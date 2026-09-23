@@ -662,7 +662,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="96"/>
         <source>Track artists not present in album artists</source>
-        <translation type="unfinished"></translation>
+        <translation>列出未出现在专辑艺人列表中的艺人</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="143"/>
@@ -725,7 +725,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="231"/>
         <source>Input decoder backend used for the current playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>用于当前播放曲目的输入解码器后端</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="233"/>
@@ -2980,52 +2980,52 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="66"/>
         <source>Focused widget</source>
-        <translation type="unfinished"></translation>
+        <translation>专注小部件</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="67"/>
         <source>Use the command as if invoked from the focused widget</source>
-        <translation type="unfinished"></translation>
+        <translation>像从获得焦点的控件调用那样使用该命令</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="68"/>
         <source>Now playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>正在播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="69"/>
         <source>Use the currently playing track for selection-based commands</source>
-        <translation type="unfinished"></translation>
+        <translation>使用当前播放的曲目进行基于选择的命令</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="70"/>
         <source>Current playlist</source>
-        <translation type="unfinished">当前播放列表</translation>
+        <translation>当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="71"/>
         <source>Use all tracks and the command context of the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>使用当前播放列表的所有曲目和命令上下文</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="72"/>
         <source>Current playlist selection</source>
-        <translation type="unfinished"></translation>
+        <translation>当前播放列表选择</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="73"/>
         <source>Use the selected tracks and command context of the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>使用当前播放列表中所选曲目和命令上下文</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="74"/>
         <source>Active selection</source>
-        <translation type="unfinished"></translation>
+        <translation>主动选择</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="75"/>
         <source>Use the most recently active track selection, even after focus moves elsewhere.</source>
-        <translation type="unfinished"></translation>
+        <translation>即使焦点移动到其他位置，也使用最近一次激活的音轨选择。</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="86"/>
@@ -3055,7 +3055,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="105"/>
         <source>Target</source>
-        <translation type="unfinished"></translation>
+        <translation>目标</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="110"/>
@@ -4038,42 +4038,42 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="100"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">点击行为</translation>
+        <translation>点击行为</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="104"/>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="105"/>
         <source>View full size</source>
-        <translation type="unfinished">查看完整尺寸</translation>
+        <translation>查看完整尺寸</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="106"/>
         <source>Next available artwork type</source>
-        <translation type="unfinished"></translation>
+        <translation>下一个可用的艺术作品类型</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="107"/>
         <source>Show track</source>
-        <translation type="unfinished"></translation>
+        <translation>显示曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="108"/>
         <source>Open containing folder</source>
-        <translation type="unfinished">打开包含的目录</translation>
+        <translation>打开所在文件夹</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="109"/>
         <source>Open properties</source>
-        <translation type="unfinished"></translation>
+        <translation>打开属性</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="115"/>
         <source>Double-click</source>
-        <translation type="unfinished">双击</translation>
+        <translation>双击</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="117"/>
@@ -4473,7 +4473,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="103"/>
         <source>Expand/collapse or play now</source>
-        <translation type="unfinished"></translation>
+        <translation>展开/收起或立即播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="106"/>
@@ -6344,7 +6344,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="233"/>
         <source>Delete currently playing file</source>
-        <translation type="unfinished"></translation>
+        <translation>删除当前正在播放的文件</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="262"/>
@@ -6639,7 +6639,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="189"/>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="193"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>立即播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="69"/>
@@ -7360,7 +7360,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1049"/>
         <source>Show or hide main window</source>
-        <translation type="unfinished"></translation>
+        <translation>显示或隐藏主窗口</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1051"/>
@@ -7492,17 +7492,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1213"/>
         <source>Look up metadata by disc TOC…</source>
-        <translation type="unfinished"></translation>
+        <translation>根据光盘 TOC 查找元数据…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1214"/>
         <source>Look up metadata using the selected tracks&apos; disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>使用所选曲目的光盘 TOC 查找元数据</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1218"/>
         <source>Look up metadata by disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>根据光盘 TOC 查找元数据</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1221"/>
@@ -7527,7 +7527,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1258"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>中止</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1286"/>
@@ -7579,7 +7579,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1340"/>
         <source>Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>艺术品</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1393"/>
@@ -8410,12 +8410,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="93"/>
         <source>Only show unrated stars on hovered rows</source>
-        <translation type="unfinished"></translation>
+        <translation>仅在鼠标悬停的行上显示未评分的星形图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="95"/>
         <source>Only show unloved hearts on hovered rows</source>
-        <translation type="unfinished"></translation>
+        <translation>仅在鼠标悬停的行上显示未获点赞的心形图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="101"/>
@@ -8966,7 +8966,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="268"/>
         <source>Samples</source>
-        <translation type="unfinished"></translation>
+        <translation>采样</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="271"/>
@@ -9317,17 +9317,17 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="193"/>
         <source>Flatpak help…</source>
-        <translation type="unfinished"></translation>
+        <translation>Flatpak 帮助…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="196"/>
         <source>Music Libraries in Flatpak</source>
-        <translation type="unfinished"></translation>
+        <translation>Flatpak 中的音乐库</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="200"/>
         <source>&lt;p&gt;The Flatpak already permits access to common music locations. If a music directory is not shown in the directory picker, cannot be read, or becomes unavailable after restarting fooyin, grant access to that directory under &lt;code&gt;Filesystem&lt;/code&gt; in Flatseal, or run the following command after replacing the example path:&lt;/p&gt;&lt;pre&gt;flatpak override --user --filesystem=&amp;quot;/path/to/music&amp;quot; org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Restart fooyin after changing its permissions.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Flatpak 默认已允许访问常见的音乐存储位置。如果音乐目录未显示在目录选择器中、无法读取或在重启 fooyin 后不可用，请在 Flatseal 的 &lt;code&gt;Filesystem&lt;/code&gt; 下授予该目录访问权限，或者在替换示例路径后运行以下命令：&lt;/p&gt;&lt;pre&gt;flatpak override --user --filesystem=&amp;quot;/path/to/music&amp;quot; org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;更改 fooyin 的权限后，重新启动它。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="277"/>
@@ -9974,7 +9974,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="199"/>
         <source>Expand/collapse or play now</source>
-        <translation type="unfinished"></translation>
+        <translation>展开/收起或立即播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="81"/>
@@ -10320,7 +10320,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/controls/lovecontrol.cpp" line="232"/>
         <source>Love Control</source>
-        <translation type="unfinished"></translation>
+        <translation>喜爱控制</translation>
     </message>
 </context>
 <context>
@@ -10698,12 +10698,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="77"/>
         <source>Ly&amp;rics</source>
-        <translation type="unfinished"></translation>
+        <translation>歌词(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="78"/>
         <source>Open lyrics in a separate window</source>
-        <translation type="unfinished"></translation>
+        <translation>在单独窗口中打开歌词</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="80"/>
@@ -11906,17 +11906,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="153"/>
         <source>Flatpak help…</source>
-        <translation type="unfinished"></translation>
+        <translation>Flatpak 帮助…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="155"/>
         <source>Notifications in Flatpak</source>
-        <translation type="unfinished"></translation>
+        <translation>Flatpak 中的通知</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="158"/>
         <source>&lt;p&gt;The Flatpak notification portal does not support custom timeouts or album art. To use the desktop notification service directly, add &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt; to fooyin&apos;s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Restart fooyin after changing its permissions.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Flatpak 通知门户不支持自定义超时时间或专辑封面。要直接使用桌面通知服务，请将 &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt; 添加到 Flatseal 中 fooyin 的会话总线“talk”权限，或者运行：&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;更改 fooyin 的权限后，重新启动它。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="207"/>
@@ -12605,7 +12605,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
         <source>P&amp;ause</source>
-        <translation type="unfinished"></translation>
+        <translation>暂停(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
@@ -12680,7 +12680,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="87"/>
         <source>Restart the current track or start playback</source>
-        <translation type="unfinished"></translation>
+        <translation>重新播放当前曲目或开始播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="93"/>
@@ -13023,127 +13023,127 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="75"/>
         <source>Playlist-led</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表主导</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="76"/>
         <source>Queue-led</source>
-        <translation type="unfinished"></translation>
+        <translation>由队列主导</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="77"/>
         <source>Start with an empty playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>从空的播放队列开始</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="78"/>
         <source>Show queue indexes in playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>在播放列表中显示队列索引</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="79"/>
         <source>Continue from the playlist after queued tracks finish</source>
-        <translation type="unfinished"></translation>
+        <translation>在已排队的曲目播放完毕后继续播放播放列表中的内容</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="80"/>
         <source>Stop playback after queued tracks finish</source>
-        <translation type="unfinished"></translation>
+        <translation>在播放完队列中的曲目后停止播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="81"/>
         <source>Scroll the current track to the top</source>
-        <translation type="unfinished"></translation>
+        <translation>将当前曲目滚动至顶部</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="82"/>
         <source>Limit recent track history</source>
-        <translation type="unfinished"></translation>
+        <translation>限制近期曲目历史记录</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="83"/>
         <source>History limit</source>
-        <translation type="unfinished"></translation>
+        <translation>历史记录限制</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="85"/>
         <source>Replace with selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>替换为所选曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="86"/>
         <source>Replace with the containing group</source>
-        <translation type="unfinished"></translation>
+        <translation>替换为包含它的组</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="87"/>
         <source>Replace with all tracks in the current view</source>
-        <translation type="unfinished"></translation>
+        <translation>替换为当前视图中的所有曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="88"/>
         <source>Insert selected tracks next and play now</source>
-        <translation type="unfinished"></translation>
+        <translation>将所选曲目插入到下一首并立即播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="91"/>
         <source>The active playlist drives playback, with queued tracks temporarily taking priority</source>
-        <translation type="unfinished"></translation>
+        <translation>当前播放列表控制着播放，而已加入队列的曲目则暂时享有优先权</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="93"/>
         <source>The queue drives playback, containing the played, current, and upcoming tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>队列驱动播放，包含已播放的、当前的和即将播放的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="102"/>
         <source>Replace Playing Tracks with the selected tracks and start playback at the first selection</source>
-        <translation type="unfinished"></translation>
+        <translation>用所选曲目替换当前播放列表中的曲目，并从所选的第一首曲目开始播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="104"/>
         <source>Replace Playing Tracks with the first selected track&apos;s group and start playback at that track</source>
-        <translation type="unfinished"></translation>
+        <translation>将当前播放曲目替换为所选的第一首曲目所属的组，并从该曲目开始播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="106"/>
         <source>Replace Playing Tracks with the current view and start playback at the first selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>用当前视图替换“正在播放”列表，并从所选的第一首曲目开始播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="108"/>
         <source>Keep Playing Tracks, insert the selected tracks next, and play the first selection immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>继续播放曲目，将所选的曲目插入下一首，并立即播放第一首所选的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="116"/>
         <source>Start fooyin without restoring the saved queue or current track</source>
-        <translation type="unfinished"></translation>
+        <translation>启动 fooyin 但不恢复已保存的队列或当前曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="118"/>
         <source>Queue mode</source>
-        <translation type="unfinished"></translation>
+        <translation>队列模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="127"/>
         <source>Show the position of each queued override beside its source track in playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>在播放列表中将每个已排队的覆盖曲目与其源曲目的位置显示出来</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="129"/>
         <source>After the queue empties, continue after the last queued track in its source playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>当队列清空后继续播放源播放列表中排在队列最后一首曲目之后的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="131"/>
         <source>Stop when the final queued override finishes instead of returning to playlist playback</source>
-        <translation type="unfinished"></translation>
+        <translation>当最后一个已排队的覆盖操作完成时停止而不是恢复播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="133"/>
         <source>Playlist-led options</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表主导选项</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="142"/>
@@ -13153,32 +13153,32 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="144"/>
         <source>Keep the current track at the top of the Playing Tracks view</source>
-        <translation type="unfinished"></translation>
+        <translation>将当前曲目保持在“正在播放”视图的顶部</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="145"/>
         <source>Automatically remove played tracks beyond the retained history</source>
-        <translation type="unfinished"></translation>
+        <translation>自动移除超出保留历史记录范围的已播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="146"/>
         <source>Number of played tracks to retain before the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>当前曲目之前需保留的已播放曲目数量</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="148"/>
         <source>Queue-led options</source>
-        <translation type="unfinished"></translation>
+        <translation>队列主导向选项</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="152"/>
         <source>Play now action</source>
-        <translation type="unfinished"></translation>
+        <translation>立即播放动作</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="157"/>
         <source>Display and history</source>
-        <translation type="unfinished"></translation>
+        <translation>显示与历史记录</translation>
     </message>
 </context>
 <context>
@@ -13201,12 +13201,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="191"/>
         <source>Show Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>显示暂停</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="192"/>
         <source>Show Play</source>
-        <translation type="unfinished"></translation>
+        <translation>显示播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="193"/>
@@ -13948,24 +13948,24 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="436"/>
         <source>Remove playlist &quot;%1&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation>移除播放列表“%1”？</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="439"/>
         <source>Remove %Ln playlist(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>移除播放列表 %Ln？</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="442"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished"></translation>
+        <translation>不再询问</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="445"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>移除</translation>
     </message>
 </context>
 <context>
@@ -14106,7 +14106,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="167"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>立即播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="87"/>
@@ -14263,7 +14263,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="349"/>
         <source>Save the selected playlist to the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>将所选的播放列表保存到指定文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="357"/>
@@ -14806,7 +14806,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="98"/>
         <source>Save the selected playlist to the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>将所选的播放列表保存到指定文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="524"/>
@@ -15884,12 +15884,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="116"/>
         <source>&amp;Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>立即播放(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="117"/>
         <source>Queue &amp;next</source>
-        <translation type="unfinished"></translation>
+        <translation>下一个队列(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="118"/>
@@ -15914,12 +15914,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="302"/>
         <source>Show playing tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>显示正在播放的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="303"/>
         <source>Show upcoming tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>显示即将播放的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="313"/>
@@ -15939,12 +15939,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="441"/>
         <source>Start playback of the selected queue track</source>
-        <translation type="unfinished"></translation>
+        <translation>开始播放所选队列曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="445"/>
         <source>Move the selected tracks to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>将所选曲目移至“下一首播放”</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="449"/>
@@ -15997,17 +15997,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="39"/>
         <source>Queue view</source>
-        <translation type="unfinished"></translation>
+        <translation>队列视图</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="40"/>
         <source>Playing Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>正在播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="41"/>
         <source>Upcoming Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>即将推出的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="42"/>
@@ -16085,12 +16085,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="212"/>
         <source>Upcoming Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>即将推出的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="212"/>
         <source>Playing Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>正在播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="215"/>
@@ -16527,7 +16527,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="55"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>立即播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="56"/>
@@ -18157,7 +18157,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="241"/>
         <source>Rating Control</source>
-        <translation type="unfinished"></translation>
+        <translation>评级控制</translation>
     </message>
 </context>
 <context>
@@ -18545,17 +18545,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="129"/>
         <source>Flatpak help…</source>
-        <translation type="unfinished"></translation>
+        <translation>Flatpak 帮助…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="131"/>
         <source>Run Services in Flatpak</source>
-        <translation type="unfinished"></translation>
+        <translation>在 Flatpak 中运行服务</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="134"/>
         <source>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin&apos;s Session Bus &quot;talk&quot; permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to execute arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Flatpak 沙盒无法直接启动宿主机上安装的应用程序。要允许 fooyin 启动宿主应用程序，请在 Flatseal 中将 &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; 添加到 fooyin 的会话总线“talk”权限，或者运行：&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;然后在每个服务命令前加上 &lt;code&gt;flatpak-spawn --host&lt;/code&gt;。 例如：&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;此权限允许 fooyin 在沙盒之外执行任意命令。仅在您信任所配置的服务时才启用此权限。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="150"/>
@@ -18928,7 +18928,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scripting/scriptformatter.cpp" line="236"/>
         <source>[%1] Error in formatting tag &apos;%2&apos;: invalid formatting option.</source>
-        <translation type="unfinished"></translation>
+        <translation>[%1] 格式化标签“%2”出错：格式化选项无效。</translation>
     </message>
 </context>
 <context>
@@ -19626,7 +19626,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="505"/>
         <source>Show played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>显示已播放阈值</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="517"/>
@@ -20009,7 +20009,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="35"/>
         <source>Prevent display from turning off</source>
-        <translation type="unfinished"></translation>
+        <translation>防止显示器关闭</translation>
     </message>
     <message>
         <location filename="../../src/plugins/sleepinhibitor/sleepinhibitorsettings.cpp" line="39"/>
@@ -21185,7 +21185,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="90"/>
         <source>Show track</source>
-        <translation type="unfinished"></translation>
+        <translation>显示曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="91"/>
@@ -21195,7 +21195,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="92"/>
         <source>Open properties</source>
-        <translation type="unfinished"></translation>
+        <translation>打开属性</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="98"/>
@@ -22773,12 +22773,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1218"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>左侧</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1219"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>右侧</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1222"/>
@@ -22955,7 +22955,7 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="46"/>
         <source>Show played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>显示已播放阈值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="142"/>
@@ -23065,7 +23065,7 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="225"/>
         <source>Threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>阈值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="234"/>
@@ -23187,7 +23187,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="613"/>
         <source>Show played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>显示已播放阈值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="622"/>
@@ -23389,12 +23389,12 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="299"/>
         <source>Rating Control</source>
-        <translation type="unfinished"></translation>
+        <translation>评级控制</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="311"/>
         <source>Love Control</source>
-        <translation type="unfinished"></translation>
+        <translation>喜爱控制</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="331"/>
@@ -23506,7 +23506,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="604"/>
         <source>Confirm before removing playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>移除播放列表前进行确认</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="610"/>
@@ -24008,12 +24008,12 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="215"/>
         <source>Only one player option can be used at a time.</source>
-        <translation type="unfinished"></translation>
+        <translation>一次只能使用一个播放选项。</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="224"/>
         <source>Only one volume option can be used at a time.</source>
-        <translation type="unfinished"></translation>
+        <translation>一次只能使用一个音量选项。</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="240"/>
@@ -24083,47 +24083,47 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="244"/>
         <source>Seek forward (e.g. 5000, 10s, or 1:30)</source>
-        <translation type="unfinished"></translation>
+        <translation>快进（例如 5000、10s 或 1:30）</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="245"/>
         <source>Seek backward (e.g. 5000, 10s, or 1:30)</source>
-        <translation type="unfinished"></translation>
+        <translation>向后跳转（例如 5000、10s 或 1:30）</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="245"/>
         <source>Volume options</source>
-        <translation type="unfinished"></translation>
+        <translation>音量选项</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="246"/>
         <source>Set volume from 0 to 100</source>
-        <translation type="unfinished"></translation>
+        <translation>将音量设置为 0 到 100</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="246"/>
         <source>Increase volume by the configured step</source>
-        <translation type="unfinished"></translation>
+        <translation>按配置的步骤增加音量</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="247"/>
         <source>Decrease volume by the configured step</source>
-        <translation type="unfinished"></translation>
+        <translation>按设定的步长降低音量</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="247"/>
         <source>Toggle mute</source>
-        <translation type="unfinished"></translation>
+        <translation>切换静音</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="248"/>
         <source>Playback mode options</source>
-        <translation type="unfinished"></translation>
+        <translation>播放模式选项</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="248"/>
         <source>Set repeat: off, playlist, album, or track</source>
-        <translation type="unfinished"></translation>
+        <translation>设置重复：关闭、播放列表、专辑或曲目</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="249"/>
@@ -24133,69 +24133,69 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="249"/>
         <source>Set shuffle: off, tracks, albums, or random</source>
-        <translation type="unfinished"></translation>
+        <translation>设置随机播放：关闭、按曲目、按专辑或随机</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="250"/>
         <source>Files, directories, or HTTP(S) URLs to open</source>
-        <translation type="unfinished"></translation>
+        <translation>要打开的文件、目录或 HTTP(S) URL</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="295"/>
         <location filename="../../src/app/commandline.cpp" line="311"/>
         <source>Invalid seek time: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无效寻道时间：%1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="304"/>
         <location filename="../../src/app/commandline.cpp" line="320"/>
         <source>Missing time for seek option.</source>
-        <translation type="unfinished"></translation>
+        <translation>缺少“查找”选项所需的时间参数。</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="327"/>
         <source>Volume must be between 0 and 100: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>音量必须在 0 到 100 之间：%1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="353"/>
         <source>The repeat option can only be specified once.</source>
-        <translation type="unfinished"></translation>
+        <translation>重复选项只能指定一次。</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="359"/>
         <source>Invalid repeat mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>重复模式无效：%1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="367"/>
         <source>The shuffle option can only be specified once.</source>
-        <translation type="unfinished"></translation>
+        <translation>随机播放选项只能指定一次。</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="373"/>
         <source>Invalid shuffle mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的随机播放模式：%1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="380"/>
         <source>Option requires an argument: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>选项需要一个参数：%1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="383"/>
         <source>Unknown option: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>未知选项：%1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="386"/>
         <source>Unable to parse command line options.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法解析命令行选项。</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="405"/>
         <source>File or URL does not exist or is not supported: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>文件或 URL 不存在或不受支持：%1</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="413"/>
@@ -24471,7 +24471,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="174"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>立即播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="177"/>

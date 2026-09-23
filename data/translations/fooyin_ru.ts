@@ -662,7 +662,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="96"/>
         <source>Track artists not present in album artists</source>
-        <translation type="unfinished"></translation>
+        <translation>Исполнители трека, отсутствующие среди исполнителей альбома</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="143"/>
@@ -7364,179 +7364,179 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="413"/>
         <location filename="../../src/gui/guiapplication.cpp" line="416"/>
         <source>New Layout</source>
-        <translation type="unfinished">Новый макет</translation>
+        <translation>Новый макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="416"/>
         <source>Layout Name</source>
-        <translation type="unfinished">Название макета</translation>
+        <translation>Название макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="443"/>
         <source>Searching for artwork…</source>
-        <translation type="unfinished">Идёт поиск обложек…</translation>
+        <translation>Идёт поиск обложек…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="457"/>
         <source>Artwork search finished</source>
-        <translation type="unfinished">Поиск обложек завершён</translation>
+        <translation>Поиск обложек завершён</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="511"/>
         <source>Failed to open artwork file</source>
-        <translation type="unfinished">Не удалось открыть файл изображения</translation>
+        <translation>Не удалось открыть файл изображения</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="517"/>
         <source>Artwork file is empty</source>
-        <translation type="unfinished">Файл обложки пуст</translation>
+        <translation>Файл обложки пуст</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="918"/>
         <source>Plugins not found</source>
-        <translation type="unfinished">Модули не найдены</translation>
+        <translation>Модули не найдены</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="919"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation type="unfinished">Без некоторых модулей функциональность будет ограничена.</translation>
+        <translation>Без некоторых модулей функциональность будет ограничена.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="920"/>
         <source>Plugin search locations:
 
 </source>
-        <translation type="unfinished">Каталоги для поиска модулей:
+        <translation>Каталоги для поиска модулей:
 
 </translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="923"/>
         <source>Quit</source>
-        <translation type="unfinished">Выход</translation>
+        <translation>Выход</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1049"/>
         <source>Show or hide main window</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать или скрыть главное окно</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1051"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1197"/>
         <source>View</source>
-        <translation type="unfinished">Вид</translation>
+        <translation>Вид</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1054"/>
         <source>Volume</source>
-        <translation type="unfinished">Громкость</translation>
+        <translation>Громкость</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1056"/>
         <source>Volume up</source>
-        <translation type="unfinished">Увеличить громкость</translation>
+        <translation>Увеличить громкость</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1063"/>
         <source>Volume down</source>
-        <translation type="unfinished">Уменьшить громкость</translation>
+        <translation>Уменьшить громкость</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1070"/>
         <source>Mute</source>
-        <translation type="unfinished">Приглушить звук</translation>
+        <translation>Приглушить звук</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1080"/>
         <source>Clear Current Playlist</source>
-        <translation type="unfinished">Очистить текущий плейлист</translation>
+        <translation>Очистить текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1081"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation type="unfinished">Удалить все дорожки из текущего плейлиста</translation>
+        <translation>Удалить все дорожки из текущего плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1084"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1111"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1184"/>
         <source>Playlist</source>
-        <translation type="unfinished">Плейлист</translation>
+        <translation>Плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1107"/>
         <source>Lock playlist</source>
-        <translation type="unfinished">Блокировать плейлист</translation>
+        <translation>Блокировать плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1109"/>
         <source>Prevent changes to the contents of the current playlist</source>
-        <translation type="unfinished">Предотвращать изменения содержимого текущего плейлиста</translation>
+        <translation>Предотвращать изменения содержимого текущего плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1112"/>
         <source>Lock Current Playlist</source>
-        <translation type="unfinished">Блокировать текущий плейлист</translation>
+        <translation>Блокировать текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1133"/>
         <source>Playback</source>
-        <translation type="unfinished">Воспроизведение</translation>
+        <translation>Воспроизведение</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1133"/>
         <source>Seek</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемотка</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1135"/>
         <source>Seek forward (small step)</source>
-        <translation type="unfinished">Перемотать вперёд (малый шаг)</translation>
+        <translation>Перемотать вперёд (малый шаг)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1142"/>
         <source>Seek forward (large step)</source>
-        <translation type="unfinished">Перемотать вперёд (большой шаг)</translation>
+        <translation>Перемотать вперёд (большой шаг)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1149"/>
         <source>Seek backward (small step)</source>
-        <translation type="unfinished">Перемотать назад (малый шаг)</translation>
+        <translation>Перемотать назад (малый шаг)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1157"/>
         <source>Seek backward (large step)</source>
-        <translation type="unfinished">Перемотать назад (большой шаг)</translation>
+        <translation>Перемотать назад (большой шаг)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1182"/>
         <source>Remove Playlist</source>
-        <translation type="unfinished">Удалить плейлист</translation>
+        <translation>Удалить плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1185"/>
         <source>Remove Current Playlist</source>
-        <translation type="unfinished">Удалить текущий плейлист</translation>
+        <translation>Удалить текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1193"/>
         <source>Toggle Menubar</source>
-        <translation type="unfinished">Переключить панель меню</translation>
+        <translation>Переключить панель меню</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1204"/>
         <source>Look up metadata by artist and album…</source>
-        <translation type="unfinished">Поиск метаданных по исполнителю и альбому…</translation>
+        <translation>Поиск метаданных по исполнителю и альбому…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1205"/>
         <source>Look up metadata using the selected tracks&apos; artist and album</source>
-        <translation type="unfinished">Поиск метаданных с использованием исполнителя и альбома выбранных дорожек</translation>
+        <translation>Поиск метаданных с использованием исполнителя и альбома выбранных дорожек</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1210"/>
         <source>Look up metadata by artist and album</source>
-        <translation type="unfinished">Поиск метаданных по исполнителю и альбому</translation>
+        <translation>Поиск метаданных по исполнителю и альбому</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1211"/>
@@ -7545,82 +7545,82 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1230"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1299"/>
         <source>Tagging</source>
-        <translation type="unfinished">Тегирование</translation>
+        <translation>Тегирование</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1213"/>
         <source>Look up metadata by disc TOC…</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск метаданных по TOC диска…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1214"/>
         <source>Look up metadata using the selected tracks&apos; disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск метаданных по TOC диска выбранных дорожек</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1218"/>
         <source>Look up metadata by disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск метаданных по TOC диска</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1221"/>
         <source>Look up metadata by MusicBrainz ID…</source>
-        <translation type="unfinished">Поиск метаданных по MusicBrainz ID…</translation>
+        <translation>Поиск метаданных по MusicBrainz ID…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1222"/>
         <source>Look up metadata using a MusicBrainz release identifier</source>
-        <translation type="unfinished">Поиск метаданных с использованием идентификатора релиза MusicBrainz</translation>
+        <translation>Поиск метаданных с использованием идентификатора релиза MusicBrainz</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1225"/>
         <source>Look up metadata by MusicBrainz ID</source>
-        <translation type="unfinished">Поиск метаданных по MusicBrainz ID</translation>
+        <translation>Поиск метаданных по MusicBrainz ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1258"/>
         <source>Reading tracks…</source>
-        <translation type="unfinished">Чтение треков…</translation>
+        <translation>Чтение треков…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1258"/>
         <source>Abort</source>
-        <translation type="unfinished">Прервать</translation>
+        <translation>Прервать</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1286"/>
         <source>Current file</source>
-        <translation type="unfinished">Текущий файл</translation>
+        <translation>Текущий файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1301"/>
         <source>Reload tags from files</source>
-        <translation type="unfinished">Перезагрузить теги из файлов</translation>
+        <translation>Перезагрузить теги из файлов</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1302"/>
         <source>Reload tags from modified files</source>
-        <translation type="unfinished">Перезагрузить теги из изменённых файлов</translation>
+        <translation>Перезагрузить теги из изменённых файлов</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1304"/>
         <source>Replace tags in selected tracks with tags from the files</source>
-        <translation type="unfinished">Заменить теги в выбранных треках на теги из файлов</translation>
+        <translation>Заменить теги в выбранных треках на теги из файлов</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1305"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
-        <translation type="unfinished">Заменить теги в выбранных треках тегами из файлов, если они были изменены</translation>
+        <translation>Заменить теги в выбранных треках тегами из файлов, если они были изменены</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1336"/>
         <source>View full size</source>
-        <translation type="unfinished">Просмотр в полном размере</translation>
+        <translation>Просмотр в полном размере</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1337"/>
         <source>View the common artwork for the selected tracks at full size</source>
-        <translation type="unfinished">Просмотр общей обложки для выбранных треков в полном размере</translation>
+        <translation>Просмотр общей обложки для выбранных треков в полном размере</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1340"/>
@@ -7632,63 +7632,63 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1655"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1664"/>
         <source>Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Дорожки</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1340"/>
         <source>Artwork</source>
-        <translation type="unfinished">Обложка</translation>
+        <translation>Обложка</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1393"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Статистика воспроизведения</translation>
+        <translation>Статистика воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1408"/>
         <source>Toggle loved</source>
-        <translation type="unfinished">Переключить «любимое»</translation>
+        <translation>Переключить «любимое»</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1408"/>
         <source>Toggle Loved for selected tracks</source>
-        <translation type="unfinished">Переключить статус «любимое» для выбранных треков</translation>
+        <translation>Переключить статус «любимое» для выбранных треков</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1410"/>
         <source>Love</source>
-        <translation type="unfinished">Любимое</translation>
+        <translation>Любимое</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1410"/>
         <source>Love selected tracks</source>
-        <translation type="unfinished">Отметить выбранные треки как любимые</translation>
+        <translation>Отметить выбранные треки как любимые</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1412"/>
         <source>Unlove</source>
-        <translation type="unfinished">Нелюбимое</translation>
+        <translation>Нелюбимое</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1412"/>
         <source>Unlove selected tracks</source>
-        <translation type="unfinished">Снять отметку «любимое» с выбранных треков</translation>
+        <translation>Снять отметку «любимое» с выбранных треков</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1428"/>
         <source>Choose destination</source>
-        <translation type="unfinished">Выбрать папку назначения</translation>
+        <translation>Выбрать папку назначения</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1454"/>
         <source>Converter Output</source>
-        <translation type="unfinished">Выходные данные конвертера</translation>
+        <translation>Выходные данные конвертера</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1551"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1559"/>
         <source>Convert using preset %1</source>
-        <translation type="unfinished">Преобразовать с предустановкой %1</translation>
+        <translation>Преобразовать с предустановкой %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1558"/>
@@ -7697,169 +7697,169 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1610"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1621"/>
         <source>Convert</source>
-        <translation type="unfinished">Преобразовать</translation>
+        <translation>Преобразовать</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1589"/>
         <source>Converter setup…</source>
-        <translation type="unfinished">Настройка преобразователя…</translation>
+        <translation>Настройка преобразователя…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1598"/>
         <source>Using default settings</source>
-        <translation type="unfinished">Использовать настройки по умолчанию</translation>
+        <translation>Использовать настройки по умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1602"/>
         <source>Convert using default settings</source>
-        <translation type="unfinished">Преобразовать с настройками по умолчанию</translation>
+        <translation>Преобразовать с настройками по умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1607"/>
         <source>Repeat last conversion</source>
-        <translation type="unfinished">Повторить последнее преобразование</translation>
+        <translation>Повторить последнее преобразование</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1638"/>
         <source>Custom conversion…</source>
-        <translation type="unfinished">Пользовательское преобразование…</translation>
+        <translation>Пользовательское преобразование…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1650"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1655"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1664"/>
         <source>Utilities</source>
-        <translation type="unfinished">Утилиты</translation>
+        <translation>Утилиты</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1652"/>
         <source>Verify integrity</source>
-        <translation type="unfinished">Проверить целостность</translation>
+        <translation>Проверить целостность</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1653"/>
         <source>Decode the selected tracks and report file or checksum errors</source>
-        <translation type="unfinished">Декодировать выбранные треки и сообщить об ошибках файлов или контрольных сумм</translation>
+        <translation>Декодировать выбранные треки и сообщить об ошибках файлов или контрольных сумм</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1660"/>
         <source>Verify album with AccurateRip</source>
-        <translation type="unfinished">Проверить альбом с помощью AccurateRip</translation>
+        <translation>Проверить альбом с помощью AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1661"/>
         <source>Verify all tracks from one complete lossless CD rip against AccurateRip</source>
-        <translation type="unfinished">Проверить все треки из одного полного бесшовного рипа CD с помощью AccurateRip</translation>
+        <translation>Проверить все треки из одного полного бесшовного рипа CD с помощью AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1949"/>
         <source>Reload Required</source>
-        <translation type="unfinished">Необходима перезагрузка</translation>
+        <translation>Необходима перезагрузка</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1951"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
-        <translation type="unfinished">Из-за изменения базы данных треки необходимо перезагрузить с диска, чтобы обновить сохранённые метаданные.</translation>
+        <translation>Из-за изменения базы данных треки необходимо перезагрузить с диска, чтобы обновить сохранённые метаданные.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1955"/>
         <source>Reload Now</source>
-        <translation type="unfinished">Перезагрузить сейчас</translation>
+        <translation>Перезагрузить сейчас</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1958"/>
         <source>OK</source>
-        <translation type="unfinished">ОК</translation>
+        <translation>ОК</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2103"/>
         <source>Playback Error</source>
-        <translation type="unfinished">Ошибка воспроизведения</translation>
+        <translation>Ошибка воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2128"/>
         <source>Continue</source>
-        <translation type="unfinished">Продолжить</translation>
+        <translation>Продолжить</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2130"/>
         <source>Stop</source>
-        <translation type="unfinished">Стоп</translation>
+        <translation>Стоп</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2134"/>
         <source>Always continue playing if a track is unavailable</source>
-        <translation type="unfinished">Всегда продолжать проигрывание, если трек недоступен</translation>
+        <translation>Всегда продолжать проигрывание, если трек недоступен</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2156"/>
         <source>Track Not Found</source>
-        <translation type="unfinished">Трек не найден</translation>
+        <translation>Трек не найден</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2161"/>
         <source>No Decoder Available</source>
-        <translation type="unfinished">Не удалось декодировать файл</translation>
+        <translation>Не удалось декодировать файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2241"/>
         <source>All Supported Media Files (%1)</source>
-        <translation type="unfinished">Все поддерживаемые медиафайлы (%1)</translation>
+        <translation>Все поддерживаемые медиафайлы (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2242"/>
         <source>Audio Files (%1)</source>
-        <translation type="unfinished">Аудиофайлы (%1)</translation>
+        <translation>Аудиофайлы (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2253"/>
         <source>Add Files</source>
-        <translation type="unfinished">Добавить файлы</translation>
+        <translation>Добавить файлы</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2267"/>
         <source>Add Folders</source>
-        <translation type="unfinished">Добавить папки</translation>
+        <translation>Добавить папки</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2279"/>
         <source>Add Stream URL</source>
-        <translation type="unfinished">Добавить адрес потока</translation>
+        <translation>Добавить адрес потока</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2279"/>
         <source>Stream URL:</source>
-        <translation type="unfinished">Адрес потока:</translation>
+        <translation>Адрес потока:</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2281"/>
         <source>&amp;Add</source>
-        <translation type="unfinished">&amp;Добавить</translation>
+        <translation>&amp;Добавить</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2285"/>
         <source>Enter a valid http:// or https:// URL.</source>
-        <translation type="unfinished">Введите верный http:// или https:// URL-адрес.</translation>
+        <translation>Введите верный http:// или https:// URL-адрес.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2383"/>
         <source>All Supported Playlists (%1)</source>
-        <translation type="unfinished">Все поддерживаемые плейлисты (%1)</translation>
+        <translation>Все поддерживаемые плейлисты (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2393"/>
         <source>Load Playlist</source>
-        <translation type="unfinished">Загрузить плейлист</translation>
+        <translation>Загрузить плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2430"/>
         <source>Save Playlist</source>
-        <translation type="unfinished">Сохранить плейлист</translation>
+        <translation>Сохранить плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="570"/>
         <source>Display</source>
-        <translation type="unfinished">Отображение</translation>
+        <translation>Отображение</translation>
     </message>
 </context>
 <context>
@@ -9024,7 +9024,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="268"/>
         <source>Samples</source>
-        <translation type="unfinished"></translation>
+        <translation>Сэмплы</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="271"/>
@@ -9375,17 +9375,17 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="193"/>
         <source>Flatpak help…</source>
-        <translation type="unfinished"></translation>
+        <translation>Справка по Flatpak…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="196"/>
         <source>Music Libraries in Flatpak</source>
-        <translation type="unfinished"></translation>
+        <translation>Музыкальные библиотеки в Flatpak</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="200"/>
         <source>&lt;p&gt;The Flatpak already permits access to common music locations. If a music directory is not shown in the directory picker, cannot be read, or becomes unavailable after restarting fooyin, grant access to that directory under &lt;code&gt;Filesystem&lt;/code&gt; in Flatseal, or run the following command after replacing the example path:&lt;/p&gt;&lt;pre&gt;flatpak override --user --filesystem=&amp;quot;/path/to/music&amp;quot; org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Restart fooyin after changing its permissions.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Flatpak уже разрешает доступ к обычным расположениям музыки. Если музыкальный каталог не отображается в средстве выбора каталогов, не читается или становится недоступным после перезапуска fooyin, предоставьте доступ к этому каталогу в разделе &lt;code&gt;Filesystem&lt;/code&gt; в Flatseal или выполните следующую команду, заменив пример пути:&lt;/p&gt;&lt;pre&gt;flatpak override --user --filesystem=&amp;quot;/path/to/music&amp;quot; org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Перезапустите fooyin после изменения его разрешений.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="277"/>
@@ -11990,17 +11990,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="153"/>
         <source>Flatpak help…</source>
-        <translation type="unfinished"></translation>
+        <translation>Справка по Flatpak…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="155"/>
         <source>Notifications in Flatpak</source>
-        <translation type="unfinished"></translation>
+        <translation>Уведомления в Flatpak</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="158"/>
         <source>&lt;p&gt;The Flatpak notification portal does not support custom timeouts or album art. To use the desktop notification service directly, add &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt; to fooyin&apos;s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Restart fooyin after changing its permissions.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Портал уведомлений Flatpak не поддерживает настраиваемые тайм-ауты и обложки альбомов. Чтобы использовать службу уведомлений рабочего стола напрямую, добавьте &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt; в разрешения «talk» сессионной шины fooyin в Flatseal или выполните:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Перезапустите fooyin после изменения его разрешений.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="207"/>
@@ -14031,31 +14031,31 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="434"/>
         <source>Remove Playlist</source>
-        <translation type="unfinished">Удалить плейлист</translation>
+        <translation>Удалить плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="436"/>
         <source>Remove playlist &quot;%1&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить плейлист «%1»?</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="439"/>
         <source>Remove %Ln playlist(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Удалить %Ln плейлист?</numerusform>
+            <numerusform>Удалить %Ln плейлиста?</numerusform>
+            <numerusform>Удалить %Ln плейлистов?</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="442"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">Не спрашивать снова</translation>
+        <translation>Не спрашивать снова</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="445"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить</translation>
     </message>
 </context>
 <context>
@@ -18657,17 +18657,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="129"/>
         <source>Flatpak help…</source>
-        <translation type="unfinished"></translation>
+        <translation>Справка по Flatpak…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="131"/>
         <source>Run Services in Flatpak</source>
-        <translation type="unfinished"></translation>
+        <translation>Службы запуска в Flatpak</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="134"/>
         <source>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin&apos;s Session Bus &quot;talk&quot; permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to execute arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Песочница Flatpak не может напрямую запускать приложения, установленные на хост-системе. Чтобы позволить fooyin запускать приложения хост-системы, добавьте &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; в разрешения «talk» сессионной шины fooyin в Flatseal или выполните:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Затем добавьте префикс &lt;code&gt;flatpak-spawn --host&lt;/code&gt; к каждой команде службы. Например:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;Это разрешение позволяет fooyin выполнять произвольные команды вне песочницы. Включайте его только если вы доверяете настроенным службам.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="150"/>
@@ -19717,7 +19717,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2084"/>
         <source>Quick Search</source>
-        <translation type="unfinished">Быстрый поиск</translation>
+        <translation>Быстрый поиск</translation>
     </message>
 </context>
 <context>
@@ -19740,7 +19740,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="505"/>
         <source>Show played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать порог проигранного</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="517"/>
@@ -23077,7 +23077,7 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="46"/>
         <source>Show played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать порог проигранного</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="142"/>
@@ -23187,7 +23187,7 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="225"/>
         <source>Threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Порог</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="234"/>
@@ -23309,7 +23309,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="613"/>
         <source>Show played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать порог проигранного</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="622"/>
@@ -23628,7 +23628,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="604"/>
         <source>Confirm before removing playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Подтверждать перед удалением плейлистов</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="610"/>

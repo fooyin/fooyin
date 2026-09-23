@@ -21,7 +21,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="297"/>
         <source>Replace current playlist</source>
-        <translation>Korvaa nykyiseen soittolista</translation>
+        <translation>Korvaa nykyinen soittolista</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="300"/>
@@ -354,7 +354,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="129"/>
         <source>Human readable file size</source>
-        <translation type="unfinished"></translation>
+        <translation>helposti luettava tiedostokoko</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="131"/>
@@ -369,17 +369,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="135"/>
         <source>Bit depth</source>
-        <translation type="unfinished"></translation>
+        <translation>Bittisyvyys</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="137"/>
         <source>First played timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Ensimmäisen toistokerran aikaleima</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="139"/>
         <source>Last played timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Edellisen toistokerran aikaleima</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="141"/>
@@ -389,7 +389,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="145"/>
         <source>Normalised rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalisoitu arvosana</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="149"/>
@@ -399,23 +399,23 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="153"/>
         <source>Rating editor representation</source>
-        <translation type="unfinished"></translation>
+        <translation>Arvostelu editorin esitysmuoto</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="154"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="156"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Toiston statistiikka</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <source>Love flag: 1 when loved, empty otherwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Tykkäys merkintä: 1 jos tykätty, muuten tyhjä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Interactive heart editor for the Love flag</source>
-        <translation type="unfinished"></translation>
+        <translation>Interaktiivinen tykkäys editori tykkäys-merkinnälle</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
@@ -435,32 +435,32 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="165"/>
         <source>Tag type list</source>
-        <translation type="unfinished"></translation>
+        <translation>Tagin tyyppi lista</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="167"/>
         <source>Encoding description</source>
-        <translation type="unfinished"></translation>
+        <translation>Enkoodauksen kuvaus</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="169"/>
         <source>Channel layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanavien asettelu</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="173"/>
         <source>Library added timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Kirjastoon lisäyksen aikamerkintä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="175"/>
         <source>Last modified timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Viimeksi muokatun aikamerkintä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="177"/>
         <source>Full file path</source>
-        <translation type="unfinished"></translation>
+        <translation>Koko tiedostopolku</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="179"/>
@@ -470,27 +470,27 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="181"/>
         <source>Filename without extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiedostonimi ilman tiedostpäätettä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="183"/>
         <source>File extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiedostopääte</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="185"/>
         <source>Filename including extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiedostonimi tiedostopäätteellä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="187"/>
         <source>Containing directory name</source>
-        <translation type="unfinished"></translation>
+        <translation>Sisältää hakemiston nimen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="189"/>
         <source>Containing directory path</source>
-        <translation type="unfinished"></translation>
+        <translation>Sisältää hakemistopolun</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="191"/>
@@ -500,32 +500,32 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="193"/>
         <source>ReplayGain track gain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplaGain kappaleen vahvistus</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="195"/>
         <source>ReplayGain track peak</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain kappaleen huippu</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="197"/>
         <source>ReplayGain track peak in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain kappaleen huippu dB:nä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="199"/>
         <source>ReplayGain album gain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain albumin vahvistus</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="201"/>
         <source>ReplayGain album peak</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain albumin huippu</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="203"/>
         <source>ReplayGain album peak in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain albumin huippu dB:nä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="204"/>
@@ -534,22 +534,22 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="210"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="214"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Soittolista</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="205"/>
         <source>Number of tracks in the list</source>
-        <translation type="unfinished"></translation>
+        <translation>Kappalaiden määrä listalla</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="207"/>
         <source>Combined duration of the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Kappalelistan kokonaiskesto</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
         <source>Alias for total playlist duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Soittolistan kokonaiskeston alias</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="212"/>
@@ -562,22 +562,22 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="234"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="236"/>
         <source>Playback</source>
-        <translation type="unfinished">Toisto</translation>
+        <translation>Toisto</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="213"/>
         <source>Elapsed time within the active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiivisen soittolistan kesto tähän asti</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="215"/>
         <source>Unique genres across the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Uniikkeja genrejä listalla</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="283"/>
         <source>Returns true when x is greater than y</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa tosi arvon kun x on suurempi kuin y</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="318"/>
@@ -607,7 +607,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="340"/>
         <source>Returns the first shortest string</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa ensimmäisen lyhyimmän merkkijonon</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="343"/>
@@ -622,22 +622,22 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="355"/>
         <source>Returns true when a is longer than b</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa tosi arvon kun a on pidempi kuin b</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="357"/>
         <source>Returns the platform path separator</source>
-        <translation type="unfinished"></translation>
+        <translation>Palauttaa alustan polkuerottimen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="412"/>
         <source>Builds a clickable link that launches an application</source>
-        <translation type="unfinished"></translation>
+        <translation>Rakentaa klikattavan linkin joka laukaisee aplikaation</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="418"/>
         <source>Returns the CRC-32 checksum of the text</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa CRC-32 tarkisteen tekstistä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="474"/>
@@ -647,126 +647,126 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="483"/>
         <source>Checks whether two numeric values are equal</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarkistaa ovatko kaksi numero arvoa yhtenäiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="217"/>
         <source>First playback queue index for the specified item</source>
-        <translation type="unfinished"></translation>
+        <translation>Määritetyn kohteen ensimmäinen indeksi toistojonossa</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="58"/>
         <source>Functions</source>
-        <translation type="unfinished"></translation>
+        <translation>Funktiot</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="96"/>
         <source>Track artists not present in album artists</source>
-        <translation type="unfinished"></translation>
+        <translation>Kappaleen artistia ei löydy albumin artisteista</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="143"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="147"/>
         <source>Numeric rating in stars</source>
-        <translation type="unfinished"></translation>
+        <translation>Numeroitu arvosana tähtinä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="151"/>
         <source>Rating shown as stars with trailing empty stars</source>
-        <translation type="unfinished"></translation>
+        <translation>Arvosana näytetään tähtinä, joiden perässä tyhjiä tähtiä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="171"/>
         <source>File created timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiedoston luomisen aikamääre</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="209"/>
         <source>Combined file size of the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Soittolistan tiedostojen yhdistetty koko</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="216"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="218"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="220"/>
         <source>Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Jono</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="219"/>
         <source>Playback queue indexes for the specified item</source>
-        <translation type="unfinished"></translation>
+        <translation>Valitun kohteen toistojono indeksi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="221"/>
         <source>Total amount of tracks in the playback queue for queued items</source>
-        <translation type="unfinished"></translation>
+        <translation>Toistojonossa olevien kappalaiden kokonaismäärä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="223"/>
         <source>Current playback position formatted as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Tämän hetkisen toiston positio aikamääreenä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="225"/>
         <source>Current playback position in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Tämän hetkisen toiston positio sekunneissa</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="227"/>
         <source>Remaining playback time formatted as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Toiston jäljellä oleva aika</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="229"/>
         <source>Remaining playback time in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Toiston jäljellä oleva aika sekunteina</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="231"/>
         <source>Input decoder backend used for the current playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Nykyisen kappaleen dekoodauksen taustajärjestelmä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="233"/>
         <source>Returns 1 while playback is active</source>
-        <translation type="unfinished"></translation>
+        <translation>Palauttaa 1:n kun toisto on aktiivinen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="235"/>
         <source>Returns 1 while playback is paused</source>
-        <translation type="unfinished"></translation>
+        <translation>Palauttaa 1:n kun toisto on tauolla</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="237"/>
         <source>Returns 1 while playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Palauttaa 1:n kun toisto on pystäytetty</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="238"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>Järjestelmä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="239"/>
         <source>Current date and time formatted as YYYY-MM-DD HH:MM:SS</source>
-        <translation type="unfinished"></translation>
+        <translation>Tämän hetkinen aika formaatissa VVVV-KK-PP TT:MM:SS</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="240"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="242"/>
         <source>Library</source>
-        <translation type="unfinished"></translation>
+        <translation>Kirjasto</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="241"/>
         <source>Current library name</source>
-        <translation type="unfinished"></translation>
+        <translation>Tämän hetkisen kirjaston nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
         <source>Current library path</source>
-        <translation type="unfinished"></translation>
+        <translation>Tämän hetkisen kirjaston tiedostopolku</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="244"/>
@@ -775,32 +775,32 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="250"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="252"/>
         <source>Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Tyyli</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
         <source>Makes the enclosed text bold</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa sisälletyn tekstin lihavoituna</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="247"/>
         <source>Makes the enclosed text italic</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa sisälletyn tekstin kursivoituna</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="249"/>
         <source>Sets the font family for the enclosed text</source>
-        <translation type="unfinished"></translation>
+        <translation>Asettaa fontti-ryhmän sisällettyyn tekstiin</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="251"/>
         <source>Sets the font size in points</source>
-        <translation type="unfinished"></translation>
+        <translation>Asettaa fontin koon pisteinä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="253"/>
         <source>Adjusts the current font size by a positive or negative delta</source>
-        <translation type="unfinished"></translation>
+        <translation>Muokkaa nykyisen fontin kokoa positiivisella tai negatiivisella deltalla</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="255"/>
@@ -808,32 +808,32 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="259"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="262"/>
         <source>Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Väri</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="256"/>
         <source>Sets the text alpha channel from 0 to 255</source>
-        <translation type="unfinished"></translation>
+        <translation>Asettaa tekstin alfa kanavan 0:sta 255:een</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="258"/>
         <source>Sets the text colour from red, green and blue components</source>
-        <translation type="unfinished"></translation>
+        <translation>Asettaa tekstin värin punaisen, vihreän ja sinisen komponenteista</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="260"/>
         <source>Sets the text colour from red, green, blue, and alpha components</source>
-        <translation type="unfinished"></translation>
+        <translation>Asettaa tekstin värin punaisesta, sinisestä ja alfa komponenteista</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="263"/>
         <source>Sets the text colour from a named colour or hex code</source>
-        <translation type="unfinished"></translation>
+        <translation>Asettaa tekstin värin nimetyn värin tai hex-koodin mukaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="264"/>
         <source>Adds numeric arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää numeroidun argumentin</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="265"/>
@@ -849,62 +849,62 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="290"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="430"/>
         <source>Numeric</source>
-        <translation type="unfinished"></translation>
+        <translation>Numeerinen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="266"/>
         <source>Subtracts later values from the first</source>
-        <translation type="unfinished"></translation>
+        <translation>Vähentää myöhemmät määreet ensimmäisistä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="268"/>
         <source>Multiplies numeric arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Kertoo numeeriset argumentit</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="270"/>
         <source>Divides the first value by the second</source>
-        <translation type="unfinished"></translation>
+        <translation>Jakaa ensimmäiset määreet toisella</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
         <source>Returns the smallest numeric value</source>
-        <translation type="unfinished"></translation>
+        <translation>Palauttaa pienimmän numeerisen määreen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
         <source>Returns the largest numeric value</source>
-        <translation type="unfinished"></translation>
+        <translation>Palauttaa isoimman numeerisen määreen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="276"/>
         <source>Returns the remainder of a division</source>
-        <translation type="unfinished"></translation>
+        <translation>Palauttaa jaon jäännöksen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="278"/>
         <source>Returns a random number in range</source>
-        <translation type="unfinished"></translation>
+        <translation>Palauttaa satunnaisen numeron arvoalueelta</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="280"/>
         <source>Rounds a numeric value</source>
-        <translation type="unfinished"></translation>
+        <translation>Pyöristää numeerisen määreen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="286"/>
         <source>Formats a number with leading zeroes</source>
-        <translation type="unfinished"></translation>
+        <translation>Muotoilee numeron siten että sitä edeltää nollia</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="289"/>
         <source>Formats a number in hexadecimal with leading zeroes</source>
-        <translation type="unfinished"></translation>
+        <translation>Muotoilee numeron hexadesimaalissa, edeltävien nollien jälkeen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="291"/>
         <source>Replaces text fragments</source>
-        <translation type="unfinished"></translation>
+        <translation>Korvaa tekstin osat</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="292"/>
@@ -954,12 +954,12 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="425"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="428"/>
         <source>String</source>
-        <translation type="unfinished"></translation>
+        <translation>Merkkijono</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="294"/>
         <source>Returns the first match or capture; group 0 is the full match</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa ensimmäisen osuman tai kaappauksen; ryhmä 0 on sisältää osuman</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="297"/>
@@ -974,62 +974,62 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="302"/>
         <source>Converts text to ASCII</source>
-        <translation type="unfinished"></translation>
+        <translation>Muuttaa tekstin ASCII:ksi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="304"/>
         <source>Returns a slice of text</source>
-        <translation type="unfinished"></translation>
+        <translation>Palauttaa osan tekstistä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="306"/>
         <source>Removes characters from the end</source>
-        <translation type="unfinished"></translation>
+        <translation>Poistaa merkkejä lopusta</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="308"/>
         <source>Returns characters from the left</source>
-        <translation type="unfinished"></translation>
+        <translation>Palauttaa merkkejä vasemmalta</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="311"/>
         <source>Returns characters from the right</source>
-        <translation type="unfinished"></translation>
+        <translation>Palauttaa merkkejä oikealta</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="314"/>
         <source>Inserts text at a position</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää tekstin positioon</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="315"/>
         <source>Returns a substring</source>
-        <translation type="unfinished"></translation>
+        <translation>Palauttaa ala-merkkijonon</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="333"/>
         <source>Joins non-empty values with a separator</source>
-        <translation type="unfinished"></translation>
+        <translation>Yhdistää ei-tyhjät arvot välimerkillä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="335"/>
         <source>Returns the text length</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa tekstin pituuden</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="337"/>
         <source>Returns the longest string</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa pisimmän merkkijonon</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="348"/>
         <source>Compares two strings</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertaa kahta merkkijonoa</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="350"/>
         <source>Compares two strings ignoring case</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertaa kahta merkkijonoa ottamatta huomioon kirjainkokoa</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="353"/>
@@ -1039,67 +1039,67 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="359"/>
         <source>Returns a newline</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa uuden rivinvaihdon</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="361"/>
         <source>Returns a tab character</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa tab-merkin</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="364"/>
         <source>Moves leading articles to the end</source>
-        <translation type="unfinished"></translation>
+        <translation>Siirtää edeltävät artikkelit loppuun</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="366"/>
         <source>Removes leading articles</source>
-        <translation type="unfinished"></translation>
+        <translation>Poistaa edeltävät artikkelit</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="368"/>
         <source>Pads text on the left</source>
-        <translation type="unfinished"></translation>
+        <translation>Täyttää tekstiä vasemmalta</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="371"/>
         <source>Pads text on the right</source>
-        <translation type="unfinished"></translation>
+        <translation>Täyttää tekstiä oikealta</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="372"/>
         <source>Repeats text</source>
-        <translation type="unfinished"></translation>
+        <translation>Toistaa tekstin</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="374"/>
         <source>Trims surrounding whitespace</source>
-        <translation type="unfinished"></translation>
+        <translation>Poistaa ympäröivät tyhjemerkit</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="376"/>
         <source>Converts text to lowercase</source>
-        <translation type="unfinished"></translation>
+        <translation>Muuttaa tekstin pieniin kirjaimiin</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="378"/>
         <source>Converts text to uppercase</source>
-        <translation type="unfinished"></translation>
+        <translation>Muuttaa tekstin isoiksi kirjaimiksi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="380"/>
         <source>Builds an abbreviation</source>
-        <translation type="unfinished"></translation>
+        <translation>Rakentaa lyhenteen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="382"/>
         <source>Capitalises words</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää ison alkukirjaimen sanoihin</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="385"/>
         <source>Returns a directory name from a path</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa hakemiston nimen tiedostopolusta</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="386"/>
@@ -1107,37 +1107,37 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="395"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="398"/>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiedostopolku</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="388"/>
         <source>Returns a parent directory path</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa ylähakemiston polun</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="391"/>
         <source>Elides text at the end</source>
-        <translation type="unfinished"></translation>
+        <translation>Jättää tekstiä pois lopusta</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="393"/>
         <source>Elides text in the middle</source>
-        <translation type="unfinished"></translation>
+        <translation>Jättää tekstiä pois keskeltä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="394"/>
         <source>Returns a file extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa tiedostopäätteen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="397"/>
         <source>Returns a filename without extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa tiedostonimen ilman tiedostopäätettä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="400"/>
         <source>Builds a text progress bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Rakentaa teksti pohjaisen etenemispalkin</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="401"/>
@@ -1146,52 +1146,52 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="410"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="413"/>
         <source>Utility</source>
-        <translation type="unfinished"></translation>
+        <translation>Apuohjelma</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="403"/>
         <source>Builds an alternate text progress bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Rakentaa valinnaisen tekstipohjaisen etenemispalkin</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="406"/>
         <source>Builds a clickable document or web link</source>
-        <translation type="unfinished"></translation>
+        <translation>Rakentaa klikattavan dokumentin tai web linkin</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="409"/>
         <source>Builds a clickable link to a fooyin command</source>
-        <translation type="unfinished"></translation>
+        <translation>Rakentaa klikattavan linkin fooyin komentoon</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="415"/>
         <source>Percent-encodes text for use in URLs</source>
-        <translation type="unfinished"></translation>
+        <translation>Prosentti-enkoodaa tekstin käytettäväksi URL:ssa</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="421"/>
         <source>Checks if text contains only alphabetic characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarkistaa sisältääkö teksti pelkkiä aakkosia</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="424"/>
         <source>Checks if text contains only alphanumeric characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarkistaa sisältääkö teksti pelkkiä aakkosia ja numeroita</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="427"/>
         <source>Checks if text contains only numeric characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarkistaa sisältääkö teksti pelkkiä numeroita</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="429"/>
         <source>Formats milliseconds as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatoi millisekunnit ajaksi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="431"/>
         <source>Returns the four-digit year from a date</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa nelinumeroisen vuosiluvun päivämäärästä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="432"/>
@@ -1200,74 +1200,74 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="440"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="443"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Aika</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="434"/>
         <source>Returns the two-digit month from a date</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa kaksinumeroisen kuukauden päivämäärästä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="437"/>
         <source>Returns the two-digit day of month from a date</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa kaksinumeroisen päivän päivämäärästä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="439"/>
         <source>Returns the date formatted as YYYY-MM-DD</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa päivämäärän muodossa VVVV-KK-PP</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="442"/>
         <source>Returns the time formatted as HH:MM or HH:MM:SS</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa ajan formaatissa TT:MM tai TT:MM:SS</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="445"/>
         <source>Returns the value stored in a script variable</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa skriptimuuttujan määrittämän arvon</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="446"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="449"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="452"/>
         <source>Variable</source>
-        <translation type="unfinished"></translation>
+        <translation>Muuttuja</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="448"/>
         <source>Stores a script variable and returns the value</source>
-        <translation type="unfinished"></translation>
+        <translation>Tallentaa skriptimuuttujan ja tulostaa arvon</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="451"/>
         <source>Stores a script variable and returns nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Tallentaa skriptamuuttujan mutta ei tulosta mitään</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="454"/>
         <source>Returns true when all expressions are true</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa tosi-arvon jos kaikki lausekkeet ovat tosia</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="456"/>
         <source>Returns the opposite truth value</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa päinvastaisen tosi-arvon</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="459"/>
         <source>Returns true when at least one expression is true</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa tosi-arvon jos ainakin yksi lauseke on tosi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="462"/>
         <source>Returns true when an odd number of expressions are true</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa tosi arvon kun pariton lukumäärä lausekkeita on tosi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="465"/>
         <source>Returns then when condition is true</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa &quot;then&quot; arvon kun ehto on tosi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="487"/>
@@ -1288,12 +1288,12 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="481"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="484"/>
         <source>Conditional</source>
-        <translation type="unfinished"></translation>
+        <translation>Ehtolause</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="468"/>
         <source>Returns the first non-empty value</source>
-        <translation type="unfinished"></translation>
+        <translation>Tulostaa ensimmäisen ei-tyhjän arvon</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="471"/>
@@ -1408,7 +1408,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="62"/>
         <source>&amp;Visualisations</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Visualisoinnit</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="84"/>
@@ -1476,13 +1476,13 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="68"/>
         <source>Artwork Finder</source>
-        <translation type="unfinished">Kuvamateriaalin Haku</translation>
+        <translation>Kuvamateriaalin Haku</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="70"/>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="121"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="71"/>
@@ -1493,17 +1493,17 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="125"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tyyppi</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="214"/>
         <source>Searching…</source>
-        <translation type="unfinished">Haetaan…</translation>
+        <translation>Haetaan…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="220"/>
         <source>No artwork found</source>
-        <translation type="unfinished">Kuvamateriaalia ei löytynyt</translation>
+        <translation>Kuvamateriaalia ei löytynyt</translation>
     </message>
 </context>
 <context>
@@ -1511,17 +1511,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="250"/>
         <source>Download</source>
-        <translation type="unfinished">Lataa</translation>
+        <translation>Lataa</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="251"/>
         <source>Interface</source>
-        <translation type="unfinished">Käyttöliittymä</translation>
+        <translation>Käyttöliittymä</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="251"/>
         <source>Artwork</source>
-        <translation type="unfinished">Kuvamateriaali</translation>
+        <translation>Kuvamateriaali</translation>
     </message>
 </context>
 <context>
@@ -1539,7 +1539,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="84"/>
         <source>Quality</source>
-        <translation type="unfinished"></translation>
+        <translation>Laatu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="100"/>
@@ -1554,22 +1554,22 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="102"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"/>
         <source>Save Method</source>
-        <translation type="unfinished">Talletustapa</translation>
+        <translation>Tallennustapa</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="120"/>
         <source>Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Formaatti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="122"/>
         <source>Save Location</source>
-        <translation type="unfinished">Tallennussijainti</translation>
+        <translation>Tallennussijainti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="125"/>
@@ -1584,17 +1584,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="127"/>
         <source>File type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiedostomuoto</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="129"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaattinen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="179"/>
         <source>Cover type</source>
-        <translation type="unfinished"></translation>
+        <translation>Kannen tyyppi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="240"/>
@@ -1607,17 +1607,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="201"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="202"/>
         <source>Interface</source>
-        <translation type="unfinished">Käyttöliittymä</translation>
+        <translation>Käyttöliittymä</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="202"/>
         <source>Artwork</source>
-        <translation type="unfinished">Kuvamateriaali</translation>
+        <translation>Kuvamateriaali</translation>
     </message>
 </context>
 <context>
@@ -1635,12 +1635,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="76"/>
         <source>Prefer directory artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Suosi hakemiston kansitaidetta</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="77"/>
         <source>Prefer embedded artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Suosi upotettua kansitaidetta</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="82"/>
@@ -1650,22 +1650,22 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="92"/>
         <source>Local Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Paikallinen lähde</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="102"/>
         <source>Thumbnails</source>
-        <translation type="unfinished"></translation>
+        <translation>Esikatselukuvat</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="105"/>
         <source>Grouping script</source>
-        <translation type="unfinished"></translation>
+        <translation>Ryhmitys skripta</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="106"/>
         <source>Groups artwork thumbnails that should share the same cached image</source>
-        <translation type="unfinished"></translation>
+        <translation>Ryhmittelee teosten pikkukuvat, joiden tulisi käyttää samaa välimuistissa olevaa kuvaa</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="114"/>
@@ -1685,7 +1685,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="194"/>
         <source>Disk cache usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Levyn välimuistin käyttö</translation>
     </message>
 </context>
 <context>
@@ -1693,7 +1693,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="76"/>
         <source>Front Cover</source>
-        <translation type="unfinished">Etukansi</translation>
+        <translation>Etukansi</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="77"/>
@@ -1708,33 +1708,33 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="339"/>
         <source>No embedded artwork found to export</source>
-        <translation type="unfinished"></translation>
+        <translation>Upotettua kansitaidetta ei löytynyt vietäväksi</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="345"/>
         <source>Exported artwork to %Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Kansitaide tallennettiin %Ln tiedostoon</numerusform>
+            <numerusform>Kansitaide tallennettiin %Ln tiedostoihin</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="353"/>
         <source>Exported artwork to %Ln file(s); some exports failed</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Kansitaiden tallennettiin %Ln tiedostoon; osa epäonnistui</numerusform>
+            <numerusform>Kansitaide tallennettiin %Ln tiedostoihin; osa epäonnistui</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="349"/>
         <source>Failed to export artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Kansitaiteen tallentaminen epäonnistui</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="115"/>
         <source>Exported artwork to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kansitaide tallennettiin %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="319"/>
@@ -1785,17 +1785,17 @@
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="197"/>
         <source>Artwork found in %Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Kansitaide löydetty %Ln tiedostosta</numerusform>
+            <numerusform>Kansitaide löydetty %Ln tiedostoista</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="198"/>
         <source>%Ln file(s) selected</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln tiedosto valittu</numerusform>
+            <numerusform>%Ln tiedostot valittu</numerusform>
         </translation>
     </message>
     <message>
@@ -1811,32 +1811,32 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="300"/>
         <source>View full size</source>
-        <translation type="unfinished"></translation>
+        <translation>Näytä täysikokoinen</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="301"/>
         <source>Auto-export to file</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuo automattisesti tiedostoon</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="302"/>
         <source>Export as…</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuo…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="305"/>
         <source>Export this embedded artwork to a file in the track directory without prompting</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuo tämä upotettu kansitaide tiedostoon kappaleen hakemistossa ilman kehoitusta</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="306"/>
         <source>Choose where to export this embedded artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Valitse mihin tuoda upotettu kansitaide</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="319"/>
         <source>Remove this artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Poista kansitaide</translation>
     </message>
 </context>
 <context>
@@ -1849,12 +1849,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="141"/>
         <source>Interface</source>
-        <translation type="unfinished">Käyttöliittymä</translation>
+        <translation>Käyttöliittymä</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="141"/>
         <source>Artwork</source>
-        <translation type="unfinished">Kuvamateriaali</translation>
+        <translation>Kuvamateriaali</translation>
     </message>
 </context>
 <context>
@@ -1862,12 +1862,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="63"/>
         <source>Automatically search for missing artwork on starting playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Etsi puuttuva kansitaide automaattisesti toiston alkaessa</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="67"/>
         <source>Minimum match threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Osuman vähimmäiskynnys</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="70"/>
@@ -1877,12 +1877,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="76"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Kappale</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="78"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="80"/>
@@ -1892,12 +1892,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="84"/>
         <source>Finder thumbnail size</source>
-        <translation type="unfinished"></translation>
+        <translation>Haun esikatselun koko</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="90"/>
         <source>Size of thumbnails in Artwork Finder when searching for artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Esikatselukuvien koko kansikuva haussa</translation>
     </message>
 </context>
 <context>
@@ -1910,12 +1910,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="264"/>
         <source>Interface</source>
-        <translation type="unfinished">Käyttöliittymä</translation>
+        <translation>Käyttöliittymä</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="264"/>
         <source>Artwork</source>
-        <translation type="unfinished">Kuvamateriaali</translation>
+        <translation>Kuvamateriaali</translation>
     </message>
 </context>
 <context>
@@ -1923,7 +1923,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="100"/>
         <source>Use front cover before placeholder</source>
-        <translation type="unfinished"></translation>
+        <translation>Käytä etukansikuvaa oletuskuvan sijaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="114"/>
@@ -1943,7 +1943,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="118"/>
         <source>Placeholder</source>
-        <translation type="unfinished"></translation>
+        <translation>Oletuskuva</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="122"/>
@@ -1968,17 +1968,17 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="138"/>
         <source>Image file</source>
-        <translation type="unfinished"></translation>
+        <translation>Kuva tiedosto</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="146"/>
         <source>Local paths</source>
-        <translation type="unfinished"></translation>
+        <translation>Paikalliset reitit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="149"/>
         <source>Download sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Lataa lähteet</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="151"/>
@@ -2022,7 +2022,7 @@
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="238"/>
         <location filename="../../src/gui/artwork/artworkviewerdialog.cpp" line="238"/>
         <source>Artwork</source>
-        <translation type="unfinished">Kuvamateriaali</translation>
+        <translation>Kuvamateriaali</translation>
     </message>
 </context>
 <context>
@@ -2030,7 +2030,7 @@
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="537"/>
         <source>Auto-size sections</source>
-        <translation>Koo sektiot automaattisesti</translation>
+        <translation>Aseta sektioiden koko automaattisesti</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/autoheaderview.cpp" line="545"/>
@@ -2560,7 +2560,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="70"/>
         <source>Metadata</source>
-        <translation type="unfinished">Metadata</translation>
+        <translation>Metadata</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="71"/>
@@ -2585,7 +2585,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="75"/>
         <source>Play</source>
-        <translation type="unfinished">Toista</translation>
+        <translation>Toista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="76"/>
@@ -2826,12 +2826,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="199"/>
         <source>Album artist</source>
-        <translation type="unfinished">Albumin artisti</translation>
+        <translation>Albumin artisti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="200"/>
         <source>Album title</source>
-        <translation type="unfinished">Albumin nimi</translation>
+        <translation>Albumin nimi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="201"/>
@@ -2846,7 +2846,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="204"/>
         <source>Disc number</source>
-        <translation type="unfinished">Levy numero</translation>
+        <translation>Levy numero</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="212"/>
@@ -2861,7 +2861,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="215"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="260"/>
@@ -3058,7 +3058,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="103"/>
         <source>Display</source>
-        <translation type="unfinished">Näytä</translation>
+        <translation>Näytä</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="105"/>
@@ -3225,7 +3225,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="121"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="121"/>
@@ -3341,7 +3341,7 @@ Paranoid: performs the most thorough available checking and additional retries (
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="85"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1127"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="86"/>
@@ -3356,7 +3356,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="90"/>
         <source>Edit</source>
-        <translation type="unfinished">Muokkaa</translation>
+        <translation>Muokkaa</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="95"/>
@@ -3671,7 +3671,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="471"/>
         <source>Metadata</source>
-        <translation type="unfinished">Metadata</translation>
+        <translation>Metadata</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="524"/>
@@ -3722,7 +3722,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="818"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="876"/>
@@ -3981,7 +3981,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="40"/>
         <source>Keep aspect ratio</source>
-        <translation type="unfinished">Säilytä kuvasuhde</translation>
+        <translation>Säilytä kuvasuhde</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="41"/>
@@ -3996,7 +3996,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="46"/>
         <source>Display</source>
-        <translation type="unfinished">Näytä</translation>
+        <translation>Näytä</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="49"/>
@@ -4016,12 +4016,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="53"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="65"/>
         <source>Alignment</source>
-        <translation type="unfinished">Sijoitus</translation>
+        <translation>Sijoitus</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="67"/>
@@ -4031,12 +4031,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="68"/>
         <source>Left</source>
-        <translation type="unfinished">Vasen</translation>
+        <translation>Vasen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="69"/>
         <source>Right</source>
-        <translation type="unfinished">Oikea</translation>
+        <translation>Oikea</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="88"/>
@@ -4081,7 +4081,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="115"/>
         <source>Double-click</source>
-        <translation type="unfinished">Tuplaklikkaus</translation>
+        <translation>Tuplaklikkaus</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="117"/>
@@ -4107,7 +4107,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/settings/playback/decoderdelegate.cpp" line="37"/>
         <source>Configure</source>
-        <translation type="unfinished">Asetukset</translation>
+        <translation>Asetukset</translation>
     </message>
 </context>
 <context>
@@ -4165,7 +4165,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="307"/>
         <source>Playback</source>
-        <translation type="unfinished">Toisto</translation>
+        <translation>Toisto</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="307"/>
@@ -4221,7 +4221,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="210"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Toista seuraavaksi</translation>
+        <translation>Toista seuraavaksi</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="253"/>
@@ -4287,12 +4287,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="625"/>
         <source>Display</source>
-        <translation type="unfinished">Näytä</translation>
+        <translation>Näytä</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="628"/>
         <source>List</source>
-        <translation type="unfinished">Lista</translation>
+        <translation>Lista</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="637"/>
@@ -4348,12 +4348,12 @@ Paranoid: performs the most thorough available checking and additional retries (
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="251"/>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="362"/>
         <source>Directory Browser</source>
-        <translation type="unfinished">Tiedostoselain</translation>
+        <translation>Tiedostoselain</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="617"/>
         <source>Set as root</source>
-        <translation type="unfinished">Aseta root-käyttäjäksi</translation>
+        <translation>Aseta root-käyttäjäksi</translation>
     </message>
 </context>
 <context>
@@ -4371,12 +4371,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="38"/>
         <source>List</source>
-        <translation type="unfinished">Lista</translation>
+        <translation>Lista</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="39"/>
         <source>Show icons</source>
-        <translation type="unfinished">Näytä kuvakkeet</translation>
+        <translation>Näytä kuvakkeet</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="40"/>
@@ -4401,7 +4401,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="45"/>
         <source>Show location</source>
-        <translation type="unfinished">Näytä sijainti</translation>
+        <translation>Näytä sijainti</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="46"/>
@@ -4411,7 +4411,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="47"/>
         <source>Show hidden</source>
-        <translation type="unfinished">Näytä piiloitetut</translation>
+        <translation>Näytä piiloitetut</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="50"/>
@@ -4436,7 +4436,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="59"/>
         <source>Double-click</source>
-        <translation type="unfinished">Tuplaklikkaus</translation>
+        <translation>Tuplaklikkaus</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="61"/>
@@ -4504,7 +4504,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="212"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished">Koo sektiot automaattisesti</translation>
+        <translation>Aseta sektioiden koko automaattisesti</translation>
     </message>
 </context>
 <context>
@@ -4512,7 +4512,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="236"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="237"/>
@@ -4550,12 +4550,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="82"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="84"/>
         <source>Album</source>
-        <translation type="unfinished">Albumi</translation>
+        <translation>Albumi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="86"/>
@@ -4585,7 +4585,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="115"/>
         <source>Artwork</source>
-        <translation type="unfinished">Kuvamateriaali</translation>
+        <translation>Kuvamateriaali</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="118"/>
@@ -4679,17 +4679,17 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="39"/>
         <source>Add</source>
-        <translation type="unfinished">Lisää</translation>
+        <translation>Lisää</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="43"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="46"/>
         <source>Configure</source>
-        <translation type="unfinished">Asetukset</translation>
+        <translation>Asetukset</translation>
     </message>
 </context>
 <context>
@@ -4718,7 +4718,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1286"/>
         <source>Playback</source>
-        <translation type="unfinished">Toisto</translation>
+        <translation>Toisto</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1286"/>
@@ -4819,7 +4819,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1051"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1069"/>
@@ -4992,7 +4992,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="386"/>
         <source>&amp;Left</source>
-        <translation type="unfinished">&amp;Vasemmalla</translation>
+        <translation>&amp;Vasemmalla</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="354"/>
@@ -5017,7 +5017,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="393"/>
         <source>&amp;Right</source>
-        <translation type="unfinished">&amp;Oikealla</translation>
+        <translation>&amp;Oikealla</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="393"/>
@@ -5262,7 +5262,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="113"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="226"/>
@@ -5320,7 +5320,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="113"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="115"/>
@@ -5626,7 +5626,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="62"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="63"/>
@@ -5669,12 +5669,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="138"/>
         <source>Add</source>
-        <translation type="unfinished">Lisää</translation>
+        <translation>Lisää</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="139"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="182"/>
@@ -5692,12 +5692,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="418"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="419"/>
         <source>Playback</source>
-        <translation type="unfinished">Toisto</translation>
+        <translation>Toisto</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="419"/>
@@ -5977,17 +5977,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="138"/>
         <source>Copy</source>
-        <translation type="unfinished">Kopioi</translation>
+        <translation>Kopioi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="139"/>
         <source>Move</source>
-        <translation type="unfinished">Siirrä</translation>
+        <translation>Siirrä</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="140"/>
         <source>Rename</source>
-        <translation type="unfinished">Nimeä uudelleen</translation>
+        <translation>Nimeä uudelleen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="141"/>
@@ -6017,7 +6017,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="150"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished">&amp;Poista</translation>
+        <translation>&amp;Poista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="458"/>
@@ -6102,7 +6102,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="599"/>
         <source>Select Directory</source>
-        <translation type="unfinished">Valitse Hakemisto</translation>
+        <translation>Valitse Hakemisto</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="620"/>
@@ -6125,7 +6125,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="192"/>
         <source>Filename</source>
-        <translation type="unfinished">Tiedostonimi</translation>
+        <translation>Tiedostonimi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="194"/>
@@ -6221,28 +6221,28 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="238"/>
         <source>Copy</source>
-        <translation type="unfinished">Kopioi</translation>
+        <translation>Kopioi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="240"/>
         <source>Move</source>
-        <translation type="unfinished">Siirrä</translation>
+        <translation>Siirrä</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="242"/>
         <source>Rename</source>
-        <translation type="unfinished">Nimeä uudelleen</translation>
+        <translation>Nimeä uudelleen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="244"/>
         <source>Create</source>
-        <translation type="unfinished">Luo</translation>
+        <translation>Luo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="246"/>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="252"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="248"/>
@@ -6257,7 +6257,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="254"/>
         <source>Unknown</source>
-        <translation type="unfinished">Tuntematon</translation>
+        <translation>Tuntematon</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="261"/>
@@ -6351,7 +6351,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="208"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished">&amp;Poista</translation>
+        <translation>&amp;Poista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="211"/>
@@ -6381,17 +6381,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="303"/>
         <source>Copy</source>
-        <translation type="unfinished">Kopioi</translation>
+        <translation>Kopioi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="306"/>
         <source>Move</source>
-        <translation type="unfinished">Siirrä</translation>
+        <translation>Siirrä</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="309"/>
         <source>Rename</source>
-        <translation type="unfinished">Nimeä uudelleen</translation>
+        <translation>Nimeä uudelleen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="312"/>
@@ -6499,12 +6499,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/filtercolumnregistry.cpp" line="41"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtercolumnregistry.cpp" line="42"/>
         <source>Album</source>
-        <translation type="unfinished">Albumi</translation>
+        <translation>Albumi</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtercolumnregistry.cpp" line="43"/>
@@ -6552,7 +6552,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="75"/>
         <source>Double-click</source>
-        <translation type="unfinished">Tuplaklikkaus</translation>
+        <translation>Tuplaklikkaus</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="77"/>
@@ -6592,7 +6592,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="98"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="70"/>
@@ -6665,7 +6665,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="69"/>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="148"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="151"/>
@@ -6718,7 +6718,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="170"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="184"/>
@@ -6729,7 +6729,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="185"/>
         <source>Add</source>
-        <translation type="unfinished">Lisää</translation>
+        <translation>Lisää</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="304"/>
@@ -6765,7 +6765,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="890"/>
         <source>Display</source>
-        <translation type="unfinished">Näytä</translation>
+        <translation>Näytä</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="639"/>
@@ -6826,12 +6826,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="899"/>
         <source>Front cover</source>
-        <translation type="unfinished">Etukansi</translation>
+        <translation>Etukansi</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="900"/>
         <source>Back cover</source>
-        <translation type="unfinished">Takakansi</translation>
+        <translation>Takakansi</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="989"/>
@@ -6861,7 +6861,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="901"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="690"/>
@@ -6871,7 +6871,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="333"/>
         <source>Library Filter</source>
-        <translation type="unfinished">Kirjasto suodatin</translation>
+        <translation>Kirjasto suodatin</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtercontroller.cpp" line="328"/>
@@ -6881,7 +6881,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/filtercontroller.cpp" line="366"/>
         <source>Filter options</source>
-        <translation type="unfinished">Suodatin valinnat</translation>
+        <translation>Suodatin valinnat</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtercontroller.cpp" line="374"/>
@@ -6900,7 +6900,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="159"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="161"/>
@@ -6938,7 +6938,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="91"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="93"/>
@@ -7059,7 +7059,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets/fontbutton.cpp" line="154"/>
         <source>Select Font</source>
-        <translation type="unfinished">Valitse Fontti</translation>
+        <translation>Valitse Fontti</translation>
     </message>
 </context>
 <context>
@@ -7076,7 +7076,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/settings/generalpage.cpp" line="236"/>
         <location filename="../../src/gui/settings/generalpage.cpp" line="237"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
 </context>
 <context>
@@ -7307,12 +7307,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets/gradienteditor.cpp" line="241"/>
         <source>Add</source>
-        <translation type="unfinished">Lisää</translation>
+        <translation>Lisää</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/gradienteditor.cpp" line="242"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/gradienteditor.cpp" line="243"/>
@@ -7441,7 +7441,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1133"/>
         <source>Playback</source>
-        <translation type="unfinished">Toisto</translation>
+        <translation>Toisto</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1133"/>
@@ -7597,7 +7597,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1340"/>
         <source>Artwork</source>
-        <translation type="unfinished">Kuvamateriaali</translation>
+        <translation>Kuvamateriaali</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1393"/>
@@ -7819,7 +7819,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="570"/>
         <source>Display</source>
-        <translation type="unfinished">Näytä</translation>
+        <translation>Näytä</translation>
     </message>
 </context>
 <context>
@@ -7832,7 +7832,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="169"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished">&amp;Poista</translation>
+        <translation>&amp;Poista</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="177"/>
@@ -8051,12 +8051,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="369"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="370"/>
         <source>Interface</source>
-        <translation type="unfinished">Käyttöliittymä</translation>
+        <translation>Käyttöliittymä</translation>
     </message>
 </context>
 <context>
@@ -8198,7 +8198,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="965"/>
         <source>Interface</source>
-        <translation type="unfinished">Käyttöliittymä</translation>
+        <translation>Käyttöliittymä</translation>
     </message>
 </context>
 <context>
@@ -8241,7 +8241,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="266"/>
         <source>Left</source>
-        <translation type="unfinished">Vasen</translation>
+        <translation>Vasen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="268"/>
@@ -8251,7 +8251,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="270"/>
         <source>Right</source>
-        <translation type="unfinished">Oikea</translation>
+        <translation>Oikea</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="272"/>
@@ -8276,7 +8276,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="288"/>
         <source>Rename</source>
-        <translation type="unfinished">Nimeä uudelleen</translation>
+        <translation>Nimeä uudelleen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="289"/>
@@ -8296,7 +8296,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="626"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="634"/>
@@ -8306,12 +8306,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="639"/>
         <source>Copy</source>
-        <translation type="unfinished">Kopioi</translation>
+        <translation>Kopioi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="645"/>
         <source>Paste</source>
-        <translation type="unfinished">Liitä</translation>
+        <translation>Liitä</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="758"/>
@@ -8392,7 +8392,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="685"/>
         <source>Interface</source>
-        <translation type="unfinished">Käyttöliittymä</translation>
+        <translation>Käyttöliittymä</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="685"/>
@@ -8410,7 +8410,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="339"/>
         <source>Interface</source>
-        <translation type="unfinished">Käyttöliittymä</translation>
+        <translation>Käyttöliittymä</translation>
     </message>
 </context>
 <context>
@@ -8418,12 +8418,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="90"/>
         <source>Prefer currently playing track</source>
-        <translation type="unfinished">Suosioi parhaillaan soivaa kappaletta</translation>
+        <translation>Suosioi parhaillaan soivaa kappaletta</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="91"/>
         <source>Prefer current selection</source>
-        <translation type="unfinished">Suosioi nykyistä valintaa</translation>
+        <translation>Suosioi nykyistä valintaa</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="93"/>
@@ -8703,7 +8703,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="158"/>
         <source>Images</source>
-        <translation type="unfinished">Kuvat</translation>
+        <translation>Kuvat</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="186"/>
@@ -8766,7 +8766,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="91"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/importlayoutdialog.cpp" line="93"/>
@@ -8835,7 +8835,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="512"/>
         <source>Metadata</source>
-        <translation type="unfinished">Metadata</translation>
+        <translation>Metadata</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="521"/>
@@ -8850,7 +8850,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="539"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="548"/>
@@ -8870,7 +8870,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="598"/>
         <source>Edit</source>
-        <translation type="unfinished">Muokkaa</translation>
+        <translation>Muokkaa</translation>
     </message>
 </context>
 <context>
@@ -8878,7 +8878,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="158"/>
         <source>Metadata</source>
-        <translation type="unfinished">Metadata</translation>
+        <translation>Metadata</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="161"/>
@@ -8888,7 +8888,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="164"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="167"/>
@@ -9224,7 +9224,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/layouttreemodel.cpp" line="638"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
 </context>
 <context>
@@ -9250,7 +9250,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="296"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="297"/>
@@ -9349,7 +9349,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="277"/>
         <source>Directory</source>
-        <translation type="unfinished">Hakemisto</translation>
+        <translation>Hakemisto</translation>
     </message>
 </context>
 <context>
@@ -9550,7 +9550,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="122"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="123"/>
@@ -9560,7 +9560,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="123"/>
         <source>Metadata</source>
-        <translation type="unfinished">Metadata</translation>
+        <translation>Metadata</translation>
     </message>
 </context>
 <context>
@@ -9593,7 +9593,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="60"/>
         <source>Metadata</source>
-        <translation type="unfinished">Metadata</translation>
+        <translation>Metadata</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="66"/>
@@ -9625,7 +9625,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="270"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="272"/>
@@ -9653,7 +9653,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="359"/>
         <source>Metadata</source>
-        <translation type="unfinished">Metadata</translation>
+        <translation>Metadata</translation>
     </message>
 </context>
 <context>
@@ -9969,7 +9969,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="88"/>
         <source>Double-click</source>
-        <translation type="unfinished">Tuplaklikkaus</translation>
+        <translation>Tuplaklikkaus</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="90"/>
@@ -9984,7 +9984,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="107"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="199"/>
@@ -9995,7 +9995,7 @@ This improves compatibility with other players, but stores whole-star values onl
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="81"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="111"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="49"/>
@@ -10026,7 +10026,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="122"/>
         <source>Searching</source>
-        <translation type="unfinished">Haetaan</translation>
+        <translation>Haetaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="126"/>
@@ -10133,7 +10133,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="161"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="163"/>
@@ -10161,7 +10161,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="44"/>
         <source>Album</source>
-        <translation type="unfinished">Albumi</translation>
+        <translation>Albumi</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="48"/>
@@ -10215,7 +10215,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="220"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">&amp;Pelaa</translation>
+        <translation>&amp;Toista</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="250"/>
@@ -10240,7 +10240,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1001"/>
         <source>Playback</source>
-        <translation type="unfinished">Toisto</translation>
+        <translation>Toisto</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="281"/>
@@ -10312,7 +10312,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="43"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/lookupresultsmodel.cpp" line="45"/>
@@ -10436,7 +10436,7 @@ This improves compatibility with other players, but stores whole-star values onl
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="231"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="254"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="82"/>
@@ -10481,17 +10481,17 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="123"/>
         <source>Align to centre</source>
-        <translation type="unfinished">Sijoita keskelle</translation>
+        <translation>Sijoita keskelle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="124"/>
         <source>Align to left</source>
-        <translation type="unfinished">Sijoita vasemmalle</translation>
+        <translation>Sijoita vasemmalle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="125"/>
         <source>Align to right</source>
-        <translation type="unfinished">Sijoita oikealle</translation>
+        <translation>Sijoita oikealle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="132"/>
@@ -10501,7 +10501,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="134"/>
         <source>Alignment</source>
-        <translation type="unfinished">Sijoitus</translation>
+        <translation>Sijoitus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="140"/>
@@ -10568,12 +10568,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="149"/>
         <source>Left</source>
-        <translation type="unfinished">Vasen</translation>
+        <translation>Vasen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="151"/>
         <source>Right</source>
-        <translation type="unfinished">Oikea</translation>
+        <translation>Oikea</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="153"/>
@@ -10662,7 +10662,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="127"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="128"/>
@@ -10697,7 +10697,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="213"/>
         <source>Play</source>
-        <translation type="unfinished">Toista</translation>
+        <translation>Toista</translation>
     </message>
 </context>
 <context>
@@ -10792,7 +10792,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="89"/>
         <source>Save to directory</source>
-        <translation type="unfinished">Tallenna hakemistoon</translation>
+        <translation>Tallenna hakemistoon</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="90"/>
@@ -10827,7 +10827,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="109"/>
         <source>Save Method</source>
-        <translation type="unfinished">Talletustapa</translation>
+        <translation>Tallennustapa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="116"/>
@@ -10837,7 +10837,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="124"/>
         <source>Save Location</source>
-        <translation type="unfinished">Tallennussijainti</translation>
+        <translation>Tallennussijainti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="127"/>
@@ -10852,12 +10852,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="129"/>
         <source>Directory</source>
-        <translation type="unfinished">Hakemisto</translation>
+        <translation>Hakemisto</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="130"/>
         <source>Filename</source>
-        <translation type="unfinished">Tiedostonimi</translation>
+        <translation>Tiedostonimi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="142"/>
@@ -10894,7 +10894,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssavingpage.cpp" line="302"/>
         <source>Select Directory</source>
-        <translation type="unfinished">Valitse Hakemisto</translation>
+        <translation>Valitse Hakemisto</translation>
     </message>
 </context>
 <context>
@@ -10907,17 +10907,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="78"/>
         <source>Album</source>
-        <translation type="unfinished">Albumi</translation>
+        <translation>Albumi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="79"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="80"/>
         <source>Search</source>
-        <translation type="unfinished">Haku</translation>
+        <translation>Haku</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="90"/>
@@ -10927,7 +10927,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="205"/>
         <source>Searching…</source>
-        <translation type="unfinished">Haetaan…</translation>
+        <translation>Haetaan…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="238"/>
@@ -10958,12 +10958,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="89"/>
         <source>Album</source>
-        <translation type="unfinished">Albumi</translation>
+        <translation>Albumi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="91"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="93"/>
@@ -10996,7 +10996,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="141"/>
         <source>Searching</source>
-        <translation type="unfinished">Haetaan</translation>
+        <translation>Haetaan</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="142"/>
@@ -11034,7 +11034,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="80"/>
         <source>Search parameters</source>
-        <translation type="unfinished">Hakuparametrit</translation>
+        <translation>Hakuparametrit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="87"/>
@@ -11044,12 +11044,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="89"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="91"/>
         <source>Album</source>
-        <translation type="unfinished">Albumi</translation>
+        <translation>Albumi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="84"/>
@@ -11063,7 +11063,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="142"/>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="143"/>
         <source>Sources</source>
-        <translation type="unfinished">Lähteet</translation>
+        <translation>Lähteet</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssourcespage.cpp" line="143"/>
@@ -11099,12 +11099,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="284"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="284"/>
         <source>Album</source>
-        <translation type="unfinished">Albumi</translation>
+        <translation>Albumi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="284"/>
@@ -11174,17 +11174,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="571"/>
         <source>Align to centre</source>
-        <translation type="unfinished">Sijoita keskelle</translation>
+        <translation>Sijoita keskelle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="572"/>
         <source>Align to left</source>
-        <translation type="unfinished">Sijoita vasemmalle</translation>
+        <translation>Sijoita vasemmalle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="573"/>
         <source>Align to right</source>
-        <translation type="unfinished">Sijoita oikealle</translation>
+        <translation>Sijoita oikealle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="602"/>
@@ -11308,19 +11308,19 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="280"/>
         <source>Search</source>
-        <translation type="unfinished">Haku</translation>
+        <translation>Haku</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="291"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="358"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="293"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="359"/>
         <source>Album</source>
-        <translation type="unfinished">Albumi</translation>
+        <translation>Albumi</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="299"/>
@@ -11750,7 +11750,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="217"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="218"/>
@@ -11829,7 +11829,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="282"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="283"/>
@@ -11897,7 +11897,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="96"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="98"/>
@@ -11967,7 +11967,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/notifyplugin.cpp" line="237"/>
         <source>Play</source>
-        <translation type="unfinished">Toista</translation>
+        <translation>Toista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/notifyplugin.cpp" line="244"/>
@@ -11991,7 +11991,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="357"/>
         <source>Playback</source>
-        <translation type="unfinished">Toisto</translation>
+        <translation>Toisto</translation>
     </message>
 </context>
 <context>
@@ -12054,7 +12054,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="111"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="117"/>
@@ -12206,7 +12206,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="50"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="60"/>
@@ -12435,12 +12435,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="378"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="379"/>
         <source>Playback</source>
-        <translation type="unfinished">Toisto</translation>
+        <translation>Toisto</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="379"/>
@@ -12469,7 +12469,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="93"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="95"/>
@@ -12623,7 +12623,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="47"/>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="309"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">&amp;Pelaa</translation>
+        <translation>&amp;Toista</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
@@ -12693,7 +12693,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="74"/>
         <source>Playback</source>
-        <translation type="unfinished">Toisto</translation>
+        <translation>Toisto</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="81"/>
@@ -12892,12 +12892,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="276"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="277"/>
         <source>Playback</source>
-        <translation type="unfinished">Toisto</translation>
+        <translation>Toisto</translation>
     </message>
 </context>
 <context>
@@ -12980,7 +12980,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="112"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="115"/>
@@ -13028,12 +13028,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="263"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="264"/>
         <source>Playback</source>
-        <translation type="unfinished">Toisto</translation>
+        <translation>Toisto</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="264"/>
@@ -13287,7 +13287,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="226"/>
         <source>Artwork</source>
-        <translation type="unfinished">Kuvamateriaali</translation>
+        <translation>Kuvamateriaali</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="227"/>
@@ -13393,7 +13393,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="157"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="158"/>
@@ -13453,7 +13453,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="173"/>
         <source>Left</source>
-        <translation type="unfinished">Vasen</translation>
+        <translation>Vasen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="174"/>
@@ -13463,7 +13463,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="175"/>
         <source>Right</source>
-        <translation type="unfinished">Oikea</translation>
+        <translation>Oikea</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="176"/>
@@ -13584,7 +13584,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="249"/>
         <source>Alignment</source>
-        <translation type="unfinished">Sijoitus</translation>
+        <translation>Sijoitus</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="251"/>
@@ -13645,7 +13645,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="247"/>
         <source>Edit</source>
-        <translation type="unfinished">Muokkaa</translation>
+        <translation>Muokkaa</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="250"/>
@@ -13660,7 +13660,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="257"/>
         <source>Rename</source>
-        <translation type="unfinished">Nimeä uudelleen</translation>
+        <translation>Nimeä uudelleen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="262"/>
@@ -13670,7 +13670,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="265"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="270"/>
@@ -13713,7 +13713,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="196"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="198"/>
@@ -13780,7 +13780,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="46"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="47"/>
@@ -13795,7 +13795,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="49"/>
         <source>Album</source>
-        <translation type="unfinished">Albumi</translation>
+        <translation>Albumi</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="59"/>
@@ -13870,12 +13870,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="64"/>
         <source>Front Cover</source>
-        <translation type="unfinished">Etukansi</translation>
+        <translation>Etukansi</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="65"/>
         <source>Back Cover</source>
-        <translation type="unfinished">Takakansi</translation>
+        <translation>Takakansi</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="66"/>
@@ -13989,7 +13989,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="445"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
 </context>
 <context>
@@ -13997,7 +13997,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="235"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="236"/>
@@ -14065,7 +14065,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="108"/>
         <source>Double-click</source>
-        <translation type="unfinished">Tuplaklikkaus</translation>
+        <translation>Tuplaklikkaus</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="110"/>
@@ -14100,7 +14100,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="135"/>
         <source>Search</source>
-        <translation type="unfinished">Haku</translation>
+        <translation>Haku</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="138"/>
@@ -14252,7 +14252,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="318"/>
         <source>Edit</source>
-        <translation type="unfinished">Muokkaa</translation>
+        <translation>Muokkaa</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="321"/>
@@ -14272,7 +14272,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="336"/>
         <source>Rename</source>
-        <translation type="unfinished">Nimeä uudelleen</translation>
+        <translation>Nimeä uudelleen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="341"/>
@@ -14282,7 +14282,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="344"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="349"/>
@@ -14351,12 +14351,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="190"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="192"/>
         <source>Rename</source>
-        <translation type="unfinished">Nimeä uudelleen</translation>
+        <translation>Nimeä uudelleen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="194"/>
@@ -14391,7 +14391,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="234"/>
         <source>Edit</source>
-        <translation type="unfinished">Muokkaa</translation>
+        <translation>Muokkaa</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="250"/>
@@ -14481,13 +14481,13 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="73"/>
         <source>Left</source>
         <extracomment>Refers to the left script field.</extracomment>
-        <translation type="unfinished">Vasen</translation>
+        <translation>Vasen</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="76"/>
         <source>Right</source>
         <extracomment>Refers to the right script field.</extracomment>
-        <translation type="unfinished">Oikea</translation>
+        <translation>Oikea</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="81"/>
@@ -14519,7 +14519,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="259"/>
         <source>Rename</source>
-        <translation type="unfinished">Nimeä uudelleen</translation>
+        <translation>Nimeä uudelleen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="260"/>
@@ -14729,7 +14729,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="172"/>
         <source>Select Directory</source>
-        <translation type="unfinished">Valitse Hakemisto</translation>
+        <translation>Valitse Hakemisto</translation>
     </message>
 </context>
 <context>
@@ -14936,7 +14936,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1003"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">&amp;Pelaa</translation>
+        <translation>&amp;Toista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1136"/>
@@ -14984,7 +14984,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1890"/>
         <source>Edit</source>
-        <translation type="unfinished">Muokkaa</translation>
+        <translation>Muokkaa</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1894"/>
@@ -15055,7 +15055,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/detachedplaylistsession.cpp" line="50"/>
         <source>Searching…</source>
-        <translation type="unfinished">Haetaan…</translation>
+        <translation>Haetaan…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="130"/>
@@ -15125,7 +15125,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="239"/>
         <source>Add to playback &amp;queue</source>
-        <translation type="unfinished">Lisää toisto &amp;jonoon</translation>
+        <translation>Lisää toisto &amp;jonoon</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="243"/>
@@ -15195,7 +15195,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="435"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation type="unfinished">Lisää valitut kappaleet toistojonoon</translation>
+        <translation>Lisää valitut kappaleet toistojonoon</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="441"/>
@@ -15223,7 +15223,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="39"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="40"/>
@@ -15266,7 +15266,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="281"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="282"/>
@@ -15279,7 +15279,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="108"/>
         <source>Configure</source>
-        <translation type="unfinished">Asetukset</translation>
+        <translation>Asetukset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="109"/>
@@ -15358,7 +15358,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="121"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="123"/>
@@ -16067,7 +16067,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="59"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="66"/>
@@ -16229,7 +16229,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="170"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="172"/>
@@ -16333,7 +16333,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="46"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="48"/>
@@ -16366,7 +16366,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="145"/>
         <source>Playback</source>
-        <translation type="unfinished">Toisto</translation>
+        <translation>Toisto</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="145"/>
@@ -16634,7 +16634,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="103"/>
         <source>Double-click</source>
-        <translation type="unfinished">Tuplaklikkaus</translation>
+        <translation>Tuplaklikkaus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="105"/>
@@ -16644,7 +16644,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="110"/>
         <source>Search</source>
-        <translation type="unfinished">Haku</translation>
+        <translation>Haku</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="118"/>
@@ -16762,7 +16762,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="77"/>
         <source>Search</source>
-        <translation type="unfinished">Haku</translation>
+        <translation>Haku</translation>
     </message>
 </context>
 <context>
@@ -16959,7 +16959,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="255"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="262"/>
@@ -17024,7 +17024,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1170"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1200"/>
@@ -17034,7 +17034,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1531"/>
         <source>Play</source>
-        <translation type="unfinished">Toista</translation>
+        <translation>Toista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1533"/>
@@ -17134,7 +17134,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1718"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished">Koo sektiot automaattisesti</translation>
+        <translation>Aseta sektioiden koko automaattisesti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1719"/>
@@ -17155,7 +17155,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1787"/>
         <source>Display</source>
-        <translation type="unfinished">Näytä</translation>
+        <translation>Näytä</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1791"/>
@@ -17218,7 +17218,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="79"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="80"/>
@@ -17238,7 +17238,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="105"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="110"/>
@@ -17307,7 +17307,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigmodel.cpp" line="91"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigmodel.cpp" line="91"/>
@@ -17320,7 +17320,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="85"/>
         <source>Genres</source>
-        <translation type="unfinished">Genret</translation>
+        <translation>Genret</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="86"/>
@@ -17765,7 +17765,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="630"/>
         <source>Display</source>
-        <translation type="unfinished">Näytä</translation>
+        <translation>Näytä</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="632"/>
@@ -18011,13 +18011,13 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="172"/>
         <source>Unknown</source>
-        <translation type="unfinished">Tuntematon</translation>
+        <translation>Tuntematon</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="183"/>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="211"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="185"/>
@@ -18137,7 +18137,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="92"/>
         <source>Replace</source>
-        <translation type="unfinished">Korvaa</translation>
+        <translation>Korvaa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationimportexportdialog.cpp" line="121"/>
@@ -18249,7 +18249,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="164"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="166"/>
@@ -18282,12 +18282,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="226"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="227"/>
         <source>Playback</source>
-        <translation type="unfinished">Toisto</translation>
+        <translation>Toisto</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="227"/>
@@ -18535,12 +18535,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="106"/>
         <source>Add</source>
-        <translation type="unfinished">Lisää</translation>
+        <translation>Lisää</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="107"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="108"/>
@@ -18595,7 +18595,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="150"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="152"/>
@@ -18670,7 +18670,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="76"/>
         <source>Select Directory</source>
-        <translation type="unfinished">Valitse Hakemisto</translation>
+        <translation>Valitse Hakemisto</translation>
     </message>
 </context>
 <context>
@@ -18683,7 +18683,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="139"/>
         <source>Edit</source>
-        <translation type="unfinished">Muokkaa</translation>
+        <translation>Muokkaa</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="184"/>
@@ -18714,7 +18714,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="337"/>
         <source>Left</source>
-        <translation type="unfinished">Vasen</translation>
+        <translation>Vasen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="338"/>
@@ -18725,7 +18725,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="339"/>
         <source>Right</source>
-        <translation type="unfinished">Oikea</translation>
+        <translation>Oikea</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="343"/>
@@ -18778,7 +18778,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="79"/>
         <source>Left</source>
-        <translation type="unfinished">Vasen</translation>
+        <translation>Vasen</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="80"/>
@@ -18789,7 +18789,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="81"/>
         <source>Right</source>
-        <translation type="unfinished">Oikea</translation>
+        <translation>Oikea</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="83"/>
@@ -18804,7 +18804,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="87"/>
         <source>Alignment</source>
-        <translation type="unfinished">Sijoitus</translation>
+        <translation>Sijoitus</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="90"/>
@@ -18997,7 +18997,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="49"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/customservicedialog.cpp" line="50"/>
@@ -19053,7 +19053,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="248"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="249"/>
@@ -19111,7 +19111,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="107"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="121"/>
@@ -19141,12 +19141,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="87"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="89"/>
         <source>Album</source>
-        <translation type="unfinished">Albumi</translation>
+        <translation>Albumi</translation>
     </message>
 </context>
 <context>
@@ -19254,7 +19254,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="270"/>
         <source>Edit</source>
-        <translation type="unfinished">Muokkaa</translation>
+        <translation>Muokkaa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="272"/>
@@ -19411,7 +19411,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="226"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="227"/>
@@ -19421,7 +19421,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="227"/>
         <source>Searching</source>
-        <translation type="unfinished">Haetaan</translation>
+        <translation>Haetaan</translation>
     </message>
 </context>
 <context>
@@ -19469,7 +19469,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="87"/>
         <source>Search</source>
-        <translation type="unfinished">Haku</translation>
+        <translation>Haku</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="91"/>
@@ -19698,7 +19698,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="44"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="45"/>
@@ -19708,7 +19708,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="46"/>
         <source>Album</source>
-        <translation type="unfinished">Albumi</translation>
+        <translation>Albumi</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldregistry.cpp" line="47"/>
@@ -19746,7 +19746,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldsmodel.cpp" line="148"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfofieldsmodel.cpp" line="150"/>
@@ -19765,7 +19765,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="127"/>
         <source>Interface</source>
-        <translation type="unfinished">Käyttöliittymä</translation>
+        <translation>Käyttöliittymä</translation>
     </message>
 </context>
 <context>
@@ -19816,7 +19816,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="150"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="151"/>
@@ -20060,7 +20060,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/sortactionhandler.cpp" line="78"/>
         <location filename="../../src/gui/sortactionhandler.cpp" line="98"/>
         <source>Edit</source>
-        <translation type="unfinished">Muokkaa</translation>
+        <translation>Muokkaa</translation>
     </message>
     <message>
         <location filename="../../src/gui/sortactionhandler.cpp" line="67"/>
@@ -20097,7 +20097,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="157"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="159"/>
@@ -20110,12 +20110,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="39"/>
         <source>Album</source>
-        <translation type="unfinished">Albumi</translation>
+        <translation>Albumi</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="41"/>
         <source>Artist</source>
-        <translation type="unfinished">Artisti</translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="42"/>
@@ -20297,7 +20297,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="48"/>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="121"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="55"/>
@@ -20583,7 +20583,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="201"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="502"/>
         <source>Display</source>
-        <translation type="unfinished">Näytä</translation>
+        <translation>Näytä</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="244"/>
@@ -20918,7 +20918,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="441"/>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="501"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="183"/>
@@ -21067,12 +21067,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="792"/>
         <source>Left</source>
-        <translation type="unfinished">Vasen</translation>
+        <translation>Vasen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="801"/>
         <source>Right</source>
-        <translation type="unfinished">Oikea</translation>
+        <translation>Oikea</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="815"/>
@@ -21137,7 +21137,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/context/staticcontextmenupage.cpp" line="46"/>
         <source>Interface</source>
-        <translation type="unfinished">Käyttöliittymä</translation>
+        <translation>Käyttöliittymä</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/staticcontextmenupage.cpp" line="46"/>
@@ -21183,7 +21183,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="179"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="180"/>
@@ -21193,7 +21193,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="180"/>
         <source>Interface</source>
-        <translation type="unfinished">Käyttöliittymä</translation>
+        <translation>Käyttöliittymä</translation>
     </message>
 </context>
 <context>
@@ -21236,7 +21236,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="98"/>
         <source>Double-click</source>
-        <translation type="unfinished">Tuplaklikkaus</translation>
+        <translation>Tuplaklikkaus</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="100"/>
@@ -21266,7 +21266,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="77"/>
         <source>Display</source>
-        <translation type="unfinished">Näytä</translation>
+        <translation>Näytä</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="68"/>
@@ -21327,7 +21327,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="307"/>
         <source>&amp;Right</source>
-        <translation type="unfinished">&amp;Oikealla</translation>
+        <translation>&amp;Oikealla</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="308"/>
@@ -21337,7 +21337,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="309"/>
         <source>&amp;Left</source>
-        <translation type="unfinished">&amp;Vasemmalla</translation>
+        <translation>&amp;Vasemmalla</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="348"/>
@@ -21453,7 +21453,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="351"/>
         <source>Genres</source>
-        <translation type="unfinished">Genret</translation>
+        <translation>Genret</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tagfilldialog.cpp" line="354"/>
@@ -21597,7 +21597,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="206"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldsmodel.cpp" line="208"/>
@@ -21755,12 +21755,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="54"/>
         <source>Copy</source>
-        <translation type="unfinished">Kopioi</translation>
+        <translation>Kopioi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="56"/>
         <source>Paste</source>
-        <translation type="unfinished">Liitä</translation>
+        <translation>Liitä</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorview.cpp" line="58"/>
@@ -21785,7 +21785,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="213"/>
         <source>Play</source>
-        <translation type="unfinished">Toista</translation>
+        <translation>Toista</translation>
     </message>
 </context>
 <context>
@@ -21798,7 +21798,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/settings/context/trackcontextmenupage.cpp" line="37"/>
         <source>Interface</source>
-        <translation type="unfinished">Käyttöliittymä</translation>
+        <translation>Käyttöliittymä</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/trackcontextmenupage.cpp" line="37"/>
@@ -21895,12 +21895,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="279"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Lisää nykyiseen soittolistaan</translation>
+        <translation>Lisää nykyiseen soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="280"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Lisää aktiiviseen soittolistaan</translation>
+        <translation>Lisää aktiiviseen soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="281"/>
@@ -21910,22 +21910,22 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="282"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Luo uusi soittolista</translation>
+        <translation>Luo uusi soittolista</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="283"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Lisää toistojonoon</translation>
+        <translation>Lisää toistojonoon</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="284"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Toista seuraavaksi</translation>
+        <translation>Toista seuraavaksi</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="285"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">Poisto toistojonosta</translation>
+        <translation>Poisto toistojonosta</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="286"/>
@@ -22021,12 +22021,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="350"/>
         <source>Create a new playlist containing the selected tracks</source>
-        <translation type="unfinished">Luo uusi soittolista valituista kappaleista</translation>
+        <translation>Luo uusi soittolista valituista kappaleista</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="363"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation type="unfinished">Lisää valitut kappaleet toistojonoon</translation>
+        <translation>Lisää valitut kappaleet toistojonoon</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="375"/>
@@ -22096,7 +22096,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1027"/>
         <source>Playback</source>
-        <translation type="unfinished">Toisto</translation>
+        <translation>Toisto</translation>
     </message>
 </context>
 <context>
@@ -22329,7 +22329,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="395"/>
         <source>Name</source>
-        <translation type="unfinished">Nimi</translation>
+        <translation>Nimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="395"/>
@@ -22592,7 +22592,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="85"/>
         <source>Display</source>
-        <translation type="unfinished">Näytä</translation>
+        <translation>Näytä</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="89"/>
@@ -22608,7 +22608,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="178"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="45"/>
@@ -22811,12 +22811,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1218"/>
         <source>Left</source>
-        <translation type="unfinished">Vasen</translation>
+        <translation>Vasen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1219"/>
         <source>Right</source>
-        <translation type="unfinished">Oikea</translation>
+        <translation>Oikea</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1222"/>
@@ -22900,7 +22900,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="84"/>
         <source>Clear Cache</source>
-        <translation type="unfinished">Tyhjennä Välimuisti</translation>
+        <translation>Tyhjennä Välimuisti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="96"/>
@@ -22911,7 +22911,7 @@ This does not support full scripting.</source>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="92"/>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="101"/>
         <source>Display</source>
-        <translation type="unfinished">Näytä</translation>
+        <translation>Näytä</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="93"/>
@@ -23105,7 +23105,7 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="234"/>
         <source>Cache</source>
-        <translation type="unfinished">Välimuisti</translation>
+        <translation>Välimuisti</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="236"/>
@@ -23255,7 +23255,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="679"/>
         <source>Display</source>
-        <translation type="unfinished">Näytä</translation>
+        <translation>Näytä</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="681"/>
@@ -23405,7 +23405,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="362"/>
         <source>Artwork Panel</source>
-        <translation type="unfinished">Kansikuva paneeli</translation>
+        <translation>Kansikuva paneeli</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="206"/>
@@ -23457,7 +23457,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="397"/>
         <source>Directory Browser</source>
-        <translation type="unfinished">Tiedostoselain</translation>
+        <translation>Tiedostoselain</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="405"/>
@@ -23468,7 +23468,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="408"/>
         <source>Library Filter</source>
-        <translation type="unfinished">Kirjasto suodatin</translation>
+        <translation>Kirjasto suodatin</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="409"/>
@@ -23504,7 +23504,7 @@ Higher supersampling values work best with higher sample counts.</source>
         <location filename="../../src/gui/widgets.cpp" line="589"/>
         <location filename="../../src/gui/widgets.cpp" line="596"/>
         <source>Interface</source>
-        <translation type="unfinished">Käyttöliittymä</translation>
+        <translation>Käyttöliittymä</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="571"/>
@@ -23519,7 +23519,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="581"/>
         <source>Layout Editing</source>
-        <translation type="unfinished">Ulkoasun muokkaus</translation>
+        <translation>Ulkoasun muokkaus</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="582"/>
@@ -23554,14 +23554,14 @@ Higher supersampling values work best with higher sample counts.</source>
         <location filename="../../src/gui/widgets.cpp" line="776"/>
         <location filename="../../src/gui/widgets.cpp" line="796"/>
         <source>Playback</source>
-        <translation type="unfinished">Toisto</translation>
+        <translation>Toisto</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="610"/>
         <location filename="../../src/gui/widgets.cpp" line="758"/>
         <location filename="../../src/gui/widgets.cpp" line="776"/>
         <source>Decoding</source>
-        <translation type="unfinished">Dekoodaus</translation>
+        <translation>Dekoodaus</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="611"/>
@@ -23820,7 +23820,7 @@ Changes apply to newly opened streams.</source>
         <location filename="../../src/gui/widgets.cpp" line="603"/>
         <location filename="../../src/gui/widgets.cpp" line="715"/>
         <source>General</source>
-        <translation type="unfinished">Yleiset</translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="715"/>
@@ -23860,7 +23860,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="851"/>
         <source>Artwork</source>
-        <translation type="unfinished">Kuvamateriaali</translation>
+        <translation>Kuvamateriaali</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="864"/>
@@ -23888,17 +23888,17 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="223"/>
         <source>Play</source>
-        <translation type="unfinished">Toista</translation>
+        <translation>Toista</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="228"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Lisää nykyiseen soittolistaan</translation>
+        <translation>Lisää nykyiseen soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="232"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Lisää aktiiviseen soittolistaan</translation>
+        <translation>Lisää aktiiviseen soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="236"/>
@@ -23908,7 +23908,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="240"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Luo uusi soittolista</translation>
+        <translation>Luo uusi soittolista</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="243"/>
@@ -23918,47 +23918,47 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="248"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Lisää toistojonoon</translation>
+        <translation>Lisää toistojonoon</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="252"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Toista seuraavaksi</translation>
+        <translation>Toista seuraavaksi</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="256"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">Poisto toistojonosta</translation>
+        <translation>Poisto toistojonosta</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="260"/>
         <source>Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>Ryhmitys</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="263"/>
         <source>Configure</source>
-        <translation type="unfinished">Asetukset</translation>
+        <translation>Asetukset</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="267"/>
         <source>Open folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Avaa kansio</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="270"/>
         <source>Track menu</source>
-        <translation type="unfinished">Kappale valikko</translation>
+        <translation>Kappale valikko</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="443"/>
         <source>Library Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>Kirjastopuu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="445"/>
         <source>Unchecked items will be hidden from the library tree context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Jos kohdetta ei ole valittu, se piilotetaan kirjastopuun kontekstivalikosta.</translation>
     </message>
 </context>
 <context>
@@ -23966,72 +23966,72 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="106"/>
         <source>Play</source>
-        <translation type="unfinished">Toista</translation>
+        <translation>Toista</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="109"/>
         <source>Stop after this</source>
-        <translation type="unfinished"></translation>
+        <translation>Pysäytä tämän jälkeen</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="113"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="116"/>
         <source>Crop</source>
-        <translation type="unfinished"></translation>
+        <translation>Rajaa</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="119"/>
         <source>Sort</source>
-        <translation type="unfinished"></translation>
+        <translation>Järjestä</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="123"/>
         <source>Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Leikepöytä</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="127"/>
         <source>Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Esiasetukset</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="132"/>
         <source>Add to another playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää toiselle soittolistalle</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="135"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Lisää toistojonoon</translation>
+        <translation>Lisää toistojonoon</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="138"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Toista seuraavaksi</translation>
+        <translation>Toista seuraavaksi</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="142"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">Poisto toistojonosta</translation>
+        <translation>Poisto toistojonosta</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="146"/>
         <source>Track menu</source>
-        <translation type="unfinished">Kappale valikko</translation>
+        <translation>Kappale valikko</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="454"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Soittolista</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="457"/>
         <source>Unchecked items will be hidden from the playlist context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Jos kohdetta ei ole valittu, se piilotetaan soittolistan kontekstivalikosta.</translation>
     </message>
 </context>
 <context>
@@ -24039,194 +24039,194 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="215"/>
         <source>Only one player option can be used at a time.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vain yksi soitin optio voi olla käytössä kerralla.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="224"/>
         <source>Only one volume option can be used at a time.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vain yksi voluumi optio voi olla käytössä kerralla.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="240"/>
         <source>Usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Käyttö</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="240"/>
         <source>options</source>
-        <translation type="unfinished"></translation>
+        <translation>valinnat</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="240"/>
         <source>urls</source>
-        <translation type="unfinished"></translation>
+        <translation>url:t</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="240"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Valinnat</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="241"/>
         <source>Display help on command line options</source>
-        <translation type="unfinished"></translation>
+        <translation>Näytä apua komentolinjan asetuksissa</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="241"/>
         <source>Display version information</source>
-        <translation type="unfinished"></translation>
+        <translation>Näytä version informaatio</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="242"/>
         <source>Player options</source>
-        <translation type="unfinished"></translation>
+        <translation>Soittimen asetukset</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="242"/>
         <source>Toggle playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Kytke toisto päälle/pois</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="242"/>
         <source>Start playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Aloita toisto</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="243"/>
         <source>Pause playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Tauko</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="243"/>
         <source>Stop playback</source>
-        <translation type="unfinished">Pysäytä toisto</translation>
+        <translation>Pysäytä toisto</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="243"/>
         <source>Skip to next track</source>
-        <translation type="unfinished"></translation>
+        <translation>Seuraava kappale</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="244"/>
         <source>Skip to previous track</source>
-        <translation type="unfinished"></translation>
+        <translation>Edellinen kappale</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="244"/>
         <source>Seek forward (e.g. 5000, 10s, or 1:30)</source>
-        <translation type="unfinished"></translation>
+        <translation>Selaa eteenpäin (esim 5000, 10s tai 1:30)</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="245"/>
         <source>Seek backward (e.g. 5000, 10s, or 1:30)</source>
-        <translation type="unfinished"></translation>
+        <translation>Selaa taaksepäin (esim 5000, 10s tai 1:30)</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="245"/>
         <source>Volume options</source>
-        <translation type="unfinished"></translation>
+        <translation>Äänenvoimakkuus valinnat</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="246"/>
         <source>Set volume from 0 to 100</source>
-        <translation type="unfinished"></translation>
+        <translation>Aseta äänenvoimakkuus 0:sta 100:n</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="246"/>
         <source>Increase volume by the configured step</source>
-        <translation type="unfinished"></translation>
+        <translation>Nosta äänenvoimakkuutta määritetyn askeleen mukaisesti</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="247"/>
         <source>Decrease volume by the configured step</source>
-        <translation type="unfinished"></translation>
+        <translation>Laske äänenvoimakkuutta määritetyn askeleen mukaisesti</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="247"/>
         <source>Toggle mute</source>
-        <translation type="unfinished"></translation>
+        <translation>Vaimennus päälle/pois</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="248"/>
         <source>Playback mode options</source>
-        <translation type="unfinished"></translation>
+        <translation>Toistotilan valinnat</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="248"/>
         <source>Set repeat: off, playlist, album, or track</source>
-        <translation type="unfinished"></translation>
+        <translation>Aseta kertaus: pois, soittolista, albumi tai kappale</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="249"/>
         <source>Arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Argumentti</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="249"/>
         <source>Set shuffle: off, tracks, albums, or random</source>
-        <translation type="unfinished"></translation>
+        <translation>Aseta sekoitettu toisto: pois, kappaleet, albumit tai satunnaistoisto</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="250"/>
         <source>Files, directories, or HTTP(S) URLs to open</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiedostot, hakemistot, tai HTTP(S) URL:t avattavaksi</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="295"/>
         <location filename="../../src/app/commandline.cpp" line="311"/>
         <source>Invalid seek time: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Virheellinen siirtymisaika: %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="304"/>
         <location filename="../../src/app/commandline.cpp" line="320"/>
         <source>Missing time for seek option.</source>
-        <translation type="unfinished"></translation>
+        <translation>Siirtymisvalinnan aika puuttuu.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="327"/>
         <source>Volume must be between 0 and 100: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Äänenvoimakkuuden on oltava 0:n ja 100:n välissä: %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="353"/>
         <source>The repeat option can only be specified once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kertaus option voi valita vain kerran.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="359"/>
         <source>Invalid repeat mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Väärä kertaus-tila: %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="367"/>
         <source>The shuffle option can only be specified once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sekoitustoisto-tilan voi valita vain kerran.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="373"/>
         <source>Invalid shuffle mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Väärä sekoitustoisto-tila:%1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="380"/>
         <source>Option requires an argument: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Valinta vaatii argumentin: %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="383"/>
         <source>Unknown option: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuntematon valinta: %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="386"/>
         <source>Unable to parse command line options.</source>
-        <translation type="unfinished"></translation>
+        <translation>Komentorivi valinnan käsittely epäonnistui.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="405"/>
         <source>File or URL does not exist or is not supported: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiedosto tai URL ei ole olemassa tai sitä ei tueta: %1</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="413"/>
@@ -24279,217 +24279,219 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="44"/>
         <source>Prefer SoXR engine (if available)</source>
-        <translation type="unfinished"></translation>
+        <translation>Suosi SoXR engineä (jos mahdollista)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="45"/>
         <source>SoXR precision</source>
-        <translation type="unfinished"></translation>
+        <translation>SoXR tarkkuus</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/resamplersettingswidget.cpp" line="72"/>
         <source>Target sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Tavoite näytteenottotaajuus</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="39"/>
         <source>Do not skip initial silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Älä ohita alun hiljaisuutta</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="40"/>
         <source>Skip silence in the middle of a track</source>
-        <translation type="unfinished"></translation>
+        <translation>Ohita hiljaisuudet kappaleen sisällä</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="46"/>
         <source>Minimum silence duration to activate removal:</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimi hiljaisuuden määrä poistamisen aktivoimiseksi:</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="55"/>
         <source>Short</source>
-        <translation type="unfinished"></translation>
+        <translation>Lyhyt</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="57"/>
         <source>Long</source>
-        <translation type="unfinished"></translation>
+        <translation>Pitkä</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="67"/>
         <source>Silence detection threshold:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hiljaisuuden tunnistuskynnys:</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="76"/>
         <source>Quiet</source>
-        <translation type="unfinished"></translation>
+        <translation>Hiljaisuus</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="78"/>
         <source>Loud</source>
-        <translation type="unfinished"></translation>
+        <translation>Äänekäs</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="149"/>
         <source> ms</source>
-        <translation type="unfinished"></translation>
+        <translation> ms</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/skipsilencesettingswidget.cpp" line="150"/>
         <source> dB</source>
-        <translation type="unfinished"></translation>
+        <translation> dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="94"/>
         <source>Image Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Kuva tiedostot</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="94"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaikki tiedostot (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="98"/>
         <source>Extract Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Poimi kansitaide</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="262"/>
         <source>No embedded artwork found to extract</source>
-        <translation type="unfinished"></translation>
+        <translation>Upotettua kansitaidetta ei löytynyt</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="265"/>
         <source>Extracted artwork to %Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Kansitaide poimittiin %L tiedostoon</numerusform>
+            <numerusform>Kansitaide poimittiin %L tiedostoihin</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="270"/>
         <source>Extracted artwork to %Ln file(s); some extractions failed</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Kansitaide poimittiin %L tiedostoon; osa epäonnistui</numerusform>
+            <numerusform>Kansitaide poimitiin %L tiedostoihin; osa epäonnistui</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkexporter.cpp" line="268"/>
         <source>Failed to extract artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Kansitaiteen poiminta epäonnistui</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="95"/>
         <source>Images</source>
-        <translation type="unfinished">Kuvat</translation>
+        <translation>Kuvat</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="96"/>
         <source>Open Image</source>
-        <translation type="unfinished">Avaa Kuva</translation>
+        <translation>Avaa Kuva</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="96"/>
         <source>Tempo multiplier</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo kerroin</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="98"/>
         <source>Pitch shift</source>
-        <translation type="unfinished"></translation>
+        <translation>Sävelkorkeuden muutos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="100"/>
         <source>Rate multiplier</source>
-        <translation type="unfinished"></translation>
+        <translation>Nopeus kerroin</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="112"/>
         <source>Tempo</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="114"/>
         <source>Pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>Äänenkorkeus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/soundtouch/soundtouchsettingswidget.cpp" line="116"/>
         <source>Playback rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Toisto kerroin</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenumodel.cpp" line="74"/>
         <source>Separator</source>
-        <translation type="unfinished"></translation>
+        <translation>Erottaja</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="48"/>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="61"/>
         <source>Automatic detection</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaattinen tunnistus</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="91"/>
         <source>Use fooyin&apos;s default POPM byte conversion when reading and writing MP3 ratings.
 This supports intermediate rating steps, but does not treat the POPM byte as a fully linear 0–255 scale.</source>
-        <translation type="unfinished"></translation>
+        <translation>Käytä fooyin:n oletus POPM bitti muuntajaa luettaessa ja kirjoittaessa MP3 arvosteluja
+Tämä tukee vaiheittaisia arvostelu asteikoita mutta ei käsittele POPM bittejä täysin lineaarisella 0-255 skaalalla.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="97"/>
         <source>Use common POPM byte values for whole-star ratings only.
 Intermediate ratings are rounded to one, two, three, four, or five stars.</source>
-        <translation type="unfinished"></translation>
+        <translation>Käytä yleisiä POPM bitti arvoja kokonaisille tähti-arvioille.
+Välitason arviot pyöristetäään yhteen, kahteen, kolmeen, neljään tai viiteen tähteen.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="101"/>
         <source>Map fooyin ratings directly onto the full POPM byte range.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kartoita fooyin:n arvioita suoraan täyteen POPM bitti alueelle.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="112"/>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="113"/>
         <source>Quick Tagger</source>
-        <translation type="unfinished"></translation>
+        <translation>Nopea Tagger</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="113"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>Taggaaminen</translation>
     </message>
     <message>
         <location filename="../../src/core/network/networkstreamdevice.cpp" line="424"/>
         <source>Failed to queue network request.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verkkopyyntöä ei voitu lisätä jonoon.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationm3u.cpp" line="78"/>
         <source>Unable to open file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiedoston avaus epäonnistui.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationm3u.cpp" line="113"/>
         <source>No stations found in file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiedosta ei löytynyt asemia.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationm3u.cpp" line="125"/>
         <source>Unable to create destination folder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kohdekansion luominen epäonnistui.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationm3u.cpp" line="133"/>
         <source>Unable to open file for writing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiedoston avaaminen epäonnistui.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="324"/>
         <source>Run Services</source>
-        <translation type="unfinished"></translation>
+        <translation>Käynnistä palvelut</translation>
     </message>
 </context>
 <context>
@@ -24497,62 +24499,62 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="170"/>
         <source>View mode</source>
-        <translation type="unfinished">Tarkastele-tila</translation>
+        <translation>Tarkastele-tila</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="174"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Toista nyt</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="177"/>
         <source>Queue next</source>
-        <translation type="unfinished"></translation>
+        <translation>Toista seuraavana</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="180"/>
         <source>Stop after this</source>
-        <translation type="unfinished"></translation>
+        <translation>Pysäytä tämän jälkeen</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="187"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Tyhjennä</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="190"/>
         <source>Sort</source>
-        <translation type="unfinished"></translation>
+        <translation>Järjestä</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="194"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="198"/>
         <source>Configure</source>
-        <translation type="unfinished">Asetukset</translation>
+        <translation>Asetukset</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="202"/>
         <source>Track menu</source>
-        <translation type="unfinished">Kappale valikko</translation>
+        <translation>Kappale valikko</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="476"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Toistojono</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="478"/>
         <source>Unchecked items will be hidden from the playback queue context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Jos kohdetta ei ole valittu, se piilotetaan toistojonon kontekstivalikosta.</translation>
     </message>
 </context>
 <context>
@@ -24560,7 +24562,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/quicktagger/quicktagger.cpp" line="135"/>
         <source>Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Arvio</translation>
     </message>
 </context>
 <context>
@@ -24568,102 +24570,102 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="62"/>
         <source>Play</source>
-        <translation type="unfinished">Toista</translation>
+        <translation>Toista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="67"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Lisää nykyiseen soittolistaan</translation>
+        <translation>Lisää nykyiseen soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="71"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Lisää aktiiviseen soittolistaan</translation>
+        <translation>Lisää aktiiviseen soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="75"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Korvaa nykyinen soittolista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="79"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Luo uusi soittolista</translation>
+        <translation>Luo uusi soittolista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="83"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää soittolistalle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="88"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Lisää toistojonoon</translation>
+        <translation>Lisää toistojonoon</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="92"/>
         <source>Queue to play next</source>
-        <translation type="unfinished">Toista seuraavaksi</translation>
+        <translation>Toista seuraavaksi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="96"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">Poisto toistojonosta</translation>
+        <translation>Poisto toistojonosta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="101"/>
         <source>Add to My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää Minun Asemiin</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="105"/>
         <source>Remove from My Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>Poista Minun Asemista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="108"/>
         <source>Edit station</source>
-        <translation type="unfinished"></translation>
+        <translation>Muokkaa asemaa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="112"/>
         <source>Add custom station</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää mukautettu asema</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="116"/>
         <source>Copy stream URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopioi streamin URL</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="119"/>
         <source>Open homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>Avaa kotisivu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="123"/>
         <source>Open radio-browser.info page</source>
-        <translation type="unfinished"></translation>
+        <translation>Avaa radio-browser.info sivu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="127"/>
         <source>Display</source>
-        <translation type="unfinished">Näytä</translation>
+        <translation>Näytä</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="130"/>
         <source>Configure</source>
-        <translation type="unfinished">Asetukset</translation>
+        <translation>Asetukset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="86"/>
         <source>Radio Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Radio Selain</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="88"/>
         <source>Unchecked items will be hidden from the radio browser context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Jos kohdetta ei ole valittu, se piilotetaan radio selaimen kontekstivalikosta.</translation>
     </message>
 </context>
 <context>
@@ -24671,22 +24673,22 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="118"/>
         <source>Open Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Avaa hakemisto</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="122"/>
         <source>Google Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Hae artistia googlesta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="126"/>
         <source>Google Artist + Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Hae artisti + kappale googlesta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservices.cpp" line="130"/>
         <source>Wikipedia Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Hae artistia Wikipediasta</translation>
     </message>
 </context>
 <context>
@@ -24694,47 +24696,47 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="440"/>
         <source>Artwork</source>
-        <translation type="unfinished">Kuvamateriaali</translation>
+        <translation>Kuvamateriaali</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1860"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Lisää nykyiseen soittolistaan</translation>
+        <translation>Lisää nykyiseen soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1863"/>
         <source>Add to current playlist and play if stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää nykyiseen soittolistaan ja toista jos pysäytetty</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1865"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Lisää aktiiviseen soittolistaan</translation>
+        <translation>Lisää aktiiviseen soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1867"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Korvaa nykyinen soittolista</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1869"/>
         <source>Create new playlist</source>
-        <translation type="unfinished">Luo uusi soittolista</translation>
+        <translation>Luo uusi soittolista</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1874"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Lisää toistojonoon</translation>
+        <translation>Lisää toistojonoon</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1876"/>
         <source>Add to front of playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää toistojonon ensimmäiseksi</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1878"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished">Korvaa toistojono</translation>
+        <translation>Korvaa toistojono</translation>
     </message>
 </context>
 </TS>
