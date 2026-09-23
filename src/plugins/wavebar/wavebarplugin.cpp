@@ -71,7 +71,8 @@ void registerLayouts(LayoutProvider& layoutProvider)
 } // namespace
 
 WaveBarPlugin::WaveBarPlugin()
-    : m_dbPool{DbConnectionPool::create(dbConnectionParams(), u"wavebar"_s)}
+    : m_playbackStarted{false}
+    , m_dbPool{DbConnectionPool::create(dbConnectionParams(), u"wavebar"_s)}
 { }
 
 WaveBarPlugin::~WaveBarPlugin() = default;
@@ -82,9 +83,12 @@ void WaveBarPlugin::initialise(const CorePluginContext& context)
     m_engine           = context.engine;
     m_audioLoader      = context.audioLoader;
     m_settings         = context.settingsManager;
+    m_playbackStarted  = m_playerController->playState() != Player::PlayState::Stopped;
 
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
                      [this](const Track& track) { m_playingTrack = track; });
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
+                     [this](Player::PlayState state) { m_playbackStarted |= state != Player::PlayState::Stopped; });
     QObject::connect(m_engine, &EngineController::trackChanged, this, [this](const Track& track) {
         if(m_playingTrack.id() == track.id()) {
             removeTrack(m_playingTrack);
@@ -146,14 +150,10 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
 
 FyWidget* WaveBarPlugin::createWavebar()
 {
-    auto* wavebar = new WaveBarWidget(m_audioLoader, m_dbPool, m_playerController, m_settings);
+    auto* wavebar = new WaveBarWidget(m_audioLoader, m_dbPool, m_playerController, m_trackSelection, m_settings,
+                                      m_playbackStarted);
 
     registerWaveBar(wavebar);
-
-    const Track currTrack = m_playerController->currentTrack();
-    if(currTrack.isValid()) {
-        wavebar->changeTrack(currTrack);
-    }
 
     return wavebar;
 }
@@ -175,17 +175,31 @@ void WaveBarPlugin::pruneWaveBars()
     std::erase_if(m_waveBars, [](const QPointer<WaveBarWidget>& widget) { return widget.isNull(); });
 }
 
-void WaveBarPlugin::refreshWaveBars(const Track& track, bool update)
+bool WaveBarPlugin::refreshWaveBars(const Track& track, bool update)
 {
     if(!track.isValid()) {
-        return;
+        return false;
     }
 
     pruneWaveBars();
 
+    bool refreshed{false};
     for(const auto& waveBar : m_waveBars) {
         if(waveBar) {
-            waveBar->changeTrack(track, update);
+            refreshed |= waveBar->changeTrack(track, update);
+        }
+    }
+
+    return refreshed;
+}
+
+void WaveBarPlugin::reloadWaveBars(bool update)
+{
+    pruneWaveBars();
+
+    for(const auto& waveBar : m_waveBars) {
+        if(waveBar) {
+            waveBar->reloadTrack(update);
         }
     }
 }
@@ -197,12 +211,8 @@ void WaveBarPlugin::regenerateSelection(bool onlyMissing)
         return;
     }
 
-    const Track currentTrack = m_playerController->currentTrack();
-    auto currIt              = std::ranges::find(selectedTracks, currentTrack);
-    if(currIt != selectedTracks.cend()) {
-        selectedTracks.erase(currIt);
-        refreshWaveBars(currentTrack, !onlyMissing);
-    }
+    std::erase_if(selectedTracks,
+                  [this, onlyMissing](const Track& track) { return refreshWaveBars(track, !onlyMissing); });
 
     if(selectedTracks.empty()) {
         return;
@@ -243,12 +253,7 @@ void WaveBarPlugin::removeTracks(const TrackList& tracks)
         return;
     }
 
-    const Track currentTrack = m_playerController->currentTrack();
-    const bool refreshCurrent
-        = currentTrack.isValid()
-       && std::ranges::any_of(tracks, [&currentTrack](const Track& track) { return track.id() == currentTrack.id(); });
-
-    Utils::asyncExec([this, tracks, currentTrack, refreshCurrent]() {
+    Utils::asyncExec([this, tracks]() {
         QStringList keys;
         for(const Track& track : tracks) {
             keys.emplace_back(WaveBarDatabase::cacheKey(track));
@@ -262,10 +267,14 @@ void WaveBarPlugin::removeTracks(const TrackList& tracks)
         if(!waveDb.removeFromCache(keys)) {
             qCWarning(WAVEBAR) << "Unable to remove waveform data";
         }
-        if(refreshCurrent) {
-            QMetaObject::invokeMethod(
-                this, [this, currentTrack]() { refreshWaveBars(currentTrack, true); }, Qt::QueuedConnection);
-        }
+        QMetaObject::invokeMethod(
+            this,
+            [this, tracks]() {
+                for(const Track& track : tracks) {
+                    refreshWaveBars(track, true);
+                }
+            },
+            Qt::QueuedConnection);
     });
 }
 
@@ -284,7 +293,7 @@ void WaveBarPlugin::clearCache()
         qCWarning(WAVEBAR) << "Unable to clear waveform cache";
     }
 
-    refreshWaveBars(m_playerController->currentTrack(), true);
+    reloadWaveBars(true);
 }
 } // namespace Fooyin::WaveBar
 

@@ -44,6 +44,7 @@ WaveBarConfigDialog::WaveBarConfigDialog(WaveBarWidget* waveBar, QWidget* parent
     , m_showLabels{new QCheckBox(tr("Show labels"), this)}
     , m_showRemainingTime{new QCheckBox(tr("Show remaining time"), this)}
     , m_showPlayedThreshold{new QCheckBox(tr("Show played threshold"), this)}
+    , m_trackPreference{new QComboBox(this)}
     , m_minMax{new QCheckBox(tr("Min/Max"), this)}
     , m_rms{new QCheckBox(tr("RMS"), this)}
     , m_silence{new QCheckBox(tr("Silence"), this)}
@@ -93,6 +94,23 @@ WaveBarConfigDialog::WaveBarConfigDialog(WaveBarWidget* waveBar, QWidget* parent
     tabs->addTab(coloursPage, tr("Colours"));
     tabs->addTab(globalPage, tr("Global"));
 
+    m_trackPreference->addItem(tr("Playing track"), static_cast<int>(TrackPreference::PlayingTrack));
+    m_trackPreference->addItem(tr("Selected track"), static_cast<int>(TrackPreference::SelectedTrack));
+    m_trackPreference->addItem(tr("Playing (or selected when stopped)"),
+                               static_cast<int>(TrackPreference::PlayingTrackSelectedWhenStopped));
+    m_trackPreference->addItem(tr("Playing (blank at startup)"),
+                               static_cast<int>(TrackPreference::PlayingTrackBlankAtStartup));
+    m_trackPreference->addItem(tr("Playing (blank when stopped)"),
+                               static_cast<int>(TrackPreference::PlayingTrackBlankWhenStopped));
+
+    auto* generalGroup       = new QGroupBox(tr("General"), displayPage);
+    auto* generalGroupLayout = new QGridLayout(generalGroup);
+
+    int row{0};
+    generalGroupLayout->addWidget(new QLabel(tr("Preferred track") + u":"_s, this), row, 0);
+    generalGroupLayout->addWidget(m_trackPreference, row++, 1);
+    generalGroupLayout->setColumnStretch(2, 1);
+
     auto* appearanceGroup  = new QGroupBox(tr("Appearance"), displayPage);
     auto* appearanceLayout = new QVBoxLayout(appearanceGroup);
     appearanceLayout->addWidget(m_showLabels);
@@ -123,7 +141,7 @@ WaveBarConfigDialog::WaveBarConfigDialog(WaveBarWidget* waveBar, QWidget* parent
     m_cursorWidth->setRange(1, 20);
     m_cursorWidth->setSuffix(u" px"_s);
 
-    int row{0};
+    row = 0;
     cursorGroupLayout->addWidget(m_showCursor, row++, 0, 1, 2);
     cursorGroupLayout->addWidget(new QLabel(tr("Cursor width") + u":"_s, this), row, 0);
     cursorGroupLayout->addWidget(m_cursorWidth, row++, 1);
@@ -256,14 +274,16 @@ WaveBarConfigDialog::WaveBarConfigDialog(WaveBarWidget* waveBar, QWidget* parent
     auto* displayLayout = new QGridLayout(displayPage);
 
     row = 0;
+    displayLayout->addWidget(generalGroup, row++, 0, 1, 3);
     displayLayout->addWidget(appearanceGroup, row, 0);
-    displayLayout->addWidget(modeGroup, row++, 1);
+    displayLayout->addWidget(modeGroup, row, 1);
+    displayLayout->addWidget(cursorGroup, row++, 2);
     displayLayout->addWidget(downmixGroupBox, row, 0);
-    displayLayout->addWidget(cursorGroup, row++, 1);
-    displayLayout->addWidget(renderingGroup, row, 0);
-    displayLayout->addWidget(amplitudeGroup, row++, 1);
+    displayLayout->addWidget(renderingGroup, row, 1);
+    displayLayout->addWidget(amplitudeGroup, row++, 2);
     displayLayout->setColumnStretch(0, 1);
     displayLayout->setColumnStretch(1, 1);
+    displayLayout->setColumnStretch(2, 1);
     displayLayout->setRowStretch(3, 1);
 
     auto* coloursLayoutPage = new QVBoxLayout(coloursPage);
@@ -311,6 +331,7 @@ WaveBarWidget::ConfigData WaveBarConfigDialog::config() const
         .showLabels          = m_showLabels->isChecked(),
         .showRemainingTime   = m_showRemainingTime->isChecked(),
         .showPlayedThreshold = m_showPlayedThreshold->isChecked(),
+        .trackPreference     = m_trackPreference->currentData().toInt(),
         .showCursor          = m_showCursor->isChecked(),
         .cursorWidth         = m_cursorWidth->value(),
         .mode                = static_cast<int>(mode),
@@ -366,6 +387,8 @@ void WaveBarConfigDialog::setConfig(const WaveBarWidget::ConfigData& config)
     m_showLabels->setChecked(config.showLabels);
     m_showRemainingTime->setChecked(config.showRemainingTime);
     m_showPlayedThreshold->setChecked(config.showPlayedThreshold);
+    const int trackPreferenceIndex = m_trackPreference->findData(config.trackPreference);
+    m_trackPreference->setCurrentIndex(trackPreferenceIndex >= 0 ? trackPreferenceIndex : 0);
     m_showCursor->setChecked(config.showCursor);
     m_cursorWidth->setValue(config.cursorWidth);
     m_channelScale->setValue(config.channelScale);
@@ -428,13 +451,14 @@ void WaveBarConfigDialog::mergeExternalConfig(const WaveBarWidget::ConfigData& p
 {
     mergeExternalFields(previous, current, &WaveBarWidget::ConfigData::showLabels,
                         &WaveBarWidget::ConfigData::showRemainingTime, &WaveBarWidget::ConfigData::showPlayedThreshold,
-                        &WaveBarWidget::ConfigData::showCursor, &WaveBarWidget::ConfigData::cursorWidth,
-                        &WaveBarWidget::ConfigData::mode, &WaveBarWidget::ConfigData::downmix,
-                        &WaveBarWidget::ConfigData::barWidth, &WaveBarWidget::ConfigData::barGap,
-                        &WaveBarWidget::ConfigData::supersampleFactor, &WaveBarWidget::ConfigData::peakDisplayMode,
-                        &WaveBarWidget::ConfigData::normaliseToPeak, &WaveBarWidget::ConfigData::decibelScale,
-                        &WaveBarWidget::ConfigData::maxScale, &WaveBarWidget::ConfigData::centreGap,
-                        &WaveBarWidget::ConfigData::channelScale, &WaveBarWidget::ConfigData::colourOptions);
+                        &WaveBarWidget::ConfigData::trackPreference, &WaveBarWidget::ConfigData::showCursor,
+                        &WaveBarWidget::ConfigData::cursorWidth, &WaveBarWidget::ConfigData::mode,
+                        &WaveBarWidget::ConfigData::downmix, &WaveBarWidget::ConfigData::barWidth,
+                        &WaveBarWidget::ConfigData::barGap, &WaveBarWidget::ConfigData::supersampleFactor,
+                        &WaveBarWidget::ConfigData::peakDisplayMode, &WaveBarWidget::ConfigData::normaliseToPeak,
+                        &WaveBarWidget::ConfigData::decibelScale, &WaveBarWidget::ConfigData::maxScale,
+                        &WaveBarWidget::ConfigData::centreGap, &WaveBarWidget::ConfigData::channelScale,
+                        &WaveBarWidget::ConfigData::colourOptions);
 }
 
 void WaveBarConfigDialog::apply()
@@ -483,7 +507,7 @@ int WaveBarConfigDialog::globalNumSamples() const
 
 void WaveBarConfigDialog::updateCacheSize()
 {
-    m_cacheSizeLabel->setText(widget()->cacheSizeText());
+    m_cacheSizeLabel->setText(WaveBarWidget::cacheSizeText());
 }
 
 void WaveBarConfigDialog::applyGlobalCacheConfig()

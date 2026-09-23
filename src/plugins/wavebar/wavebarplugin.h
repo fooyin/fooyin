@@ -57,7 +57,8 @@ private:
     FyWidget* createWavebar();
     void registerWaveBar(WaveBarWidget* widget);
     void pruneWaveBars();
-    void refreshWaveBars(const Track& track, bool update = false);
+    bool refreshWaveBars(const Track& track, bool update = false);
+    void reloadWaveBars(bool update = false);
 
     void regenerateSelection(bool onlyMissing = false);
     void removeTrack(const Track& track);
@@ -74,6 +75,7 @@ private:
     SettingsManager* m_settings;
 
     Track m_playingTrack;
+    bool m_playbackStarted;
     DbConnectionPoolPtr m_dbPool;
     std::vector<QPointer<WaveBarWidget>> m_waveBars;
 

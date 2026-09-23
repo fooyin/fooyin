@@ -21,6 +21,7 @@
 
 #include "settings/wavebarsettings.h"
 
+#include <core/track.h>
 #include <gui/fywidget.h>
 #include <utils/database/dbconnectionpool.h>
 
@@ -33,7 +34,7 @@ class AudioLoader;
 class PlayerController;
 class SeekContainer;
 class SettingsManager;
-class Track;
+class TrackSelectionController;
 
 namespace WaveBar {
 class WaveformBuilder;
@@ -45,23 +46,26 @@ class WaveBarWidget : public FyWidget
 
 public:
     WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnectionPoolPtr dbPool,
-                  PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
+                  PlayerController* playerController, TrackSelectionController* trackSelection,
+                  SettingsManager* settings, bool playbackStarted, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 
-    void changeTrack(const Track& track, bool update = false);
+    bool changeTrack(const Track& track, bool update = false);
+    void reloadTrack(bool update = false);
 
     struct ConfigData
     {
         bool showLabels{false};
         bool showRemainingTime{false};
         bool showPlayedThreshold{false};
+        int trackPreference{static_cast<int>(TrackPreference::PlayingTrack)};
         bool showCursor{true};
         int cursorWidth{3};
-        int mode{WaveMode::Default};
+        int mode{Default};
         int downmix{0};
         int barWidth{1};
         int barGap{0};
@@ -84,7 +88,7 @@ public:
 
     [[nodiscard]] int globalNumSamples() const;
     bool setGlobalNumSamples(int samples) const;
-    [[nodiscard]] QString cacheSizeText() const;
+    static QString cacheSizeText();
     void requestClearCache();
 
 Q_SIGNALS:
@@ -92,6 +96,8 @@ Q_SIGNALS:
     void clearCacheRequested();
 
 protected:
+    void openConfigDialog() override;
+
     void showEvent(QShowEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
@@ -99,18 +105,24 @@ protected:
 private:
     [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
     void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
-    void openConfigDialog() override;
 
     void rescaleWaveform();
+    void refreshTrack(bool update = false, bool force = false);
+    [[nodiscard]] Track preferredTrack() const;
+    [[nodiscard]] bool displayingCurrentTrack() const;
+    void syncPlaybackState();
     void updatePlayedThresholdMarker();
 
     PlayerController* m_playerController;
+    TrackSelectionController* m_trackSelection;
     SettingsManager* m_settings;
 
     SeekContainer* m_container;
     WaveSeekBar* m_seekbar;
     std::unique_ptr<WaveformBuilder> m_builder;
     ConfigData m_config;
+    Track m_displayedTrack;
+    bool m_playbackStarted;
 };
 } // namespace WaveBar
 } // namespace Fooyin

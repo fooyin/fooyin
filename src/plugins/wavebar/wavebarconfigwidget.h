@@ -64,6 +64,7 @@ private:
     QCheckBox* m_showLabels;
     QCheckBox* m_showRemainingTime;
     QCheckBox* m_showPlayedThreshold;
+    QComboBox* m_trackPreference;
     QCheckBox* m_minMax;
     QCheckBox* m_rms;
     QCheckBox* m_silence;
