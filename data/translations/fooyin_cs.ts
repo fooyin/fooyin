@@ -1815,7 +1815,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="300"/>
         <source>View full size</source>
-        <translation>Zobrazit skutečnou velikost</translation>
+        <translation>Zobrazit ve skutečné velikosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="301"/>
@@ -3935,7 +3935,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="535"/>
         <source>View full size</source>
-        <translation>Zobrazit skutečnou velikost</translation>
+        <translation>Zobrazit ve skutečné velikosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="548"/>
@@ -4083,7 +4083,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="107"/>
         <source>View full size</source>
-        <translation>Zobrazit skutečnou velikost</translation>
+        <translation>Zobrazit ve skutečné velikosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="108"/>
@@ -7649,7 +7649,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1339"/>
         <source>View full size</source>
-        <translation>Zobrazit skutečnou velikost</translation>
+        <translation>Zobrazit ve skutečné velikosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1340"/>
