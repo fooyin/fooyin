@@ -26,7 +26,10 @@
 
 #include <QDir>
 
+#include <QCoro/QCoroTask>
+
 #include <deque>
+#include <optional>
 #include <set>
 #include <unordered_map>
 
@@ -82,14 +85,17 @@ public:
 
     void simulate(const FileOpPreset& preset);
     void run();
-    void deleteFiles();
+    void deleteFiles(bool forceImmediateDelete = false);
 
 Q_SIGNALS:
     void simulated(const Fooyin::FileOps::FileOperations& operations);
-    void deleteFinished(const Fooyin::TrackList& deletedTracks);
+    void deleteFinished(const Fooyin::TrackList& deletedTracks, const Fooyin::TrackList& failedTrashTracks);
     void operationCompleted(const Fooyin::FileOps::FileOpResult& result);
 
 private:
+    QCoro::Task<> runAsync();
+    QCoro::Task<> deleteFilesAsync(bool forceImmediateDelete);
+
     bool prepareOperations(const FileOpPreset& preset, bool emitSimulation);
     bool populateTrackPaths();
 
@@ -103,7 +109,7 @@ private:
     FileOpResult renameFile(const FileOpsItem& item);
     static FileOpResult copyFile(const FileOpsItem& item);
     FileOpResult extractFile(const FileOpsItem& item);
-    FileOpResult removeArchive(const FileOpsItem& item);
+    QCoro::Task<FileOpResult> removeArchive(const FileOpsItem& item);
 
     void createDir(const QDir& dir);
     void removeDir(const QDir& dir);
@@ -138,6 +144,7 @@ private:
     std::unordered_map<QString, QString> m_extractedTrackDestinations;
     TrackList m_tracksToUpdate;
     TrackList m_tracksToDelete;
+    std::optional<QCoro::Task<>> m_operationTask;
 };
 } // namespace FileOps
 } // namespace Fooyin

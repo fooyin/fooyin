@@ -48,6 +48,8 @@ public:
     void saveState(QSettings& settings) const;
     void restoreState(const QSettings& settings);
 
+    void setWindowIcon(const QIcon& icon);
+
 Q_SIGNALS:
     void opening();
     void closing();

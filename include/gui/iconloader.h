@@ -35,6 +35,13 @@ class QString;
 class QStyleOptionViewItem;
 
 namespace Fooyin::Gui {
+enum class ApplicationIconOption : uint8_t
+{
+    New = 0,
+    Old,
+    Custom,
+};
+
 /*!
  * GUI icon helpers for fooyin and system theme icons.
  *
@@ -44,7 +51,9 @@ namespace Fooyin::Gui {
 /*! Sets the preferred bundled icon theme override and fallback theme. */
 FYGUI_EXPORT bool setThemeIconOverrides(const QString& primaryTheme, const QString& fallbackTheme);
 
-/*! Returns fooyin's multi-resolution application icon, including optical masters for small sizes. */
+/*! Selects the application icon and optional custom file. */
+FYGUI_EXPORT void setApplicationIconOption(ApplicationIconOption option, const QString& customPath = {});
+/*! Returns fooyin's selected multi-resolution application icon. */
 FYGUI_EXPORT QIcon applicationIcon();
 /*! Loads an icon by name using the current bundled override, then the system theme, then the bundled fallback. */
 FYGUI_EXPORT QIcon iconFromTheme(const QString& icon);

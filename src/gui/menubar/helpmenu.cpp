@@ -39,6 +39,7 @@ namespace Fooyin {
 HelpMenu::HelpMenu(ActionManager* actionManager, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
+    , m_aboutAction{new QAction(tr("&About"), this)}
 {
     auto* helpMenu = m_actionManager->actionContainer(Constants::Menus::Help);
 
@@ -63,16 +64,23 @@ HelpMenu::HelpMenu(ActionManager* actionManager, QObject* parent)
     QObject::connect(faq, &QAction::triggered, this,
                      []() { QDesktopServices::openUrl(u"https://www.fooyin.org/faq"_s); });
 
-    auto* about = new QAction(tr("&About"), this);
-    about->setIcon(Gui::applicationIcon());
-    about->setStatusTip(tr("Open the about dialog"));
-    QObject::connect(about, &QAction::triggered, this, &HelpMenu::showAboutDialog);
+    m_aboutAction->setIcon(Gui::applicationIcon());
+    m_aboutAction->setStatusTip(tr("Open the about dialog"));
+    QObject::connect(m_aboutAction, &QAction::triggered, this, &HelpMenu::showAboutDialog);
 
     helpMenu->addAction(quickStart);
     helpMenu->addAction(scripting);
     helpMenu->addAction(searching);
     helpMenu->addAction(faq);
-    helpMenu->addAction(about);
+    helpMenu->addAction(m_aboutAction);
+}
+
+void HelpMenu::refreshApplicationIcon()
+{
+    m_aboutAction->setIcon(Gui::applicationIcon());
+    if(m_aboutDialog) {
+        m_aboutDialog->refreshApplicationIcon();
+    }
 }
 
 void HelpMenu::showAboutDialog()

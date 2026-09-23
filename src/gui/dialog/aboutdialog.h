@@ -21,6 +21,8 @@
 
 #include <QDialog>
 
+class QLabel;
+
 namespace Fooyin {
 class AboutDialog : public QDialog
 {
@@ -28,5 +30,10 @@ class AboutDialog : public QDialog
 
 public:
     explicit AboutDialog(QWidget* parent = nullptr);
+
+    void refreshApplicationIcon();
+
+private:
+    QLabel* m_icon;
 };
 } // namespace Fooyin

@@ -1,5 +1,26 @@
 # Changelog
 
+## Unreleased
+
+### Improvements
+
+- **Files:** Use the Trash portal for file removal in Flatpak, with permanent deletion fallback ([#1660](https://github.com/fooyin/fooyin/issues/1660))
+- **Interface:** Add support for configuring the application window icon
+
+### Fixes
+
+- **Artwork:** Clear cached artwork when local artwork paths change
+- **Interface:** Fix new icon rendering with Qt 6.4 ([#1656](https://github.com/fooyin/fooyin/issues/1656))
+- **Playback & System:** Harden command-line option parsing and serialisation ([#1654](https://github.com/fooyin/fooyin/issues/1654))
+
+### Build/System
+
+- **CI**
+  - Fix AccurateRip tests on big-endian systems ([#1655](https://github.com/fooyin/fooyin/issues/1655))
+  - Update cross-platform-actions/action ([#1652](https://github.com/fooyin/fooyin/pull/1652))
+- **Windows:** Fix a numeric limits macro conflict
+
+
 ## [0.13.0](https://github.com/fooyin/fooyin/releases/tag/v0.13.0) (2026-09-21)
 
 ### New Features

@@ -23,12 +23,14 @@
 
 #include <QDir>
 #include <QFile>
+#include <QFuture>
 #include <QStringList>
 #include <QUrl>
 
 #include <stop_token>
 
 namespace Fooyin::Utils::File {
+FYUTILS_EXPORT QFuture<bool> moveToTrash(QString path);
 FYUTILS_EXPORT QString cleanPath(const QString& path);
 FYUTILS_EXPORT bool isSamePath(const QString& filename1, const QString& filename2);
 FYUTILS_EXPORT bool isSubdir(const QString& dir, const QString& parentDir);

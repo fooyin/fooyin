@@ -40,12 +40,25 @@ using namespace Qt::StringLiterals;
 constexpr auto DefaultIconSize       = 20;
 constexpr auto ThemeIconNameProperty = "_fy_themeIconName";
 
+namespace Fooyin::Gui {
 namespace {
 struct IconThemeState
 {
     QString primaryTheme;
     QString fallbackTheme;
 };
+
+struct ApplicationIconState
+{
+    ApplicationIconOption option{ApplicationIconOption::New};
+    QString customPath;
+};
+
+ApplicationIconState& applicationIconState()
+{
+    static ApplicationIconState state;
+    return state;
+}
 
 IconThemeState& iconThemeState()
 {
@@ -125,7 +138,13 @@ public:
 };
 } // namespace
 
-namespace Fooyin::Gui {
+void setApplicationIconOption(ApplicationIconOption option, const QString& customPath)
+{
+    auto& state      = applicationIconState();
+    state.option     = option;
+    state.customPath = customPath;
+}
+
 bool setThemeIconOverrides(const QString& primaryTheme, const QString& fallbackTheme)
 {
     return IconLoader::setThemeOverrides(primaryTheme, fallbackTheme);
@@ -133,9 +152,18 @@ bool setThemeIconOverrides(const QString& primaryTheme, const QString& fallbackT
 
 QIcon applicationIcon()
 {
+    const auto& state = applicationIconState();
+    if(state.option == ApplicationIconOption::Custom && !state.customPath.isEmpty()) {
+        const QIcon customIcon{state.customPath};
+        if(!customIcon.pixmap(48, 48).isNull()) {
+            return customIcon;
+        }
+    }
+
     QIcon icon;
-    for(const int size : {16, 22, 32, 48, 64, 128}) {
-        icon.addFile(u":/icons/%1-fooyin.png"_s.arg(size), QSize{size, size});
+    const QString suffix = state.option == ApplicationIconOption::Old ? u"-old"_s : QString{};
+    for(const int size : {16, 22, 32, 48, 64, 128, 256, 512}) {
+        icon.addFile(u":/icons/%1-fooyin%2.png"_s.arg(size).arg(suffix), QSize{size, size});
     }
     return icon;
 }

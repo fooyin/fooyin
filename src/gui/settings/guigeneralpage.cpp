@@ -26,6 +26,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/guiutils.h>
+#include <gui/iconloader.h>
 #include <gui/layoutprovider.h>
 #include <gui/theme/fytheme.h>
 #include <gui/theme/themeregistry.h>
@@ -35,10 +36,13 @@
 
 #include <QCheckBox>
 #include <QComboBox>
+#include <QFileDialog>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
+#include <QIcon>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSpinBox>
@@ -89,6 +93,9 @@ private:
     QRadioButton* m_lightTheme;
     QRadioButton* m_darkTheme;
     QRadioButton* m_systemTheme;
+    QComboBox* m_applicationIcon;
+    QLineEdit* m_customApplicationIcon;
+    QPushButton* m_browseApplicationIcon;
 
     QCheckBox* m_showMenuBar;
 
@@ -121,6 +128,9 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_lightTheme{new QRadioButton(tr("Light"), this)}
     , m_darkTheme{new QRadioButton(tr("Dark"), this)}
     , m_systemTheme{new QRadioButton(tr("Use system icons"), this)}
+    , m_applicationIcon{new QComboBox(this)}
+    , m_customApplicationIcon{new QLineEdit(this)}
+    , m_browseApplicationIcon{new QPushButton(tr("Browse…"), this)}
     , m_showMenuBar{new QCheckBox(tr("Show menu bar"), this)}
     , m_overrideMargin{new QCheckBox(tr("Override root margin") + u":"_s, this)}
     , m_editableLayoutMargin{new QSpinBox(this)}
@@ -153,7 +163,19 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     iconThemeBoxLayout->addWidget(m_lightTheme, row, 0);
     iconThemeBoxLayout->addWidget(m_darkTheme, row++, 1);
     iconThemeBoxLayout->addWidget(m_systemTheme, row++, 0, 1, 2);
-    iconThemeBoxLayout->setColumnStretch(2, 1);
+
+    m_applicationIcon->addItem(QIcon{u":/icons/32-fooyin.png"_s}, tr("New"));
+    m_applicationIcon->addItem(QIcon{u":/icons/32-fooyin-old.png"_s}, tr("Old"));
+    m_applicationIcon->addItem(tr("Custom"));
+
+    iconThemeBoxLayout->addWidget(new QLabel(tr("Application icon") + u":"_s, iconThemeBox), row, 0);
+    iconThemeBoxLayout->addWidget(m_applicationIcon, row++, 1);
+    iconThemeBoxLayout->addWidget(m_customApplicationIcon, row, 0, 1, 2);
+    iconThemeBoxLayout->addWidget(m_browseApplicationIcon, row++, 2);
+    iconThemeBoxLayout->setColumnStretch(1, 1);
+
+    m_customApplicationIcon->hide();
+    m_browseApplicationIcon->hide();
 
     row = 0;
     appearanceGroupLayout->addWidget(new QLabel(tr("Style") + u":"_s, appearanceGroup), row, 0);
@@ -208,6 +230,21 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     QObject::connect(exportLayoutBtn, &QPushButton::clicked, this, &GuiGeneralPageWidget::exportLayout);
 
     QObject::connect(m_overrideMargin, &QCheckBox::toggled, m_editableLayoutMargin, &QWidget::setEnabled);
+
+    QObject::connect(m_applicationIcon, &QComboBox::currentIndexChanged, this, [this](int index) {
+        const bool custom = index == static_cast<int>(Gui::ApplicationIconOption::Custom);
+        m_customApplicationIcon->setVisible(custom);
+        m_browseApplicationIcon->setVisible(custom);
+    });
+    QObject::connect(m_browseApplicationIcon, &QPushButton::clicked, this, [this]() {
+        const QString path
+            = QFileDialog::getOpenFileName(this, tr("Choose application icon"), m_customApplicationIcon->text(),
+                                           tr("Images (*.png *.jpg *.jpeg *.svg *.ico);;All files (*)"));
+        if(!path.isEmpty()) {
+            m_customApplicationIcon->setText(path);
+        }
+    });
+
     QObject::connect(m_overrideSplitterHandle, &QCheckBox::toggled, m_splitterHandleGap, &QWidget::setEnabled);
 #ifdef Q_OS_WIN
     QObject::connect(m_styles, &QComboBox::currentTextChanged, this, &GuiGeneralPageWidget::updateDarkModeState);
@@ -246,6 +283,9 @@ void GuiGeneralPageWidget::load()
             m_darkTheme->setChecked(true);
             break;
     }
+
+    m_applicationIcon->setCurrentIndex(m_settings->value<ApplicationIcon>());
+    m_customApplicationIcon->setText(m_settings->value<CustomApplicationIcon>());
 
     m_showMenuBar->setChecked(m_settings->value<ShowMenuBar>());
 
@@ -287,6 +327,8 @@ void GuiGeneralPageWidget::apply()
         iconThemeOption = IconThemeOption::System;
     }
     m_settings->set<IconTheme>(static_cast<int>(iconThemeOption));
+    m_settings->set<CustomApplicationIcon>(m_customApplicationIcon->text());
+    m_settings->set<ApplicationIcon>(m_applicationIcon->currentIndex());
 
     m_settings->set<ShowMenuBar>(m_showMenuBar->isChecked());
 
@@ -322,6 +364,8 @@ void GuiGeneralPageWidget::reset()
     m_settings->reset<DarkMode>();
 #endif
     m_settings->reset<IconTheme>();
+    m_settings->reset<ApplicationIcon>();
+    m_settings->reset<CustomApplicationIcon>();
     m_settings->reset<ShowMenuBar>();
     m_settings->reset<ShowSplitterHandles>();
     m_settings->reset<LockSplitterHandles>();

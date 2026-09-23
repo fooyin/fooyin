@@ -330,6 +330,7 @@ GuiApplication::GuiApplication(Application* core)
     , m_applyingTheme{false}
     , m_resolvedAppStyleRevision{0}
 {
+    updateApplicationIcon();
     m_coverRepository->setPendingTrackCoverProvider(m_core->pendingTrackCoverProvider());
 
     m_guiPluginContext.conversionService = m_conversionController;
@@ -854,6 +855,8 @@ void GuiApplication::setupConnections()
         QPixmapCache::clear();
         refreshThemeIcons();
     });
+    m_settings->subscribe<Settings::Gui::ApplicationIcon>(this, &GuiApplication::updateApplicationIcon);
+    m_settings->subscribe<Settings::Gui::CustomApplicationIcon>(this, &GuiApplication::updateApplicationIcon);
     m_settings->subscribe<Settings::Gui::CustomTheme>(this, [this]() {
         scheduleThemeUpdate();
         if(setIconTheme()) {
@@ -1818,6 +1821,24 @@ void GuiApplication::handleSystemThemeChanged()
     }
 
     scheduleThemeUpdate(true);
+}
+
+void GuiApplication::updateApplicationIcon()
+{
+    Gui::setApplicationIconOption(
+        static_cast<Gui::ApplicationIconOption>(m_settings->value<Settings::Gui::ApplicationIcon>()),
+        m_settings->value<Settings::Gui::CustomApplicationIcon>());
+    const QIcon icon = Gui::applicationIcon();
+
+    qApp->setWindowIcon(icon);
+    m_mainWindow->setWindowIcon(icon);
+    if(auto* settingsDialog = m_settings->settingsDialog()) {
+        settingsDialog->setWindowIcon(icon);
+    }
+    m_helpMenu->refreshApplicationIcon();
+    if(m_trayIcon) {
+        m_trayIcon->setIcon(icon);
+    }
 }
 
 bool GuiApplication::setIconTheme() const

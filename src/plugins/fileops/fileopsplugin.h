@@ -64,6 +64,7 @@ private:
 
     void setupMenu();
     void deleteTracks(const TrackList& tracks);
+    void runDelete(const TrackList& tracks, bool forceImmediateDelete);
     void openDialog(const TrackSelection& selection, Operation operation, const QString& presetName = {});
     void refreshPresetActions();
 

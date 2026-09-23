@@ -40,6 +40,8 @@
 
 #include <QMainWindow>
 #include <QMenu>
+#include <QMessageBox>
+#include <QPushButton>
 #include <QThread>
 
 using namespace Qt::StringLiterals;
@@ -252,35 +254,59 @@ void FileOpsPlugin::setupMenu()
 
 void FileOpsPlugin::deleteTracks(const TrackList& tracks)
 {
-    const auto runDelete = [this, tracks]() {
-        auto* worker = new FileOpsWorker(m_library, m_audioLoader, tracks, m_settings);
-        auto* thread = new QThread(this);
-        worker->moveToThread(thread);
-
-        QObject::connect(worker, &FileOpsWorker::deleteFinished, this, [](const TrackList& deletedTracks) {
-            const QString status = deletedTracks.empty()
-                                     ? tr("No tracks deleted")
-                                     : tr("Deleted %Ln track(s)", nullptr, static_cast<int>(deletedTracks.size()));
-            StatusEvent::post(status);
-        });
-        QObject::connect(worker, &Worker::finished, thread, &QThread::quit);
-        QObject::connect(thread, &QThread::finished, worker, &QObject::deleteLater);
-        QObject::connect(thread, &QThread::finished, thread, &QObject::deleteLater);
-
-        thread->start();
-        QMetaObject::invokeMethod(worker, &FileOpsWorker::deleteFiles);
-    };
-
     const bool confirm = m_settings->fileValue(Settings::ConfirmDelete, true).toBool();
     if(confirm) {
         auto* dialog = new FileOpsDeleteDialog(tracks, m_settings, Utils::getMainWindow());
         dialog->setAttribute(Qt::WA_DeleteOnClose);
-        QObject::connect(dialog, &QDialog::accepted, dialog, runDelete);
+        QObject::connect(dialog, &QDialog::accepted, this, [this, tracks]() { runDelete(tracks, false); });
         dialog->open();
     }
     else {
-        runDelete();
+        runDelete(tracks, false);
     }
+}
+
+void FileOpsPlugin::runDelete(const TrackList& tracks, bool forceImmediateDelete)
+{
+    auto* worker = new FileOpsWorker(m_library, m_audioLoader, tracks, m_settings);
+    auto* thread = new QThread(this);
+    worker->moveToThread(thread);
+
+    QObject::connect(
+        worker, &FileOpsWorker::deleteFinished, this,
+        [this, forceImmediateDelete](const TrackList& deletedTracks, const TrackList& failedTrashTracks) {
+            const QString status = deletedTracks.empty()
+                                     ? tr("No tracks deleted")
+                                     : tr("Deleted %Ln track(s)", nullptr, static_cast<int>(deletedTracks.size()));
+            StatusEvent::post(status);
+
+            if(forceImmediateDelete || failedTrashTracks.empty()) {
+                return;
+            }
+
+            const QString message = failedTrashTracks.size() == 1
+                                      ? tr("Could not move \"%1\" to the trash. Delete it permanently?")
+                                            .arg(failedTrashTracks.front().filepath())
+                                      : tr("Could not move %Ln file(s) to the trash. Delete them permanently?", nullptr,
+                                           static_cast<int>(failedTrashTracks.size()));
+            auto* confirmation    = new QMessageBox(QMessageBox::Warning, tr("Move to Trash Failed"), message,
+                                                    QMessageBox::NoButton, Utils::getMainWindow());
+            confirmation->setAttribute(Qt::WA_DeleteOnClose);
+            confirmation->setInformativeText(tr("Permanent deletion cannot be undone."));
+            auto* deleteButton = confirmation->addButton(tr("Delete Permanently"), QMessageBox::DestructiveRole);
+            auto* cancelButton = confirmation->addButton(QMessageBox::Cancel);
+            confirmation->setDefaultButton(cancelButton);
+            confirmation->setEscapeButton(cancelButton);
+            QObject::connect(deleteButton, &QPushButton::clicked, this,
+                             [this, failedTrashTracks]() { runDelete(failedTrashTracks, true); });
+            confirmation->open();
+        });
+    QObject::connect(worker, &Worker::finished, thread, &QThread::quit);
+    QObject::connect(thread, &QThread::finished, worker, &QObject::deleteLater);
+    QObject::connect(thread, &QThread::finished, thread, &QObject::deleteLater);
+
+    thread->start();
+    QMetaObject::invokeMethod(worker, [worker, forceImmediateDelete]() { worker->deleteFiles(forceImmediateDelete); });
 }
 
 void FileOpsPlugin::openDialog(const TrackSelection& selection, Operation operation, const QString& presetName)

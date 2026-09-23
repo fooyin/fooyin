@@ -214,11 +214,15 @@ void LayoutMenu::updateCurrentLayout()
 void LayoutMenu::resetCurrentLayout()
 {
     const QString current = m_layoutProvider->currentLayout().name();
-    if(current.isEmpty() || !m_layoutProvider->resetLayout(current)) {
+    if(current.isEmpty()) {
         return;
     }
 
-    Q_EMIT changeLayout(m_layoutProvider->currentLayout());
+    m_layoutProvider->resetLayout(current).then(this, [this](bool reset) {
+        if(reset) {
+            Q_EMIT changeLayout(m_layoutProvider->currentLayout());
+        }
+    });
 }
 } // namespace Fooyin
 
