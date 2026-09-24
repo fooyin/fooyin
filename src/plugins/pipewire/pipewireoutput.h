@@ -76,6 +76,7 @@ private:
 
     std::unique_ptr<LockFreeRingBuffer<std::byte>> m_buffer;
     int m_targetBufferFrames;
+    bool m_invalidTimingLogActive;
 
     bool m_loopStarted;
     std::unique_ptr<PipewireThreadLoop> m_loop;

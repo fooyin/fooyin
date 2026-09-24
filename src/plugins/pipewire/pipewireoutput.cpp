@@ -53,8 +53,11 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto BufferLength = 200; // ms
+constexpr auto BufferLength          = 200; // ms
+constexpr auto MaxOutputDelaySeconds = 60.0L;
+constexpr auto NsecPerSecond         = 1'000'000'000.0L;
 
+namespace Fooyin::Pipewire {
 namespace {
 int clampToInt(const uint64_t value)
 {
@@ -78,29 +81,29 @@ void ensurePipeWireInitialised()
     std::call_once(initOnce, []() { pw_init(nullptr, nullptr); });
 }
 
-spa_audio_format findSpaFormat(const Fooyin::SampleFormat& format)
+spa_audio_format findSpaFormat(const SampleFormat& format)
 {
     switch(format) {
-        case Fooyin::SampleFormat::U8:
+        case SampleFormat::U8:
             return SPA_AUDIO_FORMAT_U8;
-        case Fooyin::SampleFormat::S16:
+        case SampleFormat::S16:
             return SPA_AUDIO_FORMAT_S16;
-        case Fooyin::SampleFormat::S24In32:
-        case Fooyin::SampleFormat::S32:
+        case SampleFormat::S24In32:
+        case SampleFormat::S32:
             return SPA_AUDIO_FORMAT_S32;
-        case Fooyin::SampleFormat::F32:
+        case SampleFormat::F32:
             return SPA_AUDIO_FORMAT_F32;
-        case Fooyin::SampleFormat::F64:
+        case SampleFormat::F64:
             return SPA_AUDIO_FORMAT_F64;
-        case Fooyin::SampleFormat::Unknown:
+        case SampleFormat::Unknown:
         default:
             return SPA_AUDIO_FORMAT_UNKNOWN;
     }
 }
 
-spa_audio_channel toSpaChannel(Fooyin::AudioFormat::ChannelPosition channel)
+spa_audio_channel toSpaChannel(AudioFormat::ChannelPosition channel)
 {
-    using P = Fooyin::AudioFormat::ChannelPosition;
+    using P = AudioFormat::ChannelPosition;
     switch(channel) {
         case P::FrontLeft:
             return SPA_AUDIO_CHANNEL_FL;
@@ -245,14 +248,13 @@ void updateChannelMapLegacy(spa_audio_info_raw* info, int channels)
     }
 }
 
-void updateChannelMap(spa_audio_info_raw* info, const Fooyin::AudioFormat& format)
+void updateChannelMap(spa_audio_info_raw* info, const AudioFormat& format)
 {
     if(format.hasChannelLayout()) {
         bool validMap = true;
         for(int i = 0; i < format.channelCount(); ++i) {
             spa_audio_channel mapped = SPA_AUDIO_CHANNEL_UNKNOWN;
-            if(format.channelCount() == 1
-               && format.channelPosition(i) == Fooyin::AudioFormat::ChannelPosition::FrontCenter) {
+            if(format.channelCount() == 1 && format.channelPosition(i) == AudioFormat::ChannelPosition::FrontCenter) {
                 mapped = SPA_AUDIO_CHANNEL_MONO;
             }
             else {
@@ -272,7 +274,7 @@ void updateChannelMap(spa_audio_info_raw* info, const Fooyin::AudioFormat& forma
     updateChannelMapLegacy(info, format.channelCount());
 }
 
-bool supportsPipewireLayout(const Fooyin::AudioFormat& format)
+bool supportsPipewireLayout(const AudioFormat& format)
 {
     if(!format.hasChannelLayout()) {
         return true;
@@ -280,7 +282,7 @@ bool supportsPipewireLayout(const Fooyin::AudioFormat& format)
 
     for(int i = 0; i < format.channelCount(); ++i) {
         const auto pos = format.channelPosition(i);
-        if(format.channelCount() == 1 && pos == Fooyin::AudioFormat::ChannelPosition::FrontCenter) {
+        if(format.channelCount() == 1 && pos == AudioFormat::ChannelPosition::FrontCenter) {
             continue;
         }
         if(toSpaChannel(pos) == SPA_AUDIO_CHANNEL_UNKNOWN) {
@@ -290,12 +292,44 @@ bool supportsPipewireLayout(const Fooyin::AudioFormat& format)
 
     return true;
 }
+
+std::optional<double> outputDelaySeconds(const PipewireStream::TimeInfo& time, int softwareQueuedFrames, int sampleRate,
+                                         int64_t currentTimeNsec)
+{
+    if(sampleRate <= 0 || time.queued > static_cast<uint64_t>(std::numeric_limits<int64_t>::max())
+       || time.buffered > static_cast<uint64_t>(std::numeric_limits<int64_t>::max())) {
+        return {};
+    }
+
+    long double graphDelay{0.0L};
+    if(time.rate.denom > 0 && time.rate.num > 0) {
+        const long double reportedDelay = static_cast<long double>(time.delay) * time.rate.num / time.rate.denom;
+
+        long double elapsed{0.0L};
+        if(time.now > 0 && currentTimeNsec > time.now) {
+            elapsed = static_cast<long double>(currentTimeNsec - time.now) / NsecPerSecond;
+        }
+
+        graphDelay = std::max(0.0L, reportedDelay - elapsed);
+    }
+
+    const long double streamDelay
+        = (static_cast<long double>(time.queued) + static_cast<long double>(time.buffered)) / sampleRate;
+    const long double softwareDelay = static_cast<long double>(std::max(0, softwareQueuedFrames)) / sampleRate;
+    const long double totalDelay    = softwareDelay + streamDelay + graphDelay;
+
+    if(!std::isfinite(totalDelay) || totalDelay < 0.0L || totalDelay > MaxOutputDelaySeconds) {
+        return {};
+    }
+
+    return static_cast<double>(totalDelay);
+}
 } // namespace
 
-namespace Fooyin::Pipewire {
 PipeWireOutput::PipeWireOutput()
     : m_volume{1.0}
     , m_targetBufferFrames{0}
+    , m_invalidTimingLogActive{false}
     , m_loopStarted{false}
 { }
 
@@ -433,23 +467,20 @@ OutputState PipeWireOutput::currentState()
     state.queuedFrames             = softwareQueuedFrames;
 
     if(const auto time = m_stream->time()) {
-        double graphDelay{0.0};
-        if(time->rate.denom > 0 && time->rate.num > 0) {
-            const double delay = static_cast<double>(time->delay) * static_cast<double>(time->rate.num)
-                               / static_cast<double>(time->rate.denom);
-
-            double elapsed{0.0};
-            const int64_t nowNsec = monotonicNsec();
-            if(time->now > 0 && nowNsec > time->now) {
-                elapsed = static_cast<double>(nowNsec - time->now) / 1000000000.0;
+        const auto delay = outputDelaySeconds(*time, softwareQueuedFrames, sampleRate, monotonicNsec());
+        if(!delay.has_value()) {
+            if(!m_invalidTimingLogActive) {
+                qCWarning(PIPEWIRE) << "Ignoring invalid stream timing:"
+                                    << "queued=" << time->queued << "buffered=" << time->buffered
+                                    << "delay=" << time->delay << "rate=" << time->rate.num << "/" << time->rate.denom;
             }
-
-            graphDelay = std::max(0.0, delay - elapsed);
+            m_invalidTimingLogActive = true;
+            state.delay              = static_cast<double>(state.queuedFrames) / static_cast<double>(sampleRate);
+            return state;
         }
 
-        const double pipewireDelay
-            = (static_cast<double>(time->queued) + static_cast<double>(time->buffered)) / sampleRate;
-        state.delay = (static_cast<double>(softwareQueuedFrames) / sampleRate) + pipewireDelay + graphDelay;
+        m_invalidTimingLogActive       = false;
+        state.delay                    = *delay;
         const double totalQueuedFrames = std::clamp(state.delay * static_cast<double>(sampleRate), 0.0,
                                                     static_cast<double>(std::numeric_limits<int>::max()));
         state.queuedFrames             = static_cast<int>(totalQueuedFrames);

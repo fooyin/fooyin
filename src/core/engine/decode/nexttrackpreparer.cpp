@@ -140,9 +140,11 @@ NextTrackPreparationState NextTrackPreparer::prepare(const Track& track, const C
             const auto targetPrefillMs = std::max<uint64_t>(PreparedStreamPrefillMs, context.preferredPrefillMs);
             const uint64_t clampedPrefillMs
                 = std::clamp<uint64_t>(targetPrefillMs, PreparedStreamPrefillMs, MaxPreparedStreamMs);
-            const uint64_t preparedBufferMs = std::max<uint64_t>(context.bufferLengthMs, clampedPrefillMs);
-            const size_t bufferSamples      = bufferSamplesFromMs(preparedBufferMs, sampleRate, channels);
-            auto preparedStream             = decoderContext.createStream(bufferSamples);
+            const uint64_t preparedBufferMs
+                = std::clamp<uint64_t>(std::max<uint64_t>(context.bufferLengthMs, clampedPrefillMs),
+                                       PreparedStreamPrefillMs, MaxPreparedStreamMs);
+            const size_t bufferSamples = bufferSamplesFromMs(preparedBufferMs, sampleRate, channels);
+            auto preparedStream        = decoderContext.createStream(bufferSamples);
             decoderContext.setActiveStream(preparedStream);
 
             if(track.offset() > 0 && decoderContext.isSeekable()) {
