@@ -7716,29 +7716,29 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1605"/>
         <source>Convert using default settings</source>
-        <translation type="unfinished">Mit Standardeinstellungen konvertieren</translation>
+        <translation>Mit Standardeinstellungen konvertieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1610"/>
         <source>Repeat last conversion</source>
-        <translation type="unfinished">Letzte Konvertierung wiederholen</translation>
+        <translation>Letzte Konvertierung wiederholen</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1641"/>
         <source>Custom conversion…</source>
-        <translation type="unfinished">Benutzerdefinierte Konvertierung…</translation>
+        <translation>Benutzerdefinierte Konvertierung…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1653"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1658"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1667"/>
         <source>Utilities</source>
-        <translation type="unfinished">Werkzeuge</translation>
+        <translation>Werkzeuge</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1655"/>
         <source>Verify integrity</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifziere Integrität</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1656"/>
