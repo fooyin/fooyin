@@ -22,7 +22,6 @@
 #include <utils/stringutils.h>
 
 #include <QPointer>
-#include <QSignalBlocker>
 
 constexpr auto ThemeIconNameProperty = "_fy_themeIconName";
 
@@ -32,8 +31,11 @@ class ProxyActionPrivate
 public:
     explicit ProxyActionPrivate(ProxyAction* self)
         : m_self{self}
-    { }
+    {
+        connectToolTipUpdater();
+    }
 
+    void connectToolTipUpdater();
     void updateToolTipWithShortcut();
     void update(QAction* updateAction, bool initialise);
     void updateState();
@@ -49,15 +51,21 @@ public:
     QString m_toolTip;
 
     ProxyAction::Attributes m_attributes;
+    QMetaObject::Connection m_toolTipChangedConnection;
     bool m_updating{false};
 };
 
+void ProxyActionPrivate::connectToolTipUpdater()
+{
+    m_toolTipChangedConnection
+        = QObject::connect(m_self, &ProxyAction::changed, m_self, [this]() { updateToolTipWithShortcut(); });
+}
+
 void ProxyActionPrivate::updateToolTipWithShortcut()
 {
-    if(m_updating) {
+    if(std::exchange(m_updating, true)) {
         return;
     }
-    m_updating = true;
 
     if(!m_showShortcut || m_self->shortcut().isEmpty()) {
         m_self->setToolTip(m_toolTip);
@@ -75,7 +83,7 @@ void ProxyActionPrivate::update(QAction* updateAction, bool initialise)
         return;
     }
 
-    QObject::disconnect(m_self, &ProxyAction::changed, nullptr, nullptr);
+    QObject::disconnect(m_toolTipChangedConnection);
 
     const bool proxyHasIcon = !m_self->icon().isNull();
 
@@ -106,7 +114,6 @@ void ProxyActionPrivate::update(QAction* updateAction, bool initialise)
                 QObject::disconnect(m_self, &ProxyAction::toggled, m_action, &QAction::setChecked);
             }
 
-            const QSignalBlocker blocker{m_self};
             m_self->setChecked(updateAction->isChecked());
 
             if(m_action) {
@@ -116,7 +123,8 @@ void ProxyActionPrivate::update(QAction* updateAction, bool initialise)
         m_self->setEnabled(updateAction->isEnabled());
         m_self->setVisible(updateAction->isVisible());
     }
-    QObject::connect(m_self, &ProxyAction::changed, m_self, [this]() { updateToolTipWithShortcut(); });
+
+    connectToolTipUpdater();
 }
 
 void ProxyActionPrivate::updateState()
