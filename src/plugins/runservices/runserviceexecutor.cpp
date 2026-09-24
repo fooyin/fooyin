@@ -54,7 +54,9 @@ QString evaluateRunServiceLabel(const RunService& service, const Track& track)
 
 QStringList evaluateRunServiceCommands(const RunService& service, const TrackList& tracks)
 {
-    const size_t runCount = std::min(tracks.size(), static_cast<size_t>(std::max(1, service.simultaneousRuns)));
+    const size_t runCount = service.simultaneousRuns == UnlimitedRuns
+                              ? tracks.size()
+                              : std::min(tracks.size(), static_cast<size_t>(std::max(1, service.simultaneousRuns)));
 
     QStringList commands;
     commands.reserve(static_cast<qsizetype>(runCount));

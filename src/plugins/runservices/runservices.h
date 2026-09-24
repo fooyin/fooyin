@@ -40,6 +40,9 @@ Q_ENUM_NS(RunServicesSettings)
 } // namespace Settings::RunServices
 
 namespace RunServices {
+constexpr auto UnlimitedRuns = 0;
+constexpr auto MaximumRuns   = 999;
+
 // Serialised to JSON so we can easily add import/export if needed
 struct RunService
 {

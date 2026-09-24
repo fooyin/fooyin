@@ -113,7 +113,8 @@ RunServicesPageWidget::RunServicesPageWidget(SettingsManager* settings)
     , m_browse{new QPushButton(tr("Browse…"), this)}
     , m_simultaneousRuns{new QSpinBox(this)}
 {
-    m_simultaneousRuns->setRange(1, 99);
+    m_simultaneousRuns->setRange(UnlimitedRuns, MaximumRuns);
+    m_simultaneousRuns->setSpecialValueText(tr("Unlimited"));
     m_simultaneousRuns->setToolTip(tr("Run the service for up to this many selected tracks"));
     m_name->setPlaceholderText(tr("Name shown in the Run menu"));
     m_path->setPlaceholderText(tr("Application and arguments"));

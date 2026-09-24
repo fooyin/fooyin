@@ -70,7 +70,7 @@ std::vector<RunService> runServicesFromJson(const QByteArray& data)
         service.id               = object.value(IdKey).toString().trimmed();
         service.name             = object.value(NameKey).toString().trimmed();
         service.path             = object.value(PathKey).toString().trimmed();
-        service.simultaneousRuns = std::clamp(object.value(SimultaneousRunsKey).toInt(1), 1, 99);
+        service.simultaneousRuns = std::clamp(object.value(SimultaneousRunsKey).toInt(1), UnlimitedRuns, MaximumRuns);
         service.enabled          = object.value(EnabledKey).toBool(true);
 
         if(service.name.isEmpty() || service.path.isEmpty()) {
@@ -96,11 +96,13 @@ QByteArray runServicesJson(const std::vector<RunService>& services)
     QJsonArray array;
 
     for(const RunService& service : services) {
-        array.append(QJsonObject{{IdKey, service.id},
-                                 {NameKey, service.name},
-                                 {PathKey, service.path},
-                                 {SimultaneousRunsKey, std::clamp(service.simultaneousRuns, 1, 99)},
-                                 {EnabledKey, service.enabled}});
+        array.append(QJsonObject{
+            {IdKey, service.id},
+            {NameKey, service.name},
+            {PathKey, service.path},
+            {SimultaneousRunsKey, std::clamp(service.simultaneousRuns, UnlimitedRuns, MaximumRuns)},
+            {EnabledKey, service.enabled},
+        });
     }
 
     return QJsonDocument{array}.toJson(QJsonDocument::Compact);
