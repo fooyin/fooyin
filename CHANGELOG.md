@@ -12,6 +12,8 @@
 - **Playback & DSP**
   - Always show the Equaliser in the View menu ([#1667](https://github.com/fooyin/fooyin/issues/1667))
   - Allow DSP layout widgets to add missing DSPs
+- **Run Services:** Add an unlimited simultaneous runs option ([#1678](https://github.com/fooyin/fooyin/issues/1678))
+- **VU Meter:** Add an option to right-align scale labels ([#1679](https://github.com/fooyin/fooyin/issues/1679))
 
 ### Fixes
 
@@ -19,7 +21,10 @@
 - **Interface**
   - Fix new icon rendering with Qt 6.4 ([#1656](https://github.com/fooyin/fooyin/issues/1656))
   - Align default row heights across item views ([#1671](https://github.com/fooyin/fooyin/issues/1671))
-- **Playback & System:** Harden command-line option parsing and serialisation ([#1654](https://github.com/fooyin/fooyin/issues/1654))
+  - Preserve action change notifications during proxy updates ([#1683](https://github.com/fooyin/fooyin/issues/1683))
+- **Playback & System**
+  - Harden command-line option parsing and serialisation ([#1654](https://github.com/fooyin/fooyin/issues/1654))
+  - Reject invalid PipeWire timing during crossfade preparation and cap prepared stream buffers ([#1631](https://github.com/fooyin/fooyin/issues/1631))
 - **System Integrations:** Enable the X11 global shortcut backend alongside the portal backend ([#1677](https://github.com/fooyin/fooyin/issues/1677))
 
 ### Build/System
