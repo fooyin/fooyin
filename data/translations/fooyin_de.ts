@@ -7686,13 +7686,13 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1457"/>
         <source>Converter Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverter-Ausgabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1554"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1562"/>
         <source>Convert using preset %1</source>
-        <translation type="unfinished">Mit Voreinstellung %1 konvertieren</translation>
+        <translation>Mit Voreinstellung %1 konvertieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1561"/>
@@ -7701,17 +7701,17 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/gui/guiapplication.cpp" line="1613"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1624"/>
         <source>Convert</source>
-        <translation type="unfinished">Konvertieren</translation>
+        <translation>Konvertieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1592"/>
         <source>Converter setup…</source>
-        <translation type="unfinished">Konverter-Einrichtung…</translation>
+        <translation>Konverter-Einrichtung…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1601"/>
         <source>Using default settings</source>
-        <translation type="unfinished">Verwende Standardeinstellungen</translation>
+        <translation>Verwende Standardeinstellungen</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1605"/>
