@@ -172,6 +172,8 @@ SoundTouchLayoutEditor::SoundTouchLayoutEditor(const SoundTouchDsp::Parameter pa
     m_slider->setSingleStep(1);
     m_slider->setMinimumWidth(80);
 
+    SoundTouchLayoutEditor::restoreDefaults();
+
     QObject::connect(m_slider, &QSlider::valueChanged, this, [this]() {
         updateValueLabel();
         m_previewTimer.start(PreviewDebounceMs, this);
