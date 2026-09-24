@@ -5,19 +5,30 @@
 ### Improvements
 
 - **Files:** Use the Trash portal for file removal in Flatpak, with permanent deletion fallback ([#1660](https://github.com/fooyin/fooyin/issues/1660))
-- **Interface:** Add support for configuring the application window icon
+- **Interface & Widgets**
+  - Add support for configuring the application window icon
+  - Add per-widget preferred track options to Artwork, Selection Info, and WaveBar ([#1668](https://github.com/fooyin/fooyin/issues/1668))
+  - Improve playlist resize performance with blurred backgrounds
+- **Playback & DSP**
+  - Always show the Equaliser in the View menu ([#1667](https://github.com/fooyin/fooyin/issues/1667))
+  - Allow DSP layout widgets to add missing DSPs
 
 ### Fixes
 
 - **Artwork:** Clear cached artwork when local artwork paths change
-- **Interface:** Fix new icon rendering with Qt 6.4 ([#1656](https://github.com/fooyin/fooyin/issues/1656))
+- **Interface**
+  - Fix new icon rendering with Qt 6.4 ([#1656](https://github.com/fooyin/fooyin/issues/1656))
+  - Align default row heights across item views ([#1671](https://github.com/fooyin/fooyin/issues/1671))
 - **Playback & System:** Harden command-line option parsing and serialisation ([#1654](https://github.com/fooyin/fooyin/issues/1654))
+- **System Integrations:** Enable the X11 global shortcut backend alongside the portal backend ([#1677](https://github.com/fooyin/fooyin/issues/1677))
 
 ### Build/System
 
 - **CI**
   - Fix AccurateRip tests on big-endian systems ([#1655](https://github.com/fooyin/fooyin/issues/1655))
   - Update cross-platform-actions/action ([#1652](https://github.com/fooyin/fooyin/pull/1652))
+- **Plugins:** Support additional plugin search directories through `FOOYIN_PLUGIN_PATH` ([#1670](https://github.com/fooyin/fooyin/issues/1670))
+- **Translations:** Update translations and translation sources ([#1662](https://github.com/fooyin/fooyin/pull/1662), [#1663](https://github.com/fooyin/fooyin/pull/1663), [#1664](https://github.com/fooyin/fooyin/pull/1664))
 - **Windows:** Fix a numeric limits macro conflict
 
 
