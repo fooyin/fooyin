@@ -33,6 +33,7 @@
   - Fix AccurateRip tests on big-endian systems ([#1655](https://github.com/fooyin/fooyin/issues/1655))
   - Update cross-platform-actions/action ([#1652](https://github.com/fooyin/fooyin/pull/1652))
 - **Plugins:** Support additional plugin search directories through `FOOYIN_PLUGIN_PATH` ([#1670](https://github.com/fooyin/fooyin/issues/1670))
+- **TagLib:** Fix ASF metadata writes when building with TagLib 1
 - **Translations:** Update translations and translation sources ([#1662](https://github.com/fooyin/fooyin/pull/1662), [#1663](https://github.com/fooyin/fooyin/pull/1663), [#1664](https://github.com/fooyin/fooyin/pull/1664))
 - **Windows:** Fix a numeric limits macro conflict
 

@@ -3570,6 +3570,9 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
             }
             break;
         }
+#else
+        case AudioFileFormat::Dsf:
+        case AudioFileFormat::Dsdiff:
 #endif
         case AudioFileFormat::Unknown: {
             qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
@@ -3681,9 +3684,9 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
             if(file.isValid() && file.tag()) {
                 return readAsfCover(file.tag(), cover);
             }
+            break;
         }
 #if (TAGLIB_MAJOR_VERSION >= 2)
-        break;
         case AudioFileFormat::Dsf: {
             const TagLib::DSF::File file(&stream, true);
             if(file.isValid() && file.tag()) {
@@ -3696,9 +3699,12 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
             if(file.isValid() && file.hasID3v2Tag()) {
                 return readId3Cover(file.ID3v2Tag(), cover);
             }
+            break;
         }
+#else
+        case AudioFileFormat::Dsf:
+        case AudioFileFormat::Dsdiff:
 #endif
-        break;
         case AudioFileFormat::Unknown: {
             qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
             return {};
@@ -3928,9 +3934,9 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                                         : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType,
                                                            failureLogged);
             }
+            break;
         }
 #if (TAGLIB_MAJOR_VERSION >= 2)
-        break;
         case AudioFileFormat::Dsf: {
             TagLib::DSF::File file(&stream, false);
             if(file.isValid()) {
@@ -3960,6 +3966,9 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
             }
             break;
         }
+#else
+        case AudioFileFormat::Dsf:
+        case AudioFileFormat::Dsdiff:
 #endif
         case AudioFileFormat::Unknown: {
             qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
@@ -4185,6 +4194,9 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             }
             break;
         }
+#else
+        case AudioFileFormat::Dsf:
+        case AudioFileFormat::Dsdiff:
 #endif
         case AudioFileFormat::Unknown: {
             qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
