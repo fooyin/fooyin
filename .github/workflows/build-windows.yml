@@ -82,23 +82,26 @@ jobs:
           arch: ${{ matrix.msvc-arch }}
 
       - name: Setup vcpkg cache
+        id: vcpkg-cache
         shell: pwsh
         run: |
           $cacheDir = "S:/vcpkg-binary-cache"
           New-Item -ItemType Directory -Force -Path $cacheDir
+          $compilerPath = (Get-Command cl.exe -ErrorAction Stop).Source
+          $compilerHash = (Get-FileHash -Algorithm SHA256 $compilerPath).Hash.ToLowerInvariant()
+          $sdkVersion = $env:WindowsSDKVersion.TrimEnd('\')
+          $toolchain = "$env:VCToolsVersion-$sdkVersion-$compilerHash"
+          echo "toolchain=$toolchain" >> $env:GITHUB_OUTPUT
           echo "VCPKG_BINARY_SOURCES=clear;files,$cacheDir,readwrite" >> $env:GITHUB_ENV
           echo "VCPKG_TARGET_TRIPLET=${{ matrix.triplet }}" >> $env:GITHUB_ENV
 
       - name: Cache vcpkg
         uses: actions/cache@v6
         with:
-          path: |
-            ${{ github.workspace }}/vcpkg-binary-cache
-            ${{ env.VCPKG_INSTALLED_DIR }}
-          key: ${{ runner.os }}-vcpkg-${{ matrix.cmake-preset }}-${{ hashFiles('**/vcpkg.json', '**/vcpkg-configuration.json') }}
+          path: ${{ github.workspace }}/vcpkg-binary-cache
+          key: ${{ runner.os }}-vcpkg-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json', 'CMakePresets.json', 'triplets/**') }}
           restore-keys: |
-            ${{ runner.os }}-vcpkg-${{ matrix.cmake-preset }}-
-            ${{ runner.os }}-vcpkg-
+            ${{ runner.os }}-vcpkg-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-
 
       - name: Set CMAKE_PRESET
         shell: pwsh

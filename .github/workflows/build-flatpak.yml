@@ -27,6 +27,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: Set Flatpak cache key
+        id: flatpak-cache
+        shell: bash
+        run: echo "key=${{ hashFiles('dist/linux/flatpak/**') }}" >> "$GITHUB_OUTPUT"
+
       - name: Set version suffix
         if: inputs.version_suffix != ''
         env:
@@ -41,7 +46,7 @@ jobs:
         with:
           bundle: fooyin-${{ matrix.arch }}.flatpak
           manifest-path: dist/linux/flatpak/org.fooyin.fooyin.yaml
-          cache-key: flatpak-builder-${{ matrix.arch }}-${{ hashFiles('dist/linux/flatpak/**') }}
+          cache-key: flatpak-builder-${{ matrix.arch }}-${{ steps.flatpak-cache.outputs.key }}
           arch: ${{ matrix.arch }}
           upload-artifact: false
 
