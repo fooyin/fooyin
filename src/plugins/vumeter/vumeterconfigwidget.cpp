@@ -52,6 +52,7 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
     , m_showBottomLabels{new QCheckBox(tr("Bottom labels"), this)}
     , m_showLeftLabels{new QCheckBox(tr("Left labels"), this)}
     , m_showRightLabels{new QCheckBox(tr("Right labels"), this)}
+    , m_rightAlignScaleLabels{new QCheckBox(tr("Right-align scale labels"), this)}
     , m_peaksGroup{new QGroupBox(tr("Peaks"), this)}
     , m_channelSpacing{new QSpinBox(this)}
     , m_barSize{new QSpinBox(this)}
@@ -100,6 +101,7 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
     axesLayout->addWidget(m_showBottomLabels, row++, 1);
     axesLayout->addWidget(m_showLeftLabels, row, 0);
     axesLayout->addWidget(m_showRightLabels, row++, 1);
+    axesLayout->addWidget(m_rightAlignScaleLabels, row++, 0, 1, 2);
 
     m_peaksGroup->setCheckable(true);
 
@@ -190,21 +192,22 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
 VuMeterWidget::ConfigData VuMeterConfigDialog::config() const
 {
     VuMeterWidget::ConfigData config{
-        .peakHoldTimeMs   = m_peakHold->value(),
-        .falloffTime      = m_falloff->value(),
-        .peakFalloffTime  = m_peakFalloff->value(),
-        .showPeaks        = m_peaksGroup->isChecked(),
-        .showTopLabels    = m_showTopLabels->isChecked(),
-        .showBottomLabels = m_showBottomLabels->isChecked(),
-        .showLeftLabels   = m_showLeftLabels->isChecked(),
-        .showRightLabels  = m_showRightLabels->isChecked(),
-        .updateFps        = m_updateFps->currentData().toInt(),
-        .channelSpacing   = m_channelSpacing->value(),
-        .barSize          = m_barSize->value(),
-        .barSpacing       = m_barSpacing->value(),
-        .barSections      = m_barSections->value(),
-        .sectionSpacing   = m_sectionSpacing->value(),
-        .meterColours     = QVariant{},
+        .peakHoldTimeMs        = m_peakHold->value(),
+        .falloffTime           = m_falloff->value(),
+        .peakFalloffTime       = m_peakFalloff->value(),
+        .showPeaks             = m_peaksGroup->isChecked(),
+        .showTopLabels         = m_showTopLabels->isChecked(),
+        .showBottomLabels      = m_showBottomLabels->isChecked(),
+        .showLeftLabels        = m_showLeftLabels->isChecked(),
+        .showRightLabels       = m_showRightLabels->isChecked(),
+        .rightAlignScaleLabels = m_rightAlignScaleLabels->isChecked(),
+        .updateFps             = m_updateFps->currentData().toInt(),
+        .channelSpacing        = m_channelSpacing->value(),
+        .barSize               = m_barSize->value(),
+        .barSpacing            = m_barSpacing->value(),
+        .barSections           = m_barSections->value(),
+        .sectionSpacing        = m_sectionSpacing->value(),
+        .meterColours          = QVariant{},
     };
 
     Colours colours;
@@ -240,6 +243,7 @@ void VuMeterConfigDialog::setConfig(const VuMeterWidget::ConfigData& config)
     m_showBottomLabels->setChecked(config.showBottomLabels);
     m_showLeftLabels->setChecked(config.showLeftLabels);
     m_showRightLabels->setChecked(config.showRightLabels);
+    m_rightAlignScaleLabels->setChecked(config.rightAlignScaleLabels);
 
     const int nearest = Gui::FrameRate::nearestPresetFps(config.updateFps);
     int fpsIndex      = m_updateFps->findData(nearest);
@@ -279,9 +283,10 @@ void VuMeterConfigDialog::mergeExternalConfig(const VuMeterWidget::ConfigData& p
                         &VuMeterWidget::ConfigData::falloffTime, &VuMeterWidget::ConfigData::peakFalloffTime,
                         &VuMeterWidget::ConfigData::showPeaks, &VuMeterWidget::ConfigData::showTopLabels,
                         &VuMeterWidget::ConfigData::showBottomLabels, &VuMeterWidget::ConfigData::showLeftLabels,
-                        &VuMeterWidget::ConfigData::showRightLabels, &VuMeterWidget::ConfigData::updateFps,
-                        &VuMeterWidget::ConfigData::channelSpacing, &VuMeterWidget::ConfigData::barSize,
-                        &VuMeterWidget::ConfigData::barSpacing, &VuMeterWidget::ConfigData::barSections,
-                        &VuMeterWidget::ConfigData::sectionSpacing, &VuMeterWidget::ConfigData::meterColours);
+                        &VuMeterWidget::ConfigData::showRightLabels, &VuMeterWidget::ConfigData::rightAlignScaleLabels,
+                        &VuMeterWidget::ConfigData::updateFps, &VuMeterWidget::ConfigData::channelSpacing,
+                        &VuMeterWidget::ConfigData::barSize, &VuMeterWidget::ConfigData::barSpacing,
+                        &VuMeterWidget::ConfigData::barSections, &VuMeterWidget::ConfigData::sectionSpacing,
+                        &VuMeterWidget::ConfigData::meterColours);
 }
 } // namespace Fooyin::VuMeter

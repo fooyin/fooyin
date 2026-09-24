@@ -77,6 +77,7 @@ public:
         bool showBottomLabels{false};
         bool showLeftLabels{false};
         bool showRightLabels{false};
+        bool rightAlignScaleLabels{false};
         int updateFps{40};
         int channelSpacing{1};
         int barSize{0};

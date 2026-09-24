@@ -53,23 +53,24 @@ constexpr auto LegendPadding = 10;
 constexpr auto DefaultFps    = Fooyin::Gui::FrameRate::Preset::Fps40;
 
 // Settings
-constexpr auto PeakHoldTimeKey     = u"PeakHoldTime";
-constexpr auto PeakHoldTimeMsKey   = u"PeakHoldTimeMs";
-constexpr auto FalloffTimeKey      = u"FalloffTime";
-constexpr auto PeakFalloffTimeKey  = u"PeakFalloffTime";
-constexpr auto ShowPeaksKey        = u"ShowPeaks";
-constexpr auto ShowLegendKey       = u"ShowLegend"; // Depreciated
-constexpr auto ShowTopLabelsKey    = u"ShowTopLabels";
-constexpr auto ShowBottomLabelsKey = u"ShowBottomLabels";
-constexpr auto ShowLeftLabelsKey   = u"ShowLeftLabels";
-constexpr auto ShowRightLabelsKey  = u"ShowRightLabels";
-constexpr auto UpdateFpsKey        = u"UpdateFps";
-constexpr auto ChannelSpacingKey   = u"ChannelSpacing";
-constexpr auto BarSizeKey          = u"BarSize";
-constexpr auto BarSpacingKey       = u"BarSpacing";
-constexpr auto BarSectionsKey      = u"BarSections";
-constexpr auto SectionSpacingKey   = u"SectionSpacing";
-constexpr auto MeterColoursKey     = u"Colours";
+constexpr auto PeakHoldTimeKey          = u"PeakHoldTime";
+constexpr auto PeakHoldTimeMsKey        = u"PeakHoldTimeMs";
+constexpr auto FalloffTimeKey           = u"FalloffTime";
+constexpr auto PeakFalloffTimeKey       = u"PeakFalloffTime";
+constexpr auto ShowPeaksKey             = u"ShowPeaks";
+constexpr auto ShowLegendKey            = u"ShowLegend"; // Depreciated
+constexpr auto ShowTopLabelsKey         = u"ShowTopLabels";
+constexpr auto ShowBottomLabelsKey      = u"ShowBottomLabels";
+constexpr auto ShowLeftLabelsKey        = u"ShowLeftLabels";
+constexpr auto ShowRightLabelsKey       = u"ShowRightLabels";
+constexpr auto RightAlignScaleLabelsKey = u"RightAlignScaleLabels";
+constexpr auto UpdateFpsKey             = u"UpdateFps";
+constexpr auto ChannelSpacingKey        = u"ChannelSpacing";
+constexpr auto BarSizeKey               = u"BarSize";
+constexpr auto BarSpacingKey            = u"BarSpacing";
+constexpr auto BarSectionsKey           = u"BarSections";
+constexpr auto SectionSpacingKey        = u"SectionSpacing";
+constexpr auto MeterColoursKey          = u"Colours";
 
 namespace {
 float dbScale(float db)
@@ -177,6 +178,7 @@ public:
     bool m_showBottomLabels{false};
     bool m_showLeftLabels{false};
     bool m_showRightLabels{false};
+    bool m_rightAlignScaleLabels{false};
     float m_barSize{0};
     float m_barSpacing{1};
     int m_barSections{1};
@@ -637,8 +639,10 @@ void VuMeterWidgetPrivate::drawLegend(QPainter& painter)
                 painter.drawText(static_cast<int>(m_meterX) - textWidth - (LegendPadding / 2), textY, text);
             }
             if(m_showRightLabels) {
-                painter.drawText(static_cast<int>(m_meterX) + static_cast<int>(m_meterWidth) + (LegendPadding / 2),
-                                 textY, text);
+                const int textX = m_rightAlignScaleLabels
+                                    ? m_self->width() - textWidth - (LegendPadding / 2)
+                                    : static_cast<int>(m_meterX + m_meterWidth) + (LegendPadding / 2);
+                painter.drawText(textX, textY, text);
             }
 
             painter.save();
@@ -1006,6 +1010,8 @@ VuMeterWidget::ConfigData VuMeterWidget::defaultConfig() const
         config.showBottomLabels = true;
         config.showLeftLabels   = true;
     }
+    config.rightAlignScaleLabels
+        = m_settings->fileValue(settingsKey(RightAlignScaleLabelsKey), config.rightAlignScaleLabels).toBool();
 
     config.updateFps      = m_settings->fileValue(settingsKey(UpdateFpsKey), config.updateFps).toInt();
     config.channelSpacing = m_settings->fileValue(settingsKey(ChannelSpacingKey), config.channelSpacing).toInt();
@@ -1050,6 +1056,7 @@ void VuMeterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(settingsKey(ShowBottomLabelsKey), validated.showBottomLabels);
     m_settings->fileSet(settingsKey(ShowLeftLabelsKey), validated.showLeftLabels);
     m_settings->fileSet(settingsKey(ShowRightLabelsKey), validated.showRightLabels);
+    m_settings->fileSet(settingsKey(RightAlignScaleLabelsKey), validated.rightAlignScaleLabels);
     m_settings->fileRemove(settingsKey(ShowLegendKey));
     m_settings->fileSet(settingsKey(UpdateFpsKey), validated.updateFps);
     m_settings->fileSet(settingsKey(ChannelSpacingKey), validated.channelSpacing);
@@ -1072,6 +1079,7 @@ void VuMeterWidget::clearSavedDefaults() const
     m_settings->fileRemove(settingsKey(ShowBottomLabelsKey));
     m_settings->fileRemove(settingsKey(ShowLeftLabelsKey));
     m_settings->fileRemove(settingsKey(ShowRightLabelsKey));
+    m_settings->fileRemove(settingsKey(RightAlignScaleLabelsKey));
     m_settings->fileRemove(settingsKey(UpdateFpsKey));
     m_settings->fileRemove(settingsKey(ChannelSpacingKey));
     m_settings->fileRemove(settingsKey(BarSizeKey));
@@ -1102,14 +1110,15 @@ void VuMeterWidget::applyConfig(const ConfigData& config)
 
     m_config = validated;
 
-    p->m_peakHoldTimeMs   = m_config.peakHoldTimeMs;
-    p->m_falloffPerMs     = static_cast<float>(m_config.falloffTime) / DbRange / 1000.0F;
-    p->m_peakFalloffPerMs = static_cast<float>(m_config.peakFalloffTime) / DbRange / 1000.0F;
-    p->m_showPeaks        = m_config.showPeaks;
-    p->m_showTopLabels    = m_config.showTopLabels;
-    p->m_showBottomLabels = m_config.showBottomLabels;
-    p->m_showLeftLabels   = m_config.showLeftLabels;
-    p->m_showRightLabels  = m_config.showRightLabels;
+    p->m_peakHoldTimeMs        = m_config.peakHoldTimeMs;
+    p->m_falloffPerMs          = static_cast<float>(m_config.falloffTime) / DbRange / 1000.0F;
+    p->m_peakFalloffPerMs      = static_cast<float>(m_config.peakFalloffTime) / DbRange / 1000.0F;
+    p->m_showPeaks             = m_config.showPeaks;
+    p->m_showTopLabels         = m_config.showTopLabels;
+    p->m_showBottomLabels      = m_config.showBottomLabels;
+    p->m_showLeftLabels        = m_config.showLeftLabels;
+    p->m_showRightLabels       = m_config.showRightLabels;
+    p->m_rightAlignScaleLabels = m_config.rightAlignScaleLabels;
 
     p->setUpdateFps(m_config.updateFps);
 
@@ -1217,6 +1226,8 @@ void VuMeterWidget::contextMenuEvent(QContextMenuEvent* event)
     addLabelAction(tr("Bottom"), &ConfigData::showBottomLabels);
     addLabelAction(tr("Left"), &ConfigData::showLeftLabels);
     addLabelAction(tr("Right"), &ConfigData::showRightLabels);
+    labelsMenu->addSeparator();
+    addLabelAction(tr("Right-align scale labels"), &ConfigData::rightAlignScaleLabels);
 
     auto* orientationGroup = new QActionGroup(menu);
     auto* automatic        = new QAction(tr("Automatic"), orientationGroup);
@@ -1282,6 +1293,9 @@ VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& lay
     }
     if(layout.contains("ShowPeaks"_L1)) {
         config.showPeaks = layout.value("ShowPeaks"_L1).toBool();
+    }
+    if(layout.contains("RightAlignScaleLabels"_L1)) {
+        config.rightAlignScaleLabels = layout.value("RightAlignScaleLabels"_L1).toBool();
     }
     const bool hasLabelSettings = layout.contains("ShowTopLabels"_L1) || layout.contains("ShowBottomLabels"_L1)
                                || layout.contains("ShowLeftLabels"_L1) || layout.contains("ShowRightLabels"_L1);
@@ -1374,14 +1388,15 @@ VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& lay
 
 void VuMeterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
 {
-    layout["PeakHoldTimeMs"_L1]   = config.peakHoldTimeMs;
-    layout["FalloffTime"_L1]      = config.falloffTime;
-    layout["PeakFalloffTime"_L1]  = config.peakFalloffTime;
-    layout["ShowPeaks"_L1]        = config.showPeaks;
-    layout["ShowTopLabels"_L1]    = config.showTopLabels;
-    layout["ShowBottomLabels"_L1] = config.showBottomLabels;
-    layout["ShowLeftLabels"_L1]   = config.showLeftLabels;
-    layout["ShowRightLabels"_L1]  = config.showRightLabels;
+    layout["PeakHoldTimeMs"_L1]        = config.peakHoldTimeMs;
+    layout["FalloffTime"_L1]           = config.falloffTime;
+    layout["PeakFalloffTime"_L1]       = config.peakFalloffTime;
+    layout["ShowPeaks"_L1]             = config.showPeaks;
+    layout["ShowTopLabels"_L1]         = config.showTopLabels;
+    layout["ShowBottomLabels"_L1]      = config.showBottomLabels;
+    layout["ShowLeftLabels"_L1]        = config.showLeftLabels;
+    layout["ShowRightLabels"_L1]       = config.showRightLabels;
+    layout["RightAlignScaleLabels"_L1] = config.rightAlignScaleLabels;
     layout.remove("ShowLegend"_L1);
     layout["UpdateFps"_L1]      = config.updateFps;
     layout["ChannelSpacing"_L1] = config.channelSpacing;

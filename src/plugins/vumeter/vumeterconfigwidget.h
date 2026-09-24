@@ -55,6 +55,7 @@ private:
     QCheckBox* m_showBottomLabels;
     QCheckBox* m_showLeftLabels;
     QCheckBox* m_showRightLabels;
+    QCheckBox* m_rightAlignScaleLabels;
     QGroupBox* m_peaksGroup;
 
     QSpinBox* m_channelSpacing;
