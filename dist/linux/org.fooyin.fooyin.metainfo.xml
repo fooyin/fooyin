@@ -62,6 +62,16 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="0.13.1" date="2026-09-24">
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.13.1</url>
+            <description>
+                <p>Adds per-widget preferred track options for Artwork, Selection Info, and WaveBar widgets.</p>
+                <p>DSP widgets can now add missing DSPs, the Equaliser is always available from the View menu,
+                    and playlist resizing with blurred backgrounds is faster.</p>
+                <p>This release also fixes file removal in Flatpak, global shortcuts in X11, command-line handling,
+                    artwork updates, and interface consistency.</p>
+            </description>
+        </release>
         <release version="0.13.0" date="2026-09-21">
             <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.13.0</url>
             <description>

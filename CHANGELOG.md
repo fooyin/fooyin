@@ -1,12 +1,12 @@
 # Changelog
 
-## Unreleased
+## [0.13.1](https://github.com/fooyin/fooyin/releases/tag/v0.13.1) (2026-09-24)
 
 ### Improvements
 
 - **Files:** Use the Trash portal for file removal in Flatpak, with permanent deletion fallback ([#1660](https://github.com/fooyin/fooyin/issues/1660))
 - **Interface & Widgets**
-  - Add support for configuring the application window icon
+  - Add support for configuring the application window/tray icon
   - Add per-widget preferred track options to Artwork, Selection Info, and WaveBar ([#1668](https://github.com/fooyin/fooyin/issues/1668))
   - Improve playlist resize performance with blurred backgrounds
 - **Playback & DSP**
