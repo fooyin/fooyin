@@ -647,7 +647,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="483"/>
         <source>Checks whether two numeric values are equal</source>
-        <translation>Tarkistaa ovatko kaksi numero arvoa yhtenäiset</translation>
+        <translation>Tarkistaa ovatko kaksi numero-arvoa yhtenäiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="217"/>
@@ -1272,7 +1272,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="487"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with &quot;, &quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Etsii raaka-muodossa olevan tagin nimellä. Useammat arvot yhdistetään pilkulla &quot;,&quot;.</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="284"/>
@@ -1298,17 +1298,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="471"/>
         <source>Returns the first true value from a list, or else when none match</source>
-        <translation type="unfinished"></translation>
+        <translation>Palauttaa ensimmäisen tosi-arvon listalta, tai-arvon jos ei löydy täsmävää</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="477"/>
         <source>Compares numeric values</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertaa numeerisia arvoja</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="480"/>
         <source>Checks whether text is longer than a limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarkistaa onko teksti pidempi kuin sallittu määrä</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="488"/>
@@ -1319,12 +1319,12 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="508"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="510"/>
         <source>Lookup</source>
-        <translation type="unfinished"></translation>
+        <translation>Hae</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="491"/>
         <source>Looks up a raw tag field by name and returns the zero-based indexed value.</source>
-        <translation type="unfinished"></translation>
+        <translation>Etsii tagin raaka muodossa, nimen perusteella ja palauttaa nolla pohjaisen indeksi arvon.</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="495"/>

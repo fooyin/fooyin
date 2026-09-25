@@ -4008,7 +4008,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="41"/>
         <source>Show current track when playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать текущий трек, когда воспроизведение остановлено</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="42"/>
@@ -6424,31 +6424,31 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="288"/>
         <source>Could not move &quot;%1&quot; to the trash. Delete it permanently?</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось переместить «%1» в корзину. Удалить безвозвратно?</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="290"/>
         <source>Could not move %Ln file(s) to the trash. Delete them permanently?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Не удалось переместить %Ln файл в корзину. Удалить его безвозвратно?</numerusform>
+            <numerusform>Не удалось переместить %Ln файла в корзину. Удалить их безвозвратно?</numerusform>
+            <numerusform>Не удалось переместить %Ln файлов в корзину. Удалить их безвозвратно?</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="292"/>
         <source>Move to Trash Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось переместить в корзину</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="295"/>
         <source>Permanent deletion cannot be undone.</source>
-        <translation type="unfinished"></translation>
+        <translation>Безвозвратное удаление нельзя отменить.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="296"/>
         <source>Delete Permanently</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить безвозвратно</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="329"/>
@@ -8173,7 +8173,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="133"/>
         <source>Browse…</source>
-        <translation type="unfinished">Обзор…</translation>
+        <translation>Обзор…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="134"/>
@@ -8238,22 +8238,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="167"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="168"/>
         <source>Old</source>
-        <translation type="unfinished"></translation>
+        <translation>Старый</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="169"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>Пользовательский</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="171"/>
         <source>Application icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Значок приложения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="181"/>
@@ -8278,12 +8278,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="241"/>
         <source>Choose application icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбор значка приложения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="242"/>
         <source>Images (*.png *.jpg *.jpeg *.svg *.ico);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображения (*.png *.jpg *.jpeg *.svg *.ico);;Все файлы (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="260"/>
@@ -12812,7 +12812,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="60"/>
         <source>&amp;Random</source>
-        <translation>С&amp;учайный</translation>
+        <translation>Сл&amp;учайный</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="61"/>
@@ -13452,7 +13452,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="120"/>
         <source>Show current track when playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать текущий трек, когда воспроизведение остановлено</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="121"/>
@@ -14760,7 +14760,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="299"/>
         <source>Details</source>
-        <translation type="unfinished">Подробности</translation>
+        <translation>Подробности</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="354"/>
@@ -18895,7 +18895,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="61"/>
         <source>Show current track when playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать текущий трек, когда воспроизведение остановлено</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="67"/>
@@ -19136,7 +19136,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="90"/>
         <source>Script Editor</source>
-        <translation type="unfinished">Редактор скриптов</translation>
+        <translation>Редактор скриптов</translation>
     </message>
 </context>
 <context>

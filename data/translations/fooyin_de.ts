@@ -405,17 +405,17 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="154"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="156"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabestatistik</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <source>Love flag: 1 when loved, empty otherwise</source>
-        <translation type="unfinished"></translation>
+        <translation>„Geliebt“-Markierung: 1 wenn geliebt, ansonsten leer</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Interactive heart editor for the Love flag</source>
-        <translation type="unfinished"></translation>
+        <translation>Interaktiver Herz-Editor für die „Geliebt“-Markierung</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
@@ -577,52 +577,52 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="283"/>
         <source>Returns true when x is greater than y</source>
-        <translation type="unfinished"></translation>
+        <translation>Gibt „wahr“ zurück, wenn x größer als y ist</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="318"/>
         <source>Finds the first substring position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Findet die erste Position des Textteils (beginnend bei 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="321"/>
         <source>Finds the first substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Findet die erste Position des Textteils unabhängig von Groß- und Kleinschreibung (beginnend bei 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="324"/>
         <source>Finds the last substring position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Findet die letzte Position des Textteils (beginnend bei 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="327"/>
         <source>Finds the last substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Findet die letzte Position des Textteils unabhängig von Groß- und Kleinschreibung (beginnend bei 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="330"/>
         <source>Returns one split segment (1-based index)</source>
-        <translation>Liefert ein Teilsegment (1-basierter Index)</translation>
+        <translation>Gibt ein Teilsegment zurück (beginnend bei 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="340"/>
         <source>Returns the first shortest string</source>
-        <translation type="unfinished"></translation>
+        <translation>Gibt die erste kürzeste Zeichenkette zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="343"/>
         <source>Finds the first character position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Findet die erste Position des Schriftzeichens (beginnend bei 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="346"/>
         <source>Finds the last character position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Findet die letzte Position des Schriftzeichens (beginnend bei 1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="355"/>
         <source>Returns true when a is longer than b</source>
-        <translation type="unfinished"></translation>
+        <translation>Gibt „wahr“ zurück, wenn a länger als b ist</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="357"/>
@@ -632,7 +632,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="412"/>
         <source>Builds a clickable link that launches an application</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellt einen klickbaren Link, der eine Anwendung startet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="418"/>
@@ -642,7 +642,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="474"/>
         <source>Returns the value at the one-based index</source>
-        <translation type="unfinished"></translation>
+        <translation>Gibt den Wert am Index (beginnend bei 1) zurück</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="483"/>
@@ -662,7 +662,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="96"/>
         <source>Track artists not present in album artists</source>
-        <translation type="unfinished"></translation>
+        <translation>Titelkünstler nicht in Albumkünstler vorhanden</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="143"/>
@@ -725,7 +725,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="231"/>
         <source>Input decoder backend used for the current playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Für den aktuell wiedergegebenen Titel verwendetes Eingangsdecoder-Backend</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="233"/>
@@ -1811,7 +1811,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="300"/>
         <source>View full size</source>
-        <translation type="unfinished">Vollbild anzeigen</translation>
+        <translation>In voller Größe anzeigen</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="301"/>
@@ -1923,7 +1923,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="100"/>
         <source>Use front cover before placeholder</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Vorderseite des Albumcovers vor Verwendung des Platzhalters benutzen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="114"/>
@@ -1963,7 +1963,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="134"/>
         <source>Use the track&apos;s front cover when artist artwork is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende die Vorderseite des Albumcovers, wenn das Künstlerartwork nicht verfügbar ist</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="138"/>
@@ -2576,12 +2576,12 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="72"/>
         <source>Auto lookup metadata</source>
-        <translation>Metadaten automatisch nachschlagen</translation>
+        <translation>Schlage Metadaten automatisch nach</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="73"/>
         <source>Lookup metadata…</source>
-        <translation>Metadaten nachschlagen…</translation>
+        <translation>Schlage Metadaten nach…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/openaudiocddialog.cpp" line="74"/>
@@ -2807,7 +2807,7 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="174"/>
         <source>Lookup metadata…</source>
-        <translation>Metadaten nachschlagen…</translation>
+        <translation>Schlage Metadaten nach…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="175"/>
@@ -2994,52 +2994,52 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="66"/>
         <source>Focused widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Fokussiertes Widget</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="67"/>
         <source>Use the command as if invoked from the focused widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende den Befehl, als wäre er von dem fokussiertem Widget aus ausgeführt worden</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="68"/>
         <source>Now playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuell spielender Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="69"/>
         <source>Use the currently playing track for selection-based commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende den aktuell spielenden Titel für Auswahlbasierte Befehle</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="70"/>
         <source>Current playlist</source>
-        <translation type="unfinished">Aktuelle Wiedergabeliste</translation>
+        <translation>Aktuelle Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="71"/>
         <source>Use all tracks and the command context of the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende alle Titel und den Befehlskontext der aktuellen Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="72"/>
         <source>Current playlist selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuelle Wiedergabelisten-Auswahl</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="73"/>
         <source>Use the selected tracks and command context of the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende die ausgewählten Titel und den Befehlskontext der aktuellen Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="74"/>
         <source>Active selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktive Auswahl</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="75"/>
         <source>Use the most recently active track selection, even after focus moves elsewhere.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende die zuletzt aktive Titelauswahl, selbst wenn der Fokus seitdem gewechselt hat.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="86"/>
@@ -3069,7 +3069,7 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="105"/>
         <source>Target</source>
-        <translation type="unfinished"></translation>
+        <translation>Ziel</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="110"/>
@@ -3920,7 +3920,7 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="535"/>
         <source>View full size</source>
-        <translation>Vollbild anzeigen</translation>
+        <translation>In voller Größe anzeigen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="548"/>
@@ -3993,7 +3993,7 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="41"/>
         <source>Show current track when playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige aktuellen Titel bei gestoppter Wiedergabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="42"/>
@@ -4058,47 +4058,47 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="102"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Klickverhalten</translation>
+        <translation>Klickverhalten</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="106"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Nichts</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="107"/>
         <source>View full size</source>
-        <translation type="unfinished">Vollbild anzeigen</translation>
+        <translation>In voller Größe anzeigen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="108"/>
         <source>Next available artwork type</source>
-        <translation type="unfinished"></translation>
+        <translation>Nächster verfügbarer Artwork-Typ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="109"/>
         <source>Show track</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel zeigen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="110"/>
         <source>Open containing folder</source>
-        <translation type="unfinished">Öffne beinhaltenden Ordner</translation>
+        <translation>Öffne beinhaltenden Ordner</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="111"/>
         <source>Open properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Eigenschaften öffnen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="117"/>
         <source>Double-click</source>
-        <translation type="unfinished">Doppelklick</translation>
+        <translation>Doppelklick</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="119"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Mittelklick</translation>
+        <translation>Mittelklick</translation>
     </message>
 </context>
 <context>
@@ -4493,7 +4493,7 @@ Paranoid: führt die gründlichsten Überprüfungen und zusätzliche Neuversuche
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="103"/>
         <source>Expand/collapse or play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Aus-/Einklappen oder jetzt spielen</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="106"/>
@@ -6377,7 +6377,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="235"/>
         <source>Delete currently playing file</source>
-        <translation type="unfinished"></translation>
+        <translation>Lösche aktuell wiedergegebene Datei</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="279"/>
@@ -6395,30 +6395,30 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="288"/>
         <source>Could not move &quot;%1&quot; to the trash. Delete it permanently?</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte „%1“ nicht in den Papierkorb verschieben. Stattdessen dauerhaft löschen?</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="290"/>
         <source>Could not move %Ln file(s) to the trash. Delete them permanently?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Konnte %Ln Datei nicht in den Papierkorb verschieben. Stattdessen dauerhaft löschen?</numerusform>
+            <numerusform>Konnte %Ln Dateien nicht in den Papierkorb verschieben. Stattdessen dauerhaft löschen?</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="292"/>
         <source>Move to Trash Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschieben in den Papierkorb fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="295"/>
         <source>Permanent deletion cannot be undone.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dauerhaftes Löschen kann nicht rückgängig gemacht werden.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="296"/>
         <source>Delete Permanently</source>
-        <translation type="unfinished"></translation>
+        <translation>Dauerhaft löschen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="329"/>
@@ -6701,7 +6701,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="189"/>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="193"/>
         <source>Play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Jetzt spielen</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="69"/>
@@ -6965,37 +6965,37 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="52"/>
         <source>Every library filter needs a name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Jeder Bibliotheksfilter benötigt einen Namen.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="57"/>
         <source>The expression for library filter &quot;%1&quot; is invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Ausdruck für den Bibliotheksfilter „%1“ ist ungültig.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="89"/>
         <source>Enabled</source>
-        <translation type="unfinished">Aktiviert</translation>
+        <translation>Aktiviert</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="91"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="93"/>
         <source>Query</source>
-        <translation type="unfinished">Abfrage</translation>
+        <translation>Abfrage</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="138"/>
         <source>Enter name</source>
-        <translation type="unfinished"></translation>
+        <translation>Namen eingeben</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="140"/>
         <source>Enter expression</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausdruck eingeben</translation>
     </message>
 </context>
 <context>
@@ -7004,12 +7004,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="172"/>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="173"/>
         <source>Filters</source>
-        <translation type="unfinished">Filter</translation>
+        <translation>Filter</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="173"/>
         <source>Library</source>
-        <translation type="unfinished">Bibliothek</translation>
+        <translation>Bibliothek</translation>
     </message>
 </context>
 <context>
@@ -7017,7 +7017,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/library/libraryfilterpage.cpp" line="77"/>
         <source>Script Editor</source>
-        <translation type="unfinished">Skript-Editor</translation>
+        <translation>Skript-Editor</translation>
     </message>
 </context>
 <context>
@@ -7025,32 +7025,32 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="50"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="76"/>
         <source>Saved Filter Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswahl gespeicherter Filter</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="165"/>
         <source>Rename &apos;All&apos; filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Benenne „Alle“-Filter um</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="168"/>
         <source>Rename &apos;All&apos; Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Benenne „Alle“-Filter um</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="168"/>
         <source>Name:</source>
-        <translation type="unfinished">Name:</translation>
+        <translation>Name:</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="177"/>
         <source>Manage library filters…</source>
-        <translation type="unfinished"></translation>
+        <translation>Bibliotheksfilter verwalten…</translation>
     </message>
 </context>
 <context>
@@ -7058,42 +7058,42 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="52"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="63"/>
         <source>Library filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Bibliotheksfilter</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="86"/>
         <source>Saved Filter Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>„Gespeicherte Filter“-Reiter</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="465"/>
         <source>Rename tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiter umbenennen</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="472"/>
         <source>Tabs position</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiterposition</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="484"/>
         <source>Top</source>
-        <translation type="unfinished">Oben</translation>
+        <translation>Oben</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="485"/>
         <source>Bottom</source>
-        <translation type="unfinished">Unten</translation>
+        <translation>Unten</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="489"/>
         <source>Manage library filters…</source>
-        <translation type="unfinished"></translation>
+        <translation>Bibliotheksfilter verwalten…</translation>
     </message>
 </context>
 <context>
@@ -7368,179 +7368,179 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/gui/guiapplication.cpp" line="414"/>
         <location filename="../../src/gui/guiapplication.cpp" line="417"/>
         <source>New Layout</source>
-        <translation type="unfinished">Neues Layout</translation>
+        <translation>Neues Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="417"/>
         <source>Layout Name</source>
-        <translation type="unfinished">Name des Layouts</translation>
+        <translation>Name des Layouts</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="444"/>
         <source>Searching for artwork…</source>
-        <translation type="unfinished">Suche nach Artwork…</translation>
+        <translation>Suche nach Artwork…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="458"/>
         <source>Artwork search finished</source>
-        <translation type="unfinished">Artworksuche beendet</translation>
+        <translation>Artworksuche beendet</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="512"/>
         <source>Failed to open artwork file</source>
-        <translation type="unfinished">Datei mit Artwork kann nicht geöffnet werden</translation>
+        <translation>Konnte Artwork-Datei nicht öffnen</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="518"/>
         <source>Artwork file is empty</source>
-        <translation type="unfinished">Datei mit Artwork ist leer</translation>
+        <translation>Artwork-Datei ist leer</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="921"/>
         <source>Plugins not found</source>
-        <translation type="unfinished">Plugins nicht gefunden</translation>
+        <translation>Plugins nicht gefunden</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="922"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation type="unfinished">Einige Plugins sind für die volle Funktionalität erforderlich.</translation>
+        <translation>Einige Plugins sind für die volle Funktionalität erforderlich.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="923"/>
         <source>Plugin search locations:
 
 </source>
-        <translation type="unfinished">Plugin Suchorte:
+        <translation>Plugin Suchorte:
 
 </translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="926"/>
         <source>Quit</source>
-        <translation type="unfinished">Beenden</translation>
+        <translation>Beenden</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1052"/>
         <source>Show or hide main window</source>
-        <translation type="unfinished"></translation>
+        <translation>Hauptfenster zeigen oder verstecken</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1054"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1200"/>
         <source>View</source>
-        <translation type="unfinished">Ansicht</translation>
+        <translation>Ansicht</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1057"/>
         <source>Volume</source>
-        <translation type="unfinished">Lautstärke</translation>
+        <translation>Lautstärke</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1059"/>
         <source>Volume up</source>
-        <translation type="unfinished">Lautstärke erhöhen</translation>
+        <translation>Lauter</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1066"/>
         <source>Volume down</source>
-        <translation type="unfinished">Lautstärke verringern</translation>
+        <translation>Leiser</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1073"/>
         <source>Mute</source>
-        <translation type="unfinished">Stummschalten</translation>
+        <translation>Stummschalten</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1083"/>
         <source>Clear Current Playlist</source>
-        <translation type="unfinished">Leere aktuelle Wiedergabeliste</translation>
+        <translation>Leere aktuelle Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1084"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation type="unfinished">Entferne alle Titel aus der aktuellen Wiedergabeliste</translation>
+        <translation>Entferne alle Titel aus der aktuellen Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1087"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1114"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1187"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1110"/>
         <source>Lock playlist</source>
-        <translation type="unfinished">Sperre Wiedergabeliste</translation>
+        <translation>Sperre Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1112"/>
         <source>Prevent changes to the contents of the current playlist</source>
-        <translation type="unfinished">Verhindere Änderungen am Inhalt der aktuellen Wiedergabeliste</translation>
+        <translation>Verhindere Änderungen am Inhalt der aktuellen Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1115"/>
         <source>Lock Current Playlist</source>
-        <translation type="unfinished">Sperre aktuelle Wiedergabeliste</translation>
+        <translation>Sperre aktuelle Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1136"/>
         <source>Playback</source>
-        <translation type="unfinished">Wiedergabe</translation>
+        <translation>Wiedergabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1136"/>
         <source>Seek</source>
-        <translation type="unfinished">Spulen</translation>
+        <translation>Spulen</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1138"/>
         <source>Seek forward (small step)</source>
-        <translation type="unfinished">Spule vorwärts (kleiner Schritt)</translation>
+        <translation>Spule vorwärts (kleiner Schritt)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1145"/>
         <source>Seek forward (large step)</source>
-        <translation type="unfinished">Spule vorwärts (großer Schritt)</translation>
+        <translation>Spule vorwärts (großer Schritt)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1152"/>
         <source>Seek backward (small step)</source>
-        <translation type="unfinished">Spule rückwärts (kleiner Schritt)</translation>
+        <translation>Spule zurück (kleiner Schritt)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1160"/>
         <source>Seek backward (large step)</source>
-        <translation type="unfinished">Spule rückwärts (großer Schritt)</translation>
+        <translation>Spule zurück (großer Schritt)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1185"/>
         <source>Remove Playlist</source>
-        <translation type="unfinished">Wiedergabeliste entfernen</translation>
+        <translation>Entferne Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1188"/>
         <source>Remove Current Playlist</source>
-        <translation type="unfinished">Entferne aktuelle Wiedergabeliste</translation>
+        <translation>Entferne aktuelle Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1196"/>
         <source>Toggle Menubar</source>
-        <translation type="unfinished">Menüleiste umschalten</translation>
+        <translation>Menüleiste umschalten</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1207"/>
         <source>Look up metadata by artist and album…</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlage Metadaten anhand von Künstler und Album nach…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1208"/>
         <source>Look up metadata using the selected tracks&apos; artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlage Metadaten unter Verwendung von Künstler und Album des ausgewählten Titels nach</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1213"/>
         <source>Look up metadata by artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlage Metadaten anhand von Künstler und Album nach</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1214"/>
@@ -7549,82 +7549,82 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/gui/guiapplication.cpp" line="1233"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1302"/>
         <source>Tagging</source>
-        <translation type="unfinished">Tagging</translation>
+        <translation>Tagging</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1216"/>
         <source>Look up metadata by disc TOC…</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlage Metadaten anhand des CD-Inhaltsverzeichnisses nach…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1217"/>
         <source>Look up metadata using the selected tracks&apos; disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlage Metadaten unter Verwendung des Inhaltsverzeichnisses der CD des ausgewählten Titels nach</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1221"/>
         <source>Look up metadata by disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlage Metadaten anhand des CD-Inhaltsverzeichnisses nach</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1224"/>
         <source>Look up metadata by MusicBrainz ID…</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlage Metadaten anhand der MusicBrainz-ID nach…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1225"/>
         <source>Look up metadata using a MusicBrainz release identifier</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlage Metadaten unter Verwendung einer Veröffentlichungskennung von MusicBrainz nach</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1228"/>
         <source>Look up metadata by MusicBrainz ID</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlage Metadaten anhand der MusicBrainz-ID nach</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1261"/>
         <source>Reading tracks…</source>
-        <translation type="unfinished">Lese Titel…</translation>
+        <translation>Lese Titel…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1261"/>
         <source>Abort</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1289"/>
         <source>Current file</source>
-        <translation type="unfinished">Aktuelle Datei</translation>
+        <translation>Aktuelle Datei</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1304"/>
         <source>Reload tags from files</source>
-        <translation type="unfinished">Lade Tags erneut aus Dateien</translation>
+        <translation>Lade Tags aus Dateien neu</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1305"/>
         <source>Reload tags from modified files</source>
-        <translation type="unfinished">Lade Tags neu aus veränderten Dateien</translation>
+        <translation>Lade Tags aus veränderten Dateien neu</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1307"/>
         <source>Replace tags in selected tracks with tags from the files</source>
-        <translation type="unfinished">Ersetze Tags in ausgewählten Titeln durch Tags aus den Dateien</translation>
+        <translation>Ersetze Tags der ausgewählten Titel durch Tags aus den Dateien</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1308"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
-        <translation type="unfinished">Ersetze Tags in ausgewählten Titeln durch Tags aus den Dateien, sofern bearbeitet</translation>
+        <translation>Ersetze Tags der ausgewählten Titel durch Tags aus den Dateien, sofern diese bearbeitet wurden</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1339"/>
         <source>View full size</source>
-        <translation type="unfinished">Vollbild anzeigen</translation>
+        <translation>In voller Größe anzeigen</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1340"/>
         <source>View the common artwork for the selected tracks at full size</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige das gemeinsame Artwork für die gewählten Titel in voller Größe</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1343"/>
@@ -7636,63 +7636,63 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/gui/guiapplication.cpp" line="1658"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1667"/>
         <source>Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1343"/>
         <source>Artwork</source>
-        <translation type="unfinished">Artwork</translation>
+        <translation>Artwork</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1396"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabestatistiken</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1411"/>
         <source>Toggle loved</source>
-        <translation type="unfinished"></translation>
+        <translation>Schalte „Geliebt“ um</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1411"/>
         <source>Toggle Loved for selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Schalte „Geliebt“ für die ausgewählten Titel um</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1413"/>
         <source>Love</source>
-        <translation type="unfinished"></translation>
+        <translation>Als „Geliebt“ markieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1413"/>
         <source>Love selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgewählte Titel als „Geliebt“ markieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1415"/>
         <source>Unlove</source>
-        <translation type="unfinished"></translation>
+        <translation>„Geliebt“-Markierung entfernen</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1415"/>
         <source>Unlove selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>„Geliebt“-Markierung von ausgewählten Titeln entfernen</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1431"/>
         <source>Choose destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle Ziel</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1457"/>
         <source>Converter Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverter-Ausgabe</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1554"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1562"/>
         <source>Convert using preset %1</source>
-        <translation type="unfinished">Mit Voreinstellung %1 konvertieren</translation>
+        <translation>Mit Voreinstellung %1 konvertieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1561"/>
@@ -7701,169 +7701,169 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
         <location filename="../../src/gui/guiapplication.cpp" line="1613"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1624"/>
         <source>Convert</source>
-        <translation type="unfinished">Konvertieren</translation>
+        <translation>Konvertieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1592"/>
         <source>Converter setup…</source>
-        <translation type="unfinished">Konverter-Einrichtung…</translation>
+        <translation>Konverter-Einrichtung…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1601"/>
         <source>Using default settings</source>
-        <translation type="unfinished">Verwende Standardeinstellungen</translation>
+        <translation>Verwende Standardeinstellungen</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1605"/>
         <source>Convert using default settings</source>
-        <translation type="unfinished">Mit Standardeinstellungen konvertieren</translation>
+        <translation>Mit Standardeinstellungen konvertieren</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1610"/>
         <source>Repeat last conversion</source>
-        <translation type="unfinished">Letzte Konvertierung wiederholen</translation>
+        <translation>Letzte Konvertierung wiederholen</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1641"/>
         <source>Custom conversion…</source>
-        <translation type="unfinished">Benutzerdefinierte Konvertierung…</translation>
+        <translation>Benutzerdefinierte Konvertierung…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1653"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1658"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1667"/>
         <source>Utilities</source>
-        <translation type="unfinished">Werkzeuge</translation>
+        <translation>Werkzeuge</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1655"/>
         <source>Verify integrity</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifziere Integrität</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1656"/>
         <source>Decode the selected tracks and report file or checksum errors</source>
-        <translation type="unfinished"></translation>
+        <translation>Dekodiere die ausgewählten Titel und melde Datei- oder Prüfsummenfehler</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1663"/>
         <source>Verify album with AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifiziere Album mit AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1664"/>
         <source>Verify all tracks from one complete lossless CD rip against AccurateRip</source>
-        <translation type="unfinished"></translation>
+        <translation>Vergleiche alle Titel eines vollständigen verlustfreien CD-Rips mit AccurateRip</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1970"/>
         <source>Reload Required</source>
-        <translation type="unfinished">Neuladen erforderlich</translation>
+        <translation>Neuladen erforderlich</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1972"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
-        <translation type="unfinished">Aufgrund einer Datenbankänderung sollten Titel vom Datenträger neugeladen werden, um die gespeicherten Metadaten zu aktualisieren.</translation>
+        <translation>Aufgrund einer Datenbankänderung sollten Titel vom Datenträger neu geladen werden, um die gespeicherten Metadaten zu aktualisieren.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1976"/>
         <source>Reload Now</source>
-        <translation type="unfinished">Jetzt neu laden</translation>
+        <translation>Jetzt neu laden</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1979"/>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2124"/>
         <source>Playback Error</source>
-        <translation type="unfinished">Wiedergabefehler</translation>
+        <translation>Wiedergabefehler</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2149"/>
         <source>Continue</source>
-        <translation type="unfinished">Fortsetzen</translation>
+        <translation>Fortsetzen</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2151"/>
         <source>Stop</source>
-        <translation type="unfinished">Stopp</translation>
+        <translation>Stopp</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2155"/>
         <source>Always continue playing if a track is unavailable</source>
-        <translation type="unfinished">Immer weiterspielen, wenn Titel nicht verfügbar ist</translation>
+        <translation>Immer weiter abspielen, wenn ein Titel nicht verfügbar ist</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2177"/>
         <source>Track Not Found</source>
-        <translation type="unfinished">Titel nicht gefunden</translation>
+        <translation>Titel nicht gefunden</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2182"/>
         <source>No Decoder Available</source>
-        <translation type="unfinished">Kein Decoder verfügbar</translation>
+        <translation>Kein Decoder verfügbar</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2262"/>
         <source>All Supported Media Files (%1)</source>
-        <translation type="unfinished">Alle unterstützten Mediendateien (%1)</translation>
+        <translation>Alle unterstützten Mediendateien (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2263"/>
         <source>Audio Files (%1)</source>
-        <translation type="unfinished">Audiodateien (%1)</translation>
+        <translation>Audiodateien (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2274"/>
         <source>Add Files</source>
-        <translation type="unfinished">Füge Dateien hinzu</translation>
+        <translation>Füge Dateien hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2288"/>
         <source>Add Folders</source>
-        <translation type="unfinished">Füge Ordner hinzu</translation>
+        <translation>Füge Ordner hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2300"/>
         <source>Add Stream URL</source>
-        <translation type="unfinished">Stream-URL hinzufügen</translation>
+        <translation>Füge Stream-URL hinzu</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2300"/>
         <source>Stream URL:</source>
-        <translation type="unfinished">Stream-URL:</translation>
+        <translation>Stream-URL:</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2302"/>
         <source>&amp;Add</source>
-        <translation type="unfinished">&amp;Hinzufügen</translation>
+        <translation>&amp;Hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2306"/>
         <source>Enter a valid http:// or https:// URL.</source>
-        <translation type="unfinished">Gib eine gültige http:// oder https:// URL ein.</translation>
+        <translation>Gib eine gültige http:// oder https:// URL ein.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2404"/>
         <source>All Supported Playlists (%1)</source>
-        <translation type="unfinished">Alle unterstützten Wiedergabelisten (%1)</translation>
+        <translation>Alle unterstützten Wiedergabelisten (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2414"/>
         <source>Load Playlist</source>
-        <translation type="unfinished">Lade Wiedergabeliste</translation>
+        <translation>Lade Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2451"/>
         <source>Save Playlist</source>
-        <translation type="unfinished">Speichere Wiedergabeliste</translation>
+        <translation>Speichere Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="570"/>
         <source>Display</source>
-        <translation type="unfinished">Anzeige</translation>
+        <translation>Anzeige</translation>
     </message>
 </context>
 <context>
@@ -8143,7 +8143,7 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="133"/>
         <source>Browse…</source>
-        <translation type="unfinished">Durchsuchen…</translation>
+        <translation>Durchsuchen…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="134"/>
@@ -8208,22 +8208,22 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="167"/>
         <source>New</source>
-        <translation type="unfinished">Neu</translation>
+        <translation>Neu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="168"/>
         <source>Old</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="169"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerdefiniert</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="171"/>
         <source>Application icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Anwendungs-Symbol</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="181"/>
@@ -8248,12 +8248,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="241"/>
         <source>Choose application icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle ein Anwendungs-Symbol</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="242"/>
         <source>Images (*.png *.jpg *.jpeg *.svg *.ico);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilder (*.png *.jpg *.jpeg *.svg *.ico);;Alle Dateien (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="260"/>
@@ -8507,12 +8507,12 @@ Die Effekte hier beeinflussen die finale, zusammengeführte Ausgabe.</translatio
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="93"/>
         <source>Only show unrated stars on hovered rows</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Sterne für unbewertete Titel nur in Zeilen, auf die gezeigt wird</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="95"/>
         <source>Only show unloved hearts on hovered rows</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige „Geliebt“-Herzen nur in Zeilen, auf die gezeigt wird</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="101"/>
@@ -9378,7 +9378,7 @@ Wenn der vorgegebene halbe Stern in der eingestellten Systemschrift nicht richti
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="157"/>
         <source>Watch individual track files for tag changes</source>
-        <translation>Individuelle Titeldateien auf Schlagwort-Änderungen überwachen</translation>
+        <translation>Individuelle Titeldateien auf Tag-Änderungen überwachen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="159"/>
@@ -11346,7 +11346,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
         <source>Tag</source>
-        <translation>Schlagwort</translation>
+        <translation>Tag</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatachangesdialog.cpp" line="79"/>
@@ -11588,7 +11588,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="470"/>
         <source>Use the original release date for the Date tag instead of this specific release&apos;s date.</source>
-        <translation>Verwende das ursprüngliche Veröffentlichungsdatum für das Datum-Schlagwort, anstatt das Veröffentlichungsdatum dieser Veröffentlichung.</translation>
+        <translation>Verwende das ursprüngliche Veröffentlichungsdatum für das „Datum“-Tag, anstatt das Veröffentlichungsdatum dieser Veröffentlichung.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="476"/>
@@ -11842,7 +11842,7 @@ Original entfernen: löscht die ursprüngliche Datei oder Metadaten nach dem Spe
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="218"/>
         <source>Networking</source>
-        <translation>Vernetzung</translation>
+        <translation>Netzwerk</translation>
     </message>
 </context>
 <context>
@@ -17400,7 +17400,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigmodel.cpp" line="91"/>
         <source>Tag</source>
-        <translation>Schlagwort</translation>
+        <translation>Tag</translation>
     </message>
 </context>
 <context>
@@ -17901,7 +17901,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="621"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="624"/>
         <source>Any tag</source>
-        <translation>Irgendein Schlagwort</translation>
+        <translation>Irgendein Tag</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="148"/>
@@ -17951,7 +17951,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="186"/>
         <source>Tag</source>
-        <translation>Schlagwort</translation>
+        <translation>Tag</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="187"/>

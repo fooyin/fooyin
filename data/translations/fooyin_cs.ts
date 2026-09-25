@@ -1815,7 +1815,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="300"/>
         <source>View full size</source>
-        <translation>Zobrazit skutečnou velikost</translation>
+        <translation>Zobrazit ve skutečné velikosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="301"/>
@@ -3935,7 +3935,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="535"/>
         <source>View full size</source>
-        <translation>Zobrazit skutečnou velikost</translation>
+        <translation>Zobrazit ve skutečné velikosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="548"/>
@@ -4008,7 +4008,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="41"/>
         <source>Show current track when playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Po zastavení přehrávání zobrazit aktuální skladbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="42"/>
@@ -4083,7 +4083,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="107"/>
         <source>View full size</source>
-        <translation>Zobrazit skutečnou velikost</translation>
+        <translation>Zobrazit ve skutečné velikosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="108"/>
@@ -6424,31 +6424,31 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="288"/>
         <source>Could not move &quot;%1&quot; to the trash. Delete it permanently?</source>
-        <translation type="unfinished"></translation>
+        <translation>„%1“ se nepodařilo přesunout do koše. Trvale smazat?</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="290"/>
         <source>Could not move %Ln file(s) to the trash. Delete them permanently?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln soubor se nepodařilo přesunout do koše. Smazat trvale?</numerusform>
+            <numerusform>%Ln soubory se nepodařilo přesunout do koše. Smazat trvale?</numerusform>
+            <numerusform>%Ln souborů se nepodařilo přesunout do koše. Smazat trvale?</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="292"/>
         <source>Move to Trash Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Přesun do koše se nezdařil</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="295"/>
         <source>Permanent deletion cannot be undone.</source>
-        <translation type="unfinished"></translation>
+        <translation>Trvalé smazání nelze vrátit zpět.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="296"/>
         <source>Delete Permanently</source>
-        <translation type="unfinished"></translation>
+        <translation>Trvale smazat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="329"/>
@@ -7649,7 +7649,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1339"/>
         <source>View full size</source>
-        <translation>Zobrazit skutečnou velikost</translation>
+        <translation>Zobrazit ve skutečné velikosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1340"/>
@@ -8173,7 +8173,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="133"/>
         <source>Browse…</source>
-        <translation type="unfinished">Procházet…</translation>
+        <translation>Procházet…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="134"/>
@@ -8238,22 +8238,22 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="167"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Nový</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="168"/>
         <source>Old</source>
-        <translation type="unfinished"></translation>
+        <translation>Starý</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="169"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>Vlastní</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="171"/>
         <source>Application icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Ikona aplikace</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="181"/>
@@ -8278,12 +8278,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="241"/>
         <source>Choose application icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat ikonu aplikace</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="242"/>
         <source>Images (*.png *.jpg *.jpeg *.svg *.ico);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Obrázky (*.png *.jpg *.jpeg *.svg *.ico);;Všechny soubory (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="260"/>
@@ -13452,7 +13452,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="120"/>
         <source>Show current track when playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Po zastavení přehrávání zobrazit aktuální skladbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="121"/>
@@ -14760,7 +14760,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="299"/>
         <source>Details</source>
-        <translation type="unfinished">Podrobnosti</translation>
+        <translation>Podrobnosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="354"/>
@@ -18895,7 +18895,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="61"/>
         <source>Show current track when playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Po zastavení přehrávání zobrazit aktuální skladbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="67"/>
@@ -19136,7 +19136,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="90"/>
         <source>Script Editor</source>
-        <translation type="unfinished">Editor skriptů</translation>
+        <translation>Editor skriptů</translation>
     </message>
 </context>
 <context>

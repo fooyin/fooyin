@@ -3978,7 +3978,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="41"/>
         <source>Show current track when playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>停止播放时显示当前曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="42"/>
@@ -4083,7 +4083,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="119"/>
         <source>Middle-click</source>
-        <translation type="unfinished">单击中键</translation>
+        <translation>中键点击</translation>
     </message>
 </context>
 <context>
@@ -6366,29 +6366,29 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="288"/>
         <source>Could not move &quot;%1&quot; to the trash. Delete it permanently?</source>
-        <translation type="unfinished"></translation>
+        <translation>无法将“%1”移至回收站。是否将其永久删除？</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="290"/>
         <source>Could not move %Ln file(s) to the trash. Delete them permanently?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>无法将 %Ln 文件移至回收站。是否永久删除它们？</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="292"/>
         <source>Move to Trash Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>移至回收站失败</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="295"/>
         <source>Permanent deletion cannot be undone.</source>
-        <translation type="unfinished"></translation>
+        <translation>永久删除无法撤销。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="296"/>
         <source>Delete Permanently</source>
-        <translation type="unfinished"></translation>
+        <translation>永久删除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="329"/>
@@ -7338,56 +7338,56 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="414"/>
         <location filename="../../src/gui/guiapplication.cpp" line="417"/>
         <source>New Layout</source>
-        <translation type="unfinished">新建布局</translation>
+        <translation>新建布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="417"/>
         <source>Layout Name</source>
-        <translation type="unfinished">布局名称</translation>
+        <translation>布局名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="444"/>
         <source>Searching for artwork…</source>
-        <translation type="unfinished">正在搜索插图…</translation>
+        <translation>正在搜索插图…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="458"/>
         <source>Artwork search finished</source>
-        <translation type="unfinished">插图搜索完成</translation>
+        <translation>插图搜索完成</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="512"/>
         <source>Failed to open artwork file</source>
-        <translation type="unfinished">无法打开插图文件</translation>
+        <translation>无法打开插图文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="518"/>
         <source>Artwork file is empty</source>
-        <translation type="unfinished">插图作品文件为空</translation>
+        <translation>插图作品文件为空</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="921"/>
         <source>Plugins not found</source>
-        <translation type="unfinished">找不到插件</translation>
+        <translation>找不到插件</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="922"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation type="unfinished">实现完整功能需要某些插件。</translation>
+        <translation>实现完整功能需要某些插件。</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="923"/>
         <source>Plugin search locations:
 
 </source>
-        <translation type="unfinished">插件搜索目录:
+        <translation>插件搜索目录:
 
 </translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="926"/>
         <source>Quit</source>
-        <translation type="unfinished">退出</translation>
+        <translation>退出</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1052"/>
@@ -7398,119 +7398,119 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1054"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1200"/>
         <source>View</source>
-        <translation type="unfinished">视图</translation>
+        <translation>视图</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1057"/>
         <source>Volume</source>
-        <translation type="unfinished">音量</translation>
+        <translation>音量</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1059"/>
         <source>Volume up</source>
-        <translation type="unfinished">增大音量</translation>
+        <translation>增大音量</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1066"/>
         <source>Volume down</source>
-        <translation type="unfinished">减少音量</translation>
+        <translation>减少音量</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1073"/>
         <source>Mute</source>
-        <translation type="unfinished">静音</translation>
+        <translation>静音</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1083"/>
         <source>Clear Current Playlist</source>
-        <translation type="unfinished">清除当前播放列表</translation>
+        <translation>清除当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1084"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation type="unfinished">清空当前播放列表所有音轨</translation>
+        <translation>清空当前播放列表所有曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1087"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1114"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1187"/>
         <source>Playlist</source>
-        <translation type="unfinished">播放列表</translation>
+        <translation>播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1110"/>
         <source>Lock playlist</source>
-        <translation type="unfinished">锁定播放列表</translation>
+        <translation>锁定播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1112"/>
         <source>Prevent changes to the contents of the current playlist</source>
-        <translation type="unfinished">防止更改当前播放列表的内容</translation>
+        <translation>防止更改当前播放列表的内容</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1115"/>
         <source>Lock Current Playlist</source>
-        <translation type="unfinished">锁定当前播放列表</translation>
+        <translation>锁定当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1136"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1136"/>
         <source>Seek</source>
-        <translation type="unfinished">定位</translation>
+        <translation>定位</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1138"/>
         <source>Seek forward (small step)</source>
-        <translation type="unfinished">前进（一小步）</translation>
+        <translation>前进（一小步）</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1145"/>
         <source>Seek forward (large step)</source>
-        <translation type="unfinished">前进（一大步）</translation>
+        <translation>前进（一大步）</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1152"/>
         <source>Seek backward (small step)</source>
-        <translation type="unfinished">后退（一小步）</translation>
+        <translation>后退（一小步）</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1160"/>
         <source>Seek backward (large step)</source>
-        <translation type="unfinished">后退（一大步）</translation>
+        <translation>后退（一大步）</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1185"/>
         <source>Remove Playlist</source>
-        <translation type="unfinished">删除播放列表</translation>
+        <translation>移除播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1188"/>
         <source>Remove Current Playlist</source>
-        <translation type="unfinished">移除当前播放列表</translation>
+        <translation>移除当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1196"/>
         <source>Toggle Menubar</source>
-        <translation type="unfinished">切换菜单栏</translation>
+        <translation>切换菜单栏</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1207"/>
         <source>Look up metadata by artist and album…</source>
-        <translation type="unfinished">按艺人和专辑查找元数据…</translation>
+        <translation>按艺人和专辑查找元数据…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1208"/>
         <source>Look up metadata using the selected tracks&apos; artist and album</source>
-        <translation type="unfinished">使用所选曲目的艺人和专辑信息查找元数据</translation>
+        <translation>使用所选曲目的艺人和专辑信息查找元数据</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1213"/>
         <source>Look up metadata by artist and album</source>
-        <translation type="unfinished">按艺人和专辑查找元数据</translation>
+        <translation>按艺人和专辑查找元数据</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1214"/>
@@ -7519,7 +7519,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1233"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1302"/>
         <source>Tagging</source>
-        <translation type="unfinished">标签</translation>
+        <translation>标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1216"/>
@@ -7539,22 +7539,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1224"/>
         <source>Look up metadata by MusicBrainz ID…</source>
-        <translation type="unfinished">按 MusicBrainz ID 查找元数据…</translation>
+        <translation>按 MusicBrainz ID 查找元数据…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1225"/>
         <source>Look up metadata using a MusicBrainz release identifier</source>
-        <translation type="unfinished">使用 MusicBrainz 发行版标识符查询元数据</translation>
+        <translation>使用 MusicBrainz 发行版标识符查询元数据</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1228"/>
         <source>Look up metadata by MusicBrainz ID</source>
-        <translation type="unfinished">根据 MusicBrainz ID 查找元数据</translation>
+        <translation>根据 MusicBrainz ID 查找元数据</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1261"/>
         <source>Reading tracks…</source>
-        <translation type="unfinished">正在读取音轨…</translation>
+        <translation>正在读取音轨…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1261"/>
@@ -7564,37 +7564,37 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1289"/>
         <source>Current file</source>
-        <translation type="unfinished">当前文件</translation>
+        <translation>当前文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1304"/>
         <source>Reload tags from files</source>
-        <translation type="unfinished">从文件中重新加载标签</translation>
+        <translation>从文件中重新加载标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1305"/>
         <source>Reload tags from modified files</source>
-        <translation type="unfinished">从已修改的文件中重新加载标签</translation>
+        <translation>从已修改的文件中重新加载标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1307"/>
         <source>Replace tags in selected tracks with tags from the files</source>
-        <translation type="unfinished">重新加载所选音轨的标签</translation>
+        <translation>重新加载所选音轨的标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1308"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
-        <translation type="unfinished">重新加载所选音轨中已修改的标签</translation>
+        <translation>重新加载所选音轨中已修改的标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1339"/>
         <source>View full size</source>
-        <translation type="unfinished">查看完整尺寸</translation>
+        <translation>查看完整尺寸</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1340"/>
         <source>View the common artwork for the selected tracks at full size</source>
-        <translation type="unfinished">以全尺寸查看所选曲目的通用封面图像</translation>
+        <translation>以全尺寸查看所选曲目的通用封面图像</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1343"/>
@@ -7606,7 +7606,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1658"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1667"/>
         <source>Tracks</source>
-        <translation type="unfinished">音轨</translation>
+        <translation>音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1343"/>
@@ -7616,53 +7616,53 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1396"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">播放统计</translation>
+        <translation>播放统计</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1411"/>
         <source>Toggle loved</source>
-        <translation type="unfinished">切换喜爱</translation>
+        <translation>切换喜爱</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1411"/>
         <source>Toggle Loved for selected tracks</source>
-        <translation type="unfinished">切换所选曲目的“喜爱”状态</translation>
+        <translation>切换所选曲目的“喜爱”状态</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1413"/>
         <source>Love</source>
-        <translation type="unfinished">喜爱</translation>
+        <translation>喜爱</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1413"/>
         <source>Love selected tracks</source>
-        <translation type="unfinished">喜爱所选曲目</translation>
+        <translation>喜爱所选曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1415"/>
         <source>Unlove</source>
-        <translation type="unfinished">取消喜爱</translation>
+        <translation>取消喜爱</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1415"/>
         <source>Unlove selected tracks</source>
-        <translation type="unfinished">取消喜爱所选曲目</translation>
+        <translation>取消喜爱所选曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1431"/>
         <source>Choose destination</source>
-        <translation type="unfinished">选择目标</translation>
+        <translation>选择目标</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1457"/>
         <source>Converter Output</source>
-        <translation type="unfinished">转换输出</translation>
+        <translation>转换输出</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1554"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1562"/>
         <source>Convert using preset %1</source>
-        <translation type="unfinished">使用预设值 %1 进行转换</translation>
+        <translation>使用预设值 %1 进行转换</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1561"/>
@@ -7671,169 +7671,169 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1613"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1624"/>
         <source>Convert</source>
-        <translation type="unfinished">转换</translation>
+        <translation>转换</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1592"/>
         <source>Converter setup…</source>
-        <translation type="unfinished">转换器设置…</translation>
+        <translation>转换器设置…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1601"/>
         <source>Using default settings</source>
-        <translation type="unfinished">使用默认设置</translation>
+        <translation>使用默认设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1605"/>
         <source>Convert using default settings</source>
-        <translation type="unfinished">使用默认设置进行转换</translation>
+        <translation>使用默认设置进行转换</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1610"/>
         <source>Repeat last conversion</source>
-        <translation type="unfinished">重复上次转换</translation>
+        <translation>重复上次转换</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1641"/>
         <source>Custom conversion…</source>
-        <translation type="unfinished">自定义转换…</translation>
+        <translation>自定义转换…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1653"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1658"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1667"/>
         <source>Utilities</source>
-        <translation type="unfinished">实用工具</translation>
+        <translation>实用工具</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1655"/>
         <source>Verify integrity</source>
-        <translation type="unfinished">验证完整性</translation>
+        <translation>验证完整性</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1656"/>
         <source>Decode the selected tracks and report file or checksum errors</source>
-        <translation type="unfinished">解码所选音轨并报告文件或校验和错误</translation>
+        <translation>解码所选音轨并报告文件或校验和错误</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1663"/>
         <source>Verify album with AccurateRip</source>
-        <translation type="unfinished">使用 AccurateRip 验证专辑</translation>
+        <translation>使用 AccurateRip 验证专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1664"/>
         <source>Verify all tracks from one complete lossless CD rip against AccurateRip</source>
-        <translation type="unfinished">根据 AccurateRip 验证一张完整无损 CD 抓轨的所有音轨</translation>
+        <translation>根据 AccurateRip 验证一张完整无损 CD 抓轨的所有音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1970"/>
         <source>Reload Required</source>
-        <translation type="unfinished">需要重新加载</translation>
+        <translation>需要重新加载</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1972"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
-        <translation type="unfinished">由于数据库发生了变更，应从磁盘重新加载曲目，以更新其保存的元数据。</translation>
+        <translation>由于数据库发生变更，需要从磁盘重新加载曲目以更新其保存的元数据。</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1976"/>
         <source>Reload Now</source>
-        <translation type="unfinished">立即重新加载</translation>
+        <translation>立即重新加载</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1979"/>
         <source>OK</source>
-        <translation type="unfinished">确定</translation>
+        <translation>确定</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2124"/>
         <source>Playback Error</source>
-        <translation type="unfinished">播放错误</translation>
+        <translation>播放错误</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2149"/>
         <source>Continue</source>
-        <translation type="unfinished">继续</translation>
+        <translation>继续</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2151"/>
         <source>Stop</source>
-        <translation type="unfinished">停止</translation>
+        <translation>停止</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2155"/>
         <source>Always continue playing if a track is unavailable</source>
-        <translation type="unfinished">如果有音轨不可用则继续播放下一首</translation>
+        <translation>如果有音轨不可用则继续播放下一首</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2177"/>
         <source>Track Not Found</source>
-        <translation type="unfinished">未找到音轨</translation>
+        <translation>未找到音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2182"/>
         <source>No Decoder Available</source>
-        <translation type="unfinished">解码器不可用</translation>
+        <translation>解码器不可用</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2262"/>
         <source>All Supported Media Files (%1)</source>
-        <translation type="unfinished">所有支持的媒体文件 (%1)</translation>
+        <translation>所有支持的媒体文件 (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2263"/>
         <source>Audio Files (%1)</source>
-        <translation type="unfinished">音频文件 (%1)</translation>
+        <translation>音频文件 (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2274"/>
         <source>Add Files</source>
-        <translation type="unfinished">添加文件</translation>
+        <translation>添加文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2288"/>
         <source>Add Folders</source>
-        <translation type="unfinished">添加文件夹</translation>
+        <translation>添加文件夹</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2300"/>
         <source>Add Stream URL</source>
-        <translation type="unfinished">添加流媒体 URL</translation>
+        <translation>添加流媒体 URL</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2300"/>
         <source>Stream URL:</source>
-        <translation type="unfinished">流媒体 URL：</translation>
+        <translation>流媒体 URL：</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2302"/>
         <source>&amp;Add</source>
-        <translation type="unfinished">添加(&amp;A)</translation>
+        <translation>添加(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2306"/>
         <source>Enter a valid http:// or https:// URL.</source>
-        <translation type="unfinished">请输入有效的 http:// 或 https:// URL。</translation>
+        <translation>请输入有效的 http:// 或 https:// URL。</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2404"/>
         <source>All Supported Playlists (%1)</source>
-        <translation type="unfinished">所有支持的播放列表 (%1)</translation>
+        <translation>所有支持的播放列表 (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2414"/>
         <source>Load Playlist</source>
-        <translation type="unfinished">加载播放列表</translation>
+        <translation>加载播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2451"/>
         <source>Save Playlist</source>
-        <translation type="unfinished">保存播放列表</translation>
+        <translation>保存播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="570"/>
         <source>Display</source>
-        <translation type="unfinished">显示</translation>
+        <translation>显示</translation>
     </message>
 </context>
 <context>
@@ -8113,7 +8113,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="133"/>
         <source>Browse…</source>
-        <translation type="unfinished">浏览…</translation>
+        <translation>浏览…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="134"/>
@@ -8178,22 +8178,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="167"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>新的</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="168"/>
         <source>Old</source>
-        <translation type="unfinished"></translation>
+        <translation>旧的</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="169"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>自定义</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="171"/>
         <source>Application icon</source>
-        <translation type="unfinished"></translation>
+        <translation>应用程序图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="181"/>
@@ -8218,12 +8218,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="241"/>
         <source>Choose application icon</source>
-        <translation type="unfinished"></translation>
+        <translation>选择应用程序图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="242"/>
         <source>Images (*.png *.jpg *.jpeg *.svg *.ico);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>图像 (*.png *.jpg *.jpeg *.svg *.ico);;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="260"/>
@@ -10775,7 +10775,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="80"/>
         <source>View</source>
-        <translation type="unfinished">视图</translation>
+        <translation>视图</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplugin.cpp" line="84"/>
@@ -12388,22 +12388,22 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="285"/>
         <source>Automatic</source>
-        <translation type="unfinished">自动</translation>
+        <translation>自动</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="286"/>
         <source>Horizontal</source>
-        <translation type="unfinished">水平</translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="287"/>
         <source>Vertical</source>
-        <translation type="unfinished">垂直</translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="289"/>
         <source>Orientation</source>
-        <translation type="unfinished">方向</translation>
+        <translation>方向</translation>
     </message>
 </context>
 <context>
@@ -12752,7 +12752,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="93"/>
         <source>Pause playback</source>
-        <translation type="unfinished">暂停播放</translation>
+        <translation>暂停播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="99"/>
@@ -13072,17 +13072,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="263"/>
         <source>General</source>
-        <translation type="unfinished">常规</translation>
+        <translation>常规</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="264"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="264"/>
         <source>Queue</source>
-        <translation type="unfinished">队列</translation>
+        <translation>队列</translation>
     </message>
 </context>
 <context>
@@ -13215,7 +13215,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="142"/>
         <source>Unlimited</source>
-        <translation type="unfinished">无限制</translation>
+        <translation>无限制</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="144"/>
@@ -13293,22 +13293,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="199"/>
         <source>Automatic</source>
-        <translation type="unfinished">自动</translation>
+        <translation>自动</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="200"/>
         <source>Horizontal</source>
-        <translation type="unfinished">水平</translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="201"/>
         <source>Vertical</source>
-        <translation type="unfinished">垂直</translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="203"/>
         <source>Orientation</source>
-        <translation type="unfinished">方向</translation>
+        <translation>方向</translation>
     </message>
 </context>
 <context>
@@ -13362,7 +13362,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="120"/>
         <source>Show current track when playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>停止播放时显示当前曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="121"/>
@@ -13947,22 +13947,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="115"/>
         <source>Automatic</source>
-        <translation type="unfinished">自动</translation>
+        <translation>自动</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="116"/>
         <source>Horizontal</source>
-        <translation type="unfinished">水平</translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="117"/>
         <source>Vertical</source>
-        <translation type="unfinished">垂直</translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="119"/>
         <source>Orientation</source>
-        <translation type="unfinished">方向</translation>
+        <translation>方向</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="173"/>
@@ -14015,7 +14015,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="434"/>
         <source>Remove Playlist</source>
-        <translation type="unfinished">删除播放列表</translation>
+        <translation>移除播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="436"/>
@@ -14273,7 +14273,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="137"/>
         <source>&amp;Save playlist…</source>
-        <translation type="unfinished">保存播放列表(&amp;S)…</translation>
+        <translation>保存播放列表(&amp;S)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="140"/>
@@ -14666,7 +14666,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="299"/>
         <source>Details</source>
-        <translation type="unfinished">详细信息</translation>
+        <translation>详细信息</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="354"/>
@@ -14869,7 +14869,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="82"/>
         <source>&amp;Save playlist…</source>
-        <translation type="unfinished">保存播放列表(&amp;S)…</translation>
+        <translation>保存播放列表(&amp;S)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="98"/>
@@ -15967,7 +15967,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="120"/>
         <source>&amp;Stop after this</source>
-        <translation type="unfinished">当前音轨后停止(&amp;S)</translation>
+        <translation>当前音轨后停止(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="121"/>
@@ -15997,7 +15997,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="369"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">添加到播放列表</translation>
+        <translation>添加到播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="428"/>
@@ -16022,7 +16022,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="455"/>
         <source>Stop playback at the end of the selected track</source>
-        <translation type="unfinished">播放到选中的音轨后停止</translation>
+        <translation>播放到选中的音轨后停止</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="459"/>
@@ -18781,7 +18781,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="61"/>
         <source>Show current track when playback is stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>停止播放时显示当前曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="67"/>
@@ -19022,7 +19022,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="90"/>
         <source>Script Editor</source>
-        <translation type="unfinished">脚本编辑器</translation>
+        <translation>脚本编辑器</translation>
     </message>
 </context>
 <context>
@@ -19681,7 +19681,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2105"/>
         <source>Quick Search</source>
-        <translation type="unfinished">快速搜索</translation>
+        <translation>快速搜索</translation>
     </message>
 </context>
 <context>
@@ -19709,22 +19709,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="517"/>
         <source>Automatic</source>
-        <translation type="unfinished">自动</translation>
+        <translation>自动</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="518"/>
         <source>Horizontal</source>
-        <translation type="unfinished">水平</translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="519"/>
         <source>Vertical</source>
-        <translation type="unfinished">垂直</translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="521"/>
         <source>Orientation</source>
-        <translation type="unfinished">方向</translation>
+        <translation>方向</translation>
     </message>
 </context>
 <context>
@@ -21253,12 +21253,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="85"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">点击行为</translation>
+        <translation>点击行为</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="89"/>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="90"/>
@@ -21268,7 +21268,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="91"/>
         <source>Open containing folder</source>
-        <translation type="unfinished">打开包含的目录</translation>
+        <translation>打开包含的目录</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="92"/>
@@ -21278,12 +21278,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="98"/>
         <source>Double-click</source>
-        <translation type="unfinished">双击</translation>
+        <translation>双击</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="100"/>
         <source>Middle-click</source>
-        <translation type="unfinished">单击中键</translation>
+        <translation>单击中键</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="108"/>
@@ -22604,22 +22604,22 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="411"/>
         <source>Automatic</source>
-        <translation type="unfinished">自动</translation>
+        <translation>自动</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="412"/>
         <source>Horizontal</source>
-        <translation type="unfinished">水平</translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="413"/>
         <source>Vertical</source>
-        <translation type="unfinished">垂直</translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="415"/>
         <source>Orientation</source>
-        <translation type="unfinished">方向</translation>
+        <translation>方向</translation>
     </message>
 </context>
 <context>
@@ -22668,7 +22668,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="66"/>
         <source>Gridlines</source>
-        <translation type="unfinished">网格线</translation>
+        <translation>网格线</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="83"/>
@@ -22683,7 +22683,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="95"/>
         <source>Axes</source>
-        <translation type="unfinished">轴线</translation>
+        <translation>轴线</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="109"/>
@@ -22728,22 +22728,22 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="51"/>
         <source>Top labels</source>
-        <translation type="unfinished">顶部标签</translation>
+        <translation>顶部标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="52"/>
         <source>Bottom labels</source>
-        <translation type="unfinished">底部标签</translation>
+        <translation>底部标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="53"/>
         <source>Left labels</source>
-        <translation type="unfinished">左侧标签</translation>
+        <translation>左侧标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="54"/>
         <source>Right labels</source>
-        <translation type="unfinished">右侧标签</translation>
+        <translation>右侧标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="64"/>
@@ -22836,17 +22836,17 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1204"/>
         <source>Labels</source>
-        <translation type="unfinished">标签</translation>
+        <translation>标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1216"/>
         <source>Top</source>
-        <translation type="unfinished">顶部</translation>
+        <translation>顶部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1217"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1218"/>
@@ -22861,7 +22861,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1222"/>
         <source>Automatic</source>
-        <translation type="unfinished">自动</translation>
+        <translation>自动</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1224"/>
@@ -24544,7 +24544,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="170"/>
         <source>View mode</source>
-        <translation type="unfinished">查看模式</translation>
+        <translation>查看模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="174"/>
@@ -24554,37 +24554,37 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="177"/>
         <source>Queue next</source>
-        <translation type="unfinished"></translation>
+        <translation>下一个队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="180"/>
         <source>Stop after this</source>
-        <translation type="unfinished">在此之后停止</translation>
+        <translation>在此之后停止</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="187"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>清除</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="190"/>
         <source>Sort</source>
-        <translation type="unfinished">排序</translation>
+        <translation>排序</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="194"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">添加到播放列表</translation>
+        <translation>添加到播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="198"/>
         <source>Configure</source>
-        <translation type="unfinished">配置</translation>
+        <translation>配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="202"/>
@@ -24594,12 +24594,12 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/gui/widgets.cpp" line="476"/>
         <source>Playback Queue</source>
-        <translation type="unfinished">播放队列</translation>
+        <translation>播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="478"/>
         <source>Unchecked items will be hidden from the playback queue context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>未勾选的项目将从播放队列的上下文菜单中隐藏。</translation>
     </message>
 </context>
 <context>
