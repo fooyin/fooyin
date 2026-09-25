@@ -1,5 +1,32 @@
 # Changelog
 
+## Unreleased
+
+### Improvements
+
+- **Interface:** Refine the dragon icon and restore it as the default application icon
+- **Playback:** Add a native FLAC decoder and DTS-FLAC support ([#346](https://github.com/fooyin/fooyin/issues/346))
+- **ProjectM:** Add favourite support to presets ([#1674](https://github.com/fooyin/fooyin/issues/1674))
+- **Settings:** Clarify rating and Love editor options ([#1684](https://github.com/fooyin/fooyin/issues/1684))
+- **Tag Editor**
+  - Start editing values when navigating with Tab ([#1669](https://github.com/fooyin/fooyin/issues/1669))
+  - Add an option for single-click value editing
+  - Require a double-click or edit key to edit custom tag names
+
+### Fixes
+
+- **Scripting:** Preserve literal backslashes in formatted text ([#1678](https://github.com/fooyin/fooyin/issues/1678))
+
+### Build/System
+
+- **Dependencies:** Add libFLAC
+- **Flatpak:** Include the version in bundle filenames
+
+### Dev/API
+
+- **Audio Encoders:** Add the `EncoderPlugin` interface for registering encoder plugins
+
+
 ## [0.13.1](https://github.com/fooyin/fooyin/releases/tag/v0.13.1) (2026-09-24)
 
 ### Improvements
