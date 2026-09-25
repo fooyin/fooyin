@@ -83,9 +83,9 @@ GuiTrackDisplayPageWidget::GuiTrackDisplayPageWidget(SettingsManager* settings)
     , m_titleScript{new ScriptLineEdit(this)}
     , m_propertiesSidebarTrackScript{new ScriptLineEdit(this)}
     , m_starRatingSize{new QSpinBox(this)}
-    , m_ratingEditorOnlyOnHover{new QCheckBox(tr("Only show unrated stars on hovered rows"), this)}
+    , m_ratingEditorOnlyOnHover{new QCheckBox(tr("Only show unrated stars on hovered\nor selected rows"), this)}
     , m_loveHeartSize{new QSpinBox(this)}
-    , m_loveEditorOnlyOnHover{new QCheckBox(tr("Only show unloved hearts on hovered rows"), this)}
+    , m_loveEditorOnlyOnHover{new QCheckBox(tr("Only show unloved hearts on hovered\nor selected rows"), this)}
     , m_fullStarSymbol{new QLineEdit(this)}
     , m_halfStarSymbol{new QLineEdit(this)}
     , m_emptyStarSymbol{new QLineEdit(this)}
@@ -131,22 +131,28 @@ GuiTrackDisplayPageWidget::GuiTrackDisplayPageWidget(SettingsManager* settings)
     m_emptyStarSymbol->setToolTip(tr("Used for the trailing empty portion of %rating_stars_padded%"));
     m_ratingPreview->setToolTip(tr("Preview of %rating_stars_padded% using the current font."));
 
-    auto* ratingsGroupBox = new QGroupBox(tr("Ratings"), this);
+    auto* ratingScriptsGroupBox = new QGroupBox(tr("Rating Script Variables"), this);
+    auto* ratingScriptsLayout   = new QGridLayout(ratingScriptsGroupBox);
+
+    row = 0;
+    ratingScriptsLayout->addWidget(new QLabel(tr("Full star symbol") + u":"_s, this), row, 0);
+    ratingScriptsLayout->addWidget(m_fullStarSymbol, row++, 1);
+    ratingScriptsLayout->addWidget(new QLabel(tr("Half star symbol") + u":"_s, this), row, 0);
+    ratingScriptsLayout->addWidget(m_halfStarSymbol, row++, 1);
+    ratingScriptsLayout->addWidget(new QLabel(tr("Empty star symbol") + u":"_s, this), row, 0);
+    ratingScriptsLayout->addWidget(m_emptyStarSymbol, row++, 1);
+    ratingScriptsLayout->addWidget(new QLabel(tr("Preview") + u":"_s, this), row, 0);
+    ratingScriptsLayout->addWidget(m_ratingPreview, row++, 1);
+    ratingScriptsLayout->setColumnStretch(2, 1);
+
+    auto* ratingsGroupBox = new QGroupBox(tr("Rating Editor"), this);
     auto* ratingsLayout   = new QGridLayout(ratingsGroupBox);
 
     row = 0;
     ratingsLayout->addWidget(m_ratingEditorOnlyOnHover, row++, 0, 1, 2);
-    ratingsLayout->addWidget(new QLabel(tr("Rating editor star size") + u":"_s, this), row, 0);
+    ratingsLayout->addWidget(new QLabel(tr("Star size") + u":"_s, this), row, 0);
     ratingsLayout->addWidget(m_starRatingSize, row++, 1);
-    ratingsLayout->addWidget(new QLabel(tr("Full star symbol") + u":"_s, this), row, 0);
-    ratingsLayout->addWidget(m_fullStarSymbol, row++, 1);
-    ratingsLayout->addWidget(new QLabel(tr("Half star symbol") + u":"_s, this), row, 0);
-    ratingsLayout->addWidget(m_halfStarSymbol, row++, 1);
-    ratingsLayout->addWidget(new QLabel(tr("Empty star symbol") + u":"_s, this), row, 0);
-    ratingsLayout->addWidget(m_emptyStarSymbol, row++, 1);
-    ratingsLayout->addWidget(new QLabel(tr("Preview") + u":"_s, this), row, 0);
-    ratingsLayout->addWidget(m_ratingPreview, row++, 1);
-    ratingsLayout->addWidget(Gui::createSectionHeader(tr("Editor colours"), this), row++, 0, 1, 2);
+    ratingsLayout->addWidget(Gui::createSectionHeader(tr("Colours"), this), row++, 0, 1, 2);
     ratingsLayout->addWidget(m_unratedColour, row++, 0, 1, 2);
     for(auto* colour : m_ratingColours) {
         ratingsLayout->addWidget(colour, row++, 0, 1, 2);
@@ -159,13 +165,14 @@ GuiTrackDisplayPageWidget::GuiTrackDisplayPageWidget(SettingsManager* settings)
     m_loveHeartSize->setSuffix(u" px"_s);
     m_loveHeartSize->setToolTip(tr("Controls the heart size used by the love editor widget"));
 
-    auto* loveGroupBox = new QGroupBox(tr("Love"), this);
+    auto* loveGroupBox = new QGroupBox(tr("Love Editor"), this);
     auto* loveLayout   = new QGridLayout(loveGroupBox);
 
     row = 0;
     loveLayout->addWidget(m_loveEditorOnlyOnHover, row++, 0, 1, 2);
-    loveLayout->addWidget(new QLabel(tr("Love editor heart size") + u":"_s, this), row, 0);
+    loveLayout->addWidget(new QLabel(tr("Heart size") + u":"_s, this), row, 0);
     loveLayout->addWidget(m_loveHeartSize, row++, 1);
+    loveLayout->addWidget(Gui::createSectionHeader(tr("Colours"), this), row++, 0, 1, 2);
     loveLayout->addWidget(m_unlovedColour, row++, 0, 1, 2);
     loveLayout->addWidget(m_loveColour, row++, 0, 1, 2);
     ColourButton::alignLabels({m_loveColour, m_unlovedColour});
@@ -177,6 +184,7 @@ GuiTrackDisplayPageWidget::GuiTrackDisplayPageWidget(SettingsManager* settings)
     row = 0;
     mainLayout->addWidget(nowPlayingGroup, row++, 0, 1, 2);
     mainLayout->addWidget(propertiesDialogGroup, row++, 0, 1, 2);
+    mainLayout->addWidget(ratingScriptsGroupBox, row++, 0, 1, 2);
     mainLayout->addWidget(ratingsGroupBox, row, 0, 1, 1);
     mainLayout->addWidget(loveGroupBox, row++, 1, 1, 1);
     mainLayout->setColumnStretch(1, 1);
