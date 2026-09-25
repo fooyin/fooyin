@@ -19,6 +19,8 @@
 
 #include <core/engine/audioloader.h>
 
+#include "input/carrierdecoder.h"
+
 #include <core/coresettings.h>
 #include <core/internalcoresettings.h>
 #include <core/network/remotesourceprovider.h>
@@ -518,7 +520,7 @@ LoadedDecoder AudioLoader::loadDecoderForTrack(const Track& track, AudioDecoder:
     const bool isSchemeSource = !sourceScheme(track.filepath()).isEmpty();
 
     for(auto& candidate : decoders) {
-        auto& decoder = candidate.decoder;
+        auto decoder = std::make_unique<CarrierDecoder>(std::move(candidate.decoder));
         if(track.isRemote()) {
             std::shared_ptr<RemoteSourceProvider> remoteSourceProvider;
             {
@@ -619,7 +621,7 @@ LoadedDecoder AudioLoader::loadDecoderForArchiveTrack(const Track& track, AudioD
     }
 
     for(auto& candidate : decoders) {
-        auto& decoder = candidate.decoder;
+        auto decoder = std::make_unique<CarrierDecoder>(std::move(candidate.decoder));
         if(ret.input.device && !ret.input.device->seek(0)
            && !openArchiveSource(ret.input, *this, track.archivePath(), track.pathInArchive())) {
             return {};

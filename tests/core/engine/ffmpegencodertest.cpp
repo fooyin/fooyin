@@ -97,6 +97,40 @@ QByteArray timedId3Tag()
     return tag;
 }
 
+QByteArray makeSixChannelWave(QByteArray pcm)
+{
+    auto append16 = [](QByteArray& data, uint16_t value) {
+        data.append(static_cast<char>(value & 0xffU));
+        data.append(static_cast<char>((value >> 8U) & 0xffU));
+    };
+    auto append32 = [](QByteArray& data, uint32_t value) {
+        data.append(static_cast<char>(value & 0xffU));
+        data.append(static_cast<char>((value >> 8U) & 0xffU));
+        data.append(static_cast<char>((value >> 16U) & 0xffU));
+        data.append(static_cast<char>((value >> 24U) & 0xffU));
+    };
+
+    constexpr uint16_t Channels{6};
+    constexpr uint16_t BitsPerSample{16};
+    constexpr uint32_t SampleRate{48'000};
+    constexpr uint16_t BlockAlign{Channels * BitsPerSample / 8};
+
+    QByteArray wave{"RIFF", 4};
+    append32(wave, static_cast<uint32_t>(36 + pcm.size()));
+    wave.append("WAVEfmt ", 8);
+    append32(wave, 16);
+    append16(wave, 1);
+    append16(wave, Channels);
+    append32(wave, SampleRate);
+    append32(wave, SampleRate * BlockAlign);
+    append16(wave, BlockAlign);
+    append16(wave, BitsPerSample);
+    wave.append("data", 4);
+    append32(wave, static_cast<uint32_t>(pcm.size()));
+    wave.append(pcm);
+    return wave;
+}
+
 QByteArray makeTimedId3TransportStream()
 {
     AVFormatContext* context{nullptr};
@@ -538,6 +572,39 @@ TEST(FFmpegInputTest, ReadsTimedId3FromMpegTsDataStream)
     EXPECT_GT(change->timestampMs, 0);
     EXPECT_EQ(change->track.title(), u"Test Title"_s);
     EXPECT_EQ(change->track.artist(), u"Test Artist"_s);
+}
+
+TEST(FFmpegInputTest, PreservesFramesWhenReadSizeIsNotFrameAligned)
+{
+    QByteArray pcm(12'000, Qt::Uninitialized);
+    for(qsizetype i{0}; i < pcm.size(); ++i) {
+        pcm[i] = static_cast<char>((i * 31) & 0xFF);
+    }
+    QByteArray wave = makeSixChannelWave(pcm);
+
+    QBuffer input{&wave};
+    ASSERT_TRUE(input.open(QIODevice::ReadOnly));
+
+    const Track track{u"six-channel.wav"_s};
+    FFmpegDecoder decoder;
+    const auto format = decoder.init({.filepath = track.filepath(), .device = &input}, track, AudioDecoder::None);
+    ASSERT_TRUE(format.has_value());
+    ASSERT_EQ(format->bytesPerFrame(), 12);
+    decoder.start();
+
+    QByteArray decoded;
+    while(true) {
+        auto result = decoder.readAudio(100);
+        if(result.status == AudioDecoder::ReadStatus::EndOfStream) {
+            break;
+        }
+        ASSERT_EQ(result.status, AudioDecoder::ReadStatus::DecodedAudio);
+        ASSERT_TRUE(result.buffer.isValid());
+        const auto data = result.buffer.constData();
+        decoded.append(reinterpret_cast<const char*>(data.data()), static_cast<qsizetype>(data.size()));
+    }
+
+    EXPECT_EQ(decoded, pcm);
 }
 
 } // namespace Fooyin::Testing

@@ -1646,6 +1646,11 @@ std::optional<AudioDecoder::TimedTrackChange> FFmpegDecoder::takeTimedTrackChang
     return change;
 }
 
+void FFmpegDecoder::applyStreamProperties(Track& track) const
+{
+    p->applyStreamProperties(track);
+}
+
 std::optional<AudioFormat> FFmpegDecoder::init(const AudioSource& source, const Track& track, DecoderOptions options)
 {
     p->m_options = options;
@@ -1728,7 +1733,10 @@ AudioDecoder::ReadResult FFmpegDecoder::readAudio(size_t bytes)
 
     AudioBuffer buffer;
 
-    const int bytesRequested = static_cast<int>(bytes);
+    const auto frameBytes       = static_cast<size_t>(p->m_audioFormat.bytesPerFrame());
+    const size_t requestedBytes = std::min(bytes, static_cast<size_t>(std::numeric_limits<int>::max()));
+    const size_t alignedBytes   = requestedBytes - (requestedBytes % frameBytes);
+    const int bytesRequested    = static_cast<int>(std::max(frameBytes, alignedBytes));
     int bytesWritten{0};
 
     while(p->m_buffer.isValid() && bytesWritten < bytesRequested) {

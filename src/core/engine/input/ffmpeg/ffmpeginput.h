@@ -46,6 +46,9 @@ public:
     [[nodiscard]] Track changedTrack() const override;
     [[nodiscard]] std::optional<TimedTrackChange> takeTimedTrackChange() override;
 
+    //! Apply properties of the selected decoded stream to an existing track.
+    void applyStreamProperties(Track& track) const;
+
     std::optional<AudioFormat> init(const AudioSource& source, const Track& track, DecoderOptions options) override;
     void start() override;
     void stop() override;

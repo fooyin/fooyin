@@ -6,6 +6,15 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
+ *
+ * Fooyin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 #include "carrierdecoder.h"
@@ -21,22 +30,21 @@ extern "C"
 #include <libavformat/avformat.h>
 }
 
-#include <algorithm>
 #include <cstring>
 #include <limits>
-#include <utility>
 
 Q_LOGGING_CATEGORY(CARRIER_DECODER, "fy.audio.carrier")
 
 using namespace Qt::StringLiterals;
 
-namespace {
-constexpr qsizetype ProbeBytes            = 256 * 1024;
-constexpr int MinimumProbeScore           = AVPROBE_SCORE_EXTENSION + 1;
-constexpr int MaximumCarrierDrainAttempts = 16;
+constexpr qsizetype ProbeBytes             = 256UL * 1024;
+constexpr auto MinimumProbeScore           = AVPROBE_SCORE_EXTENSION + 1;
+constexpr auto MaximumCarrierDrainAttempts = 16;
 
+namespace {
 bool canContainCarrier(const Fooyin::AudioSource& source, const Fooyin::AudioFormat& format)
 {
+    // Specific to DTS-FLAC for now
     return !source.remoteStreamDevice && format.sampleFormat() == Fooyin::SampleFormat::S16
         && format.channelCount() == 2;
 }
@@ -47,7 +55,7 @@ const AVInputFormat* probeCarrier(const QByteArray& data)
         return nullptr;
     }
 
-    QByteArray padded = data;
+    QByteArray padded{data};
     padded.resize(data.size() + AVPROBE_PADDING_SIZE);
     std::memset(padded.data() + data.size(), 0, AVPROBE_PADDING_SIZE);
 
@@ -65,15 +73,15 @@ namespace Fooyin {
 class DecodedAudioDevice final : public QIODevice
 {
 public:
-    DecodedAudioDevice(AudioDecoder* decoder, AudioFormat format, QByteArray prefix)
+    DecodedAudioDevice(AudioDecoder* decoder, const AudioFormat& format, QByteArray prefix)
         : m_decoder{decoder}
-        , m_format{std::move(format)}
+        , m_format{format}
         , m_prefix{std::move(prefix)}
     {
-        open(QIODevice::ReadOnly);
+        QIODevice::open(ReadOnly);
     }
 
-    bool isSequential() const override
+    [[nodiscard]] bool isSequential() const override
     {
         return true;
     }
@@ -89,7 +97,7 @@ protected:
         if(m_prefixOffset < m_prefix.size()) {
             const qsizetype available = m_prefix.size() - m_prefixOffset;
             const qsizetype count     = std::min<qsizetype>(available, maxSize);
-            std::memcpy(data, m_prefix.constData() + m_prefixOffset, static_cast<size_t>(count));
+            std::memcpy(data, m_prefix.constData() + m_prefixOffset, count);
             m_prefixOffset += count;
             written += count;
         }
@@ -104,12 +112,14 @@ protected:
                 continue;
             }
 
-            const uint64_t requested = std::max<uint64_t>(static_cast<uint64_t>(maxSize - written),
-                                                          static_cast<uint64_t>(m_format.bytesPerFrame()));
+            const uint64_t requested
+                = std::max<uint64_t>(maxSize - written, static_cast<uint64_t>(m_format.bytesPerFrame()));
             const uint64_t aligned
                 = requested
-                + (m_format.bytesPerFrame() - requested % m_format.bytesPerFrame()) % m_format.bytesPerFrame();
-            auto result = m_decoder->readAudio(static_cast<size_t>(aligned));
+                + ((m_format.bytesPerFrame() - (requested % m_format.bytesPerFrame())) % m_format.bytesPerFrame());
+
+            auto result = m_decoder->readAudio(aligned);
+
             if(result.status == AudioDecoder::ReadStatus::DecodedAudio) {
                 m_buffer       = std::move(result.buffer);
                 m_bufferOffset = 0;
@@ -120,6 +130,7 @@ protected:
                     << "Primary decoder failed while reading encoded-audio carrier:" << result.error;
                 return written > 0 ? written : -1;
             }
+
             qCDebug(CARRIER_DECODER) << "Primary carrier input stopped:" << static_cast<int>(result.status);
             return written;
         }
@@ -127,7 +138,7 @@ protected:
         return written;
     }
 
-    qint64 writeData(const char*, qint64) override
+    qint64 writeData(const char* /*data*/, qint64 /*len*/) override
     {
         return -1;
     }
@@ -160,12 +171,15 @@ public:
         secondary->setPlaybackHints(primary->playbackHints());
 
         AudioSource source;
-        source.filepath   = carrierFilename;
-        source.device     = device.get();
+        source.filepath = carrierFilename;
+        source.device   = device.get();
+
         const auto format = secondary->init(source, track, options);
         if(!format) {
             secondary.reset();
-            device.reset();
+            if(device) {
+                (*device).reset();
+            }
             return false;
         }
 
@@ -187,6 +201,8 @@ public:
     uint64_t timelineOffset{0};
     QString error;
     QString carrierFilename;
+    mutable Track changedTrack;
+    mutable bool trackChanged{false};
     bool primaryStarted{false};
     bool started{false};
 };
@@ -253,11 +269,15 @@ AudioDecoder::RepeatHandling CarrierDecoder::repeatHandling() const
 
 bool CarrierDecoder::trackHasChanged() const
 {
-    return p->activeDecoder()->trackHasChanged();
+    return p->trackChanged || p->activeDecoder()->trackHasChanged();
 }
 
 Track CarrierDecoder::changedTrack() const
 {
+    if(p->trackChanged) {
+        p->trackChanged = false;
+        return p->changedTrack;
+    }
     return p->activeDecoder()->changedTrack();
 }
 
@@ -273,7 +293,6 @@ int CarrierDecoder::bitrate() const
 
 std::optional<AudioFormat> CarrierDecoder::init(const AudioSource& source, const Track& track, DecoderOptions options)
 {
-    stop();
     p->options = options;
     p->track   = track;
     p->primary->setPlaybackHints(playbackHints());
@@ -293,14 +312,15 @@ std::optional<AudioFormat> CarrierDecoder::init(const AudioSource& source, const
     p->primaryStarted = true;
 
     while(p->prefix.size() < ProbeBytes) {
-        const size_t remaining = static_cast<size_t>(ProbeBytes - p->prefix.size());
-        auto result            = p->primary->readAudio(remaining);
+        const auto remaining = static_cast<size_t>(ProbeBytes - p->prefix.size());
+        auto result          = p->primary->readAudio(remaining);
         if(result.status != ReadStatus::DecodedAudio) {
             break;
         }
         if(p->prefix.isEmpty()) {
             p->prefixStartTime = result.buffer.startTime();
         }
+
         const auto data = result.buffer.constData();
         p->prefix.append(reinterpret_cast<const char*>(data.data()), static_cast<qsizetype>(data.size()));
     }
@@ -311,16 +331,24 @@ std::optional<AudioFormat> CarrierDecoder::init(const AudioSource& source, const
     }
 
     qCDebug(CARRIER_DECODER) << "Detected encoded audio carrier:" << carrierFormat->name;
+
     const QString extension = carrierFormat->extensions
                                 ? QString::fromLatin1(carrierFormat->extensions).section(u',', 0, 0)
                                 : QString::fromLatin1(carrierFormat->name);
     p->carrierFilename      = u"carrier.%1"_s.arg(extension);
+
     if(p->initialiseSecondary(0)) {
+        if(options.testFlag(UpdateTracks)) {
+            Track runtimeTrack{track};
+            p->secondary->applyStreamProperties(runtimeTrack);
+            runtimeTrack.setMetadataWasRead(true);
+            p->changedTrack = runtimeTrack;
+            p->trackChanged = !runtimeTrack.sameDataAs(track);
+        }
         return p->outputFormat;
     }
 
     qCWarning(CARRIER_DECODER) << "Failed to initialise detected audio carrier:" << carrierFormat->name;
-    stop();
     return {};
 }
 
@@ -344,7 +372,10 @@ void CarrierDecoder::stop()
     if(p->primary) {
         p->primary->stop();
     }
-    p->device.reset();
+
+    if(p->device) {
+        (*p->device).reset();
+    }
     p->secondary.reset();
     p->primaryFormat = {};
     p->outputFormat  = {};
@@ -356,6 +387,8 @@ void CarrierDecoder::stop()
     p->timelineOffset  = 0;
     p->error.clear();
     p->carrierFilename.clear();
+    p->changedTrack   = {};
+    p->trackChanged   = false;
     p->primaryStarted = false;
     p->started        = false;
 }
@@ -374,7 +407,10 @@ void CarrierDecoder::seek(uint64_t pos)
     if(p->secondary) {
         p->secondary->stop();
         p->secondary.reset();
-        p->device.reset();
+        if(p->device) {
+            (*p->device).reset();
+        }
+
         if(!p->initialiseSecondary(pos)) {
             p->error = u"Failed to resynchronise encoded-audio carrier after seeking"_s;
             return;
@@ -406,8 +442,8 @@ AudioDecoder::ReadResult CarrierDecoder::readAudio(size_t bytes)
     }
 
     if(p->prefixOffset < p->prefix.size()) {
-        const size_t frameBytes = static_cast<size_t>(p->primaryFormat.bytesPerFrame());
-        size_t count            = std::min<size_t>(bytes, static_cast<size_t>(p->prefix.size() - p->prefixOffset));
+        const auto frameBytes = static_cast<size_t>(p->primaryFormat.bytesPerFrame());
+        size_t count          = std::min<size_t>(bytes, static_cast<size_t>(p->prefix.size() - p->prefixOffset));
         count -= count % frameBytes;
         if(count == 0) {
             return ReadResult::needMoreInput();

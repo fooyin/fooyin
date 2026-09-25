@@ -885,7 +885,7 @@ TEST_F(AudioLoaderTest, LoadsDecoderAndReaderForRegularTracks)
     const auto loadedDecoder
         = loader.loadDecoderForTrack(track, AudioDecoder::UpdateTracks, AudioDecoder::RepeatTrackEnabled);
     ASSERT_NE(loadedDecoder.decoder, nullptr);
-    EXPECT_EQ(u"decoder-two"_s, decoderLabel(loadedDecoder.decoder));
+    EXPECT_EQ(u"decoder-two"_s, loadedDecoder.name);
     ASSERT_TRUE(loadedDecoder.format.has_value());
     EXPECT_EQ(testFormat(), loadedDecoder.format.value());
     ASSERT_NE(loadedDecoder.input.device, nullptr);
@@ -998,7 +998,7 @@ TEST_F(AudioLoaderTest, LoadsDecoderAndReaderForRemoteTracksWithoutOpeningDevice
 
     const auto loadedDecoder = loader.loadDecoderForTrack(track);
     ASSERT_NE(loadedDecoder.decoder, nullptr);
-    EXPECT_EQ(u"decoder-two"_s, decoderLabel(loadedDecoder.decoder));
+    EXPECT_EQ(u"decoder-two"_s, loadedDecoder.name);
     EXPECT_EQ(track.filepath(), loadedDecoder.input.source.filepath);
     EXPECT_EQ(nullptr, loadedDecoder.input.source.device);
     EXPECT_EQ(nullptr, loadedDecoder.input.device.get());
@@ -1195,7 +1195,7 @@ TEST_F(AudioLoaderTest, LoadsDecoderAndReaderForArchiveTracks)
     const auto loadedDecoder
         = loader.loadDecoderForArchiveTrack(track, AudioDecoder::NoSeeking, AudioDecoder::RepeatTrackEnabled);
     ASSERT_NE(loadedDecoder.decoder, nullptr);
-    EXPECT_EQ(u"decoder-two"_s, decoderLabel(loadedDecoder.decoder));
+    EXPECT_EQ(u"decoder-two"_s, loadedDecoder.name);
     ASSERT_TRUE(loadedDecoder.format.has_value());
     EXPECT_EQ(testFormat(), loadedDecoder.format.value());
     ASSERT_NE(loadedDecoder.input.device, nullptr);

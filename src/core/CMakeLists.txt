@@ -157,6 +157,8 @@ set(SOURCES
     engine/fadingdefs.cpp
     engine/input/archiveinput.cpp
     engine/input/archiveinput.h
+    engine/input/carrierdecoder.cpp
+    engine/input/carrierdecoder.h
     engine/input/ffmpeg/ffmpegcodec.cpp
     engine/input/ffmpeg/ffmpegcodec.h
     engine/input/ffmpeg/ffmpegencoder.cpp

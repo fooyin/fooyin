@@ -49,6 +49,7 @@ fooyin_add_test(test_conversionrunner core/engine/conversion/conversionrunnertes
 fooyin_add_test(test_accurateripcore core/engine/accurateriptest.cpp)
 fooyin_add_test(test_audioverifier core/engine/audioverifiertest.cpp)
 fooyin_add_test(test_ffmpegencoder core/engine/ffmpegencodertest.cpp)
+fooyin_add_test(test_carrierdecoder core/engine/carrierdecodertest.cpp)
 fooyin_add_test(test_audioloader core/engine/audioloadertest.cpp)
 fooyin_add_test(test_audioengine core/engine/audioenginetest.cpp)
 fooyin_add_test(test_visualisationbackend core/engine/visualisationbackendtest.cpp)
