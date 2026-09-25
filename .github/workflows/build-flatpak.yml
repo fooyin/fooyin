@@ -32,6 +32,15 @@ jobs:
         shell: bash
         run: echo "key=${{ hashFiles('dist/linux/flatpak/**') }}" >> "$GITHUB_OUTPUT"
 
+      - name: Set bundle name
+        id: flatpak-bundle
+        env:
+          FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
+        shell: bash
+        run: |
+          version="$(awk '$1 == "VERSION" { print $2; exit }' CMakeLists.txt)${FOOYIN_VERSION_SUFFIX}"
+          echo "name=fooyin-${version}-${{ matrix.arch }}.flatpak" >> "$GITHUB_OUTPUT"
+
       - name: Set version suffix
         if: inputs.version_suffix != ''
         env:
@@ -44,7 +53,7 @@ jobs:
       - name: Build Flatpak
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
-          bundle: fooyin-${{ matrix.arch }}.flatpak
+          bundle: ${{ steps.flatpak-bundle.outputs.name }}
           manifest-path: dist/linux/flatpak/org.fooyin.fooyin.yaml
           cache-key: flatpak-builder-${{ matrix.arch }}-${{ steps.flatpak-cache.outputs.key }}
           arch: ${{ matrix.arch }}
@@ -54,4 +63,4 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: flatpak-${{ matrix.arch }}
-          path: fooyin-${{ matrix.arch }}.flatpak
+          path: ${{ steps.flatpak-bundle.outputs.name }}
