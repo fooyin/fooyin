@@ -21,6 +21,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/engine/dsp/realfft.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/enginecontroller.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/enginedefs.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/encoderplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/fadingdefs.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/inputplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/levelframe.h

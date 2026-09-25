@@ -45,6 +45,7 @@
 #include <core/engine/audioencoderregistry.h>
 #include <core/engine/audioloader.h>
 #include <core/engine/dsp/dspplugin.h>
+#include <core/engine/encoderplugin.h>
 #include <core/engine/outputplugin.h>
 #include <core/network/networkaccessmanager.h>
 #include <core/network/remoteioservice.h>
@@ -467,6 +468,13 @@ void Application::loadPlugins()
         }
         if(creator.archiveReader) {
             m_audioLoader->addArchiveReader(plugin->inputName(), creator.archiveReader);
+        }
+    });
+
+    m_pluginManager->initialisePlugins<EncoderPlugin>([this](EncoderPlugin* plugin) {
+        const auto creator = plugin->encoderCreator();
+        if(creator) {
+            m_audioEncoderRegistry->addEncoderBackend(plugin->encoderName(), plugin->encoderName(), creator);
         }
     });
 

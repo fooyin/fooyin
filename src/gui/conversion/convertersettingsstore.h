@@ -24,7 +24,9 @@
 #include <QByteArray>
 #include <QString>
 
+#include <array>
 #include <optional>
+#include <ranges>
 #include <vector>
 
 namespace Fooyin {
@@ -47,8 +49,20 @@ struct StoredConversionPreset
 };
 
 namespace ConverterSettings {
-constexpr auto PreferredDefaultEncoderProfileId = "ffmpeg-flac";
-constexpr auto FallbackDefaultEncoderProfileId  = "ffmpeg-wav";
+constexpr std::array DefaultEncoderProfileIds{"flac", "ffmpeg-flac", "ffmpeg-wav"};
+
+template <typename Range, typename Projection>
+auto findDefaultEncoderProfile(Range& profiles, Projection projection)
+{
+    const auto end = std::ranges::end(profiles);
+    for(const char* id : DefaultEncoderProfileIds) {
+        const auto profile = std::ranges::find(profiles, QLatin1StringView{id}, projection);
+        if(profile != end) {
+            return profile;
+        }
+    }
+    return end;
+}
 
 EncoderProfile applyStoredEncoderProfile(EncoderProfile profile, const StoredEncoderProfile& stored);
 

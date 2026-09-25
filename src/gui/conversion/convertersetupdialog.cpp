@@ -1037,15 +1037,9 @@ void ConverterSetupDialog::applyPreset(const StoredConversionPreset& stored)
 
 void ConverterSetupDialog::applyDefaultPreset()
 {
-    const auto& profiles = std::as_const(m_profiles);
-    auto defaultProfile  = std::ranges::find_if(profiles, [](const EncoderProfileEntry& entry) {
-        return entry.info.id == QLatin1StringView{ConverterSettings::PreferredDefaultEncoderProfileId};
-    });
-    if(defaultProfile == profiles.cend()) {
-        defaultProfile = std::ranges::find_if(profiles, [](const EncoderProfileEntry& entry) {
-            return entry.info.id == QLatin1StringView{ConverterSettings::FallbackDefaultEncoderProfileId};
-        });
-    }
+    const auto& profiles      = std::as_const(m_profiles);
+    const auto defaultProfile = ConverterSettings::findDefaultEncoderProfile(
+        profiles, [](const EncoderProfileEntry& entry) { return entry.info.id; });
     if(defaultProfile != profiles.cend()) {
         m_profileTable->selectRow(static_cast<int>(std::ranges::distance(profiles.cbegin(), defaultProfile)));
     }
