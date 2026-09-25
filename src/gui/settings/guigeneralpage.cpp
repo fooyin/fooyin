@@ -164,9 +164,11 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     iconThemeBoxLayout->addWidget(m_darkTheme, row++, 1);
     iconThemeBoxLayout->addWidget(m_systemTheme, row++, 0, 1, 2);
 
-    m_applicationIcon->addItem(QIcon{u":/icons/32-fooyin.png"_s}, tr("New"));
-    m_applicationIcon->addItem(QIcon{u":/icons/32-fooyin-old.png"_s}, tr("Old"));
-    m_applicationIcon->addItem(tr("Custom"));
+    m_applicationIcon->addItem(QIcon{u":/icons/32-fooyin.png"_s}, tr("Dragon"),
+                               static_cast<int>(Gui::ApplicationIconOption::Dragon));
+    m_applicationIcon->addItem(QIcon{u":/icons/32-fooyin-typographic.png"_s}, tr("Typographic"),
+                               static_cast<int>(Gui::ApplicationIconOption::Typographic));
+    m_applicationIcon->addItem(tr("Custom"), static_cast<int>(Gui::ApplicationIconOption::Custom));
 
     iconThemeBoxLayout->addWidget(new QLabel(tr("Application icon") + u":"_s, iconThemeBox), row, 0);
     iconThemeBoxLayout->addWidget(m_applicationIcon, row++, 1);
@@ -231,8 +233,9 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 
     QObject::connect(m_overrideMargin, &QCheckBox::toggled, m_editableLayoutMargin, &QWidget::setEnabled);
 
-    QObject::connect(m_applicationIcon, &QComboBox::currentIndexChanged, this, [this](int index) {
-        const bool custom = index == static_cast<int>(Gui::ApplicationIconOption::Custom);
+    QObject::connect(m_applicationIcon, &QComboBox::currentIndexChanged, this, [this]() {
+        const bool custom
+            = m_applicationIcon->currentData().toInt() == static_cast<int>(Gui::ApplicationIconOption::Custom);
         m_customApplicationIcon->setVisible(custom);
         m_browseApplicationIcon->setVisible(custom);
     });
@@ -284,7 +287,8 @@ void GuiGeneralPageWidget::load()
             break;
     }
 
-    m_applicationIcon->setCurrentIndex(m_settings->value<ApplicationIcon>());
+    const int applicationIconIndex = m_applicationIcon->findData(m_settings->value<ApplicationIcon>());
+    m_applicationIcon->setCurrentIndex(applicationIconIndex >= 0 ? applicationIconIndex : 0);
     m_customApplicationIcon->setText(m_settings->value<CustomApplicationIcon>());
 
     m_showMenuBar->setChecked(m_settings->value<ShowMenuBar>());
@@ -328,7 +332,7 @@ void GuiGeneralPageWidget::apply()
     }
     m_settings->set<IconTheme>(static_cast<int>(iconThemeOption));
     m_settings->set<CustomApplicationIcon>(m_customApplicationIcon->text());
-    m_settings->set<ApplicationIcon>(m_applicationIcon->currentIndex());
+    m_settings->set<ApplicationIcon>(m_applicationIcon->currentData().toInt());
 
     m_settings->set<ShowMenuBar>(m_showMenuBar->isChecked());
 

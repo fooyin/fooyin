@@ -8,14 +8,14 @@
         <file>icons/128-fooyin.png</file>
         <file>icons/256-fooyin.png</file>
         <file>icons/512-fooyin.png</file>
-        <file>icons/16-fooyin-old.png</file>
-        <file>icons/22-fooyin-old.png</file>
-        <file>icons/32-fooyin-old.png</file>
-        <file>icons/48-fooyin-old.png</file>
-        <file>icons/64-fooyin-old.png</file>
-        <file>icons/128-fooyin-old.png</file>
-        <file>icons/256-fooyin-old.png</file>
-        <file>icons/512-fooyin-old.png</file>
+        <file>icons/16-fooyin-typographic.png</file>
+        <file>icons/22-fooyin-typographic.png</file>
+        <file>icons/32-fooyin-typographic.png</file>
+        <file>icons/48-fooyin-typographic.png</file>
+        <file>icons/64-fooyin-typographic.png</file>
+        <file>icons/128-fooyin-typographic.png</file>
+        <file>icons/256-fooyin-typographic.png</file>
+        <file>icons/512-fooyin-typographic.png</file>
         <file>icons/dark/index.theme</file>
         <file>icons/dark/scalable/actions/application-exit.svg</file>
         <file>icons/dark/scalable/actions/applications-graphics.svg</file>

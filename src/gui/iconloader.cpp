@@ -50,7 +50,7 @@ struct IconThemeState
 
 struct ApplicationIconState
 {
-    ApplicationIconOption option{ApplicationIconOption::New};
+    ApplicationIconOption option{ApplicationIconOption::Dragon};
     QString customPath;
 };
 
@@ -161,7 +161,7 @@ QIcon applicationIcon()
     }
 
     QIcon icon;
-    const QString suffix = state.option == ApplicationIconOption::Old ? u"-old"_s : QString{};
+    const QString suffix = state.option == ApplicationIconOption::Typographic ? u"-typographic"_s : QString{};
     for(const int size : {16, 22, 32, 48, 64, 128, 256, 512}) {
         icon.addFile(u":/icons/%1-fooyin%2.png"_s.arg(size).arg(suffix), QSize{size, size});
     }

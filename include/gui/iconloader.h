@@ -37,9 +37,9 @@ class QStyleOptionViewItem;
 namespace Fooyin::Gui {
 enum class ApplicationIconOption : uint8_t
 {
-    New = 0,
-    Old,
-    Custom,
+    Typographic = 0,
+    Dragon      = 1,
+    Custom      = 2,
 };
 
 /*!
