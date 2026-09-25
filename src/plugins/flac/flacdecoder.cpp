@@ -206,7 +206,8 @@ AudioDecoder::ReadResult FlacDecoder::readAudio(size_t bytes)
         if(!FLAC__stream_decoder_process_single(m_decoder.get())) {
             if(m_error.isEmpty()) {
                 const auto state = FLAC__stream_decoder_get_state(m_decoder.get());
-                setError(u"Failed to decode FLAC audio: %1"_s.arg(FLAC__StreamDecoderStateString[state]));
+                setError(u"Failed to decode FLAC audio: %1"_s.arg(
+                    QString::fromLatin1(FLAC__StreamDecoderStateString[state])));
             }
             break;
         }
