@@ -14,11 +14,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 #include "flacplugin.h"
 
 #include "flacdecoder.h"
+#include "flacencoder.h"
 
 using namespace Qt::StringLiterals;
 
@@ -35,5 +37,17 @@ InputCreator FlacPlugin::inputCreator() const
         return std::make_unique<FlacDecoder>();
     };
     return creator;
+}
+
+QString FlacPlugin::encoderName() const
+{
+    return u"FLAC"_s;
+}
+
+EncoderCreator FlacPlugin::encoderCreator() const
+{
+    return [] {
+        return std::make_unique<FlacEncoder>();
+    };
 }
 } // namespace Fooyin::Flac

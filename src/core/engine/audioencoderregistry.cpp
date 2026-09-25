@@ -19,6 +19,8 @@
 
 #include <core/engine/audioencoderregistry.h>
 
+#include <utils/stringcollator.h>
+
 namespace Fooyin {
 void AudioEncoderRegistry::addEncoderBackend(const QString& id, const QString& name, EncoderCreator creator)
 {
@@ -54,6 +56,11 @@ std::vector<AudioEncoderInfo> AudioEncoderRegistry::availableEncoders() const
             encoders.push_back(std::move(info));
         }
     }
+
+    const StringCollator collator;
+    std::ranges::sort(encoders, [&collator](const AudioEncoderInfo& lhs, const AudioEncoderInfo& rhs) {
+        return collator.compare(lhs.name, rhs.name) < 0;
+    });
 
     return encoders;
 }

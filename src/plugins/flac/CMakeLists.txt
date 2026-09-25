@@ -11,6 +11,8 @@ create_fooyin_plugin_internal(
             FLAC::FLAC
     SOURCES flacdecoder.cpp
             flacdecoder.h
+            flacencoder.cpp
+            flacencoder.h
             flacplugin.cpp
             flacplugin.h
 )

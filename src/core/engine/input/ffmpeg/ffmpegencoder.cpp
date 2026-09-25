@@ -382,7 +382,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
         },
         {
             .id               = u"ffmpeg-flac"_s,
-            .name             = u"FLAC"_s,
+            .name             = u"FLAC (FFmpeg)"_s,
             .extension        = u"flac"_s,
             .containerName    = u"flac"_s,
             .codecNames       = {u"flac"_s},

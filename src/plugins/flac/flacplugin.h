@@ -14,24 +14,30 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 #pragma once
 
+#include <core/engine/encoderplugin.h>
 #include <core/engine/inputplugin.h>
 #include <core/plugins/plugin.h>
 
 namespace Fooyin::Flac {
 class FlacPlugin : public QObject,
                    public Plugin,
-                   public InputPlugin
+                   public InputPlugin,
+                   public EncoderPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin" FILE "flac.json")
-    Q_INTERFACES(Fooyin::Plugin Fooyin::InputPlugin)
+    Q_INTERFACES(Fooyin::Plugin Fooyin::InputPlugin Fooyin::EncoderPlugin)
 
 public:
     [[nodiscard]] QString inputName() const override;
     [[nodiscard]] InputCreator inputCreator() const override;
+
+    [[nodiscard]] QString encoderName() const override;
+    [[nodiscard]] EncoderCreator encoderCreator() const override;
 };
 } // namespace Fooyin::Flac
