@@ -410,12 +410,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <source>Love flag: 1 when loved, empty otherwise</source>
-        <translation>戀愛狀態：1 表示戀愛中，空白則為其他</translation>
+        <translation>最愛狀態：1 表示最愛中，空白則為其他</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Interactive heart editor for the Love flag</source>
-        <translation>互動式愛心編輯器用於戀愛狀態</translation>
+        <translation>互動式愛心編輯器用於最愛狀態</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
@@ -425,7 +425,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="161"/>
         <source>Codec profile</source>
-        <translation>編解碼器設定檔案</translation>
+        <translation>編解碼器資訊檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="163"/>
@@ -1498,7 +1498,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="214"/>
         <source>Searching…</source>
-        <translation>搜尋中…</translation>
+        <translation>進行搜尋…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="220"/>
@@ -1840,7 +1840,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="140"/>
         <source>Searching</source>
-        <translation>搜尋中</translation>
+        <translation>進行搜尋</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="141"/>
@@ -7519,7 +7519,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1233"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1302"/>
         <source>Tagging</source>
-        <translation>標籤</translation>
+        <translation>進行標籤</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1216"/>
@@ -7646,7 +7646,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1415"/>
         <source>Unlove selected tracks</source>
-        <translation>取消最愛所選的曲目</translation>
+        <translation>取消最愛所選曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1431"/>
@@ -7773,7 +7773,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2182"/>
         <source>No Decoder Available</source>
-        <translation>解碼器無可供用</translation>
+        <translation>無解碼器可供使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2262"/>
@@ -8482,7 +8482,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="95"/>
         <source>Only show unloved hearts on hovered rows</source>
-        <translation>僅顯示尚無愛心的，在游標停懸處</translation>
+        <translation>僅顯示取消最愛的，在游標停懸處</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="101"/>
@@ -8522,7 +8522,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="109"/>
         <source>Unloved heart colour</source>
-        <translation>撤銷愛心顏色</translation>
+        <translation>取消最愛的愛心顏色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="111"/>
@@ -9068,12 +9068,12 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="310"/>
         <source>Codec</source>
-        <translation>解碼器</translation>
+        <translation>編解碼器</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="312"/>
         <source>Codec Profile</source>
-        <translation>解碼器內容</translation>
+        <translation>編解碼器資訊檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="314"/>
@@ -10078,7 +10078,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="122"/>
         <source>Searching</source>
-        <translation>搜尋中</translation>
+        <translation>進行搜尋</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="126"/>
@@ -10387,7 +10387,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/controls/lovecontrol.cpp" line="232"/>
         <source>Love Control</source>
-        <translation>喜愛控制</translation>
+        <translation>最愛控制</translation>
     </message>
 </context>
 <context>
@@ -10981,7 +10981,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="205"/>
         <source>Searching…</source>
-        <translation>搜尋中…</translation>
+        <translation>進行搜尋…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="238"/>
@@ -11049,7 +11049,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="141"/>
         <source>Searching</source>
-        <translation>搜尋中</translation>
+        <translation>進行搜尋</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="142"/>
@@ -12030,7 +12030,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="356"/>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="357"/>
         <source>Now Playing</source>
-        <translation>現在播放中</translation>
+        <translation>現正播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="357"/>
@@ -12133,7 +12133,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="339"/>
         <source>Now Playing</source>
-        <translation>現在播放中</translation>
+        <translation>現正播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="339"/>
@@ -15097,7 +15097,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/detachedplaylistsession.cpp" line="50"/>
         <source>Searching…</source>
-        <translation>搜尋中…</translation>
+        <translation>進行搜尋…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="130"/>
@@ -16304,7 +16304,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="111"/>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="352"/>
         <source>Tagging</source>
-        <translation>標籤進行中</translation>
+        <translation>進行標籤</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="116"/>
@@ -16744,7 +16744,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="76"/>
         <source>codecs</source>
-        <translation>編碼</translation>
+        <translation>編解碼器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontroller.cpp" line="79"/>
@@ -16827,7 +16827,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="455"/>
         <source>Codec</source>
-        <translation>編碼</translation>
+        <translation>編解碼器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="457"/>
@@ -17707,7 +17707,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="60"/>
         <source>Loading Codecs…</source>
-        <translation>載入編碼…</translation>
+        <translation>載入編解碼器…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="63"/>
@@ -17858,7 +17858,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="419"/>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1012"/>
         <source>Any codec</source>
-        <translation>任何編碼</translation>
+        <translation>任何編解碼器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="154"/>
@@ -17905,7 +17905,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="187"/>
         <source>Codec</source>
-        <translation>編碼</translation>
+        <translation>編解碼器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="188"/>
@@ -17967,12 +17967,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="420"/>
         <source>Codecs unavailable — select to retry</source>
-        <translation>編碼不可用 — 選擇重試</translation>
+        <translation>編解碼器無可供用 — 選擇重試</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="421"/>
         <source>Codecs unavailable: %1 — select to retry</source>
-        <translation>編碼不可用：%1 — 選擇重試</translation>
+        <translation>編解碼器無可供用：%1 — 選擇重試</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="826"/>
@@ -18089,7 +18089,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="199"/>
         <source>Codec</source>
-        <translation>編碼</translation>
+        <translation>編解碼器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiostationdialog.cpp" line="201"/>
@@ -19463,7 +19463,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="227"/>
         <source>Searching</source>
-        <translation>搜尋中</translation>
+        <translation>進行搜尋</translation>
     </message>
 </context>
 <context>
@@ -19802,7 +19802,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="126"/>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="127"/>
         <source>Selection Info</source>
-        <translation>區段資訊</translation>
+        <translation>選項資訊</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/selectioninfosettingspage.cpp" line="127"/>
@@ -21673,7 +21673,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="146"/>
         <source>Tagging</source>
-        <translation>標籤</translation>
+        <translation>進行標籤</translation>
     </message>
 </context>
 <context>
@@ -23472,7 +23472,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="311"/>
         <source>Love Control</source>
-        <translation>喜愛控制</translation>
+        <translation>最愛控制</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="331"/>
@@ -23708,7 +23708,7 @@ Set to 0 to choose automatically from the remote buffer length.</source>
         <location filename="../../src/gui/widgets.cpp" line="732"/>
         <location filename="../../src/gui/widgets.cpp" line="743"/>
         <source>Tagging</source>
-        <translation>標籤中</translation>
+        <translation>進行標籤</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="708"/>
@@ -24506,7 +24506,7 @@ Intermediate ratings are rounded to one, two, three, four, or five stars.</sourc
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggerpage.cpp" line="113"/>
         <source>Tagging</source>
-        <translation>標籤</translation>
+        <translation>進行標籤</translation>
     </message>
     <message>
         <location filename="../../src/core/network/networkstreamdevice.cpp" line="424"/>
