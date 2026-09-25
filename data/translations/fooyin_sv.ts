@@ -8213,17 +8213,17 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="168"/>
         <source>Old</source>
-        <translation type="unfinished"></translation>
+        <translation>Gammal</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="169"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>Egen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="171"/>
         <source>Application icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Applikationsikon</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="181"/>
@@ -8248,12 +8248,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="241"/>
         <source>Choose application icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj applikationsikon</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="242"/>
         <source>Images (*.png *.jpg *.jpeg *.svg *.ico);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilder (*.png *.jpg *.jpeg *.svg *.ico);;Alla filer (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="260"/>
@@ -12021,7 +12021,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="155"/>
         <source>Notifications in Flatpak</source>
-        <translation type="unfinished"></translation>
+        <translation>Notiser i Flatpak</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="158"/>
@@ -14070,9 +14070,9 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="439"/>
         <source>Remove %Ln playlist(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Ta bort %Ln spellista?</numerusform>
+            <numerusform>Ta bort %Ln spellistor?</numerusform>
         </translation>
     </message>
     <message>
