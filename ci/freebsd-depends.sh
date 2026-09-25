@@ -17,6 +17,7 @@ sudo pkg install -y \
      qt6-tools \
      qcoro-qt6 \
      ffmpeg \
+     flac \
      taglib \
      kdsingleapplication \
      pipewire-spa-oss \

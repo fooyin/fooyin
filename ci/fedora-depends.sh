@@ -37,6 +37,7 @@ dnf -y install --skip-broken \
      libopenmpt-devel \
      game-music-emu-devel \
      libarchive-devel \
+     flac-devel \
      libsndfile-devel \
      libebur128-devel \
      libcdio-devel \

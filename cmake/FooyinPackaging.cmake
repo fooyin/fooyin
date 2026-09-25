@@ -89,6 +89,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
     libgme0,
     libopenmpt0,
     libarchive13,
+    libflac12,
     libsndfile1,
     libebur128-1,
     libsoundtouch1,

@@ -6,6 +6,7 @@ set(FOOYIN_KNOWN_PLUGINS
     discord
     equaliser
     fileops
+    flac
     gme
     globalhotkeys
     libarchive
@@ -43,6 +44,7 @@ set(FOOYIN_DEFAULT_PLUGINS
     discord
     equaliser
     fileops
+    flac
     gme
     globalhotkeys
     libarchive
@@ -134,6 +136,7 @@ endif()
 fooyin_add_selected_plugin(discord)
 fooyin_add_selected_plugin(equaliser)
 fooyin_add_selected_plugin(fileops)
+fooyin_add_selected_plugin(flac)
 fooyin_add_selected_plugin(gme)
 fooyin_add_selected_plugin(globalhotkeys)
 fooyin_add_selected_plugin(libarchive)
