@@ -21,7 +21,6 @@
 
 #include <core/plugins/plugin.h>
 #include <core/plugins/pluginmanager.h>
-#include <utils/enum.h>
 
 namespace Fooyin {
 PluginItem::PluginItem(PluginInfo* info, PluginItem* parent)
@@ -117,15 +116,15 @@ QVariant PluginsModel::headerData(int section, Qt::Orientation orientation, int 
     }
 
     switch(section) {
-        case(0):
+        case 0:
             return tr("Name");
-        case(1):
+        case 1:
             return tr("Version");
-        case(2):
+        case 2:
             return tr("Author");
-        case(3):
+        case 3:
             return tr("Load");
-        case(4):
+        case 4:
             return tr("Status");
         default:
             break;
@@ -144,13 +143,13 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
 
     if(role == Qt::TextAlignmentRole) {
         switch(column) {
-            case(0):
+            case 0:
                 return (Qt::AlignVCenter | Qt::AlignLeft).toInt();
-            case(1):
-            case(2):
-            case(3):
-            case(5):
-            case(4):
+            case 1:
+            case 2:
+            case 3:
+            case 5:
+            case 4:
             default:
                 return Qt::AlignCenter;
         }
@@ -184,14 +183,29 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
 
     if(role == Qt::DisplayRole) {
         switch(column) {
-            case(0):
+            case 0:
                 return info->name();
-            case(1):
+            case 1:
                 return info->version();
-            case(2):
+            case 2:
                 return info->author();
-            case(4):
-                return Utils::Enum::toString(info->status());
+            case 4: {
+                switch(info->status()) {
+                    case PluginInfo::Status::Discovered:
+                        return tr("Discovered");
+                    case PluginInfo::Status::Disabled:
+                        return tr("Disabled");
+                    case PluginInfo::Status::Incompatible:
+                        return tr("Incompatible");
+                    case PluginInfo::Status::LoadFailed:
+                        return tr("Load failed");
+                    case PluginInfo::Status::Loaded:
+                        return tr("Loaded");
+                    case PluginInfo::Status::Initialised:
+                        return tr("Initialised");
+                }
+                break;
+            }
             default:
                 break;
         }
