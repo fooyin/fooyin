@@ -41,6 +41,8 @@ create_fooyin_plugin_internal(
             ${PROJECTM_OPENGL_LOADER_TARGET}
     SOURCES projectminstance.cpp
             projectminstance.h
+            projectmfavouritestore.cpp
+            projectmfavouritestore.h
             projectmconfigdialog.cpp
             projectmconfigdialog.h
             projectmplugin.cpp

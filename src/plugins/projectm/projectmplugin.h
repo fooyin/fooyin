@@ -28,6 +28,8 @@ class ActionManager;
 class SettingsManager;
 
 namespace ProjectM {
+class ProjectMFavouriteStore;
+
 class ProjectMPlugin : public QObject,
                        public Plugin,
                        public CorePlugin,
@@ -46,6 +48,7 @@ private:
 
     ActionManager* m_actionManager;
     EngineController* m_engine;
+    ProjectMFavouriteStore* m_favourites;
     SettingsManager* m_settings;
     WidgetProvider* m_widgetProvider;
 };

@@ -24,6 +24,9 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QListWidgetItem>
+#include <QRect>
+
+class QToolButton;
 
 namespace Fooyin::ProjectM {
 class PresetDialog : public QDialog
@@ -38,18 +41,31 @@ public:
     [[nodiscard]] QString selectedPresetPath() const;
 
     void markPresetFailed(int index, const QString& path, const QString& message);
+    void updateFavourite(const QString& identifier, bool favourite);
 
 Q_SIGNALS:
     void presetIndexSelected(int index);
     void presetPathSelected(const QString& path);
+    void favouriteChanged(const QString& identifier, bool favourite);
+
+protected:
+    bool eventFilter(QObject* watched, QEvent* event) override;
 
 private:
     void markPresetFailed(QListWidgetItem* item, const QString& message);
+    void setFavourite(QListWidgetItem* item, bool favourite);
+    void updateFavouriteIcon(QListWidgetItem* item);
+    void setHoveredFavouriteItem(QListWidgetItem* item);
+    void toggleFavourite(QListWidgetItem* item);
+    [[nodiscard]] QRect favouriteIconRect(const QListWidgetItem* item) const;
     void refilter();
     void emitSelectionChanged();
 
     QLineEdit* m_filterEdit;
+    QToolButton* m_favouritesOnlyButton;
     QListWidget* m_presetList;
+    QListWidgetItem* m_hoveredFavouriteItem;
+    bool m_hoveredFavouriteState;
     QDialogButtonBox* m_buttons;
     int m_lastSelectedIndex;
     QString m_lastSelectedPath;

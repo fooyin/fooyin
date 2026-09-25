@@ -67,6 +67,7 @@ public:
     void selectRandomPreset();
     void selectPreset(int index);
     void selectPreset(const QString& path);
+    void setPlaylistPresetPaths(const QStringList& presetPaths);
     void setPlaybackIdle(bool idle);
     void setPresetLocked(bool locked);
     void setShuffle(bool shuffle);
@@ -144,6 +145,8 @@ private:
     QBasicTimer m_renderTimer;
     QString m_statusText;
     QString m_pendingPresetPath;
+    QString m_currentPresetPath;
+    QStringList m_playlistPresetPaths;
     QStringList m_presetDirs;
     uint64_t m_lastPcmTimeMs;
     bool m_ready;

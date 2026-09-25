@@ -28,6 +28,7 @@
 #include <QPoint>
 #include <QPointer>
 #include <QString>
+#include <QStringList>
 
 #include <vector>
 
@@ -47,6 +48,7 @@ class SettingsManager;
 class WidgetContext;
 
 namespace ProjectM {
+class ProjectMFavouriteStore;
 class ProjectMView;
 
 class ProjectMWidget : public FyWidget
@@ -61,7 +63,7 @@ public:
     };
 
     ProjectMWidget(ActionManager* actionManager, EngineController* engine, SettingsManager* settings,
-                   QWidget* parent = nullptr);
+                   ProjectMFavouriteStore* favourites, QWidget* parent = nullptr);
     ~ProjectMWidget() override;
 
     [[nodiscard]] QString name() const override;
@@ -103,6 +105,11 @@ private:
     void leaveFullScreen();
     void saveSelectedPreset();
     void scanPresetLibrary();
+    [[nodiscard]] QString presetIdentifier(const QString& path) const;
+    [[nodiscard]] QStringList favouritePresetPaths() const;
+    void toggleCurrentPresetFavourite(bool favourite);
+    void updateFavouritePlaylist();
+    void setCycleFavouritesOnly(bool enabled);
     void selectRandomPreset();
     void setRememberPreset(bool remember);
     void setPresetLocked(bool locked);
@@ -113,16 +120,21 @@ private:
     void endSplitterResize();
     void updateResizeSnapshotGeometry();
 
+    ActionManager* m_actionManager;
+    SettingsManager* m_settings;
+    ProjectMFavouriteStore* m_favourites;
+
     ProjectMView* m_view;
     QWidget* m_viewContainer;
     QLabel* m_statusLabel;
     QLabel* m_resizeSnapshot;
     QPointer<QWidget> m_fullScreenWindow;
-    ActionManager* m_actionManager;
     WidgetContext* m_context;
-    SettingsManager* m_settings;
+
     QAction* m_fullScreenAction;
     QAction* m_selectPresetAction;
+    QAction* m_favouritePresetAction;
+    QAction* m_cycleFavouritesOnlyAction;
     QAction* m_previousPresetAction;
     QAction* m_nextPresetAction;
     QAction* m_randomPresetAction;
@@ -131,17 +143,21 @@ private:
     QAction* m_rememberPresetAction;
     Command* m_fullScreenCmd;
     Command* m_selectPresetCmd;
+    Command* m_favouritePresetCmd;
+    Command* m_cycleFavouritesOnlyCmd;
     Command* m_previousPresetCmd;
     Command* m_nextPresetCmd;
     Command* m_randomPresetCmd;
     Command* m_lockPresetCmd;
     Command* m_shufflePresetsCmd;
+
     std::vector<QPointer<QObject>> m_splitterEventObjects;
     ConfigData m_config;
     ProjectMPresetLibrary m_library;
     QString m_presetPath;
     Qt::WindowStates m_standaloneWindowState;
     bool m_rememberPreset;
+    bool m_cycleFavouritesOnly;
     bool m_detachedWindowFullScreen;
     bool m_splitterResizeActive;
 };

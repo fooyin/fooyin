@@ -264,6 +264,23 @@ void ProjectMView::selectPreset(const QString& path)
     }
 }
 
+void ProjectMView::setPlaylistPresetPaths(const QStringList& presetPaths)
+{
+    const QStringList normalised = normaliseDirs(presetPaths);
+    if(std::exchange(m_playlistPresetPaths, normalised) == normalised) {
+        return;
+    }
+
+    if(isReady()) {
+        queueGLOperation([this, normalised]() {
+            if(isReady()) {
+                m_projectM->setPlaylistPresetPaths(normalised);
+                m_projectM->setShuffle(m_shuffle);
+            }
+        });
+    }
+}
+
 void ProjectMView::setPlaybackIdle(bool idle)
 {
     if(std::exchange(m_playbackIdle, idle) == idle) {
@@ -335,6 +352,9 @@ int ProjectMView::selectedPresetIndex()
 
 QString ProjectMView::selectedPresetPath()
 {
+    if(!m_currentPresetPath.isEmpty()) {
+        return m_currentPresetPath;
+    }
     if(!isReady()) {
         return {};
     }
@@ -584,6 +604,7 @@ void ProjectMView::createProjectM()
                      });
     QObject::connect(projectM.get(), &ProjectMInstance::presetChanged, this, [this](const QString& path) {
         m_pendingPresetPath = path;
+        m_currentPresetPath = path;
         Q_EMIT presetChanged(path);
     });
 
@@ -600,6 +621,7 @@ void ProjectMView::createProjectM()
     m_projectM = std::move(projectM);
     m_projectM->setPresetLocked(m_presetLocked);
     m_projectM->setShuffle(m_shuffle);
+    m_projectM->setPlaylistPresetPaths(m_playlistPresetPaths);
 
     if(!m_pendingPresetPath.isEmpty()) {
         m_projectM->selectPreset(m_pendingPresetPath, true);

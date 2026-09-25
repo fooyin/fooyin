@@ -20,11 +20,14 @@
 #include "projectmwidget.h"
 
 #include "projectmconfigdialog.h"
+#include "projectmfavouritestore.h"
 #include "projectmpresetdialog.h"
 #include "projectmview.h"
 
 #include <core/engine/enginecontroller.h>
 #include <core/engine/visualisationservice.h>
+#include <gui/guiconstants.h>
+#include <gui/iconloader.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
@@ -56,47 +59,50 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto PresetLockKey                 = "PresetLock"_L1;
-constexpr auto PresetShuffleKey              = "PresetShuffle"_L1;
-constexpr auto PresetDurationKey             = "PresetDuration"_L1;
-constexpr auto RememberPresetKey             = "RememberPreset"_L1;
-constexpr auto PresetPathKey                 = "PresetPath"_L1;
-constexpr auto ScanRecursiveLayoutKey        = "ScanRecursive"_L1;
-constexpr auto MaxFpsLayoutKey               = "MaxFps"_L1;
-constexpr auto MeshWidthLayoutKey            = "MeshWidth"_L1;
-constexpr auto MeshHeightLayoutKey           = "MeshHeight"_L1;
-constexpr auto AspectCorrectionLayoutKey     = "AspectCorrection"_L1;
-constexpr auto SoftCutDurationLayoutKey      = "SoftCutDuration"_L1;
-constexpr auto HardCutsEnabledLayoutKey      = "HardCutsEnabled"_L1;
-constexpr auto HardCutDurationLayoutKey      = "HardCutDuration"_L1;
-constexpr auto HardCutSensitivityLayoutKey   = "HardCutSensitivity"_L1;
-constexpr auto BeatSensitivityLayoutKey      = "BeatSensitivity"_L1;
-constexpr auto PresetDirectoryKey            = "ProjectM/PresetDirectory";
-constexpr auto PresetDirectoriesKey          = "ProjectM/PresetDirectories";
-constexpr auto ScanRecursiveKey              = "ProjectM/ScanRecursive";
-constexpr auto MaxFpsKey                     = "ProjectM/MaxFps";
-constexpr auto MeshWidthKey                  = "ProjectM/MeshWidth";
-constexpr auto MeshHeightKey                 = "ProjectM/MeshHeight";
-constexpr auto AspectCorrectionKey           = "ProjectM/AspectCorrection";
-constexpr auto GlobalPresetDurationKey       = "ProjectM/PresetDuration";
-constexpr auto SoftCutDurationKey            = "ProjectM/SoftCutDuration";
-constexpr auto HardCutsEnabledKey            = "ProjectM/HardCutsEnabled";
-constexpr auto HardCutDurationKey            = "ProjectM/HardCutDuration";
-constexpr auto HardCutSensitivityKey         = "ProjectM/HardCutSensitivity";
-constexpr auto BeatSensitivityKey            = "ProjectM/BeatSensitivity";
-constexpr auto SelectedCategoriesKey         = "ProjectM/SelectedCategories";
-constexpr auto CategoriesConfiguredKey       = "ProjectM/CategoriesConfigured";
-constexpr auto SelectedFavoriteCategoriesKey = "ProjectM/SelectedFavoriteCategories";
-constexpr auto FavoritesKey                  = "ProjectM/Favorites";
+constexpr auto PresetLockKey                  = "PresetLock"_L1;
+constexpr auto PresetShuffleKey               = "PresetShuffle"_L1;
+constexpr auto PresetDurationKey              = "PresetDuration"_L1;
+constexpr auto RememberPresetKey              = "RememberPreset"_L1;
+constexpr auto CycleFavouritesOnlyKey         = "CycleFavouritesOnly"_L1;
+constexpr auto PresetPathKey                  = "PresetPath"_L1;
+constexpr auto ScanRecursiveLayoutKey         = "ScanRecursive"_L1;
+constexpr auto MaxFpsLayoutKey                = "MaxFps"_L1;
+constexpr auto MeshWidthLayoutKey             = "MeshWidth"_L1;
+constexpr auto MeshHeightLayoutKey            = "MeshHeight"_L1;
+constexpr auto AspectCorrectionLayoutKey      = "AspectCorrection"_L1;
+constexpr auto SoftCutDurationLayoutKey       = "SoftCutDuration"_L1;
+constexpr auto HardCutsEnabledLayoutKey       = "HardCutsEnabled"_L1;
+constexpr auto HardCutDurationLayoutKey       = "HardCutDuration"_L1;
+constexpr auto HardCutSensitivityLayoutKey    = "HardCutSensitivity"_L1;
+constexpr auto BeatSensitivityLayoutKey       = "BeatSensitivity"_L1;
+constexpr auto PresetDirectoryKey             = "ProjectM/PresetDirectory";
+constexpr auto PresetDirectoriesKey           = "ProjectM/PresetDirectories";
+constexpr auto ScanRecursiveKey               = "ProjectM/ScanRecursive";
+constexpr auto MaxFpsKey                      = "ProjectM/MaxFps";
+constexpr auto MeshWidthKey                   = "ProjectM/MeshWidth";
+constexpr auto MeshHeightKey                  = "ProjectM/MeshHeight";
+constexpr auto AspectCorrectionKey            = "ProjectM/AspectCorrection";
+constexpr auto GlobalPresetDurationKey        = "ProjectM/PresetDuration";
+constexpr auto SoftCutDurationKey             = "ProjectM/SoftCutDuration";
+constexpr auto HardCutsEnabledKey             = "ProjectM/HardCutsEnabled";
+constexpr auto HardCutDurationKey             = "ProjectM/HardCutDuration";
+constexpr auto HardCutSensitivityKey          = "ProjectM/HardCutSensitivity";
+constexpr auto BeatSensitivityKey             = "ProjectM/BeatSensitivity";
+constexpr auto SelectedCategoriesKey          = "ProjectM/SelectedCategories";
+constexpr auto CategoriesConfiguredKey        = "ProjectM/CategoriesConfigured";
+constexpr auto SelectedFavouriteCategoriesKey = "ProjectM/SelectedFavouriteCategories";
+constexpr auto FavouritesKey                  = "ProjectM/Favourites";
 constexpr std::array PresetDurations{5, 10, 20, 30, 45, 60};
 
-constexpr auto FullScreenAction     = "ProjectM.FullScreen";
-constexpr auto SelectPresetAction   = "ProjectM.SelectPreset";
-constexpr auto PreviousPresetAction = "ProjectM.PreviousPreset";
-constexpr auto NextPresetAction     = "ProjectM.NextPreset";
-constexpr auto RandomPresetAction   = "ProjectM.RandomPreset";
-constexpr auto LockPresetAction     = "ProjectM.LockPreset";
-constexpr auto ShufflePresetsAction = "ProjectM.ShufflePresets";
+constexpr auto FullScreenAction      = "ProjectM.FullScreen";
+constexpr auto SelectPresetAction    = "ProjectM.SelectPreset";
+constexpr auto FavouritePresetAction = "ProjectM.FavouritePreset";
+constexpr auto CycleFavouritesAction = "ProjectM.CycleFavouritesOnly";
+constexpr auto PreviousPresetAction  = "ProjectM.PreviousPreset";
+constexpr auto NextPresetAction      = "ProjectM.NextPreset";
+constexpr auto RandomPresetAction    = "ProjectM.RandomPreset";
+constexpr auto LockPresetAction      = "ProjectM.LockPreset";
+constexpr auto ShufflePresetsAction  = "ProjectM.ShufflePresets";
 
 namespace Fooyin::ProjectM {
 namespace {
@@ -135,17 +141,20 @@ QStringList presetDirs(const ProjectMWidget::ConfigData& config)
 } // namespace
 
 ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* engine, SettingsManager* settings,
-                               QWidget* parent)
+                               ProjectMFavouriteStore* favourites, QWidget* parent)
     : FyWidget{parent}
+    , m_actionManager{actionManager}
+    , m_settings{settings}
+    , m_favourites{favourites}
     , m_view{new ProjectMView()}
     , m_viewContainer{createWindowContainer(m_view, this)}
     , m_statusLabel{new QLabel(this)}
     , m_resizeSnapshot{new QLabel(this)}
-    , m_actionManager{actionManager}
     , m_context{new WidgetContext(m_viewContainer, Context{Id{"Fooyin.Context.ProjectM."}.append(id())}, this)}
-    , m_settings{settings}
     , m_fullScreenAction{new QAction(tr("&Full Screen"), this)}
     , m_selectPresetAction{new QAction(tr("&Select Preset…"), this)}
+    , m_favouritePresetAction{new QAction(tr("&Favourite Current Preset"), this)}
+    , m_cycleFavouritesOnlyAction{new QAction(tr("Cycle &Favourites Only"), this)}
     , m_previousPresetAction{new QAction(tr("&Previous Preset"), this)}
     , m_nextPresetAction{new QAction(tr("&Next Preset"), this)}
     , m_randomPresetAction{new QAction(tr("&Random Preset"), this)}
@@ -154,6 +163,8 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
     , m_rememberPresetAction{new QAction(tr("Remember &Current Preset"), this)}
     , m_fullScreenCmd{nullptr}
     , m_selectPresetCmd{nullptr}
+    , m_favouritePresetCmd{nullptr}
+    , m_cycleFavouritesOnlyCmd{nullptr}
     , m_previousPresetCmd{nullptr}
     , m_nextPresetCmd{nullptr}
     , m_randomPresetCmd{nullptr}
@@ -161,6 +172,7 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
     , m_shufflePresetsCmd{nullptr}
     , m_standaloneWindowState{Qt::WindowNoState}
     , m_rememberPreset{false}
+    , m_cycleFavouritesOnly{false}
     , m_detachedWindowFullScreen{false}
     , m_splitterResizeActive{false}
 {
@@ -218,6 +230,11 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
         if(m_rememberPreset && !path.isEmpty()) {
             m_presetPath = path;
         }
+        updateActionState();
+    });
+    QObject::connect(m_favourites, &ProjectMFavouriteStore::favouriteChanged, this, [this]() {
+        updateFavouritePlaylist();
+        updateActionState();
     });
 
     const auto updateIdleState = [this](Engine::PlaybackState state) {
@@ -264,6 +281,7 @@ void ProjectMWidget::saveLayoutData(QJsonObject& layout)
     layout[PresetLockKey]               = m_view->presetLocked();
     layout[PresetShuffleKey]            = m_view->shuffle();
     layout[RememberPresetKey]           = m_rememberPreset;
+    layout[CycleFavouritesOnlyKey]      = m_cycleFavouritesOnly;
     layout[ScanRecursiveLayoutKey]      = m_config.settings.scanRecursive;
     layout[MaxFpsLayoutKey]             = m_config.settings.maxFps;
     layout[MeshWidthLayoutKey]          = m_config.settings.meshWidth;
@@ -291,6 +309,7 @@ void ProjectMWidget::loadLayoutData(const QJsonObject& layout)
     if(layout.contains(RememberPresetKey)) {
         m_rememberPreset = layout.value(RememberPresetKey).toBool(true);
     }
+    m_cycleFavouritesOnly = layout.value(CycleFavouritesOnlyKey).toBool(false);
 
     m_config.settings.scanRecursive = layout.value(ScanRecursiveLayoutKey).toBool(m_config.settings.scanRecursive);
     m_config.settings.maxFps        = layout.value(MaxFpsLayoutKey).toInt(m_config.settings.maxFps);
@@ -314,7 +333,9 @@ void ProjectMWidget::loadLayoutData(const QJsonObject& layout)
     m_view->applySettings(m_config.settings);
 
     m_presetPath = layout.value(PresetPathKey).toString();
-    if(m_rememberPreset && !m_presetPath.isEmpty()) {
+    updateFavouritePlaylist();
+    if(m_rememberPreset && !m_presetPath.isEmpty()
+       && (!m_cycleFavouritesOnly || m_favourites->contains(presetIdentifier(m_presetPath)))) {
         m_view->selectPreset(m_presetPath);
     }
 
@@ -372,6 +393,7 @@ void ProjectMWidget::applyConfig(const ConfigData& config)
     m_config = normaliseConfig(config);
     m_settings->fileSet(PresetDirectoryKey, m_config.presetDir);
     scanPresetLibrary();
+    updateFavouritePlaylist();
     m_view->setPresetDirs(presetDirs(m_config));
     m_view->applySettings(m_config.settings);
 
@@ -396,8 +418,8 @@ void ProjectMWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileRemove(PresetDirectoriesKey);
     m_settings->fileRemove(CategoriesConfiguredKey);
     m_settings->fileRemove(SelectedCategoriesKey);
-    m_settings->fileRemove(SelectedFavoriteCategoriesKey);
-    m_settings->fileRemove(FavoritesKey);
+    m_settings->fileRemove(SelectedFavouriteCategoriesKey);
+    m_settings->fileRemove(FavouritesKey);
 }
 
 void ProjectMWidget::clearSavedDefaults() const
@@ -417,8 +439,8 @@ void ProjectMWidget::clearSavedDefaults() const
     m_settings->fileRemove(BeatSensitivityKey);
     m_settings->fileRemove(CategoriesConfiguredKey);
     m_settings->fileRemove(SelectedCategoriesKey);
-    m_settings->fileRemove(SelectedFavoriteCategoriesKey);
-    m_settings->fileRemove(FavoritesKey);
+    m_settings->fileRemove(SelectedFavouriteCategoriesKey);
+    m_settings->fileRemove(FavouritesKey);
 }
 
 void ProjectMWidget::showDetachedWindow()
@@ -530,6 +552,20 @@ void ProjectMWidget::setupActions()
     m_selectPresetCmd = registerAction(m_selectPresetAction, SelectPresetAction, tr("Select a projectM preset"));
     QObject::connect(m_selectPresetAction, &QAction::triggered, this, [this]() { showPresetDialog(); });
 
+    m_favouritePresetAction->setCheckable(true);
+    Gui::setThemeIcon(m_favouritePresetAction, Constants::Icons::FavoriteOff);
+    m_favouritePresetCmd
+        = registerAction(m_favouritePresetAction, FavouritePresetAction, tr("Favourite the current projectM preset"));
+    QObject::connect(m_favouritePresetAction, &QAction::triggered, this,
+                     [this](bool checked) { toggleCurrentPresetFavourite(checked); });
+
+    m_cycleFavouritesOnlyAction->setCheckable(true);
+    Gui::setThemeIcon(m_cycleFavouritesOnlyAction, Constants::Icons::Favorite);
+    m_cycleFavouritesOnlyCmd = registerAction(m_cycleFavouritesOnlyAction, CycleFavouritesAction,
+                                              tr("Cycle through favourite projectM presets only"));
+    QObject::connect(m_cycleFavouritesOnlyAction, &QAction::triggered, this,
+                     [this](bool checked) { setCycleFavouritesOnly(checked); });
+
     m_previousPresetCmd
         = registerAction(m_previousPresetAction, PreviousPresetAction, tr("Switch to the previous projectM preset"));
     QObject::connect(m_previousPresetAction, &QAction::triggered, this, [this]() {
@@ -579,6 +615,17 @@ void ProjectMWidget::updateActionState()
     m_lockPresetAction->setChecked(m_view->presetLocked());
     m_shufflePresetsAction->setChecked(m_view->shuffle());
     m_rememberPresetAction->setChecked(m_rememberPreset);
+
+    const QString currentIdentifier = presetIdentifier(m_view->selectedPresetPath());
+    const bool currentIsFavourite   = m_favourites->contains(currentIdentifier);
+    const bool hasFavourites        = !favouritePresetPaths().empty();
+
+    m_favouritePresetAction->setEnabled(ready && !currentIdentifier.isEmpty());
+    m_favouritePresetAction->setChecked(currentIsFavourite);
+    Gui::setThemeIcon(m_favouritePresetAction,
+                      currentIsFavourite ? Constants::Icons::Favorite : Constants::Icons::FavoriteOff);
+    m_cycleFavouritesOnlyAction->setEnabled(ready && hasFavourites);
+    m_cycleFavouritesOnlyAction->setChecked(m_cycleFavouritesOnly);
 }
 
 void ProjectMWidget::showContextMenu(const QPoint& globalPos)
@@ -589,6 +636,8 @@ void ProjectMWidget::showContextMenu(const QPoint& globalPos)
     updateActionState();
 
     menu->addAction(m_selectPresetCmd->action());
+    menu->addAction(m_favouritePresetCmd->action());
+    menu->addAction(m_cycleFavouritesOnlyCmd->action());
     menu->addSeparator();
     menu->addAction(m_previousPresetCmd->action());
     menu->addAction(m_nextPresetCmd->action());
@@ -638,6 +687,10 @@ void ProjectMWidget::showPresetDialog()
         if(!preset.path.isEmpty()) {
             preset.failureMessage = m_view->presetFailureMessage(preset.path);
         }
+        if(preset.relativePath.isEmpty()) {
+            preset.relativePath = presetIdentifier(preset.path);
+        }
+        preset.favourite = m_favourites->contains(preset.relativePath);
     }
 
     QWidget* dialogParent = m_fullScreenWindow ? m_fullScreenWindow.data() : this;
@@ -650,6 +703,8 @@ void ProjectMWidget::showPresetDialog()
         m_view->selectPreset(index);
         saveSelectedPreset();
     });
+    QObject::connect(dialog, &PresetDialog::favouriteChanged, m_favourites, &ProjectMFavouriteStore::setFavourite);
+    QObject::connect(m_favourites, &ProjectMFavouriteStore::favouriteChanged, dialog, &PresetDialog::updateFavourite);
     QObject::connect(m_view, &ProjectMView::presetLoadFailed, dialog,
                      [dialog](int index, const QString& path, const QString& message) {
                          dialog->markPresetFailed(index, path, message);
@@ -777,6 +832,62 @@ void ProjectMWidget::scanPresetLibrary()
     m_library.setRecursive(m_config.settings.scanRecursive);
     m_library.setRootDir(m_config.presetDir);
     m_library.scan();
+}
+
+QString ProjectMWidget::presetIdentifier(const QString& path) const
+{
+    return path.isEmpty() ? QString{} : m_library.relativePath(path);
+}
+
+QStringList ProjectMWidget::favouritePresetPaths() const
+{
+    QStringList paths;
+    for(const auto& preset : m_library.presets()) {
+        if(m_favourites->contains(preset.relativePath)) {
+            paths.push_back(preset.path);
+        }
+    }
+    return paths;
+}
+
+void ProjectMWidget::toggleCurrentPresetFavourite(bool favourite)
+{
+    const QString identifier = presetIdentifier(m_view->selectedPresetPath());
+    if(identifier.isEmpty()) {
+        updateActionState();
+        return;
+    }
+
+    m_favourites->setFavourite(identifier, favourite);
+}
+
+void ProjectMWidget::updateFavouritePlaylist()
+{
+    const QStringList paths = favouritePresetPaths();
+    if(m_cycleFavouritesOnly && paths.empty()) {
+        m_cycleFavouritesOnly = false;
+    }
+
+    m_view->setPlaylistPresetPaths(m_cycleFavouritesOnly ? paths : QStringList{});
+    if(!m_cycleFavouritesOnly) {
+        return;
+    }
+
+    const QString currentIdentifier = presetIdentifier(m_view->selectedPresetPath());
+    if(!m_favourites->contains(currentIdentifier)) {
+        m_view->selectPreset(paths.front());
+    }
+}
+
+void ProjectMWidget::setCycleFavouritesOnly(bool enabled)
+{
+    if(enabled && favouritePresetPaths().empty()) {
+        enabled = false;
+    }
+
+    m_cycleFavouritesOnly = enabled;
+    updateFavouritePlaylist();
+    updateActionState();
 }
 
 void ProjectMWidget::selectRandomPreset()

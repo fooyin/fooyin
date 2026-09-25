@@ -19,16 +19,35 @@
 
 #pragma once
 
+#include <QObject>
 #include <QString>
 
-namespace Fooyin::ProjectM {
-struct ProjectMPreset
+#include <vector>
+
+namespace Fooyin {
+class SettingsManager;
+
+namespace ProjectM {
+class ProjectMFavouriteStore : public QObject
 {
-    int index;
-    QString name;
-    QString path;
-    QString relativePath;
-    QString failureMessage;
-    bool favourite{false};
+    Q_OBJECT
+
+public:
+    explicit ProjectMFavouriteStore(SettingsManager* settings, QObject* parent = nullptr);
+
+    [[nodiscard]] bool contains(const QString& identifier) const;
+    [[nodiscard]] const std::vector<QString>& favourites() const;
+
+    void setFavourite(const QString& identifier, bool favourite);
+
+Q_SIGNALS:
+    void favouriteChanged(const QString& identifier, bool favourite);
+
+private:
+    void save() const;
+
+    SettingsManager* m_settings;
+    std::vector<QString> m_favourites;
 };
-} // namespace Fooyin::ProjectM
+} // namespace ProjectM
+} // namespace Fooyin

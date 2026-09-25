@@ -107,18 +107,7 @@ ProjectMInstance::ProjectMInstance(QString dataDir, QStringList presetDirs, Proj
     projectm_playlist_set_preset_switched_event_callback(m_playlist, &ProjectMInstance::presetSwitched, this);
     projectm_playlist_set_preset_switch_failed_event_callback(m_playlist, &ProjectMInstance::presetSwitchFailed, this);
 
-    int existingPresetDirs{0};
-    for(const QString& presetDir : std::as_const(m_presetDirs)) {
-        if(!QDir{presetDir}.exists()) {
-            continue;
-        }
-
-        const std::string presetDirPath = presetDir.toStdString();
-        projectm_playlist_add_path(m_playlist, presetDirPath.c_str(), m_settings.scanRecursive, false);
-        ++existingPresetDirs;
-    }
-
-    if(existingPresetDirs == 0) {
+    if(addPresetDirs() == 0) {
         m_errorMessage = u"No projectM preset folders exist"_s;
         return;
     }
@@ -243,6 +232,21 @@ void ProjectMInstance::setShuffle(bool shuffle)
     }
 
     projectm_playlist_set_shuffle(m_playlist, shuffle);
+}
+
+void ProjectMInstance::setPlaylistPresetPaths(const QStringList& presetPaths)
+{
+    if(!isReady()) {
+        return;
+    }
+
+    projectm_playlist_clear(m_playlist);
+    if(presetPaths.empty()) {
+        addPresetDirs();
+    }
+    else {
+        addPresetPaths(presetPaths);
+    }
 }
 
 void ProjectMInstance::applySettings(const ProjectMSettings& settings)
@@ -398,6 +402,29 @@ int ProjectMInstance::presetIndexForFailedPath(const QString& path) const
     }
 
     return -1;
+}
+
+void ProjectMInstance::addPresetPaths(const QStringList& presetPaths)
+{
+    for(const QString& presetPath : presetPaths) {
+        const std::string path = presetPath.toStdString();
+        projectm_playlist_add_preset(m_playlist, path.c_str(), false);
+    }
+}
+
+int ProjectMInstance::addPresetDirs()
+{
+    int existingPresetDirs{0};
+    for(const QString& presetDir : std::as_const(m_presetDirs)) {
+        if(!QDir{presetDir}.exists()) {
+            continue;
+        }
+
+        const std::string presetDirPath = presetDir.toStdString();
+        projectm_playlist_add_path(m_playlist, presetDirPath.c_str(), m_settings.scanRecursive, false);
+        ++existingPresetDirs;
+    }
+    return existingPresetDirs;
 }
 
 void ProjectMInstance::notifyPresetChanged(int index)

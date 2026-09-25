@@ -19,6 +19,7 @@
 
 #include "projectmplugin.h"
 
+#include "projectmfavouritestore.h"
 #include "projectmwidget.h"
 
 #include <core/engine/enginecontroller.h>
@@ -38,6 +39,8 @@ void ProjectMPlugin::initialise(const CorePluginContext& context)
 {
     m_engine   = context.engine;
     m_settings = context.settingsManager;
+
+    m_favourites = new ProjectMFavouriteStore(m_settings, this);
 }
 
 void ProjectMPlugin::initialise(const GuiPluginContext& context)
@@ -55,13 +58,14 @@ void ProjectMPlugin::initialise(const GuiPluginContext& context)
     QObject::connect(showProjectM, &QAction::triggered, this, &ProjectMPlugin::showProjectMWindow);
 
     m_widgetProvider->registerWidget(
-        u"ProjectM"_s, [this]() { return new ProjectMWidget(m_actionManager, m_engine, m_settings); }, tr("projectM"));
+        u"ProjectM"_s, [this]() { return new ProjectMWidget(m_actionManager, m_engine, m_settings, m_favourites); },
+        tr("projectM"));
     m_widgetProvider->setSubMenus(u"ProjectM"_s, {tr("Visualisations")});
 }
 
 void ProjectMPlugin::showProjectMWindow()
 {
-    auto* window = new ProjectMWidget(m_actionManager, m_engine, m_settings);
+    auto* window = new ProjectMWidget(m_actionManager, m_engine, m_settings, m_favourites);
     window->showStandaloneWindow(tr("projectM"), u"ProjectM/WindowState"_s);
 }
 } // namespace Fooyin::ProjectM
