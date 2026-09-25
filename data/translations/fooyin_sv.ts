@@ -7651,12 +7651,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1411"/>
         <source>Toggle loved</source>
-        <translation type="unfinished">Tåggla älskade</translation>
+        <translation>Tåggla älskad</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1411"/>
         <source>Toggle Loved for selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Tåggla älskad för de valda spåren</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1413"/>
@@ -8512,7 +8512,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="95"/>
         <source>Only show unloved hearts on hovered rows</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa bara oälskade hjärtan på hovrade rader</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="101"/>
