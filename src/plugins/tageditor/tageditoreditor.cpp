@@ -118,6 +118,8 @@ TagEditorEditor::TagEditorEditor(ActionManager* actionManager, TagEditorFieldReg
     QObject::connect(m_changeFields, &QAction::triggered, this,
                      [this]() { m_settings->settingsDialog()->openAtPage(Constants::Page::TagEditorFields); });
     QObject::connect(&m_populator, &TagEditorPopulator::populated, this, &TagEditorEditor::populationFinished);
+
+    m_settings->subscribe(SettingsKeys::EditValuesOnSingleClick, this, &TagEditorEditor::updateEditState);
 }
 
 TagEditorEditor::~TagEditorEditor()
@@ -156,11 +158,18 @@ void TagEditorEditor::setReadOnly(bool readOnly)
 
 void TagEditorEditor::updateEditState()
 {
-    const bool readOnly = m_readOnly || m_loading;
+    const bool readOnly                = m_readOnly || m_loading;
+    const bool editValuesOnSingleClick = m_settings->value(SettingsKeys::EditValuesOnSingleClick).toBool();
 
-    m_view->setTagEditTriggers(readOnly ? QAbstractItemView::NoEditTriggers
-                                        : (QAbstractItemView::DoubleClicked | QAbstractItemView::SelectedClicked
-                                           | QAbstractItemView::EditKeyPressed));
+    QAbstractItemView::EditTriggers triggers{QAbstractItemView::NoEditTriggers};
+    if(!readOnly) {
+        triggers |= QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed;
+        if(editValuesOnSingleClick) {
+            triggers |= QAbstractItemView::SelectedClicked;
+        }
+    }
+    m_view->setTagEditTriggers(triggers);
+
     m_view->addRowAction()->setDisabled(readOnly);
     m_view->removeRowAction()->setDisabled(readOnly || m_view->selectionModel()->selectedIndexes().empty());
     m_autoTrackNum->setDisabled(readOnly);

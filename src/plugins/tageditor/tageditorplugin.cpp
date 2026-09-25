@@ -65,6 +65,7 @@ void TagEditorPlugin::initialise(const CorePluginContext& context)
                               QString::fromLatin1(SettingsKeys::DefaultMultiValueSeparators));
     m_settings->createSetting(QString::fromLatin1(SettingsKeys::AutoFillMultiValueSeparators),
                               QString::fromLatin1(SettingsKeys::DefaultMultiValueSeparators));
+    m_settings->createSetting(QString::fromLatin1(SettingsKeys::EditValuesOnSingleClick), true);
 
     m_registry = new TagEditorFieldRegistry(m_settings, this);
 }

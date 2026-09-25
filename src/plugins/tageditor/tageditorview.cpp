@@ -204,7 +204,7 @@ void TagEditorView::mouseReleaseEvent(QMouseEvent* event)
 
     ExtendableTableView::mouseReleaseEvent(event);
 
-    if(event->button() == Qt::LeftButton) {
+    if(event->button() == Qt::LeftButton && index.column() == 1 && (m_editTrigger & SelectedClicked)) {
         reopenEditor(index);
     }
 }
@@ -215,8 +215,8 @@ void TagEditorView::mouseDoubleClickEvent(QMouseEvent* event)
 
     ExtendableTableView::mouseDoubleClickEvent(event);
 
-    if(event->button() == Qt::LeftButton && index.isValid() && index.row() != m_ratingRow
-       && index.row() != m_lovedRow) {
+    if(event->button() == Qt::LeftButton && (m_editTrigger & DoubleClicked) && index.isValid()
+       && index.row() != m_ratingRow && index.row() != m_lovedRow) {
         reopenEditor(index);
     }
 }
@@ -239,7 +239,34 @@ void TagEditorView::keyPressEvent(QKeyEvent* event)
         }
     }
 
+    const bool navigate = event->key() == Qt::Key_Tab || event->key() == Qt::Key_Backtab;
+
     ExtendableTableView::keyPressEvent(event);
+
+    if(navigate && currentIndex().column() == 1) {
+        reopenEditor(currentIndex());
+    }
+}
+
+void TagEditorView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint)
+{
+    if(hint != QAbstractItemDelegate::EditNextItem && hint != QAbstractItemDelegate::EditPreviousItem) {
+        ExtendableTableView::closeEditor(editor, hint);
+        return;
+    }
+
+    ExtendableTableView::closeEditor(editor, QAbstractItemDelegate::NoHint);
+
+    const CursorAction action = (hint == QAbstractItemDelegate::EditNextItem) ? MoveNext : MovePrevious;
+    const QModelIndex index   = moveCursor(action, QApplication::keyboardModifiers());
+    if(!index.isValid()) {
+        return;
+    }
+
+    setCurrentIndex(index);
+    if(index.column() == 1) {
+        reopenEditor(index);
+    }
 }
 
 void TagEditorView::leaveEvent(QEvent* event)

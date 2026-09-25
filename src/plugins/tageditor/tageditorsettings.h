@@ -27,6 +27,7 @@ class SettingsManager;
 namespace TagEditor::SettingsKeys {
 constexpr auto MultiValueSeparators         = "TagEditor/MultiValueSeparators";
 constexpr auto AutoFillMultiValueSeparators = "TagEditor/AutoFillMultiValueSeparators";
+constexpr auto EditValuesOnSingleClick      = "TagEditor/EditValuesOnSingleClick";
 constexpr auto DefaultMultiValueSeparators  = ";";
 } // namespace TagEditor::SettingsKeys
 
