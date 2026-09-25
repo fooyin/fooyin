@@ -33,7 +33,8 @@ QString FlacPlugin::inputName() const
 InputCreator FlacPlugin::inputCreator() const
 {
     InputCreator creator;
-    creator.decoder = [] {
+    creator.priority = 10;
+    creator.decoder  = [] {
         return std::make_unique<FlacDecoder>();
     };
     return creator;

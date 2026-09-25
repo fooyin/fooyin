@@ -29,6 +29,8 @@ struct InputCreator
     DecoderCreator decoder;
     ReaderCreator reader;
     ArchiveReaderCreator archiveReader;
+    //! Default priority for every backend supplied by this plugin.
+    int priority{DefaultInputPriority};
 };
 
 /*!

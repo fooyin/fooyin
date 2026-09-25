@@ -252,7 +252,8 @@ QString CddaPlugin::inputName() const
 InputCreator CddaPlugin::inputCreator() const
 {
     InputCreator creator;
-    creator.decoder = [driveManager = m_driveManager, settingsStore = m_settingsStore]() {
+    creator.priority = 100;
+    creator.decoder  = [driveManager = m_driveManager, settingsStore = m_settingsStore]() {
         return std::make_unique<CddaDecoder>(driveManager, settingsStore);
     };
     creator.reader = [driveManager = m_driveManager]() {

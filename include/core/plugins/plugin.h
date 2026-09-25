@@ -23,6 +23,8 @@
 
 #include <QtPlugin>
 
+#define FOOYIN_PLUGIN_IID "org.fooyin.fooyin.plugin/2"
+
 namespace Fooyin {
 /*!
  * An abstract interface for fooyin plugins.
@@ -31,7 +33,7 @@ namespace Fooyin {
  * fooyin plugin. It must also use the same IID as this interface like so:
  *
  * @code
- *     Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "metadata.json")
+ *     Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "metadata.json")
  * @endcode
  */
 class FYCORE_EXPORT Plugin
@@ -48,4 +50,4 @@ public:
 };
 } // namespace Fooyin
 
-Q_DECLARE_INTERFACE(Fooyin::Plugin, "org.fooyin.fooyin.plugin/1.0")
+Q_DECLARE_INTERFACE(Fooyin::Plugin, FOOYIN_PLUGIN_IID)

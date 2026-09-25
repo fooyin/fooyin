@@ -44,10 +44,21 @@ PluginInfo::PluginInfo(QString filepath, const QJsonObject& allMetadata)
     , m_plugin{nullptr}
 {
     m_loader.setFileName(m_filepath);
+
+    const QString iid = allMetadata.value("IID"_L1).toString();
+    if(iid != QLatin1StringView{FOOYIN_PLUGIN_IID}) {
+        m_error = u"Plugin (%1) uses incompatible plugin API '%2' (expected '%3')"_s.arg(
+            m_name, iid.isEmpty() ? u"unknown"_s : iid, QLatin1StringView{FOOYIN_PLUGIN_IID});
+        m_status = Status::Invalid;
+    }
 }
 
 void PluginInfo::load()
 {
+    if(m_status != Status::Read) {
+        return;
+    }
+
     if(!m_loader.load()) {
         m_error  = u"Plugin (%1) couldn't be loaded: %2"_s.arg(m_name, m_loader.errorString());
         m_status = Status::Invalid;

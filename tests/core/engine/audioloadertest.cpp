@@ -604,7 +604,8 @@ protected:
     }
 
     std::shared_ptr<DecoderState> addDecoder(AudioLoader& loader, const QString& label, const QStringList& extensions,
-                                             int priority = -1, const QStringList& supportedSchemes = {})
+                                             int priority                        = AudioLoader::DefaultPriority,
+                                             const QStringList& supportedSchemes = {})
     {
         auto state              = std::make_shared<DecoderState>();
         state->label            = label;
@@ -622,7 +623,7 @@ protected:
     }
 
     std::shared_ptr<ReaderState> addReader(AudioLoader& loader, const QString& label, const QStringList& extensions,
-                                           int priority = -1, bool isArchiveWrapper = false,
+                                           int priority = AudioLoader::DefaultPriority, bool isArchiveWrapper = false,
                                            const QStringList& supportedSchemes = {})
     {
         auto state              = std::make_shared<ReaderState>();
@@ -641,7 +642,8 @@ protected:
     }
 
     std::shared_ptr<ArchiveReaderState> addArchiveReader(AudioLoader& loader, const QString& label,
-                                                         const QStringList& extensions, int priority = -1)
+                                                         const QStringList& extensions,
+                                                         int priority = AudioLoader::DefaultPriority)
     {
         auto state        = std::make_shared<ArchiveReaderState>();
         state->label      = label;
@@ -692,8 +694,8 @@ TEST_F(AudioLoaderTest, RegistersLoadersAndEnumeratesPublicState)
     Q_UNUSED(wrapperReader);
     Q_UNUSED(archiveReader);
 
-    EXPECT_EQ((QStringList{u"decoder-mp3"_s, u"decoder-flac"_s}), entryNames(loader.decoders()));
-    EXPECT_EQ((QStringList{u"reader-mp3"_s, u"reader-flac"_s, u"wrapper-reader"_s}), entryNames(loader.readers()));
+    EXPECT_EQ((QStringList{u"decoder-flac"_s, u"decoder-mp3"_s}), entryNames(loader.decoders()));
+    EXPECT_EQ((QStringList{u"reader-flac"_s, u"wrapper-reader"_s, u"reader-mp3"_s}), entryNames(loader.readers()));
     EXPECT_EQ((QStringList{u"zip-reader"_s}), entryNames(loader.archiveReaders()));
 
     EXPECT_EQ((QStringList{u"flac"_s, u"mp3"_s, u"zip"_s}), loader.supportedFileExtensions());
@@ -762,15 +764,32 @@ TEST_F(AudioLoaderTest, CanReorderDisableAndReloadRegularLoaders)
     EXPECT_EQ((QStringList{u"reader-one"_s}), readerLabels(loader.readersForFile(u"/tmp/test.aac"_s)));
 }
 
+TEST_F(AudioLoaderTest, DefaultPriorityIsIndependentOfRegistrationOrder)
+{
+    AudioLoader loader;
+
+    addDecoder(loader, u"fallback-decoder"_s, {u"mp3"_s}, 1000);
+    addDecoder(loader, u"default-decoder"_s, {u"mp3"_s}, 100);
+    addDecoder(loader, u"preferred-decoder"_s, {u"mp3"_s}, 10);
+    addReader(loader, u"fallback-reader"_s, {u"mp3"_s}, 1000);
+    addReader(loader, u"default-reader"_s, {u"mp3"_s}, 100);
+    addReader(loader, u"preferred-reader"_s, {u"mp3"_s}, 10);
+
+    EXPECT_EQ((QStringList{u"preferred-decoder"_s, u"default-decoder"_s, u"fallback-decoder"_s}),
+              entryNames(loader.decoders()));
+    EXPECT_EQ((QStringList{u"preferred-reader"_s, u"default-reader"_s, u"fallback-reader"_s}),
+              entryNames(loader.readers()));
+}
+
 TEST_F(AudioLoaderTest, PrioritisesLoadersWithPreferredExtensions)
 {
     AudioLoader loader;
     addDecoder(loader, u"first-decoder"_s, {u"m4b"_s, u"mp3"_s}, 0);
-    const auto preferredDecoder           = addDecoder(loader, u"preferred-decoder"_s, {u"m4b"_s, u"mp3"_s}, 99);
+    const auto preferredDecoder           = addDecoder(loader, u"preferred-decoder"_s, {u"m4b"_s, u"mp3"_s}, 1000);
     preferredDecoder->preferredExtensions = {u"m4b"_s};
 
     addReader(loader, u"first-reader"_s, {u"m4b"_s, u"mp3"_s}, 0);
-    const auto preferredReader           = addReader(loader, u"preferred-reader"_s, {u"m4b"_s, u"mp3"_s}, 99);
+    const auto preferredReader           = addReader(loader, u"preferred-reader"_s, {u"m4b"_s, u"mp3"_s}, 1000);
     preferredReader->preferredExtensions = {u"m4b"_s};
 
     EXPECT_EQ((QStringList{u"preferred-decoder"_s, u"first-decoder"_s}),
@@ -797,7 +816,7 @@ TEST_F(AudioLoaderTest, ProbesAllReadersForConfiguredExtensionsAndChoosesHighest
     firstReader->requireDevice = true;
     firstReader->subsongCount  = 2;
 
-    const auto secondReader     = addReader(loader, u"second-reader"_s, {u"mp3"_s}, 99);
+    const auto secondReader     = addReader(loader, u"second-reader"_s, {u"mp3"_s}, 1000);
     secondReader->requireDevice = true;
     secondReader->subsongCount  = 5;
 
@@ -825,7 +844,7 @@ TEST_F(AudioLoaderTest, ReaderProbeKeepsConfiguredPriorityWhenSubsongCountsTie)
     firstReader->requireDevice = true;
     firstReader->subsongCount  = 3;
 
-    const auto secondReader     = addReader(loader, u"second-reader"_s, {u"mp3"_s}, 99);
+    const auto secondReader     = addReader(loader, u"second-reader"_s, {u"mp3"_s}, 1000);
     secondReader->requireDevice = true;
     secondReader->subsongCount  = 3;
 
@@ -850,7 +869,7 @@ TEST_F(AudioLoaderTest, ReaderProbeUsesLegacyFFmpegPriorityExtensionsWhenNewSett
     firstReader->requireDevice = true;
     firstReader->subsongCount  = 1;
 
-    const auto secondReader     = addReader(loader, u"second-reader"_s, {u"mp3"_s}, 99);
+    const auto secondReader     = addReader(loader, u"second-reader"_s, {u"mp3"_s}, 1000);
     secondReader->requireDevice = true;
     secondReader->subsongCount  = 4;
 

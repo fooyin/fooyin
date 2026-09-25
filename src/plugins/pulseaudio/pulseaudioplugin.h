@@ -28,7 +28,7 @@ class PulseAudioPlugin : public QObject,
                          public OutputPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.fooyin.plugin/1.0" FILE "pulseaudio.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "pulseaudio.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::OutputPlugin)
 
 public:

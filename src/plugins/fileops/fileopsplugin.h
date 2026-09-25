@@ -45,7 +45,7 @@ class FileOpsPlugin : public QObject,
                       public GuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "fileops.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "fileops.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:

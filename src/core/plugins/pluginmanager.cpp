@@ -95,7 +95,7 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
 void PluginManager::loadPlugins()
 {
     for(const auto& [name, plugin] : m_plugins) {
-        if(!plugin->isDisabled()) {
+        if(!plugin->isDisabled() && plugin->status() == PluginInfo::Status::Read) {
             plugin->load();
         }
     }

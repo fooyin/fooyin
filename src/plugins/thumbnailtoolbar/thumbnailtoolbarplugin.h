@@ -41,7 +41,7 @@ class ThumbnailToolbarPlugin : public QObject,
                                public GuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "thumbnailtoolbar.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "thumbnailtoolbar.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:

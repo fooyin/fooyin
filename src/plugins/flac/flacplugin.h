@@ -30,7 +30,7 @@ class FlacPlugin : public QObject,
                    public EncoderPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin" FILE "flac.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "flac.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::InputPlugin Fooyin::EncoderPlugin)
 
 public:

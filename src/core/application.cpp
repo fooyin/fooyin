@@ -370,10 +370,10 @@ void Application::registerInputs()
     m_audioEncoderRegistry->addEncoderBackend(u"ffmpeg"_s, u"FFmpeg"_s,
                                               []() { return std::make_unique<FFmpegEncoder>(); });
     m_audioLoader->addReader(
-        u"Archive"_s, [this]() { return std::make_unique<GeneralArchiveReader>(m_audioLoader); }, -1, true);
-    m_audioLoader->addReader(u"TagLib"_s, []() { return std::make_unique<TagLibReader>(); });
-    m_audioLoader->addDecoder(u"FFmpeg"_s, []() { return std::make_unique<FFmpegDecoder>(); }, 99);
-    m_audioLoader->addReader(u"FFmpeg"_s, []() { return std::make_unique<FFmpegReader>(); }, 99);
+        u"Archive"_s, [this]() { return std::make_unique<GeneralArchiveReader>(m_audioLoader); }, 100, true);
+    m_audioLoader->addReader(u"TagLib"_s, []() { return std::make_unique<TagLibReader>(); }, 100);
+    m_audioLoader->addDecoder(u"FFmpeg"_s, []() { return std::make_unique<FFmpegDecoder>(); }, 1000);
+    m_audioLoader->addReader(u"FFmpeg"_s, []() { return std::make_unique<FFmpegReader>(); }, 1000);
 }
 
 void Application::setupConnections()
@@ -461,13 +461,13 @@ void Application::loadPlugins()
     m_pluginManager->initialisePlugins<InputPlugin>([this](InputPlugin* plugin) {
         const auto creator = plugin->inputCreator();
         if(creator.decoder) {
-            m_audioLoader->addDecoder(plugin->inputName(), creator.decoder);
+            m_audioLoader->addDecoder(plugin->inputName(), creator.decoder, creator.priority);
         }
         if(creator.reader) {
-            m_audioLoader->addReader(plugin->inputName(), creator.reader);
+            m_audioLoader->addReader(plugin->inputName(), creator.reader, creator.priority);
         }
         if(creator.archiveReader) {
-            m_audioLoader->addArchiveReader(plugin->inputName(), creator.archiveReader);
+            m_audioLoader->addArchiveReader(plugin->inputName(), creator.archiveReader, creator.priority);
         }
     });
 

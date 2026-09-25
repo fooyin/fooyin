@@ -44,7 +44,8 @@ QString GmePlugin::inputName() const
 InputCreator GmePlugin::inputCreator() const
 {
     InputCreator creator;
-    creator.decoder = []() {
+    creator.priority = 100;
+    creator.decoder  = []() {
         return std::make_unique<GmeDecoder>();
     };
     creator.reader = []() {

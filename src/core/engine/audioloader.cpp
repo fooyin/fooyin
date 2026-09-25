@@ -90,9 +90,16 @@ void renumberLoaderEntries(std::vector<T>& entries)
 }
 
 template <typename T>
-void sortLoaderEntries(std::vector<T>& entries)
+void sortLoaderEntriesByIndex(std::vector<T>& entries)
 {
     std::ranges::sort(entries, {}, &T::index);
+    renumberLoaderEntries(entries);
+}
+
+template <typename T>
+void sortLoaderEntriesByPriority(std::vector<T>& entries)
+{
+    std::ranges::stable_sort(entries, std::less{}, &T::priority);
     renumberLoaderEntries(entries);
 }
 
@@ -394,7 +401,7 @@ void AudioLoader::restoreState()
 
     auto restoreLoaders = [&settings](auto& loaders, auto& defaultLoaders, const char* state) {
         defaultLoaders = loaders;
-        sortLoaderEntries(defaultLoaders);
+        sortLoaderEntriesByPriority(defaultLoaders);
 
         QByteArray data = settings.value(state, {}).toByteArray();
         if(data.isEmpty()) {
@@ -430,7 +437,7 @@ void AudioLoader::restoreState()
             }
         }
 
-        sortLoaderEntries(loaders);
+        sortLoaderEntriesByIndex(loaders);
     };
 
     const std::unique_lock lock{p->m_mutex};
@@ -949,16 +956,16 @@ void AudioLoader::addDecoder(const QString& name, const DecoderCreator& creator,
 
     LoaderEntry<DecoderCreator> loader;
     loader.name       = name;
-    loader.index      = priority >= 0 ? priority : static_cast<int>(p->m_decoders.size());
+    loader.priority   = priority;
     loader.extensions = decoderExtensions;
     loader.schemes    = decoderSchemes;
     loader.creator    = creator;
 
     p->m_decoders.push_back(loader);
-    sortLoaderEntries(p->m_decoders);
+    sortLoaderEntriesByPriority(p->m_decoders);
 
     p->m_defaultDecoders.push_back(loader);
-    sortLoaderEntries(p->m_defaultDecoders);
+    sortLoaderEntriesByPriority(p->m_defaultDecoders);
 }
 
 void AudioLoader::addReader(const QString& name, const ReaderCreator& creator, int priority, bool isArchiveWrapper)
@@ -986,17 +993,17 @@ void AudioLoader::addReader(const QString& name, const ReaderCreator& creator, i
 
     LoaderEntry<ReaderCreator> loader;
     loader.name             = name;
-    loader.index            = priority >= 0 ? priority : static_cast<int>(p->m_readers.size());
+    loader.priority         = priority;
     loader.extensions       = isArchiveWrapper ? archiveExtensionsFromReaders(p->m_archiveReaders) : readerExtensions;
     loader.schemes          = isArchiveWrapper ? QStringList{} : readerSchemes;
     loader.isArchiveWrapper = isArchiveWrapper;
     loader.creator          = creator;
 
     p->m_readers.push_back(loader);
-    sortLoaderEntries(p->m_readers);
+    sortLoaderEntriesByPriority(p->m_readers);
 
     p->m_defaultReaders.push_back(loader);
-    sortLoaderEntries(p->m_defaultReaders);
+    sortLoaderEntriesByPriority(p->m_defaultReaders);
 }
 
 void AudioLoader::addArchiveReader(const QString& name, const ArchiveReaderCreator& creator, int priority)
@@ -1023,12 +1030,12 @@ void AudioLoader::addArchiveReader(const QString& name, const ArchiveReaderCreat
 
     LoaderEntry<ArchiveReaderCreator> loader;
     loader.name       = name;
-    loader.index      = priority >= 0 ? priority : static_cast<int>(p->m_archiveReaders.size());
+    loader.priority   = priority;
     loader.extensions = readerExtensions;
     loader.creator    = creator;
 
     p->m_archiveReaders.push_back(loader);
-    sortLoaderEntries(p->m_archiveReaders);
+    sortLoaderEntriesByPriority(p->m_archiveReaders);
 
     const QStringList archiveExtensions = archiveExtensionsFromReaders(p->m_archiveReaders);
     refreshArchiveWrapperExtensions(p->m_readers, archiveExtensions);

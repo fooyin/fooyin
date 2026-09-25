@@ -67,7 +67,8 @@ QString OpenMptPlugin::inputName() const
 InputCreator OpenMptPlugin::inputCreator() const
 {
     InputCreator creator;
-    creator.decoder = [this]() {
+    creator.priority = 100;
+    creator.decoder  = [this]() {
         return std::make_unique<OpenMptDecoder>(m_settings);
     };
     creator.reader = [this]() {

@@ -52,7 +52,7 @@ class CddaPlugin : public QObject,
                    public GuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin" FILE "cdda.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "cdda.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::InputPlugin Fooyin::GuiPlugin)
 
 public:

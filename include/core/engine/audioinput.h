@@ -34,6 +34,9 @@
 #include <utility>
 
 namespace Fooyin {
+//! Default priority. Lower values are tried first.
+constexpr int DefaultInputPriority = 100;
+
 class AudioDecoderPrivate;
 class ArchiveReader;
 class RemoteStreamDevice;

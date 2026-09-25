@@ -34,7 +34,7 @@ class RGScannerPlugin : public QObject,
                         public GuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "rgscanner.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "rgscanner.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
