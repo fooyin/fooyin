@@ -38,7 +38,7 @@ PluginInfo::PluginInfo(QString filepath, const QJsonObject& allMetadata)
     , m_category{m_metadata.value("Category"_L1).toString().split(u'.', Qt::SkipEmptyParts)}
     , m_description{m_metadata.value("Description"_L1).toString()}
     , m_url{m_metadata.value("Url"_L1).toString()}
-    , m_status{Status::Read}
+    , m_status{Status::Discovered}
     , m_isDisabled{false}
     , m_root{nullptr}
     , m_plugin{nullptr}
@@ -49,19 +49,19 @@ PluginInfo::PluginInfo(QString filepath, const QJsonObject& allMetadata)
     if(iid != QLatin1StringView{FOOYIN_PLUGIN_IID}) {
         m_error = u"Plugin (%1) uses incompatible plugin API '%2' (expected '%3')"_s.arg(
             m_name, iid.isEmpty() ? u"unknown"_s : iid, QLatin1StringView{FOOYIN_PLUGIN_IID});
-        m_status = Status::Invalid;
+        m_status = Status::Incompatible;
     }
 }
 
 void PluginInfo::load()
 {
-    if(m_status != Status::Read) {
+    if(m_status != Status::Discovered) {
         return;
     }
 
     if(!m_loader.load()) {
         m_error  = u"Plugin (%1) couldn't be loaded: %2"_s.arg(m_name, m_loader.errorString());
-        m_status = Status::Invalid;
+        m_status = Status::LoadFailed;
         return;
     }
 
@@ -70,7 +70,9 @@ void PluginInfo::load()
 
     if(!m_plugin) {
         m_error  = u"Plugin (%1) does not subclass 'Fooyin::Plugin'"_s.arg(m_name);
-        m_status = Status::Invalid;
+        m_status = Status::LoadFailed;
+        m_loader.unload();
+        m_root = nullptr;
         return;
     }
 
@@ -87,6 +89,7 @@ void PluginInfo::unload()
     if(m_loader.unload()) {
         m_root   = nullptr;
         m_plugin = nullptr;
+        m_status = Status::Discovered;
     }
 }
 
@@ -164,7 +167,7 @@ QString PluginInfo::url() const
 
 bool PluginInfo::isLoaded() const
 {
-    return m_status == Status::Loaded;
+    return m_status == Status::Loaded || m_status == Status::Initialised;
 }
 
 bool PluginInfo::isDisabled() const
@@ -190,6 +193,11 @@ bool PluginInfo::hasError() const
 void PluginInfo::setDisabled(bool disabled)
 {
     m_isDisabled = disabled;
-    m_status     = Status::Disabled;
+    if(disabled && m_status == Status::Discovered) {
+        m_status = Status::Disabled;
+    }
+    else if(!disabled && m_status == Status::Disabled) {
+        m_status = Status::Discovered;
+    }
 }
 } // namespace Fooyin

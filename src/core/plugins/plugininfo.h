@@ -34,13 +34,14 @@ class FYCORE_EXPORT PluginInfo
     Q_GADGET
 
 public:
-    enum class Status
+    enum class Status : uint8_t
     {
-        Invalid,
-        Read,
+        Discovered = 0,
+        Disabled,
+        Incompatible,
+        LoadFailed,
         Loaded,
         Initialised,
-        Disabled,
     };
     Q_ENUM(Status)
 
