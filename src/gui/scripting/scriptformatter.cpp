@@ -122,9 +122,14 @@ void ScriptFormatterPrivate::expression()
     }
 
     if(current == u'\\') {
-        ++m_position;
-        if(m_position < m_input.size()) {
-            m_currentBlock.text += m_input.at(m_position++);
+        const qsizetype nextPosition = m_position + 1;
+        if(nextPosition < m_input.size() && (m_input.at(nextPosition) == u'<' || m_input.at(nextPosition) == u'\\')) {
+            m_currentBlock.text += m_input.at(nextPosition);
+            m_position += 2;
+        }
+        else {
+            m_currentBlock.text += current;
+            ++m_position;
         }
         return;
     }

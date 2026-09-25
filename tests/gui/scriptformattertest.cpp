@@ -192,6 +192,20 @@ TEST_F(ScriptFormatterTest, EscapedLeftAngle)
     EXPECT_EQ(u"<A"_s, result.blocks.front().text);
 }
 
+TEST_F(ScriptFormatterTest, EscapedBackslash)
+{
+    const auto result = m_formattter.evaluate(uR"(C:\\Music)"_s);
+    ASSERT_EQ(1, result.size());
+    EXPECT_EQ(uR"(C:\Music)"_s, result.blocks.front().text);
+}
+
+TEST_F(ScriptFormatterTest, LiteralBackslashes)
+{
+    const auto result = m_formattter.evaluate(uR"(C:\Music\Track.flac\)"_s);
+    ASSERT_EQ(1, result.size());
+    EXPECT_EQ(uR"(C:\Music\Track.flac\)"_s, result.blocks.front().text);
+}
+
 TEST_F(ScriptFormatterTest, Link)
 {
     const auto result = m_formattter.evaluate(u"<a href=\"https://example.com\">Example</a>"_s);
