@@ -22,6 +22,8 @@
 #include <core/plugins/plugin.h>
 #include <core/plugins/pluginmanager.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 PluginItem::PluginItem(PluginInfo* info, PluginItem* parent)
     : TreeItem{parent}
@@ -160,7 +162,7 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
 
     if(!info) {
         if(role == Qt::DisplayRole && column == 0) {
-            return item->name();
+            return categoryName(item->name());
         }
         return {};
     }
@@ -253,5 +255,53 @@ QStringList PluginsModel::enabledPlugins() const
 QStringList PluginsModel::disabledPlugins() const
 {
     return m_disabledPlugins;
+}
+
+QString PluginsModel::categoryName(const QString& category)
+{
+    // Translates the common category names used by fooyin's built-in plugins.
+    // Plugins can use any categories they want, so unknown names are left untranslated.
+
+    if(category == "Audio"_L1) {
+        return tr("Audio");
+    }
+    if(category == "Output"_L1) {
+        return tr("Output");
+    }
+    if(category == "System Integration"_L1) {
+        return tr("System Integration");
+    }
+    if(category == "Online Services"_L1) {
+        return tr("Online Services");
+    }
+    if(category == "Display"_L1) {
+        return tr("Display");
+    }
+    if(category == "Visualisations"_L1) {
+        return tr("Visualisations");
+    }
+    if(category == "Analysis"_L1) {
+        return tr("Analysis");
+    }
+    if(category == "Input"_L1) {
+        return tr("Input");
+    }
+    if(category == "Widgets"_L1) {
+        return tr("Widgets");
+    }
+    if(category == "Library"_L1) {
+        return tr("Library");
+    }
+    if(category == "Tagging"_L1) {
+        return tr("Tagging");
+    }
+    if(category == "DSP"_L1) {
+        return tr("DSP");
+    }
+    if(category == "File Management"_L1) {
+        return tr("File Management");
+    }
+
+    return category;
 }
 } // namespace Fooyin

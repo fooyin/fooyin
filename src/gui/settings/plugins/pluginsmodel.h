@@ -68,6 +68,8 @@ public:
 private:
     using PluginNameMap = std::unordered_map<QString, PluginItem>;
 
+    static QString categoryName(const QString& category);
+
     PluginManager* m_pluginManager;
 
     PluginNameMap m_nodes;
