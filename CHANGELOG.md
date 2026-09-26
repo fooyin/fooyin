@@ -5,7 +5,12 @@
 ### Improvements
 
 - **Interface:** Refine the dragon icon and restore it as the default application icon
-- **Playback:** Add a native FLAC decoder and DTS-FLAC support ([#346](https://github.com/fooyin/fooyin/issues/346))
+- **Filters:** Add an option to remember the selected saved filter ([#1690](https://github.com/fooyin/fooyin/issues/1690))
+- **Playback**
+  - Add an FLAC decoder plugin and DTS-FLAC support ([#346](https://github.com/fooyin/fooyin/issues/346))
+  - Add an MPEG decoder plugin with MP1, MP2, and MP3 support
+  - Add an Opus decoder plugin
+- **Plugins:** Standardise and translate plugin categories and statuses
 - **ProjectM:** Add favourite support to presets ([#1674](https://github.com/fooyin/fooyin/issues/1674))
 - **Settings:** Clarify rating and Love editor options ([#1684](https://github.com/fooyin/fooyin/issues/1684))
 - **Tag Editor**
@@ -15,16 +20,21 @@
 
 ### Fixes
 
+- **Interface:** Fix Properties action icons in Windows dark mode ([#1691](https://github.com/fooyin/fooyin/issues/1691))
 - **Scripting:** Preserve literal backslashes in formatted text ([#1678](https://github.com/fooyin/fooyin/issues/1678))
+- **WaveBar:** Rescale the waveform when label visibility changes ([#1689](https://github.com/fooyin/fooyin/issues/1689))
 
 ### Build/System
 
-- **Dependencies:** Add libFLAC
+- **Dependencies:** Add libFLAC, libmpg123, and libopusfile
 - **Flatpak:** Include the version in bundle filenames
+- **Translations:** Update translations and translation sources ([#1687](https://github.com/fooyin/fooyin/pull/1687), [#1688](https://github.com/fooyin/fooyin/pull/1688))
+- **Windows:** Sign release artifacts with SignPath
 
 ### Dev/API
 
 - **Audio Encoders:** Add the `EncoderPlugin` interface for registering encoder plugins
+- **Plugins:** Add API version checks and audio input priorities
 
 
 ## [0.13.1](https://github.com/fooyin/fooyin/releases/tag/v0.13.1) (2026-09-24)
