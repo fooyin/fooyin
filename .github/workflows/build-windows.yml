@@ -7,6 +7,17 @@ on:
         required: false
         type: string
         default: ''
+      signing_policy_slug:
+        required: false
+        type: string
+        default: ''
+  workflow_dispatch:
+    inputs:
+      signing_policy_slug:
+        description: SignPath signing policy slug
+        required: false
+        type: string
+        default: ''
 
 env:
   FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
@@ -107,13 +118,83 @@ jobs:
         shell: pwsh
         run: echo "CMAKE_PRESET=${{ matrix.cmake-preset }}" >> $env:GITHUB_ENV
 
-      - name: Build & Package
+      - name: Build & Test
         shell: pwsh
         env:
           VCPKG_ROOT: ${{ env.VCPKG_ROOT_DIR }}
         run: |
           Set-Location S:/
           .\ci\windows-build.ps1
+
+      - name: Upload unsigned binaries for SignPath
+        if: inputs.signing_policy_slug != '' && github.repository == 'fooyin/fooyin'
+        id: upload-unsigned-binaries
+        uses: actions/upload-artifact@v7
+        with:
+          name: signpath-input-binaries-${{ matrix.arch }}
+          path: build-${{ matrix.cmake-preset }}/run
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Sign Windows binaries
+        if: inputs.signing_policy_slug != '' && github.repository == 'fooyin/fooyin'
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ inputs.signing_policy_slug }}
+          artifact-configuration-slug: ${{ vars.SIGNPATH_BINARIES_CONFIG_SLUG }}
+          github-artifact-id: ${{ steps.upload-unsigned-binaries.outputs.artifact-id }}
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: 3600
+          output-artifact-directory: signpath-signed-binaries
+
+      - name: Apply signed binaries
+        if: inputs.signing_policy_slug != '' && github.repository == 'fooyin/fooyin'
+        shell: pwsh
+        run: |
+          Copy-Item `
+            -Path "signpath-signed-binaries/*" `
+            -Destination "build-${{ matrix.cmake-preset }}/run" `
+            -Recurse `
+            -Force
+
+      - name: Package
+        shell: pwsh
+        run: |
+          Set-Location S:/
+          .\ci\windows-package.ps1
+
+      - name: Upload unsigned installer for SignPath
+        if: inputs.signing_policy_slug != '' && github.repository == 'fooyin/fooyin'
+        id: upload-unsigned-installer
+        uses: actions/upload-artifact@v7
+        with:
+          name: signpath-input-installer-${{ matrix.arch }}
+          path: artifacts/*.exe
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Sign Windows installer
+        if: inputs.signing_policy_slug != '' && github.repository == 'fooyin/fooyin'
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ inputs.signing_policy_slug }}
+          artifact-configuration-slug: ${{ vars.SIGNPATH_INSTALLER_CONFIG_SLUG }}
+          github-artifact-id: ${{ steps.upload-unsigned-installer.outputs.artifact-id }}
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: 3600
+          output-artifact-directory: signpath-signed-installer
+
+      - name: Apply signed installer
+        if: inputs.signing_policy_slug != '' && github.repository == 'fooyin/fooyin'
+        shell: pwsh
+        run: |
+          Copy-Item -Path "signpath-signed-installer/*.exe" -Destination artifacts -Force
 
       - name: Upload installer artifact
         uses: actions/upload-artifact@v7

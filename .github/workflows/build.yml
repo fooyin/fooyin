@@ -8,6 +8,11 @@ on:
         required: false
         type: string
         default: ''
+      signing_policy_slug:
+        description: Optional SignPath signing policy slug for Windows artifacts
+        required: false
+        type: string
+        default: ''
   push:
     branches-ignore:
       - update-translations
@@ -23,6 +28,7 @@ on:
     types: [published]
 
 permissions:
+  actions: read
   contents: write # needed for vcpkg cache and release upload
 
 jobs:
@@ -45,6 +51,7 @@ jobs:
     uses: ./.github/workflows/build-windows.yml
     with:
       version_suffix: ${{ inputs.version_suffix || '' }}
+      signing_policy_slug: ${{ github.event_name == 'release' && vars.SIGNPATH_RELEASE_POLICY_SLUG || inputs.signing_policy_slug || '' }}
     secrets: inherit
 
   macos:
