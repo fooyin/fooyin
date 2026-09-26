@@ -4048,32 +4048,32 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="83"/>
         <source>Playing track</source>
-        <translation type="unfinished">Проигрываемый трек</translation>
+        <translation>Проигрываемый трек</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="84"/>
         <source>Selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбранная дорожка</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="85"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизводимая (или выбранная при остановке)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="87"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизводимая (пусто при запуске)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="89"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизводимая (пусто при остановке)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="93"/>
         <source>Preferred track</source>
-        <translation type="unfinished"></translation>
+        <translation>Предпочтительная дорожка</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="105"/>
@@ -8248,12 +8248,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="167"/>
         <source>Dragon</source>
-        <translation type="unfinished"></translation>
+        <translation>Dragon</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="169"/>
         <source>Typographic</source>
-        <translation type="unfinished"></translation>
+        <translation>Типографский</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="171"/>
@@ -8538,13 +8538,15 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="86"/>
         <source>Only show unrated stars on hovered
 or selected rows</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать звёзды без оценки только на
+строках под курсором или выбранных</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="88"/>
         <source>Only show unloved hearts on hovered
 or selected rows</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать неотмеченные сердца только на
+строках под курсором или выбранных</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="94"/>
@@ -8641,33 +8643,33 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="134"/>
         <source>Rating Script Variables</source>
-        <translation type="unfinished"></translation>
+        <translation>Переменные скрипта рейтинга</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="148"/>
         <source>Rating Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактор рейтинга</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="153"/>
         <source>Star size</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер звёзд</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="155"/>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="175"/>
         <source>Colours</source>
-        <translation type="unfinished">Цвета</translation>
+        <translation>Цвета</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="168"/>
         <source>Love Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактор отметок «нравится»</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="173"/>
         <source>Heart size</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер сердец</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="138"/>
@@ -8978,32 +8980,32 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="598"/>
         <source>Preferred track</source>
-        <translation type="unfinished"></translation>
+        <translation>Предпочтительная дорожка</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="613"/>
         <source>Playing track</source>
-        <translation type="unfinished">Проигрываемый трек</translation>
+        <translation>Проигрываемый трек</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="614"/>
         <source>Selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбранная дорожка</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="615"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизводимая (или выбранная при остановке)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="617"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизводимая (пусто при запуске)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="618"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизводимая (пусто при остановке)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="631"/>
@@ -15549,97 +15551,97 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="197"/>
         <source>Discovered</source>
-        <translation type="unfinished"></translation>
+        <translation>Обнаружен</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="199"/>
         <source>Disabled</source>
-        <translation type="unfinished">Отключено</translation>
+        <translation>Отключено</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="201"/>
         <source>Incompatible</source>
-        <translation type="unfinished"></translation>
+        <translation>Несовместим</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="203"/>
         <source>Load failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка загрузки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="205"/>
         <source>Loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Загружен</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="207"/>
         <source>Initialised</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализирован</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="266"/>
         <source>Audio</source>
-        <translation type="unfinished"></translation>
+        <translation>Аудио</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="269"/>
         <source>Output</source>
-        <translation type="unfinished">Вывод</translation>
+        <translation>Вывод</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="272"/>
         <source>System Integration</source>
-        <translation type="unfinished"></translation>
+        <translation>Интеграция с системой</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="275"/>
         <source>Online Services</source>
-        <translation type="unfinished"></translation>
+        <translation>Онлайн-сервисы</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="278"/>
         <source>Display</source>
-        <translation type="unfinished">Отображение</translation>
+        <translation>Отображение</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="281"/>
         <source>Visualisations</source>
-        <translation type="unfinished">Визуализации</translation>
+        <translation>Визуализации</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="284"/>
         <source>Analysis</source>
-        <translation type="unfinished">Анализ</translation>
+        <translation>Анализ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="287"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>Ввод</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="290"/>
         <source>Widgets</source>
-        <translation type="unfinished"></translation>
+        <translation>Виджеты</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="293"/>
         <source>Library</source>
-        <translation type="unfinished">Фонотека</translation>
+        <translation>Фонотека</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="296"/>
         <source>Tagging</source>
-        <translation type="unfinished">Тегирование</translation>
+        <translation>Тегирование</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="299"/>
         <source>DSP</source>
-        <translation type="unfinished">DSP</translation>
+        <translation>DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="302"/>
         <source>File Management</source>
-        <translation type="unfinished"></translation>
+        <translation>Управление файлами</translation>
     </message>
 </context>
 <context>
@@ -15680,7 +15682,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmpresetdialog.cpp" line="72"/>
         <source>Favourites only</source>
-        <translation type="unfinished"></translation>
+        <translation>Только избранное</translation>
     </message>
 </context>
 <context>
@@ -15979,12 +15981,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="156"/>
         <source>&amp;Favourite Current Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Добавить текущий пресет в избранное</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="157"/>
         <source>Cycle &amp;Favourites Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключать &amp;только избранные</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="158"/>
@@ -16045,12 +16047,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="558"/>
         <source>Favourite the current projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить текущий пресет projectM в избранное</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="565"/>
         <source>Cycle through favourite projectM presets only</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключать только избранные пресеты projectM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="570"/>
@@ -18860,7 +18862,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="117"/>
         <source>Unlimited</source>
-        <translation type="unfinished">Без ограничений</translation>
+        <translation>Без ограничений</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="118"/>
@@ -21950,7 +21952,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="69"/>
         <source>Edit values on single click</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать значения одним щелчком</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="146"/>
@@ -22945,7 +22947,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="55"/>
         <source>Right-align scale labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Выравнивать подписи шкалы по правому краю</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="56"/>
@@ -23148,7 +23150,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1230"/>
         <source>Right-align scale labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Выравнивать подписи шкалы по правому краю</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1233"/>
@@ -23330,37 +23332,37 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="97"/>
         <source>Playing track</source>
-        <translation type="unfinished">Проигрываемый трек</translation>
+        <translation>Проигрываемый трек</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="98"/>
         <source>Selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбранная дорожка</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="99"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизводимая (или выбранная при остановке)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="101"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизводимая (пусто при запуске)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="103"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизводимая (пусто при остановке)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="106"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Общие</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="110"/>
         <source>Preferred track</source>
-        <translation type="unfinished"></translation>
+        <translation>Предпочтительная дорожка</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="160"/>
