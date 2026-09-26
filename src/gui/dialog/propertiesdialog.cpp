@@ -1178,9 +1178,9 @@ PropertiesDialog::PropertiesDialog(ActionManager* actionManager, SettingsManager
     const QStringList category{tr("Tracks"), tr("Properties")};
 
     m_toggleScopeAction->setCheckable(true);
-    m_toggleScopeAction->setIcon(Gui::iconFromTheme(Constants::Icons::SidebarRight));
-    m_previousTrackAction->setIcon(Gui::iconFromTheme(Constants::Icons::GoPrevious));
-    m_nextTrackAction->setIcon(Gui::iconFromTheme(Constants::Icons::GoNext));
+    Gui::setThemeIcon(m_toggleScopeAction, Constants::Icons::SidebarRight);
+    Gui::setThemeIcon(m_previousTrackAction, Constants::Icons::GoPrevious);
+    Gui::setThemeIcon(m_nextTrackAction, Constants::Icons::GoNext);
     QObject::connect(m_toggleScopeAction, &QAction::triggered, this, [this]() {
         if(auto* dialog = activePropertiesDialogWidget()) {
             const bool visible = !dialog->scopePanelVisible();
