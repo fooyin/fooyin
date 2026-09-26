@@ -57,6 +57,8 @@ private:
 
     QComboBox* m_presets;
     QString m_allLibraryName;
+    bool m_rememberLastFilter;
+    int m_lastFilterId;
 };
 } // namespace Filters
 } // namespace Fooyin

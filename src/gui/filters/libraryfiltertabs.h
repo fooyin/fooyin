@@ -88,6 +88,8 @@ private:
 
     QString m_allLibraryName;
     int m_allLibraryIndex;
+    bool m_rememberLastFilter;
+    int m_lastFilterId;
 };
 } // namespace Filters
 } // namespace Fooyin

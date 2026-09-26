@@ -48,6 +48,8 @@ LibraryFilterSwitcher::LibraryFilterSwitcher(LibraryFilterRegistry* registry, Mu
     , m_settings{settings}
     , m_presets{new QComboBox(this)}
     , m_allLibraryName{tr("All")}
+    , m_rememberLastFilter{false}
+    , m_lastFilterId{-1}
 {
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins({});
@@ -83,7 +85,11 @@ QString LibraryFilterSwitcher::layoutName() const
 
 void LibraryFilterSwitcher::saveLayoutData(QJsonObject& layout)
 {
-    layout["AllLibraryName"_L1] = m_allLibraryName;
+    layout["AllLibraryName"_L1]     = m_allLibraryName;
+    layout["RememberLastFilter"_L1] = m_rememberLastFilter;
+    if(m_rememberLastFilter) {
+        layout["LastFilter"_L1] = m_presets->currentData().toInt();
+    }
 }
 
 void LibraryFilterSwitcher::loadLayoutData(const QJsonObject& layout)
@@ -91,11 +97,26 @@ void LibraryFilterSwitcher::loadLayoutData(const QJsonObject& layout)
     if(const QString name = layout.value("AllLibraryName"_L1).toString().trimmed(); !name.isEmpty()) {
         m_allLibraryName = name;
     }
+    if(layout.contains("RememberLastFilter"_L1)) {
+        m_rememberLastFilter = layout.value("RememberLastFilter"_L1).toBool();
+    }
+    if(layout.contains("LastFilter"_L1)) {
+        m_lastFilterId = layout.value("LastFilter"_L1).toInt(-1);
+    }
 }
 
 void LibraryFilterSwitcher::finalise()
 {
     populate();
+
+    if(m_rememberLastFilter) {
+        const int lastIndex = m_presets->findData(m_lastFilterId);
+        {
+            const QSignalBlocker blocker{m_presets};
+            m_presets->setCurrentIndex(lastIndex >= 0 ? lastIndex : 0);
+        }
+        activateCurrent();
+    }
 }
 
 void LibraryFilterSwitcher::populate()
@@ -173,6 +194,13 @@ void LibraryFilterSwitcher::showContextMenu(const QPoint& pos)
             populate();
         }
     });
+
+    auto* rememberLast = menu->addAction(tr("Remember last filter"));
+    rememberLast->setCheckable(true);
+    rememberLast->setChecked(m_rememberLastFilter);
+    QObject::connect(rememberLast, &QAction::triggered, this, [this](bool checked) { m_rememberLastFilter = checked; });
+
+    menu->addSeparator();
 
     auto* manage = menu->addAction(tr("Manage library filters…"));
     QObject::connect(manage, &QAction::triggered, this,

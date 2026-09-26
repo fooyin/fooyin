@@ -51,6 +51,8 @@ LibraryFilterTabs::LibraryFilterTabs(LibraryFilterRegistry* registry, MusicLibra
     , m_tabs{new SingleTabbedWidget(this)}
     , m_allLibraryName{tr("All")}
     , m_allLibraryIndex{0}
+    , m_rememberLastFilter{false}
+    , m_lastFilterId{-1}
 {
     QObject::setObjectName(LibraryFilterTabs::name());
 
@@ -93,9 +95,13 @@ QString LibraryFilterTabs::layoutName() const
 
 void LibraryFilterTabs::saveLayoutData(QJsonObject& layout)
 {
-    layout["AllLibraryName"_L1]  = m_allLibraryName;
-    layout["AllLibraryIndex"_L1] = m_allLibraryIndex;
-    layout["TabPosition"_L1]     = static_cast<int>(m_tabs->tabPosition());
+    layout["AllLibraryName"_L1]     = m_allLibraryName;
+    layout["AllLibraryIndex"_L1]    = m_allLibraryIndex;
+    layout["TabPosition"_L1]        = static_cast<int>(m_tabs->tabPosition());
+    layout["RememberLastFilter"_L1] = m_rememberLastFilter;
+    if(m_rememberLastFilter) {
+        layout["LastFilter"_L1] = m_tabs->tabBar()->tabData(m_tabs->currentIndex()).toInt();
+    }
 
     if(m_tabsWidget) {
         QJsonArray children;
@@ -116,6 +122,12 @@ void LibraryFilterTabs::loadLayoutData(const QJsonObject& layout)
         const auto position = static_cast<SingleTabbedWidget::TabPosition>(layout.value("TabPosition"_L1).toInt());
         m_tabs->setTabPosition(position);
     }
+    if(layout.contains("RememberLastFilter"_L1)) {
+        m_rememberLastFilter = layout.value("RememberLastFilter"_L1).toBool();
+    }
+    if(layout.contains("LastFilter"_L1)) {
+        m_lastFilterId = layout.value("LastFilter"_L1).toInt(-1);
+    }
 
     if(layout.contains("Widgets"_L1)) {
         WidgetContainer::loadWidgets(layout.value("Widgets"_L1).toArray());
@@ -125,6 +137,22 @@ void LibraryFilterTabs::loadLayoutData(const QJsonObject& layout)
 void LibraryFilterTabs::finalise()
 {
     setupTabs();
+
+    if(m_rememberLastFilter) {
+        int lastIndex{-1};
+        for(int index{0}; index < m_tabs->count(); ++index) {
+            if(m_tabs->tabBar()->tabData(index).toInt() == m_lastFilterId) {
+                lastIndex = index;
+                break;
+            }
+        }
+
+        {
+            const QSignalBlocker blocker{m_tabs};
+            m_tabs->setCurrentIndex(lastIndex >= 0 ? lastIndex : m_allLibraryIndex);
+        }
+        activateCurrent();
+    }
 }
 
 void LibraryFilterTabs::setupTabs()
@@ -483,6 +511,11 @@ void LibraryFilterTabs::showContextMenu(const QPoint& pos)
 
     addPositionAction(tr("Top"), SingleTabbedWidget::TabPosition::Top);
     addPositionAction(tr("Bottom"), SingleTabbedWidget::TabPosition::Bottom);
+
+    auto* rememberLast = menu->addAction(tr("Remember last filter"));
+    rememberLast->setCheckable(true);
+    rememberLast->setChecked(m_rememberLastFilter);
+    QObject::connect(rememberLast, &QAction::triggered, this, [this](bool checked) { m_rememberLastFilter = checked; });
 
     menu->addSeparator();
 
