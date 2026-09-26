@@ -819,7 +819,12 @@ void WaveBarWidget::syncPlaybackState()
     m_seekbar->setPlayState(showsCurrentTrack ? m_playerController->playState() : Player::PlayState::Stopped);
     m_seekbar->setSeekable(showsCurrentTrack && m_playerController->currentTrackSeekable());
     m_seekbar->setPosition(showsCurrentTrack ? m_playerController->currentPosition() : 0);
-    m_container->setLabelsEnabled(m_config.showLabels && showsCurrentTrack);
+
+    const bool showLabels = m_config.showLabels && showsCurrentTrack;
+    if(m_container->labelsEnabled() != showLabels) {
+        m_container->setLabelsEnabled(showLabels);
+        QMetaObject::invokeMethod(m_container, [this]() { rescaleWaveform(); }, Qt::QueuedConnection);
+    }
 }
 
 void WaveBarWidget::updatePlayedThresholdMarker()
