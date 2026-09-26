@@ -150,7 +150,6 @@ jobs:
           signing-policy-slug: ${{ inputs.signing_policy_slug }}
           artifact-configuration-slug: ${{ vars.SIGNPATH_BINARIES_CONFIG_SLUG }}
           github-artifact-id: ${{ steps.upload-unsigned-binaries.outputs.artifact-id }}
-          github-token: ${{ secrets.SIGNPATH_GITHUB_TOKEN }}
           wait-for-completion: true
           wait-for-completion-timeout-in-seconds: 3600
           output-artifact-directory: signpath-signed-binaries
@@ -191,7 +190,6 @@ jobs:
           signing-policy-slug: ${{ inputs.signing_policy_slug }}
           artifact-configuration-slug: ${{ vars.SIGNPATH_INSTALLER_CONFIG_SLUG }}
           github-artifact-id: ${{ steps.upload-unsigned-installer.outputs.artifact-id }}
-          github-token: ${{ secrets.SIGNPATH_GITHUB_TOKEN }}
           wait-for-completion: true
           wait-for-completion-timeout-in-seconds: 3600
           output-artifact-directory: signpath-signed-installer
