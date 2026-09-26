@@ -15,6 +15,7 @@
     "libopenmpt",
     "libflac",
     "libsndfile",
+    "mpg123",
     "libarchive",
     "libgme",
     "soundtouch",

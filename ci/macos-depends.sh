@@ -15,6 +15,7 @@ brew install \
     taglib \
     ffmpeg \
     flac \
+    mpg123 \
     icu4c@78 \
     sdl2 \
     libopenmpt \

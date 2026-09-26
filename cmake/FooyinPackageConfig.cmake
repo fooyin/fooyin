@@ -64,6 +64,15 @@ if(CPACK_GENERATOR STREQUAL "DEB")
         stonking libflac14
     )
 
+    set(DISTRO_MPG123_PACKAGE_MAP
+        bookworm libmpg123-0
+        noble    libmpg123-0t64
+        trixie   libmpg123-0t64
+        forky    libmpg123-0t64
+        resolute libmpg123-0t64
+        stonking libmpg123-0t64
+    )
+
     set(DISTRO_QT_PACKAGE_MAP
         bookworm "libqt6core6 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
         noble    "libqt6core6t64 (>= 6.4.0), libqt6gui6t64 (>= 6.4.0), libqt6widgets6t64 (>= 6.4.0), libqt6network6t64 (>= 6.4.0), libqt6concurrent6t64 (>= 6.4.0), libqt6sql6t64 (>= 6.4.0)"
@@ -104,6 +113,7 @@ if(CPACK_GENERATOR STREQUAL "DEB")
     get_distro_package(DISTRO_ICU_PACKAGE_MAP "${DIST_RELEASE}" ICU_PKG)
     get_distro_package(DISTRO_TAGLIB_PACKAGE_MAP "${DIST_RELEASE}" TAGLIB_PKG)
     get_distro_package(DISTRO_FLAC_PACKAGE_MAP "${DIST_RELEASE}" FLAC_PKG)
+    get_distro_package(DISTRO_MPG123_PACKAGE_MAP "${DIST_RELEASE}" MPG123_PKG)
     get_distro_package(DISTRO_QT_PACKAGE_MAP "${DIST_RELEASE}" QT_PKGS)
     get_distro_package(DISTRO_DEB_REVISION_MAP "${DIST_RELEASE}" DEB_REVISION)
 
@@ -113,7 +123,14 @@ if(CPACK_GENERATOR STREQUAL "DEB")
 
     set(CPACK_DEBIAN_PACKAGE_RELEASE "${DEB_REVISION}")
 
-    foreach(pkg IN ITEMS "${ICU_PKG}" "${TAGLIB_PKG}" "${FLAC_PKG}" "${QT_PKGS}")
+    foreach(
+        pkg IN
+        ITEMS "${ICU_PKG}"
+              "${TAGLIB_PKG}"
+              "${FLAC_PKG}"
+              "${MPG123_PKG}"
+              "${QT_PKGS}"
+    )
         if(pkg)
             string(APPEND CPACK_DEBIAN_PACKAGE_DEPENDS ", ${pkg}")
         endif()

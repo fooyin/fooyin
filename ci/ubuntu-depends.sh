@@ -43,6 +43,7 @@ $SUDO apt-get install -y \
         libgme-dev \
         libarchive-dev \
         libflac-dev \
+        libmpg123-dev \
         libsndfile1-dev \
         libebur128-dev \
         libcdio-dev \
