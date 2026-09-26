@@ -19,6 +19,10 @@ on:
         type: string
         default: ''
 
+permissions:
+  actions: read
+  contents: read
+
 env:
   FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
   QT_VERSION: '6.8.3'
