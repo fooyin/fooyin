@@ -2383,12 +2383,13 @@ QString Track::findCommonField(const TrackList& tracks)
     QString primaryDir{firstTrack.directory()};
 
     const auto hasSameField = [&tracks]<typename Func>(const QString& field, const Func& trackFunc) {
-        return !field.isEmpty() && std::ranges::all_of(tracks, [&field, &trackFunc](const Track& track) {
+        const QString foldedField = Utils::foldForSearch(field);
+        return !field.isEmpty() && std::ranges::all_of(tracks, [&foldedField, &trackFunc](const Track& track) {
             if constexpr(std::is_member_function_pointer_v<Func>) {
-                return (track.*trackFunc)() == field;
+                return Utils::foldForSearch((track.*trackFunc)()) == foldedField;
             }
             else {
-                return trackFunc(track) == field;
+                return Utils::foldForSearch(trackFunc(track)) == foldedField;
             }
         });
     };
@@ -2418,7 +2419,9 @@ QString Track::findCommonField(const TrackList& tracks)
         return primaryGenre;
     }
 
-    const bool sameDir = hasSameField(primaryDir, &Track::directory);
+    const bool sameDir = !primaryDir.isEmpty() && std::ranges::all_of(tracks, [&primaryDir](const Track& track) {
+        return track.directory() == primaryDir;
+    });
     if(sameDir) {
         return primaryDir;
     }
