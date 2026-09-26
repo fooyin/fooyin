@@ -91,6 +91,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
     libarchive13,
     libsndfile1,
     libebur128-1,
+    libopusfile0,
     libsoundtouch1,
     libsoxr0"
 )

@@ -16,6 +16,7 @@ brew install \
     ffmpeg \
     flac \
     mpg123 \
+    opusfile \
     icu4c@78 \
     sdl2 \
     libopenmpt \

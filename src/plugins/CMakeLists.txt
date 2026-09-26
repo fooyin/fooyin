@@ -15,6 +15,7 @@ set(FOOYIN_KNOWN_PLUGINS
     mpris
     mpg123
     notify
+    opus
     oscilloscope
     nowplaying
     openmpt
@@ -51,6 +52,7 @@ set(FOOYIN_DEFAULT_PLUGINS
     libarchive
     lyrics
     mpg123
+    opus
     oscilloscope
     openmpt
     pipewire
@@ -144,6 +146,7 @@ fooyin_add_selected_plugin(globalhotkeys)
 fooyin_add_selected_plugin(libarchive)
 fooyin_add_selected_plugin(lyrics)
 fooyin_add_selected_plugin(mpg123)
+fooyin_add_selected_plugin(opus)
 fooyin_add_selected_plugin(oscilloscope)
 fooyin_add_selected_plugin(openmpt)
 fooyin_add_selected_plugin(pipewire)

@@ -19,6 +19,7 @@ sudo pkg install -y \
      ffmpeg \
      flac \
      mpg123 \
+     opusfile \
      taglib \
      kdsingleapplication \
      pipewire-spa-oss \

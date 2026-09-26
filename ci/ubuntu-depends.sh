@@ -44,6 +44,7 @@ $SUDO apt-get install -y \
         libarchive-dev \
         libflac-dev \
         libmpg123-dev \
+        libopusfile-dev \
         libsndfile1-dev \
         libebur128-dev \
         libcdio-dev \

@@ -16,6 +16,7 @@
     "libflac",
     "libsndfile",
     "mpg123",
+    "opusfile",
     "libarchive",
     "libgme",
     "soundtouch",
