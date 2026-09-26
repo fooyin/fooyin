@@ -2995,10 +2995,11 @@ bool writeOpusHeaderGainQ78(QIODevice* device, int16_t gain)
 
 QStringList TagLibReader::extensions() const
 {
-    static const QStringList extensions{u"mp3"_s,  u"ogg"_s, u"opus"_s, u"oga"_s, u"m4a"_s,  u"wav"_s, u"wv"_s,
-                                        u"flac"_s, u"wma"_s, u"asf"_s,  u"mpc"_s, u"aiff"_s, u"ape"_s, u"mp4"_s,
+    static const QStringList extensions{u"mp1"_s, u"mp2"_s,  u"mp3"_s, u"ogg"_s,  u"opus"_s, u"oga"_s,
+                                        u"m4a"_s, u"wav"_s,  u"wv"_s,  u"flac"_s, u"wma"_s,  u"asf"_s,
+                                        u"mpc"_s, u"aiff"_s, u"ape"_s, u"mp4"_s,
 #if (TAGLIB_MAJOR_VERSION >= 2)
-                                        u"dsf"_s,  u"dff"_s
+                                        u"dsf"_s, u"dff"_s
 #endif
     };
     return extensions;

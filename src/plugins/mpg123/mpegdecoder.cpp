@@ -17,16 +17,18 @@
  *
  */
 
-#include "mp3decoder.h"
+#include "mpegdecoder.h"
 
 #include <QLoggingCategory>
 
 #include <cstdio>
 #include <limits>
 
-Q_LOGGING_CATEGORY(MP3_DECODER, "fy.mp3.decoder")
+Q_LOGGING_CATEGORY(MPEG_DECODER, "fy.mpeg.decoder")
 
 using namespace Qt::StringLiterals;
+
+constexpr auto MaxResyncAttempts = 10;
 
 namespace Fooyin::Mpg123 {
 namespace {
@@ -37,38 +39,49 @@ bool initialiseMpg123()
 }
 } // namespace
 
-Mp3Decoder::Mp3Decoder()
+MpegDecoder::MpegDecoder()
     : m_decoder{nullptr}
     , m_device{nullptr}
     , m_currentFrame{0}
+    , m_bitrate{0}
     , m_finished{false}
 { }
 
-QStringList Mp3Decoder::extensions() const
+QStringList MpegDecoder::extensions() const
 {
-    return {u"mp3"_s};
+    return {u"mp1"_s, u"mp2"_s, u"mp3"_s};
 }
 
-bool Mp3Decoder::isSeekable() const
+bool MpegDecoder::isSeekable() const
 {
     return m_decoder && m_device && !m_device->isSequential() && !m_options.testFlag(NoSeeking);
 }
 
-std::optional<AudioFormat> Mp3Decoder::init(const AudioSource& source, const Track& track, DecoderOptions options)
+QStringList MpegDecoder::takeWarnings()
+{
+    return std::exchange(m_warnings, {});
+}
+
+int MpegDecoder::bitrate() const
+{
+    return m_bitrate;
+}
+
+std::optional<AudioFormat> MpegDecoder::init(const AudioSource& source, const Track& track, DecoderOptions options)
 {
     m_device  = source.device;
     m_options = options;
 
-    if(!m_device->isOpen() || !initialiseMpg123()) {
-        qCWarning(MP3_DECODER) << "Unable to initialise MP3 decoder for" << track.filepath();
+    if(!m_device || !m_device->isOpen() || !initialiseMpg123()) {
+        qCWarning(MPEG_DECODER) << "Unable to initialise MPEG audio decoder for" << track.filepath();
         return {};
     }
 
     int error{MPG123_OK};
     m_decoder.reset(mpg123_new(nullptr, &error));
     if(!m_decoder) {
-        qCWarning(MP3_DECODER) << "Unable to create MP3 decoder for" << track.filepath() << ":"
-                               << mpg123_plain_strerror(error);
+        qCWarning(MPEG_DECODER) << "Unable to create MPEG audio decoder for" << track.filepath() << ":"
+                                << mpg123_plain_strerror(error);
         return {};
     }
 
@@ -76,24 +89,26 @@ std::optional<AudioFormat> Mp3Decoder::init(const AudioSource& source, const Tra
        || !configureOutput()
        || mpg123_replace_reader_handle(m_decoder.get(), readCallback, seekCallback, nullptr) != MPG123_OK
        || mpg123_open_handle(m_decoder.get(), this) != MPG123_OK || !updateFormat()) {
-        qCWarning(MP3_DECODER) << "Unable to open MP3 stream" << track.filepath() << ":" << decoderError();
+        qCWarning(MPEG_DECODER) << "Unable to open MPEG audio stream" << track.filepath() << ":" << decoderError();
         return {};
     }
 
     return m_format;
 }
 
-void Mp3Decoder::stop()
+void MpegDecoder::stop()
 {
     m_decoder.reset();
-    m_device       = nullptr;
-    m_format       = {};
-    m_options      = None;
+    m_device  = nullptr;
+    m_format  = {};
+    m_options = None;
+    m_warnings.clear();
     m_currentFrame = 0;
+    m_bitrate      = 0;
     m_finished     = false;
 }
 
-void Mp3Decoder::seek(uint64_t pos)
+void MpegDecoder::seek(uint64_t pos)
 {
     if(!isSeekable() || m_format.sampleRate() <= 0) {
         return;
@@ -106,24 +121,25 @@ void Mp3Decoder::seek(uint64_t pos)
 
     const off_t result = mpg123_seek(m_decoder.get(), static_cast<off_t>(target), SEEK_SET);
     if(result < 0) {
-        qCWarning(MP3_DECODER) << "Failed to seek in MP3 stream:" << decoderError();
+        qCWarning(MPEG_DECODER) << "Failed to seek in MPEG audio stream:" << decoderError();
         return;
     }
 
     m_currentFrame = static_cast<uint64_t>(result);
+    m_bitrate      = 0;
     m_finished     = false;
 }
 
-AudioDecoder::ReadResult Mp3Decoder::readAudio(size_t bytes)
+AudioDecoder::ReadResult MpegDecoder::readAudio(size_t bytes)
 {
     if(!m_decoder || !m_format.isValid()) {
-        return ReadResult::errorResult(u"MP3 decoder is not initialised"_s);
+        return ReadResult::errorResult(u"MPEG audio decoder is not initialised"_s);
     }
     if(m_finished) {
         return ReadResult::endOfStream();
     }
     if(abortToken().stop_requested()) {
-        return ReadResult::errorResult(u"MP3 decoding was cancelled"_s);
+        return ReadResult::errorResult(u"MPEG audio decoding was cancelled"_s);
     }
 
     const auto bytesPerFrame = static_cast<size_t>(m_format.bytesPerFrame());
@@ -136,52 +152,62 @@ AudioDecoder::ReadResult Mp3Decoder::readAudio(size_t bytes)
     AudioBuffer buffer{m_format, currentTimestamp()};
     buffer.resize(requested);
 
-    size_t decoded{0};
-    int result = mpg123_read(m_decoder.get(), buffer.data(), requested, &decoded);
-    if(result == MPG123_NEW_FORMAT) {
-        if(!updateFormat()) {
-            return ReadResult::errorResult(u"MP3 stream format changed unexpectedly"_s);
-        }
-        if(decoded == 0) {
-            result = mpg123_read(m_decoder.get(), buffer.data(), requested, &decoded);
-        }
-        else {
+    int resyncAttempts{0};
+    while(resyncAttempts < MaxResyncAttempts) {
+        size_t decoded{0};
+        int result = mpg123_read(m_decoder.get(), buffer.data(), requested, &decoded);
+        if(result == MPG123_NEW_FORMAT) {
+            if(!updateFormat()) {
+                return ReadResult::errorResult(u"MPEG audio stream format changed unexpectedly"_s);
+            }
+            if(decoded == 0) {
+                continue;
+            }
             result = MPG123_OK;
         }
+
+        if(decoded > requested || (decoded % bytesPerFrame) != 0) {
+            return ReadResult::errorResult(u"MPEG audio decoder returned invalid audio data"_s);
+        }
+
+        if(decoded > 0) {
+            buffer.resize(decoded);
+            m_currentFrame += decoded / bytesPerFrame;
+            m_finished = result == MPG123_DONE;
+            updateBitrate();
+            return ReadResult::data(std::move(buffer));
+        }
+
+        if(result == MPG123_DONE) {
+            m_finished = true;
+            return ReadResult::endOfStream();
+        }
+        if(result == MPG123_OK || result == MPG123_NEED_MORE) {
+            return ReadResult::needMoreInput();
+        }
+
+        if(mpg123_errcode(m_decoder.get()) != MPG123_RESYNC_FAIL || m_options.testFlag(VerifyIntegrity)) {
+            return ReadResult::errorResult(u"Failed to decode MPEG audio: %1"_s.arg(decoderError()));
+        }
+
+        ++resyncAttempts;
     }
 
-    if(decoded > requested || (decoded % bytesPerFrame) != 0) {
-        return ReadResult::errorResult(u"MP3 decoder returned invalid audio data"_s);
-    }
-
-    if(decoded > 0) {
-        buffer.resize(decoded);
-        m_currentFrame += decoded / bytesPerFrame;
-        m_finished = result == MPG123_DONE;
-        return ReadResult::data(std::move(buffer));
-    }
-
-    if(result == MPG123_DONE) {
-        m_finished = true;
-        return ReadResult::endOfStream();
-    }
-    if(result == MPG123_OK || result == MPG123_NEED_MORE) {
-        return ReadResult::needMoreInput();
-    }
-
-    return ReadResult::errorResult(u"Failed to decode MP3 audio: %1"_s.arg(decoderError()));
+    m_warnings.append(u"Ignored trailing junk after MPEG audio"_s);
+    m_finished = true;
+    return ReadResult::endOfStream();
 }
 
-AudioBuffer Mp3Decoder::readBuffer(size_t bytes)
+AudioBuffer MpegDecoder::readBuffer(size_t bytes)
 {
     auto result = readAudio(bytes);
     return result.status == ReadStatus::DecodedAudio ? std::move(result.buffer) : AudioBuffer{};
 }
 
-mpg123_ssize_t Mp3Decoder::readCallback(void* handle, void* buffer, size_t bytes)
+mpg123_ssize_t MpegDecoder::readCallback(void* handle, void* buffer, size_t bytes)
 {
-    auto* decoder = static_cast<Mp3Decoder*>(handle);
-    if(!decoder || decoder->abortToken().stop_requested()) {
+    auto* decoder = static_cast<MpegDecoder*>(handle);
+    if(!decoder || !decoder->m_device || decoder->abortToken().stop_requested()) {
         return -1;
     }
 
@@ -191,10 +217,10 @@ mpg123_ssize_t Mp3Decoder::readCallback(void* handle, void* buffer, size_t bytes
     return static_cast<mpg123_ssize_t>(read);
 }
 
-off_t Mp3Decoder::seekCallback(void* handle, off_t offset, int whence)
+off_t MpegDecoder::seekCallback(void* handle, off_t offset, int whence)
 {
-    auto* decoder = static_cast<Mp3Decoder*>(handle);
-    if(!decoder || decoder->m_device->isSequential()) {
+    auto* decoder = static_cast<MpegDecoder*>(handle);
+    if(!decoder || !decoder->m_device || decoder->m_device->isSequential()) {
         return -1;
     }
 
@@ -226,7 +252,7 @@ off_t Mp3Decoder::seekCallback(void* handle, off_t offset, int whence)
     return static_cast<off_t>(target);
 }
 
-bool Mp3Decoder::configureOutput() const
+bool MpegDecoder::configureOutput() const
 {
     if(mpg123_format_none(m_decoder.get()) != MPG123_OK) {
         return false;
@@ -244,7 +270,7 @@ bool Mp3Decoder::configureOutput() const
     return configured;
 }
 
-bool Mp3Decoder::updateFormat()
+bool MpegDecoder::updateFormat()
 {
     long sampleRate{0};
     int channels{0};
@@ -262,12 +288,22 @@ bool Mp3Decoder::updateFormat()
     return true;
 }
 
-QString Mp3Decoder::decoderError() const
+void MpegDecoder::updateBitrate()
+{
+    mpg123_frameinfo info{};
+    if(mpg123_info(m_decoder.get(), &info) != MPG123_OK) {
+        return;
+    }
+
+    m_bitrate = info.vbr != MPG123_CBR && info.bitrate > 0 ? info.bitrate : 0;
+}
+
+QString MpegDecoder::decoderError() const
 {
     return m_decoder ? QString::fromLocal8Bit(mpg123_strerror(m_decoder.get())) : u"Unknown error"_s;
 }
 
-uint64_t Mp3Decoder::currentTimestamp() const
+uint64_t MpegDecoder::currentTimestamp() const
 {
     if(m_format.sampleRate() <= 0) {
         return 0;

@@ -80,9 +80,9 @@ bool isRecoverableDecodeError(int error)
 
 QStringList fileExtensions(bool allSupported)
 {
-    QStringList extensions{u"mp3"_s,  u"ogg"_s,  u"opus"_s, u"oga"_s, u"m4a"_s, u"m4b"_s,  u"wav"_s,
-                           u"wv"_s,   u"flac"_s, u"wma"_s,  u"asf"_s, u"mpc"_s, u"aiff"_s, u"ape"_s,
-                           u"webm"_s, u"mp4"_s,  u"mka"_s,  u"dsf"_s, u"dff"_s, u"tak"_s};
+    QStringList extensions{u"mp1"_s,  u"mp2"_s, u"mp3"_s,  u"ogg"_s, u"opus"_s, u"oga"_s, u"m4a"_s,  u"m4b"_s,
+                           u"wav"_s,  u"wv"_s,  u"flac"_s, u"wma"_s, u"asf"_s,  u"mpc"_s, u"aiff"_s, u"ape"_s,
+                           u"webm"_s, u"mp4"_s, u"mka"_s,  u"dsf"_s, u"dff"_s,  u"tak"_s};
 
     if(!allSupported) {
         return extensions;

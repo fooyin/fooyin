@@ -24,13 +24,15 @@
 #include <mpg123.h>
 
 namespace Fooyin::Mpg123 {
-class Mp3Decoder : public AudioDecoder
+class MpegDecoder : public AudioDecoder
 {
 public:
-    Mp3Decoder();
+    MpegDecoder();
 
     [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool isSeekable() const override;
+    [[nodiscard]] QStringList takeWarnings() override;
+    [[nodiscard]] int bitrate() const override;
 
     std::optional<AudioFormat> init(const AudioSource& source, const Track& track, DecoderOptions options) override;
     void stop() override;
@@ -45,7 +47,8 @@ private:
     static off_t seekCallback(void* handle, off_t offset, int whence);
 
     [[nodiscard]] bool configureOutput() const;
-    [[nodiscard]] bool updateFormat();
+    bool updateFormat();
+    void updateBitrate();
     [[nodiscard]] QString decoderError() const;
     [[nodiscard]] uint64_t currentTimestamp() const;
 
@@ -64,7 +67,9 @@ private:
     QIODevice* m_device;
     AudioFormat m_format;
     DecoderOptions m_options;
+    QStringList m_warnings;
     uint64_t m_currentFrame;
+    int m_bitrate;
     bool m_finished;
 };
 } // namespace Fooyin::Mpg123

@@ -19,14 +19,14 @@
 
 #include "mpg123plugin.h"
 
-#include "mp3decoder.h"
+#include "mpegdecoder.h"
 
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Mpg123 {
 QString Mpg123Plugin::inputName() const
 {
-    return u"MP3"_s;
+    return u"MPEG Audio"_s;
 }
 
 InputCreator Mpg123Plugin::inputCreator() const
@@ -34,7 +34,7 @@ InputCreator Mpg123Plugin::inputCreator() const
     InputCreator creator;
     creator.priority = 10;
     creator.decoder  = [] {
-        return std::make_unique<Mp3Decoder>();
+        return std::make_unique<MpegDecoder>();
     };
     return creator;
 }
