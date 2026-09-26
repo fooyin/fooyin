@@ -815,6 +815,29 @@ TEST_F(TagReaderTest, OggRead)
     EXPECT_EQ(testTag.front(), u"A custom tag"_s);
 }
 
+TEST_F(TagReaderTest, OggReadSpacedAlbumArtist)
+{
+    const QString filepath = u":/audio/audiotest.ogg"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    {
+        const QByteArray localPath = file.fileName().toLocal8Bit();
+        TagLib::Ogg::Vorbis::File oggFile{localPath.constData()};
+        ASSERT_TRUE(oggFile.isValid());
+        ASSERT_NE(oggFile.tag(), nullptr);
+
+        oggFile.tag()->removeFields("ALBUMARTIST");
+        oggFile.tag()->addField("ALBUM ARTIST", "Spaced Album Artist");
+        ASSERT_TRUE(oggFile.save());
+    }
+
+    Track track{file.fileName()};
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+
+    EXPECT_EQ(track.albumArtist(), u"Spaced Album Artist"_s);
+}
+
 TEST_F(TagReaderTest, OggReadPrefersFmpsRatingOverRating)
 {
     const QString filepath = u":/audio/audiotest.ogg"_s;

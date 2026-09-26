@@ -1097,13 +1097,17 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Track& track, bool 
         else if(field == Album) {
             track.setAlbum(convertString(value.toString()));
         }
-        else if(field == AlbumArtist) {
+        else if(field == AlbumArtist || (field == AlbumArtistAlt && !props.contains(AlbumArtist))) {
             QStringList values = convertStringList(value);
             if(isId3v23) {
                 values = Id3Utils::splitStandardField(convertString(field), values,
                                                       policy.splitId3v23SemicolonSeparatedTags);
             }
             track.setAlbumArtists(values);
+        }
+        else if(field == AlbumArtistAlt) {
+            // Handled above with ALBUMARTIST taking precedence
+            continue;
         }
         else if(field == Genre) {
             QStringList values = convertStringList(value);
@@ -1226,6 +1230,7 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Track& tra
     replaceOrErase(oldProperties, Artist, track.artists());
     replaceOrErase(oldProperties, Album, track.album());
     replaceOrErase(oldProperties, AlbumArtist, track.albumArtists());
+    oldProperties.erase(AlbumArtistAlt);
     replaceOrErase(oldProperties, Genre, track.genres());
     replaceOrErase(oldProperties, Composer, track.composers());
     replaceOrErase(oldProperties, Performer, track.performers());
