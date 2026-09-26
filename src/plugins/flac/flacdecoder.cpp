@@ -69,7 +69,7 @@ QStringList FlacDecoder::extensions() const
 
 bool FlacDecoder::isSeekable() const
 {
-    return m_initialised && !m_options.testFlag(NoSeeking) && m_device && !m_device->isSequential();
+    return m_initialised && m_device && !m_device->isSequential();
 }
 
 std::optional<AudioFormat> FlacDecoder::init(const AudioSource& source, const Track& track, DecoderOptions options)

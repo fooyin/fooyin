@@ -101,7 +101,7 @@ public:
     enum DecoderFlag : uint8_t
     {
         None = 0,
-        //! Disable decoder seeking.
+        //! Hint that playback-time seeking is not required; explicit setup seeks may still occur.
         NoSeeking = 1 << 0,
         //! Disable all loop/repeat behaviour.
         NoLooping = 1 << 1,

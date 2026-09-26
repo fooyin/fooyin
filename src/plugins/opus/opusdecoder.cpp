@@ -115,7 +115,7 @@ QStringList OpusDecoder::extensions() const
 
 bool OpusDecoder::isSeekable() const
 {
-    return m_decoder && !m_options.testFlag(NoSeeking) && op_seekable(m_decoder.get()) != 0;
+    return m_decoder && op_seekable(m_decoder.get()) != 0;
 }
 
 int OpusDecoder::bitrate() const

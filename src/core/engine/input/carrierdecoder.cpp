@@ -240,7 +240,7 @@ bool CarrierDecoder::needsMoreInput() const
 
 bool CarrierDecoder::isSeekable() const
 {
-    return !p->options.testFlag(NoSeeking) && p->primary->isSeekable();
+    return p->primary->isSeekable();
 }
 
 bool CarrierDecoder::allowsConcurrentDecoding() const

@@ -54,7 +54,7 @@ QStringList MpegDecoder::extensions() const
 
 bool MpegDecoder::isSeekable() const
 {
-    return m_decoder && m_device && !m_device->isSequential() && !m_options.testFlag(NoSeeking);
+    return m_decoder && m_device && !m_device->isSequential();
 }
 
 QStringList MpegDecoder::takeWarnings()
