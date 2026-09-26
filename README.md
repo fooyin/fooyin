@@ -138,6 +138,11 @@ Translations are managed on [Hosted Weblate](https://hosted.weblate.org/projects
 
 fooyin is free software released under the [GNU General Public License, version 3 or later](COPYING).
 
+## Code signing
+
+- Free code signing provided by [SignPath.io](https://signpath.io/), certificate by [SignPath Foundation](https://signpath.org/)
+- This program will not transfer any information to other networked systems unless specifically requested by the user or the person installing or operating it
+
 ## Donate
 
 If you would like to support fooyin development, see the [donate page](https://fooyin.org/donate).
