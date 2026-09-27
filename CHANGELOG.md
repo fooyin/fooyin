@@ -2,17 +2,26 @@
 
 ## Unreleased
 
-### Improvements
+### New Features
 
-- **Interface:** Refine the dragon icon and restore it as the default application icon
-- **Filters:** Add an option to remember the selected saved filter ([#1690](https://github.com/fooyin/fooyin/issues/1690))
 - **Playback**
   - Add an FLAC decoder plugin and DTS-FLAC support ([#346](https://github.com/fooyin/fooyin/issues/346))
   - Add an MPEG decoder plugin with MP1, MP2, and MP3 support
   - Add an Opus decoder plugin
+- **Interface:** Add Track Viewer and per-widget playlist settings ([#1699](https://github.com/fooyin/fooyin/pull/1699))
+- **Plugins:** Add installation of `.zip` and `.fyplugin` bundles with staged upgrades
+
+### Improvements
+
+- **Interface:** Refine the dragon icon and restore it as the default application icon
+- **Filters** 
+  - Add an option to remember the selected saved filter ([#1690](https://github.com/fooyin/fooyin/issues/1690))
+  - Add an option to restore Library Filter state on startup ([#1699](https://github.com/fooyin/fooyin/pull/1699))
 - **Plugins:** Standardise and translate plugin categories and statuses
 - **ProjectM:** Add favourite support to presets ([#1674](https://github.com/fooyin/fooyin/issues/1674))
-- **Settings:** Clarify rating and Love editor options ([#1684](https://github.com/fooyin/fooyin/issues/1684))
+- **Settings**
+  - Clarify rating and Love editor options ([#1684](https://github.com/fooyin/fooyin/issues/1684))
+  - Show supported URI schemes in decoder tooltips
 - **Tag Editor**
   - Start editing values when navigating with Tab ([#1669](https://github.com/fooyin/fooyin/issues/1669))
   - Add an option for single-click value editing
@@ -21,12 +30,18 @@
 ### Fixes
 
 - **Interface:** Fix Properties action icons in Windows dark mode ([#1691](https://github.com/fooyin/fooyin/issues/1691))
+- **Library & Metadata:** Recognise spaced `ALBUM ARTIST` tags ([#1693](https://github.com/fooyin/fooyin/issues/1693))
+- **Playlists**
+  - Use folding for automatic playlist names ([#1694](https://github.com/fooyin/fooyin/issues/1694))
+  - Allow Return to commit playlist renames ([#1700](https://github.com/fooyin/fooyin/issues/1700))
 - **Scripting:** Preserve literal backslashes in formatted text ([#1678](https://github.com/fooyin/fooyin/issues/1678))
 - **WaveBar:** Rescale the waveform when label visibility changes ([#1689](https://github.com/fooyin/fooyin/issues/1689))
 
 ### Build/System
 
-- **Dependencies:** Add libFLAC, libmpg123, and libopusfile
+- **CI**
+  - Enable ccache for Linux, FreeBSD, Windows, and Flatpak builds
+- **Dependencies:** Add libFLAC, libmpg123, and libopusfile; make libarchive required
 - **Flatpak:** Include the version in bundle filenames
 - **Translations:** Update translations and translation sources ([#1687](https://github.com/fooyin/fooyin/pull/1687), [#1688](https://github.com/fooyin/fooyin/pull/1688))
 - **Windows:** Sign release artifacts with SignPath
