@@ -23,8 +23,6 @@
 #include "lyricssaver.h"
 #include "lyricswidget.h"
 
-#include <utils/settings/settingsmanager.h>
-
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Lyrics::Defaults {
@@ -47,8 +45,7 @@ QMargins margins()
 } // namespace Fooyin::Lyrics::Defaults
 
 namespace Fooyin::Lyrics {
-LyricsSettings::LyricsSettings(SettingsManager* settingsManager)
-    : m_settings{settingsManager}
+LyricsSettings::LyricsSettings()
 {
     qRegisterMetaType<QMargins>("QMargins");
     qRegisterMetaType<Fooyin::Lyrics::Colours>("Fooyin::Lyrics::Colours");

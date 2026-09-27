@@ -367,10 +367,10 @@ target_link_libraries(
 
 target_include_directories(
     fooyin_core
-    PRIVATE ${FFMPEG_INCLUDE_DIRS}
-            ${CMAKE_CURRENT_SOURCE_DIR}/..
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..
             ${CMAKE_CURRENT_SOURCE_DIR}/engine
             ${CMAKE_CURRENT_SOURCE_DIR}/engine/control
             ${CMAKE_CURRENT_SOURCE_DIR}/engine/pipeline
             ${CMAKE_CURRENT_SOURCE_DIR}/engine/decode
 )
+target_include_directories(fooyin_core SYSTEM PRIVATE ${FFMPEG_INCLUDE_DIRS})

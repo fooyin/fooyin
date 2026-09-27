@@ -91,6 +91,7 @@ QString socketErrorToString(QLocalSocket::LocalSocketError error)
     }
 }
 
+#if !defined(Q_OS_WIN) && !defined(Q_OS_MAC)
 void addUniquePath(QStringList& paths, const QString& path)
 {
     if(path.isEmpty()) {
@@ -143,6 +144,7 @@ QStringList unixPipeDirs()
 
     return dirs;
 }
+#endif
 
 QStringList pipeLocations()
 {

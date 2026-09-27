@@ -44,8 +44,6 @@ using namespace Qt::StringLiterals;
 constexpr uint64_t InitialPcmWindowMs = 50;
 constexpr uint64_t MaxPcmCatchupMs    = 1000;
 constexpr uint64_t PcmBacklogMs       = 5000;
-constexpr uint32_t DebugRenderFrames  = 5;
-constexpr uint32_t DebugPcmWindows    = 5;
 
 namespace Fooyin::ProjectM {
 namespace {

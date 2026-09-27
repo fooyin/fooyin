@@ -15,7 +15,7 @@ set(PROJECTM_OPENGL_LOADER_TARGET)
 include("${PROJECT_SOURCE_DIR}/3rdparty/projectm.cmake")
 
 if(TARGET libprojectM::projectM AND TARGET libprojectM::playlist)
-    set(PROJECTM_TARGET libprojectM::projectM libprojectM::playlist)
+    set(PROJECTM_TARGET libprojectM::playlist)
 else()
     message(STATUS "projectM 4 not found; skipping projectm plugin.")
     return()

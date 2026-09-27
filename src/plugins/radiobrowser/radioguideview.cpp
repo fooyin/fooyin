@@ -28,7 +28,6 @@
 #include <QStyle>
 #include <QStyledItemDelegate>
 
-constexpr auto BannerMargin   = 8;
 constexpr auto BannerPaddingX = 12;
 constexpr auto BannerPaddingY = 8;
 

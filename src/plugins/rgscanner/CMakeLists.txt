@@ -30,7 +30,7 @@ create_fooyin_plugin_internal(
             rgscanresultsmodel.h
 )
 
-target_include_directories(rgscanner PRIVATE ${FFMPEG_INCLUDE_DIRS})
+target_include_directories(rgscanner SYSTEM PRIVATE ${FFMPEG_INCLUDE_DIRS})
 
 if(HAVE_EBUR128)
     target_link_libraries(rgscanner PRIVATE Ebur128::Ebur128)

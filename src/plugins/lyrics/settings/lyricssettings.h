@@ -23,10 +23,7 @@
 #include <QMargins>
 #include <QStringList>
 
-namespace Fooyin {
-class SettingsManager;
-
-namespace Lyrics {
+namespace Fooyin::Lyrics {
 namespace Settings {
 constexpr auto Paths           = u"Lyrics/Paths";
 constexpr auto Colours         = u"Lyrics/Colours";
@@ -124,10 +121,6 @@ QMargins margins();
 class LyricsSettings
 {
 public:
-    explicit LyricsSettings(SettingsManager* settingsManager);
-
-private:
-    SettingsManager* m_settings;
+    LyricsSettings();
 };
-} // namespace Lyrics
-} // namespace Fooyin
+} // namespace Fooyin::Lyrics
