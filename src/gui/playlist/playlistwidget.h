@@ -297,8 +297,6 @@ private:
     ConfigData m_config;
     QString m_configDialogTitle;
     QString m_loadedPlaylistLayout;
-    // Until playlist settings are per-playlist
-    bool m_useGlobalPresetState;
 
     WidgetContext* m_playlistContext;
     TrackAction m_doubleClickAction;

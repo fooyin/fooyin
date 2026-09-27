@@ -296,7 +296,6 @@ PlaylistWidget* PlaylistWidget::createDetachedTracks(ActionManager* actionManage
 {
     auto* widget = new PlaylistWidget(actionManager, playlistInteractor, coverProvider, core, styleProvider,
                                       selectionController, PlaylistWidgetSession::createDetachedTracks(tracks), parent);
-    widget->m_useGlobalPresetState = false;
     if(const auto presets = widget->m_presetRegistry->items(); !presets.empty()) {
         widget->m_layoutState.currentPreset = presets.front();
     }
@@ -408,7 +407,7 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
         const int presetId = layout.value("Preset"_L1).toInt();
         if(const auto preset = m_presetRegistry->itemById(presetId)) {
             m_layoutState.currentPreset = preset.value();
-            if(m_useGlobalPresetState) {
+            if(m_session->capabilities().editablePlaylist) {
                 m_settings->fileSet(PlaylistCurrentPreset, presetId);
             }
         }
@@ -709,7 +708,7 @@ void PlaylistWidget::resetModelThrottled() const
 void PlaylistWidget::changePreset(const PlaylistPreset& preset)
 {
     m_layoutState.currentPreset = preset;
-    if(m_useGlobalPresetState && !remembersLayout(m_playlistController->currentPlaylist())) {
+    if(m_session->capabilities().editablePlaylist && !remembersLayout(m_playlistController->currentPlaylist())) {
         m_settings->fileSet(PlaylistCurrentPreset, preset.id);
     }
     m_playlistView->setExtendSpansIntoParents(m_layoutState.currentPreset.insetSubheadersToImageColumns);
@@ -1023,7 +1022,6 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     , m_delgate{new PlaylistDelegate(this)}
     , m_playlistView{new PlaylistView(this)}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
-    , m_useGlobalPresetState{true}
     , m_playlistContext{new WidgetContext(
           this, Context{IdList{Constants::Context::TrackSelection, Id{Constants::Context::Playlist}.append(id())}},
           this)}
