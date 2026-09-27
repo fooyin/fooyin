@@ -99,7 +99,9 @@ modules:
     builddir: true
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
-      - -DBUILD_PCH=ON
+      - -DBUILD_PCH=OFF
+    post-install:
+      - ccache --show-stats
     sources:
       - type: dir
         path: ../../..
