@@ -320,9 +320,9 @@ void PlaylistManagerWidget::setupActions()
 
     m_activateAction->setStatusTip(tr("Activate the selected playlist"));
     m_activateAction->setShortcut(QKeySequence(Qt::Key_Return));
-    m_activateAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    m_activateAction->setShortcutContext(Qt::WidgetShortcut);
     m_activateAction->setShortcutVisibleInContextMenu(true);
-    addAction(m_activateAction);
+    m_view->addAction(m_activateAction);
     QObject::connect(m_activateAction, &QAction::triggered, this, &PlaylistManagerWidget::activateCurrentPlaylist);
 
     m_editAutoPlaylistAction->setStatusTip(tr("Edit the selected autoplaylist"));
