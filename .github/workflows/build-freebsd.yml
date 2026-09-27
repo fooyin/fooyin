@@ -11,7 +11,12 @@ on:
 env:
   FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
   BUILD_TESTS: ON
-  BUILD_CCACHE: OFF
+  BUILD_CCACHE: ON
+  CCACHE_DIR: ${{ github.workspace }}/.ccache
+  CCACHE_BASEDIR: ${{ github.workspace }}
+  CCACHE_MAXSIZE: 500M
+  CCACHE_COMPILERCHECK: content
+  CCACHE_SLOPPINESS: pch_defines,time_macros
 
 jobs:
   freebsd:
@@ -26,6 +31,19 @@ jobs:
           fetch-depth: 0
           submodules: recursive
 
+      - name: Set ccache generation
+        id: ccache-generation
+        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore ccache
+        id: ccache-restore
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: freebsd-${{ env.FREEBSD_VERSION }}-ccache-${{ steps.ccache-generation.outputs.week }}
+          restore-keys: |
+            freebsd-${{ env.FREEBSD_VERSION }}-ccache-
+
       - name: Start FreeBSD VM
         uses: cross-platform-actions/action@v1.6.0
         with:
@@ -34,7 +52,7 @@ jobs:
           cpu_count: 4
           shell: bash
           version: ${{ env.FREEBSD_VERSION }}
-          environment_variables: BUILD_TESTS BUILD_CCACHE FOOYIN_VERSION_SUFFIX
+          environment_variables: BUILD_TESTS BUILD_CCACHE FOOYIN_VERSION_SUFFIX CCACHE_DIR CCACHE_BASEDIR CCACHE_MAXSIZE CCACHE_COMPILERCHECK CCACHE_SLOPPINESS
 
       - name: Build and test
         shell: cpa.sh {0}
@@ -50,3 +68,10 @@ jobs:
         with:
           name: freebsd-${{ env.FREEBSD_VERSION }}
           path: pkg
+
+      - name: Save ccache
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}

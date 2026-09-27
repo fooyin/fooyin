@@ -11,8 +11,13 @@ on:
 env:
   FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
   BUILD_TESTS: ON
-  BUILD_CCACHE: OFF
+  BUILD_CCACHE: ON
   BUILD_PCH: ON
+  CCACHE_DIR: ${{ github.workspace }}/.ccache
+  CCACHE_BASEDIR: ${{ github.workspace }}
+  CCACHE_MAXSIZE: 500M
+  CCACHE_COMPILERCHECK: content
+  CCACHE_SLOPPINESS: pch_defines,time_macros
 
 jobs:
   fedora:
@@ -42,6 +47,19 @@ jobs:
         run: |
           ./ci/fedora-depends.sh
 
+      - name: Set ccache generation
+        id: ccache-generation
+        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore ccache
+        id: ccache-restore
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: linux-fedora-${{ matrix.fedora_version }}-${{ matrix.runner.arch }}-ccache-${{ steps.ccache-generation.outputs.week }}
+          restore-keys: |
+            linux-fedora-${{ matrix.fedora_version }}-${{ matrix.runner.arch }}-ccache-
+
       - name: Build
         run: |
           ./ci/fedora-build.sh
@@ -56,6 +74,13 @@ jobs:
         with:
           name: fedora-${{matrix.fedora_version}}-${{ matrix.runner.arch }}
           path: rpm
+
+      - name: Save ccache
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
 
   debian:
     name: Debian (${{matrix.debian_version}}, ${{ matrix.runner.arch }})
@@ -94,6 +119,19 @@ jobs:
           ln -sf /usr/lib/libgtest.a /usr/local/lib/libgtest.a
           ln -sf /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
 
+      - name: Set ccache generation
+        id: ccache-generation
+        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore ccache
+        id: ccache-restore
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: linux-debian-${{ matrix.debian_version }}-${{ matrix.runner.arch }}-ccache-${{ steps.ccache-generation.outputs.week }}
+          restore-keys: |
+            linux-debian-${{ matrix.debian_version }}-${{ matrix.runner.arch }}-ccache-
+
       - name: Build
         run: |
           ./ci/ubuntu-build.sh
@@ -108,6 +146,13 @@ jobs:
         with:
           name: debian-${{matrix.debian_version}}-${{ matrix.runner.arch }}
           path: deb
+
+      - name: Save ccache
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
 
   ubuntu:
     name: Ubuntu (${{matrix.ubuntu_version}}, ${{ matrix.runner.arch }})
@@ -146,6 +191,19 @@ jobs:
           ln -sf /usr/lib/libgtest.a /usr/local/lib/libgtest.a
           ln -sf /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
 
+      - name: Set ccache generation
+        id: ccache-generation
+        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore ccache
+        id: ccache-restore
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: linux-ubuntu-${{ matrix.ubuntu_version }}-${{ matrix.runner.arch }}-ccache-${{ steps.ccache-generation.outputs.week }}
+          restore-keys: |
+            linux-ubuntu-${{ matrix.ubuntu_version }}-${{ matrix.runner.arch }}-ccache-
+
       - name: Build
         env:
           BUILD_PCH: ${{ matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64' && 'OFF' || env.BUILD_PCH }}
@@ -162,3 +220,10 @@ jobs:
         with:
           name: ubuntu-${{matrix.ubuntu_version}}-${{ matrix.runner.arch }}
           path: deb
+
+      - name: Save ccache
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}

@@ -8,6 +8,7 @@ $SUDO apt-get update -qq
 $SUDO apt-get install -y \
         g++ \
         git \
+        ccache \
         zstd \
         bison \
         flex \

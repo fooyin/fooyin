@@ -10,8 +10,13 @@ on:
 
 env:
   FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
-  BUILD_CCACHE: OFF
+  BUILD_CCACHE: ON
   BUILD_PCH: ON
+  CCACHE_DIR: ${{ github.workspace }}/.ccache
+  CCACHE_BASEDIR: ${{ github.workspace }}
+  CCACHE_MAXSIZE: 500M
+  CCACHE_COMPILERCHECK: content
+  CCACHE_SLOPPINESS: pch_defines,time_macros
 
 jobs:
   appimage:
@@ -48,6 +53,19 @@ jobs:
             patchelf \
             qt6-wayland
 
+      - name: Set ccache generation
+        id: ccache-generation
+        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore ccache
+        id: ccache-restore
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: appimage-debian-bookworm-${{ matrix.arch }}-ccache-${{ steps.ccache-generation.outputs.week }}
+          restore-keys: |
+            appimage-debian-bookworm-${{ matrix.arch }}-ccache-
+
       - name: Build AppImage
         run: |
           ./ci/appimage-build.sh
@@ -59,3 +77,10 @@ jobs:
           path: build-appimage/output/*.AppImage
           compression-level: 0
           if-no-files-found: error
+
+      - name: Save ccache
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
