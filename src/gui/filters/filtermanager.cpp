@@ -21,6 +21,7 @@
 
 #include "filtercontroller.h"
 #include "filterwidget.h"
+#include "tracklistwidget.h"
 
 #include <core/library/musiclibrary.h>
 #include <gui/editablelayout.h>
@@ -36,15 +37,16 @@
 
 #include <ranges>
 
+namespace Fooyin::Filters {
 namespace {
-QColor generateRandomUniqueColor(const Fooyin::Id& id)
+QColor generateRandomUniqueColor(const Id& id)
 {
     auto uniqueColour = QColor::fromRgb(static_cast<QRgb>(id.id()));
     uniqueColour.setAlpha(80);
     return uniqueColour;
 }
 
-void updateOverlayLabel(Fooyin::Filters::FilterWidget* filter, Fooyin::OverlayWidget* overlay)
+void updateOverlayLabel(FilterWidget* filter, OverlayWidget* overlay)
 {
     if(!filter || !overlay) {
         return;
@@ -54,7 +56,6 @@ void updateOverlayLabel(Fooyin::Filters::FilterWidget* filter, Fooyin::OverlayWi
 }
 } // namespace
 
-namespace Fooyin::Filters {
 class FilterManagerPrivate
 {
 public:
@@ -64,13 +65,15 @@ public:
     void exitGroupMode();
 
     void clearOverlays();
-    void hideAndDeselectOverlay(FilterWidget* filter) const;
+    void hideAndDeselectOverlay(FyWidget* widget) const;
 
     void updateDialog() const;
 
     void addOrRemoveFilter(FilterWidget* widget, const QColor& colour) const;
+    void addOrRemoveViewer(TrackListWidget* widget, const QColor& colour) const;
     void setupOverlayButtons(const Id& group, const QColor& colour);
     OverlayWidget* setupWidgetOverlay(FilterWidget* widget, const QColor& colour);
+    OverlayWidget* setupWidgetOverlay(TrackListWidget* widget, const QColor& colour);
 
     void setupOverlays();
 
@@ -132,14 +135,16 @@ void FilterManagerPrivate::clearOverlays()
     m_overlays.clear();
 }
 
-void FilterManagerPrivate::hideAndDeselectOverlay(FilterWidget* filter) const
+void FilterManagerPrivate::hideAndDeselectOverlay(FyWidget* widget) const
 {
-    const Id id = filter->id();
+    const Id id = widget->id();
     if(m_overlays.contains(id)) {
         auto* overlay = m_overlays.at(id);
         overlay->button()->hide();
         overlay->deselect();
-        overlay->setOption(OverlayWidget::Selectable, !m_controller->filterIsUngrouped(id));
+
+        const bool ungrouped = m_controller->filterIsUngrouped(id) || m_controller->viewerIsUngrouped(id);
+        overlay->setOption(OverlayWidget::Selectable, !ungrouped);
     }
 }
 
@@ -172,9 +177,14 @@ void FilterManagerPrivate::addOrRemoveFilter(FilterWidget* widget, const QColor&
             overlay->select();
 
             if(const auto group = m_controller->groupById(m_selectedGroup)) {
-                for(FilterWidget* filter : group.value().filters) {
+                for(const FyWidget* filter : group.value().filters) {
                     if(m_overlays.contains(filter->id())) {
                         m_overlays.at(filter->id())->connectOverlay(overlay);
+                    }
+                }
+                for(const FyWidget* viewer : group->viewers) {
+                    if(m_overlays.contains(viewer->id())) {
+                        m_overlays.at(viewer->id())->connectOverlay(overlay);
                     }
                 }
             }
@@ -194,6 +204,68 @@ void FilterManagerPrivate::addOrRemoveFilter(FilterWidget* widget, const QColor&
                         updateOverlayLabel(filter, filterOverlay);
                     }
                 }
+                for(const FyWidget* viewer : group->viewers) {
+                    if(m_overlays.contains(viewer->id())) {
+                        overlay->disconnectOverlay(m_overlays.at(viewer->id()));
+                    }
+                }
+            }
+        }
+    }
+
+    updateDialog();
+}
+
+void FilterManagerPrivate::addOrRemoveViewer(TrackListWidget* widget, const QColor& colour) const
+{
+    const Id id = widget->id();
+    if(!m_overlays.contains(id)) {
+        return;
+    }
+
+    auto* overlay            = m_overlays.at(id);
+    const Id groupId         = widget->group();
+    const bool addingToGroup = m_controller->viewerIsUngrouped(id);
+
+    if(m_controller->removeViewer(widget)) {
+        if(addingToGroup) {
+            m_controller->addViewerToGroup(widget, m_selectedGroup);
+            overlay->label()->setText(FilterManager::tr("Viewer"));
+            overlay->button()->setText(FilterManager::tr("Remove"));
+            overlay->setColour(colour);
+            overlay->select();
+
+            if(const auto group = m_controller->groupById(m_selectedGroup)) {
+                for(const FyWidget* member : group->filters) {
+                    if(m_overlays.contains(member->id())) {
+                        m_overlays.at(member->id())->connectOverlay(overlay);
+                    }
+                }
+                for(const FyWidget* member : group->viewers) {
+                    if(m_overlays.contains(member->id())) {
+                        m_overlays.at(member->id())->connectOverlay(overlay);
+                    }
+                }
+            }
+        }
+        else {
+            m_controller->addViewerToGroup(widget, {});
+            overlay->label()->setText(FilterManager::tr("Ungrouped"));
+            overlay->button()->setText(FilterManager::tr("Add"));
+            overlay->setColour(m_ungroupedColour);
+            overlay->setOption(OverlayWidget::Selectable, false);
+
+            if(const auto group = m_controller->groupById(groupId)) {
+                for(const FyWidget* member : group->filters) {
+                    if(m_overlays.contains(member->id())) {
+                        overlay->disconnectOverlay(m_overlays.at(member->id()));
+                    }
+                }
+                for(const FyWidget* member : group->viewers) {
+                    if(m_overlays.contains(member->id())) {
+                        overlay->disconnectOverlay(m_overlays.at(member->id()));
+                    }
+                }
             }
         }
     }
@@ -203,33 +275,52 @@ void FilterManagerPrivate::addOrRemoveFilter(FilterWidget* widget, const QColor&
 
 void FilterManagerPrivate::setupOverlayButtons(const Id& group, const QColor& colour)
 {
-    auto setupOverlayButtons = [this, &colour](const Id& id, FilterWidget* widget) {
+    auto setupFilterOverlayButtons = [this, &colour](const Id& id, FilterWidget* widget) {
         if(!m_overlays.contains(id)) {
             return;
         }
 
         OverlayWidget* overlay = m_overlays.at(id);
-
         overlay->button()->setText(FilterManager::tr(m_controller->filterIsUngrouped(id) ? "Add" : "Remove"));
         overlay->button()->show();
-
         overlay->button()->disconnect(m_self);
         QObject::connect(overlay->button(), &QPushButton::clicked, m_self,
                          [this, widget, colour]() { addOrRemoveFilter(widget, colour); });
+    };
+    auto setupViewerOverlayButtons = [this, &colour](const Id& id, TrackListWidget* widget) {
+        if(!m_overlays.contains(id)) {
+            return;
+        }
+
+        OverlayWidget* overlay = m_overlays.at(id);
+        overlay->button()->setText(FilterManager::tr(m_controller->viewerIsUngrouped(id) ? "Add" : "Remove"));
+        overlay->button()->show();
+        overlay->button()->disconnect(m_self);
+        QObject::connect(overlay->button(), &QPushButton::clicked, m_self,
+                         [this, widget, colour]() { addOrRemoveViewer(widget, colour); });
     };
 
     if(group.isValid()) {
         const auto groups        = m_controller->filterGroups();
         const auto& groupWidgets = groups.at(group).filters;
+        const auto& groupViewers = groups.at(group).viewers;
 
         for(FilterWidget* widget : groupWidgets) {
-            setupOverlayButtons(widget->id(), widget);
+            setupFilterOverlayButtons(widget->id(), widget);
+        }
+        for(TrackListWidget* widget : groupViewers) {
+            setupViewerOverlayButtons(widget->id(), widget);
         }
     }
 
     const auto ungrouped = m_controller->ungroupedFilters();
     for(const auto& [id, widget] : ungrouped) {
-        setupOverlayButtons(id, widget);
+        setupFilterOverlayButtons(id, widget);
+    }
+
+    const auto ungroupedViewers = m_controller->ungroupedViewers();
+    for(const auto& [id, widget] : ungroupedViewers) {
+        setupViewerOverlayButtons(id, widget);
     }
 }
 
@@ -237,8 +328,7 @@ OverlayWidget* FilterManagerPrivate::setupWidgetOverlay(FilterWidget* widget, co
 {
     const Id widgetId           = widget->id();
     constexpr auto overlayFlags = OverlayWidget::Label | OverlayWidget::Button | OverlayWidget::Resize;
-
-    auto* overlay = m_overlays.emplace(widgetId, new OverlayWidget(overlayFlags, widget)).first->second;
+    auto* overlay               = m_overlays.emplace(widgetId, new OverlayWidget(overlayFlags, widget)).first->second;
 
     overlay->button()->hide();
     overlay->setColour(colour);
@@ -263,18 +353,46 @@ OverlayWidget* FilterManagerPrivate::setupWidgetOverlay(FilterWidget* widget, co
     return overlay;
 }
 
+OverlayWidget* FilterManagerPrivate::setupWidgetOverlay(TrackListWidget* widget, const QColor& colour)
+{
+    const Id widgetId           = widget->id();
+    constexpr auto overlayFlags = OverlayWidget::Label | OverlayWidget::Button | OverlayWidget::Resize;
+    auto* overlay               = m_overlays.emplace(widgetId, new OverlayWidget(overlayFlags, widget)).first->second;
+
+    const bool groupIsValid = widget->group().isValid();
+
+    overlay->button()->hide();
+    overlay->setColour(colour);
+    overlay->label()->setText(groupIsValid ? FilterManager::tr("Viewer") : FilterManager::tr("Ungrouped"));
+    overlay->setOption(OverlayWidget::Selectable, groupIsValid);
+
+    QObject::connect(overlay, &OverlayWidget::clicked, m_self, [this, widget, overlay]() {
+        m_selectedGroup = widget->group();
+        setupOverlayButtons(m_selectedGroup, overlay->colour());
+        enterGroupMode();
+    });
+
+    overlay->resize(widget->size());
+    overlay->show();
+
+    return overlay;
+}
+
 void FilterManagerPrivate::setupOverlays()
 {
     const auto groups = m_controller->filterGroups();
 
     for(const auto& group : groups | std::views::values) {
-        if(!group.filters.empty()) {
+        if(!group.filters.empty() || !group.viewers.empty()) {
             const QColor groupColour = generateRandomUniqueColor(group.id);
             std::vector<OverlayWidget*> groupOverlays;
 
             std::ranges::transform(
                 group.filters, std::back_inserter(groupOverlays),
                 [this, &groupColour](FilterWidget* widget) { return setupWidgetOverlay(widget, groupColour); });
+            std::ranges::transform(
+                group.viewers, std::back_inserter(groupOverlays),
+                [this, &groupColour](TrackListWidget* widget) { return setupWidgetOverlay(widget, groupColour); });
 
             for(auto it1 = groupOverlays.begin(); it1 != groupOverlays.end(); ++it1) {
                 for(auto it2 = std::next(it1); it2 != groupOverlays.end(); ++it2) {
@@ -288,6 +406,8 @@ void FilterManagerPrivate::setupOverlays()
 
     std::ranges::for_each(ungrouped | std::views::values,
                           [this](FilterWidget* widget) { setupWidgetOverlay(widget, m_ungroupedColour); });
+    std::ranges::for_each(m_controller->ungroupedViewers() | std::views::values,
+                          [this](TrackListWidget* widget) { setupWidgetOverlay(widget, m_ungroupedColour); });
 }
 
 void FilterManagerPrivate::createControlDialog()
@@ -316,15 +436,22 @@ void FilterManagerPrivate::createControlDialog()
         const auto groups = m_controller->filterGroups();
 
         if(m_selectedGroup.isValid()) {
-            const auto filters = groups.at(m_selectedGroup).filters;
+            const auto& group  = groups.at(m_selectedGroup);
+            const auto filters = group.filters;
             std::ranges::for_each(filters,
                                   [this](FilterWidget* widget) { addOrRemoveFilter(widget, m_ungroupedColour); });
+            const auto viewers = group.viewers;
+            std::ranges::for_each(viewers,
+                                  [this](TrackListWidget* widget) { addOrRemoveViewer(widget, m_ungroupedColour); });
         }
         else {
             for(const auto& group : groups | std::views::values) {
                 const auto filters = group.filters;
                 std::ranges::for_each(filters,
                                       [this](FilterWidget* widget) { addOrRemoveFilter(widget, m_ungroupedColour); });
+                const auto viewers = group.viewers;
+                std::ranges::for_each(
+                    viewers, [this](TrackListWidget* widget) { addOrRemoveViewer(widget, m_ungroupedColour); });
             }
         }
     });
@@ -337,11 +464,15 @@ void FilterManagerPrivate::createControlDialog()
         if(m_selectedGroup.isValid() && groups.contains(m_selectedGroup)) {
             const auto& group = groups.at(m_selectedGroup);
             std::ranges::for_each(group.filters, [this](FilterWidget* filter) { hideAndDeselectOverlay(filter); });
+            std::ranges::for_each(group.viewers, [this](TrackListWidget* viewer) { hideAndDeselectOverlay(viewer); });
         }
 
         const auto ungrouped = m_controller->ungroupedFilters();
         for(auto* filter : ungrouped | std::views::values) {
             hideAndDeselectOverlay(filter);
+        }
+        for(auto* viewer : m_controller->ungroupedViewers() | std::views::values) {
+            hideAndDeselectOverlay(viewer);
         }
         exitGroupMode();
     });

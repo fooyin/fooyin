@@ -21,7 +21,6 @@
 
 #include "core/library/tracksort.h"
 #include "internalguisettings.h"
-#include "playlist/presetregistry.h"
 #include "playlistcommands.h"
 #include "playlistcontroller.h"
 #include "playlistuicontroller.h"
@@ -258,12 +257,7 @@ void EditablePlaylistSession::ensureActions(QWidget* parent)
 void EditablePlaylistSession::setupConnections(PlaylistWidgetSessionHost& sessionHost)
 {
     auto* widget = sessionHost.sessionWidget();
-    auto& host   = editableHost(widget);
 
-    QObject::connect(host.presetRegistry(), &PresetRegistry::presetChanged, widget,
-                     [widget](const PlaylistPreset& preset) { editableHost(widget).handlePresetChanged(preset); });
-
-    QObject::connect(widget->playlistView(), &ExpandedTreeView::middleClicked, widget, &PlaylistWidget::middleClicked);
     QObject::connect(widget->playlistModel(), &PlaylistModel::filesDropped, widget,
                      [widget, this](const QList<QUrl>& urls, int index) {
                          scanDroppedTracks(widgetSessionHost(widget), urls, index);
@@ -332,12 +326,6 @@ void EditablePlaylistSession::setupConnections(PlaylistWidgetSessionHost& sessio
                      widget->playlistModel(), [widget, this]() { requestPlaylistFocus(widgetSessionHost(widget)); });
     QObject::connect(widget->playlistController()->uiController(), &PlaylistUiController::showCurrentTrack, widget,
                      [widget, this]() { followCurrentTrack(editableHost(widget)); });
-    host.settingsManager()->subscribe<Settings::Gui::Internal::PlaylistHeader>(
-        widget, [widget](bool show) { editableHost(widget).setHeaderVisible(show); });
-    host.settingsManager()->subscribe<Settings::Gui::Internal::PlaylistScrollBar>(
-        widget, [widget](bool show) { editableHost(widget).setScrollbarVisible(show); });
-    host.settingsManager()->subscribe<Settings::Gui::Internal::PlaylistAltColours>(
-        widget, [widget](bool enabled) { editableHost(widget).setAlternatingRowColors(enabled); });
 }
 
 void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHost, ActionContainer* editMenu,

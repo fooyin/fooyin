@@ -21,6 +21,7 @@
 
 #include "fygui_export.h"
 
+#include "filtercontroller.h"
 #include "filterfwd.h"
 #include "filterrows.h"
 
@@ -67,6 +68,7 @@ public:
         FilterRowList rows;
         std::vector<RowKey> selectedKeys;
         QString searchText;
+        bool selectionRestorePending{false};
     };
 
     explicit FilterWidget(ActionManager* actionManager, FilterColumnRegistry* columnRegistry, MusicLibrary* library,
@@ -79,6 +81,7 @@ public:
     [[nodiscard]] bool multipleColumns() const;
     [[nodiscard]] bool isActive() const;
     [[nodiscard]] std::vector<RowKey> selectedKeys() const;
+    [[nodiscard]] bool selectionRestorePending() const;
     [[nodiscard]] QString searchText() const;
     [[nodiscard]] WidgetContext* widgetContext() const;
     [[nodiscard]] TrackAction doubleClickAction() const;
@@ -90,7 +93,6 @@ public:
     [[nodiscard]] bool preservePlaybackPlaylist() const;
     [[nodiscard]] QString playlistName() const;
     [[nodiscard]] bool hasSelection() const;
-    void openConfigDialog() override;
 
     void setGroup(const Id& group);
     void setIndex(int index);
@@ -98,6 +100,7 @@ public:
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
+    void layoutEditingMenu(QMenu* menu) override;
     void saveLayoutData(QJsonObject& layout) override;
     void saveCopyLayoutData(QJsonObject& layout, LayoutCopyContext& context, bool isRoot) override;
     void loadLayoutData(const QJsonObject& layout) override;
@@ -114,7 +117,8 @@ public:
         bool playlistEnabled{true};
         bool autoSwitch{true};
         bool preservePlaybackPlaylist{true};
-        QString playlistName;
+        QString playlistName{FilterController::defaultPlaylistName()};
+        bool restoreState{true};
         int rowHeight{0};
         QSize iconSize{100, 100};
         int iconHorizontalGap{-1};
@@ -129,6 +133,7 @@ public:
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
+    void openConfigDialog() override;
 
     void addFilterHeaderMenu(QMenu* menu, const QPoint& pos, bool includeWidgetActions = true);
 
@@ -188,7 +193,10 @@ private:
     WidgetContext* m_widgetContext;
 
     QString m_searchStr;
+    std::vector<RowKey> m_restoredSelectedKeys;
+    int m_pendingScrollPosition;
     bool m_applyingViewState;
+    bool m_selectionRestorePending;
 
     QByteArray m_headerState;
 

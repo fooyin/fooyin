@@ -202,6 +202,13 @@ void PlaylistWidgetSession::handleTracksChanged(PlaylistWidgetSessionHost& /*hos
                                                 const std::vector<int>& /*indexes*/, bool /*allNew*/)
 { }
 
+void PlaylistWidgetSession::replaceTracks(PlaylistWidgetSessionHost& /*host*/, const TrackList& /*tracks*/) { }
+
+void PlaylistWidgetSession::startPlayback(PlaylistWidgetSessionHost& host) const
+{
+    host.selectionController()->executeAction(TrackAction::Play, playbackOptions());
+}
+
 void PlaylistWidgetSession::searchEvent(PlaylistWidgetSessionHost& host, const SearchRequest& request)
 {
     const uint64_t requestToken = ++m_searchRequestToken;

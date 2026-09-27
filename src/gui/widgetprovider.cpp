@@ -256,7 +256,7 @@ void WidgetProvider::setupAddWidgetMenu(EditableLayout* layout, QMenu* menu, Wid
 void WidgetProvider::setupReplaceWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container,
                                             const Id& widgetId)
 {
-    if(!p->m_layoutCommands) {
+    if(!p->m_layoutCommands || !container) {
         return;
     }
 

@@ -19,6 +19,8 @@
 
 #include "detachedplaylistsession.h"
 
+#include "playlistview.h"
+
 #include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 
@@ -223,8 +225,78 @@ PlaylistTrackList DetachedTrackListSession::searchSourceTracks(const PlaylistCon
     return m_tracks;
 }
 
-PlaylistAction::ActionOptions DetachedTrackListSession::playbackOptions() const
+void DetachedTrackListSession::startPlayback(PlaylistWidgetSessionHost& host) const
 {
-    return PlaylistAction::TempPlaylist;
+    const auto& playlistTracks = filteredTracks();
+    if(playlistTracks.empty()) {
+        return;
+    }
+
+    int trackIndex{0};
+    const QModelIndex currentIndex = host.playlistView()->currentIndex();
+    if(currentIndex.isValid() && currentIndex.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
+        const auto currentTrack = currentIndex.data(PlaylistItem::Role::PersistentItemData).value<PlaylistTrack>();
+        const auto trackIt      = std::ranges::find(playlistTracks, currentTrack.entryId, &PlaylistTrack::entryId);
+        if(trackIt != playlistTracks.cend()) {
+            trackIndex = static_cast<int>(std::distance(playlistTracks.cbegin(), trackIt));
+        }
+    }
+
+    host.selectionController()->startPlayback(PlaylistTrack::toTracks(playlistTracks), trackIndex);
+}
+
+void DetachedTrackListSession::setupConnections(PlaylistWidgetSessionHost& host)
+{
+    auto* model  = host.playlistModel();
+    auto* player = host.playerController();
+
+    const auto updatePlayingTrack = [this, model](const PlaylistTrack& track) {
+        model->playingTrackChanged(playingTrackForView(track));
+    };
+
+    model->setMatchPlayingTrackByIdentity(true);
+    updatePlayingTrack(player->currentPlaylistTrack());
+    model->playStateChanged(player->playState());
+
+    QObject::connect(player, &PlayerController::playlistTrackChanged, model, updatePlayingTrack);
+    QObject::connect(player, &PlayerController::playlistTrackUpdated, model, updatePlayingTrack);
+    QObject::connect(
+        player, &PlayerController::trackChangeRequested, model,
+        [updatePlayingTrack](const Player::TrackChangeRequest& request) { updatePlayingTrack(request.track); });
+    QObject::connect(player, &PlayerController::playStateChanged, model, &PlaylistModel::playStateChanged);
+    QObject::connect(player, &PlayerController::positionChangedSeconds, model,
+                     &PlaylistModel::refreshPlayingTrackPositionData);
+    QObject::connect(player, &PlayerController::positionMoved, model, &PlaylistModel::refreshPlayingTrackPositionData);
+    QObject::connect(player, &PlayerController::bitrateChanged, model, &PlaylistModel::refreshPlayingTrackBitrateData);
+}
+
+PlaylistTrack DetachedTrackListSession::playingTrackForView(const PlaylistTrack& track) const
+{
+    PlaylistTrack viewTrack{track};
+    viewTrack.indexInPlaylist = -1;
+
+    if(track.indexInPlaylist < 0 || std::cmp_greater_equal(track.indexInPlaylist, filteredTracks().size())) {
+        return viewTrack;
+    }
+
+    const auto& candidate = filteredTracks().at(track.indexInPlaylist);
+    if(candidate.track.sameIdentityAs(track.track)) {
+        viewTrack.indexInPlaylist = candidate.indexInPlaylist;
+    }
+
+    return viewTrack;
+}
+
+void DetachedTrackListSession::replaceTracks(PlaylistWidgetSessionHost& host, const TrackList& tracks)
+{
+    m_tracks = PlaylistTrack::fromTracks(tracks, {});
+
+    if(hasSearch()) {
+        searchEvent(host, {.text = search(), .emptyMode = emptyMode()});
+        return;
+    }
+
+    setFilteredTracks(m_tracks);
+    host.resetModelThrottled();
 }
 } // namespace Fooyin

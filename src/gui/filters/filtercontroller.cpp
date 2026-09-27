@@ -25,6 +25,7 @@
 #include "filterpipeline.h"
 #include "filterrows.h"
 #include "filterwidget.h"
+#include "tracklistwidget.h"
 
 #include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
@@ -92,7 +93,7 @@ void filterHeaderContextMenu(FilterWidget* widget, AutoHeaderView* header, const
     menu->popup(header->mapToGlobal(pos));
 }
 
-Id makeUngroupedGroupId(FilterWidget* widget)
+Id makeUngroupedGroupId(const FyWidget* widget)
 {
     return Id{"Fooyin.Filters.Ungrouped."}.append(widget ? widget->id() : Id{});
 }
@@ -133,6 +134,7 @@ public:
         QString searchText;
 
         bool isActive{false};
+        bool selectionRestorePending{false};
         uint64_t revision{0};
         uint64_t searchRevision{0};
     };
@@ -141,6 +143,7 @@ public:
     {
         Id id;
         std::vector<FilterWidget*> filters;
+        std::vector<TrackListWidget*> viewers;
         std::vector<FilterStageState> stages;
 
         TrackList sourceTracks;
@@ -162,8 +165,8 @@ public:
     [[nodiscard]] FilterRowBuildContext rowBuildContext() const;
     [[nodiscard]] std::optional<WidgetLocation> widgetLocation(FilterWidget* widget) const;
     [[nodiscard]] std::optional<Id> widgetGroupId(FilterWidget* widget) const;
-    [[nodiscard]] FilterGroupState* groupState(FilterWidget* widget);
-    [[nodiscard]] FilterStageState* stageState(FilterWidget* widget);
+    FilterGroupState* groupState(FilterWidget* widget);
+    FilterStageState* stageState(FilterWidget* widget);
 
     void updateFilterPlaylistActions(FilterWidget* filterWidget) const;
     void updateAllPlaylistActions();
@@ -182,8 +185,9 @@ public:
     [[nodiscard]] bool usesCurrentPlaylist(const FilterGroupState& group) const;
     [[nodiscard]] TrackList sourceTracks(const FilterGroupState& group) const;
     void publishCurrentPlaylistSelection(const FilterGroupState& group) const;
+    void publishGroupResult(const Id& groupId) const;
     void handleLibraryTracksPatched(const TrackList& changedTracks);
-    [[nodiscard]] bool patchGroup(const Id& groupId, const TrackList& sourceTracks, const TrackIds& changedTrackIds);
+    bool patchGroup(const Id& groupId, const TrackList& sourceTracks, const TrackIds& changedTrackIds);
     void recomputeGroup(const Id& groupId);
     void recomputeStage(const Id& groupId, int stageIndex, uint64_t revision, TrackList currentTracks,
                         bool constrained);
@@ -192,8 +196,12 @@ public:
 
     void handleFilterUpdated(FilterWidget* widget);
     void handleConfigChanged(FilterWidget* widget);
+
     void attachWidget(FilterWidget* widget, const Id& publicGroupId);
-    [[nodiscard]] std::optional<Id> detachWidget(FilterWidget* widget);
+    std::optional<Id> detachWidget(FilterWidget* widget);
+    void attachViewer(TrackListWidget* widget, const Id& publicGroupId);
+    std::optional<Id> detachViewer(TrackListWidget* widget);
+
     void recalculateIndexesOfGroup(const Id& groupId);
     [[nodiscard]] FilterGroups publicGroups() const;
     [[nodiscard]] std::optional<FilterGroup> publicGroup(const Id& id) const;
@@ -219,6 +227,8 @@ public:
     std::unordered_map<Id, FilterGroupState, Id::IdHash> m_groups;
     std::unordered_map<FilterWidget*, WidgetLocation> m_widgetLocations;
     std::unordered_set<FilterWidget*> m_ungrouped;
+    std::unordered_map<TrackListWidget*, Id> m_viewerGroups;
+    std::unordered_set<TrackListWidget*> m_ungroupedViewers;
     std::optional<Id> m_playlistSelectionGroup;
     bool m_selectPlaylistMatches{false};
     bool m_syncingSource{false};
@@ -526,9 +536,10 @@ void FilterControllerPrivate::handleSelectionChanged(FilterWidget* filter, const
 
     const FilterSelectionResolution selection
         = resolveFilterSelection(rowsForSelection(*stage), stage->inputTracks, keys, stage->rowLookup);
-    stage->selectedKeys   = selection.selectedKeys;
-    stage->selectedTracks = selection.selectedTracks;
-    stage->isActive       = selection.isActive;
+    stage->selectedKeys            = selection.selectedKeys;
+    stage->selectedTracks          = selection.selectedTracks;
+    stage->isActive                = selection.isActive;
+    stage->selectionRestorePending = false;
     updateWidgetSelection(*stage);
 
     if(filter->source() == FilterSource::Library && filter->playlistEnabled() && m_trackSelection) {
@@ -582,7 +593,8 @@ void FilterControllerPrivate::handleSearchChanged(FilterWidget* filter, const QS
     if(!stage->selectedKeys.empty()) {
         stage->selectedKeys.clear();
         stage->selectedTracks.clear();
-        stage->isActive = false;
+        stage->isActive                = false;
+        stage->selectionRestorePending = false;
         updateWidgetSelection(*stage);
 
         ++group->revision;
@@ -629,7 +641,8 @@ void FilterControllerPrivate::syncStages(FilterGroupState& group)
             stage.searchText = filter->searchText();
         }
         if(stage.selectedKeys.empty()) {
-            stage.selectedKeys = filter->selectedKeys();
+            stage.selectedKeys            = filter->selectedKeys();
+            stage.selectionRestorePending = filter->selectionRestorePending();
         }
 
         stages.push_back(std::move(stage));
@@ -730,6 +743,16 @@ void FilterControllerPrivate::publishCurrentPlaylistSelection(const FilterGroupS
     m_playlistController->selectTracks(m_selectPlaylistMatches ? group.finalFilteredTracks : TrackList{});
 }
 
+void FilterControllerPrivate::publishGroupResult(const Id& groupId) const
+{
+    if(!m_groups.contains(groupId) || isUngroupedGroupId(groupId)) {
+        return;
+    }
+
+    const auto& group = m_groups.at(groupId);
+    Q_EMIT m_self->filterGroupChanged(group.id, group.finalFilteredTracks, group.hasActiveStages);
+}
+
 void FilterControllerPrivate::handleLibraryTracksPatched(const TrackList& changedTracks)
 {
     if(!m_styleProvider->isResolved()) {
@@ -785,11 +808,18 @@ bool FilterControllerPrivate::patchGroup(const Id& groupId, const TrackList& sou
         stage.revision = group.revision;
         stage.rowLookup.rebuildRows(stage.rows);
 
-        const FilterSelectionResolution selection
-            = resolveFilterSelection(stage.rows, stage.inputTracks, stage.selectedKeys, stage.rowLookup);
-        stage.selectedKeys   = selection.selectedKeys;
-        stage.selectedTracks = selection.selectedTracks;
-        stage.isActive       = selection.isActive;
+        if(stage.selectionRestorePending && stage.inputTracks.empty()) {
+            stage.selectedTracks.clear();
+            stage.isActive = !stage.selectedKeys.empty();
+        }
+        else {
+            const FilterSelectionResolution selection
+                = resolveFilterSelection(stage.rows, stage.inputTracks, stage.selectedKeys, stage.rowLookup);
+            stage.selectedKeys            = selection.selectedKeys;
+            stage.selectedTracks          = selection.selectedTracks;
+            stage.isActive                = selection.isActive;
+            stage.selectionRestorePending = false;
+        }
 
         refreshStageSearch(groupId, stageIndex, group.revision);
 
@@ -804,6 +834,7 @@ bool FilterControllerPrivate::patchGroup(const Id& groupId, const TrackList& sou
 
     group.finalFilteredTracks = constrained ? currentTracks : TrackList{};
     group.hasActiveStages     = constrained;
+    publishGroupResult(group.id);
     return true;
 }
 
@@ -839,6 +870,7 @@ void FilterControllerPrivate::recomputeStage(const Id& groupId, int stageIndex, 
         group.finalFilteredTracks = constrained ? std::move(currentTracks) : TrackList{};
         group.hasActiveStages     = constrained;
         publishCurrentPlaylistSelection(group);
+        publishGroupResult(group.id);
         return;
     }
 
@@ -879,11 +911,18 @@ void FilterControllerPrivate::recomputeStage(const Id& groupId, int stageIndex, 
             currentStage.rows = rows;
             currentStage.rowLookup.rebuildRows(currentStage.rows);
 
-            const FilterSelectionResolution selection = resolveFilterSelection(
-                currentStage.rows, currentStage.inputTracks, currentStage.selectedKeys, currentStage.rowLookup);
-            currentStage.selectedKeys   = selection.selectedKeys;
-            currentStage.selectedTracks = selection.selectedTracks;
-            currentStage.isActive       = selection.isActive;
+            if(currentStage.selectionRestorePending && currentStage.inputTracks.empty()) {
+                currentStage.selectedTracks.clear();
+                currentStage.isActive = !currentStage.selectedKeys.empty();
+            }
+            else {
+                const FilterSelectionResolution selection = resolveFilterSelection(
+                    currentStage.rows, currentStage.inputTracks, currentStage.selectedKeys, currentStage.rowLookup);
+                currentStage.selectedKeys            = selection.selectedKeys;
+                currentStage.selectedTracks          = selection.selectedTracks;
+                currentStage.isActive                = selection.isActive;
+                currentStage.selectionRestorePending = false;
+            }
 
             refreshStageSearch(groupId, stageIndex, revision);
 
@@ -987,9 +1026,10 @@ void FilterControllerPrivate::publishStage(const Id& groupId, int stageIndex)
     }
 
     FilterWidget::FilterViewState viewState;
-    viewState.rows         = stage.searchedRows.value_or(stage.rows);
-    viewState.selectedKeys = stage.selectedKeys;
-    viewState.searchText   = stage.searchText;
+    viewState.rows                    = stage.searchedRows.value_or(stage.rows);
+    viewState.selectedKeys            = stage.selectedKeys;
+    viewState.searchText              = stage.searchText;
+    viewState.selectionRestorePending = stage.selectionRestorePending;
 
     stage.widget->setViewState(viewState);
     updateWidgetSelection(stage);
@@ -1124,13 +1164,64 @@ std::optional<Id> FilterControllerPrivate::detachWidget(FilterWidget* widget)
             m_playlistSelectionGroup.reset();
             m_selectPlaylistMatches = false;
         }
-        m_groups.erase(groupId.value());
-        return groupId;
+        if(group.viewers.empty()) {
+            m_groups.erase(groupId.value());
+            Q_EMIT m_self->filterGroupRemoved(groupId.value());
+            return groupId;
+        }
     }
 
     syncStages(group);
     if(!isUngroupedGroupId(groupId.value())) {
         recalculateIndexesOfGroup(groupId.value());
+    }
+
+    return groupId;
+}
+
+void FilterControllerPrivate::attachViewer(TrackListWidget* widget, const Id& publicGroupId)
+{
+    const Id groupId = publicGroupId.isValid() ? publicGroupId : makeUngroupedGroupId(widget);
+    if(const auto current = m_viewerGroups.find(widget); current != m_viewerGroups.cend()) {
+        if(current->second == groupId) {
+            return;
+        }
+        detachViewer(widget);
+    }
+
+    auto& group = m_groups[groupId];
+    group.id    = groupId;
+    group.viewers.push_back(widget);
+    m_viewerGroups[widget] = groupId;
+
+    if(publicGroupId.isValid()) {
+        m_ungroupedViewers.erase(widget);
+    }
+    else {
+        m_ungroupedViewers.emplace(widget);
+    }
+}
+
+std::optional<Id> FilterControllerPrivate::detachViewer(TrackListWidget* widget)
+{
+    if(!m_viewerGroups.contains(widget)) {
+        return {};
+    }
+
+    Id groupId = m_viewerGroups.at(widget);
+    m_viewerGroups.erase(widget);
+    m_ungroupedViewers.erase(widget);
+
+    if(!m_groups.contains(groupId)) {
+        return {};
+    }
+
+    auto& group = m_groups.at(groupId);
+    std::erase(group.viewers, widget);
+
+    if(group.filters.empty() && group.viewers.empty()) {
+        m_groups.erase(groupId);
+        Q_EMIT m_self->filterGroupRemoved(groupId);
     }
 
     return groupId;
@@ -1164,6 +1255,7 @@ FilterGroups FilterControllerPrivate::publicGroups() const
         FilterGroup publicGroup;
         publicGroup.id               = groupId;
         publicGroup.filters          = group.filters;
+        publicGroup.viewers          = group.viewers;
         publicGroup.filteredTracks   = group.finalFilteredTracks;
         publicGroup.hasActiveFilters = group.hasActiveStages;
 
@@ -1182,6 +1274,7 @@ std::optional<FilterGroup> FilterControllerPrivate::publicGroup(const Id& id) co
     FilterGroup group;
     group.id               = id;
     group.filters          = m_groups.at(id).filters;
+    group.viewers          = m_groups.at(id).viewers;
     group.filteredTracks   = m_groups.at(id).finalFilteredTracks;
     group.hasActiveFilters = m_groups.at(id).hasActiveStages;
     return group;
@@ -1269,7 +1362,6 @@ FilterWidget* FilterController::createFilter()
 {
     auto* widget
         = new FilterWidget(p->m_actionManager, p->m_columnRegistry, p->m_library, p->m_coverRepository, p->m_settings);
-
     widget->setGroup(p->m_defaultId);
     p->attachWidget(widget, p->m_defaultId);
 
@@ -1301,15 +1393,48 @@ FilterWidget* FilterController::createFilter()
     return widget;
 }
 
+TrackListWidget* FilterController::createTrackList(PlaylistWidget* playlistWidget)
+{
+    auto* widget = new TrackListWidget(this, playlistWidget);
+    widget->setGroup(p->m_defaultId);
+    p->attachViewer(widget, p->m_defaultId);
+
+    QObject::connect(widget, &TrackListWidget::groupChanged, this, [this, widget]() {
+        const auto oldGroup = p->detachViewer(widget);
+        p->attachViewer(widget, widget->group());
+        if(oldGroup) {
+            p->publishGroupResult(*oldGroup);
+        }
+        if(const auto group = p->m_viewerGroups.find(widget); group != p->m_viewerGroups.cend()) {
+            p->publishGroupResult(group->second);
+        }
+    });
+    QObject::connect(widget, &TrackListWidget::viewerDeleted, this, [this, widget]() { removeViewer(widget); });
+    QObject::connect(widget, &TrackListWidget::requestEditConnections, p->m_manager,
+                     &FilterManager::setupWidgetConnections);
+
+    if(const auto group = p->m_viewerGroups.find(widget); group != p->m_viewerGroups.cend()) {
+        p->publishGroupResult(group->second);
+    }
+
+    return widget;
+}
+
 bool FilterController::haveUngroupedFilters() const
 {
-    return !p->m_ungrouped.empty();
+    return !p->m_ungrouped.empty() || !p->m_ungroupedViewers.empty();
 }
 
 bool FilterController::filterIsUngrouped(const Id& id) const
 {
     return std::ranges::any_of(p->m_ungrouped,
                                [&id](const FilterWidget* widget) { return widget && widget->id() == id; });
+}
+
+bool FilterController::viewerIsUngrouped(const Id& id) const
+{
+    return std::ranges::any_of(p->m_ungroupedViewers,
+                               [&id](const TrackListWidget* widget) { return widget && widget->id() == id; });
 }
 
 FilterGroups FilterController::filterGroups() const
@@ -1332,6 +1457,17 @@ UngroupedFilters FilterController::ungroupedFilters() const
         }
     }
 
+    return ungrouped;
+}
+
+UngroupedViewers FilterController::ungroupedViewers() const
+{
+    UngroupedViewers ungrouped;
+    for(TrackListWidget* widget : p->m_ungroupedViewers) {
+        if(widget) {
+            ungrouped.emplace(widget->id(), widget);
+        }
+    }
     return ungrouped;
 }
 
@@ -1358,6 +1494,24 @@ bool FilterController::removeFilter(FilterWidget* widget)
         p->scheduleRecompute(groupId.value());
     }
     return true;
+}
+
+void FilterController::addViewerToGroup(TrackListWidget* widget, const Id& groupId)
+{
+    if(widget->group() != groupId) {
+        widget->setGroup(groupId);
+        return;
+    }
+
+    p->attachViewer(widget, groupId);
+    if(const auto group = p->m_viewerGroups.find(widget); group != p->m_viewerGroups.cend()) {
+        p->publishGroupResult(group->second);
+    }
+}
+
+bool FilterController::removeViewer(TrackListWidget* widget)
+{
+    return p->detachViewer(widget).has_value();
 }
 } // namespace Fooyin::Filters
 

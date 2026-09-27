@@ -22,7 +22,6 @@
 #include "filtercolumneditordialog.h"
 #include "filtercolumnregistry.h"
 #include "filterconfigwidget.h"
-#include "filtercontroller.h"
 #include "filterdelegate.h"
 #include "filteritem.h"
 #include "filtermodel.h"
@@ -44,6 +43,7 @@
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QMenu>
 #include <QScrollBar>
@@ -61,6 +61,7 @@ constexpr auto FilterMiddleClickKey       = u"Filters/MiddleClickBehaviour";
 constexpr auto FilterPlaylistEnabledKey   = u"Filters/SelectionPlaylistEnabled";
 constexpr auto FilterAutoSwitchKey        = u"Filters/AutoSwitchSelectionPlaylist";
 constexpr auto FilterAutoPlaylistKey      = u"Filters/SelectionPlaylistName";
+constexpr auto FilterRestoreStateKey      = u"Filters/RestoreState";
 constexpr auto FilterRowHeightKey         = u"Filters/RowHeight";
 constexpr auto FilterSendPlaybackKey      = u"Filters/StartPlaybackOnSend";
 constexpr auto FilterSourceKey            = u"Filters/Source";
@@ -116,7 +117,9 @@ FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* c
     , m_widgetContext{new WidgetContext(
           this, Context{IdList{Constants::Context::TrackSelection, Id{"Fooyin.Context.FilterWidget."}.append(id())}},
           this)}
+    , m_pendingScrollPosition{-1}
     , m_applyingViewState{false}
+    , m_selectionRestorePending{false}
     , m_showScrollbar{true}
     , m_alternatingColours{false}
 {
@@ -212,7 +215,16 @@ std::vector<RowKey> FilterWidget::selectedKeys() const
         }
     }
 
+    if(keys.empty() && m_selectionRestorePending) {
+        return m_restoredSelectedKeys;
+    }
+
     return keys;
+}
+
+bool FilterWidget::selectionRestorePending() const
+{
+    return m_selectionRestorePending;
 }
 
 QString FilterWidget::searchText() const
@@ -270,11 +282,6 @@ bool FilterWidget::hasSelection() const
     return m_view->selectionModel()->hasSelection();
 }
 
-void FilterWidget::openConfigDialog()
-{
-    showConfigDialog(new FilterConfigDialog(this, m_columnRegistry, this), Qt::NonModal);
-}
-
 void FilterWidget::setGroup(const Id& group)
 {
     m_group = group;
@@ -287,8 +294,10 @@ void FilterWidget::setIndex(int index)
 
 void FilterWidget::setViewState(const FilterViewState& state)
 {
-    m_applyingViewState = true;
-    m_searchStr         = state.searchText;
+    m_applyingViewState       = true;
+    m_searchStr               = state.searchText;
+    m_restoredSelectedKeys    = state.selectedKeys;
+    m_selectionRestorePending = state.selectionRestorePending;
 
     m_model->setRows(m_columns, state.rows);
 
@@ -323,6 +332,14 @@ void FilterWidget::setViewState(const FilterViewState& state)
     }
 
     m_applyingViewState = false;
+
+    if(m_pendingScrollPosition >= 0 && !state.rows.empty()) {
+        const int scrollPosition = std::exchange(m_pendingScrollPosition, -1);
+        QMetaObject::invokeMethod(
+            m_view, [this, scrollPosition]() { m_view->verticalScrollBar()->setValue(scrollPosition); },
+            Qt::QueuedConnection);
+    }
+
     // Restored layouts can publish rows before the widget has gone through a resize,
     // so nudge the view to recalculate delegate-driven row heights immediately.
     QMetaObject::invokeMethod(m_delegate, "sizeHintChanged", Q_ARG(QModelIndex, {}));
@@ -336,6 +353,12 @@ QString FilterWidget::name() const
 QString FilterWidget::layoutName() const
 {
     return u"LibraryFilter"_s;
+}
+
+void FilterWidget::layoutEditingMenu(QMenu* menu)
+{
+    auto* editConnections = menu->addAction(tr("Manage filter groups…"));
+    QObject::connect(editConnections, &QAction::triggered, this, &FilterWidget::requestEditConnections);
 }
 
 void FilterWidget::saveLayoutData(QJsonObject& layout)
@@ -372,6 +395,15 @@ void FilterWidget::saveLayoutData(QJsonObject& layout)
     layout["ShowScrollbar"_L1]   = m_showScrollbar;
     layout["AlternatingRows"_L1] = m_alternatingColours;
 
+    QJsonArray selectedKeys;
+    for(const RowKey& key : this->selectedKeys()) {
+        selectedKeys.push_back(QString::fromLatin1(key.toBase64()));
+    }
+    if(!selectedKeys.empty()) {
+        layout["SelectedKeys"_L1] = selectedKeys;
+    }
+    layout["ScrollPosition"_L1] = m_view->verticalScrollBar()->value();
+
     QByteArray state = m_header->saveHeaderState();
     state            = qCompress(state, 9);
 
@@ -398,6 +430,23 @@ void FilterWidget::saveCopyLayoutData(QJsonObject& layout, LayoutCopyContext& co
 void FilterWidget::loadLayoutData(const QJsonObject& layout)
 {
     applyConfig(configFromLayout(layout));
+
+    m_restoredSelectedKeys.clear();
+
+    std::set<RowKey> seenKeys;
+    const QJsonArray selectedKeys = m_config.restoreState ? layout.value("SelectedKeys"_L1).toArray() : QJsonArray{};
+    for(const auto& value : selectedKeys) {
+        if(!value.isString()) {
+            continue;
+        }
+
+        RowKey key = QByteArray::fromBase64(value.toString().toLatin1());
+        if(seenKeys.emplace(key).second) {
+            m_restoredSelectedKeys.push_back(std::move(key));
+        }
+    }
+    m_selectionRestorePending = !m_restoredSelectedKeys.empty();
+    m_pendingScrollPosition   = m_config.restoreState ? layout.value("ScrollPosition"_L1).toInt(-1) : -1;
 
     if(layout.contains("Columns"_L1)) {
         m_columns.clear();
@@ -503,22 +552,7 @@ void FilterWidget::searchEvent(const SearchRequest& request)
 
 FilterWidget::ConfigData FilterWidget::factoryConfig() const
 {
-    return {
-        .doubleClickAction        = 1,
-        .middleClickAction        = 0,
-        .sendPlayback             = true,
-        .source                   = FilterSource::Library,
-        .playlistEnabled          = true,
-        .autoSwitch               = true,
-        .preservePlaybackPlaylist = true,
-        .playlistName             = FilterController::defaultPlaylistName(),
-        .rowHeight                = 0,
-        .iconSize                 = QSize{100, 100},
-        .iconHorizontalGap        = -1,
-        .iconVerticalGap          = 10,
-        .artworkCornerRadius      = 0,
-        .alignCaptionsToArtwork   = true,
-    };
+    return {};
 }
 
 FilterWidget::ConfigData FilterWidget::defaultConfig() const
@@ -535,6 +569,7 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
     config.preservePlaybackPlaylist
         = m_settings->fileValue(FilterKeepAliveKey, config.preservePlaybackPlaylist).toBool();
     config.playlistName        = m_settings->fileValue(FilterAutoPlaylistKey, config.playlistName).toString();
+    config.restoreState        = m_settings->fileValue(FilterRestoreStateKey, config.restoreState).toBool();
     config.rowHeight           = m_settings->fileValue(FilterRowHeightKey, config.rowHeight).toInt();
     config.iconSize            = m_settings->fileValue(FilterIconSizeKey, config.iconSize).toSize();
     config.iconHorizontalGap   = m_settings->fileValue(FilterIconHorizontalGapKey, config.iconHorizontalGap).toInt();
@@ -561,6 +596,7 @@ void FilterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(FilterAutoSwitchKey, config.autoSwitch);
     m_settings->fileSet(FilterKeepAliveKey, config.preservePlaybackPlaylist);
     m_settings->fileSet(FilterAutoPlaylistKey, config.playlistName);
+    m_settings->fileSet(FilterRestoreStateKey, config.restoreState);
     m_settings->fileSet(FilterRowHeightKey, config.rowHeight);
     m_settings->fileSet(FilterIconSizeKey, config.iconSize);
     m_settings->fileSet(FilterIconHorizontalGapKey, config.iconHorizontalGap);
@@ -579,6 +615,7 @@ void FilterWidget::clearSavedDefaults() const
     m_settings->fileRemove(FilterAutoSwitchKey);
     m_settings->fileRemove(FilterKeepAliveKey);
     m_settings->fileRemove(FilterAutoPlaylistKey);
+    m_settings->fileRemove(FilterRestoreStateKey);
     m_settings->fileRemove(FilterRowHeightKey);
     m_settings->fileRemove(FilterIconSizeKey);
     m_settings->fileRemove(FilterIconHorizontalGapKey);
@@ -610,13 +647,14 @@ void FilterWidget::applyConfig(const ConfigData& config)
        || m_config.source != validated.source || m_config.playlistEnabled != validated.playlistEnabled
        || m_config.autoSwitch != validated.autoSwitch
        || m_config.preservePlaybackPlaylist != validated.preservePlaybackPlaylist
-       || m_config.playlistName != validated.playlistName || m_config.rowHeight != validated.rowHeight
-       || m_config.iconSize != validated.iconSize || m_config.iconHorizontalGap != validated.iconHorizontalGap
+       || m_config.playlistName != validated.playlistName || m_config.restoreState != validated.restoreState
+       || m_config.rowHeight != validated.rowHeight || m_config.iconSize != validated.iconSize
+       || m_config.iconHorizontalGap != validated.iconHorizontalGap
        || m_config.iconVerticalGap != validated.iconVerticalGap
        || m_config.artworkCornerRadius != validated.artworkCornerRadius
        || m_config.alignCaptionsToArtwork != validated.alignCaptionsToArtwork;
 
-    m_config = validated;
+    m_config = std::move(validated);
 
     m_model->setRowHeight(m_config.rowHeight);
     m_model->setIconSize(m_config.iconSize);
@@ -632,6 +670,11 @@ void FilterWidget::applyConfig(const ConfigData& config)
     if(hasConfigChanged) {
         Q_EMIT configChanged();
     }
+}
+
+void FilterWidget::openConfigDialog()
+{
+    showConfigDialog(new FilterConfigDialog(this, m_columnRegistry, this), Qt::NonModal);
 }
 
 void FilterWidget::addFilterHeaderMenu(QMenu* menu, const QPoint& pos, bool includeWidgetActions)
@@ -728,7 +771,7 @@ void FilterWidget::addFilterHeaderMenu(QMenu* menu, const QPoint& pos, bool incl
 
     if(includeWidgetActions) {
         menu->addSeparator();
-        auto* manageConnections = new QAction(tr("Manage groups"), menu);
+        auto* manageConnections = new QAction(tr("Manage filter groups…"), menu);
         QObject::connect(manageConnections, &QAction::triggered, this, &FilterWidget::requestEditConnections);
         menu->addAction(manageConnections);
 
@@ -820,6 +863,9 @@ void FilterWidget::handleSelectionChanged(const QItemSelection& selected, const 
     if(selected.indexes().empty() && deselected.indexes().empty()) {
         return;
     }
+
+    m_restoredSelectedKeys.clear();
+    m_selectionRestorePending = false;
 
     Q_EMIT selectionKeysChanged(selectedKeys());
 }
@@ -1094,6 +1140,9 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
     if(layout.contains("PlaylistName"_L1)) {
         config.playlistName = layout.value("PlaylistName"_L1).toString();
     }
+    if(layout.contains("RestoreState"_L1)) {
+        config.restoreState = layout.value("RestoreState"_L1).toBool();
+    }
     if(layout.contains("RowHeight"_L1)) {
         config.rowHeight = layout.value("RowHeight"_L1).toInt();
     }
@@ -1135,6 +1184,7 @@ void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["AutoSwitch"_L1]             = config.autoSwitch;
     layout["KeepAlive"_L1]              = config.preservePlaybackPlaylist;
     layout["PlaylistName"_L1]           = config.playlistName;
+    layout["RestoreState"_L1]           = config.restoreState;
     layout["RowHeight"_L1]              = config.rowHeight;
     layout["IconWidth"_L1]              = config.iconSize.width();
     layout["IconHeight"_L1]             = config.iconSize.height();

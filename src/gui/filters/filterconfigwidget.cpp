@@ -48,6 +48,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
     , m_preservePlaybackPlaylist{new QCheckBox(tr("Preserve playback playlist"), this)}
     , m_playlistName{new QLineEdit(this)}
+    , m_restoreState{new QCheckBox(tr("Restore state on startup"), this)}
     , m_overrideRowHeight{new QCheckBox(tr("Override row height") + u":"_s, this)}
     , m_rowHeight{new QSpinBox(this)}
     , m_iconWidth{new QSpinBox(this)}
@@ -160,7 +161,8 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
         this);
     playlistSourceHint->setWordWrap(true);
     generalGroupLayout->addWidget(playlistSourceHint, 1, 0, 1, 3);
-    generalGroupLayout->addWidget(m_manageColumns, 2, 0, 1, 3);
+    generalGroupLayout->addWidget(m_restoreState, 2, 0, 1, 3);
+    generalGroupLayout->addWidget(m_manageColumns, 3, 0, 1, 3);
     generalGroupLayout->setColumnStretch(2, 1);
 
     auto* generalLayout = new QGridLayout(generalTab);
@@ -228,6 +230,7 @@ FilterWidget::ConfigData FilterConfigDialog::config() const
         .autoSwitch               = m_autoSwitch->isChecked(),
         .preservePlaybackPlaylist = m_preservePlaybackPlaylist->isChecked(),
         .playlistName             = m_playlistName->text(),
+        .restoreState             = m_restoreState->isChecked(),
         .rowHeight                = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
         .iconSize                 = {m_iconWidth->value(), m_iconHeight->value()},
         .iconHorizontalGap        = m_iconHorizontalGap->value(),
@@ -248,6 +251,7 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     m_autoSwitch->setChecked(config.autoSwitch);
     m_preservePlaybackPlaylist->setChecked(config.preservePlaybackPlaylist);
     m_playlistName->setText(config.playlistName);
+    m_restoreState->setChecked(config.restoreState);
     m_overrideRowHeight->setChecked(config.rowHeight > 0);
     m_rowHeight->setValue(config.rowHeight > 0 ? config.rowHeight : 1);
     m_rowHeight->setEnabled(m_overrideRowHeight->isChecked());
@@ -269,9 +273,10 @@ void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& pre
                         &FilterWidget::ConfigData::middleClickAction, &FilterWidget::ConfigData::sendPlayback,
                         &FilterWidget::ConfigData::source, &FilterWidget::ConfigData::playlistEnabled,
                         &FilterWidget::ConfigData::autoSwitch, &FilterWidget::ConfigData::preservePlaybackPlaylist,
-                        &FilterWidget::ConfigData::playlistName, &FilterWidget::ConfigData::rowHeight,
-                        &FilterWidget::ConfigData::iconSize, &FilterWidget::ConfigData::iconHorizontalGap,
-                        &FilterWidget::ConfigData::iconVerticalGap, &FilterWidget::ConfigData::artworkCornerRadius,
+                        &FilterWidget::ConfigData::playlistName, &FilterWidget::ConfigData::restoreState,
+                        &FilterWidget::ConfigData::rowHeight, &FilterWidget::ConfigData::iconSize,
+                        &FilterWidget::ConfigData::iconHorizontalGap, &FilterWidget::ConfigData::iconVerticalGap,
+                        &FilterWidget::ConfigData::artworkCornerRadius,
                         &FilterWidget::ConfigData::alignCaptionsToArtwork);
 }
 } // namespace Fooyin::Filters

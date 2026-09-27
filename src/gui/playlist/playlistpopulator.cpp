@@ -60,7 +60,7 @@ public:
     RichText evaluateTrackScript(const ParsedScript& parsedScript, const Track& track, const ScriptContext& context);
     RichText evaluateGroupScript(const ParsedScript& parsedScript, const TrackList& tracks,
                                  const ScriptContext& context);
-    [[nodiscard]] const ScriptContext& makeContext(int index = -1, int depth = 0);
+    [[nodiscard]] const ScriptContext& makeContext(int index = -1, int depth = 0, const Track* track = nullptr);
     PendingData buildBatchData() const;
     void clearBatchData();
     void updateContainerText(PlaylistContainerItem& container, PlaylistItem::ItemType type, int scriptIndex,
@@ -241,16 +241,20 @@ RichText PlaylistPopulatorPrivate::evaluateGroupScript(const ParsedScript& parse
     return m_formatter.evaluate(evalScript);
 }
 
-const ScriptContext& PlaylistPopulatorPrivate::makeContext(int index, int depth)
+const ScriptContext& PlaylistPopulatorPrivate::makeContext(int index, int depth, const Track* track)
 {
     int currentPlayingTrackIndex{-1};
     int currentPlayingTrackId{-1};
 
-    if(m_playerController && m_playlist) {
+    if(m_playerController) {
         const auto playingTrack = m_playerController->currentPlaylistTrack();
-        if(playingTrack.playlistId == m_playlist->id()) {
+        if(m_playlist && playingTrack.playlistId == m_playlist->id()) {
             currentPlayingTrackIndex = playingTrack.indexInPlaylist;
             currentPlayingTrackId    = playingTrack.track.id();
+        }
+        else if(!m_playlist && track && track->sameIdentityAs(playingTrack.track)) {
+            currentPlayingTrackIndex = index;
+            currentPlayingTrackId    = track->id();
         }
     }
 
@@ -495,7 +499,7 @@ PlaylistItem* PlaylistPopulatorPrivate::iterateTrack(const PlaylistTrack& track,
         return nullptr;
     }
 
-    const auto& context = makeContext(index, m_trackDepth);
+    const auto& context = makeContext(index, m_trackDepth, &track.track);
 
     PlaylistTrackItem playlistTrack = [&] {
         if(!m_columns.empty()) {
@@ -683,7 +687,8 @@ void PlaylistPopulator::updateTracks(Playlist* playlist, const PlaylistPreset& p
         PlaylistTrackItem& trackData = std::get<0>(item.data());
 
         trackData.setTrack(track);
-        const auto& context = p->makeContext(trackData.track().indexInPlaylist, trackData.depth());
+        const auto& context
+            = p->makeContext(trackData.track().indexInPlaylist, trackData.depth(), &trackData.track().track);
 
         if(!columnsToUpdate.empty()) {
             std::vector<RichText> trackColumns;

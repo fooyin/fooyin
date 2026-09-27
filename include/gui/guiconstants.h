@@ -291,7 +291,6 @@ constexpr auto LibrarySearching                   = "Fooyin.Page.Library.Searchi
 constexpr auto LibrarySorting                     = "Fooyin.Page.Library.Sorting";
 constexpr auto PlaylistGeneral                    = "Fooyin.Page.Playlist.General";
 constexpr auto PlaylistInterface                  = "Fooyin.Page.Playlist.Interface";
-constexpr auto PlaylistAppearance                 = "Fooyin.Page.Playlist.Appearance";
 constexpr auto PlaylistTabs                       = "Fooyin.Page.Playlist.Tabs";
 constexpr auto PlaylistSaving                     = "Fooyin.Page.Playlist.Saving";
 constexpr auto PlaylistPresets                    = "Fooyin.Page.Playlist.Presets";

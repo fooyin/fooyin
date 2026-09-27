@@ -60,6 +60,7 @@ private:
     QCheckBox* m_autoSwitch;
     QCheckBox* m_preservePlaybackPlaylist;
     QLineEdit* m_playlistName;
+    QCheckBox* m_restoreState;
 
     QCheckBox* m_overrideRowHeight;
     QSpinBox* m_rowHeight;
