@@ -22,7 +22,7 @@ jobs:
 #          - arch: amd64
 #            runs-on: macos-15-intel
           - arch: aarch64
-            runs-on: macos-latest
+            runs-on: macos-15
     runs-on: ${{ matrix.runs-on }}
     steps:
       - name: Checkout
