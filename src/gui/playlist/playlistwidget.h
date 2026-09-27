@@ -159,6 +159,7 @@ public:
     void loadLayoutData(const QJsonObject& layout) override;
     void finalise() override;
     void layoutEditingMenu(QMenu* menu) override;
+    void setConfigDialogTitle(QString title);
     void openConfigDialog(const QString& title);
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -294,6 +295,7 @@ private:
     PlaylistWidgetLayoutState m_layoutState;
     PlaylistWidgetLayoutState m_defaultLayoutState;
     ConfigData m_config;
+    QString m_configDialogTitle;
     QString m_loadedPlaylistLayout;
     // Until playlist settings are per-playlist
     bool m_useGlobalPresetState;

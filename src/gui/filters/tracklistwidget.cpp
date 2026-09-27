@@ -44,6 +44,7 @@ TrackListWidget::TrackListWidget(FilterController* controller, PlaylistWidget* p
     layout->setContentsMargins({});
     layout->addWidget(m_playlistWidget);
 
+    m_playlistWidget->setConfigDialogTitle(tr("Track Viewer Settings"));
     m_playlistWidget->setHeaderText(tr("Tracks"));
 
     QObject::connect(controller, &FilterController::filterGroupChanged, this,

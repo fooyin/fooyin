@@ -494,6 +494,11 @@ void PlaylistWidget::layoutEditingMenu(QMenu* menu)
     addConfigureAction(menu, false);
 }
 
+void PlaylistWidget::setConfigDialogTitle(QString title)
+{
+    m_configDialogTitle = std::move(title);
+}
+
 void PlaylistWidget::openConfigDialog(const QString& title)
 {
     showConfigDialog(new PlaylistConfigDialog(this, title, this), Qt::NonModal);
@@ -945,7 +950,7 @@ EditablePlaylistSessionHost& PlaylistWidget::editableSessionHost()
 
 void PlaylistWidget::openConfigDialog()
 {
-    openConfigDialog(tr("Playlist Settings"));
+    openConfigDialog(m_configDialogTitle.isEmpty() ? tr("Playlist Settings") : m_configDialogTitle);
 }
 
 void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
