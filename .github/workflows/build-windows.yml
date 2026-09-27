@@ -30,8 +30,13 @@ env:
   VCPKG_ROOT_DIR: 'C:/vcpkg'
   VCPKG_INSTALLED_DIR: 'C:/v'
   VCPKG_DOWNLOADS: 'C:/v/dl'
-  BUILD_CCACHE: OFF
-  BUILD_PCH: ON
+  CCACHE_VERSION: '4.13.6'
+  CCACHE_DIR: 'S:/.ccache'
+  CCACHE_BASEDIR: 'S:/'
+  CCACHE_MAXSIZE: 500M
+  CCACHE_COMPILERCHECK: content
+  BUILD_CCACHE: ON
+  BUILD_PCH: OFF
   BUILD_TESTS: ON
 
 jobs:
@@ -80,7 +85,17 @@ jobs:
         uses: lukka/get-cmake@latest
 
       - name: Install dependencies
-        run: choco install ninja nsis -y
+        shell: pwsh
+        run: |
+          choco install ccache --version $env:CCACHE_VERSION -y
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+          choco install ninja nsis -y
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+          ccache --version
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
@@ -117,6 +132,24 @@ jobs:
           key: ${{ runner.os }}-vcpkg-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json', 'CMakePresets.json', 'triplets/**') }}
           restore-keys: |
             ${{ runner.os }}-vcpkg-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-
+
+      - name: Set ccache generation
+        id: ccache-generation
+        shell: pwsh
+        run: |
+          $now = [DateTime]::UtcNow
+          $weekYear = [System.Globalization.ISOWeek]::GetYear($now)
+          $week = [System.Globalization.ISOWeek]::GetWeekOfYear($now)
+          echo "week=$weekYear-$($week.ToString('D2'))" >> $env:GITHUB_OUTPUT
+
+      - name: Restore ccache
+        id: ccache-restore
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ github.workspace }}/.ccache
+          key: ${{ runner.os }}-ccache-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ env.CCACHE_VERSION }}-${{ steps.ccache-generation.outputs.week }}
+          restore-keys: |
+            ${{ runner.os }}-ccache-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ env.CCACHE_VERSION }}-
 
       - name: Set CMAKE_PRESET
         shell: pwsh
@@ -211,3 +244,10 @@ jobs:
         with:
           name: windows-portable-${{ matrix.arch }}
           path: artifacts/*.zip
+
+      - name: Save ccache
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ github.workspace }}/.ccache
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
