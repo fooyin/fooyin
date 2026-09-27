@@ -69,6 +69,8 @@ public:
 
     [[nodiscard]] QSize sizeHint() const override;
 
+    bool eventFilter(QObject* watched, QEvent* event) override;
+
 protected:
     bool event(QEvent* event) override;
     void showEvent(QShowEvent* event) override;

@@ -21,6 +21,7 @@
 
 #include "internalguisettings.h"
 #include "menubar/mainmenubar.h"
+#include "plugininstallhandler.h"
 #include "scanprogresstext.h"
 #include "widgets/statuswidget.h"
 
@@ -40,6 +41,7 @@
 
 #include <QApplication>
 #include <QContextMenuEvent>
+#include <QDropEvent>
 #include <QMenuBar>
 #include <QSystemTrayIcon>
 #include <QTimer>
@@ -63,6 +65,9 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Music
     , m_hasQuit{false}
     , m_showStatusTips{m_settings->value<Settings::Gui::ShowStatusTips>()}
 {
+    setAcceptDrops(true);
+    qApp->installEventFilter(this);
+
     actionManager->setMainWindow(this);
     setMenuBar(m_mainMenu->menuBar());
     m_settings->createSettingsDialog(this);
@@ -94,6 +99,7 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Music
 
 MainWindow::~MainWindow()
 {
+    qApp->removeEventFilter(this);
     exit();
 }
 
@@ -186,6 +192,30 @@ void MainWindow::installStatusWidget(StatusWidget* statusWidget)
 QSize MainWindow::sizeHint() const
 {
     return Utils::proportionateSize(this, 0.6, 0.6);
+}
+
+bool MainWindow::eventFilter(QObject* watched, QEvent* event)
+{
+    auto* target = qobject_cast<QWidget*>(watched);
+    if(!target || target->window() != this
+       || (event->type() != QEvent::DragEnter && event->type() != QEvent::DragMove && event->type() != QEvent::Drop)) {
+        return QMainWindow::eventFilter(watched, event);
+    }
+
+    auto* dropEvent = static_cast<QDropEvent*>(event);
+    const QString filepath
+        = PluginInstall::fileFromMimeData(dropEvent->mimeData(), PluginInstall::DropTarget::MainWindow);
+    if(filepath.isEmpty()) {
+        return QMainWindow::eventFilter(watched, event);
+    }
+
+    dropEvent->setDropAction(Qt::CopyAction);
+    dropEvent->accept();
+    if(event->type() == QEvent::Drop) {
+        PluginInstall::install(filepath, this);
+    }
+
+    return true;
 }
 
 bool MainWindow::event(QEvent* event)

@@ -263,6 +263,8 @@ set(SOURCES
     librarytree/librarytreegroupeditordialog.h
     mainwindow.cpp
     mainwindow.h
+    plugininstallhandler.cpp
+    plugininstallhandler.h
     menubar/editmenu.cpp
     menubar/editmenu.h
     menubar/filemenu.cpp

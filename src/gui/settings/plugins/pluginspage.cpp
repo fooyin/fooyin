@@ -19,6 +19,7 @@
 
 #include "pluginspage.h"
 
+#include "plugininstallhandler.h"
 #include "pluginsettingsregistry.h"
 #include "pluginsmodel.h"
 #include "settings/plugins/pluginaboutdialog.h"
@@ -33,6 +34,9 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
+#include <QDropEvent>
 #include <QFileDialog>
 #include <QGridLayout>
 #include <QHeaderView>
@@ -76,6 +80,11 @@ public:
     void apply() override;
     void reset() override;
 
+protected:
+    void dragEnterEvent(QDragEnterEvent* event) override;
+    void dragMoveEvent(QDragMoveEvent* event) override;
+    void dropEvent(QDropEvent* event) override;
+
 private:
     [[nodiscard]] PluginInfo* currentPlugin() const;
 
@@ -109,6 +118,8 @@ PluginPageWidget::PluginPageWidget(PluginManager* pluginManager, PluginSettingsR
     , m_aboutPlugin{new QPushButton(tr("About"), this)}
     , m_installPlugin{new QPushButton(tr("Install…"), this)}
 {
+    setAcceptDrops(true);
+
     auto* proxyModel = new CheckSortProxyModel(this);
     proxyModel->setSourceModel(m_model);
 
@@ -248,29 +259,36 @@ void PluginPageWidget::installPlugin()
         return;
     }
 
-    bool updating{false};
-    auto installResult = PluginManager::installPlugin(filepath);
-    if(installResult == PluginManager::InstallResult::AlreadyInstalled) {
-        QMessageBox msg{QMessageBox::Question, tr("Plugin Already Installed"),
-                        tr("This plugin is already installed. Update it?"), QMessageBox::Yes | QMessageBox::No};
-        msg.button(QMessageBox::Yes)->setText(tr("Update"));
-        if(msg.exec() != QMessageBox::Yes) {
-            return;
-        }
-        updating      = true;
-        installResult = PluginManager::installPlugin(filepath, true);
+    PluginInstall::install(filepath, this);
+}
+
+void PluginPageWidget::dragEnterEvent(QDragEnterEvent* event)
+{
+    if(!PluginInstall::fileFromMimeData(event->mimeData(), PluginInstall::DropTarget::PluginsPage).isEmpty()) {
+        event->setDropAction(Qt::CopyAction);
+        event->accept();
+    }
+}
+
+void PluginPageWidget::dragMoveEvent(QDragMoveEvent* event)
+{
+    if(!PluginInstall::fileFromMimeData(event->mimeData(), PluginInstall::DropTarget::PluginsPage).isEmpty()) {
+        event->setDropAction(Qt::CopyAction);
+        event->accept();
+    }
+}
+
+void PluginPageWidget::dropEvent(QDropEvent* event)
+{
+    const QString filepath = PluginInstall::fileFromMimeData(event->mimeData(), PluginInstall::DropTarget::PluginsPage);
+    if(filepath.isEmpty()) {
+        event->ignore();
+        return;
     }
 
-    if(installResult == PluginManager::InstallResult::Installed) {
-        QMessageBox msg{QMessageBox::Question, updating ? tr("Plugin Updated") : tr("Plugin Installed"),
-                        tr("Restart for changes to take effect. Restart now?"), QMessageBox::Yes | QMessageBox::No};
-        if(msg.exec() == QMessageBox::Yes) {
-            Application::restart();
-        }
-    }
-    else {
-        QMessageBox::critical(this, tr("Plugin Installation Failed"), tr("The plugin could not be installed."));
-    }
+    event->setDropAction(Qt::CopyAction);
+    event->accept();
+    PluginInstall::install(filepath, this);
 }
 
 PluginPage::PluginPage(PluginManager* pluginManager, PluginSettingsRegistry* pluginSettingsRegistry,

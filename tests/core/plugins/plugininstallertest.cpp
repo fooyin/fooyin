@@ -49,6 +49,8 @@ QString targetDirectory()
     const QString os = u"windows"_s;
 #elifdef Q_OS_MACOS
     const QString os = u"macos"_s;
+#elifdef Q_OS_FREEBSD
+    const QString os = u"freebsd"_s;
 #else
     const QString os = u"linux"_s;
 #endif

@@ -69,30 +69,33 @@ struct InstalledPlugin
 
 QString targetDirectory()
 {
+    QString osName;
 #ifdef Q_OS_WIN
-    static constexpr auto OsName = "windows"_L1;
+    osName = "windows"_L1;
 #elifdef Q_OS_LINUX
-    static constexpr auto OsName = "linux"_L1;
+    osName = "linux"_L1;
 #elifdef Q_OS_MACOS
-    static constexpr auto OsName = "macos"_L1;
+    osName = "macos"_L1;
+#elifdef Q_OS_FREEBSD
+    osName = "freebsd"_L1;
 #else
     return {};
 #endif
 
     const QString arch = QSysInfo::buildCpuArchitecture();
     if(arch == "x86_64"_L1 || arch == "amd64"_L1) {
-        return OsName + "-x64"_L1;
+        return osName + "-x64"_L1;
     }
     if(arch == "arm64"_L1 || arch == "aarch64"_L1) {
-        return OsName + "-arm64"_L1;
+        return osName + "-arm64"_L1;
     }
     return {};
 }
 
 bool isPlatformDirectory(const QString& name)
 {
-    static const std::array directories{"windows-x64"_L1, "windows-arm64"_L1, "linux-x64"_L1,
-                                        "linux-arm64"_L1, "macos-x64"_L1,     "macos-arm64"_L1};
+    static const std::array directories{"windows-x64"_L1, "windows-arm64"_L1, "linux-x64"_L1,   "linux-arm64"_L1,
+                                        "macos-x64"_L1,   "macos-arm64"_L1,   "freebsd-x64"_L1, "freebsd-arm64"_L1};
     return std::ranges::find(directories, name) != directories.cend();
 }
 
