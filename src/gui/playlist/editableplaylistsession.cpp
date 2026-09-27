@@ -258,7 +258,6 @@ void EditablePlaylistSession::setupConnections(PlaylistWidgetSessionHost& sessio
 {
     auto* widget = sessionHost.sessionWidget();
 
-    QObject::connect(widget->playlistView(), &ExpandedTreeView::middleClicked, widget, &PlaylistWidget::middleClicked);
     QObject::connect(widget->playlistModel(), &PlaylistModel::filesDropped, widget,
                      [widget, this](const QList<QUrl>& urls, int index) {
                          scanDroppedTracks(widgetSessionHost(widget), urls, index);
