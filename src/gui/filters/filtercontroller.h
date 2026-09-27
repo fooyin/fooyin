@@ -34,6 +34,7 @@ struct CorePluginContext;
 class EditableLayout;
 class GuiStyleProvider;
 class MusicLibrary;
+class PlaylistWidget;
 class SettingsManager;
 class TagLoader;
 class TrackSelectionController;
@@ -42,11 +43,13 @@ namespace Filters {
 class FilterControllerPrivate;
 class FilterColumnRegistry;
 class FilterWidget;
+class TrackListWidget;
 
 struct FilterGroup
 {
     Id id;
     std::vector<FilterWidget*> filters;
+    std::vector<TrackListWidget*> viewers;
     TrackList filteredTracks;
     bool hasActiveFilters{false};
     int updateCount{0};
@@ -54,6 +57,7 @@ struct FilterGroup
 
 using FilterGroups     = std::unordered_map<Id, FilterGroup, Id::IdHash>;
 using UngroupedFilters = std::unordered_map<Id, FilterWidget*, Id::IdHash>;
+using UngroupedViewers = std::unordered_map<Id, TrackListWidget*, Id::IdHash>;
 
 class FYGUI_EXPORT FilterController : public QObject
 {
@@ -70,16 +74,25 @@ public:
     static QString defaultPlaylistName();
 
     FilterWidget* createFilter();
+    TrackListWidget* createTrackList(PlaylistWidget* playlistWidget);
 
     [[nodiscard]] bool haveUngroupedFilters() const;
     [[nodiscard]] bool filterIsUngrouped(const Id& id) const;
+    [[nodiscard]] bool viewerIsUngrouped(const Id& id) const;
 
     [[nodiscard]] FilterGroups filterGroups() const;
     [[nodiscard]] std::optional<FilterGroup> groupById(const Id& id) const;
     [[nodiscard]] UngroupedFilters ungroupedFilters() const;
+    [[nodiscard]] UngroupedViewers ungroupedViewers() const;
 
     void addFilterToGroup(FilterWidget* widget, const Id& groupId);
     bool removeFilter(FilterWidget* widget);
+    void addViewerToGroup(TrackListWidget* widget, const Id& groupId);
+    bool removeViewer(TrackListWidget* widget);
+
+Q_SIGNALS:
+    void filterGroupChanged(const Fooyin::Id& group, const Fooyin::TrackList& tracks, bool hasActiveFilters);
+    void filterGroupRemoved(const Fooyin::Id& group);
 
 private:
     std::unique_ptr<FilterControllerPrivate> p;

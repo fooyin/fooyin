@@ -83,9 +83,13 @@ public:
                                   const std::set<Track>& selectedTracks) const override;
     [[nodiscard]] PlaylistTrackList searchSourceTracks(const PlaylistController* playlistController,
                                                        const MusicLibrary* library) const override;
-    [[nodiscard]] PlaylistAction::ActionOptions playbackOptions() const override;
+    void startPlayback(PlaylistWidgetSessionHost& host) const override;
+    void setupConnections(PlaylistWidgetSessionHost& host) override;
+    void replaceTracks(PlaylistWidgetSessionHost& host, const TrackList& tracks) override;
 
 private:
+    [[nodiscard]] PlaylistTrack playingTrackForView(const PlaylistTrack& track) const;
+
     PlaylistTrackList m_tracks;
 };
 } // namespace Fooyin

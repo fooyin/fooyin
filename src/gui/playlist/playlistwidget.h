@@ -28,6 +28,7 @@
 #include "sortactionhandler.h"
 
 #include <gui/fywidget.h>
+#include <gui/trackdisplay.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/autoheaderview.h>
 
@@ -76,6 +77,29 @@ class PlaylistWidget : public FyWidget
     Q_OBJECT
 
 public:
+    struct ConfigData
+    {
+        bool showHeader{true};
+        bool showScrollBar{true};
+        bool alternatingRows{true};
+        int imagePadding{5};
+        int imagePaddingTop{0};
+        int artworkCornerRadius{0};
+        int backgroundImageMode{0};
+        QString backgroundCustomImage;
+        int backgroundCoverType{0};
+        int backgroundScaling{0};
+        int backgroundPosition{4};
+        int backgroundMaxSize{0};
+        int backgroundBlur{0};
+        int backgroundOpacity{40};
+        int backgroundFadeDuration{0};
+        TrackDisplayPreference backgroundTrackPreference{TrackDisplayPreference::PlayingTrack};
+        TrackAction doubleClickAction{TrackAction::Play};
+        TrackAction middleClickAction{TrackAction::None};
+        bool startPlaybackOnSend{false};
+    };
+
     struct ModeCapabilities
     {
         bool editablePlaylist{false};
@@ -123,7 +147,10 @@ public:
     [[nodiscard]] PlaylistView* view() const;
     [[nodiscard]] PlaylistModel* model() const;
     [[nodiscard]] int trackCount() const;
+    void setHeaderText(QString text);
 
+    //! Replaces the source tracks when this widget uses a detached tracklist session.
+    void setTracks(const TrackList& tracks);
     void startPlayback();
 
     [[nodiscard]] QString name() const override;
@@ -131,6 +158,15 @@ public:
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
     void finalise() override;
+    void layoutEditingMenu(QMenu* menu) override;
+    void openConfigDialog(const QString& title);
+
+    [[nodiscard]] ConfigData factoryConfig() const;
+    [[nodiscard]] ConfigData defaultConfig() const;
+    [[nodiscard]] const ConfigData& currentConfig() const;
+    void saveDefaults(const ConfigData& config) const;
+    void clearSavedDefaults() const;
+    void applyConfig(const ConfigData& config);
 
     void searchEvent(const SearchRequest& request) override;
     bool openIntegratedSearch();
@@ -173,7 +209,13 @@ public:
     [[nodiscard]] PlaylistWidgetSessionHost& sessionHost();
     [[nodiscard]] EditablePlaylistSessionHost& editableSessionHost();
 
+Q_SIGNALS:
+    void configChanged();
+    void headerMenuAboutToShow(QMenu* menu);
+
 protected:
+    void openConfigDialog() override;
+
     void contextMenuEvent(QContextMenuEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
 
@@ -181,6 +223,7 @@ private:
     PlaylistWidget(ActionManager* actionManager, PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider,
                    Application* core, GuiStyleProvider* styleProvider, TrackSelectionController* selectionController,
                    std::unique_ptr<PlaylistWidgetSession> session, QWidget* parent);
+
     void populateTrackContextMenu(QMenu* menu, const ContextMenuRequest& request);
     void showHeaderMenu(const QPoint& pos);
     void addSortMenu(QMenu* parent, bool disabled);
@@ -192,7 +235,6 @@ private:
     void addPresetMenu(QMenu* parent);
     void addColumnsMenu(QMenu* parent);
     void addSettingsAction(QMenu* menu);
-    void applyInitialViewSettings();
     void applySessionTexts();
     void refreshViewStyle();
     void updateMetadataEditTriggers(bool readOnly);
@@ -212,7 +254,9 @@ private:
     [[nodiscard]] bool remembersLayout(const Playlist* playlist) const;
     void updateSpans();
     void applyBackgroundSettings();
-    void reloadBackgroundCover(const Track& track = {});
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
+    void reloadBackgroundCover();
     void updateVisibleCoverPins();
     void executeClickAction(TrackAction action);
 
@@ -249,6 +293,7 @@ private:
     AutoHeaderView* m_header;
     PlaylistWidgetLayoutState m_layoutState;
     PlaylistWidgetLayoutState m_defaultLayoutState;
+    ConfigData m_config;
     QString m_loadedPlaylistLayout;
     // Until playlist settings are per-playlist
     bool m_useGlobalPresetState;
@@ -263,6 +308,7 @@ private:
     int m_bgCoverRequestId;
     PlaylistBgImage m_bgImageMode;
     Track::Cover m_bgCoverType;
+    TrackDisplayPreference m_bgTrackPreference;
     QString m_bgCustomImage;
     Track m_bgCoverTrack;
 

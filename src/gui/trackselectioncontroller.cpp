@@ -173,6 +173,7 @@ public:
     void addPlaylistTargets(QMenu* menu, const TrackSelection& selection,
                             const std::optional<UId>& excludedPlaylistId = {}) const;
     void startPlayback(PlaylistAction::ActionOptions options);
+    void startPlayback(const TrackList& tracks, int trackIndex);
     void addToQueue() const;
     void queueNext(PlaylistAction::ActionOptions options = {}) const;
     void openFolder(const TrackSelection& selection) const;
@@ -1193,6 +1194,24 @@ void TrackSelectionControllerPrivate::startPlayback(PlaylistAction::ActionOption
     }
 }
 
+void TrackSelectionControllerPrivate::startPlayback(const TrackList& tracks, int trackIndex)
+{
+    if(tracks.empty()) {
+        return;
+    }
+
+    if(!m_tempPlaylist) {
+        m_tempPlaylist = m_playlistHandler->createTempPlaylist(QString::fromLatin1(TempSelectionPlaylist));
+        if(!m_tempPlaylist) {
+            return;
+        }
+    }
+
+    m_playlistHandler->replacePlaylistTracks(m_tempPlaylist->id(), tracks);
+    m_tempPlaylist->changeCurrentIndex(std::clamp(trackIndex, 0, static_cast<int>(tracks.size()) - 1));
+    m_playlistController->playerController()->startPlayback(m_tempPlaylist);
+}
+
 void TrackSelectionControllerPrivate::addToQueue() const
 {
     const auto* selection = currentSelection();
@@ -1925,6 +1944,11 @@ void TrackSelectionController::executeAction(TrackAction action, PlaylistAction:
         case TrackAction::None:
             break;
     }
+}
+
+void TrackSelectionController::startPlayback(const TrackList& tracks, int trackIndex)
+{
+    p->startPlayback(tracks, trackIndex);
 }
 
 void TrackSelectionController::tracksUpdated(const TrackList& tracks)

@@ -133,10 +133,12 @@ ReplaceWidgetCommand::ReplaceWidgetCommand(EditableLayout* layout, WidgetProvide
                                            QString key, const Id& widgetToReplace)
     : LayoutChangeCommand{layout, provider, container}
     , m_key{std::move(key)}
-    , m_index{m_container->widgetIndex(widgetToReplace)}
+    , m_index{container ? container->widgetIndex(widgetToReplace) : -1}
 {
-    if(auto* oldWidget = m_container->widgetAtIndex(m_index)) {
-        m_oldWidget = EditableLayout::saveWidget(oldWidget);
+    if(m_container) {
+        if(auto* oldWidget = m_container->widgetAtIndex(m_index)) {
+            m_oldWidget = EditableLayout::saveWidget(oldWidget);
+        }
     }
 }
 
@@ -144,38 +146,38 @@ ReplaceWidgetCommand::ReplaceWidgetCommand(EditableLayout* layout, WidgetProvide
                                            QJsonObject widget, const Id& widgetToReplace)
     : LayoutChangeCommand{layout, provider, container}
     , m_widget{std::move(widget)}
-    , m_index{m_container->widgetIndex(widgetToReplace)}
+    , m_index{container ? container->widgetIndex(widgetToReplace) : -1}
 {
-    if(auto* oldWidget = m_container->widgetAtIndex(m_index)) {
-        m_oldWidget = EditableLayout::saveWidget(oldWidget);
+    if(m_container) {
+        if(auto* oldWidget = m_container->widgetAtIndex(m_index)) {
+            m_oldWidget = EditableLayout::saveWidget(oldWidget);
+        }
     }
 }
 
 void ReplaceWidgetCommand::undo()
 {
-    if(!checkContainer()) {
+    if(!checkContainer() || m_index < 0 || m_oldWidget.empty()) {
         return;
     }
 
-    if(m_container && !m_oldWidget.empty()) {
-        m_container->removeWidget(m_index);
+    m_container->removeWidget(m_index);
 
-        QMetaObject::invokeMethod(
-            m_container,
-            [this]() {
-                if(auto* widget = EditableLayout::loadWidget(m_provider, m_oldWidget)) {
-                    m_container->insertWidget(m_index, widget);
-                    widget->finalise();
-                    m_container->restoreState(m_containerState);
-                }
-            },
-            Qt::QueuedConnection);
-    }
+    QMetaObject::invokeMethod(
+        m_container,
+        [this]() {
+            if(auto* widget = EditableLayout::loadWidget(m_provider, m_oldWidget)) {
+                m_container->insertWidget(m_index, widget);
+                widget->finalise();
+                m_container->restoreState(m_containerState);
+            }
+        },
+        Qt::QueuedConnection);
 }
 
 void ReplaceWidgetCommand::redo()
 {
-    if(!checkContainer()) {
+    if(!checkContainer() || m_index < 0 || m_oldWidget.empty()) {
         return;
     }
 

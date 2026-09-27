@@ -149,7 +149,9 @@ public:
 
     void setPixmapColumnSize(int column, int size);
     void setPixmapColumnSizes(const std::vector<int>& sizes);
+    void setPixmapPadding(int padding, int topPadding);
     void updateColours();
+    void setMatchPlayingTrackByIdentity(bool enabled);
 
     void reset(const PlaylistTrackList& tracks);
     void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist,
@@ -170,6 +172,8 @@ public:
     void refreshTracks(const std::vector<int>& indexes, const std::set<int>& columns);
     void removeTracks(const QModelIndexList& indexes);
     void removeTracks(const TrackGroups& groups);
+
+    void setHeaderText(QString text);
     void updateHeader(Playlist* playlist);
 
     bool removeColumn(int column);
@@ -290,12 +294,14 @@ private:
     std::vector<int> pixmapColumns() const;
     std::set<int> columnsNeedUpdating() const;
     void updateLivePlaybackDependencies();
+    void refreshPlayingTrackForDependency(PlaybackDependency dependency);
     void refreshTracksForDependency(const std::vector<int>& indexes, PlaybackDependency dependency);
     void refreshTracksForDependencies(const std::vector<int>& indexes, PlaybackDependencies dependencies);
     void coverUpdated(const Track& track);
     [[nodiscard]] PlaylistTrack persistentTrackForIndex(const QModelIndex& index) const;
     [[nodiscard]] bool playbackTrackMatchesPlaylistIndex(const PlaylistTrack& track, int index) const;
     [[nodiscard]] PlayingTrackIndexResolution resolvePlayingTrackIndex(const PlaylistTrack& track) const;
+    [[nodiscard]] int trackIndexForIdentity(const Track& track) const;
     [[nodiscard]] int resolveTrackIndex(const PlaylistTrack& track) const;
     void syncPlayingTrackIndex();
     void syncStopAtTrackIndex();
@@ -368,11 +374,12 @@ private:
     bool m_singleColumnHasPlaybackStateDependency;
 
     Playlist* m_currentPlaylist;
+    bool m_matchPlayingTrackByIdentity;
     Player::PlayState m_currentPlayState;
     PlaylistTrack m_playingTrack;
-    PlaylistTrack m_preRequestPlayingTrack;
     PlaylistTrack m_stopAtTrack;
     QPersistentModelIndex m_playingIndex;
+    QPersistentModelIndex m_preRequestPlayingIndex;
     QPersistentModelIndex m_stopAtIndex;
     QModelIndexList m_indexesPendingRemoval;
 };

@@ -177,6 +177,8 @@ public:
 
     void executeAction(TrackAction action, PlaylistAction::ActionOptions options = {},
                        const QString& playlistName = {});
+    //! Starts a temporary playback sequence at @p trackIndex without changing the current selection.
+    void startPlayback(const TrackList& tracks, int trackIndex = 0);
 
 Q_SIGNALS:
     void actionExecuted(Fooyin::TrackAction action);

@@ -58,21 +58,27 @@ constexpr auto LayoutVersion = 1;
 
 namespace Fooyin {
 namespace {
+FyWidget* findLayoutWidget(QWidget* widget)
+{
+    while(widget) {
+        if(auto* candidate = qobject_cast<FyWidget*>(widget)) {
+            auto* parent = qobject_cast<WidgetContainer*>(candidate->findParent());
+            if(parent && parent->widgetAtId(candidate->id()) == candidate) {
+                return candidate;
+            }
+        }
+        widget = widget->parentWidget();
+    }
+
+    return nullptr;
+}
+
 FyWidget* findSplitterChild(QWidget* widget, const QPoint& pos)
 {
-    if(!widget) {
-        return {};
+    auto* fyWidget = findLayoutWidget(widget);
+    if(!fyWidget) {
+        return nullptr;
     }
-    QWidget* child = widget;
-
-    while(!qobject_cast<FyWidget*>(child)) {
-        child = child->parentWidget();
-        if(!child) {
-            return {};
-        }
-    }
-
-    auto* fyWidget = qobject_cast<FyWidget*>(child);
 
     if(auto* container = qobject_cast<WidgetContainer*>(fyWidget)) {
         const QPoint widgetPos = container->mapFromGlobal(pos);
@@ -546,7 +552,7 @@ void EditableLayoutPrivate::setupContextMenu(FyWidget* widget, QMenu* menu)
                     return;
                 }
                 if(id == QLatin1StringView{ContextMenuIds::LayoutEditing::Replace}) {
-                    if(!isDummy && sectionEnabled(ContextMenuIds::LayoutEditing::Replace)) {
+                    if(!isDummy && parent && sectionEnabled(ContextMenuIds::LayoutEditing::Replace)) {
                         auto* changeMenu = new QMenu(EditableLayout::tr("R&eplace"), targetMenu);
                         m_widgetProvider->setupReplaceWidgetMenu(m_self, changeMenu, parent, currentWidget->id());
                         targetMenu->addMenu(changeMenu);

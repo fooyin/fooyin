@@ -219,6 +219,8 @@ set(SOURCES
     filters/libraryfilterswitcher.h
     filters/libraryfiltertabs.cpp
     filters/libraryfiltertabs.h
+    filters/tracklistwidget.cpp
+    filters/tracklistwidget.h
     filters/filterconfigwidget.cpp
     filters/filterconfigwidget.h
     fylayout.cpp
@@ -356,6 +358,8 @@ set(SOURCES
     playlist/playlisttabsconfigdialog.h
     playlist/playlistview.cpp
     playlist/playlistview.h
+    playlist/playlistconfigdialog.cpp
+    playlist/playlistconfigdialog.h
     playlist/detachedplaylistsession.cpp
     playlist/detachedplaylistsession.h
     playlist/editableplaylistsession.cpp
@@ -533,8 +537,6 @@ set(SOURCES
     settings/playlist/playlistcolumnpage.h
     settings/playlist/playlistgeneralpage.cpp
     settings/playlist/playlistgeneralpage.h
-    settings/playlist/playlistguipage.cpp
-    settings/playlist/playlistguipage.h
     settings/playlist/playlistpresetspage.cpp
     settings/playlist/playlistpresetspage.h
     settings/playlist/playlistsavingpage.cpp

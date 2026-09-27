@@ -44,6 +44,7 @@
 #include "filters/filterwidget.h"
 #include "filters/libraryfilterswitcher.h"
 #include "filters/libraryfiltertabs.h"
+#include "filters/tracklistwidget.h"
 #include "gui/editablelayout.h"
 #include "gui/plugins/guiplugincontext.h"
 #include "guiapplication.h"
@@ -93,7 +94,6 @@
 #include "settings/playback/replaygainpage.h"
 #include "settings/playlist/playlistcolumnpage.h"
 #include "settings/playlist/playlistgeneralpage.h"
-#include "settings/playlist/playlistguipage.h"
 #include "settings/playlist/playlistpresetspage.h"
 #include "settings/playlist/playlistsavingpage.h"
 #include "settings/plugins/pluginspage.h"
@@ -409,6 +409,17 @@ void Widgets::registerWidgets()
     provider->setSubMenus(u"LibraryFilter"_s, {tr("Filters")});
 
     provider->registerWidget(
+        u"TrackViewer"_s,
+        [this]() {
+            auto* playlist = PlaylistWidget::createDetachedTracks(m_gui->actionManager(), m_playlistInteractor,
+                                                                  m_gui->trackSelection(), m_coverProvider, m_core,
+                                                                  m_styleProvider, {});
+            return m_filterController->createTrackList(playlist);
+        },
+        tr("Track Viewer"));
+    provider->setSubMenus(u"TrackViewer"_s, {tr("Filters")});
+
+    provider->registerWidget(
         u"SavedFilterTabs"_s,
         [this, provider]() {
             return new Filters::LibraryFilterTabs(m_libraryFilterRegistry, m_core->library(), provider, m_settings);
@@ -523,7 +534,6 @@ void Widgets::registerPages()
     new DspManagerPage(m_core->dspChainStore(), m_dspPresetRegistry, m_dspSettingsRegistry.get(), m_settings, this);
     new FadingPage(m_settings, this);
     new PlaylistGeneralPage(m_settings, this);
-    new PlaylistGuiPage(m_settings, this);
     new PlaylistSavingPage(m_core->playlistLoader()->supportedSaveExtensions(), m_settings, this);
     new PlaylistColumnPage(m_playlistController->columnRegistry(), m_settings, this);
     new PlaylistPresetsPage(m_playlistController->presetRegistry(), m_settings, this);
