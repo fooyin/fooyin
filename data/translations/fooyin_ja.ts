@@ -1476,7 +1476,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="68"/>
         <source>Artwork Finder</source>
-        <translation>アートワークファインダー</translation>
+        <translation>アートワークファインダ</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="70"/>
@@ -1853,7 +1853,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="70"/>
         <source>Search parameters</source>
-        <translation>検索パラメーター</translation>
+        <translation>パラメータ検索</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="76"/>
@@ -2331,7 +2331,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="336"/>
         <source>The disc in the CD drive has changed</source>
-        <translation>CD ドライブ内のディスクが変更されました</translation>
+        <translation>CD ドライブのディスクが変更されました</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadecoder.cpp" line="351"/>
@@ -2778,7 +2778,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="174"/>
         <source>Lookup metadata…</source>
-        <translation>メタデータの検索中…</translation>
+        <translation>メタデータの検索…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/ripaudiocddialog.cpp" line="175"/>
@@ -3870,7 +3870,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="517"/>
         <source>Front cover</source>
-        <translation>表カバー</translation>
+        <translation>表ジャケット</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="518"/>
@@ -4018,32 +4018,32 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="83"/>
         <source>Playing track</source>
-        <translation type="unfinished">再生中のトラック</translation>
+        <translation>再生中のトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="84"/>
         <source>Selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>選択済みトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="85"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>再生中(停止時は選択中のトラック)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="87"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>再生中(起動時は空欄)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="89"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>再生中(停止時は空欄)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="93"/>
         <source>Preferred track</source>
-        <translation type="unfinished"></translation>
+        <translation>優先トラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="105"/>
@@ -8188,12 +8188,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="167"/>
         <source>Dragon</source>
-        <translation type="unfinished"></translation>
+        <translation>ドラゴン</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="169"/>
         <source>Typographic</source>
-        <translation type="unfinished"></translation>
+        <translation>文字ベース</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="171"/>
@@ -8478,13 +8478,15 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="86"/>
         <source>Only show unrated stars on hovered
 or selected rows</source>
-        <translation type="unfinished"></translation>
+        <translation>カーソルを合わせた行または選択した行でのみ
+未評価の星を表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="88"/>
         <source>Only show unloved hearts on hovered
 or selected rows</source>
-        <translation type="unfinished"></translation>
+        <translation>カーソルを合わせた行または選択した行でのみ
+「いいね」されていないハートを表示する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="94"/>
@@ -8559,7 +8561,7 @@ or selected rows</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="127"/>
         <source>Used for the filled portion of %rating_stars% and %rating_stars_padded%</source>
-        <translation>%rating_stars%と%rating_stars_padded%の塗りつぶし部分に使用されます</translation>
+        <translation>%rating_stars% と %rating_stars_padded% の塗りつぶし部分に使用されます</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="128"/>
@@ -8581,33 +8583,33 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="134"/>
         <source>Rating Script Variables</source>
-        <translation type="unfinished"></translation>
+        <translation>評価用スクリプト変数</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="148"/>
         <source>Rating Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>評価エディタ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="153"/>
         <source>Star size</source>
-        <translation type="unfinished"></translation>
+        <translation>星のサイズ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="155"/>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="175"/>
         <source>Colours</source>
-        <translation type="unfinished">色</translation>
+        <translation>色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="168"/>
         <source>Love Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」エディタ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="173"/>
         <source>Heart size</source>
-        <translation type="unfinished"></translation>
+        <translation>ハートのサイズ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="138"/>
@@ -8918,32 +8920,32 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="598"/>
         <source>Preferred track</source>
-        <translation type="unfinished"></translation>
+        <translation>優先トラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="613"/>
         <source>Playing track</source>
-        <translation type="unfinished">再生中のトラック</translation>
+        <translation>再生中のトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="614"/>
         <source>Selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>選択済みトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="615"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>再生中(停止時は選択中のトラック)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="617"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>再生中(起動時は空欄)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="618"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>再生中(停止時は空欄)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="631"/>
@@ -15453,97 +15455,97 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="197"/>
         <source>Discovered</source>
-        <translation type="unfinished"></translation>
+        <translation>検出済み</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="199"/>
         <source>Disabled</source>
-        <translation type="unfinished">無効</translation>
+        <translation>無効</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="201"/>
         <source>Incompatible</source>
-        <translation type="unfinished"></translation>
+        <translation>非互換</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="203"/>
         <source>Load failed</source>
-        <translation type="unfinished"></translation>
+        <translation>読み込み失敗</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="205"/>
         <source>Loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>読み込み済み</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="207"/>
         <source>Initialised</source>
-        <translation type="unfinished"></translation>
+        <translation>初期化済み</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="266"/>
         <source>Audio</source>
-        <translation type="unfinished"></translation>
+        <translation>オーディオ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="269"/>
         <source>Output</source>
-        <translation type="unfinished">出力</translation>
+        <translation>出力</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="272"/>
         <source>System Integration</source>
-        <translation type="unfinished"></translation>
+        <translation>システム統合</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="275"/>
         <source>Online Services</source>
-        <translation type="unfinished"></translation>
+        <translation>オンラインサービス</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="278"/>
         <source>Display</source>
-        <translation type="unfinished">表示</translation>
+        <translation>表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="281"/>
         <source>Visualisations</source>
-        <translation type="unfinished">ビジュアライゼーション</translation>
+        <translation>ビジュアライゼーション</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="284"/>
         <source>Analysis</source>
-        <translation type="unfinished">解析</translation>
+        <translation>解析</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="287"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>入力</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="290"/>
         <source>Widgets</source>
-        <translation type="unfinished"></translation>
+        <translation>ウィジェット</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="293"/>
         <source>Library</source>
-        <translation type="unfinished">ライブラリ</translation>
+        <translation>ライブラリ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="296"/>
         <source>Tagging</source>
-        <translation type="unfinished">タグ付け</translation>
+        <translation>タグ付け</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="299"/>
         <source>DSP</source>
-        <translation type="unfinished">DSP</translation>
+        <translation>DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="302"/>
         <source>File Management</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル管理</translation>
     </message>
 </context>
 <context>
@@ -15584,7 +15586,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmpresetdialog.cpp" line="72"/>
         <source>Favourites only</source>
-        <translation type="unfinished"></translation>
+        <translation>お気に入りのみ</translation>
     </message>
 </context>
 <context>
@@ -15879,12 +15881,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="156"/>
         <source>&amp;Favourite Current Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のプリセットをお気に入りに登録(&amp;F)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="157"/>
         <source>Cycle &amp;Favourites Only</source>
-        <translation type="unfinished"></translation>
+        <translation>お気に入りのみを循環(&amp;F)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="158"/>
@@ -15945,12 +15947,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="558"/>
         <source>Favourite the current projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の projectM プリセットをお気に入りに登録</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="565"/>
         <source>Cycle through favourite projectM presets only</source>
-        <translation type="unfinished"></translation>
+        <translation>お気に入りの projectM プリセットのみを循環</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="570"/>
@@ -17523,7 +17525,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="88"/>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="143"/>
         <source>Country</source>
-        <translation>国</translation>
+        <translation>カントリー</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="89"/>
@@ -18746,7 +18748,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="117"/>
         <source>Unlimited</source>
-        <translation type="unfinished">無制限</translation>
+        <translation>無制限</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="118"/>
@@ -21834,7 +21836,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="69"/>
         <source>Edit values on single click</source>
-        <translation type="unfinished"></translation>
+        <translation>シングルクリックで値を編集する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="146"/>
@@ -22821,7 +22823,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="55"/>
         <source>Right-align scale labels</source>
-        <translation type="unfinished"></translation>
+        <translation>スケールラベルを右寄せにする</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="56"/>
@@ -23024,7 +23026,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1230"/>
         <source>Right-align scale labels</source>
-        <translation type="unfinished"></translation>
+        <translation>スケールラベルを右寄せにする</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1233"/>
@@ -23206,37 +23208,37 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="97"/>
         <source>Playing track</source>
-        <translation type="unfinished">再生中のトラック</translation>
+        <translation>再生中のトラック</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="98"/>
         <source>Selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>選択済みトラック</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="99"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>再生中(停止時は選択中のトラック)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="101"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>再生中(起動時は空欄)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="103"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>再生中(停止時は空欄)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="106"/>
         <source>General</source>
-        <translation type="unfinished">全般</translation>
+        <translation>全般</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="110"/>
         <source>Preferred track</source>
-        <translation type="unfinished"></translation>
+        <translation>優先トラック</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="160"/>
