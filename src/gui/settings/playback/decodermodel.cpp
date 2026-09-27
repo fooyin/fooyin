@@ -30,19 +30,19 @@ constexpr auto LoaderItems = "application/x-fooyin-loaderitems";
 
 namespace Fooyin {
 namespace {
-QString supportedExtensionsTooltip(const QStringList& extensions, const QString& title)
+QString formatSupportedInputs(const QStringList& inputs)
 {
     static constexpr auto MaxLineLength = 120;
 
     QStringList lines;
     QString currentLine;
 
-    for(const QString& extension : extensions) {
-        const QString segment = currentLine.isEmpty() ? extension : u", %1"_s.arg(extension);
+    for(const QString& input : inputs) {
+        const QString segment = currentLine.isEmpty() ? input : u", %1"_s.arg(input);
 
         if(!currentLine.isEmpty() && currentLine.size() + segment.size() > MaxLineLength) {
             lines.emplace_back(currentLine);
-            currentLine = extension;
+            currentLine = input;
             continue;
         }
 
@@ -53,7 +53,22 @@ QString supportedExtensionsTooltip(const QStringList& extensions, const QString&
         lines.emplace_back(std::move(currentLine));
     }
 
-    return lines.isEmpty() ? title : u"%1:\n%2"_s.arg(title, lines.join(u"\n"_s));
+    return lines.join(u"\n"_s);
+}
+
+QString supportedInputsTooltip(const QStringList& extensions, const QStringList& schemes,
+                               const QString& extensionsTitle, const QString& schemesTitle)
+{
+    QStringList sections;
+
+    if(!extensions.isEmpty()) {
+        sections.emplace_back(u"%1:\n%2"_s.arg(extensionsTitle, formatSupportedInputs(extensions)));
+    }
+    if(!schemes.isEmpty()) {
+        sections.emplace_back(u"%1:\n%2"_s.arg(schemesTitle, formatSupportedInputs(schemes)));
+    }
+
+    return sections.join(u"\n\n"_s);
 }
 } // namespace
 
@@ -132,7 +147,8 @@ QVariant DecoderModel::data(const QModelIndex& index, int role) const
             case Qt::DisplayRole:
                 return loader.name;
             case Qt::ToolTipRole:
-                return supportedExtensionsTooltip(loader.extensions, tr("Supported extensions"));
+                return supportedInputsTooltip(loader.extensions, loader.schemes, tr("Supported extensions"),
+                                              tr("Supported URI schemes"));
             case Qt::CheckStateRole:
                 return loader.enabled ? Qt::Checked : Qt::Unchecked;
             case HasSettings:
