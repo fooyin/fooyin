@@ -21,21 +21,58 @@
 
 #include "corepaths.h"
 #include "internalcoresettings.h"
+#include "plugininstaller.h"
 
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QDir>
 #include <QLibrary>
-#include <QSaveFile>
+#include <QLoggingCategory>
+
+#include <queue>
+
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
 
 using namespace Qt::StringLiterals;
+
+Q_LOGGING_CATEGORY(PLUGIN_MANAGER, "fy.pluginmanager")
 
 namespace Fooyin {
 namespace {
 bool isDepreciatedPlugin(const QString& pluginId)
 {
     return pluginId == "fooyin.filters"_L1;
+}
+
+QStringList pluginFiles(const QDir& baseDir, bool skipInstallerDirs = false)
+{
+    QStringList files;
+    std::queue<QDir> dirs;
+    dirs.emplace(baseDir);
+
+    while(!dirs.empty()) {
+        const QDir directory = dirs.front();
+        dirs.pop();
+
+        const QFileInfoList subDirs = directory.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+        for(const QFileInfo& subDirectory : subDirs) {
+            if(skipInstallerDirs
+               && (subDirectory.fileName().startsWith(".staging-"_L1) || subDirectory.fileName() == ".updates"_L1)) {
+                continue;
+            }
+            dirs.emplace(subDirectory.absoluteFilePath());
+        }
+
+        const QFileInfoList dirFiles = directory.entryInfoList(QDir::Files);
+        for(const QFileInfo& file : dirFiles) {
+            files.emplace_back(file.absoluteFilePath());
+        }
+    }
+
+    return files;
 }
 } // namespace
 
@@ -64,9 +101,16 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
             continue;
         }
 
-        const QStringList disabledPlugins = m_settings->value<Settings::Core::Internal::DisabledPlugins>();
+        QStringList files;
+        if(Utils::File::cleanPath(pluginDir) == Utils::File::cleanPath(Core::userPluginsPath())) {
+            PluginInstaller::applyPendingUpdates(Core::userPluginsPath());
+            files.append(pluginFiles(dir, true));
+        }
+        else {
+            files = pluginFiles(dir);
+        }
 
-        const auto files = Utils::File::getFilesInDirRecursive(dir, {});
+        const QStringList disabledPlugins = m_settings->value<Settings::Core::Internal::DisabledPlugins>();
         for(const auto& filepath : files) {
             if(!QLibrary::isLibrary(filepath)) {
                 continue;
@@ -77,6 +121,10 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
             if(metaData.empty() || !metaData.contains("MetaData"_L1)) {
                 continue;
             }
+
+#ifdef Q_OS_WIN
+            registerPluginDirectory(filepath);
+#endif
 
             auto plugin         = std::make_unique<PluginInfo>(filepath, metaData);
             const auto pluginId = plugin->identifier();
@@ -92,6 +140,23 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
     }
 }
 
+#ifdef Q_OS_WIN
+void PluginManager::registerPluginDirectory(const QString& filepath)
+{
+    const QString directory = QFileInfo{filepath}.absolutePath();
+    if(m_registeredPluginDirectories.contains(directory)) {
+        return;
+    }
+
+    if(!AddDllDirectory(reinterpret_cast<LPCWSTR>(directory.utf16()))) {
+        qCWarning(PLUGIN_MANAGER) << "Failed to add plugin DLL search directory:" << directory;
+        return;
+    }
+
+    m_registeredPluginDirectories.emplace(directory);
+}
+#endif
+
 void PluginManager::loadPlugins()
 {
     for(const auto& [name, plugin] : m_plugins) {
@@ -103,38 +168,15 @@ void PluginManager::loadPlugins()
 
 PluginManager::InstallResult PluginManager::installPlugin(const QString& filepath, bool overwrite)
 {
-    QFile pluginFile{filepath};
-    const QFileInfo fileInfo{filepath};
-
-    const QString newPlugin = Core::userPluginsPath() + u"/"_s + fileInfo.fileName();
-    if(QFileInfo::exists(newPlugin) && !overwrite) {
-        return InstallResult::AlreadyInstalled;
-    }
-
-    if(!pluginFile.open(QIODevice::ReadOnly)) {
-        return InstallResult::Failed;
-    }
-
-    QSaveFile newPluginFile{newPlugin};
-    if(!newPluginFile.open(QIODevice::WriteOnly)) {
-        return InstallResult::Failed;
-    }
-
-    while(!pluginFile.atEnd()) {
-        const QByteArray data = pluginFile.read(1024LL * 1024);
-        if(data.isEmpty() || newPluginFile.write(data) != data.size()) {
-            newPluginFile.cancelWriting();
+    switch(PluginInstaller::install(filepath, Core::userPluginsPath(), overwrite)) {
+        case PluginInstaller::Result::Installed:
+            return InstallResult::Installed;
+        case PluginInstaller::Result::AlreadyInstalled:
+            return InstallResult::AlreadyInstalled;
+        case PluginInstaller::Result::Failed:
             return InstallResult::Failed;
-        }
     }
-
-    if(pluginFile.error() != QFileDevice::NoError) {
-        newPluginFile.cancelWriting();
-        return InstallResult::Failed;
-    }
-
-    newPluginFile.setPermissions(pluginFile.permissions());
-    return newPluginFile.commit() ? InstallResult::Installed : InstallResult::Failed;
+    return InstallResult::Failed;
 }
 
 void PluginManager::unloadPlugins()

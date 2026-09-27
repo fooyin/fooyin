@@ -308,6 +308,8 @@ set(SOURCES
     plugins/plugin.cpp
     plugins/plugininfo.cpp
     plugins/plugininfo.h
+    plugins/plugininstaller.cpp
+    plugins/plugininstaller.h
     plugins/pluginmanager.cpp
     plugins/pluginmanager.h
     scripting/functions/controlfuncs.cpp
@@ -353,6 +355,7 @@ target_link_libraries(
             Taglib::Taglib
             QCoro6::Core
             ${FFMPEG_LIBRARIES}
+            LibArchive::LibArchive
             PFFFT::PFFFT
             ZLIB::ZLIB
     PUBLIC Fooyin::Utils

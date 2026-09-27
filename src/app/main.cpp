@@ -30,7 +30,6 @@
 #include <kdsingleapplication.h>
 
 #include <QApplication>
-#include <QDir>
 #include <QLoggingCategory>
 
 #include <QSurfaceFormat>
@@ -79,13 +78,9 @@ struct GuiThreadApartment
     }
 };
 
-void configurePluginSearchPaths()
+void configureDllSearchPaths()
 {
     SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
-
-    const QDir appPath{QCoreApplication::applicationDirPath()};
-    const QString pluginDir = appPath.absolutePath() + u"/plugins"_s;
-    AddDllDirectory(reinterpret_cast<LPCWSTR>(pluginDir.utf16()));
 }
 #endif
 
@@ -218,7 +213,7 @@ int main(int argc, char** argv)
     QGuiApplication::setQuitOnLastWindowClosed(false);
 
 #ifdef Q_OS_WIN
-    configurePluginSearchPaths();
+    configureDllSearchPaths();
 #endif
 
     CommandLine commandLine{argc, argv};

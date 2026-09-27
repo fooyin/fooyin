@@ -14,6 +14,7 @@ The following libraries are required:
 * [FFmpeg](https://ffmpeg.org) (4.4+)
 * [ICU](https://icu.unicode.org/)
 * [zlib](https://zlib.net/)
+* [libarchive](https://www.libarchive.org/)
 
 At least one of the following is required for audio output:
 
@@ -31,7 +32,6 @@ The following libraries are optional:
 * [libopusfile](https://opus-codec.org/) - for the Opus audio input plugin
 * [OpenMPT](https://lib.openmpt.org/libopenmpt) - for the OpenMPT audio input plugin
 * [Game Music Emu](https://github.com/libgme/game-music-emu) - for the GME audio input plugin
-* [libarchive](https://www.libarchive.org) - for the archive support plugin
 * [libebur128](https://github.com/jiixyj/libebur128) - for the ReplayGain scanner plugin
 * [libcdio](https://www.gnu.org/software/libcdio/) and libcdio-paranoia - for the Audio CD plugin
 * [SoundTouch](https://www.surina.net/soundtouch/) - for the SoundTouch DSP plugin

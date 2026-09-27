@@ -24,6 +24,7 @@
 #include "plugininfo.h"
 
 #include <ranges>
+#include <unordered_set>
 
 namespace Fooyin {
 class SettingsManager;
@@ -66,7 +67,14 @@ public:
     void unloadPlugins();
 
 private:
+#ifdef Q_OS_WIN
+    void registerPluginDirectory(const QString& filepath);
+#endif
+
     SettingsManager* m_settings;
     PluginInfoMap m_plugins;
+#ifdef Q_OS_WIN
+    std::unordered_set<QString> m_registeredPluginDirectories;
+#endif
 };
 } // namespace Fooyin

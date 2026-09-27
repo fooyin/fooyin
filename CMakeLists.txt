@@ -167,6 +167,15 @@ if(APPLE)
 endif()
 find_package(Taglib REQUIRED taglib>=1.12)
 find_package(ZLIB REQUIRED)
+if(APPLE AND NOT LibArchive_ROOT)
+    foreach(homebrew_libarchive_root "/opt/homebrew/opt/libarchive" "/usr/local/opt/libarchive")
+        if(EXISTS "${homebrew_libarchive_root}")
+            set(LibArchive_ROOT "${homebrew_libarchive_root}")
+            break()
+        endif()
+    endforeach()
+endif()
+find_package(LibArchive REQUIRED)
 find_package(
     FFmpeg REQUIRED
     COMPONENTS AVCODEC

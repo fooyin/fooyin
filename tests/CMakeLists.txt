@@ -94,6 +94,18 @@ fooyin_add_test(test_scriptparser core/scriptparsertest.cpp)
 fooyin_add_test(test_stringpool core/stringpooltest.cpp)
 fooyin_add_test(test_track core/tracktest.cpp)
 
+create_fooyin_plugin(
+    testbundleplugin
+    NO_INSTALL
+    JSON_IN core/plugins/testplugin.json.in
+    DEPENDS Fooyin::Core
+    SOURCES core/plugins/testplugin.cpp
+)
+fooyin_add_test(test_plugininstaller core/plugins/plugininstallertest.cpp)
+target_compile_definitions(test_plugininstaller PRIVATE TEST_PLUGIN_PATH="$<TARGET_FILE:testbundleplugin>")
+target_link_libraries(test_plugininstaller PRIVATE LibArchive::LibArchive)
+add_dependencies(test_plugininstaller testbundleplugin)
+
 fooyin_add_test(test_tagreader core/tagging/tagreadertest.cpp data/audio.qrc)
 target_include_directories(test_tagreader PRIVATE ${FFMPEG_INCLUDE_DIRS})
 fooyin_add_test(test_ratingtagpolicy core/tagging/ratingtagpolicytest.cpp)

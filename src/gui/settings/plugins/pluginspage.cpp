@@ -237,9 +237,9 @@ bool PluginPageWidget::hasConfigProvider(const PluginInfo* pluginInfo) const
 void PluginPageWidget::installPlugin()
 {
 #ifdef Q_OS_WIN
-    const QString pluginFilter = tr("fooyin Plugin (*.dll)");
+    const QString pluginFilter = tr("fooyin Plugins (*.fyplugin *.zip *.dll)");
 #else
-    const QString pluginFilter = tr("fooyin Plugin (*.so)");
+    const QString pluginFilter = tr("fooyin Plugins (*.fyplugin *.zip *.so)");
 #endif
     const QString filepath = QFileDialog::getOpenFileName(this, tr("Install Plugin"), {}, pluginFilter, nullptr,
                                                           QFileDialog::DontResolveSymlinks);

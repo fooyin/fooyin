@@ -1,0 +1,7 @@
+{
+    "Name" : "Bundle Test",
+    "Version" : "1.2.3",
+    "Author" : "fooyin",
+    "Category" : "Testing",
+    "Description" : "Plugin bundle installer test plugin"
+}
