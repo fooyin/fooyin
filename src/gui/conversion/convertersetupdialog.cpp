@@ -1148,11 +1148,30 @@ void ConverterSetupDialog::updatePreview()
     request.destination.outputStyle      = static_cast<OutputStyle>(m_outputStyle->currentData().toInt());
     request.askFolder                    = QDir::homePath();
 
-    const auto paths   = Fooyin::ConversionPathResolver::resolve(request);
+    const auto paths   = ConversionPathResolver::resolve(request);
     const size_t count = std::min<size_t>(paths.size(), 20);
     for(size_t i{0}; i < count; ++i) {
-        const QString filename = QFileInfo{paths.at(i).outputPath}.fileName();
-        m_preview->addItem(filename.isEmpty() ? paths.at(i).error : filename);
+        const ConversionPathResult& path = paths.at(i);
+        if(path.outputPath.isEmpty()) {
+            m_preview->addItem(path.error);
+            continue;
+        }
+
+        QString destinationFolder;
+        switch(request.destination.mode) {
+            case DestinationMode::Ask:
+                destinationFolder = request.askFolder;
+                break;
+            case DestinationMode::SourceFolder:
+                destinationFolder = QFileInfo{path.track.filepath()}.absolutePath();
+                break;
+            case DestinationMode::FixedFolder:
+                destinationFolder = request.destination.fixedFolder;
+                break;
+        }
+
+        const QString relativePath = QDir{destinationFolder}.relativeFilePath(path.outputPath);
+        m_preview->addItem(QDir::toNativeSeparators(relativePath));
     }
 }
 
