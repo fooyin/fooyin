@@ -764,24 +764,6 @@ void Widgets::registerAdvancedSettings()
          .normalise = {},
          .validate  = {}});
     advancedSettingsRegistry->add(
-        {.id           = QString::fromLatin1(Settings::Core::Internal::FFmpegAllExtensions),
-         .category     = {tr("Playback"), tr("Decoding"), u"FFmpeg"_s},
-         .label        = tr("Enable all supported extensions"),
-         .description  = tr("Enabled all extensions supported by the FFmpeg input"),
-         .defaultValue = false,
-         .editor       = AdvancedSettingCheckBox{},
-         .read = [this] { return m_settings->fileValue(Settings::Core::Internal::FFmpegAllExtensions).toBool(); },
-         .write =
-             [this](const QVariant& value) {
-                 if(m_settings->fileSet(Settings::Core::Internal::FFmpegAllExtensions, value.toBool())) {
-                     m_core->audioLoader()->reloadDecoderExtensions(u"FFmpeg"_s);
-                     m_core->audioLoader()->reloadReaderExtensions(u"FFmpeg"_s);
-                 }
-                 return true;
-             },
-         .normalise = {},
-         .validate  = {}});
-    advancedSettingsRegistry->add(
         {.id           = QString::fromLatin1(Settings::Core::Internal::ReaderProbeAllExtensions),
          .category     = {tr("Playback"), tr("Decoding")},
          .label        = tr("Probe all readers for extensions"),

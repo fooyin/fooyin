@@ -205,7 +205,7 @@ TEST_F(TagReaderTest, AiffRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_EQ(track.codec(), u"AIFF"_s);
     EXPECT_EQ(track.title(), u"AIFF Test"_s);
@@ -236,7 +236,7 @@ TEST_F(TagReaderTest, FlacRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_EQ(track.codec(), u"FLAC"_s);
     EXPECT_EQ(track.title(), u"FLAC Test"_s);
@@ -277,7 +277,7 @@ TEST_F(TagReaderTest, FlacReadPrefersFmpsRatingOverRating)
     }
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_FLOAT_EQ(track.rating(), 0.8F);
     EXPECT_EQ(track.rawRatingTag(u"RATING"_s), u"1"_s);
@@ -291,7 +291,7 @@ TEST_F(TagReaderTest, M4aRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_EQ(track.codec(), u"AAC"_s);
     EXPECT_EQ(track.title(), u"M4A Test"_s);
@@ -331,7 +331,7 @@ TEST_F(TagReaderTest, M4aReadDeduplicatesNormalisedExtraTags)
     }
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_EQ(track.extraTag(u"RELEASETYPE"_s), QStringList{u"Album"_s});
 }
@@ -354,7 +354,7 @@ TEST_F(TagReaderTest, M4aReadPreservesDistinctNormalisedExtraTags)
     }
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_EQ(track.extraTag(u"RELEASETYPE"_s), (QStringList{u"Album"_s, u"Compilation"_s}));
 }
@@ -380,7 +380,7 @@ TEST_F(TagReaderTest, M4aReadCustomAutomaticRatingScale)
     setRatingReadPolicy(u"MY_RATING"_s, u"Automatic"_s);
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_FLOAT_EQ(track.rating(), 0.7F);
     EXPECT_EQ(track.rawRatingTag(u"MY_RATING"_s), u"7"_s);
@@ -409,7 +409,7 @@ TEST_F(TagReaderTest, M4aReadLowercaseReplayGain)
     }
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_TRUE(track.hasTrackGain());
     EXPECT_TRUE(track.hasTrackPeak());
@@ -447,7 +447,7 @@ TEST_F(TagReaderTest, M4aReadUppercaseReplayGain)
     }
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_TRUE(track.hasTrackGain());
     EXPECT_TRUE(track.hasTrackPeak());
@@ -471,7 +471,7 @@ TEST_F(TagReaderTest, Mp3Read)
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_EQ(track.codec(), u"MP3"_s);
     EXPECT_EQ(track.title(), u"MP3 Test"_s);
@@ -513,7 +513,7 @@ TEST_F(TagReaderTest, Mp3ReadDeduplicatesNormalisedExtraTags)
     }
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_EQ(track.extraTag(u"LABEL"_s), QStringList{u"Example Records"_s});
 }
@@ -537,7 +537,7 @@ TEST_F(TagReaderTest, Mp3ReadPreservesDistinctNormalisedExtraTags)
     }
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     const QStringList labels = track.extraTag(u"LABEL"_s);
     EXPECT_EQ(labels.size(), 2);
@@ -565,7 +565,7 @@ TEST_F(TagReaderTest, Mp3ReadDeduplicatesMixedCaseTxxxDescriptions)
     }
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_EQ(track.extraTag(u"ALBUMARTISTSORT"_s), QStringList{u"Artist, The"_s});
 }
@@ -605,7 +605,8 @@ TEST_F(TagReaderTest, Mp3ReadRepairsLegacyTextInLatin1Id3Frames)
     settings.sync();
 
     Track track{file.fileName()};
-    const bool success = m_parser.readTrack({filepath, &file, nullptr}, track);
+    const bool success
+        = m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track);
 
     settings.remove(Utils::PreferredFallbackEncodingSetting);
     settings.sync();
@@ -747,7 +748,7 @@ TEST_F(TagReaderTest, Mp3ReadHonoursPopmSettings)
         settings.sync();
 
         Track track{file.fileName()};
-        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
         EXPECT_LE(track.rating(), 0.0F);
         EXPECT_EQ(track.playCount(), 12);
@@ -761,7 +762,7 @@ TEST_F(TagReaderTest, Mp3ReadHonoursPopmSettings)
         settings.sync();
 
         Track track{file.fileName()};
-        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
         EXPECT_FLOAT_EQ(track.rating(), 0.8F);
         EXPECT_EQ(track.playCount(), 0);
@@ -775,7 +776,7 @@ TEST_F(TagReaderTest, Mp3ReadHonoursPopmSettings)
         settings.sync();
 
         Track track{file.fileName()};
-        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
         EXPECT_LE(track.rating(), 0.0F);
         EXPECT_EQ(track.playCount(), 0);
@@ -792,7 +793,7 @@ TEST_F(TagReaderTest, OggRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_EQ(track.codec(), u"Vorbis"_s);
     EXPECT_EQ(track.title(), u"OGG Test"_s);
@@ -833,7 +834,7 @@ TEST_F(TagReaderTest, OggReadSpacedAlbumArtist)
     }
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_EQ(track.albumArtist(), u"Spaced Album Artist"_s);
 }
@@ -855,7 +856,7 @@ TEST_F(TagReaderTest, OggReadPrefersFmpsRatingOverRating)
     }
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_FLOAT_EQ(track.rating(), 0.8F);
     EXPECT_EQ(track.rawRatingTag(u"RATING"_s), u"1"_s);
@@ -879,7 +880,7 @@ TEST_F(TagReaderTest, OggAutomaticPlaycountReadPrefersFmpsPlaycount)
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
         EXPECT_EQ(track.playCount(), 42);
     }
 
@@ -892,7 +893,7 @@ TEST_F(TagReaderTest, OggAutomaticPlaycountReadPrefersFmpsPlaycount)
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
         EXPECT_EQ(track.playCount(), 17);
     }
 
@@ -909,7 +910,7 @@ TEST_F(TagReaderTest, OggAutomaticPlaycountReadPrefersFmpsPlaycount)
         }
 
         Track track{file.fileName()};
-        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
         EXPECT_EQ(track.playCount(), 17);
     }
 
@@ -935,7 +936,7 @@ TEST_F(TagReaderTest, OggAutomaticRatingReadDetectsTenPointRating)
     }
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_FLOAT_EQ(track.rating(), 0.7F);
     EXPECT_EQ(track.rawRatingTag(u"RATING"_s), u"7"_s);
@@ -964,7 +965,7 @@ TEST_F(TagReaderTest, OggReadCustomAutomaticRatingScale)
     setRatingReadPolicy(u"MY_RATING"_s, u"Automatic"_s);
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_FLOAT_EQ(track.rating(), 0.7F);
     EXPECT_EQ(track.rawRatingTag(u"MY_RATING"_s), u"7"_s);
@@ -1007,7 +1008,7 @@ TEST_F(TagReaderTest, OggReadConfiguredRatingScales)
         setRatingReadPolicy(u"RATING"_s, testCase.scale);
 
         Track track{file.fileName()};
-        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
         EXPECT_FLOAT_EQ(track.rating(), testCase.expectedRating);
         EXPECT_EQ(track.rawRatingTag(u"RATING"_s), testCase.rawRating);
@@ -1024,7 +1025,7 @@ TEST_F(TagReaderTest, OpusRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_EQ(track.codec(), u"Opus"_s);
     EXPECT_EQ(track.title(), u"OPUS Test"_s);
@@ -1054,7 +1055,7 @@ TEST_F(TagReaderTest, WavRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+    ASSERT_TRUE(m_parser.readTrack({.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr}, track));
 
     EXPECT_EQ(track.codec(), u"PCM"_s);
     EXPECT_EQ(track.title(), u"WAV Test"_s);
@@ -1085,7 +1086,7 @@ TEST_F(FFmpegTagReaderTest, TakRead)
 
     const QString localFilepath = file.QFile::fileName();
     Track track{localFilepath};
-    AudioSource source{localFilepath, &file, nullptr};
+    const AudioSource source{.filepath = localFilepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(m_parser.init(source));
     ASSERT_TRUE(m_parser.readTrack(source, track));
 
@@ -1117,8 +1118,8 @@ TEST_F(FFmpegTagReaderTest, TakReadApeCoverArt)
     ASSERT_TRUE(file.seek(0));
 
     const QString localFilepath = file.QFile::fileName();
-    Track track{localFilepath};
-    AudioSource source{localFilepath, &file, nullptr};
+    const Track track{localFilepath};
+    const AudioSource source{.filepath = localFilepath, .device = &file, .remoteStreamDevice = nullptr};
 
     const QByteArray frontCover = m_parser.readCover(source, track, Track::Cover::Front);
     const QByteArray backCover  = m_parser.readCover(source, track, Track::Cover::Back);
@@ -1128,6 +1129,29 @@ TEST_F(FFmpegTagReaderTest, TakReadApeCoverArt)
     EXPECT_NE(frontCover, backCover);
     EXPECT_TRUE(frontCover.contains("FRONT"));
     EXPECT_TRUE(backCover.contains("BACK"));
+}
+
+TEST_F(FFmpegTagReaderTest, TtaRead)
+{
+    EXPECT_TRUE(m_parser.extensions().contains(u"tta"_s));
+
+    const QString filepath = u":/audio/audiotest.tta"_s;
+    TempResource file{filepath};
+    file.checkValid();
+
+    const QString localFilepath = file.QFile::fileName();
+    Track track{localFilepath};
+    const AudioSource source{.filepath = localFilepath, .device = &file, .remoteStreamDevice = nullptr};
+    ASSERT_TRUE(m_parser.init(source));
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+
+    EXPECT_EQ(track.codec(), u"TTA"_s);
+    EXPECT_EQ(track.encoding(), u"Lossless"_s);
+    EXPECT_EQ(track.title(), u"TTA Test"_s);
+    EXPECT_EQ(track.album(), u"Fooyin Audio Tests"_s);
+    EXPECT_EQ(track.artist(), u"Fooyin"_s);
+    EXPECT_EQ(track.date(), u"2026"_s);
+    EXPECT_GT(track.duration(), 0);
 }
 
 } // namespace Fooyin::Testing

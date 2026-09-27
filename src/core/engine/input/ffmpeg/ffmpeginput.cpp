@@ -82,7 +82,7 @@ QStringList fileExtensions(bool allSupported)
 {
     QStringList extensions{u"mp1"_s,  u"mp2"_s, u"mp3"_s,  u"ogg"_s, u"opus"_s, u"oga"_s, u"m4a"_s,  u"m4b"_s,
                            u"wav"_s,  u"wv"_s,  u"flac"_s, u"wma"_s, u"asf"_s,  u"mpc"_s, u"aiff"_s, u"ape"_s,
-                           u"webm"_s, u"mp4"_s, u"mka"_s,  u"dsf"_s, u"dff"_s,  u"tak"_s};
+                           u"webm"_s, u"mp4"_s, u"mka"_s,  u"dsf"_s, u"dff"_s,  u"tak"_s, u"tta"_s};
 
     if(!allSupported) {
         return extensions;
@@ -132,6 +132,8 @@ QString getCodec(AVCodecID codec)
             return u"FLAC"_s;
         case AV_CODEC_ID_TAK:
             return u"TAK"_s;
+        case AV_CODEC_ID_TTA:
+            return u"TTA"_s;
         case AV_CODEC_ID_OPUS:
             return u"Opus"_s;
         case AV_CODEC_ID_VORBIS:
@@ -152,6 +154,7 @@ bool isLossless(AVCodecID codec)
         case AV_CODEC_ID_WAVPACK:
         case AV_CODEC_ID_FLAC:
         case AV_CODEC_ID_TAK:
+        case AV_CODEC_ID_TTA:
             return true;
         default:
             return false;

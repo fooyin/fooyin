@@ -522,6 +522,8 @@ set(SOURCES
     settings/playback/dspmanagerpage.h
     settings/playback/fadingpage.cpp
     settings/playback/fadingpage.h
+    settings/playback/ffmpegsettings.cpp
+    settings/playback/ffmpegsettings.h
     settings/playback/dspmodel.cpp
     settings/playback/dspmodel.h
     settings/playback/outputpage.cpp
