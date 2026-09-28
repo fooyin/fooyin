@@ -410,12 +410,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <source>Love flag: 1 when loved, empty otherwise</source>
-        <translation>Флаг «любимое»: 1, если отмечено как любимое, иначе пусто</translation>
+        <translation>Флаг «избранное»: 1, если отмечено как избранное, иначе пусто</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Interactive heart editor for the Love flag</source>
-        <translation>Интерактивный редактор сердечка для флага «любимое»</translation>
+        <translation>Интерактивный редактор сердечка для флага «избранное»</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
@@ -7691,32 +7691,32 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1411"/>
         <source>Toggle loved</source>
-        <translation>Переключить «любимое»</translation>
+        <translation>Переключить «избранное»</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1411"/>
         <source>Toggle Loved for selected tracks</source>
-        <translation>Переключить статус «любимое» для выбранных треков</translation>
+        <translation>Переключить статус «избранное» для выбранных дорожек</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1413"/>
         <source>Love</source>
-        <translation>Любимое</translation>
+        <translation>Избранное</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1413"/>
         <source>Love selected tracks</source>
-        <translation>Отметить выбранные треки как любимые</translation>
+        <translation>Отметить выбранные дорожки избранными</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1415"/>
         <source>Unlove</source>
-        <translation>Нелюбимое</translation>
+        <translation>Неизбранное</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1415"/>
         <source>Unlove selected tracks</source>
-        <translation>Снять отметку «любимое» с выбранных треков</translation>
+        <translation>Снять отметку «избранное» с выбранных дорожек</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1431"/>
@@ -8248,7 +8248,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="167"/>
         <source>Dragon</source>
-        <translation>Dragon</translation>
+        <translation>Дракон</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="169"/>
@@ -8586,7 +8586,7 @@ or selected rows</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="102"/>
         <source>Unloved heart colour</source>
-        <translation>Цвет сердечка для нелюбимого</translation>
+        <translation>Цвет сердечка для избранного</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="104"/>
@@ -8694,7 +8694,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="166"/>
         <source>Controls the heart size used by the love editor widget</source>
-        <translation>Управляет размером сердечка, используемого виджетом редактора «любимое»</translation>
+        <translation>Управляет размером сердечка, используемого виджетом редактора «избранное»</translation>
     </message>
 </context>
 <context>
@@ -9178,7 +9178,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="321"/>
         <source>Loved</source>
-        <translation>Любимое</translation>
+        <translation>Избранное</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="322"/>
@@ -14024,7 +14024,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="61"/>
         <source>Love</source>
-        <translation>Любимое</translation>
+        <translation>Избранное</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="62"/>
@@ -19433,7 +19433,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="125"/>
         <source>Import play counts and Loved status from enabled services when a track starts playing</source>
-        <translation>Импортировать счётчики прослушиваний и статус «любимое» из включённых служб при начале воспроизведения трека</translation>
+        <translation>Импортировать счётчики прослушиваний и статус «избранное» из включённых служб при старте воспроизведения дорожки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="129"/>
@@ -19591,12 +19591,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="324"/>
         <source>Submit loved changes</source>
-        <translation>Отправлять изменения «любимое»</translation>
+        <translation>Отправлять изменения «избранного»</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="325"/>
         <source>Submit Love and Unlove changes to this service</source>
-        <translation>Отправлять изменения «любимое» и «нелюбимое» в эту службу</translation>
+        <translation>Отправлять изменения «избранного» и «неизбранного» в эту службу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="329"/>
@@ -19606,7 +19606,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="331"/>
         <source>Import play counts and Loved status from this service when a track starts playing</source>
-        <translation>Импортировать счётчики прослушиваний и статус «любимое» из этой службы при начале воспроизведения трека</translation>
+        <translation>Импортировать счётчики прослушиваний и статус «избранное» из этой службы при старте воспроизведения дорожки</translation>
     </message>
 </context>
 <context>
@@ -21888,7 +21888,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="58"/>
         <source>Love</source>
-        <translation>Любимое</translation>
+        <translation>Избранное</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="59"/>
