@@ -226,6 +226,31 @@ TEST(FilterPipelineTest, FilterRowsBySearchKeepsCanonicalRowsWhenEveryTrackMatch
     EXPECT_EQ(rows.at(1).tracks, filteredRows.at(1).tracks);
 }
 
+TEST(FilterPipelineTest, SplitFunctionCreatesRowsFromSingleTagValue)
+{
+    Track track{u"/music/one.flac"_s};
+    track.setId(1);
+    track.setLibraryId(1);
+    track.addExtraTag(u"TEST"_s, u"A; B"_s);
+
+    const Filters::FilterColumnList columns{
+        {.id = 0, .name = u"Test"_s, .field = u"$split(%test%,; )"_s, .sortField = {}},
+    };
+    const Filters::FilterRowBuildContext context{
+        .font          = {},
+        .ratingSymbols = {u"*"_s, u"/"_s, u"-"_s},
+        .useVarious    = false,
+    };
+
+    const Filters::FilterRowList rows = Filters::buildFilterRows(nullptr, columns, {track}, context);
+
+    ASSERT_EQ(2, rows.size());
+    EXPECT_TRUE(
+        std::ranges::any_of(rows, [](const Filters::FilterRow& row) { return row.columns == QStringList{u"A"_s}; }));
+    EXPECT_TRUE(
+        std::ranges::any_of(rows, [](const Filters::FilterRow& row) { return row.columns == QStringList{u"B"_s}; }));
+}
+
 TEST(FilterPipelineTest, PatchFilterRowsMovesUpdatedTrackBetweenBucketsAndPrunesEmptyRows)
 {
     const Track oldRock = [] {

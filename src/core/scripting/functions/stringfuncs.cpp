@@ -450,7 +450,9 @@ QString stristrLast(const QStringList& vec)
 
 QString split(const QStringList& vec)
 {
-    if(vec.size() != 3) {
+    const qsizetype count = vec.size();
+
+    if(count != 2 && count != 3) {
         return {};
     }
 
@@ -461,6 +463,10 @@ QString split(const QStringList& vec)
     QStringList parts = vec.front().split(vec.at(1), Qt::SkipEmptyParts);
     for(QString& part : parts) {
         part = part.trimmed();
+    }
+
+    if(count == 2) {
+        return parts.join(QLatin1StringView{Constants::UnitSeparator});
     }
 
     bool ok{false};

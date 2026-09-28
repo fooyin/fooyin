@@ -326,8 +326,9 @@ const std::vector<ScriptReferenceEntry>& scriptReferenceEntries()
         functionEntry("stristrlast", u"$stristrlast(text,needle[,start])"_s,
                       QT_TRANSLATE_NOOP("Fooyin", "Finds the last substring position ignoring case (1-based)"),
                       QT_TRANSLATE_NOOP("Fooyin", "String")),
-        functionEntry("split", u"$split(text,sep,index)"_s,
-                      QT_TRANSLATE_NOOP("Fooyin", "Returns one split segment (1-based index)"),
+        functionEntry("split", u"$split(text,sep[,index])"_s,
+                      QT_TRANSLATE_NOOP("Fooyin", "Splits text into multiple values, or returns one split segment "
+                                                  "when given a 1-based index"),
                       QT_TRANSLATE_NOOP("Fooyin", "String")),
         functionEntry("join", u"$join(sep,value,…)"_s,
                       QT_TRANSLATE_NOOP("Fooyin", "Joins non-empty values with a separator"),

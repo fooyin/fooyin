@@ -463,7 +463,8 @@ TEST_F(ScriptParserTest, StringTest)
     EXPECT_EQ(u"1", m_parser.evaluate(u"$stricmp(cmp,cMp)"_s));
     EXPECT_EQ(u"true", m_parser.evaluate(u"$if($stricmp(cmp,cMp),true,false)"_s));
     EXPECT_EQ(u"false", m_parser.evaluate(u"$if($strcmp(cmp,cMp),true,false)"_s));
-    EXPECT_EQ(u"", m_parser.evaluate(u"$split(a;b;c,;)"_s));
+    EXPECT_EQ(u"a\037b\037c", m_parser.evaluate(u"$split(a;b;c,;)"_s));
+    EXPECT_EQ(u"a\037b\037c", m_parser.evaluate(u"$split( a ; b ; c ,;)"_s));
     EXPECT_EQ(u"", m_parser.evaluate(u"$split(a;b;c,;,0)"_s));
     EXPECT_EQ(u"a", m_parser.evaluate(u"$split(a;b;c,;,1)"_s));
     EXPECT_EQ(u"b", m_parser.evaluate(u"$split(a;b;c,;,2)"_s));
