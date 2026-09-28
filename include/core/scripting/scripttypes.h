@@ -95,6 +95,10 @@ public:
     {
         return {};
     }
+    [[nodiscard]] virtual Engine::PlaybackOutputInfo outputInfo() const
+    {
+        return {};
+    }
     [[nodiscard]] virtual Player::PlayState playState() const = 0;
 };
 

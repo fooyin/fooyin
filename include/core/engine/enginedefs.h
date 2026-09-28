@@ -119,6 +119,37 @@ enum RGProcess : uint8_t
 Q_DECLARE_FLAGS(RGProcessing, RGProcess)
 Q_FLAG_NS(RGProcessing)
 
+enum class ReplayGainSource : uint8_t
+{
+    None = 0,
+    Track,
+    Album,
+};
+
+struct ReplayGainOutputInfo
+{
+    ReplayGainSource source{ReplayGainSource::None};
+    RGProcessing processing{NoProcessing};
+    double gainDb{0.0};
+    double peak{1.0};
+    bool hasPeak{false};
+
+    bool operator==(const ReplayGainOutputInfo&) const = default;
+};
+
+struct PlaybackOutputInfo
+{
+    AudioFormat format;
+    QString device;
+    std::vector<QString> dsps;
+    QString dspPreset;
+    double volume{1.0};
+    int bufferLengthMs{0};
+    ReplayGainOutputInfo replayGain;
+
+    bool operator==(const PlaybackOutputInfo&) const = default;
+};
+
 //! Analysis frame types produced by the analysis bus.
 enum AnalysisDataType : uint32_t
 {
@@ -307,6 +338,7 @@ struct OutputProfileRequest
     SampleFormat bitDepth{SampleFormat::Unknown};
     bool dither{false};
     DspChains chain;
+    QString dspPreset;
 };
 
 } // namespace Fooyin::Engine
@@ -317,6 +349,7 @@ Q_DECLARE_METATYPE(Fooyin::Engine::TrackStatusContext)
 Q_DECLARE_METATYPE(Fooyin::Engine::AboutToFinishContext)
 Q_DECLARE_METATYPE(Fooyin::Engine::PlaybackItem)
 Q_DECLARE_METATYPE(Fooyin::Engine::TrackCommitContext)
+Q_DECLARE_METATYPE(Fooyin::Engine::PlaybackOutputInfo)
 Q_DECLARE_METATYPE(Fooyin::Engine::AnalysisDataTypes)
 Q_DECLARE_METATYPE(Fooyin::LevelFrame)
 Q_DECLARE_METATYPE(Fooyin::PcmFrame)

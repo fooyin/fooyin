@@ -466,8 +466,44 @@ uint64_t AudioEngine::position() const
     return m_audioClock.position();
 }
 
-void AudioEngine::setDspChain(const Engine::DspChains& chain)
+void AudioEngine::publishPlaybackOutputInfo()
 {
+    const auto runtimeInfo = m_pipeline.runtimeOutputInfo();
+
+    Engine::PlaybackOutputInfo info;
+    info.format         = runtimeInfo.format;
+    info.device         = runtimeInfo.device.isEmpty() ? m_outputController.outputDevice() : runtimeInfo.device;
+    info.dsps           = m_activeDspNames;
+    info.dspPreset      = m_activeDspPreset;
+    info.volume         = m_volume;
+    info.bufferLengthMs = runtimeInfo.format.isValid()
+                            ? static_cast<int>(runtimeInfo.format.durationForFrames(runtimeInfo.bufferFrames))
+                            : 0;
+
+    if(const auto settings = m_replayGainSharedSettings ? m_replayGainSharedSettings->load() : nullptr) {
+        info.replayGain = ReplayGainProcessor::outputInfo(m_currentTrack, settings->value);
+    }
+
+    Q_EMIT playbackOutputInfoChanged(info);
+}
+
+void AudioEngine::setDspChain(const Engine::DspChains& chain, const QString& preset)
+{
+    m_activeDspNames.clear();
+
+    for(const auto& entry : chain.perTrackChain) {
+        if(entry.enabled) {
+            m_activeDspNames.push_back(entry.name.isEmpty() ? entry.id : entry.name);
+        }
+    }
+    for(const auto& entry : chain.masterChain) {
+        if(entry.enabled) {
+            m_activeDspNames.push_back(entry.name.isEmpty() ? entry.id : entry.name);
+        }
+    }
+
+    m_activeDspPreset = preset;
+
     const auto buildNodes = [this](const Engine::DspChain& defs) -> std::vector<DspNodePtr> {
         if(!m_dspRegistry) {
             return {};
@@ -509,6 +545,9 @@ void AudioEngine::setDspChain(const Engine::DspChains& chain)
 
     if(outputFormatChanged) {
         reinitOutputForCurrentFormat();
+    }
+    else {
+        publishPlaybackOutputInfo();
     }
 }
 
@@ -1376,6 +1415,7 @@ void AudioEngine::setVolume(double volume)
 {
     m_volume = std::clamp(volume, 0.0, 1.0);
     m_pipeline.setOutputVolume(m_volume);
+    publishPlaybackOutputInfo();
 }
 
 void AudioEngine::handleOutputVolumeChange(double volume)
@@ -1387,6 +1427,7 @@ void AudioEngine::handleOutputVolumeChange(double volume)
 
     m_volume = volume;
     Q_EMIT volumeChanged(m_volume);
+    publishPlaybackOutputInfo();
 }
 
 void AudioEngine::updateCurrentTrackMetadata(const Track& track)
@@ -1397,6 +1438,7 @@ void AudioEngine::updateCurrentTrackMetadata(const Track& track)
 
     m_currentTrack = track;
     updateAutoCrossfadeAlbumMatch();
+    publishPlaybackOutputInfo();
 
     if(auto stream = m_decoder.activeStream(); stream && sameTrackIdentity(stream->track(), track)) {
         stream->setTrack(track);
@@ -1433,6 +1475,7 @@ void AudioEngine::setAudioOutput(const OutputCreator& output, const QString& dev
         m_outputController.uninitOutput();
         const bool initOk = m_outputController.initOutput(m_format, m_volume);
         if(initOk) {
+            publishPlaybackOutputInfo();
             if(wasPlaying) {
                 if(auto stream = m_decoder.activeStream()) {
                     m_pipeline.sendStreamCommand(stream->id(), AudioStream::Command::Play);
@@ -1444,7 +1487,7 @@ void AudioEngine::setAudioOutput(const OutputCreator& output, const QString& dev
 }
 
 void AudioEngine::applyOutputProfile(const OutputCreator& output, const QString& device, SampleFormat bitdepth,
-                                     bool dither, const Engine::DspChains& chain)
+                                     bool dither, const Engine::DspChains& chain, const QString& preset)
 {
     qCDebug(ENGINE) << "Applying output profile:" << "device=" << device << "bitdepth=" << static_cast<int>(bitdepth)
                     << "dither=" << dither;
@@ -1489,6 +1532,20 @@ void AudioEngine::applyOutputProfile(const OutputCreator& output, const QString&
     };
 
     std::vector<DspNodePtr> masterNodes = buildNodes(chain.masterChain);
+
+    m_activeDspNames.clear();
+    for(const auto& entry : chain.perTrackChain) {
+        if(entry.enabled) {
+            m_activeDspNames.push_back(entry.name.isEmpty() ? entry.id : entry.name);
+        }
+    }
+    for(const auto& entry : chain.masterChain) {
+        if(entry.enabled) {
+            m_activeDspNames.push_back(entry.name.isEmpty() ? entry.id : entry.name);
+        }
+    }
+    m_activeDspPreset = preset;
+
     m_pipeline.setDspChain(std::move(masterNodes), chain.perTrackChain, m_format);
 
     if(m_format.isValid()) {
@@ -1499,6 +1556,9 @@ void AudioEngine::applyOutputProfile(const OutputCreator& output, const QString&
                 m_pipeline.sendStreamCommand(stream->id(), AudioStream::Command::Play);
             }
             m_pipeline.play();
+        }
+        if(initOk) {
+            publishPlaybackOutputInfo();
         }
     }
 }
@@ -1531,6 +1591,9 @@ void AudioEngine::setOutputDevice(const QString& device)
             m_pipeline.sendStreamCommand(stream->id(), AudioStream::Command::Play);
         }
         m_pipeline.play();
+    }
+    if(initOk) {
+        publishPlaybackOutputInfo();
     }
 }
 
@@ -1565,7 +1628,9 @@ void AudioEngine::setVisualisationAnalysisEnabled(bool enabled)
 
 void AudioEngine::updateLiveDspSettings(const Engine::LiveDspSettingsUpdate& update)
 {
+    m_activeDspPreset.clear();
     m_pipeline.updateLiveDspSettings(update);
+    publishPlaybackOutputInfo();
 }
 
 bool AudioEngine::event(QEvent* event)
@@ -2351,6 +2416,7 @@ bool AudioEngine::rebuildCurrentTrackStreamAt(uint64_t positionMs, uint64_t requ
     else if(inputFormatChanged) {
         m_pipeline.applyInputFormat(m_format);
     }
+    publishPlaybackOutputInfo();
 
     uint64_t clampedPositionMs{positionMs};
     if(m_currentTrack.duration() > 0) {
@@ -2418,6 +2484,7 @@ void AudioEngine::reinitOutputForCurrentFormat()
         updateTrackStatus(Engine::TrackStatus::Invalid);
         return;
     }
+    publishPlaybackOutputInfo();
 
     if(wasPlaying) {
         if(auto stream = m_decoder.activeStream()) {
@@ -3283,6 +3350,7 @@ void AudioEngine::finaliseTrackCommitCleanup()
 void AudioEngine::finaliseTrackCommit(const Engine::TransitionMode mode, const uint64_t audibleDelayMs)
 {
     finaliseTrackCommitCleanup();
+    publishPlaybackOutputInfo();
     Q_EMIT trackCommitted(makeTrackCommitContext(mode, audibleDelayMs));
 }
 
@@ -3319,6 +3387,7 @@ void AudioEngine::maybeEmitPendingAudibleTrackCommit(const StreamId audibleOutpu
     qCDebug(ENGINE) << "Deferred track commit released after prepared stream became audible:"
                     << "trackId=" << context.track.id() << "itemId=" << context.itemId
                     << "generation=" << context.generation << "streamId=" << audibleOutputStreamId;
+    publishPlaybackOutputInfo();
     Q_EMIT trackCommitted(context);
 }
 
@@ -4334,6 +4403,7 @@ void AudioEngine::setupSettings()
     m_replayGainSharedSettings           = ReplayGainProcessor::makeSharedSettings();
     const auto refreshReplayGainSettings = [this]() {
         ReplayGainProcessor::refreshSharedSettings(*m_settings, *m_replayGainSharedSettings);
+        publishPlaybackOutputInfo();
     };
 
     const auto refreshDecoderPlaybackHints = [this](bool invalidatePreparedState) {
@@ -5540,6 +5610,7 @@ void AudioEngine::executeFullReinitLoad(const Engine::PlaybackItem& item, bool m
     else if(inputFormatChanged) {
         m_pipeline.applyInputFormat(m_format);
     }
+    publishPlaybackOutputInfo();
 
     const Track& activeTrack    = m_currentTrack;
     const bool applyPendingSeek = m_transitions.hasPendingInitialSeekForTrack(activeTrack.id());

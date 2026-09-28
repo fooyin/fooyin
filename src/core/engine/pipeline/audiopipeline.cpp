@@ -1423,6 +1423,19 @@ AudioFormat AudioPipeline::outputFormat() const
     return formatFromSnapshot(snapshot);
 }
 
+AudioPipeline::RuntimeOutputInfo AudioPipeline::runtimeOutputInfo() const
+{
+    return onAudioThread([](const AudioPipeline& pipeline) {
+        RuntimeOutputInfo info;
+        info.format       = pipeline.m_renderer.outputFormat();
+        info.bufferFrames = pipeline.m_outputUnit.bufferFrames();
+        if(pipeline.m_outputUnit.output()) {
+            info.device = pipeline.m_outputUnit.output()->device();
+        }
+        return info;
+    });
+}
+
 QString AudioPipeline::lastInitError() const
 {
     const auto error = m_lastInitError.load(std::memory_order_acquire);

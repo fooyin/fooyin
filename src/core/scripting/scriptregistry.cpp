@@ -533,6 +533,22 @@ std::optional<QString> playbackVariableValue(const VariableKind kind, const Scri
         case VariableKind::InputDecoder:
             return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.decoder()}
                                                                   : std::optional<QString>{};
+        case VariableKind::OutputSampleRate:
+        case VariableKind::OutputChannels:
+        case VariableKind::OutputChannelMask:
+        case VariableKind::OutputBitDepth:
+        case VariableKind::OutputDevice:
+        case VariableKind::OutputDsps:
+        case VariableKind::OutputDspPreset:
+        case VariableKind::OutputVolume:
+        case VariableKind::OutputRgSource:
+        case VariableKind::OutputRgMode:
+        case VariableKind::OutputRgGain:
+        case VariableKind::OutputRgPeak:
+        case VariableKind::OutputRgPeakDb:
+        case VariableKind::OutputBufferLength:
+            return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.outputInfo(kind)}
+                                                                  : std::optional<QString>{};
         case VariableKind::IsPlaying:
             return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.isPlaying()}
                                                                   : std::optional<QString>{};
@@ -646,6 +662,79 @@ QString ScriptRegistry::decoder() const
         return environment->decoder();
     }
     return {};
+}
+
+QString ScriptRegistry::outputInfo(VariableKind kind) const
+{
+    const auto* environment = playbackEnvironment(m_context);
+    if(!environment) {
+        return {};
+    }
+
+    const Engine::PlaybackOutputInfo info = environment->outputInfo();
+    const auto formatDb                   = [](double value) {
+        return QString::number(value, 'f', 2);
+    };
+
+    switch(kind) {
+        case VariableKind::OutputSampleRate:
+            return info.format.isValid() ? QString::number(info.format.sampleRate()) : QString{};
+        case VariableKind::OutputChannels:
+            return info.format.isValid() ? QString::number(info.format.channelCount()) : QString{};
+        case VariableKind::OutputChannelMask:
+            return info.format.isValid() && info.format.hasChannelLayout() ? info.format.prettyChannelLayout()
+                                                                           : QString{};
+        case VariableKind::OutputBitDepth:
+            return info.format.isValid() ? QString::number(info.format.bitdepth()) : QString{};
+        case VariableKind::OutputDevice:
+            return info.device;
+        case VariableKind::OutputDsps: {
+            QStringList dsps;
+            dsps.reserve(static_cast<qsizetype>(info.dsps.size()));
+            std::ranges::copy(info.dsps, std::back_inserter(dsps));
+            return dsps.join(u", "_s);
+        }
+        case VariableKind::OutputDspPreset:
+            return info.dspPreset;
+        case VariableKind::OutputVolume:
+            return info.volume > 0.0 ? formatDb(Audio::volumeToDb(info.volume)) + u" dB"_s : u"-inf"_s;
+        case VariableKind::OutputRgSource:
+            switch(info.replayGain.source) {
+                case Engine::ReplayGainSource::Track:
+                    return tr("Track");
+                case Engine::ReplayGainSource::Album:
+                    return tr("Album");
+                case Engine::ReplayGainSource::None:
+                default:
+                    return tr("None");
+            }
+        case VariableKind::OutputRgMode: {
+            const bool gain = info.replayGain.processing.testFlag(Engine::ApplyGain);
+            const bool clip = info.replayGain.processing.testFlag(Engine::PreventClipping);
+            if(gain && clip) {
+                return tr("Gain and clip prevention");
+            }
+            if(gain) {
+                return tr("Gain");
+            }
+            if(clip) {
+                return tr("Clip prevention");
+            }
+            return tr("None");
+        }
+        case VariableKind::OutputRgGain:
+            return formatDb(info.replayGain.gainDb) + u" dB"_s;
+        case VariableKind::OutputRgPeak:
+            return info.replayGain.hasPeak ? QString::number(info.replayGain.peak, 'g', 10) : QString{};
+        case VariableKind::OutputRgPeakDb:
+            return info.replayGain.hasPeak && info.replayGain.peak > 0.0
+                     ? formatDb(Audio::volumeToDb(info.replayGain.peak)) + u" dBFS"_s
+                     : QString{};
+        case VariableKind::OutputBufferLength:
+            return info.bufferLengthMs > 0 ? QString::number(info.bufferLengthMs) : QString{};
+        default:
+            return {};
+    }
 }
 
 QString ScriptRegistry::isPaused() const

@@ -185,16 +185,20 @@ bool OutputProfileManager::applyProfile(const QString& output, const QString& de
 
     const int dspPresetId         = profile ? profile->dspPresetId : -1;
     const Engine::DspChains chain = resolveChain(dspPresetId);
+    const auto dspPreset          = dspPresetId >= 0 ? m_presetRegistry->itemById(dspPresetId) : std::nullopt;
+    const QString dspPresetName
+        = dspPreset ? dspPreset->name : (dspPresetId < 0 ? m_chainStore->activePreset() : QString{});
 
     m_engine->applyOutputProfile({
-        .output   = output,
-        .device   = device,
-        .bitDepth = bitDepth,
-        .dither   = dither,
-        .chain    = chain,
+        .output    = output,
+        .device    = device,
+        .bitDepth  = bitDepth,
+        .dither    = dither,
+        .chain     = chain,
+        .dspPreset = dspPresetName,
     });
 
-    m_chainStore->syncActiveChain(chain);
+    m_chainStore->syncActiveChain(chain, dspPresetName);
 
     const QString setting = output + u"|"_s + device;
     m_settings->setSilently<Settings::Core::AudioOutput>(setting);
@@ -212,7 +216,7 @@ bool OutputProfileManager::applyDspPreset(int index)
         return false;
     }
 
-    m_chainStore->setActiveChain(presets.at(index).chain);
+    m_chainStore->setActiveChain(presets.at(index).chain, presets.at(index).name);
     return true;
 }
 

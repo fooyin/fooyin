@@ -129,6 +129,13 @@ struct PipelineStatus
 class FYCORE_EXPORT AudioPipeline : public AudioPipelineFader
 {
 public:
+    struct RuntimeOutputInfo
+    {
+        AudioFormat format;
+        QString device;
+        int bufferFrames{0};
+    };
+
     struct FadeEvent
     {
         //! Fade completion type reported by `OutputFader`.
@@ -317,6 +324,7 @@ public:
 
     [[nodiscard]] AudioFormat inputFormat() const;
     [[nodiscard]] AudioFormat outputFormat() const;
+    [[nodiscard]] RuntimeOutputInfo runtimeOutputInfo() const;
 
     [[nodiscard]] QString lastInitError() const;
 

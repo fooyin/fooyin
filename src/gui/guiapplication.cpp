@@ -765,6 +765,8 @@ void GuiApplication::setupConnections()
                      &GuiApplication::updateWindowTitle);
     QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,
                      &GuiApplication::updateWindowTitle);
+    QObject::connect(m_playerController, &PlayerController::playbackOutputInfoChanged, this,
+                     &GuiApplication::updateWindowTitle);
     QObject::connect(m_playerController, &PlayerController::trackQueueChanged, this,
                      &GuiApplication::updateWindowTitle);
     QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this,

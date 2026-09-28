@@ -258,6 +258,7 @@ public:
     uint64_t m_nextPlaybackItemId{1};
     bool m_currentTrackSeekable{false};
     QString m_decoder;
+    Engine::PlaybackOutputInfo m_outputInfo;
 
     PlaybackQueue m_queue;
     PlaybackOrderNavigator m_navigator;
@@ -1669,6 +1670,14 @@ void PlayerController::setDecoder(const QString& decoder)
     p->m_decoder = decoder;
 }
 
+void PlayerController::setPlaybackOutputInfo(const Engine::PlaybackOutputInfo& info)
+{
+    if(std::exchange(p->m_outputInfo, info) != info) {
+        Q_EMIT playbackOutputInfoChanged(info);
+        Q_EMIT playbackSnapshotChanged(playbackSnapshot());
+    }
+}
+
 void PlayerController::changeCurrentTrack(const Track& track)
 {
     changeCurrentTrack(PlaylistTrack{.track = track, .playlistId = {}, .entryId = {}});
@@ -1795,6 +1804,7 @@ Player::PlaybackSnapshot PlayerController::playbackSnapshot() const
         .durationMs      = p->m_progressTracker.totalDuration(),
         .bitrate         = p->m_progressTracker.bitrate(),
         .decoder         = p->m_decoder,
+        .outputInfo      = p->m_outputInfo,
         .isQueueTrack    = p->m_session.isQueueTrack(),
         .queueItemId     = p->m_session.currentQueueItemId(),
     };
@@ -2052,6 +2062,11 @@ int PlayerController::bitrate() const
 QString PlayerController::decoder() const
 {
     return p->m_decoder;
+}
+
+Engine::PlaybackOutputInfo PlayerController::playbackOutputInfo() const
+{
+    return p->m_outputInfo;
 }
 
 bool PlayerController::currentTrackSeekable() const

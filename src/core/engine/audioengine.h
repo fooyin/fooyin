@@ -139,7 +139,7 @@ public:
     [[nodiscard]] uint64_t position() const;
 
     //! Replace active DSP chain configuration.
-    void setDspChain(const Engine::DspChains& chain);
+    void setDspChain(const Engine::DspChains& chain, const QString& preset = {});
     //! Thread-safe shutdown hook for decoder operations blocked outside the engine event loop.
     void requestBlockingDecoderAbort();
 
@@ -177,7 +177,7 @@ public Q_SLOTS:
 
     void setAudioOutput(const Fooyin::OutputCreator& output, const QString& device);
     void applyOutputProfile(const Fooyin::OutputCreator& output, const QString& device, Fooyin::SampleFormat bitdepth,
-                            bool dither, const Fooyin::Engine::DspChains& chain);
+                            bool dither, const Fooyin::Engine::DspChains& chain, const QString& preset);
     void setOutputDevice(const QString& device);
     void setAutomaticResampling(bool enabled, const QStringList& preferredDspNames);
     void setAnalysisDataSubscriptions(Fooyin::Engine::AnalysisDataTypes subscriptions);
@@ -200,6 +200,7 @@ Q_SIGNALS:
     void seekPositionApplied(uint64_t positionMs, uint64_t requestId);
     void bitrateChanged(int bitrate);
     void volumeChanged(double volume);
+    void playbackOutputInfoChanged(const Fooyin::Engine::PlaybackOutputInfo& info);
 
     void levelReady(const Fooyin::LevelFrame& frame);
     void pcmReady(const Fooyin::PcmFrame& frame);
@@ -384,6 +385,7 @@ private:
     void executeFullReinitLoad(const Engine::PlaybackItem& item, bool manualChange, bool preserveTransportFade);
     void executeLoadPlan(const Engine::PlaybackItem& item, bool manualChange, const TrackLoadContext& context,
                          const LoadPlan& plan);
+    void publishPlaybackOutputInfo();
 
     SettingsManager* m_settings;
     DspRegistry* m_dspRegistry;
@@ -460,6 +462,8 @@ private:
     OutputController m_outputController;
     TransitionOrchestrator m_transitions;
     ReplayGainProcessor::SharedSettingsPtr m_replayGainSharedSettings;
+    std::vector<QString> m_activeDspNames;
+    QString m_activeDspPreset;
 
     double m_volume;
     int m_playbackBufferLengthMs;

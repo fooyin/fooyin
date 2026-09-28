@@ -672,12 +672,13 @@ public:
         }
 
         m_playbackEnvironment.setTrackState(-1, currentPlayingTrackIndex, currentPlayingTrackId, 0);
-        m_playbackEnvironment.setPlaybackState(playerController ? playerController->currentPosition() : 0,
-                                               playerController ? playerController->currentTrack().duration() : 0,
-                                               playerController ? playerController->bitrate() : 0,
-                                               playerController ? playerController->playState()
-                                                                : Player::PlayState::Stopped,
-                                               playerController ? playerController->decoder() : QString{});
+        m_playbackEnvironment.setPlaybackState(
+            playerController ? playerController->currentPosition() : 0,
+            playerController ? playerController->currentTrack().duration() : 0,
+            playerController ? playerController->bitrate() : 0,
+            playerController ? playerController->playState() : Player::PlayState::Stopped,
+            playerController ? playerController->decoder() : QString{},
+            playerController ? playerController->playbackOutputInfo() : Engine::PlaybackOutputInfo{});
     }
 
     [[nodiscard]] const ScriptPlaybackEnvironment* playbackEnvironment() const override
@@ -916,6 +917,8 @@ void ScriptEditorPrivate::setupConnections()
         QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,
                          qOverload<>(&ScriptEditorPrivate::updateResults));
         QObject::connect(m_playerController, &PlayerController::bitrateChanged, this,
+                         qOverload<>(&ScriptEditorPrivate::updateResults));
+        QObject::connect(m_playerController, &PlayerController::playbackOutputInfoChanged, this,
                          qOverload<>(&ScriptEditorPrivate::updateResults));
     }
 }

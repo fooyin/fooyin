@@ -159,6 +159,8 @@ ScriptDisplay::ScriptDisplay(PlayerController* playerController, PlaylistHandler
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &ScriptDisplay::updateText);
     QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this, &ScriptDisplay::updateText);
     QObject::connect(m_playerController, &PlayerController::bitrateChanged, this, &ScriptDisplay::updateText);
+    QObject::connect(m_playerController, &PlayerController::playbackOutputInfoChanged, this,
+                     &ScriptDisplay::updateText);
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &ScriptDisplay::updateText);
     QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, &ScriptDisplay::updateText);
     QObject::connect(m_playerController, &PlayerController::playlistTrackUpdated, this, &ScriptDisplay::updateText);

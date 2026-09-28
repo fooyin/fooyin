@@ -193,6 +193,8 @@ void StatusWidgetPrivate::setupConnections()
     QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,
                      &StatusWidgetPrivate::updatePlayingText);
     QObject::connect(m_playerController, &PlayerController::bitrateChanged, this, [this](int) { updatePlayingText(); });
+    QObject::connect(m_playerController, &PlayerController::playbackOutputInfoChanged, this,
+                     &StatusWidgetPrivate::updatePlayingText);
     QObject::connect(m_selectionController, &TrackSelectionController::displaySelectionChanged, this,
                      &StatusWidgetPrivate::updateSelectionText);
     QObject::connect(m_playlistController, &PlaylistController::playlistsLoaded, this,
@@ -419,9 +421,10 @@ PlaybackScriptContext StatusWidgetPrivate::makeSelectionContext(const TrackSelec
     contextData.environment.setPlaylistData(currentPlaylist, &m_playerController->playbackQueue(), trackList,
                                             m_playerController->queuedTracksCount());
     contextData.environment.setTrackState(playlistTrackIndex, currentPlayingTrackIndex, currentPlayingTrackId, 0);
-    contextData.environment.setPlaybackState(
-        m_playerController->currentPosition(), m_playerController->currentTrack().duration(),
-        m_playerController->bitrate(), m_playerController->playState(), m_playerController->decoder());
+    contextData.environment.setPlaybackState(m_playerController->currentPosition(),
+                                             m_playerController->currentTrack().duration(),
+                                             m_playerController->bitrate(), m_playerController->playState(),
+                                             m_playerController->decoder(), m_playerController->playbackOutputInfo());
     contextData.environment.setRatingStarSymbols(ratingSymbols());
     contextData.environment.setEvaluationPolicy(TrackListContextPolicy::Fallback, {}, true);
 

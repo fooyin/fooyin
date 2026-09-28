@@ -112,6 +112,8 @@ EngineHandler::EngineHandler(std::shared_ptr<AudioLoader> audioLoader, PlayerCon
     QObject::connect(m_engine, &AudioEngine::positionChangedWithContext, this, &EngineHandler::handlePositionSample);
     QObject::connect(m_engine, &AudioEngine::seekPositionApplied, this, &EngineHandler::handleSeekApplied);
     QObject::connect(m_engine, &AudioEngine::bitrateChanged, m_playerController, &PlayerController::setBitrate);
+    QObject::connect(m_engine, &AudioEngine::playbackOutputInfoChanged, m_playerController,
+                     &PlayerController::setPlaybackOutputInfo);
     QObject::connect(m_engine, &AudioEngine::stateChanged, this, &EngineHandler::handleStateChange);
     QObject::connect(m_engine, &AudioEngine::audiblePauseDrainStarted, this,
                      &EngineController::audiblePauseDrainStarted);
@@ -1123,12 +1125,12 @@ void EngineHandler::applyOutputProfile(const Engine::OutputProfileRequest& reque
 
     m_currentOutput = {.name = request.output, .device = request.device};
     dispatchCommand(&AudioEngine::applyOutputProfile, m_outputs.at(request.output), request.device, request.bitDepth,
-                    request.dither, request.chain);
+                    request.dither, request.chain, request.dspPreset);
 }
 
-void EngineHandler::setDspChain(const Engine::DspChains& chain)
+void EngineHandler::setDspChain(const Engine::DspChains& chain, const QString& preset)
 {
-    dispatchCommand(&AudioEngine::setDspChain, chain);
+    dispatchCommand(&AudioEngine::setDspChain, chain, preset);
 }
 
 void EngineHandler::updateLiveDspSettings(const Engine::LiveDspSettingsUpdate& update)

@@ -21,6 +21,8 @@
 
 #include <core/scripting/scriptproviders.h>
 
+#include <QCoreApplication>
+
 #include <functional>
 #include <type_traits>
 #include <unordered_map>
@@ -32,6 +34,8 @@ namespace Fooyin {
  */
 class ScriptRegistry
 {
+    Q_DECLARE_TR_FUNCTIONS(Fooyin::ScriptRegistry)
+
 public:
     using FuncRet         = ScriptFieldValue;
     using VariableInvoker = ScriptVariableInvoker;
@@ -132,6 +136,7 @@ public:
     [[nodiscard]] QString playbackTimeRemaining() const;
     [[nodiscard]] QString playbackTimeRemainingSeconds() const;
     [[nodiscard]] QString decoder() const;
+    [[nodiscard]] QString outputInfo(VariableKind kind) const;
     [[nodiscard]] QString isPlaying() const;
     [[nodiscard]] QString isPaused() const;
     [[nodiscard]] QString isStopped() const;

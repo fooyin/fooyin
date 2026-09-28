@@ -32,8 +32,9 @@
 #include <type_traits>
 #include <unordered_set>
 
-constexpr auto ActiveChainKey = "DSP/ActiveChain";
-constexpr auto ChainVersion   = 1;
+constexpr auto ActiveChainKey  = "DSP/ActiveChain";
+constexpr auto ActivePresetKey = "DSP/ActivePreset";
+constexpr auto ChainVersion    = 1;
 
 namespace {
 using namespace Fooyin::Engine;
@@ -135,7 +136,7 @@ void DspChainStore::setEngine(EngineHandler* engine)
     m_activeChain = normaliseChain(m_activeChain);
 
     if(m_engine) {
-        m_engine->setDspChain(m_activeChain);
+        m_engine->setDspChain(m_activeChain, m_activePreset);
     }
 }
 
@@ -143,15 +144,16 @@ DspChain DspChainStore::availableDsps() const
 {
     DspChain defs;
 
-    if(!m_registry) {
-        return defs;
-    }
-
     const auto entries = m_registry->entries();
     defs.reserve(entries.size());
 
     for(const auto& entry : entries) {
-        defs.push_back({entry.id, entry.name, false, true, 0, {}});
+        defs.push_back({.id          = entry.id,
+                        .name        = entry.name,
+                        .hasSettings = false,
+                        .enabled     = true,
+                        .instanceId  = 0,
+                        .settings    = {}});
     }
 
     return defs;
@@ -162,29 +164,38 @@ DspChains DspChainStore::activeChain() const
     return m_activeChain;
 }
 
-std::unique_ptr<DspNode> DspChainStore::createDsp(const QString& id) const
+QString DspChainStore::activePreset() const
 {
-    return m_registry ? m_registry->create(id) : nullptr;
+    return m_activePreset;
 }
 
-void DspChainStore::setActiveChain(const DspChains& chain)
+std::unique_ptr<DspNode> DspChainStore::createDsp(const QString& id) const
 {
-    m_activeChain = normaliseChain(chain);
+    return m_registry->create(id);
+}
+
+void DspChainStore::setActiveChain(const DspChains& chain, QString preset)
+{
+    m_activeChain  = normaliseChain(chain);
+    m_activePreset = std::move(preset);
     m_liveRevisionByKey.clear();
     persistChain(m_activeChain);
+    persistActivePreset();
 
     if(m_engine) {
-        m_engine->setDspChain(m_activeChain);
+        m_engine->setDspChain(m_activeChain, m_activePreset);
     }
 
     Q_EMIT activeChainChanged(m_activeChain);
 }
 
-void DspChainStore::syncActiveChain(const DspChains& chain)
+void DspChainStore::syncActiveChain(const DspChains& chain, QString preset)
 {
-    m_activeChain = normaliseChain(chain);
+    m_activeChain  = normaliseChain(chain);
+    m_activePreset = std::move(preset);
     m_liveRevisionByKey.clear();
     persistChain(m_activeChain);
+    persistActivePreset();
 
     Q_EMIT activeChainChanged(m_activeChain);
 }
@@ -211,6 +222,9 @@ bool DspChainStore::updateLiveDspSettings(DspChainScope scope, uint64_t instance
     if(!targetChain || !inChain(*targetChain)) {
         return false;
     }
+
+    m_activePreset.clear();
+    persistActivePreset();
 
     if(persist) {
         for(auto& entry : *targetChain) {
@@ -259,13 +273,9 @@ bool DspChainStore::setDspEnabled(DspChainScope scope, uint64_t instanceId, bool
 
 void DspChainStore::loadFromSettings()
 {
-    if(!m_settings) {
-        m_activeChain.clear();
-        return;
-    }
-
     const auto chainData = m_settings->fileValue(ActiveChainKey).toByteArray();
     m_activeChain        = normaliseChain(deserialiseChain(chainData));
+    m_activePreset       = m_settings->fileValue(ActivePresetKey).toString();
 
     m_liveRevisionByKey.clear();
     if(!chainData.isEmpty()) {
@@ -273,18 +283,30 @@ void DspChainStore::loadFromSettings()
     }
 }
 
-void DspChainStore::persistChain(const DspChains& chain)
+uint64_t DspChainStore::nextLiveRevision(const DspChainScope scope, uint64_t instanceId)
 {
-    if(!m_settings) {
+    const auto scopeRaw = static_cast<uint64_t>(static_cast<std::underlying_type_t<DspChainScope>>(scope));
+    const uint64_t key  = (scopeRaw << 63) | (instanceId & ~(1ULL << 63));
+
+    uint64_t revision{0};
+    if(const auto it = m_liveRevisionByKey.find(key); it != m_liveRevisionByKey.end()) {
+        revision = it->second;
+    }
+
+    ++revision;
+    m_liveRevisionByKey[key] = revision;
+
+    return revision;
+}
+
+void DspChainStore::persistActivePreset()
+{
+    if(m_activePreset.isEmpty()) {
+        m_settings->fileRemove(ActivePresetKey);
         return;
     }
 
-    if(chain.isEmpty()) {
-        m_settings->fileRemove(ActiveChainKey);
-        return;
-    }
-
-    m_settings->fileSet(ActiveChainKey, serialiseChain(chain));
+    m_settings->fileSet(ActivePresetKey, m_activePreset);
 }
 
 uint64_t DspChainStore::nextInstanceId()
@@ -307,33 +329,25 @@ void DspChainStore::noteExistingInstanceId(uint64_t instanceId)
     }
 }
 
-uint64_t DspChainStore::nextLiveRevision(const DspChainScope scope, uint64_t instanceId)
+void DspChainStore::persistChain(const DspChains& chain)
 {
-    const auto scopeRaw = static_cast<uint64_t>(static_cast<std::underlying_type_t<DspChainScope>>(scope));
-    const uint64_t key  = (scopeRaw << 63) | (instanceId & ~(1ULL << 63));
-
-    uint64_t revision{0};
-    if(const auto it = m_liveRevisionByKey.find(key); it != m_liveRevisionByKey.end()) {
-        revision = it->second;
+    if(chain.isEmpty()) {
+        m_settings->fileRemove(ActiveChainKey);
+        return;
     }
 
-    ++revision;
-    m_liveRevisionByKey[key] = revision;
-
-    return revision;
+    m_settings->fileSet(ActiveChainKey, serialiseChain(chain));
 }
 
 DspChains DspChainStore::normaliseChain(const Engine::DspChains& chain)
 {
     std::unordered_map<QString, QString> names;
 
-    if(m_registry) {
-        const auto entries = m_registry->entries();
-        names.reserve(entries.size());
+    const auto entries = m_registry->entries();
+    names.reserve(entries.size());
 
-        for(const auto& entry : entries) {
-            names[entry.id] = entry.name;
-        }
+    for(const auto& entry : entries) {
+        names[entry.id] = entry.name;
     }
 
     std::unordered_set<uint64_t> usedInstanceIds;

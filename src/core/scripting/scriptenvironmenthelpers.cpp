@@ -181,13 +181,15 @@ void PlaylistScriptEnvironment::setTrackState(int playlistTrackIndex, int curren
 }
 
 void PlaylistScriptEnvironment::setPlaybackState(uint64_t currentPosition, uint64_t currentTrackDuration, int bitrate,
-                                                 Player::PlayState playState, QString decoder)
+                                                 Player::PlayState playState, QString decoder,
+                                                 Engine::PlaybackOutputInfo outputInfo)
 {
     m_currentPosition      = currentPosition;
     m_currentTrackDuration = currentTrackDuration;
     m_bitrate              = bitrate;
     m_playState            = playState;
     m_decoder              = std::move(decoder);
+    m_outputInfo           = std::move(outputInfo);
 }
 
 void PlaylistScriptEnvironment::setEvaluationPolicy(TrackListContextPolicy policy, QString placeholder,
@@ -295,6 +297,11 @@ QString PlaylistScriptEnvironment::decoder() const
     return m_decoder;
 }
 
+Engine::PlaybackOutputInfo PlaylistScriptEnvironment::outputInfo() const
+{
+    return m_outputInfo;
+}
+
 Player::PlayState PlaylistScriptEnvironment::playState() const
 {
     return m_playState;
@@ -373,6 +380,7 @@ PlaybackScriptContext makePlaybackScriptContext(PlayerController* playerControll
     uint64_t currentTrackDuration{0};
     int bitrate{0};
     QString decoder;
+    Engine::PlaybackOutputInfo outputInfo;
     auto playState{Player::PlayState::Stopped};
 
     if(playerController) {
@@ -381,6 +389,7 @@ PlaybackScriptContext makePlaybackScriptContext(PlayerController* playerControll
         currentTrackDuration = playerController->currentTrack().duration();
         bitrate              = playerController->bitrate();
         decoder              = playerController->decoder();
+        outputInfo           = playerController->playbackOutputInfo();
         playState            = playerController->playState();
     }
 
@@ -389,7 +398,8 @@ PlaybackScriptContext makePlaybackScriptContext(PlayerController* playerControll
                                      playerController ? playerController->queuedTracksCount() : 0);
     data.environment.setTrackState(playlistTrackIndex, playlistTrackIndex,
                                    playerController ? playerController->currentTrackId() : -1, 0);
-    data.environment.setPlaybackState(currentPosition, currentTrackDuration, bitrate, playState, std::move(decoder));
+    data.environment.setPlaybackState(currentPosition, currentTrackDuration, bitrate, playState, std::move(decoder),
+                                      std::move(outputInfo));
     data.environment.setRatingStarSymbols(ratingSymbols);
     data.environment.setEvaluationPolicy(policy, std::move(placeholder), escapeRichText, useVariousArtists);
 

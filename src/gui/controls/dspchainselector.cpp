@@ -75,7 +75,7 @@ DspChainSelector::DspChainSelector(DspChainStore* chainStore, DspPresetRegistry*
             return;
         }
         if(const auto preset = m_presetRegistry->itemById(presetId)) {
-            m_chainStore->setActiveChain(preset->chain);
+            m_chainStore->setActiveChain(preset->chain, preset->name);
         }
     });
 

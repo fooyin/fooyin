@@ -267,12 +267,13 @@ const ScriptContext& PlaylistPopulatorPrivate::makeContext(int index, int depth,
         m_scriptEnvironment.setQueueState({}, m_queueTotal);
     }
     m_scriptEnvironment.setTrackState(index, currentPlayingTrackIndex, currentPlayingTrackId, depth);
-    m_scriptEnvironment.setPlaybackState(m_playerController ? m_playerController->currentPosition() : 0,
-                                         m_playerController ? m_playerController->currentTrack().duration() : 0,
-                                         m_playerController ? m_playerController->bitrate() : 0,
-                                         m_playerController ? m_playerController->playState()
-                                                            : Player::PlayState::Stopped,
-                                         m_playerController ? m_playerController->decoder() : QString{});
+    m_scriptEnvironment.setPlaybackState(
+        m_playerController ? m_playerController->currentPosition() : 0,
+        m_playerController ? m_playerController->currentTrack().duration() : 0,
+        m_playerController ? m_playerController->bitrate() : 0,
+        m_playerController ? m_playerController->playState() : Player::PlayState::Stopped,
+        m_playerController ? m_playerController->decoder() : QString{},
+        m_playerController ? m_playerController->playbackOutputInfo() : Engine::PlaybackOutputInfo{});
     m_scriptContext.playlist = m_playlist;
     return m_scriptContext;
 }

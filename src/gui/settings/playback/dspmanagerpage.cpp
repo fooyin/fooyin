@@ -355,6 +355,7 @@ private:
     Engine::DspChain m_pendingRemovedMaster;
     Engine::DspChains m_chainBaseline;
     Engine::DspChains m_chain;
+    QString m_loadedPresetName;
     std::unordered_map<uint64_t, DspDialogSession> m_dspDialogs;
     bool m_updating{false};
     bool m_applyingChain{false};
@@ -516,13 +517,20 @@ void DspManagerPageWidget::load()
 
     m_pendingRemovedPerTrack.clear();
     m_pendingRemovedMaster.clear();
-    m_chainBaseline = m_chainStore->activeChain();
-    m_chain         = m_chainBaseline;
-    m_changed       = false;
+    m_chainBaseline    = m_chainStore->activeChain();
+    m_chain            = m_chainBaseline;
+    m_loadedPresetName = m_chainStore->activePreset();
+    m_changed          = false;
 
     refreshAvailable();
     refreshActive();
     refreshPresets();
+
+    const int presetIndex = m_presetBox->findText(m_loadedPresetName);
+    m_presetBox->setCurrentIndex(presetIndex);
+    if(presetIndex < 0) {
+        m_presetBox->clearEditText();
+    }
 }
 
 void DspManagerPageWidget::apply()
@@ -535,7 +543,7 @@ void DspManagerPageWidget::apply()
 
     if(m_changed) {
         m_applyingChain = true;
-        m_chainStore->setActiveChain(m_chain);
+        m_chainStore->setActiveChain(m_chain, m_loadedPresetName);
         m_applyingChain = false;
         // Retrieve the normalised chain so live-setting updates can target newly added DSP instances
         m_chain         = m_chainStore->activeChain();
@@ -553,7 +561,7 @@ void DspManagerPageWidget::apply()
 
         if(finalChain != m_chain || !applied) {
             m_applyingChain = true;
-            m_chainStore->setActiveChain(finalChain);
+            m_chainStore->setActiveChain(finalChain, m_loadedPresetName);
             m_applyingChain = false;
             m_chain         = m_chainStore->activeChain();
             m_chainBaseline = m_chain;
@@ -580,6 +588,7 @@ void DspManagerPageWidget::reset()
     m_pendingRemovedPerTrack.clear();
     m_pendingRemovedMaster.clear();
     m_chain.clear();
+    m_loadedPresetName.clear();
     refreshActive();
 }
 
@@ -839,7 +848,8 @@ void DspManagerPageWidget::syncActiveChain(const Engine::DspChains& chain)
     m_chain             = mergeDspChainsThreeWay(baseline, chain, std::move(draft));
     m_pendingRemovedPerTrack.clear();
     m_pendingRemovedMaster.clear();
-    m_changed = m_chain != chain;
+    m_changed          = m_chain != chain;
+    m_loadedPresetName = m_changed ? QString{} : m_chainStore->activePreset();
 
     refreshActive();
     refreshAvailable();
@@ -1084,12 +1094,14 @@ void DspManagerPageWidget::syncChainFromActiveList()
     const auto mergedPerTrack
         = mergeVisibleAndPending(m_chain.perTrackChain, m_perTrackModel->dsps(), m_pendingRemovedPerTrack);
     if(std::exchange(m_chain.perTrackChain, mergedPerTrack) != m_chain.perTrackChain) {
+        m_loadedPresetName.clear();
         m_changed = true;
     }
 
     const auto mergedMaster
         = mergeVisibleAndPending(m_chain.masterChain, m_masterModel->dsps(), m_pendingRemovedMaster);
     if(std::exchange(m_chain.masterChain, mergedMaster) != m_chain.masterChain) {
+        m_loadedPresetName.clear();
         m_changed = true;
     }
 }
@@ -1203,7 +1215,9 @@ void DspManagerPageWidget::loadPreset()
 
     closeDspDialogs();
 
-    if(std::exchange(m_chain, presetOpt->chain) != m_chain) {
+    const bool chainChanged  = std::exchange(m_chain, presetOpt->chain) != m_chain;
+    const bool presetChanged = std::exchange(m_loadedPresetName, presetOpt->name) != m_loadedPresetName;
+    if(chainChanged || presetChanged) {
         m_changed = true;
     }
 
@@ -1237,9 +1251,16 @@ void DspManagerPageWidget::savePreset()
 
         DspChainPreset preset = existing.value();
 
-        preset.chain = presetChain;
+        const bool isActivePreset
+            = m_chainStore->activePreset() == preset.name || m_chainStore->activeChain() == presetChain;
 
+        preset.chain = std::move(presetChain);
         m_presetRegistry->changeItem(preset);
+
+        if(isActivePreset) {
+            m_loadedPresetName = preset.name;
+            m_chainStore->setActiveChain(preset.chain, preset.name);
+        }
 
         refreshPresets();
         m_presetBox->setCurrentText(name);
@@ -1248,7 +1269,7 @@ void DspManagerPageWidget::savePreset()
 
     DspChainPreset preset;
     preset.name  = name;
-    preset.chain = presetChain;
+    preset.chain = std::move(presetChain);
 
     m_presetRegistry->addItem(preset);
     refreshPresets();

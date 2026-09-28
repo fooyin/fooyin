@@ -203,6 +203,7 @@ public Q_SLOTS:
     void playStateChanged(Fooyin::Player::PlayState state);
     void refreshPlayingTrackPositionData();
     void refreshPlayingTrackBitrateData();
+    void refreshPlayingTrackOutputData();
 
 private:
     struct PlayingTrackIndexResolution

@@ -279,6 +279,48 @@ VariableKind resolveBuiltInVariableKind(const QString& var)
     if(var == "INPUT_DECODER"_L1) {
         return VariableKind::InputDecoder;
     }
+    if(var == "OUTPUT_SAMPLERATE"_L1) {
+        return VariableKind::OutputSampleRate;
+    }
+    if(var == "OUTPUT_CHANNELS"_L1) {
+        return VariableKind::OutputChannels;
+    }
+    if(var == "OUTPUT_CHANNEL_MASK"_L1) {
+        return VariableKind::OutputChannelMask;
+    }
+    if(var == "OUTPUT_BITDEPTH"_L1) {
+        return VariableKind::OutputBitDepth;
+    }
+    if(var == "OUTPUT_DEVICE"_L1) {
+        return VariableKind::OutputDevice;
+    }
+    if(var == "OUTPUT_DSPS"_L1) {
+        return VariableKind::OutputDsps;
+    }
+    if(var == "OUTPUT_DSP_PRESET"_L1) {
+        return VariableKind::OutputDspPreset;
+    }
+    if(var == "OUTPUT_VOLUME"_L1) {
+        return VariableKind::OutputVolume;
+    }
+    if(var == "OUTPUT_RG_SOURCE"_L1) {
+        return VariableKind::OutputRgSource;
+    }
+    if(var == "OUTPUT_RG_MODE"_L1) {
+        return VariableKind::OutputRgMode;
+    }
+    if(var == "OUTPUT_RG_GAIN"_L1) {
+        return VariableKind::OutputRgGain;
+    }
+    if(var == "OUTPUT_RG_PEAK"_L1) {
+        return VariableKind::OutputRgPeak;
+    }
+    if(var == "OUTPUT_RG_PEAK_DB"_L1) {
+        return VariableKind::OutputRgPeakDb;
+    }
+    if(var == "OUTPUT_BUFFER_LENGTH"_L1) {
+        return VariableKind::OutputBufferLength;
+    }
     if(var == "ISPLAYING"_L1) {
         return VariableKind::IsPlaying;
     }

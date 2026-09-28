@@ -193,6 +193,8 @@ NowPlayingOutputPageWidget::NowPlayingOutputPageWidget(PlayerController* playerC
                      &NowPlayingOutputPageWidget::updatePreview);
     QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,
                      &NowPlayingOutputPageWidget::updatePreview);
+    QObject::connect(m_playerController, &PlayerController::playbackOutputInfoChanged, this,
+                     &NowPlayingOutputPageWidget::updatePreview);
 }
 
 void NowPlayingOutputPageWidget::load()

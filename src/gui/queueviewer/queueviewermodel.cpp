@@ -106,6 +106,7 @@ PlaybackScriptContext makeQueueScriptContext(PlayerController* playerController,
     uint64_t currentTrackDuration{0};
     int bitrate{0};
     QString decoder;
+    Engine::PlaybackOutputInfo outputInfo;
     int currentTrackId{-1};
     int currentPlayingTrackIndex{-1};
     auto playState{Player::PlayState::Stopped};
@@ -115,13 +116,15 @@ PlaybackScriptContext makeQueueScriptContext(PlayerController* playerController,
         currentTrackDuration     = playerController->currentTrack().duration();
         bitrate                  = playerController->bitrate();
         decoder                  = playerController->decoder();
+        outputInfo               = playerController->playbackOutputInfo();
         currentTrackId           = playerController->currentTrackId();
         currentPlayingTrackIndex = playerController->currentPlaylistTrack().indexInPlaylist;
         playState                = playerController->playState();
     }
 
     data.environment.setTrackState(queueTrack.indexInPlaylist, currentPlayingTrackIndex, currentTrackId, 0);
-    data.environment.setPlaybackState(currentPosition, currentTrackDuration, bitrate, playState, std::move(decoder));
+    data.environment.setPlaybackState(currentPosition, currentTrackDuration, bitrate, playState, std::move(decoder),
+                                      std::move(outputInfo));
     data.environment.setRatingStarSymbols(Gui::ratingStarSymbols(*settings));
     data.environment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true);
     data.environment.setQueueState(queueIndexes, queueTotal);

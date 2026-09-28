@@ -192,6 +192,11 @@ public:
         m_playState            = playState;
     }
 
+    void setOutputInfo(Engine::PlaybackOutputInfo info)
+    {
+        m_outputInfo = std::move(info);
+    }
+
     void setLibraryState(QString libraryName, QString libraryPath)
     {
         m_libraryName = std::move(libraryName);
@@ -280,6 +285,11 @@ public:
         return m_bitrate;
     }
 
+    [[nodiscard]] Engine::PlaybackOutputInfo outputInfo() const override
+    {
+        return m_outputInfo;
+    }
+
     [[nodiscard]] Player::PlayState playState() const override
     {
         return m_playState;
@@ -354,6 +364,7 @@ private:
     uint64_t m_currentTrackDuration{0};
     int m_bitrate{0};
     Player::PlayState m_playState{Player::PlayState::Stopped};
+    Engine::PlaybackOutputInfo m_outputInfo;
     QString m_libraryName;
     QString m_libraryPath;
     TrackListContextPolicy m_trackListContextPolicy{TrackListContextPolicy::Unresolved};
@@ -1077,6 +1088,48 @@ TEST_F(ScriptParserTest, PlaybackTimeRemainingFollowsElapsedSecondBoundaries)
     environment.setPlaybackState(2015, 254013, 320, Player::PlayState::Playing);
     EXPECT_EQ(u"04:12", parser.evaluate(u"%playback_time_remaining%"_s, track, context));
     EXPECT_EQ(u"252", parser.evaluate(u"%playback_time_remaining_s%"_s, track, context));
+}
+
+TEST_F(ScriptParserTest, ContextPlaybackEnvironmentProvidesOutputVariables)
+{
+    ScriptParser parser;
+
+    TestPlaylistEnvironment environment;
+    environment.setPlaybackState(1000, 120000, 320, Player::PlayState::Playing);
+    Engine::PlaybackOutputInfo info{
+        .format         = AudioFormat{SampleFormat::S24In32, 96000, 2},
+        .device         = u"DAC"_s,
+        .dsps           = {u"Resampler"_s, u"Equalizer"_s},
+        .dspPreset      = u"Headphones"_s,
+        .volume         = 0.5,
+        .bufferLengthMs = 200,
+        .replayGain     = {.source     = Engine::ReplayGainSource::Track,
+                           .processing = Engine::ApplyGain | Engine::PreventClipping,
+                           .gainDb     = -3.5,
+                           .peak       = 0.9,
+                           .hasPeak    = true},
+    };
+    info.format.setChannelLayout({AudioFormat::ChannelPosition::FrontLeft, AudioFormat::ChannelPosition::FrontRight});
+    environment.setOutputInfo(std::move(info));
+
+    ScriptContext context;
+    context.environment = &environment;
+    const Track track;
+
+    EXPECT_EQ(u"96000", parser.evaluate(u"%output_samplerate%"_s, track, context));
+    EXPECT_EQ(u"2", parser.evaluate(u"%output_channels%"_s, track, context));
+    EXPECT_EQ(u"FL,FR", parser.evaluate(u"%output_channel_mask%"_s, track, context));
+    EXPECT_EQ(u"24", parser.evaluate(u"%output_bitdepth%"_s, track, context));
+    EXPECT_EQ(u"DAC", parser.evaluate(u"%output_device%"_s, track, context));
+    EXPECT_EQ(u"Resampler, Equalizer", parser.evaluate(u"%output_dsps%"_s, track, context));
+    EXPECT_EQ(u"Headphones", parser.evaluate(u"%output_dsp_preset%"_s, track, context));
+    EXPECT_EQ(u"-6.02 dB", parser.evaluate(u"%output_volume%"_s, track, context));
+    EXPECT_EQ(u"Track", parser.evaluate(u"%output_rg_source%"_s, track, context));
+    EXPECT_EQ(u"Gain and clip prevention", parser.evaluate(u"%output_rg_mode%"_s, track, context));
+    EXPECT_EQ(u"-3.50 dB", parser.evaluate(u"%output_rg_gain%"_s, track, context));
+    EXPECT_EQ(u"0.9", parser.evaluate(u"%output_rg_peak%"_s, track, context));
+    EXPECT_EQ(u"-0.92 dBFS", parser.evaluate(u"%output_rg_peak_db%"_s, track, context));
+    EXPECT_EQ(u"200", parser.evaluate(u"%output_buffer_length%"_s, track, context));
 }
 
 TEST_F(ScriptParserTest, ContextLibraryEnvironmentProvidesLibraryVariables)

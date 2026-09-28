@@ -21,6 +21,7 @@
 
 #include "fycore_export.h"
 
+#include <core/engine/enginedefs.h>
 #include <core/player/playbackqueue.h>
 #include <core/playlist/playlist.h>
 #include <core/track.h>
@@ -84,6 +85,7 @@ struct FYCORE_EXPORT PlaybackSnapshot
     uint64_t durationMs{0};
     int bitrate{0};
     QString decoder;
+    Engine::PlaybackOutputInfo outputInfo;
     bool isQueueTrack{false};
     PlaybackQueueItemId queueItemId{0};
 };

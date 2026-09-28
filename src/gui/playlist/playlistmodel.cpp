@@ -649,7 +649,8 @@ PlaylistModel::PlaybackDependency dependencyForVariable(const QString& variable)
        || variable.compare(u"ISPAUSED"_s, Qt::CaseInsensitive) == 0
        || variable.compare(u"ISSTOPPED"_s, Qt::CaseInsensitive) == 0
        || variable.compare(u"INPUT_DECODER"_s, Qt::CaseInsensitive) == 0
-       || variable.compare(u"PLAYINGICON"_s, Qt::CaseInsensitive) == 0) {
+       || variable.compare(u"PLAYINGICON"_s, Qt::CaseInsensitive) == 0
+       || variable.startsWith(u"OUTPUT_"_s, Qt::CaseInsensitive)) {
         return Dependency::PlaybackState;
     }
 
@@ -1803,6 +1804,11 @@ void PlaylistModel::refreshPlayingTrackPositionData()
 void PlaylistModel::refreshPlayingTrackBitrateData()
 {
     refreshPlayingTrackForDependency(Bitrate);
+}
+
+void PlaylistModel::refreshPlayingTrackOutputData()
+{
+    refreshPlayingTrackForDependency(PlaybackState);
 }
 
 std::optional<PlaylistModel::EditableTrackContext> PlaylistModel::editableTrackContextForColumn(int column) const

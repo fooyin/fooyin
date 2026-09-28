@@ -94,7 +94,7 @@ public:
     //! Register an audio output
     void addOutput(const QString& name, OutputCreator output) override;
 
-    void setDspChain(const Engine::DspChains& chain);
+    void setDspChain(const Engine::DspChains& chain, const QString& preset = {});
     void updateLiveDspSettings(const Engine::LiveDspSettingsUpdate& update);
     void updateCurrentTrackMetadata(const Track& track);
 

@@ -63,6 +63,8 @@ public:
     [[nodiscard]] int bitrate() const;
     /** Returns the decoder backend used for the current track. */
     [[nodiscard]] QString decoder() const;
+    /** Returns current post-DSP output and processing information. */
+    [[nodiscard]] Engine::PlaybackOutputInfo playbackOutputInfo() const;
     /** Returns @c true if the current track can be seeked. */
     [[nodiscard]] bool currentTrackSeekable() const;
 
@@ -118,6 +120,7 @@ public:
     void setCurrentPosition(uint64_t ms);
     void setBitrate(int bitrate);
     void setDecoder(const QString& decoder);
+    void setPlaybackOutputInfo(const Fooyin::Engine::PlaybackOutputInfo& info);
     void setCurrentTrackSeekable(bool seekable);
 
     void changeCurrentTrack(const Track& track);
@@ -185,6 +188,7 @@ Q_SIGNALS:
     void positionChanged(uint64_t ms);
     void positionChangedSeconds(uint64_t seconds);
     void bitrateChanged(int bitrate);
+    void playbackOutputInfoChanged(const Fooyin::Engine::PlaybackOutputInfo& info);
     void positionMoved(uint64_t ms);
 
     /*! Emitted when the actual playback track changes. */

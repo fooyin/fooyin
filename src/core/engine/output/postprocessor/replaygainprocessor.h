@@ -59,9 +59,11 @@ public:
     explicit ReplayGainProcessor(std::shared_ptr<const SharedSettings> settings);
 
     //! Create shared runtime snapshot storage for engine-wide reuse.
-    [[nodiscard]] static SharedSettingsPtr makeSharedSettings();
+    static SharedSettingsPtr makeSharedSettings();
     //! Refresh shared snapshot from current user settings.
     static void refreshSharedSettings(const SettingsManager& settings, SharedSettings& sharedSettings);
+
+    static Engine::ReplayGainOutputInfo outputInfo(const Track& track, const RuntimeSettings& settings);
 
     void init(const Track& track, const AudioFormat& format) override;
     [[nodiscard]] bool isActive() const override;
@@ -70,22 +72,6 @@ public:
     void reset() override;
 
 private:
-    enum class Mode : uint8_t
-    {
-        Off = 0,
-        Track,
-        Album
-    };
-
-    struct ReplayGainValues
-    {
-        double gainDb{0.0};
-        double peak{1.0};
-        bool haveGain{false};
-        bool havePeak{false};
-    };
-
-    [[nodiscard]] ReplayGainValues extractValues(bool preferTrack) const;
     void refreshSettings();
     void updateGain();
     [[nodiscard]] double calculateGain() const;
@@ -93,22 +79,12 @@ private:
     std::shared_ptr<const SharedSettings> m_settings;
     uint64_t m_settingsEpoch;
 
-    AudioFormat m_format;
-    Mode m_mode;
+    Track m_track;
+    SelectionMode m_mode;
     Engine::RGProcessing m_processing;
 
     double m_rgPreampDb;
     double m_nonRgPreampDb;
-
-    double m_trackGainDb;
-    double m_albumGainDb;
-    double m_trackPeak;
-    double m_albumPeak;
-
-    bool m_haveTrackGain;
-    bool m_haveAlbumGain;
-    bool m_haveTrackPeak;
-    bool m_haveAlbumPeak;
 
     double m_linearGain;
     bool m_active;

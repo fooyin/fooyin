@@ -115,6 +115,8 @@ NowPlayingOutputService::NowPlayingOutputService(PlayerController* playerControl
                      });
     QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,
                      [updateIf]() { updateIf(UpdateSecond); });
+    QObject::connect(m_playerController, &PlayerController::playbackOutputInfoChanged, this,
+                     [updateIf]() { updateIf(UpdateTrack); });
     QObject::connect(m_playerController, &PlayerController::trackPlayed, this,
                      [updateIf]() { updateIf(UpdatePlayed); });
 
