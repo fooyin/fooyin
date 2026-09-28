@@ -25,6 +25,7 @@
 #include <core/engine/enginedefs.h>
 #include <core/internalcoresettings.h>
 #include <gui/guiconstants.h>
+#include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -77,6 +78,9 @@ private:
     QSpinBox* m_crossfadeAutoOut;
     QLabel* m_crossfadeAutoSwitchPolicyLabel;
     QComboBox* m_crossfadeAutoSwitchPolicy;
+    QCheckBox* m_skipAutoCrossfadeSameAlbum;
+    QLabel* m_autoCrossfadeAlbumGroupingLabel;
+    ScriptLineEdit* m_autoCrossfadeAlbumGroupingScript;
     QSpinBox* m_crossfadeSeekIn;
     QSpinBox* m_crossfadeSeekOut;
 };
@@ -106,6 +110,9 @@ FadingPageWidget::FadingPageWidget(SettingsManager* settings)
     , m_crossfadeAutoOut{new QSpinBox(this)}
     , m_crossfadeAutoSwitchPolicyLabel{new QLabel(tr("Auto switch policy") + u":"_s, this)}
     , m_crossfadeAutoSwitchPolicy{new QComboBox(this)}
+    , m_skipAutoCrossfadeSameAlbum{new QCheckBox(tr("Don't crossfade within the same album"), this)}
+    , m_autoCrossfadeAlbumGroupingLabel{new QLabel(tr("Album matching pattern") + u":"_s, this)}
+    , m_autoCrossfadeAlbumGroupingScript{new ScriptLineEdit(this)}
     , m_crossfadeSeekIn{new QSpinBox(this)}
     , m_crossfadeSeekOut{new QSpinBox(this)}
 {
@@ -256,11 +263,26 @@ FadingPageWidget::FadingPageWidget(SettingsManager* settings)
     crossmixLayout->addWidget(m_crossfadeAutoEnabled, row, 0);
     crossmixLayout->addWidget(m_crossfadeAutoIn, row, 1);
     crossmixLayout->addWidget(m_crossfadeAutoOut, row++, 2);
-    crossmixLayout->setRowMinimumHeight(row - 1, 30);
-    crossmixLayout->addWidget(m_crossfadeAutoSwitchPolicyLabel, row, 0);
-    crossmixLayout->addWidget(m_crossfadeAutoSwitchPolicy, row, 1, 1, 2);
+
+    const auto albumGroupingToolTip = tr("Tracks with the same non-empty result are treated as part of the same album");
+    m_autoCrossfadeAlbumGroupingLabel->setToolTip(albumGroupingToolTip);
+    m_autoCrossfadeAlbumGroupingScript->setToolTip(albumGroupingToolTip);
+
+    auto* autoOptions       = new QWidget(m_crossfadeBox);
+    auto* autoOptionsLayout = new QGridLayout(autoOptions);
+    autoOptionsLayout->setContentsMargins(20, 4, 0, 0);
+    autoOptionsLayout->setHorizontalSpacing(12);
+    autoOptionsLayout->setVerticalSpacing(10);
+
+    autoOptionsLayout->addWidget(m_crossfadeAutoSwitchPolicyLabel, 0, 0);
+    autoOptionsLayout->addWidget(m_crossfadeAutoSwitchPolicy, 0, 1);
+    autoOptionsLayout->addWidget(m_skipAutoCrossfadeSameAlbum, 1, 0, 1, 3);
+    autoOptionsLayout->addWidget(m_autoCrossfadeAlbumGroupingLabel, 2, 0);
+    autoOptionsLayout->addWidget(m_autoCrossfadeAlbumGroupingScript, 2, 1, 1, 2);
+    autoOptionsLayout->setColumnStretch(2, 1);
+
+    crossmixLayout->addWidget(autoOptions, row++, 0, 1, 4);
     crossmixLayout->setColumnStretch(4, 1);
-    ++row;
     crossmixLayout->setColumnStretch(3, 1);
 
     auto* mainLayout = new QVBoxLayout(this);
@@ -305,6 +327,9 @@ FadingPageWidget::FadingPageWidget(SettingsManager* settings)
         setEnabled(crossfadingEnabled && autoCrossfadeActive, m_crossfadeAutoIn, m_crossfadeAutoOut);
         setEnabled(crossfadingEnabled && autoCrossfadeActive && m_crossfadeAutoEnabled->isEnabled(),
                    m_crossfadeAutoSwitchPolicyLabel, m_crossfadeAutoSwitchPolicy);
+        setEnabled(crossfadingEnabled && autoCrossfadeActive, m_skipAutoCrossfadeSameAlbum);
+        setEnabled(crossfadingEnabled && autoCrossfadeActive && m_skipAutoCrossfadeSameAlbum->isChecked(),
+                   m_autoCrossfadeAlbumGroupingLabel, m_autoCrossfadeAlbumGroupingScript);
     };
 
     const auto updateState = [enforceExclusiveOptions, updateRowStates]() {
@@ -320,6 +345,8 @@ FadingPageWidget::FadingPageWidget(SettingsManager* settings)
     QObject::connect(m_crossfadeSeekEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
     QObject::connect(m_crossfadeManualEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
     QObject::connect(m_crossfadeAutoEnabled, &QCheckBox::toggled, this, [updateState]() { updateState(); });
+    QObject::connect(m_skipAutoCrossfadeSameAlbum, &QCheckBox::toggled, this,
+                     [updateRowStates]() { updateRowStates(); });
 
     updateRowStates();
 }
@@ -356,6 +383,9 @@ void FadingPageWidget::load()
     const int policyIndex
         = m_crossfadeAutoSwitchPolicy->findData(static_cast<int>(policy), Qt::UserRole, Qt::MatchExactly);
     m_crossfadeAutoSwitchPolicy->setCurrentIndex(policyIndex >= 0 ? policyIndex : 0);
+    m_skipAutoCrossfadeSameAlbum->setChecked(m_settings->value<Settings::Core::Internal::SkipSameAlbumCrossfade>());
+    m_autoCrossfadeAlbumGroupingScript->setText(
+        m_settings->value<Settings::Core::Internal::AutoCrossfadeAlbumScript>());
 
     if(m_crossfadeAutoEnabled->isChecked() && m_fadingBoundaryEnabled->isChecked()) {
         m_fadingBoundaryEnabled->setChecked(false);
@@ -395,6 +425,8 @@ void FadingPageWidget::apply()
     m_settings->set<Settings::Core::Internal::CrossfadingValues>(QVariant::fromValue(crossfadingValues));
     m_settings->set<Settings::Core::Internal::CrossfadeSwitchPolicy>(
         m_crossfadeAutoSwitchPolicy->currentData().toInt());
+    m_settings->set<Settings::Core::Internal::SkipSameAlbumCrossfade>(m_skipAutoCrossfadeSameAlbum->isChecked());
+    m_settings->set<Settings::Core::Internal::AutoCrossfadeAlbumScript>(m_autoCrossfadeAlbumGroupingScript->text());
 
     const int minBufferLength = PlaybackSettings::minimumBufferLengthForFades(
         m_fadingBox->isChecked(), fadingValues, m_crossfadeBox->isChecked(), crossfadingValues);
@@ -409,6 +441,8 @@ void FadingPageWidget::reset()
     m_settings->reset<Settings::Core::Internal::EngineCrossfading>();
     m_settings->reset<Settings::Core::Internal::CrossfadingValues>();
     m_settings->reset<Settings::Core::Internal::CrossfadeSwitchPolicy>();
+    m_settings->reset<Settings::Core::Internal::SkipSameAlbumCrossfade>();
+    m_settings->reset<Settings::Core::Internal::AutoCrossfadeAlbumScript>();
 }
 
 FadingPage::FadingPage(SettingsManager* settings, QObject* parent)

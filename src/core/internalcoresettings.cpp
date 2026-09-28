@@ -152,6 +152,9 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::DecodeHighWatermarkRatio>(0.95, u"Engine/DecodeHighWatermarkRatio"_s);
     m_settings->createSetting<Internal::CrossfadeSwitchPolicy>(
         static_cast<int>(Engine::CrossfadeSwitchPolicy::OverlapStart), u"Playback/CrossfadeSwitchPolicy"_s);
+    m_settings->createSetting<Internal::SkipSameAlbumCrossfade>(false, u"Playback/SkipSameAlbumCrossfade"_s);
+    m_settings->createSetting<Internal::AutoCrossfadeAlbumScript>(
+        QString::fromLatin1(Internal::DefaultAutoCrossfadeAlbumScript), u"Playback/AutoCrossfadeAlbumScript"_s);
     m_settings->createSetting<Internal::OutputDeviceProfiles>(QVariant::fromValue(Engine::OutputDeviceProfiles{}),
                                                               u"Engine/OutputDeviceProfiles"_s);
     m_settings->createSetting<Internal::OpusHeaderWriteMode>(static_cast<int>(OpusRGWriteMode::Album),

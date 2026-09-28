@@ -240,6 +240,11 @@ void registerMinimalEngineSettings(SettingsManager& settings, bool enablePauseSt
     settings.createSetting<Settings::Core::Internal::EngineCrossfading>(enableManualCrossfade, u"Engine/Crossfading"_s);
     settings.createSetting<Settings::Core::Internal::CrossfadingValues>(QVariant::fromValue(crossfadingValues),
                                                                         u"Engine/CrossfadingValues"_s);
+    settings.createSetting<Settings::Core::Internal::SkipSameAlbumCrossfade>(false,
+                                                                             u"Playback/SkipSameAlbumCrossfade"_s);
+    settings.createSetting<Settings::Core::Internal::AutoCrossfadeAlbumScript>(
+        QString::fromLatin1(Settings::Core::Internal::DefaultAutoCrossfadeAlbumScript),
+        u"Playback/AutoCrossfadeAlbumScript"_s);
     settings.createSetting<Settings::Core::Internal::VBRUpdateInterval>(1000, u"Engine/VBRUpdateInterval"_s);
 }
 
@@ -622,6 +627,25 @@ public:
         engine.m_gaplessEnabled = enabled;
     }
 
+    static void setAutoCrossfadeAlbumPolicy(AudioEngine& engine, bool enabled, const QString& script)
+    {
+        engine.m_skipAutoCrossfadeSameAlbum    = enabled;
+        engine.m_autoCrossfadeAlbumGroupScript = engine.m_autoCrossfadeAlbumGroupParser.parse(script);
+        engine.updateAutoCrossfadeAlbumMatch();
+    }
+
+    static void setAutoCrossfadeTracks(AudioEngine& engine, const Track& current, const Track& upcoming)
+    {
+        engine.m_currentTrack           = current;
+        engine.m_upcomingTrackCandidate = upcoming;
+        engine.updateAutoCrossfadeAlbumMatch();
+    }
+
+    static AutoTransitionMode configuredTrackEndAutoTransitionMode(const AudioEngine& engine)
+    {
+        return engine.configuredTrackEndAutoTransitionMode();
+    }
+
     static void setPauseFadeDuration(AudioEngine& engine, int durationMs)
     {
         engine.m_fadingEnabled          = true;
@@ -802,6 +826,62 @@ public:
         return reason;
     }
 };
+
+FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, SameAlbumPolicyUsesGroupingScriptForAutomaticCrossfade)
+{
+    ensureCoreApplication();
+    EngineHarness harness{false};
+
+    const Engine::CrossfadingValues crossfadingValues;
+    AudioEngineTestAccessor::setCrossfadeConfig(harness.engine, true, crossfadingValues,
+                                                Engine::CrossfadeSwitchPolicy::OverlapStart);
+    AudioEngineTestAccessor::setGaplessEnabled(harness.engine, true);
+
+    Track current = harness.createTrack(u"same-album-current.fyt"_s, 0, 120000);
+    current.setAlbum(u"Album"_s);
+    current.setAlbumArtists({u"Artist"_s});
+    current.setDate(u"2026"_s);
+
+    Track upcoming = harness.createTrack(u"same-album-upcoming.fyt"_s, 0, 120000);
+    upcoming.setAlbum(u"Album"_s);
+    upcoming.setAlbumArtists({u"Artist"_s});
+    upcoming.setDate(u"2026"_s);
+
+    AudioEngineTestAccessor::setAutoCrossfadeAlbumPolicy(
+        harness.engine, true, QString::fromLatin1(Settings::Core::Internal::DefaultAutoCrossfadeAlbumScript));
+    AudioEngineTestAccessor::setAutoCrossfadeTracks(harness.engine, current, upcoming);
+    EXPECT_EQ(AudioEngineTestAccessor::configuredTrackEndAutoTransitionMode(harness.engine),
+              AutoTransitionMode::Gapless);
+
+    upcoming.setAlbum(u"Another Album"_s);
+    AudioEngineTestAccessor::setAutoCrossfadeTracks(harness.engine, current, upcoming);
+    EXPECT_EQ(AudioEngineTestAccessor::configuredTrackEndAutoTransitionMode(harness.engine),
+              AutoTransitionMode::Crossfade);
+
+    current.setAlbum({});
+    upcoming.setAlbum({});
+    AudioEngineTestAccessor::setAutoCrossfadeTracks(harness.engine, current, upcoming);
+    EXPECT_EQ(AudioEngineTestAccessor::configuredTrackEndAutoTransitionMode(harness.engine),
+              AutoTransitionMode::Crossfade);
+
+    current.setGenres({u"Continuous"_s});
+    upcoming.setGenres({u"Continuous"_s});
+    AudioEngineTestAccessor::setAutoCrossfadeAlbumPolicy(harness.engine, true, u"%genre%"_s);
+    AudioEngineTestAccessor::setAutoCrossfadeTracks(harness.engine, current, upcoming);
+    EXPECT_EQ(AudioEngineTestAccessor::configuredTrackEndAutoTransitionMode(harness.engine),
+              AutoTransitionMode::Gapless);
+
+    AudioEngineTestAccessor::setGaplessEnabled(harness.engine, false);
+    EXPECT_EQ(AudioEngineTestAccessor::configuredTrackEndAutoTransitionMode(harness.engine), AutoTransitionMode::None);
+
+    AudioEngineTestAccessor::setAutoCrossfadeAlbumPolicy(harness.engine, false, u"%genre%"_s);
+    EXPECT_EQ(AudioEngineTestAccessor::configuredTrackEndAutoTransitionMode(harness.engine),
+              AutoTransitionMode::Crossfade);
+
+    AudioEngineTestAccessor::setAutoCrossfadeAlbumPolicy(harness.engine, true, u"$if("_s);
+    EXPECT_EQ(AudioEngineTestAccessor::configuredTrackEndAutoTransitionMode(harness.engine),
+              AutoTransitionMode::Crossfade);
+}
 
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, LoadTrackFullReinitInitialisesDecoderAndOutput)
 {

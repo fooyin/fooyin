@@ -25,6 +25,7 @@
 #include <core/engine/audiooutput.h>
 #include <core/engine/enginedefs.h>
 #include <core/engine/pcmframe.h>
+#include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <utils/lockfreeringbuffer.h>
 
@@ -265,6 +266,7 @@ private:
     [[nodiscard]] AutoTransitionMode effectiveAutoTransitionMode() const;
     [[nodiscard]] AutoTransitionMode configuredTrackEndAutoTransitionMode() const;
     [[nodiscard]] AutoTransitionMode configuredTrackEndAutoTransitionMode(const Track& track) const;
+    void updateAutoCrossfadeAlbumMatch();
 
     [[nodiscard]] uint64_t scaledPlaybackDelayMs() const;
     [[nodiscard]] uint64_t scaledTransitionDelayMs() const;
@@ -468,11 +470,15 @@ private:
     bool m_fadingEnabled;
     bool m_crossfadeEnabled;
     bool m_gaplessEnabled;
+    bool m_skipAutoCrossfadeSameAlbum;
     bool m_trackEndAutoTransitionEnabled{true};
     Engine::CrossfadeSwitchPolicy m_crossfadeSwitchPolicy;
     AudioDecoder::PlaybackHints m_decoderPlaybackHints{AudioDecoder::NoHints};
     Engine::FadingValues m_fadingValues;
     Engine::CrossfadingValues m_crossfadingValues;
+    ScriptParser m_autoCrossfadeAlbumGroupParser;
+    ParsedScript m_autoCrossfadeAlbumGroupScript;
+    bool m_autoCrossfadeAlbumMatches{false};
 
     AudioClock m_audioClock;
     int m_lastReportedBitrate;

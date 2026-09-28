@@ -321,6 +321,7 @@ AudioEngine::AudioEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManag
     , m_fadingEnabled{m_settings->value<Settings::Core::Internal::EngineFading>()}
     , m_crossfadeEnabled{m_settings->value<Settings::Core::Internal::EngineCrossfading>()}
     , m_gaplessEnabled{m_settings->value<Settings::Core::GaplessPlayback>()}
+    , m_skipAutoCrossfadeSameAlbum{m_settings->value<Settings::Core::Internal::SkipSameAlbumCrossfade>()}
     , m_crossfadeSwitchPolicy{static_cast<Engine::CrossfadeSwitchPolicy>(
           m_settings->value<Settings::Core::Internal::CrossfadeSwitchPolicy>())}
     , m_audioClock{this}
@@ -576,8 +577,9 @@ void AudioEngine::setUpcomingTrackCandidate(const Engine::PlaybackItem& item)
         discardPreparedGaplessTransition(false);
     }
 
-    m_upcomingTrackCandidate                 = track;
-    m_upcomingTrackCandidateItemId           = itemId;
+    m_upcomingTrackCandidate       = track;
+    m_upcomingTrackCandidateItemId = itemId;
+    updateAutoCrossfadeAlbumMatch();
     m_autoAdvanceState.generation            = m_trackGeneration;
     m_autoAdvanceState.drainPrepareRequested = false;
     m_drainFillPrepareDiagnostic             = {};
@@ -1394,6 +1396,7 @@ void AudioEngine::updateCurrentTrackMetadata(const Track& track)
     }
 
     m_currentTrack = track;
+    updateAutoCrossfadeAlbumMatch();
 
     if(auto stream = m_decoder.activeStream(); stream && sameTrackIdentity(stream->track(), track)) {
         stream->setTrack(track);
@@ -2362,6 +2365,7 @@ bool AudioEngine::rebuildCurrentTrackStreamAt(uint64_t positionMs, uint64_t requ
 
     m_upcomingTrackCandidate       = upcomingTrack;
     m_upcomingTrackCandidateItemId = upcomingId;
+    updateAutoCrossfadeAlbumMatch();
 
     if(prevTrackStatus == Engine::TrackStatus::End) {
         updateTrackStatus(Engine::TrackStatus::Buffered);
@@ -2617,6 +2621,7 @@ void AudioEngine::syncDecoderTrackMetadata()
     }
 
     m_currentTrack = changedTrack;
+    updateAutoCrossfadeAlbumMatch();
     setStreamToTrackOriginForTrack(changedTrack);
     updateCurrentStreamReadLimit();
     if(changedTrack.bitrate() >= MinLiveBitrateKbps) {
@@ -2634,6 +2639,7 @@ void AudioEngine::syncTimedTrackMetadata(const AudioStreamPtr& stream, uint64_t 
     }
 
     m_currentTrack = *changed;
+    updateAutoCrossfadeAlbumMatch();
     stream->setTrack(*changed);
     if(changed->bitrate() >= MinLiveBitrateKbps) {
         publishBitrate(changed->bitrate());
@@ -2963,7 +2969,13 @@ AutoTransitionMode AudioEngine::effectiveAutoTransitionMode() const
 
 AutoTransitionMode AudioEngine::configuredTrackEndAutoTransitionMode() const
 {
-    return configuredTrackEndAutoTransitionMode(m_currentTrack);
+    const auto configuredMode = configuredTrackEndAutoTransitionMode(m_currentTrack);
+    if(configuredMode == AutoTransitionMode::Crossfade && m_skipAutoCrossfadeSameAlbum
+       && m_upcomingTrackCandidate.isValid() && m_autoCrossfadeAlbumMatches) {
+        return m_gaplessEnabled ? AutoTransitionMode::Gapless : AutoTransitionMode::None;
+    }
+
+    return configuredMode;
 }
 
 AutoTransitionMode AudioEngine::configuredTrackEndAutoTransitionMode(const Track& track) const
@@ -2992,6 +3004,25 @@ AutoTransitionMode AudioEngine::configuredTrackEndAutoTransitionMode(const Track
     }
 
     return AutoTransitionMode::None;
+}
+
+void AudioEngine::updateAutoCrossfadeAlbumMatch()
+{
+    m_autoCrossfadeAlbumMatches = false;
+
+    if(!m_currentTrack.isValid() || !m_upcomingTrackCandidate.isValid() || !m_autoCrossfadeAlbumGroupScript.isValid()) {
+        return;
+    }
+
+    const QString currentGroup
+        = m_autoCrossfadeAlbumGroupParser.evaluate(m_autoCrossfadeAlbumGroupScript, m_currentTrack);
+    if(currentGroup.isEmpty()) {
+        return;
+    }
+
+    const QString upcomingGroup
+        = m_autoCrossfadeAlbumGroupParser.evaluate(m_autoCrossfadeAlbumGroupScript, m_upcomingTrackCandidate);
+    m_autoCrossfadeAlbumMatches = !upcomingGroup.isEmpty() && currentGroup == upcomingGroup;
 }
 
 uint64_t AudioEngine::scaledPlaybackDelayMs() const
@@ -4231,8 +4262,15 @@ void AudioEngine::setupSettings()
         m_decoder.setBufferWatermarksMs(lowWatermarkMs, highWatermarkMs);
     };
 
+    const auto updateAutoCrossfadeAlbumGrouping = [this]() {
+        const QString script            = m_settings->value<Settings::Core::Internal::AutoCrossfadeAlbumScript>();
+        m_autoCrossfadeAlbumGroupScript = m_autoCrossfadeAlbumGroupParser.parse(script);
+        updateAutoCrossfadeAlbumMatch();
+    };
+
     updateFadeDurations();
     updateDecodeWatermarks();
+    updateAutoCrossfadeAlbumGrouping();
 
     m_settings->subscribe<Settings::Core::Internal::FadingValues>(this, updateFadeDurations);
     m_settings->subscribe<Settings::Core::Internal::EngineFading>(this,
@@ -4242,6 +4280,9 @@ void AudioEngine::setupSettings()
     m_settings->subscribe<Settings::Core::GaplessPlayback>(this, [this](bool enabled) { m_gaplessEnabled = enabled; });
     m_settings->subscribe<Settings::Core::Internal::CrossfadeSwitchPolicy>(
         this, [this](int policy) { m_crossfadeSwitchPolicy = static_cast<Engine::CrossfadeSwitchPolicy>(policy); });
+    m_settings->subscribe<Settings::Core::Internal::SkipSameAlbumCrossfade>(
+        this, [this](bool enabled) { m_skipAutoCrossfadeSameAlbum = enabled; });
+    m_settings->subscribe<Settings::Core::Internal::AutoCrossfadeAlbumScript>(this, updateAutoCrossfadeAlbumGrouping);
     m_settings->subscribe<Settings::Core::Internal::CrossfadingValues>(this, updateFadeDurations);
     m_settings->subscribe<Settings::Core::BufferLength>(this, [this, updateDecodeWatermarks](int bufferLengthMs) {
         const int clampedBufferLengthMs  = std::max(200, bufferLengthMs);
@@ -4689,6 +4730,7 @@ void AudioEngine::setCurrentTrackContext(const Engine::PlaybackItem& item)
 {
     m_currentTrack       = item.track;
     m_currentTrackItemId = item.itemId;
+    updateAutoCrossfadeAlbumMatch();
     ++m_trackGeneration;
     m_lastAppliedSeekRequestId = 0;
     m_lastVbrUpdateAt          = {};

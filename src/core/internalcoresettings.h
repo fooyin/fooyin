@@ -75,9 +75,10 @@ constexpr auto SplitId3v23SemicolonSeparatedTags = "Tagging/SplitId3v23Semicolon
 constexpr auto Id3v2WriteVersion                 = "Tagging/Id3v2WriteVersion";
 constexpr auto Mp3TagWritingScheme               = "Tagging/Mp3TagWritingScheme";
 
-constexpr auto DefaultRemoteReadAheadKb   = 2048;
-constexpr auto DefaultRemotePrebufferMs   = 0;
-constexpr auto DefaultRemoteOpenTimeoutMs = 8000;
+constexpr auto DefaultRemoteReadAheadKb        = 2048;
+constexpr auto DefaultRemotePrebufferMs        = 0;
+constexpr auto DefaultRemoteOpenTimeoutMs      = 8000;
+constexpr auto DefaultAutoCrossfadeAlbumScript = "$if(%album%,%albumartist%|%date%|%album%,)";
 
 [[nodiscard]] FYCORE_EXPORT QStringList defaultFFmpegPriorityExtensions();
 [[nodiscard]] FYCORE_EXPORT QStringList defaultReaderProbeAllExtensions();
@@ -114,6 +115,8 @@ enum CoreInternalSettings : uint32_t
     OutputResamplerPreference = 26 | Type::StringList,
     PlaylistSkipUnavailable   = 27 | Type::Bool,
     ReplayGainLastActiveMode  = 28 | Type::Int,
+    SkipSameAlbumCrossfade    = 29 | Type::Bool,
+    AutoCrossfadeAlbumScript  = 30 | Type::String,
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal
