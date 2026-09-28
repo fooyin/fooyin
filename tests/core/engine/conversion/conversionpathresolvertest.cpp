@@ -45,26 +45,25 @@ ConversionDestination destination(DestinationMode mode, QString pattern = u"%tit
     dest.filenamePattern = std::move(pattern);
     return dest;
 }
-
 } // namespace
 
 TEST(ConversionPathResolverTest, ResolvesSourceFolderDestination)
 {
-    QTemporaryDir dir;
+    const QTemporaryDir dir;
     ASSERT_TRUE(dir.isValid());
 
     const Track track = makeTrack(QDir{dir.path()}.filePath(u"source.wav"_s), u"Song One"_s);
 
-    ConversionPathResolver resolver;
-    const QString path = resolver.previewPath(track, destination(DestinationMode::SourceFolder), u"flac"_s);
+    const QString path
+        = ConversionPathResolver::previewPath(track, destination(DestinationMode::SourceFolder), u"flac"_s);
 
     EXPECT_EQ(path, QDir::cleanPath(QDir{dir.path()}.filePath(u"Song One.flac"_s)));
 }
 
 TEST(ConversionPathResolverTest, ResolvesFixedFolderDestination)
 {
-    QTemporaryDir sourceDir;
-    QTemporaryDir outputDir;
+    const QTemporaryDir sourceDir;
+    const QTemporaryDir outputDir;
     ASSERT_TRUE(sourceDir.isValid());
     ASSERT_TRUE(outputDir.isValid());
 
@@ -73,71 +72,123 @@ TEST(ConversionPathResolverTest, ResolvesFixedFolderDestination)
     auto dest        = destination(DestinationMode::FixedFolder);
     dest.fixedFolder = outputDir.path();
 
-    ConversionPathResolver resolver;
-    const QString path = resolver.previewPath(track, dest, u".wav"_s);
+    const QString path = ConversionPathResolver::previewPath(track, dest, u".wav"_s);
 
     EXPECT_EQ(path, QDir::cleanPath(QDir{outputDir.path()}.filePath(u"Song Two.wav"_s)));
 }
 
 TEST(ConversionPathResolverTest, ResolvesAskFolderDestination)
 {
-    QTemporaryDir sourceDir;
-    QTemporaryDir outputDir;
+    const QTemporaryDir sourceDir;
+    const QTemporaryDir outputDir;
     ASSERT_TRUE(sourceDir.isValid());
     ASSERT_TRUE(outputDir.isValid());
 
     const Track track = makeTrack(QDir{sourceDir.path()}.filePath(u"source.wav"_s), u"Song Three"_s);
 
-    ConversionPathResolver resolver;
-    const QString path = resolver.previewPath(track, destination(DestinationMode::Ask), u"opus"_s, outputDir.path());
+    const QString path
+        = ConversionPathResolver::previewPath(track, destination(DestinationMode::Ask), u"opus"_s, outputDir.path());
 
     EXPECT_EQ(path, QDir::cleanPath(QDir{outputDir.path()}.filePath(u"Song Three.opus"_s)));
 }
 
 TEST(ConversionPathResolverTest, FormatsFilenamePattern)
 {
-    QTemporaryDir dir;
+    const QTemporaryDir dir;
     ASSERT_TRUE(dir.isValid());
 
     Track track = makeTrack(QDir{dir.path()}.filePath(u"source.wav"_s), u"Track Title"_s);
     track.setArtists({u"Artist Name"_s});
 
-    ConversionPathResolver resolver;
-    const QString path
-        = resolver.previewPath(track, destination(DestinationMode::SourceFolder, u"%artist% - %title%"_s), u"flac"_s);
+    const QString path = ConversionPathResolver::previewPath(
+        track, destination(DestinationMode::SourceFolder, u"%artist% - %title%"_s), u"flac"_s);
 
     EXPECT_EQ(path, QDir::cleanPath(QDir{dir.path()}.filePath(u"Artist Name - Track Title.flac"_s)));
 }
 
 TEST(ConversionPathResolverTest, SanitisesInvalidFilenameCharacters)
 {
-    QTemporaryDir dir;
+    const QTemporaryDir dir;
     ASSERT_TRUE(dir.isValid());
 
     const Track track = makeTrack(QDir{dir.path()}.filePath(u"source.wav"_s), u"A:B*C?D\"E<F>G|H"_s);
 
-    ConversionPathResolver resolver;
-    const QString path = resolver.previewPath(track, destination(DestinationMode::SourceFolder), u"wav"_s);
+    const QString path
+        = ConversionPathResolver::previewPath(track, destination(DestinationMode::SourceFolder), u"wav"_s);
 
     EXPECT_EQ(path, QDir::cleanPath(QDir{dir.path()}.filePath(u"A_B_C_D_E_F_G_H.wav"_s)));
 }
 
+TEST(ConversionPathResolverTest, SanitisesDirectorySeparatorsFromMetadata)
+{
+    const QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+
+    Track track = makeTrack(QDir{dir.path()}.filePath(u"source.wav"_s), u"A/B\\C"_s);
+    track.setTrackNumber(u"01"_s);
+
+    const QString path = ConversionPathResolver::previewPath(
+        track, destination(DestinationMode::SourceFolder, u"%track% - %title%"_s), u"wav"_s);
+
+    EXPECT_EQ(path, QDir::cleanPath(QDir{dir.path()}.filePath(u"01 - A-B-C.wav"_s)));
+}
+
+TEST(ConversionPathResolverTest, PreservesDirectorySeparatorsFromPattern)
+{
+    const QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+
+    Track track = makeTrack(QDir{dir.path()}.filePath(u"source.wav"_s), u"Song/Title"_s);
+    track.setAlbum(u"Album/Name"_s);
+
+    const QString path = ConversionPathResolver::previewPath(
+        track, destination(DestinationMode::SourceFolder, u"%album%/%title%"_s), u"flac"_s);
+
+    EXPECT_EQ(path, QDir::cleanPath(QDir{dir.path()}.filePath(u"Album-Name/Song-Title.flac"_s)));
+}
+
+TEST(ConversionPathResolverTest, SanitisesMetadataUsedByFunctions)
+{
+    const QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+
+    const Track track = makeTrack(QDir{dir.path()}.filePath(u"source.wav"_s), u"Song/Title"_s);
+
+    const QString path = ConversionPathResolver::previewPath(
+        track, destination(DestinationMode::SourceFolder, u"$upper(%title%)"_s), u"flac"_s);
+
+    EXPECT_EQ(path, QDir::cleanPath(QDir{dir.path()}.filePath(u"SONG-TITLE.flac"_s)));
+}
+
 TEST(ConversionPathResolverTest, FallsBackWhenPatternIsEmpty)
 {
-    QTemporaryDir dir;
+    const QTemporaryDir dir;
     ASSERT_TRUE(dir.isValid());
 
     const Track track = makeTrack(QDir{dir.path()}.filePath(u"fallback-name.wav"_s));
 
-    ConversionPathResolver resolver;
-    const QString path = resolver.previewPath(track, destination(DestinationMode::SourceFolder, u"[]"_s), u"flac"_s);
+    const QString path
+        = ConversionPathResolver::previewPath(track, destination(DestinationMode::SourceFolder, u"[]"_s), u"flac"_s);
 
     EXPECT_EQ(path, QDir::cleanPath(QDir{dir.path()}.filePath(u"fallback-name.flac"_s)));
 }
 
+TEST(ConversionPathResolverTest, SanitisesDirectorySeparatorsFromFallbackFilename)
+{
+    const QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+
+    const Track track = makeTrack(QDir{dir.path()}.filePath(u"source.wav"_s), u"Fallback/Name"_s);
+
+    const QString path
+        = ConversionPathResolver::previewPath(track, destination(DestinationMode::SourceFolder, u"[]"_s), u"flac"_s);
+
+    EXPECT_EQ(path, QDir::cleanPath(QDir{dir.path()}.filePath(u"Fallback-Name.flac"_s)));
+}
+
 TEST(ConversionPathResolverTest, DetectsDuplicateOutputPaths)
 {
-    QTemporaryDir dir;
+    const QTemporaryDir dir;
     ASSERT_TRUE(dir.isValid());
 
     const Track first  = makeTrack(QDir{dir.path()}.filePath(u"first.wav"_s), u"Same"_s);
@@ -148,7 +199,7 @@ TEST(ConversionPathResolverTest, DetectsDuplicateOutputPaths)
     request.destination = destination(DestinationMode::SourceFolder);
     request.extension   = u"flac"_s;
 
-    const auto results = ConversionPathResolver{}.resolve(request);
+    const auto results = Fooyin::ConversionPathResolver::resolve(request);
 
     ASSERT_EQ(results.size(), 2);
     EXPECT_EQ(results[0].status, ConversionPathStatus::Ready);
@@ -158,8 +209,8 @@ TEST(ConversionPathResolverTest, DetectsDuplicateOutputPaths)
 
 TEST(ConversionPathResolverTest, ResolvesSinglePathForMergedTracks)
 {
-    QTemporaryDir sourceDir;
-    QTemporaryDir outputDir;
+    const QTemporaryDir sourceDir;
+    const QTemporaryDir outputDir;
     ASSERT_TRUE(sourceDir.isValid());
     ASSERT_TRUE(outputDir.isValid());
 
@@ -173,7 +224,7 @@ TEST(ConversionPathResolverTest, ResolvesSinglePathForMergedTracks)
     request.destination.outputStyle = OutputStyle::MergeTracks;
     request.extension               = u"flac"_s;
 
-    const auto results = ConversionPathResolver{}.resolve(request);
+    const auto results = Fooyin::ConversionPathResolver::resolve(request);
 
     ASSERT_EQ(results.size(), 1);
     EXPECT_EQ(results.front().status, ConversionPathStatus::Ready);
@@ -183,8 +234,8 @@ TEST(ConversionPathResolverTest, ResolvesSinglePathForMergedTracks)
 
 TEST(ConversionPathResolverTest, GroupsMultiTrackFilesByResolvedOutputPath)
 {
-    QTemporaryDir sourceDir;
-    QTemporaryDir outputDir;
+    const QTemporaryDir sourceDir;
+    const QTemporaryDir outputDir;
     ASSERT_TRUE(sourceDir.isValid());
     ASSERT_TRUE(outputDir.isValid());
 
@@ -202,7 +253,7 @@ TEST(ConversionPathResolverTest, GroupsMultiTrackFilesByResolvedOutputPath)
     request.destination.outputStyle = OutputStyle::MultiTrackFiles;
     request.extension               = u"flac"_s;
 
-    const auto results = ConversionPathResolver{}.resolve(request);
+    const auto results = Fooyin::ConversionPathResolver::resolve(request);
 
     ASSERT_EQ(results.size(), 2);
     EXPECT_EQ(results[0].status, ConversionPathStatus::Ready);
@@ -215,7 +266,7 @@ TEST(ConversionPathResolverTest, GroupsMultiTrackFilesByResolvedOutputPath)
 
 TEST(ConversionPathResolverTest, AppliesSkipExistingFilePolicy)
 {
-    QTemporaryDir dir;
+    const QTemporaryDir dir;
     ASSERT_TRUE(dir.isValid());
 
     const QString output = QDir{dir.path()}.filePath(u"Existing.flac"_s);
@@ -231,7 +282,7 @@ TEST(ConversionPathResolverTest, AppliesSkipExistingFilePolicy)
     request.destination.existingFileMode = ExistingFileMode::Skip;
     request.extension                    = u"flac"_s;
 
-    const auto results = ConversionPathResolver{}.resolve(request);
+    const auto results = Fooyin::ConversionPathResolver::resolve(request);
 
     ASSERT_EQ(results.size(), 1);
     EXPECT_EQ(results[0].status, ConversionPathStatus::Skipped);
@@ -240,7 +291,7 @@ TEST(ConversionPathResolverTest, AppliesSkipExistingFilePolicy)
 
 TEST(ConversionPathResolverTest, AppliesAskExistingFilePolicy)
 {
-    QTemporaryDir dir;
+    const QTemporaryDir dir;
     ASSERT_TRUE(dir.isValid());
 
     const QString output = QDir{dir.path()}.filePath(u"Existing.flac"_s);
@@ -256,7 +307,7 @@ TEST(ConversionPathResolverTest, AppliesAskExistingFilePolicy)
     request.destination.existingFileMode = ExistingFileMode::Ask;
     request.extension                    = u"flac"_s;
 
-    const auto results = ConversionPathResolver{}.resolve(request);
+    const auto results = Fooyin::ConversionPathResolver::resolve(request);
 
     ASSERT_EQ(results.size(), 1);
     EXPECT_EQ(results[0].status, ConversionPathStatus::NeedsOverwriteDecision);
@@ -264,7 +315,7 @@ TEST(ConversionPathResolverTest, AppliesAskExistingFilePolicy)
 
 TEST(ConversionPathResolverTest, AppliesOverwriteExistingFilePolicy)
 {
-    QTemporaryDir dir;
+    const QTemporaryDir dir;
     ASSERT_TRUE(dir.isValid());
 
     const QString output = QDir{dir.path()}.filePath(u"Existing.flac"_s);
@@ -280,7 +331,7 @@ TEST(ConversionPathResolverTest, AppliesOverwriteExistingFilePolicy)
     request.destination.existingFileMode = ExistingFileMode::Overwrite;
     request.extension                    = u"flac"_s;
 
-    const auto results = ConversionPathResolver{}.resolve(request);
+    const auto results = ConversionPathResolver::resolve(request);
 
     ASSERT_EQ(results.size(), 1);
     EXPECT_EQ(results[0].status, ConversionPathStatus::Ready);

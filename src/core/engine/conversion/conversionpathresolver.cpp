@@ -33,6 +33,36 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 namespace {
+class ConversionScriptEnvironment : public ScriptEnvironment,
+                                    public ScriptEvaluationEnvironment
+{
+public:
+    [[nodiscard]] const ScriptEvaluationEnvironment* evaluationEnvironment() const override
+    {
+        return this;
+    }
+
+    [[nodiscard]] TrackListContextPolicy trackListContextPolicy() const override
+    {
+        return TrackListContextPolicy::Unresolved;
+    }
+
+    [[nodiscard]] QString trackListPlaceholder() const override
+    {
+        return {};
+    }
+
+    [[nodiscard]] bool escapeRichText() const override
+    {
+        return false;
+    }
+
+    [[nodiscard]] bool replacePathSeparators() const override
+    {
+        return true;
+    }
+};
+
 QString normaliseExtension(QString extension)
 {
     extension = extension.trimmed();
@@ -66,6 +96,13 @@ QString sanitisePathSegment(QString segment)
     }
 
     return cleanParts.join(u'/');
+}
+
+QString sanitiseMetadataValue(QString value)
+{
+    value.replace(u'/', u'-');
+    value.replace(u'\\', u'-');
+    return value;
 }
 
 QString fallbackFilename(const Track& track)
@@ -207,10 +244,12 @@ QString ConversionPathResolver::previewPath(const Track& track, const Conversion
     }
 
     ScriptParser parser;
-    QString filename = parser.evaluate(destination.filenamePattern, track).trimmed();
+    const ConversionScriptEnvironment environment;
+    const ScriptContext context{.environment = &environment};
+    QString filename = parser.evaluate(destination.filenamePattern, track, context).trimmed();
     filename         = sanitisePathSegment(filename);
     if(filename.isEmpty()) {
-        filename = sanitisePathSegment(fallbackFilename(track));
+        filename = sanitisePathSegment(sanitiseMetadataValue(fallbackFilename(track)));
     }
 
     return QDir::cleanPath(QDir{folder}.filePath(appendExtension(filename, extension)));
