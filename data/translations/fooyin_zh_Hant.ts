@@ -410,12 +410,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <source>Love flag: 1 when loved, empty otherwise</source>
-        <translation>最愛狀態：1 表示最愛中，空白則為其他</translation>
+        <translation>喜愛狀態：1 表示喜愛，空白則為其他</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Interactive heart editor for the Love flag</source>
-        <translation>互動式愛心編輯器用於最愛狀態</translation>
+        <translation>互動式愛心編輯器用於喜愛狀態</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
@@ -2879,12 +2879,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="80"/>
         <source>Open properties for the currently playing track</source>
-        <translation>開啟目前播放曲目的屬性</translation>
+        <translation>開啟目前進行播放曲目的屬性</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="82"/>
         <source>Open the folder of the currently playing track</source>
-        <translation>開啟目前播放曲目的資料夾</translation>
+        <translation>開啟目前進行播放曲目的資料夾</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="173"/>
@@ -2975,12 +2975,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="68"/>
         <source>Now playing track</source>
-        <translation>立即播放曲目</translation>
+        <translation>現正進行播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="69"/>
         <source>Use the currently playing track for selection-based commands</source>
-        <translation>使用目前播放的曲目進行基於選擇的指令</translation>
+        <translation>使用目前進行播放曲目 用於基於選擇的指令</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="70"/>
@@ -4018,7 +4018,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="83"/>
         <source>Playing track</source>
-        <translation>播放曲目</translation>
+        <translation>進行播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="84"/>
@@ -4038,7 +4038,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="89"/>
         <source>Playing (blank when stopped)</source>
-        <translation>進行播放 (空白當於停止時)</translation>
+        <translation>進行播放 (空白當已停止時)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="93"/>
@@ -6359,7 +6359,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="235"/>
         <source>Delete currently playing file</source>
-        <translation>刪除目前正在播放的檔案</translation>
+        <translation>刪除目前進行播放的檔案</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="279"/>
@@ -7631,32 +7631,32 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1411"/>
         <source>Toggle loved</source>
-        <translation>切換最愛的</translation>
+        <translation>切換喜愛的</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1411"/>
         <source>Toggle Loved for selected tracks</source>
-        <translation>切換最愛的 用於所選曲目</translation>
+        <translation>切換喜愛的 用於所選曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1413"/>
         <source>Love</source>
-        <translation>最愛</translation>
+        <translation>喜愛</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1413"/>
         <source>Love selected tracks</source>
-        <translation>最愛所選的曲目</translation>
+        <translation>喜愛所選的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1415"/>
         <source>Unlove</source>
-        <translation>取消最愛</translation>
+        <translation>取消喜愛</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1415"/>
         <source>Unlove selected tracks</source>
-        <translation>取消最愛所選曲目</translation>
+        <translation>取消喜愛所選曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1431"/>
@@ -7773,7 +7773,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2146"/>
         <source>Always continue playing if a track is unavailable</source>
-        <translation>如果曲目無法供用，則繼續播放下一首</translation>
+        <translation>如果曲目無法供用，總是繼續進行播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2168"/>
@@ -8485,7 +8485,7 @@ or selected rows</source>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="88"/>
         <source>Only show unloved hearts on hovered
 or selected rows</source>
-        <translation>僅顯示已經取消最愛愛心的 在游標懸停處
+        <translation>僅顯示已經取消喜愛愛心的 在游標懸停處
 或所選取的行列</translation>
     </message>
     <message>
@@ -8526,12 +8526,12 @@ or selected rows</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="102"/>
         <source>Unloved heart colour</source>
-        <translation>取消最愛的愛心顏色</translation>
+        <translation>取消喜愛的愛心顏色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="104"/>
         <source>Now Playing</source>
-        <translation>立即播放</translation>
+        <translation>現正進行播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="108"/>
@@ -8604,7 +8604,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="168"/>
         <source>Love Editor</source>
-        <translation>最愛編輯器</translation>
+        <translation>喜愛編輯器</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="173"/>
@@ -8634,7 +8634,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="166"/>
         <source>Controls the heart size used by the love editor widget</source>
-        <translation>控制愛心大小，依照編輯器小工具所使用的</translation>
+        <translation>控制愛心大小，依照喜愛編輯器小工具所使用的</translation>
     </message>
 </context>
 <context>
@@ -9118,7 +9118,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="321"/>
         <source>Loved</source>
-        <translation>最愛的</translation>
+        <translation>喜愛的</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="322"/>
@@ -10417,7 +10417,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/controls/lovecontrol.cpp" line="232"/>
         <source>Love Control</source>
-        <translation>最愛控制</translation>
+        <translation>喜愛控制</translation>
     </message>
 </context>
 <context>
@@ -12060,7 +12060,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="356"/>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="357"/>
         <source>Now Playing</source>
-        <translation>現正播放</translation>
+        <translation>現正進行播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="357"/>
@@ -12912,7 +12912,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="241"/>
         <source>Select the currently playing track when changed</source>
-        <translation>選擇播放中的曲目，當有變更時</translation>
+        <translation>選擇目前進行播放的曲目，當已經變更時</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="246"/>
@@ -13195,22 +13195,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="102"/>
         <source>Replace Playing Tracks with the selected tracks and start playback at the first selection</source>
-        <translation>取代播放中的曲目，使用所選的曲目，並開始播放於第一個選取的</translation>
+        <translation>取代進行播放的曲目，使用所選的曲目，並開始播放於第一個選取的</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="104"/>
         <source>Replace Playing Tracks with the first selected track&apos;s group and start playback at that track</source>
-        <translation>取代播放中的曲目，用第一個所選取曲目的群組，並開始播放於該曲目</translation>
+        <translation>取代進行播放的曲目，用第一個所選取曲目的群組，並開始播放於該曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="106"/>
         <source>Replace Playing Tracks with the current view and start playback at the first selected track</source>
-        <translation>取代播放中的曲目，用目前所檢視的，並開始播放於第一個所選取的曲目</translation>
+        <translation>取代進行播放的曲目，用目前所檢視的，並開始播放於第一個所選取的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="108"/>
         <source>Keep Playing Tracks, insert the selected tracks next, and play the first selection immediately</source>
-        <translation>保留播放中曲目，插進所取的曲目下一個，並立刻播放第一個選取</translation>
+        <translation>保留進行播放的曲目，插進所取的曲目下一個，並立刻播放第一個選取</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="116"/>
@@ -13250,7 +13250,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="144"/>
         <source>Keep the current track at the top of the Playing Tracks view</source>
-        <translation>保留目前曲目於 播放曲目 檢視的頂端</translation>
+        <translation>保留目前曲目於 進行播放曲目 檢視的頂端</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="145"/>
@@ -13437,7 +13437,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="151"/>
         <source>Use the currently playing track&apos;s artwork as the playlist background</source>
-        <translation>使用目前播放曲目的圖面作為播放清單背景</translation>
+        <translation>使用目前進行播放曲目的圖面作為播放清單背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="152"/>
@@ -13568,12 +13568,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="198"/>
         <source>Use a custom background colour for the currently playing row; transparency is supported</source>
-        <translation>使用自訂背景顏色來呈現目前播放的欄列；支援透明度</translation>
+        <translation>使用自訂背景顏色來呈現目前進行播放的欄列；支援透明度</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="199"/>
         <source>Use a custom font for the currently playing row</source>
-        <translation>使用自訂字型用於正在播放的欄列</translation>
+        <translation>使用自訂字型用於目前進行播放的欄列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="201"/>
@@ -13628,7 +13628,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="225"/>
         <source>Playing row</source>
-        <translation>播放欄列</translation>
+        <translation>進行播放欄列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="233"/>
@@ -13889,7 +13889,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="51"/>
         <source>Playing</source>
-        <translation>播放中</translation>
+        <translation>進行播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="52"/>
@@ -13934,7 +13934,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="61"/>
         <source>Love</source>
-        <translation>最愛</translation>
+        <translation>喜愛</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="62"/>
@@ -14537,12 +14537,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="59"/>
         <source>Playing text</source>
-        <translation>播放文字</translation>
+        <translation>進行播放文字</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="60"/>
         <source>Playing background</source>
-        <translation>播放背景</translation>
+        <translation>進行播放背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="62"/>
@@ -16132,7 +16132,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="302"/>
         <source>Show playing tracks</source>
-        <translation>顯示播放中的曲目</translation>
+        <translation>顯示進行播放的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="303"/>
@@ -16142,7 +16142,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="313"/>
         <source>Show playing queue track</source>
-        <translation>顯示播放佇列曲目</translation>
+        <translation>顯示進行播放佇列曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="369"/>
@@ -16220,7 +16220,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="40"/>
         <source>Playing Tracks</source>
-        <translation>播放中的曲目</translation>
+        <translation>進行播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="41"/>
@@ -16245,7 +16245,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="45"/>
         <source>Show playing queue track</source>
-        <translation>顯示播放佇列曲目</translation>
+        <translation>顯示進行播放佇列曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="46"/>
@@ -16308,7 +16308,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="212"/>
         <source>Playing Tracks</source>
-        <translation>播放中的曲目</translation>
+        <translation>進行播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="215"/>
@@ -19319,7 +19319,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="125"/>
         <source>Import play counts and Loved status from enabled services when a track starts playing</source>
-        <translation>匯入播放次數和最愛狀態，來自已經啟用的服務，當曲目開始播放時</translation>
+        <translation>匯入播放次數和喜愛狀態，來自已經啟用的服務，當曲目開始進行播放時</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerpage.cpp" line="129"/>
@@ -19477,12 +19477,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="324"/>
         <source>Submit loved changes</source>
-        <translation>提交最愛的變更</translation>
+        <translation>提交喜愛的變更</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="325"/>
         <source>Submit Love and Unlove changes to this service</source>
-        <translation>提交最愛與取消最愛的變更至此服務</translation>
+        <translation>提交喜愛與取消喜愛的變更至此服務</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="329"/>
@@ -19492,7 +19492,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="331"/>
         <source>Import play counts and Loved status from this service when a track starts playing</source>
-        <translation>匯入播放次數和最愛狀態來自此服務，當歌曲開始播放時</translation>
+        <translation>匯入播放次數和喜愛狀態來自此服務，當歌曲開始進行播放時</translation>
     </message>
 </context>
 <context>
@@ -21448,7 +21448,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="111"/>
         <source>Playing track</source>
-        <translation>播放曲目</translation>
+        <translation>進行播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="113"/>
@@ -21772,7 +21772,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="58"/>
         <source>Love</source>
-        <translation>最愛</translation>
+        <translation>喜愛</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="59"/>
@@ -22726,12 +22726,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="103"/>
         <source>Show playing &amp;track</source>
-        <translation>顯示播放中的曲目(&amp;T)</translation>
+        <translation>顯示進行播放曲目(&amp;T)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="104"/>
         <source>Show the currently playing track in the playlist</source>
-        <translation>在播放清單中顯示目前播放中的曲目</translation>
+        <translation>在播放清單中顯示目前進行播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="122"/>
@@ -23218,7 +23218,7 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="99"/>
         <source>Playing (or selected when stopped)</source>
-        <translation>進行播放(或所選的當已停止時)</translation>
+        <translation>進行播放 (或所選的當已停止時)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="101"/>
@@ -23338,7 +23338,7 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="241"/>
         <source>Playing</source>
-        <translation>播放中</translation>
+        <translation>進行播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="242"/>
@@ -23677,7 +23677,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="311"/>
         <source>Love Control</source>
-        <translation>最愛控制</translation>
+        <translation>喜愛控制</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="331"/>
