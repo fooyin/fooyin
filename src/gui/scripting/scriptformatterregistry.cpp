@@ -105,6 +105,12 @@ bool italic(RichFormatting& formatting, const QString& /*option*/)
     return true;
 }
 
+bool underline(RichFormatting& formatting, const QString& /*option*/)
+{
+    formatting.font.setUnderline(true);
+    return true;
+}
+
 bool fontFamily(RichFormatting& formatting, const QString& option)
 {
     if(option.isEmpty()) {
@@ -208,6 +214,7 @@ bool alignRight(RichFormatting& formatting, const QString& /*option*/)
 constexpr std::array FormatterHandlers{
     FormatterHandlerEntry{.name = "b"_L1, .handler = &bold},
     FormatterHandlerEntry{.name = "i"_L1, .handler = &italic},
+    FormatterHandlerEntry{.name = "u"_L1, .handler = &underline},
     FormatterHandlerEntry{.name = "font"_L1, .handler = &fontFamily},
     FormatterHandlerEntry{.name = "size"_L1, .handler = &fontSize},
     FormatterHandlerEntry{.name = "sized"_L1, .handler = &fontDelta},

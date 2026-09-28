@@ -66,6 +66,14 @@ TEST_F(ScriptFormatterTest, Italic)
     EXPECT_TRUE(result.blocks.front().format.font.italic());
 }
 
+TEST_F(ScriptFormatterTest, Underline)
+{
+    const auto result = m_formattter.evaluate(u"<u>I</u> am a test."_s);
+    ASSERT_EQ(2, result.size());
+    EXPECT_TRUE(result.blocks.front().format.font.underline());
+    EXPECT_FALSE(result.blocks.back().format.font.underline());
+}
+
 TEST_F(ScriptFormatterTest, Rgb)
 {
     const auto result = m_formattter.evaluate(u"<rgb=255,0,0>I am a test."_s);
