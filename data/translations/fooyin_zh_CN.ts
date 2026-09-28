@@ -4018,12 +4018,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="83"/>
         <source>Playing track</source>
-        <translation type="unfinished">播放音轨</translation>
+        <translation>播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="84"/>
         <source>Selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>已选曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="85"/>
