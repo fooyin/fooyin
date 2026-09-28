@@ -42,7 +42,7 @@ InputCreator FlacPlugin::inputCreator() const
 
 QString FlacPlugin::encoderName() const
 {
-    return u"FLAC"_s;
+    return u"libFLAC"_s;
 }
 
 EncoderCreator FlacPlugin::encoderCreator() const

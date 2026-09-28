@@ -559,17 +559,20 @@ QWidget* ConverterSetupDialog::createOtherPage()
 
 void ConverterSetupDialog::populateProfiles()
 {
-    m_runtimeEncoders = m_registry ? m_registry->availableEncoders() : std::vector<AudioEncoderInfo>{};
+    m_runtimeEncoders = m_registry->availableEncoders();
     m_profiles.clear();
 
-    for(const AudioEncoderInfo& info : std::as_const(m_runtimeEncoders)) {
+    const auto preferredEncoders = m_registry->preferredEncoders();
+    for(const AudioEncoderInfo& info : preferredEncoders) {
         m_profiles.push_back({.info = info, .storageId = u"builtin:%1"_s.arg(info.id), .builtIn = true});
     }
 
     for(const StoredEncoderProfile& stored : ConverterSettings::encoderProfiles()) {
-        const auto runtime = std::ranges::find_if(
+        const auto exact = std::ranges::find_if(
             m_runtimeEncoders, [&stored](const AudioEncoderInfo& info) { return info.id == stored.baseEncoderId; });
-        if(runtime == m_runtimeEncoders.cend()) {
+        const std::optional<AudioEncoderInfo> runtime
+            = exact != m_runtimeEncoders.cend() ? std::optional{*exact} : m_registry->encoderInfo(stored.baseEncoderId);
+        if(!runtime) {
             continue;
         }
 
@@ -582,8 +585,8 @@ void ConverterSetupDialog::populateProfiles()
         }
 
         if(stored.overridesBuiltIn) {
-            const auto builtIn = std::ranges::find_if(m_profiles, [&stored](const EncoderProfileEntry& entry) {
-                return entry.info.id == stored.baseEncoderId;
+            const auto builtIn = std::ranges::find_if(m_profiles, [&info](const EncoderProfileEntry& entry) {
+                return entry.info.profile.formatId == info.profile.formatId;
             });
             if(builtIn != m_profiles.end()) {
                 builtIn->info      = std::move(info);
@@ -893,10 +896,7 @@ void ConverterSetupDialog::importPresets()
     }
 
     for(const StoredConversionPreset& stored : imported) {
-        const bool encoderAvailable = std::ranges::any_of(m_runtimeEncoders, [&stored](const AudioEncoderInfo& info) {
-            return info.id == stored.preset.encoder.profile.id;
-        });
-        if(!encoderAvailable) {
+        if(!m_registry->encoderInfo(stored.preset.encoder.profile.id)) {
             QMessageBox::warning(this, tr("Import Converter Presets"),
                                  tr("Encoder is unavailable for preset: %1").arg(stored.name));
             return;
@@ -974,9 +974,11 @@ void ConverterSetupDialog::applyPreset(const StoredConversionPreset& stored)
     }
 
     if(profileRow < 0) {
-        const auto runtime = std::ranges::find_if(
+        const auto exact = std::ranges::find_if(
             m_runtimeEncoders, [&profile](const AudioEncoderInfo& info) { return info.id == profile.id; });
-        if(runtime != m_runtimeEncoders.end()) {
+        const std::optional<AudioEncoderInfo> runtime
+            = exact != m_runtimeEncoders.end() ? std::optional{*exact} : m_registry->encoderInfo(profile.id);
+        if(runtime) {
             AudioEncoderInfo info         = *runtime;
             info.name                     = profile.name;
             info.profile.name             = profile.name;

@@ -189,6 +189,7 @@ public:
         profile.codecName     = u"capture"_s;
         return {{.id                  = profile.id,
                  .backendId           = u"capture"_s,
+                 .backendName         = u"Capture"_s,
                  .name                = profile.name,
                  .description         = {},
                  .profile             = profile,

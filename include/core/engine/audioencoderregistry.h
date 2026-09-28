@@ -23,15 +23,25 @@
 
 #include <core/engine/audioencoder.h>
 
+#include <optional>
 #include <vector>
 
 namespace Fooyin {
 class FYCORE_EXPORT AudioEncoderRegistry
 {
 public:
-    void addEncoderBackend(const QString& id, const QString& name, EncoderCreator creator);
+    enum class BackendPriority : int8_t
+    {
+        Fallback = -100,
+        Normal   = 0,
+    };
+
+    void addEncoderBackend(const QString& id, const QString& name, EncoderCreator creator,
+                           BackendPriority priority = BackendPriority::Normal);
 
     [[nodiscard]] std::vector<AudioEncoderInfo> availableEncoders() const;
+    [[nodiscard]] std::vector<AudioEncoderInfo> preferredEncoders() const;
+    [[nodiscard]] std::optional<AudioEncoderInfo> encoderInfo(const QString& encoderId) const;
     [[nodiscard]] std::unique_ptr<AudioEncoder> createEncoder(const QString& encoderId) const;
 
     void reset();
@@ -42,6 +52,7 @@ private:
         QString id;
         QString name;
         EncoderCreator creator;
+        BackendPriority priority{BackendPriority::Normal};
     };
 
     std::vector<Backend> m_backends;

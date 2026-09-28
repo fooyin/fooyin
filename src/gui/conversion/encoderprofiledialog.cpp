@@ -31,6 +31,9 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
+#include <algorithm>
+#include <limits>
+
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
@@ -61,7 +64,9 @@ EncoderProfileDialog::EncoderProfileDialog(std::vector<AudioEncoderInfo> availab
                                            const AudioEncoderInfo& initial, bool allowEncoderChange, QWidget* parent)
     : QDialog{parent}
     , m_availableEncoders{std::move(availableEncoders)}
-    , m_encoder{new QComboBox(this)}
+    , m_format{new QComboBox(this)}
+    , m_backendLabel{new QLabel(tr("Backend") + ":"_L1, this)}
+    , m_backend{new QComboBox(this)}
     , m_name{new QLineEdit(this)}
     , m_options{new QGroupBox(tr("Options"), this)}
     , m_optionsLayout{new QGridLayout(m_options)}
@@ -81,10 +86,14 @@ EncoderProfileDialog::EncoderProfileDialog(std::vector<AudioEncoderInfo> availab
     setModal(true);
     resize(520, 300);
 
-    for(const AudioEncoderInfo& encoder : std::as_const(m_availableEncoders)) {
-        m_encoder->addItem(encoder.name);
+    for(int encoderIndex{0}; std::cmp_less(encoderIndex, m_availableEncoders.size()); ++encoderIndex) {
+        const AudioEncoderInfo& encoder = m_availableEncoders.at(encoderIndex);
+        const int formatIndex           = m_format->findData(encoder.profile.formatId);
+        if(formatIndex < 0) {
+            m_format->addItem(encoder.name, encoder.profile.formatId);
+        }
     }
-    m_encoder->setEnabled(allowEncoderChange);
+    m_format->setEnabled(allowEncoderChange);
 
     m_bitrate->setSuffix(u" kbps"_s);
     m_quality->setTicksVisible(true);
@@ -109,7 +118,9 @@ EncoderProfileDialog::EncoderProfileDialog(std::vector<AudioEncoderInfo> availab
 
     row = 0;
     encoderLayout->addWidget(new QLabel(tr("Format") + ":"_L1, encoderGroup), row, 0);
-    encoderLayout->addWidget(m_encoder, row++, 1);
+    encoderLayout->addWidget(m_format, row++, 1);
+    encoderLayout->addWidget(m_backendLabel, row, 0);
+    encoderLayout->addWidget(m_backend, row++, 1);
     encoderLayout->addWidget(new QLabel(tr("Name") + ":"_L1, encoderGroup), row, 0);
     encoderLayout->addWidget(m_name, row++, 1);
     encoderLayout->setColumnStretch(1, 1);
@@ -119,7 +130,8 @@ EncoderProfileDialog::EncoderProfileDialog(std::vector<AudioEncoderInfo> availab
 
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     QObject::connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-    QObject::connect(m_encoder, &QComboBox::currentIndexChanged, this, &EncoderProfileDialog::encoderChanged);
+    QObject::connect(m_format, &QComboBox::currentIndexChanged, this, &EncoderProfileDialog::formatChanged);
+    QObject::connect(m_backend, &QComboBox::currentIndexChanged, this, &EncoderProfileDialog::backendChanged);
     QObject::connect(m_name, &QLineEdit::textChanged, this, &EncoderProfileDialog::updateAcceptState);
     QObject::connect(m_mode, &QComboBox::currentIndexChanged, this, &EncoderProfileDialog::updateMode);
     QObject::connect(m_quality, &DoubleSliderEditor::valueChanged, this, &EncoderProfileDialog::updateBitrateEstimate);
@@ -130,15 +142,22 @@ EncoderProfileDialog::EncoderProfileDialog(std::vector<AudioEncoderInfo> availab
     layout->addStretch();
     layout->addWidget(buttonBox);
 
-    int initialIndex{0};
+    const QString initialFormat  = initial.profile.formatId.isEmpty() ? initial.profile.id : initial.profile.formatId;
+    const int initialFormatIndex = std::max(0, m_format->findData(initialFormat));
+    m_format->setCurrentIndex(initialFormatIndex);
+    formatChanged(initialFormatIndex);
+
+    int initialBackendIndex{-1};
     for(int i{0}; std::cmp_less(i, m_availableEncoders.size()); ++i) {
         if(m_availableEncoders.at(i).id == initial.id) {
-            initialIndex = i;
+            initialBackendIndex = m_backend->findData(i);
             break;
         }
     }
-    m_encoder->setCurrentIndex(initialIndex);
-    encoderChanged(initialIndex);
+    if(initialBackendIndex >= 0) {
+        m_backend->setCurrentIndex(initialBackendIndex);
+    }
+    encoderChanged(currentEncoderIndex());
 
     m_name->setText(initial.profile.name.isEmpty() ? initial.name : initial.profile.name);
     const int modeIndex = m_mode->findData(static_cast<int>(initial.profile.mode));
@@ -152,6 +171,42 @@ EncoderProfileDialog::EncoderProfileDialog(std::vector<AudioEncoderInfo> availab
 
     updateMode();
     updateAcceptState();
+}
+
+void EncoderProfileDialog::formatChanged(int index)
+{
+    m_backend->clear();
+    if(index < 0) {
+        encoderChanged(-1);
+        return;
+    }
+
+    const QString formatId = m_format->itemData(index).toString();
+    int preferredIndex{-1};
+    int preferredPriority{std::numeric_limits<int>::min()};
+    for(int encoderIndex{0}; std::cmp_less(encoderIndex, m_availableEncoders.size()); ++encoderIndex) {
+        const AudioEncoderInfo& encoder = m_availableEncoders.at(encoderIndex);
+        if(encoder.profile.formatId != formatId) {
+            continue;
+        }
+
+        m_backend->addItem(encoder.backendName, encoderIndex);
+        if(encoder.backendPriority > preferredPriority) {
+            preferredIndex    = m_backend->count() - 1;
+            preferredPriority = encoder.backendPriority;
+        }
+    }
+
+    m_backend->setCurrentIndex(preferredIndex);
+    const bool multipleBackends = m_backend->count() > 1;
+    m_backendLabel->setVisible(multipleBackends);
+    m_backend->setVisible(multipleBackends);
+    encoderChanged(currentEncoderIndex());
+}
+
+void EncoderProfileDialog::backendChanged(int /*index*/)
+{
+    encoderChanged(currentEncoderIndex());
 }
 
 void EncoderProfileDialog::encoderChanged(int index)
@@ -230,7 +285,7 @@ void EncoderProfileDialog::updateMode()
 
 void EncoderProfileDialog::updateBitrateEstimate()
 {
-    const int index = m_encoder->currentIndex();
+    const int index = currentEncoderIndex();
     if(index < 0 || std::cmp_greater_equal(index, m_availableEncoders.size())) {
         m_bitrateEstimateLabel->hide();
         m_bitrateEstimate->hide();
@@ -252,12 +307,12 @@ void EncoderProfileDialog::updateBitrateEstimate()
 
 void EncoderProfileDialog::updateAcceptState() const
 {
-    m_okButton->setEnabled(m_encoder->currentIndex() >= 0 && !m_name->text().trimmed().isEmpty());
+    m_okButton->setEnabled(currentEncoderIndex() >= 0 && !m_name->text().trimmed().isEmpty());
 }
 
 AudioEncoderInfo EncoderProfileDialog::encoderInfo() const
 {
-    const int index = m_encoder->currentIndex();
+    const int index = currentEncoderIndex();
     if(index < 0 || std::cmp_greater_equal(index, m_availableEncoders.size())) {
         return {};
     }
@@ -270,6 +325,11 @@ AudioEncoderInfo EncoderProfileDialog::encoderInfo() const
     result.profile.bitrateKbps      = m_bitrate->value();
     result.profile.compressionLevel = result.capabilities.compressionLevel.isValid() ? m_level->value() : -1;
     return result;
+}
+
+int EncoderProfileDialog::currentEncoderIndex() const
+{
+    return m_backend->currentIndex() >= 0 ? m_backend->currentData().toInt() : -1;
 }
 } // namespace Fooyin
 

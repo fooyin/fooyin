@@ -46,13 +46,18 @@ public:
     [[nodiscard]] AudioEncoderInfo encoderInfo() const;
 
 private:
+    void formatChanged(int index);
+    void backendChanged(int index);
     void encoderChanged(int index);
     void updateMode();
     void updateBitrateEstimate();
     void updateAcceptState() const;
+    [[nodiscard]] int currentEncoderIndex() const;
 
     std::vector<AudioEncoderInfo> m_availableEncoders;
-    QComboBox* m_encoder;
+    QComboBox* m_format;
+    QLabel* m_backendLabel;
+    QComboBox* m_backend;
     QLineEdit* m_name;
     QGroupBox* m_options;
     QGridLayout* m_optionsLayout;

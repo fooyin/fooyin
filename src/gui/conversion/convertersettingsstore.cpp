@@ -39,6 +39,7 @@ QJsonObject encoderProfileToJson(const EncoderProfile& profile)
 {
     return {
         {u"id"_s, profile.id},
+        {u"formatId"_s, profile.formatId},
         {u"name"_s, profile.name},
         {u"extension"_s, profile.extension},
         {u"container"_s, profile.containerName},
@@ -53,7 +54,14 @@ QJsonObject encoderProfileToJson(const EncoderProfile& profile)
 EncoderProfile encoderProfileFromJson(const QJsonObject& object)
 {
     EncoderProfile profile;
-    profile.id               = object.value(u"id"_s).toString();
+    profile.id       = object.value(u"id"_s).toString();
+    profile.formatId = object.value(u"formatId"_s).toString();
+    if(profile.formatId.isEmpty() && profile.id.startsWith(u"ffmpeg-"_s)) {
+        profile.formatId = profile.id.sliced(7);
+    }
+    else if(profile.formatId.isEmpty()) {
+        profile.formatId = profile.id;
+    }
     profile.name             = object.value(u"name"_s).toString();
     profile.extension        = object.value(u"extension"_s).toString();
     profile.containerName    = object.value(u"container"_s).toString();

@@ -50,6 +50,7 @@ enum class EncoderMode : uint8_t
 struct EncoderProfile
 {
     QString id;
+    QString formatId;
     QString name;
     QString extension;
     QString containerName;

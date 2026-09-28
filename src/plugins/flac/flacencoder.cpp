@@ -133,6 +133,7 @@ std::vector<AudioEncoderInfo> FlacEncoder::availableEncoders() const
 {
     EncoderProfile profile;
     profile.id               = u"flac"_s;
+    profile.formatId         = u"flac"_s;
     profile.name             = u"FLAC"_s;
     profile.extension        = u"flac"_s;
     profile.containerName    = u"flac"_s;

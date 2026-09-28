@@ -87,9 +87,8 @@ ConversionTrackResult failedResult(const Track& track, const QString& outputPath
 
 bool profileSupportsPictures(const AudioEncoderRegistry& registry, const QString& profileId)
 {
-    const auto encoders = registry.availableEncoders();
-    const auto it = std::ranges::find_if(encoders, [&profileId](const auto& info) { return info.id == profileId; });
-    return it != encoders.end() && it->supportsPictures;
+    const auto info = registry.encoderInfo(profileId);
+    return info && info->supportsPictures;
 }
 
 TrackCovers readCovers(const AudioLoader& loader, const Track& track)

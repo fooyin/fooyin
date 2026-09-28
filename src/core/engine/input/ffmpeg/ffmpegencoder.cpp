@@ -44,6 +44,7 @@ namespace {
 struct FFmpegProfileDescriptor
 {
     QString id;
+    QString formatId;
     QString name;
     QString extension;
     QString containerName;
@@ -335,6 +336,7 @@ EncoderProfile makeProfile(const FFmpegProfileDescriptor& descriptor, const QStr
 {
     EncoderProfile profile;
     profile.id               = descriptor.id;
+    profile.formatId         = descriptor.formatId;
     profile.name             = descriptor.name;
     profile.extension        = descriptor.extension;
     profile.containerName    = descriptor.containerName;
@@ -365,6 +367,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
     return {
         {
             .id               = u"ffmpeg-wav"_s,
+            .formatId         = u"wav"_s,
             .name             = u"WAV"_s,
             .extension        = u"wav"_s,
             .containerName    = u"wav"_s,
@@ -382,7 +385,8 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
         },
         {
             .id               = u"ffmpeg-flac"_s,
-            .name             = u"FLAC (FFmpeg)"_s,
+            .formatId         = u"flac"_s,
+            .name             = u"FLAC"_s,
             .extension        = u"flac"_s,
             .containerName    = u"flac"_s,
             .codecNames       = {u"flac"_s},
@@ -400,6 +404,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
         },
         {
             .id               = u"ffmpeg-alac"_s,
+            .formatId         = u"alac"_s,
             .name             = u"Apple Lossless"_s,
             .extension        = u"m4a"_s,
             .containerName    = u"ipod"_s,
@@ -417,6 +422,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
         },
         {
             .id               = u"ffmpeg-wavpack"_s,
+            .formatId         = u"wavpack"_s,
             .name             = u"WavPack"_s,
             .extension        = u"wv"_s,
             .containerName    = u"wv"_s,
@@ -435,6 +441,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
         },
         {
             .id               = u"ffmpeg-mp3"_s,
+            .formatId         = u"mp3"_s,
             .name             = u"MP3"_s,
             .extension        = u"mp3"_s,
             .containerName    = u"mp3"_s,
@@ -456,6 +463,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
         },
         {
             .id             = u"ffmpeg-aac"_s,
+            .formatId       = u"aac"_s,
             .name           = u"AAC"_s,
             .extension      = u"m4a"_s,
             .containerName  = u"ipod"_s,
@@ -475,6 +483,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
         },
         {
             .id             = u"ffmpeg-vorbis"_s,
+            .formatId       = u"vorbis"_s,
             .name           = u"Ogg Vorbis"_s,
             .extension      = u"ogg"_s,
             .containerName  = u"ogg"_s,
@@ -493,6 +502,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
         },
         {
             .id               = u"ffmpeg-opus"_s,
+            .formatId         = u"opus"_s,
             .name             = u"Opus"_s,
             .extension        = u"opus"_s,
             .containerName    = u"ogg"_s,

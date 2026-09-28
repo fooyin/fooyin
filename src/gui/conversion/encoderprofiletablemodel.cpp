@@ -22,6 +22,7 @@
 #include <QUuid>
 
 #include <algorithm>
+#include <limits>
 #include <utility>
 
 using namespace Qt::StringLiterals;
@@ -155,8 +156,11 @@ bool EncoderProfileTableModel::removeRows(int row, int count, const QModelIndex&
             return false;
         }
 
-        const auto runtime = std::ranges::find(*m_encoders, entry.info.id, &AudioEncoderInfo::id);
-        if(runtime == m_encoders->end()) {
+        const QString formatId = entry.info.profile.formatId;
+        const auto runtime     = std::ranges::max_element(*m_encoders, {}, [formatId](const AudioEncoderInfo& encoder) {
+            return encoder.profile.formatId == formatId ? encoder.backendPriority : std::numeric_limits<int>::min();
+        });
+        if(runtime == m_encoders->end() || runtime->profile.formatId != formatId) {
             return false;
         }
 

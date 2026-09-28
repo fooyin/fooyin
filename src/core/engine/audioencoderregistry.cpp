@@ -22,14 +22,15 @@
 #include <utils/stringcollator.h>
 
 namespace Fooyin {
-void AudioEncoderRegistry::addEncoderBackend(const QString& id, const QString& name, EncoderCreator creator)
+void AudioEncoderRegistry::addEncoderBackend(const QString& id, const QString& name, EncoderCreator creator,
+                                             BackendPriority priority)
 {
     if(id.isEmpty() || !creator) {
         return;
     }
 
     std::erase_if(m_backends, [&id](const Backend& backend) { return backend.id == id; });
-    m_backends.emplace_back(id, name, std::move(creator));
+    m_backends.emplace_back(id, name, std::move(creator), priority);
 }
 
 std::vector<AudioEncoderInfo> AudioEncoderRegistry::availableEncoders() const
@@ -44,15 +45,18 @@ std::vector<AudioEncoderInfo> AudioEncoderRegistry::availableEncoders() const
 
         const auto encoderInfos = encoder->availableEncoders();
         for(AudioEncoderInfo info : encoderInfos) {
-            if(info.backendId.isEmpty()) {
-                info.backendId = backend.id;
-            }
+            info.backendId   = backend.id;
+            info.backendName = backend.name;
             if(info.id.isEmpty()) {
                 info.id = info.profile.id;
             }
             if(info.id.isEmpty()) {
                 continue;
             }
+            if(info.profile.formatId.isEmpty()) {
+                info.profile.formatId = info.id;
+            }
+            info.backendPriority = static_cast<int>(backend.priority);
             encoders.push_back(std::move(info));
         }
     }
@@ -65,27 +69,69 @@ std::vector<AudioEncoderInfo> AudioEncoderRegistry::availableEncoders() const
     return encoders;
 }
 
-std::unique_ptr<AudioEncoder> AudioEncoderRegistry::createEncoder(const QString& encoderId) const
+std::vector<AudioEncoderInfo> AudioEncoderRegistry::preferredEncoders() const
+{
+    std::vector<AudioEncoderInfo> preferred;
+
+    const auto encoders = availableEncoders();
+    for(AudioEncoderInfo info : encoders) {
+        const auto existing = std::ranges::find(
+            preferred, info.profile.formatId, [](const AudioEncoderInfo& encoder) { return encoder.profile.formatId; });
+        if(existing == preferred.end()) {
+            preferred.push_back(std::move(info));
+        }
+        else if(info.backendPriority > existing->backendPriority) {
+            *existing = std::move(info);
+        }
+    }
+
+    const StringCollator collator;
+    std::ranges::sort(preferred, [&collator](const AudioEncoderInfo& lhs, const AudioEncoderInfo& rhs) {
+        return collator.compare(lhs.name, rhs.name) < 0;
+    });
+
+    return preferred;
+}
+
+std::optional<AudioEncoderInfo> AudioEncoderRegistry::encoderInfo(const QString& encoderId) const
 {
     if(encoderId.isEmpty()) {
         return {};
     }
 
-    for(const Backend& backend : m_backends) {
-        auto probe = backend.creator();
-        if(!probe) {
-            continue;
-        }
+    const auto encoders = availableEncoders();
+    if(const auto exact = std::ranges::find_if(
+           encoders,
+           [&encoderId](const AudioEncoderInfo& info) { return info.id == encoderId || info.profile.id == encoderId; });
+       exact != encoders.end()) {
+        return *exact;
+    }
 
-        const auto infos   = probe->availableEncoders();
-        const bool matches = std::ranges::any_of(infos, [&encoderId](const AudioEncoderInfo& info) {
-            return info.id == encoderId || (!info.profile.id.isEmpty() && info.profile.id == encoderId);
-        });
-        if(matches) {
-            return backend.creator();
+    std::optional<AudioEncoderInfo> preferred;
+    for(const AudioEncoderInfo& info : encoders) {
+        if(info.profile.formatId == encoderId && (!preferred || info.backendPriority > preferred->backendPriority)) {
+            preferred = info;
         }
     }
 
+    if(preferred) {
+        preferred->id         = encoderId;
+        preferred->profile.id = encoderId;
+    }
+    return preferred;
+}
+
+std::unique_ptr<AudioEncoder> AudioEncoderRegistry::createEncoder(const QString& encoderId) const
+{
+    const auto info = encoderInfo(encoderId);
+    if(!info) {
+        return {};
+    }
+
+    const auto backend = std::ranges::find(m_backends, info->backendId, &Backend::id);
+    if(backend != m_backends.end()) {
+        return backend->creator();
+    }
     return {};
 }
 

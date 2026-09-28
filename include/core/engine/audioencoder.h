@@ -54,6 +54,8 @@ struct AudioEncoderInfo
 {
     QString id;
     QString backendId;
+    QString backendName;
+    int backendPriority{0};
     QString name;
     QString description;
     EncoderProfile profile;

@@ -367,8 +367,9 @@ void Application::registerPlaylistParsers()
 
 void Application::registerInputs()
 {
-    m_audioEncoderRegistry->addEncoderBackend(u"ffmpeg"_s, u"FFmpeg"_s,
-                                              []() { return std::make_unique<FFmpegEncoder>(); });
+    m_audioEncoderRegistry->addEncoderBackend(
+        u"ffmpeg"_s, u"FFmpeg"_s, []() { return std::make_unique<FFmpegEncoder>(); },
+        AudioEncoderRegistry::BackendPriority::Fallback);
     m_audioLoader->addReader(
         u"Archive"_s, [this]() { return std::make_unique<GeneralArchiveReader>(m_audioLoader); }, 100, true);
     m_audioLoader->addReader(u"TagLib"_s, []() { return std::make_unique<TagLibReader>(); }, 100);
