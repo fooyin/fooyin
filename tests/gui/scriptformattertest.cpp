@@ -74,6 +74,23 @@ TEST_F(ScriptFormatterTest, Underline)
     EXPECT_FALSE(result.blocks.back().format.font.underline());
 }
 
+TEST_F(ScriptFormatterTest, StrikeOut)
+{
+    const auto result = m_formattter.evaluate(u"<s>I</s> am a test."_s);
+    ASSERT_EQ(2, result.size());
+    EXPECT_TRUE(result.blocks.front().format.font.strikeOut());
+    EXPECT_FALSE(result.blocks.back().format.font.strikeOut());
+}
+
+TEST_F(ScriptFormatterTest, CombinedTextDecorations)
+{
+    const auto result = m_formattter.evaluate(u"<u><s>test</s></u>"_s);
+    ASSERT_EQ(1, result.size());
+    EXPECT_TRUE(result.blocks.front().format.font.underline());
+    EXPECT_TRUE(result.blocks.front().format.font.strikeOut());
+    EXPECT_TRUE(richTextToHtml(result).contains(u"text-decoration:underline line-through"_s));
+}
+
 TEST_F(ScriptFormatterTest, Rgb)
 {
     const auto result = m_formattter.evaluate(u"<rgb=255,0,0>I am a test."_s);

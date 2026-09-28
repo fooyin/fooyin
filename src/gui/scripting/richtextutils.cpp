@@ -142,12 +142,18 @@ QString richTextToHtml(const RichText& richText, const QColor& linkColour)
         if(format.font.italic()) {
             styles.emplace_back(u"font-style:italic"_s);
         }
+
+        QStringList decorations;
         if(format.font.underline()) {
-            styles.emplace_back(u"text-decoration:underline"_s);
+            decorations.emplace_back(u"underline"_s);
         }
         if(format.font.strikeOut()) {
-            styles.emplace_back(u"text-decoration:line-through"_s);
+            decorations.emplace_back(u"line-through"_s);
         }
+        if(!decorations.isEmpty()) {
+            styles.emplace_back(u"text-decoration:%1"_s.arg(decorations.join(u' ')));
+        }
+
         if(isLink && linkColour.isValid()) {
             QColor colour{linkColour};
             if(format.colour.alpha >= 0) {

@@ -247,6 +247,8 @@ const std::vector<ScriptReferenceEntry>& scriptReferenceEntries()
                         QT_TRANSLATE_NOOP("Fooyin", "Makes the enclosed text italic"), 4),
         formattingEntry("u", "<u>", QT_TRANSLATE_NOOP("Fooyin", "Style"),
                         QT_TRANSLATE_NOOP("Fooyin", "Underlines the enclosed text"), 4),
+        formattingEntry("s", "<s>", QT_TRANSLATE_NOOP("Fooyin", "Style"),
+                        QT_TRANSLATE_NOOP("Fooyin", "Strikes through the enclosed text"), 4),
         formattingEntry("font", "<font=sans>", QT_TRANSLATE_NOOP("Fooyin", "Style"),
                         QT_TRANSLATE_NOOP("Fooyin", "Sets the font family for the enclosed text"), 7),
         formattingEntry("size", "<size=12>", QT_TRANSLATE_NOOP("Fooyin", "Style"),

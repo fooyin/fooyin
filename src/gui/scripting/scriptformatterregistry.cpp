@@ -111,6 +111,12 @@ bool underline(RichFormatting& formatting, const QString& /*option*/)
     return true;
 }
 
+bool strikeOut(RichFormatting& formatting, const QString& /*option*/)
+{
+    formatting.font.setStrikeOut(true);
+    return true;
+}
+
 bool fontFamily(RichFormatting& formatting, const QString& option)
 {
     if(option.isEmpty()) {
@@ -215,6 +221,7 @@ constexpr std::array FormatterHandlers{
     FormatterHandlerEntry{.name = "b"_L1, .handler = &bold},
     FormatterHandlerEntry{.name = "i"_L1, .handler = &italic},
     FormatterHandlerEntry{.name = "u"_L1, .handler = &underline},
+    FormatterHandlerEntry{.name = "s"_L1, .handler = &strikeOut},
     FormatterHandlerEntry{.name = "font"_L1, .handler = &fontFamily},
     FormatterHandlerEntry{.name = "size"_L1, .handler = &fontSize},
     FormatterHandlerEntry{.name = "sized"_L1, .handler = &fontDelta},
