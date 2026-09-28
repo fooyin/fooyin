@@ -22,6 +22,10 @@
 #include <QMainWindow>
 #include <QPointer>
 
+class QAction;
+class QKeyEvent;
+class QMenu;
+
 namespace Fooyin {
 class ActionManager;
 class MainMenuBar;
@@ -78,7 +82,11 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
 
 private:
+    bool handleHiddenMenuKeyEvent(QKeyEvent* event);
+    void showHiddenMenu(QAction* activeAction = nullptr);
+
     void showScanProgress(const ScanProgress& progress);
+
     WindowState currentState();
     void saveWindowGeometry();
     void restoreWindowGeometry();
@@ -90,11 +98,13 @@ private:
     MusicLibrary* m_library;
     SettingsManager* m_settings;
     QPointer<StatusWidget> m_statusWidget;
+    QPointer<QMenu> m_altMenuBar;
 
     WindowState m_prevState;
     WindowState m_state;
     bool m_isHiding;
     bool m_hasQuit;
     bool m_showStatusTips;
+    bool m_altPressed;
 };
 } // namespace Fooyin

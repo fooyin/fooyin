@@ -42,9 +42,11 @@
 #include <QApplication>
 #include <QContextMenuEvent>
 #include <QDropEvent>
+#include <QKeyEvent>
+#include <QKeySequence>
+#include <QMenu>
 #include <QMenuBar>
 #include <QSystemTrayIcon>
-#include <QTimer>
 #include <QWindow>
 
 using namespace Qt::StringLiterals;
@@ -64,6 +66,7 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Music
     , m_isHiding{false}
     , m_hasQuit{false}
     , m_showStatusTips{m_settings->value<Settings::Gui::ShowStatusTips>()}
+    , m_altPressed{false}
 {
     setAcceptDrops(true);
     qApp->installEventFilter(this);
@@ -91,7 +94,12 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Music
     }
 
     m_settings->subscribe<Settings::Gui::ShowStatusTips>(this, [this](const bool show) { m_showStatusTips = show; });
-    m_settings->subscribe<Settings::Gui::ShowMenuBar>(this, [this](const bool show) { menuBar()->setVisible(show); });
+    m_settings->subscribe<Settings::Gui::ShowMenuBar>(this, [this](const bool show) {
+        if(show && m_altMenuBar) {
+            m_altMenuBar->close();
+        }
+        menuBar()->setVisible(show);
+    });
     QObject::connect(m_library, &MusicLibrary::scanProgress, this, &MainWindow::showScanProgress);
 
     menuBar()->setVisible(m_settings->value<Settings::Gui::ShowMenuBar>());
@@ -197,7 +205,30 @@ QSize MainWindow::sizeHint() const
 bool MainWindow::eventFilter(QObject* watched, QEvent* event)
 {
     auto* target = qobject_cast<QWidget*>(watched);
-    if(!target || target->window() != this
+    if(!target) {
+        return QMainWindow::eventFilter(watched, event);
+    }
+
+    if(m_altMenuBar && m_altMenuBar->isVisible() && event->type() == QEvent::KeyPress) {
+        const auto* keyEvent = static_cast<QKeyEvent*>(event);
+        if(keyEvent->key() == Qt::Key_Alt
+           || (keyEvent->key() == Qt::Key_F10 && keyEvent->modifiers() == Qt::NoModifier)) {
+            m_altPressed = false;
+            m_altMenuBar->close();
+            return true;
+        }
+    }
+
+    if(target->window() == this && (event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
+       && handleHiddenMenuKeyEvent(static_cast<QKeyEvent*>(event))) {
+        return true;
+    }
+
+    if(target == this && event->type() == QEvent::WindowDeactivate) {
+        m_altPressed = false;
+    }
+
+    if(target->window() != this
        || (event->type() != QEvent::DragEnter && event->type() != QEvent::DragMove && event->type() != QEvent::Drop)) {
         return QMainWindow::eventFilter(watched, event);
     }
@@ -216,6 +247,93 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event)
     }
 
     return true;
+}
+
+bool MainWindow::handleHiddenMenuKeyEvent(QKeyEvent* event)
+{
+    if(event->key() == Qt::Key_F10 && event->modifiers() == Qt::NoModifier) {
+        if(event->type() == QEvent::KeyPress && !event->isAutoRepeat()) {
+            if(m_settings->value<Settings::Gui::ShowMenuBar>()) {
+                const auto menuActions = menuBar()->actions();
+                for(auto* action : menuActions) {
+                    if(action->isVisible() && action->isEnabled() && action->menu()) {
+                        menuBar()->setActiveAction(action);
+                        const QPoint menuPosition
+                            = menuBar()->mapToGlobal(menuBar()->actionGeometry(action).bottomLeft());
+                        action->menu()->popup(menuPosition);
+                        break;
+                    }
+                }
+            }
+            else {
+                showHiddenMenu();
+            }
+        }
+        return true;
+    }
+
+    if(m_settings->value<Settings::Gui::ShowMenuBar>()) {
+        m_altPressed = false;
+        return false;
+    }
+
+    if(event->key() == Qt::Key_Alt) {
+        if(event->isAutoRepeat()) {
+            return true;
+        }
+
+        if(event->type() == QEvent::KeyPress) {
+            m_altPressed = true;
+        }
+        else if(std::exchange(m_altPressed, false)) {
+            showHiddenMenu();
+        }
+        return true;
+    }
+
+    if(event->type() != QEvent::KeyPress || event->modifiers() != Qt::AltModifier) {
+        m_altPressed = false;
+        return false;
+    }
+
+    m_altPressed = false;
+
+    const QKeySequence pressedKey = event->keyCombination();
+    const auto menuActions        = menuBar()->actions();
+    for(auto* action : menuActions) {
+        if(action->isVisible() && action->isEnabled() && action->menu()
+           && QKeySequence::mnemonic(action->text()) == pressedKey) {
+            showHiddenMenu(action);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void MainWindow::showHiddenMenu(QAction* activeAction)
+{
+    if(!m_altMenuBar) {
+        m_altMenuBar = new QMenu(this);
+    }
+
+    m_altMenuBar->clear();
+
+    const auto menuActions = menuBar()->actions();
+    for(auto* action : menuActions) {
+        if(action->isVisible()) {
+            m_altMenuBar->addAction(action);
+        }
+    }
+
+    if(m_altMenuBar->isEmpty()) {
+        return;
+    }
+
+    m_altMenuBar->popup(frameGeometry().topLeft());
+    if(activeAction) {
+        m_altMenuBar->setActiveAction(activeAction);
+    }
 }
 
 bool MainWindow::event(QEvent* event)
