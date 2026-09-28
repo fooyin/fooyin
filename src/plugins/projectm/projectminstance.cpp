@@ -79,7 +79,9 @@ ProjectMInstance::ProjectMInstance(QString dataDir, QStringList presetDirs, Proj
         appendExistingDir(textureDirs, m_dataDir);
     }
     for(const QString& presetDir : std::as_const(m_presetDirs)) {
+        appendExistingDir(textureDirs, presetDir + u"/textures"_s);
         appendExistingDir(textureDirs, presetDir + u"/Textures"_s);
+        appendExistingDir(textureDirs, QFileInfo{presetDir}.dir().filePath(u"textures"_s));
         appendExistingDir(textureDirs, QFileInfo{presetDir}.dir().filePath(u"Textures"_s));
     }
 
