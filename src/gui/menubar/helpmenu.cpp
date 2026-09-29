@@ -56,8 +56,9 @@ HelpMenu::HelpMenu(ActionManager* actionManager, QObject* parent)
 
     auto* searching = new QAction(tr("S&earching help"), this);
     searching->setStatusTip(tr("Open the search documentation"));
-    QObject::connect(searching, &QAction::triggered, this,
-                     []() { QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/searching/basics.html"_s); });
+    QObject::connect(searching, &QAction::triggered, this, []() {
+        QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/library/searching-library.html"_s);
+    });
 
     auto* faq = new QAction(tr("&Frequently asked questions"), this);
     faq->setStatusTip(tr("Open the FAQ"));
