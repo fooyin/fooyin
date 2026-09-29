@@ -60,6 +60,8 @@ private:
 
     QCheckBox* m_restoreState;
     QCheckBox* m_expandOnSingleClick;
+    QCheckBox* m_showControls;
+    QComboBox* m_controlsPosition;
     QSpinBox* m_autoExpandSearchResultLimit;
     QCheckBox* m_showSummaryNode;
     QLineEdit* m_summaryNodeTitle;

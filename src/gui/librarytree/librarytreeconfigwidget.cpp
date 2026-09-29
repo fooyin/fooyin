@@ -50,6 +50,8 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     , m_playlistName{new QLineEdit(this)}
     , m_restoreState{new QCheckBox(tr("Restore state on startup"), this)}
     , m_expandOnSingleClick{new QCheckBox(tr("Single-click expands/collapses nodes"), this)}
+    , m_showControls{new QCheckBox(tr("Show controls"), this)}
+    , m_controlsPosition{new QComboBox(this)}
     , m_autoExpandSearchResultLimit{new QSpinBox(this)}
     , m_showSummaryNode{new QCheckBox(tr("Show summary node"), this)}
     , m_summaryNodeTitle{new QLineEdit(this)}
@@ -64,15 +66,6 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     , m_artworkCornerRadius{new QSpinBox(this)}
     , m_manageGroupings{new QPushButton(tr("Manage groupings…"), this)}
 {
-    m_playbackOnSend->setToolTip(
-        tr(R"(For "Replace current playlist" and "Create new playlist", start playback immediately.)"));
-    m_summaryNodeTitle->setPlaceholderText(defaultLibraryTreeSummaryTitle());
-    m_summaryNodeTitle->setToolTip(
-        tr("Supports <right> for right-aligned text, %trackcount% for tracks, and %childcount% for child nodes."));
-    m_autoExpandSearchResultLimit->setRange(0, 1000);
-    m_autoExpandSearchResultLimit->setSingleStep(5);
-    m_autoExpandSearchResultLimit->setSpecialValueText(tr("Disabled"));
-
     auto* tabs = new QTabWidget(this);
 
     auto* generalTab = new QWidget(tabs);
@@ -80,6 +73,9 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
 
     tabs->addTab(generalTab, tr("General"));
     tabs->addTab(styleTab, tr("Appearance"));
+
+    m_playbackOnSend->setToolTip(
+        tr(R"(For "Replace current playlist" and "Create new playlist", start playback immediately.)"));
 
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), generalTab);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
@@ -108,6 +104,10 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     selectionPlaylistLayout->addWidget(m_playlistName, row++, 1, 1, 2);
     selectionPlaylistLayout->setColumnStretch(2, 1);
 
+    m_summaryNodeTitle->setPlaceholderText(defaultLibraryTreeSummaryTitle());
+    m_summaryNodeTitle->setToolTip(
+        tr("Supports <right> for right-aligned text, %trackcount% for tracks, and %childcount% for child nodes."));
+
     auto* generalGroup       = new QGroupBox(tr("General"), generalTab);
     auto* generalGroupLayout = new QGridLayout(generalGroup);
 
@@ -119,10 +119,20 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     generalGroupLayout->addWidget(m_manageGroupings, row++, 0, 1, 3);
     generalGroupLayout->setColumnStretch(2, 1);
 
+    m_controlsPosition->addItem(tr("Top"), static_cast<int>(LibraryTreeWidget::ControlsPosition::Top));
+    m_controlsPosition->addItem(tr("Bottom"), static_cast<int>(LibraryTreeWidget::ControlsPosition::Bottom));
+
+    m_autoExpandSearchResultLimit->setRange(0, 1000);
+    m_autoExpandSearchResultLimit->setSingleStep(5);
+    m_autoExpandSearchResultLimit->setSpecialValueText(tr("Disabled"));
+
     auto* searchingGroup       = new QGroupBox(tr("Searching"), generalTab);
     auto* searchingGroupLayout = new QGridLayout(searchingGroup);
 
     row = 0;
+    searchingGroupLayout->addWidget(m_showControls, row++, 0, 1, 3);
+    searchingGroupLayout->addWidget(new QLabel(tr("Controls position") + u":"_s, this), row, 0, 1, 2);
+    searchingGroupLayout->addWidget(m_controlsPosition, row++, 2);
     searchingGroupLayout->addWidget(new QLabel(tr("Auto-expand if matching track count is at most") + u":"_s, this),
                                     row, 0, 1, 2);
     searchingGroupLayout->addWidget(m_autoExpandSearchResultLimit, row++, 2);
@@ -204,6 +214,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
 
     QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);
     QObject::connect(m_showSummaryNode, &QCheckBox::toggled, m_summaryNodeTitle, &QWidget::setEnabled);
+    QObject::connect(m_showControls, &QCheckBox::toggled, m_controlsPosition, &QWidget::setEnabled);
     QObject::connect(m_playlistEnabled, &QCheckBox::toggled, this, [this](bool checked) {
         m_playlistName->setEnabled(checked);
         m_autoSwitch->setEnabled(checked);
@@ -222,15 +233,17 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
 LibraryTreeWidget::ConfigData LibraryTreeConfigDialog::config() const
 {
     return {
-        .doubleClickAction           = m_doubleClick->currentData().toInt(),
-        .middleClickAction           = m_middleClick->currentData().toInt(),
-        .sendPlayback                = m_playbackOnSend->isChecked(),
-        .playlistEnabled             = m_playlistEnabled->isChecked(),
-        .autoSwitch                  = m_autoSwitch->isChecked(),
-        .preservePlaybackPlaylist    = m_preservePlaybackPlaylist->isChecked(),
-        .playlistName                = m_playlistName->text(),
-        .restoreState                = m_restoreState->isChecked(),
-        .expandOnSingleClick         = m_expandOnSingleClick->isChecked(),
+        .doubleClickAction        = m_doubleClick->currentData().toInt(),
+        .middleClickAction        = m_middleClick->currentData().toInt(),
+        .sendPlayback             = m_playbackOnSend->isChecked(),
+        .playlistEnabled          = m_playlistEnabled->isChecked(),
+        .autoSwitch               = m_autoSwitch->isChecked(),
+        .preservePlaybackPlaylist = m_preservePlaybackPlaylist->isChecked(),
+        .playlistName             = m_playlistName->text(),
+        .restoreState             = m_restoreState->isChecked(),
+        .expandOnSingleClick      = m_expandOnSingleClick->isChecked(),
+        .showControls             = m_showControls->isChecked(),
+        .controlsPosition = static_cast<LibraryTreeWidget::ControlsPosition>(m_controlsPosition->currentData().toInt()),
         .autoExpandSearchResultLimit = m_autoExpandSearchResultLimit->value(),
         .animated                    = m_animated->isChecked(),
         .showHeader                  = m_header->isChecked(),
@@ -256,6 +269,9 @@ void LibraryTreeConfigDialog::setConfig(const LibraryTreeWidget::ConfigData& con
     m_playlistName->setText(config.playlistName);
     m_restoreState->setChecked(config.restoreState);
     m_expandOnSingleClick->setChecked(config.expandOnSingleClick);
+    m_showControls->setChecked(config.showControls);
+    m_controlsPosition->setCurrentIndex(m_controlsPosition->findData(static_cast<int>(config.controlsPosition)));
+    m_controlsPosition->setEnabled(m_showControls->isChecked());
     m_autoExpandSearchResultLimit->setValue(config.autoExpandSearchResultLimit);
     m_animated->setChecked(config.animated);
     m_header->setChecked(config.showHeader);
@@ -284,6 +300,7 @@ void LibraryTreeConfigDialog::mergeExternalConfig(const LibraryTreeWidget::Confi
         &LibraryTreeWidget::ConfigData::playlistEnabled, &LibraryTreeWidget::ConfigData::autoSwitch,
         &LibraryTreeWidget::ConfigData::preservePlaybackPlaylist, &LibraryTreeWidget::ConfigData::playlistName,
         &LibraryTreeWidget::ConfigData::restoreState, &LibraryTreeWidget::ConfigData::expandOnSingleClick,
+        &LibraryTreeWidget::ConfigData::controlsPosition, &LibraryTreeWidget::ConfigData::showControls,
         &LibraryTreeWidget::ConfigData::autoExpandSearchResultLimit, &LibraryTreeWidget::ConfigData::animated,
         &LibraryTreeWidget::ConfigData::showHeader, &LibraryTreeWidget::ConfigData::showScrollbar,
         &LibraryTreeWidget::ConfigData::alternatingRows, &LibraryTreeWidget::ConfigData::showSummaryNode,

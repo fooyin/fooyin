@@ -256,13 +256,7 @@ void Widgets::registerWidgets()
     provider->setSubMenus(u"TabStack"_s, {tr("Splitters")});
     provider->setCanSplit(u"TabStack"_s, true);
 
-    provider->registerWidget(
-        u"LibraryTree"_s,
-        [this]() {
-            return new LibraryTreeWidget(m_gui->actionManager(), m_playlistController, m_gui->trackSelection(),
-                                         m_libraryTreeController, m_core, m_coverRepository, m_styleProvider, m_window);
-        },
-        tr("Library Tree"));
+    provider->registerWidget(u"LibraryTree"_s, [this]() { return createLibraryTree(m_window); }, tr("Library Tree"));
 
     provider->registerWidget(
         u"CommandButton"_s,
@@ -882,6 +876,12 @@ OutputProfileManager* Widgets::outputProfileManager() const
     return m_outputProfileManager;
 }
 
+void Widgets::showLibraryTree()
+{
+    auto* libraryTree = createLibraryTree(nullptr, true);
+    libraryTree->showStandaloneWindow(tr("Library Tree"), u"LibraryTree/WindowState"_s, true);
+}
+
 void Widgets::showArtworkDialog(const TrackList& tracks, Track::Cover type, bool quick)
 {
     m_gui->searchForArtwork(tracks, type, quick);
@@ -917,6 +917,15 @@ FyWidget* Widgets::createDirBrowser()
                      &DirBrowser::activePlaylistChanged);
 
     return browser;
+}
+
+LibraryTreeWidget* Widgets::createLibraryTree(QWidget* parent, bool controlsVisibleByDefault)
+{
+    auto* libraryTree
+        = new LibraryTreeWidget(m_gui->actionManager(), m_playlistController, m_gui->trackSelection(),
+                                m_libraryTreeController, m_core, m_coverRepository, m_styleProvider, parent);
+    libraryTree->enableIntegratedControls(m_gui->searchController(), controlsVisibleByDefault);
+    return libraryTree;
 }
 
 } // namespace Fooyin

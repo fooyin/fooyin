@@ -169,6 +169,7 @@ constexpr auto LockSplitters             = "Layout.LockSplitters";
 constexpr auto QuickSetup                = "View.QuickSetup";
 constexpr auto PlaybackQueue             = "View.PlaybackQueue";
 constexpr auto PlaylistManager           = "View.PlaylistManager";
+constexpr auto LibraryTree               = "View.LibraryTree";
 constexpr auto ShowNowPlaying            = "View.ShowNowPlaying";
 constexpr auto ToggleMainWindow          = "View.ToggleMainWindow";
 constexpr auto FocusSearchBar            = "View.FocusSearchBar";

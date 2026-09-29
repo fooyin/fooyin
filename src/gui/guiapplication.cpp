@@ -815,6 +815,7 @@ void GuiApplication::setupConnections()
     QObject::connect(m_viewMenu, &ViewMenu::openQuickSetup, this, &GuiApplication::showQuickSetup);
     QObject::connect(m_viewMenu, &ViewMenu::openPlaybackQueue, this, &GuiApplication::showPlaybackQueue);
     QObject::connect(m_viewMenu, &ViewMenu::openPlaylistManager, this, &GuiApplication::showPlaylistManager);
+    QObject::connect(m_viewMenu, &ViewMenu::openLibraryTree, m_widgets, &Widgets::showLibraryTree);
     QObject::connect(m_viewMenu, &ViewMenu::focusSearchBar, this, &GuiApplication::focusSearchBar);
     QObject::connect(m_viewMenu, &ViewMenu::openLog, this, [this]() {
         m_logWidget->show();

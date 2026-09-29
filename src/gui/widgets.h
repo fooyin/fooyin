@@ -27,6 +27,8 @@
 #include <QObject>
 #include <memory>
 
+class QWidget;
+
 namespace Fooyin {
 class Application;
 class ArtworkFinder;
@@ -40,6 +42,7 @@ class GuiApplication;
 class GuiStyleProvider;
 struct GuiPluginContext;
 class LibraryTreeController;
+class LibraryTreeWidget;
 class MainWindow;
 class NowPlayingOutputService;
 class OutputProfileManager;
@@ -78,12 +81,14 @@ public:
     [[nodiscard]] PluginSettingsRegistry* pluginSettingsRegistry() const;
     [[nodiscard]] OutputProfileManager* outputProfileManager() const;
 
+    void showLibraryTree();
     void showArtworkDialog(const TrackList& tracks, Track::Cover type, bool quick);
     void removeArtwork(const TrackList& tracks, Track::Cover type);
     void refreshCoverWidgets();
 
 private:
     FyWidget* createDirBrowser();
+    LibraryTreeWidget* createLibraryTree(QWidget* parent, bool controlsVisibleByDefault = false);
 
     Application* m_core;
     GuiApplication* m_gui;

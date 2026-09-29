@@ -35,6 +35,8 @@
 #include <vector>
 
 class QAction;
+class QComboBox;
+class QHBoxLayout;
 class QItemSelection;
 class QJsonObject;
 class QMenu;
@@ -60,6 +62,8 @@ class PlaylistController;
 class PlaylistHandler;
 struct PlaylistTrack;
 class SettingsManager;
+class SearchController;
+class SearchWidget;
 class SignalThrottler;
 class TrackSelectionController;
 class WidgetContext;
@@ -70,6 +74,12 @@ class LibraryTreeWidget : public FyWidget
     Q_OBJECT
 
 public:
+    enum class ControlsPosition : uint8_t
+    {
+        Top = 0,
+        Bottom,
+    };
+
     LibraryTreeWidget(ActionManager* actionManager, PlaylistController* playlistController,
                       TrackSelectionController* trackSelection, LibraryTreeController* controller, Application* core,
                       CoverRepository* coverRepository, GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
@@ -81,6 +91,7 @@ public:
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 
+    void enableIntegratedControls(SearchController* searchController, bool visibleByDefault = false);
     void searchEvent(const SearchRequest& request) override;
 
     struct ConfigData
@@ -94,6 +105,8 @@ public:
         QString playlistName{LibraryTreeController::defaultPlaylistName()};
         bool restoreState{true};
         bool expandOnSingleClick{false};
+        bool showControls{false};
+        ControlsPosition controlsPosition{ControlsPosition::Bottom};
         int autoExpandSearchResultLimit{10};
         bool animated{true};
         bool showHeader{true};
@@ -126,9 +139,13 @@ protected:
 
 private:
     void setupConnections();
+    void refreshGroupingSelector();
+    void setControlsPosition(ControlsPosition position);
+    void setControlsVisible(bool visible);
     void reset();
     void populateContextMenu(QMenu* menu);
 
+    void addDisplayMenu(QMenu* parent);
     void changeGrouping(const LibraryTreeGrouping& newGrouping);
 
     void activePlaylistChanged(Playlist* playlist) const;
@@ -181,6 +198,10 @@ private:
     LibraryTreeGrouping m_grouping;
 
     QVBoxLayout* m_layout;
+    QHBoxLayout* m_controlsLayout;
+    QComboBox* m_groupSelector;
+    SearchWidget* m_searchBar;
+    bool m_controlsVisibleByDefault;
     LibraryTreeView* m_libraryTree;
     LibraryTreeDelegate* m_delegate;
     LibraryTreeModel* m_model;
@@ -199,7 +220,7 @@ private:
     QString m_currentSearch;
     EmptySearchMode m_currentEmptySearchMode;
     TrackList m_filteredTracks;
-    uint64_t m_searchRevision{0};
+    uint64_t m_searchRevision;
 
     bool m_updating;
     QByteArray m_pendingState;

@@ -115,6 +115,23 @@ QString SearchWidget::defaultPlaylistName()
     return tr("Search Results");
 }
 
+void SearchWidget::setSearchTarget(FyWidget* target)
+{
+    m_searchTarget = target;
+    updateConnectedState();
+}
+
+void SearchWidget::clear()
+{
+    m_searchBox->clear();
+    searchChanged();
+}
+
+void SearchWidget::selectAll()
+{
+    m_searchBox->selectAll();
+}
+
 QString SearchWidget::name() const
 {
     return tr("Search Bar");
@@ -127,6 +144,10 @@ QString SearchWidget::layoutName() const
 
 void SearchWidget::layoutEditingMenu(QMenu* menu)
 {
+    if(m_searchTarget) {
+        return;
+    }
+
     auto* manageConnections = new QAction(tr("Manage connected widgets"), this);
     QObject::connect(manageConnections, &QAction::triggered, this,
                      [this]() { m_searchController->setupWidgetConnections(id()); });
@@ -142,6 +163,10 @@ void SearchWidget::saveLayoutData(QJsonObject& layout)
     const QString placeholderText = m_searchBox->placeholderText();
     if(!placeholderText.isEmpty() && placeholderText != m_defaultPlaceholder) {
         layout["Placeholder"_L1] = placeholderText;
+    }
+
+    if(m_searchTarget) {
+        return;
     }
 
     const auto connectedWidgets = m_searchController->connectedWidgetIds(id());
@@ -174,7 +199,7 @@ void SearchWidget::loadLayoutData(const QJsonObject& layout)
         m_searchBox->setPlaceholderText(layout.value("Placeholder"_L1).toString());
     }
 
-    if(!layout.contains("Widgets"_L1)) {
+    if(m_searchTarget || !layout.contains("Widgets"_L1)) {
         return;
     }
 
@@ -443,6 +468,13 @@ void SearchWidget::resetColours()
 
 void SearchWidget::updateConnectedState()
 {
+    if(m_searchTarget) {
+        m_unconnected       = false;
+        m_exclusivePlaylist = false;
+        m_searchBox->setToolTip({});
+        return;
+    }
+
     const auto widgets  = m_searchController->connectedWidgets(id());
     m_unconnected       = widgets.empty();
     m_exclusivePlaylist = (widgets.size() == 1 && qobject_cast<PlaylistWidget*>(widgets.front()));
@@ -474,6 +506,11 @@ SearchRequest SearchWidget::currentSearchRequest() const
 
 void SearchWidget::searchChanged(bool enterKey)
 {
+    if(m_searchTarget) {
+        m_searchTarget->searchEvent(currentSearchRequest());
+        return;
+    }
+
     if(!m_unconnected) {
         m_searchController->changeSearch(id(), currentSearchRequest());
         return;
@@ -577,10 +614,12 @@ void SearchWidget::showOptionsMenu()
         QObject::connect(changePlaceholder, &QAction::triggered, this, &SearchWidget::changePlaceholderText);
         menu->addAction(changePlaceholder);
 
-        auto* manageConnections = new QAction(tr("Manage connected widgets"), menu);
-        QObject::connect(manageConnections, &QAction::triggered, this,
-                         [this]() { m_searchController->setupWidgetConnections(id()); });
-        menu->addAction(manageConnections);
+        if(!m_searchTarget) {
+            auto* manageConnections = new QAction(tr("Manage connected widgets"), menu);
+            QObject::connect(manageConnections, &QAction::triggered, this,
+                             [this]() { m_searchController->setupWidgetConnections(id()); });
+            menu->addAction(manageConnections);
+        }
     }
 
     auto* searching = new QAction(tr("Help"), menu);

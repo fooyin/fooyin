@@ -80,6 +80,13 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     viewMenu->addAction(showPlaylistManagerCmd);
     QObject::connect(showPlaylistManager, &QAction::triggered, this, &ViewMenu::openPlaylistManager);
 
+    auto* showLibraryTree = new QAction(tr("&Library Tree"), this);
+    showLibraryTree->setStatusTip(tr("Open the library tree window"));
+    auto* showLibraryTreeCmd = m_actionManager->registerAction(showLibraryTree, Constants::Actions::LibraryTree);
+    showLibraryTreeCmd->setCategories(viewCategory);
+    viewMenu->addAction(showLibraryTreeCmd);
+    QObject::connect(showLibraryTree, &QAction::triggered, this, &ViewMenu::openLibraryTree);
+
     auto* showPlaybackQueue = new QAction(tr("Playback &Queue"), this);
     showPlaybackQueue->setStatusTip(tr("Open the playback queue window"));
     auto* showPlaybackQueueCmd = m_actionManager->registerAction(showPlaybackQueue, Constants::Actions::PlaybackQueue);

@@ -216,6 +216,7 @@ constexpr auto TrackSeparator    = "Fooyin.Context.LibraryTree.Track.Separator";
 constexpr auto TrackActions      = "Fooyin.Context.LibraryTree.TrackActions";
 constexpr auto WidgetSeparator   = "Fooyin.Context.LibraryTree.Widget.Separator";
 constexpr auto Grouping          = "Fooyin.Context.LibraryTree.Grouping";
+constexpr auto Display           = "Fooyin.Context.LibraryTree.Display";
 constexpr auto Configure         = "Fooyin.Context.LibraryTree.Configure";
 
 constexpr auto DefaultItems = std::to_array<Item>({
@@ -258,6 +259,9 @@ constexpr auto DefaultItems = std::to_array<Item>({
     {.id = QueueSeparator, .title = {}, .isSeparator = true},
     {.id          = Grouping,
      .title       = {.context = "LibraryTreeWidget", .sourceText = QT_TRANSLATE_NOOP("LibraryTreeWidget", "Grouping")},
+     .isSeparator = false},
+    {.id          = Display,
+     .title       = {.context = "LibraryTreeWidget", .sourceText = QT_TRANSLATE_NOOP("LibraryTreeWidget", "Display")},
      .isSeparator = false},
     {.id          = Configure,
      .title       = {.context = "LibraryTreeWidget", .sourceText = QT_TRANSLATE_NOOP("LibraryTreeWidget", "Configure")},
