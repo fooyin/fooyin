@@ -81,7 +81,7 @@ void LyricsPlugin::initialise(const GuiPluginContext& context)
     m_actionManager->actionContainer(Constants::Menus::View)->addAction(showLyricsCmd);
     QObject::connect(showLyrics, &QAction::triggered, this, [createLyricsWidget]() {
         auto* window = createLyricsWidget();
-        window->showStandaloneWindow(tr("Lyrics"), u"Lyrics/WindowState"_s);
+        window->showStandaloneWindow(tr("Lyrics"), u"Lyrics/WindowState"_s, true);
     });
 
     context.propertiesDialog->addTab(tr("Lyrics"), [this](const TrackList& tracks) {
