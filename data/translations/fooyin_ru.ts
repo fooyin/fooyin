@@ -9567,7 +9567,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="96"/>
         <source>Show Recently &amp;Played</source>
-        <translation>Показать недавно &amp;воспроизведённые</translation>
+        <translation>Показать недавно воспрои&amp;зведённые</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="97"/>
@@ -9587,7 +9587,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="109"/>
         <source>&amp;Quick Search</source>
-        <translation>&amp;Быстрый поиск</translation>
+        <translation>Быстры&amp;й поиск</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="110"/>
