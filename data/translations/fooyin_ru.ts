@@ -7773,7 +7773,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1649"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1658"/>
         <source>Utilities</source>
-        <translation>Утилиты</translation>
+        <translation>Инструменты</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1646"/>
@@ -16736,7 +16736,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="121"/>
         <source>Calculate ReplayGain values as a single album</source>
-        <translation>Рассчитайте значения ReplayGain как один альбом</translation>
+        <translation>Рассчитать значения ReplayGain как единого альбома</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="122"/>
@@ -23526,7 +23526,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="120"/>
         <source>Utilities</source>
-        <translation>Утилиты</translation>
+        <translation>Инструменты</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="124"/>
