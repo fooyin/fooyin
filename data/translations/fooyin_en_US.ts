@@ -7284,7 +7284,7 @@ Effects here process the final combined output.</translation>
     <message numerus="yes">
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="102"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln track</numerusform>
             <numerusform>%Ln tracks</numerusform>
         </translation>
@@ -7292,9 +7292,9 @@ Effects here process the final combined output.</translation>
     <message numerus="yes">
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="103"/>
         <source>%1 of %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1 of %Ln track</numerusform>
+            <numerusform>%1 of %Ln tracks</numerusform>
         </translation>
     </message>
     <message>
