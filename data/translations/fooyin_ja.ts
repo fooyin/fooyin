@@ -13988,278 +13988,278 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="127"/>
         <source>Choose a custom background image file</source>
-        <translation type="unfinished">カスタム背景画像ファイルを選択</translation>
+        <translation>カスタム背景画像ファイルを選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="130"/>
         <source>No background image</source>
-        <translation type="unfinished">背景画像なし</translation>
+        <translation>背景画像なし</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="131"/>
         <source>Current track artwork</source>
-        <translation type="unfinished">現在のトラックのアートワーク</translation>
+        <translation>現在のトラックのアートワーク</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="132"/>
         <source>Use the currently playing track&apos;s artwork as the playlist background</source>
-        <translation type="unfinished">現在再生中のトラックのアートワークをプレイリストの背景として使用</translation>
+        <translation>現在再生中のトラックのアートワークをプレイリストの背景として使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="133"/>
         <source>Custom image</source>
-        <translation type="unfinished">カスタム画像</translation>
+        <translation>カスタム画像</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="134"/>
         <source>Use the selected image file as the playlist background</source>
-        <translation type="unfinished">選択した画像ファイルをプレイリストの背景として使用</translation>
+        <translation>選択した画像ファイルをプレイリストの背景として使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="135"/>
         <source>Front</source>
-        <translation type="unfinished">フロント</translation>
+        <translation>フロント</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="136"/>
         <source>Use the front cover for current track artwork</source>
-        <translation type="unfinished">現在のトラックのアートワークとしてフロントカバーを使用</translation>
+        <translation>現在のトラックのアートワークとしてフロントカバーを使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="137"/>
         <source>Back</source>
-        <translation type="unfinished">戻る</translation>
+        <translation>戻る</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="138"/>
         <source>Use the back cover for current track artwork</source>
-        <translation type="unfinished">現在のトラックのアートワークとしてバックカバーを使用</translation>
+        <translation>現在のトラックのアートワークとしてバックカバーを使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="139"/>
         <source>Artist</source>
-        <translation type="unfinished">アーティスト</translation>
+        <translation>アーティスト</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="140"/>
         <source>Use the artist picture for current track artwork</source>
-        <translation type="unfinished">現在のトラックのアートワークとしてアーティスト画像を使用</translation>
+        <translation>現在のトラックのアートワークとしてアーティスト画像を使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="141"/>
         <source>Playing track</source>
-        <translation type="unfinished">再生中のトラック</translation>
+        <translation>再生中のトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="143"/>
         <source>Selected track</source>
-        <translation type="unfinished">選択済みトラック</translation>
+        <translation>選択済みトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="145"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished">再生中(停止時は選択中のトラック)</translation>
+        <translation>再生中(停止時は選択中のトラック)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="147"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished">再生中(起動時は空欄)</translation>
+        <translation>再生中(起動時は空欄)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="149"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished">再生中(停止時は空欄)</translation>
+        <translation>再生中(停止時は空欄)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="151"/>
         <source>Scaled and cropped</source>
-        <translation type="unfinished">拡大縮小してトリミング</translation>
+        <translation>拡大縮小してトリミング</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="152"/>
         <source>Fill the playlist area while preserving proportions; edges may be cropped</source>
-        <translation type="unfinished">縦横比を保ったままプレイリスト領域を埋めます。端がトリミングされる場合があります</translation>
+        <translation>縦横比を保ったままプレイリスト領域を埋めます。端がトリミングされる場合があります</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="153"/>
         <source>Scaled</source>
-        <translation type="unfinished">拡大縮小</translation>
+        <translation>拡大縮小</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="154"/>
         <source>Stretch the image to fill the playlist area; proportions may change</source>
-        <translation type="unfinished">画像を引き伸ばしてプレイリスト領域を埋めます。縦横比が変わる場合があります</translation>
+        <translation>画像を引き伸ばしてプレイリスト領域を埋めます。縦横比が変わる場合があります</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="155"/>
         <source>Scaled, keep proportions</source>
-        <translation type="unfinished">縦横比を保って拡大縮小</translation>
+        <translation>縦横比を保って拡大縮小</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="157"/>
         <source>Fit the whole image inside the playlist area without cropping</source>
-        <translation type="unfinished">トリミングせずに画像全体をプレイリスト領域内に収めます</translation>
+        <translation>トリミングせずに画像全体をプレイリスト領域内に収めます</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="158"/>
         <source>Original size</source>
-        <translation type="unfinished">元のサイズ</translation>
+        <translation>元のサイズ</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="159"/>
         <source>Draw the image at its original size, optionally limited by maximum size</source>
-        <translation type="unfinished">画像を元のサイズで描画。必要に応じて最大サイズで制限できます</translation>
+        <translation>画像を元のサイズで描画。必要に応じて最大サイズで制限できます</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="160"/>
         <source>Top left</source>
-        <translation type="unfinished">左上</translation>
+        <translation>左上</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="162"/>
         <source>Top right</source>
-        <translation type="unfinished">右上</translation>
+        <translation>右上</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="163"/>
         <source>Left</source>
-        <translation type="unfinished">左寄せ</translation>
+        <translation>左寄せ</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="164"/>
         <source>Middle</source>
-        <translation type="unfinished">中央</translation>
+        <translation>中央</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="165"/>
         <source>Right</source>
-        <translation type="unfinished">右寄せ</translation>
+        <translation>右寄せ</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="166"/>
         <source>Bottom left</source>
-        <translation type="unfinished">左下</translation>
+        <translation>左下</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="167"/>
         <source>Bottom</source>
-        <translation type="unfinished">下</translation>
+        <translation>下</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="168"/>
         <source>Bottom right</source>
-        <translation type="unfinished">右下</translation>
+        <translation>右下</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="172"/>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="180"/>
         <source>Disabled</source>
-        <translation type="unfinished">無効</translation>
+        <translation>無効</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="182"/>
         <source>Path to the custom background image</source>
-        <translation type="unfinished">カスタム背景画像のパス</translation>
+        <translation>カスタム背景画像のパス</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="183"/>
         <source>Select which image source to use for the playlist background</source>
-        <translation type="unfinished">プレイリストの背景に使用する画像ソースを選択</translation>
+        <translation>プレイリストの背景に使用する画像ソースを選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="184"/>
         <source>Select which artwork type to use for current track artwork</source>
-        <translation type="unfinished">現在のトラックのアートワークに使用するアートワークの種類を選択</translation>
+        <translation>現在のトラックのアートワークに使用するアートワークの種類を選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="185"/>
         <source>Select which track supplies the background artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>背景カバーに使用するトラックを選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="186"/>
         <source>Controls how the background image is scaled to the playlist area</source>
-        <translation type="unfinished">背景画像をプレイリスト領域に合わせて拡大縮小する方法を制御</translation>
+        <translation>背景画像をプレイリスト領域に合わせて拡大縮小する方法を制御</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="187"/>
         <source>Alignment for original-size background images</source>
-        <translation type="unfinished">元のサイズの背景画像の配置</translation>
+        <translation>元のサイズの背景画像の配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="188"/>
         <source>Maximum width or height for original-size background images</source>
-        <translation type="unfinished">元のサイズの背景画像の最大幅または最大高さ</translation>
+        <translation>元のサイズの背景画像の最大幅または最大高さ</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="189"/>
         <source>Applies blur to the background image</source>
-        <translation type="unfinished">背景画像にぼかしを適用</translation>
+        <translation>背景画像にぼかしを適用</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="190"/>
         <source>Controls how strongly the background image is shown</source>
-        <translation type="unfinished">背景画像の表示の強さを制御</translation>
+        <translation>背景画像の表示の強さを制御</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="191"/>
         <source>Duration for fading between background images; set to 0 to disable</source>
-        <translation type="unfinished">背景画像間のフェードにかかる時間です。無効にするには 0を設定してください</translation>
+        <translation>背景画像間のフェードにかかる時間です。無効にするには 0を設定してください</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="193"/>
         <source>After adding tracks to the front of or replacing the playback queue, start playback immediately</source>
-        <translation type="unfinished">トラックを再生キューの先頭に追加した際、またはキューを置き換えた際に、すぐに再生を開始します</translation>
+        <translation>トラックを再生キューの先頭に追加した際、またはキューを置き換えた際に、すぐに再生を開始します</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="195"/>
         <source>Background Image</source>
-        <translation type="unfinished">背景画像</translation>
+        <translation>背景画像</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="199"/>
         <source>Image source</source>
-        <translation type="unfinished">画像ソース</translation>
+        <translation>画像ソース</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="200"/>
         <source>Source</source>
-        <translation type="unfinished">ソース</translation>
+        <translation>ソース</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="208"/>
         <source>Layout</source>
-        <translation type="unfinished">レイアウト</translation>
+        <translation>レイアウト</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="209"/>
         <source>Scale mode</source>
-        <translation type="unfinished">拡大縮小モード</translation>
+        <translation>拡大縮小モード</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="211"/>
         <source>Alignment</source>
-        <translation type="unfinished">配置</translation>
+        <translation>配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="213"/>
         <source>Maximum size</source>
-        <translation type="unfinished">最大サイズ</translation>
+        <translation>最大サイズ</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="215"/>
         <source>Effects</source>
-        <translation type="unfinished">エフェクト</translation>
+        <translation>エフェクト</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="314"/>
         <source>Choose Background Image</source>
-        <translation type="unfinished"></translation>
+        <translation>背景画像の選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="315"/>
         <source>Images (*.png *.jpg *.jpeg *.webp *.bmp);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>画像 (*.png *.jpg *.jpeg *.webp *.bmp);;すべてのファイル (*)</translation>
     </message>
 </context>
 <context>
@@ -14433,27 +14433,27 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="84"/>
         <source>Background colour</source>
-        <translation type="unfinished">背景色</translation>
+        <translation>背景色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="85"/>
         <source>Font</source>
-        <translation type="unfinished">フォント</translation>
+        <translation>フォント</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="114"/>
         <source>Use a custom background colour for the currently playing row; transparency is supported</source>
-        <translation type="unfinished">現在再生中の行にカスタム背景色を使用。透明度もサポートされます</translation>
+        <translation>現在再生中の行にカスタム背景色を使用。透明度もサポートされます</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="115"/>
         <source>Use a custom font for the currently playing row</source>
-        <translation type="unfinished">現在再生中の行にカスタムフォントを使用</translation>
+        <translation>現在再生中の行にカスタムフォントを使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="117"/>
         <source>Playing row</source>
-        <translation type="unfinished">再生中の行</translation>
+        <translation>再生中の行</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
@@ -15363,7 +15363,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="952"/>
         <source>Playlist Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストの設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1263"/>
@@ -15648,12 +15648,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="251"/>
         <source>fooyin Plugins (*.fyplugin *.zip *.dll)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin プラグイン (*.fyplugin *.zip *.dll)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="253"/>
         <source>fooyin Plugins (*.fyplugin *.zip *.so)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin プラグイン (*.fyplugin *.zip *.so)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="255"/>
@@ -19294,32 +19294,32 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="119"/>
         <source>Playing track</source>
-        <translation type="unfinished">再生中のトラック</translation>
+        <translation>再生中のトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="120"/>
         <source>Selected track</source>
-        <translation type="unfinished">選択済みトラック</translation>
+        <translation>選択済みトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="121"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished">再生中(停止時は選択中のトラック)</translation>
+        <translation>再生中(停止時は選択中のトラック)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="123"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished">再生中(起動時は空欄)</translation>
+        <translation>再生中(起動時は空欄)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="125"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished">再生中(停止時は空欄)</translation>
+        <translation>再生中(停止時は空欄)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="132"/>
         <source>Preferred track</source>
-        <translation type="unfinished">優先トラック</translation>
+        <translation>優先トラック</translation>
     </message>
 </context>
 <context>
@@ -19474,33 +19474,33 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="704"/>
         <source>Track</source>
-        <translation type="unfinished">トラック</translation>
+        <translation>トラック</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="706"/>
         <source>Album</source>
-        <translation type="unfinished">アルバム</translation>
+        <translation>アルバム</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="709"/>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="723"/>
         <source>None</source>
-        <translation type="unfinished">なし</translation>
+        <translation>なし</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="715"/>
         <source>Gain and clip prevention</source>
-        <translation type="unfinished"></translation>
+        <translation>ゲインおよびクリップ防止</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="718"/>
         <source>Gain</source>
-        <translation type="unfinished">ゲイン</translation>
+        <translation>ゲイン</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="721"/>
         <source>Clip prevention</source>
-        <translation type="unfinished"></translation>
+        <translation>クリップ防止</translation>
     </message>
 </context>
 <context>
@@ -23042,12 +23042,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="83"/>
         <source>&amp;Library Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>ライブラリツリー(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="84"/>
         <source>Open the library tree window</source>
-        <translation type="unfinished"></translation>
+        <translation>ライブラリツリーウィンドウを開く</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="90"/>
@@ -24079,7 +24079,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="413"/>
         <source>Track Viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックビューア</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="421"/>
@@ -24531,7 +24531,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="264"/>
         <source>Display</source>
-        <translation type="unfinished">表示</translation>
+        <translation>表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="267"/>
