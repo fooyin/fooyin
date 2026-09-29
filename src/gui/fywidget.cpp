@@ -320,7 +320,6 @@ void FyWidget::showConfigDialog(QDialog* dialog, const Qt::WindowModality modali
 
     p->m_configDialog = dialog;
 
-    QObject::connect(dialog, &QDialog::destroyed, this, [this]() { p->m_configDialog = nullptr; });
     dialog->setWindowModality(modality);
     dialog->show();
 }
