@@ -23,7 +23,6 @@
 #include "gui/widgets/fontbutton.h"
 #include "gui/widgets/scriptlineedit.h"
 
-#include <QCheckBox>
 #include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -58,7 +57,7 @@ namespace Fooyin {
 ScriptDisplayConfigDialog::ScriptDisplayConfigDialog(ScriptDisplay* widget, QWidget* parent)
     : WidgetConfigDialog<ScriptDisplay, ScriptDisplay::ConfigData>{widget, widget->name(), parent}
     , m_script{new ScriptTextEdit(this)}
-    , m_showStoppedTrack{new QCheckBox(tr("Show current track when playback is stopped"), this)}
+    , m_trackPreference{new QComboBox(this)}
     , m_tabs{new QTabWidget(this)}
     , m_formatTab{new QWidget(this)}
     , m_styleTab{new QWidget(this)}
@@ -117,11 +116,22 @@ ScriptDisplayConfigDialog::ScriptDisplayConfigDialog(ScriptDisplay* widget, QWid
     styleLayout->addWidget(colourGroup, 2, 0);
     styleLayout->setRowStretch(4, 1);
 
+    m_trackPreference->addItem(tr("Playing track"), static_cast<int>(TrackDisplayPreference::PlayingTrack));
+    m_trackPreference->addItem(tr("Selected track"), static_cast<int>(TrackDisplayPreference::SelectedTrack));
+    m_trackPreference->addItem(tr("Playing (or selected when stopped)"),
+                               static_cast<int>(TrackDisplayPreference::PlayingTrackSelectedWhenStopped));
+    m_trackPreference->addItem(tr("Playing (blank at startup)"),
+                               static_cast<int>(TrackDisplayPreference::PlayingTrackBlankAtStartup));
+    m_trackPreference->addItem(tr("Playing (blank when stopped)"),
+                               static_cast<int>(TrackDisplayPreference::PlayingTrackBlankWhenStopped));
+
     auto* formatLayout = new QGridLayout(m_formatTab);
     formatLayout->setContentsMargins({});
 
-    formatLayout->addWidget(m_script, 1, 0);
-    formatLayout->addWidget(m_showStoppedTrack, 2, 0);
+    formatLayout->addWidget(m_script, 1, 0, 1, 3);
+    formatLayout->addWidget(new QLabel(tr("Preferred track") + u":"_s, m_formatTab), 2, 0);
+    formatLayout->addWidget(m_trackPreference, 2, 1);
+    formatLayout->setColumnStretch(2, 1);
 
     QObject::connect(widget, &ScriptDisplay::configChanged, this, &ScriptDisplayConfigDialog::syncCurrentConfig);
 
@@ -146,14 +156,14 @@ ScriptDisplay::ConfigData ScriptDisplayConfigDialog::config() const
         .horizontalAlignment = m_horizontalAlignment->currentData().toInt(),
         .verticalAlignment   = m_verticalAlignment->currentData().toInt(),
         .showScrollBar       = widget()->currentConfig().showScrollBar,
-        .showStoppedTrack    = m_showStoppedTrack->isChecked(),
+        .trackPreference     = static_cast<TrackDisplayPreference>(m_trackPreference->currentData().toInt()),
     };
 }
 
 void ScriptDisplayConfigDialog::setConfig(const ScriptDisplay::ConfigData& config)
 {
     m_script->setText(config.script);
-    m_showStoppedTrack->setChecked(config.showStoppedTrack);
+    m_trackPreference->setCurrentIndex(m_trackPreference->findData(static_cast<int>(config.trackPreference)));
 
     const QFont defaultFont = config.font.isEmpty() ? widget()->font() : fontFromString(config.font);
     m_font->setChecked(!config.font.isEmpty());
@@ -183,6 +193,6 @@ void ScriptDisplayConfigDialog::mergeExternalConfig(const ScriptDisplay::ConfigD
                         &ScriptDisplay::ConfigData::bgColour, &ScriptDisplay::ConfigData::fgColour,
                         &ScriptDisplay::ConfigData::linkColour, &ScriptDisplay::ConfigData::horizontalAlignment,
                         &ScriptDisplay::ConfigData::verticalAlignment, &ScriptDisplay::ConfigData::showScrollBar,
-                        &ScriptDisplay::ConfigData::showStoppedTrack);
+                        &ScriptDisplay::ConfigData::trackPreference);
 }
 } // namespace Fooyin

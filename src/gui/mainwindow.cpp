@@ -249,6 +249,73 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event)
     return true;
 }
 
+bool MainWindow::event(QEvent* event)
+{
+    if(!m_statusWidget) {
+        return QMainWindow::event(event);
+    }
+
+    if(m_showStatusTips && event->type() == QEvent::StatusTip) {
+        const QString tip = static_cast<QStatusTipEvent*>(event)->tip();
+        m_statusWidget->showStatusTip(tip);
+    }
+    else if(event->type() == StatusEvent::StatusEventType) {
+        const auto* status = static_cast<StatusEvent*>(event);
+        if(status->timeout() >= 0) {
+            m_statusWidget->showTempMessage(status->message(), status->timeout());
+        }
+        else {
+            m_statusWidget->showTempMessage(status->message());
+        }
+        return true;
+    }
+
+    return QMainWindow::event(event);
+}
+
+void MainWindow::showEvent(QShowEvent* event)
+{
+    QMainWindow::showEvent(event);
+    m_settings->set<Settings::Gui::MainWindowPixelRatio>(devicePixelRatioF());
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    if(!m_isHiding) {
+        if(event->spontaneous()) {
+            const bool canHide = m_settings->value<Settings::Gui::Internal::ShowTrayIcon>()
+                              && m_settings->value<Settings::Gui::Internal::TrayOnClose>();
+            if(!isHidden() && QSystemTrayIcon::isSystemTrayAvailable() && canHide) {
+                hideToTray(true);
+            }
+            else {
+                exit();
+            }
+        }
+        else {
+            exit();
+        }
+    }
+
+    event->accept();
+    QMainWindow::closeEvent(event);
+}
+
+void MainWindow::mousePressEvent(QMouseEvent* event)
+{
+    if(event->button() == Qt::BackButton) {
+        if(auto* prevCmd = m_actionManager->command(Constants::Actions::Previous)) {
+            prevCmd->action()->activate(QAction::Trigger);
+        }
+    }
+    if(event->button() == Qt::ForwardButton) {
+        if(auto* nextCmd = m_actionManager->command(Constants::Actions::Next)) {
+            nextCmd->action()->activate(QAction::Trigger);
+        }
+    }
+    QMainWindow::mousePressEvent(event);
+}
+
 bool MainWindow::handleHiddenMenuKeyEvent(QKeyEvent* event)
 {
     if(event->key() == Qt::Key_F10 && event->modifiers() == Qt::NoModifier) {
@@ -336,58 +403,6 @@ void MainWindow::showHiddenMenu(QAction* activeAction)
     }
 }
 
-bool MainWindow::event(QEvent* event)
-{
-    if(!m_statusWidget) {
-        return QMainWindow::event(event);
-    }
-
-    if(m_showStatusTips && event->type() == QEvent::StatusTip) {
-        const QString tip = static_cast<QStatusTipEvent*>(event)->tip();
-        m_statusWidget->showStatusTip(tip);
-    }
-    else if(event->type() == StatusEvent::StatusEventType) {
-        const auto* status = static_cast<StatusEvent*>(event);
-        if(status->timeout() >= 0) {
-            m_statusWidget->showTempMessage(status->message(), status->timeout());
-        }
-        else {
-            m_statusWidget->showTempMessage(status->message());
-        }
-        return true;
-    }
-
-    return QMainWindow::event(event);
-}
-
-void MainWindow::showEvent(QShowEvent* event)
-{
-    QMainWindow::showEvent(event);
-    m_settings->set<Settings::Gui::MainWindowPixelRatio>(devicePixelRatioF());
-}
-
-void MainWindow::closeEvent(QCloseEvent* event)
-{
-    if(!m_isHiding) {
-        if(event->spontaneous()) {
-            const bool canHide = m_settings->value<Settings::Gui::Internal::ShowTrayIcon>()
-                              && m_settings->value<Settings::Gui::Internal::TrayOnClose>();
-            if(!isHidden() && QSystemTrayIcon::isSystemTrayAvailable() && canHide) {
-                hideToTray(true);
-            }
-            else {
-                exit();
-            }
-        }
-        else {
-            exit();
-        }
-    }
-
-    event->accept();
-    QMainWindow::closeEvent(event);
-}
-
 void MainWindow::showScanProgress(const ScanProgress& progress)
 {
     if(!m_statusWidget) {
@@ -416,21 +431,6 @@ void MainWindow::showScanProgress(const ScanProgress& progress)
 
     m_statusWidget->setScanProgress(scanText,
                                     [library = m_library, scanId = progress.id]() { library->cancelScan(scanId); });
-}
-
-void MainWindow::mousePressEvent(QMouseEvent* event)
-{
-    if(event->button() == Qt::BackButton) {
-        if(auto* prevCmd = m_actionManager->command(Constants::Actions::Previous)) {
-            prevCmd->action()->activate(QAction::Trigger);
-        }
-    }
-    if(event->button() == Qt::ForwardButton) {
-        if(auto* nextCmd = m_actionManager->command(Constants::Actions::Next)) {
-            nextCmd->action()->activate(QAction::Trigger);
-        }
-    }
-    QMainWindow::mousePressEvent(event);
 }
 
 MainWindow::WindowState MainWindow::currentState()

@@ -22,6 +22,7 @@
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <gui/fywidget.h>
+#include <gui/trackdisplay.h>
 
 #include <QString>
 
@@ -41,6 +42,7 @@ class PlaylistHandler;
 class PropertiesDialog;
 class ScriptCommandHandler;
 class SettingsManager;
+class TrackSelectionController;
 class WidgetContext;
 
 class ScriptDisplay : public FyWidget
@@ -58,12 +60,12 @@ public:
         int horizontalAlignment{Qt::AlignLeft};
         int verticalAlignment{Qt::AlignVCenter};
         bool showScrollBar{true};
-        bool showStoppedTrack{true};
+        TrackDisplayPreference trackPreference{TrackDisplayPreference::PlayingTrack};
     };
 
     ScriptDisplay(PlayerController* playerController, PlaylistHandler* playlistHandler,
-                  ScriptCommandHandler* commandHandler, ActionManager* actionManager, SettingsManager* settings,
-                  QWidget* parent = nullptr);
+                  TrackSelectionController* trackSelection, ScriptCommandHandler* commandHandler,
+                  ActionManager* actionManager, SettingsManager* settings, QWidget* parent = nullptr);
     ~ScriptDisplay() override;
 
     [[nodiscard]] QString name() const override;
@@ -105,6 +107,7 @@ private:
 
     PlayerController* m_playerController;
     PlaylistHandler* m_playlistHandler;
+    TrackSelectionController* m_trackSelection;
     ScriptCommandHandler* m_commandHandler;
     ActionManager* m_actionManager;
     SettingsManager* m_settings;

@@ -35,6 +35,7 @@
 #include <gui/scripting/richtext.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
+#include <gui/trackselectioncontroller.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/actions/actionmanager.h>
@@ -74,6 +75,7 @@ constexpr auto HorizontalAlignmentKey = "TextWidget/HorizontalAlignment";
 constexpr auto VerticalAlignmentKey   = "TextWidget/VerticalAlignment";
 constexpr auto ScrollBarKey           = "TextWidget/Scrollbar";
 constexpr auto ShowStoppedTrackKey    = "TextWidget/ShowStoppedTrack";
+constexpr auto TrackPreferenceKey     = "TextWidget/TrackPreference";
 
 Q_LOGGING_CATEGORY(SCRIPT_DISPLAY, "fy.scriptdisplay")
 
@@ -117,11 +119,12 @@ public:
 };
 
 ScriptDisplay::ScriptDisplay(PlayerController* playerController, PlaylistHandler* playlistHandler,
-                             ScriptCommandHandler* commandHandler, ActionManager* actionManager,
-                             SettingsManager* settings, QWidget* parent)
+                             TrackSelectionController* trackSelection, ScriptCommandHandler* commandHandler,
+                             ActionManager* actionManager, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerController{playerController}
     , m_playlistHandler{playlistHandler}
+    , m_trackSelection{trackSelection}
     , m_commandHandler{commandHandler}
     , m_actionManager{actionManager}
     , m_settings{settings}
@@ -164,6 +167,8 @@ ScriptDisplay::ScriptDisplay(PlayerController* playerController, PlaylistHandler
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &ScriptDisplay::updateText);
     QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, &ScriptDisplay::updateText);
     QObject::connect(m_playerController, &PlayerController::playlistTrackUpdated, this, &ScriptDisplay::updateText);
+    QObject::connect(m_trackSelection, &TrackSelectionController::displaySelectionChanged, this,
+                     &ScriptDisplay::updateText);
 
     m_settings->subscribe<Settings::Gui::RatingFullStarSymbol>(this, &ScriptDisplay::updateText);
     m_settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(this, &ScriptDisplay::updateText);
@@ -204,7 +209,14 @@ ScriptDisplay::ConfigData ScriptDisplay::defaultConfig() const
     config.horizontalAlignment = m_settings->fileValue(HorizontalAlignmentKey, config.horizontalAlignment).toInt();
     config.verticalAlignment   = m_settings->fileValue(VerticalAlignmentKey, config.verticalAlignment).toInt();
     config.showScrollBar       = m_settings->fileValue(ScrollBarKey, config.showScrollBar).toBool();
-    config.showStoppedTrack    = m_settings->fileValue(ShowStoppedTrackKey, config.showStoppedTrack).toBool();
+
+    if(m_settings->fileContains(TrackPreferenceKey)) {
+        config.trackPreference = static_cast<TrackDisplayPreference>(
+            m_settings->fileValue(TrackPreferenceKey, static_cast<int>(config.trackPreference)).toInt());
+    }
+    else if(!m_settings->fileValue(ShowStoppedTrackKey, true).toBool()) {
+        config.trackPreference = TrackDisplayPreference::PlayingTrackBlankWhenStopped;
+    }
 
     return config;
 }
@@ -239,7 +251,7 @@ void ScriptDisplay::applyConfig(const ConfigData& config)
     m_config.horizontalAlignment = config.horizontalAlignment;
     m_config.verticalAlignment   = config.verticalAlignment;
     m_config.showScrollBar       = config.showScrollBar;
-    m_config.showStoppedTrack    = config.showStoppedTrack;
+    m_config.trackPreference     = config.trackPreference;
 
     applyAppearance();
     updateText();
@@ -257,7 +269,8 @@ void ScriptDisplay::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(HorizontalAlignmentKey, config.horizontalAlignment);
     m_settings->fileSet(VerticalAlignmentKey, config.verticalAlignment);
     m_settings->fileSet(ScrollBarKey, config.showScrollBar);
-    m_settings->fileSet(ShowStoppedTrackKey, config.showStoppedTrack);
+    m_settings->fileSet(TrackPreferenceKey, static_cast<int>(config.trackPreference));
+    m_settings->fileRemove(ShowStoppedTrackKey);
 }
 
 void ScriptDisplay::clearSavedDefaults() const
@@ -271,6 +284,7 @@ void ScriptDisplay::clearSavedDefaults() const
     m_settings->fileRemove(VerticalAlignmentKey);
     m_settings->fileRemove(ScrollBarKey);
     m_settings->fileRemove(ShowStoppedTrackKey);
+    m_settings->fileRemove(TrackPreferenceKey);
 }
 
 void ScriptDisplay::saveLayoutData(QJsonObject& layout)
@@ -399,8 +413,13 @@ ScriptDisplay::ConfigData ScriptDisplay::configFromLayout(const QJsonObject& lay
     if(layout.contains("ShowScrollbar"_L1)) {
         config.showScrollBar = layout.value("ShowScrollbar"_L1).toBool();
     }
-    if(layout.contains("ShowStoppedTrack"_L1)) {
-        config.showStoppedTrack = layout.value("ShowStoppedTrack"_L1).toBool();
+    if(layout.contains("TrackPreference"_L1)) {
+        config.trackPreference = static_cast<TrackDisplayPreference>(layout.value("TrackPreference"_L1).toInt());
+    }
+    else if(layout.contains("ShowStoppedTrack"_L1)) {
+        config.trackPreference = layout.value("ShowStoppedTrack"_L1).toBool()
+                                   ? TrackDisplayPreference::PlayingTrack
+                                   : TrackDisplayPreference::PlayingTrackBlankWhenStopped;
     }
 
     return config;
@@ -416,7 +435,8 @@ void ScriptDisplay::saveConfigToLayout(const ConfigData& config, QJsonObject& la
     layout["HorizontalAlignment"_L1] = config.horizontalAlignment;
     layout["VerticalAlignment"_L1]   = config.verticalAlignment;
     layout["ShowScrollbar"_L1]       = config.showScrollBar;
-    layout["ShowStoppedTrack"_L1]    = config.showStoppedTrack;
+    layout["TrackPreference"_L1]     = static_cast<int>(config.trackPreference);
+    layout.remove("ShowStoppedTrack"_L1);
 }
 
 void ScriptDisplay::applyAppearance()
@@ -539,19 +559,38 @@ void ScriptDisplay::updateViewportAlignment()
 
 Track ScriptDisplay::currentTrack() const
 {
-    if(!m_config.showStoppedTrack && m_playerController->playState() == Player::PlayState::Stopped) {
+    const auto source = preferredTrackSource(m_config.trackPreference, m_playerController->playState(),
+                                             m_playerController->playbackStarted());
+    if(source == PreferredTrackSource::None) {
         return {};
     }
 
-    if(const Track track = m_playerController->currentTrack(); track.isValid()) {
+    const auto playingTrack = [this]() {
+        if(const Track track = m_playerController->currentTrack(); track.isValid()) {
+            return track;
+        }
+        if(const PlaylistTrack track = m_playlistHandler->currentTrack(); track.isValid()) {
+            return track.track;
+        }
+        return Track{};
+    };
+
+    const auto selectedTrack = [this]() {
+        return m_trackSelection->hasDisplayTracks() ? m_trackSelection->displayTrack() : Track{};
+    };
+
+    if(source == PreferredTrackSource::Selected) {
+        if(const Track track = selectedTrack(); track.isValid()) {
+            return track;
+        }
+        return playingTrack();
+    }
+
+    if(const Track track = playingTrack(); track.isValid()) {
         return track;
     }
 
-    if(auto* playlist = m_playlistHandler->activePlaylist(); playlist && playlist->currentTrack().isValid()) {
-        return playlist->currentTrack();
-    }
-
-    return {};
+    return selectedTrack();
 }
 
 Playlist* ScriptDisplay::currentPlaylist() const

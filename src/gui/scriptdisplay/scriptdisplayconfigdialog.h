@@ -23,7 +23,6 @@
 
 #include "scriptdisplay.h"
 
-class QCheckBox;
 class QComboBox;
 class QTabWidget;
 
@@ -47,7 +46,7 @@ protected:
 
 private:
     ScriptTextEdit* m_script;
-    QCheckBox* m_showStoppedTrack;
+    QComboBox* m_trackPreference;
 
     QTabWidget* m_tabs;
     QWidget* m_formatTab;
