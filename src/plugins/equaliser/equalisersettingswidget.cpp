@@ -32,6 +32,7 @@
 #include <QDoubleSpinBox>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QGridLayout>
 #include <QHBoxLayout>
 #include <QInputDialog>
 #include <QJsonObject>
@@ -632,20 +633,21 @@ EqualiserSettingsWidget::EqualiserSettingsWidget(EqualiserPresetStore& presetSto
     auto* stripWidget = new QWidget(this);
     stripWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    auto* row = new QHBoxLayout(stripWidget);
-    row->setContentsMargins(0, 0, 0, 0);
-    row->setSpacing(7);
+    auto* bandsLayout = new QHBoxLayout(stripWidget);
+    bandsLayout->setContentsMargins({});
+    bandsLayout->setSpacing(7);
 
     std::vector<QWidget*> sliderColumns;
     std::vector<QLabel*> bandLabels;
     std::vector<QLabel*> valueLabels;
     int sliderColumnMinWidth{0};
 
-    const auto addSliderColumn = [this, row, &sliderColumns, &bandLabels, &valueLabels, &sliderColumnMinWidth](
-                                     QSlider* slider, QLabel* valueLabel, const QString& labelText) {
+    const auto addSliderColumn = [this, bandsLayout, &bandLabels, &valueLabels](QSlider* slider, QLabel* valueLabel,
+                                                                                const QString& labelText) {
         auto* col = new QVBoxLayout();
-        col->setContentsMargins(0, 0, 0, 0);
+        col->setContentsMargins({});
         col->setSpacing(6);
+
         auto* label = makeBandLabel(labelText, this);
         col->addWidget(label);
         col->addWidget(slider, 1, Qt::AlignHCenter);
@@ -654,27 +656,30 @@ EqualiserSettingsWidget::EqualiserSettingsWidget(EqualiserPresetStore& presetSto
         auto* colWidget = new QWidget(this);
         colWidget->setLayout(col);
         colWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        sliderColumnMinWidth = std::max({sliderColumnMinWidth, slider->sizeHint().width(), label->sizeHint().width(),
-                                         valueLabel->sizeHint().width()});
-        sliderColumns.push_back(colWidget);
+        colWidget->setMinimumWidth(
+            std::max({slider->sizeHint().width(), label->sizeHint().width(), valueLabel->sizeHint().width()}));
         bandLabels.push_back(label);
         valueLabels.push_back(valueLabel);
 
-        row->addWidget(colWidget, 0, Qt::AlignTop);
+        bandsLayout->addWidget(colWidget, 0, Qt::AlignTop);
+        return colWidget;
     };
 
-    addSliderColumn(m_preampSlider, m_preampValueLabel, tr("Preamp"));
+    auto* preampColumn = addSliderColumn(m_preampSlider, m_preampValueLabel, tr("Preamp"));
+    preampColumn->setFixedWidth(preampColumn->minimumWidth());
     connectSliderSignals(m_preampSlider, false);
 
     for(size_t i{0}; i < m_bandSliders.size(); ++i) {
         m_bandSliders[i]     = makeGainSlider(this);
         m_bandValueLabels[i] = makeValueLabel(this);
-        addSliderColumn(m_bandSliders[i], m_bandValueLabels[i], QString::fromLatin1(BandLabels[i]));
+        auto* bandColumn = addSliderColumn(m_bandSliders[i], m_bandValueLabels[i], QString::fromLatin1(BandLabels[i]));
+        sliderColumns.push_back(bandColumn);
+        sliderColumnMinWidth = std::max(sliderColumnMinWidth, bandColumn->minimumWidth());
         connectSliderSignals(m_bandSliders[i], true);
     }
 
-    for(auto* colWidget : sliderColumns) {
-        colWidget->setFixedWidth(sliderColumnMinWidth);
+    for(auto* bandColumn : sliderColumns) {
+        bandColumn->setFixedWidth(sliderColumnMinWidth);
     }
 
     int bandLabelHeight{0};
@@ -694,7 +699,7 @@ EqualiserSettingsWidget::EqualiserSettingsWidget(EqualiserPresetStore& presetSto
     }
 
     auto* scaleCol = new QVBoxLayout();
-    scaleCol->setContentsMargins(0, 0, 0, 0);
+    scaleCol->setContentsMargins({});
     scaleCol->setSpacing(6);
 
     scaleCol->addSpacerItem(new QSpacerItem(0, bandLabelHeight, QSizePolicy::Minimum, QSizePolicy::Fixed));
@@ -704,15 +709,15 @@ EqualiserSettingsWidget::EqualiserSettingsWidget(EqualiserPresetStore& presetSto
     scaleCol->addWidget(m_scaleTrackWidget, 0, Qt::AlignTop | Qt::AlignRight);
     scaleCol->addSpacerItem(new QSpacerItem(0, valueLabelHeight, QSizePolicy::Minimum, QSizePolicy::Fixed));
 
-    row->addSpacing(4);
-    row->addLayout(scaleCol);
+    bandsLayout->addSpacing(4);
+    bandsLayout->addLayout(scaleCol);
     root->addWidget(stripWidget, 0, Qt::AlignHCenter | Qt::AlignTop);
 
     auto* controlsWidget = new QWidget(this);
     controlsWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    auto* controlsLayout = new QHBoxLayout(controlsWidget);
-    controlsLayout->setContentsMargins(0, 0, 0, 0);
+    auto* controlsLayout = new QGridLayout(controlsWidget);
+    controlsLayout->setContentsMargins({});
     controlsLayout->setSpacing(6);
 
     auto* zeroButton      = new QPushButton(tr("Zero all"), this);
@@ -737,19 +742,20 @@ EqualiserSettingsWidget::EqualiserSettingsWidget(EqualiserPresetStore& presetSto
     m_presetBox->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
     m_presetBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
-    controlsLayout->addWidget(zeroButton);
-    controlsLayout->addWidget(autoButton);
-    controlsLayout->addWidget(bandEditorLabel);
-    controlsLayout->addWidget(m_selectedBandCombo);
-    controlsLayout->addWidget(m_selectedBandSpin);
-    controlsLayout->addStretch(1);
-    controlsLayout->addWidget(presetsLabel);
-    controlsLayout->addWidget(m_presetBox);
-    controlsLayout->addWidget(m_loadPresetButton);
-    controlsLayout->addWidget(m_savePresetButton);
-    controlsLayout->addWidget(m_deletePresetButton);
-    controlsLayout->addWidget(m_importPresetButton);
-    controlsLayout->addWidget(m_exportPresetButton);
+    int row{0};
+    controlsLayout->addWidget(zeroButton, row, 0);
+    controlsLayout->addWidget(autoButton, row, 1);
+    controlsLayout->addWidget(bandEditorLabel, row, 2);
+    controlsLayout->addWidget(m_selectedBandCombo, row, 3);
+    controlsLayout->addWidget(m_selectedBandSpin, row, 4);
+    controlsLayout->addWidget(m_importPresetButton, row, 7);
+    controlsLayout->addWidget(m_exportPresetButton, row++, 8);
+    controlsLayout->addWidget(presetsLabel, row, 0);
+    controlsLayout->addWidget(m_presetBox, row, 1, 1, 5);
+    controlsLayout->addWidget(m_loadPresetButton, row, 6);
+    controlsLayout->addWidget(m_savePresetButton, row, 7);
+    controlsLayout->addWidget(m_deletePresetButton, row++, 8);
+    controlsLayout->setColumnStretch(5, 1);
 
     controlsWidget->setFixedWidth(stripWidget->sizeHint().width());
 
