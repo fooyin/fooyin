@@ -335,6 +335,7 @@ void PlaylistWidget::setHeaderText(QString text)
 void PlaylistWidget::setTracks(const TrackList& tracks)
 {
     m_session->replaceTracks(sessionHost(), tracks);
+    m_playlistView->scrollToTop();
 }
 
 void PlaylistWidget::startPlayback()

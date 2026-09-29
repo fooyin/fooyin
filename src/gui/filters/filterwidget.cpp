@@ -301,6 +301,10 @@ void FilterWidget::setViewState(const FilterViewState& state)
 
     m_model->setRows(m_columns, state.rows);
 
+    if(m_pendingScrollPosition < 0) {
+        m_view->scrollToTop();
+    }
+
     auto* selectionModel = m_view->selectionModel();
     const QSignalBlocker blocker{selectionModel};
     selectionModel->clearSelection();
