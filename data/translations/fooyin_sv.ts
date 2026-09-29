@@ -4,72 +4,72 @@
 <context>
     <name>DirBrowser</name>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="287"/>
+        <location filename="../../src/gui/contextmenuids.h" line="291"/>
         <source>Play</source>
         <translation>Spela</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="291"/>
+        <location filename="../../src/gui/contextmenuids.h" line="295"/>
         <source>Add to current playlist</source>
         <translation>Lägg till i aktuell spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="294"/>
+        <location filename="../../src/gui/contextmenuids.h" line="298"/>
         <source>Add to active playlist</source>
         <translation>Lägg till i aktiv spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="297"/>
+        <location filename="../../src/gui/contextmenuids.h" line="301"/>
         <source>Replace current playlist</source>
         <translation>Ersätt aktuell spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="300"/>
+        <location filename="../../src/gui/contextmenuids.h" line="304"/>
         <source>Create new playlist</source>
         <translation>Skapa ny spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="303"/>
+        <location filename="../../src/gui/contextmenuids.h" line="307"/>
         <source>Add to playlist</source>
         <translation>Lägg till i spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="307"/>
+        <location filename="../../src/gui/contextmenuids.h" line="311"/>
         <source>Add to playback queue</source>
         <translation>Lägg till i uppspelningskö</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="310"/>
+        <location filename="../../src/gui/contextmenuids.h" line="314"/>
         <source>Queue to play next</source>
         <translation>Köa till nästa spelning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="313"/>
+        <location filename="../../src/gui/contextmenuids.h" line="317"/>
         <source>Replace playback queue</source>
         <translation>Ersätt uppspelningskö</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="317"/>
+        <location filename="../../src/gui/contextmenuids.h" line="321"/>
         <source>Set as root</source>
         <translation>Sätt som rot</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="320"/>
+        <location filename="../../src/gui/contextmenuids.h" line="324"/>
         <source>View mode</source>
         <translation>Visningsläge</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="323"/>
+        <location filename="../../src/gui/contextmenuids.h" line="327"/>
         <source>Configure</source>
         <translation>Konfigurera</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="465"/>
+        <location filename="../../src/gui/widgets.cpp" line="470"/>
         <source>Directory Browser</source>
         <translation>Mappbläddrare</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="467"/>
+        <location filename="../../src/gui/widgets.cpp" line="472"/>
         <source>Unchecked items will be hidden from the directory browser context menu.</source>
         <translation>Obockade saker kommer vara dolda från mappbläddrarens snabbmeny.</translation>
     </message>
@@ -122,12 +122,12 @@
         <translation>Ta bort</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="487"/>
+        <location filename="../../src/gui/widgets.cpp" line="492"/>
         <source>Layout Editing</source>
         <translation>Layoutredigering</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="489"/>
+        <location filename="../../src/gui/widgets.cpp" line="494"/>
         <source>Unchecked items will be hidden from the layout editing context menu.</source>
         <translation>Obockade saker kommer vara dolda från layoutredigeringens snabbmeny.</translation>
     </message>
@@ -190,12 +190,12 @@
         <translation>Spårmeny</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="498"/>
+        <location filename="../../src/gui/widgets.cpp" line="503"/>
         <source>Library Filter</source>
         <translation>Biblioteksfilter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="500"/>
+        <location filename="../../src/gui/widgets.cpp" line="505"/>
         <source>Unchecked items will be hidden from the library filter context menu.</source>
         <translation>Obockade saker kommer vara dolda från biblioteksfiltrets snabbmeny.</translation>
     </message>
@@ -561,6 +561,20 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="232"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="234"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="236"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="238"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="240"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="242"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="244"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="246"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="248"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="250"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="252"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="254"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="256"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="258"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="260"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="262"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="264"/>
         <source>Playback</source>
         <translation>Uppspelning</translation>
     </message>
@@ -575,77 +589,72 @@
         <translation>Unika genrer i spårlistan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="283"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="315"/>
         <source>Returns true when x is greater than y</source>
         <translation>Returnerar sant när x är större än y</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="318"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="350"/>
         <source>Finds the first substring position (1-based)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="321"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="353"/>
         <source>Finds the first substring position ignoring case (1-based)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="324"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="356"/>
         <source>Finds the last substring position (1-based)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="327"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="359"/>
         <source>Finds the last substring position ignoring case (1-based)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="330"/>
-        <source>Returns one split segment (1-based index)</source>
-        <translation>Returnerar ett splittat segment (1-baserat index)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="340"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="373"/>
         <source>Returns the first shortest string</source>
         <translation>Returnerar den första kortaste strängen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="343"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="376"/>
         <source>Finds the first character position (1-based)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="346"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="379"/>
         <source>Finds the last character position (1-based)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="355"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="388"/>
         <source>Returns true when a is longer than b</source>
         <translation>Returnerar sant när a är längre än b</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="357"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="390"/>
         <source>Returns the platform path separator</source>
         <translation>Returnerar plattform-sökvägs-separatorn</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="412"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="445"/>
         <source>Builds a clickable link that launches an application</source>
         <translation>Bygger en klickbar länk som öppnar en applikation</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="418"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="451"/>
         <source>Returns the CRC-32 checksum of the text</source>
         <translation>Returnerar CRC-32-kontrollsumman av texten</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="474"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="507"/>
         <source>Returns the value at the one-based index</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="483"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="516"/>
         <source>Checks whether two numeric values are equal</source>
         <translation>Kollar om två numeriska värden är lika</translation>
     </message>
@@ -729,625 +738,712 @@
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="233"/>
+        <source>Sample rate entering the active output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="235"/>
+        <source>Number of channels entering the active output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="237"/>
+        <source>Channel layout entering the active output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="239"/>
+        <source>Bit depth used by the active output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="241"/>
+        <source>Active output device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
+        <source>Enabled DSPs in processing order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
+        <source>Explicitly selected DSP chain preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="247"/>
+        <source>Playback volume in dB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="249"/>
+        <source>Active ReplayGain source mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="251"/>
+        <source>Active ReplayGain processing mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="253"/>
+        <source>Effective ReplayGain adjustment in dB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="255"/>
+        <source>Effective ReplayGain peak</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="257"/>
+        <source>Effective ReplayGain peak in dBFS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="259"/>
+        <source>Active output buffer length in milliseconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="261"/>
         <source>Returns 1 while playback is active</source>
         <translation>Returnerar 1 medan uppspelning är aktiv</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="235"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="263"/>
         <source>Returns 1 while playback is paused</source>
         <translation>Returnerar 1 medan uppspelning är pausad</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="237"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="265"/>
         <source>Returns 1 while playback is stopped</source>
         <translation>Returnerar 1 medan uppspelning är stoppad</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="238"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="266"/>
         <source>System</source>
         <translation>System</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="239"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="267"/>
         <source>Current date and time formatted as YYYY-MM-DD HH:MM:SS</source>
         <translation>Aktuellt datum och tid formaterat som ÅÅÅÅ-MM-DD tt:mm:ss</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="240"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="242"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="268"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="270"/>
         <source>Library</source>
         <translation>Bibliotek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="241"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="269"/>
         <source>Current library name</source>
         <translation>Aktuellt biblioteksnamn</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="271"/>
         <source>Current library path</source>
         <translation>Aktuell bibliotekssökväg</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="244"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="246"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="248"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="250"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="252"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="276"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="278"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="280"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="282"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="284"/>
         <source>Style</source>
         <translation>Stil</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="273"/>
         <source>Makes the enclosed text bold</source>
         <translation>Gör den inneslutna texten fet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="247"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="275"/>
         <source>Makes the enclosed text italic</source>
         <translation>Gör den inneslutna texten kursiv</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="249"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="277"/>
+        <source>Underlines the enclosed text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="279"/>
+        <source>Strikes through the enclosed text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="281"/>
         <source>Sets the font family for the enclosed text</source>
         <translation>Sätter teckenfamiljen för den inneslutna texten</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="251"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="283"/>
         <source>Sets the font size in points</source>
         <translation>Sätter typsnittets storlek i punkter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="253"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="285"/>
         <source>Adjusts the current font size by a positive or negative delta</source>
         <translation>Justerar den aktuella typsnittsstorleken med en positiv eller negativ delta</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="255"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="257"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="259"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="262"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="287"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="289"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="291"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="294"/>
         <source>Colour</source>
         <translation>Färg</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="256"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="288"/>
         <source>Sets the text alpha channel from 0 to 255</source>
         <translation>Sätter textens alfakanal från 0 till 255</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="258"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="290"/>
         <source>Sets the text colour from red, green and blue components</source>
         <translation>Sätter färgtexten från röda, gröna och blåa komponenter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="260"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="292"/>
         <source>Sets the text colour from red, green, blue, and alpha components</source>
         <translation>Sätter färgtexten från röda, gröna, blåa och alfakomponenter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="263"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="295"/>
         <source>Sets the text colour from a named colour or hex code</source>
         <translation>Sätter färgtexten från en döpt färg eller hexkod</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="264"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="296"/>
         <source>Adds numeric arguments</source>
         <translation>Adderar numeriska argument</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="265"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="267"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="269"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="271"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="273"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="275"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="277"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="279"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="281"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="287"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="290"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="430"/>
-        <source>Numeric</source>
-        <translation>Numerisk</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="266"/>
-        <source>Subtracts later values from the first</source>
-        <translation>Subtraherar senare värden från den första</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="268"/>
-        <source>Multiplies numeric arguments</source>
-        <translation>Multiplicerar numeriska argument</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="270"/>
-        <source>Divides the first value by the second</source>
-        <translation>Dividerar det första värdet med sekunden</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
-        <source>Returns the smallest numeric value</source>
-        <translation>Returnerar det minsta numeriska värdet</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
-        <source>Returns the largest numeric value</source>
-        <translation>Returnerar det största numeriska värdet</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="276"/>
-        <source>Returns the remainder of a division</source>
-        <translation>Returnerar resten av en division</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="278"/>
-        <source>Returns a random number in range</source>
-        <translation>Returnerar en slumpmässig siffra inom intervall</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="280"/>
-        <source>Rounds a numeric value</source>
-        <translation>Avrunda ett numeriskt värde</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="286"/>
-        <source>Formats a number with leading zeroes</source>
-        <translation>Formatera ett nummer med inledande nollor</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="289"/>
-        <source>Formats a number in hexadecimal with leading zeroes</source>
-        <translation>Formaterar ett nummer i hexadecimal med inledande nollor</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="291"/>
-        <source>Replaces text fragments</source>
-        <translation>Ersätter textfragment</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="292"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="295"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="298"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="297"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="299"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="301"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="303"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="305"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="307"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="309"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="312"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="314"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="316"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="311"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="313"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="319"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="322"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="325"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="328"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="331"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="334"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="336"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="338"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="463"/>
+        <source>Numeric</source>
+        <translation>Numerisk</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="298"/>
+        <source>Subtracts later values from the first</source>
+        <translation>Subtraherar senare värden från den första</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="300"/>
+        <source>Multiplies numeric arguments</source>
+        <translation>Multiplicerar numeriska argument</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="302"/>
+        <source>Divides the first value by the second</source>
+        <translation>Dividerar det första värdet med sekunden</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="304"/>
+        <source>Returns the smallest numeric value</source>
+        <translation>Returnerar det minsta numeriska värdet</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="306"/>
+        <source>Returns the largest numeric value</source>
+        <translation>Returnerar det största numeriska värdet</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="308"/>
+        <source>Returns the remainder of a division</source>
+        <translation>Returnerar resten av en division</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="310"/>
+        <source>Returns a random number in range</source>
+        <translation>Returnerar en slumpmässig siffra inom intervall</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="312"/>
+        <source>Rounds a numeric value</source>
+        <translation>Avrunda ett numeriskt värde</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="318"/>
+        <source>Formats a number with leading zeroes</source>
+        <translation>Formatera ett nummer med inledande nollor</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="321"/>
+        <source>Formats a number in hexadecimal with leading zeroes</source>
+        <translation>Formaterar ett nummer i hexadecimal med inledande nollor</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="323"/>
+        <source>Replaces text fragments</source>
+        <translation>Ersätter textfragment</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="324"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="327"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="330"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="333"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="335"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="337"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="339"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="341"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="344"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="347"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="349"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="346"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="348"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="351"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="354"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="356"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="358"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="357"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="360"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="362"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="365"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="364"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="367"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="369"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="371"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="373"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="375"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="374"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="377"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="379"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="381"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="383"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="380"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="382"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="384"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="387"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="389"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="391"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="393"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="395"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="398"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="400"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="402"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="404"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="406"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="408"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="410"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="412"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="414"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="416"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="419"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="422"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="425"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="428"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="424"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="426"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="449"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="452"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="455"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="458"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="461"/>
         <source>String</source>
         <translation>Sträng</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="294"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="326"/>
         <source>Returns the first match or capture; group 0 is the full match</source>
         <translation>Returnerar första matchningen eller fångsten; grupp 0 är den fulla matchningen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="297"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="329"/>
         <source>Returns all matches or captures; group 0 is the full match</source>
         <translation>Returnerar alla matchningar eller fångster; grupp 0 är den fulla matchningen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="300"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="332"/>
         <source>Replaces all regular expression matches; flags: i, m, s, x, U</source>
         <translation>Ersätter alla matchningar för reguljära uttryck; flaggor: i, m, s, x, U</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="302"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="334"/>
         <source>Converts text to ASCII</source>
         <translation>Konverterar text till ASCII</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="304"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="336"/>
         <source>Returns a slice of text</source>
         <translation>Returnerar en skiva text</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="306"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="338"/>
         <source>Removes characters from the end</source>
         <translation>Tar bort karaktärer på slutet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="308"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="340"/>
         <source>Returns characters from the left</source>
         <translation>Returnerar karaktärer från vänster</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="311"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="343"/>
         <source>Returns characters from the right</source>
         <translation>Returnerar karaktärer från höger</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="314"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="346"/>
         <source>Inserts text at a position</source>
         <translation>Infogar text vid en position</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="315"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="347"/>
         <source>Returns a substring</source>
         <translation>Returnerar en substräng</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="333"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="362"/>
+        <source>Splits text into multiple values, or returns one split segment when given a 1-based index</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="366"/>
         <source>Joins non-empty values with a separator</source>
         <translation>Lägger samman icke-tomma värden med en separator</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="335"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="368"/>
         <source>Returns the text length</source>
         <translation>Returnerar textlängden</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="337"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="370"/>
         <source>Returns the longest string</source>
         <translation>Returnerar den längsta strängen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="348"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="381"/>
         <source>Compares two strings</source>
         <translation>Jämför två strängar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="350"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="383"/>
         <source>Compares two strings ignoring case</source>
         <translation>Jämför två strängar utan åtanke på stora och små bokstäver</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="353"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="386"/>
         <source>Tests a regular expression match; flags: i, m, s, x, U</source>
         <translation>Testar en matchning för ett reguljärt uttryck; flaggor: i, m, s, x, U</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="359"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="392"/>
         <source>Returns a newline</source>
         <translation>Returnerar en ny-rad</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="361"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="394"/>
         <source>Returns a tab character</source>
         <translation>Returnerar ett tabbskrivtecken</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="364"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="397"/>
         <source>Moves leading articles to the end</source>
         <translation>Flyttar ledande artiklar till slutet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="366"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="399"/>
         <source>Removes leading articles</source>
         <translation>Tar bort ledande artiklar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="368"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="401"/>
         <source>Pads text on the left</source>
         <translation>Fyller ut text från vänster</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="371"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="404"/>
         <source>Pads text on the right</source>
         <translation>Fyller ut text från höger</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="372"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="405"/>
         <source>Repeats text</source>
         <translation>Upprepar text</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="374"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="407"/>
         <source>Trims surrounding whitespace</source>
         <translation>Trimmar omringande blankt utrymme</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="376"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="409"/>
         <source>Converts text to lowercase</source>
         <translation>Konverterar text till gemener</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="378"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="411"/>
         <source>Converts text to uppercase</source>
         <translation>Konverterar text till versaler</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="380"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="413"/>
         <source>Builds an abbreviation</source>
         <translation>Bygger en förkortning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="382"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="415"/>
         <source>Capitalises words</source>
         <translation>Versaliserar ord</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="385"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="418"/>
         <source>Returns a directory name from a path</source>
         <translation>Returnerar ett mappnamn från en sökväg</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="386"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="389"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="395"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="398"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="419"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="422"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="428"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="431"/>
         <source>Path</source>
         <translation>Sökväg</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="388"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="421"/>
         <source>Returns a parent directory path</source>
         <translation>Returnerar en föräldermapps sökväg</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="391"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="424"/>
         <source>Elides text at the end</source>
         <translation>Utelämnar text i slutet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="393"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="426"/>
         <source>Elides text in the middle</source>
         <translation>Utelämnar text i mitten</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="394"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="427"/>
         <source>Returns a file extension</source>
         <translation>Returnerar en filändelse</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="397"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="430"/>
         <source>Returns a filename without extension</source>
         <translation>Returnerar ett filnamn utan ändelse</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="400"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="433"/>
         <source>Builds a text progress bar</source>
         <translation>Bygger en textförloppsindikator</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="401"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="404"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="407"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="410"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="413"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="434"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="437"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="440"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="443"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="446"/>
         <source>Utility</source>
         <translation>Utilitet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="403"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="436"/>
         <source>Builds an alternate text progress bar</source>
         <translation>Bygger en alternativ textförloppsindikator</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="406"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="439"/>
         <source>Builds a clickable document or web link</source>
         <translation>Bygger ett klickbart dokument- eller webblänk</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="409"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="442"/>
         <source>Builds a clickable link to a fooyin command</source>
         <translation>Bygger en klickbar länk till ett fooyin-kommando</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="415"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="448"/>
         <source>Percent-encodes text for use in URLs</source>
         <translation>Procentkodar text för användning i URL:er</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="421"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="454"/>
         <source>Checks if text contains only alphabetic characters</source>
         <translation>Kollar om text innehåller endast alfabetiska karaktärer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="424"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="457"/>
         <source>Checks if text contains only alphanumeric characters</source>
         <translation>Kollar om text innehåller endast alfanumeriska karaktärer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="427"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="460"/>
         <source>Checks if text contains only numeric characters</source>
         <translation>Kollar om text innehåller endast numeriska karaktärer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="429"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="462"/>
         <source>Formats milliseconds as time</source>
         <translation>Formaterar millisekunder som tid</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="431"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="464"/>
         <source>Returns the four-digit year from a date</source>
         <translation>Returnerar det fyrsiffriga året från ett datum</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="432"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="435"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="438"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="440"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="443"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="465"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="468"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="471"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="473"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="476"/>
         <source>Time</source>
         <translation>Tid</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="434"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="467"/>
         <source>Returns the two-digit month from a date</source>
         <translation>Returnerar den tvåsiffriga månaden från ett datum</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="437"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="470"/>
         <source>Returns the two-digit day of month from a date</source>
         <translation>Returnerar den tvåsiffriga dagen eller månaden från ett datum</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="439"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="472"/>
         <source>Returns the date formatted as YYYY-MM-DD</source>
         <translation>Returnerar datumet formaterat som ÅÅÅÅ-MM-DD</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="442"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="475"/>
         <source>Returns the time formatted as HH:MM or HH:MM:SS</source>
         <translation>Returnerar tiden formaterad som tt:mm eller tt:mm:ss</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="445"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="478"/>
         <source>Returns the value stored in a script variable</source>
         <translation>Returnerar värdet lagrat i en skriptvariabel</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="446"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="449"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="452"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="479"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="482"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="485"/>
         <source>Variable</source>
         <translation>Variabel</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="448"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="481"/>
         <source>Stores a script variable and returns the value</source>
         <translation>Lagrar en skriptvariabel och returnerar värdet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="451"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="484"/>
         <source>Stores a script variable and returns nothing</source>
         <translation>Lagrar en skriptvariabel och returnerar inget</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="454"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="487"/>
         <source>Returns true when all expressions are true</source>
         <translation>Returnerar sant när alla uttryck är sanna</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="456"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="489"/>
         <source>Returns the opposite truth value</source>
         <translation>Returnerar det motsatta sant-värdet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="459"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="492"/>
         <source>Returns true when at least one expression is true</source>
         <translation>Returnerar sant när mint ett uttryck är sant</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="462"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="495"/>
         <source>Returns true when an odd number of expressions are true</source>
         <translation>Returnerar sant när ett udda antal uttryck är sanna</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="465"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="498"/>
         <source>Returns then when condition is true</source>
         <translation>Returnerar då när villkoret är sant</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="487"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="520"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with &quot;, &quot;.</source>
         <translation>Söker upp ett rått taggfält efter namn. Flera värden är ihopsatta med ”, ”.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="284"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="455"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="457"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="460"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="463"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="466"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="469"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="472"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="475"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="478"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="481"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="484"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="316"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="488"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="490"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="493"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="496"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="499"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="502"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="505"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="508"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="511"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="514"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="517"/>
         <source>Conditional</source>
         <translation>Villkorlighet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="468"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="501"/>
         <source>Returns the first non-empty value</source>
         <translation>Returnerar det första icke-tomma värdet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="471"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="504"/>
         <source>Returns the first true value from a list, or else when none match</source>
         <translation>Returnerar det första sanna värdet från en lista, annars när inga matchar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="477"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="510"/>
         <source>Compares numeric values</source>
         <translation>Jämför numeriska värden</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="480"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="513"/>
         <source>Checks whether text is longer than a limit</source>
         <translation>Kollar om text är längre än en gräns</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="488"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="492"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="496"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="502"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="505"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="508"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="510"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="521"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="525"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="529"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="535"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="538"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="541"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="543"/>
         <source>Lookup</source>
         <translation>Uppsökning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="491"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="524"/>
         <source>Looks up a raw tag field by name and returns the zero-based indexed value.</source>
         <translation>Söker upp ett rått taggfält efter namn och returnerar det nollbaserade indexvärdet.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="495"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="528"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with sep.</source>
         <translation>Söker upp ett rått taggfält efter namn. Flera värden är ihopsatta med sep.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="499"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="532"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with sep, using lastsep between the final two values.</source>
         <translation>Söker upp ett rått taggfält efter namn. Flera värden är ihopsatta med sep, med lastsep mellan de sista två värdena.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="504"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="537"/>
         <source>Returns 1 when all named tag fields exist.</source>
         <translation>Returnerar 1 när alla namngivna taggfält existerar.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="507"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="540"/>
         <source>Returns the number of values in a raw tag field.</source>
         <translation>Returnerar antalet värden i ett rått taggfält.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="509"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="542"/>
         <source>Looks up technical track information</source>
         <translation>Söker upp teknisk spårinformation</translation>
     </message>
@@ -3247,12 +3343,12 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
 <context>
     <name>Fooyin::ConversionPathResolver</name>
     <message>
-        <location filename="../../src/core/engine/conversion/conversionpathresolver.cpp" line="161"/>
+        <location filename="../../src/core/engine/conversion/conversionpathresolver.cpp" line="198"/>
         <source>Duplicate output path</source>
         <translation>Duplicera utgångssökväg</translation>
     </message>
     <message>
-        <location filename="../../src/core/engine/conversion/conversionpathresolver.cpp" line="176"/>
+        <location filename="../../src/core/engine/conversion/conversionpathresolver.cpp" line="213"/>
         <source>Could not resolve output path</source>
         <translation>Kunde inte upplösa utgångssökväg</translation>
     </message>
@@ -3331,7 +3427,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="85"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1121"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1123"/>
         <source>Remove</source>
         <translation>Ta bort</translation>
     </message>
@@ -3447,7 +3543,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="224"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1085"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1087"/>
         <source>Choose destination</source>
         <translation>Välj destination</translation>
     </message>
@@ -3523,13 +3619,13 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="351"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1171"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1192"/>
         <source>Ask when conversion starts</source>
         <translation>Fråga när konvertering startar</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="352"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1174"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1195"/>
         <source>Source track folder</source>
         <translation>Samma mapp som källan</translation>
     </message>
@@ -3600,8 +3696,8 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="403"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1230"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1250"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1251"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1271"/>
         <source>None</source>
         <translation>Av</translation>
     </message>
@@ -3686,57 +3782,57 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
         <translation>Kopiera andra filer till destinationsmappen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="729"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="735"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="732"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="738"/>
         <source>DSP Settings</source>
         <translation>DSP-inställningar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="729"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="732"/>
         <source>This DSP has no configurable settings.</source>
         <translation>Denna DSP har inga konfigurerbara inställningar.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="736"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="739"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
         <translation>Kan inte öppna inställningar för DSP ”%1”.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="789"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="792"/>
         <source>Default settings</source>
         <translation>Default-inställningar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="818"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="821"/>
         <source>Save Converter Preset</source>
         <translation>Spara konverteringsförinställning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="818"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="821"/>
         <source>Name</source>
         <translation>Namn</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="876"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="885"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="891"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="879"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="888"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="894"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="900"/>
         <source>Import Converter Presets</source>
         <translation>Importera konverteringsförinställningar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="877"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="880"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="948"/>
         <source>fooyin Converter Presets (*.fycp)</source>
         <translation>fooyin-konverteringsförinställningar (*.fycp)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="885"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="888"/>
         <source>The preset file could not be opened.</source>
         <translation>Förinställningsfilen kunde inte öppnas.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="891"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="894"/>
         <source>The preset file is invalid or empty.</source>
         <translation>Förinställningsfilen är ogiltig eller tom.</translation>
     </message>
@@ -3757,67 +3853,67 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
         <translation>Förinställningsfilen kunde inte skrivas.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1121"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1123"/>
         <source>Reset</source>
         <translation>Återställ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1165"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1186"/>
         <source>No encoder available</source>
         <translation>Ingen kodare tillgänglig</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1178"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1199"/>
         <source>No folder specified</source>
         <translation>Ingen mapp specificerad</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1186"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1207"/>
         <source>group tracks by output name</source>
         <translation>Gruppera spår efter utmatningsnamn</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1189"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1210"/>
         <source>merge tracks</source>
         <translation>Slå ihop spår</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1193"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1214"/>
         <source>No name format</source>
         <translation>Inget namnformat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1200"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1221"/>
         <source>metadata</source>
         <translation>metadata</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1203"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1224"/>
         <source>rating</source>
         <translation>betyg</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1206"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1227"/>
         <source>play count</source>
         <translation>antal spelningar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1209"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1230"/>
         <source>attached pictures</source>
         <translation>bifogade bilder</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1214"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1235"/>
         <source>ReplayGain (track)</source>
         <translation>ReplayGain (spår)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1217"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1238"/>
         <source>ReplayGain (album)</source>
         <translation>ReplayGain (album)</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1224"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1245"/>
         <source>%Ln DSP(s)</source>
         <translation>
             <numerusform>%Ln DSP</numerusform>
@@ -3825,32 +3921,32 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1226"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1247"/>
         <source>continuous DSP</source>
         <translation>kontinuerlig DSP</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1235"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1256"/>
         <source>%1% previews</source>
         <translation>%1% förhandsvisningar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1238"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1259"/>
         <source>Show status report</source>
         <translation>Visa statusrapport</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1241"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1262"/>
         <source>Show converted files</source>
         <translation>Visa konverterade filer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1244"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1265"/>
         <source>Copy matching files</source>
         <translation>Kopiera matchande filer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1247"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1268"/>
         <source>Verify output</source>
         <translation>Verifiera utmatning</translation>
     </message>
@@ -4135,25 +4231,30 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
 <context>
     <name>Fooyin::DecoderModel</name>
     <message>
-        <location filename="../../src/gui/settings/playback/decodermodel.cpp" line="135"/>
+        <location filename="../../src/gui/settings/playback/decodermodel.cpp" line="150"/>
         <source>Supported extensions</source>
         <translation>Stödda ändelser</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/decodermodel.cpp" line="151"/>
+        <source>Supported URI schemes</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>Fooyin::DecoderPage</name>
     <message>
-        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="239"/>
+        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="272"/>
         <source>General</source>
         <translation>Generellt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="240"/>
+        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="273"/>
         <source>Playback</source>
         <translation>Uppspelning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="240"/>
+        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="273"/>
         <source>Decoding</source>
         <translation>Avkodning</translation>
     </message>
@@ -4161,17 +4262,17 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
 <context>
     <name>Fooyin::DecoderPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="168"/>
+        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="201"/>
         <source>Decoders</source>
         <translation>Avkodare</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="169"/>
+        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="202"/>
         <source>Tag readers</source>
         <translation>Taggläsare</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="226"/>
+        <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="259"/>
         <source>Configure…</source>
         <translation>Konfigurera…</translation>
     </message>
@@ -4738,12 +4839,12 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
 <context>
     <name>Fooyin::DspManagerPage</name>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1286"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1307"/>
         <source>Playback</source>
         <translation>Uppspelning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1286"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1307"/>
         <source>DSP Manager</source>
         <translation>DSP-hanterare</translation>
     </message>
@@ -4751,117 +4852,117 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
 <context>
     <name>Fooyin::DspManagerPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="379"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="380"/>
         <source>Load</source>
         <translation>Läs in</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="380"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="381"/>
         <source>Save</source>
         <translation>Spara</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="381"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="382"/>
         <source>Delete</source>
         <translation>Radera</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="410"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="411"/>
         <source>Per-Track DSPs</source>
         <translation>Per-spår-DSP:n</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="411"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="412"/>
         <source>Master DSPs</source>
         <translation>Mästar-DPS:n</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="413"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="414"/>
         <source>Per-track DSPs are applied to each stream separately before tracks are mixed.
 During crossfades, each track is processed independently.</source>
         <translation>Per-spår-DSP:n tllämpas på varje ström separat innan spår är mixade.
 Under korstoningar bearbetas varje spår för sig självt.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="415"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="416"/>
         <source>Master DSPs are applied after all active tracks are mixed into one signal.
 Effects here process the final combined output.</source>
         <translation>Mästar-DSP:n tillämpas efter alla aktiva spår är mixade in i en signal.
 Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="418"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="419"/>
         <source>Available DSPs</source>
         <translation>Tillgängliga DSP:n</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="437"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="438"/>
         <source>DSP chain presets</source>
         <translation>DSP-kedjeförinställningar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="705"/>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="711"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="714"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="720"/>
         <source>DSP Settings</source>
         <translation>DSP-inställningar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="705"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="714"/>
         <source>This DSP has no configurable settings.</source>
         <translation>Denna DSP har inga konfigurerbara inställningar.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="712"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="721"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
         <translation>Kan inte öppna inställningar för DSP ”%1”.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1020"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1030"/>
         <source>Configure…</source>
         <translation>Konfigurera…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1028"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1038"/>
         <source>Move Up</source>
         <translation>Flytta upp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1034"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1044"/>
         <source>Move Down</source>
         <translation>Flytta ner</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1043"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1053"/>
         <source>Disable</source>
         <translation>Stäng av</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1043"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1053"/>
         <source>Enable</source>
         <translation>­Sätt på</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1051"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1061"/>
         <source>Remove</source>
         <translation>Ta bort</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1069"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1079"/>
         <source>Add to Per-Track</source>
         <translation>Lägg till i per spår</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1070"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1080"/>
         <source>Add to Master</source>
         <translation>Lägg till i mästar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1232"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1246"/>
         <source>Preset already exists</source>
         <translation>Förinställning existerar redan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1233"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1247"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
         <translation>Förinställning ”%1” existerar redan. Överskriv?</translation>
     </message>
@@ -4999,167 +5100,167 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
 <context>
     <name>Fooyin::EditableLayout</name>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="458"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="464"/>
         <source>&amp;Before</source>
         <translation>&amp;Före</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="465"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="471"/>
         <source>&amp;After</source>
         <translation>&amp;Efter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="476"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="482"/>
         <source>&amp;Inside</source>
         <translation>&amp;Inuti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="386"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="392"/>
         <source>&amp;Left</source>
         <translation>&amp;Vänster</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="354"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="360"/>
         <source>Insert &amp;before</source>
         <translation>Infoga f&amp;öre</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="359"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="365"/>
         <source>Insert &amp;after</source>
         <translation>Infog&amp;a efter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="367"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="373"/>
         <source>Insert &amp;inside</source>
         <translation>Infoga &amp;inuti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="386"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="392"/>
         <source>&amp;Up</source>
         <translation>&amp;Upp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="393"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="399"/>
         <source>&amp;Right</source>
         <translation>&amp;Höger</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="393"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="399"/>
         <source>&amp;Down</source>
         <translation>&amp;Ner</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="400"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="406"/>
         <source>Far Lef&amp;t</source>
         <translation>Långt vänste&amp;r</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="400"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="406"/>
         <source>&amp;Top</source>
         <translation>&amp;Topp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="408"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="414"/>
         <source>Far Rig&amp;ht</source>
         <translation>Långt hög&amp;er</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="408"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="414"/>
         <source>&amp;Bottom</source>
         <translation>&amp;Botten</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="430"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="436"/>
         <source>Remove spli&amp;t</source>
         <translation>&amp;Ta bort split</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="444"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="450"/>
         <source>&amp;Paste</source>
         <translation>K&amp;listra in</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="447"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="453"/>
         <source>Rep&amp;lace</source>
         <translation>Er&amp;sätt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="506"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="512"/>
         <source>Parent: %1</source>
         <translation>Förälder: %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="526"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="532"/>
         <source>Lock width</source>
         <translation>Lås bredd</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="526"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="532"/>
         <source>Lock height</source>
         <translation>Lås höjd</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="529"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="535"/>
         <source>Keep the width unchanged during automatic resizing; splitter handles can still resize it</source>
         <translation>Håll bredden oförändrad under automatisk ändring av storlek; splittrarhandtag kan fortfarande ändra dess storlek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="531"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="537"/>
         <source>Keep the height unchanged during automatic resizing; splitter handles can still resize it</source>
         <translation>Håll höjden oförändrad under automatisk ändring av storlek; splittrarhandtag kan fortfarande ändra dess storlek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="550"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="556"/>
         <source>R&amp;eplace</source>
         <translation>&amp;Ersätt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="558"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="564"/>
         <source>&amp;Split</source>
         <translation>&amp;Split</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="572"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="578"/>
         <source>&amp;Copy</source>
         <translation>&amp;Kopiera</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="595"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="601"/>
         <source>&amp;Move</source>
         <translation>&amp;Flytta</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="605"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="611"/>
         <source>&amp;Remove</source>
         <translation>Ta bo&amp;rt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="675"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="681"/>
         <source>Edit</source>
         <translation>Ändra</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="677"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="683"/>
         <source>&amp;Undo</source>
         <translation>&amp;Ångra</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="678"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="684"/>
         <source>Undo the previous layout edit</source>
         <translation>Ångra föregående layoutändring</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="689"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="695"/>
         <source>&amp;Redo</source>
         <translation>Gö&amp;r om</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="690"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="696"/>
         <source>Redo the previous layout edit</source>
         <translation>Gör om den föregående layoutändringen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="345"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="351"/>
         <source>&amp;Insert</source>
         <translation>&amp;Infoga</translation>
     </message>
@@ -5204,97 +5305,102 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
 <context>
     <name>Fooyin::EncoderProfileDialog</name>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="42"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="45"/>
         <source>Default</source>
         <translation>Default</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="44"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="47"/>
         <source>Variable bitrate (VBR)</source>
         <translation>Variabel bittakt (VBR)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="46"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="49"/>
         <source>Constrained variable bitrate</source>
         <translation>Begränsad variabel bittakt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="48"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="51"/>
         <source>Constant quality (VBR)</source>
         <translation>Konstant kvalitet (VBR)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="50"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="53"/>
         <source>Average bitrate (ABR)</source>
         <translation>Genomsnittlig bittakt (ABR)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="52"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="55"/>
         <source>Constant bitrate (CBR)</source>
         <translation>Konstant bittakt (CBR)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="54"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="57"/>
         <source>Lossless compression</source>
         <translation>Förlustfri komprimering</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="66"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="68"/>
+        <source>Backend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="71"/>
         <source>Options</source>
         <translation>Alternativ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="68"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="73"/>
         <source>Mode</source>
         <translation>Läge</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="69"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="74"/>
         <source>Quality</source>
         <translation>Kvalitet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="70"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="75"/>
         <source>Estimated bitrate</source>
         <translation>Uppskattad bittakt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="72"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="77"/>
         <source>Bitrate</source>
         <translation>Bittakt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="73"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="78"/>
         <source>Level</source>
         <translation>Nivå</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="80"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="85"/>
         <source>Encoder Profile</source>
         <translation>Kodarprofil</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="107"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="116"/>
         <source>Encoder</source>
         <translation>Kodare</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="111"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="120"/>
         <source>Format</source>
         <translation>Format</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="113"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="124"/>
         <source>Name</source>
         <translation>Namn</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="226"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="281"/>
         <source>Compression level</source>
         <translation>Komprimeringsnivå</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="227"/>
+        <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="282"/>
         <source>Encoding effort</source>
         <translation>Kodarinsatts</translation>
     </message>
@@ -5302,57 +5408,57 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
 <context>
     <name>Fooyin::EncoderProfileTableModel</name>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="42"/>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="43"/>
         <source>VBR</source>
         <translation>VBR</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="44"/>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="45"/>
         <source>CVBR</source>
         <translation>CVBR</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="46"/>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="47"/>
         <source>VBR quality %1</source>
         <translation>VBR kvalitet %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="48"/>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="49"/>
         <source>ABR</source>
         <translation>ABR</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="50"/>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="51"/>
         <source>CBR</source>
         <translation>CBR</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="52"/>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="53"/>
         <source>level %1</source>
         <translation>Nivå %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="87"/>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="88"/>
         <source>%1 kbps</source>
         <translation>%1&#xa0;kb/s</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="90"/>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="91"/>
         <source>~%1 kbps</source>
         <translation>Ungefär %1&#xa0;kb/s</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="113"/>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="114"/>
         <source>Name</source>
         <translation>Namn</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="115"/>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="116"/>
         <source>Bitrate</source>
         <translation>Bittakt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="117"/>
+        <location filename="../../src/gui/conversion/encoderprofiletablemodel.cpp" line="118"/>
         <source>Settings</source>
         <translation>Inställningar</translation>
     </message>
@@ -5360,77 +5466,77 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
 <context>
     <name>Fooyin::Equaliser::EqualiserLayoutEditor</name>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="269"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="270"/>
         <source>Enabled</source>
         <translation>På</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="270"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="436"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="271"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="437"/>
         <source>Zero level</source>
         <translation>Nollnivå</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="271"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="449"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="272"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="450"/>
         <source>Auto level</source>
         <translation>Autonivå</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="273"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="274"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="576"/>
         <source>Save preset</source>
         <translation>Spara förinställning</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="310"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="515"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="311"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="516"/>
         <source> dB</source>
         <translation> dB</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="324"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="325"/>
         <source>Preamp</source>
         <translation>Förförstärkning</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="441"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="442"/>
         <source>Show controls</source>
         <translation>Visa kontroller</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="453"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="454"/>
         <source>Save preset…</source>
         <translation>Spara förinställning…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="457"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="458"/>
         <source>Presets</source>
         <translation>Förinställningar</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="461"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="543"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="462"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="544"/>
         <source>No presets</source>
         <translation>Inga förinställningar</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="546"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="547"/>
         <source>Load preset…</source>
         <translation>Läs in förinställning…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="575"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="576"/>
         <source>Preset name:</source>
         <translation>Förinställningsnamn:</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="583"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="584"/>
         <source>Preset already exists</source>
         <translation>Förinställning existerar redan</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="584"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="585"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
         <translation>Förinställning ”%1” existerar redan. Överskriv?</translation>
     </message>
@@ -5438,13 +5544,13 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
 <context>
     <name>Fooyin::Equaliser::EqualiserSettingsProvider</name>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1137"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1142"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1143"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1148"/>
         <source>Equaliser</source>
         <translation>Equalizer</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1147"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1153"/>
         <source>Open Equaliser settings</source>
         <translation>Öppna equalizer-inställningar</translation>
     </message>
@@ -5452,111 +5558,111 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
 <context>
     <name>Fooyin::Equaliser::EqualiserSettingsWidget</name>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="613"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="614"/>
         <source>Load</source>
         <translation>Läs in</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="614"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="615"/>
         <source>Save</source>
         <translation>Spara</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="615"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="616"/>
         <source>Delete</source>
         <translation>Radera</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="616"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="617"/>
         <source>Import</source>
         <translation>Importera</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="617"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="618"/>
         <source>Export</source>
         <translation>Exportera</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="626"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="627"/>
         <source>Equaliser Settings</source>
         <translation>Equalizer-inställningar</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="666"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="668"/>
         <source>Preamp</source>
         <translation>Förförstärkare</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="718"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="723"/>
         <source>Zero all</source>
         <translation>Nollställ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="719"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="724"/>
         <source>Auto level</source>
         <translation>Autonivå</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="720"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="725"/>
         <source>Band:</source>
         <translation>Band:</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="721"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="726"/>
         <source>Presets:</source>
         <translation>Förinställningar:</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="733"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="738"/>
         <source> dB</source>
         <translation> dB</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="901"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="907"/>
         <source>Presets</source>
         <translation>Förinställningar</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="901"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="907"/>
         <source>Unable to load the selected preset.</source>
         <translation>Kan inte läsa in den valda förinställningen.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="918"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="924"/>
         <source>Preset already exists</source>
         <translation>Förinställning existerar redan</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="919"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="925"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
         <translation>Förinställning ”%1” existerar redan. Överskriv?</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="955"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="963"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="985"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="997"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="961"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="969"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="991"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1003"/>
         <source>Import Equaliser Preset</source>
         <translation>Importera equalizer-förinställning</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="956"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1018"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="962"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1024"/>
         <source>Equaliser Preset (*.feq)</source>
         <translation>Equalizer-förinställning (*.feq)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="964"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="970"/>
         <source>Unable to open &quot;%1&quot; for reading.</source>
         <translation>Kan inte öppna ”%1” för läsning.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="986"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="992"/>
         <source>Invalid value on line %L1.</source>
         <translation>Ogiltigt värde på rad %L1.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="987"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="993"/>
         <source>The first %Ln non-empty line(s) must contain integer values.</source>
         <translation>
             <numerusform>Den första icke-tomma raden måste innehålla heltal.</numerusform>
@@ -5564,7 +5670,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="998"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1004"/>
         <source>The preset file contains %Ln band value(s).</source>
         <translation>
             <numerusform>Förinställningsfilen innehåller %Ln bandvärde.</numerusform>
@@ -5572,7 +5678,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="999"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1005"/>
         <source>Expected %Ln band value(s).</source>
         <translation>
             <numerusform>Förväntade %Ln bandvärde.</numerusform>
@@ -5580,19 +5686,19 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1018"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1043"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1055"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1024"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1049"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1061"/>
         <source>Export Equaliser Preset</source>
         <translation>Exportera equalizer-förinställning</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1044"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1050"/>
         <source>Unable to open &quot;%1&quot; for writing.</source>
         <translation>Kan inte öpnna ”%1” för skrivning.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1056"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1062"/>
         <source>An error occurred while writing &quot;%1&quot;.</source>
         <translation>Ett fel inträffade medan ”%1” skrevs.</translation>
     </message>
@@ -5712,19 +5818,32 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     </message>
 </context>
 <context>
+    <name>Fooyin::FFmpegSettings</name>
+    <message>
+        <location filename="../../src/gui/settings/playback/ffmpegsettings.cpp" line="39"/>
+        <source>Enable all supported formats</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/ffmpegsettings.cpp" line="41"/>
+        <source>FFmpeg Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::FadingPage</name>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="418"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="452"/>
         <source>General</source>
         <translation>Generellt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="419"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="453"/>
         <source>Playback</source>
         <translation>Uppspelning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="419"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="453"/>
         <source>Fading</source>
         <translation>Toning</translation>
     </message>
@@ -5732,124 +5851,139 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
 <context>
     <name>Fooyin::FadingPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="86"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="90"/>
         <source>Fading</source>
         <translation>Toning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="87"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="91"/>
         <source>Pause</source>
         <translation>Paus</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="88"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="92"/>
         <source>Stop</source>
         <translation>Stopp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="93"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="97"/>
         <source>Between tracks</source>
         <translation>Mellan spår</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="99"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="103"/>
         <source>Crossfading</source>
         <translation>Korstoning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="100"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="104"/>
         <source>Seek</source>
         <translation>Leta</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="101"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="105"/>
         <source>Manual track change</source>
         <translation>Manuellt spårbyte</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="102"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="106"/>
         <source>Auto track change</source>
         <translation>Automatiskt spårbyte</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="107"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="111"/>
         <source>Auto switch policy</source>
         <translation>Autobytespolicy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="143"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="113"/>
+        <source>Don&apos;t crossfade within the same album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="114"/>
+        <source>Album matching pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="150"/>
         <source>Linear</source>
         <translation>Linjär</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="144"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="151"/>
         <source>Ease Out (Sine)</source>
         <translation>Mjukna ut (sinus)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="145"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="152"/>
         <source>Ease In (Cosine)</source>
         <translation>Mjukna in (cosinus)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="146"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="153"/>
         <source>Ease Out (Exponential)</source>
         <translation>Mjukna ut (exponentiell)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="147"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="154"/>
         <source>Ease In (Exponential)</source>
         <translation>Mjukna in (exponentiell)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="148"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="155"/>
         <source>Smooth S-Curve</source>
         <translation>Mjuk S-kurva</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="177"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="184"/>
         <source>Pause, stop, and between-tracks fades without overlap. Between-tracks fades are used instead of auto track-change crossfades.</source>
         <translation>Paus-, stopp- och mellanspårtoningar sker utan överlapp. Mellanspårtoningar används istället för automatiska spårbytes-korstoningar.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="234"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="241"/>
         <source>Overlapping fades for seek and track changes. Auto track change uses overlap; use Between tracks above for non-overlapping fades.</source>
         <translation>Överlappande toningar för letande och spårbyten. Autospårbyten använder överlapp; använd mellan spår ovan för icke-överlappande toningar.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="188"/>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="245"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="267"/>
+        <source>Tracks with the same non-empty result are treated as part of the same album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="195"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="252"/>
         <source>Fade In</source>
         <translation>Intoning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="189"/>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="246"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="196"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="253"/>
         <source>Fade Out</source>
         <translation>Uttoning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="190"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="197"/>
         <source>Curve</source>
         <translation>Kurva</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="225"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="232"/>
         <source>Overlap start</source>
         <translation>Överlappsstart</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="227"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="234"/>
         <source>Overlap midpoint</source>
         <translation>Överlappsmittpunkt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="229"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="236"/>
         <source>End of track</source>
         <translation>Slutet av spår</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="231"/>
+        <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="238"/>
         <source>Controls when the UI switches tracks during automatic crossfade transitions</source>
         <translation>Kontrollerar när UI:n byter spår under automatiska korstoningsövergångar</translation>
     </message>
@@ -6587,32 +6721,32 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <translation>Byt när ändrad</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="51"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="52"/>
         <source>Override row height</source>
         <translation>Överskugga radhöjd</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="62"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="63"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
         <translation>Börja uppspelning omedelbart för ”Ersätt aktuell spellista” och ”Skapa ny spellista”.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="72"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="73"/>
         <source>Click Behaviour</source>
         <translation>Klickbeteende</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="75"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="76"/>
         <source>Double-click</source>
         <translation>Dubbelklick</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="77"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="78"/>
         <source>Middle-click</source>
         <translation>Mellanklick</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="86"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="87"/>
         <source>Filter Selection Playlist</source>
         <translation>Filterselektions-spellista</translation>
     </message>
@@ -6622,126 +6756,131 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <translation>Bevara uppspelingsspellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="58"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="59"/>
         <source>Align labels to artwork</source>
         <translation>Positionera etiketter till konstverk</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="81"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="82"/>
         <source>Set to &lt;b&gt;Play&lt;/b&gt; to start playback at the first matching track.</source>
         <translation>Sätt till &lt;b&gt;spela&lt;/b&gt; för att starta uppspelning vid det första matchande spåret.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="89"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="90"/>
         <source>In current playlist mode, matching tracks are selected directly in the playlist.</source>
         <translation>I det aktuella spellistsläget är matchande spår valda direkt i spellistan.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="92"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="93"/>
         <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
         <translation>När denna selektionsspellista används för uppspelning, bevara den med ”(uppspelning)” tillagd i dess namn, istället för att byta ut spår.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="98"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="99"/>
         <source>Name</source>
         <translation>Namn</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="70"/>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="102"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="71"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="103"/>
         <source>Appearance</source>
         <translation>Utseende</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="59"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="51"/>
+        <source>Restore state on startup</source>
+        <translation type="unfinished">Återhämta läge vid uppstart</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="60"/>
         <source>Manage columns…</source>
         <translation>Hantera kolumner…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="106"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="107"/>
         <source>Align bottom labels to the horizontal bounds of the artwork in artwork mode.</source>
         <translation>Positionera bottenetiketter till konstverkets horisontella gränser i konstverksläge.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="113"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="114"/>
         <source>Artwork Mode</source>
         <translation>Konstverksläge</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="123"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="124"/>
         <source>Auto</source>
         <translation>Auto</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="130"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="131"/>
         <source>Square</source>
         <translation>Kvadrat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="132"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="133"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
         <translation>Använd &lt;b&gt;Ctrl&#x202f;+&#x202f;Skroll&lt;/b&gt; i widgeten för att ändra ikonernas storlek.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="135"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="136"/>
         <source>Width</source>
         <translation>Bredd</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="137"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="138"/>
         <source>Height</source>
         <translation>Höjd</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="140"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="141"/>
         <source>Horizontal gap</source>
         <translation>Horisontellt mellanrum</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="142"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="143"/>
         <source>Vertical gap</source>
         <translation>Vertikalt mellanrum</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="144"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="145"/>
         <source>Corner radius</source>
         <translation>Hörnradie</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="189"/>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="193"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="191"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="195"/>
         <source>Play now</source>
         <translation>Spela nu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="69"/>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="148"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="70"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="149"/>
         <source>General</source>
         <translation>Generellt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="151"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="152"/>
         <source>Library</source>
         <translation>Bibliotek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="152"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="153"/>
         <source>Current playlist</source>
         <translation>Aktuell spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="154"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="155"/>
         <source>Source</source>
         <translation>Källa</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="158"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="159"/>
         <source>Current playlist mode uses the displayed playlist as its source and selects the matching tracks in that playlist.</source>
         <translation>Aktuella spellistsläget använder den visade spellistan som dess källa och väljer de matchande spåren i den spellistan.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="188"/>
-        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="192"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="190"/>
+        <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="194"/>
         <source>None</source>
         <translation>Ingen</translation>
     </message>
@@ -6749,7 +6888,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
 <context>
     <name>Fooyin::Filters::FilterController</name>
     <message>
-        <location filename="../../src/gui/filters/filtercontroller.cpp" line="1265"/>
+        <location filename="../../src/gui/filters/filtercontroller.cpp" line="1358"/>
         <source>Filter Results</source>
         <translation>Filtrera resultat</translation>
     </message>
@@ -6757,44 +6896,54 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
 <context>
     <name>Fooyin::Filters::FilterManager</name>
     <message>
-        <location filename="../../src/gui/filters/filtermanager.cpp" line="108"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="111"/>
         <source>Clear Group</source>
         <translation>Rensa grupp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filtermanager.cpp" line="118"/>
-        <location filename="../../src/gui/filters/filtermanager.cpp" line="313"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="121"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="433"/>
         <source>Clear Groups</source>
         <translation>Rensa grupper</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filtermanager.cpp" line="170"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="175"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="234"/>
         <source>Remove</source>
         <translation>Ta bort</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filtermanager.cpp" line="184"/>
-        <location filename="../../src/gui/filters/filtermanager.cpp" line="251"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="194"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="253"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="341"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="366"/>
         <source>Ungrouped</source>
         <translation>Ogrupperad</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filtermanager.cpp" line="185"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="195"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="254"/>
         <source>Add</source>
         <translation>Lägg till</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filtermanager.cpp" line="304"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="233"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="366"/>
+        <source>Viewer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="424"/>
         <source>Add New Group</source>
         <translation>Lägg till ny grupp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filtermanager.cpp" line="332"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="459"/>
         <source>Back</source>
         <translation>Bakåt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filtermanager.cpp" line="349"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="480"/>
         <source>Finish</source>
         <translation>Slutför</translation>
     </message>
@@ -6815,129 +6964,130 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
 <context>
     <name>Fooyin::Filters::FilterWidget</name>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="890"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="936"/>
         <source>Display</source>
         <translation>Visa</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="639"/>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="895"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="682"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="941"/>
         <source>Columns</source>
         <translation>Kolumner</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="706"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="360"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="774"/>
+        <source>Manage filter groups…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="749"/>
         <source>Source</source>
         <translation>Källa</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="717"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="760"/>
         <source>Library</source>
         <translation>Bibliotek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="718"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="761"/>
         <source>Current playlist</source>
         <translation>Aktuell spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="896"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="942"/>
         <source>Artwork (bottom labels)</source>
         <translation>Konstverk (bottenetiketter)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="897"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="943"/>
         <source>Artwork (right labels)</source>
         <translation>Konstverk (högeretiketter)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="898"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="944"/>
         <source>Artwork (no labels)</source>
         <translation>Konstverk (inga etiketter)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="902"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="948"/>
         <source>Use embedded covers</source>
         <translation>Använd inbäddade omslag</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="903"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="949"/>
         <source>Use directory covers</source>
         <translation>Använd omslag från mappar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="904"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="950"/>
         <source>Use default source</source>
         <translation>Använd defaultkälla</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="983"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="1029"/>
         <source>Summary item</source>
         <translation>Sammanfattningsföremål</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="899"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="945"/>
         <source>Front cover</source>
         <translation>Framsidsomslag</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="900"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="946"/>
         <source>Back cover</source>
         <translation>Baksidsomslag</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="989"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="1035"/>
         <source>Show header</source>
         <translation>Visa rubrik</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="994"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="1040"/>
         <source>Show scrollbar</source>
         <translation>Visa skrollningslist</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="1002"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="1048"/>
         <source>Alternating row colours</source>
         <translation>Zebramönstra rader</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="682"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="725"/>
         <source>Multiple columns</source>
         <translation>Flera kolumner</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="731"/>
-        <source>Manage groups</source>
-        <translation>Hantera grupper</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="901"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="947"/>
         <source>Artist</source>
         <translation>Artist</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="690"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="733"/>
         <source>More…</source>
         <translation>Mer…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="333"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="350"/>
         <source>Library Filter</source>
         <translation>Biblioteksfilter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filtercontroller.cpp" line="328"/>
+        <location filename="../../src/gui/filters/filtercontroller.cpp" line="338"/>
         <source>Add to playlist</source>
         <translation>Lägg till i spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filtercontroller.cpp" line="366"/>
+        <location filename="../../src/gui/filters/filtercontroller.cpp" line="376"/>
         <source>Filter options</source>
         <translation>Filteralternativ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filtercontroller.cpp" line="374"/>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="735"/>
+        <location filename="../../src/gui/filters/filtercontroller.cpp" line="384"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="778"/>
         <source>Configure…</source>
         <translation>Konfigurera…</translation>
     </message>
@@ -7038,27 +7188,32 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="76"/>
+        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="78"/>
         <source>Saved Filter Selector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="165"/>
+        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="186"/>
         <source>Rename &apos;All&apos; filter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="168"/>
+        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="189"/>
         <source>Rename &apos;All&apos; Filter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="168"/>
+        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="189"/>
         <source>Name:</source>
         <translation>Namn:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="177"/>
+        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="198"/>
+        <source>Remember last filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="205"/>
         <source>Manage library filters…</source>
         <translation>Hantera biblioteksfilter…</translation>
     </message>
@@ -7071,39 +7226,86 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="63"/>
+        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="65"/>
         <source>Library filter</source>
         <translation>Biblioteksfilter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="86"/>
+        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="88"/>
         <source>Saved Filter Tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="465"/>
+        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="493"/>
         <source>Rename tab</source>
         <translation>Döp om flik</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="472"/>
+        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="500"/>
         <source>Tabs position</source>
         <translation>Flikposition</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="484"/>
+        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="512"/>
         <source>Top</source>
         <translation>Topp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="485"/>
+        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="513"/>
         <source>Bottom</source>
         <translation>Botten</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="489"/>
+        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="515"/>
+        <source>Remember last filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="522"/>
         <source>Manage library filters…</source>
         <translation>Hantera biblioteksfilter…</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Filters::TrackListWidget</name>
+    <message>
+        <location filename="../../src/gui/filters/tracklistwidget.cpp" line="47"/>
+        <location filename="../../src/gui/filters/tracklistwidget.cpp" line="163"/>
+        <source>Track Viewer Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/filters/tracklistwidget.cpp" line="48"/>
+        <location filename="../../src/gui/filters/tracklistwidget.cpp" line="87"/>
+        <source>Tracks</source>
+        <translation type="unfinished">Spår</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/filters/tracklistwidget.cpp" line="66"/>
+        <location filename="../../src/gui/filters/tracklistwidget.cpp" line="157"/>
+        <source>Manage filter groups…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/filters/tracklistwidget.cpp" line="102"/>
+        <source>%Ln track(s)</source>
+        <translation type="unfinished">
+            <numerusform>%Ln spår</numerusform>
+            <numerusform>%Ln spår</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/filters/tracklistwidget.cpp" line="103"/>
+        <source>%1 of %Ln track(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/filters/tracklistwidget.cpp" line="109"/>
+        <source>Track Viewer</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7406,17 +7608,17 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <translation>Konstverksfil är tom</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="921"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="924"/>
         <source>Plugins not found</source>
         <translation>Tillägg hittades inte</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="922"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="925"/>
         <source>Some plugins are required for full functionality.</source>
         <translation>Vissa tillägg behövs för fullständig funktionalitet.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="923"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="926"/>
         <source>Plugin search locations:
 
 </source>
@@ -7425,453 +7627,453 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
 </translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="926"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="929"/>
         <source>Quit</source>
         <translation>Avsluta</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1052"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1055"/>
         <source>Show or hide main window</source>
         <translation>Visa eller dölj huvudfönster</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1054"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1200"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1057"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1203"/>
         <source>View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1057"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1060"/>
         <source>Volume</source>
         <translation>Volym</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1059"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1062"/>
         <source>Volume up</source>
         <translation>Volym upp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1066"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1069"/>
         <source>Volume down</source>
         <translation>Volym ner</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1073"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1076"/>
         <source>Mute</source>
         <translation>Tystna</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1083"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1086"/>
         <source>Clear Current Playlist</source>
         <translation>Rensa aktuell spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1084"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1087"/>
         <source>Remove all tracks from the current playlist</source>
         <translation>Ta bort alla spår från den aktuella spellistan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1087"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1114"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1187"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1090"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1117"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1190"/>
         <source>Playlist</source>
         <translation>Spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1110"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1113"/>
         <source>Lock playlist</source>
         <translation>Lås spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1112"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1115"/>
         <source>Prevent changes to the contents of the current playlist</source>
         <translation>Förhindra ändringar av den aktuella spellistans innehåll</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1115"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1118"/>
         <source>Lock Current Playlist</source>
         <translation>Lås aktuell spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1136"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1139"/>
         <source>Playback</source>
         <translation>Uppspelning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1136"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1139"/>
         <source>Seek</source>
         <translation type="unfinished">Leta</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1138"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1141"/>
         <source>Seek forward (small step)</source>
         <translation type="unfinished">Leta framåt (litet steg)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1145"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1148"/>
         <source>Seek forward (large step)</source>
         <translation type="unfinished">Leta framåt (stort steg)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1152"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1155"/>
         <source>Seek backward (small step)</source>
         <translation type="unfinished">Leta bakåt (litet steg)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1160"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1163"/>
         <source>Seek backward (large step)</source>
         <translation type="unfinished">Leta bakåt (stort steg)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1185"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1188"/>
         <source>Remove Playlist</source>
         <translation>Ta bort spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1188"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1191"/>
         <source>Remove Current Playlist</source>
         <translation>Ta bort aktuell spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1196"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1199"/>
         <source>Toggle Menubar</source>
         <translation>Tåggla menyruta</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1207"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1210"/>
         <source>Look up metadata by artist and album…</source>
         <translation>Sök upp metadata efter artist och album…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1208"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1211"/>
         <source>Look up metadata using the selected tracks&apos; artist and album</source>
         <translation>Sök upp metadata med de valda spårens artist och album</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1213"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1216"/>
         <source>Look up metadata by artist and album</source>
         <translation>Sök upp metadata efter artist och album</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1214"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1222"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1229"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1233"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1302"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1217"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1225"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1232"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1236"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1305"/>
         <source>Tagging</source>
         <translation>Taggning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1216"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1219"/>
         <source>Look up metadata by disc TOC…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1217"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1220"/>
         <source>Look up metadata using the selected tracks&apos; disc TOC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1221"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1224"/>
         <source>Look up metadata by disc TOC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1224"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1227"/>
         <source>Look up metadata by MusicBrainz ID…</source>
         <translation>Sök upp metadata efter MusicBrainz-ID…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1225"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1228"/>
         <source>Look up metadata using a MusicBrainz release identifier</source>
         <translation>Sök upp metadata med en MusicBrainz-utsläppsidentifierare</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1228"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1231"/>
         <source>Look up metadata by MusicBrainz ID</source>
         <translation>Sök upp metadata efter MusicBrainz-ID</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1261"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1264"/>
         <source>Reading tracks…</source>
         <translation>Läser spår…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1261"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1264"/>
         <source>Abort</source>
         <translation>Stoppa</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1289"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1292"/>
         <source>Current file</source>
         <translation>Aktuell fil</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1304"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1307"/>
         <source>Reload tags from files</source>
         <translation>Ladda om taggar från filer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1305"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1308"/>
         <source>Reload tags from modified files</source>
         <translation>Ladda om taggar från modifierade filer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1307"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1310"/>
         <source>Replace tags in selected tracks with tags from the files</source>
         <translation>Ersätt taggar i valda spår med taggar från filerna</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1308"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1311"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
         <translation>Ersätt taggar i valda spår med taggar från filerna om modifierade</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1339"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1342"/>
         <source>View full size</source>
         <translation>Visa full storlek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1340"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1343"/>
         <source>View the common artwork for the selected tracks at full size</source>
         <translation>Visa det gemensamma konstverket för de valda spåren vid full storlek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1343"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1396"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1554"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1585"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1595"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1604"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1649"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1658"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1346"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1399"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1557"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1588"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1598"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1607"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1652"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1661"/>
         <source>Tracks</source>
         <translation>Spår</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1343"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1346"/>
         <source>Artwork</source>
         <translation>Konstverk</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1396"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1399"/>
         <source>Playback Statistics</source>
         <translation>Uppspelningsstatistik</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1411"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1414"/>
         <source>Toggle loved</source>
         <translation>Tåggla älskad</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1411"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1414"/>
         <source>Toggle Loved for selected tracks</source>
         <translation>Tåggla älskad för de valda spåren</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1413"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1416"/>
         <source>Love</source>
         <translation>Älska</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1413"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1416"/>
         <source>Love selected tracks</source>
         <translation>Älska valda spår</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1415"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1418"/>
         <source>Unlove</source>
         <translation>Oälska</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1415"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1418"/>
         <source>Unlove selected tracks</source>
         <translation>Oälska valda spår</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1431"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1434"/>
         <source>Choose destination</source>
         <translation>Välj destination</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1457"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1460"/>
         <source>Converter Output</source>
         <translation type="unfinished">Konverterarutmatning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1547"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1555"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1550"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1558"/>
         <source>Convert using preset %1</source>
         <translation>Konvertera med förinställning %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1554"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1585"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1595"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1604"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1615"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1557"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1588"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1598"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1607"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1618"/>
         <source>Convert</source>
         <translation>Konvertera</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1583"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1586"/>
         <source>Converter setup…</source>
         <translation>Konverterar-setup…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1592"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1595"/>
         <source>Using default settings</source>
         <translation>Med default-inställningar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1596"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1599"/>
         <source>Convert using default settings</source>
         <translation>Konvertera med default-inställningar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1601"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1604"/>
         <source>Repeat last conversion</source>
         <translation>Upprepa senaste konvertering</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1632"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1635"/>
         <source>Custom conversion…</source>
         <translation>Anpassad konvertering…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1644"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1649"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1658"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1647"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1652"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1661"/>
         <source>Utilities</source>
         <translation>Verktyg</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1646"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1649"/>
         <source>Verify integrity</source>
         <translation>Verifiera integritet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1647"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1650"/>
         <source>Decode the selected tracks and report file or checksum errors</source>
         <translation type="unfinished">Avkoda de valda spåren och rapportera fil- eller kontrollsummafel</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1654"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1657"/>
         <source>Verify album with AccurateRip</source>
         <translation>Verifiera album med AccurateRip</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1655"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1658"/>
         <source>Verify all tracks from one complete lossless CD rip against AccurateRip</source>
         <translation>Verifiera alla spår från en helt förlustfri CD-rippning mot AccurateRip</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1961"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1964"/>
         <source>Reload Required</source>
         <translation>Omladdning krävs</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1963"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1966"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
         <translation>På grund av en databasändring borde spåren laddas om från disken för att uppdatera dess sparade metadata.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1967"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1970"/>
         <source>Reload Now</source>
         <translation>Ladda om nu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1970"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1973"/>
         <source>OK</source>
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2115"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2118"/>
         <source>Playback Error</source>
         <translation>Uppspelningsfel</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2140"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2143"/>
         <source>Continue</source>
         <translation>Fortsätt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2142"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2145"/>
         <source>Stop</source>
         <translation>Stopp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2146"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2149"/>
         <source>Always continue playing if a track is unavailable</source>
         <translation>Fortsätt alltid spela om ett spår är otillgängligt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2168"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2171"/>
         <source>Track Not Found</source>
         <translation>Spår hittades inte</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2173"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2176"/>
         <source>No Decoder Available</source>
         <translation>Ingen avkodare tillgänglig</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2253"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2256"/>
         <source>All Supported Media Files (%1)</source>
         <translation>Alla stödda mediafiler (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2254"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2257"/>
         <source>Audio Files (%1)</source>
         <translation>Ljudfiler (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2265"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2268"/>
         <source>Add Files</source>
         <translation>Lägg till filer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2279"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2282"/>
         <source>Add Folders</source>
         <translation>Lägg till mappar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2291"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2294"/>
         <source>Add Stream URL</source>
         <translation>Lägg till ström-URL</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2291"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2294"/>
         <source>Stream URL:</source>
         <translation>Ström-URL:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2293"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2296"/>
         <source>&amp;Add</source>
         <translation>L&amp;ägg till</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2297"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2300"/>
         <source>Enter a valid http:// or https:// URL.</source>
         <translation>Skriv in en giltig http(s)://-URL.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2395"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2398"/>
         <source>All Supported Playlists (%1)</source>
         <translation>Alla stödda spellistor (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2405"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2408"/>
         <source>Load Playlist</source>
         <translation>Läs in spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2442"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2445"/>
         <source>Save Playlist</source>
         <translation>Spara spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="570"/>
+        <location filename="../../src/gui/widgets.cpp" line="574"/>
         <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10030,82 +10232,82 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
         <translation>Enkelklick expanderar/kollapsar noder</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="54"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="56"/>
         <source>Show summary node</source>
         <translation>Visa sammanfattningsnod</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="56"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="58"/>
         <source>Expand/collapse animation</source>
         <translation>Expanderings-/Kollapsanimation</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="57"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="59"/>
         <source>Show header</source>
         <translation>Visa rubrik</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="58"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="60"/>
         <source>Show scrollbar</source>
         <translation>Visa skrollningslist</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="59"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="61"/>
         <source>Alternating row colours</source>
         <translation>Zebramönstrade rader</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="60"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="62"/>
         <source>Override row height</source>
         <translation>Överskugga radhöjd</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="68"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="78"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
         <translation>Börja uppspelning omedelbart för ”Ersätt aktuell spellista” och ”Skapa ny spellista”.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="71"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="109"/>
         <source>Supports &lt;right&gt; for right-aligned text, %trackcount% for tracks, and %childcount% for child nodes.</source>
         <translation>Stödjer &lt;right&gt; för högerjusterad text, %trackcount% för spår och %childcount% för barnnoder.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="74"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="127"/>
         <source>Disabled</source>
         <translation>Av</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="84"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="80"/>
         <source>Click Behaviour</source>
         <translation>Klickbeteende</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="88"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="84"/>
         <source>Double-click</source>
         <translation>Dubbelklick</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="90"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="86"/>
         <source>Middle-click</source>
         <translation>Mellanklick</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="96"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="92"/>
         <source>Library Selection Playlist</source>
         <translation>Biblioteksselektions-spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="107"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="103"/>
         <source>Name</source>
         <translation>Namn</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="199"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="209"/>
         <source>Expand/collapse or play now</source>
         <translation>Expandera/Kollapsa eller spela nu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="81"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="74"/>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="111"/>
         <source>General</source>
         <translation>Generellt</translation>
@@ -10116,18 +10318,23 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
         <translation>Bevara uppspelningsspellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="65"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="53"/>
+        <source>Show controls</source>
+        <translation type="unfinished">Visa kontroller</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="67"/>
         <source>Manage groupings…</source>
         <translation>Hantera grupperingar…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="82"/>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="131"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="75"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="141"/>
         <source>Appearance</source>
         <translation>Utseende</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="100"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="96"/>
         <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
         <translation>När denna selektionsspellista används för uppspelning bevara den med ”(uppspelning)” tillagd i dess namn, istället för att byta ut spår.</translation>
     </message>
@@ -10138,51 +10345,66 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="122"/>
+        <source>Top</source>
+        <translation type="unfinished">Topp</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="123"/>
+        <source>Bottom</source>
+        <translation type="unfinished">Botten</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="129"/>
         <source>Searching</source>
         <translation>Sökning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="126"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="134"/>
+        <source>Controls position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="136"/>
         <source>Auto-expand if matching track count is at most</source>
         <translation>Autoexpandera om antal matchande spår är som mest</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="134"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="144"/>
         <source>Icon</source>
         <translation>Ikon</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="146"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="156"/>
         <source>Square</source>
         <translation>Kvadrat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="148"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="158"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
         <translation>Använd &lt;b&gt;Ctrl&#x202f;+&#x202f;Skroll&lt;/b&gt; i widgeten för att ändra ikonernas storlek.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="152"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="162"/>
         <source>Width</source>
         <translation>Bredd</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="154"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="164"/>
         <source>Height</source>
         <translation>Höjd</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="156"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="166"/>
         <source>Corner radius</source>
         <translation>Hörnradie</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="198"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="208"/>
         <source>Expand/collapse</source>
         <translation>Expandera/Kollapsa</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="202"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="212"/>
         <source>None</source>
         <translation>Inget</translation>
     </message>
@@ -10306,57 +10528,97 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
 <context>
     <name>Fooyin::LibraryTreeWidget</name>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="851"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1021"/>
         <source>Grouping</source>
         <translation>Gruppering</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="217"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="224"/>
         <source>&amp;Add to playback queue</source>
         <translation>&amp;Lägg till i uppspelningskö</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="218"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="225"/>
         <source>&amp;Queue to play next</source>
         <translation>&amp;Köa till nästa spelning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="219"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="226"/>
         <source>&amp;Remove from playback queue</source>
         <translation>Ta bo&amp;rt från uppspelningskö</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="220"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="227"/>
         <source>&amp;Play</source>
         <translation>S&amp;pela</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="250"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="258"/>
         <source>Start playback of the selected tracks</source>
         <translation>Starta uppspelning av de valda spåren</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="867"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="373"/>
+        <source>Focus search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="374"/>
+        <source>Focus the integrated search bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="949"/>
+        <source>Display</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="962"/>
+        <source>Show controls</source>
+        <translation type="unfinished">Visa kontroller</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="964"/>
+        <source>Show summary node</source>
+        <translation type="unfinished">Visa sammanfattningsnod</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="965"/>
+        <source>Show header</source>
+        <translation type="unfinished">Visa rubrik</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="966"/>
+        <source>Show scrollbar</source>
+        <translation type="unfinished">Visa skrollningslist</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="967"/>
+        <source>Alternating row colours</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1037"/>
         <source>Manage groupings…</source>
         <translation>Hantera grupperingar…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="911"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1081"/>
         <source>Open folder</source>
         <translation>Öppna mapp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="740"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="874"/>
         <source>Add to playlist</source>
         <translation>Lägg till i spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1001"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1171"/>
         <source>Playback</source>
         <translation>Uppspelning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="281"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="289"/>
         <source>Library Tree</source>
         <translation>Biblioteksträd</translation>
     </message>
@@ -11315,7 +11577,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
 <context>
     <name>Fooyin::MainWindow</name>
     <message>
-        <location filename="../../src/gui/mainwindow.cpp" line="171"/>
+        <location filename="../../src/gui/mainwindow.cpp" line="185"/>
         <source>Layout Editing Mode</source>
         <translation>Layoutredigeringsläge</translation>
     </message>
@@ -12098,13 +12360,13 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
 <context>
     <name>Fooyin::NowPlayingOutputPage</name>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="356"/>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="357"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="358"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="359"/>
         <source>Now Playing</source>
         <translation>Nu spelar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="357"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="359"/>
         <source>Playback</source>
         <translation>Uppspelning</translation>
     </message>
@@ -12202,12 +12464,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
         <translation>Bläddra till en utgångsfil</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="339"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="341"/>
         <source>Now Playing</source>
         <translation>Nu spelar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="339"/>
+        <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="341"/>
         <source>Text Files (*.txt);;All Files (*)</source>
         <translation>Textfiler (*.txt);;Alla filer (*)</translation>
     </message>
@@ -13385,351 +13647,6 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     </message>
 </context>
 <context>
-    <name>Fooyin::PlaylistAppearancePageWidget</name>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="109"/>
-        <source>Show scrollbar</source>
-        <translation>Visa skrollningslist</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="110"/>
-        <source>Show header</source>
-        <translation>Visa rubrik</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="111"/>
-        <source>Alternating row colours</source>
-        <translation>Zebramönstrade rader</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="228"/>
-        <source>Artwork</source>
-        <translation>Konstverk</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="229"/>
-        <source>Left/Right</source>
-        <translation>Vänster/Höger</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="173"/>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="231"/>
-        <source>Top</source>
-        <translation>Topp</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="112"/>
-        <source>Background colour</source>
-        <translation>Bakgrundsfärg</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="113"/>
-        <source>Font</source>
-        <translation>Typsnitt</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="118"/>
-        <source>Artwork type</source>
-        <translation>Konstverkstyp</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="120"/>
-        <source>Show current track when playback is stopped</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="121"/>
-        <source>File</source>
-        <translation>Fil</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="126"/>
-        <source>Blur</source>
-        <translation>Suddighet</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="127"/>
-        <source>Opacity</source>
-        <translation>Opacitet</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="128"/>
-        <source>Fade length</source>
-        <translation>Toningslängd</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="132"/>
-        <source>Choose a custom background image file</source>
-        <translation>Välj en egen bakgrundsbildfil</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="147"/>
-        <source>Square</source>
-        <translation>Kvadrat</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="149"/>
-        <source>No background image</source>
-        <translation>Ingen bakgrundsbild</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="150"/>
-        <source>Current track artwork</source>
-        <translation>Aktuellt spårkonstverk</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="151"/>
-        <source>Use the currently playing track&apos;s artwork as the playlist background</source>
-        <translation>Använd den spelande spårets konstverk som spellistans bakgrund</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="152"/>
-        <source>Custom image</source>
-        <translation>Egen bild</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="153"/>
-        <source>Use the selected image file as the playlist background</source>
-        <translation>Används den valda bildfilen som spellistans bakgruund</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="155"/>
-        <source>Front</source>
-        <translation>Fram</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="156"/>
-        <source>Use the front cover for current track artwork</source>
-        <translation>Används framsidsomslaget för det aktuella spårets konstverk</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="157"/>
-        <source>Back</source>
-        <translation>Bak</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="158"/>
-        <source>Use the back cover for current track artwork</source>
-        <translation>Används baksidsomslaget för det aktuella spårets konstverk</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="159"/>
-        <source>Artist</source>
-        <translation>Artist</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="160"/>
-        <source>Use the artist picture for current track artwork</source>
-        <translation>Använd artistbilden för det aktuella spårets konstverk</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="162"/>
-        <source>Scaled and cropped</source>
-        <translation>Skalad och skärd</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="163"/>
-        <source>Fill the playlist area while preserving proportions; edges may be cropped</source>
-        <translation>Fyll spellistsarean medan proportioner behålls; kanter kan bli skärda</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="164"/>
-        <source>Scaled</source>
-        <translation>Skalad</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="165"/>
-        <source>Stretch the image to fill the playlist area; proportions may change</source>
-        <translation>Stretcha bilden för att fylla spellistsarean; proportioner kan ändras</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="166"/>
-        <source>Scaled, keep proportions</source>
-        <translation>Skalad, behåll proportioner</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="168"/>
-        <source>Fit the whole image inside the playlist area without cropping</source>
-        <translation>Passa hela bilden i spellistsarean utan skärning</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="169"/>
-        <source>Original size</source>
-        <translation>Originell storlek</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="170"/>
-        <source>Draw the image at its original size, optionally limited by maximum size</source>
-        <translation>Rita bilden i dess originalstorlek, valfritt begränsad av maximal storlek</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="172"/>
-        <source>Top left</source>
-        <translation>Vänster uppe</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="174"/>
-        <source>Top right</source>
-        <translation>Höger uppe</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="175"/>
-        <source>Left</source>
-        <translation>Vänster</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="176"/>
-        <source>Middle</source>
-        <translation>Mitten</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="177"/>
-        <source>Right</source>
-        <translation>Höger</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="178"/>
-        <source>Bottom left</source>
-        <translation>Vänster nere</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="179"/>
-        <source>Bottom</source>
-        <translation>Botten</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="180"/>
-        <source>Bottom right</source>
-        <translation>Höger nere</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="185"/>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="195"/>
-        <source>Disabled</source>
-        <translation>Av</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="198"/>
-        <source>Use a custom background colour for the currently playing row; transparency is supported</source>
-        <translation>Använd en egen bakgrundsfärg för den aktuella spelande raden; genomskinlighet stöds</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="199"/>
-        <source>Use a custom font for the currently playing row</source>
-        <translation>Använd ett eget typsnitt för den aktuella spelande raden</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="201"/>
-        <source>Path to the custom background image</source>
-        <translation>Sökväg till den egna bakgrundsbilden</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="202"/>
-        <source>Select which image source to use for the playlist background</source>
-        <translation>Välj vilken bildkälla att använda för spellistans bakgrund</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="203"/>
-        <source>Select which artwork type to use for current track artwork</source>
-        <translation>Välj vilken konstverkstyp att använda för aktuellt spårkonstverk</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="204"/>
-        <source>Controls how the background image is scaled to the playlist area</source>
-        <translation>Kontrollera hur bakgrundsbilden är skalad till spellistsarean</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="205"/>
-        <source>Alignment for original-size background images</source>
-        <translation>Positionering av original-storleks-bakgrunds-bilder</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="206"/>
-        <source>Maximum width or height for original-size background images</source>
-        <translation>Maximal bredd eller höjd för original-storleks-bakgrunds-bilder</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="207"/>
-        <source>Applies blur to the background image</source>
-        <translation>Applicerar suddighet på bakgrundbilden</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="208"/>
-        <source>Controls how strongly the background image is shown</source>
-        <translation>Kontrollera hur starkt bakgrundsbilden visas</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="209"/>
-        <source>Duration for fading between background images; set to 0 to disable</source>
-        <translation>Tidslängd för toning mellan bakgrundsbilder. Sätt till 0 för att stänga av</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="218"/>
-        <source>Appearance</source>
-        <translation>Utseende</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="225"/>
-        <source>Playing row</source>
-        <translation>Spelande rad</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="233"/>
-        <source>Corner radius</source>
-        <translation>Hörnradie</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="237"/>
-        <source>Background Image</source>
-        <translation>Bakgrundsbild</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="241"/>
-        <source>Image source</source>
-        <translation>Bildkälla</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="242"/>
-        <source>Source</source>
-        <translation>Källa</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="249"/>
-        <source>Layout</source>
-        <translation>Layout</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="250"/>
-        <source>Scale mode</source>
-        <translation>Skalningsläge</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="252"/>
-        <source>Alignment</source>
-        <translation>Justering</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="254"/>
-        <source>Maximum size</source>
-        <translation>Maximal storlek</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="256"/>
-        <source>Effects</source>
-        <translation>Effekter</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="359"/>
-        <source>Select Background Image</source>
-        <translation>Välj bakgrundsbild</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="360"/>
-        <source>Images (*.png *.jpg *.jpeg *.bmp *.webp)</source>
-        <translation>Bilder (*.png *.jpg *.jpeg *.bmp *.webp)</translation>
-    </message>
-</context>
-<context>
     <name>Fooyin::PlaylistBox</name>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="73"/>
@@ -14006,6 +13923,391 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     </message>
 </context>
 <context>
+    <name>Fooyin::PlaylistConfigDialog</name>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="58"/>
+        <source>Show header</source>
+        <translation type="unfinished">Visa rubrik</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="59"/>
+        <source>Show scrollbar</source>
+        <translation type="unfinished">Visa skrollningslist</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="60"/>
+        <source>Alternating row colours</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="65"/>
+        <source>Artwork type</source>
+        <translation type="unfinished">Konstverkstyp</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="67"/>
+        <source>Preferred track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="69"/>
+        <source>File</source>
+        <translation type="unfinished">Fil</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="74"/>
+        <source>Blur</source>
+        <translation type="unfinished">Suddighet</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="75"/>
+        <source>Opacity</source>
+        <translation type="unfinished">Opacitet</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="76"/>
+        <source>Fade length</source>
+        <translation type="unfinished">Toningslängd</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="79"/>
+        <source>Start playback immediately</source>
+        <translation type="unfinished">Starta uppspelning omedelbart</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="88"/>
+        <source>Square</source>
+        <translation type="unfinished">Kvadrat</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="90"/>
+        <source>Appearance</source>
+        <translation type="unfinished">Utseende</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="97"/>
+        <source>Artwork</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="98"/>
+        <source>Left/Right</source>
+        <translation type="unfinished">Vänster/Höger</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="100"/>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="161"/>
+        <source>Top</source>
+        <translation type="unfinished">Topp</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="102"/>
+        <source>Corner radius</source>
+        <translation type="unfinished">Hörnradie</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="107"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="108"/>
+        <source>Play now</source>
+        <translation type="unfinished">Spela nu</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="114"/>
+        <source>Click Behaviour</source>
+        <translation type="unfinished">Klickbeteende</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="118"/>
+        <source>Double-click</source>
+        <translation type="unfinished">Dubbelklick</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="120"/>
+        <source>Middle-click</source>
+        <translation type="unfinished">Mellanklick</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="127"/>
+        <source>Choose a custom background image file</source>
+        <translation type="unfinished">Välj en egen bakgrundsbildfil</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="130"/>
+        <source>No background image</source>
+        <translation type="unfinished">Ingen bakgrundsbild</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="131"/>
+        <source>Current track artwork</source>
+        <translation type="unfinished">Aktuellt spårkonstverk</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="132"/>
+        <source>Use the currently playing track&apos;s artwork as the playlist background</source>
+        <translation type="unfinished">Använd den spelande spårets konstverk som spellistans bakgrund</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="133"/>
+        <source>Custom image</source>
+        <translation type="unfinished">Egen bild</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="134"/>
+        <source>Use the selected image file as the playlist background</source>
+        <translation type="unfinished">Används den valda bildfilen som spellistans bakgruund</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="135"/>
+        <source>Front</source>
+        <translation type="unfinished">Fram</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="136"/>
+        <source>Use the front cover for current track artwork</source>
+        <translation type="unfinished">Används framsidsomslaget för det aktuella spårets konstverk</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="137"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="138"/>
+        <source>Use the back cover for current track artwork</source>
+        <translation type="unfinished">Används baksidsomslaget för det aktuella spårets konstverk</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="139"/>
+        <source>Artist</source>
+        <translation type="unfinished">Artist</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="140"/>
+        <source>Use the artist picture for current track artwork</source>
+        <translation type="unfinished">Använd artistbilden för det aktuella spårets konstverk</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="141"/>
+        <source>Playing track</source>
+        <translation type="unfinished">Spelande spår</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="143"/>
+        <source>Selected track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="145"/>
+        <source>Playing (or selected when stopped)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="147"/>
+        <source>Playing (blank at startup)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="149"/>
+        <source>Playing (blank when stopped)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="151"/>
+        <source>Scaled and cropped</source>
+        <translation type="unfinished">Skalad och skärd</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="152"/>
+        <source>Fill the playlist area while preserving proportions; edges may be cropped</source>
+        <translation type="unfinished">Fyll spellistsarean medan proportioner behålls; kanter kan bli skärda</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="153"/>
+        <source>Scaled</source>
+        <translation type="unfinished">Skalad</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="154"/>
+        <source>Stretch the image to fill the playlist area; proportions may change</source>
+        <translation type="unfinished">Stretcha bilden för att fylla spellistsarean; proportioner kan ändras</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="155"/>
+        <source>Scaled, keep proportions</source>
+        <translation type="unfinished">Skalad, behåll proportioner</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="157"/>
+        <source>Fit the whole image inside the playlist area without cropping</source>
+        <translation type="unfinished">Passa hela bilden i spellistsarean utan skärning</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="158"/>
+        <source>Original size</source>
+        <translation type="unfinished">Originell storlek</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="159"/>
+        <source>Draw the image at its original size, optionally limited by maximum size</source>
+        <translation type="unfinished">Rita bilden i dess originalstorlek, valfritt begränsad av maximal storlek</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="160"/>
+        <source>Top left</source>
+        <translation type="unfinished">Vänster uppe</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="162"/>
+        <source>Top right</source>
+        <translation type="unfinished">Höger uppe</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="163"/>
+        <source>Left</source>
+        <translation type="unfinished">Vänster</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="164"/>
+        <source>Middle</source>
+        <translation type="unfinished">Mitten</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="165"/>
+        <source>Right</source>
+        <translation type="unfinished">Höger</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="166"/>
+        <source>Bottom left</source>
+        <translation type="unfinished">Vänster nere</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="167"/>
+        <source>Bottom</source>
+        <translation type="unfinished">Botten</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="168"/>
+        <source>Bottom right</source>
+        <translation type="unfinished">Höger nere</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="172"/>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="180"/>
+        <source>Disabled</source>
+        <translation type="unfinished">Av</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="182"/>
+        <source>Path to the custom background image</source>
+        <translation type="unfinished">Sökväg till den egna bakgrundsbilden</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="183"/>
+        <source>Select which image source to use for the playlist background</source>
+        <translation type="unfinished">Välj vilken bildkälla att använda för spellistans bakgrund</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="184"/>
+        <source>Select which artwork type to use for current track artwork</source>
+        <translation type="unfinished">Välj vilken konstverkstyp att använda för aktuellt spårkonstverk</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="185"/>
+        <source>Select which track supplies the background artwork</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="186"/>
+        <source>Controls how the background image is scaled to the playlist area</source>
+        <translation type="unfinished">Kontrollera hur bakgrundsbilden är skalad till spellistsarean</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="187"/>
+        <source>Alignment for original-size background images</source>
+        <translation type="unfinished">Positionering av original-storleks-bakgrunds-bilder</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="188"/>
+        <source>Maximum width or height for original-size background images</source>
+        <translation type="unfinished">Maximal bredd eller höjd för original-storleks-bakgrunds-bilder</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="189"/>
+        <source>Applies blur to the background image</source>
+        <translation type="unfinished">Applicerar suddighet på bakgrundbilden</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="190"/>
+        <source>Controls how strongly the background image is shown</source>
+        <translation type="unfinished">Kontrollera hur starkt bakgrundsbilden visas</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="191"/>
+        <source>Duration for fading between background images; set to 0 to disable</source>
+        <translation type="unfinished">Tidslängd för toning mellan bakgrundsbilder. Sätt till 0 för att stänga av</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="193"/>
+        <source>After adding tracks to the front of or replacing the playback queue, start playback immediately</source>
+        <translation type="unfinished">Efter att ha lagt till spår längst fram eller ersatt uppspelningskön, starta uppspelning omedelbart</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="195"/>
+        <source>Background Image</source>
+        <translation type="unfinished">Bakgrundsbild</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="199"/>
+        <source>Image source</source>
+        <translation type="unfinished">Bildkälla</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="200"/>
+        <source>Source</source>
+        <translation type="unfinished">Källa</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="208"/>
+        <source>Layout</source>
+        <translation type="unfinished">Layout</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="209"/>
+        <source>Scale mode</source>
+        <translation type="unfinished">Skalningsläge</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="211"/>
+        <source>Alignment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="213"/>
+        <source>Maximum size</source>
+        <translation type="unfinished">Maximal storlek</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="215"/>
+        <source>Effects</source>
+        <translation type="unfinished">Effekter</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="314"/>
+        <source>Choose Background Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="315"/>
+        <source>Images (*.png *.jpg *.jpeg *.webp *.bmp);;All files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::PlaylistControl</name>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="63"/>
@@ -14117,12 +14419,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
 <context>
     <name>Fooyin::PlaylistGeneralPage</name>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="235"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="221"/>
         <source>General</source>
         <translation>Generellt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="236"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="222"/>
         <source>Playlist</source>
         <translation>Spellista</translation>
     </message>
@@ -14130,74 +14432,74 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
 <context>
     <name>Fooyin::PlaylistGeneralPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="77"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="86"/>
         <source>Skip missing tracks</source>
         <translation>Hoppa över saknade spår</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="76"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="83"/>
         <source>Enable inline tag editing</source>
         <translation>Sätt på inline-taggredigering</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="75"/>
-        <source>Start playback immediately</source>
-        <translation>Starta uppspelning omedelbart</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="78"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="87"/>
         <source>Ignore playlist files when adding folders</source>
         <translation>Ignorera spellistsfiler när mappar läggs till</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="79"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="88"/>
         <source>Prevent duplicate tracks when loading playlists</source>
         <translation>Hindra duplicerade spår när spellistor läses in</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="80"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="89"/>
         <source>Open search bar instead of pop-up playlist search</source>
         <translation>Öppna sökruta istället för popup-spellistssökning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="84"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="93"/>
         <source>Behaviour</source>
         <translation>Beteende</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="89"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="98"/>
         <source>Number of tracks used to preload the playlist before loading the rest of the playlist</source>
         <translation>Antal spår som förladdar spellistan innan resten av spellistan läses in</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="95"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="104"/>
         <source>Allow editing writable track tag columns directly from the playlist</source>
         <translation>Tillåt redigering av skrivbara spårtaggkolumner direkt från spellistan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="100"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="109"/>
         <source>Set to &apos;0&apos; to disable preloading.</source>
         <translation>Sätt till ”0” för att stänga av förladdning.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="104"/>
-        <source>Click Behaviour</source>
-        <translation>Klickbeteende</translation>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="84"/>
+        <source>Background colour</source>
+        <translation type="unfinished">Bakgrundsfärg</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="108"/>
-        <source>Double-click</source>
-        <translation>Dubbelklick</translation>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="85"/>
+        <source>Font</source>
+        <translation type="unfinished">Typsnitt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="110"/>
-        <source>Middle-click</source>
-        <translation>Mellanklick</translation>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="114"/>
+        <source>Use a custom background colour for the currently playing row; transparency is supported</source>
+        <translation type="unfinished">Använd en egen bakgrundsfärg för den aktuella spelande raden; genomskinlighet stöds</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="116"/>
-        <source>After adding tracks to the front of or replacing the playback queue, start playback immediately</source>
-        <translation>Efter att ha lagt till spår längst fram eller ersatt uppspelningskön, starta uppspelning omedelbart</translation>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="115"/>
+        <source>Use a custom font for the currently playing row</source>
+        <translation type="unfinished">Använd ett eget typsnitt för den aktuella spelande raden</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="117"/>
+        <source>Playing row</source>
+        <translation type="unfinished">Spelande rad</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
@@ -14245,32 +14547,9 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
         <translation>Sökskript</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="166"/>
-        <source>None</source>
-        <translation>Inget</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="167"/>
-        <source>Play now</source>
-        <translation>Spela nu</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="87"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="96"/>
         <source>Tracks to preload</source>
         <translation>Spår att förladda</translation>
-    </message>
-</context>
-<context>
-    <name>Fooyin::PlaylistGuiPage</name>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="396"/>
-        <source>Appearance</source>
-        <translation>Utseende</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistguipage.cpp" line="397"/>
-        <source>Playlist</source>
-        <translation>Spellista</translation>
     </message>
 </context>
 <context>
@@ -14460,7 +14739,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
 <context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1617"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1636"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln spår</numerusform>
@@ -15052,42 +15331,42 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1003"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1031"/>
         <source>&amp;Play</source>
         <translation>S&amp;pela</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1136"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1162"/>
         <source>Add to another playlist</source>
         <translation>Lägg till i en annan spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1288"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1319"/>
         <source>Use custom layout for this playlist</source>
         <translation>Använd en anpassad layout för den här spellistan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1289"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1320"/>
         <source>Use a separate view layout instead of the default</source>
         <translation>Använd en separat visningslayout istället för defaulten</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1767"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2026"/>
         <source>Writing metadata…</source>
         <translation>Skriver metadata…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1767"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2026"/>
         <source>Abort</source>
         <translation>Stoppa</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1773"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2032"/>
         <source>Writing Metadata</source>
         <translation>Skriver metadata</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1774"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2033"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Skriver metadata till %Ln spår…</numerusform>
@@ -15095,243 +15374,243 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1892"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2133"/>
         <source>Start playback of the selected track</source>
         <translation>Starta uppspelning av det valda spåret</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1901"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2142"/>
         <source>Edit</source>
         <translation>Ändra</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1905"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2146"/>
         <source>Randomise the current playlist</source>
         <translation>Slumpa den aktuella spellistan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1908"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2149"/>
         <source>Reverse the current playlist</source>
         <translation>Omvänd den aktuella spellistan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1926"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2167"/>
         <source>Select &amp;all</source>
         <translation>Välj &amp;allt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1927"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2168"/>
         <source>Select all tracks in the current playlist</source>
         <translation>Välj alla spår i den aktuella spellistan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1210"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1236"/>
         <source>Reset columns to default</source>
         <translation>Återställ kolumner till default</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1236"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="952"/>
+        <source>Playlist Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1263"/>
         <source>Sort the current playlist using this preset</source>
         <translation>Sortera den aktuella spellistan med denna förinställning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1276"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1303"/>
         <source>Single-column mode</source>
         <translation>Enkolumnsläge</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1393"/>
-        <source>Playlist settings…</source>
-        <translation>Spellistsinställningar…</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1317"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1348"/>
         <source>Presets</source>
         <translation>Förinställningar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1348"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1379"/>
         <source>Columns</source>
         <translation>Kolumner</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1336"/>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1378"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1367"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1409"/>
         <source>More…</source>
         <translation>Mer…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="334"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="349"/>
         <source>Playlist</source>
         <translation>Spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/detachedplaylistsession.cpp" line="45"/>
+        <location filename="../../src/gui/playlist/detachedplaylistsession.cpp" line="47"/>
         <source>No results</source>
         <translation>Inga resultat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/detachedplaylistsession.cpp" line="50"/>
+        <location filename="../../src/gui/playlist/detachedplaylistsession.cpp" line="52"/>
         <source>Searching…</source>
         <translation>Söker…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="130"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="129"/>
         <source>Playlist empty</source>
         <translation>Spellista tom</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="135"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="134"/>
         <source>Loading playlist…</source>
         <translation>Läser in spellista…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="204"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="203"/>
         <source>&amp;Undo</source>
         <translation>&amp;Ångra</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="207"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="206"/>
         <source>&amp;Redo</source>
         <translation>Gö&amp;r om</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="210"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="209"/>
         <source>&amp;Crop</source>
         <translation>Sk&amp;är</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="213"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="212"/>
         <source>&amp;Stop after this</source>
         <translation>&amp;Stoppa efter den här</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="217"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="216"/>
         <source>Cu&amp;t</source>
         <translation>K&amp;lipp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="220"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="219"/>
         <source>&amp;Copy</source>
         <translation>&amp;Kopiera</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="223"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="222"/>
         <source>&amp;Paste</source>
         <translation>Kl&amp;istra in</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="226"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="225"/>
         <source>C&amp;lear</source>
         <translation>R&amp;ensa</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="229"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="228"/>
         <source>&amp;Remove</source>
         <translation>Ta bo&amp;rt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="233"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="232"/>
         <source>Remove duplicates</source>
         <translation>Ta bort dubletter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="236"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="235"/>
         <source>Remove dead tracks</source>
         <translation>Ta bort döda spår</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="239"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="238"/>
         <source>Add to playback &amp;queue</source>
         <translation>Lägg till i &amp;uppspelningskö</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="243"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="242"/>
         <source>&amp;Queue to play next</source>
         <translation>K&amp;öa till nästa spelning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="247"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="246"/>
         <source>Remove from playback q&amp;ueue</source>
         <translation>Ta bort från &amp;uppspelningskön</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="251"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="250"/>
         <source>Randomise</source>
         <translation>Slumpa</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="254"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="253"/>
         <source>Reverse</source>
         <translation>Omvänd</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="351"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="341"/>
         <source>Remove all tracks from the playlist except for the selected tracks</source>
         <translation>Ta bort alla spår från spellistan förutom de valda spåren</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="355"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="345"/>
         <source>Stop playback at the end of the selected track</source>
         <translation>Stoppa uppspelning vid slutet av det valda spåret</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="362"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="352"/>
         <source>Undo the previous playlist change</source>
         <translation>Ångra den föregående spellistsändringen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="372"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="362"/>
         <source>Redo the previous playlist change</source>
         <translation>Gör om den föregående spellistsändringen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="384"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="374"/>
         <source>Cut the selected tracks</source>
         <translation>Klipp de valda spåren</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="392"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="382"/>
         <source>Copy the selected tracks</source>
         <translation>Kopiera de valda spåren</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="401"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="391"/>
         <source>Paste the selected tracks</source>
         <translation>Klistra in de valda spåren</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="413"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="403"/>
         <source>Remove all tracks from the current playlist</source>
         <translation>Ta bort alla spår från den aktuella spellistan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="421"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="411"/>
         <source>Remove the selected tracks from the current playlist</source>
         <translation>Ta bort de valda spåren från den aktuella spellistan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="435"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="425"/>
         <source>Add the selected tracks to the playback queue</source>
         <translation>Lägg till de valda spåren i uppspelningskön</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="441"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="431"/>
         <source>Add the selected tracks to the front of the playback queue</source>
         <translation>Lägg till de valda spåren längst fram i uppspelningskön</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="447"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="437"/>
         <source>Remove the selected tracks from the playback queue</source>
         <translation>Ta bort de valda spåren från uppspelningskön</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="455"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="445"/>
         <source>Remove duplicate tracks from the playlist</source>
         <translation>Ta bort spårdubletter från spellistan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="460"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="450"/>
         <source>Remove dead (non-existent) tracks from the playlist</source>
         <translation>Ta bort döda (icke-existerande) spår från spellistan</translation>
     </message>
@@ -15382,12 +15661,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
 <context>
     <name>Fooyin::PluginPage</name>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="281"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="299"/>
         <source>General</source>
         <translation>Generellt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="282"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="300"/>
         <source>Plugins</source>
         <translation>Tillägg</translation>
     </message>
@@ -15395,78 +15674,78 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
 <context>
     <name>Fooyin::PluginPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="108"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="117"/>
         <source>Configure</source>
         <translation>Konfigurera</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="109"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="118"/>
         <source>About</source>
         <translation>Om</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="110"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="119"/>
         <source>Install…</source>
         <translation>Installera…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="177"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="188"/>
         <source>Plugins Changed</source>
         <translation>Tillägg ändrade</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="240"/>
-        <source>fooyin Plugin (*.dll)</source>
-        <translation>fooyin-tillägg (*.dll)</translation>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="251"/>
+        <source>fooyin Plugins (*.fyplugin *.zip *.dll)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="242"/>
-        <source>fooyin Plugin (*.so)</source>
-        <translation>fooyin-tillägg (*.so)</translation>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="253"/>
+        <source>fooyin Plugins (*.fyplugin *.zip *.so)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="244"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="255"/>
         <source>Install Plugin</source>
         <translation>Installera tillägg</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="254"/>
+        <location filename="../../src/gui/plugininstallhandler.cpp" line="70"/>
         <source>Plugin Already Installed</source>
         <translation>Tillägg redan installerat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="255"/>
+        <location filename="../../src/gui/plugininstallhandler.cpp" line="71"/>
         <source>This plugin is already installed. Update it?</source>
         <translation>Detta tillägg är redan installerat. Uppdatera den?</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="256"/>
+        <location filename="../../src/gui/plugininstallhandler.cpp" line="73"/>
         <source>Update</source>
         <translation>Uppdatera</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="265"/>
+        <location filename="../../src/gui/plugininstallhandler.cpp" line="82"/>
         <source>Plugin Updated</source>
         <translation>Tillägg uppdaterat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="272"/>
+        <location filename="../../src/gui/plugininstallhandler.cpp" line="94"/>
         <source>Plugin Installation Failed</source>
         <translation>Tilläggsinitiering misslyckades</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="272"/>
+        <location filename="../../src/gui/plugininstallhandler.cpp" line="95"/>
         <source>The plugin could not be installed.</source>
         <translation>Tillägget kunde inte initieras.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="265"/>
+        <location filename="../../src/gui/plugininstallhandler.cpp" line="83"/>
         <source>Plugin Installed</source>
         <translation>Tillägg installerat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="178"/>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="266"/>
+        <location filename="../../src/gui/plugininstallhandler.cpp" line="86"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="189"/>
         <source>Restart for changes to take effect. Restart now?</source>
         <translation>Starta om för att ändringar ska börja gälla. Starta om nu?</translation>
     </message>
@@ -15854,58 +16133,58 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
 <context>
     <name>Fooyin::ProjectM::ProjectMView</name>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="100"/>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="874"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="98"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="872"/>
         <source>Initialising projectM…</source>
         <translation>Initierar projectM…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="412"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="410"/>
         <source>Preset %1</source>
         <translation>Förinställning %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="435"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="433"/>
         <source>Could not initialise OpenGL: %1</source>
         <translation>Kunde inte initiera OpenGL: %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="440"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="438"/>
         <source>projectM requires OpenGL 3.3 or newer.</source>
         <translation>projectM kräver OpenGL 3.3 eller nyare.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="568"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="566"/>
         <source>projectM requires an initialised OpenGL 3.3 context.</source>
         <translation>projectM kräver en initierad OpenGL 3.3-kontext.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="573"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="571"/>
         <source>No projectM preset folders are configured.</source>
         <translation>Inga projectM-förinställningsmappar är konfigurerade.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="597"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="595"/>
         <source>Preset failed to load.</source>
         <translation>Förinställning misslyckades att läsas in.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="616"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="614"/>
         <source>projectM initialisation failed.</source>
         <translation>projectM-initiering misslyckades.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="617"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="615"/>
         <source>projectM initialisation failed: %1</source>
         <translation>projectM-initiering misslyckades: %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="639"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="637"/>
         <source>Using presets from %1</source>
         <translation>Använder förinställningar från %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="640"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="638"/>
         <source>Using presets from %Ln folder(s)</source>
         <translation>
             <numerusform>Använder förinställningar från %Ln mapp</numerusform>
@@ -16351,17 +16630,17 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
 <context>
     <name>Fooyin::QueueViewerModel</name>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="212"/>
+        <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="215"/>
         <source>Upcoming Tracks</source>
         <translation>Kommande spår</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="212"/>
+        <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="215"/>
         <source>Playing Tracks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="215"/>
+        <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="218"/>
         <source>Playback Queue</source>
         <translation>Uppspelningskö</translation>
     </message>
@@ -18919,69 +19198,69 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
 <context>
     <name>Fooyin::ScriptDisplay</name>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="131"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="134"/>
         <source>&amp;Copy</source>
         <translation>&amp;Kopiera</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="140"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="143"/>
         <source>Edit</source>
         <translation>Ändra</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="185"/>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="215"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="192"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="229"/>
         <source>Script Display</source>
         <translation>Skriptdisplay</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="215"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="229"/>
         <source>Right-click to configure this panel.</source>
         <translation>Högerklicka för att konfigurera denna panel.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="329"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="345"/>
         <source>Show scrollbar</source>
         <translation>Visa skrollningslist</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="338"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="354"/>
         <source>Align</source>
         <translation>Positionera</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="340"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="356"/>
         <source>Horizontal</source>
         <translation>Horisontellt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="342"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="358"/>
         <source>Left</source>
         <translation>Vänster</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="343"/>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="351"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="359"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="367"/>
         <source>Centre</source>
         <translation>Mitten</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="344"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="360"/>
         <source>Right</source>
         <translation>Höger</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="348"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="364"/>
         <source>Vertical</source>
         <translation>Vertikalt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="350"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="366"/>
         <source>Top</source>
         <translation>Topp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="352"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplay.cpp" line="368"/>
         <source>Bottom</source>
         <translation>Botten</translation>
     </message>
@@ -18989,219 +19268,244 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
 <context>
     <name>Fooyin::ScriptDisplayConfigDialog</name>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="61"/>
-        <source>Show current track when playback is stopped</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="67"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="66"/>
         <source>Default</source>
         <translation>Default</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="68"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="67"/>
         <source>Text</source>
         <translation>Text</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="69"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="68"/>
         <source>Background</source>
         <translation>Bakgrund</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="70"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="69"/>
         <source>Links</source>
         <translation>Länkar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="77"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="76"/>
         <source>Format</source>
         <translation>Format</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="78"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="77"/>
         <source>Appearance</source>
         <translation>Utseende</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="80"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="79"/>
         <source>Left</source>
         <translation>Vänster</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="81"/>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="85"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="80"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="84"/>
         <source>Centre</source>
         <translation>Centrerad</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="82"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="81"/>
         <source>Right</source>
         <translation>Höger</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="84"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="83"/>
         <source>Top</source>
         <translation>Topp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="86"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="85"/>
         <source>Bottom</source>
         <translation>Botten</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="88"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="87"/>
         <source>Alignment</source>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="91"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="90"/>
         <source>Horizontal</source>
         <translation>Horisontell</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="93"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="92"/>
         <source>Vertical</source>
         <translation>Vertikal</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="97"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="96"/>
         <source>Font</source>
         <translation>Typsnitt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="103"/>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="102"/>
         <source>Colours</source>
         <translation>Färger</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="119"/>
+        <source>Playing track</source>
+        <translation type="unfinished">Spelande spår</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="120"/>
+        <source>Selected track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="121"/>
+        <source>Playing (or selected when stopped)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="123"/>
+        <source>Playing (blank at startup)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="125"/>
+        <source>Playing (blank when stopped)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="132"/>
+        <source>Preferred track</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>Fooyin::ScriptEditor</name>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="862"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="863"/>
         <source>Structure</source>
         <translation>Struktur</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="863"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="864"/>
         <source>Reference</source>
         <translation>Referens</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="970"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="973"/>
         <source>Item</source>
         <translation>Föremål</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="970"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="973"/>
         <source>Category</source>
         <translation>Kategori</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="970"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="973"/>
         <source>Description</source>
         <translation>Beskrivning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1036"/>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1168"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1039"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1171"/>
         <source>Variables</source>
         <translation>Variabler</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1037"/>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1169"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1040"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1172"/>
         <source>Functions</source>
         <translation>Funktioner</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1038"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1041"/>
         <source>Formatting</source>
         <translation>Formatering</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1040"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1043"/>
         <source>Filter</source>
         <translation>Filter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1049"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1052"/>
         <source>Editor</source>
         <translation>Redigerare</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1051"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1054"/>
         <source>Syntax highlighting</source>
         <translation>Syntaxmarkering</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1059"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1062"/>
         <source>Font</source>
         <translation>Typsnitt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1060"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1063"/>
         <source>Word wrap</source>
         <translation>Radbrytning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1061"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1064"/>
         <source>Autocomplete</source>
         <translation>Textförslag</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1062"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1065"/>
         <source>Show whitespace</source>
         <translation>Visa blanka tecken</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1063"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1066"/>
         <source>Highlight matching brackets</source>
         <translation>Markera matchande parenteser</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1064"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1067"/>
         <source>Highlight current line</source>
         <translation>Markera aktuell rad</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1065"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1068"/>
         <source>Show line numbers</source>
         <translation>Visa radnummer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1117"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1120"/>
         <source>Reset editor settings</source>
         <translation>Återställ redigerarinställningar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1171"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1174"/>
         <source>Conditionals</source>
         <translation>Villkorligheter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1172"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1175"/>
         <source>Operators</source>
         <translation>Operatörer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1173"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1176"/>
         <source>Quoted text</source>
         <translation>Citerad text</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1184"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1187"/>
         <source>Reset colours</source>
         <translation>Återställ färger</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1208"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1211"/>
         <source>Settings</source>
         <translation>Inställningar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1412"/>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1425"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1415"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1428"/>
         <source>Script Editor</source>
         <translation>Skriptredigerare</translation>
     </message>
@@ -19220,6 +19524,40 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
         <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="49"/>
         <source>Open in script editor</source>
         <translation>Öppna i skriptredigerare</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::ScriptRegistry</name>
+    <message>
+        <location filename="../../src/core/scripting/scriptregistry.cpp" line="704"/>
+        <source>Track</source>
+        <translation type="unfinished">Spår</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/scripting/scriptregistry.cpp" line="706"/>
+        <source>Album</source>
+        <translation type="unfinished">Album</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/scripting/scriptregistry.cpp" line="709"/>
+        <location filename="../../src/core/scripting/scriptregistry.cpp" line="723"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/scripting/scriptregistry.cpp" line="715"/>
+        <source>Gain and clip prevention</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/scripting/scriptregistry.cpp" line="718"/>
+        <source>Gain</source>
+        <translation type="unfinished">Förstärkning</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/scripting/scriptregistry.cpp" line="721"/>
+        <source>Clip prevention</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -19794,7 +20132,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="97"/>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="532"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="569"/>
         <source>Options</source>
         <translation>Alternativ</translation>
     </message>
@@ -19804,93 +20142,93 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
         <translation>Sökresultat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="120"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="137"/>
         <source>Search Bar</source>
         <translation>Sökfält</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="130"/>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="580"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="151"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="618"/>
         <source>Manage connected widgets</source>
         <translation>Hantera anslutna widgetar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="459"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="491"/>
         <source>Special Keys</source>
         <translation>Specialtangenter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="459"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="491"/>
         <source>Force the creation of a new results playlist</source>
         <translation>Tvinga skapandet av en ny resultatspellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="460"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="492"/>
         <source>Force search in the current playlist</source>
         <translation>Tvinga sökning i den aktuella spellistan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="460"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="492"/>
         <source>Force search in all playlists</source>
         <translation>Tvinga sökning i alla spellistor</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="461"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="493"/>
         <source>Force new results playlist using the current playlist as the source</source>
         <translation>Tvinga ny resultatspellista med den aktuella spellistan som källan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="462"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="494"/>
         <source>Force new results playlist using all playlists</source>
         <translation>Tvinga ny resultatspellista med alla spellistor</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="462"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="494"/>
         <source>Delete a word in the search box</source>
         <translation>Radera ett ord i sökrutan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="535"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="572"/>
         <source>Autosearch</source>
         <translation>Autosök</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="541"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="578"/>
         <source>Show all when search is empty</source>
         <translation>Visa allt när sökningen är tom</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="551"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="588"/>
         <source>Search in</source>
         <translation>Sök i</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="553"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="590"/>
         <source>Library</source>
         <translation>Bibliotek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="559"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="596"/>
         <source>Playlist</source>
         <translation>Spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="565"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="602"/>
         <source>All Playlists</source>
         <translation>Alla spellistor</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="576"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="613"/>
         <source>Change placeholder text</source>
         <translation>Ändra platshållartext</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="586"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="625"/>
         <source>Help</source>
         <translation>Hjälp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2096"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2099"/>
         <source>Quick Search</source>
         <translation type="unfinished">Snabbsök</translation>
     </message>
@@ -21401,32 +21739,32 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
 <context>
     <name>Fooyin::StatusWidget</name>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="573"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="576"/>
         <source>Status Bar</source>
         <translation>Statusfält</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="652"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="655"/>
         <source>Show icon</source>
         <translation>Visa ikon</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="658"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="661"/>
         <source>Show selection info</source>
         <translation>Visa selektionsinfo</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="665"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="668"/>
         <source>Show current playlist info</source>
         <translation>Visa aktuell spellistsinfo</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="684"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="687"/>
         <source>Status bar settings…</source>
         <translation>Statusfältinställningar…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="672"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="675"/>
         <source>Show action tips</source>
         <translation>Visa åtgärdstips</translation>
     </message>
@@ -21545,12 +21883,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
         <translation>Avbryt skanning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="373"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="375"/>
         <source>Layout Editing Mode</source>
         <translation>Layoutredigeringsläge</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="447"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="450"/>
         <source>Buffering stream…</source>
         <translation>Buffrar ström…</translation>
     </message>
@@ -22152,208 +22490,208 @@ Detta stödjer inte fullständig skriptning.</translation>
 <context>
     <name>Fooyin::TrackSelectionControllerPrivate</name>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="279"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="280"/>
         <source>Add to current playlist</source>
         <translation>Lägg till i aktuell spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="280"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="281"/>
         <source>Add to active playlist</source>
         <translation>Lägg till i aktiv spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="281"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="282"/>
         <source>Replace current playlist</source>
         <translation>Ersätt aktuell spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="282"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="283"/>
         <source>Create new playlist</source>
         <translation>Skapa ny spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="283"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="284"/>
         <source>Add to playback queue</source>
         <translation>Lägg till i uppspelningskö</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="284"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="285"/>
         <source>Queue to play next</source>
         <translation>Köa till nästa spelning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="285"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="286"/>
         <source>Remove from playback queue</source>
         <translation>Ta bort från uppspelningskö</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="286"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="287"/>
         <source>Open containing folder</source>
         <translation>Öppna innehållande mapp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="289"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="290"/>
         <source>Search for artwork…</source>
         <translation>Sök efter konstverk…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="258"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="259"/>
         <source>Track actions</source>
         <translation>Spårhandlingar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="266"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="267"/>
         <source>Playback queue</source>
         <translation>Uppspelningskö</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="274"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="275"/>
         <source>Playlist actions</source>
         <translation>Spellistshandlingar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="287"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="288"/>
         <source>Copy file path</source>
         <translation>Kopiera filsökväg</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="288"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="289"/>
         <source>Copy directory path</source>
         <translation>Kopiera mappsökväg</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="290"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="291"/>
         <source>Auto-extract artwork to files</source>
         <translation>Autoextrahera konstverk till filer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="291"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="292"/>
         <source>Front cover…</source>
         <translation>Framsidsomslag…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="292"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="293"/>
         <source>Back cover…</source>
         <translation>Baksidsomslag…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="293"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="294"/>
         <source>Artist picture…</source>
         <translation>Artistbild…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="294"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="295"/>
         <source>Remove all artwork</source>
         <translation>Ta bort allt konstverk</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="295"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="296"/>
         <source>Properties</source>
         <translation>Egenskaper</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="321"/>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="322"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="323"/>
         <source>Tracks</source>
         <translation>Spår</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="322"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="323"/>
         <source>Queue</source>
         <translation>Kö</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="324"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="325"/>
         <source>Append selected tracks to the current playlist</source>
         <translation>Lägg till valda spår i slutet av den aktuella spellistan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="331"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="332"/>
         <source>Append selected tracks to the active playlist</source>
         <translation>Lägg till valda spår i slutet av den aktiva spellistan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="338"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="339"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
         <translation>Ersätt innehållet av den aktuella spellistan med de valda spåren</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="350"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="351"/>
         <source>Create a new playlist containing the selected tracks</source>
         <translation>Skapa en ny spellista som innehåller de valda spåren</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="363"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="364"/>
         <source>Add the selected tracks to the playback queue</source>
         <translation>Lägg till de valda spåren i uppspelningskön</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="375"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="376"/>
         <source>Add the selected tracks to the front of the playback queue</source>
         <translation>Lägg till de valda spåren längst fram i uppspelningskön</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="387"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="388"/>
         <source>Remove the selected tracks from the playback queue</source>
         <translation>Ta bort de valda spåren från uppspelningskön</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="403"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="404"/>
         <source>Open the directory containing the selected tracks</source>
         <translation>Öppna mappen som innehåller de valda spåren</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="414"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="415"/>
         <source>Copy the file paths of the selected tracks</source>
         <translation>Kopiera filsökvägarna för de valda spåren</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="426"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="427"/>
         <source>Copy the containing directories of the selected tracks</source>
         <translation>Kopiera de innehållande mapparna av de valda spåren</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="442"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="443"/>
         <source>Search for artwork for the selected tracks</source>
         <translation>Sök efter konstverk för de valda spåren</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="458"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="459"/>
         <source>Extract embedded artwork for the selected tracks to files in their directories without prompting</source>
         <translation>Extrahera inbäddade konstverk för de valda spåren till filer i dess mappar utan att fråga</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="471"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="472"/>
         <source>Attach image</source>
         <translation>Bifoga bild</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="473"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="474"/>
         <source>Attach an image file as the front cover for the selected tracks</source>
         <translation>Bifoga en bildfil som framsidsomslaget för de valda spåren</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="486"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="487"/>
         <source>Attach an image file as the back cover for the selected tracks</source>
         <translation>Bifoga en bildfil som baksidsomslaget för de valda spåren</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="499"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="500"/>
         <source>Attach an image file as the artist picture for the selected tracks</source>
         <translation>Bifoga en bildfil som artistbilden för de valda spåren</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="515"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="516"/>
         <source>Remove all artwork associated with the selected tracks (embedded, directory)</source>
         <translation>Ta bort allt konstverk som är associerat med de valda spåren (inbäddade, mapp)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="530"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="531"/>
         <source>Open the properties dialog</source>
         <translation>Öppna egenskapsdialogen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1027"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1028"/>
         <source>Playback</source>
         <translation>Uppspelning</translation>
     </message>
@@ -22719,7 +23057,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <name>Fooyin::ViewMenu</name>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="49"/>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="122"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="129"/>
         <source>View</source>
         <translation>Visa</translation>
     </message>
@@ -22765,36 +23103,46 @@ Detta stödjer inte fullständig skriptning.</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="83"/>
+        <source>&amp;Library Tree</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="84"/>
+        <source>Open the library tree window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="90"/>
         <source>Playback &amp;Queue</source>
         <translation>Uppspelnings&amp;kö</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="84"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="91"/>
         <source>Open the playback queue window</source>
         <translation>Öppna uppspelningsköfönstret</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="96"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="103"/>
         <source>Focus Search &amp;Bar</source>
         <translation>F&amp;okusera på sökruta</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="97"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="104"/>
         <source>Focus the first Search Bar found in the current layout</source>
         <translation>Fokusera på det första sökfältet hittat i den aktuella layouten</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="103"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="110"/>
         <source>Show playing &amp;track</source>
         <translation>&amp;Visa spelande spår</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="104"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="111"/>
         <source>Show the currently playing track in the playlist</source>
         <translation>Visa det aktuellt spelande spåret i spellistan</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="122"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="129"/>
         <source>DSP</source>
         <translation>DSP</translation>
     </message>
@@ -23653,27 +24001,28 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
         <translation>Flikbunt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="265"/>
-        <location filename="../../src/gui/widgets.cpp" line="865"/>
+        <location filename="../../src/gui/widgets.cpp" line="259"/>
+        <location filename="../../src/gui/widgets.cpp" line="851"/>
+        <location filename="../../src/gui/widgets.cpp" line="882"/>
         <source>Library Tree</source>
         <translation>Biblioteksträd</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="281"/>
+        <location filename="../../src/gui/widgets.cpp" line="275"/>
         <source>Player Controls</source>
         <translation>Spelarkontroller</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="274"/>
+        <location filename="../../src/gui/widgets.cpp" line="268"/>
+        <location filename="../../src/gui/widgets.cpp" line="276"/>
         <location filename="../../src/gui/widgets.cpp" line="282"/>
-        <location filename="../../src/gui/widgets.cpp" line="288"/>
-        <location filename="../../src/gui/widgets.cpp" line="300"/>
-        <location filename="../../src/gui/widgets.cpp" line="312"/>
-        <location filename="../../src/gui/widgets.cpp" line="317"/>
-        <location filename="../../src/gui/widgets.cpp" line="322"/>
-        <location filename="../../src/gui/widgets.cpp" line="327"/>
+        <location filename="../../src/gui/widgets.cpp" line="294"/>
+        <location filename="../../src/gui/widgets.cpp" line="306"/>
+        <location filename="../../src/gui/widgets.cpp" line="311"/>
+        <location filename="../../src/gui/widgets.cpp" line="316"/>
+        <location filename="../../src/gui/widgets.cpp" line="321"/>
+        <location filename="../../src/gui/widgets.cpp" line="326"/>
         <location filename="../../src/gui/widgets.cpp" line="332"/>
-        <location filename="../../src/gui/widgets.cpp" line="338"/>
         <source>Controls</source>
         <translation>Kontroller</translation>
     </message>
@@ -23683,37 +24032,37 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
         <translation>Spellistshanterare</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="273"/>
+        <location filename="../../src/gui/widgets.cpp" line="267"/>
         <source>Command Button</source>
         <translation>Kommandoknapp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="287"/>
+        <location filename="../../src/gui/widgets.cpp" line="281"/>
         <source>Playlist Controls</source>
         <translation>Spellistskontroller</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="316"/>
+        <location filename="../../src/gui/widgets.cpp" line="310"/>
         <source>Volume Controls</source>
         <translation>Volymkontroller</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="321"/>
+        <location filename="../../src/gui/widgets.cpp" line="315"/>
         <source>Seekbar</source>
         <translation>Letningsruta</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="326"/>
+        <location filename="../../src/gui/widgets.cpp" line="320"/>
         <source>Output Selector</source>
         <translation>Utgångsväljare</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="346"/>
+        <location filename="../../src/gui/widgets.cpp" line="340"/>
         <source>Selection Info</source>
         <translation>Selektionsinfo</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="362"/>
+        <location filename="../../src/gui/widgets.cpp" line="356"/>
         <source>Artwork Panel</source>
         <translation>Konstverkspanel</translation>
     </message>
@@ -23722,475 +24071,469 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
         <location filename="../../src/gui/widgets.cpp" line="223"/>
         <location filename="../../src/gui/widgets.cpp" line="230"/>
         <location filename="../../src/gui/widgets.cpp" line="243"/>
-        <location filename="../../src/gui/widgets.cpp" line="371"/>
-        <location filename="../../src/gui/widgets.cpp" line="372"/>
-        <location filename="../../src/gui/widgets.cpp" line="603"/>
-        <location filename="../../src/gui/widgets.cpp" line="866"/>
+        <location filename="../../src/gui/widgets.cpp" line="365"/>
+        <location filename="../../src/gui/widgets.cpp" line="366"/>
+        <location filename="../../src/gui/widgets.cpp" line="607"/>
+        <location filename="../../src/gui/widgets.cpp" line="852"/>
         <source>Playlist</source>
         <translation>Spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="299"/>
+        <location filename="../../src/gui/widgets.cpp" line="293"/>
         <source>Rating Control</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="311"/>
+        <location filename="../../src/gui/widgets.cpp" line="305"/>
         <source>Love Control</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="331"/>
+        <location filename="../../src/gui/widgets.cpp" line="325"/>
         <source>ReplayGain Mode</source>
         <translation>ReplayGain-läge</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="337"/>
+        <location filename="../../src/gui/widgets.cpp" line="331"/>
         <source>DSP Selector</source>
         <translation>DSP-väljare</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="375"/>
+        <location filename="../../src/gui/widgets.cpp" line="369"/>
         <source>Spacer</source>
         <translation>Tomrum</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="386"/>
+        <location filename="../../src/gui/widgets.cpp" line="380"/>
         <source>Status Bar</source>
         <translation>Statusfält</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="395"/>
+        <location filename="../../src/gui/widgets.cpp" line="389"/>
         <source>Search Bar</source>
         <translation>Sökfält</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="397"/>
+        <location filename="../../src/gui/widgets.cpp" line="391"/>
         <source>Directory Browser</source>
         <translation>Mappbläddrare</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="405"/>
-        <location filename="../../src/gui/widgets.cpp" line="867"/>
+        <location filename="../../src/gui/widgets.cpp" line="399"/>
+        <location filename="../../src/gui/widgets.cpp" line="853"/>
         <source>Script Display</source>
         <translation>Skriptdisplay</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="408"/>
+        <location filename="../../src/gui/widgets.cpp" line="402"/>
         <source>Library Filter</source>
         <translation>Biblioteksfilter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="409"/>
-        <location filename="../../src/gui/widgets.cpp" line="417"/>
-        <location filename="../../src/gui/widgets.cpp" line="424"/>
-        <location filename="../../src/gui/widgets.cpp" line="870"/>
+        <location filename="../../src/gui/widgets.cpp" line="403"/>
+        <location filename="../../src/gui/widgets.cpp" line="414"/>
+        <location filename="../../src/gui/widgets.cpp" line="422"/>
+        <location filename="../../src/gui/widgets.cpp" line="429"/>
+        <location filename="../../src/gui/widgets.cpp" line="856"/>
         <source>Filters</source>
         <translation>Filter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="416"/>
+        <location filename="../../src/gui/widgets.cpp" line="413"/>
+        <source>Track Viewer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="421"/>
         <source>Saved Filter Tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="423"/>
+        <location filename="../../src/gui/widgets.cpp" line="428"/>
         <source>Saved Filter Selector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="550"/>
+        <location filename="../../src/gui/widgets.cpp" line="554"/>
         <source>Metadata Lookup</source>
         <translation>Metadatauppsökning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="551"/>
+        <location filename="../../src/gui/widgets.cpp" line="555"/>
         <source>Confirm before wiping writable tags</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="570"/>
-        <location filename="../../src/gui/widgets.cpp" line="581"/>
-        <location filename="../../src/gui/widgets.cpp" line="589"/>
-        <location filename="../../src/gui/widgets.cpp" line="596"/>
+        <location filename="../../src/gui/widgets.cpp" line="574"/>
+        <location filename="../../src/gui/widgets.cpp" line="585"/>
+        <location filename="../../src/gui/widgets.cpp" line="593"/>
+        <location filename="../../src/gui/widgets.cpp" line="600"/>
         <source>Interface</source>
         <translation>Gränssnitt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="571"/>
+        <location filename="../../src/gui/widgets.cpp" line="575"/>
         <source>Image allocation limit</source>
         <translation>Bildallokeringsgräns</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="572"/>
+        <location filename="../../src/gui/widgets.cpp" line="576"/>
         <source>Maximum image allocation size in MB. Set to 0 to disable the limit.</source>
         <translation>Maximal bildallokeringsstorlek i MB. Sätt till 0 för att stänga av begränsningen.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="581"/>
+        <location filename="../../src/gui/widgets.cpp" line="585"/>
         <source>Layout Editing</source>
         <translation>Layoutredigering</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="582"/>
+        <location filename="../../src/gui/widgets.cpp" line="586"/>
         <source>Menu levels</source>
         <translation>Menynivåer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="589"/>
+        <location filename="../../src/gui/widgets.cpp" line="593"/>
         <source>Seeking</source>
         <translation>Letande</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="590"/>
+        <location filename="../../src/gui/widgets.cpp" line="594"/>
         <source>Focus seekbars when clicked</source>
         <translation>Fokusera på letningsrutor när klickad</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="604"/>
+        <location filename="../../src/gui/widgets.cpp" line="608"/>
         <source>Confirm before removing playlists</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="610"/>
-        <location filename="../../src/gui/widgets.cpp" line="621"/>
-        <location filename="../../src/gui/widgets.cpp" line="633"/>
-        <location filename="../../src/gui/widgets.cpp" line="644"/>
-        <location filename="../../src/gui/widgets.cpp" line="656"/>
-        <location filename="../../src/gui/widgets.cpp" line="667"/>
-        <location filename="../../src/gui/widgets.cpp" line="682"/>
-        <location filename="../../src/gui/widgets.cpp" line="689"/>
-        <location filename="../../src/gui/widgets.cpp" line="758"/>
-        <location filename="../../src/gui/widgets.cpp" line="776"/>
-        <location filename="../../src/gui/widgets.cpp" line="796"/>
+        <location filename="../../src/gui/widgets.cpp" line="614"/>
+        <location filename="../../src/gui/widgets.cpp" line="625"/>
+        <location filename="../../src/gui/widgets.cpp" line="637"/>
+        <location filename="../../src/gui/widgets.cpp" line="648"/>
+        <location filename="../../src/gui/widgets.cpp" line="660"/>
+        <location filename="../../src/gui/widgets.cpp" line="671"/>
+        <location filename="../../src/gui/widgets.cpp" line="686"/>
+        <location filename="../../src/gui/widgets.cpp" line="693"/>
+        <location filename="../../src/gui/widgets.cpp" line="762"/>
+        <location filename="../../src/gui/widgets.cpp" line="782"/>
         <source>Playback</source>
         <translation>Uppspelning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="610"/>
-        <location filename="../../src/gui/widgets.cpp" line="758"/>
-        <location filename="../../src/gui/widgets.cpp" line="776"/>
+        <location filename="../../src/gui/widgets.cpp" line="614"/>
+        <location filename="../../src/gui/widgets.cpp" line="762"/>
         <source>Decoding</source>
         <translation>Avkodning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="611"/>
+        <location filename="../../src/gui/widgets.cpp" line="615"/>
         <source>VBR update interval</source>
         <translation>VBR-updateringsintervall</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="612"/>
+        <location filename="../../src/gui/widgets.cpp" line="616"/>
         <source>Interval used to refresh VBR playback information. Set to 0 to disable.</source>
         <translation>Intervall för uppdatering av VBR-uppspelningsinformation. Sätt till 0 för att stänga av.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="621"/>
-        <location filename="../../src/gui/widgets.cpp" line="633"/>
-        <location filename="../../src/gui/widgets.cpp" line="644"/>
-        <location filename="../../src/gui/widgets.cpp" line="656"/>
+        <location filename="../../src/gui/widgets.cpp" line="625"/>
+        <location filename="../../src/gui/widgets.cpp" line="637"/>
+        <location filename="../../src/gui/widgets.cpp" line="648"/>
+        <location filename="../../src/gui/widgets.cpp" line="660"/>
         <source>Buffering</source>
         <translation>Buffring</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="622"/>
+        <location filename="../../src/gui/widgets.cpp" line="626"/>
         <source>Read-ahead for remote streams</source>
         <translation>Framåtläsning för fjärrströmmar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="634"/>
+        <location filename="../../src/gui/widgets.cpp" line="638"/>
         <source>Buffer length for remote streams</source>
         <translation>Buffertlängd för fjärrströmmar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="645"/>
+        <location filename="../../src/gui/widgets.cpp" line="649"/>
         <source>Prebuffer for remote streams</source>
         <translation>Förbuffert för fjärrströmmar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="646"/>
+        <location filename="../../src/gui/widgets.cpp" line="650"/>
         <source>Decoded audio buffered before starting or resuming remote playback.
 Set to 0 to choose automatically from the remote buffer length.</source>
         <translation>Avkodat ljud buffrat innan påbörjande eller fortsättning av fjärruppspelning.
 Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="652"/>
-        <location filename="../../src/gui/widgets.cpp" line="718"/>
+        <location filename="../../src/gui/widgets.cpp" line="656"/>
+        <location filename="../../src/gui/widgets.cpp" line="722"/>
         <source>Auto</source>
         <translation>Auto</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="657"/>
+        <location filename="../../src/gui/widgets.cpp" line="661"/>
         <source>Open timeout for remote streams</source>
         <translation>Öppningstimeout för fjärrströmmar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="667"/>
-        <location filename="../../src/gui/widgets.cpp" line="682"/>
-        <location filename="../../src/gui/widgets.cpp" line="689"/>
+        <location filename="../../src/gui/widgets.cpp" line="671"/>
+        <location filename="../../src/gui/widgets.cpp" line="686"/>
+        <location filename="../../src/gui/widgets.cpp" line="693"/>
         <source>Output</source>
         <translation>Utmatning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="668"/>
+        <location filename="../../src/gui/widgets.cpp" line="672"/>
         <source>Device refresh interval</source>
         <translation>Enhetsuppdateringsintervall</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="669"/>
+        <location filename="../../src/gui/widgets.cpp" line="673"/>
         <source>Interval used to refresh the list of available output devices. Set to 0 to disable.</source>
         <translation>Intervall som används för att uppdatera listan av tillgängliga utgångsenheter. Sätt till 0 för att stänga av.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="674"/>
+        <location filename="../../src/gui/widgets.cpp" line="678"/>
         <source>Disabled</source>
         <translation>Av</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="683"/>
+        <location filename="../../src/gui/widgets.cpp" line="687"/>
         <source>Automatically resample unsupported output rates</source>
         <translation>Omsampla automatiskt ostödda utgångsfrekvenser</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="684"/>
+        <location filename="../../src/gui/widgets.cpp" line="688"/>
         <source>Resample audio when the selected output device uses a different sample rate</source>
         <translation>Omsampla ljud när den valda utgångsenheten använder en annan samplingsfrekvens</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="690"/>
+        <location filename="../../src/gui/widgets.cpp" line="694"/>
         <source>Automatic resampling preference</source>
         <translation>Automatisk omsamplings-preferens</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="691"/>
+        <location filename="../../src/gui/widgets.cpp" line="695"/>
         <source>Preferred resampler DSP names, in order. Other registered resamplers are used as fallbacks.</source>
         <translation>Föredragna omsamplar-DSP-namn, i ordning. Andra registrerade omsamplare används som reserv.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="550"/>
-        <location filename="../../src/gui/widgets.cpp" line="707"/>
-        <location filename="../../src/gui/widgets.cpp" line="724"/>
-        <location filename="../../src/gui/widgets.cpp" line="732"/>
-        <location filename="../../src/gui/widgets.cpp" line="743"/>
+        <location filename="../../src/gui/widgets.cpp" line="554"/>
+        <location filename="../../src/gui/widgets.cpp" line="711"/>
+        <location filename="../../src/gui/widgets.cpp" line="728"/>
+        <location filename="../../src/gui/widgets.cpp" line="736"/>
+        <location filename="../../src/gui/widgets.cpp" line="747"/>
         <source>Tagging</source>
         <translation>Taggning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="708"/>
+        <location filename="../../src/gui/widgets.cpp" line="712"/>
         <source>Preserve timestamps</source>
         <translation>Bevara tidsstämplar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="725"/>
+        <location filename="../../src/gui/widgets.cpp" line="729"/>
         <source>Split ID3v2.3 semicolon-separated tags</source>
         <translation>Splitta ID3v2.3-semikolonseparerade taggar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="726"/>
+        <location filename="../../src/gui/widgets.cpp" line="730"/>
         <source>Split ID3v2.3 values with non-standard &quot;;&quot; separators when reading tags.</source>
         <translation>Splitta ID3v2.3-värden med icke-standard ”;”-separator när taggar läses.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="733"/>
+        <location filename="../../src/gui/widgets.cpp" line="737"/>
         <source>ID3v2 revision</source>
         <translation>ID3v2-version</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="734"/>
+        <location filename="../../src/gui/widgets.cpp" line="738"/>
         <source>ID3v2 revision used when writing MP3 tags</source>
         <translation>ID3v2-version som används för skrivning av MP3-taggar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="736"/>
+        <location filename="../../src/gui/widgets.cpp" line="740"/>
         <source>Write ID3v2.3 tags</source>
         <translation>Skriv ID3v2.3-taggar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="738"/>
+        <location filename="../../src/gui/widgets.cpp" line="742"/>
         <source>Write ID3v2.4 tags</source>
         <translation>Skriv ID3v2.4-taggar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="744"/>
+        <location filename="../../src/gui/widgets.cpp" line="748"/>
         <source>Tag writing scheme for untagged files</source>
         <translation>Taggskrivningsplan för otaggade filer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="745"/>
+        <location filename="../../src/gui/widgets.cpp" line="749"/>
         <source>Tag types created when writing an MP3 file that has no existing tags</source>
         <translation>Taggtyper som skapas vid skrivning till en MP3-fil som inte har existerande taggar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="749"/>
+        <location filename="../../src/gui/widgets.cpp" line="753"/>
         <source>ID3v2 + ID3v1</source>
         <translation>ID3v2&#x202f;+&#x202f;ID3v1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="750"/>
+        <location filename="../../src/gui/widgets.cpp" line="754"/>
         <source>ID3v2</source>
         <translation>ID3v2</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="752"/>
+        <location filename="../../src/gui/widgets.cpp" line="756"/>
         <source>APE + ID3v1</source>
         <translation>APE&#x202f;+&#x202f;ID3v1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="753"/>
+        <location filename="../../src/gui/widgets.cpp" line="757"/>
         <source>APE</source>
         <translation>APE</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="759"/>
-        <source>Enable all supported extensions</source>
-        <translation>Sätt på alla stödda ändelser</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/widgets.cpp" line="797"/>
+        <location filename="../../src/gui/widgets.cpp" line="783"/>
         <source>Opus header gain</source>
         <translation>Opus rubrikförstärkning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="800"/>
+        <location filename="../../src/gui/widgets.cpp" line="786"/>
         <source>Use Track Gain</source>
         <translation>Använd spårförstärkning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="802"/>
+        <location filename="../../src/gui/widgets.cpp" line="788"/>
         <source>Use Album Gain</source>
         <translation>Använd albumförstärkning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="804"/>
+        <location filename="../../src/gui/widgets.cpp" line="790"/>
         <source>Leave null</source>
         <translation>Lämna som null</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="834"/>
+        <location filename="../../src/gui/widgets.cpp" line="820"/>
         <source>DSP</source>
         <translation>DSP</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="840"/>
+        <location filename="../../src/gui/widgets.cpp" line="826"/>
         <source>Details</source>
         <translation>Detaljer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="796"/>
-        <location filename="../../src/gui/widgets.cpp" line="844"/>
+        <location filename="../../src/gui/widgets.cpp" line="782"/>
+        <location filename="../../src/gui/widgets.cpp" line="830"/>
         <source>ReplayGain</source>
         <translation>ReplayGain</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="583"/>
+        <location filename="../../src/gui/widgets.cpp" line="587"/>
         <source>Number of widget levels shown in the layout editing context menu</source>
         <translation>Antal widgetnivåer som visas i layoutredigeringens snabbmeny</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="591"/>
+        <location filename="../../src/gui/widgets.cpp" line="595"/>
         <source>Give seekbars keyboard focus after clicking them</source>
         <translation>Ge letningsrutor tangentbordsfokus efter att ha klickat på dem</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="596"/>
+        <location filename="../../src/gui/widgets.cpp" line="600"/>
         <source>Selection</source>
         <translation>Selektion</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="597"/>
+        <location filename="../../src/gui/widgets.cpp" line="601"/>
         <source>Drag only after selecting</source>
         <translation>Dra endast efter väljande</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="598"/>
+        <location filename="../../src/gui/widgets.cpp" line="602"/>
         <source>Require a row to be selected before it can be dragged from item views</source>
         <translation>Kräv att en rad blir vald innan den kan dras från föremålsvyer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="623"/>
+        <location filename="../../src/gui/widgets.cpp" line="627"/>
         <source>Maximum network data buffered for remote streams.
 Changes apply to newly opened streams.</source>
         <translation>Maximal nätverksdata buffrad för fjärrströmmar.
 Ändringar tillämpas på nyöppnade strömmar.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="635"/>
+        <location filename="../../src/gui/widgets.cpp" line="639"/>
         <source>Maximum decoded audio buffered for remote streams</source>
         <translation>Maximal avkodat ljud buffrat för fjärrströmmar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="658"/>
+        <location filename="../../src/gui/widgets.cpp" line="662"/>
         <source>Maximum time spent opening and probing remote streams</source>
         <translation>Maximal tid som spenderas på att öppna och probera fjärrströmmar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="709"/>
+        <location filename="../../src/gui/widgets.cpp" line="713"/>
         <source>Preserve file access and modification timestamps when updating tags</source>
         <translation>Bevara filåtkomst och modifikationstidsstämplar när taggar uppdateras</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="603"/>
-        <location filename="../../src/gui/widgets.cpp" line="715"/>
+        <location filename="../../src/gui/widgets.cpp" line="607"/>
+        <location filename="../../src/gui/widgets.cpp" line="719"/>
         <source>General</source>
         <translation>Generellt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="715"/>
+        <location filename="../../src/gui/widgets.cpp" line="719"/>
         <source>Text Encoding</source>
         <translation>Teckenkod</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="716"/>
+        <location filename="../../src/gui/widgets.cpp" line="720"/>
         <source>Preferred fallback encoding</source>
         <translation>Föredragen reservtextkod</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="717"/>
+        <location filename="../../src/gui/widgets.cpp" line="721"/>
         <source>Encoding preferred when the best automatic match is Latin-compatible single-byte text</source>
         <translation>Textkod föredragen när den bästa automatiska matchningen är latinkompatibel en-byte-text</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="760"/>
-        <source>Enabled all extensions supported by the FFmpeg input</source>
-        <translation>Satt på alla ändelser som stöds av FFmpeg-inmatningen</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/widgets.cpp" line="777"/>
+        <location filename="../../src/gui/widgets.cpp" line="763"/>
         <source>Probe all readers for extensions</source>
         <translation>Probera alla läsare efter tillägg</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="778"/>
+        <location filename="../../src/gui/widgets.cpp" line="764"/>
         <source>Semicolon-separated extensions where all readers are tried and the reader with the most subsongs or chapters is used.</source>
         <translation>Semikolonseparerade ändelser där alla läsare prövas och den med mest sublåtar eller kapitel används.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="798"/>
+        <location filename="../../src/gui/widgets.cpp" line="784"/>
         <source>ReplayGain value written to the Opus header when updating metadata</source>
         <translation>ReplayGain-värde skrivet till Opus-rubriken när metadata uppdateras</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="850"/>
+        <location filename="../../src/gui/widgets.cpp" line="836"/>
         <source>Artwork</source>
         <translation>Konstverk</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="863"/>
+        <location filename="../../src/gui/widgets.cpp" line="849"/>
         <source>Default</source>
         <translation>Default</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="869"/>
+        <location filename="../../src/gui/widgets.cpp" line="855"/>
         <source>Tabs</source>
         <translation>Flikar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="864"/>
+        <location filename="../../src/gui/widgets.cpp" line="850"/>
         <source>Lists</source>
         <translation>Listor</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="868"/>
+        <location filename="../../src/gui/widgets.cpp" line="854"/>
         <source>Status bar</source>
         <translation>Statusfält</translation>
     </message>
@@ -24198,77 +24541,82 @@ Changes apply to newly opened streams.</source>
 <context>
     <name>LibraryTreeWidget</name>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="223"/>
+        <location filename="../../src/gui/contextmenuids.h" line="224"/>
         <source>Play</source>
         <translation>Spela</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="228"/>
+        <location filename="../../src/gui/contextmenuids.h" line="229"/>
         <source>Add to current playlist</source>
         <translation>Lägg till i aktuell spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="232"/>
+        <location filename="../../src/gui/contextmenuids.h" line="233"/>
         <source>Add to active playlist</source>
         <translation>Lägg till i aktiv spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="236"/>
+        <location filename="../../src/gui/contextmenuids.h" line="237"/>
         <source>Replace current playlist</source>
         <translation>Ersätt aktuell spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="240"/>
+        <location filename="../../src/gui/contextmenuids.h" line="241"/>
         <source>Create new playlist</source>
         <translation>Skapa ny spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="243"/>
+        <location filename="../../src/gui/contextmenuids.h" line="244"/>
         <source>Add to playlist</source>
         <translation>Lägg till i spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="248"/>
+        <location filename="../../src/gui/contextmenuids.h" line="249"/>
         <source>Add to playback queue</source>
         <translation>Lägg till i uppspelningskö</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="252"/>
+        <location filename="../../src/gui/contextmenuids.h" line="253"/>
         <source>Queue to play next</source>
         <translation>Köa till nästa spelning</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="256"/>
+        <location filename="../../src/gui/contextmenuids.h" line="257"/>
         <source>Remove from playback queue</source>
         <translation>Ta bort från uppspelningskö</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="260"/>
+        <location filename="../../src/gui/contextmenuids.h" line="261"/>
         <source>Grouping</source>
         <translation>Gruppering</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="263"/>
+        <location filename="../../src/gui/contextmenuids.h" line="264"/>
+        <source>Display</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/contextmenuids.h" line="267"/>
         <source>Configure</source>
         <translation>Konfigurera</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="267"/>
+        <location filename="../../src/gui/contextmenuids.h" line="271"/>
         <source>Open folder</source>
         <translation>Öppna mapp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/contextmenuids.h" line="270"/>
+        <location filename="../../src/gui/contextmenuids.h" line="274"/>
         <source>Track menu</source>
         <translation>Spårmeny</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="443"/>
+        <location filename="../../src/gui/widgets.cpp" line="448"/>
         <source>Library Tree</source>
         <translation>Biblioteksträd</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="445"/>
+        <location filename="../../src/gui/widgets.cpp" line="450"/>
         <source>Unchecked items will be hidden from the library tree context menu.</source>
         <translation>Obockade saker kommer vara dolda från bibliotekträdets snabbmeny.</translation>
     </message>
@@ -24336,12 +24684,12 @@ Changes apply to newly opened streams.</source>
         <translation>Spårmeny</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="454"/>
+        <location filename="../../src/gui/widgets.cpp" line="459"/>
         <source>Playlist</source>
         <translation>Spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="457"/>
+        <location filename="../../src/gui/widgets.cpp" line="462"/>
         <source>Unchecked items will be hidden from the playlist context menu.</source>
         <translation>Obockade saker kommer vara dolda från spellistans snabbmeny.</translation>
     </message>
@@ -24859,12 +25207,12 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
         <translation type="unfinished">Spårmeny</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="476"/>
+        <location filename="../../src/gui/widgets.cpp" line="481"/>
         <source>Playback Queue</source>
         <translation type="unfinished">Uppspelningskö</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="478"/>
+        <location filename="../../src/gui/widgets.cpp" line="483"/>
         <source>Unchecked items will be hidden from the playback queue context menu.</source>
         <translation>Obockade saker kommer vara dolda från uppspelningsköns snabbmeny.</translation>
     </message>
@@ -25006,47 +25354,47 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
 <context>
     <name>TrackSelectionController</name>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="440"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="441"/>
         <source>Artwork</source>
         <translation>Konstverk</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1860"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1879"/>
         <source>Add to current playlist</source>
         <translation>Lägg till i aktuell spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1863"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1882"/>
         <source>Add to current playlist and play if stopped</source>
         <translation>Lägg till i aktuell spellista och spela om stoppad</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1865"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1884"/>
         <source>Add to active playlist</source>
         <translation>Lägg till i aktiv spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1867"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1886"/>
         <source>Replace current playlist</source>
         <translation>Ersätt aktuell spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1869"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1888"/>
         <source>Create new playlist</source>
         <translation>Skapa ny spellista</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1874"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1893"/>
         <source>Add to playback queue</source>
         <translation>Lägg till i uppspelningskö</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1876"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1895"/>
         <source>Add to front of playback queue</source>
         <translation>Lägg till längst fram i uppspelningskö</translation>
     </message>
     <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1878"/>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="1897"/>
         <source>Replace playback queue</source>
         <translation>Ersätt uppspelningskö</translation>
     </message>
