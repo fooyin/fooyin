@@ -299,9 +299,9 @@ void FilterWidget::setViewState(const FilterViewState& state)
     m_restoredSelectedKeys    = state.selectedKeys;
     m_selectionRestorePending = state.selectionRestorePending;
 
-    m_model->setRows(m_columns, state.rows);
+    const bool rowsChanged = m_model->setRows(m_columns, state.rows);
 
-    if(m_pendingScrollPosition < 0) {
+    if(rowsChanged && m_pendingScrollPosition < 0) {
         m_view->scrollToTop();
     }
 

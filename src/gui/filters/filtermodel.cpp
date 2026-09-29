@@ -645,8 +645,15 @@ bool FilterModel::removeColumn(int column)
     return true;
 }
 
-void FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& rows)
+bool FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& rows)
 {
+    const bool rowsChanged = p->m_columns != columns || p->m_nodes.size() != rows.size()
+                          || std::ranges::any_of(rows, [this](const FilterRow& row) {
+                                 const auto item = p->m_nodes.find(row.key);
+                                 return item == p->m_nodes.cend() || row.tracks.size() != item->second.trackIds().size()
+                                     || !std::ranges::equal(row.tracks, item->second.trackIds(), {}, &Track::id);
+                             });
+
     const auto resetRows = [this, &columns, &rows]() {
         beginResetModel();
 
@@ -679,7 +686,7 @@ void FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& 
 
     if(p->m_columns != columns || rootItem()->childCount() == 0) {
         resetRows();
-        return;
+        return rowsChanged;
     }
 
     const int rowOffset   = p->rowOffset();
@@ -730,7 +737,7 @@ void FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& 
 
         if(!item || item->isSummary() || item->key() != row.key) {
             resetRows();
-            return;
+            return rowsChanged;
         }
 
         if(rowMatchesItem(row, *item)) {
@@ -759,5 +766,7 @@ void FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& 
         const QModelIndex bottomRight = index(topLeft.row(), columnCount - 1, {});
         Q_EMIT dataChanged(topLeft, bottomRight);
     }
+
+    return rowsChanged;
 }
 } // namespace Fooyin::Filters

@@ -85,7 +85,7 @@ public:
                                                        const MusicLibrary* library) const override;
     void startPlayback(PlaylistWidgetSessionHost& host) const override;
     void setupConnections(PlaylistWidgetSessionHost& host) override;
-    void replaceTracks(PlaylistWidgetSessionHost& host, const TrackList& tracks) override;
+    bool replaceTracks(PlaylistWidgetSessionHost& host, const TrackList& tracks) override;
 
 private:
     [[nodiscard]] PlaylistTrack playingTrackForView(const PlaylistTrack& track) const;

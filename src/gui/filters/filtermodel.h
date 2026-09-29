@@ -96,7 +96,7 @@ public:
 
     bool removeColumn(int column);
 
-    void setRows(const FilterColumnList& columns, const FilterRowList& rows);
+    bool setRows(const FilterColumnList& columns, const FilterRowList& rows);
 
 protected:
     friend class FilterModelPrivate;

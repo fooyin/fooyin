@@ -289,16 +289,23 @@ PlaylistTrack DetachedTrackListSession::playingTrackForView(const PlaylistTrack&
     return viewTrack;
 }
 
-void DetachedTrackListSession::replaceTracks(PlaylistWidgetSessionHost& host, const TrackList& tracks)
+bool DetachedTrackListSession::replaceTracks(PlaylistWidgetSessionHost& host, const TrackList& tracks)
 {
+    const bool tracksChanged
+        = m_tracks.size() != tracks.size()
+       || !std::ranges::equal(m_tracks, tracks, [](const PlaylistTrack& current, const Track& replacement) {
+              return current.track.sameIdentityAs(replacement);
+          });
+
     m_tracks = PlaylistTrack::fromTracks(tracks, {});
 
     if(hasSearch()) {
         searchEvent(host, {.text = search(), .emptyMode = emptyMode()});
-        return;
+        return tracksChanged;
     }
 
     setFilteredTracks(m_tracks);
     host.resetModelThrottled();
+    return tracksChanged;
 }
 } // namespace Fooyin

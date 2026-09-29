@@ -92,7 +92,7 @@ public:
     virtual void handleAboutToBeReset(PlaylistWidgetSessionHost& host);
     virtual void resetTree(PlaylistWidgetSessionHost& host);
     virtual void handleTracksChanged(PlaylistWidgetSessionHost& host, const std::vector<int>& indexes, bool allNew);
-    virtual void replaceTracks(PlaylistWidgetSessionHost& host, const TrackList& tracks);
+    virtual bool replaceTracks(PlaylistWidgetSessionHost& host, const TrackList& tracks);
     virtual void startPlayback(PlaylistWidgetSessionHost& host) const;
     virtual void searchEvent(PlaylistWidgetSessionHost& host, const SearchRequest& request);
     virtual void handleSearchChanged(PlaylistWidgetSessionHost& host, const QString& search);

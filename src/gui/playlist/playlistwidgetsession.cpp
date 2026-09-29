@@ -202,7 +202,10 @@ void PlaylistWidgetSession::handleTracksChanged(PlaylistWidgetSessionHost& /*hos
                                                 const std::vector<int>& /*indexes*/, bool /*allNew*/)
 { }
 
-void PlaylistWidgetSession::replaceTracks(PlaylistWidgetSessionHost& /*host*/, const TrackList& /*tracks*/) { }
+bool PlaylistWidgetSession::replaceTracks(PlaylistWidgetSessionHost& /*host*/, const TrackList& /*tracks*/)
+{
+    return false;
+}
 
 void PlaylistWidgetSession::startPlayback(PlaylistWidgetSessionHost& host) const
 {
