@@ -17,6 +17,7 @@
     "libsndfile",
     "mpg123",
     "opusfile",
+    "libvorbis",
     "libarchive",
     "libgme",
     "soundtouch",

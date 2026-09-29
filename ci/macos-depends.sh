@@ -17,6 +17,7 @@ brew install \
     flac \
     mpg123 \
     opusfile \
+    libvorbis \
     icu4c@78 \
     sdl2 \
     libopenmpt \

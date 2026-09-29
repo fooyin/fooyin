@@ -92,6 +92,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
     libsndfile1,
     libebur128-1,
     libopusfile0,
+    libvorbisfile3,
     libsoundtouch1,
     libsoxr0"
 )

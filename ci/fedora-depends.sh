@@ -41,6 +41,7 @@ dnf -y install --skip-broken \
      flac-devel \
      mpg123-devel \
      opusfile-devel \
+     libvorbis-devel \
      libsndfile-devel \
      libebur128-devel \
      libcdio-devel \

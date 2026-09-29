@@ -21,6 +21,7 @@ sudo pkg install -y \
      flac \
      mpg123 \
      opusfile \
+     libvorbis \
      taglib \
      kdsingleapplication \
      pipewire-spa-oss \

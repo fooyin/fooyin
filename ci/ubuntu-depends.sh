@@ -46,6 +46,7 @@ $SUDO apt-get install -y \
         libflac-dev \
         libmpg123-dev \
         libopusfile-dev \
+        libvorbis-dev \
         libsndfile1-dev \
         libebur128-dev \
         libcdio-dev \

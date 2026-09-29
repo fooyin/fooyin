@@ -30,6 +30,7 @@ The following libraries are optional:
 * [libFLAC](https://xiph.org/flac/) - for the FLAC audio input plugin
 * [libmpg123](https://www.mpg123.org/) - for the MPEG audio input plugin
 * [libopusfile](https://opus-codec.org/) - for the Opus audio input plugin
+* [libvorbis](https://xiph.org/vorbis/) - for the Vorbis audio input plugin
 * [OpenMPT](https://lib.openmpt.org/libopenmpt) - for the OpenMPT audio input plugin
 * [Game Music Emu](https://github.com/libgme/game-music-emu) - for the GME audio input plugin
 * [libebur128](https://github.com/jiixyj/libebur128) - for the ReplayGain scanner plugin
@@ -49,7 +50,7 @@ sudo apt install \
     libasound2-dev libtag1-dev libicu-dev libpipewire-0.3-dev libpulse-dev \
     qt6-base-dev libqt6sql6-sqlite libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
     libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev libswresample-dev \
-    libflac-dev libmpg123-dev libopusfile-dev libsndfile1-dev libopenmpt-dev libgme-dev libarchive-dev libebur128-dev libcdio-dev \
+    libflac-dev libmpg123-dev libopusfile-dev libvorbis-dev libsndfile1-dev libopenmpt-dev libgme-dev libarchive-dev libebur128-dev libcdio-dev \
     libcdio-paranoia-dev libsoundtouch-dev libsoxr-dev
 ```
 
@@ -60,7 +61,7 @@ sudo pacman -Syu
 sudo pacman -S --needed \
     gcc git cmake pkgconf ninja alsa-lib pipewire libpulse icu zlib ffmpeg \
     qt6-base qt6-svg qt6-imageformats qt6-tools kdsingleapplication \
-    taglib flac mpg123 opusfile libsndfile libopenmpt libgme libarchive libebur128 libcdio libcdio-paranoia soundtouch libsoxr
+    taglib flac mpg123 opusfile libvorbis libsndfile libopenmpt libgme libarchive libebur128 libcdio libcdio-paranoia soundtouch libsoxr
 ```
 
 ### Fedora
@@ -72,7 +73,7 @@ sudo dnf install \
     alsa-lib-devel qt6-qtbase-devel qt6-qtsvg-devel qt6-qttools-devel \
     libavcodec-free-devel libavfilter-free-devel libavformat-free-devel libavutil-free-devel libswresample-free-devel \
     taglib-devel kdsingleapplication-qt6-devel libicu-devel pipewire-devel pulseaudio-libs-devel \
-    flac-devel mpg123-devel opusfile-devel libsndfile-devel libopenmpt-devel game-music-emu-devel libarchive-devel libebur128-devel libcdio-devel \
+    flac-devel mpg123-devel opusfile-devel libvorbis-devel libsndfile-devel libopenmpt-devel game-music-emu-devel libarchive-devel libebur128-devel libcdio-devel \
     libcdio-paranoia-devel soundtouch-devel soxr-devel
 ```
 
