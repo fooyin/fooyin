@@ -739,42 +739,42 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="233"/>
         <source>Sample rate entering the active output</source>
-        <translation type="unfinished"></translation>
+        <translation>取樣率進入作用中的輸出</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="235"/>
         <source>Number of channels entering the active output</source>
-        <translation type="unfinished"></translation>
+        <translation>進入作用中的輸出的通道數量</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="237"/>
         <source>Channel layout entering the active output</source>
-        <translation type="unfinished"></translation>
+        <translation>通道配置進入作用中的輸出</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="239"/>
         <source>Bit depth used by the active output</source>
-        <translation type="unfinished"></translation>
+        <translation>所使用的位元深度依照作用中的輸出</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="241"/>
         <source>Active output device</source>
-        <translation type="unfinished"></translation>
+        <translation>作用中輸出裝置</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
         <source>Enabled DSPs in processing order</source>
-        <translation type="unfinished"></translation>
+        <translation>已經啟用 DSPs 於處理順序</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
         <source>Explicitly selected DSP chain preset</source>
-        <translation type="unfinished"></translation>
+        <translation>明確所選擇的 DSP 鏈預設集</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="247"/>
         <source>Playback volume in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>播放音量 分貝</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="249"/>
@@ -2243,7 +2243,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="62"/>
         <source>The CD drive is already in use</source>
-        <translation>光碟機正在使用中</translation>
+        <translation>光碟機已在使用中</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivemanager.cpp" line="356"/>
@@ -3344,7 +3344,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="200"/>
         <source>Preparing conversion…</source>
-        <translation>正在準備轉換…</translation>
+        <translation>進行準備轉換…</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="200"/>
@@ -6160,7 +6160,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="458"/>
         <source>Determining operations…</source>
-        <translation>正在確定操作…</translation>
+        <translation>進行確定操作…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="514"/>
@@ -9804,7 +9804,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="206"/>
         <source>Optimising database…</source>
-        <translation>正在最佳化資料庫…</translation>
+        <translation>進行最佳化資料庫…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="216"/>
@@ -10748,7 +10748,7 @@ This improves compatibility with other players, but stores whole-star values onl
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="70"/>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="71"/>
         <source>Current line colour</source>
-        <translation>正在播放的行列顏色</translation>
+        <translation>目前播放的行列顏色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="72"/>
@@ -14512,7 +14512,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="338"/>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="344"/>
         <source>Reading tracks…</source>
-        <translation>正在讀取曲目…</translation>
+        <translation>進行讀取曲目…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="78"/>
@@ -14527,7 +14527,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="349"/>
         <source>Loading playlist…</source>
-        <translation>正在載入播放清單…</translation>
+        <translation>進行載入播放清單…</translation>
     </message>
 </context>
 <context>
@@ -15414,7 +15414,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="134"/>
         <source>Loading playlist…</source>
-        <translation>正在載入播放清單…</translation>
+        <translation>進行載入播放清單…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="203"/>
@@ -16087,7 +16087,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="98"/>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="872"/>
         <source>Initialising projectM…</source>
-        <translation>正在初始化 projectM…</translation>
+        <translation>進行初始化 projectM…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="410"/>
@@ -16784,7 +16784,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="114"/>
         <source>Writing to file tags…</source>
-        <translation>正在寫入檔案標籤…</translation>
+        <translation>進行寫入檔案標籤…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="82"/>
@@ -16876,7 +16876,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="71"/>
         <source>Scanning tracks…</source>
-        <translation>正在掃瞄曲目…</translation>
+        <translation>進行掃瞄曲目…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="71"/>
@@ -16957,7 +16957,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="226"/>
         <source>Writing to file tags…</source>
-        <translation>正在寫入標籤…</translation>
+        <translation>進行寫入檔案標籤…</translation>
     </message>
 </context>
 <context>
