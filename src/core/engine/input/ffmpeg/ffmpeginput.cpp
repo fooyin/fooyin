@@ -952,7 +952,7 @@ FormatContext createAVFormatContext(const AudioSource& source, std::stop_token a
             qCWarning(FFMPEG) << "Timed out opening input:" << source.filepath;
         }
         else {
-            qCWarning(FFMPEG) << "Error opening input:" << Utils::ffmpegErrorString(ret);
+            qCDebug(FFMPEG) << "Error opening input:" << Utils::ffmpegErrorString(ret);
         }
         return {};
     }
@@ -964,7 +964,7 @@ FormatContext createAVFormatContext(const AudioSource& source, std::stop_token a
             qCWarning(FFMPEG) << "Timed out probing input:" << source.filepath;
         }
         else {
-            qCWarning(FFMPEG) << "Could not find stream info";
+            qCDebug(FFMPEG) << "Could not find stream info";
         }
         return {};
     }

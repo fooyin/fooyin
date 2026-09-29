@@ -101,7 +101,7 @@ std::optional<AudioFormat> FlacDecoder::init(const AudioSource& source, const Tr
 
     m_initialised = true;
     if(!FLAC__stream_decoder_process_until_end_of_metadata(decoder) || !m_format.isValid() || !m_error.isEmpty()) {
-        qCWarning(FLAC_DECODER) << "Failed to read FLAC stream information for" << track.filepath();
+        qCDebug(FLAC_DECODER) << "Failed to read FLAC stream information for" << track.filepath();
         return {};
     }
 

@@ -112,7 +112,7 @@ std::optional<AudioFormat> OpenMptDecoder::init(const AudioSource& source, const
         setupModule(m_settings, m_module.get());
     }
     catch(...) {
-        qCWarning(OPENMPT) << "Failed to open" << track.filepath();
+        qCDebug(OPENMPT) << "Failed to open" << track.filepath();
         return {};
     }
 
@@ -213,7 +213,7 @@ bool OpenMptReader::init(const AudioSource& source)
         m_subsongCount = m_module->get_num_subsongs();
     }
     catch(...) {
-        qCWarning(OPENMPT) << "Failed to open" << source.filepath;
+        qCDebug(OPENMPT) << "Failed to open" << source.filepath;
         return {};
     }
 

@@ -78,7 +78,7 @@ std::optional<AudioFormat> RawAudioDecoder::init(const AudioSource& source, cons
     m_file = source.device;
 
     if(!isValidData(m_file)) {
-        qCWarning(RAW_AUD) << "Invalid file" << track.filepath();
+        qCDebug(RAW_AUD) << "Invalid file" << track.filepath();
         return {};
     }
 
@@ -133,7 +133,7 @@ bool RawAudioReader::canWriteMetaData() const
 bool RawAudioReader::readTrack(const AudioSource& source, Track& track)
 {
     if(!isValidData(source.device)) {
-        qCWarning(RAW_AUD) << "Invalid file" << track.filepath();
+        qCDebug(RAW_AUD) << "Invalid file" << track.filepath();
         return false;
     }
 

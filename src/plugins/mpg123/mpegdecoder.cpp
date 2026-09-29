@@ -89,7 +89,7 @@ std::optional<AudioFormat> MpegDecoder::init(const AudioSource& source, const Tr
        || !configureOutput()
        || mpg123_replace_reader_handle(m_decoder.get(), readCallback, seekCallback, nullptr) != MPG123_OK
        || mpg123_open_handle(m_decoder.get(), this) != MPG123_OK || !updateFormat()) {
-        qCWarning(MPEG_DECODER) << "Unable to open MPEG audio stream" << track.filepath() << ":" << decoderError();
+        qCDebug(MPEG_DECODER) << "Unable to open MPEG audio stream" << track.filepath() << ":" << decoderError();
         return {};
     }
 

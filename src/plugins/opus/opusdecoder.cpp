@@ -148,7 +148,7 @@ std::optional<AudioFormat> OpusDecoder::init(const AudioSource& source, const Tr
     int error{0};
     m_decoder.reset(op_open_callbacks(this, &callbacks, nullptr, 0, &error));
     if(!m_decoder) {
-        qCWarning(OPUS_DECODER) << "Unable to open Opus stream" << track.filepath() << ":" << errorString(error);
+        qCDebug(OPUS_DECODER) << "Unable to open Opus stream" << track.filepath() << ":" << errorString(error);
         stop();
         return {};
     }

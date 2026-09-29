@@ -145,7 +145,7 @@ std::optional<AudioFormat> VorbisDecoder::init(const AudioSource& source, const 
     auto decoder    = std::make_unique<OggVorbis_File>();
     const int error = ov_open_callbacks(this, decoder.get(), nullptr, 0, callbacks);
     if(error < 0) {
-        qCWarning(VORBIS_DECODER) << "Unable to open Vorbis stream" << track.filepath() << ":" << errorString(error);
+        qCDebug(VORBIS_DECODER) << "Unable to open Vorbis stream" << track.filepath() << ":" << errorString(error);
         stop();
         return {};
     }
@@ -153,7 +153,7 @@ std::optional<AudioFormat> VorbisDecoder::init(const AudioSource& source, const 
 
     const vorbis_info* info = ov_info(m_decoder.get(), -1);
     if(!info || info->rate <= 0 || info->channels <= 0 || info->channels > AudioFormat::MaxChannels) {
-        qCWarning(VORBIS_DECODER) << "Vorbis stream has invalid audio properties for" << track.filepath();
+        qCDebug(VORBIS_DECODER) << "Vorbis stream has invalid audio properties for" << track.filepath();
         stop();
         return {};
     }
@@ -171,7 +171,7 @@ std::optional<AudioFormat> VorbisDecoder::init(const AudioSource& source, const 
         for(int link{0}; link < links; ++link) {
             if(!formatMatches(link)) {
                 // TODO: Support format changes in engine
-                qCWarning(VORBIS_DECODER) << "Vorbis stream changes format between links for" << track.filepath();
+                qCDebug(VORBIS_DECODER) << "Vorbis stream changes format between links for" << track.filepath();
                 stop();
                 return {};
             }

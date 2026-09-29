@@ -141,7 +141,7 @@ std::optional<AudioFormat> SndFileDecoder::init(const AudioSource& source, const
 
     m_sndFile = sf_open_virtual(&m_vio, SFM_READ, &info, m_file);
     if(!m_sndFile) {
-        qCWarning(SND_FILE) << "Unable to open" << track.filepath() << ":" << sf_strerror(nullptr);
+        qCDebug(SND_FILE) << "Unable to open" << track.filepath() << ":" << sf_strerror(nullptr);
         return {};
     }
 
@@ -219,7 +219,7 @@ bool SndFileReader::readTrack(const AudioSource& source, Track& track)
 
     SNDFILE* sndFile = sf_open_virtual(&vio, SFM_READ, &info, source.device);
     if(!sndFile) {
-        qCWarning(SND_FILE) << "Unable to open" << track.filepath() << ":" << sf_strerror(nullptr);
+        qCDebug(SND_FILE) << "Unable to open" << track.filepath() << ":" << sf_strerror(nullptr);
         return {};
     }
 
