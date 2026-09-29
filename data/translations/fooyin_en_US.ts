@@ -6405,9 +6405,9 @@ Effects here process the final combined output.</translation>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="290"/>
         <source>Could not move %Ln file(s) to the trash. Delete them permanently?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Could not move %Ln file to the trash. Delete them permanently?</numerusform>
+            <numerusform>Could not move %Ln files to the trash. Delete them permanently?</numerusform>
         </translation>
     </message>
     <message>
@@ -11760,7 +11760,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message numerus="yes">
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="957"/>
         <source>Writing metadata to %Ln track(s)…</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
             <numerusform>Writing metadata to %Ln tracks…</numerusform>
         </translation>
