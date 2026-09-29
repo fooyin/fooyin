@@ -270,9 +270,9 @@
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="290"/>
         <source>Could not move %Ln file(s) to the trash. Delete them permanently?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Could not move %Ln file to the trash. Delete them permanently?</numerusform>
+            <numerusform>Could not move %Ln files to the trash. Delete them permanently?</numerusform>
         </translation>
     </message>
 </context>
