@@ -26,6 +26,7 @@
 #include "controls/commandbutton.h"
 #include "controls/dspchainselector.h"
 #include "controls/lovecontrol.h"
+#include "controls/mainmenubutton.h"
 #include "controls/outputselector.h"
 #include "controls/playercontrol.h"
 #include "controls/playlistcontrol.h"
@@ -126,6 +127,8 @@
 #include <gui/theme/themeregistry.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
+#include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/settings/advancedsettingsregistry.h>
 #include <utils/stringutils.h>
 
@@ -266,6 +269,15 @@ void Widgets::registerWidgets()
         },
         tr("Command Button"));
     provider->setSubMenus(u"CommandButton"_s, {tr("Controls")});
+
+    provider->registerWidget(
+        u"MainMenuButton"_s,
+        [this]() {
+            auto* command = m_gui->actionManager()->command(Constants::Actions::ShowMainMenu);
+            return new MainMenuButton(m_gui->mainMenuBar(), command->action(), m_settings, m_window);
+        },
+        tr("Main Menu Button"));
+    provider->setSubMenus(u"MainMenuButton"_s, {tr("Controls")});
 
     provider->registerWidget(
         u"PlayerControls"_s,

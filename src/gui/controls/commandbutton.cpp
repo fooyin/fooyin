@@ -143,7 +143,7 @@ CommandButton::CommandButton(ActionManager* actionManager, PlayerController* pla
     QObject::connect(m_button, &QAbstractButton::clicked, this, [this]() {
         if(m_commandHandler->canExecute(m_config.commandId, m_config.target)) {
             const QPointer self{this};
-            m_commandHandler->execute(m_config.commandId, m_config.target);
+            m_commandHandler->execute(m_config.commandId, m_config.target, m_button);
             if(self) {
                 QMetaObject::invokeMethod(self, &CommandButton::updateButton, Qt::QueuedConnection);
             }

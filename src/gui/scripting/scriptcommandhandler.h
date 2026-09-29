@@ -28,6 +28,7 @@
 #include <vector>
 
 class QAction;
+class QWidget;
 
 namespace Fooyin {
 class ActionManager;
@@ -79,6 +80,7 @@ struct ResolvedScriptCommand
 struct CommandInvocation
 {
     QAction* action{nullptr};
+    QWidget* sourceWidget{nullptr};
     ScriptCommandTarget target{ScriptCommandTarget::FollowActiveContext};
     std::optional<TrackSelectionTarget> selectionTarget;
     CommandSelectionScope selectionScope{CommandSelectionScope::ContextDefault};
@@ -97,7 +99,8 @@ public:
 
     [[nodiscard]] bool canExecute(const QString& commandId,
                                   ScriptCommandTarget target = ScriptCommandTarget::FollowActiveContext) const;
-    bool execute(const QString& commandId, ScriptCommandTarget target = ScriptCommandTarget::FollowActiveContext) const;
+    bool execute(const QString& commandId, ScriptCommandTarget target = ScriptCommandTarget::FollowActiveContext,
+                 QWidget* sourceWidget = nullptr) const;
 
 private:
     ActionManager* m_actionManager;

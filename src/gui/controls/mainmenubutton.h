@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <luket@pm.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,27 +19,23 @@
 
 #pragma once
 
-#include <QObject>
+#include <gui/fywidget.h>
 
-class QMenuBar;
-class QMenu;
+class QAction;
 
 namespace Fooyin {
-class ActionContainer;
-class ActionManager;
+class MainMenuBar;
+class SettingsManager;
 
-class MainMenuBar : public QObject
+class MainMenuButton : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit MainMenuBar(ActionManager* actionManager, QObject* parent = nullptr);
+    explicit MainMenuButton(MainMenuBar* mainMenu, QAction* action, SettingsManager* settings,
+                            QWidget* parent = nullptr);
 
-    [[nodiscard]] QMenuBar* menuBar() const;
-    void populateMenu(QMenu* menu) const;
-
-private:
-    ActionManager* m_actionManager;
-    ActionContainer* m_menubar;
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 };
 } // namespace Fooyin

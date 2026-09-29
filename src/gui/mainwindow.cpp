@@ -378,26 +378,19 @@ bool MainWindow::handleHiddenMenuKeyEvent(QKeyEvent* event)
     return false;
 }
 
-void MainWindow::showHiddenMenu(QAction* activeAction)
+void MainWindow::showHiddenMenu(QAction* activeAction, QWidget* anchor)
 {
     if(!m_altMenuBar) {
         m_altMenuBar = new QMenu(this);
     }
 
-    m_altMenuBar->clear();
-
-    const auto menuActions = menuBar()->actions();
-    for(auto* action : menuActions) {
-        if(action->isVisible()) {
-            m_altMenuBar->addAction(action);
-        }
-    }
-
+    m_mainMenu->populateMenu(m_altMenuBar);
     if(m_altMenuBar->isEmpty()) {
         return;
     }
 
-    m_altMenuBar->popup(frameGeometry().topLeft());
+    const QPoint menuPosition = anchor ? anchor->mapToGlobal(QPoint{0, anchor->height()}) : frameGeometry().topLeft();
+    m_altMenuBar->popup(menuPosition);
     if(activeAction) {
         m_altMenuBar->setActiveAction(activeAction);
     }

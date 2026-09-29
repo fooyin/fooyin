@@ -116,6 +116,8 @@ set(SOURCES
     controls/commandbuttonconfigdialog.h
     controls/lovecontrol.cpp
     controls/lovecontrol.h
+    controls/mainmenubutton.cpp
+    controls/mainmenubutton.h
     controls/playercontrol.cpp
     controls/playercontrol.h
     controls/playlistcontrol.cpp

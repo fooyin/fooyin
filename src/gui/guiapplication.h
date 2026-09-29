@@ -112,6 +112,7 @@ public:
     void removeAllArtwork(const TrackList& tracks);
 
     [[nodiscard]] ActionManager* actionManager() const;
+    [[nodiscard]] MainMenuBar* mainMenuBar() const;
     [[nodiscard]] LayoutProvider* layoutProvider() const;
     [[nodiscard]] PlaylistController* playlistController() const;
     [[nodiscard]] TrackSelectionController* trackSelection() const;

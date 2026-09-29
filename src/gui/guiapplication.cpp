@@ -558,6 +558,11 @@ ActionManager* GuiApplication::actionManager() const
     return m_actionManager;
 }
 
+MainMenuBar* GuiApplication::mainMenuBar() const
+{
+    return m_menubar.get();
+}
+
 LayoutProvider* GuiApplication::layoutProvider() const
 {
     return m_layoutProvider.get();
@@ -1052,6 +1057,16 @@ void GuiApplication::removeExpiredCovers(const TrackList& tracks)
 
 void GuiApplication::registerActions()
 {
+    auto* showMainMenu = new QAction(tr("Show Main Menu"), m_mainWindow.get());
+    Gui::setThemeIcon(showMainMenu, Constants::Icons::MainMenu);
+    auto* showMainMenuCmd = m_actionManager->registerAction(showMainMenu, Constants::Actions::ShowMainMenu);
+    showMainMenuCmd->setCategories({tr("View")});
+    showMainMenuCmd->setDescription(tr("Show Main Menu"));
+    QObject::connect(showMainMenu, &QAction::triggered, m_mainWindow.get(), [this]() {
+        const auto* invocation = ScriptCommandHandler::currentInvocation();
+        m_mainWindow->showHiddenMenu(nullptr, invocation ? invocation->sourceWidget : nullptr);
+    });
+
     auto* toggleMainWindow    = new QAction(tr("Show or hide main window"), m_mainWindow.get());
     auto* toggleMainWindowCmd = m_actionManager->registerAction(toggleMainWindow, Constants::Actions::ToggleMainWindow);
     toggleMainWindowCmd->setCategories({tr("View")});

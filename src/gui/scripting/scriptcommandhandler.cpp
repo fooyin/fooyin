@@ -449,6 +449,10 @@ const ScriptCommandAliasList& ScriptCommandHandler::scriptCommandAliases()
          .actionId    = Constants::Actions::ToggleMenubar,
          .category    = "View",
          .description = "Toggle the menu bar"},
+        {.alias       = u"mainmenu",
+         .actionId    = Constants::Actions::ShowMainMenu,
+         .category    = "View",
+         .description = "Show the main menu"},
         {.alias       = u"properties",
          .actionId    = Constants::Actions::OpenProperties,
          .category    = "View",
@@ -509,7 +513,7 @@ bool ScriptCommandHandler::canExecute(const QString& commandId, ScriptCommandTar
     return false;
 }
 
-bool ScriptCommandHandler::execute(const QString& commandId, ScriptCommandTarget target) const
+bool ScriptCommandHandler::execute(const QString& commandId, ScriptCommandTarget target, QWidget* sourceWidget) const
 {
     const auto resolved = resolveCommandId(commandId);
     if(!resolved) {
@@ -560,6 +564,7 @@ bool ScriptCommandHandler::execute(const QString& commandId, ScriptCommandTarget
         }
 
         const CommandInvocation invocation{.action          = action,
+                                           .sourceWidget    = sourceWidget,
                                            .target          = target,
                                            .selectionTarget = selectionTarget,
                                            .selectionScope  = selectionScope(target)};

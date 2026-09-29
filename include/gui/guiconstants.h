@@ -71,6 +71,7 @@ constexpr auto ScriptFunction   = "script-function";
 constexpr auto ScriptLiteral    = "script-literal";
 constexpr auto ScriptFormatting = "format-text-bold";
 constexpr auto Command          = "command";
+constexpr auto MainMenu         = "application-menu";
 
 constexpr auto Quit          = "application-exit";
 constexpr auto Settings      = "preferences-system";
@@ -247,6 +248,7 @@ constexpr auto PropertiesNextTrack       = "Tracks.Properties.NextTrack";
 constexpr auto ToggleLove                = "Tracks.Loved.Toggle";
 constexpr auto LoveTracks                = "Tracks.Loved.Love";
 constexpr auto UnloveTracks              = "Tracks.Loved.Unlove";
+constexpr auto ShowMainMenu              = "View.MainMenu";
 constexpr auto ToggleMenubar             = "View.ToggleMenubar";
 constexpr auto LookupMetadata            = "Tracks.LookupMetadata";
 constexpr auto LookupMetadataByDiscToc   = "Tracks.LookupMetadataByDiscToc";

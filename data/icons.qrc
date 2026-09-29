@@ -18,6 +18,7 @@
         <file>icons/512-fooyin-typographic.png</file>
         <file>icons/dark/index.theme</file>
         <file>icons/dark/scalable/actions/application-exit.svg</file>
+        <file>icons/dark/scalable/actions/application-menu.svg</file>
         <file>icons/dark/scalable/actions/applications-graphics.svg</file>
         <file>icons/dark/scalable/actions/audio-file.svg</file>
         <file>icons/dark/scalable/actions/audio-volume-high.svg</file>
@@ -75,6 +76,7 @@
         <file>icons/dark/scalable/actions/window-unpin.svg</file>
         <file>icons/light/index.theme</file>
         <file>icons/light/scalable/actions/application-exit.svg</file>
+        <file>icons/light/scalable/actions/application-menu.svg</file>
         <file>icons/light/scalable/actions/applications-graphics.svg</file>
         <file>icons/light/scalable/actions/audio-file.svg</file>
         <file>icons/light/scalable/actions/audio-volume-high.svg</file>

@@ -68,6 +68,7 @@ public:
 
     void setTitle(const QString& title);
     void resetTitle();
+    void showHiddenMenu(QAction* activeAction = nullptr, QWidget* anchor = nullptr);
 
     void installStatusWidget(StatusWidget* statusWidget);
 
@@ -83,7 +84,6 @@ protected:
 
 private:
     bool handleHiddenMenuKeyEvent(QKeyEvent* event);
-    void showHiddenMenu(QAction* activeAction = nullptr);
 
     void showScanProgress(const ScanProgress& progress);
 

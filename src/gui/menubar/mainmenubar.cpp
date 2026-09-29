@@ -26,6 +26,7 @@
 
 #include <QAction>
 #include <QMenu>
+#include <QMenuBar>
 
 #include <ranges>
 
@@ -99,6 +100,18 @@ MainMenuBar::MainMenuBar(ActionManager* actionManager, QObject* parent)
 QMenuBar* MainMenuBar::menuBar() const
 {
     return m_menubar->menuBar();
+}
+
+void MainMenuBar::populateMenu(QMenu* menu) const
+{
+    menu->clear();
+
+    const auto menuActions = menuBar()->actions();
+    for(auto* action : menuActions) {
+        if(action->isVisible()) {
+            menu->addAction(action);
+        }
+    }
 }
 } // namespace Fooyin
 
