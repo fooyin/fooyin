@@ -4642,7 +4642,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="212"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished">Авторазмер секций</translation>
+        <translation>Авторазмер секций</translation>
     </message>
 </context>
 <context>
