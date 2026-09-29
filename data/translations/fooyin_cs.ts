@@ -739,72 +739,72 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="233"/>
         <source>Sample rate entering the active output</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzorkovací frekvence pro aktivní výstup</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="235"/>
         <source>Number of channels entering the active output</source>
-        <translation type="unfinished"></translation>
+        <translation>Počet kanálů pro aktivní výstup</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="237"/>
         <source>Channel layout entering the active output</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozložení kanálů pro aktivní výstup</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="239"/>
         <source>Bit depth used by the active output</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitová hloubka používaná aktivním výstupem</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="241"/>
         <source>Active output device</source>
-        <translation type="unfinished"></translation>
+        <translation>Zařízení aktivního výstupu</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
         <source>Enabled DSPs in processing order</source>
-        <translation type="unfinished"></translation>
+        <translation>Povolené DSP v pořadí zpracování</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
         <source>Explicitly selected DSP chain preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Explicitně vybraná předvolba DSP řetězce</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="247"/>
         <source>Playback volume in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>Hlasitost přehrávání v dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="249"/>
         <source>Active ReplayGain source mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktivní ReplayGain režim zdroje</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="251"/>
         <source>Active ReplayGain processing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktivní ReplayGain režim zpracování</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="253"/>
         <source>Effective ReplayGain adjustment in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>Efektivní ReplayGain úprava v dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="255"/>
         <source>Effective ReplayGain peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Efektivní ReplayGain špička</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="257"/>
         <source>Effective ReplayGain peak in dBFS</source>
-        <translation type="unfinished"></translation>
+        <translation>Efektivní ReplayGain špička v dBFS</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="259"/>
         <source>Active output buffer length in milliseconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Délka výstupní vyrovnávací paměti v milisekundách</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="261"/>
