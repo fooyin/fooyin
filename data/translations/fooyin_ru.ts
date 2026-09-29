@@ -5406,7 +5406,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="324"/>
         <source>Preamp</source>
-        <translation>Предусиление</translation>
+        <translation>Предусил.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="441"/>
@@ -5499,7 +5499,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="666"/>
         <source>Preamp</source>
-        <translation>Предусиление</translation>
+        <translation>Предусил.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="718"/>
