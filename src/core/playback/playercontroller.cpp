@@ -803,23 +803,12 @@ void PlayerControllerPrivate::rematerialisePlaybackSequence(Playlist::PlayModes 
     const PlaybackQueueItem* anchor{nullptr};
     for(int index{currentIndex}; index >= 0; --index) {
         const auto* item = m_queue.item(index);
-        if(item && item->origin == PlaybackQueueItemOrigin::PlaylistGenerated && item->sourceOrder >= 0
-           && item->track.playlistId.isValid()) {
+        if(item && item->origin == PlaybackQueueItemOrigin::PlaylistGenerated && item->sourceOrder >= 0) {
             anchor = item;
             break;
         }
     }
     if(!anchor) {
-        return;
-    }
-
-    auto* playlist = m_playlistHandler->playlistById(anchor->track.playlistId);
-    if(!playlist || anchor->sourceOrder >= playlist->trackCount()) {
-        return;
-    }
-
-    auto order = materialisePlaybackOrder(*playlist, anchor->sourceOrder, mode, *m_settings);
-    if(order.tracks.empty()) {
         return;
     }
 
@@ -845,11 +834,26 @@ void PlayerControllerPrivate::rematerialisePlaybackSequence(Playlist::PlayModes 
             std::ranges::rotate(orderedGeneratedIds, std::next(orderedGeneratedIds.begin()));
         }
     }
-    else {
+    else if(mode & Playlist::ShuffleAlbums) {
+        auto* playlist = m_playlistHandler->playlistById(anchor->track.playlistId);
+        if(!playlist || anchor->sourceOrder >= playlist->trackCount()) {
+            return;
+        }
+
+        const auto order = materialisePlaybackOrder(*playlist, anchor->sourceOrder, mode, *m_settings);
+        if(order.tracks.empty()) {
+            return;
+        }
+
         for(const int sourceOrder : order.sourceOrder) {
             if(const auto it = remainingGeneratedItems.find(sourceOrder); it != remainingGeneratedItems.end()) {
                 orderedGeneratedIds.push_back(it->second);
             }
+        }
+    }
+    else {
+        for(const auto id : remainingGeneratedItems | std::views::values) {
+            orderedGeneratedIds.push_back(id);
         }
     }
 

@@ -1940,6 +1940,41 @@ TEST(PlayerControllerTest, QueueSourcePlayModeChangeReordersOnlyUpcomingGenerate
     EXPECT_EQ(restoredUpcoming, originalUpcoming);
 }
 
+TEST(PlayerControllerTest, QueueSourceRestoredDetachedSequenceReturnsToSourceOrder)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_source_detached_restore_test.ini"_s};
+    registerControllerSettings(settings);
+    settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
+    settings.set<Settings::Core::PlayMode>(static_cast<int>(Playlist::ShuffleTracks));
+
+    PlaylistHandlerHarness harness{settings};
+    ASSERT_TRUE(harness.dbInitialised);
+    TrackList tracks;
+    for(int i{0}; i < 5; ++i) {
+        tracks.push_back(makeTrack(u"/tmp/source-detached-restore-%1.flac"_s.arg(i), 570 + i, 1000));
+    }
+
+    PlayerController controller{&settings, &harness.handler};
+
+    PlaybackQueueSnapshot snapshot;
+    for(const int sourceOrder : {0, 1, 4, 2, 3}) {
+        snapshot.items.push_back(
+            {.track       = {.track = tracks.at(sourceOrder), .playlistId = {}, .entryId = {}, .indexInPlaylist = -1},
+             .origin      = PlaybackQueueItemOrigin::PlaylistGenerated,
+             .sourceOrder = sourceOrder});
+    }
+    snapshot.currentIndex = 1;
+    controller.restorePlaybackQueue(std::move(snapshot));
+    controller.setPlayMode(Playlist::Default);
+
+    std::vector<int> restoredOrder;
+    for(const auto& item : controller.playbackQueue().items()) {
+        restoredOrder.push_back(item.sourceOrder);
+    }
+    EXPECT_EQ(restoredOrder, (std::vector{0, 1, 2, 3, 4}));
+}
+
 TEST(PlayerControllerTest, QueueSourceRepeatAlbumWrapsWithinDisplayedAlbum)
 {
     ensureCoreApplication();
