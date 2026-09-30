@@ -233,9 +233,17 @@ void DetachedTrackListSession::startPlayback(PlaylistWidgetSessionHost& host) co
     }
 
     int trackIndex{0};
-    const QModelIndex currentIndex = host.playlistView()->currentIndex();
-    if(currentIndex.isValid() && currentIndex.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
-        const auto currentTrack = currentIndex.data(PlaylistItem::Role::PersistentItemData).value<PlaylistTrack>();
+    QModelIndex playbackIndex = host.playlistView()->currentIndex();
+    if(playbackIndex.isValid() && playbackIndex.data(PlaylistItem::Type).toInt() != PlaylistItem::Track) {
+        QModelIndexList groupTrackIndexes;
+        getAllTrackIndexes(host.playlistView()->model(), playbackIndex, groupTrackIndexes);
+        if(!groupTrackIndexes.empty()) {
+            playbackIndex = groupTrackIndexes.front();
+        }
+    }
+
+    if(playbackIndex.isValid() && playbackIndex.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
+        const auto currentTrack = playbackIndex.data(PlaylistItem::Role::PersistentItemData).value<PlaylistTrack>();
         const auto trackIt      = std::ranges::find(playlistTracks, currentTrack.entryId, &PlaylistTrack::entryId);
         if(trackIt != playlistTracks.cend()) {
             trackIndex = static_cast<int>(std::distance(playlistTracks.cbegin(), trackIt));
