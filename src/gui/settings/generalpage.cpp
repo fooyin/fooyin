@@ -110,10 +110,19 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
 
     auto* openConfig = new QPushButton(tr("Open Configuration Folder"), this);
     auto* openShare  = new QPushButton(tr("Open Data Folder"), this);
+    auto* openCache  = new QPushButton(tr("Open Cache Folder"), this);
 
     row = 0;
     dirGroupLayout->addWidget(openConfig, row, 0);
     dirGroupLayout->addWidget(openShare, row++, 1);
+    dirGroupLayout->addWidget(openCache, row, 0);
+
+    if(Utils::statePath() != Utils::sharePath()) {
+        auto* openState = new QPushButton(tr("Open State Folder"), this);
+        dirGroupLayout->addWidget(openState, row, 1);
+        QObject::connect(openState, &QPushButton::clicked, this,
+                         []() { Utils::File::openDirectory(Utils::statePath()); });
+    }
 
     auto* mainLayout = new QGridLayout(this);
 
@@ -141,6 +150,7 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     QObject::connect(openConfig, &QPushButton::clicked, this,
                      []() { Utils::File::openDirectory(Utils::configPath()); });
     QObject::connect(openShare, &QPushButton::clicked, this, []() { Utils::File::openDirectory(Utils::sharePath()); });
+    QObject::connect(openCache, &QPushButton::clicked, this, []() { Utils::File::openDirectory(Utils::cachePath()); });
 }
 
 void GeneralPageWidget::load()
