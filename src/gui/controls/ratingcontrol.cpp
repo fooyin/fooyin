@@ -124,7 +124,7 @@ void RatingControlEditor::paintEvent(QPaintEvent*)
 
     auto displayedRating = ratingForSize();
     displayedRating.setRating(m_previewRating);
-    displayedRating.paint(&painter, rect(), palette(), StarRating::EditMode::Editable, Qt::AlignCenter);
+    displayedRating.paint(&painter, rect(), StarRating::EditMode::Editable, Qt::AlignCenter);
 }
 
 void RatingControlEditor::leaveEvent(QEvent* event)

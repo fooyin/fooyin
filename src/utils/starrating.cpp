@@ -25,53 +25,6 @@
 
 using namespace Qt::StringLiterals;
 
-namespace {
-struct StarBrushes
-{
-    QBrush filled;
-    QBrush faded;
-};
-
-[[nodiscard]] StarBrushes getStarBrushes(const QPalette& palette, Fooyin::StarRating::EditMode mode, bool selected,
-                                         const QColor& customColour, const QColor& unratedColour)
-{
-    const QBrush filled = customColour.isValid() ? QBrush{customColour}
-                        : mode == Fooyin::StarRating::EditMode::Editable
-                            ? palette.highlight()
-                            : (selected ? palette.highlightedText() : palette.text());
-
-    QBrush faded;
-    if(unratedColour.isValid()) {
-        faded = unratedColour;
-    }
-    else {
-        QColor fadedColour{filled.color()};
-        fadedColour.setAlphaF(fadedColour.alphaF() * 0.2);
-        faded = fadedColour;
-    }
-
-    return {.filled = filled, .faded = faded};
-}
-
-void drawHalfPolygon(QPainter* painter, const QPolygonF& polygon, bool drawLeftHalf)
-{
-    QRectF clipRect;
-    if(drawLeftHalf) {
-        clipRect = QRectF{polygon.boundingRect().topLeft(),
-                          QPointF{polygon.boundingRect().center().x(), polygon.boundingRect().bottom()}};
-    }
-    else {
-        clipRect = QRectF{QPointF{polygon.boundingRect().center().x(), polygon.boundingRect().top()},
-                          polygon.boundingRect().bottomRight()};
-    }
-
-    const QPolygonF clippedPolygon = polygon.intersected(QPolygonF(clipRect));
-
-    painter->setPen(Qt::NoPen);
-    painter->drawPolygon(clippedPolygon, Qt::WindingFill);
-}
-} // namespace
-
 namespace Fooyin {
 StarRating::StarRating()
     : StarRating{0, 5}
@@ -96,13 +49,7 @@ StarRating::StarRating(float rating, int maxStarCount, int scale, const RatingSt
     , m_scale{scale}
     , m_colours{colours}
     , m_unratedColour{unratedColour}
-{
-    double angle{-0.314};
-    for(int i{0}; i < 5; ++i) {
-        m_starPolygon.append(QPointF(0.5 + (0.5 * std::cos(angle)), 0.5 + (0.5 * std::sin(angle))));
-        angle += 2.513;
-    }
-}
+{ }
 
 float StarRating::rating() const
 {
@@ -134,13 +81,24 @@ void StarRating::setStarScale(int scale)
     m_scale = scale;
 }
 
-void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode,
-                       Qt::Alignment alignment, bool selected) const
+void StarRating::paint(QPainter* painter, const QRect& rect, EditMode mode,
+                       Qt::Alignment alignment) const
 {
+    RatingStarSymbols symbols{m_ratingSymbols};
+
+    if(symbols.fullStarSymbol.isEmpty()) {
+        symbols.fullStarSymbol = defaultRatingFullStarSymbol();
+    }
+    if(symbols.halfStarSymbol.isEmpty()) {
+        symbols.halfStarSymbol = defaultRatingHalfStarSymbol();
+    }
+    if(symbols.emptyStarSymbol.isEmpty()) {
+        symbols.emptyStarSymbol = defaultRatingEmptyStarSymbol();
+    }
+
     const int colourIndex = std::clamp(static_cast<int>(std::ceil(m_rating * static_cast<float>(m_maxCount))) - 1, 0,
                                        static_cast<int>(m_colours.size()) - 1);
     const QColor customColour = m_rating > 0 ? m_colours.at(colourIndex) : QColor{};
-    const auto brushes        = getStarBrushes(palette, mode, selected, customColour, m_unratedColour);
     const qreal dpr           = painter->device()->devicePixelRatioF();
     const QString cacheKey    = u"StarRating:%1|%2|%3|%4|%5|%6"_s.arg(m_rating)
                                     .arg(m_scale)
@@ -148,9 +106,10 @@ void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& pal
                                     .arg(mode == EditMode::Editable ? 1 : 0)
                                     .arg(rect.width())
                                     .arg(rect.height())
-                              + u"|%1|%2|%3|%4"_s.arg(alignment.toInt())
-                                    .arg(brushes.filled.color().name(QColor::HexArgb))
-                                    .arg(brushes.faded.color().name(QColor::HexArgb))
+                              + u"|%1|%2|%3|%4|%5"_s.arg(alignment.toInt())
+                                    .arg(symbols.fullStarSymbol)
+                                    .arg(symbols.halfStarSymbol)
+                                    .arg(symbols.emptyStarSymbol)
                                     .arg(dpr);
 
     QPixmap pixmap;
@@ -161,8 +120,10 @@ void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& pal
 
         QPainter pixmapPainter(&pixmap);
         pixmapPainter.setRenderHint(QPainter::Antialiasing, true);
+        pixmapPainter.setFont(QFont(QString{u"Arial"}, m_scale));
+        pixmapPainter.setPen(customColour);
 
-        const int yOffset = (rect.height() - m_scale) / 2;
+        const int yOffset = (rect.height() - m_scale) * 0.5 + m_scale;
 
         int xOffset{0};
         const int totalWidth = m_maxCount * m_scale;
@@ -173,34 +134,21 @@ void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& pal
             xOffset = rect.width() - totalWidth;
         }
 
-        pixmapPainter.translate(xOffset, yOffset);
-        pixmapPainter.scale(m_scale, m_scale);
-
         const int fullStars     = std::floor(m_rating * static_cast<float>(m_maxCount));
         const float partialStar = (m_rating * static_cast<float>(m_maxCount)) - static_cast<float>(fullStars);
 
         for(int i{0}; i < m_maxCount; ++i) {
             if(i < fullStars) {
-                // Draw full star
-                pixmapPainter.setPen(Qt::NoPen);
-                pixmapPainter.setBrush(brushes.filled);
-                pixmapPainter.drawPolygon(m_starPolygon, Qt::WindingFill);
+                pixmapPainter.drawText(QPointF(xOffset, yOffset), symbols.fullStarSymbol);
+            }
+            else if(i == fullStars && partialStar >= 0.5) {
+                pixmapPainter.drawText(QPointF(xOffset, yOffset), symbols.halfStarSymbol);
             }
             else {
-                pixmapPainter.setPen(Qt::NoPen);
-                pixmapPainter.setBrush(brushes.faded);
-                pixmapPainter.drawPolygon(m_starPolygon, Qt::WindingFill);
+                pixmapPainter.drawText(QPointF(xOffset, yOffset), symbols.emptyStarSymbol);
             }
-
-            if(i == fullStars && partialStar >= 0.5) {
-                // Draw half star
-                pixmapPainter.setBrush(brushes.filled);
-                drawHalfPolygon(&pixmapPainter, m_starPolygon, true);
-            }
-
-            pixmapPainter.translate(1.0, 0.0);
+            xOffset = xOffset + m_scale;
         }
-
         pixmapPainter.end();
 
         QPixmapCache::insert(cacheKey, pixmap);

@@ -21,6 +21,8 @@
 
 #include "fyutils_export.h"
 
+#include <core/ratingsymbols.h>
+
 #include <QColor>
 #include <QMetaType>
 #include <QPixmap>
@@ -61,8 +63,8 @@ public:
     void setMaxStarCount(int maxStarCount);
     void setStarScale(int scale);
 
-    void paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode,
-               Qt::Alignment alignment = Qt::AlignLeft, bool selected = false) const;
+    void paint(QPainter* painter, const QRect& rect, EditMode mode,
+               Qt::Alignment alignment = Qt::AlignLeft) const;
     [[nodiscard]] QSize sizeHint() const;
 
     operator QVariant() const
@@ -71,11 +73,11 @@ public:
     }
 
 private:
-    QPolygonF m_starPolygon;
     float m_rating;
     int m_maxCount;
     int m_scale;
     RatingStarColours m_colours;
+    RatingStarSymbols m_ratingSymbols;
     QColor m_unratedColour;
 };
 } // namespace Fooyin
