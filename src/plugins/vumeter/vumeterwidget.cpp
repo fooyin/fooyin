@@ -39,6 +39,7 @@
 #include <QMenu>
 #include <QPainter>
 #include <QTimerEvent>
+#include <QToolBar>
 
 #include <cmath>
 
@@ -477,6 +478,7 @@ bool VuMeterWidgetPrivate::setOrientation(Qt::Orientation orientation)
 
     m_orientation = orientation;
     updateSize();
+    m_self->updateGeometry();
     m_self->update();
     return true;
 }
@@ -874,6 +876,70 @@ void VuMeterWidget::loadLayoutData(const QJsonObject& layout)
     }
 }
 
+void VuMeterWidget::populateContextMenu(QMenu* menu)
+{
+    auto* showPeaks = new QAction(tr("Show peaks"), menu);
+    showPeaks->setCheckable(true);
+    showPeaks->setChecked(p->m_showPeaks);
+    QObject::connect(showPeaks, &QAction::triggered, this, [this](const bool checked) {
+        p->m_showPeaks     = checked;
+        m_config.showPeaks = checked;
+        update();
+
+        Q_EMIT configChanged();
+    });
+
+    auto* labelsMenu          = new QMenu(tr("Labels"), menu);
+    const auto addLabelAction = [this, labelsMenu](const QString& text, bool ConfigData::* field) {
+        auto* action = new QAction(text, labelsMenu);
+        action->setCheckable(true);
+        action->setChecked(m_config.*field);
+        QObject::connect(action, &QAction::triggered, this, [this, field](bool checked) {
+            auto config{m_config};
+            config.*field = checked;
+            applyConfig(config);
+        });
+        labelsMenu->addAction(action);
+    };
+    addLabelAction(tr("Top"), &ConfigData::showTopLabels);
+    addLabelAction(tr("Bottom"), &ConfigData::showBottomLabels);
+    addLabelAction(tr("Left"), &ConfigData::showLeftLabels);
+    addLabelAction(tr("Right"), &ConfigData::showRightLabels);
+    labelsMenu->addSeparator();
+    addLabelAction(tr("Right-align scale labels"), &ConfigData::rightAlignScaleLabels);
+
+    auto* orientationGroup = new QActionGroup(menu);
+    auto* automatic        = new QAction(tr("Automatic"), orientationGroup);
+    auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
+    auto* vertical         = new QAction(tr("Vertical"), orientationGroup);
+
+    auto* orientationMenu = new QMenu(tr("Orientation"), menu);
+    orientationMenu->addAction(automatic);
+    orientationMenu->addAction(horizontal);
+    orientationMenu->addAction(vertical);
+
+    automatic->setCheckable(true);
+    horizontal->setCheckable(true);
+    vertical->setCheckable(true);
+
+    automatic->setChecked(p->m_autoOrientation);
+    horizontal->setChecked(!p->m_autoOrientation && p->isHorizontal());
+    vertical->setChecked(!p->m_autoOrientation && !p->isHorizontal());
+
+    QObject::connect(automatic, &QAction::triggered, this, [this]() {
+        p->m_autoOrientation = true;
+        p->setOrientation(automaticOrientation());
+    });
+    QObject::connect(horizontal, &QAction::triggered, this, [this]() { setOrientation(Qt::Horizontal); });
+    QObject::connect(vertical, &QAction::triggered, this, [this]() { setOrientation(Qt::Vertical); });
+
+    menu->addAction(showPeaks);
+    menu->addMenu(labelsMenu);
+    menu->addMenu(orientationMenu);
+    menu->addSeparator();
+    addConfigureAction(menu);
+}
+
 void VuMeterWidget::renderLevel(const LevelFrame& frame)
 {
     if(!p->m_updateTimer.isActive()) {
@@ -969,7 +1035,14 @@ void VuMeterWidget::setSectionSpacing(int size)
 
 QSize VuMeterWidget::minimumSizeHint() const
 {
-    return {5, 5};
+    const auto meterOrientation = p->m_autoOrientation ? automaticOrientation() : p->m_orientation;
+    return meterOrientation == Qt::Horizontal ? QSize{24, 8} : QSize{8, 24};
+}
+
+QSize VuMeterWidget::sizeHint() const
+{
+    const auto meterOrientation = p->m_autoOrientation ? automaticOrientation() : p->m_orientation;
+    return meterOrientation == Qt::Horizontal ? QSize{200, 24} : QSize{24, 200};
 }
 
 VuMeterWidget::ConfigData VuMeterWidget::factoryConfig() const
@@ -1138,8 +1211,7 @@ void VuMeterWidget::applyConfig(const ConfigData& config)
 void VuMeterWidget::resizeEvent(QResizeEvent* event)
 {
     if(p->m_autoOrientation) {
-        const auto orientation = height() > width() ? Qt::Vertical : Qt::Horizontal;
-        p->setOrientation(orientation);
+        p->setOrientation(automaticOrientation());
     }
     p->updateSize();
     FyWidget::resizeEvent(event);
@@ -1198,75 +1270,21 @@ void VuMeterWidget::contextMenuEvent(QContextMenuEvent* event)
 {
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
-
-    auto* showPeaks = new QAction(tr("Show peaks"), menu);
-    showPeaks->setCheckable(true);
-    showPeaks->setChecked(p->m_showPeaks);
-    QObject::connect(showPeaks, &QAction::triggered, this, [this](const bool checked) {
-        p->m_showPeaks     = checked;
-        m_config.showPeaks = checked;
-        update();
-
-        Q_EMIT configChanged();
-    });
-
-    auto* labelsMenu          = new QMenu(tr("Labels"), menu);
-    const auto addLabelAction = [this, labelsMenu](const QString& text, bool ConfigData::* field) {
-        auto* action = new QAction(text, labelsMenu);
-        action->setCheckable(true);
-        action->setChecked(m_config.*field);
-        QObject::connect(action, &QAction::triggered, this, [this, field](bool checked) {
-            auto config{m_config};
-            config.*field = checked;
-            applyConfig(config);
-        });
-        labelsMenu->addAction(action);
-    };
-    addLabelAction(tr("Top"), &ConfigData::showTopLabels);
-    addLabelAction(tr("Bottom"), &ConfigData::showBottomLabels);
-    addLabelAction(tr("Left"), &ConfigData::showLeftLabels);
-    addLabelAction(tr("Right"), &ConfigData::showRightLabels);
-    labelsMenu->addSeparator();
-    addLabelAction(tr("Right-align scale labels"), &ConfigData::rightAlignScaleLabels);
-
-    auto* orientationGroup = new QActionGroup(menu);
-    auto* automatic        = new QAction(tr("Automatic"), orientationGroup);
-    auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
-    auto* vertical         = new QAction(tr("Vertical"), orientationGroup);
-
-    auto* orientationMenu = new QMenu(tr("Orientation"), menu);
-    orientationMenu->addAction(automatic);
-    orientationMenu->addAction(horizontal);
-    orientationMenu->addAction(vertical);
-
-    automatic->setCheckable(true);
-    horizontal->setCheckable(true);
-    vertical->setCheckable(true);
-
-    automatic->setChecked(p->m_autoOrientation);
-    horizontal->setChecked(!p->m_autoOrientation && p->isHorizontal());
-    vertical->setChecked(!p->m_autoOrientation && !p->isHorizontal());
-
-    QObject::connect(automatic, &QAction::triggered, this, [this]() {
-        p->m_autoOrientation   = true;
-        const auto orientation = height() > width() ? Qt::Vertical : Qt::Horizontal;
-        p->setOrientation(orientation);
-    });
-    QObject::connect(horizontal, &QAction::triggered, this, [this]() { setOrientation(Qt::Horizontal); });
-    QObject::connect(vertical, &QAction::triggered, this, [this]() { setOrientation(Qt::Vertical); });
-
-    menu->addAction(showPeaks);
-    menu->addMenu(labelsMenu);
-    menu->addMenu(orientationMenu);
-    menu->addSeparator();
-    addConfigureAction(menu);
-
+    populateContextMenu(menu);
     menu->popup(event->globalPos());
 }
 
 void VuMeterWidget::openConfigDialog()
 {
     showConfigDialog(new VuMeterConfigDialog(this, this), Qt::NonModal);
+}
+
+Qt::Orientation VuMeterWidget::automaticOrientation() const
+{
+    if(const auto* toolbar = findToolbar()) {
+        return toolbar->orientation();
+    }
+    return height() > width() ? Qt::Vertical : Qt::Horizontal;
 }
 
 QString VuMeterWidget::settingsKey(QStringView key) const

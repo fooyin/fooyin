@@ -76,7 +76,7 @@ void VuMeterPlugin::initialise(const GuiPluginContext& context)
             QObject::connect(m_engine, &EngineController::levelReady, meter, &VuMeterWidget::renderLevel);
             return meter;
         },
-        u"VU Meter"_s);
+        u"VU Meter"_s, {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     m_widgetProvider->setSubMenus(u"VUMeter"_s, {tr("Visualisations")});
 
     m_widgetProvider->registerWidget(
@@ -86,7 +86,7 @@ void VuMeterPlugin::initialise(const GuiPluginContext& context)
             QObject::connect(m_engine, &EngineController::levelReady, meter, &VuMeterWidget::renderLevel);
             return meter;
         },
-        u"Peak Meter"_s);
+        u"Peak Meter"_s, {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     m_widgetProvider->setSubMenus(u"PeakMeter"_s, {tr("Visualisations")});
 }
 } // namespace Fooyin::VuMeter
