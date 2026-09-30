@@ -8716,7 +8716,8 @@ or selected rows</source>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="88"/>
         <source>Only show unloved hearts on hovered
 or selected rows</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa endast oälskade hjärtan på hovrade
+eller valda rader</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="94"/>
@@ -24081,12 +24082,12 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="293"/>
         <source>Rating Control</source>
-        <translation type="unfinished"></translation>
+        <translation>Betygskontroll</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="305"/>
         <source>Love Control</source>
-        <translation type="unfinished"></translation>
+        <translation>Älskkontroll</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="325"/>
@@ -24699,12 +24700,12 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="225"/>
         <source>Only one player option can be used at a time.</source>
-        <translation type="unfinished"></translation>
+        <translation>Endast ett spelaralternativ kan användas åt gången.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="234"/>
         <source>Only one volume option can be used at a time.</source>
-        <translation type="unfinished"></translation>
+        <translation>Endast ett volymalternativ kan användas åt gången.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="250"/>
@@ -25169,7 +25170,7 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="177"/>
         <source>Queue next</source>
-        <translation type="unfinished"></translation>
+        <translation>Köa som nästa</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="180"/>
