@@ -8,32 +8,45 @@
   - Add an FLAC decoder plugin and DTS-FLAC support ([#346](https://github.com/fooyin/fooyin/issues/346))
   - Add an MPEG decoder plugin with MP1, MP2, and MP3 support
   - Add an Opus decoder plugin
-- **Interface:** Add Track Viewer and per-widget playlist settings ([#1699](https://github.com/fooyin/fooyin/pull/1699))
+  - Add a Vorbis decoder plugin
+- **Interface**
+  - Add Track Viewer and per-widget playlist settings ([#1699](https://github.com/fooyin/fooyin/pull/1699))
+  - Add a standalone Library Tree window with integrated controls ([#1708](https://github.com/fooyin/fooyin/issues/1708))
+  - Add customisable toolbar layouts
 - **Plugins:** Add installation of `.zip` and `.fyplugin` bundles with staged upgrades
 
 ### Improvements
 
 - **Audio Conversion**
   - Group output formats and add encoder backend selection
+  - Arrange metadata options across two columns
   - Show destination subdirectories in the preview ([#1705](https://github.com/fooyin/fooyin/issues/1705))
+- **Equaliser:** Improve the layout and size preamp and band columns independently ([#1712](https://github.com/fooyin/fooyin/issues/1712))
 - **Interface**
   - Refine the dragon icon and restore it as the default application icon
+  - Add a layout button and command for opening the hidden vertical main menu
   - Show a vertical menu with Alt or F10 when the menu bar is hidden ([#1483](https://github.com/fooyin/fooyin/issues/1483))
 - **Filters**
   - Add an option to remember the selected saved filter ([#1690](https://github.com/fooyin/fooyin/issues/1690))
   - Add an option to restore Library Filter state on startup ([#1699](https://github.com/fooyin/fooyin/pull/1699))
-- **Playback** 
+  - Scroll to the top for changed results and preserve position for unchanged results
+- **Playback**
   - Add TTA playback support ([#764](https://github.com/fooyin/fooyin/issues/764))
   - Add an option to skip automatic crossfading within albums
+  - Reduce log noise from expected decoder probe failures
 - **Plugins**
   - Add drag-and-drop plugin installation
   - Standardise and translate plugin categories and statuses
 - **ProjectM:** Add favourite support to presets ([#1674](https://github.com/fooyin/fooyin/issues/1674))
+- **Lyrics:** Support transparent standalone window backgrounds
 - **Settings**
   - Clarify rating and Love editor options ([#1684](https://github.com/fooyin/fooyin/issues/1684))
   - Add an FFmpeg decoder settings dialog
   - Show supported URI schemes in decoder tooltips
-- **Scripting:** Add underline and strikethrough formatting tags
+- **Scripting**
+  - Add playback output information fields
+  - Add underline and strikethrough formatting tags
+- **Script Display:** Add a per-widget track preference
 - **Tag Editor**
   - Start editing values when navigating with Tab ([#1669](https://github.com/fooyin/fooyin/issues/1669))
   - Add an option for single-click value editing
@@ -42,9 +55,14 @@
 ### Fixes
 
 - **Audio Conversion:** Sanitise path separators in metadata-derived paths ([#1706](https://github.com/fooyin/fooyin/issues/1706))
-- **Interface:** Fix Properties action icons in Windows dark mode ([#1691](https://github.com/fooyin/fooyin/issues/1691))
+- **Interface**
+  - Fix a crash when closing a widget window with its configuration dialog open
+  - Fix Properties action icons in Windows dark mode ([#1691](https://github.com/fooyin/fooyin/issues/1691))
+  - Update the search help link ([#1715](https://github.com/fooyin/fooyin/issues/1715))
 - **Library & Metadata:** Recognise spaced `ALBUM ARTIST` tags ([#1693](https://github.com/fooyin/fooyin/issues/1693))
+- **Playback:** Preserve active DSP preset identity across edits and restarts
 - **Playlists**
+  - Restore queue-led source order for temporary playlists
   - Use folding for automatic playlist names ([#1694](https://github.com/fooyin/fooyin/issues/1694))
   - Allow Return to commit playlist renames ([#1700](https://github.com/fooyin/fooyin/issues/1700))
 - **ProjectM:** Find lowercase texture directories ([#1709](https://github.com/fooyin/fooyin/issues/1709))
@@ -57,9 +75,9 @@
 
 - **CI**
   - Enable ccache for Linux, FreeBSD, Windows, and Flatpak builds
-- **Dependencies:** Add libFLAC, libmpg123, and libopusfile; make libarchive required
+- **Dependencies:** Add libFLAC, libmpg123, libopusfile, and libvorbis; make libarchive required
 - **Flatpak:** Include the version in bundle filenames
-- **Translations:** Update translations and translation sources ([#1687](https://github.com/fooyin/fooyin/pull/1687), [#1688](https://github.com/fooyin/fooyin/pull/1688), [#1701](https://github.com/fooyin/fooyin/pull/1701))
+- **Translations:** Update translations and translation sources ([#1687](https://github.com/fooyin/fooyin/pull/1687), [#1688](https://github.com/fooyin/fooyin/pull/1688), [#1701](https://github.com/fooyin/fooyin/pull/1701), [#1713](https://github.com/fooyin/fooyin/pull/1713), [#1714](https://github.com/fooyin/fooyin/pull/1714))
 - **Windows:** Sign release artifacts with SignPath
 
 ### Dev/API
