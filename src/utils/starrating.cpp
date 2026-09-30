@@ -81,8 +81,7 @@ void StarRating::setStarScale(int scale)
     m_scale = scale;
 }
 
-void StarRating::paint(QPainter* painter, const QRect& rect, EditMode mode,
-                       Qt::Alignment alignment) const
+void StarRating::paint(QPainter* painter, const QRect& rect, EditMode mode, Qt::Alignment alignment) const
 {
     RatingStarSymbols symbols{m_ratingSymbols};
 

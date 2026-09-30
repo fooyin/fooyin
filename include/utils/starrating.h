@@ -63,8 +63,7 @@ public:
     void setMaxStarCount(int maxStarCount);
     void setStarScale(int scale);
 
-    void paint(QPainter* painter, const QRect& rect, EditMode mode,
-               Qt::Alignment alignment = Qt::AlignLeft) const;
+    void paint(QPainter* painter, const QRect& rect, EditMode mode, Qt::Alignment alignment = Qt::AlignLeft) const;
     [[nodiscard]] QSize sizeHint() const;
 
     operator QVariant() const
