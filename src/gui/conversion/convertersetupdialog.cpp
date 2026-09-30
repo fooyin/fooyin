@@ -469,11 +469,15 @@ QWidget* ConverterSetupDialog::createProcessingPage()
     dspLayout->addWidget(m_preserveDspState);
 
     auto* metadataBox    = new QGroupBox(tr("Metadata"), this);
-    auto* metadataLayout = new QVBoxLayout(metadataBox);
-    metadataLayout->addWidget(m_transferMetadata);
-    metadataLayout->addWidget(m_transferRating);
-    metadataLayout->addWidget(m_transferPlaycount);
-    metadataLayout->addWidget(m_transferPictures);
+    auto* metadataLayout = new QGridLayout(metadataBox);
+
+    row = 0;
+    metadataLayout->addWidget(m_transferMetadata, row, 0);
+    metadataLayout->addWidget(m_transferRating, row++, 1);
+    metadataLayout->addWidget(m_transferPlaycount, row, 0);
+    metadataLayout->addWidget(m_transferPictures, row++, 1);
+    metadataLayout->setColumnStretch(0, 1);
+    metadataLayout->setColumnStretch(1, 1);
 
     auto* page   = new QWidget(this);
     auto* layout = new QVBoxLayout(page);
