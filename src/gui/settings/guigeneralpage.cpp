@@ -98,6 +98,7 @@ private:
     QPushButton* m_browseApplicationIcon;
 
     QCheckBox* m_showMenuBar;
+    QCheckBox* m_menuBarMovable;
 
     QCheckBox* m_overrideMargin;
     QSpinBox* m_editableLayoutMargin;
@@ -132,6 +133,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_customApplicationIcon{new QLineEdit(this)}
     , m_browseApplicationIcon{new QPushButton(tr("Browse…"), this)}
     , m_showMenuBar{new QCheckBox(tr("Show menu bar"), this)}
+    , m_menuBarMovable{new QCheckBox(tr("Place menu bar in a toolbar"), this)}
     , m_overrideMargin{new QCheckBox(tr("Override root margin") + u":"_s, this)}
     , m_editableLayoutMargin{new QSpinBox(this)}
     , m_splitterHandles{new QCheckBox(tr("Show splitter handles"), this)}
@@ -193,6 +195,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 
     row = 0;
     layoutGroupLayout->addWidget(m_showMenuBar, row++, 0, 1, 3);
+    layoutGroupLayout->addWidget(m_menuBarMovable, row++, 0, 1, 3);
     layoutGroupLayout->addWidget(m_splitterHandles, row++, 0, 1, 3);
     layoutGroupLayout->addWidget(m_lockSplitters, row++, 0, 1, 3);
     layoutGroupLayout->addWidget(m_lockedWidgetsResizeAdjacentOnly, row++, 0, 1, 3);
@@ -254,6 +257,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 #endif
 
     m_settings->subscribe<ShowMenuBar>(m_showMenuBar, &QCheckBox::setChecked);
+    m_settings->subscribe<MenuBarMovable>(m_menuBarMovable, &QCheckBox::setChecked);
     m_settings->subscribe<LockSplitterHandles>(m_lockSplitters, &QCheckBox::setChecked);
 }
 
@@ -292,6 +296,7 @@ void GuiGeneralPageWidget::load()
     m_customApplicationIcon->setText(m_settings->value<CustomApplicationIcon>());
 
     m_showMenuBar->setChecked(m_settings->value<ShowMenuBar>());
+    m_menuBarMovable->setChecked(m_settings->value<MenuBarMovable>());
 
     m_splitterHandles->setChecked(m_settings->value<ShowSplitterHandles>());
     m_lockSplitters->setChecked(m_settings->value<LockSplitterHandles>());
@@ -335,6 +340,7 @@ void GuiGeneralPageWidget::apply()
     m_settings->set<ApplicationIcon>(m_applicationIcon->currentData().toInt());
 
     m_settings->set<ShowMenuBar>(m_showMenuBar->isChecked());
+    m_settings->set<MenuBarMovable>(m_menuBarMovable->isChecked());
 
     m_settings->set<ShowSplitterHandles>(m_splitterHandles->isChecked());
     m_settings->set<LockSplitterHandles>(m_lockSplitters->isChecked());
@@ -371,6 +377,7 @@ void GuiGeneralPageWidget::reset()
     m_settings->reset<ApplicationIcon>();
     m_settings->reset<CustomApplicationIcon>();
     m_settings->reset<ShowMenuBar>();
+    m_settings->reset<MenuBarMovable>();
     m_settings->reset<ShowSplitterHandles>();
     m_settings->reset<LockSplitterHandles>();
     m_settings->reset<ResizeLockedAdjacentOnly>();

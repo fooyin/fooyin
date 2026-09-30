@@ -178,11 +178,6 @@ QString CommandButton::layoutName() const
     return u"CommandButton"_s;
 }
 
-CommandButton::ConfigData CommandButton::factoryConfig()
-{
-    return {};
-}
-
 CommandButton::ConfigData CommandButton::defaultConfig() const
 {
     auto config{factoryConfig()};
@@ -195,6 +190,11 @@ CommandButton::ConfigData CommandButton::defaultConfig() const
     config.target          = commandTarget(m_settings->fileValue(TargetKey, static_cast<int>(config.target)).toInt());
 
     return config;
+}
+
+CommandButton::ConfigData CommandButton::factoryConfig()
+{
+    return {};
 }
 
 const CommandButton::ConfigData& CommandButton::currentConfig() const
@@ -268,6 +268,11 @@ QSize CommandButton::sizeHint() const
 QSize CommandButton::minimumSizeHint() const
 {
     return m_layout->minimumSize();
+}
+
+void CommandButton::populateContextMenu(QMenu* menu)
+{
+    addConfigureAction(menu, false);
 }
 
 void CommandButton::contextMenuEvent(QContextMenuEvent* event)
@@ -405,8 +410,7 @@ void CommandButton::showContextMenu(const QPoint& globalPos)
 {
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
-
-    addConfigureAction(menu, false);
+    populateContextMenu(menu);
     menu->popup(globalPos);
 }
 

@@ -73,11 +73,8 @@ QString ScrobblerToggle::layoutName() const
     return u"ScrobbleToggle"_s;
 }
 
-void ScrobblerToggle::contextMenuEvent(QContextMenuEvent* event)
+void ScrobblerToggle::populateContextMenu(QMenu* menu)
 {
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-
     auto* scrobblingEnabled = new QAction(tr("Enable scrobbling"), menu);
     scrobblingEnabled->setCheckable(true);
     scrobblingEnabled->setChecked(m_settings->value<Settings::Scrobbler::ScrobblingEnabled>());
@@ -102,7 +99,13 @@ void ScrobblerToggle::contextMenuEvent(QContextMenuEvent* event)
         }
     });
     menu->addAction(scrobblingServices);
+}
 
+void ScrobblerToggle::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    populateContextMenu(menu);
     menu->popup(event->globalPos());
 }
 

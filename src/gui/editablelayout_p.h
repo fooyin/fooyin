@@ -40,6 +40,7 @@ class EditableLayout;
 class FyLayout;
 class LayoutProvider;
 class SettingsManager;
+class ToolbarManager;
 class WidgetContext;
 class WidgetProvider;
 
@@ -133,7 +134,7 @@ public:
 
             if(const auto* container = qobject_cast<WidgetContainer*>(current)) {
                 const auto containerWidgets = container->widgets();
-                for(FyWidget* containerWidget : containerWidgets) {
+                for(FyWidget* const containerWidget : containerWidgets) {
                     widgetsToCheck.push(containerWidget);
                 }
             }
@@ -151,6 +152,7 @@ public:
     SettingsManager* m_settings;
     WidgetProvider* m_widgetProvider;
     LayoutProvider* m_layoutProvider;
+    QPointer<ToolbarManager> m_toolbarManager;
 
     QPointer<QMenu> m_editingMenu;
     QHBoxLayout* m_box;

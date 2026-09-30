@@ -30,6 +30,7 @@
 #include <QLayout>
 #include <QMenu>
 #include <QPointer>
+#include <QToolBar>
 
 #include <unordered_map>
 
@@ -127,6 +128,15 @@ FyWidget* FyWidget::findParent() const
     return qobject_cast<FyWidget*>(parent);
 }
 
+QToolBar* FyWidget::findToolbar() const
+{
+    QWidget* parent = parentWidget();
+    while(parent && !qobject_cast<QToolBar*>(parent)) {
+        parent = parent->parentWidget();
+    }
+    return qobject_cast<QToolBar*>(parent);
+}
+
 QRect FyWidget::widgetGeometry() const
 {
     int x = this->x();
@@ -202,6 +212,8 @@ void FyWidget::loadLayout(const QJsonObject& layout)
 void FyWidget::searchEvent(const SearchRequest& /*request*/) { }
 
 void FyWidget::layoutEditingMenu(QMenu* /*menu*/) { }
+
+void FyWidget::populateContextMenu(QMenu* /*menu*/) { }
 
 void FyWidget::saveLayoutData(QJsonObject& /*object*/) { }
 

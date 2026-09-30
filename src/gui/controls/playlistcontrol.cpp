@@ -36,6 +36,7 @@
 #include <QJsonObject>
 #include <QMenu>
 #include <QResizeEvent>
+#include <QToolBar>
 
 using namespace Qt::StringLiterals;
 
@@ -106,11 +107,8 @@ void PlaylistControl::loadLayoutData(const QJsonObject& layout)
     }
 }
 
-void PlaylistControl::contextMenuEvent(QContextMenuEvent* event)
+void PlaylistControl::populateContextMenu(QMenu* menu)
 {
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-
     auto* orientationGroup = new QActionGroup(menu);
     auto* automatic        = new QAction(tr("Automatic"), orientationGroup);
     auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
@@ -145,7 +143,13 @@ void PlaylistControl::contextMenuEvent(QContextMenuEvent* event)
     });
 
     menu->addMenu(orientationMenu);
+}
 
+void PlaylistControl::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    populateContextMenu(menu);
     menu->popup(event->globalPos());
 }
 
@@ -157,8 +161,12 @@ void PlaylistControl::resizeEvent(QResizeEvent* event)
 
 void PlaylistControl::updateOrientation()
 {
-    const auto orientation = m_autoOrientation ? (height() > width() ? Qt::Vertical : Qt::Horizontal) : m_orientation;
-    const auto direction   = orientation == Qt::Vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight;
+    auto orientation{m_orientation};
+    if(m_autoOrientation) {
+        const auto* toolbar = findToolbar();
+        orientation         = toolbar ? toolbar->orientation() : (height() > width() ? Qt::Vertical : Qt::Horizontal);
+    }
+    const auto direction = orientation == Qt::Vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight;
     if(m_layout->direction() != direction) {
         m_layout->setDirection(direction);
     }

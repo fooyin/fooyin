@@ -58,7 +58,7 @@ void OscilloscopePlugin::initialise(const GuiPluginContext& context)
 
     context.widgetProvider->registerWidget(
         u"Oscilloscope"_s, [this]() { return new OscilloscopeWidget(m_engine, m_playerController, m_settings); },
-        tr("Oscilloscope"));
+        tr("Oscilloscope"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     context.widgetProvider->setSubMenus(u"Oscilloscope"_s, {tr("Visualisations")});
 }
 } // namespace Fooyin::Oscilloscope

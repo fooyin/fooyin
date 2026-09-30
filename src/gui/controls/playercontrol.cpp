@@ -37,6 +37,7 @@
 #include <QJsonObject>
 #include <QMenu>
 #include <QResizeEvent>
+#include <QToolBar>
 
 using namespace Qt::StringLiterals;
 
@@ -67,13 +68,9 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
     m_layout->setContentsMargins({});
     m_layout->setSpacing(0);
 
-    m_layout->addWidget(m_stop);
-    m_layout->addWidget(m_prev);
-    m_layout->addWidget(m_pause);
-    m_layout->addWidget(m_play);
-    m_layout->addWidget(m_playPause);
-    m_layout->addWidget(m_next);
-    m_layout->addWidget(m_randomTrack);
+    for(auto* button : {m_stop, m_prev, m_pause, m_play, m_playPause, m_next, m_randomTrack}) {
+        m_layout->addWidget(button);
+    }
 
     if(auto* stopCmd = m_actionManager->command(Constants::Actions::Stop)) {
         m_stop->setDefaultAction(stopCmd->action());
@@ -171,11 +168,8 @@ void PlayerControl::loadLayoutData(const QJsonObject& layout)
     }
 }
 
-void PlayerControl::contextMenuEvent(QContextMenuEvent* event)
+void PlayerControl::populateContextMenu(QMenu* menu)
 {
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-
     const auto setupButtonControl = [this, menu](const QString& title, ToolButton* button, bool* member) {
         auto* action = menu->addAction(title);
         action->setCheckable(true);
@@ -229,7 +223,13 @@ void PlayerControl::contextMenuEvent(QContextMenuEvent* event)
     });
 
     menu->addMenu(orientationMenu);
+}
 
+void PlayerControl::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    populateContextMenu(menu);
     menu->popup(event->globalPos());
 }
 
@@ -241,8 +241,12 @@ void PlayerControl::resizeEvent(QResizeEvent* event)
 
 void PlayerControl::updateOrientation()
 {
-    const auto orientation = m_autoOrientation ? (height() > width() ? Qt::Vertical : Qt::Horizontal) : m_orientation;
-    const auto direction   = orientation == Qt::Vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight;
+    auto orientation{m_orientation};
+    if(m_autoOrientation) {
+        const auto* toolbar = findToolbar();
+        orientation         = toolbar ? toolbar->orientation() : (height() > width() ? Qt::Vertical : Qt::Horizontal);
+    }
+    const auto direction = orientation == Qt::Vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight;
     if(m_layout->direction() != direction) {
         m_layout->setDirection(direction);
     }

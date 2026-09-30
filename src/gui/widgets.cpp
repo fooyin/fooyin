@@ -261,36 +261,34 @@ void Widgets::registerWidgets()
 
     provider->registerWidget(u"LibraryTree"_s, [this]() { return createLibraryTree(m_window); }, tr("Library Tree"));
 
-    provider->registerWidget(
-        u"CommandButton"_s,
-        [this]() {
-            return new CommandButton(m_gui->actionManager(), m_core->playerController(), m_scriptCommandHandler,
-                                     m_settings, m_window);
-        },
-        tr("Command Button"));
+    provider->registerWidget(u"CommandButton"_s,
+                             [this]() {
+                                 return new CommandButton(m_gui->actionManager(), m_core->playerController(),
+                                                          m_scriptCommandHandler, m_settings, m_window);
+                             },
+                             tr("Command Button"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     provider->setSubMenus(u"CommandButton"_s, {tr("Controls")});
 
-    provider->registerWidget(
-        u"MainMenuButton"_s,
-        [this]() {
-            auto* command = m_gui->actionManager()->command(Constants::Actions::ShowMainMenu);
-            return new MainMenuButton(m_gui->mainMenuBar(), command->action(), m_settings, m_window);
-        },
-        tr("Main Menu Button"));
+    provider->registerWidget(u"MainMenuButton"_s,
+                             [this]() {
+                                 auto* command = m_gui->actionManager()->command(Constants::Actions::ShowMainMenu);
+                                 return new MainMenuButton(m_gui->mainMenuBar(), command->action(), m_settings,
+                                                           m_window);
+                             },
+                             tr("Main Menu Button"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     provider->setSubMenus(u"MainMenuButton"_s, {tr("Controls")});
 
-    provider->registerWidget(
-        u"PlayerControls"_s,
-        [this]() {
-            return new PlayerControl(m_gui->actionManager(), m_core->playerController(), m_settings, m_window);
-        },
-        tr("Player Controls"));
+    provider->registerWidget(u"PlayerControls"_s,
+                             [this]() {
+                                 return new PlayerControl(m_gui->actionManager(), m_core->playerController(),
+                                                          m_settings, m_window);
+                             },
+                             tr("Player Controls"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     provider->setSubMenus(u"PlayerControls"_s, {tr("Controls")});
 
-    provider->registerWidget(
-        u"PlaylistControls"_s,
-        [this]() { return new PlaylistControl(m_core->playerController(), m_settings, m_window); },
-        tr("Playlist Controls"));
+    provider->registerWidget(u"PlaylistControls"_s,
+                             [this]() { return new PlaylistControl(m_core->playerController(), m_settings, m_window); },
+                             tr("Playlist Controls"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     provider->setSubMenus(u"PlaylistControls"_s, {tr("Controls")});
 
     provider->registerWidget(
@@ -317,19 +315,19 @@ void Widgets::registerWidgets()
         tr("Love Control"));
     provider->setSubMenus(u"LoveControl"_s, {tr("Controls")});
 
-    provider->registerWidget(
-        u"VolumeControls"_s, [this]() { return new VolumeControl(m_gui->actionManager(), m_settings, m_window); },
-        tr("Volume Controls"));
+    provider->registerWidget(u"VolumeControls"_s,
+                             [this]() { return new VolumeControl(m_gui->actionManager(), m_settings, m_window); },
+                             tr("Volume Controls"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     provider->setSubMenus(u"VolumeControls"_s, {tr("Controls")});
 
-    provider->registerWidget(
-        u"SeekBar"_s, [this]() { return new SeekBar(m_core->playerController(), m_settings, m_window); },
-        tr("Seekbar"));
+    provider->registerWidget(u"SeekBar"_s,
+                             [this]() { return new SeekBar(m_core->playerController(), m_settings, m_window); },
+                             tr("Seekbar"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     provider->setSubMenus(u"SeekBar"_s, {tr("Controls")});
 
-    provider->registerWidget(
-        u"OutputSelector"_s, [this]() { return new OutputSelector(m_outputProfileManager, m_settings, m_window); },
-        tr("Output Selector"));
+    provider->registerWidget(u"OutputSelector"_s,
+                             [this]() { return new OutputSelector(m_outputProfileManager, m_settings, m_window); },
+                             tr("Output Selector"), {.supportsToolbar = true});
     provider->setSubMenus(u"OutputSelector"_s, {tr("Controls")});
 
     provider->registerWidget(
@@ -340,7 +338,7 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"DspSelector"_s,
         [this]() { return new DspChainSelector(m_core->dspChainStore(), m_dspPresetRegistry, m_settings, m_window); },
-        tr("DSP Selector"));
+        tr("DSP Selector"), {.supportsToolbar = true});
     provider->setSubMenus(u"DspSelector"_s, {tr("Controls")});
 
     provider->registerWidget(
@@ -378,7 +376,8 @@ void Widgets::registerWidgets()
     provider->setSubMenus(u"Playlist"_s, {tr("Playlist")});
     provider->setLimit(u"Playlist"_s, 1);
 
-    provider->registerWidget(u"Spacer"_s, [this]() { return new Spacer(m_window); }, tr("Spacer"));
+    provider->registerWidget(u"Spacer"_s, [this]() { return new Spacer(m_window); }, tr("Spacer"),
+                             {.supportsToolbar = true});
 
     provider->registerWidget(
         u"StatusBar"_s,
@@ -392,13 +391,12 @@ void Widgets::registerWidgets()
         tr("Status Bar"));
     provider->setLimit(u"StatusBar"_s, 1);
 
-    provider->registerWidget(
-        u"SearchBar"_s,
-        [this]() {
-            return new SearchWidget(m_gui->searchController(), m_gui->playlistController(), m_core->library(),
-                                    m_settings, m_window);
-        },
-        tr("Search Bar"));
+    provider->registerWidget(u"SearchBar"_s,
+                             [this]() {
+                                 return new SearchWidget(m_gui->searchController(), m_gui->playlistController(),
+                                                         m_core->library(), m_settings, m_window);
+                             },
+                             tr("Search Bar"), {.supportsToolbar = true});
 
     provider->registerWidget(u"DirectoryBrowser"_s, [this]() { return createDirBrowser(); }, tr("Directory Browser"));
 

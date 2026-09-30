@@ -64,7 +64,7 @@ void ScrobblerPlugin::initialise(const GuiPluginContext& context)
 
     context.widgetProvider->registerWidget(
         u"ScrobbleToggle"_s, [this]() { return new ScrobblerToggle(m_actionManager, m_settings); },
-        tr("Scrobble Toggle"));
+        tr("Scrobble Toggle"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     context.widgetProvider->setSubMenus(u"ScrobbleToggle"_s, {tr("Controls")});
 
     new ScrobblerPage(m_settings, this);

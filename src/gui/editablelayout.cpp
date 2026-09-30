@@ -25,6 +25,7 @@
 #include "internalguisettings.h"
 #include "layoutcommands.h"
 #include "splitters/splitterwidget.h"
+#include "toolbarmanager.h"
 #include "utils/actions/command.h"
 #include "widgets/dummy.h"
 #include "widgets/menuheader.h"
@@ -294,6 +295,9 @@ void EditableLayoutPrivate::changeLayout(const FyLayout& layout)
 {
     const QScopedValueRollback changingLayout{m_changingLayout, true};
 
+    if(m_toolbarManager) {
+        m_toolbarManager->clear();
+    }
     m_root->reset();
 
     if(m_self->loadLayout(layout)) {
@@ -707,6 +711,11 @@ void EditableLayout::initialise()
     p->changeLayout(p->m_layoutProvider->currentLayout());
 }
 
+void EditableLayout::setToolbarManager(ToolbarManager* toolbarManager)
+{
+    p->m_toolbarManager = toolbarManager;
+}
+
 FyLayout EditableLayout::saveCurrentToLayout(const QString& name, bool saveWindowSize)
 {
     QJsonObject root;
@@ -727,6 +736,11 @@ FyLayout EditableLayout::saveCurrentToLayout(const QString& name, bool saveWindo
     root["Name"_L1]    = layoutName;
     root["Version"_L1] = LayoutVersion;
     root["Widgets"_L1] = array;
+
+    if(p->m_toolbarManager) {
+        root["Toolbars"_L1]     = p->m_toolbarManager->saveLayout();
+        root["ToolbarState"_L1] = QString::fromUtf8(p->m_toolbarManager->saveState().toBase64());
+    }
 
     const QByteArray json = QJsonDocument(root).toJson();
 
@@ -757,19 +771,51 @@ FyWidget* EditableLayout::root() const
     return p->m_root;
 }
 
+WidgetList EditableLayout::allWidgets() const
+{
+    auto widgets = p->findAllWidgets();
+    if(p->m_toolbarManager) {
+        const auto toolbarWidgets = p->m_toolbarManager->widgets();
+        widgets.insert(widgets.end(), toolbarWidgets.cbegin(), toolbarWidgets.cend());
+    }
+    return widgets;
+}
+
 FyWidget* EditableLayout::findWidget(const Id& id) const
 {
-    return p->findWidgets<FyWidget*>([&id](FyWidget* widget) { return widget->id() == id; });
+    if(auto* widget = p->findWidgets<FyWidget*>([&id](FyWidget* candidate) { return candidate->id() == id; })) {
+        return widget;
+    }
+    if(p->m_toolbarManager) {
+        const auto widgets = p->m_toolbarManager->widgets();
+        const auto it      = std::ranges::find_if(widgets, [&id](FyWidget* widget) { return widget->id() == id; });
+        if(it != widgets.end()) {
+            return *it;
+        }
+    }
+    return nullptr;
 }
 
 WidgetList EditableLayout::findWidgetsByName(const QString& name) const
 {
-    return p->findWidgets<WidgetList>([&name](FyWidget* widget) { return widget->name() == name; });
+    auto widgets = p->findWidgets<WidgetList>([&name](FyWidget* widget) { return widget->name() == name; });
+    if(p->m_toolbarManager) {
+        const auto toolbarWidgets = p->m_toolbarManager->widgets();
+        std::ranges::copy_if(toolbarWidgets, std::back_inserter(widgets),
+                             [&name](FyWidget* widget) { return widget->name() == name; });
+    }
+    return widgets;
 }
 
 WidgetList EditableLayout::findWidgetsByFeatures(const FyWidget::Features& features) const
 {
-    return p->findWidgets<WidgetList>([&features](FyWidget* widget) { return widget->features() & features; });
+    auto widgets = p->findWidgets<WidgetList>([&features](FyWidget* widget) { return widget->features() & features; });
+    if(p->m_toolbarManager) {
+        const auto toolbarWidgets = p->m_toolbarManager->widgets();
+        std::ranges::copy_if(toolbarWidgets, std::back_inserter(widgets),
+                             [&features](FyWidget* widget) { return widget->features() & features; });
+    }
+    return widgets;
 }
 
 bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
@@ -903,6 +949,12 @@ bool EditableLayout::loadLayout(const FyLayout& layout)
     }
 
     topWidget->finalise();
+
+    if(p->m_toolbarManager) {
+        const auto toolbarState = QByteArray::fromBase64(json.value("ToolbarState"_L1).toString().toUtf8());
+        p->m_toolbarManager->loadLayout(json.value("Toolbars"_L1).toArray(), toolbarState);
+    }
+
     return true;
 }
 

@@ -39,6 +39,7 @@
 #include <QResizeEvent>
 #include <QSlider>
 #include <QStyleOptionSlider>
+#include <QToolBar>
 
 #include <optional>
 
@@ -478,16 +479,8 @@ void SeekBar::loadLayoutData(const QJsonObject& layout)
     }
 }
 
-void SeekBar::contextMenuEvent(QContextMenuEvent* event)
+void SeekBar::populateContextMenu(QMenu* menu)
 {
-    if(m_slider->isSeeking()) {
-        m_slider->stopSeeking();
-        return;
-    }
-
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-
     auto* showLabels = new QAction(tr("Show labels"), menu);
     showLabels->setCheckable(true);
     showLabels->setChecked(m_container->labelsEnabled());
@@ -547,7 +540,18 @@ void SeekBar::contextMenuEvent(QContextMenuEvent* event)
     });
 
     menu->addMenu(orientationMenu);
+}
 
+void SeekBar::contextMenuEvent(QContextMenuEvent* event)
+{
+    if(m_slider->isSeeking()) {
+        m_slider->stopSeeking();
+        return;
+    }
+
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    populateContextMenu(menu);
     menu->popup(event->globalPos());
 }
 
@@ -559,7 +563,11 @@ void SeekBar::resizeEvent(QResizeEvent* event)
 
 void SeekBar::updateOrientation()
 {
-    const auto orientation = m_autoOrientation ? (height() > width() ? Qt::Vertical : Qt::Horizontal) : m_orientation;
+    auto orientation{m_orientation};
+    if(m_autoOrientation) {
+        const auto* toolbar = findToolbar();
+        orientation         = toolbar ? toolbar->orientation() : (height() > width() ? Qt::Vertical : Qt::Horizontal);
+    }
     if(m_slider->orientation() == orientation) {
         return;
     }

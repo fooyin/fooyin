@@ -154,6 +154,67 @@ void SearchWidget::layoutEditingMenu(QMenu* menu)
     menu->addAction(manageConnections);
 }
 
+void SearchWidget::populateContextMenu(QMenu* menu)
+{
+    auto* autoSearch = new QAction(tr("Autosearch"), menu);
+    autoSearch->setCheckable(true);
+    autoSearch->setChecked(m_autoSearch);
+    QObject::connect(autoSearch, &QAction::triggered, this, [this](const bool checked) { m_autoSearch = checked; });
+    menu->addAction(autoSearch);
+
+    auto* showAll = new QAction(tr("Show all when search is empty"), this);
+    showAll->setCheckable(true);
+    showAll->setChecked(m_showAll);
+    QObject::connect(showAll, &QAction::triggered, this, [this](const bool checked) {
+        m_showAll = checked;
+        searchChanged();
+    });
+    menu->addAction(showAll);
+
+    if(m_unconnected) {
+        auto* searchInMenu = menu->addMenu(tr("Search in"));
+
+        auto* searchLibrary = new QAction(tr("Library"), menu);
+        searchLibrary->setCheckable(true);
+        searchLibrary->setChecked(m_mode == SearchMode::Library);
+        QObject::connect(searchLibrary, &QAction::triggered, this, [this]() { m_mode = SearchMode::Library; });
+        searchInMenu->addAction(searchLibrary);
+
+        auto* searchPlaylist = new QAction(tr("Playlist"), menu);
+        searchPlaylist->setCheckable(true);
+        searchPlaylist->setChecked(m_mode == SearchMode::Playlist);
+        QObject::connect(searchPlaylist, &QAction::triggered, this, [this]() { m_mode = SearchMode::Playlist; });
+        searchInMenu->addAction(searchPlaylist);
+
+        auto* searchAllPlaylist = new QAction(tr("All Playlists"), menu);
+        searchAllPlaylist->setCheckable(true);
+        searchAllPlaylist->setChecked(m_mode == SearchMode::AllPlaylists);
+        QObject::connect(searchAllPlaylist, &QAction::triggered, this, [this]() { m_mode = SearchMode::AllPlaylists; });
+        searchInMenu->addAction(searchAllPlaylist);
+
+        menu->addSeparator();
+    }
+
+    if(!isQuickSearch()) {
+        // Quick search widget can't be connected to other widgets
+        auto* changePlaceholder = new QAction(tr("Change placeholder text"), menu);
+        QObject::connect(changePlaceholder, &QAction::triggered, this, &SearchWidget::changePlaceholderText);
+        menu->addAction(changePlaceholder);
+
+        if(!m_searchTarget) {
+            auto* manageConnections = new QAction(tr("Manage connected widgets"), menu);
+            QObject::connect(manageConnections, &QAction::triggered, this,
+                             [this]() { m_searchController->setupWidgetConnections(id()); });
+            menu->addAction(manageConnections);
+        }
+    }
+
+    auto* searching = new QAction(tr("Help"), menu);
+    QObject::connect(searching, &QAction::triggered, this,
+                     []() { QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/searching/basics.html"_s); });
+    menu->addAction(searching);
+}
+
 void SearchWidget::saveLayoutData(QJsonObject& layout)
 {
     layout["AutoSearch"_L1] = m_autoSearch;
@@ -568,64 +629,7 @@ void SearchWidget::showOptionsMenu()
 {
     auto* menu = new QMenu(tr("Options"), this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
-
-    auto* autoSearch = new QAction(tr("Autosearch"), menu);
-    autoSearch->setCheckable(true);
-    autoSearch->setChecked(m_autoSearch);
-    QObject::connect(autoSearch, &QAction::triggered, this, [this](const bool checked) { m_autoSearch = checked; });
-    menu->addAction(autoSearch);
-
-    auto* showAll = new QAction(tr("Show all when search is empty"), this);
-    showAll->setCheckable(true);
-    showAll->setChecked(m_showAll);
-    QObject::connect(showAll, &QAction::triggered, this, [this](const bool checked) {
-        m_showAll = checked;
-        searchChanged();
-    });
-    menu->addAction(showAll);
-
-    if(m_unconnected) {
-        auto* searchInMenu = menu->addMenu(tr("Search in"));
-
-        auto* searchLibrary = new QAction(tr("Library"), menu);
-        searchLibrary->setCheckable(true);
-        searchLibrary->setChecked(m_mode == SearchMode::Library);
-        QObject::connect(searchLibrary, &QAction::triggered, this, [this]() { m_mode = SearchMode::Library; });
-        searchInMenu->addAction(searchLibrary);
-
-        auto* searchPlaylist = new QAction(tr("Playlist"), menu);
-        searchPlaylist->setCheckable(true);
-        searchPlaylist->setChecked(m_mode == SearchMode::Playlist);
-        QObject::connect(searchPlaylist, &QAction::triggered, this, [this]() { m_mode = SearchMode::Playlist; });
-        searchInMenu->addAction(searchPlaylist);
-
-        auto* searchAllPlaylist = new QAction(tr("All Playlists"), menu);
-        searchAllPlaylist->setCheckable(true);
-        searchAllPlaylist->setChecked(m_mode == SearchMode::AllPlaylists);
-        QObject::connect(searchAllPlaylist, &QAction::triggered, this, [this]() { m_mode = SearchMode::AllPlaylists; });
-        searchInMenu->addAction(searchAllPlaylist);
-
-        menu->addSeparator();
-    }
-
-    if(!isQuickSearch()) {
-        // Quick search widget can't be connected to other widgets
-        auto* changePlaceholder = new QAction(tr("Change placeholder text"), menu);
-        QObject::connect(changePlaceholder, &QAction::triggered, this, &SearchWidget::changePlaceholderText);
-        menu->addAction(changePlaceholder);
-
-        if(!m_searchTarget) {
-            auto* manageConnections = new QAction(tr("Manage connected widgets"), menu);
-            QObject::connect(manageConnections, &QAction::triggered, this,
-                             [this]() { m_searchController->setupWidgetConnections(id()); });
-            menu->addAction(manageConnections);
-        }
-    }
-
-    auto* searching = new QAction(tr("Help"), menu);
-    QObject::connect(searching, &QAction::triggered, this,
-                     []() { QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/searching/basics.html"_s); });
-    menu->addAction(searching);
+    populateContextMenu(menu);
 
     QStyleOptionFrame opt;
     opt.initFrom(m_searchBox);

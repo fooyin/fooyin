@@ -35,6 +35,7 @@ class FyLayout;
 class Id;
 class LayoutProvider;
 class SettingsManager;
+class ToolbarManager;
 class WidgetProvider;
 
 class FYGUI_EXPORT EditableLayout : public QWidget
@@ -47,10 +48,13 @@ public:
     ~EditableLayout() override;
 
     void initialise();
+    void setToolbarManager(ToolbarManager* toolbarManager);
     FyLayout saveCurrentToLayout(const QString& name, bool saveWindowSize);
 
     [[nodiscard]] FyWidget* root() const;
 
+    /** Returns all widgets in the editable layout and application toolbars. */
+    [[nodiscard]] WidgetList allWidgets() const;
     [[nodiscard]] FyWidget* findWidget(const Id& id) const;
     [[nodiscard]] WidgetList findWidgetsByName(const QString& name) const;
     [[nodiscard]] WidgetList findWidgetsByFeatures(const FyWidget::Features& features) const;
@@ -58,35 +62,12 @@ public:
     template <typename T>
     [[nodiscard]] std::vector<T*> findWidgetsByType() const
     {
-        if(!root()) {
-            return {};
-        }
-
         std::vector<T*> widgets;
-
-        std::stack<FyWidget*> widgetsToCheck;
-        widgetsToCheck.push(root());
-
-        while(!widgetsToCheck.empty()) {
-            auto* current = widgetsToCheck.top();
-            widgetsToCheck.pop();
-
-            if(!current) {
-                continue;
-            }
-
+        for(auto* current : allWidgets()) {
             if(auto* w = qobject_cast<T*>(current)) {
                 widgets.push_back(w);
             }
-
-            if(const auto* container = qobject_cast<WidgetContainer*>(current)) {
-                const auto containerWidgets = container->widgets();
-                for(FyWidget* containerWidget : containerWidgets) {
-                    widgetsToCheck.push(containerWidget);
-                }
-            }
         }
-
         return widgets;
     }
 

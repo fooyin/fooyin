@@ -38,6 +38,7 @@
 #include <QPainter>
 #include <QPolygonF>
 #include <QResizeEvent>
+#include <QToolBar>
 
 using namespace Qt::StringLiterals;
 
@@ -114,113 +115,8 @@ void OscilloscopeWidget::loadLayoutData(const QJsonObject& layout)
     }
 }
 
-OscilloscopeWidget::ConfigData OscilloscopeWidget::factoryConfig() const
+void OscilloscopeWidget::populateContextMenu(QMenu* menu)
 {
-    return {};
-}
-
-OscilloscopeWidget::ConfigData OscilloscopeWidget::defaultConfig() const
-{
-    auto config{factoryConfig()};
-
-    config.curveDurationMs = m_settings->fileValue(CurveDurationKey, config.curveDurationMs).toInt();
-    config.zoomPercent     = m_settings->fileValue(ZoomKey, config.zoomPercent).toInt();
-    config.updateFps       = m_settings->fileValue(UpdateFpsKey, config.updateFps).toInt();
-    config.downmixMode
-        = static_cast<DownmixMode>(m_settings->fileValue(DownmixModeKey, static_cast<int>(config.downmixMode)).toInt());
-    config.showZeroLine = m_settings->fileValue(ShowZeroLineKey, config.showZeroLine).toBool();
-    config.colours      = m_settings->fileValue(ColoursKey, config.colours);
-
-    return config;
-}
-
-const OscilloscopeWidget::ConfigData& OscilloscopeWidget::currentConfig() const
-{
-    return m_config;
-}
-
-void OscilloscopeWidget::saveDefaults(const ConfigData& config) const
-{
-    auto validated{config};
-
-    validated.curveDurationMs = std::clamp(validated.curveDurationMs, MinCurveDurationMs, MaxCurveDurationMs);
-    validated.zoomPercent     = std::clamp(validated.zoomPercent, MinZoomPercent, MaxZoomPercent);
-    validated.updateFps       = Gui::FrameRate::nearestPresetFps(validated.updateFps);
-
-    if(!validated.colours.canConvert<Colours>()
-       || (validated.colours.isValid() && validated.colours.value<Colours>().isEmpty())) {
-        validated.colours = QVariant{};
-    }
-
-    m_settings->fileSet(CurveDurationKey, validated.curveDurationMs);
-    m_settings->fileSet(ZoomKey, validated.zoomPercent);
-    m_settings->fileSet(UpdateFpsKey, validated.updateFps);
-    m_settings->fileSet(DownmixModeKey, static_cast<int>(validated.downmixMode));
-    m_settings->fileSet(ShowZeroLineKey, validated.showZeroLine);
-    m_settings->fileSet(ColoursKey, validated.colours);
-}
-
-void OscilloscopeWidget::clearSavedDefaults() const
-{
-    m_settings->fileRemove(CurveDurationKey);
-    m_settings->fileRemove(ZoomKey);
-    m_settings->fileRemove(UpdateFpsKey);
-    m_settings->fileRemove(DownmixModeKey);
-    m_settings->fileRemove(ShowZeroLineKey);
-    m_settings->fileRemove(ColoursKey);
-}
-
-void OscilloscopeWidget::applyConfig(const ConfigData& config)
-{
-    auto validated{config};
-
-    validated.curveDurationMs = std::clamp(validated.curveDurationMs, MinCurveDurationMs, MaxCurveDurationMs);
-    validated.zoomPercent     = std::clamp(validated.zoomPercent, MinZoomPercent, MaxZoomPercent);
-    validated.updateFps       = Gui::FrameRate::nearestPresetFps(validated.updateFps);
-
-    if(!validated.colours.canConvert<Colours>()
-       || (validated.colours.isValid() && validated.colours.value<Colours>().isEmpty())) {
-        validated.colours = QVariant{};
-    }
-
-    m_config = validated;
-    updateSessionConfig();
-    update();
-
-    Q_EMIT configChanged();
-}
-
-QSize OscilloscopeWidget::minimumSizeHint() const
-{
-    return {24, 18};
-}
-
-void OscilloscopeWidget::paintEvent(QPaintEvent* /*event*/)
-{
-    QPainter painter{this};
-    painter.setRenderHint(QPainter::Antialiasing, false);
-    paint(painter, rect(), palette());
-}
-
-void OscilloscopeWidget::resizeEvent(QResizeEvent* event)
-{
-    updateOrientation();
-    FyWidget::resizeEvent(event);
-}
-
-void OscilloscopeWidget::timerEvent(QTimerEvent* event)
-{
-    if(event->timerId() == m_updateTimer.timerId()) {
-        tick();
-    }
-    FyWidget::timerEvent(event);
-}
-
-void OscilloscopeWidget::contextMenuEvent(QContextMenuEvent* event)
-{
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-
     auto* zeroLineAction = menu->addAction(tr("Show zero line"));
     zeroLineAction->setCheckable(true);
     zeroLineAction->setChecked(m_config.showZeroLine);
@@ -315,6 +211,122 @@ void OscilloscopeWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->addMenu(orientationMenu);
     menu->addSeparator();
     addConfigureAction(menu, false);
+}
+
+OscilloscopeWidget::ConfigData OscilloscopeWidget::factoryConfig() const
+{
+    return {};
+}
+
+OscilloscopeWidget::ConfigData OscilloscopeWidget::defaultConfig() const
+{
+    auto config{factoryConfig()};
+
+    config.curveDurationMs = m_settings->fileValue(CurveDurationKey, config.curveDurationMs).toInt();
+    config.zoomPercent     = m_settings->fileValue(ZoomKey, config.zoomPercent).toInt();
+    config.updateFps       = m_settings->fileValue(UpdateFpsKey, config.updateFps).toInt();
+    config.downmixMode
+        = static_cast<DownmixMode>(m_settings->fileValue(DownmixModeKey, static_cast<int>(config.downmixMode)).toInt());
+    config.showZeroLine = m_settings->fileValue(ShowZeroLineKey, config.showZeroLine).toBool();
+    config.colours      = m_settings->fileValue(ColoursKey, config.colours);
+
+    return config;
+}
+
+const OscilloscopeWidget::ConfigData& OscilloscopeWidget::currentConfig() const
+{
+    return m_config;
+}
+
+void OscilloscopeWidget::saveDefaults(const ConfigData& config) const
+{
+    auto validated{config};
+
+    validated.curveDurationMs = std::clamp(validated.curveDurationMs, MinCurveDurationMs, MaxCurveDurationMs);
+    validated.zoomPercent     = std::clamp(validated.zoomPercent, MinZoomPercent, MaxZoomPercent);
+    validated.updateFps       = Gui::FrameRate::nearestPresetFps(validated.updateFps);
+
+    if(!validated.colours.canConvert<Colours>()
+       || (validated.colours.isValid() && validated.colours.value<Colours>().isEmpty())) {
+        validated.colours = QVariant{};
+    }
+
+    m_settings->fileSet(CurveDurationKey, validated.curveDurationMs);
+    m_settings->fileSet(ZoomKey, validated.zoomPercent);
+    m_settings->fileSet(UpdateFpsKey, validated.updateFps);
+    m_settings->fileSet(DownmixModeKey, static_cast<int>(validated.downmixMode));
+    m_settings->fileSet(ShowZeroLineKey, validated.showZeroLine);
+    m_settings->fileSet(ColoursKey, validated.colours);
+}
+
+void OscilloscopeWidget::clearSavedDefaults() const
+{
+    m_settings->fileRemove(CurveDurationKey);
+    m_settings->fileRemove(ZoomKey);
+    m_settings->fileRemove(UpdateFpsKey);
+    m_settings->fileRemove(DownmixModeKey);
+    m_settings->fileRemove(ShowZeroLineKey);
+    m_settings->fileRemove(ColoursKey);
+}
+
+void OscilloscopeWidget::applyConfig(const ConfigData& config)
+{
+    auto validated{config};
+
+    validated.curveDurationMs = std::clamp(validated.curveDurationMs, MinCurveDurationMs, MaxCurveDurationMs);
+    validated.zoomPercent     = std::clamp(validated.zoomPercent, MinZoomPercent, MaxZoomPercent);
+    validated.updateFps       = Gui::FrameRate::nearestPresetFps(validated.updateFps);
+
+    if(!validated.colours.canConvert<Colours>()
+       || (validated.colours.isValid() && validated.colours.value<Colours>().isEmpty())) {
+        validated.colours = QVariant{};
+    }
+
+    m_config = validated;
+    updateSessionConfig();
+    update();
+
+    Q_EMIT configChanged();
+}
+
+QSize OscilloscopeWidget::minimumSizeHint() const
+{
+    const auto orientation = m_autoOrientation ? automaticOrientation() : m_orientation;
+    return orientation == Qt::Horizontal ? QSize{24, 8} : QSize{8, 24};
+}
+
+QSize OscilloscopeWidget::sizeHint() const
+{
+    const auto orientation = m_autoOrientation ? automaticOrientation() : m_orientation;
+    return orientation == Qt::Horizontal ? QSize{200, 24} : QSize{24, 200};
+}
+
+void OscilloscopeWidget::paintEvent(QPaintEvent* /*event*/)
+{
+    QPainter painter{this};
+    painter.setRenderHint(QPainter::Antialiasing, false);
+    paint(painter, rect(), palette());
+}
+
+void OscilloscopeWidget::resizeEvent(QResizeEvent* event)
+{
+    updateOrientation();
+    FyWidget::resizeEvent(event);
+}
+
+void OscilloscopeWidget::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_updateTimer.timerId()) {
+        tick();
+    }
+    FyWidget::timerEvent(event);
+}
+
+void OscilloscopeWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    populateContextMenu(menu);
     menu->popup(event->globalPos());
 }
 
@@ -323,11 +335,20 @@ void OscilloscopeWidget::openConfigDialog()
     showConfigDialog(new OscilloscopeConfigDialog(this, this), Qt::NonModal);
 }
 
+Qt::Orientation OscilloscopeWidget::automaticOrientation() const
+{
+    if(const auto* toolbar = findToolbar()) {
+        return toolbar->orientation();
+    }
+    return height() > width() ? Qt::Vertical : Qt::Horizontal;
+}
+
 void OscilloscopeWidget::setOrientation(Qt::Orientation orientation)
 {
     if(std::exchange(m_orientation, orientation) == orientation) {
         return;
     }
+    updateGeometry();
     update();
 }
 
@@ -336,7 +357,7 @@ void OscilloscopeWidget::updateOrientation()
     if(!m_autoOrientation) {
         return;
     }
-    setOrientation(height() > width() ? Qt::Vertical : Qt::Horizontal);
+    setOrientation(automaticOrientation());
 }
 
 void OscilloscopeWidget::handlePlayStateChanged(Player::PlayState state)

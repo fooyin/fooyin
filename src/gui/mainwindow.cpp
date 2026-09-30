@@ -23,6 +23,7 @@
 #include "menubar/mainmenubar.h"
 #include "plugininstallhandler.h"
 #include "scanprogresstext.h"
+#include "toolbarmanager.h"
 #include "widgets/statuswidget.h"
 
 #include <core/application.h>
@@ -51,16 +52,19 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto MainWindowPrevState = "Interface/PrevState";
+constexpr auto MainWindowPrevState = "Interface/PrevState"_L1;
+constexpr auto MainWindowGeometry  = "MainWindow/Geometry"_L1;
+constexpr auto MainWindowSize      = "MainWindow/Size"_L1;
 
 namespace Fooyin {
 MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, MusicLibrary* library,
-                       SettingsManager* settings, QWidget* parent)
+                       WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent)
     : QMainWindow{parent}
     , m_actionManager{actionManager}
     , m_mainMenu{menubar}
     , m_library{library}
     , m_settings{settings}
+    , m_toolbarManager{nullptr}
     , m_prevState{Normal}
     , m_state{Normal}
     , m_isHiding{false}
@@ -72,7 +76,8 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Music
     qApp->installEventFilter(this);
 
     actionManager->setMainWindow(this);
-    setMenuBar(m_mainMenu->menuBar());
+    m_toolbarManager
+        = std::make_unique<ToolbarManager>(this, m_mainMenu->menuBar(), actionManager, widgetProvider, settings, this);
     m_settings->createSettingsDialog(this);
 
     const FyStateSettings stateSettings;
@@ -98,11 +103,11 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Music
         if(show && m_altMenuBar) {
             m_altMenuBar->close();
         }
-        menuBar()->setVisible(show);
+        m_toolbarManager->setMenuVisible(show);
     });
     QObject::connect(m_library, &MusicLibrary::scanProgress, this, &MainWindow::showScanProgress);
 
-    menuBar()->setVisible(m_settings->value<Settings::Gui::ShowMenuBar>());
+    m_toolbarManager->setMenuVisible(m_settings->value<Settings::Gui::ShowMenuBar>());
 }
 
 MainWindow::~MainWindow()
@@ -192,9 +197,32 @@ void MainWindow::resetTitle()
     setTitle(u"fooyin"_s);
 }
 
+void MainWindow::showHiddenMenu(QAction* activeAction, QWidget* anchor)
+{
+    if(!m_altMenuBar) {
+        m_altMenuBar = new QMenu(this);
+    }
+
+    m_mainMenu->populateMenu(m_altMenuBar);
+    if(m_altMenuBar->isEmpty()) {
+        return;
+    }
+
+    const QPoint menuPosition = anchor ? anchor->mapToGlobal(QPoint{0, anchor->height()}) : frameGeometry().topLeft();
+    m_altMenuBar->popup(menuPosition);
+    if(activeAction) {
+        m_altMenuBar->setActiveAction(activeAction);
+    }
+}
+
 void MainWindow::installStatusWidget(StatusWidget* statusWidget)
 {
     m_statusWidget = statusWidget;
+}
+
+ToolbarManager* MainWindow::toolbarManager() const
+{
+    return m_toolbarManager.get();
 }
 
 QSize MainWindow::sizeHint() const
@@ -378,24 +406,6 @@ bool MainWindow::handleHiddenMenuKeyEvent(QKeyEvent* event)
     return false;
 }
 
-void MainWindow::showHiddenMenu(QAction* activeAction, QWidget* anchor)
-{
-    if(!m_altMenuBar) {
-        m_altMenuBar = new QMenu(this);
-    }
-
-    m_mainMenu->populateMenu(m_altMenuBar);
-    if(m_altMenuBar->isEmpty()) {
-        return;
-    }
-
-    const QPoint menuPosition = anchor ? anchor->mapToGlobal(QPoint{0, anchor->height()}) : frameGeometry().topLeft();
-    m_altMenuBar->popup(menuPosition);
-    if(activeAction) {
-        m_altMenuBar->setActiveAction(activeAction);
-    }
-}
-
 void MainWindow::showScanProgress(const ScanProgress& progress)
 {
     if(!m_statusWidget) {
@@ -441,13 +451,19 @@ MainWindow::WindowState MainWindow::currentState()
 void MainWindow::saveWindowGeometry()
 {
     FyStateSettings stateSettings;
-    Utils::saveState(this, stateSettings, u"MainWindow"_s);
+    stateSettings.setValue(MainWindowGeometry, saveGeometry());
+    stateSettings.setValue(MainWindowSize, size());
 }
 
 void MainWindow::restoreWindowGeometry()
 {
     const FyStateSettings stateSettings;
-    Utils::restoreState(this, stateSettings, u"MainWindow"_s);
+    if(const auto geometry = stateSettings.value(MainWindowGeometry).toByteArray(); !geometry.isEmpty()) {
+        restoreGeometry(geometry);
+    }
+    if(const auto savedSize = stateSettings.value(MainWindowSize).toSize(); savedSize.isValid()) {
+        resize(savedSize);
+    }
 }
 
 void MainWindow::restoreState(WindowState state)

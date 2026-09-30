@@ -271,7 +271,8 @@ GuiApplication::GuiApplication(Application* core)
     , m_editableLayout{std::make_unique<EditableLayout>(m_actionManager, m_widgetProvider.get(), m_layoutProvider.get(),
                                                         m_settings)}
     , m_menubar{std::make_unique<MainMenuBar>(m_actionManager, m_settings)}
-    , m_mainWindow{std::make_unique<MainWindow>(m_actionManager, m_menubar.get(), m_library, m_settings)}
+    , m_mainWindow{std::make_unique<MainWindow>(m_actionManager, m_menubar.get(), m_library, m_widgetProvider.get(),
+                                                m_settings)}
     , m_mainContext{new WidgetContext(m_mainWindow.get(), Context{"Fooyin.MainWindow"}, this)}
     , m_playlistController{std::make_unique<PlaylistController>(m_core)}
     , m_playlistInteractor{m_core->playlistHandler(), m_playlistController.get(), m_library, m_settings}
@@ -337,6 +338,7 @@ GuiApplication::GuiApplication(Application* core)
     QObject::connect(m_conversionController, &ConversionController::convertedFilesReady, this,
                      &GuiApplication::showConvertedFiles);
 
+    m_editableLayout->setToolbarManager(m_mainWindow->toolbarManager());
     m_scriptParser.addProvider(playlistVariableProvider());
 
     QObject::connect(m_settings->settingsDialog(), &SettingsDialogController::opening, this, [this]() {

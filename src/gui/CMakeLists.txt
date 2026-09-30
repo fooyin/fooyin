@@ -579,6 +579,8 @@ set(SOURCES
     theme/themeregistry.cpp
     trackmimedata.cpp
     trackselectioncontroller.cpp
+    toolbarmanager.cpp
+    toolbarmanager.h
     widgetfilter.cpp
     widgetprovider.cpp
     verification/verificationcontroller.cpp

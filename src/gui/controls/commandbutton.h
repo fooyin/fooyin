@@ -70,6 +70,7 @@ public:
 
     [[nodiscard]] QSize sizeHint() const override;
     [[nodiscard]] QSize minimumSizeHint() const override;
+    void populateContextMenu(QMenu* menu) override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

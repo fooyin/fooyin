@@ -35,6 +35,7 @@ class SettingsManager;
 
 namespace Spectrum {
 class SpectrumView;
+
 class SpectrumWidget : public FyWidget
 {
     Q_OBJECT
@@ -90,6 +91,7 @@ public:
     [[nodiscard]] QString layoutName() const override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
+    void populateContextMenu(QMenu* menu) override;
 
     [[nodiscard]] ConfigData factoryConfig() const;
     [[nodiscard]] ConfigData defaultConfig() const;

@@ -43,6 +43,7 @@
 #include <QMenu>
 #include <QResizeEvent>
 #include <QStyle>
+#include <QToolBar>
 #include <QToolTip>
 #include <QWheelEvent>
 
@@ -167,8 +168,12 @@ void VolumeControlPrivate::changeDisplay(VolumeControl::Options options, bool in
 
 void VolumeControlPrivate::updateOrientation()
 {
-    const auto orientation
-        = m_autoOrientation ? (m_self->height() > m_self->width() ? Qt::Vertical : Qt::Horizontal) : m_orientation;
+    auto orientation{m_orientation};
+    if(m_autoOrientation) {
+        const auto* toolbar = m_self->findToolbar();
+        orientation
+            = toolbar ? toolbar->orientation() : (m_self->height() > m_self->width() ? Qt::Vertical : Qt::Horizontal);
+    }
     const auto direction = orientation == Qt::Vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight;
     if(m_layout->direction() != direction) {
         m_layout->setDirection(direction);
@@ -366,11 +371,8 @@ void VolumeControl::loadLayoutData(const QJsonObject& layout)
     }
 }
 
-void VolumeControl::contextMenuEvent(QContextMenuEvent* event)
+void VolumeControl::populateContextMenu(QMenu* menu)
 {
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-
     auto* iconMode   = new QAction(tr("Icon"), menu);
     auto* sliderMode = new QAction(tr("Slider"), menu);
     auto* toolTip    = new QAction(tr("Tooltip"), menu);
@@ -446,7 +448,13 @@ void VolumeControl::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(toolTip);
     menu->addSeparator();
     menu->addMenu(orientationMenu);
+}
 
+void VolumeControl::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    populateContextMenu(menu);
     menu->popup(event->globalPos());
 }
 

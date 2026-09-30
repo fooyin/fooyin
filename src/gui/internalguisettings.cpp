@@ -134,6 +134,8 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                   u"Playlist/SearchMode"_s);
     m_settings->createSetting<PlaylistSearchScript>(u"[%artist%] [%title%] [%album%]"_s, u"Playlist/SearchScript"_s);
     m_settings->createSetting<ShowMenuBar>(true, u"Interface/ShowMenuBar"_s);
+    m_settings->createSetting<MenuBarMovable>(false, u"Interface/MenuBarMovable"_s);
+    m_settings->createSetting<ToolbarsLocked>(true, u"Interface/ToolbarsLocked"_s);
     m_settings->createSetting<DarkMode>(false, u"Interface/DarkMode"_s);
     m_settings->createSetting<RatingFullStarSymbol>(defaultRatingFullStarSymbol(), u"Interface/RatingFullStarSymbol"_s);
     m_settings->createSetting<RatingHalfStarSymbol>(defaultRatingHalfStarSymbol(), u"Interface/RatingHalfStarSymbol"_s);

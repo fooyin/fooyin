@@ -80,6 +80,7 @@ public:
     [[nodiscard]] QString layoutName() const override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
+    void populateContextMenu(QMenu* menu) override;
 
     [[nodiscard]] ConfigData factoryConfig() const;
     [[nodiscard]] ConfigData defaultConfig() const;
@@ -89,6 +90,7 @@ public:
     void applyConfig(const ConfigData& config);
 
     [[nodiscard]] QSize minimumSizeHint() const override;
+    [[nodiscard]] QSize sizeHint() const override;
 
 Q_SIGNALS:
     void configChanged();
@@ -102,6 +104,7 @@ protected:
     void openConfigDialog() override;
 
 private:
+    [[nodiscard]] Qt::Orientation automaticOrientation() const;
     void setOrientation(Qt::Orientation orientation);
     void updateOrientation();
 

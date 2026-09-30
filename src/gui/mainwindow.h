@@ -33,7 +33,9 @@ class MusicLibrary;
 class SettingsManager;
 struct ScanProgress;
 class StatusWidget;
+class ToolbarManager;
 class Track;
+class WidgetProvider;
 
 class MainWindow : public QMainWindow
 {
@@ -57,8 +59,8 @@ public:
     };
     Q_ENUM(WindowState)
 
-    explicit MainWindow(ActionManager* actionManager, MainMenuBar* menubar, MusicLibrary* library,
-                        SettingsManager* settings, QWidget* parent = nullptr);
+    MainWindow(ActionManager* actionManager, MainMenuBar* menubar, MusicLibrary* library,
+               WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent = nullptr);
     ~MainWindow() override;
 
     void open();
@@ -71,6 +73,7 @@ public:
     void showHiddenMenu(QAction* activeAction = nullptr, QWidget* anchor = nullptr);
 
     void installStatusWidget(StatusWidget* statusWidget);
+    [[nodiscard]] ToolbarManager* toolbarManager() const;
 
     [[nodiscard]] QSize sizeHint() const override;
 
@@ -99,6 +102,7 @@ private:
     SettingsManager* m_settings;
     QPointer<StatusWidget> m_statusWidget;
     QPointer<QMenu> m_altMenuBar;
+    std::unique_ptr<ToolbarManager> m_toolbarManager;
 
     WindowState m_prevState;
     WindowState m_state;

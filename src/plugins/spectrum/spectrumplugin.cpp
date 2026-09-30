@@ -57,8 +57,8 @@ void SpectrumPlugin::initialise(const GuiPluginContext& context)
         window->showStandaloneWindow(tr("Spectrum"), u"Spectrum/WindowState"_s, true);
     });
 
-    m_widgetProvider->registerWidget(
-        u"Spectrum"_s, [this]() { return new SpectrumWidget(m_engine, m_settings); }, tr("Spectrum"));
+    m_widgetProvider->registerWidget(u"Spectrum"_s, [this]() { return new SpectrumWidget(m_engine, m_settings); },
+                                     tr("Spectrum"), {.supportsToolbar = true});
     m_widgetProvider->setSubMenus(u"Spectrum"_s, {tr("Visualisations")});
     context.themeRegistry->registerFontEntry(tr("Spectrum"), u"Fooyin::Spectrum::SpectrumWidget"_s);
 }

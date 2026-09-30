@@ -32,6 +32,7 @@ class QAction;
 class QCloseEvent;
 class QDialog;
 class QMenu;
+class QToolBar;
 
 namespace Fooyin {
 class FyWidgetPrivate;
@@ -133,6 +134,8 @@ public:
 
     /** Returns the closest FyWidget parent of this widget. */
     [[nodiscard]] FyWidget* findParent() const;
+    /** Returns the toolbar hosting this widget, or @c nullptr if it is not hosted in one. */
+    [[nodiscard]] QToolBar* findToolbar() const;
     /** Returns the full geometry of this widget including frame. */
     [[nodiscard]] QRect widgetGeometry() const;
 
@@ -178,6 +181,15 @@ public:
      * @note the base class implementation of this function does nothing.
      */
     virtual void layoutEditingMenu(QMenu* menu);
+
+    /*!
+     * Adds this widget's actions to @p menu.
+     *
+     * Reimplement this for widgets with a context menu so the same actions can be included when the widget is hosted
+     * in a toolbar.
+     * @note the base class implementation of this function does nothing.
+     */
+    virtual void populateContextMenu(QMenu* menu);
 
     /*!
      * Called by @fn saveLayout() and @fn saveBaseLayout().
