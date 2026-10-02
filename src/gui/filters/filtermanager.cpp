@@ -24,7 +24,7 @@
 #include "tracklistwidget.h"
 
 #include <core/library/musiclibrary.h>
-#include <gui/editablelayout.h>
+#include <gui/layout/editablelayout.h>
 #include <gui/widgetfilter.h>
 #include <gui/widgets/overlaywidget.h>
 #include <utils/async.h>

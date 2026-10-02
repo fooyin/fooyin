@@ -75,13 +75,12 @@
 #include <core/scripting/scriptenvironmenthelpers.h>
 #include <gui/coverprovider.h>
 #include <gui/coverrepository.h>
-#include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
-#include <gui/layoutprovider.h>
+#include <gui/layout/editablelayout.h>
 #include <gui/playlist/currentplaylistcontroller.h>
 #include <gui/plugins/dspguiplugin.h>
 #include <gui/plugins/guiplugin.h>

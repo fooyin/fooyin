@@ -38,6 +38,8 @@
         <file>icons/dark/scalable/actions/go-next.svg</file>
         <file>icons/dark/scalable/actions/go-previous.svg</file>
         <file>icons/dark/scalable/actions/go-up.svg</file>
+        <file>icons/dark/scalable/actions/grip-horizontal.svg</file>
+        <file>icons/dark/scalable/actions/grip-vertical.svg</file>
         <file>icons/dark/scalable/actions/list-add.svg</file>
         <file>icons/dark/scalable/actions/list-remove.svg</file>
         <file>icons/dark/scalable/actions/love.svg</file>
@@ -96,6 +98,8 @@
         <file>icons/light/scalable/actions/go-next.svg</file>
         <file>icons/light/scalable/actions/go-previous.svg</file>
         <file>icons/light/scalable/actions/go-up.svg</file>
+        <file>icons/light/scalable/actions/grip-horizontal.svg</file>
+        <file>icons/light/scalable/actions/grip-vertical.svg</file>
         <file>icons/light/scalable/actions/list-add.svg</file>
         <file>icons/light/scalable/actions/list-remove.svg</file>
         <file>icons/light/scalable/actions/love.svg</file>

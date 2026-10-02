@@ -46,7 +46,6 @@
 #include "filters/libraryfilterswitcher.h"
 #include "filters/libraryfiltertabs.h"
 #include "filters/tracklistwidget.h"
-#include "gui/editablelayout.h"
 #include "gui/plugins/guiplugincontext.h"
 #include "guiapplication.h"
 #include "internalguisettings.h"
@@ -121,6 +120,7 @@
 #include <gui/coverrepository.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/layout/editablelayout.h>
 #include <gui/output/outputprofilemanager.h>
 #include <gui/playlist/playlistinteractor.h>
 #include <gui/settings/context/staticcontextmenupage.h>

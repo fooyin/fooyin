@@ -22,10 +22,10 @@
 #include "layouttreemodel.h"
 
 #include <core/constants.h>
-#include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
-#include <gui/layoutprovider.h>
+#include <gui/layout/editablelayout.h>
+#include <gui/layout/layoutprovider.h>
 #include <gui/theme/fytheme.h>
 #include <gui/widgetprovider.h>
 #include <utils/jsonutils.h>

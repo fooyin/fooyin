@@ -111,6 +111,7 @@ enum GuiSettings : uint32_t
     CustomApplicationIcon      = 54 | Type::String,
     MenuBarMovable             = 55 | Type::Bool,
     ToolbarsLocked             = 56 | Type::Bool,
+    DockWidgetPalette          = 57 | Type::Bool,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Settings::Gui

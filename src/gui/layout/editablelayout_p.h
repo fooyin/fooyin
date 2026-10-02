@@ -39,12 +39,13 @@ class ActionManager;
 class EditableLayout;
 class FyLayout;
 class LayoutProvider;
+class LayoutDragController;
 class SettingsManager;
 class ToolbarManager;
 class WidgetContext;
 class WidgetProvider;
 
-class RootContainer : public WidgetContainer
+class FYGUI_EXPORT RootContainer : public WidgetContainer
 {
     Q_OBJECT
 
@@ -58,6 +59,7 @@ public:
     [[nodiscard]] QString layoutName() const override;
 
     [[nodiscard]] bool canAddWidget() const override;
+    [[nodiscard]] bool canInsertWidget(int index) const override;
     [[nodiscard]] bool canMoveWidget(int index, int newIndex) const override;
     [[nodiscard]] int widgetIndex(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtId(const Id& id) const override;
@@ -67,9 +69,11 @@ public:
 
     int addWidget(FyWidget* widget) override;
     void insertWidget(int index, FyWidget* widget) override;
-    void removeWidget(int index) override;
-    void replaceWidget(int index, FyWidget* newWidget) override;
     void moveWidget(int index, int newIndex) override;
+    [[nodiscard]] FyWidget* takeWidget(int index) override;
+
+protected:
+    FyWidget* exchangeWidgetImpl(int index, FyWidget* newWidget) override;
 
 private:
     SettingsManager* m_settings;
@@ -164,5 +168,6 @@ public:
     WidgetContext* m_editingContext;
     QJsonObject m_widgetClipboard;
     QUndoStack* m_layoutHistory;
+    std::unique_ptr<LayoutDragController> m_dragController;
 };
 } // namespace Fooyin

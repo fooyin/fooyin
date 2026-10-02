@@ -284,6 +284,11 @@ bool PlaylistTabs::canAddWidget() const
     return !m_tabsWidget;
 }
 
+bool PlaylistTabs::canInsertWidget(int index) const
+{
+    return index == 0 && !m_tabsWidget;
+}
+
 bool PlaylistTabs::canMoveWidget(int /*index*/, int /*newIndex*/) const
 {
     return false;
@@ -390,25 +395,31 @@ void PlaylistTabs::insertWidget(int index, FyWidget* widget)
     addWidget(widget);
 }
 
-void PlaylistTabs::removeWidget(int index)
-{
-    if(index == 0 && m_tabsWidget) {
-        m_tabs->setWidget(nullptr);
-        m_tabsWidget = nullptr;
-    }
-}
-
-void PlaylistTabs::replaceWidget(int index, FyWidget* newWidget)
-{
-    if(index != 0) {
-        return;
-    }
-
-    m_tabsWidget = newWidget;
-    m_tabs->setWidget(m_tabsWidget);
-}
-
 void PlaylistTabs::moveWidget(int /*index*/, int /*newIndex*/) { }
+
+FyWidget* PlaylistTabs::takeWidget(int index)
+{
+    if(index != 0 || !m_tabsWidget) {
+        return nullptr;
+    }
+
+    auto* widget = qobject_cast<FyWidget*>(m_tabs->takeWidget());
+    m_tabsWidget = nullptr;
+    return widget;
+}
+
+QJsonObject PlaylistTabs::saveEditingState() const
+{
+    auto state          = WidgetContainer::saveEditingState();
+    state["Current"_L1] = m_tabs->currentIndex();
+    return state;
+}
+
+void PlaylistTabs::restoreEditingState(const QJsonObject& state)
+{
+    WidgetContainer::restoreEditingState(state);
+    m_tabs->setCurrentIndex(state.value("Current"_L1).toInt(-1));
+}
 
 void PlaylistTabs::changeEvent(QEvent* event)
 {
@@ -698,6 +709,14 @@ void PlaylistTabs::dropEvent(QDropEvent* event)
 void PlaylistTabs::openConfigDialog()
 {
     showConfigDialog(new PlaylistTabsConfigDialog(this, this), Qt::NonModal);
+}
+
+FyWidget* PlaylistTabs::exchangeWidgetImpl(int index, FyWidget* newWidget)
+{
+    auto* previous = takeWidget(index);
+    m_tabsWidget   = newWidget;
+    m_tabs->setWidget(m_tabsWidget);
+    return previous;
 }
 
 void PlaylistTabs::setupConnections()

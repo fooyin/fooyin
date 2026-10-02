@@ -18,23 +18,26 @@
  */
 
 #include "editablelayout_p.h"
-#include <gui/editablelayout.h>
 
 #include "contextmenuids.h"
 #include "dialog/exportlayoutdialog.h"
 #include "internalguisettings.h"
 #include "layoutcommands.h"
+#include "layoutdragcontroller.h"
 #include "splitters/splitterwidget.h"
 #include "toolbarmanager.h"
 #include "utils/actions/command.h"
+#include "widgetpalette.h"
 #include "widgets/dummy.h"
 #include "widgets/menuheader.h"
 
+#include <core/coresettings.h>
 #include <gui/contextmenuutils.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/guiutils.h>
-#include <gui/layoutprovider.h>
+#include <gui/layout/editablelayout.h>
+#include <gui/layout/layoutprovider.h>
 #include <gui/widgetprovider.h>
 #include <gui/widgets/overlaywidget.h>
 #include <utils/actions/actioncontainer.h>
@@ -43,11 +46,13 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
+#include <QCheckBox>
 #include <QHBoxLayout>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMenu>
+#include <QMessageBox>
 #include <QMouseEvent>
 #include <QScopedValueRollback>
 #include <QStyle>
@@ -157,6 +162,12 @@ bool RootContainer::canAddWidget() const
     return !m_widget || qobject_cast<Dummy*>(m_widget);
 }
 
+bool RootContainer::canInsertWidget(int index) const
+{
+    const auto* dummy = qobject_cast<Dummy*>(m_widget.data());
+    return index == 0 && (!m_widget || (dummy && dummy->missingName().isEmpty()));
+}
+
 bool RootContainer::canMoveWidget(int /*index*/, int /*newIndex*/) const
 {
     return false;
@@ -199,29 +210,49 @@ int RootContainer::addWidget(FyWidget* widget)
 
 void RootContainer::insertWidget(int index, FyWidget* widget)
 {
-    if(index != 0) {
+    if(!widget || !canInsertWidget(index)) {
         return;
     }
 
-    widget->setParent(this);
-    delete m_widget;
-    m_widget = widget;
-    m_layout->insertWidget(0, m_widget);
-}
-
-void RootContainer::removeWidget(int index)
-{
-    if(index == 0) {
-        reset();
+    if(m_widget) {
+        replaceWidget(index, widget);
     }
-}
-
-void RootContainer::replaceWidget(int index, FyWidget* newWidget)
-{
-    insertWidget(index, newWidget);
+    else {
+        m_widget = widget;
+        m_layout->addWidget(widget);
+    }
+    widget->show();
 }
 
 void RootContainer::moveWidget(int /*index*/, int /*newIndex*/) { }
+
+FyWidget* RootContainer::takeWidget(int index)
+{
+    if(index != 0 || !m_widget) {
+        return nullptr;
+    }
+
+    auto* widget = m_widget.data();
+    m_layout->removeWidget(widget);
+    widget->hide();
+    widget->setParent(nullptr);
+    m_widget = nullptr;
+    return widget;
+}
+
+FyWidget* RootContainer::exchangeWidgetImpl(int /*index*/, FyWidget* newWidget)
+{
+    auto* previous = m_widget.data();
+    auto* item     = m_layout->replaceWidget(previous, newWidget);
+    if(!item) {
+        return nullptr;
+    }
+    delete item;
+    previous->hide();
+    previous->setParent(nullptr);
+    m_widget = newWidget;
+    return previous;
+}
 
 EditableLayoutPrivate::EditableLayoutPrivate(EditableLayout* self, ActionManager* actionManager,
                                              WidgetProvider* widgetProvider, LayoutProvider* layoutProvider,
@@ -241,7 +272,14 @@ EditableLayoutPrivate::EditableLayoutPrivate(EditableLayout* self, ActionManager
     updateMargins();
     m_box->addWidget(m_root);
 
+    QObject::connect(m_layoutHistory, &QUndoStack::indexChanged, m_root, [root = m_root]() {
+        if(!root->widget()) {
+            root->reset();
+        }
+    });
+
     m_widgetProvider->setCommandStack(m_layoutHistory);
+    m_dragController = std::make_unique<LayoutDragController>(m_self, m_layoutHistory, m_widgetProvider, m_settings);
 
     m_settings->subscribe<Settings::Gui::LayoutEditing>(m_self, [this](bool enabled) { changeEditingState(enabled); });
     m_settings->subscribe<Settings::Gui::Internal::EditableLayoutMargin>(m_self, [this]() { updateMargins(); });
@@ -273,10 +311,49 @@ void EditableLayoutPrivate::changeEditingState(bool editing)
         return;
     }
 
+    m_dragController->setEditing(editing);
+
     if(editing) {
         m_actionManager->overrideContext(m_editingContext, true);
         m_overlay = new OverlayWidget(m_self);
         qApp->installEventFilter(m_self);
+
+        const FyStateSettings savedState;
+        if(savedState.value(Settings::Gui::Internal::ShowLayoutEditingHint, true).toBool()) {
+            QMetaObject::invokeMethod(
+                m_self,
+                [this] {
+                    const FyStateSettings state;
+                    if(!m_layoutEditing
+                       || !state.value(Settings::Gui::Internal::ShowLayoutEditingHint, true).toBool()) {
+                        return;
+                    }
+
+                    auto* hint
+                        = new QMessageBox(QMessageBox::Information, EditableLayout::tr("Layout Editing"),
+                                          EditableLayout::tr("Add and arrange widgets to customise your layout."),
+                                          QMessageBox::Ok, m_self);
+                    hint->setTextFormat(Qt::PlainText);
+                    hint->setInformativeText(EditableLayout::tr(
+                        "• Find widgets in the palette on the right (hover near the right edge if it's hidden).\n\n"
+                        "• Drag widgets from the palette to add them, or drag existing widgets to move them. "
+                        "Hold Ctrl while dragging to replace the widget under the cursor.\n\n"
+                        "• Select a widget to see its parent containers in the breadcrumb bar. "
+                        "Select a parent to move an entire section.\n\n"
+                        "• Right-click any widget to split, replace, or remove it using the context menu."));
+                    auto* dontShowAgain = new QCheckBox(EditableLayout::tr("Don't show this again"), hint);
+                    hint->setCheckBox(dontShowAgain);
+                    QObject::connect(hint, &QMessageBox::finished, hint, [dontShowAgain] {
+                        if(dontShowAgain->isChecked()) {
+                            FyStateSettings stateSettings;
+                            stateSettings.setValue(Settings::Gui::Internal::ShowLayoutEditingHint, false);
+                        }
+                    });
+                    hint->setAttribute(Qt::WA_DeleteOnClose);
+                    hint->open();
+                },
+                Qt::QueuedConnection);
+        }
     }
     else {
         m_actionManager->overrideContext(m_editingContext, false);
@@ -823,6 +900,15 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
     if(!p->m_layoutEditing || event->type() != QEvent::MouseButtonPress) {
         return QWidget::eventFilter(watched, event);
     }
+    if(const auto* watchedWidget = qobject_cast<QWidget*>(watched);
+       watchedWidget && watchedWidget->window() != window()) {
+        return QWidget::eventFilter(watched, event);
+    }
+    for(auto* widget = qobject_cast<QWidget*>(watched); widget; widget = widget->parentWidget()) {
+        if(widget == p->m_dragController->palette()) {
+            return QWidget::eventFilter(watched, event);
+        }
+    }
 
     if(event->type() == QEvent::MouseButtonPress) {
         auto* mouseEvent = static_cast<QMouseEvent*>(event);
@@ -838,7 +924,9 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
 
         const QPoint pos = mouseEvent->globalPosition().toPoint();
         QWidget* widget  = childAt(mapFromGlobal(pos));
-        FyWidget* child  = findSplitterChild(widget, pos);
+        FyWidget* child  = widget && widget->property("LayoutWidgetId").isValid()
+                             ? findWidget(Id{widget->property("LayoutWidgetId").toString()})
+                             : findSplitterChild(widget, pos);
 
         if(!child) {
             return QWidget::eventFilter(watched, event);
@@ -1012,4 +1100,4 @@ FyWidget* EditableLayout::loadWidget(WidgetProvider* provider, const QJsonObject
 
 } // namespace Fooyin
 
-#include "gui/moc_editablelayout.cpp"
+#include "gui/layout/moc_editablelayout.cpp"

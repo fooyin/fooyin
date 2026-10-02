@@ -17,7 +17,7 @@
  *
  */
 
-#include <gui/fylayout.h>
+#include <gui/layout/fylayout.h>
 
 #include <gui/theme/fytheme.h>
 #include <utils/utils.h>

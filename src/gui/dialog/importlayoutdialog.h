@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <gui/fylayout.h>
+#include <gui/layout/fylayout.h>
 
 #include <QDialog>
 

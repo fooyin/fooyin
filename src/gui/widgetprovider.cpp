@@ -19,7 +19,7 @@
 
 #include <gui/widgetprovider.h>
 
-#include "layoutcommands.h"
+#include "layout/layoutcommands.h"
 
 #include <gui/fywidget.h>
 #include <gui/guiconstants.h>
@@ -129,6 +129,13 @@ public:
         }
     }
 
+    struct Instance
+    {
+        QString key;
+        bool retained{false};
+    };
+
+    std::map<FyWidget*, Instance> m_instances;
     QUndoStack* m_layoutCommands{nullptr};
     std::map<QString, FactoryWidget> m_widgets;
 };
@@ -142,6 +149,23 @@ WidgetProvider::~WidgetProvider() = default;
 void WidgetProvider::setCommandStack(QUndoStack* layoutCommands)
 {
     p->m_layoutCommands = layoutCommands;
+}
+
+std::vector<WidgetCatalogueEntry> WidgetProvider::widgetCatalogue() const
+{
+    std::vector<WidgetCatalogueEntry> entries;
+
+    for(const auto& widget : sortBySubMenu(p->m_widgets)) {
+        if(widget.isHidden || (widget.isVisibleWhen && !widget.isVisibleWhen())) {
+            continue;
+        }
+        entries.push_back({.key        = widget.key,
+                           .name       = widget.name,
+                           .categories = widget.subMenus,
+                           .available  = widget.instantiator && p->canCreateWidget(widget.key)});
+    }
+
+    return entries;
 }
 
 bool WidgetProvider::registerWidget(const QString& key, std::function<FyWidget*()> instantiator,
@@ -277,14 +301,37 @@ FyWidget* WidgetProvider::createWidget(const QString& key)
     widget.count++;
 
     auto* newWidget = widget.instantiator();
+    if(!newWidget) {
+        --widget.count;
+        return nullptr;
+    }
 
-    QObject::connect(newWidget, &QObject::destroyed, newWidget, [this, key]() {
-        if(p->m_widgets.contains(key)) {
-            p->m_widgets.at(key).count--;
+    p->m_instances.emplace(newWidget, WidgetProviderPrivate::Instance{.key = key});
+    QObject::connect(newWidget, &QObject::destroyed, newWidget, [this, newWidget] {
+        const auto instance = p->m_instances.find(newWidget);
+        if(instance != p->m_instances.end()) {
+            if(!instance->second.retained && p->m_widgets.contains(instance->second.key)) {
+                --p->m_widgets.at(instance->second.key).count;
+            }
+            p->m_instances.erase(instance);
         }
     });
 
     return newWidget;
+}
+
+void WidgetProvider::setWidgetRetained(FyWidget* widget, bool retained)
+{
+    if(!widget) {
+        return;
+    }
+
+    for(auto& [candidate, instance] : p->m_instances) {
+        if((candidate == widget || widget->isAncestorOf(candidate)) && instance.retained != retained) {
+            instance.retained = retained;
+            p->m_widgets.at(instance.key).count += retained ? -1 : 1;
+        }
+    }
 }
 
 void WidgetProvider::setupAddWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container, int index)

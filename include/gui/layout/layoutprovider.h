@@ -21,7 +21,7 @@
 
 #include "fygui_export.h"
 
-#include <gui/fylayout.h>
+#include <gui/layout/fylayout.h>
 
 #include <QJsonObject>
 #include <QString>

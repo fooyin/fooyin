@@ -88,6 +88,7 @@ public:
     void loadLayoutData(const QJsonObject& layout) override;
 
     [[nodiscard]] bool canAddWidget() const override;
+    [[nodiscard]] bool canInsertWidget(int index) const override;
     [[nodiscard]] bool canMoveWidget(int index, int newIndex) const override;
     [[nodiscard]] int widgetIndex(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtId(const Id& id) const override;
@@ -99,9 +100,11 @@ public:
 
     int addWidget(FyWidget* widget) override;
     void insertWidget(int index, FyWidget* widget) override;
-    void removeWidget(int index) override;
-    void replaceWidget(int index, FyWidget* newWidget) override;
     void moveWidget(int index, int newIndex) override;
+    FyWidget* takeWidget(int index) override;
+
+    [[nodiscard]] QJsonObject saveEditingState() const override;
+    void restoreEditingState(const QJsonObject& state) override;
 
 Q_SIGNALS:
     void configChanged();
@@ -119,6 +122,8 @@ protected:
     void timerEvent(QTimerEvent* event) override;
     void dropEvent(QDropEvent* event) override;
     void openConfigDialog() override;
+
+    FyWidget* exchangeWidgetImpl(int index, FyWidget* newWidget) override;
 
 private:
     void setupConnections();

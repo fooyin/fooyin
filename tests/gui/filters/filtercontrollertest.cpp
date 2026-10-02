@@ -29,11 +29,11 @@
 #include <core/ratingsymbols.h>
 #include <gui/coverprovider.h>
 #include <gui/coverrepository.h>
-#include <gui/editablelayout.h>
 #include <gui/guisettings.h>
 #include <gui/guistyleprovider.h>
 #include <gui/internalguisettings.h>
-#include <gui/layoutprovider.h>
+#include <gui/layout/editablelayout.h>
+#include <gui/layout/layoutprovider.h>
 #include <gui/playlist/currentplaylistcontroller.h>
 #include <gui/widgetprovider.h>
 #include <utils/actions/actionmanager.h>

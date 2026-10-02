@@ -8,8 +8,6 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/dsp/dsplayouteditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/dsp/dspsettingsdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/dsp/dspsettingsprovider.h
-    ${CMAKE_SOURCE_DIR}/include/gui/editablelayout.h
-    ${CMAKE_SOURCE_DIR}/include/gui/fylayout.h
     ${CMAKE_SOURCE_DIR}/include/gui/fywidget.h
     ${CMAKE_SOURCE_DIR}/include/gui/framerate.h
     ${CMAKE_SOURCE_DIR}/include/gui/guiconstants.h
@@ -18,7 +16,9 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h
     ${CMAKE_SOURCE_DIR}/include/gui/guistyleprovider.h
     ${CMAKE_SOURCE_DIR}/include/gui/guiutils.h
-    ${CMAKE_SOURCE_DIR}/include/gui/layoutprovider.h
+    ${CMAKE_SOURCE_DIR}/include/gui/layout/editablelayout.h
+    ${CMAKE_SOURCE_DIR}/include/gui/layout/fylayout.h
+    ${CMAKE_SOURCE_DIR}/include/gui/layout/layoutprovider.h
     ${CMAKE_SOURCE_DIR}/include/gui/output/outputprofilemanager.h
     ${CMAKE_SOURCE_DIR}/include/gui/playlist/currentplaylistcontroller.h
     ${CMAKE_SOURCE_DIR}/include/gui/playlist/playlisteditcontroller.h
@@ -190,8 +190,6 @@ set(SOURCES
     dsp/resamplersettingswidget.h
     dsp/skipsilencesettingswidget.cpp
     dsp/skipsilencesettingswidget.h
-    editablelayout.cpp
-    editablelayout_p.h
     filters/filtercolumnregistry.cpp
     filters/filtercolumnregistry.h
     filters/filtercolumneditordialog.cpp
@@ -225,7 +223,6 @@ set(SOURCES
     filters/tracklistwidget.h
     filters/filterconfigwidget.cpp
     filters/filterconfigwidget.h
-    fylayout.cpp
     fywidget.cpp
     guiapplication.cpp
     guiapplication.h
@@ -235,11 +232,26 @@ set(SOURCES
     guiutils.cpp
     internalguisettings.cpp
     internalguisettings.h
-    layoutcommands.cpp
-    layoutcommands.h
+    layout/editablelayout.cpp
+    layout/editablelayout_p.h
+    layout/fylayout.cpp
+    layout/layoutcommands.cpp
+    layout/layoutcommands.h
+    layout/layoutdragcard.cpp
+    layout/layoutdragcard.h
+    layout/layoutdragcontroller.cpp
+    layout/layoutdragcontroller.h
+    layout/layoutdragsurface.cpp
+    layout/layoutdragsurface.h
+    layout/layoututils.cpp
+    layout/layoututils.h
+    layout/layoutpaneloverlay.cpp
+    layout/layoutpaneloverlay.h
+    layout/layoutprovider.cpp
+    layout/widgetpalette.cpp
+    layout/widgetpalette.h
     pluginsettingsregistry.cpp
     pluginsettingsregistry.h
-    layoutprovider.cpp
     librarytree/librarytreecontroller.cpp
     librarytree/librarytreecontroller.h
     librarytree/librarytreedelegate.cpp
@@ -565,6 +577,8 @@ set(SOURCES
     settings/widgets/statuswidgetpage.h
     splitters/fysplitter.cpp
     splitters/fysplitter.h
+    splitters/splittergraboverlay.cpp
+    splitters/splittergraboverlay.h
     splitters/splitterstate.cpp
     splitters/splitterstate.h
     splitters/splitterwidget.cpp
