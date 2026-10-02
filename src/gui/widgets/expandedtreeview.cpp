@@ -2167,6 +2167,7 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
 
     if(m_view->selectionModel()->isSelected(index)) {
         opt.state |= QStyle::State_Selected;
+        opt.features.setFlag(QStyleOptionViewItem::Alternate, false);
     }
     if(rowFocused && current.parent() == index.parent() && current.row() == index.row()) {
         currentRowHasFocus = true;
