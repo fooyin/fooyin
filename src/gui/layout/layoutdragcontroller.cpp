@@ -847,12 +847,9 @@ void LayoutDragController::updatePaletteHover()
     const QRect paletteArea{m_palette->mapToGlobal(QPoint{}), m_palette->size()};
     const bool overHint
         = m_paletteHint->isVisible() && m_paletteHint->rect().contains(m_paletteHint->mapFromGlobal(position));
-    const bool searching = m_palette->isVisible() && m_palette->findChild<QLineEdit*>()->hasFocus();
-    const bool hovered   = window->isActiveWindow()
-                        && (searching
-                            || (windowArea.contains(position)
-                                && (overHint || position.x() >= windowArea.right() - 7
-                                    || (m_palette->isVisible() && paletteArea.contains(position)))));
+    const bool hovered = window->isActiveWindow() && windowArea.contains(position)
+                      && (overHint || position.x() >= windowArea.right() - 7
+                          || (m_palette->isVisible() && paletteArea.contains(position)));
     if(hovered != m_paletteHovered) {
         m_paletteHovered = hovered;
         m_paletteHoverTimer.stop();
