@@ -6091,12 +6091,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="48"/>
         <source>Are you sure you want to permanently delete &quot;%1&quot;?</source>
-        <translation>Are you sure you want to permanently delete &quot;%1&quot;?</translation>
+        <translation>Are you sure you want to permanently delete “%1”?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="49"/>
         <source>Are you sure you want to delete &quot;%1&quot;?</source>
-        <translation>Are you sure you want to delete &quot;%1&quot;?</translation>
+        <translation>Are you sure you want to delete “%1”?</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="51"/>
@@ -6316,7 +6316,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="335"/>
         <source>A preset named &quot;%1&quot; already exists. Overwrite it?</source>
-        <translation>A preset named &quot;%1&quot; already exists. Overwrite it?</translation>
+        <translation>A preset named “%1” already exists. Overwrite it?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="477"/>
@@ -6534,7 +6534,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="288"/>
         <source>Could not move &quot;%1&quot; to the trash. Delete it permanently?</source>
-        <translation type="unfinished"></translation>
+        <translation>Could not move “%1” to the trash. Delete it permanently?</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="290"/>
@@ -6723,7 +6723,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="63"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</translation>
+        <translation>For “Replace current playlist” and “Create new playlist”, start playback immediately.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="73"/>
@@ -6768,7 +6768,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="93"/>
         <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
-        <translation>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</translation>
+        <translation>When this selection playlist is used for playback, preserve it with “(Playback)” appended to its name instead of replacing its tracks.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="99"/>
@@ -7125,7 +7125,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="57"/>
         <source>The expression for library filter &quot;%1&quot; is invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>The expression for library filter “%1” is invalid.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="89"/>
@@ -8650,7 +8650,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="889"/>
         <source>Delete layout &quot;%1&quot;?</source>
-        <translation>Delete layout &quot;%1&quot;?</translation>
+        <translation>Delete layout “%1”?</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="914"/>
@@ -9624,7 +9624,7 @@ If the default half-star does not render correctly with your system font, choose
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="168"/>
         <source>e.g. &quot;%1&quot;</source>
         <extracomment>Example of semicolon-separated file extensions (e.g. mp3;m4a)</extracomment>
-        <translation>e.g. &quot;%1&quot;</translation>
+        <translation>e.g. “%1”</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="171"/>
@@ -10259,7 +10259,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="78"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</translation>
+        <translation>For “Replace current playlist” and “Create new playlist”, start playback immediately.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="109"/>
@@ -10331,7 +10331,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="96"/>
         <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
-        <translation>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</translation>
+        <translation>When this selection playlist is used for playback, preserve it with “(Playback)” appended to its name instead of replacing its tracks.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="117"/>
@@ -14390,7 +14390,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="436"/>
         <source>Remove playlist &quot;%1&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove playlist “%1”?</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="439"/>
@@ -15800,7 +15800,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="207"/>
         <source>Initialised</source>
-        <translation type="unfinished"></translation>
+        <translation>Initialized</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="266"/>
@@ -15906,7 +15906,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/plugins/projectm/projectmpresetdialog.cpp" line="72"/>
         <source>Favourites only</source>
-        <translation type="unfinished"></translation>
+        <translation>Favorites only</translation>
     </message>
 </context>
 <context>
@@ -16203,12 +16203,12 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="156"/>
         <source>&amp;Favourite Current Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Favorite Current Preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="157"/>
         <source>Cycle &amp;Favourites Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Cycle &amp;Favorites Only</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="158"/>
@@ -16269,12 +16269,12 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="558"/>
         <source>Favourite the current projectM preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Favorite the current projectM preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="565"/>
         <source>Cycle through favourite projectM presets only</source>
-        <translation type="unfinished"></translation>
+        <translation>Cycle through favorite projectM presets only</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="570"/>
@@ -16812,8 +16812,8 @@ Changes take effect the next time the PipeWire output is initialized.</translati
         <source>Set &quot;%1&quot; on %Ln track(s)?</source>
         <extracomment>%1 is the Quick Tagger entry name, for example &quot;Rating&quot;.</extracomment>
         <translation>
-            <numerusform>Set &quot;%1&quot; on %Ln track?</numerusform>
-            <numerusform>Set &quot;%1&quot; on %Ln tracks?</numerusform>
+            <numerusform>Set “%1” on %Ln track?</numerusform>
+            <numerusform>Set “%1” on %Ln tracks?</numerusform>
         </translation>
     </message>
 </context>
@@ -16916,7 +16916,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="84"/>
         <source>Used with the &quot;Calculate as albums (by tags)&quot; action</source>
-        <translation>Used with the &quot;Calculate as albums (by tags)&quot; action</translation>
+        <translation>Used with the “Calculate as albums (by tags)” action</translation>
     </message>
 </context>
 <context>
@@ -17081,7 +17081,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="64"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately</source>
-        <translation>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately</translation>
+        <translation>For “Replace current playlist” and “Create new playlist”, start playback immediately</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="65"/>
@@ -17506,7 +17506,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1150"/>
         <source>Saved as &quot;%1&quot;</source>
-        <translation>Saved as &quot;%1&quot;</translation>
+        <translation>Saved as “%1”</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1154"/>
@@ -20446,7 +20446,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="77"/>
         <source>e.g. &quot;%1&quot;</source>
         <extracomment>Example of semicolon-separated file extensions (e.g. mp3;m4a)</extracomment>
-        <translation>e.g. &quot;%1&quot;</translation>
+        <translation>e.g. “%1”</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="80"/>
@@ -22230,7 +22230,7 @@ This does not support full scripting.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="146"/>
         <source>Use any of &quot;%1&quot; in the editor to enter multiple values.</source>
-        <translation>Use any of &quot;%1&quot; in the editor to enter multiple values.</translation>
+        <translation>Use any of “%1” in the editor to enter multiple values.</translation>
     </message>
 </context>
 <context>
@@ -22737,7 +22737,7 @@ This does not support full scripting.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="174"/>
         <source>Item: &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Item: “%1”</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="175"/>
@@ -24335,7 +24335,7 @@ Set to 0 to choose automatically from the remote buffer length.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="730"/>
         <source>Split ID3v2.3 values with non-standard &quot;;&quot; separators when reading tags.</source>
-        <translation>Split ID3v2.3 values with non-standard &quot;;&quot; separators when reading tags.</translation>
+        <translation>Split ID3v2.3 values with non-standard “;” separators when reading tags.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="737"/>
