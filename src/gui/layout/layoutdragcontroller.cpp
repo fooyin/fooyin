@@ -407,7 +407,9 @@ void LayoutDragController::timerEvent(QTimerEvent* event)
     else if(event->timerId() == m_paletteHoverTimer.timerId()) {
         m_paletteHoverTimer.stop();
 
-        if(!m_editing || m_paletteDocked || m_drag || QApplication::mouseButtons() != Qt::NoButton) {
+        if(!m_editing || m_paletteDocked
+           || (m_drag ? m_drag->creationKey.isEmpty() || m_paletteHovered
+                      : QApplication::mouseButtons() != Qt::NoButton)) {
             return;
         }
 
@@ -834,6 +836,22 @@ void LayoutDragController::hidePalette()
 void LayoutDragController::updatePaletteHover()
 {
     updatePaletteHint();
+
+    if(m_editing && !m_paletteDocked && m_drag) {
+        if(m_drag->creationKey.isEmpty() || !m_palette->isVisible()) {
+            m_paletteHoverTimer.stop();
+            return;
+        }
+
+        const bool hovered = m_palette->rect().contains(m_palette->mapFrom(m_layout, m_drag->position).toPoint());
+        if(std::exchange(m_paletteHovered, hovered) != hovered) {
+            m_paletteHoverTimer.stop();
+        }
+        if(!hovered && !m_paletteHoverTimer.isActive()) {
+            m_paletteHoverTimer.start(600, this);
+        }
+        return;
+    }
 
     if(!m_editing || m_paletteDocked || m_drag || QApplication::mouseButtons() != Qt::NoButton) {
         m_paletteHoverTimer.stop();
