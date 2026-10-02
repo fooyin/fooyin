@@ -177,6 +177,7 @@ constexpr auto PlaylistCurrentPreset = "PlaylistWidget/CurrentPreset";
 constexpr auto LastFilePath          = "Interface/LastFilePath";
 constexpr auto LastPlaylistPath      = "Playlist/LastPlaylistPath";
 constexpr auto ConfirmMetadataWipe   = "MetadataLookup/ConfirmWipeWritableTags";
+constexpr auto ShowLayoutEditingHint = "Interface/ShowLayoutEditingHint";
 
 enum GuiInternalSettings : uint32_t
 {

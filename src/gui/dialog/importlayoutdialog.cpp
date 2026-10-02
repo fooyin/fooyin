@@ -19,7 +19,7 @@
 
 #include "importlayoutdialog.h"
 
-#include <gui/layoutprovider.h>
+#include <gui/layout/layoutprovider.h>
 #include <gui/theme/fytheme.h>
 
 #include <QCheckBox>

@@ -73,15 +73,17 @@ constexpr auto ScriptFormatting = "format-text-bold";
 constexpr auto Command          = "command";
 constexpr auto MainMenu         = "application-menu";
 
-constexpr auto Quit          = "application-exit";
-constexpr auto Settings      = "preferences-system";
-constexpr auto RescanLibrary = "view-refresh";
-constexpr auto PlaylistPlay  = "media-playlist-play";
-constexpr auto Randomize     = "randomize";
-constexpr auto LayoutEditing = "applications-graphics";
-constexpr auto QuickSetup    = "preferences-desktop";
-constexpr auto Options       = "preferences-other";
-constexpr auto SidebarRight  = "sidebar-right";
+constexpr auto Quit           = "application-exit";
+constexpr auto Settings       = "preferences-system";
+constexpr auto RescanLibrary  = "view-refresh";
+constexpr auto PlaylistPlay   = "media-playlist-play";
+constexpr auto Randomize      = "randomize";
+constexpr auto LayoutEditing  = "applications-graphics";
+constexpr auto GripHorizontal = "grip-horizontal";
+constexpr auto GripVertical   = "grip-vertical";
+constexpr auto QuickSetup     = "preferences-desktop";
+constexpr auto Options        = "preferences-other";
+constexpr auto SidebarRight   = "sidebar-right";
 } // namespace Icons
 
 constexpr auto MenuBar = "Fooyin.MenuBar";

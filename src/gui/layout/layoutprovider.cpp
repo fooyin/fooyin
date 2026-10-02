@@ -17,7 +17,7 @@
  *
  */
 
-#include <gui/layoutprovider.h>
+#include <gui/layout/layoutprovider.h>
 
 #include "dialog/importlayoutdialog.h"
 

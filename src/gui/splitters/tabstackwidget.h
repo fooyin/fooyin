@@ -29,7 +29,7 @@ namespace Fooyin {
 class SettingsManager;
 class WidgetProvider;
 
-class TabStackWidget : public WidgetContainer
+class FYGUI_EXPORT TabStackWidget : public WidgetContainer
 {
     Q_OBJECT
 
@@ -44,6 +44,7 @@ public:
     [[nodiscard]] Qt::Orientation orientation() const override;
 
     [[nodiscard]] bool canAddWidget() const override;
+    [[nodiscard]] bool canInsertWidget(int index) const override;
     [[nodiscard]] bool canMoveWidget(int index, int newIndex) const override;
     [[nodiscard]] int widgetIndex(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtId(const Id& id) const override;
@@ -55,12 +56,18 @@ public:
 
     int addWidget(FyWidget* widget) override;
     void insertWidget(int index, FyWidget* widget) override;
-    void removeWidget(int index) override;
-    void replaceWidget(int index, FyWidget* newWidget) override;
     void moveWidget(int index, int newIndex) override;
+    FyWidget* takeWidget(int index) override;
+
+    [[nodiscard]] QJsonObject saveChildState(int index) const override;
+    void restoreChildState(int index, const QJsonObject& state) override;
+    [[nodiscard]] QJsonObject saveEditingState() const override;
+    void restoreEditingState(const QJsonObject& state) override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
+
+    FyWidget* exchangeWidgetImpl(int index, FyWidget* newWidget) override;
 
 private:
     [[nodiscard]] int indexOfWidget(FyWidget* widget) const;

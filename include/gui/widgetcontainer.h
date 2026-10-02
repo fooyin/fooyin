@@ -30,11 +30,14 @@ class SettingsManager;
 class WidgetProvider;
 
 /*!
- * Represents a container of FyWidgets.
- * This should be used as the base class for FyWidgets which can contain/hold other
- * FyWidgets.
- * It's recommended to save the child widgets under the 'Widgets' key
- * when reimplementing @fn saveLayoutData.
+ * Base class for layout widgets which hold other FyWidgets.
+ *
+ * Successful insertion transfers ownership to the container. Use takeWidget() or
+ * exchangeWidget() to transfer live instances without deleting them.
+ *
+ * Reimplement saveLayoutData() to persist container configuration and child layouts,
+ * preferably storing children under the 'Widgets' key. Editing state instead records
+ * placement metadata for existing children without serialising or recreating them.
  */
 class FYGUI_EXPORT WidgetContainer : public FyWidget
 {
@@ -44,33 +47,105 @@ public:
     explicit WidgetContainer(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] virtual bool canAddWidget() const                         = 0;
+    [[nodiscard]] virtual bool canInsertWidget(int index) const             = 0;
     [[nodiscard]] virtual bool canMoveWidget(int index, int newIndex) const = 0;
     [[nodiscard]] virtual int widgetIndex(const Id& id) const               = 0;
-    [[nodiscard]] virtual FyWidget* widgetAtId(const Id& id) const          = 0;
-    [[nodiscard]] virtual FyWidget* widgetAtIndex(int index) const          = 0;
+    /*! Returns the immediate child with @p id, or nullptr when it is not present. */
+    [[nodiscard]] virtual FyWidget* widgetAtId(const Id& id) const = 0;
+    /*! Returns the immediate child at @p index, or nullptr for an invalid or empty index. */
+    [[nodiscard]] virtual FyWidget* widgetAtIndex(int index) const = 0;
+    /*!
+     * Resolves @p pos in container coordinates to a layout widget.
+     * Containers may return themselves for their own controls, such as a shared tab bar.
+     * The default returns nullptr.
+     */
     [[nodiscard]] virtual FyWidget* widgetAtPosition(const QPoint& pos) const;
+    /*!
+     * Returns the layout area representing @p widget in container coordinates.
+     * The default maps the widget's actual geometry, or returns an empty rectangle for nullptr.
+     */
     [[nodiscard]] virtual QRect widgetGeometry(FyWidget* widget) const;
+    /*! Returns the immediate child count. Containers may exclude placeholder widgets. */
     [[nodiscard]] virtual int widgetCount() const = 0;
+    /*!
+     * Returns the child count used for positioning actions.
+     * Defaults to widgetCount(); containers which need placeholder positions can include them here.
+     */
     [[nodiscard]] virtual int fullWidgetCount() const;
+    /*! Returns all immediate layout children in index order, including placeholders and hidden tabs. */
     [[nodiscard]] virtual WidgetList widgets() const = 0;
 
+    /*! Returns the child arrangement direction. Defaults to Qt::Horizontal for containers without a split axis. */
     [[nodiscard]] virtual Qt::Orientation orientation() const;
 
-    virtual int addWidget(FyWidget* widget)                    = 0;
-    virtual void insertWidget(int index, FyWidget* widget)     = 0;
-    virtual void removeWidget(int index)                       = 0;
-    virtual void replaceWidget(int index, FyWidget* newWidget) = 0;
-    virtual void moveWidget(int index, int newIndex)           = 0;
+    /*!
+     * Adds @p widget at the container's default position and returns its index.
+     * On success, the container takes ownership.
+     */
+    virtual int addWidget(FyWidget* widget) = 0;
+    /*! Inserts @p widget at @p index, taking ownership on success. */
+    virtual void insertWidget(int index, FyWidget* widget) = 0;
+    /*!
+     * Removes and schedules deletion of the child at @p index.
+     * Use takeWidget() when the child must remain alive.
+     */
+    virtual void removeWidget(int index);
+    /*! Calls exchangeWidget() and schedules deletion of the detached widget on success. */
+    void replaceWidget(int index, FyWidget* newWidget);
+    /*!
+     * Replaces an existing widget with @p newWidget, preserving editing state and visibility.
+     * Returns the hidden, parentless predecessor, whose ownership passes to the caller.
+     * Returns nullptr on failure without changing the container or taking ownership of @p newWidget.
+     */
+    [[nodiscard]] FyWidget* exchangeWidget(int index, FyWidget* newWidget);
+    /*! Reorders a child within this container. Call canMoveWidget() first. */
+    virtual void moveWidget(int index, int newIndex) = 0;
+    /*!
+     * Detaches the child at @p index without deletion, replacement placeholders, or container cleanup.
+     * Returns the hidden, parentless child, or nullptr for an invalid or empty index.
+     * The caller owns the returned widget.
+     */
+    virtual FyWidget* takeWidget(int index) = 0;
 
+    /*! Saves container state, such as splitter sizes. The default returns an empty byte array. */
     [[nodiscard]] virtual QByteArray saveState() const;
+    /*! Restores saveState() data and reports success. The default is a no-op returning true. */
     virtual bool restoreState(const QByteArray& state);
+    /*!
+     * Saves placement metadata for the child at @p index, such as a tab title or splitter lock.
+     * This does not save the child's configuration. The default returns an empty object.
+     */
+    [[nodiscard]] virtual QJsonObject saveChildState(int index) const;
+    /*! Applies metadata to the existing child at @p index. The default does nothing. */
+    virtual void restoreChildState(int index, const QJsonObject& state);
+    /*!
+     * Captures runtime placement state for layout editing, without saving child layouts.
+     * The default combines saveState() with saveChildState() for each entry in widgets().
+     * Overrides can add container-specific state, such as the active tab.
+     */
+    [[nodiscard]] virtual QJsonObject saveEditingState() const;
+    /*!
+     * Applies an editing snapshot to the current children by index.
+     * Callers must restore the intended child order before applying the snapshot.
+     * The default restores container state followed by metadata for the available child slots.
+     */
+    virtual void restoreEditingState(const QJsonObject& state);
 
+    /*!
+     * Saves copy-adjusted container data and child layouts under 'Widgets'.
+     * The same @p context is shared with descendants to preserve relationships within the copy.
+     */
     void saveCopyLayoutData(QJsonObject& layout, LayoutCopyContext& context, bool isRoot) override;
 
     /*!
-     * Convenience method to load all widgets in the @p widgets array.
+     * Creates and adds children from saved layout objects, then finalises the added widgets.
+     * Unavailable widget types are represented by placeholders which retain their saved data.
+     * Existing children are not cleared; prepare the container before loading a replacement layout.
      */
     void loadWidgets(const QJsonArray& widgets);
+
+protected:
+    virtual FyWidget* exchangeWidgetImpl(int index, FyWidget* newWidget) = 0;
 
 private:
     WidgetProvider* m_widgetProvider;

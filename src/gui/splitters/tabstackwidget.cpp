@@ -24,7 +24,6 @@
 #include <gui/widgets/editabletabbar.h>
 #include <gui/widgets/editabletabwidget.h>
 #include <utils/enum.h>
-#include <utils/helpers.h>
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
@@ -150,6 +149,11 @@ bool TabStackWidget::canAddWidget() const
     return true;
 }
 
+bool TabStackWidget::canInsertWidget(int index) const
+{
+    return index >= 0 && index <= m_tabs->count();
+}
+
 bool TabStackWidget::canMoveWidget(int index, int newIndex) const
 {
     const auto count = static_cast<int>(m_widgets.size());
@@ -250,39 +254,53 @@ void TabStackWidget::insertWidget(int index, FyWidget* widget)
     m_widgets.insert(m_widgets.begin() + insertionIndex, widget);
 }
 
-void TabStackWidget::removeWidget(int index)
-{
-    if(index < 0 || index > m_tabs->count()) {
-        return;
-    }
-
-    m_tabs->removeTab(index);
-    m_widgets.at(index)->deleteLater();
-    m_widgets.erase(m_widgets.begin() + index);
-}
-
-void TabStackWidget::replaceWidget(int index, FyWidget* newWidget)
-{
-    if(index < 0 || std::cmp_greater_equal(index, m_widgets.size())) {
-        return;
-    }
-
-    m_tabs->removeTab(index);
-    m_tabs->insertTab(index, newWidget, newWidget->name());
-
-    m_widgets.at(index)->deleteLater();
-    m_widgets.erase(m_widgets.begin() + index);
-    m_widgets.insert(m_widgets.begin() + index, newWidget);
-
-    m_tabs->setCurrentIndex(index);
-}
-
 void TabStackWidget::moveWidget(int index, int newIndex)
 {
+    if(canMoveWidget(index, newIndex)) {
+        m_tabs->tabBar()->moveTab(index, newIndex);
+    }
+}
+
+FyWidget* TabStackWidget::takeWidget(int index)
+{
+    if(index < 0 || std::cmp_greater_equal(index, m_widgets.size())) {
+        return nullptr;
+    }
+
     auto* widget = m_widgets.at(index);
-    Utils::move(m_widgets, index, newIndex);
     m_tabs->removeTab(index);
-    m_tabs->insertTab(newIndex, widget, widget->name());
+    m_widgets.erase(m_widgets.begin() + index);
+    widget->hide();
+    widget->setParent(nullptr);
+    return widget;
+}
+
+QJsonObject TabStackWidget::saveChildState(int index) const
+{
+    return {{"Title"_L1, m_tabs->tabText(index)}};
+}
+
+void TabStackWidget::restoreChildState(int index, const QJsonObject& state)
+{
+    if(index >= 0 && index < m_tabs->count() && state.contains("Title"_L1)) {
+        m_tabs->setTabText(index, state.value("Title"_L1).toString());
+    }
+}
+
+QJsonObject TabStackWidget::saveEditingState() const
+{
+    auto state          = WidgetContainer::saveEditingState();
+    state["Current"_L1] = m_tabs->currentIndex();
+    return state;
+}
+
+void TabStackWidget::restoreEditingState(const QJsonObject& state)
+{
+    WidgetContainer::restoreEditingState(state);
+    m_tabs->setCurrentIndex(state.value("Current"_L1).toInt(-1));
+    for(int i{0}; std::cmp_less(i, m_widgets.size()); ++i) {
+        m_widgets.at(i)->setVisible(i == m_tabs->currentIndex());
+    }
 }
 
 void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
@@ -364,6 +382,13 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(remove);
 
     menu->popup(m_tabs->tabBar()->mapToGlobal(point));
+}
+
+FyWidget* TabStackWidget::exchangeWidgetImpl(int index, FyWidget* newWidget)
+{
+    auto* previous = takeWidget(index);
+    insertWidget(index, newWidget);
+    return previous;
 }
 
 int TabStackWidget::indexOfWidget(FyWidget* widget) const

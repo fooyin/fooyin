@@ -19,7 +19,7 @@
 
 #include "quicksetupmodel.h"
 
-#include "gui/layoutprovider.h"
+#include <gui/layout/layoutprovider.h>
 
 namespace Fooyin {
 QuickSetupModel::QuickSetupModel(LayoutProvider* layoutProvider, QObject* parent)

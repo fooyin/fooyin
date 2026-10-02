@@ -264,6 +264,11 @@ bool SplitterWidget::canAddWidget() const
     return true;
 }
 
+bool SplitterWidget::canInsertWidget(int index) const
+{
+    return index >= 0 && std::cmp_less_equal(index, m_widgets.size());
+}
+
 bool SplitterWidget::canMoveWidget(int index, int newIndex) const
 {
     const auto count = static_cast<int>(m_widgets.size());
@@ -345,27 +350,11 @@ int SplitterWidget::addWidget(FyWidget* widget)
 
 void SplitterWidget::insertWidget(int index, FyWidget* widget)
 {
-    if(!widget) {
+    if(!widget || !canInsertWidget(index)) {
         return;
     }
-
-    if(index < 0 || std::cmp_greater(index, m_widgets.size())) {
-        return;
-    }
-
-    if(std::cmp_less(index, m_widgets.size()) && qobject_cast<Dummy*>(m_widgets.at(index))) {
-        auto* replacedWidget = m_splitter->replaceWidget(index, widget);
-        if(!replacedWidget) {
-            return;
-        }
-
-        m_widgets[index] = widget;
-        replacedWidget->deleteLater();
-    }
-    else {
-        m_widgets.insert(m_widgets.begin() + index, widget);
-        m_splitter->insertWidget(index, widget);
-    }
+    m_widgets.insert(m_widgets.begin() + index, widget);
+    m_splitter->insertWidget(index, widget);
 }
 
 void SplitterWidget::removeWidget(int index)
@@ -381,24 +370,8 @@ void SplitterWidget::removeWidget(int index)
         m_widgets[index] = dummy;
     }
     else {
-        m_widgets.at(index)->deleteLater();
-        m_widgets.erase(m_widgets.begin() + index);
+        WidgetContainer::removeWidget(index);
     }
-}
-
-void SplitterWidget::replaceWidget(int index, FyWidget* newWidget)
-{
-    if(index < 0 || std::cmp_greater_equal(index, m_widgets.size())) {
-        return;
-    }
-
-    auto* replacedWidget = m_splitter->replaceWidget(index, newWidget);
-    if(!replacedWidget) {
-        return;
-    }
-
-    m_widgets[index] = newWidget;
-    replacedWidget->deleteLater();
 }
 
 void SplitterWidget::moveWidget(int index, int newIndex)
@@ -406,6 +379,55 @@ void SplitterWidget::moveWidget(int index, int newIndex)
     auto* widget = m_widgets.at(index);
     Utils::move(m_widgets, index, newIndex);
     m_splitter->insertWidget(newIndex, widget);
+}
+
+FyWidget* SplitterWidget::takeWidget(int index)
+{
+    if(index < 0 || std::cmp_greater_equal(index, m_widgets.size())) {
+        return nullptr;
+    }
+
+    auto* widget = m_widgets.at(index);
+    m_widgets.erase(m_widgets.begin() + index);
+    widget->hide();
+    widget->setParent(nullptr);
+    return widget;
+}
+
+QJsonObject SplitterWidget::saveChildState(int index) const
+{
+    return {{"Locked"_L1, isWidgetLocked(index)}};
+}
+
+void SplitterWidget::restoreChildState(int index, const QJsonObject& state)
+{
+    setWidgetLocked(index, state.value("Locked"_L1).toBool());
+}
+
+void SplitterWidget::restoreEditingState(const QJsonObject& state)
+{
+    const auto children = state.value("Children"_L1).toArray();
+    const auto count    = std::min(children.size(), static_cast<qsizetype>(m_widgets.size()));
+
+    // Unlock first so restoring locks doesn't depend on child order
+    for(int i{0}; i < count; ++i) {
+        if(!children.at(i).toObject().value("Locked"_L1).toBool()) {
+            setWidgetLocked(i, false);
+        }
+    }
+    for(int i{0}; i < count; ++i) {
+        restoreChildState(i, children.at(i).toObject());
+    }
+
+    restoreState(QByteArray::fromBase64(state.value("State"_L1).toString().toUtf8()));
+}
+
+void SplitterWidget::expandSingleWidget()
+{
+    if(m_widgets.size() == 1) {
+        m_splitter->setLocked(0, false);
+        m_splitter->refresh();
+    }
 }
 
 bool SplitterWidget::isWidgetLocked(int index) const
@@ -536,6 +558,15 @@ void SplitterWidget::finalise()
         addDummy();
         addDummy();
     }
+}
+
+FyWidget* SplitterWidget::exchangeWidgetImpl(int index, FyWidget* newWidget)
+{
+    auto* previous = qobject_cast<FyWidget*>(m_splitter->replaceWidget(index, newWidget));
+    if(previous) {
+        m_widgets[index] = newWidget;
+    }
+    return previous;
 }
 } // namespace Fooyin
 

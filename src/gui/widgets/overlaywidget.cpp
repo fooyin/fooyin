@@ -19,7 +19,6 @@
 
 #include <gui/widgets/overlaywidget.h>
 
-#include <QApplication>
 #include <QLabel>
 #include <QPaintEvent>
 #include <QPainter>
@@ -67,6 +66,7 @@ public:
 
     bool m_hovered{false};
     bool m_selected{false};
+    bool m_customColour{false};
 
     OverlayWidget::Options m_options;
     QColor m_colour;
@@ -195,15 +195,18 @@ QColor OverlayWidget::colour() const
 
 void OverlayWidget::setColour(const QColor& colour)
 {
-    p->m_colour = colour;
+    p->m_colour       = colour;
+    p->m_customColour = true;
     update();
 }
 
 void OverlayWidget::resetColour()
 {
-    static QColor colour = QApplication::palette().color(QPalette::Highlight);
+    auto colour = palette().color(QPalette::Highlight);
     colour.setAlpha(80);
-    p->m_colour = colour;
+    p->m_colour       = colour;
+    p->m_customColour = false;
+    update();
 }
 
 void OverlayWidget::select()
@@ -227,6 +230,9 @@ bool OverlayWidget::event(QEvent* event)
     }
     else if(event->type() == QEvent::ParentChange) {
         p->handleParentChanged();
+    }
+    else if((event->type() == QEvent::PaletteChange || event->type() == QEvent::StyleChange) && !p->m_customColour) {
+        resetColour();
     }
 
     return QWidget::event(event);
@@ -252,8 +258,7 @@ bool OverlayWidget::eventFilter(QObject* watched, QEvent* event)
         raise();
     }
 
-    event->accept();
-    return true;
+    return QWidget::eventFilter(watched, event);
 }
 
 void OverlayWidget::showEvent(QShowEvent* event)

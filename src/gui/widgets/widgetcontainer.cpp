@@ -61,6 +61,42 @@ Qt::Orientation WidgetContainer::orientation() const
     return Qt::Horizontal;
 }
 
+void WidgetContainer::removeWidget(int index)
+{
+    if(auto* widget = takeWidget(index)) {
+        widget->deleteLater();
+    }
+}
+
+void WidgetContainer::replaceWidget(int index, FyWidget* newWidget)
+{
+    if(auto* previous = exchangeWidget(index, newWidget)) {
+        previous->deleteLater();
+    }
+}
+
+FyWidget* WidgetContainer::exchangeWidget(int index, FyWidget* newWidget)
+{
+    auto* previous = widgetAtIndex(index);
+    if(!previous || !newWidget || previous == newWidget || newWidget == this || newWidget->isAncestorOf(this)) {
+        return nullptr;
+    }
+
+    if(auto* parent = qobject_cast<WidgetContainer*>(newWidget->findParent());
+       parent && parent->widgetIndex(newWidget->id()) >= 0) {
+        return nullptr;
+    }
+
+    const auto state  = saveEditingState();
+    const bool hidden = previous->isHidden();
+    if(auto* detached = exchangeWidgetImpl(index, newWidget)) {
+        newWidget->setVisible(!hidden);
+        restoreEditingState(state);
+        return detached;
+    }
+    return nullptr;
+}
+
 QByteArray WidgetContainer::saveState() const
 {
     return {};
@@ -69,6 +105,34 @@ QByteArray WidgetContainer::saveState() const
 bool WidgetContainer::restoreState(const QByteArray& /*state*/)
 {
     return true;
+}
+
+QJsonObject WidgetContainer::saveChildState(int /*index*/) const
+{
+    return {};
+}
+
+void WidgetContainer::restoreChildState(int /*index*/, const QJsonObject& /*state*/) { }
+
+QJsonObject WidgetContainer::saveEditingState() const
+{
+    QJsonArray children;
+    const auto count = widgets().size();
+    for(int i{0}; std::cmp_less(i, count); ++i) {
+        children.append(saveChildState(i));
+    }
+    return {{"State"_L1, QString::fromUtf8(saveState().toBase64())}, {"Children"_L1, children}};
+}
+
+void WidgetContainer::restoreEditingState(const QJsonObject& state)
+{
+    restoreState(QByteArray::fromBase64(state.value("State"_L1).toString().toUtf8()));
+
+    const auto children = state.value("Children"_L1).toArray();
+    const auto count    = widgets().size();
+    for(int i{0}; i < children.size() && std::cmp_less(i, count); ++i) {
+        restoreChildState(i, children.at(i).toObject());
+    }
 }
 
 void WidgetContainer::saveCopyLayoutData(QJsonObject& layout, LayoutCopyContext& context, bool isRoot)
