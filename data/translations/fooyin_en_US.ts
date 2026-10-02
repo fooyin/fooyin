@@ -1368,7 +1368,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="520"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with &quot;, &quot;.</source>
-        <translation>Looks up a raw tag field by name. Multiple values are joined with &quot;, &quot;.</translation>
+        <translation>Looks up a raw tag field by name. Multiple values are joined with “, ”.</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="316"/>
@@ -2044,7 +2044,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="134"/>
         <source>Use the track&apos;s front cover when artist artwork is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Use the track’s front cover when artist artwork is unavailable</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="138"/>
@@ -2211,7 +2211,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="177"/>
         <source>A query named &quot;%1&quot; already exists. Overwrite it?</source>
-        <translation>A query named &quot;%1&quot; already exists. Overwrite it?</translation>
+        <translation>A query named “%1” already exists. Overwrite it?</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="300"/>
@@ -2336,12 +2336,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="77"/>
         <source>Limits the drive&apos;s read speed while ripping; playback is unaffected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Limits the drive’s read speed while ripping; playback is unaffected.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="78"/>
         <source>This drive doesn&apos;t support read-speed control.</source>
-        <translation type="unfinished"></translation>
+        <translation>This drive doesn’t support read-speed control.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="88"/>
@@ -3160,7 +3160,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="115"/>
         <source>Choose a built-in icon or custom image. If none is set, the button uses the command&apos;s default icon.</source>
-        <translation>Choose a built-in icon or custom image. If none is set, the button uses the command&apos;s default icon.</translation>
+        <translation>Choose a built-in icon or custom image. If none is set, the button uses the command’s default icon.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="122"/>
@@ -3474,7 +3474,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="108"/>
         <source>Don&apos;t reset DSP between tracks</source>
-        <translation>Don&apos;t reset DSP between tracks</translation>
+        <translation>Don’t reset DSP between tracks</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="115"/>
@@ -3790,7 +3790,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="739"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation>Unable to open settings for DSP &quot;%1&quot;.</translation>
+        <translation>Unable to open settings for DSP “%1”.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="792"/>
@@ -4539,7 +4539,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="53"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</translation>
+        <translation>For “Replace current playlist” and “Create new playlist”, start playback immediately.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="54"/>
@@ -4599,7 +4599,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="103"/>
         <source>Expand/collapse or play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Expand/Collapse or play now</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="106"/>
@@ -4909,7 +4909,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="721"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation>Unable to open settings for DSP &quot;%1&quot;.</translation>
+        <translation>Unable to open settings for DSP “%1”.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1030"/>
@@ -4959,7 +4959,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1247"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
-        <translation>Preset &quot;%1&quot; already exists. Overwrite?</translation>
+        <translation>Preset “%1” already exists. Overwrite?</translation>
     </message>
 </context>
 <context>
@@ -4998,12 +4998,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="468"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation>Unable to open settings for DSP &quot;%1&quot;.</translation>
+        <translation>Unable to open settings for DSP “%1”.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="478"/>
         <source>Unable to find DSP &quot;%1&quot;.</source>
-        <translation>Unable to find DSP &quot;%1&quot;.</translation>
+        <translation>Unable to find DSP “%1”.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="523"/>
@@ -5533,7 +5533,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="585"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
-        <translation>Preset &quot;%1&quot; already exists. Overwrite?</translation>
+        <translation>Preset “%1” already exists. Overwrite?</translation>
     </message>
 </context>
 <context>
@@ -5630,7 +5630,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="925"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
-        <translation>Preset &quot;%1&quot; already exists. Overwrite?</translation>
+        <translation>Preset “%1” already exists. Overwrite?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="961"/>
@@ -5649,7 +5649,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="970"/>
         <source>Unable to open &quot;%1&quot; for reading.</source>
-        <translation>Unable to open &quot;%1&quot; for reading.</translation>
+        <translation>Unable to open “%1” for reading.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="992"/>
@@ -5690,12 +5690,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1050"/>
         <source>Unable to open &quot;%1&quot; for writing.</source>
-        <translation>Unable to open &quot;%1&quot; for writing.</translation>
+        <translation>Unable to open “%1” for writing.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1062"/>
         <source>An error occurred while writing &quot;%1&quot;.</source>
-        <translation>An error occurred while writing &quot;%1&quot;.</translation>
+        <translation>An error occurred while writing “%1”.</translation>
     </message>
 </context>
 <context>
@@ -5893,7 +5893,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="113"/>
         <source>Don&apos;t crossfade within the same album</source>
-        <translation type="unfinished"></translation>
+        <translation>Don’t crossfade within the same album</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="114"/>
@@ -6336,7 +6336,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="485"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">Don&apos;t ask again</translation>
+        <translation>Don’t ask again</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="498"/>
@@ -7190,12 +7190,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="186"/>
         <source>Rename &apos;All&apos; filter</source>
-        <translation>Rename &quot;All&quot; filter</translation>
+        <translation>Rename “All” filter</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="189"/>
         <source>Rename &apos;All&apos; Filter</source>
-        <translation>Rename &quot;All&quot; Filter</translation>
+        <translation>Rename “All” Filter</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="189"/>
@@ -7742,7 +7742,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1211"/>
         <source>Look up metadata using the selected tracks&apos; artist and album</source>
-        <translation type="unfinished"></translation>
+        <translation>Look up metadata using the selected tracks’ artist and album</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1216"/>
@@ -7766,7 +7766,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1220"/>
         <source>Look up metadata using the selected tracks&apos; disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Look up metadata using the selected tracks’ disc TOC</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1224"/>
@@ -9873,7 +9873,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="54"/>
         <source>Use &apos;Various Artists&apos; for compilations</source>
-        <translation>Use &quot;Various Artists&quot; for compilations</translation>
+        <translation>Use “Various Artists” for compilations</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="55"/>
@@ -10234,7 +10234,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="58"/>
         <source>Expand/collapse animation</source>
-        <translation>Expand/collapse animation</translation>
+        <translation>Expand/Collapse animation</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="59"/>
@@ -10299,7 +10299,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="209"/>
         <source>Expand/collapse or play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Expand/Collapse or play now</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="74"/>
@@ -10816,7 +10816,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="84"/>
         <source>This will be displayed if lyrics for the current track can&apos;t be found.</source>
-        <translation>This will be displayed if lyrics for the current track can&apos;t be found.</translation>
+        <translation>This will be displayed if lyrics for the current track can’t be found.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="89"/>
@@ -11823,7 +11823,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="454"/>
         <source>Choose how retrieved metadata is combined with the track&apos;s existing tags.</source>
-        <translation type="unfinished"></translation>
+        <translation>Choose how retrieved metadata is combined with the track’s existing tags.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="456"/>
@@ -11873,7 +11873,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="470"/>
         <source>Use the original release date for the Date tag instead of this specific release&apos;s date.</source>
-        <translation type="unfinished"></translation>
+        <translation>Use the original release date for the Date tag instead of this specific release’s date.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="476"/>
@@ -11931,7 +11931,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1012"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">Don&apos;t ask again</translation>
+        <translation>Don’t ask again</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="590"/>
@@ -12311,7 +12311,7 @@ Remove original: deletes the previous file or tag after saving.</translation>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="158"/>
         <source>&lt;p&gt;The Flatpak notification portal does not support custom timeouts or album art. To use the desktop notification service directly, add &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt; to fooyin&apos;s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Restart fooyin after changing its permissions.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;The Flatpak notification portal does not support custom timeouts or album art. To use the desktop notification service directly, add &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt; to fooyin’s Session Bus “talk” permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Restart fooyin after changing its permissions.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="207"/>
@@ -13223,7 +13223,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="257"/>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="261"/>
         <source>Reset &apos;Stop after current&apos; after stopping</source>
-        <translation>Reset &quot;Stop after current&quot; after stopping</translation>
+        <translation>Reset “Stop after current” after stopping</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="305"/>
@@ -13279,7 +13279,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="84"/>
         <source>Save/restore playback state</source>
-        <translation>Save/restore playback state</translation>
+        <translation>Save/Restore playback state</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="85"/>
@@ -13359,7 +13359,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="115"/>
         <source>Track is counted as &apos;played&apos; once either threshold is reached</source>
-        <translation>Track is counted as &quot;played&quot; once either threshold is reached</translation>
+        <translation>Track is counted as “played” once either threshold is reached</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="144"/>
@@ -13500,7 +13500,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="104"/>
         <source>Replace Playing Tracks with the first selected track&apos;s group and start playback at that track</source>
-        <translation type="unfinished"></translation>
+        <translation>Replace Playing Tracks with the first selected track’s group and start playback at that track</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="106"/>
@@ -14043,7 +14043,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="132"/>
         <source>Use the currently playing track&apos;s artwork as the playlist background</source>
-        <translation type="unfinished">Use the currently playing track&apos;s artwork as the playlist background</translation>
+        <translation>Use the currently playing track’s artwork as the playlist background</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="133"/>
@@ -14403,7 +14403,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="442"/>
         <source>Don&apos;t ask again</source>
-        <translation type="unfinished">Don&apos;t ask again</translation>
+        <translation>Don’t ask again</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="445"/>
@@ -14469,7 +14469,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="109"/>
         <source>Set to &apos;0&apos; to disable preloading.</source>
-        <translation>Set to &quot;0&quot; to disable preloading.</translation>
+        <translation>Set to “0” to disable preloading.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="84"/>
@@ -16034,7 +16034,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="153"/>
         <source>Sensitivity of projectM&apos;s beat detection</source>
-        <translation>Sensitivity of projectM&apos;s beat detection</translation>
+        <translation>Sensitivity of projectM’s beat detection</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="167"/>
@@ -16382,7 +16382,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1121"/>
         <source>Apply or clear the current tab&apos;s pending changes before switching tracks or tabs.</source>
-        <translation>Apply or clear the current tab&apos;s pending changes before switching tracks or tabs.</translation>
+        <translation>Apply or clear the current tab’s pending changes before switching tracks or tabs.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1138"/>
@@ -17126,7 +17126,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="91"/>
         <source>Horizontal spacing between stations in icon display mode. Auto uses the view&apos;s default spacing.</source>
-        <translation>Horizontal spacing between stations in icon display mode. Auto uses the view&apos;s default spacing.</translation>
+        <translation>Horizontal spacing between stations in icon display mode. Auto uses the view’s default spacing.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="95"/>
@@ -19107,7 +19107,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="135"/>
         <source>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin&apos;s Session Bus &quot;talk&quot; permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to execute arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin’s Session Bus “talk” permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to execute arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="151"/>
@@ -19510,7 +19510,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/scripting/scriptformatter.cpp" line="241"/>
         <source>[%1] Error in formatting tag &apos;%2&apos;: invalid formatting option.</source>
-        <translation>[%1] Error in formatting tag &quot;%2&quot;: invalid formatting option.</translation>
+        <translation>[%1] Error in formatting tag “%2”: invalid formatting option.</translation>
     </message>
 </context>
 <context>
@@ -22271,7 +22271,7 @@ This does not support full scripting.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="143"/>
         <source>Don&apos;t ask again</source>
-        <translation>Don&apos;t ask again</translation>
+        <translation>Don’t ask again</translation>
     </message>
 </context>
 <context>
@@ -22334,7 +22334,7 @@ This does not support full scripting.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpropertiestab.cpp" line="160"/>
         <source>Don&apos;t ask again</source>
-        <translation>Don&apos;t ask again</translation>
+        <translation>Don’t ask again</translation>
     </message>
 </context>
 <context>
@@ -25091,7 +25091,7 @@ Changes apply to newly opened streams.</translation>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="91"/>
         <source>Use fooyin&apos;s default POPM byte conversion when reading and writing MP3 ratings.
 This supports intermediate rating steps, but does not treat the POPM byte as a fully linear 0–255 scale.</source>
-        <translation>Use fooyin&apos;s default POPM byte conversion when reading and writing MP3 ratings.
+        <translation>Use fooyin’s default POPM byte conversion when reading and writing MP3 ratings.
 This supports intermediate rating steps, but does not treat the POPM byte as a fully linear 0–255 scale.</translation>
     </message>
     <message>
