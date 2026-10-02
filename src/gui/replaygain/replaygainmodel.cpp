@@ -442,8 +442,6 @@ void ReplayGainModel::populate(const RGInfoData& data)
         }
     }
 
-    rootItem()->sortChildren();
-
     updateSummary();
 
     endResetModel();
