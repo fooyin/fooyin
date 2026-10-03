@@ -74,12 +74,19 @@ struct RichFormatting
 
 struct RichTextBlock
 {
+    enum class Type : uint8_t
+    {
+        Text = 0,
+        Line,
+    };
+
     QString text;
     RichFormatting format;
+    Type type{Type::Text};
 
     bool operator==(const RichTextBlock& other) const
     {
-        return std::tie(text, format) == std::tie(other.text, other.format);
+        return std::tie(text, format, type) == std::tie(other.text, other.format, other.type);
     };
 };
 

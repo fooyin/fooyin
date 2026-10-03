@@ -2547,34 +2547,30 @@ QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) con
         return {};
     }
 
-    const auto height = header.height();
+    const int coverSize = std::max(0, header.height() - (2 * m_currentPreset.header.artworkPaddingVertical));
 
     switch(role) {
         case PlaylistItem::Role::UniformHeightKey:
-            return uniformHeightKey(PlaylistItem::Header, height);
+            return uniformHeightKey(PlaylistItem::Header, header.height());
         case PlaylistItem::Role::Title:
             return header.title();
-        case PlaylistItem::Role::Simple:
-            return m_currentPreset.header.simple;
-        case PlaylistItem::Role::Subtitle:
-            return header.subtitle();
-        case PlaylistItem::Role::Info:
-            return header.info();
-        case PlaylistItem::Role::Right:
-            return header.sideText();
+        case PlaylistItem::Role::ImagePadding:
+            return m_currentPreset.header.artworkPadding;
+        case PlaylistItem::Role::ImagePaddingTop:
+            return m_currentPreset.header.artworkPaddingVertical;
         case Qt::DecorationRole: {
-            if(m_currentPreset.header.simple || !m_currentPreset.header.showCover) {
+            if(!m_currentPreset.header.showCover || coverSize <= 0) {
                 return {};
             }
             if(header.coverTrack().has_value()) {
-                return m_coverProvider->trackCoverThumbnail(*header.coverTrack(), QSize{height, height},
+                return m_coverProvider->trackCoverThumbnail(*header.coverTrack(), QSize{coverSize, coverSize},
                                                             Track::Cover::Front);
             }
             return {};
         }
         case PlaylistItem::Role::CoverKey:
-            if(!m_currentPreset.header.simple && m_currentPreset.header.showCover && header.coverTrack().has_value()) {
-                return m_coverProvider->thumbnailCacheKey(*header.coverTrack(), QSize{height, height},
+            if(m_currentPreset.header.showCover && coverSize > 0 && header.coverTrack().has_value()) {
+                return m_coverProvider->thumbnailCacheKey(*header.coverTrack(), QSize{coverSize, coverSize},
                                                           Track::Cover::Front);
             }
             break;
@@ -3408,9 +3404,7 @@ void PlaylistModel::updateLivePlaybackDependencies()
         return;
     }
 
-    const auto leftDependencies  = dependenciesForScript(parser.parse(m_currentPreset.track.leftText.script));
-    const auto rightDependencies = dependenciesForScript(parser.parse(m_currentPreset.track.rightText.script));
-    const auto dependencies      = leftDependencies | rightDependencies;
+    const auto dependencies = dependenciesForScript(parser.parse(m_currentPreset.track.text.script));
 
     m_singleColumnHasPositionDependency      = dependencies.testFlag(Position);
     m_singleColumnHasBitrateDependency       = dependencies.testFlag(Bitrate);

@@ -211,6 +211,12 @@ bool linkHref(RichFormatting& formatting, const QString& option)
     return true;
 }
 
+bool alignLeft(RichFormatting& formatting, const QString& /*option*/)
+{
+    formatting.alignment = RichAlignment::Left;
+    return true;
+}
+
 bool alignRight(RichFormatting& formatting, const QString& /*option*/)
 {
     formatting.alignment = RichAlignment::Right;
@@ -230,6 +236,7 @@ constexpr std::array FormatterHandlers{
     FormatterHandlerEntry{.name = "rgba"_L1, .handler = &colourRgb},
     FormatterHandlerEntry{.name = "color"_L1, .handler = &colourGeneric},
     FormatterHandlerEntry{.name = "a"_L1, .handler = &linkHref},
+    FormatterHandlerEntry{.name = "left"_L1, .handler = &alignLeft},
     FormatterHandlerEntry{.name = "right"_L1, .handler = &alignRight},
 };
 } // namespace

@@ -34,21 +34,18 @@ namespace Fooyin {
 struct HeaderRow
 {
     QString grouping;
-    RichScript title;
-    RichScript subtitle;
-    RichScript sideText;
-    RichScript info;
+    RichScript text;
 
     int rowHeight{0};
     bool showCover{true};
-    bool simple{false};
+    int artworkPadding{10};
+    int artworkPaddingVertical{10};
 
     bool operator==(const HeaderRow& other) const = default;
 
     [[nodiscard]] bool isValid() const
     {
-        return !title.script.isEmpty() || !subtitle.script.isEmpty() || !sideText.script.isEmpty()
-            || !info.script.isEmpty();
+        return !text.script.isEmpty();
     }
 
     friend QDataStream& operator<<(QDataStream& stream, const HeaderRow& header);
@@ -58,8 +55,7 @@ struct HeaderRow
 struct SubheaderRow
 {
     QString grouping;
-    RichScript leftText;
-    RichScript rightText;
+    RichScript text;
 
     int rowHeight{0};
 
@@ -67,7 +63,7 @@ struct SubheaderRow
 
     [[nodiscard]] bool isValid() const
     {
-        return !leftText.script.isEmpty() || !rightText.script.isEmpty();
+        return !text.script.isEmpty();
     }
 
     friend QDataStream& operator<<(QDataStream& stream, const SubheaderRow& subheader);
@@ -78,8 +74,7 @@ using SubheaderRows = QList<SubheaderRow>;
 struct TrackRow
 {
     std::vector<RichScript> columns;
-    RichScript leftText;
-    RichScript rightText;
+    RichScript text;
 
     int rowHeight{0};
 
@@ -87,7 +82,7 @@ struct TrackRow
 
     [[nodiscard]] bool isValid() const
     {
-        return !columns.empty() || !leftText.script.isEmpty() || !rightText.script.isEmpty();
+        return !columns.empty() || !text.script.isEmpty();
     }
 
     friend QDataStream& operator<<(QDataStream& stream, const TrackRow& track);

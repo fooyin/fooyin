@@ -27,6 +27,7 @@
 #include <core/scripting/scriptenvironmenthelpers.h>
 #include <gui/guisettings.h>
 #include <gui/guiutils.h>
+#include <gui/scripting/richtextutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QTimer>
@@ -84,26 +85,21 @@ public:
     struct ParsedHeaderRow
     {
         ParsedScript grouping;
-        ParsedScript title;
-        ParsedScript subtitle;
-        ParsedScript sideText;
-        ParsedScript info;
+        ParsedScript text;
     };
     ParsedHeaderRow m_parsedHeader;
 
     struct ParsedSubheaderRow
     {
         ParsedScript grouping;
-        ParsedScript leftText;
-        ParsedScript rightText;
+        ParsedScript text;
     };
     std::vector<ParsedSubheaderRow> m_parsedSubheaders;
 
     struct ParsedTrackRow
     {
         std::vector<ParsedScript> columns;
-        ParsedScript leftText;
-        ParsedScript rightText;
+        ParsedScript text;
     };
     ParsedTrackRow m_parsedTrack;
 
@@ -162,16 +158,12 @@ void PlaylistPopulatorPrivate::resetState()
 void PlaylistPopulatorPrivate::prepareScripts()
 {
     m_parsedHeader.grouping = m_parser.parse(m_currentPreset.header.grouping);
-    m_parsedHeader.title    = m_parser.parse(m_currentPreset.header.title.script);
-    m_parsedHeader.subtitle = m_parser.parse(m_currentPreset.header.subtitle.script);
-    m_parsedHeader.sideText = m_parser.parse(m_currentPreset.header.sideText.script);
-    m_parsedHeader.info     = m_parser.parse(m_currentPreset.header.info.script);
+    m_parsedHeader.text     = m_parser.parse(m_currentPreset.header.text.script);
 
     m_parsedSubheaders.clear();
     m_parsedSubheaders.reserve(m_currentPreset.subHeaders.size());
     for(const auto& subheader : std::as_const(m_currentPreset.subHeaders)) {
-        m_parsedSubheaders.emplace_back(m_parser.parse(subheader.grouping), m_parser.parse(subheader.leftText.script),
-                                        m_parser.parse(subheader.rightText.script));
+        m_parsedSubheaders.emplace_back(m_parser.parse(subheader.grouping), m_parser.parse(subheader.text.script));
     }
 
     m_parsedTrack = {};
@@ -182,8 +174,7 @@ void PlaylistPopulatorPrivate::prepareScripts()
         }
     }
     else {
-        m_parsedTrack.leftText  = m_parser.parse(m_currentPreset.track.leftText.script);
-        m_parsedTrack.rightText = m_parser.parse(m_currentPreset.track.rightText.script);
+        m_parsedTrack.text = m_parser.parse(m_currentPreset.track.text.script);
     }
 
     prepareQueueState();
@@ -331,8 +322,6 @@ void PlaylistPopulatorPrivate::updateContainerText(PlaylistContainerItem& contai
     if(tracks.empty()) {
         container.setTitle({});
         container.setSubtitle({});
-        container.setSideText({});
-        container.setInfo({});
         container.clearCoverTrack();
         container.calculateSize();
         return;
@@ -341,10 +330,9 @@ void PlaylistPopulatorPrivate::updateContainerText(PlaylistContainerItem& contai
     if(type == PlaylistItem::Header) {
         const auto& context = makeContext();
 
-        container.setTitle(evaluateGroupScript(m_parsedHeader.title, tracks, context));
-        container.setSubtitle(evaluateGroupScript(m_parsedHeader.subtitle, tracks, context));
-        container.setSideText(evaluateGroupScript(m_parsedHeader.sideText, tracks, context));
-        container.setInfo(evaluateGroupScript(m_parsedHeader.info, tracks, context));
+        container.setTitle(evaluateGroupScript(m_parsedHeader.text, tracks, context));
+        container.setSubtitle({});
+        container.setShowCover(m_currentPreset.header.showCover);
     }
     else if(type == PlaylistItem::Subheader && scriptIndex >= 0
             && std::cmp_less(scriptIndex, m_parsedSubheaders.size())) {
@@ -352,10 +340,9 @@ void PlaylistPopulatorPrivate::updateContainerText(PlaylistContainerItem& contai
 
         const auto& context = makeContext();
 
-        container.setTitle(evaluateGroupScript(parsedSubheader.leftText, tracks, context));
-        container.setSubtitle(evaluateGroupScript(parsedSubheader.rightText, tracks, context));
-        container.setSideText({});
-        container.setInfo({});
+        const auto text = evaluateGroupScript(parsedSubheader.text, tracks, context);
+        container.setTitle(text);
+        container.setSubtitle({});
     }
 
     container.setCoverTrack(tracks.front());
@@ -386,15 +373,11 @@ void PlaylistPopulatorPrivate::iterateHeader(const Track& track, PlaylistItem*& 
         return;
     }
 
-    const auto& context       = makeContext(index, m_trackDepth);
-    const auto titleScript    = m_parser.evaluate(m_parsedHeader.title, track, context);
-    const auto subtitleScript = m_parser.evaluate(m_parsedHeader.subtitle, track, context);
-    const auto sideScript     = m_parser.evaluate(m_parsedHeader.sideText, track, context);
-    const auto infoScript     = m_parser.evaluate(m_parsedHeader.info, track, context);
-
-    const auto baseKey = !m_currentPreset.header.grouping.isEmpty()
-                           ? Utils::generateMd5Hash(m_parser.evaluate(m_parsedHeader.grouping, track, context))
-                           : Utils::generateMd5Hash(titleScript, subtitleScript, sideScript, infoScript);
+    const auto& context = makeContext(index, m_trackDepth);
+    const auto script   = m_parser.evaluate(m_parsedHeader.text, track, context);
+    const auto baseKey  = !m_currentPreset.header.grouping.isEmpty()
+                            ? Utils::generateMd5Hash(m_parser.evaluate(m_parsedHeader.grouping, track, context))
+                            : Utils::generateMd5Hash(script);
 
     UId key;
     if(m_prevHeaderKey.isValid() && m_prevBaseHeaderKey == baseKey && index == m_prevIndex + 1) {
@@ -408,9 +391,7 @@ void PlaylistPopulatorPrivate::iterateHeader(const Track& track, PlaylistItem*& 
     m_prevHeaderKey     = key;
 
     if(!m_headers.contains(key)) {
-        const auto layoutKind = m_currentPreset.header.simple ? PlaylistContainerItem::LayoutKind::SimpleHeader
-                                                              : PlaylistContainerItem::LayoutKind::Header;
-        PlaylistContainerItem headerData{layoutKind};
+        PlaylistContainerItem headerData{PlaylistContainerItem::LayoutKind::Header};
         headerData.setRowHeight(m_currentPreset.header.rowHeight);
         headerData.setScriptIndex(-1);
 
@@ -440,11 +421,10 @@ void PlaylistPopulatorPrivate::iterateSubheaders(const Track& track, PlaylistIte
         auto subheader              = m_currentPreset.subHeaders.at(i);
         const auto& parsedSubheader = m_parsedSubheaders.at(i);
         const auto& context         = makeContext(index, m_trackDepth);
-        const auto leftScript       = m_parser.evaluate(parsedSubheader.leftText, track, context);
-        const auto rightScript      = m_parser.evaluate(parsedSubheader.rightText, track, context);
-        const QString subheaderKey  = leftScript + rightScript;
+        const auto subheaderScript  = m_parser.evaluate(parsedSubheader.text, track, context);
+        const auto subheaderText    = m_formatter.evaluate(subheaderScript);
 
-        if(subheaderKey.isEmpty()) {
+        if(subheaderText.joinedText().isEmpty()) {
             m_prevBaseSubheaderKey[i] = {};
             m_prevSubheaderKey[i]     = {};
             continue;
@@ -452,7 +432,7 @@ void PlaylistPopulatorPrivate::iterateSubheaders(const Track& track, PlaylistIte
 
         const auto groupingKey = !subheader.grouping.isEmpty()
                                    ? m_parser.evaluate(parsedSubheader.grouping, track, context)
-                                   : subheaderKey;
+                                   : subheaderScript;
         const auto baseKey     = Utils::generateMd5Hash(parent->baseKey(), groupingKey);
 
         UId key;
@@ -513,8 +493,9 @@ PlaylistItem* PlaylistPopulatorPrivate::iterateTrack(const PlaylistTrack& track,
             return PlaylistTrackItem{std::move(trackColumns), track};
         }
 
-        return PlaylistTrackItem{evaluateTrackScript(m_parsedTrack.leftText, track.track, context),
-                                 evaluateTrackScript(m_parsedTrack.rightText, track.track, context), track};
+        const auto text = evaluateTrackScript(m_parsedTrack.text, track.track, context);
+        return PlaylistTrackItem{richTextForAlignment(text, RichAlignment::Left),
+                                 richTextForAlignment(text, RichAlignment::Right), track};
     }();
 
     playlistTrack.setRowHeight(m_currentPreset.track.rowHeight);
@@ -707,9 +688,9 @@ void PlaylistPopulator::updateTracks(Playlist* playlist, const PlaylistPreset& p
             trackData.setColumns(trackColumns);
         }
         else {
-            const auto trackLeft  = p->evaluateTrackScript(p->m_parsedTrack.leftText, track.track, context);
-            const auto trackRight = p->evaluateTrackScript(p->m_parsedTrack.rightText, track.track, context);
-            trackData.setLeftRight(trackLeft, trackRight);
+            const auto text = p->evaluateTrackScript(p->m_parsedTrack.text, track.track, context);
+            trackData.setLeftRight(richTextForAlignment(text, RichAlignment::Left),
+                                   richTextForAlignment(text, RichAlignment::Right));
         }
 
         updatedTracks.push_back(item);

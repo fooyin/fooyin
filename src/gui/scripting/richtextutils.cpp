@@ -80,52 +80,20 @@ TextBaselineMetrics textBaselineMetrics(const QFont& font)
     return metrics;
 }
 
-RichText trimRichText(RichText richText)
-{
-    while(!richText.blocks.empty()) {
-        auto& block = richText.blocks.front();
-
-        int firstNonSpace{0};
-        while(firstNonSpace < block.text.size() && block.text.at(firstNonSpace).isSpace()) {
-            ++firstNonSpace;
-        }
-
-        if(firstNonSpace > 0) {
-            block.text.remove(0, firstNonSpace);
-        }
-
-        if(!block.text.isEmpty()) {
-            break;
-        }
-
-        richText.blocks.erase(richText.blocks.begin());
-    }
-
-    while(!richText.blocks.empty()) {
-        auto& block = richText.blocks.back();
-
-        int lastNonSpace = block.text.size() - 1;
-        while(lastNonSpace >= 0 && block.text.at(lastNonSpace).isSpace()) {
-            --lastNonSpace;
-        }
-
-        block.text.truncate(lastNonSpace + 1);
-        if(!block.text.isEmpty()) {
-            break;
-        }
-
-        richText.blocks.pop_back();
-    }
-
-    return richText;
-}
-
 QString richTextToHtml(const RichText& richText, const QColor& linkColour)
 {
     QString html;
     html.reserve(richText.joinedText().size() * 2);
 
-    for(const auto& [text, format] : richText.blocks) {
+    for(const auto& block : richText.blocks) {
+        if(block.type == RichTextBlock::Type::Line) {
+            html += u"<hr/>"_s;
+            continue;
+        }
+
+        const auto& text   = block.text;
+        const auto& format = block.format;
+
         QStringList styles;
 
         const bool isLink = !format.link.isEmpty();
@@ -198,6 +166,25 @@ bool richTextHasLineBreaks(const RichText& richText)
     return false;
 }
 
+int richTextHeight(const RichText& richText, const QFont& baseFont)
+{
+    int height{0};
+    const auto baseMetrics = textBaselineMetrics(baseFont);
+    for(const auto& line : splitRichTextLines(richText)) {
+        auto baseline = baseMetrics;
+        for(const auto& block : line.blocks) {
+            baseline.expand(QFontMetrics{resolvedRichTextFont(block.format, baseFont)});
+        }
+        height += baseline.height();
+    }
+    return height;
+}
+
+int richTextExtraLineHeight(const RichText& richText, const QFont& baseFont)
+{
+    return measureRichText(richText, baseFont).extraLineHeight;
+}
+
 std::vector<RichText> splitRichTextLines(const RichText& richText)
 {
     if(richText.empty()) {
@@ -207,6 +194,11 @@ std::vector<RichText> splitRichTextLines(const RichText& richText)
     std::vector<RichText> lines(1);
 
     for(const auto& block : richText.blocks) {
+        if(block.type == RichTextBlock::Type::Line) {
+            lines.back().blocks.push_back(block);
+            continue;
+        }
+
         const QStringView text{block.text};
         if(text.isEmpty()) {
             continue;
@@ -239,25 +231,6 @@ std::vector<RichText> splitRichTextLines(const RichText& richText)
     }
 
     return lines;
-}
-
-int richTextHeight(const RichText& richText, const QFont& baseFont)
-{
-    int height{0};
-    const auto baseMetrics = textBaselineMetrics(baseFont);
-    for(const auto& line : splitRichTextLines(richText)) {
-        auto baseline = baseMetrics;
-        for(const auto& block : line.blocks) {
-            baseline.expand(QFontMetrics{resolvedRichTextFont(block.format, baseFont)});
-        }
-        height += baseline.height();
-    }
-    return height;
-}
-
-int richTextExtraLineHeight(const RichText& richText, const QFont& baseFont)
-{
-    return measureRichText(richText, baseFont).extraLineHeight;
 }
 
 RichTextMetrics measureRichText(const RichText& richText, const QFont& baseFont)
@@ -304,5 +277,57 @@ RichTextBlockMetrics measureRichTextBlock(const std::vector<RichText>& lines, co
     }
 
     return blockMetrics;
+}
+
+RichText richTextForAlignment(const RichText& richText, RichAlignment alignment)
+{
+    RichText alignedText;
+    for(auto block : richText.blocks) {
+        if(block.format.alignment == alignment) {
+            block.format.alignment = RichAlignment::Left;
+            alignedText.blocks.push_back(std::move(block));
+        }
+    }
+    return alignedText;
+}
+
+RichText trimRichText(RichText richText)
+{
+    while(!richText.blocks.empty()) {
+        auto& block = richText.blocks.front();
+
+        int firstNonSpace{0};
+        while(firstNonSpace < block.text.size() && block.text.at(firstNonSpace).isSpace()) {
+            ++firstNonSpace;
+        }
+
+        if(firstNonSpace > 0) {
+            block.text.remove(0, firstNonSpace);
+        }
+
+        if(!block.text.isEmpty()) {
+            break;
+        }
+
+        richText.blocks.erase(richText.blocks.begin());
+    }
+
+    while(!richText.blocks.empty()) {
+        auto& block = richText.blocks.back();
+
+        int lastNonSpace = block.text.size() - 1;
+        while(lastNonSpace >= 0 && block.text.at(lastNonSpace).isSpace()) {
+            --lastNonSpace;
+        }
+
+        block.text.truncate(lastNonSpace + 1);
+        if(!block.text.isEmpty()) {
+            break;
+        }
+
+        richText.blocks.pop_back();
+    }
+
+    return richText;
 }
 } // namespace Fooyin

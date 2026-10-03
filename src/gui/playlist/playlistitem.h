@@ -48,7 +48,6 @@ public:
         Info,
         Left,
         Right,
-        Simple,
         Path,
         ItemData,
         PersistentItemData,
