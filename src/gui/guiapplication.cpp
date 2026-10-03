@@ -73,6 +73,7 @@
 #include <core/plugins/plugininfo.h>
 #include <core/plugins/pluginmanager.h>
 #include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/scripting/scriptparser.h>
 #include <gui/coverprovider.h>
 #include <gui/coverrepository.h>
 #include <gui/guiconstants.h>
@@ -88,6 +89,7 @@
 #include <gui/plugins/pluginconfigguiplugin.h>
 #include <gui/propertiesdialog.h>
 #include <gui/scripting/scripteditor.h>
+#include <gui/scripting/scriptvariableregistry.h>
 #include <gui/statusevent.h>
 #include <gui/theme/fytheme.h>
 #include <gui/theme/themeregistry.h>
@@ -282,8 +284,10 @@ GuiApplication::GuiApplication(Application* core)
                          m_selectionController.get(),
                          m_searchController,
                          m_playlistController.get(),
+                         m_playlistController.get(),
                          m_propertiesDialog,
                          m_scriptCommandHandler.get(),
+                         &m_scriptVariableRegistry,
                          m_widgetProvider.get(),
                          m_editableLayout.get(),
                          m_windowController,
@@ -710,6 +714,7 @@ void GuiApplication::initialise()
     m_actionManager->addContextObject(m_mainContext);
 
     initialisePlugins();
+    ScriptParser::finaliseGlobalProviderRegistration();
 
     m_widgets->registerDspWidgets();
     m_viewMenu->registerDspSettingsActions(m_widgets->dspSettingsRegistry(), m_widgets->dspSettingsController());
