@@ -59,6 +59,7 @@ public:
 
     explicit PlaylistView(QWidget* parent = nullptr);
 
+    void setInlineEditDelay(int delayMs);
     void setLoadingText(const QString& text);
     void setEmptyText(const QString& text);
     void setRatingColumn(int column);
@@ -160,6 +161,7 @@ private:
     QPersistentModelIndex m_pendingEditIndex;
     QLineEdit* m_bulkEditor;
     QBasicTimer m_editTimer;
+    int m_inlineEditDelayMs{600};
     QModelIndexList m_bulkEditRows;
     std::vector<int> m_bulkEditColumns;
     int m_bulkEditColumnIndex;

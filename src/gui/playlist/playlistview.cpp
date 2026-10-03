@@ -40,7 +40,6 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto EditorDelay           = 600;
 constexpr auto BackgroundResizeDelay = 100;
 constexpr auto MultipleValuesPrefix  = "<<multiple values>>"_L1;
 
@@ -108,6 +107,11 @@ PlaylistView::PlaylistView(QWidget* parent)
     setSelectIgnoreParents(true);
 
     m_bgFadeController->setUpdateCallback([this] { viewport()->update(); });
+}
+
+void PlaylistView::setInlineEditDelay(int delayMs)
+{
+    m_inlineEditDelayMs = std::clamp(delayMs, 0, 10000);
 }
 
 void PlaylistView::setLoadingText(const QString& text)
@@ -933,7 +937,7 @@ void PlaylistView::queueEditor(const QModelIndex& index)
     }
 
     m_pendingEditIndex = index;
-    m_editTimer.start(EditorDelay, this);
+    m_editTimer.start(m_inlineEditDelayMs, this);
 }
 
 void PlaylistView::cancelPendingEditor()

@@ -620,6 +620,17 @@ void Widgets::registerAdvancedSettings()
          .editor      = AdvancedSettingCheckBox{},
          .normalise   = {},
          .validate    = {}});
+    advancedSettingsRegistry->add<Settings::Gui::Internal::PlaylistInlineEditDelayMs>(
+        {.category    = {tr("Playlist"), tr("General")},
+         .label       = tr("Inline editing delay"),
+         .description = tr("Delay before starting inline editing after clicking a selected editable cell"),
+         .editor      = AdvancedSettingSpinBox{.minimum          = 0,
+                                               .maximum          = 10000,
+                                               .singleStep       = 100,
+                                               .suffix           = u" ms"_s,
+                                               .specialValueText = {}},
+         .normalise   = {},
+         .validate    = {}});
     advancedSettingsRegistry->add<Settings::Core::Internal::VBRUpdateInterval>(
         {.category    = {tr("Playback"), tr("Decoding")},
          .label       = tr("VBR update interval"),

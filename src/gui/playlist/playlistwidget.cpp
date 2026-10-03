@@ -1065,6 +1065,9 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     m_playlistView->setSelectBeforeDrag(m_settings->value<Settings::Gui::DragOnlyAfterSelect>());
     m_settings->subscribe<Settings::Gui::DragOnlyAfterSelect>(m_playlistView, &PlaylistView::setSelectBeforeDrag);
 
+    m_playlistView->setInlineEditDelay(m_settings->value<PlaylistInlineEditDelayMs>());
+    m_settings->subscribe<PlaylistInlineEditDelayMs>(m_playlistView, &PlaylistView::setInlineEditDelay);
+
     m_playlistView->setRatingEditorOnlyOnHover(m_settings->value<Settings::Gui::RatingEditorOnlyOnHover>());
     m_playlistView->setLoveEditorOnlyOnHover(m_settings->value<Settings::Gui::LoveEditorOnlyOnHover>());
     m_settings->subscribe<Settings::Gui::RatingEditorOnlyOnHover>(m_playlistView,
