@@ -45,6 +45,8 @@
 
 using namespace Qt::StringLiterals;
 
+constexpr auto ToolbarStateVersion = 1;
+
 namespace Fooyin {
 ToolbarManager::ToolbarManager(QMainWindow* window, QMenuBar* menuBar, ActionManager* actionManager,
                                WidgetProvider* widgetProvider, SettingsManager* settings, QObject* parent)
@@ -70,6 +72,7 @@ ToolbarManager::ToolbarManager(QMainWindow* window, QMenuBar* menuBar, ActionMan
 {
     qApp->installEventFilter(this);
 
+    m_menuToolbar->setObjectName(u"MenuToolbar"_s);
     m_menuToolbar->setFloatable(true);
     m_menuToolbar->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
     m_menuToolbar->toggleViewAction()->setVisible(false);
@@ -168,7 +171,7 @@ QJsonArray ToolbarManager::saveLayout() const
 
 QByteArray ToolbarManager::saveState() const
 {
-    return m_window->saveState();
+    return m_window->saveState(ToolbarStateVersion);
 }
 
 void ToolbarManager::loadLayout(const QJsonArray& toolbars, const QByteArray& state)
@@ -230,8 +233,12 @@ void ToolbarManager::loadLayout(const QJsonArray& toolbars, const QByteArray& st
         }
     }
 
-    if(!state.isEmpty()) {
+    if(!state.isEmpty() && !m_window->restoreState(state, ToolbarStateVersion)) {
+        // Legacy states identified the menu toolbar by its empty object name
+        const auto menuToolbarName = m_menuToolbar->objectName();
+        m_menuToolbar->setObjectName({});
         m_window->restoreState(state);
+        m_menuToolbar->setObjectName(menuToolbarName);
     }
     setMenuVisible(m_settings->value<Settings::Gui::ShowMenuBar>());
 }
