@@ -33,6 +33,7 @@
 #include <gui/guisettings.h>
 #include <gui/iconloader.h>
 #include <gui/playlist/playlistinteractor.h>
+#include <gui/scripting/richtextutils.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
@@ -59,10 +60,14 @@ using namespace Qt::StringLiterals;
 
 constexpr auto OrganiserModel                   = "PlaylistOrganiser/Model";
 constexpr auto OrganiserState                   = "PlaylistOrganiser/State";
+constexpr auto OrganiserDisplayScript           = u"PlaylistOrganiser/DisplayScript";
 constexpr auto OrganiserLeftScript              = "PlaylistOrganiser/LeftScript";
 constexpr auto OrganiserRightScript             = "PlaylistOrganiser/RightScript";
 constexpr auto OrganiserPlayingTextColour       = "PlaylistOrganiser/PlayingTextColour";
 constexpr auto OrganiserPlayingBackgroundColour = "PlaylistOrganiser/PlayingBackgroundColour";
+
+constexpr auto LegacyLeftScript  = "%node_name%$if(%is_group%, \\[%count%\\],)"_L1;
+constexpr auto LegacyRightScript = "$if($not(%is_group%),%count%)"_L1;
 
 namespace {
 QByteArray saveExpandedState(QTreeView* view, QAbstractItemModel* model)
@@ -368,8 +373,7 @@ void PlaylistOrganiser::loadLayoutData(const QJsonObject& layout)
 PlaylistOrganiser::ConfigData PlaylistOrganiser::factoryConfig() const
 {
     return {
-        .leftScript              = PlaylistOrganiserModel::defaultLeftDisplayScript(),
-        .rightScript             = PlaylistOrganiserModel::defaultRightDisplayScript(),
+        .displayScript           = PlaylistOrganiserModel::defaultDisplayScript(),
         .playingTextColour       = {},
         .playingBackgroundColour = {},
     };
@@ -379,8 +383,14 @@ PlaylistOrganiser::ConfigData PlaylistOrganiser::defaultConfig() const
 {
     auto config{factoryConfig()};
 
-    config.leftScript  = m_settings->fileValue(OrganiserLeftScript, config.leftScript).toString();
-    config.rightScript = m_settings->fileValue(OrganiserRightScript, config.rightScript).toString();
+    if(m_settings->fileContains(OrganiserDisplayScript)) {
+        config.displayScript = m_settings->fileValue(OrganiserDisplayScript).toString();
+    }
+    else if(m_settings->fileContains(OrganiserLeftScript) || m_settings->fileContains(OrganiserRightScript)) {
+        const QString left   = m_settings->fileValue(OrganiserLeftScript, LegacyLeftScript).toString();
+        const QString right  = m_settings->fileValue(OrganiserRightScript, LegacyRightScript).toString();
+        config.displayScript = combineAlignedScripts(left, right);
+    }
 
     config.playingTextColour = normaliseColour(m_settings->fileValue(OrganiserPlayingTextColour, {}).toString());
     config.playingBackgroundColour
@@ -396,14 +406,16 @@ const PlaylistOrganiser::ConfigData& PlaylistOrganiser::currentConfig() const
 
 void PlaylistOrganiser::saveDefaults(const ConfigData& config) const
 {
-    m_settings->fileSet(OrganiserLeftScript, config.leftScript);
-    m_settings->fileSet(OrganiserRightScript, config.rightScript);
+    m_settings->fileSet(OrganiserDisplayScript, config.displayScript);
+    m_settings->fileRemove(OrganiserLeftScript);
+    m_settings->fileRemove(OrganiserRightScript);
     m_settings->fileSet(OrganiserPlayingTextColour, normaliseColour(config.playingTextColour));
     m_settings->fileSet(OrganiserPlayingBackgroundColour, normaliseColour(config.playingBackgroundColour));
 }
 
 void PlaylistOrganiser::clearSavedDefaults() const
 {
+    m_settings->fileRemove(OrganiserDisplayScript);
     m_settings->fileRemove(OrganiserLeftScript);
     m_settings->fileRemove(OrganiserRightScript);
     m_settings->fileRemove(OrganiserPlayingTextColour);
@@ -412,8 +424,7 @@ void PlaylistOrganiser::clearSavedDefaults() const
 
 void PlaylistOrganiser::applyConfig(const ConfigData& config)
 {
-    m_config.leftScript              = config.leftScript;
-    m_config.rightScript             = config.rightScript;
+    m_config.displayScript           = config.displayScript;
     m_config.playingTextColour       = normaliseColour(config.playingTextColour);
     m_config.playingBackgroundColour = normaliseColour(config.playingBackgroundColour);
 
@@ -423,7 +434,7 @@ void PlaylistOrganiser::applyConfig(const ConfigData& config)
         playingBackgroundColour = defaultPlayingBackgroundColour();
     }
 
-    m_model->setDisplayScripts(m_config.leftScript, m_config.rightScript);
+    m_model->setDisplayScript(m_config.displayScript);
     m_model->setColours(playingTextColour, playingBackgroundColour);
 }
 
@@ -789,11 +800,17 @@ PlaylistOrganiser::ConfigData PlaylistOrganiser::configFromLayout(const QJsonObj
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("LeftScript"_L1)) {
-        config.leftScript = layout.value("LeftScript"_L1).toString();
+    if(layout.contains("DisplayScript"_L1)) {
+        config.displayScript = layout.value("DisplayScript"_L1).toString();
     }
-    if(layout.contains("RightScript"_L1)) {
-        config.rightScript = layout.value("RightScript"_L1).toString();
+    else if(layout.contains("LeftScript"_L1) || layout.contains("RightScript"_L1)) {
+        const QString left   = layout.contains("LeftScript"_L1)
+                                 ? layout.value("LeftScript"_L1).toString()
+                                 : m_settings->fileValue(OrganiserLeftScript, LegacyLeftScript).toString();
+        const QString right  = layout.contains("RightScript"_L1)
+                                 ? layout.value("RightScript"_L1).toString()
+                                 : m_settings->fileValue(OrganiserRightScript, LegacyRightScript).toString();
+        config.displayScript = combineAlignedScripts(left, right);
     }
     if(layout.contains("PlayingTextColour"_L1)) {
         config.playingTextColour = normaliseColour(layout.value("PlayingTextColour"_L1).toString());
@@ -807,8 +824,9 @@ PlaylistOrganiser::ConfigData PlaylistOrganiser::configFromLayout(const QJsonObj
 
 void PlaylistOrganiser::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
 {
-    layout["LeftScript"_L1]              = config.leftScript;
-    layout["RightScript"_L1]             = config.rightScript;
+    layout.remove("LeftScript"_L1);
+    layout.remove("RightScript"_L1);
+    layout["DisplayScript"_L1]           = config.displayScript;
     layout["PlayingTextColour"_L1]       = normaliseColour(config.playingTextColour);
     layout["PlayingBackgroundColour"_L1] = normaliseColour(config.playingBackgroundColour);
 }

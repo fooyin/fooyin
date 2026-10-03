@@ -76,8 +76,7 @@ public:
 
     struct ConfigData
     {
-        QString leftScript;
-        QString rightScript;
+        QString displayScript;
         bool showCurrent{true};
         bool showIcon{true};
         QSize iconSize{36, 36};

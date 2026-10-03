@@ -34,8 +34,7 @@ using namespace Qt::StringLiterals;
 namespace Fooyin {
 QueueViewerConfigDialog::QueueViewerConfigDialog(QueueViewer* queueViewer, bool showDisplayMode, QWidget* parent)
     : WidgetConfigDialog{queueViewer, tr("Queue Viewer Settings"), parent}
-    , m_titleScript{new ScriptLineEdit(this)}
-    , m_subtitleScript{new ScriptLineEdit(this)}
+    , m_displayScript{new ScriptTextEdit(this)}
     , m_displayModeLabel{new QLabel(tr("Queue view") + u":"_s, this)}
     , m_playingTracksMode{new QRadioButton(tr("Playing Tracks"), this)}
     , m_upcomingTracksMode{new QRadioButton(tr("Upcoming Tracks"), this)}
@@ -63,10 +62,11 @@ QueueViewerConfigDialog::QueueViewerConfigDialog(QueueViewer* queueViewer, bool 
     generalLayout->addWidget(m_displayModeLabel, row, 0);
     generalLayout->addWidget(m_playingTracksMode, row, 1);
     generalLayout->addWidget(m_upcomingTracksMode, row++, 2);
-    generalLayout->addWidget(new QLabel(tr("Left script") + u":"_s, this), row, 0);
-    generalLayout->addWidget(m_titleScript, row++, 1, 1, 2);
-    generalLayout->addWidget(new QLabel(tr("Right script") + u":"_s, this), row, 0);
-    generalLayout->addWidget(m_subtitleScript, row++, 1, 1, 2);
+    generalLayout->addWidget(new QLabel(tr("Display script") + u":"_s, this), row, 0);
+    generalLayout->addWidget(m_displayScript, row++, 1, 1, 2);
+    auto* scriptHint = new QLabel(u"🛈 "_s + tr("Use <code>&lt;right&gt;</code> for right-aligned text."), this);
+    scriptHint->setWordWrap(true);
+    generalLayout->addWidget(scriptHint, row++, 0, 1, 3);
 
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);
@@ -124,8 +124,7 @@ QueueViewerConfigDialog::QueueViewerConfigDialog(QueueViewer* queueViewer, bool 
 
 void QueueViewerConfigDialog::setConfig(const QueueViewer::ConfigData& config)
 {
-    m_titleScript->setText(config.leftScript);
-    m_subtitleScript->setText(config.rightScript);
+    m_displayScript->setText(config.displayScript);
     m_playingTracksMode->setChecked(config.displayMode == QueueViewer::DisplayMode::PlayingTracks);
     m_upcomingTracksMode->setChecked(config.displayMode == QueueViewer::DisplayMode::UpcomingTracks);
     m_headers->setChecked(config.showHeader);
@@ -141,8 +140,7 @@ void QueueViewerConfigDialog::setConfig(const QueueViewer::ConfigData& config)
 QueueViewer::ConfigData QueueViewerConfigDialog::config() const
 {
     return {
-        .leftScript          = m_titleScript->text(),
-        .rightScript         = m_subtitleScript->text(),
+        .displayScript       = m_displayScript->text(),
         .showCurrent         = m_showCurrent->isChecked(),
         .showIcon            = m_showIcon->isChecked(),
         .iconSize            = {m_iconWidth->value(), m_iconHeight->value()},
@@ -158,7 +156,7 @@ QueueViewer::ConfigData QueueViewerConfigDialog::config() const
 void QueueViewerConfigDialog::mergeExternalConfig(const QueueViewer::ConfigData& previous,
                                                   const QueueViewer::ConfigData& current)
 {
-    mergeExternalFields(previous, current, &QueueViewer::ConfigData::leftScript, &QueueViewer::ConfigData::rightScript,
+    mergeExternalFields(previous, current, &QueueViewer::ConfigData::displayScript,
                         &QueueViewer::ConfigData::showCurrent, &QueueViewer::ConfigData::showIcon,
                         &QueueViewer::ConfigData::iconSize, &QueueViewer::ConfigData::artworkCornerRadius,
                         &QueueViewer::ConfigData::showHeader, &QueueViewer::ConfigData::showScrollBar,

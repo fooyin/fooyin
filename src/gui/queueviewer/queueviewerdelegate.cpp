@@ -195,7 +195,7 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     const QRect textRect = Gui::itemViewTextRect(opt);
 
     const auto leftRichText  = index.data(QueueViewerItem::RichTitle).value<RichText>();
-    const auto rightRichText = index.data(QueueViewerItem::RichRightText).value<RichText>();
+    const auto rightRichText = index.data(QueueViewerItem::RightRichTitle).value<RichText>();
     const QSize rightSize    = richTextNaturalSize(opt, rightRichText);
 
     QRect rightContentRect{textRect};
@@ -251,7 +251,7 @@ QSize QueueViewerDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
     const QStyle* style   = opt.widget ? opt.widget->style() : QApplication::style();
     const int textGap     = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, opt.widget) * 2;
     const QSize leftSize  = richTextNaturalSize(opt, index.data(QueueViewerItem::RichTitle).value<RichText>());
-    const QSize rightSize = richTextNaturalSize(opt, index.data(QueueViewerItem::RichRightText).value<RichText>());
+    const QSize rightSize = richTextNaturalSize(opt, index.data(QueueViewerItem::RightRichTitle).value<RichText>());
     const QSize textSize{leftSize.width() + rightSize.width()
                              + (rightSize.width() > 0 ? textGap + RightContentPadding + TextElideMargin : 0),
                          std::max(leftSize.height(), rightSize.height())};

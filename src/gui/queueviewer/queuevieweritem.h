@@ -33,9 +33,8 @@ class QueueViewerItem : public TreeItem<QueueViewerItem>
 public:
     enum Role
     {
-        RightText = Qt::UserRole,
-        RichTitle,
-        RichRightText,
+        RichTitle = Qt::UserRole,
+        RightRichTitle,
         IsPlaybackIcon,
         Track,
         QueueItemId,
@@ -45,18 +44,18 @@ public:
     explicit QueueViewerItem(PlaylistTrack track, PlaybackQueueItemId queueItemId = 0);
 
     [[nodiscard]] QString title() const;
-    [[nodiscard]] QString subtitle() const;
     [[nodiscard]] const RichText& richTitle() const;
-    [[nodiscard]] const RichText& richSubtitle() const;
+    [[nodiscard]] const RichText& rightRichTitle() const;
     [[nodiscard]] PlaylistTrack track() const;
     [[nodiscard]] PlaybackQueueItemId queueItemId() const;
 
-    void generateTitle(ScriptParser* parser, ScriptFormatter* formatter, const QString& leftScript,
-                       const QString& rightScript, const ScriptContext& context);
+    void generateTitle(ScriptParser* parser, ScriptFormatter* formatter, const QString& displayScript,
+                       const ScriptContext& context);
 
 private:
-    RichText m_title;
-    RichText m_subtitle;
+    QString m_title;
+    RichText m_richTitle;
+    RichText m_rightRichTitle;
     PlaylistTrack m_track;
     PlaybackQueueItemId m_queueItemId{0};
 };

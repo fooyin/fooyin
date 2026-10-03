@@ -282,6 +282,18 @@ RichTextBlockMetrics measureRichTextBlock(const std::vector<RichText>& lines, co
     return blockMetrics;
 }
 
+QString combineAlignedScripts(const QString& left, const QString& right)
+{
+    QString script;
+    if(!left.isEmpty()) {
+        script = u"<left>\n"_s + left + u"\n</left>\n"_s;
+    }
+    if(!right.isEmpty()) {
+        script += u"<right>\n"_s + right + u"\n</right>\n"_s;
+    }
+    return script;
+}
+
 RichText richTextForAlignment(const RichText& richText, RichAlignment alignment)
 {
     RichText alignedText;

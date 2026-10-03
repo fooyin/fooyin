@@ -39,6 +39,7 @@
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/playlist/playlistinteractor.h>
+#include <gui/scripting/richtextutils.h>
 #include <gui/trackmimedata.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/scriptlineedit.h>
@@ -79,11 +80,15 @@ constexpr auto QueueViewerArtworkRadiusKey = u"PlaybackQueue/ArtworkCornerRadius
 constexpr auto QueueViewerHeaderKey        = u"PlaybackQueue/Header";
 constexpr auto QueueViewerScrollBarKey     = u"PlaybackQueue/Scrollbar";
 constexpr auto QueueViewerAltColoursKey    = u"PlaybackQueue/AlternatingColours";
+constexpr auto QueueViewerDisplayScriptKey = u"PlaybackQueue/DisplayScript";
 constexpr auto QueueViewerLeftScriptKey    = u"PlaybackQueue/LeftScript";
 constexpr auto QueueViewerRightScriptKey   = u"PlaybackQueue/RightScript";
 constexpr auto QueueViewerShowCurrentKey   = u"PlaybackQueue/ShowCurrent";
 constexpr auto QueueViewerDisplayModeKey   = u"PlaybackQueue/DisplayMode";
 constexpr auto QueueViewerStateKey         = "PlaybackQueue/State"_L1;
+
+constexpr auto LegacyLeftScript  = "%title%$crlf()%album%"_L1;
+constexpr auto LegacyRightScript = "%duration%"_L1;
 
 namespace Fooyin {
 namespace {
@@ -177,8 +182,7 @@ bool QueueViewer::isWindowWidget() const
 QueueViewer::ConfigData QueueViewer::factoryConfig() const
 {
     return {
-        .leftScript          = u"%title%$crlf()%album%"_s,
-        .rightScript         = u"%duration%"_s,
+        .displayScript       = u"%title%$crlf()%album%<right>%duration%"_s,
         .showCurrent         = true,
         .showIcon            = true,
         .iconSize            = QSize{36, 36},
@@ -194,8 +198,14 @@ QueueViewer::ConfigData QueueViewer::defaultConfig() const
 {
     auto config{factoryConfig()};
 
-    config.leftScript          = m_settings->fileValue(QueueViewerLeftScriptKey, config.leftScript).toString();
-    config.rightScript         = m_settings->fileValue(QueueViewerRightScriptKey, config.rightScript).toString();
+    if(m_settings->fileContains(QueueViewerDisplayScriptKey)) {
+        config.displayScript = m_settings->fileValue(QueueViewerDisplayScriptKey).toString();
+    }
+    else if(m_settings->fileContains(QueueViewerLeftScriptKey) || m_settings->fileContains(QueueViewerRightScriptKey)) {
+        const QString left   = m_settings->fileValue(QueueViewerLeftScriptKey, LegacyLeftScript).toString();
+        const QString right  = m_settings->fileValue(QueueViewerRightScriptKey, LegacyRightScript).toString();
+        config.displayScript = combineAlignedScripts(left, right);
+    }
     config.showCurrent         = m_settings->fileValue(QueueViewerShowCurrentKey, config.showCurrent).toBool();
     config.showIcon            = m_settings->fileValue(QueueViewerShowIconKey, config.showIcon).toBool();
     config.iconSize            = m_settings->fileValue(QueueViewerIconSizeKey, config.iconSize).toSize();
@@ -218,8 +228,9 @@ const QueueViewer::ConfigData& QueueViewer::currentConfig() const
 
 void QueueViewer::saveDefaults(const ConfigData& config) const
 {
-    m_settings->fileSet(QueueViewerLeftScriptKey, config.leftScript);
-    m_settings->fileSet(QueueViewerRightScriptKey, config.rightScript);
+    m_settings->fileSet(QueueViewerDisplayScriptKey, config.displayScript);
+    m_settings->fileRemove(QueueViewerLeftScriptKey);
+    m_settings->fileRemove(QueueViewerRightScriptKey);
     m_settings->fileSet(QueueViewerShowCurrentKey, config.showCurrent);
     m_settings->fileSet(QueueViewerShowIconKey, config.showIcon);
     m_settings->fileSet(QueueViewerIconSizeKey, config.iconSize);
@@ -232,6 +243,7 @@ void QueueViewer::saveDefaults(const ConfigData& config) const
 
 void QueueViewer::clearSavedDefaults() const
 {
+    m_settings->fileRemove(QueueViewerDisplayScriptKey);
     m_settings->fileRemove(QueueViewerLeftScriptKey);
     m_settings->fileRemove(QueueViewerRightScriptKey);
     m_settings->fileRemove(QueueViewerShowCurrentKey);
@@ -254,7 +266,7 @@ void QueueViewer::applyConfig(const ConfigData& config)
         m_config.showHeader = false;
     }
 
-    m_model->setScripts(m_config.leftScript, m_config.rightScript);
+    m_model->setDisplayScript(m_config.displayScript);
     m_model->setShowCurrent(m_config.showCurrent);
     m_model->setShowUpcomingTracks(m_config.displayMode == DisplayMode::UpcomingTracks);
     m_model->setShowIcon(m_config.showIcon);
@@ -1146,11 +1158,17 @@ QueueViewer::ConfigData QueueViewer::configFromLayout(const QJsonObject& layout)
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("LeftScript"_L1)) {
-        config.leftScript = layout.value("LeftScript"_L1).toString();
+    if(layout.contains("DisplayScript"_L1)) {
+        config.displayScript = layout.value("DisplayScript"_L1).toString();
     }
-    if(layout.contains("RightScript"_L1)) {
-        config.rightScript = layout.value("RightScript"_L1).toString();
+    else if(layout.contains("LeftScript"_L1) || layout.contains("RightScript"_L1)) {
+        const QString left   = layout.contains("LeftScript"_L1)
+                                 ? layout.value("LeftScript"_L1).toString()
+                                 : m_settings->fileValue(QueueViewerLeftScriptKey, LegacyLeftScript).toString();
+        const QString right  = layout.contains("RightScript"_L1)
+                                 ? layout.value("RightScript"_L1).toString()
+                                 : m_settings->fileValue(QueueViewerRightScriptKey, LegacyRightScript).toString();
+        config.displayScript = combineAlignedScripts(left, right);
     }
     if(layout.contains("ShowCurrent"_L1)) {
         config.showCurrent = layout.value("ShowCurrent"_L1).toBool();
@@ -1188,8 +1206,9 @@ QueueViewer::ConfigData QueueViewer::configFromLayout(const QJsonObject& layout)
 
 void QueueViewer::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
 {
-    layout["LeftScript"_L1]          = config.leftScript;
-    layout["RightScript"_L1]         = config.rightScript;
+    layout.remove("LeftScript"_L1);
+    layout.remove("RightScript"_L1);
+    layout["DisplayScript"_L1]       = config.displayScript;
     layout["ShowCurrent"_L1]         = config.showCurrent;
     layout["ShowIcon"_L1]            = config.showIcon;
     layout["IconWidth"_L1]           = config.iconSize.width();

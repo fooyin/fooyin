@@ -192,8 +192,8 @@ void PlaylistOrganiserDelegate::paint(QPainter* painter, const QStyleOptionViewI
     opt.text.clear();
     opt.showDecorationSelected = true;
 
-    const auto leftRichText  = index.data(PlaylistOrganiserItem::RichText).value<RichText>();
-    const auto rightRichText = index.data(PlaylistOrganiserItem::RichRightText).value<RichText>();
+    const auto leftRichText  = index.data(PlaylistOrganiserItem::RichTitle).value<RichText>();
+    const auto rightRichText = index.data(PlaylistOrganiserItem::RightRichTitle).value<RichText>();
 
     painter->save();
 
@@ -244,9 +244,9 @@ QSize PlaylistOrganiserDelegate::sizeHint(const QStyleOptionViewItem& option, co
     const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
     const int textGap   = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, opt.widget) * 2;
 
-    const QSize leftSize = richTextNaturalSize(opt, index.data(PlaylistOrganiserItem::RichText).value<RichText>());
+    const QSize leftSize = richTextNaturalSize(opt, index.data(PlaylistOrganiserItem::RichTitle).value<RichText>());
     const QSize rightSize
-        = richTextNaturalSize(opt, index.data(PlaylistOrganiserItem::RichRightText).value<RichText>());
+        = richTextNaturalSize(opt, index.data(PlaylistOrganiserItem::RightRichTitle).value<RichText>());
     const QSize contentSize{leftSize.width() + rightSize.width()
                                 + (rightSize.width() > 0 ? textGap + RightContentPadding : 0),
                             std::max(leftSize.height(), rightSize.height())};

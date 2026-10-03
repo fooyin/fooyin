@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <gui/scripting/richtext.h>
 #include <utils/treeitem.h>
 
 #include <QString>
@@ -40,8 +41,8 @@ public:
     {
         ItemType = Qt::UserRole,
         PlaylistData,
-        RichText,
-        RichRightText,
+        RichTitle,
+        RightRichTitle,
     };
 
     PlaylistOrganiserItem();
@@ -51,12 +52,21 @@ public:
     Type type() const;
     QString title() const;
     Playlist* playlist() const;
+    [[nodiscard]] bool hasRichText() const;
+    [[nodiscard]] const RichText& richTitle() const;
+    [[nodiscard]] const RichText& rightRichTitle() const;
 
     void setTitle(const QString& title);
+    void setRichText(RichText text);
+
+    void invalidateRichText();
 
 private:
     Type m_type;
     QString m_title;
     Playlist* m_playlist;
+    RichText m_richTitle;
+    RichText m_rightRichTitle;
+    bool m_hasRichText{false};
 };
 } // namespace Fooyin

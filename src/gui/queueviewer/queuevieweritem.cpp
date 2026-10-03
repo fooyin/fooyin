@@ -31,22 +31,17 @@ QueueViewerItem::QueueViewerItem(PlaylistTrack track, PlaybackQueueItemId queueI
 
 QString QueueViewerItem::title() const
 {
-    return m_title.joinedText();
-}
-
-QString QueueViewerItem::subtitle() const
-{
-    return m_subtitle.joinedText();
+    return m_title;
 }
 
 const RichText& QueueViewerItem::richTitle() const
 {
-    return m_title;
+    return m_richTitle;
 }
 
-const RichText& QueueViewerItem::richSubtitle() const
+const RichText& QueueViewerItem::rightRichTitle() const
 {
-    return m_subtitle;
+    return m_rightRichTitle;
 }
 
 PlaylistTrack QueueViewerItem::track() const
@@ -59,14 +54,16 @@ PlaybackQueueItemId QueueViewerItem::queueItemId() const
     return m_queueItemId;
 }
 
-void QueueViewerItem::generateTitle(ScriptParser* parser, ScriptFormatter* formatter, const QString& leftScript,
-                                    const QString& rightScript, const ScriptContext& context)
+void QueueViewerItem::generateTitle(ScriptParser* parser, ScriptFormatter* formatter, const QString& displayScript,
+                                    const ScriptContext& context)
 {
     if(!parser || !formatter) {
         return;
     }
 
-    m_title    = trimRichText(formatter->evaluate(parser->evaluate(leftScript, m_track.track, context)));
-    m_subtitle = trimRichText(formatter->evaluate(parser->evaluate(rightScript, m_track.track, context)));
+    const auto text  = formatter->evaluate(parser->evaluate(displayScript, m_track.track, context));
+    m_title          = text.joinedText();
+    m_richTitle      = trimRichText(richTextForAlignment(text, RichAlignment::Left));
+    m_rightRichTitle = trimRichText(richTextForAlignment(text, RichAlignment::Right));
 }
 } // namespace Fooyin
