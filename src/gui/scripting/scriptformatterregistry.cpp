@@ -144,6 +144,22 @@ bool fontSize(RichFormatting& formatting, const QString& option)
     return false;
 }
 
+bool fontWeight(RichFormatting& formatting, const QString& option)
+{
+    if(option.isEmpty()) {
+        return false;
+    }
+
+    bool isInt{false};
+    const int weight = option.toInt(&isInt);
+    if(!isInt || weight < 1 || weight > 1000) {
+        return false;
+    }
+
+    formatting.font.setWeight(static_cast<QFont::Weight>(weight));
+    return true;
+}
+
 bool fontDelta(RichFormatting& formatting, const QString& option)
 {
     if(option.isEmpty()) {
@@ -223,6 +239,7 @@ constexpr std::array FormatterHandlers{
     FormatterHandlerEntry{.name = "u"_L1, .handler = &underline},
     FormatterHandlerEntry{.name = "s"_L1, .handler = &strikeOut},
     FormatterHandlerEntry{.name = "font"_L1, .handler = &fontFamily},
+    FormatterHandlerEntry{.name = "weight"_L1, .handler = &fontWeight},
     FormatterHandlerEntry{.name = "size"_L1, .handler = &fontSize},
     FormatterHandlerEntry{.name = "sized"_L1, .handler = &fontDelta},
     FormatterHandlerEntry{.name = "alpha"_L1, .handler = &colourAlpha},

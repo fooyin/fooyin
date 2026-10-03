@@ -279,6 +279,8 @@ const std::vector<ScriptReferenceEntry>& scriptReferenceEntries()
                         QT_TRANSLATE_NOOP("Fooyin", "Strikes through the enclosed text"), 4),
         formattingEntry("font", "<font=sans>", QT_TRANSLATE_NOOP("Fooyin", "Style"),
                         QT_TRANSLATE_NOOP("Fooyin", "Sets the font family for the enclosed text"), 7),
+        formattingEntry("weight", "<weight=600>", QT_TRANSLATE_NOOP("Fooyin", "Style"),
+                        QT_TRANSLATE_NOOP("Fooyin", "Sets the font weight from 1 to 1000"), 9),
         formattingEntry("size", "<size=12>", QT_TRANSLATE_NOOP("Fooyin", "Style"),
                         QT_TRANSLATE_NOOP("Fooyin", "Sets the font size in points"), 7),
         formattingEntry("sized", "<sized=2>", QT_TRANSLATE_NOOP("Fooyin", "Style"),

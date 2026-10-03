@@ -136,8 +136,11 @@ QString richTextToHtml(const RichText& richText, const QColor& linkColour)
         if(format.font.pointSizeF() > 0) {
             styles.emplace_back(u"font-size:%1pt"_s.arg(format.font.pointSizeF()));
         }
-        if(format.font.bold()) {
+        if(format.font.weight() == QFont::Bold) {
             styles.emplace_back(u"font-weight:bold"_s);
+        }
+        else if(format.font.resolveMask() & QFont::WeightResolved) {
+            styles.emplace_back(u"font-weight:%1"_s.arg(format.font.weight()));
         }
         if(format.font.italic()) {
             styles.emplace_back(u"font-style:italic"_s);
