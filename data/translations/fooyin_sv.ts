@@ -774,7 +774,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="247"/>
         <source>Playback volume in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppspelningsvolym i dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="249"/>
@@ -871,12 +871,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="277"/>
         <source>Underlines the enclosed text</source>
-        <translation type="unfinished"></translation>
+        <translation>Understryker den inneslutna texten</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="279"/>
         <source>Strikes through the enclosed text</source>
-        <translation type="unfinished"></translation>
+        <translation>Genomstryker den inneslutna texten</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="281"/>
@@ -5822,12 +5822,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/ffmpegsettings.cpp" line="39"/>
         <source>Enable all supported formats</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätt på alla stödda format</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/ffmpegsettings.cpp" line="41"/>
         <source>FFmpeg Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg-inställningar</translation>
     </message>
 </context>
 <context>
@@ -5898,7 +5898,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="113"/>
         <source>Don&apos;t crossfade within the same album</source>
-        <translation type="unfinished"></translation>
+        <translation>Korstona inte inom samma album</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="114"/>
@@ -6978,7 +6978,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="360"/>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="774"/>
         <source>Manage filter groups…</source>
-        <translation type="unfinished"></translation>
+        <translation>Hantera filtergrupper…</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="749"/>
@@ -7210,7 +7210,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="198"/>
         <source>Remember last filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Kom ihåg senaste filter</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="205"/>
@@ -7258,7 +7258,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="515"/>
         <source>Remember last filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Kom ihåg senaste filter</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="522"/>
@@ -7284,7 +7284,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="66"/>
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="157"/>
         <source>Manage filter groups…</source>
-        <translation type="unfinished"></translation>
+        <translation>Hantera filtergrupper…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="102"/>
@@ -7297,9 +7297,9 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message numerus="yes">
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="103"/>
         <source>%1 of %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1 av %Ln spår</numerusform>
+            <numerusform>%1 av %Ln spår</numerusform>
         </translation>
     </message>
     <message>
@@ -8420,12 +8420,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="167"/>
         <source>Dragon</source>
-        <translation type="unfinished"></translation>
+        <translation>Drake</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="169"/>
         <source>Typographic</source>
-        <translation type="unfinished"></translation>
+        <translation>Typografisk</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="171"/>
@@ -8819,12 +8819,12 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="148"/>
         <source>Rating Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Betygsredigerare</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="153"/>
         <source>Star size</source>
-        <translation type="unfinished"></translation>
+        <translation>Stjärnstorlek</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="155"/>
@@ -8840,7 +8840,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="173"/>
         <source>Heart size</source>
-        <translation type="unfinished"></translation>
+        <translation>Hjärtstorlek</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="138"/>
@@ -9151,7 +9151,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="598"/>
         <source>Preferred track</source>
-        <translation type="unfinished"></translation>
+        <translation>Föredraget spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="613"/>
@@ -9161,7 +9161,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="614"/>
         <source>Selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>Valt spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="615"/>
@@ -10596,7 +10596,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="967"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Zebramönstrade rader</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1037"/>
@@ -13938,7 +13938,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="60"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Zebramönstrade rader</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="65"/>
@@ -13988,7 +13988,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="97"/>
         <source>Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Konstverk</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="98"/>
@@ -14099,7 +14099,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="143"/>
         <source>Selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>Valt spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="145"/>
@@ -14220,7 +14220,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="185"/>
         <source>Select which track supplies the background artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj vilka spår som tillför bakgrundskonstverket</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="186"/>
@@ -14300,12 +14300,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="314"/>
         <source>Choose Background Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj bakgrundsbild</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="315"/>
         <source>Images (*.png *.jpg *.jpeg *.webp *.bmp);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilder (*.png *.jpg *.jpeg *.webp *.bmp);;Alla filer (*)</translation>
     </message>
 </context>
 <context>
@@ -15412,7 +15412,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="952"/>
         <source>Playlist Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Spellistsinställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1263"/>
@@ -15697,12 +15697,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="251"/>
         <source>fooyin Plugins (*.fyplugin *.zip *.dll)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin-tillägg (*.fyplugin *.zip *.dll)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="253"/>
         <source>fooyin Plugins (*.fyplugin *.zip *.so)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin-tillägg (*.fyplugin *.zip *.so)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="255"/>
@@ -15781,7 +15781,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="197"/>
         <source>Discovered</source>
-        <translation type="unfinished"></translation>
+        <translation>Upptäckt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="199"/>
@@ -15791,7 +15791,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="201"/>
         <source>Incompatible</source>
-        <translation type="unfinished"></translation>
+        <translation>Inkompatibel</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="203"/>
@@ -15806,7 +15806,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="207"/>
         <source>Initialised</source>
-        <translation type="unfinished"></translation>
+        <translation>Initierad</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="266"/>
@@ -15826,7 +15826,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="275"/>
         <source>Online Services</source>
-        <translation type="unfinished"></translation>
+        <translation>Onlinetjänster</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="278"/>
@@ -15851,7 +15851,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="290"/>
         <source>Widgets</source>
-        <translation type="unfinished"></translation>
+        <translation>Widgetar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="293"/>
@@ -15871,7 +15871,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="302"/>
         <source>File Management</source>
-        <translation type="unfinished"></translation>
+        <translation>Filhantering</translation>
     </message>
 </context>
 <context>
@@ -15912,7 +15912,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/projectm/projectmpresetdialog.cpp" line="72"/>
         <source>Favourites only</source>
-        <translation type="unfinished"></translation>
+        <translation>Favoriter bara</translation>
     </message>
 </context>
 <context>
@@ -19083,7 +19083,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="117"/>
         <source>Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Oändligt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="118"/>
@@ -19548,7 +19548,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="715"/>
         <source>Gain and clip prevention</source>
-        <translation type="unfinished"></translation>
+        <translation>Förstärkning och klippningsprevention</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="718"/>
@@ -19558,7 +19558,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="721"/>
         <source>Clip prevention</source>
-        <translation type="unfinished"></translation>
+        <translation>Klippningsprevention</translation>
     </message>
 </context>
 <context>
@@ -22231,7 +22231,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="69"/>
         <source>Edit values on single click</source>
-        <translation type="unfinished"></translation>
+        <translation>Redigera värden med enkelklick</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="146"/>
@@ -23105,12 +23105,12 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="83"/>
         <source>&amp;Library Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>Bib&amp;lioteksträd</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="84"/>
         <source>Open the library tree window</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna biblioteksträdsfönstret</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="90"/>
