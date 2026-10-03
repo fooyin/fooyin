@@ -42,11 +42,13 @@
 #include <gui/widgets/overlaywidget.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/crypto.h>
 #include <utils/id.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
 #include <QCheckBox>
+#include <QFormLayout>
 #include <QHBoxLayout>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -54,9 +56,15 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QMouseEvent>
+#include <QPushButton>
 #include <QScopedValueRollback>
+#include <QSignalBlocker>
+#include <QSpinBox>
 #include <QStyle>
 #include <QUndoStack>
+#include <QWidgetAction>
+
+#include <array>
 
 using namespace Qt::StringLiterals;
 
@@ -574,6 +582,81 @@ void EditableLayoutPrivate::setupPasteMenu(QMenu* menu, WidgetContainer* parent,
     }
 }
 
+void EditableLayoutPrivate::setupMarginsMenu(FyWidget* widget, QMenu* menu)
+{
+    auto* editor = new QWidget();
+    auto* form   = new QFormLayout(editor);
+
+    struct EditingSession
+    {
+        Id id;
+        QMargins margins;
+        bool custom{false};
+    };
+    const auto session = std::make_shared<EditingSession>();
+
+    const std::array labels{EditableLayout::tr("Left"), EditableLayout::tr("Top"), EditableLayout::tr("Right"),
+                            EditableLayout::tr("Bottom")};
+
+    std::array<QSpinBox*, 4> spinBoxes{};
+    for(size_t i{0}; i < spinBoxes.size(); ++i) {
+        auto* spinBox = new QSpinBox(editor);
+        spinBox->setRange(0, 999);
+        form->addRow(labels[i], spinBox);
+        spinBoxes[i] = spinBox;
+    }
+
+    auto* reset = new QPushButton(EditableLayout::tr("Restore defaults"), editor);
+    form->addRow(reset);
+
+    const auto updateControls = [widget = QPointer{widget}, spinBoxes, reset, editor]() {
+        if(!widget || !widget->layout()) {
+            editor->setEnabled(false);
+            return;
+        }
+
+        const auto margins = widget->layout()->contentsMargins();
+        const std::array values{margins.left(), margins.top(), margins.right(), margins.bottom()};
+        for(size_t i{0}; i < spinBoxes.size(); ++i) {
+            const QSignalBlocker blocker{spinBoxes[i]};
+            spinBoxes[i]->setMaximum(std::max(999, values[i]));
+            spinBoxes[i]->setValue(values[i]);
+        }
+
+        reset->setEnabled(widget->hasCustomLayoutMargins());
+    };
+
+    updateControls();
+    QObject::connect(m_layoutHistory, &QUndoStack::indexChanged, editor, updateControls);
+
+    for(const auto* spinBox : spinBoxes) {
+        QObject::connect(spinBox, &QSpinBox::valueChanged, widget, [this, widget, spinBoxes, session]() {
+            const QMargins margins{spinBoxes[0]->value(), spinBoxes[1]->value(), spinBoxes[2]->value(),
+                                   spinBoxes[3]->value()};
+            const auto override
+                = !session->custom && margins == session->margins ? std::nullopt : std::optional{margins};
+            m_layoutHistory->push(new SetWidgetMarginsCommand(m_self, widget, override, session->id));
+        });
+    }
+    QObject::connect(reset, &QPushButton::clicked, widget, [this, widget, session]() {
+        m_layoutHistory->push(new SetWidgetMarginsCommand(m_self, widget, {}, session->id));
+    });
+
+    auto* marginsMenu = menu->addMenu(EditableLayout::tr("Margins"));
+    auto* action      = new QWidgetAction(marginsMenu);
+    action->setDefaultWidget(editor);
+    marginsMenu->addAction(action);
+
+    QObject::connect(marginsMenu, &QMenu::aboutToShow, widget, [widget, session, updateControls]() {
+        session->id = Id{Utils::generateUniqueHash()};
+        if(const auto* layout = widget->layout()) {
+            session->margins = layout->contentsMargins();
+        }
+        session->custom = widget->hasCustomLayoutMargins();
+        updateControls();
+    });
+}
+
 void EditableLayoutPrivate::setupContextMenu(FyWidget* widget, QMenu* menu)
 {
     using namespace Settings::Gui::Internal;
@@ -604,6 +687,10 @@ void EditableLayoutPrivate::setupContextMenu(FyWidget* widget, QMenu* menu)
                         currentWidget->layoutEditingMenu(targetMenu);
 
                         if(!isDummy) {
+                            if(currentWidget->layout()) {
+                                setupMarginsMenu(currentWidget, targetMenu);
+                            }
+
                             if(auto* splitter = qobject_cast<SplitterWidget*>(parent)) {
                                 const int index   = splitter->widgetIndex(currentWidget->id());
                                 const bool locked = splitter->isWidgetLocked(index);

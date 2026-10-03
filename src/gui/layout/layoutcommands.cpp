@@ -30,6 +30,8 @@
 #include <gui/widgetcontainer.h>
 #include <gui/widgetprovider.h>
 
+#include <QLayout>
+
 #include <ranges>
 
 namespace Fooyin {
@@ -126,6 +128,68 @@ bool LayoutChangeCommand::checkContainer()
         return false;
     }
     return true;
+}
+
+SetWidgetMarginsCommand::SetWidgetMarginsCommand(EditableLayout* layout, FyWidget* widget,
+                                                 std::optional<QMargins> margins, const Id& session)
+    : m_layout{layout}
+    , m_widget{widget}
+    , m_widgetId{widget->id()}
+    , m_session{session}
+    , m_before{widget->hasCustomLayoutMargins() ? std::optional{widget->layout()->contentsMargins()} : std::nullopt}
+    , m_after{margins}
+{
+    setText(tr("Change widget margins"));
+    setObsolete(m_before == m_after);
+}
+
+int SetWidgetMarginsCommand::id() const
+{
+    return 1;
+}
+
+bool SetWidgetMarginsCommand::mergeWith(const QUndoCommand* other)
+{
+    if(other->id() != id()) {
+        return false;
+    }
+
+    const auto* command = static_cast<const SetWidgetMarginsCommand*>(other);
+    if(!command || m_layout != command->m_layout || m_widgetId != command->m_widgetId
+       || m_session != command->m_session) {
+        return false;
+    }
+
+    m_after = command->m_after;
+    setObsolete(m_before == m_after);
+    return true;
+}
+
+void SetWidgetMarginsCommand::undo()
+{
+    apply(m_before);
+}
+
+void SetWidgetMarginsCommand::redo()
+{
+    apply(m_after);
+}
+
+void SetWidgetMarginsCommand::apply(const std::optional<QMargins>& margins)
+{
+    refreshWidget(m_widget, m_layout, m_widgetId);
+
+    if(!m_widget || !m_widget->layout()) {
+        setObsolete(true);
+        return;
+    }
+
+    if(margins) {
+        m_widget->setLayoutMargins(*margins);
+    }
+    else {
+        m_widget->resetLayoutMargins();
+    }
 }
 
 SwitchLayoutCommand::SwitchLayoutCommand(EditableLayoutPrivate* editableLayout, FyLayout layout)

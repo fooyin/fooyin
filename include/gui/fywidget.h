@@ -139,6 +139,13 @@ public:
     /** Returns the full geometry of this widget including frame. */
     [[nodiscard]] QRect widgetGeometry() const;
 
+    /** Returns whether layout contents margins have a saved per-widget override. */
+    [[nodiscard]] bool hasCustomLayoutMargins() const;
+    /** Sets and persists layout contents margins, preserving the original margins for reset. */
+    void setLayoutMargins(const QMargins& margins);
+    /** Restores the original layout contents margins and removes the saved override. */
+    void resetLayoutMargins();
+
     /*!
      * Serialises this widget into the layout array.
      *

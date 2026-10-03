@@ -101,6 +101,7 @@ public:
     void setupUnsplitAction(QMenu* menu, WidgetContainer* parent, FyWidget* current) const;
     void setupPasteMenu(QMenu* menu, WidgetContainer* parent, FyWidget* prev, FyWidget* current, bool isDummy);
     void setupContextMenu(FyWidget* widget, QMenu* menu);
+    void setupMarginsMenu(FyWidget* widget, QMenu* menu);
 
     [[nodiscard]] WidgetList findAllWidgets() const;
 

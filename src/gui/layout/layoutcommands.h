@@ -24,9 +24,11 @@
 
 #include <QCoreApplication>
 #include <QJsonObject>
+#include <QMargins>
 #include <QPointer>
 #include <QUndoCommand>
 
+#include <optional>
 #include <vector>
 
 namespace Fooyin {
@@ -61,6 +63,30 @@ protected:
 
 private:
     std::vector<QPointer<FyWidget>> m_retainedWidgets;
+};
+
+class SetWidgetMarginsCommand : public QUndoCommand
+{
+    Q_DECLARE_TR_FUNCTIONS(Fooyin::SetWidgetMarginsCommand)
+
+public:
+    SetWidgetMarginsCommand(EditableLayout* layout, FyWidget* widget, std::optional<QMargins> margins,
+                            const Id& session);
+
+    [[nodiscard]] int id() const override;
+    bool mergeWith(const QUndoCommand* other) override;
+    void undo() override;
+    void redo() override;
+
+private:
+    void apply(const std::optional<QMargins>& margins);
+
+    QPointer<EditableLayout> m_layout;
+    QPointer<FyWidget> m_widget;
+    Id m_widgetId;
+    Id m_session;
+    std::optional<QMargins> m_before;
+    std::optional<QMargins> m_after;
 };
 
 class SwitchLayoutCommand : public QUndoCommand
