@@ -62,5 +62,6 @@ struct FYCORE_EXPORT BoundScript
 [[nodiscard]] FYCORE_EXPORT VariableKind resolveBuiltInVariableKind(const QString& var);
 [[nodiscard]] FYCORE_EXPORT FunctionKind resolveBuiltInFunctionKind(const QString& name);
 
-[[nodiscard]] FYCORE_EXPORT BoundScript bindScript(const ParsedScript& script, const ScriptRegistry* registry);
+[[nodiscard]] FYCORE_EXPORT BoundScript bindScript(const ParsedScript& script, const ScriptRegistry* registry,
+                                                   bool combineLiterals = false);
 } // namespace Fooyin

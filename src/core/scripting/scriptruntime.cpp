@@ -28,6 +28,8 @@
 
 #include <QDir>
 
+#include <optional>
+
 using namespace Qt::StringLiterals;
 
 using TokenType = Fooyin::ScriptScanner::TokenType;
@@ -1663,7 +1665,7 @@ const BoundScript& ScriptRuntime::bind(const ParsedScript& input)
         }
     }
 
-    BoundScript bound = bindScript(input, m_registry.get());
+    BoundScript bound = bindScript(input, m_registry.get(), !m_isQuery);
 
     if(input.cacheId == 0) {
         m_currentBoundScript = std::move(bound);
@@ -1722,23 +1724,23 @@ QString ScriptRuntime::evaluateImpl(const ParsedScript& input, const Tracks& tra
                 m_currentResult.push_back(evalExpr.value);
             }
             else {
-                std::ranges::transform(m_currentResult, m_currentResult.begin(),
-                                       [&](const QString& retValue) -> QString { return retValue + evalExpr.value; });
+                for(auto& result : m_currentResult) {
+                    result.append(evalExpr.value);
+                }
             }
         }
     }
 
+    QString result;
     if(m_currentResult.size() == 1) {
         // Calling join on a QStringList with a single empty string will return a null QString, so return the first
         // result.
-        return m_currentResult.constFirst();
+        result = m_currentResult.constFirst();
     }
-
-    if(m_currentResult.size() > 1) {
-        return m_currentResult.join(QLatin1String{Constants::UnitSeparator});
+    else if(m_currentResult.size() > 1) {
+        result = m_currentResult.join(QLatin1StringView{Constants::UnitSeparator});
     }
-
-    return {};
+    return result;
 }
 
 template <typename TrackListType, typename UpdateContext>

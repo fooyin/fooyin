@@ -405,7 +405,7 @@ FunctionKind resolveBuiltInFunctionKind(const QString& name)
     return Kind::Generic;
 }
 
-BoundScript bindScript(const ParsedScript& script, const ScriptRegistry* registry)
+BoundScript bindScript(const ParsedScript& script, const ScriptRegistry* registry, bool combineLiterals)
 {
     BoundScript bound;
     bound.input  = script.input;
@@ -413,6 +413,17 @@ BoundScript bindScript(const ParsedScript& script, const ScriptRegistry* registr
     bound.expressions.reserve(script.expressions.size());
 
     for(const auto& expr : script.expressions) {
+        if(combineLiterals && expr.type == Expr::Literal && !bound.expressions.empty()
+           && bound.expressions.back().type == Expr::Literal) {
+            const auto& value = std::get<QString>(expr.value);
+            auto& previous    = std::get<QString>(bound.expressions.back().value);
+            // A literal containing the list separator must retain its expansion step
+            if(!value.contains(QLatin1StringView{Constants::UnitSeparator})
+               && !previous.contains(QLatin1StringView{Constants::UnitSeparator})) {
+                previous.append(value);
+                continue;
+            }
+        }
         bound.expressions.emplace_back(bindExpression(expr, registry));
     }
 
