@@ -601,7 +601,7 @@ void EditableLayoutPrivate::setupMarginsMenu(FyWidget* widget, QMenu* menu)
     std::array<QSpinBox*, 4> spinBoxes{};
     for(size_t i{0}; i < spinBoxes.size(); ++i) {
         auto* spinBox = new QSpinBox(editor);
-        spinBox->setRange(0, 999);
+        spinBox->setRange(-999, 999);
         form->addRow(labels[i], spinBox);
         spinBoxes[i] = spinBox;
     }
