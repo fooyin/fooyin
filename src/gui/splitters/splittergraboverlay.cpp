@@ -26,7 +26,7 @@
 #include <QEvent>
 #include <QMouseEvent>
 
-constexpr auto HoverGrabArea = 6;
+constexpr auto HoverGrabArea = 2;
 
 namespace Fooyin {
 SplitterGrabOverlay::SplitterGrabOverlay(FySplitterHandle* handle)
