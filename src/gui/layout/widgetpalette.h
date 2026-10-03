@@ -54,9 +54,6 @@ public:
 Q_SIGNALS:
     void widgetDragRequested(const QString& key);
 
-protected:
-    void showEvent(QShowEvent* event) override;
-
 private:
     WidgetProvider* m_provider;
     SettingsManager* m_settings;

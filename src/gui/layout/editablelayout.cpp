@@ -997,6 +997,14 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
         }
     }
 
+    if(const auto* clickedWidget = qobject_cast<QWidget*>(watched);
+       clickedWidget && (clickedWidget == this || isAncestorOf(clickedWidget))) {
+        if(const auto* focusedWidget = QApplication::focusWidget();
+           focusedWidget && p->m_dragController->palette()->isAncestorOf(focusedWidget)) {
+            setFocus(Qt::MouseFocusReason);
+        }
+    }
+
     if(event->type() == QEvent::MouseButtonPress) {
         auto* mouseEvent = static_cast<QMouseEvent*>(event);
 
@@ -1021,6 +1029,7 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
 
         p->setupContextMenu(child, p->m_editingMenu);
         p->showOverlay(child);
+        setFocus(Qt::MouseFocusReason);
         p->m_editingMenu->popup(pos);
     }
 

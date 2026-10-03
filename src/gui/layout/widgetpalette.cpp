@@ -27,7 +27,6 @@
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QPainter>
-#include <QShowEvent>
 #include <QToolButton>
 #include <QTreeWidget>
 #include <QVBoxLayout>
@@ -89,6 +88,8 @@ WidgetPalette::WidgetPalette(WidgetProvider* provider, SettingsManager* settings
     box->addWidget(m_entries);
 
     QObject::connect(m_search, &QLineEdit::textChanged, this, &WidgetPalette::refresh);
+    QObject::connect(m_search, &QLineEdit::returnPressed, m_entries,
+                     [this]() { m_entries->setFocus(Qt::OtherFocusReason); });
     QObject::connect(m_entries, &PaletteTree::widgetDragRequested, this, &WidgetPalette::widgetDragRequested);
 }
 
@@ -131,11 +132,6 @@ void WidgetPalette::refresh()
     }
 }
 
-void WidgetPalette::showEvent(QShowEvent* event)
-{
-    QWidget::showEvent(event);
-    m_search->setFocus();
-}
 } // namespace Fooyin
 
 #include "moc_widgetpalette.cpp"
