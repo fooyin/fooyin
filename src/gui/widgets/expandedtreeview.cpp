@@ -28,6 +28,7 @@
 #include <QHeaderView>
 #include <QKeyEvent>
 #include <QMenu>
+#include <QMimeData>
 #include <QScrollBar>
 #include <QStack>
 #include <QStylePainter>
@@ -3039,6 +3040,21 @@ bool ExpandedTreeViewPrivate::dropOn(QDropEvent* event, int& dropRow, int& dropC
     return true;
 }
 
+Qt::DropAction ExpandedTreeViewPrivate::dropAction(const QDropEvent* event) const
+{
+    if(m_self->dragDropMode() == QAbstractItemView::InternalMove) {
+        return Qt::MoveAction;
+    }
+
+    // Drags carrying files don't offer MoveAction (see startDrag), so moves within the view are decided here
+    if(event->source() == m_self && m_self->defaultDropAction() == Qt::MoveAction
+       && !(event->modifiers() & Qt::ControlModifier)) {
+        return Qt::MoveAction;
+    }
+
+    return event->dropAction();
+}
+
 std::vector<std::pair<int, int>> ExpandedTreeViewPrivate::columnRanges(const QModelIndex& topIndex,
                                                                        const QModelIndex& bottomIndex) const
 {
@@ -3786,6 +3802,18 @@ bool ExpandedTreeView::viewportEvent(QEvent* event)
     return QAbstractItemView::viewportEvent(event);
 }
 
+void ExpandedTreeView::dragEnterEvent(QDragEnterEvent* event)
+{
+    // QAbstractItemView ignores internal moves that don't offer MoveAction, which drags carrying files never do
+    if(dragDropMode() == InternalMove && event->source() == this) {
+        setState(DraggingState);
+        event->accept();
+        return;
+    }
+
+    QAbstractItemView::dragEnterEvent(event);
+}
+
 void ExpandedTreeView::dragMoveEvent(QDragMoveEvent* event)
 {
     const QPoint pos = event->position().toPoint();
@@ -3983,7 +4011,7 @@ void ExpandedTreeView::resizeEvent(QResizeEvent* event)
 
 void ExpandedTreeView::dropEvent(QDropEvent* event)
 {
-    if(dragDropMode() == InternalMove && (event->source() != this || !(event->possibleActions() & Qt::MoveAction))) {
+    if(dragDropMode() == InternalMove && event->source() != this) {
         return;
     }
 
@@ -3996,7 +4024,7 @@ void ExpandedTreeView::dropEvent(QDropEvent* event)
     }
 
     if(p->dropOn(event, row, col, index)) {
-        const Qt::DropAction action = dragDropMode() == InternalMove ? Qt::MoveAction : event->dropAction();
+        const Qt::DropAction action = p->dropAction(event);
 
         if(p->m_model->dropMimeData(event->mimeData(), action, row, col, index)) {
             if(action != event->dropAction()) {
@@ -4159,6 +4187,12 @@ void ExpandedTreeView::startDrag(Qt::DropActions supportedActions)
     QMimeData* mimeData = p->m_model->mimeData(indexes);
     if(!mimeData) {
         return;
+    }
+
+    // File managers treat MoveAction as permission to move the files themselves
+    if(mimeData->hasUrls() && supportedActions.testFlag(Qt::MoveAction)) {
+        supportedActions.setFlag(Qt::MoveAction, false);
+        supportedActions.setFlag(Qt::CopyAction);
     }
 
     QRect rect;
