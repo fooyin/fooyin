@@ -24,6 +24,7 @@
 #include <QCoreApplication>
 #include <QRegularExpression>
 
+#include <algorithm>
 #include <optional>
 
 using namespace Qt::StringLiterals;
@@ -108,6 +109,7 @@ public:
     qsizetype m_position{0};
 
     RichTextBlock m_currentBlock;
+    std::vector<QString> m_formatTags;
 
     ErrorList m_errors;
     RichText m_formatResult;
@@ -143,14 +145,23 @@ void ScriptFormatterPrivate::expression()
 
 bool ScriptFormatterPrivate::formatBlock()
 {
+    const qsizetype end = tagEnd();
+    if(end >= 0
+       && m_input.sliced(m_position + 1, end - m_position - 1).trimmed().compare(u"hr/"_s, Qt::CaseInsensitive) == 0) {
+        flushCurrentBlock();
+        m_formatResult.blocks.push_back(
+            {.text = {}, .format = m_currentBlock.format, .type = RichTextBlock::Type::Line});
+        m_position = end + 1;
+        return true;
+    }
+
     const auto tag = peekFormatTag();
     if(!tag) {
         return false;
     }
 
     const qsizetype tagPos{m_position};
-    const qsizetype end = tagEnd();
-    m_position          = end + 1;
+    m_position = end + 1;
     processFormat(*tag, tagPos, end - tagPos + 1);
     return true;
 }
@@ -222,11 +233,15 @@ void ScriptFormatterPrivate::processFormat(const FormatTag& tag, qsizetype tagPo
         addError(tagPosition, m_input.sliced(tagPosition, tagLength));
     }
 
-    while(m_position < m_input.size() && !isClosingTag(tag.name)) {
+    m_formatTags.push_back(tag.name);
+    // Closing an enclosing scope also ends any unclosed tag inside it
+    while(m_position < m_input.size()
+          && !std::ranges::any_of(m_formatTags, [this](const auto& name) { return isClosingTag(name); })) {
         expression();
     }
 
-    if(m_position < m_input.size()) {
+    m_formatTags.pop_back();
+    if(m_position < m_input.size() && isClosingTag(tag.name)) {
         m_position = tagEnd() + 1;
     }
 

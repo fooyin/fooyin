@@ -19,6 +19,8 @@
 
 #include "playlistitemmodels.h"
 
+#include "playlistheaderlayout.h"
+
 #include <gui/scripting/richtextutils.h>
 
 #include <QFontMetrics>
@@ -31,9 +33,9 @@ QSize singleLineTrackSize(const RichText& richText)
 {
     QSize blockSize;
 
-    for(const auto& [blockText, format] : richText.blocks) {
-        const QFontMetrics fm{format.font};
-        blockSize.rwidth() += fm.horizontalAdvance(blockText);
+    for(const auto& block : richText.blocks) {
+        const QFontMetrics fm{block.format.font};
+        blockSize.rwidth() += fm.horizontalAdvance(block.text);
     }
 
     return blockSize;
@@ -86,16 +88,6 @@ const RichText& PlaylistContainerItem::subtitle() const
     return m_subtitle;
 }
 
-const RichText& PlaylistContainerItem::sideText() const
-{
-    return m_sideText;
-}
-
-const RichText& PlaylistContainerItem::info() const
-{
-    return m_info;
-}
-
 PlaylistContainerItem::LayoutKind PlaylistContainerItem::layoutKind() const
 {
     return m_layoutKind;
@@ -140,14 +132,9 @@ void PlaylistContainerItem::setSubtitle(const RichText& subtitle)
     m_subtitle = subtitle;
 }
 
-void PlaylistContainerItem::setSideText(const RichText& text)
+void PlaylistContainerItem::setShowCover(bool showCover)
 {
-    m_sideText = text;
-}
-
-void PlaylistContainerItem::setInfo(const RichText& info)
-{
-    m_info = info;
+    m_showCover = showCover;
 }
 
 void PlaylistContainerItem::setRowHeight(int height)
@@ -182,63 +169,17 @@ QSize PlaylistContainerItem::calculateSize(bool measureWidth) const
         return {m_size.width(), m_rowHeight};
     }
 
-    QSize totalSize;
-
-    auto addSize = [&totalSize, measureWidth](const RichText& text, bool addToTotal = true) {
-        const auto metrics = measureWidth ? measureRichText(text) : RichTextMetrics{.height = richTextHeight(text)};
-        const QSize blockSize{metrics.width, metrics.height};
-
-        if(addToTotal) {
-            totalSize.setWidth(totalSize.width() + blockSize.width());
-            totalSize.setHeight(totalSize.height() + blockSize.height() + 4);
-        }
-        return blockSize;
-    };
-
-    if(!m_title.empty()) {
-        addSize(m_title);
+    if(m_layoutKind == LayoutKind::Header) {
+        const auto layout = preparePlaylistHeader(m_title, {}, measureWidth);
+        return {measureWidth ? layout.width : 0,
+                std::max(m_showCover ? 50 : 0, layout.height + ContainerVerticalPadding)};
     }
 
-    QSize subtitleSize;
-
-    if(!m_subtitle.empty()) {
-        subtitleSize = addSize(m_subtitle, false);
-    }
-
-    if(!m_sideText.empty()) {
-        const QSize sideSize = addSize(m_sideText, false);
-        subtitleSize.setWidth(subtitleSize.width() + sideSize.width());
-        subtitleSize.setHeight(std::max(subtitleSize.height(), sideSize.height()));
-    }
-
-    switch(m_layoutKind) {
-        case LayoutKind::SimpleHeader: {
-            totalSize.setWidth(totalSize.width() + subtitleSize.width());
-            totalSize.setHeight(std::max(totalSize.height(), subtitleSize.height()));
-            const bool hasMultiline = richTextHasLineBreaks(m_title) || richTextHasLineBreaks(m_subtitle)
-                                   || richTextHasLineBreaks(m_sideText) || richTextHasLineBreaks(m_info);
-            if(hasMultiline) {
-                totalSize.rheight() += ContainerVerticalPadding;
-            }
-            break;
-        }
-        case LayoutKind::Subheader: {
-            totalSize.setWidth(totalSize.width() + subtitleSize.width());
-            totalSize.setHeight(std::max(totalSize.height(), subtitleSize.height()) + ContainerVerticalPadding);
-            break;
-        }
-        case LayoutKind::Header: {
-            totalSize.setWidth(totalSize.width() + subtitleSize.width());
-            totalSize.setHeight(totalSize.height() + subtitleSize.height() + 4);
-
-            if(!m_info.empty()) {
-                addSize(m_info);
-            }
-            break;
-        }
-    }
-
-    return totalSize;
+    const auto layout      = preparePlaylistHeader(m_title, {}, measureWidth);
+    const bool hasLeftText = std::ranges::any_of(
+        m_title.blocks, [](const auto& block) { return block.format.alignment == RichAlignment::Left; });
+    const int padding = ContainerVerticalPadding + (hasLeftText ? 4 : 0);
+    return {measureWidth ? layout.width : 0, layout.height + padding};
 }
 
 PlaylistTrackItem::PlaylistTrackItem(std::vector<RichText> columns, PlaylistTrack track)

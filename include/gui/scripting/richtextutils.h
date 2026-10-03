@@ -80,5 +80,6 @@ FYGUI_EXPORT RichTextBlockMetrics measureRichTextBlock(const RichText& richText,
                                                        int minimumLineHeight = 0);
 FYGUI_EXPORT RichTextBlockMetrics measureRichTextBlock(const std::vector<RichText>& lines, const QFont& baseFont = {},
                                                        int minimumLineHeight = 0);
+FYGUI_EXPORT RichText richTextForAlignment(const RichText& richText, RichAlignment alignment);
 FYGUI_EXPORT RichText trimRichText(RichText richText);
 } // namespace Fooyin

@@ -353,4 +353,30 @@ TEST_F(ScriptFormatterTest, KeywordWordsCannotCloseTag)
     EXPECT_EQ(u"LESS/b GREATER"_s, result.blocks.front().text);
     EXPECT_TRUE(result.blocks.front().format.font.bold());
 }
+
+TEST_F(ScriptFormatterTest, AlignmentScopesCloseUnclosedFormatting)
+{
+    const auto result = m_formattter.evaluate(u"<left><b><color=red>Title</left><right>Duration</right>"_s);
+    ASSERT_EQ(2, result.size());
+    EXPECT_EQ(u"TitleDuration"_s, result.joinedText());
+    EXPECT_TRUE(result.blocks.front().format.font.bold());
+    EXPECT_EQ(QColor(Qt::red), result.blocks.front().format.colour.colour);
+    EXPECT_EQ(RichAlignment::Left, result.blocks.front().format.alignment);
+    EXPECT_FALSE(result.blocks.back().format.font.bold());
+    EXPECT_FALSE(result.blocks.back().format.colour.isExplicit());
+    EXPECT_EQ(RichAlignment::Right, result.blocks.back().format.alignment);
+    EXPECT_TRUE(m_formattter.errors().empty());
+}
+
+TEST_F(ScriptFormatterTest, AlignmentTextPreservesFormattingAndLineBreaks)
+{
+    const auto result = m_formattter.evaluate(u"<b>Title</b>\nArtist<right><i>Duration\nCount</i></right>"_s);
+    const auto left   = richTextForAlignment(result, RichAlignment::Left);
+    const auto right  = richTextForAlignment(result, RichAlignment::Right);
+    EXPECT_EQ(u"Title\nArtist"_s, left.joinedText());
+    EXPECT_EQ(u"Duration\nCount"_s, right.joinedText());
+    EXPECT_TRUE(left.blocks.front().format.font.bold());
+    EXPECT_TRUE(right.blocks.front().format.font.italic());
+    EXPECT_EQ(RichAlignment::Left, right.blocks.front().format.alignment);
+}
 } // namespace Fooyin::Testing

@@ -355,6 +355,8 @@ set(SOURCES
     playlist/playlistworkspacestate.h
     playlist/playlistdelegate.cpp
     playlist/playlistdelegate.h
+    playlist/playlistheaderlayout.cpp
+    playlist/playlistheaderlayout.h
     playlist/playlistinteractor.cpp
     playlist/playlistitem.cpp
     playlist/playlistitem.h
