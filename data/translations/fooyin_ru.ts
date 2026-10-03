@@ -7476,7 +7476,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="281"/>
         <source>Global shortcut registration was cancelled</source>
-        <translation>Регистрация глобального сочетания клавиш была отменена</translation>
+        <translation>Регистрация глобального сочетания клавиш отменена</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutportalbackend.cpp" line="282"/>
@@ -20547,7 +20547,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="44"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="50"/>
         <source>Global</source>
-        <translation>Общие</translation>
+        <translation>Глобальное</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="68"/>
@@ -20620,7 +20620,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="179"/>
         <source>Configure global shortcuts…</source>
-        <translation>Настройка глобальных сочетаний клавиш…</translation>
+        <translation>Настройка глобальных сочетаний…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="183"/>
@@ -20636,7 +20636,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="178"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="344"/>
         <source>Global</source>
-        <translation>Общие</translation>
+        <translation>Глобальное</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="349"/>
