@@ -34,6 +34,7 @@ public:
     void reset();
 
     [[nodiscard]] std::chrono::milliseconds elapsed() const;
+    [[nodiscard]] std::chrono::nanoseconds elapsedNanoseconds() const;
     [[nodiscard]] QString elapsedFormatted() const;
 
 private:
