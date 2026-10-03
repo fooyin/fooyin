@@ -45,21 +45,6 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 namespace {
-class PresetScriptTextEdit : public ScriptTextEdit
-{
-public:
-    explicit PresetScriptTextEdit(QWidget* parent = nullptr)
-        : ScriptTextEdit{parent}
-    { }
-
-    [[nodiscard]] QSize sizeHint() const override
-    {
-        QSize hint = ScriptTextEdit::sizeHint();
-        hint.setHeight((4 * fontMetrics().lineSpacing()) + (2 * frameWidth()) + viewportMargins().bottom());
-        return hint.expandedTo(minimumSizeHint());
-    }
-};
-
 class ExpandableGroupBox : public ExpandableInput
 {
     Q_OBJECT
@@ -70,8 +55,8 @@ public:
         , m_groupBox{new QGroupBox(this)}
         , m_overrideHeight{new QCheckBox(tr("Override height") + u":"_s, this)}
         , m_rowHeight{new QSpinBox(this)}
-        , m_grouping{new PresetScriptTextEdit(this)}
-        , m_script{new PresetScriptTextEdit(this)}
+        , m_grouping{new ScriptTextEdit(this)}
+        , m_script{new ScriptTextEdit(this)}
     {
         auto* layout = new QVBoxLayout(this);
         layout->setContentsMargins(0, 0, 0, 0);
@@ -247,15 +232,15 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     , m_settings{settings}
     , m_presetBox{new QComboBox(this)}
     , m_presetTabs{new QTabWidget(this)}
-    , m_headerText{new PresetScriptTextEdit(this)}
-    , m_headerGrouping{new PresetScriptTextEdit(this)}
+    , m_headerText{new ScriptTextEdit(this)}
+    , m_headerGrouping{new ScriptTextEdit(this)}
     , m_overrideHeaderHeight{new QCheckBox(tr("Override height") + u":"_s, this)}
     , m_headerRowHeight{new QSpinBox(this)}
     , m_headerArtworkPadding{new QSpinBox(this)}
     , m_headerArtworkPaddingVertical{new QSpinBox(this)}
     , m_alignSubheadersToImageColumns{new QCheckBox(tr("Align subheaders to edge of image columns"), this)}
     , m_showCoverBelowEverySubheader{new QCheckBox(tr("Display covers below every subheader"), this)}
-    , m_trackText{new PresetScriptTextEdit(this)}
+    , m_trackText{new ScriptTextEdit(this)}
     , m_overrideTrackHeight{new QCheckBox(tr("Override height") + u":"_s, this)}
     , m_trackRowHeight{new QSpinBox(this)}
     , m_showCover{new QCheckBox(tr("Show cover"), this)}
