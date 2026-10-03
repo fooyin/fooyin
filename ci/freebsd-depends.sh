@@ -15,6 +15,7 @@ sudo pkg install -y \
      libvgm \
      vulkan-headers \
      alsa-lib \
+     jackit \
      qt6-tools \
      qcoro-qt6 \
      ffmpeg \

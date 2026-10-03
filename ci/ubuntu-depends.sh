@@ -25,6 +25,7 @@ $SUDO apt-get install -y \
         dh-make \
         zlib1g-dev \
         libasound2-dev \
+        libjack-jackd2-dev \
         libpipewire-0.3-dev \
         libpulse-dev \
         libsdl2-dev \
