@@ -379,11 +379,11 @@ void paintSubheader(QPainter* painter, const QStyleOptionViewItem& opt, const QM
     const int halfWidth         = rect.width() / 2;
     static constexpr int offset = 5;
 
-    const QRect rightRect{rect.left() + halfWidth, rect.top(), halfWidth - offset, height};
+    const QRect rightRect{rect.left() + halfWidth, rect.top(), rect.width() - halfWidth, height};
     auto [rightBound, totalRightWidth]
         = drawTextBlocks(painter, opt, rightRect, subtitle, Qt::AlignVCenter | Qt::AlignRight);
 
-    QRect leftRect{rect.left() + offset, rect.top(), rect.width() - totalRightWidth, height};
+    QRect leftRect{rect.left(), rect.top(), rect.width() - totalRightWidth, height};
     if(totalRightWidth > 0) {
         leftRect.setWidth(leftRect.width() - (4 * offset));
     }
