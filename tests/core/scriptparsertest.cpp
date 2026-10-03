@@ -1023,6 +1023,42 @@ TEST_F(ScriptParserTest, ContextEvaluationEnvironmentPreservesPathVariableSepara
     EXPECT_EQ(u"foo-bar", parser.evaluate(u"%title%"_s, track, context));
 }
 
+TEST_F(ScriptParserTest, RichTextEscapingPreservesMetadataAndPathBackslashes)
+{
+    TestPlaylistEnvironment environment;
+    environment.setEvaluationState(TrackListContextPolicy::Unresolved, {}, true);
+
+    ScriptContext context;
+    context.environment = &environment;
+    Track track;
+    track.setAlbum(uR"(/// ABCD \\)"_s);
+    track.setFilePath(uR"(/tmp/music/\<album>\track.flac)"_s);
+
+    EXPECT_EQ(uR"(/// ABCD \\\\)"_s, m_parser.evaluate(u"%album%"_s, track, context));
+    EXPECT_EQ(uR"(/tmp/music/\\\<album>\\track.flac)"_s, m_parser.evaluate(u"%filepath%"_s, track, context));
+    EXPECT_EQ(track.album(), m_parser.evaluate(u"%album%"_s, track));
+    EXPECT_EQ(track.filepath(), m_parser.evaluate(u"%filepath%"_s, track));
+}
+
+TEST_F(ScriptParserTest, ProviderVariablesRespectRichTextEscaping)
+{
+    const StaticScriptVariableProvider provider{makeScriptVariableDescriptor<[]() {
+        return uR"(\<b>provider</b>\)"_s;
+    }>(VariableKind::Generic, u"ESCAPETEST"_s)};
+    m_parser.addProvider(provider);
+    TestPlaylistEnvironment environment;
+    environment.setEvaluationState(TrackListContextPolicy::Unresolved, {}, true);
+    const ScriptContext context{.environment = &environment};
+    const Track track;
+    const TrackList tracks{track};
+    const QString escaped = uR"(\\\<b>provider\</b>\\)"_s;
+
+    EXPECT_EQ(escaped, m_parser.evaluate(u"%escapetest%"_s, track, context));
+    EXPECT_EQ(escaped, m_parser.evaluate(u"%escapetest%"_s, tracks, context));
+    EXPECT_EQ(escaped, m_parser.evaluate(u"%escapetest%"_s, context));
+    EXPECT_EQ(uR"(\<b>provider</b>\)"_s, m_parser.evaluate(u"%escapetest%"_s, track));
+}
+
 TEST_F(ScriptParserTest, ContextTrackListEnvironmentProvidesFallbackData)
 {
     ScriptParser parser;

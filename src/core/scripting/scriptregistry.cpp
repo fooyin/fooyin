@@ -41,24 +41,35 @@
 
 using namespace Qt::StringLiterals;
 
+namespace Fooyin {
 namespace {
+QString escapeRichText(const ScriptContext* context, QString value)
+{
+    const auto* environment = context && context->environment ? context->environment->evaluationEnvironment() : nullptr;
+    if(environment && environment->escapeRichText()) {
+        value.replace(u'\\', u"\\\\"_s);
+        value.replace(u'<', u"\\<"_s);
+    }
+    return value;
+}
+
 uint64_t remainingPlaybackSeconds(uint64_t duration, uint64_t position)
 {
     return (duration / 1000) - (position / 1000);
 }
 
-Fooyin::RatingStarSymbols ratingStarSymbols(const Fooyin::ScriptContext& context)
+RatingStarSymbols ratingStarSymbols(const ScriptContext& context)
 {
     const auto* environment = context.environment ? context.environment->evaluationEnvironment() : nullptr;
-    return environment ? environment->ratingStarSymbols() : Fooyin::defaultRatingStarSymbols();
+    return environment ? environment->ratingStarSymbols() : defaultRatingStarSymbols();
 }
 
-QString formattedRatingStars(const Fooyin::Track& track, const Fooyin::ScriptContext& context, bool includeEmptyStars)
+QString formattedRatingStars(const Track& track, const ScriptContext& context, bool includeEmptyStars)
 {
     const int rating = track.ratingStars();
 
-    const Fooyin::RatingStarSymbols symbols = ratingStarSymbols(context);
-    const QString emptyStarSymbol           = includeEmptyStars ? symbols.emptyStarSymbol : QString{};
+    const RatingStarSymbols symbols = ratingStarSymbols(context);
+    const QString emptyStarSymbol   = includeEmptyStars ? symbols.emptyStarSymbol : QString{};
 
     if(rating <= 0) {
         return includeEmptyStars && !emptyStarSymbol.isEmpty() ? emptyStarSymbol.repeated(5) : QString{};
@@ -82,21 +93,27 @@ QString formattedRatingStars(const Fooyin::Track& track, const Fooyin::ScriptCon
     return text;
 }
 
-QString trackMeta(const Fooyin::ScriptFunctionCallContext& call)
+QString trackMeta(const ScriptFunctionCallContext& call)
 {
     if(call.args.empty() || !call.subject.track) {
         return {};
     }
 
     const QString tag = call.args.front().value.toUpper();
-    if(tag == QLatin1String{Fooyin::Constants::MetaData::RatingStars}) {
-        return formattedRatingStars(*call.subject.track, call.context ? *call.context : Fooyin::ScriptContext{}, false);
+    if(tag == QLatin1StringView{Constants::MetaData::RatingStars}) {
+        return escapeRichText(
+            call.context,
+            formattedRatingStars(*call.subject.track, call.context ? *call.context : ScriptContext{}, false));
     }
-    if(tag == QLatin1String{Fooyin::Constants::MetaData::RatingStarsPadded}) {
-        return formattedRatingStars(*call.subject.track, call.context ? *call.context : Fooyin::ScriptContext{}, true);
+    if(tag == QLatin1StringView{Constants::MetaData::RatingStarsPadded}) {
+        return escapeRichText(call.context, formattedRatingStars(*call.subject.track,
+                                                                 call.context ? *call.context : ScriptContext{}, true));
     }
 
-    const QStringList values = call.subject.track->metaValues(tag);
+    QStringList values = call.subject.track->metaValues(tag);
+    for(auto& value : values) {
+        value = escapeRichText(call.context, value);
+    }
     if(call.args.size() == 1) {
         return values.join(", "_L1);
     }
@@ -109,13 +126,16 @@ QString trackMeta(const Fooyin::ScriptFunctionCallContext& call)
     return values.at(index);
 }
 
-QString trackMetaSep(const Fooyin::ScriptFunctionCallContext& call)
+QString trackMetaSep(const ScriptFunctionCallContext& call)
 {
     if(call.args.size() < 2 || call.args.size() > 3 || !call.subject.track) {
         return {};
     }
 
-    const QStringList values = call.subject.track->metaValues(call.args.front().value);
+    QStringList values = call.subject.track->metaValues(call.args.front().value);
+    for(auto& value : values) {
+        value = escapeRichText(call.context, value);
+    }
     if(values.size() < 2) {
         return values.value(0);
     }
@@ -135,7 +155,7 @@ QString trackMetaSep(const Fooyin::ScriptFunctionCallContext& call)
     return result;
 }
 
-Fooyin::ScriptResult trackMetaTest(const Fooyin::ScriptFunctionCallContext& call)
+ScriptResult trackMetaTest(const ScriptFunctionCallContext& call)
 {
     if(call.args.empty() || !call.subject.track) {
         return {};
@@ -150,7 +170,7 @@ Fooyin::ScriptResult trackMetaTest(const Fooyin::ScriptFunctionCallContext& call
     return {.value = u"1"_s, .cond = true};
 }
 
-QString trackMetaNum(const Fooyin::ScriptFunctionCallContext& call)
+QString trackMetaNum(const ScriptFunctionCallContext& call)
 {
     if(call.args.size() != 1 || !call.subject.track) {
         return {};
@@ -159,16 +179,16 @@ QString trackMetaNum(const Fooyin::ScriptFunctionCallContext& call)
     return QString::number(call.subject.track->metaValues(call.args.front().value).size());
 }
 
-QString trackInfo(const Fooyin::Track& track, const QStringList& args)
+QString trackInfo(const ScriptFunctionCallContext& call)
 {
-    if(args.empty()) {
+    if(call.args.empty() || !call.subject.track) {
         return {};
     }
 
-    return track.techInfo(args.front());
+    return escapeRichText(call.context, call.subject.track->techInfo(call.args.front().value));
 }
 
-QString trackChannels(const Fooyin::Track& track)
+QString trackChannels(const Track& track)
 {
     switch(track.channels()) {
         case 1:
@@ -187,7 +207,7 @@ QString formatGain(const float gain)
 
 QString formatPeak(const float peak)
 {
-    const double dbPeak = Fooyin::Audio::volumeToDb(static_cast<double>(peak));
+    const double dbPeak = Audio::volumeToDb(static_cast<double>(peak));
     return u"%1 dB"_s.arg(dbPeak, 0, 'f', 2).prepend(dbPeak > 0 ? "+"_L1 : ""_L1);
 }
 
@@ -197,20 +217,20 @@ QString formatDateTime(const uint64_t ms)
         return {};
     }
 
-    return Fooyin::Utils::msToDateString(static_cast<int64_t>(ms));
+    return Utils::msToDateString(static_cast<int64_t>(ms));
 }
 
-QString sampleRateMetadata(const Fooyin::Track& track)
+QString sampleRateMetadata(const Track& track)
 {
     return track.sampleRate() > 0 ? QString::number(track.sampleRate()) : QString{};
 }
 
-int bitDepthMetadata(const Fooyin::Track& track)
+int bitDepthMetadata(const Track& track)
 {
     return track.bitDepth() > 0 ? track.bitDepth() : -1;
 }
 
-Fooyin::ScriptResult dateTimeVariable()
+ScriptResult dateTimeVariable()
 {
     const QString value = QDateTime::currentDateTime().toString(u"yyyy-MM-dd hh:mm:ss"_s);
     return {.value = value, .cond = !value.isEmpty()};
@@ -221,39 +241,36 @@ QString fooyinVersionVariable()
     return QString::fromLatin1(VERSION);
 }
 
-Fooyin::ScriptContext makeContext(const Fooyin::ScriptContext& base, const Fooyin::Track* track,
-                                  const Fooyin::TrackList* tracks, const Fooyin::Playlist* playlist)
+ScriptContext makeContext(const ScriptContext& base, const Track* track, const TrackList* tracks,
+                          const Playlist* playlist)
 {
-    Fooyin::ScriptContext context = base;
-    context.track                 = track;
-    context.tracks                = tracks;
-    context.playlist              = playlist;
+    ScriptContext context = base;
+    context.track         = track;
+    context.tracks        = tracks;
+    context.playlist      = playlist;
     return context;
 }
 
-Fooyin::ScriptResult unavailableTrackListResult(const Fooyin::ScriptContext& context, const QString& var)
+ScriptResult unavailableTrackListResult(const ScriptContext& context, const QString& var)
 {
     const auto* environment = context.environment ? context.environment->evaluationEnvironment() : nullptr;
-    const Fooyin::TrackListContextPolicy policy
-        = environment ? environment->trackListContextPolicy() : Fooyin::TrackListContextPolicy::Unresolved;
+    const TrackListContextPolicy policy
+        = environment ? environment->trackListContextPolicy() : TrackListContextPolicy::Unresolved;
     const QString placeholder = environment ? environment->trackListPlaceholder() : QString{};
 
-    if(policy == Fooyin::TrackListContextPolicy::Placeholder && !placeholder.isNull()) {
+    if(policy == TrackListContextPolicy::Placeholder && !placeholder.isNull()) {
         return {.value = placeholder, .cond = true};
     }
 
     return {.value = u"%%1%"_s.arg(var), .cond = true};
 }
 
-void applyOutputPolicy(const Fooyin::ScriptContext& context, Fooyin::ScriptResult& result)
+void applyOutputPolicy(const ScriptContext& context, ScriptResult& result)
 {
     const auto* environment          = context.environment ? context.environment->evaluationEnvironment() : nullptr;
-    const bool escapeRichText        = environment && environment->escapeRichText();
     const bool replacePathSeparators = environment && environment->replacePathSeparators();
 
-    if(escapeRichText && !result.value.isEmpty()) {
-        result.value.replace(u'<', u"\\<"_s);
-    }
+    result.value = escapeRichText(&context, result.value);
 
     if(replacePathSeparators && !result.value.isEmpty()) {
         static const QRegularExpression regex{uR"([/\\])"_s};
@@ -261,44 +278,40 @@ void applyOutputPolicy(const Fooyin::ScriptContext& context, Fooyin::ScriptResul
     }
 }
 
-bool preservesPathSeparators(const Fooyin::VariableKind kind)
+bool preservesPathSeparators(const VariableKind kind)
 {
     switch(kind) {
-        case Fooyin::VariableKind::FilePath:
-        case Fooyin::VariableKind::Directory:
-        case Fooyin::VariableKind::Path:
-        case Fooyin::VariableKind::LibraryPath:
-        case Fooyin::VariableKind::RelativePath:
+        case VariableKind::FilePath:
+        case VariableKind::Directory:
+        case VariableKind::Path:
+        case VariableKind::LibraryPath:
+        case VariableKind::RelativePath:
             return true;
         default:
             return false;
     }
 }
 
-void applyVariableOutputPolicy(const Fooyin::ScriptContext& context, const Fooyin::VariableKind kind,
-                               Fooyin::ScriptResult& result)
+void applyVariableOutputPolicy(const ScriptContext& context, const VariableKind kind, ScriptResult& result)
 {
     if(preservesPathSeparators(kind)) {
-        const auto* environment = context.environment ? context.environment->evaluationEnvironment() : nullptr;
-        if(environment && environment->escapeRichText() && !result.value.isEmpty()) {
-            result.value.replace(u'<', u"\\<"_s);
-        }
+        result.value = escapeRichText(&context, result.value);
         return;
     }
 
     applyOutputPolicy(context, result);
 }
 
-Fooyin::TrackListContextPolicy trackListContextPolicy(const Fooyin::ScriptContext& context)
+TrackListContextPolicy trackListContextPolicy(const ScriptContext& context)
 {
     if(const auto* environment = context.environment ? context.environment->evaluationEnvironment() : nullptr) {
         return environment->trackListContextPolicy();
     }
 
-    return Fooyin::TrackListContextPolicy::Unresolved;
+    return TrackListContextPolicy::Unresolved;
 }
 
-bool useVariousArtists(const Fooyin::ScriptContext& context)
+bool useVariousArtists(const ScriptContext& context)
 {
     if(const auto* environment = context.environment ? context.environment->evaluationEnvironment() : nullptr) {
         return environment->useVariousArtists();
@@ -307,7 +320,7 @@ bool useVariousArtists(const Fooyin::ScriptContext& context)
     return false;
 }
 
-const Fooyin::TrackList* contextTrackList(const Fooyin::ScriptContext& context)
+const TrackList* contextTrackList(const ScriptContext& context)
 {
     if(const auto* environment = context.environment ? context.environment->trackListEnvironment() : nullptr) {
         return environment->trackList();
@@ -316,18 +329,17 @@ const Fooyin::TrackList* contextTrackList(const Fooyin::ScriptContext& context)
     return context.tracks;
 }
 
-const Fooyin::ScriptPlaybackEnvironment* playbackEnvironment(const Fooyin::ScriptContext& context)
+const ScriptPlaybackEnvironment* playbackEnvironment(const ScriptContext& context)
 {
     return context.environment ? context.environment->playbackEnvironment() : nullptr;
 }
 
-const Fooyin::ScriptLibraryEnvironment* libraryEnvironment(const Fooyin::ScriptContext& context)
+const ScriptLibraryEnvironment* libraryEnvironment(const ScriptContext& context)
 {
     return context.environment ? context.environment->libraryEnvironment() : nullptr;
 }
 } // namespace
 
-namespace Fooyin {
 bool isTrackListVariableKind(const VariableKind kind)
 {
     switch(kind) {
@@ -1024,7 +1036,9 @@ ScriptResult ScriptRegistry::valueForTrack(VariableKind kind, const QString& var
                                            const Playlist* playlist) const
 {
     if(const auto* invoker = customVariableInvoker(kind, var); invoker != nullptr) {
-        return (*invoker)(makeContext(m_context, &track, nullptr, playlist), var);
+        ScriptResult result = (*invoker)(makeContext(m_context, &track, nullptr, playlist), var);
+        applyVariableOutputPolicy(m_context, kind, result);
+        return result;
     }
 
     if(isTrackListVariableKind(kind)) {
@@ -1064,7 +1078,9 @@ ScriptResult ScriptRegistry::valueForTrackList(VariableKind kind, const QString&
                                                const Playlist* playlist) const
 {
     if(const auto* invoker = customVariableInvoker(kind, var); invoker != nullptr) {
-        return (*invoker)(makeContext(m_context, nullptr, &tracks, playlist), var);
+        ScriptResult result = (*invoker)(makeContext(m_context, nullptr, &tracks, playlist), var);
+        applyVariableOutputPolicy(m_context, kind, result);
+        return result;
     }
 
     if(const auto value = trackListValue(kind, tracks, *this); value.has_value()) {
@@ -1083,7 +1099,9 @@ ScriptResult ScriptRegistry::valueForTrackList(VariableKind kind, const QString&
 ScriptResult ScriptRegistry::valueForPlaylist(VariableKind kind, const QString& var, const Playlist& playlist) const
 {
     if(const auto* invoker = customVariableInvoker(kind, var); invoker != nullptr) {
-        return (*invoker)(makeContext(m_context, nullptr, nullptr, &playlist), var);
+        ScriptResult result = (*invoker)(makeContext(m_context, nullptr, nullptr, &playlist), var);
+        applyVariableOutputPolicy(m_context, kind, result);
+        return result;
     }
 
     if(var.isEmpty()) {

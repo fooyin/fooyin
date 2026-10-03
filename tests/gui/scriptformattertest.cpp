@@ -17,6 +17,9 @@
  *
  */
 
+#include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/scripting/scriptparser.h>
+#include <core/track.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
 #include <gui/scripting/scriptformatterregistry.h>
@@ -229,6 +232,31 @@ TEST_F(ScriptFormatterTest, LiteralBackslashes)
     const auto result = m_formattter.evaluate(uR"(C:\Music\Track.flac\)"_s);
     ASSERT_EQ(1, result.size());
     EXPECT_EQ(uR"(C:\Music\Track.flac\)"_s, result.blocks.front().text);
+}
+
+TEST_F(ScriptFormatterTest, MetadataSeparatorsCanContainFormatting)
+{
+    ScriptParser parser;
+    LibraryScriptEnvironment environment{nullptr};
+    environment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true);
+    const ScriptContext context{.environment = &environment};
+    Track track;
+    track.setArtists({uR"(first\)"_s, uR"(<b>second</b>\)"_s, uR"(third\\)"_s});
+
+    const QString script = u"$meta_sep(artist,<rgb=1,2,3> / </rgb>,<rgb=4,5,6> and </rgb>)"_s;
+    const auto result    = m_formattter.evaluate(parser.evaluate(script, track, context));
+    ASSERT_EQ(5, result.size());
+    EXPECT_EQ(track.artists().at(0), result.blocks.at(0).text);
+    EXPECT_EQ(u" / "_s, result.blocks.at(1).text);
+    EXPECT_EQ(QColor(1, 2, 3), result.blocks.at(1).format.colour.colour);
+    EXPECT_EQ(track.artists().at(1), result.blocks.at(2).text);
+    EXPECT_EQ(u" and "_s, result.blocks.at(3).text);
+    EXPECT_EQ(QColor(4, 5, 6), result.blocks.at(3).format.colour.colour);
+    EXPECT_EQ(track.artists().at(2), result.blocks.at(4).text);
+    EXPECT_FALSE(result.blocks.at(0).format.font.bold());
+    EXPECT_FALSE(result.blocks.at(2).format.font.bold());
+    EXPECT_EQ(uR"(first\<rgb=1,2,3> / </rgb><b>second</b>\<rgb=4,5,6> and </rgb>third\\)"_s,
+              parser.evaluate(script, track));
 }
 
 TEST_F(ScriptFormatterTest, Link)

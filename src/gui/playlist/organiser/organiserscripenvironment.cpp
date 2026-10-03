@@ -59,8 +59,11 @@ QString organiserCount(const Fooyin::ScriptContext& context)
 
 namespace Fooyin {
 OrganiserScripEnvironment::OrganiserScripEnvironment(const PlaylistOrganiserItem* item)
-    : m_item{item}
-{ }
+    : LibraryScriptEnvironment{nullptr}
+    , m_item{item}
+{
+    setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true);
+}
 
 void OrganiserScripEnvironment::setItem(const PlaylistOrganiserItem* item)
 {

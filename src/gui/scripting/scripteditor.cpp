@@ -655,7 +655,9 @@ class ScriptEditorEnvironment : public ScriptEnvironment
 public:
     explicit ScriptEditorEnvironment(LibraryManager* libraryManager)
         : m_libraryEnvironment{libraryManager}
-    { }
+    {
+        m_libraryEnvironment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true);
+    }
 
     void updatePlaybackState(PlayerController* playerController)
     {

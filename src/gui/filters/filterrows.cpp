@@ -141,7 +141,7 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
 
     LibraryScriptEnvironment scriptEnvironment{libraryManager};
     scriptEnvironment.setRatingStarSymbols(context.ratingSymbols);
-    scriptEnvironment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, false, context.useVarious);
+    scriptEnvironment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true, context.useVarious);
 
     const ParsedScript script = parser.parse(fields.join(QLatin1StringView{Constants::RecordSeparator}));
     ScriptContext scriptContext;

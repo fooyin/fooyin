@@ -19,15 +19,15 @@
 
 #pragma once
 
+#include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptproviders.h>
-#include <core/scripting/scripttypes.h>
 
 #include <QString>
 
 namespace Fooyin {
 class PlaylistOrganiserItem;
 
-class OrganiserScripEnvironment : public ScriptEnvironment
+class OrganiserScripEnvironment : public LibraryScriptEnvironment
 {
 public:
     explicit OrganiserScripEnvironment(const PlaylistOrganiserItem* item = nullptr);
