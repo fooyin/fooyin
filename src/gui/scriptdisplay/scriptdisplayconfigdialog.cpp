@@ -120,9 +120,9 @@ ScriptDisplayConfigDialog::ScriptDisplayConfigDialog(ScriptDisplay* widget, QWid
     m_trackPreference->addItem(tr("Selected track"), static_cast<int>(TrackDisplayPreference::SelectedTrack));
     m_trackPreference->addItem(tr("Playing (or selected when stopped)"),
                                static_cast<int>(TrackDisplayPreference::PlayingTrackSelectedWhenStopped));
-    m_trackPreference->addItem(tr("Playing (blank at startup)"),
+    m_trackPreference->addItem(tr("Playing (no track at startup)"),
                                static_cast<int>(TrackDisplayPreference::PlayingTrackBlankAtStartup));
-    m_trackPreference->addItem(tr("Playing (blank when stopped)"),
+    m_trackPreference->addItem(tr("Playing (no track when stopped)"),
                                static_cast<int>(TrackDisplayPreference::PlayingTrackBlankWhenStopped));
 
     auto* formatLayout = new QGridLayout(m_formatTab);
