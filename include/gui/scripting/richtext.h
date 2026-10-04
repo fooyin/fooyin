@@ -30,6 +30,7 @@ enum class RichAlignment : uint8_t
 {
     Left = 0,
     Right,
+    Default, // Uses the view alignment; left/right item layouts treat this as left
 };
 
 struct RichColour
@@ -63,7 +64,7 @@ struct RichFormatting
     QFont font;
     RichColour colour;
     QString link;
-    RichAlignment alignment{RichAlignment::Left};
+    RichAlignment alignment{RichAlignment::Default};
 
     bool operator==(const RichFormatting& other) const
     {

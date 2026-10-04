@@ -270,7 +270,7 @@ const std::vector<ScriptReferenceEntry>& scriptReferenceEntries()
         variableEntry("librarypath", QT_TRANSLATE_NOOP("Fooyin", "Library"),
                       QT_TRANSLATE_NOOP("Fooyin", "Current library path")),
         formattingEntry("hr", "<hr/>", QT_TRANSLATE_NOOP("Fooyin", "Layout"),
-                        QT_TRANSLATE_NOOP("Fooyin", "Draws a separator in playlist headers and subheaders"), 7),
+                        QT_TRANSLATE_NOOP("Fooyin", "Draws a separator in supported views"), 7),
         formattingEntry("left", "<left>", QT_TRANSLATE_NOOP("Fooyin", "Alignment"),
                         QT_TRANSLATE_NOOP("Fooyin", "Aligns enclosed text to the left in supported views"), 7),
         formattingEntry("right", "<right>", QT_TRANSLATE_NOOP("Fooyin", "Alignment"),

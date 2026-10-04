@@ -486,7 +486,7 @@ void ScriptDisplay::updateText()
     const QString text     = evaluateScript();
 
     const QColor linkColour = m_config.linkColour.isEmpty() ? QColor{} : QColor{m_config.linkColour};
-    const QString body      = richTextToHtml(formatter.evaluate(text), linkColour);
+    const QString body      = richTextToHtml(formatter.evaluate(text), linkColour, m_config.horizontalAlignment);
     const QString html      = u"<html><body style=\"margin:0;text-align:%1;\">%2</body></html>"_s.arg(
         alignmentToCss(m_config.horizontalAlignment), body);
 

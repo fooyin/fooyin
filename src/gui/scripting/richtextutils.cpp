@@ -47,40 +47,8 @@ RichTextMetrics measureRichTextLine(const RichText& richText, const QFont& baseF
     metrics.height = baseline.height();
     return metrics;
 }
-} // namespace
 
-QColor resolvedRichTextColour(const RichFormatting& formatting, const QColor& baseColour, const QColor& linkColour)
-{
-    QColor colour;
-    if(formatting.colour.isExplicit()) {
-        colour = formatting.colour.colour;
-    }
-    else if(!formatting.link.isEmpty() && linkColour.isValid()) {
-        colour = linkColour;
-    }
-    else {
-        colour = baseColour;
-    }
-
-    if(formatting.colour.alpha >= 0) {
-        colour.setAlpha(formatting.colour.alpha);
-    }
-    return colour;
-}
-
-QFont resolvedRichTextFont(const RichFormatting& formatting, const QFont& baseFont)
-{
-    return formatting.font == QFont{} ? baseFont : formatting.font.resolve(baseFont);
-}
-
-TextBaselineMetrics textBaselineMetrics(const QFont& font)
-{
-    TextBaselineMetrics metrics;
-    metrics.expand(QFontMetrics{font});
-    return metrics;
-}
-
-QString richTextToHtml(const RichText& richText, const QColor& linkColour)
+QString richTextSpansToHtml(const RichText& richText, const QColor& linkColour)
 {
     QString html;
     html.reserve(richText.joinedText().size() * 2);
@@ -149,10 +117,106 @@ QString richTextToHtml(const RichText& richText, const QColor& linkColour)
             html += u"<span style=\"%1\">%2</span>"_s.arg(style, htmlText);
         }
         else {
-            html += u"<a href=\"%1\"><span style=\"%2\">%3</span></a>"_s.arg(format.link.toHtmlEscaped(), style, text);
+            html += u"<a href=\"%1\"><span style=\"%2\">%3</span></a>"_s.arg(format.link.toHtmlEscaped(), style,
+                                                                             htmlText);
         }
     }
 
+    return html;
+}
+} // namespace
+
+QColor resolvedRichTextColour(const RichFormatting& formatting, const QColor& baseColour, const QColor& linkColour)
+{
+    QColor colour;
+    if(formatting.colour.isExplicit()) {
+        colour = formatting.colour.colour;
+    }
+    else if(!formatting.link.isEmpty() && linkColour.isValid()) {
+        colour = linkColour;
+    }
+    else {
+        colour = baseColour;
+    }
+
+    if(formatting.colour.alpha >= 0) {
+        colour.setAlpha(formatting.colour.alpha);
+    }
+    return colour;
+}
+
+QFont resolvedRichTextFont(const RichFormatting& formatting, const QFont& baseFont)
+{
+    return formatting.font == QFont{} ? baseFont : formatting.font.resolve(baseFont);
+}
+
+TextBaselineMetrics textBaselineMetrics(const QFont& font)
+{
+    TextBaselineMetrics metrics;
+    metrics.expand(QFontMetrics{font});
+    return metrics;
+}
+
+QString richTextToHtml(const RichText& richText, const QColor& linkColour, int defaultAlignment)
+{
+    const bool hasAlignment = std::ranges::any_of(
+        richText.blocks, [](const auto& block) { return block.format.alignment != RichAlignment::Default; });
+    if(!hasAlignment) {
+        return richTextSpansToHtml(richText, linkColour);
+    }
+
+    const QString defaultAlign = (defaultAlignment & Qt::AlignRight) != 0   ? u"right"_s
+                               : (defaultAlignment & Qt::AlignHCenter) != 0 ? u"center"_s
+                                                                            : u"left"_s;
+
+    QString html = u"<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">"_s;
+
+    const auto appendLine = [&html, &linkColour, &defaultAlign](const RichText& line) {
+        const bool aligned = std::ranges::any_of(
+            line.blocks, [](const auto& block) { return block.format.alignment != RichAlignment::Default; });
+        if(!aligned) {
+            const QString text = line.empty() ? u"&nbsp;"_s : richTextSpansToHtml(line, linkColour);
+            html += u"<tr><td colspan=\"2\" align=\"%1\">%2</td></tr>"_s.arg(defaultAlign, text);
+            return;
+        }
+
+        const auto left  = richTextForAlignment(line, RichAlignment::Left);
+        const auto right = richTextForAlignment(line, RichAlignment::Right);
+        if(left.empty() || right.empty()) {
+            const bool rightOnly = left.empty();
+            html += u"<tr><td colspan=\"2\" align=\"%1\">%2</td></tr>"_s.arg(
+                rightOnly ? u"right"_s : u"left"_s, richTextSpansToHtml(rightOnly ? right : left, linkColour));
+        }
+        else {
+            html += u"<tr><td align=\"left\" valign=\"top\">%1</td>"
+                    "<td align=\"right\" valign=\"top\">%2</td></tr>"_s.arg(richTextSpansToHtml(left, linkColour),
+                                                                            richTextSpansToHtml(right, linkColour));
+        }
+    };
+
+    const auto lines = splitRichTextLines(richText);
+    for(const auto& line : lines) {
+        RichText text;
+        bool hasRule{false};
+        for(const auto& block : line.blocks) {
+            if(block.type == RichTextBlock::Type::Line) {
+                if(!text.empty()) {
+                    appendLine(text);
+                    text.clear();
+                }
+                html += u"<tr><td colspan=\"2\"><hr/></td></tr>"_s;
+                hasRule = true;
+            }
+            else {
+                text.blocks.push_back(block);
+            }
+        }
+        if(!text.empty() || !hasRule) {
+            appendLine(text);
+        }
+    }
+
+    html += u"</table>"_s;
     return html;
 }
 
@@ -298,7 +362,8 @@ RichText richTextForAlignment(const RichText& richText, RichAlignment alignment)
 {
     RichText alignedText;
     for(auto block : richText.blocks) {
-        if(block.format.alignment == alignment) {
+        if(block.format.alignment == alignment
+           || (alignment == RichAlignment::Left && block.format.alignment == RichAlignment::Default)) {
             block.format.alignment = RichAlignment::Left;
             alignedText.blocks.push_back(std::move(block));
         }

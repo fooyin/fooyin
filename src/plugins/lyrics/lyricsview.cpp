@@ -159,7 +159,7 @@ void LyricsView::paintEvent(QPaintEvent* event)
         document.setDocumentMargin(0);
         document.setTextWidth(textRect.width());
         document.setHtml(u"<html><body style=\"margin:0;text-align:%1;\">%2</body></html>"_s.arg(
-            alignmentToCss(m_displayAlignment), richTextToHtml(m_displayString)));
+            alignmentToCss(m_displayAlignment), richTextToHtml(m_displayString, {}, m_displayAlignment)));
 
         const qreal docHeight = document.size().height();
         qreal textTop         = textRect.top();

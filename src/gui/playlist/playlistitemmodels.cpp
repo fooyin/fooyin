@@ -177,7 +177,7 @@ QSize PlaylistContainerItem::calculateSize(bool measureWidth) const
 
     const auto layout      = preparePlaylistHeader(m_title, {}, measureWidth);
     const bool hasLeftText = std::ranges::any_of(
-        m_title.blocks, [](const auto& block) { return block.format.alignment == RichAlignment::Left; });
+        m_title.blocks, [](const auto& block) { return block.format.alignment != RichAlignment::Right; });
     const int padding = ContainerVerticalPadding + (hasLeftText ? 4 : 0);
     return {measureWidth ? layout.width : 0, layout.height + padding};
 }
