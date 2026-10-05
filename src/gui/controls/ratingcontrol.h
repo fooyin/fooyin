@@ -37,10 +37,19 @@ public:
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
+    void saveLayoutData(QJsonObject& layout) override;
+    void loadLayoutData(const QJsonObject& layout) override;
+    void populateContextMenu(QMenu* menu) override;
+
+protected:
+    void contextMenuEvent(QContextMenuEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
+
 Q_SIGNALS:
     void trackRated(const Fooyin::Track& track);
 
 private:
+    void updateOrientation();
     void updateTrack(const Track& track);
     void updateAppearance();
     void changeRating(float rating);
@@ -48,5 +57,7 @@ private:
     PlayerController* m_playerController;
     SettingsManager* m_settings;
     RatingControlEditor* m_editor;
+    Qt::Orientation m_orientation;
+    bool m_autoOrientation;
 };
 } // namespace Fooyin

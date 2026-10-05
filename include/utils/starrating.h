@@ -56,10 +56,12 @@ public:
     [[nodiscard]] float rating() const;
     [[nodiscard]] int maxStarCount() const;
     [[nodiscard]] int starScale() const;
+    [[nodiscard]] Qt::Orientation orientation() const;
 
     void setRating(float rating);
     void setMaxStarCount(int maxStarCount);
     void setStarScale(int scale);
+    void setOrientation(Qt::Orientation orientation);
 
     void paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode,
                Qt::Alignment alignment = Qt::AlignLeft, bool selected = false) const;
@@ -77,6 +79,7 @@ private:
     int m_scale;
     RatingStarColours m_colours;
     QColor m_unratedColour;
+    Qt::Orientation m_orientation;
 };
 } // namespace Fooyin
 

@@ -300,7 +300,7 @@ void Widgets::registerWidgets()
                              [library](const Track& track) { library->updateTrackStats(track, Track::Stat::Rating); });
             return control;
         },
-        tr("Rating Control"));
+        tr("Rating Control"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     provider->setSubMenus(u"RatingControl"_s, {tr("Controls")});
 
     provider->registerWidget(
@@ -312,7 +312,7 @@ void Widgets::registerWidgets()
                              [library](const Track& track) { library->updateTrackStats(track, Track::Stat::Loved); });
             return control;
         },
-        tr("Love Control"));
+        tr("Love Control"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     provider->setSubMenus(u"LoveControl"_s, {tr("Controls")});
 
     provider->registerWidget(u"VolumeControls"_s,
