@@ -86,6 +86,7 @@ constexpr auto FunctionColourKey       = "Interface/ScriptEditor/FunctionColour"
 constexpr auto ConditionalColourKey    = "Interface/ScriptEditor/ConditionalColour";
 constexpr auto OperatorColourKey       = "Interface/ScriptEditor/OperatorColour";
 constexpr auto QuotedTextColourKey     = "Interface/ScriptEditor/QuotedTextColour";
+constexpr auto FormattingTagColourKey  = "Interface/ScriptEditor/FormattingTagColour";
 constexpr auto FontKey                 = "Interface/ScriptEditor/Font";
 constexpr auto WordWrapKey             = "Interface/ScriptEditor/WordWrap";
 constexpr auto AutocompleteKey         = "Interface/ScriptEditor/Autocomplete";
@@ -768,6 +769,7 @@ public:
     ColourButton* m_conditionalColour{nullptr};
     ColourButton* m_operatorColour{nullptr};
     ColourButton* m_quotedTextColour{nullptr};
+    ColourButton* m_formattingTagColour{nullptr};
 
     QTreeView* m_expressionTree;
     QTabWidget* m_referenceTabs;
@@ -1176,13 +1178,15 @@ void ScriptEditorPrivate::setupSettings()
         = createColourButton(ScriptEditor::tr("Conditionals"), ConditionalColourKey, defaults.conditional);
     m_operatorColour   = createColourButton(ScriptEditor::tr("Operators"), OperatorColourKey, defaults.operatorColour);
     m_quotedTextColour = createColourButton(ScriptEditor::tr("Quoted text"), QuotedTextColourKey, defaults.quotedText);
+    m_formattingTagColour
+        = createColourButton(ScriptEditor::tr("Formatting tags"), FormattingTagColourKey, defaults.formattingTag);
 
-    ColourButton::alignLabels(
-        {m_variableColour, m_functionColour, m_conditionalColour, m_operatorColour, m_quotedTextColour});
+    ColourButton::alignLabels({m_variableColour, m_functionColour, m_conditionalColour, m_operatorColour,
+                               m_quotedTextColour, m_formattingTagColour});
 
     row = 0;
-    for(auto* button :
-        {m_variableColour, m_functionColour, m_conditionalColour, m_operatorColour, m_quotedTextColour}) {
+    for(auto* button : {m_variableColour, m_functionColour, m_conditionalColour, m_operatorColour, m_quotedTextColour,
+                        m_formattingTagColour}) {
         coloursLayout->addWidget(button, row++, 0);
     }
 
@@ -1204,6 +1208,7 @@ void ScriptEditorPrivate::setupSettings()
         resetButton(m_conditionalColour, ConditionalColourKey, defaultColours.conditional);
         resetButton(m_operatorColour, OperatorColourKey, defaultColours.operatorColour);
         resetButton(m_quotedTextColour, QuotedTextColourKey, defaultColours.quotedText);
+        resetButton(m_formattingTagColour, FormattingTagColourKey, defaultColours.formattingTag);
         updateSyntaxColours();
     });
 
@@ -1225,6 +1230,7 @@ void ScriptEditorPrivate::updateSyntaxColours()
         .conditional    = m_conditionalColour->isChecked() ? m_conditionalColour->colour() : defaults.conditional,
         .operatorColour = m_operatorColour->isChecked() ? m_operatorColour->colour() : defaults.operatorColour,
         .quotedText     = m_quotedTextColour->isChecked() ? m_quotedTextColour->colour() : defaults.quotedText,
+        .formattingTag  = m_formattingTagColour->isChecked() ? m_formattingTagColour->colour() : defaults.formattingTag,
     });
 }
 
