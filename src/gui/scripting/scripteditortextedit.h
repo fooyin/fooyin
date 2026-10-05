@@ -23,6 +23,7 @@
 
 #include <core/scripting/scriptscanner.h>
 
+#include <QBasicTimer>
 #include <QCompleter>
 #include <QPlainTextEdit>
 #include <QWidget>
