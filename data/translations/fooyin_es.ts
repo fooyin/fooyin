@@ -5213,7 +5213,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="578"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiar</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="601"/>
@@ -8583,7 +8583,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="634"/>
         <source>Cut</source>
-        <translation type="unfinished"></translation>
+        <translation>Cortar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="639"/>
@@ -9080,7 +9080,7 @@ If the default half-star does not render correctly with your system font, choose
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="163"/>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="210"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiar</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="482"/>
@@ -9396,7 +9396,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infoview.cpp" line="82"/>
         <source>No Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin selección</translation>
     </message>
 </context>
 <context>
@@ -10654,7 +10654,7 @@ This improves compatibility with other players, but stores whole-star values onl
         <location filename="../../src/utils/logging/logwidget.cpp" line="121"/>
         <location filename="../../src/utils/logging/logwidget.cpp" line="270"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiar</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="280"/>
@@ -14562,7 +14562,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="201"/>
         <source>Playlist name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de la lista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="203"/>
@@ -14596,7 +14596,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="133"/>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="397"/>
         <source>Re&amp;name playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Renombrar lista de reproducción</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="135"/>
@@ -19942,7 +19942,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="209"/>
         <source>Search Library</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscar Biblioteca</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="212"/>
@@ -20101,7 +20101,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="124"/>
         <source>Playlist name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de la lista</translation>
     </message>
 </context>
 <context>
@@ -20109,7 +20109,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="63"/>
         <source>Search library…</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscar biblioteca…</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="97"/>
@@ -20452,7 +20452,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="92"/>
         <source>Playlist name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de la lista</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="94"/>
