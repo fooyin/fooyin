@@ -3880,75 +3880,75 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1214"/>
         <source>No name format</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun formato per il nome</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1221"/>
         <source>metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>metadati</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1224"/>
         <source>rating</source>
-        <translation type="unfinished"></translation>
+        <translation>valutazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1227"/>
         <source>play count</source>
-        <translation type="unfinished"></translation>
+        <translation>numero di riproduzioni</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1230"/>
         <source>attached pictures</source>
-        <translation type="unfinished"></translation>
+        <translation>immagini allegate</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1235"/>
         <source>ReplayGain (track)</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain (traccia)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1238"/>
         <source>ReplayGain (album)</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain (album)</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1245"/>
         <source>%Ln DSP(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln DSP</numerusform>
+            <numerusform>%Ln DSP</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1247"/>
         <source>continuous DSP</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP continuo</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1256"/>
         <source>%1% previews</source>
-        <translation type="unfinished"></translation>
+        <translation>%1% anteprime</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1259"/>
         <source>Show status report</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra rapporto di stato</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1262"/>
         <source>Show converted files</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra file convertiti</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1265"/>
         <source>Copy matching files</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia i file corrispondenti</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1268"/>
         <source>Verify output</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifica output</translation>
     </message>
 </context>
 <context>
@@ -3956,37 +3956,37 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="398"/>
         <source>Artwork Panel</source>
-        <translation type="unfinished"></translation>
+        <translation>Pannello Artwork</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="480"/>
         <source>Keep aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Mantieni proporzioni</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="493"/>
         <source>Align to centre</source>
-        <translation type="unfinished"></translation>
+        <translation>Allinea al centro</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="494"/>
         <source>Align to left</source>
-        <translation type="unfinished"></translation>
+        <translation>Allinea a sinistra</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="495"/>
         <source>Align to right</source>
-        <translation type="unfinished"></translation>
+        <translation>Allinea a destra</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="517"/>
         <source>Front cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Copertina anteriore</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="518"/>
         <source>Back cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Retro copertina</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="519"/>
@@ -3996,57 +3996,57 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="550"/>
         <source>Artwork settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostazioni artwork…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="561"/>
         <source>View full size</source>
-        <translation type="unfinished">Visualizza a dimensione intera</translation>
+        <translation>Visualizza a dimensione intera</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="574"/>
         <source>Search for artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca artwork…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="575"/>
         <source>Quicksearch for artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricerca rapida artwork</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="576"/>
         <source>Auto-extract to file</source>
-        <translation type="unfinished"></translation>
+        <translation>Estrazione automatica su file</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="577"/>
         <source>Extract as…</source>
-        <translation type="unfinished"></translation>
+        <translation>Estrai come…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="578"/>
         <source>Remove artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi artwork</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="583"/>
         <source>Search for artwork for this cover type</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca artwork per questo tipo di copertina</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="584"/>
         <source>Search for artwork and automatically choose the best match for this cover type</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca artwork e scegli automaticamente la corrispondenza migliore per questo tipo di copertina</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="586"/>
         <source>Extract this embedded artwork to a file in the track directory without prompting</source>
-        <translation type="unfinished"></translation>
+        <translation>Estrai questo artwork incorporato in un file nella directory della traccia senza richiesta</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="587"/>
         <source>Choose where to extract this embedded artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Scegli dove estrarre questo artwork incorporato</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="588"/>
@@ -4056,7 +4056,7 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="622"/>
         <source>Extracted artwork to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Artwork estratto in %1</translation>
     </message>
 </context>
 <context>
@@ -4064,22 +4064,22 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="38"/>
         <source>Cover Widget Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostazioni Widget Copertina</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="42"/>
         <source>Keep aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Mantieni proporzioni</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="43"/>
         <source>Fade cover changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Dissolvenza cambio copertine</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="44"/>
         <source>Fade length</source>
-        <translation type="unfinished"></translation>
+        <translation>Durata dissolvenza</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="48"/>
@@ -4094,12 +4094,12 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="53"/>
         <source>Front</source>
-        <translation type="unfinished"></translation>
+        <translation>Fronte</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="54"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Retro</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="55"/>
@@ -4114,7 +4114,7 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="69"/>
         <source>Centre</source>
-        <translation type="unfinished"></translation>
+        <translation>Centro</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="70"/>
@@ -4129,82 +4129,82 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="83"/>
         <source>Playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Brano in riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="84"/>
         <source>Selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>Brano selezionato</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="85"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>In riproduzione (o selezionato se in pausa)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="87"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>In riproduzione (vuoto all&apos;avvio)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="89"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>In riproduzione (vuoto quando fermo)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="93"/>
         <source>Preferred track</source>
-        <translation type="unfinished"></translation>
+        <translation>Brano preferito</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="105"/>
         <source>Cover change</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambio copertina</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="117"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished"></translation>
+        <translation>Comportamento al clic</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="121"/>
         <source>None</source>
-        <translation type="unfinished">Nessuno</translation>
+        <translation>Nessuno</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="122"/>
         <source>View full size</source>
-        <translation type="unfinished">Visualizza a dimensione intera</translation>
+        <translation>Visualizza a dimensione intera</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="123"/>
         <source>Next available artwork type</source>
-        <translation type="unfinished"></translation>
+        <translation>Prossimo tipo di copertina disponibile</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="124"/>
         <source>Show track</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra brano</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="125"/>
         <source>Open containing folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri cartella contenitore</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="126"/>
         <source>Open properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri proprietà</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="132"/>
         <source>Double-click</source>
-        <translation type="unfinished">Doppio-clic</translation>
+        <translation>Doppio-clic</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="134"/>
         <source>Middle-click</source>
-        <translation type="unfinished"></translation>
+        <translation>Clic centrale</translation>
     </message>
 </context>
 <context>
@@ -4233,12 +4233,12 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/settings/playback/decodermodel.cpp" line="150"/>
         <source>Supported extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Estensioni supportate</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decodermodel.cpp" line="151"/>
         <source>Supported URI schemes</source>
-        <translation type="unfinished"></translation>
+        <translation>Schemi URI supportati</translation>
     </message>
 </context>
 <context>
@@ -4256,7 +4256,7 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="273"/>
         <source>Decoding</source>
-        <translation type="unfinished"></translation>
+        <translation>Decodifica</translation>
     </message>
 </context>
 <context>
@@ -4264,17 +4264,17 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="201"/>
         <source>Decoders</source>
-        <translation type="unfinished"></translation>
+        <translation>Decoders</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="202"/>
         <source>Tag readers</source>
-        <translation type="unfinished"></translation>
+        <translation>Lettori di tag</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="259"/>
         <source>Configure…</source>
-        <translation type="unfinished"></translation>
+        <translation>Configura…</translation>
     </message>
 </context>
 <context>
@@ -4283,7 +4283,7 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="306"/>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="307"/>
         <source>Devices</source>
-        <translation type="unfinished"></translation>
+        <translation>Dispositivi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="307"/>
@@ -4293,7 +4293,7 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="307"/>
         <source>Output</source>
-        <translation type="unfinished">Output</translation>
+        <translation>Uscita</translation>
     </message>
 </context>
 <context>
@@ -4301,22 +4301,22 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="106"/>
         <source>Only checked devices will appear in the output device selector widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>Solo i dispositivi selezionati appariranno nel widget di selezione del dispositivo di uscita.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="112"/>
         <source>Output</source>
-        <translation type="unfinished">Output</translation>
+        <translation>Uscita</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="282"/>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona tutto</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/devicepage.cpp" line="287"/>
         <source>Select none</source>
-        <translation type="unfinished"></translation>
+        <translation>Deseleziona tutto</translation>
     </message>
 </context>
 <context>
@@ -4324,22 +4324,22 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="204"/>
         <source>&amp;Play</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Riproduci</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="205"/>
         <source>Add to &amp;current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi alla playlist &amp;corrente</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="206"/>
         <source>Add to &amp;active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi alla playlist a&amp;ttiva</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="209"/>
         <source>Add to playback &amp;queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi alla &amp;coda di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="210"/>
@@ -4349,23 +4349,23 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="253"/>
         <source>Go up to the parent directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Vai alla directory superiore</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="258"/>
         <source>Return to the previous directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Torna alla directory precedente</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="267"/>
         <source>Undo a Go-&gt;Back action</source>
-        <translation type="unfinished"></translation>
+        <translation>Annulla un&apos;azione Vai-&gt;Indietro</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="277"/>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="278"/>
         <source>Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Tracce</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="278"/>
@@ -4375,37 +4375,37 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="283"/>
         <source>Append selected tracks to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Accoda le tracce selezionate alla playlist corrente</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="290"/>
         <source>Append selected tracks to the active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Accoda le tracce selezionate alla playlist attiva</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="297"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Sostituisci il contenuto della playlist corrente con le tracce selezionate</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="304"/>
         <source>Create a new playlist containing the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea una nuova playlist contenente le tracce selezionate</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="310"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi le tracce selezionate alla coda di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="316"/>
         <source>Add the selected tracks to the front of the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi le tracce selezionate all&apos;inizio della coda di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="322"/>
         <source>Replace the playback queue with the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Sostituisci la coda di riproduzione con le tracce selezionate</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="625"/>
@@ -4415,17 +4415,17 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="628"/>
         <source>List</source>
-        <translation type="unfinished"></translation>
+        <translation>Elenco</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="637"/>
         <source>Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>Albero</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="650"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra intestazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="778"/>
@@ -4435,37 +4435,37 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="201"/>
         <source>Go up</source>
-        <translation type="unfinished"></translation>
+        <translation>Vai su</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="202"/>
         <source>Go back</source>
-        <translation type="unfinished"></translation>
+        <translation>Torna indietro</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="203"/>
         <source>Go forwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Vai avanti</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="207"/>
         <source>&amp;Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sostituisci playlist attuale</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="208"/>
         <source>Create &amp;new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea &amp;nuova playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="211"/>
         <source>Replace playback q&amp;ueue</source>
-        <translation type="unfinished"></translation>
+        <translation>Sostituisci coda di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="280"/>
         <source>Start playback of the selected files</source>
-        <translation type="unfinished"></translation>
+        <translation>Avvia riproduzione dei file selezionati</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="251"/>
@@ -4484,52 +4484,52 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="36"/>
         <source>Directory Browser Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostazioni Browser Directory</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="37"/>
         <source>Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>Albero</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="38"/>
         <source>List</source>
-        <translation type="unfinished"></translation>
+        <translation>Elenco</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="39"/>
         <source>Show icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra icone</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="40"/>
         <source>Show indent</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra rientro</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="41"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra intestazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="42"/>
         <source>Remember sort column</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricorda colonna di ordinamento</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="44"/>
         <source>Show controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra controlli</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="45"/>
         <source>Show location</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra posizione</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="46"/>
         <source>Show symlinks</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra collegamenti simbolici</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="47"/>
@@ -4539,17 +4539,17 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="50"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished"></translation>
+        <translation>Avvia la riproduzione immediatamente</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="53"/>
         <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
-        <translation type="unfinished"></translation>
+        <translation>Per &quot;Sostituisci playlist corrente&quot; e &quot;Crea nuova playlist&quot;, avvia la riproduzione immediatamente.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="54"/>
         <source>Restore the sort column on startup and when changing directories.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ripristina la colonna di ordinamento all&apos;avvio e al cambio di cartella.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="56"/>
@@ -4564,22 +4564,22 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="61"/>
         <source>Middle-click</source>
-        <translation type="unfinished"></translation>
+        <translation>Clic centrale</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="66"/>
         <source>Browser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modalità browser</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="72"/>
         <source>Browser Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtri del browser</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="77"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>In alto</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="78"/>
