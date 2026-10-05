@@ -35,7 +35,6 @@
 #include <QPainter>
 #include <QPen>
 #include <QScrollBar>
-#include <QTextDocument>
 #include <QWheelEvent>
 
 using namespace Qt::StringLiterals;
@@ -78,6 +77,9 @@ LyricsView::LyricsView(QWidget* parent)
     setFrameShape(QFrame::NoFrame);
     viewport()->setAutoFillBackground(false);
 
+    m_displayDocument.setDocumentMargin(0);
+    m_displayDocument.setUndoRedoEnabled(false);
+    updateDisplayDocumentWidth();
     updateScrollSingleStep();
 }
 
@@ -87,6 +89,7 @@ void LyricsView::setDisplayAlignment(Qt::Alignment alignment)
         return;
     }
 
+    updateDisplayDocument();
     viewport()->update();
 }
 
@@ -117,12 +120,17 @@ void LyricsView::setDisplayMargins(const QMargins& margins)
         return;
     }
 
+    updateDisplayDocumentWidth();
     viewport()->update();
 }
 
 void LyricsView::setDisplayString(const RichText& string)
 {
-    m_displayString = string;
+    if(std::exchange(m_displayString, string) == string) {
+        return;
+    }
+
+    updateDisplayDocument();
     viewport()->update();
 }
 
@@ -155,13 +163,7 @@ void LyricsView::paintEvent(QPaintEvent* event)
             return;
         }
 
-        QTextDocument document;
-        document.setDocumentMargin(0);
-        document.setTextWidth(textRect.width());
-        document.setHtml(u"<html><body style=\"margin:0;text-align:%1;\">%2</body></html>"_s.arg(
-            alignmentToCss(m_displayAlignment), richTextToHtml(m_displayString, {}, m_displayAlignment)));
-
-        const qreal docHeight = document.size().height();
+        const qreal docHeight = m_displayDocument.size().height();
         qreal textTop         = textRect.top();
         if(docHeight < textRect.height()) {
             textTop += (textRect.height() - docHeight) / 2.0;
@@ -172,7 +174,7 @@ void LyricsView::paintEvent(QPaintEvent* event)
         painter.translate(textRect.left(), textTop);
 
         const QAbstractTextDocumentLayout::PaintContext context;
-        document.documentLayout()->draw(&painter, context);
+        m_displayDocument.documentLayout()->draw(&painter, context);
 
         painter.restore();
         return;
@@ -213,32 +215,6 @@ void LyricsView::paintEvent(QPaintEvent* event)
 
     if(m_dragSeeking && isSeekableIndex(m_dragIndex)) {
         paintSeekLine();
-    }
-}
-
-void LyricsView::paintItems(QPainter& painter, const QPaintEvent* event) const
-{
-    if(!model() || !itemDelegate()) {
-        return;
-    }
-
-    QStyleOptionViewItem option;
-    initViewItemOption(&option);
-    option.widget = this;
-
-    const QRect exposedRect = event->rect();
-    for(int row{0}; row < model()->rowCount({}); ++row) {
-        const QModelIndex index = model()->index(row, 0);
-        const QRect itemRect    = visualRect(index);
-        if(!itemRect.intersects(exposedRect)) {
-            continue;
-        }
-
-        option.rect = itemRect;
-        if(const QVariant font = index.data(Qt::FontRole); font.canConvert<QFont>()) {
-            option.font = font.value<QFont>();
-        }
-        itemDelegateForIndex(index)->paint(&painter, option, index);
     }
 }
 
@@ -327,6 +303,7 @@ void LyricsView::mouseReleaseEvent(QMouseEvent* event)
 void LyricsView::resizeEvent(QResizeEvent* event)
 {
     QListView::resizeEvent(event);
+    updateDisplayDocumentWidth();
     Q_EMIT viewportResized();
 }
 
@@ -351,23 +328,75 @@ void LyricsView::wheelEvent(QWheelEvent* event)
     QListView::wheelEvent(event);
 }
 
-void LyricsView::updateScrollSingleStep()
+QPoint LyricsView::seekPosition(const QPoint& pos) const
 {
-    int singleStep = std::max(1, fontMetrics().height());
+    QPoint seekPos{pos};
+    const QRect viewportRect = viewport()->rect();
+    if(viewportRect.isEmpty()) {
+        return seekPos;
+    }
 
-    if(model()) {
-        if(model()->rowCount({}) > 2) {
-            const int firstRowHeight = sizeHintForIndex(model()->index(1, 0)).height();
-            if(firstRowHeight > 0) {
-                singleStep = firstRowHeight;
+    seekPos.setX(std::clamp(seekPos.x(), viewportRect.left(), viewportRect.right()));
+    seekPos.setY(std::clamp(seekPos.y(), viewportRect.top(), viewportRect.bottom()));
+    return seekPos;
+}
+
+QModelIndex LyricsView::seekableIndexAt(const QPoint& pos) const
+{
+    const auto* model = this->model();
+    if(!model || model->rowCount() <= 2) {
+        return {};
+    }
+
+    const QPoint seekPos    = seekPosition(pos);
+    const QModelIndex index = indexAt(seekPos);
+    if(isSeekableIndex(index)) {
+        return index;
+    }
+
+    if(index.isValid() && index.data(LyricsModel::IsPaddingRole).toBool()) {
+        if(index.row() == 0) {
+            return model->index(1, 0);
+        }
+        if(index.row() == model->rowCount({}) - 1) {
+            return model->index(model->rowCount({}) - 2, 0);
+        }
+    }
+
+    if(seekPos.y() < viewport()->rect().center().y()) {
+        return model->index(1, 0);
+    }
+
+    return model->index(model->rowCount() - 2, 0);
+}
+
+bool LyricsView::isSeekableIndex(const QModelIndex& index) const
+{
+    return index.isValid() && !index.data(LyricsModel::IsPaddingRole).toBool();
+}
+
+QString LyricsView::seekText(const QModelIndex& index, const QPoint& pos) const
+{
+    if(!isSeekableIndex(index)) {
+        return {};
+    }
+
+    auto timestamp = index.data(LyricsModel::TimestampRole).value<uint64_t>();
+
+    const auto lyricsType = static_cast<Lyrics::Type>(index.data(LyricsModel::LyricsTypeRole).toInt());
+    if(lyricsType == Lyrics::Type::SyncedWords) {
+        if(const auto* delegate = qobject_cast<const LyricsDelegate*>(itemDelegate())) {
+            const int wordIndex = delegate->wordIndexAt(index, pos, visualRect(index));
+            if(wordIndex >= 0) {
+                const auto words = index.data(LyricsModel::WordsRole).value<std::vector<ParsedWord>>();
+                if(static_cast<size_t>(wordIndex) < words.size()) {
+                    timestamp = words.at(static_cast<size_t>(wordIndex)).timestamp;
+                }
             }
         }
     }
 
-    // QAbstractItemView derives the scrollbar step from item sizes in ScrollPerPixel mode.
-    // The lyrics model's row 0 is synthetic padding for centering, so anchor manual scrolling
-    // to the first real lyrics row instead of the padding height
-    verticalScrollBar()->setSingleStep(singleStep);
+    return Utils::msToString(timestamp);
 }
 
 QColor LyricsView::backgroundColour() const
@@ -403,6 +432,65 @@ int LyricsView::visiblePaddingHeight(const bool top) const
 
     const QRect visibleRect = visualRect(paddingIndex).intersected(viewport()->rect());
     return std::max(0, visibleRect.height());
+}
+
+void LyricsView::updateScrollSingleStep()
+{
+    int singleStep = std::max(1, fontMetrics().height());
+
+    if(model()) {
+        if(model()->rowCount({}) > 2) {
+            const int firstRowHeight = sizeHintForIndex(model()->index(1, 0)).height();
+            if(firstRowHeight > 0) {
+                singleStep = firstRowHeight;
+            }
+        }
+    }
+
+    // QAbstractItemView derives the scrollbar step from item sizes in ScrollPerPixel mode.
+    // The lyrics model's row 0 is synthetic padding for centering, so anchor manual scrolling
+    // to the first real lyrics row instead of the padding height
+    verticalScrollBar()->setSingleStep(singleStep);
+}
+
+void LyricsView::updateDisplayDocument()
+{
+    m_displayDocument.setHtml(u"<html><body style=\"margin:0;text-align:%1;\">%2</body></html>"_s.arg(
+        alignmentToCss(m_displayAlignment), richTextToHtml(m_displayString, {}, m_displayAlignment)));
+}
+
+void LyricsView::updateDisplayDocumentWidth()
+{
+    const int width = std::max(0, viewport()->width() - m_displayMargins.left() - m_displayMargins.right());
+    if(m_displayDocument.textWidth() != width) {
+        m_displayDocument.setTextWidth(width);
+    }
+}
+
+void LyricsView::paintItems(QPainter& painter, const QPaintEvent* event) const
+{
+    if(!model() || !itemDelegate()) {
+        return;
+    }
+
+    QStyleOptionViewItem option;
+    initViewItemOption(&option);
+    option.widget = this;
+
+    const QRect exposedRect = event->rect();
+    for(int row{0}; row < model()->rowCount({}); ++row) {
+        const QModelIndex index = model()->index(row, 0);
+        const QRect itemRect    = visualRect(index);
+        if(!itemRect.intersects(exposedRect)) {
+            continue;
+        }
+
+        option.rect = itemRect;
+        if(const QVariant font = index.data(Qt::FontRole); font.canConvert<QFont>()) {
+            option.font = font.value<QFont>();
+        }
+        itemDelegateForIndex(index)->paint(&painter, option, index);
+    }
 }
 
 void LyricsView::paintEdgeFade(QPainter& painter) const
@@ -463,77 +551,6 @@ void LyricsView::paintEdgeFade(QPainter& painter) const
         bottomGradient.setColorAt(1.0, edgeColour);
         painter.fillRect(bottomRect, bottomGradient);
     }
-}
-
-QModelIndex LyricsView::seekableIndexAt(const QPoint& pos) const
-{
-    const auto* model = this->model();
-    if(!model || model->rowCount() <= 2) {
-        return {};
-    }
-
-    const QPoint seekPos    = seekPosition(pos);
-    const QModelIndex index = indexAt(seekPos);
-    if(isSeekableIndex(index)) {
-        return index;
-    }
-
-    if(index.isValid() && index.data(LyricsModel::IsPaddingRole).toBool()) {
-        if(index.row() == 0) {
-            return model->index(1, 0);
-        }
-        if(index.row() == model->rowCount({}) - 1) {
-            return model->index(model->rowCount({}) - 2, 0);
-        }
-    }
-
-    if(seekPos.y() < viewport()->rect().center().y()) {
-        return model->index(1, 0);
-    }
-
-    return model->index(model->rowCount() - 2, 0);
-}
-
-QPoint LyricsView::seekPosition(const QPoint& pos) const
-{
-    QPoint seekPos{pos};
-    const QRect viewportRect = viewport()->rect();
-    if(viewportRect.isEmpty()) {
-        return seekPos;
-    }
-
-    seekPos.setX(std::clamp(seekPos.x(), viewportRect.left(), viewportRect.right()));
-    seekPos.setY(std::clamp(seekPos.y(), viewportRect.top(), viewportRect.bottom()));
-    return seekPos;
-}
-
-bool LyricsView::isSeekableIndex(const QModelIndex& index) const
-{
-    return index.isValid() && !index.data(LyricsModel::IsPaddingRole).toBool();
-}
-
-QString LyricsView::seekText(const QModelIndex& index, const QPoint& pos) const
-{
-    if(!isSeekableIndex(index)) {
-        return {};
-    }
-
-    auto timestamp = index.data(LyricsModel::TimestampRole).value<uint64_t>();
-
-    const auto lyricsType = static_cast<Lyrics::Type>(index.data(LyricsModel::LyricsTypeRole).toInt());
-    if(lyricsType == Lyrics::Type::SyncedWords) {
-        if(const auto* delegate = qobject_cast<const LyricsDelegate*>(itemDelegate())) {
-            const int wordIndex = delegate->wordIndexAt(index, pos, visualRect(index));
-            if(wordIndex >= 0) {
-                const auto words = index.data(LyricsModel::WordsRole).value<std::vector<ParsedWord>>();
-                if(static_cast<size_t>(wordIndex) < words.size()) {
-                    timestamp = words.at(static_cast<size_t>(wordIndex)).timestamp;
-                }
-            }
-        }
-    }
-
-    return Utils::msToString(timestamp);
 }
 
 void LyricsView::updateSeekToolTip()
