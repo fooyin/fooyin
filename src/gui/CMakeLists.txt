@@ -429,6 +429,8 @@ set(SOURCES
     scripting/expressiontreemodel.h
     scripting/richtextutils.cpp
     scripting/scripteditor.cpp
+    scripting/scripteditortextedit.cpp
+    scripting/scripteditortextedit.h
     scripting/scriptformatter.cpp
     scripting/scriptvariableproviders.cpp
     scripting/scriptvariableproviders.h
