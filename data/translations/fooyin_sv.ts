@@ -596,7 +596,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="350"/>
         <source>Finds the first substring position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Hittar den första substrängspositionen (1-baserad)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="353"/>
@@ -606,7 +606,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="356"/>
         <source>Finds the last substring position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Hittar den sista substrängspositionen (1-baserad)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="359"/>
@@ -651,7 +651,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="507"/>
         <source>Returns the value at the one-based index</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerar värdet vid det ett-baserade indexet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="516"/>
@@ -671,7 +671,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="96"/>
         <source>Track artists not present in album artists</source>
-        <translation type="unfinished"></translation>
+        <translation>Spårartister inte närvarande i albumartister</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="143"/>
@@ -2567,19 +2567,19 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="330"/>
         <source>Failed to read a CD track boundary from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Misslyckades att läsa en CD-spårgräns från %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="393"/>
         <source>Failed to read CD audio sectors from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Misslyckades att läsa CD-ljudsektorer från %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="422"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="535"/>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="546"/>
         <source>Failed to initialise secure CD extraction for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Misslyckades att initiera säker CD-extrahering för %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="437"/>
@@ -2589,7 +2589,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="457"/>
         <source>Failed to read securely from audio CD drive %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Misslyckades att läsa säkert från ljud-CD-enhet %1</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/drive/libcdiodrivebackend.cpp" line="468"/>
@@ -3075,7 +3075,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="66"/>
         <source>Focused widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Fokuserad widget</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="67"/>
@@ -3105,7 +3105,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="72"/>
         <source>Current playlist selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuell spellistsselektion</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="73"/>
@@ -3115,7 +3115,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="74"/>
         <source>Active selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiv selektion</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="75"/>
@@ -3150,7 +3150,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="105"/>
         <source>Target</source>
-        <translation type="unfinished"></translation>
+        <translation>Mål</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="110"/>
@@ -10711,7 +10711,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/controls/lovecontrol.cpp" line="232"/>
         <source>Love Control</source>
-        <translation type="unfinished"></translation>
+        <translation>Älskkontroll</translation>
     </message>
 </context>
 <context>
@@ -11869,17 +11869,17 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="467"/>
         <source>Write genres supplied by the selected metadata provider when available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv genrer tillförda från de valda metadataleverantörerna när tillgängligt.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="468"/>
         <source>Write identifiers supplied by the selected metadata provider.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv identifierare tillförd från den valda metadataleverantören.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="470"/>
         <source>Use the original release date for the Date tag instead of this specific release&apos;s date.</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd det ursprungliga utsläppsdatumet för datumtaggen istället för detta specifika utsläppets datum.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="476"/>
@@ -12115,12 +12115,12 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="555"/>
         <source>Could not read the MusicBrainz search response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte läsa MusicBrainz-sökningssvaret: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="566"/>
         <source>Could not read the MusicBrainz release response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte läsa MusicBrainz-utsläppssvaret: %1</translation>
     </message>
 </context>
 <context>
@@ -13491,12 +13491,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="91"/>
         <source>The active playlist drives playback, with queued tracks temporarily taking priority</source>
-        <translation type="unfinished"></translation>
+        <translation>Den aktiva spellistan driver uppspelning, medan köade spår temporärt tar prioritet</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="93"/>
         <source>The queue drives playback, containing the played, current, and upcoming tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Kön driver uppspelning, och innehåller de spelade, aktuella och kommande spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="102"/>
@@ -20595,7 +20595,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="434"/>
         <source>This action is only available within an application context</source>
-        <translation type="unfinished"></translation>
+        <translation>Denna handling är endast tillgänglig inom ett applikationssammanhang</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="472"/>
@@ -22722,7 +22722,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="93"/>
         <source>No match</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingen matchning</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="95"/>
@@ -24147,12 +24147,12 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="421"/>
         <source>Saved Filter Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Sparade filterflikar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="428"/>
         <source>Saved Filter Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>Sparad filterväljare</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="554"/>
@@ -24162,7 +24162,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/widgets.cpp" line="555"/>
         <source>Confirm before wiping writable tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Bekräfta innan rensning av skrivbara taggar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="574"/>
