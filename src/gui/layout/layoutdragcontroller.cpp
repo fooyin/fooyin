@@ -983,6 +983,7 @@ void LayoutDragController::updateSelection()
             path.emplace_back(widget);
         }
     }
+    std::ranges::reverse(path);
 
     if(std::ranges::find(path, m_selected) == path.end()) {
         selectWidget(nullptr);
