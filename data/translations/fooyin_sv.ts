@@ -13501,7 +13501,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="102"/>
         <source>Replace Playing Tracks with the selected tracks and start playback at the first selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Ersätt spelande spår med de valda spåren och starta uppspelning vid den första selektionen</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="104"/>
