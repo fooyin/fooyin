@@ -11,7 +11,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="295"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Añadir a la lista de reproducción actual</translation>
+        <translation>Añadir a la lista de reproducción actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="298"/>
@@ -21,12 +21,12 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="301"/>
         <source>Replace current playlist</source>
-        <translation>Reemplazar lista de reproducción actual</translation>
+        <translation>Reemplazar la lista de reproducción actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="304"/>
         <source>Create new playlist</source>
-        <translation>Crear lista de reproducción nueva</translation>
+        <translation>Crear nueva lista de reproducción</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="307"/>
@@ -36,7 +36,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="311"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Agregar a cola de reproducción</translation>
+        <translation>Agregar a cola de reproducción</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="314"/>
@@ -46,12 +46,12 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="317"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Reemplazar la cola de reproducción</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="321"/>
         <source>Set as root</source>
-        <translation type="unfinished">Establecer como carpeta raíz</translation>
+        <translation>Establecer como carpeta raíz</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="324"/>
@@ -66,12 +66,12 @@
     <message>
         <location filename="../../src/gui/widgets.cpp" line="470"/>
         <source>Directory Browser</source>
-        <translation type="unfinished">Explorador de directorios</translation>
+        <translation>Explorador de directorios</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="472"/>
         <source>Unchecked items will be hidden from the directory browser context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Los elementos sin marcar estarán ocultos en el menú contextual del directorio del navegador.</translation>
     </message>
 </context>
 <context>
@@ -79,7 +79,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="55"/>
         <source>Widget actions</source>
-        <translation type="unfinished"></translation>
+        <translation>Acciones de widgets</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="59"/>
@@ -99,7 +99,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="69"/>
         <source>Copy</source>
-        <translation type="unfinished">Copiar</translation>
+        <translation>Copiar</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="72"/>
@@ -114,7 +114,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="79"/>
         <source>Move</source>
-        <translation type="unfinished">Mover</translation>
+        <translation>Mover</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="83"/>
@@ -269,7 +269,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="94"/>
         <source>Primary artist</source>
-        <translation>Artista primario</translation>
+        <translation>Artista principal</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="98"/>
@@ -289,7 +289,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="104"/>
         <source>Total tracks on the release</source>
-        <translation type="unfinished"></translation>
+        <translation>Número total de pistas del lanzamiento</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="106"/>
@@ -299,7 +299,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="108"/>
         <source>Total discs on the release</source>
-        <translation type="unfinished"></translation>
+        <translation>Total de discos en lanzamiento</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="109"/>
@@ -349,12 +349,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="127"/>
         <source>File size in bytes</source>
-        <translation>Tamaño de archivo en bytes</translation>
+        <translation>Tamaño del archivo en bytes</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="129"/>
         <source>Human readable file size</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño del archivo legible para humanos</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="131"/>
@@ -4433,7 +4433,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="202"/>
         <source>Go back</source>
-        <translation>Bajar</translation>
+        <translation>Retroceder</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="203"/>
@@ -8159,7 +8159,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="217"/>
         <source>Button (Foreground)</source>
-        <translation type="unfinished"></translation>
+        <translation>Botón (Frente)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="224"/>
@@ -8371,22 +8371,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="142"/>
         <source>Raise</source>
-        <translation type="unfinished"></translation>
+        <translation>Subir</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="143"/>
         <source>Stretch</source>
-        <translation type="unfinished"></translation>
+        <translation>Estirar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="145"/>
         <source>Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="147"/>
         <source>Quick Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración rápida</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="148"/>
@@ -8446,7 +8446,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="214"/>
         <source>Tool Buttons</source>
-        <translation type="unfinished"></translation>
+        <translation>Botones de herramientas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="244"/>
@@ -8871,37 +8871,37 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="46"/>
         <source>&amp;Quick start</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicio rápido</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="47"/>
         <source>Open the quick start guide</source>
-        <translation type="unfinished"></translation>
+        <translation>Abra la guía de inicio rápido</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="52"/>
         <source>&amp;Scripting help</source>
-        <translation type="unfinished"></translation>
+        <translation>Ayuda de scripts</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="53"/>
         <source>Open the scripting documentation</source>
-        <translation type="unfinished"></translation>
+        <translation>Abra la documentación de scripting</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="57"/>
         <source>S&amp;earching help</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscando ayuda</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="58"/>
         <source>Open the search documentation</source>
-        <translation type="unfinished"></translation>
+        <translation>Abra la documentación de búsqueda</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="62"/>
         <source>&amp;Frequently asked questions</source>
-        <translation type="unfinished"></translation>
+        <translation>Preguntas frecuentes</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="63"/>
@@ -24525,7 +24525,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="233"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Añadir a la lista de reproducción activa</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="237"/>
@@ -24575,7 +24575,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="271"/>
         <source>Open folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir carpeta</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="274"/>
