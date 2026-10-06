@@ -62,16 +62,6 @@ AutoHeaderView* RadioStationView::stationHeader() const
     return m_header;
 }
 
-void RadioStationView::finaliseView(const QByteArray& headerState)
-{
-    if(!headerState.isEmpty()) {
-        m_header->restoreHeaderState(headerState);
-    }
-    else {
-        resetColumnsToDefault();
-    }
-}
-
 void RadioStationView::resetColumnsToDefault()
 {
     m_header->resetSectionPositions();

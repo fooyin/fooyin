@@ -335,6 +335,8 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
 
     const QScopedValueRollback loadingLayout{m_loadingLayout, true};
     applyConfig(defaultConfig());
+    m_resultsView->resetColumnsToDefault();
+    updateIconColumnOrder();
 
     refreshThemeIcons();
     m_controller->fetchCategories(RadioCategoryType::Country);
@@ -471,7 +473,7 @@ void RadioBrowserWidget::loadLayoutData(const QJsonObject& layout)
         m_savedStationsViewState.headerState = decodeHeaderState(layout.value("SavedState"_L1));
     }
 
-    setViewConfig(m_viewConfig);
+    applyActiveViewState();
 
     m_doubleClickAction = layout.value("DoubleClickAction"_L1).toInt(m_doubleClickAction);
     m_middleClickAction = layout.value("MiddleClickAction"_L1).toInt(m_middleClickAction);
@@ -493,9 +495,6 @@ void RadioBrowserWidget::loadLayoutData(const QJsonObject& layout)
 
 void RadioBrowserWidget::finalise()
 {
-    m_resultsView->finaliseView(m_browseViewState.headerState);
-    updateIconColumnOrder();
-
     if(m_initialSearchState == InitialSearchState::Disabled && syncControllerBrowseState()) {
         return;
     }
