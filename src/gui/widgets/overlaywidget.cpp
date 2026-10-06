@@ -311,10 +311,12 @@ void OverlayWidget::paintEvent(QPaintEvent* event)
     painter.fillRect(rect(), p->m_colour);
 
     if(p->m_options & Selectable) {
-        painter.fillRect(rect(), p->m_selected ? p->m_selectedColour : p->m_hovered ? p->m_hoveredColour : p->m_colour);
-    }
-    else {
-        painter.fillRect(rect(), p->m_colour);
+        if(p->m_selected) {
+            painter.fillRect(rect(), p->m_selectedColour);
+        }
+        else if(p->m_hovered) {
+            painter.fillRect(rect(), p->m_hoveredColour);
+        }
     }
 }
 } // namespace Fooyin
