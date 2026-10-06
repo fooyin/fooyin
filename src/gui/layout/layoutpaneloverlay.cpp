@@ -23,6 +23,7 @@
 #include <gui/iconloader.h>
 
 #include <QApplication>
+#include <QGraphicsDropShadowEffect>
 #include <QMouseEvent>
 #include <QPainter>
 
@@ -122,6 +123,12 @@ LayoutStackGrip::LayoutStackGrip(QWidget* parent, LayoutPanelOverlay* outline)
     , m_orientation{Qt::Vertical}
 {
     setFixedSize(LayoutStackGrip::sizeHint());
+
+    auto* shadow = new QGraphicsDropShadowEffect(this);
+    shadow->setBlurRadius(30);
+    shadow->setColor(Qt::black);
+    shadow->setOffset(10, 10);
+    setGraphicsEffect(shadow);
 }
 
 QSize LayoutStackGrip::sizeHint() const
@@ -148,12 +155,6 @@ void LayoutStackGrip::paintEvent(QPaintEvent* /*event*/)
 
     if(m_bgColour.isValid()) {
         painter.fillRect(rect(), m_bgColour);
-        painter.fillRect(rect(), m_bgColour);
-
-        auto background = palette().color(QPalette::Window);
-        background.setAlpha(255);
-
-        painter.fillRect(rect().adjusted(5, 5, -5, -5), background);
     }
 
     const int size = std::max(32, std::min(width(), height()));

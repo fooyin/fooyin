@@ -114,22 +114,6 @@ protected:
     }
 };
 
-class LayoutBreadcrumb : public QScrollArea
-{
-public:
-    using QScrollArea::QScrollArea;
-
-protected:
-    void paintEvent(QPaintEvent* /*event*/) override
-    {
-        QPainter painter{viewport()};
-
-        auto background = parentWidget()->palette().color(QPalette::Window);
-        background.setAlpha(255);
-
-        painter.fillRect(viewport()->rect(), background);
-    }
-};
 } // namespace
 
 LayoutDragController::LayoutDragController(EditableLayout* layout, QUndoStack* history, WidgetProvider* provider,
@@ -145,7 +129,8 @@ LayoutDragController::LayoutDragController(EditableLayout* layout, QUndoStack* h
     , m_paletteHint{new PaletteEdgeHint(layout)}
     , m_dragCard{new LayoutDragCard(layout)}
     , m_selectionControl{new OverlayWidget(layout)}
-    , m_selectionBar{new LayoutBreadcrumb(m_selectionControl)}
+    , m_selectionBar{new QScrollArea(m_selectionControl)}
+    , m_selectionClose{new QToolButton(m_selectionControl)}
     , m_selectionOutline{new LayoutPanelOverlay(layout)}
     , m_selectionGrip{new LayoutStackGrip(layout)}
     , m_paletteWidth{std::clamp(m_palette->width(), 160, 420)}
@@ -168,13 +153,27 @@ LayoutDragController::LayoutDragController(EditableLayout* layout, QUndoStack* h
     row->setSpacing(2);
 
     m_selectionBar->setWidget(crumbs);
+    m_selectionBar->viewport()->setAutoFillBackground(false);
+    crumbs->setAutoFillBackground(false);
+
+    m_selectionClose->setAutoRaise(true);
+    m_selectionClose->setToolTip(tr("Close"));
+    QObject::connect(m_selectionClose, &QToolButton::clicked, this, [this] { selectWidget(nullptr); });
+
+    auto* controls    = new QWidget(m_selectionControl);
+    auto* controlsRow = new QHBoxLayout(controls);
+
+    controlsRow->setContentsMargins({});
+    controlsRow->addWidget(m_selectionBar);
+    controlsRow->addWidget(m_selectionClose, 0, Qt::AlignVCenter);
+
     m_selectionControl->layout()->setSizeConstraint(QLayout::SetNoConstraint);
-    m_selectionControl->addWidget(m_selectionBar);
+    m_selectionControl->addWidget(controls);
 
     auto* shadow = new QGraphicsDropShadowEffect(m_selectionControl);
     shadow->setBlurRadius(30);
     shadow->setColor(Qt::black);
-    shadow->setOffset(1, 1);
+    shadow->setOffset(10, 10);
 
     m_selectionControl->setGraphicsEffect(shadow);
     m_selectionControl->hide();
@@ -183,13 +182,7 @@ LayoutDragController::LayoutDragController(EditableLayout* layout, QUndoStack* h
     m_selectionOutline->setHovered(true);
     m_selectionOutline->hide();
 
-    auto* gripShadow = new QGraphicsDropShadowEffect(m_selectionGrip);
-    gripShadow->setBlurRadius(30);
-    gripShadow->setColor(Qt::black);
-    gripShadow->setOffset(1, 1);
-
     m_selectionGrip->setFixedSize(40, 40);
-    m_selectionGrip->setGraphicsEffect(gripShadow);
     m_selectionGrip->hide();
 
     m_sourceOverlay->setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -1070,13 +1063,15 @@ void LayoutDragController::updateSelection()
     const auto margins          = m_selectionControl->layout()->contentsMargins();
     const int horizontalMargins = margins.left() + margins.right();
     const int verticalMargins   = margins.top() + margins.bottom();
-    const int width             = std::min(crumbs->width(), std::max(0, available.width() - 16 - horizontalMargins));
+    const int closeWidth        = m_selectionClose->width() + m_selectionBar->parentWidget()->layout()->spacing();
+    const int width = std::min(crumbs->width(), std::max(0, available.width() - 16 - horizontalMargins - closeWidth));
     const int height
         = crumbs->height() + (width < crumbs->width() ? m_selectionBar->horizontalScrollBar()->sizeHint().height() : 0);
 
     m_selectionBar->setFixedSize(width, std::max(0, std::min(height, available.height() - 16 - verticalMargins)));
 
-    const QSize size{m_selectionBar->width() + horizontalMargins, m_selectionBar->height() + verticalMargins};
+    const QSize size{m_selectionBar->width() + closeWidth + horizontalMargins,
+                     std::max(m_selectionBar->height(), m_selectionClose->height()) + verticalMargins};
     m_selectionControl->setGeometry(available.left() + ((available.width() - size.width()) / 2),
                                     available.top() + std::min(8, std::max(0, available.height() - size.height())),
                                     size.width(), size.height());
@@ -1099,8 +1094,10 @@ void LayoutDragController::updateSelection()
 
 void LayoutDragController::updateSelectionStyle()
 {
+    m_selectionClose->setIcon(Gui::iconFromTheme(Constants::Icons::Close));
+
     auto highlight = QApplication::palette().color(QPalette::Highlight);
-    highlight.setAlpha(80);
+    highlight.setAlpha(160);
     m_selectionControl->setColour(highlight);
     m_selectionGrip->setBackgroundColour(highlight);
 
