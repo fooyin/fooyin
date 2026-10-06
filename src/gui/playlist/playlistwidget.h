@@ -158,7 +158,6 @@ public:
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
     void finalise() override;
-    void layoutEditingMenu(QMenu* menu) override;
     void setConfigDialogTitle(QString title);
     void openConfigDialog(const QString& title);
 

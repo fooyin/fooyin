@@ -490,11 +490,6 @@ void PlaylistWidget::finalise()
     m_session->finalise(sessionHost());
 }
 
-void PlaylistWidget::layoutEditingMenu(QMenu* menu)
-{
-    addConfigureAction(menu, false);
-}
-
 void PlaylistWidget::setConfigDialogTitle(QString title)
 {
     m_configDialogTitle = std::move(title);
