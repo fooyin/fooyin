@@ -414,10 +414,14 @@ void FilterManagerPrivate::createControlDialog()
 {
     m_controlDialog = new OverlayWidget(OverlayWidget::Static, m_editableLayout);
 
-    auto* effect = new QGraphicsDropShadowEffect();
+    auto highlight = m_controlDialog->palette().color(QPalette::Highlight);
+    highlight.setAlpha(160);
+    m_controlDialog->setColour(highlight);
+
+    auto* effect = new QGraphicsDropShadowEffect(m_controlDialog);
     effect->setBlurRadius(30);
     effect->setColor(Qt::black);
-    effect->setOffset(1, 1);
+    effect->setOffset(10, 10);
 
     m_controlDialog->setGraphicsEffect(effect);
 
