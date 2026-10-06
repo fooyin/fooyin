@@ -287,6 +287,13 @@ void LayoutDragController::showPalette()
     m_palette->findChild<QLineEdit*>()->setFocus();
 }
 
+void LayoutDragController::clearSelection(FyWidget* contextWidget)
+{
+    if(m_selected != contextWidget) {
+        selectWidget(nullptr);
+    }
+}
+
 bool LayoutDragController::eventFilter(QObject* watched, QEvent* event)
 {
     const auto type          = event->type();

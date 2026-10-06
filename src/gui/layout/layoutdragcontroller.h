@@ -34,6 +34,7 @@ class QDrag;
 class QLabel;
 class QScrollArea;
 class QTabWidget;
+class QToolButton;
 class QUndoCommand;
 class QUndoStack;
 
@@ -63,6 +64,8 @@ public:
 
     [[nodiscard]] WidgetPalette* palette() const;
     void showPalette();
+
+    void clearSelection(FyWidget* contextWidget);
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
@@ -134,6 +137,7 @@ private:
     LayoutDragCard* m_dragCard;
     OverlayWidget* m_selectionControl;
     QScrollArea* m_selectionBar;
+    QToolButton* m_selectionClose;
     LayoutPanelOverlay* m_selectionOutline;
     LayoutStackGrip* m_selectionGrip;
     QPointer<FyWidget> m_selected;

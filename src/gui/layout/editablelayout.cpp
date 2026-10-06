@@ -1027,6 +1027,7 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
             return QWidget::eventFilter(watched, event);
         }
 
+        p->m_dragController->clearSelection(child);
         p->setupContextMenu(child, p->m_editingMenu);
         p->showOverlay(child);
         setFocus(Qt::MouseFocusReason);
