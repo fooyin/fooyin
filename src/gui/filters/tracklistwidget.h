@@ -45,7 +45,6 @@ public:
     void loadLayoutData(const QJsonObject& layout) override;
     void finalise() override;
     void searchEvent(const SearchRequest& request) override;
-    void layoutEditingMenu(QMenu* menu) override;
 
 Q_SIGNALS:
     void groupChanged();

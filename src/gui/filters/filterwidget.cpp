@@ -359,12 +359,6 @@ QString FilterWidget::layoutName() const
     return u"LibraryFilter"_s;
 }
 
-void FilterWidget::layoutEditingMenu(QMenu* menu)
-{
-    auto* editConnections = menu->addAction(tr("Manage filter groups…"));
-    QObject::connect(editConnections, &QAction::triggered, this, &FilterWidget::requestEditConnections);
-}
-
 void FilterWidget::saveLayoutData(QJsonObject& layout)
 {
     saveConfigToLayout(m_config, layout);

@@ -152,12 +152,6 @@ void TrackListWidget::searchEvent(const SearchRequest& request)
     m_playlistWidget->searchEvent(request);
 }
 
-void TrackListWidget::layoutEditingMenu(QMenu* menu)
-{
-    auto* editConnections = menu->addAction(tr("Manage filter groups…"));
-    QObject::connect(editConnections, &QAction::triggered, this, &TrackListWidget::requestEditConnections);
-}
-
 void TrackListWidget::openConfigDialog()
 {
     m_playlistWidget->openConfigDialog(tr("Track Viewer Settings"));
