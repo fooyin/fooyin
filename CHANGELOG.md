@@ -33,7 +33,9 @@
   - Show a vertical menu with Alt or F10 when the menu bar is hidden ([#1483](https://github.com/fooyin/fooyin/issues/1483))
   - Unify Playlist Organiser and Queue Viewer display scripts
   - Add a per-widget track preference to Script Display
+  - Clarify track preference labels in Script Display and Artwork ([#1734](https://github.com/fooyin/fooyin/issues/1734))
   - Support transparent standalone lyrics window backgrounds
+  - Cache the no-lyrics document
 - **Filters**
   - Add an option to remember the selected saved filter ([#1690](https://github.com/fooyin/fooyin/issues/1690))
   - Add an option to restore Library Filter state on startup ([#1699](https://github.com/fooyin/fooyin/pull/1699))
@@ -57,6 +59,8 @@
   - Add playback output information fields
   - Add font weight formatting with `<weight>`
   - Add underline and strikethrough formatting tags with `<u>` and `<s>`
+  - Add alignment tag support to rich-text HTML rendering ([#1733](https://github.com/fooyin/fooyin/issues/1733))
+  - Add Script Editor formatting tag highlighting and optional function parameter hints
   - Improve binding and evaluation performance
   - Reduce the default minimum height of script text editors
 - **Tag Editor**
@@ -72,7 +76,11 @@
   - Fix a crash when closing a widget window with its configuration dialog open
   - Fix Properties action icons in Windows dark mode ([#1691](https://github.com/fooyin/fooyin/issues/1691))
   - Update the search help link ([#1715](https://github.com/fooyin/fooyin/issues/1715))
-- **Library & Metadata:** Recognise spaced `ALBUM ARTIST` tags ([#1693](https://github.com/fooyin/fooyin/issues/1693))
+- **Library & Metadata**
+  - Fix DSD detection on Windows ([#1633](https://github.com/fooyin/fooyin/issues/1633), [#1735](https://github.com/fooyin/fooyin/issues/1735))
+  - Initialise audio readers before metadata and artwork writes
+  - Recognise spaced `ALBUM ARTIST` tags ([#1693](https://github.com/fooyin/fooyin/issues/1693))
+- **Lyrics:** Fix truncation around bracketed text ([#1737](https://github.com/fooyin/fooyin/issues/1737))
 - **Playback:** Preserve active DSP preset identity across edits and restarts
 - **Playlists**
   - Fix extra padding in subheaders ([#1725](https://github.com/fooyin/fooyin/issues/1725))
@@ -80,6 +88,7 @@
   - Use folding for automatic playlist names ([#1694](https://github.com/fooyin/fooyin/issues/1694))
   - Allow Return to commit playlist renames ([#1700](https://github.com/fooyin/fooyin/issues/1700))
 - **ProjectM:** Find lowercase texture directories ([#1709](https://github.com/fooyin/fooyin/issues/1709))
+- **Radio Browser:** Preserve configured columns on startup ([#1686](https://github.com/fooyin/fooyin/issues/1686))
 - **Scripting**
   - Correctly escape metadata in rich-text scripts ([#1729](https://github.com/fooyin/fooyin/issues/1729))
   - Preserve literal backslashes in formatted text ([#1678](https://github.com/fooyin/fooyin/issues/1678))
@@ -93,7 +102,7 @@
   - Enable ccache for Linux, FreeBSD, Windows, and Flatpak builds
 - **Dependencies:** Add JACK, libFLAC, libmpg123, libopusfile, and libvorbis; make libarchive required
 - **Flatpak:** Include the version in bundle filenames
-- **Translations:** Update translations and translation sources ([#1687](https://github.com/fooyin/fooyin/pull/1687), [#1688](https://github.com/fooyin/fooyin/pull/1688), [#1701](https://github.com/fooyin/fooyin/pull/1701), [#1713](https://github.com/fooyin/fooyin/pull/1713), [#1714](https://github.com/fooyin/fooyin/pull/1714))
+- **Translations:** Update translations and translation sources ([#1687](https://github.com/fooyin/fooyin/pull/1687), [#1688](https://github.com/fooyin/fooyin/pull/1688), [#1701](https://github.com/fooyin/fooyin/pull/1701), [#1713](https://github.com/fooyin/fooyin/pull/1713), [#1714](https://github.com/fooyin/fooyin/pull/1714), [#1748](https://github.com/fooyin/fooyin/pull/1748), [#1749](https://github.com/fooyin/fooyin/pull/1749))
 - **Windows:** Sign release artifacts with SignPath
 
 ### Dev/API
