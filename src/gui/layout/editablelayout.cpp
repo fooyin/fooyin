@@ -337,28 +337,25 @@ void EditableLayoutPrivate::changeEditingState(bool editing)
                         return;
                     }
 
-                    auto* hint
-                        = new QMessageBox(QMessageBox::Information, EditableLayout::tr("Layout Editing"),
-                                          EditableLayout::tr("Add and arrange widgets to customise your layout."),
-                                          QMessageBox::Ok, m_self);
-                    hint->setTextFormat(Qt::PlainText);
-                    hint->setInformativeText(EditableLayout::tr(
+                    QMessageBox hint{QMessageBox::Information, EditableLayout::tr("Layout Editing"),
+                                     EditableLayout::tr("Add and arrange widgets to customise your layout."),
+                                     QMessageBox::Ok, m_self};
+                    hint.setTextFormat(Qt::PlainText);
+                    hint.setInformativeText(EditableLayout::tr(
                         "• Find widgets in the palette on the right (hover near the right edge if it's hidden).\n\n"
                         "• Drag widgets from the palette to add them, or drag existing ones to move them. "
-                        "Hold Ctrl while dragging to replace the target widget.\n\n"
+                        "Hold Ctrl to replace the target widget.\n\n"
                         "• Select a widget to see its parent containers in the breadcrumb bar. "
                         "Select a parent to move an entire section.\n\n"
                         "• Right-click any widget to split, replace, or remove it using the context menu."));
-                    auto* dontShowAgain = new QCheckBox(EditableLayout::tr("Don't show this again"), hint);
-                    hint->setCheckBox(dontShowAgain);
-                    QObject::connect(hint, &QMessageBox::finished, hint, [dontShowAgain] {
-                        if(dontShowAgain->isChecked()) {
-                            FyStateSettings stateSettings;
-                            stateSettings.setValue(Settings::Gui::Internal::ShowLayoutEditingHint, false);
-                        }
-                    });
-                    hint->setAttribute(Qt::WA_DeleteOnClose);
-                    hint->open();
+                    auto* dontShowAgain = new QCheckBox(EditableLayout::tr("Don't show this again"), &hint);
+                    hint.setCheckBox(dontShowAgain);
+                    hint.exec();
+
+                    if(dontShowAgain->isChecked()) {
+                        FyStateSettings stateSettings;
+                        stateSettings.setValue(Settings::Gui::Internal::ShowLayoutEditingHint, false);
+                    }
                 },
                 Qt::QueuedConnection);
         }
