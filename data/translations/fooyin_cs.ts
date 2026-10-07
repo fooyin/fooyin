@@ -9737,7 +9737,7 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="293"/>
         <source>Place before %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Umístit před %1</translation>
     </message>
 </context>
 <context>
@@ -11906,7 +11906,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/controls/mainmenubutton.cpp" line="52"/>
         <source>Main Menu Button</source>
-        <translation type="unfinished"></translation>
+        <translation>Tlačítko hlavní nabídky</translation>
     </message>
 </context>
 <context>
