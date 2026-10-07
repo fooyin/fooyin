@@ -9722,17 +9722,17 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="292"/>
         <source>Place below %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Umístit pod %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="292"/>
         <source>Place above %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Umístit nad %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="293"/>
         <source>Place after %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Umístit za %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="293"/>
