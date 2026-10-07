@@ -252,7 +252,7 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
     m_layoutTree->setModel(m_model);
 
     for(auto* spinBox : {m_leftMargin, m_topMargin, m_rightMargin, m_bottomMargin}) {
-        spinBox->setRange(-999, 999);
+        spinBox->setRange(0, 999);
         spinBox->setSuffix(u" px"_s);
     }
 
