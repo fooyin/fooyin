@@ -95,14 +95,7 @@ PlaybackProgressTracker::PositionUpdate PlaybackProgressTracker::restoreProgress
     m_timeListened   = timeListenedMs;
     m_trackingActive = true;
     m_seeking        = false;
-    m_counted        = false;
-
-    if(m_playedThreshold > 0 && m_timeListened >= m_playedThreshold) {
-        m_timeListened = m_playedThreshold - 1;
-    }
-    else if(m_playedThreshold == 0) {
-        m_timeListened = 0;
-    }
+    m_counted        = m_timeListened >= m_playedThreshold;
 
     return currentPositionUpdate();
 }

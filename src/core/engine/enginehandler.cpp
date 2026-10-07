@@ -1023,7 +1023,7 @@ void EngineHandler::savePlaybackState() const
         const auto lastPos = static_cast<quint64>(m_playerController->currentPosition());
         PlaybackState::savePlaybackPosition(lastPos);
 
-        if(m_playerController->currentTrack().isValid() && !m_playerController->playedThresholdReached()) {
+        if(m_playerController->currentTrack().isValid()) {
             PlaybackState::savePlaybackTimeListened(m_playerController->currentTimeListened());
         }
         else {
@@ -1074,13 +1074,9 @@ std::optional<EngineHandler::StartupRestoreState> EngineHandler::readStartupRest
 void EngineHandler::applyStartupRestore(const StartupRestoreState& restore)
 {
     const auto restoreProgress = [this, &restore](bool pause) {
-        if(restore.timeListenedMs.has_value()) {
-            m_playerController->restorePlaybackProgress(restore.positionMs, *restore.timeListenedMs);
-            dispatchCommand(&AudioEngine::restorePosition, restore.positionMs, pause);
-            return;
-        }
-
-        restorePosition(restore.positionMs, pause);
+        const uint64_t timeListened = restore.timeListenedMs.value_or(m_playerController->playedThreshold());
+        m_playerController->restorePlaybackProgress(restore.positionMs, timeListened);
+        dispatchCommand(&AudioEngine::restorePosition, restore.positionMs, pause);
     };
 
     switch(restore.playState) {
