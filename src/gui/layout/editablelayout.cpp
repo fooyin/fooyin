@@ -369,6 +369,7 @@ void EditableLayoutPrivate::changeEditingState(bool editing)
 
         if(!m_changingLayout) {
             m_self->saveLayout();
+            m_layoutHistory->clear();
         }
     }
 }
