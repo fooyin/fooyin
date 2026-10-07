@@ -9680,12 +9680,12 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="152"/>
         <source>Replace %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="194"/>
         <source>Insert tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložit kartu</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="219"/>
