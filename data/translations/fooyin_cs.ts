@@ -9697,17 +9697,17 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
         <location filename="../../src/gui/layout/layoututils.cpp" line="299"/>
         <location filename="../../src/gui/layout/layoututils.cpp" line="307"/>
         <source>Move into empty area</source>
-        <translation type="unfinished"></translation>
+        <translation>Přesunout do prázdného místa</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="267"/>
         <source>Split %1: place below</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozdělit %1: umístit pod</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="267"/>
         <source>Split %1: place above</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozdělit %1: umístit nad</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="268"/>
