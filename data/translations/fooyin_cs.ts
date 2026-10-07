@@ -850,28 +850,28 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
         <source>Layout</source>
-        <translation type="unfinished">Vzhled</translation>
+        <translation>Vzhled</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="273"/>
         <source>Draws a separator in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>V podporovaných zobrazeních vykreslí oddělovač</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="276"/>
         <source>Alignment</source>
-        <translation type="unfinished">Zarovnání</translation>
+        <translation>Zarovnání</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="275"/>
         <source>Aligns enclosed text to the left in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>V podporovaných zobrazeních zarovná text uvnitř tagu doleva</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="277"/>
         <source>Aligns enclosed text to the right in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>V podporovaných zobrazeních zarovná text uvnitř tagu doprava</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="278"/>
@@ -913,7 +913,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="289"/>
         <source>Sets the font weight from 1 to 1000</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastaví tloušťku textu uvnitř tagu od 1 do 1000</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="291"/>
@@ -4191,12 +4191,12 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="87"/>
         <source>Playing (no track at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrávaná (po spuštění žádná)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="89"/>
         <source>Playing (no track when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrávaná (po zastavení žádná)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="93"/>
@@ -4260,7 +4260,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="1227"/>
         <source>Add %1</source>
         <extracomment>%1 is the name of a widget e.g. Add Playlist</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Přidat %1</translation>
     </message>
 </context>
 <context>
@@ -5178,12 +5178,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="341"/>
         <source>Layout Editing</source>
-        <translation type="unfinished">Úprava vzhledu</translation>
+        <translation>Úprava vzhledu</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="342"/>
         <source>Add and arrange widgets to customise your layout.</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat a uspořádat widgety pro přizpůsobení vzhledu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="345"/>
@@ -5194,7 +5194,15 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 • Select a widget to see its parent containers in the breadcrumb bar. Select a parent to move an entire section.
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>• Dostupné widgety najdeš v panelu napravo (pokud je skrytý, podrž ukazatel myši u pravého okraje).
+
+• Widget přidáš jeho přetažením z panelu do okna. Polohu existujících widgetů v okně můžeš změnit
+   jejich přetažením. Pokud při přetahování podržíš Ctrl, nahradíš přetahovaným widgetem cílový widget.
+
+• Vyber widget pro zobrazení jeho nadřazených widgetů v navigační liště. Vyber nadřazený widget
+   pro přesun celé skupiny.
+
+• Kliknutím pravým tlačítkem otevřeš místní nabídku pro rozdělení, nahrazení nebo odstranění widgetu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="352"/>
