@@ -3277,7 +3277,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="42"/>
         <source>Restore defaults</source>
-        <translation>Obnovit</translation>
+        <translation>Obnovit výchozí</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="44"/>
@@ -17533,7 +17533,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="142"/>
         <source>Item border</source>
-        <translation>Okraje</translation>
+        <translation>Rámeček</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="144"/>
@@ -19065,22 +19065,22 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="295"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Atutomaticky</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="296"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontální</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="297"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikální</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="299"/>
         <source>Orientation</source>
-        <translation type="unfinished">Orientace</translation>
+        <translation>Orientace</translation>
     </message>
 </context>
 <context>
@@ -19737,12 +19737,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="123"/>
         <source>Playing (no track at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrávaná (po spuštění žádná)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="125"/>
         <source>Playing (no track when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrávaná (po zastavení žádná)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="132"/>
@@ -19827,7 +19827,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="543"/>
         <source>Function parameter hints</source>
-        <translation type="unfinished"></translation>
+        <translation>Nápověda pro parametry funkcí</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="544"/>
@@ -19872,7 +19872,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="660"/>
         <source>Formatting tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Formátovací tagy</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="671"/>
@@ -20754,7 +20754,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="142"/>
         <source>Change widget margins</source>
-        <translation type="unfinished"></translation>
+        <translation>Změnit okraje widgetu</translation>
     </message>
 </context>
 <context>
@@ -22086,7 +22086,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="1071"/>
         <source>Split and move widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozdělit a přesunout widget</translation>
     </message>
 </context>
 <context>
@@ -22788,95 +22788,95 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="58"/>
         <source>Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Nabídka</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="60"/>
         <source>&amp;Place menu bar in a toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Hlavní nabídka jako panel nástrojů</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="61"/>
         <source>&amp;Lock toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Uzamknout panely nástrojů</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="65"/>
         <location filename="../../src/gui/toolbarmanager.cpp" line="505"/>
         <source>Toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>Panely nástrojů</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="83"/>
         <location filename="../../src/gui/toolbarmanager.cpp" line="84"/>
         <source>Layout</source>
-        <translation type="unfinished">Vzhled</translation>
+        <translation>Vzhled</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="88"/>
         <source>Allow the menu bar to share rows and positions with other toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>Umožnit hlavní nabídce sdílet řádek a pozici s dalšími panely nástrojů</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="96"/>
         <source>Prevent toolbars from being moved</source>
-        <translation type="unfinished"></translation>
+        <translation>Uzamknout pozici panelů nástrojů</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="193"/>
         <location filename="../../src/gui/toolbarmanager.cpp" line="503"/>
         <source>Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Panel nástrojů</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="425"/>
         <source>Missing Widget: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Chybí widget: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="515"/>
         <source>Remove toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit panel nástrojů</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="576"/>
         <source>Add widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat widget</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="579"/>
         <source>Add separator</source>
-        <translation type="unfinished">Přidat oddělovač</translation>
+        <translation>Přidat oddělovač</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="588"/>
         <source>Insert widget before</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložit widget před</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="591"/>
         <source>Insert widget after</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložit widget za</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="594"/>
         <source>Insert separator before</source>
-        <translation type="unfinished">Vložit oddělovač před</translation>
+        <translation>Vložit oddělovač před</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="598"/>
         <source>Insert separator after</source>
-        <translation type="unfinished">Vložit oddělovače za</translation>
+        <translation>Vložit oddělovače za</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="602"/>
         <source>Remove separator</source>
-        <translation type="unfinished">Odebrat oddělovač</translation>
+        <translation>Odstranit oddělovač</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="602"/>
         <source>Remove widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit widget</translation>
     </message>
 </context>
 <context>
@@ -23195,7 +23195,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="645"/>
         <source>Move widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Přesunout widget</translation>
     </message>
 </context>
 <context>
@@ -24462,28 +24462,29 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="66"/>
         <source>Search widgets…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat widget…</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="71"/>
         <source>Dock widget palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Připnout panel widgetů</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="107"/>
         <source>Widgets</source>
-        <translation type="unfinished">Widgety</translation>
+        <translation>Widgety</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="130"/>
         <source>Drag to add %1.
 Hold Ctrl to replace a widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>Přetáhni pro přidání %1.
+Přidrž Ctrl pro nahrazení widgetu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="131"/>
         <source>Instance limit reached</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosažen limit instancí</translation>
     </message>
 </context>
 <context>
@@ -24618,7 +24619,7 @@ Hold Ctrl to replace a widget.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="278"/>
         <source>Main Menu Button</source>
-        <translation type="unfinished"></translation>
+        <translation>Tlačítko hlavní nabídky</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="303"/>
@@ -24751,12 +24752,12 @@ Hold Ctrl to replace a widget.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="625"/>
         <source>Inline editing delay</source>
-        <translation type="unfinished"></translation>
+        <translation>Zpoždění přímé úpravy</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="626"/>
         <source>Delay before starting inline editing after clicking a selected editable cell</source>
-        <translation type="unfinished"></translation>
+        <translation>Prodleva před spuštěním přímé úpravy po kliknutí na upravitelnou buňku</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="635"/>
