@@ -850,28 +850,28 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
         <source>Layout</source>
-        <translation type="unfinished">Макет</translation>
+        <translation>Макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="273"/>
         <source>Draws a separator in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Рисует разделитель в поддерживаемых представлениях</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="276"/>
         <source>Alignment</source>
-        <translation type="unfinished">Выравнивание</translation>
+        <translation>Выравнивание</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="275"/>
         <source>Aligns enclosed text to the left in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Выравнивает заключённый текст по левому краю в поддерживаемых представлениях</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="277"/>
         <source>Aligns enclosed text to the right in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Выравнивает заключённый текст по правому краю в поддерживаемых представлениях</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="278"/>
@@ -913,7 +913,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="289"/>
         <source>Sets the font weight from 1 to 1000</source>
-        <translation type="unfinished"></translation>
+        <translation>Задаёт насыщенность шрифта от 1 до 1000</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="291"/>
@@ -4191,12 +4191,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="87"/>
         <source>Playing (no track at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизведение (нет трека при запуске)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="89"/>
         <source>Playing (no track when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизведение (нет трека при остановке)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="93"/>
@@ -4260,7 +4260,7 @@ Paranoid: performs the most thorough available checking and additional retries (
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="1227"/>
         <source>Add %1</source>
         <extracomment>%1 is the name of a widget e.g. Add Playlist</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Добавить %1</translation>
     </message>
 </context>
 <context>
@@ -5178,12 +5178,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="341"/>
         <source>Layout Editing</source>
-        <translation type="unfinished">Редактор макета</translation>
+        <translation>Редактор макета</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="342"/>
         <source>Add and arrange widgets to customise your layout.</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавляйте и упорядочивайте виджеты, чтобы настроить свой макет.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="345"/>
@@ -5194,12 +5194,18 @@ Effects here process the final combined output.</source>
 • Select a widget to see its parent containers in the breadcrumb bar. Select a parent to move an entire section.
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>• Найдите виджеты на панели справа (наведите курсор у правого края, если она скрыта).
+
+• Перетаскивайте виджеты с панели, чтобы добавить их, или перетаскивайте существующие, чтобы переместить их. Удерживайте Ctrl при перетаскивании, чтобы заменить целевой виджет.
+
+• Выберите виджет, чтобы увидеть его родительские контейнеры в строке навигации. Выберите родительский элемент, чтобы переместить целый раздел.
+
+• Щёлкните правой кнопкой мыши по любому виджету, чтобы разделить, заменить или удалить его с помощью контекстного меню.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="352"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished"></translation>
+        <translation>Больше не показывать это</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="449"/>
@@ -5269,32 +5275,32 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="598"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Слева</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="598"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Сверху</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="598"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Справа</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="599"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Снизу</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="609"/>
         <source>Restore defaults</source>
-        <translation type="unfinished">Вернуть значения по умолчанию</translation>
+        <translation>Вернуть значения по умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="645"/>
         <source>Margins</source>
-        <translation type="unfinished">Поля</translation>
+        <translation>Поля</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="676"/>
@@ -5828,17 +5834,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="70"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text and &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; to draw a separator.</source>
-        <translation type="unfinished"></translation>
+        <translation>Используйте &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; для текста с выравниванием по правому краю и &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; для рисования разделителя.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="75"/>
         <source>Leave empty to group by the display script</source>
-        <translation type="unfinished"></translation>
+        <translation>Оставьте пустым для группировки по скрипту отображения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="86"/>
         <source>Display script</source>
-        <translation type="unfinished"></translation>
+        <translation>Скрипт отображения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="84"/>
@@ -7510,12 +7516,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="113"/>
         <source>Open Cache Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть папку кэша</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
         <source>Open State Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть папку состояния</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="130"/>
@@ -7784,7 +7790,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1044"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1048"/>
         <source>Show Main Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать главное меню</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1059"/>
@@ -7980,7 +7986,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1342"/>
         <source>View the artwork for the selected track at full size</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотреть обложку выбранного трека в полном размере</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1345"/>
@@ -8509,7 +8515,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="136"/>
         <source>Place menu bar in a toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Разместить строку меню на панели инструментов</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="140"/>
@@ -9573,55 +9579,55 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="160"/>
         <source>Close</source>
-        <translation type="unfinished">Закрыть</translation>
+        <translation>Закрыть</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="517"/>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1150"/>
         <source>Move tabs and content</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить вкладки и содержимое</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="518"/>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1150"/>
         <source>Move tab stack</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить стек вкладок</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="518"/>
         <source>Drag to move this panel</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетащите, чтобы переместить эту панель</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="531"/>
         <source>Drop a widget here</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетащите виджет сюда</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="601"/>
         <source>Moving %1</source>
         <extracomment>%1 is the name of a widget e.g. Moving Playlist</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Перемещение %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1027"/>
         <source>Horizontal split</source>
-        <translation type="unfinished"></translation>
+        <translation>Горизонтальное разделение</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1027"/>
         <source>Vertical split</source>
-        <translation type="unfinished"></translation>
+        <translation>Вертикальное разделение</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1031"/>
         <source>Select %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1054"/>
         <source>Move %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить %1</translation>
     </message>
 </context>
 <context>
@@ -9631,17 +9637,17 @@ If the default half-star does not render correctly with your system font, choose
         <location filename="../../src/gui/layout/layoutdragsurface.cpp" line="104"/>
         <source>Replace %1 with %2</source>
         <extracomment>%1 and %2 are widget names. e.g. Replace Playlist with Lyrics</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Заменить %1 на %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragsurface.cpp" line="150"/>
         <source>Drop into the layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетащите в макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragsurface.cpp" line="157"/>
         <source>This widget is no longer available</source>
-        <translation type="unfinished"></translation>
+        <translation>Этот виджет больше недоступен</translation>
     </message>
 </context>
 <context>
@@ -9649,84 +9655,84 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="94"/>
         <source>Drop beside a panel or on a tab bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетащите рядом с панелью или на панель вкладок</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="120"/>
         <source>Cannot move this panel here</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно переместить эту панель сюда</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="135"/>
         <source>Choose a widget to replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите виджет для замены</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="144"/>
         <source>Cannot replace this widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно заменить этот виджет</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="152"/>
         <source>Replace %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Заменить %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="194"/>
         <source>Insert tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить вкладку</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="219"/>
         <source>Fill empty area</source>
-        <translation type="unfinished"></translation>
+        <translation>Заполнить пустую область</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="237"/>
         <location filename="../../src/gui/layout/layoututils.cpp" line="299"/>
         <location filename="../../src/gui/layout/layoututils.cpp" line="307"/>
         <source>Move into empty area</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить в пустую область</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="267"/>
         <source>Split %1: place below</source>
-        <translation type="unfinished"></translation>
+        <translation>Разделить %1: разместить снизу</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="267"/>
         <source>Split %1: place above</source>
-        <translation type="unfinished"></translation>
+        <translation>Разделить %1: разместить сверху</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="268"/>
         <source>Split %1: place right</source>
-        <translation type="unfinished"></translation>
+        <translation>Разделить %1: разместить справа</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="268"/>
         <source>Split %1: place left</source>
-        <translation type="unfinished"></translation>
+        <translation>Разделить %1: разместить слева</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="292"/>
         <source>Place below %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Разместить под %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="292"/>
         <source>Place above %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Разместить над %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="293"/>
         <source>Place after %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Разместить после %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="293"/>
         <source>Place before %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Разместить перед %1</translation>
     </message>
 </context>
 <context>
@@ -11895,7 +11901,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/controls/mainmenubutton.cpp" line="52"/>
         <source>Main Menu Button</source>
-        <translation type="unfinished"></translation>
+        <translation>Кнопка главного меню</translation>
     </message>
 </context>
 <context>
@@ -15208,12 +15214,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="61"/>
         <source>Display script</source>
-        <translation type="unfinished"></translation>
+        <translation>Скрипт отображения</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="72"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text.</source>
-        <translation type="unfinished"></translation>
+        <translation>Используйте &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; для текста с выравниванием по правому краю.</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="65"/>
@@ -15270,7 +15276,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="267"/>
         <source>Leave empty to group by the display script</source>
-        <translation type="unfinished"></translation>
+        <translation>Оставьте пустым для группировки по скрипту отображения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="403"/>
@@ -15319,27 +15325,27 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="275"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="344"/>
         <source>Display script</source>
-        <translation type="unfinished"></translation>
+        <translation>Скрипт отображения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="278"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text and &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; to draw a separator.</source>
-        <translation type="unfinished"></translation>
+        <translation>Используйте &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; для текста с выравниванием по правому краю и &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; для рисования разделителя.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="295"/>
         <source>Artwork</source>
-        <translation type="unfinished">Обложка</translation>
+        <translation>Обложка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="298"/>
         <source>Left/Right</source>
-        <translation type="unfinished">Слева/справа</translation>
+        <translation>Слева/справа</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="300"/>
         <source>Top/Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Сверху/Снизу</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="318"/>
@@ -15350,7 +15356,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="338"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text.</source>
-        <translation type="unfinished"></translation>
+        <translation>Используйте &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; для текста с выравниванием по правому краю.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="351"/>
@@ -16924,12 +16930,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="65"/>
         <source>Display script</source>
-        <translation type="unfinished"></translation>
+        <translation>Скрипт отображения</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="67"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text.</source>
-        <translation type="unfinished"></translation>
+        <translation>Используйте &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; для текста с выравниванием по правому краю.</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="71"/>
@@ -19054,22 +19060,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="295"/>
         <source>Automatic</source>
-        <translation type="unfinished">Автоматически</translation>
+        <translation>Автоматически</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="296"/>
         <source>Horizontal</source>
-        <translation type="unfinished">Горизонтальный</translation>
+        <translation>Горизонтальный</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="297"/>
         <source>Vertical</source>
-        <translation type="unfinished">Вертикальный</translation>
+        <translation>Вертикальный</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="299"/>
         <source>Orientation</source>
-        <translation type="unfinished">Ориентация</translation>
+        <translation>Ориентация</translation>
     </message>
 </context>
 <context>
@@ -19726,12 +19732,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="123"/>
         <source>Playing (no track at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизведение (нет трека при запуске)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="125"/>
         <source>Playing (no track when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизведение (нет трека при остановке)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="132"/>
@@ -19816,7 +19822,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="543"/>
         <source>Function parameter hints</source>
-        <translation type="unfinished"></translation>
+        <translation>Подсказки параметров функции</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="544"/>
@@ -19861,7 +19867,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="660"/>
         <source>Formatting tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Теги форматирования</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="671"/>
@@ -20743,7 +20749,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="142"/>
         <source>Change widget margins</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить отступы виджета</translation>
     </message>
 </context>
 <context>
@@ -22075,7 +22081,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="1071"/>
         <source>Split and move widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Разделить и переместить виджет</translation>
     </message>
 </context>
 <context>
@@ -22777,95 +22783,95 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="58"/>
         <source>Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Меню</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="60"/>
         <source>&amp;Place menu bar in a toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Разместить строку меню на панели инструментов</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="61"/>
         <source>&amp;Lock toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Заблокировать панели инструментов</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="65"/>
         <location filename="../../src/gui/toolbarmanager.cpp" line="505"/>
         <source>Toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>Панели инструментов</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="83"/>
         <location filename="../../src/gui/toolbarmanager.cpp" line="84"/>
         <source>Layout</source>
-        <translation type="unfinished">Макет</translation>
+        <translation>Макет</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="88"/>
         <source>Allow the menu bar to share rows and positions with other toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешить строке меню делить строки и позиции с другими панелями инструментов</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="96"/>
         <source>Prevent toolbars from being moved</source>
-        <translation type="unfinished"></translation>
+        <translation>Запретить перемещение панелей инструментов</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="193"/>
         <location filename="../../src/gui/toolbarmanager.cpp" line="503"/>
         <source>Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Панель инструментов</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="425"/>
         <source>Missing Widget: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Отсутствует виджет: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="515"/>
         <source>Remove toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить панель инструментов</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="576"/>
         <source>Add widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить виджет</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="579"/>
         <source>Add separator</source>
-        <translation type="unfinished">Добавить разделитель</translation>
+        <translation>Добавить разделитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="588"/>
         <source>Insert widget before</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить виджет перед</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="591"/>
         <source>Insert widget after</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить виджет после</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="594"/>
         <source>Insert separator before</source>
-        <translation type="unfinished">Вставить разделитель перед</translation>
+        <translation>Вставить разделитель перед</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="598"/>
         <source>Insert separator after</source>
-        <translation type="unfinished">Вставить разделитель после</translation>
+        <translation>Вставить разделитель после</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="602"/>
         <source>Remove separator</source>
-        <translation type="unfinished">Удалить разделитель</translation>
+        <translation>Удалить разделитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="602"/>
         <source>Remove widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить виджет</translation>
     </message>
 </context>
 <context>
@@ -23184,7 +23190,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="645"/>
         <source>Move widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить виджет</translation>
     </message>
 </context>
 <context>
@@ -24451,28 +24457,29 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="66"/>
         <source>Search widgets…</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск виджетов…</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="71"/>
         <source>Dock widget palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрепить панель виджетов</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="107"/>
         <source>Widgets</source>
-        <translation type="unfinished">Виджеты</translation>
+        <translation>Виджеты</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="130"/>
         <source>Drag to add %1.
 Hold Ctrl to replace a widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетащите, чтобы добавить %1.
+Удерживайте Ctrl, чтобы заменить виджет.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="131"/>
         <source>Instance limit reached</source>
-        <translation type="unfinished"></translation>
+        <translation>Достигнут предел экземпляров</translation>
     </message>
 </context>
 <context>
@@ -24607,7 +24614,7 @@ Hold Ctrl to replace a widget.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="278"/>
         <source>Main Menu Button</source>
-        <translation type="unfinished"></translation>
+        <translation>Кнопка главного меню</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="303"/>
@@ -24740,12 +24747,12 @@ Hold Ctrl to replace a widget.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="625"/>
         <source>Inline editing delay</source>
-        <translation type="unfinished"></translation>
+        <translation>Задержка встроенного редактирования</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="626"/>
         <source>Delay before starting inline editing after clicking a selected editable cell</source>
-        <translation type="unfinished"></translation>
+        <translation>Задержка перед началом встроенного редактирования после щелчка по выбранной редактируемой ячейке</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="635"/>
