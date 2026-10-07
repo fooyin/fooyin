@@ -5195,22 +5195,22 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
         <translation>• Dostupné widgety najdeš v panelu napravo (pokud je skrytý, podrž ukazatel
-  myši u pravého okraje).
+   myši u pravého okraje).
 
 • Widget přidáš jeho přetažením z panelu do okna. Polohu existujících widgetů
-  v okně můžeš změnit jejich přetažením. Pokud při přetahování podržíš Ctrl,
-  nahradíš přetahovaným widgetem cílový widget.
+   v okně můžeš změnit jejich přetažením. Pokud při přetahování podržíš Ctrl,
+   nahradíš přetahovaným widgetem cílový widget.
 
 • Vyber widget pro zobrazení jeho nadřazených widgetů v navigační liště. Vyber
-  nadřazený widget pro přesun celé skupiny.
+   nadřazený widget pro přesun celé skupiny.
 
 • Kliknutím pravým tlačítkem otevřeš místní nabídku pro rozdělení, nahrazení,
-  nebo odstranění widgetu.</translation>
+   nebo odstranění widgetu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="352"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished"></translation>
+        <translation>Příště už nezobrazovat</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="449"/>
@@ -5280,32 +5280,32 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="598"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Levý</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="598"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Horní</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="598"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Pravý</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="599"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Dolní</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="609"/>
         <source>Restore defaults</source>
-        <translation type="unfinished">Obnovit</translation>
+        <translation>Obnovit výchozí</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="645"/>
         <source>Margins</source>
-        <translation type="unfinished">Okraje</translation>
+        <translation>Okraje</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="676"/>
@@ -5839,17 +5839,17 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="70"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text and &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; to draw a separator.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použij &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; pro text zarovnaný doprava a &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; pro vykreslení oddělovače.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="75"/>
         <source>Leave empty to group by the display script</source>
-        <translation type="unfinished"></translation>
+        <translation>Ponech prázdné pro seskupení podle skriptu pro zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="86"/>
         <source>Display script</source>
-        <translation type="unfinished"></translation>
+        <translation>Skript pro zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="84"/>
