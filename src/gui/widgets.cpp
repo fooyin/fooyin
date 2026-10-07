@@ -435,7 +435,7 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"SavedFilterSelector"_s,
         [this]() { return new Filters::LibraryFilterSwitcher(m_libraryFilterRegistry, m_core->library(), m_settings); },
-        tr("Saved Filter Selector"));
+        tr("Saved Filter Selector"), {.supportsToolbar = true});
     provider->setSubMenus(u"SavedFilterSelector"_s, {tr("Filters")});
 }
 
