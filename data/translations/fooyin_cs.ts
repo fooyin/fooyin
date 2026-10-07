@@ -15335,17 +15335,17 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="278"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text and &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; to draw a separator.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použij &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; pro text zarovnaný doprava a &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; pro vykreslení oddělovače.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="295"/>
         <source>Artwork</source>
-        <translation type="unfinished">Přebaly alb</translation>
+        <translation>Přebaly alb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="298"/>
         <source>Left/Right</source>
-        <translation type="unfinished">Vlevo / Vpravo</translation>
+        <translation>Vlevo / Vpravo</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="300"/>
