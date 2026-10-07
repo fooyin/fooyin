@@ -278,6 +278,13 @@ bool ToolbarManager::eventFilter(QObject* watched, QEvent* event)
     if(event->type() == QEvent::ContextMenu) {
         auto* contextMenuEvent = static_cast<QContextMenuEvent*>(event);
         if(auto* toolbar = toolbarFor(watched)) {
+            if(contextMenuEvent->reason() == QContextMenuEvent::Mouse
+               && QApplication::mouseButtons() & Qt::LeftButton) {
+                // Avoid showing context menu if right-click is used to cancel a current mouse action e.g. seeking
+                event->accept();
+                return true;
+            }
+
             auto* source = static_cast<QWidget*>(watched);
             showContextMenu(toolbar, source->mapTo(toolbar, contextMenuEvent->pos()), contextMenuEvent->globalPos(),
                             source);

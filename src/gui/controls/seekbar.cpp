@@ -28,6 +28,7 @@
 #include <utils/stringutils.h>
 
 #include <QActionGroup>
+#include <QApplication>
 #include <QBoxLayout>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
@@ -65,6 +66,8 @@ public:
     void stopSeeking();
 
     void setMouseFocusEnabled(bool enabled);
+
+    bool event(QEvent* event) override;
 
 Q_SIGNALS:
     void sliderDropped(uint64_t pos);
@@ -130,6 +133,10 @@ void TrackSlider::updateCurrentValue(uint64_t value)
 {
     m_currentPos = value;
 
+    if(isSeeking() && !(QApplication::mouseButtons() & Qt::LeftButton)) {
+        stopSeeking();
+    }
+
     if(!isSeeking()) {
         setValue(static_cast<int>(value));
     }
@@ -159,7 +166,21 @@ void TrackSlider::stopSeeking()
         m_toolTip->deleteLater();
     }
 
-    m_seekPos = {};
+    m_seekPos  = {};
+    m_pressPos = {};
+    setSliderDown(false);
+}
+
+bool TrackSlider::event(QEvent* event)
+{
+    if(isSeeking()
+       && (event->type() == QEvent::UngrabMouse || event->type() == QEvent::WindowDeactivate
+           || event->type() == QEvent::Hide)) {
+        stopSeeking();
+        setValue(static_cast<int>(m_currentPos));
+    }
+
+    return QSlider::event(event);
 }
 
 void TrackSlider::mousePressEvent(QMouseEvent* event)
@@ -170,6 +191,12 @@ void TrackSlider::mousePressEvent(QMouseEvent* event)
     }
 
     Qt::MouseButton button = event->button();
+    if(button == Qt::RightButton && isSeeking()) {
+        stopSeeking();
+        setValue(static_cast<int>(m_currentPos));
+        event->accept();
+        return;
+    }
     if(button != Qt::LeftButton) {
         event->ignore();
         return;
@@ -210,7 +237,6 @@ void TrackSlider::mouseReleaseEvent(QMouseEvent* event)
     }
 
     stopSeeking();
-    m_pressPos = {};
 
     const auto pos = valueFromPosition(
         static_cast<int>(orientation() == Qt::Horizontal ? event->position().x() : event->position().y()));
@@ -224,9 +250,8 @@ void TrackSlider::mouseMoveEvent(QMouseEvent* event)
         return;
     }
 
-    QSlider::mouseMoveEvent(event);
-
     if(isSeeking() && event->buttons() & Qt::LeftButton) {
+        QSlider::mouseMoveEvent(event);
         updateSeekPosition(event->position());
 
         const auto axisPosition = [this](const QPoint& point) {
@@ -549,6 +574,11 @@ void SeekBar::contextMenuEvent(QContextMenuEvent* event)
         return;
     }
 
+    if(event->reason() == QContextMenuEvent::Mouse && QApplication::mouseButtons() & Qt::LeftButton) {
+        event->accept();
+        return;
+    }
+
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
     populateContextMenu(menu);
@@ -600,6 +630,8 @@ void SeekBar::updateSeekEnabled() const
 
 void SeekBar::trackChanged(const Track& track)
 {
+    m_slider->stopSeeking();
+
     if(track.isValid()) {
         m_max = track.duration();
         m_slider->setValue(0);
