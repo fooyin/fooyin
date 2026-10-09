@@ -4650,7 +4650,7 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="106"/>
         <source>None</source>
-        <translation type="unfinished">Nessuno</translation>
+        <translation>Nessuno</translation>
     </message>
 </context>
 <context>
@@ -4658,12 +4658,12 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="196"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Colonne</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="207"/>
         <source>Show header</source>
-        <translation type="unfinished">Mostra intestazione</translation>
+        <translation>Mostra intestazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirtree.cpp" line="212"/>
@@ -4681,12 +4681,12 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="237"/>
         <source>Discord</source>
-        <translation type="unfinished"></translation>
+        <translation>Discord</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="237"/>
         <source>Integrations</source>
-        <translation type="unfinished"></translation>
+        <translation>Integrazioni</translation>
     </message>
 </context>
 <context>
@@ -4694,17 +4694,17 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="75"/>
         <source>Enable</source>
-        <translation type="unfinished"></translation>
+        <translation>Abilita</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="76"/>
         <source>Show playstate</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra stato di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="77"/>
         <source>Clear on pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Pulisci in pausa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="80"/>
@@ -4724,27 +4724,27 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="86"/>
         <source>Show artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra copertina</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="87"/>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Sorgente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="89"/>
         <source>Retention</source>
-        <translation type="unfinished"></translation>
+        <translation>Conservazione</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="92"/>
         <source>Connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Connessione</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="101"/>
         <source>Rich Presence</source>
-        <translation type="unfinished"></translation>
+        <translation>Rich Presence</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="115"/>
@@ -4754,57 +4754,57 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="118"/>
         <source>1 hour</source>
-        <translation type="unfinished"></translation>
+        <translation>1 ora</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="119"/>
         <source>12 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>12 ore</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="120"/>
         <source>24 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>24 ore</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="121"/>
         <source>72 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>72 ore</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="125"/>
         <source>Search for artwork via MusicBrainz ID only</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca copertina solo tramite ID MusicBrainz</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="126"/>
         <source>Search via MusicBrainz ID, or upload if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca tramite ID MusicBrainz o carica se non trovata</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="128"/>
         <source>Upload artwork only</source>
-        <translation type="unfinished"></translation>
+        <translation>Solo caricamento copertina</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="129"/>
         <source>Upload artwork, or search via MusicBrainz ID if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Carica copertina o cerca tramite ID MusicBrainz se non trovata</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="142"/>
         <source>Display a small icon in Discord showing the current playback state</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra una piccola icona su Discord con lo stato di riproduzione attuale</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="143"/>
         <source>Clear status when paused</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancella stato quando in pausa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="78"/>
         <source>Client ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID Client</translation>
     </message>
 </context>
 <context>
@@ -4812,22 +4812,22 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="49"/>
         <source>DSP</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="98"/>
         <source>DSP Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>Selettore DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="149"/>
         <source>Configure…</source>
-        <translation type="unfinished">Configura…</translation>
+        <translation>Configura…</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/dspchainselector.cpp" line="118"/>
         <source>Show label</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra etichetta</translation>
     </message>
 </context>
 <context>
@@ -4835,7 +4835,7 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="429"/>
         <source>Configure…</source>
-        <translation type="unfinished">Configura…</translation>
+        <translation>Configura…</translation>
     </message>
 </context>
 <context>
@@ -4861,7 +4861,7 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/dsp/dsplayouteditor.cpp" line="42"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Ripristina predefiniti</translation>
     </message>
 </context>
 <context>
@@ -4869,12 +4869,12 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="254"/>
         <source>Instance</source>
-        <translation type="unfinished"></translation>
+        <translation>Istanza</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="271"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Abilitato</translation>
     </message>
 </context>
 <context>
@@ -4887,7 +4887,7 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1307"/>
         <source>DSP Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Gestore DSP</translation>
     </message>
 </context>
 <context>
@@ -4905,80 +4905,82 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="382"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="411"/>
         <source>Per-Track DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP per traccia</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="412"/>
         <source>Master DSPs</source>
-        <translation type="unfinished"></translation>
+        <translation>DSP master</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="414"/>
         <source>Per-track DSPs are applied to each stream separately before tracks are mixed.
 During crossfades, each track is processed independently.</source>
-        <translation type="unfinished"></translation>
+        <translation>I DSP per traccia vengono applicati separatamente a ciascun flusso prima del missaggio delle tracce.
+Durante le dissolvenze incrociate, ogni traccia viene elaborata in modo indipendente.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="416"/>
         <source>Master DSPs are applied after all active tracks are mixed into one signal.
 Effects here process the final combined output.</source>
-        <translation type="unfinished"></translation>
+        <translation>I DSP master vengono applicati dopo che tutte le tracce attive sono state missate in un unico segnale.
+Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="419"/>
         <source>Available DSPs</source>
-        <translation type="unfinished">DSP disponibili</translation>
+        <translation>DSP disponibili</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="438"/>
         <source>DSP chain presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Preset catena DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="714"/>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="720"/>
         <source>DSP Settings</source>
-        <translation type="unfinished">Impostazioni DSP</translation>
+        <translation>Impostazioni DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="714"/>
         <source>This DSP has no configurable settings.</source>
-        <translation type="unfinished">Questo DSP non ha impostazioni configurabili.</translation>
+        <translation>Questo DSP non ha impostazioni configurabili.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="721"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation type="unfinished">Impossibile aprire le impostazioni per il DSP &quot;%1&quot;.</translation>
+        <translation>Impossibile aprire le impostazioni per il DSP &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1030"/>
         <source>Configure…</source>
-        <translation type="unfinished">Configura…</translation>
+        <translation>Configura…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1038"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Sposta su</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1044"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Sposta giù</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1053"/>
         <source>Disable</source>
-        <translation type="unfinished"></translation>
+        <translation>Disattiva</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1053"/>
         <source>Enable</source>
-        <translation type="unfinished"></translation>
+        <translation>Attiva</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1061"/>
@@ -4988,22 +4990,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1079"/>
         <source>Add to Per-Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi a Per-Traccia</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1080"/>
         <source>Add to Master</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi al Master</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1246"/>
         <source>Preset already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Il preset esiste già</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1247"/>
         <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>Il preset &quot;%1&quot; esiste già. Sovrascrivere?</translation>
     </message>
 </context>
 <context>
@@ -5012,7 +5014,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/settings/playback/outputdevicesdelegate.cpp" line="67"/>
         <location filename="../../src/gui/settings/playback/outputdevicesdelegate.cpp" line="84"/>
         <source>&lt;not set&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;non impostato&gt;</translation>
     </message>
 </context>
 <context>
@@ -5021,43 +5023,43 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="45"/>
         <location filename="../../src/gui/dsp/dspsettingslayoutwidget.cpp" line="42"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Abilitato</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="62"/>
         <source>Master</source>
-        <translation type="unfinished"></translation>
+        <translation>Master</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="63"/>
         <source>Per-track</source>
-        <translation type="unfinished"></translation>
+        <translation>Per-traccia</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="468"/>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="478"/>
         <source>DSP Settings</source>
-        <translation type="unfinished">Impostazioni DSP</translation>
+        <translation>Impostazioni DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="468"/>
         <source>Unable to open settings for DSP &quot;%1&quot;.</source>
-        <translation type="unfinished">Impossibile aprire le impostazioni per il DSP &quot;%1&quot;.</translation>
+        <translation>Impossibile aprire le impostazioni per il DSP &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="478"/>
         <source>Unable to find DSP &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile trovare il DSP &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="523"/>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="524"/>
         <source>%1: %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2 (%3)</translation>
     </message>
 </context>
 <context>
@@ -5066,22 +5068,22 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/widgets/dummy.cpp" line="68"/>
         <source>Dummy</source>
         <extracomment>Represents a dummy/placeholder widget</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Vuoto</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="115"/>
         <source>Missing Widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Widget mancante</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="118"/>
         <source>Right-click to add a new widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Fai clic con il tasto destro per aggiungere un nuovo widget</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="121"/>
         <source>Enter layout editing mode to edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Accedi alla modalità di modifica del layout per modificare</translation>
     </message>
 </context>
 <context>
@@ -5089,12 +5091,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="44"/>
         <source>Randomise</source>
-        <translation type="unfinished"></translation>
+        <translation>Randomizza</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="45"/>
         <source>Reverse</source>
-        <translation type="unfinished"></translation>
+        <translation>Inverti</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="49"/>
@@ -5113,12 +5115,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="73"/>
         <source>S&amp;earch</source>
-        <translation type="unfinished"></translation>
+        <translation>C&amp;erca</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="74"/>
         <source>Search the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca nella playlist corrente</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="81"/>
@@ -5128,12 +5130,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="83"/>
         <source>Open the settings dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri la finestra di dialogo delle impostazioni</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="98"/>
         <source>Sort by %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordina per %1</translation>
     </message>
 </context>
 <context>
@@ -5141,17 +5143,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="553"/>
         <source>&amp;Before</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Prima</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="560"/>
         <source>&amp;After</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Dopo</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="571"/>
         <source>&amp;Inside</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Dentro</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="481"/>
@@ -5161,12 +5163,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="341"/>
         <source>Layout Editing</source>
-        <translation type="unfinished">Modifica Layout</translation>
+        <translation>Modifica Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="342"/>
         <source>Add and arrange widgets to customise your layout.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi e organizza i widget per personalizzare il tuo layout.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="345"/>
@@ -5177,32 +5179,38 @@ Effects here process the final combined output.</source>
 • Select a widget to see its parent containers in the breadcrumb bar. Select a parent to move an entire section.
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>• Trova i widget nella tavolozza a destra (passa il mouse vicino al bordo destro se è nascosta).
+
+• Trascina i widget dalla tavolozza per aggiungerli o trascina quelli esistenti per spostarli. Tieni premuto Ctrl mentre trascini per sostituire il widget di destinazione.
+
+• Seleziona un widget per vedere i relativi contenitori principali nella barra di navigazione. Seleziona un contenitore principale per spostare un&apos;intera sezione.
+
+• Fai clic con il pulsante destro del mouse su un widget per dividerlo, sostituirlo o rimuoverlo tramite il menu contestuale.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="352"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished"></translation>
+        <translation>Non mostrare più</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="449"/>
         <source>Insert &amp;before</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci &amp;prima</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="454"/>
         <source>Insert &amp;after</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci &amp;dopo</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="462"/>
         <source>Insert &amp;inside</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci &amp;dentro</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="481"/>
         <source>&amp;Up</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Su</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="488"/>
@@ -5212,27 +5220,27 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="488"/>
         <source>&amp;Down</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Giù</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="495"/>
         <source>Far Lef&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>Estremo sinistr&amp;o</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="495"/>
         <source>&amp;Top</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;In alto</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="503"/>
         <source>Far Rig&amp;ht</source>
-        <translation type="unfinished"></translation>
+        <translation>Estremo destr&amp;o</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="503"/>
         <source>&amp;Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;In basso</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="525"/>
