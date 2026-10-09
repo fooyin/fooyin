@@ -850,28 +850,28 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
         <source>Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="273"/>
         <source>Draws a separator in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Disegna un separatore nelle viste supportate</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="276"/>
         <source>Alignment</source>
-        <translation type="unfinished">Allineamento</translation>
+        <translation>Allineamento</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="275"/>
         <source>Aligns enclosed text to the left in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Allinea il testo racchiuso a sinistra nelle viste supportate</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="277"/>
         <source>Aligns enclosed text to the right in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Allinea il testo racchiuso a destra nelle viste supportate</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="278"/>
@@ -913,7 +913,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="289"/>
         <source>Sets the font weight from 1 to 1000</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta lo spessore del carattere da 1 a 1000</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="291"/>
@@ -4176,12 +4176,12 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="87"/>
         <source>Playing (no track at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>In riproduzione (nessuna traccia all&apos;avvio)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="89"/>
         <source>Playing (no track when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>In riproduzione (nessuna traccia quando fermo)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="93"/>
@@ -4245,7 +4245,7 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="1227"/>
         <source>Add %1</source>
         <extracomment>%1 is the name of a widget e.g. Add Playlist</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi %1</translation>
     </message>
 </context>
 <context>
@@ -4625,27 +4625,27 @@ Paranoico: esegue il controllo più approfondito disponibile e ulteriori tentati
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="78"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>In basso</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="80"/>
         <source>Display Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opzioni di visualizzazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="87"/>
         <source>Path and controls position</source>
-        <translation type="unfinished"></translation>
+        <translation>Posizione del percorso e dei controlli</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="102"/>
         <source>Expand/collapse</source>
-        <translation type="unfinished"></translation>
+        <translation>Espandi/comprimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="103"/>
         <source>Expand/collapse or play now</source>
-        <translation type="unfinished"></translation>
+        <translation>Espandi/comprimi o riproduci ora</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="106"/>
