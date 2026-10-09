@@ -488,6 +488,7 @@ bool ConversionController::startPreset(const QString& presetId, const TrackList&
     lastUsed.name        = u"[last used]"_s;
     lastUsed.preset.name = lastUsed.name;
     ConverterSettings::setLastUsedConversionPreset(lastUsed);
+    ConverterSettings::setCurrentConversionPreset(lastUsed);
     Q_EMIT conversionPresetsChanged();
 
     start({.tracks = tracks, .preset = std::move(selected.preset)}, std::move(askFolder), selected.showReport,

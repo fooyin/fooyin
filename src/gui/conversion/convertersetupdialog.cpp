@@ -151,7 +151,21 @@ ConverterSetupDialog::ConverterSetupDialog(AudioEncoderRegistry* registry, DspCh
 
     populateProfiles();
     populatePresets();
+
     applyDefaultPreset();
+    if(const auto current = ConverterSettings::currentConversionPreset()) {
+        m_presetList->setCurrentRow(-1);
+        applyPreset(*current);
+    }
+
+    QObject::connect(this, &QDialog::finished, this, [this] {
+        ConverterSettings::setCurrentConversionPreset({
+            .name            = u"[current]"_s,
+            .preset          = job().preset,
+            .showReport      = showReport(),
+            .showOutputFiles = showOutputFiles(),
+        });
+    });
 }
 
 ConversionJob ConverterSetupDialog::job() const
