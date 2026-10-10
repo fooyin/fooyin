@@ -999,7 +999,9 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
 
     const auto* item = itemForIndex(index);
 
-    const QString parentTitle = item->parent() && !item->parent()->title().isEmpty() ? item->parent()->title() : u"?"_s;
+    const auto* parent = item->parent();
+    const QString parentTitle
+        = parent && parent != rootItem() ? (parent->title().isEmpty() ? u"?"_s : parent->title()) : QString{};
     const bool isPlayingTrack = p->m_playingState != Player::PlayState::Stopped && item->childCount() == 0
                              && item->trackCount() == 1 && item->tracks().front().uniqueFilepath() == p->m_playingPath
                              && parentTitle == p->m_parentNode;
