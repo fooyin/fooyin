@@ -161,7 +161,7 @@ TEST(FilterPipelineTest, ResolveFilterSelectionUsesVisibleRowsForSummaryRow)
     EXPECT_TRUE(selection.selectedKeys.front().isEmpty());
 }
 
-TEST(FilterPipelineTest, ResolveFilterSelectionFallsBackToInputTracksForEmptySummaryRows)
+TEST(FilterPipelineTest, ResolveFilterSelectionKeepsEmptySummarySelectionActive)
 {
     const TrackList inputTracks{
         makeTrack(10, u"/music/all-a.flac"_s),
@@ -172,7 +172,7 @@ TEST(FilterPipelineTest, ResolveFilterSelectionFallsBackToInputTracksForEmptySum
         = Filters::resolveFilterSelection({}, inputTracks, {Filters::RowKey{}});
 
     EXPECT_TRUE(selection.isActive);
-    EXPECT_EQ(inputTracks, selection.selectedTracks);
+    EXPECT_TRUE(selection.selectedTracks.empty());
     ASSERT_EQ(1, selection.selectedKeys.size());
     EXPECT_TRUE(selection.selectedKeys.front().isEmpty());
 }
