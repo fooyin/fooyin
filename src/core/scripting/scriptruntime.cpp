@@ -27,6 +27,7 @@
 #include <utils/utils.h>
 
 #include <QDir>
+#include <QScopedValueRollback>
 
 #include <optional>
 
@@ -941,7 +942,7 @@ ScriptResult ScriptRuntime::evalVariable(const BoundExpression& exp, const auto&
     ScriptResult result = m_registry->value(exp.variableKind, var, makeScriptSubject(tracks));
 
     if(!result.cond) {
-        return {};
+        return {.value = m_missingVariableText, .cond = false};
     }
 
     if(result.value.contains(QLatin1String{Constants::UnitSeparator})) {
@@ -953,8 +954,12 @@ ScriptResult ScriptRuntime::evalVariable(const BoundExpression& exp, const auto&
 
 ScriptResult ScriptRuntime::evalVariableList(const BoundExpression& exp, const auto& tracks)
 {
-    const auto& var = std::get<QString>(exp.value);
-    return m_registry->value(exp.variableKind, var, makeScriptSubject(tracks));
+    const auto& var     = std::get<QString>(exp.value);
+    ScriptResult result = m_registry->value(exp.variableKind, var, makeScriptSubject(tracks));
+    if(!result.cond && !m_missingVariableText.isEmpty()) {
+        result.value = m_missingVariableText;
+    }
+    return result;
 }
 
 ScriptResult ScriptRuntime::evalVariableRaw(const BoundExpression& exp, const auto& tracks)
@@ -971,7 +976,7 @@ ScriptResult ScriptRuntime::evalVariableRaw(const BoundExpression& exp, const au
     result.cond = !result.value.isEmpty();
 
     if(!result.cond) {
-        return {};
+        return {.value = m_missingVariableText, .cond = false};
     }
 
     if(result.value.contains(QLatin1String{Constants::UnitSeparator})) {
@@ -1676,27 +1681,32 @@ const BoundScript& ScriptRuntime::bind(const ParsedScript& input)
     return *cache.find(input.cacheId);
 }
 
-QString ScriptRuntime::evaluate(const ParsedScript& input, const Track& track)
+QString ScriptRuntime::evaluate(const ParsedScript& input, const Track& track, const ScriptEvaluationOptions& options)
 {
-    return evaluateImpl(input, track);
+    return evaluateImpl(input, track, options);
 }
 
-QString ScriptRuntime::evaluate(const ParsedScript& input, const TrackList& tracks)
+QString ScriptRuntime::evaluate(const ParsedScript& input, const TrackList& tracks,
+                                const ScriptEvaluationOptions& options)
 {
-    return evaluateImpl(input, tracks);
+    return evaluateImpl(input, tracks, options);
 }
 
-QString ScriptRuntime::evaluate(const ParsedScript& input, const Playlist& playlist)
+QString ScriptRuntime::evaluate(const ParsedScript& input, const Playlist& playlist,
+                                const ScriptEvaluationOptions& options)
 {
-    return evaluateImpl(input, playlist);
+    return evaluateImpl(input, playlist, options);
 }
 
 template <typename Tracks>
-QString ScriptRuntime::evaluateImpl(const ParsedScript& input, const Tracks& tracks)
+QString ScriptRuntime::evaluateImpl(const ParsedScript& input, const Tracks& tracks,
+                                    const ScriptEvaluationOptions& options)
 {
     if(!input.isValid()) {
         return {};
     }
+
+    const QScopedValueRollback missingVariableText{m_missingVariableText, options.missingVariableText};
 
     const BoundScript& bound = bind(input);
     if(!bound.isValid()) {

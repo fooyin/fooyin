@@ -50,9 +50,9 @@ public:
                        ScriptScanner::WhitespaceMode whitespaceMode = ScriptScanner::WhitespaceMode::IgnoreLayout);
     ParsedScript parseQuery(const QString& input);
 
-    QString evaluate(const ParsedScript& input, const Track& track);
-    QString evaluate(const ParsedScript& input, const TrackList& tracks);
-    QString evaluate(const ParsedScript& input, const Playlist& playlist);
+    QString evaluate(const ParsedScript& input, const Track& track, const ScriptEvaluationOptions& options = {});
+    QString evaluate(const ParsedScript& input, const TrackList& tracks, const ScriptEvaluationOptions& options = {});
+    QString evaluate(const ParsedScript& input, const Playlist& playlist, const ScriptEvaluationOptions& options = {});
 
     [[nodiscard]] TrackList filterQuery(const QString& search, const TrackList& tracks,
                                         const ScriptSearchOptions& options, const ScriptContext& context = {},
@@ -103,7 +103,7 @@ private:
     const BoundScript& bind(const ParsedScript& input);
 
     template <typename Tracks>
-    QString evaluateImpl(const ParsedScript& input, const Tracks& tracks);
+    QString evaluateImpl(const ParsedScript& input, const Tracks& tracks, const ScriptEvaluationOptions& options);
 
     ScriptResult evalExpression(const BoundExpression& exp, const auto& tracks);
     ScriptResult evalVariable(const BoundExpression& exp, const auto& tracks);
@@ -156,6 +156,7 @@ private:
     BoundScriptCache m_boundQueryCache;
     BoundScript m_currentBoundScript;
     QStringList m_currentResult;
+    QString m_missingVariableText;
 
     QString m_sortScript;
     Qt::SortOrder m_sortOrder;

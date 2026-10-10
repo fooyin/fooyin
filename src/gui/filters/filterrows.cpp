@@ -50,13 +50,6 @@ struct CachedColumnData
     RowKey key;
 };
 
-RichText placeholderRichText()
-{
-    RichText richText;
-    richText.blocks.push_back({.text = u"?"_s, .format = {}});
-    return richText;
-}
-
 ColumnData buildColumnData(const QStringList& columns, ScriptFormatter& formatter)
 {
     ColumnData data;
@@ -67,18 +60,7 @@ ColumnData buildColumnData(const QStringList& columns, ScriptFormatter& formatte
         RichText richColumn = trimRichText(formatter.evaluate(column));
         QString plainColumn = richColumn.joinedText();
 
-        if(plainColumn.isEmpty()) {
-            RichText placeholder = trimRichText(formatter.evaluate(column + u"?"_s));
-            if(!placeholder.empty()) {
-                richColumn = std::move(placeholder);
-            }
-            else {
-                richColumn = placeholderRichText();
-            }
-            plainColumn = richColumn.joinedText();
-        }
-
-        data.plainColumns.push_back(plainColumn);
+        data.plainColumns.push_back(std::move(plainColumn));
         data.richColumns.push_back(std::move(richColumn));
     }
 
@@ -154,12 +136,14 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
                                       ? parser.parse(sortFields.join(QLatin1StringView{Constants::RecordSeparator}))
                                       : ParsedScript{};
 
+    const ScriptEvaluationOptions displayOptions{.missingVariableText = u"?"_s};
+
     for(const Track& track : tracks) {
         if(!track.isInLibrary()) {
             continue;
         }
 
-        const QString evaluated                     = parser.evaluate(script, track, scriptContext);
+        const QString evaluated                     = parser.evaluate(script, track, scriptContext, displayOptions);
         const std::vector<QStringList> columnValues = splitColumnValues(evaluated);
 
         std::vector<QStringList> sortValues;
@@ -178,7 +162,10 @@ FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumn
             }
 
             const ColumnData& columnData = columnDataIt->second.columns;
-            const RowKey& key            = columnDataIt->second.key;
+            if(std::ranges::all_of(columnData.plainColumns, [](const QString& column) { return column.isEmpty(); })) {
+                return;
+            }
+            const RowKey& key = columnDataIt->second.key;
 
             auto [it, inserted] = items.try_emplace(key);
             FilterRow& row      = it->second;

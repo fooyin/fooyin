@@ -170,6 +170,12 @@ QString ScriptParser::evaluate(const ParsedScript& input, const ScriptContext& c
     return evaluate(input, Track{}, context);
 }
 
+QString ScriptParser::evaluate(const ParsedScript& input, const ScriptContext& context,
+                               const ScriptEvaluationOptions& options)
+{
+    return evaluate(input, Track{}, context, options);
+}
+
 QString ScriptParser::evaluate(const QString& input, const Track& track)
 {
     if(input.isEmpty()) {
@@ -204,12 +210,19 @@ QString ScriptParser::evaluate(const QString& input, const Track& track, const S
     }
 
     const auto script = p->parse(input, whitespaceMode(options.whitespaceMode));
-    return evaluate(script, track, context);
+    return evaluate(script, track, context, options);
 }
 
 QString ScriptParser::evaluate(const ParsedScript& input, const Track& track, const ScriptContext& context)
 {
-    return p->withContext(context, [&] { return evaluate(input, track); });
+    return evaluate(input, track, context, {});
+}
+
+QString ScriptParser::evaluate(const ParsedScript& input, const Track& track, const ScriptContext& context,
+                               const ScriptEvaluationOptions& options)
+{
+    p->setQueryMode(false);
+    return p->withContext(context, [&] { return p->evaluate(input, track, options); });
 }
 
 QString ScriptParser::evaluate(const QString& input, const TrackList& tracks)
@@ -246,12 +259,19 @@ QString ScriptParser::evaluate(const QString& input, const TrackList& tracks, co
     }
 
     const auto script = p->parse(input, whitespaceMode(options.whitespaceMode));
-    return evaluate(script, tracks, context);
+    return evaluate(script, tracks, context, options);
 }
 
 QString ScriptParser::evaluate(const ParsedScript& input, const TrackList& tracks, const ScriptContext& context)
 {
-    return p->withContext(context, [&] { return evaluate(input, tracks); });
+    return evaluate(input, tracks, context, {});
+}
+
+QString ScriptParser::evaluate(const ParsedScript& input, const TrackList& tracks, const ScriptContext& context,
+                               const ScriptEvaluationOptions& options)
+{
+    p->setQueryMode(false);
+    return p->withContext(context, [&] { return p->evaluate(input, tracks, options); });
 }
 
 QString ScriptParser::evaluate(const QString& input, const Playlist& playlist)
@@ -288,12 +308,19 @@ QString ScriptParser::evaluate(const QString& input, const Playlist& playlist, c
     }
 
     const auto script = p->parse(input, whitespaceMode(options.whitespaceMode));
-    return evaluate(script, playlist, context);
+    return evaluate(script, playlist, context, options);
 }
 
 QString ScriptParser::evaluate(const ParsedScript& input, const Playlist& playlist, const ScriptContext& context)
 {
-    return p->withContext(context, [&] { return evaluate(input, playlist); });
+    return evaluate(input, playlist, context, {});
+}
+
+QString ScriptParser::evaluate(const ParsedScript& input, const Playlist& playlist, const ScriptContext& context,
+                               const ScriptEvaluationOptions& options)
+{
+    p->setQueryMode(false);
+    return p->withContext(context, [&] { return p->evaluate(input, playlist, options); });
 }
 
 void ScriptParser::withContext(const ScriptContext& context, const std::function<void()>& operation)

@@ -54,6 +54,7 @@ enum class ScriptWhitespaceMode : uint8_t
 struct ScriptEvaluationOptions
 {
     ScriptWhitespaceMode whitespaceMode{ScriptWhitespaceMode::IgnoreLayout};
+    QString missingVariableText{};
 };
 
 /*!
@@ -101,6 +102,7 @@ public:
     QString evaluate(const QString& input, const ScriptContext& context);
     QString evaluate(const QString& input, const ScriptContext& context, const ScriptEvaluationOptions& options);
     QString evaluate(const ParsedScript& input, const ScriptContext& context);
+    QString evaluate(const ParsedScript& input, const ScriptContext& context, const ScriptEvaluationOptions& options);
 
     QString evaluate(const QString& input, const Track& track);
     QString evaluate(const ParsedScript& input, const Track& track);
@@ -108,6 +110,8 @@ public:
     QString evaluate(const QString& input, const Track& track, const ScriptContext& context,
                      const ScriptEvaluationOptions& options);
     QString evaluate(const ParsedScript& input, const Track& track, const ScriptContext& context);
+    QString evaluate(const ParsedScript& input, const Track& track, const ScriptContext& context,
+                     const ScriptEvaluationOptions& options);
 
     QString evaluate(const QString& input, const TrackList& tracks);
     QString evaluate(const ParsedScript& input, const TrackList& tracks);
@@ -115,6 +119,8 @@ public:
     QString evaluate(const QString& input, const TrackList& tracks, const ScriptContext& context,
                      const ScriptEvaluationOptions& options);
     QString evaluate(const ParsedScript& input, const TrackList& tracks, const ScriptContext& context);
+    QString evaluate(const ParsedScript& input, const TrackList& tracks, const ScriptContext& context,
+                     const ScriptEvaluationOptions& options);
 
     QString evaluate(const QString& input, const Playlist& playlist);
     QString evaluate(const ParsedScript& input, const Playlist& playlist);
@@ -122,6 +128,8 @@ public:
     QString evaluate(const QString& input, const Playlist& playlist, const ScriptContext& context,
                      const ScriptEvaluationOptions& options);
     QString evaluate(const ParsedScript& input, const Playlist& playlist, const ScriptContext& context);
+    QString evaluate(const ParsedScript& input, const Playlist& playlist, const ScriptContext& context,
+                     const ScriptEvaluationOptions& options);
 
     void withContext(const ScriptContext& context, const std::function<void()>& operation);
 
