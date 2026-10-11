@@ -15,7 +15,9 @@
   - Add Track Viewer and per-widget playlist settings ([#1699](https://github.com/fooyin/fooyin/pull/1699))
   - Add a standalone Library Tree window with integrated controls ([#1708](https://github.com/fooyin/fooyin/issues/1708))
   - Add customisable toolbar layouts
-- **Plugins:** Add installation of `.zip` and `.fyplugin` bundles with staged upgrades
+- **Playlist**
+  - Add options to keep headers and artwork visible while scrolling ([#1739](https://github.com/fooyin/fooyin/issues/1739))
+  - Add configurable artwork reflections
 
 ### Improvements
 
@@ -39,6 +41,10 @@
   - Keep configuration dialog reset buttons aligned left
   - Support transparent standalone lyrics window backgrounds
   - Cache the no-lyrics document
+  - Suppress known noisy Qt log messages
+- **Library & Metadata**
+  - Add MusicBrainz release page link and scrollable release details ([#1741](https://github.com/fooyin/fooyin/issues/1741))
+  - Arrange Library Tree settings in two columns
 - **Filters**
   - Add an option to remember the selected saved filter ([#1690](https://github.com/fooyin/fooyin/issues/1690))
   - Add an option to restore Library Filter state on startup ([#1699](https://github.com/fooyin/fooyin/pull/1699))
@@ -49,11 +55,13 @@
   - Reduce log noise from expected decoder probe failures
 - **Plugins**
   - Add drag-and-drop plugin installation
+  - Add installation of `.zip` and `.fyplugin` bundles with staged upgrades
   - Standardise and translate plugin categories and statuses
 - **Playlists**
   - Add scripted separators and unify preset display scripts ([#1732](https://github.com/fooyin/fooyin/pull/1732))
   - Make the inline editing delay configurable
 - **Settings**
+  - Add search across settings categories, pages, and advanced options
   - Add buttons for opening cache and state directories
   - Clarify rating and Love editor options ([#1684](https://github.com/fooyin/fooyin/issues/1684))
   - Add an FFmpeg decoder settings dialog
@@ -66,6 +74,7 @@
   - Add Queue Viewer variables for current, upcoming, and played queue entries
   - Add Script Editor formatting tag highlighting and optional function parameter hints
   - Improve binding and evaluation performance
+  - Reorganise Script Editor settings and move font configuration to theme settings
   - Reduce the default minimum height of script text editors
 - **Tag Editor**
   - Start editing values when navigating with Tab ([#1669](https://github.com/fooyin/fooyin/issues/1669))
@@ -89,12 +98,14 @@
   - Fix DSD detection on Windows ([#1633](https://github.com/fooyin/fooyin/issues/1633), [#1735](https://github.com/fooyin/fooyin/issues/1735))
   - Initialise audio readers before metadata and artwork writes
   - Fix playback and playing indicators for Library Tree root tracks ([#1759](https://github.com/fooyin/fooyin/issues/1759))
+  - Update the Library Tree selection before handling middle-click actions ([#1766](https://github.com/fooyin/fooyin/issues/1766))
   - Recognise spaced `ALBUM ARTIST` tags ([#1693](https://github.com/fooyin/fooyin/issues/1693))
 - **Playback**
   - Preserve active DSP preset identity across edits and restarts
   - Preserve played threshold state when restoring playback
 - **Playlists**
   - Fix extra padding in subheaders ([#1725](https://github.com/fooyin/fooyin/issues/1725))
+  - Follow the playing track by playlist entry ID ([#1765](https://github.com/fooyin/fooyin/issues/1765))
   - Restore queue-led source order for temporary playlists
   - Use folding for automatic playlist names ([#1694](https://github.com/fooyin/fooyin/issues/1694))
   - Allow Return to commit playlist renames ([#1700](https://github.com/fooyin/fooyin/issues/1700))
