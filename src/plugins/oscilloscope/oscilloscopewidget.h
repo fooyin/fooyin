@@ -104,7 +104,6 @@ protected:
     void openConfigDialog() override;
 
 private:
-    [[nodiscard]] Qt::Orientation automaticOrientation() const;
     void setOrientation(Qt::Orientation orientation);
     void updateOrientation();
 

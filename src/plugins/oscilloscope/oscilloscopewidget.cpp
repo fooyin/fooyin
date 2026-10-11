@@ -38,7 +38,6 @@
 #include <QPainter>
 #include <QPolygonF>
 #include <QResizeEvent>
-#include <QToolBar>
 
 using namespace Qt::StringLiterals;
 
@@ -291,6 +290,9 @@ void OscilloscopeWidget::applyConfig(const ConfigData& config)
 
 QSize OscilloscopeWidget::minimumSizeHint() const
 {
+    if(m_autoOrientation && !findToolbar()) {
+        return {8, 8};
+    }
     const auto orientation = m_autoOrientation ? automaticOrientation() : m_orientation;
     return orientation == Qt::Horizontal ? QSize{24, 8} : QSize{8, 24};
 }
@@ -333,14 +335,6 @@ void OscilloscopeWidget::contextMenuEvent(QContextMenuEvent* event)
 void OscilloscopeWidget::openConfigDialog()
 {
     showConfigDialog(new OscilloscopeConfigDialog(this, this), Qt::NonModal);
-}
-
-Qt::Orientation OscilloscopeWidget::automaticOrientation() const
-{
-    if(const auto* toolbar = findToolbar()) {
-        return toolbar->orientation();
-    }
-    return height() > width() ? Qt::Vertical : Qt::Horizontal;
 }
 
 void OscilloscopeWidget::setOrientation(Qt::Orientation orientation)

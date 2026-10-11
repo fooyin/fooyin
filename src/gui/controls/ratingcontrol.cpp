@@ -35,7 +35,6 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QResizeEvent>
-#include <QToolBar>
 
 using namespace Qt::StringLiterals;
 
@@ -345,11 +344,13 @@ void RatingControl::updateOrientation()
 {
     auto orientation{m_orientation};
     if(m_autoOrientation) {
-        const auto* toolbar = findToolbar();
-        orientation         = toolbar ? toolbar->orientation() : (height() > width() ? Qt::Vertical : Qt::Horizontal);
+        orientation = automaticOrientation();
     }
     m_editor->setOrientation(orientation);
-    setMinimumSize(m_editor->sizeHint());
+    updateOrientationConstraints(m_autoOrientation, layout()->minimumSize().expandedTo(m_editor->sizeHint()));
+    if(!m_autoOrientation || findToolbar()) {
+        setMinimumSize(m_editor->sizeHint());
+    }
 }
 
 void RatingControl::updateTrack(const Track& track)
@@ -358,7 +359,7 @@ void RatingControl::updateTrack(const Track& track)
     m_editor->setRating({rating, 5, m_settings->value<Settings::Gui::StarRatingSize>(),
                          Gui::ratingStarColours(*m_settings), Gui::unratedStarColour(*m_settings)});
     m_editor->setInteractive(track.isValid() && m_playerController->playState() != Player::PlayState::Stopped);
-    setMinimumSize(m_editor->sizeHint());
+    updateOrientation();
 }
 
 void RatingControl::updateAppearance()

@@ -39,7 +39,6 @@
 #include <QMenu>
 #include <QPainter>
 #include <QTimerEvent>
-#include <QToolBar>
 
 #include <cmath>
 
@@ -1035,6 +1034,9 @@ void VuMeterWidget::setSectionSpacing(int size)
 
 QSize VuMeterWidget::minimumSizeHint() const
 {
+    if(p->m_autoOrientation && !findToolbar()) {
+        return {8, 8};
+    }
     const auto meterOrientation = p->m_autoOrientation ? automaticOrientation() : p->m_orientation;
     return meterOrientation == Qt::Horizontal ? QSize{24, 8} : QSize{8, 24};
 }
@@ -1277,14 +1279,6 @@ void VuMeterWidget::contextMenuEvent(QContextMenuEvent* event)
 void VuMeterWidget::openConfigDialog()
 {
     showConfigDialog(new VuMeterConfigDialog(this, this), Qt::NonModal);
-}
-
-Qt::Orientation VuMeterWidget::automaticOrientation() const
-{
-    if(const auto* toolbar = findToolbar()) {
-        return toolbar->orientation();
-    }
-    return height() > width() ? Qt::Vertical : Qt::Horizontal;
 }
 
 QString VuMeterWidget::settingsKey(QStringView key) const

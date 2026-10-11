@@ -20,6 +20,7 @@
 #include <gui/fywidget.h>
 
 #include <core/coresettings.h>
+#include <gui/widgetcontainer.h>
 #include <utils/crypto.h>
 
 #include <QAction>
@@ -136,6 +137,45 @@ QToolBar* FyWidget::findToolbar() const
         parent = parent->parentWidget();
     }
     return qobject_cast<QToolBar*>(parent);
+}
+
+Qt::Orientation FyWidget::automaticOrientation() const
+{
+    if(const auto* toolbar = findToolbar()) {
+        return toolbar->orientation();
+    }
+
+    // At the square minimum, follow the surrounding row or column to avoid getting stuck
+    const auto availableSize = width() == height() && parentWidget() ? parentWidget()->size() : size();
+    return availableSize.height() > availableSize.width() ? Qt::Vertical : Qt::Horizontal;
+}
+
+void FyWidget::updateOrientationConstraints(bool automatic, const QSize& minimumSize)
+{
+    auto* widgetLayout{layout()};
+    if(!widgetLayout) {
+        return;
+    }
+
+    if(automatic && !findToolbar()) {
+        widgetLayout->setSizeConstraint(QLayout::SetNoConstraint);
+
+        const int minExtent = std::min(minimumSize.width(), minimumSize.height());
+        QSize flexibleMin{minExtent, minExtent};
+        if(const auto* container = qobject_cast<WidgetContainer*>(findParent())) {
+            if(container->orientation() == Qt::Horizontal) {
+                flexibleMin.setWidth(minimumSize.width());
+            }
+            else {
+                flexibleMin.setHeight(minimumSize.height());
+            }
+        }
+        setMinimumSize(flexibleMin);
+    }
+    else if(widgetLayout->sizeConstraint() == QLayout::SetNoConstraint) {
+        setMinimumSize(0, 0);
+        widgetLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+    }
 }
 
 QRect FyWidget::widgetGeometry() const

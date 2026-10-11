@@ -43,7 +43,6 @@
 #include <QMenu>
 #include <QResizeEvent>
 #include <QStyle>
-#include <QToolBar>
 #include <QToolTip>
 #include <QWheelEvent>
 
@@ -169,11 +168,25 @@ void VolumeControlPrivate::changeDisplay(VolumeControl::Options options, bool in
 void VolumeControlPrivate::updateOrientation()
 {
     auto orientation{m_orientation};
+
     if(m_autoOrientation) {
-        const auto* toolbar = m_self->findToolbar();
-        orientation
-            = toolbar ? toolbar->orientation() : (m_self->height() > m_self->width() ? Qt::Vertical : Qt::Horizontal);
+        orientation = m_self->automaticOrientation();
+        if((m_options & VolumeControl::SliderMode) && !m_self->findToolbar()) {
+            const QSize minSize       = m_layout->minimumSize();
+            const int minLength       = std::max(minSize.width(), minSize.height());
+            const bool horizontalFits = m_self->width() >= minLength;
+            const bool verticalFits   = m_self->height() >= minLength;
+
+            if(horizontalFits != verticalFits) {
+                orientation = verticalFits ? Qt::Vertical : Qt::Horizontal;
+            }
+            else if(!horizontalFits && m_self->parentWidget()) {
+                const auto parentSize = m_self->parentWidget()->size();
+                orientation           = parentSize.height() > parentSize.width() ? Qt::Vertical : Qt::Horizontal;
+            }
+        }
     }
+
     const auto direction = orientation == Qt::Vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight;
     if(m_layout->direction() != direction) {
         m_layout->setDirection(direction);
@@ -195,6 +208,8 @@ void VolumeControlPrivate::updateOrientation()
         m_volumeSlider->setOrientation(Qt::Vertical);
         m_volumeSlider->setMinimumSize(0, 100);
     }
+
+    m_self->updateOrientationConstraints(m_autoOrientation, m_layout->minimumSize());
 }
 
 void VolumeControlPrivate::showVolumeMenu() const

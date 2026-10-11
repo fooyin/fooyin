@@ -108,7 +108,6 @@ protected:
     void openConfigDialog() override;
 
 private:
-    [[nodiscard]] Qt::Orientation automaticOrientation() const;
     [[nodiscard]] QString settingsKey(QStringView key) const;
     [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
     void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;

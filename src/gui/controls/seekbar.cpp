@@ -40,7 +40,6 @@
 #include <QResizeEvent>
 #include <QSlider>
 #include <QStyleOptionSlider>
-#include <QToolBar>
 
 #include <optional>
 
@@ -595,17 +594,15 @@ void SeekBar::updateOrientation()
 {
     auto orientation{m_orientation};
     if(m_autoOrientation) {
-        const auto* toolbar = findToolbar();
-        orientation         = toolbar ? toolbar->orientation() : (height() > width() ? Qt::Vertical : Qt::Horizontal);
+        orientation = automaticOrientation();
     }
-    if(m_slider->orientation() == orientation) {
-        return;
+    if(m_slider->orientation() != orientation) {
+        m_slider->setOrientation(orientation);
+        m_slider->setInvertedAppearance(orientation == Qt::Vertical);
+        m_container->setOrientation(orientation);
+        updateGeometry();
     }
-
-    m_slider->setOrientation(orientation);
-    m_slider->setInvertedAppearance(orientation == Qt::Vertical);
-    m_container->setOrientation(orientation);
-    updateGeometry();
+    updateOrientationConstraints(m_autoOrientation, layout()->minimumSize());
 }
 
 void SeekBar::reset()

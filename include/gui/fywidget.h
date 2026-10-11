@@ -136,6 +136,10 @@ public:
     [[nodiscard]] FyWidget* findParent() const;
     /** Returns the toolbar hosting this widget, or @c nullptr if it is not hosted in one. */
     [[nodiscard]] QToolBar* findToolbar() const;
+    /** Chooses an orientation from the available space, respecting toolbar orientation. */
+    [[nodiscard]] Qt::Orientation automaticOrientation() const;
+    /** Allows automatic orientation to change before the current layout's minimum size blocks resizing. */
+    void updateOrientationConstraints(bool automatic, const QSize& minimumSize);
     /** Returns the full geometry of this widget including frame. */
     [[nodiscard]] QRect widgetGeometry() const;
 

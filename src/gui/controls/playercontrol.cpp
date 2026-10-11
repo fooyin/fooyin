@@ -37,7 +37,6 @@
 #include <QJsonObject>
 #include <QMenu>
 #include <QResizeEvent>
-#include <QToolBar>
 
 using namespace Qt::StringLiterals;
 
@@ -243,13 +242,13 @@ void PlayerControl::updateOrientation()
 {
     auto orientation{m_orientation};
     if(m_autoOrientation) {
-        const auto* toolbar = findToolbar();
-        orientation         = toolbar ? toolbar->orientation() : (height() > width() ? Qt::Vertical : Qt::Horizontal);
+        orientation = automaticOrientation();
     }
     const auto direction = orientation == Qt::Vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight;
     if(m_layout->direction() != direction) {
         m_layout->setDirection(direction);
     }
+    updateOrientationConstraints(m_autoOrientation, m_layout->minimumSize());
 }
 
 void PlayerControl::updateIcons() const
