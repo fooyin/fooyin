@@ -29,6 +29,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/iconloader.h>
+#include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
@@ -101,6 +102,8 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
 
     m_settings->createTempSetting<LayoutEditing>(false);
     m_settings->createSetting<DockWidgetPalette>(false, u"Interface/DockWidgetPalette"_s);
+    m_settings->createSetting<SettingsSearchBarPosition>(
+        static_cast<int>(SettingsDialogController::SearchBarPosition::Top), u"Interface/SettingsSearchBarPosition"_s);
     m_settings->createSetting<StartupBehaviour>(3, u"Interface/StartupBehaviour"_s);
     m_settings->createSetting<WaitForTracks>(true, u"Interface/WaitForTracks"_s);
     m_settings->createSetting<IconTheme>(0, u"Theme/IconTheme"_s);

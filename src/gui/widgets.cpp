@@ -130,6 +130,7 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/settings/advancedsettingsregistry.h>
+#include <utils/settings/settingsdialogcontroller.h>
 #include <utils/stringutils.h>
 
 using namespace Qt::StringLiterals;
@@ -558,6 +559,20 @@ void Widgets::registerPages()
 void Widgets::registerAdvancedSettings()
 {
     auto* advancedSettingsRegistry = m_gui->advancedSettingsRegistry();
+
+    using SearchBarPosition = SettingsDialogController::SearchBarPosition;
+    advancedSettingsRegistry->add<Settings::Gui::SettingsSearchBarPosition>(
+        {.category    = {tr("Interface"), tr("Settings Dialog")},
+         .label       = tr("Search bar"),
+         .description = tr("Visibility and position of the search bar in the settings dialog"),
+         .editor
+         = AdvancedSettingRadioButtons{.options
+                                       = {{.value = static_cast<int>(SearchBarPosition::Hidden), .label = tr("Hidden")},
+                                          {.value = static_cast<int>(SearchBarPosition::Top), .label = tr("Top")},
+                                          {.value = static_cast<int>(SearchBarPosition::Bottom),
+                                           .label = tr("Bottom")}}},
+         .normalise = {},
+         .validate  = {}});
 
     advancedSettingsRegistry->add(
         {.id           = QString::fromLatin1(Settings::Gui::Internal::ConfirmMetadataWipe),

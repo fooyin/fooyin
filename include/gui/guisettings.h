@@ -112,6 +112,7 @@ enum GuiSettings : uint32_t
     MenuBarMovable             = 55 | Type::Bool,
     ToolbarsLocked             = 56 | Type::Bool,
     DockWidgetPalette          = 57 | Type::Bool,
+    SettingsSearchBarPosition  = 58 | Type::Int,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Settings::Gui

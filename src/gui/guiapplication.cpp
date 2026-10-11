@@ -842,6 +842,13 @@ void GuiApplication::setupConnections()
 
     m_settings->subscribe<Settings::Gui::LayoutEditing>(this, &GuiApplication::updateWindowTitle);
 
+    const auto updateSettingsSearchBar = [this](int position) {
+        m_settings->settingsDialog()->setSearchBarPosition(
+            static_cast<SettingsDialogController::SearchBarPosition>(position));
+    };
+    m_settings->subscribe<Settings::Gui::SettingsSearchBarPosition>(this, updateSettingsSearchBar);
+    updateSettingsSearchBar(m_settings->value<Settings::Gui::SettingsSearchBarPosition>());
+
     m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
         setIconTheme();
         QPixmapCache::clear();
