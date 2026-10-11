@@ -125,6 +125,13 @@ QString playingQueue(const Fooyin::ScriptContext& context)
     const QString indexes = queueIndexes(context);
     return indexes.isEmpty() ? QString{} : u"[%1]"_s.arg(indexes);
 }
+
+template <Fooyin::ScriptQueueItemState State>
+QString queueItemState(const Fooyin::ScriptContext& context)
+{
+    const auto* environment = playlistEnvironment(context);
+    return environment && environment->queueItemState() == State ? u"1"_s : QString{};
+}
 } // namespace
 
 namespace Fooyin {
@@ -148,6 +155,12 @@ const ScriptVariableProvider& playlistVariableProvider()
         makeScriptVariableDescriptor<queueIndexes>(VariableKind::QueueIndexes, u"QUEUE_INDEXES"_s),
         makeScriptVariableDescriptor<queueTotal>(VariableKind::QueueTotal, u"QUEUETOTAL"_s),
         makeScriptVariableDescriptor<queueTotal>(VariableKind::QueueTotal, u"QUEUE_TOTAL"_s),
+        makeScriptVariableDescriptor<queueItemState<ScriptQueueItemState::Current>>(VariableKind::IsQueueCurrent,
+                                                                                    u"IS_QUEUE_CURRENT"_s),
+        makeScriptVariableDescriptor<queueItemState<ScriptQueueItemState::Upcoming>>(VariableKind::IsQueueUpcoming,
+                                                                                     u"IS_QUEUE_UPCOMING"_s),
+        makeScriptVariableDescriptor<queueItemState<ScriptQueueItemState::Played>>(VariableKind::IsQueuePlayed,
+                                                                                   u"IS_QUEUE_PLAYED"_s),
         makeScriptVariableDescriptor<playingQueue>(VariableKind::PlayingIcon, u"PLAYINGICON"_s)};
     return Provider;
 }

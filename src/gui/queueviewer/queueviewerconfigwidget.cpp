@@ -55,6 +55,14 @@ QueueViewerConfigDialog::QueueViewerConfigDialog(QueueViewer* queueViewer, bool 
     m_playingTracksMode->setVisible(showDisplayMode);
     m_upcomingTracksMode->setVisible(showDisplayMode);
 
+    auto* rightHint = new QLabel(u"🛈 "_s + tr("Use <code>&lt;right&gt;</code> for right-aligned text."), this);
+    rightHint->setWordWrap(true);
+    auto* scriptHint = new QLabel(u"🛈 "_s
+                                      + tr("Use <code>%is_queue_current%</code>, <code>%is_queue_upcoming%</code>, and "
+                                           "<code>%is_queue_played%</code> to format entries by queue state."),
+                                  this);
+    scriptHint->setWordWrap(true);
+
     auto* general       = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(general);
 
@@ -64,9 +72,9 @@ QueueViewerConfigDialog::QueueViewerConfigDialog(QueueViewer* queueViewer, bool 
     generalLayout->addWidget(m_upcomingTracksMode, row++, 2);
     generalLayout->addWidget(new QLabel(tr("Display script") + u":"_s, this), row, 0);
     generalLayout->addWidget(m_displayScript, row++, 1, 1, 2);
-    auto* scriptHint = new QLabel(u"🛈 "_s + tr("Use <code>&lt;right&gt;</code> for right-aligned text."), this);
-    scriptHint->setWordWrap(true);
-    generalLayout->addWidget(scriptHint, row++, 0, 1, 3);
+    generalLayout->addWidget(rightHint, row++, 1, 1, 3);
+    generalLayout->addWidget(scriptHint, row++, 1, 1, 3);
+    generalLayout->setColumnStretch(2, 1);
 
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);

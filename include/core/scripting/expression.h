@@ -182,6 +182,9 @@ enum class VariableKind : uint8_t
     FrontCover,
     BackCover,
     ArtistPicture,
+    IsQueueCurrent,
+    IsQueueUpcoming,
+    IsQueuePlayed,
 };
 
 struct Expression;

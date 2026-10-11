@@ -43,6 +43,14 @@ enum class TrackListContextPolicy : uint8_t
     Fallback,
 };
 
+enum class ScriptQueueItemState : uint8_t
+{
+    None = 0,
+    Current,
+    Upcoming,
+    Played,
+};
+
 /*!
  * Playlist-specific capability interface used by variables such as `%list_index%`.
  */
@@ -66,6 +74,10 @@ public:
     [[nodiscard]] virtual int currentQueueTotal() const
     {
         return 0;
+    }
+    [[nodiscard]] virtual ScriptQueueItemState queueItemState() const
+    {
+        return ScriptQueueItemState::None;
     }
 };
 

@@ -263,6 +263,13 @@ const std::vector<ScriptReferenceEntry>& scriptReferenceEntries()
                       QT_TRANSLATE_NOOP("Fooyin", "Returns 1 while playback is paused")),
         variableEntry("isstopped", QT_TRANSLATE_NOOP("Fooyin", "Playback"),
                       QT_TRANSLATE_NOOP("Fooyin", "Returns 1 while playback is stopped")),
+        variableEntry(
+            "is_queue_current", QT_TRANSLATE_NOOP("Fooyin", "Queue"),
+            QT_TRANSLATE_NOOP("Fooyin", "Returns 1 for the current queue viewer entry, including while paused")),
+        variableEntry("is_queue_upcoming", QT_TRANSLATE_NOOP("Fooyin", "Queue"),
+                      QT_TRANSLATE_NOOP("Fooyin", "Returns 1 for a queue viewer entry ahead of the queue cursor")),
+        variableEntry("is_queue_played", QT_TRANSLATE_NOOP("Fooyin", "Queue"),
+                      QT_TRANSLATE_NOOP("Fooyin", "Returns 1 for a queue viewer entry in queue history")),
         variableEntry("datetime", QT_TRANSLATE_NOOP("Fooyin", "System"),
                       QT_TRANSLATE_NOOP("Fooyin", "Current date and time formatted as YYYY-MM-DD HH:MM:SS")),
         variableEntry("libraryname", QT_TRANSLATE_NOOP("Fooyin", "Library"),

@@ -89,6 +89,7 @@ public:
     void setPlaylistData(const Playlist* playlist, const PlaybackQueue* playbackQueue,
                          const TrackList* tracks = nullptr, int queueTotal = 0);
     void setQueueState(std::span<const int> queueIndexes, int queueTotal);
+    void setQueueItemState(ScriptQueueItemState state);
     void setQueueIndexesVisible(bool visible);
     void setTrackState(int playlistTrackIndex, int currentPlayingTrackIndex, int currentPlayingTrackId, int trackDepth);
     void setPlaybackState(uint64_t currentPosition, uint64_t currentTrackDuration, int bitrate,
@@ -110,6 +111,7 @@ public:
     [[nodiscard]] int trackDepth() const override;
     [[nodiscard]] std::span<const int> currentQueueIndexes() const override;
     [[nodiscard]] int currentQueueTotal() const override;
+    [[nodiscard]] ScriptQueueItemState queueItemState() const override;
     [[nodiscard]] const TrackList* trackList() const override;
     [[nodiscard]] uint64_t currentPosition() const override;
     [[nodiscard]] uint64_t currentTrackDuration() const override;
@@ -135,6 +137,7 @@ private:
     int m_currentPlayingTrackId;
     int m_trackDepth;
     int m_queueTotal;
+    ScriptQueueItemState m_queueItemState;
     uint64_t m_currentPosition;
     uint64_t m_currentTrackDuration;
     int m_bitrate;

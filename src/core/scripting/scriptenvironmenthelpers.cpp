@@ -135,6 +135,7 @@ PlaylistScriptEnvironment::PlaylistScriptEnvironment()
     , m_currentPlayingTrackId{-1}
     , m_trackDepth{0}
     , m_queueTotal{0}
+    , m_queueItemState{ScriptQueueItemState::None}
     , m_currentPosition{0}
     , m_currentTrackDuration{0}
     , m_bitrate{0}
@@ -157,6 +158,7 @@ void PlaylistScriptEnvironment::setPlaylistData(const Playlist* playlist, const 
     m_currentQueueIndexes.clear();
     m_directQueueIndexes.clear();
     m_hasDirectQueueState = false;
+    m_queueItemState      = ScriptQueueItemState::None;
 }
 
 void PlaylistScriptEnvironment::setQueueState(std::span<const int> queueIndexes, const int queueTotal)
@@ -169,6 +171,11 @@ void PlaylistScriptEnvironment::setQueueState(std::span<const int> queueIndexes,
 void PlaylistScriptEnvironment::setQueueIndexesVisible(bool visible)
 {
     m_queueIndexesVisible = visible;
+}
+
+void PlaylistScriptEnvironment::setQueueItemState(ScriptQueueItemState state)
+{
+    m_queueItemState = state;
 }
 
 void PlaylistScriptEnvironment::setTrackState(int playlistTrackIndex, int currentPlayingTrackIndex,
@@ -270,6 +277,11 @@ std::span<const int> PlaylistScriptEnvironment::currentQueueIndexes() const
 int PlaylistScriptEnvironment::currentQueueTotal() const
 {
     return m_queueTotal;
+}
+
+ScriptQueueItemState PlaylistScriptEnvironment::queueItemState() const
+{
+    return m_queueItemState;
 }
 
 const TrackList* PlaylistScriptEnvironment::trackList() const
