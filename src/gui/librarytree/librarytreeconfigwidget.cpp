@@ -126,15 +126,17 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     m_autoExpandSearchResultLimit->setSingleStep(5);
     m_autoExpandSearchResultLimit->setSpecialValueText(tr("Disabled"));
 
+    auto* autoExpandLabel = new QLabel(tr("Auto-expand if matching track count is at most") + u":"_s, this);
+    autoExpandLabel->setWordWrap(true);
+
     auto* searchingGroup       = new QGroupBox(tr("Searching"), generalTab);
     auto* searchingGroupLayout = new QGridLayout(searchingGroup);
 
     row = 0;
     searchingGroupLayout->addWidget(m_showControls, row++, 0, 1, 3);
-    searchingGroupLayout->addWidget(new QLabel(tr("Controls position") + u":"_s, this), row, 0, 1, 2);
-    searchingGroupLayout->addWidget(m_controlsPosition, row++, 2);
-    searchingGroupLayout->addWidget(new QLabel(tr("Auto-expand if matching track count is at most") + u":"_s, this),
-                                    row, 0, 1, 2);
+    searchingGroupLayout->addWidget(new QLabel(tr("Controls position") + u":"_s, this), row, 0);
+    searchingGroupLayout->addWidget(m_controlsPosition, row++, 1, 1, 2, Qt::AlignLeft);
+    searchingGroupLayout->addWidget(autoExpandLabel, row, 0, 1, 2);
     searchingGroupLayout->addWidget(m_autoExpandSearchResultLimit, row++, 2);
     searchingGroupLayout->setColumnStretch(3, 1);
 
@@ -185,12 +187,13 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     auto* generalLayout = new QGridLayout(generalTab);
 
     row = 0;
-    generalLayout->addWidget(generalGroup, row++, 0);
-    generalLayout->addWidget(searchingGroup, row++, 0);
-    generalLayout->addWidget(clickBehaviour, row++, 0);
-    generalLayout->addWidget(selectionPlaylist, row++, 0);
+    generalLayout->addWidget(generalGroup, row, 0);
+    generalLayout->addWidget(clickBehaviour, row++, 1);
+    generalLayout->addWidget(searchingGroup, row, 0);
+    generalLayout->addWidget(selectionPlaylist, row++, 1);
     generalLayout->setColumnStretch(0, 1);
-    generalLayout->setRowStretch(4, 1);
+    generalLayout->setColumnStretch(1, 1);
+    generalLayout->setRowStretch(2, 1);
 
     auto* styleLayout = new QGridLayout(styleTab);
 
