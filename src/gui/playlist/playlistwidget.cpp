@@ -832,7 +832,9 @@ bool PlaylistWidget::followCurrentTrack()
         return false;
     }
 
-    QModelIndex modelIndex = m_model->indexAtPlaylistIndex(playingTrack.indexInPlaylist, true);
+    QModelIndex modelIndex = playingTrack.entryId.isValid()
+                               ? m_model->indexAtTrackEntry(playingTrack.entryId)
+                               : m_model->indexAtPlaylistIndex(playingTrack.indexInPlaylist);
     while(modelIndex.isValid() && m_header->isSectionHidden(modelIndex.column())) {
         modelIndex = modelIndex.siblingAtColumn(modelIndex.column() + 1);
     }
