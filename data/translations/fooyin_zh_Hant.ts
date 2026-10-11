@@ -5164,7 +5164,13 @@ Effects here process the final combined output.</source>
 • Select a widget to see its parent containers in the breadcrumb bar. Select a parent to move an entire section.
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>• 在右側面盤中尋找小工具(若是隱藏，可在右側邊緣處停置)。
+
+• 從面盤拖放小工具以新增，或將現有元件拖放以移動。按住 Ctrl 鍵來取代目標小工具。
+
+• 選擇一個小工具，即可在跛徑導引列查看其上層容器。選擇上層來移動整個區段。
+
+• 以滑鼠右鍵點按一下任何小工具，即可透過前後選單進行分割、取代或移除。</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="351"/>
@@ -7251,7 +7257,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="51"/>
         <source>Filter</source>
-        <translation type="unfinished">篩選器</translation>
+        <translation>篩選器</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="53"/>
@@ -7266,7 +7272,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="125"/>
         <source>Show label</source>
-        <translation type="unfinished">顯示標籤</translation>
+        <translation>顯示標籤</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="130"/>
