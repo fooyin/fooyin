@@ -38,6 +38,7 @@
 #include <QCheckBox>
 #include <QCloseEvent>
 #include <QComboBox>
+#include <QDesktopServices>
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QGridLayout>
@@ -51,6 +52,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPushButton>
+#include <QScrollArea>
 #include <QScrollBar>
 #include <QSignalBlocker>
 #include <QSplitter>
@@ -192,6 +194,11 @@ MetadataLookupDialog::MetadataLookupDialog(TrackList tracks, MusicLibrary* libra
     QObject::connect(m_idType, &QComboBox::currentIndexChanged, this, &MetadataLookupDialog::updateLookupEditor);
     QObject::connect(m_changesButton, &QPushButton::clicked, this, &MetadataLookupDialog::showChanges);
     QObject::connect(m_search, &QPushButton::clicked, this, &MetadataLookupDialog::startSearch);
+    QObject::connect(m_openRelease, &QPushButton::clicked, this, [this] {
+        if(!m_releaseUrl.isEmpty() && m_releaseUrl.isValid()) {
+            QDesktopServices::openUrl(m_releaseUrl);
+        }
+    });
     QObject::connect(m_updateFiles, &QPushButton::clicked, this, &MetadataLookupDialog::applyMetadata);
     QObject::connect(m_close, &QPushButton::clicked, this, &QDialog::close);
     QObject::connect(m_policy, &QComboBox::currentIndexChanged, this, [this] { updatePreview(); });
@@ -341,17 +348,22 @@ void MetadataLookupDialog::buildUi()
     m_resultsView->verticalHeader()->hide();
 
     auto* releaseInfo       = new QGroupBox(tr("Release information"), this);
-    auto* releaseInfoLayout = new QFormLayout(releaseInfo);
-    releaseInfoLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+    auto* releaseInfoLayout = new QVBoxLayout(releaseInfo);
 
-    const auto addReleaseField = [releaseInfo, releaseInfoLayout](const QString& name) {
-        auto* label = new QLabel(name + u":"_s, releaseInfo);
+    auto* releaseFields = new QWidget(releaseInfo);
+    auto* releaseForm   = new QFormLayout(releaseFields);
+    releaseForm->setContentsMargins({});
+    releaseForm->setRowWrapPolicy(QFormLayout::WrapLongRows);
+    releaseForm->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+
+    const auto addReleaseField = [releaseFields, releaseForm](const QString& name) {
+        auto* label = new QLabel(name + u":"_s, releaseFields);
         label->setForegroundRole(QPalette::PlaceholderText);
 
-        auto* value = new QLabel(releaseInfo);
+        auto* value = new QLabel(releaseFields);
         value->setTextInteractionFlags(Qt::TextSelectableByMouse);
         value->setWordWrap(true);
-        releaseInfoLayout->addRow(label, value);
+        releaseForm->addRow(label, value);
         return value;
     };
 
@@ -367,6 +379,16 @@ void MetadataLookupDialog::buildUi()
     m_releaseType           = addReleaseField(tr("Type"));
     m_releaseStatus         = addReleaseField(tr("Status"));
     m_releaseDisambiguation = addReleaseField(tr("Comment"));
+
+    auto* releaseScroll = new QScrollArea(releaseInfo);
+    releaseScroll->setWidgetResizable(true);
+    releaseScroll->setWidget(releaseFields);
+
+    m_openRelease = new QPushButton(tr("Open release page"), releaseInfo);
+    m_openRelease->setEnabled(false);
+
+    releaseInfoLayout->addWidget(releaseScroll, 1);
+    releaseInfoLayout->addWidget(m_openRelease);
 
     auto* resultsPage   = new QWidget(this);
     auto* resultsLayout = new QVBoxLayout(resultsPage);
@@ -749,6 +771,9 @@ void MetadataLookupDialog::selectRelease(const QModelIndex& current)
         updateActions();
         m_client->fetchRelease(release->id);
     }
+    else {
+        updateReleaseInformation({});
+    }
 }
 
 void MetadataLookupDialog::setRelease(const Release& release)
@@ -801,6 +826,9 @@ void MetadataLookupDialog::setRelease(const Release& release)
 
 void MetadataLookupDialog::updateReleaseInformation(const ReleaseSummary& release)
 {
+    m_releaseUrl = release.url;
+    m_openRelease->setEnabled(!m_releaseUrl.isEmpty() && m_releaseUrl.isValid());
+
     const auto setValue = [](QLabel* label, const QString& value) {
         label->setText(value.isEmpty() ? u"—"_s : value);
     };
