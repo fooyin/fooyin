@@ -597,16 +597,23 @@ void PlaylistWidget::clearSavedDefaults() const
 
 void PlaylistWidget::applyConfig(const ConfigData& config)
 {
+    const bool reflectionChanged = m_config.artworkReflection != config.artworkReflection
+                                || m_config.artworkReflectionHeight != config.artworkReflectionHeight
+                                || m_config.artworkReflectionGap != config.artworkReflectionGap;
+
     m_config = config;
     const ConfigData factory{factoryConfig()};
 
-    m_config.imagePadding           = std::clamp(m_config.imagePadding, 0, 100);
-    m_config.imagePaddingTop        = std::clamp(m_config.imagePaddingTop, 0, 100);
-    m_config.artworkCornerRadius    = std::clamp(m_config.artworkCornerRadius, 0, 100);
-    m_config.backgroundMaxSize      = std::clamp(m_config.backgroundMaxSize, 0, 4096);
-    m_config.backgroundBlur         = std::clamp(m_config.backgroundBlur, 0, 100);
-    m_config.backgroundOpacity      = std::clamp(m_config.backgroundOpacity, 0, 100);
-    m_config.backgroundFadeDuration = std::max(m_config.backgroundFadeDuration, 0);
+    m_config.imagePadding             = std::clamp(m_config.imagePadding, 0, 100);
+    m_config.imagePaddingTop          = std::clamp(m_config.imagePaddingTop, 0, 100);
+    m_config.artworkCornerRadius      = std::clamp(m_config.artworkCornerRadius, 0, 100);
+    m_config.artworkReflectionHeight  = std::clamp(m_config.artworkReflectionHeight, 1, 100);
+    m_config.artworkReflectionOpacity = std::clamp(m_config.artworkReflectionOpacity, 0, 100);
+    m_config.artworkReflectionGap     = std::clamp(m_config.artworkReflectionGap, 0, 100);
+    m_config.backgroundMaxSize        = std::clamp(m_config.backgroundMaxSize, 0, 4096);
+    m_config.backgroundBlur           = std::clamp(m_config.backgroundBlur, 0, 100);
+    m_config.backgroundOpacity        = std::clamp(m_config.backgroundOpacity, 0, 100);
+    m_config.backgroundFadeDuration   = std::max(m_config.backgroundFadeDuration, 0);
 
     if(m_config.backgroundImageMode < static_cast<int>(PlaylistBgImage::None)
        || m_config.backgroundImageMode > static_cast<int>(PlaylistBgImage::Custom)) {
@@ -647,11 +654,19 @@ void PlaylistWidget::applyConfig(const ConfigData& config)
     setAlternatingRowColors(m_config.alternatingRows);
     m_model->setPixmapPadding(m_config.imagePadding, m_config.imagePaddingTop);
     m_delgate->setArtworkCornerRadius(m_config.artworkCornerRadius);
+    m_delgate->setArtworkReflection({.enabled = m_config.artworkReflection,
+                                     .height  = m_config.artworkReflectionHeight,
+                                     .opacity = m_config.artworkReflectionOpacity,
+                                     .gap     = m_config.artworkReflectionGap});
     m_doubleClickAction   = m_config.doubleClickAction;
     m_middleClickAction   = m_config.middleClickAction;
     m_startPlaybackOnSend = m_config.startPlaybackOnSend;
     applyBackgroundSettings();
     m_playlistView->viewport()->update();
+
+    if(reflectionChanged) {
+        m_playlistView->doItemsLayout();
+    }
 
     Q_EMIT configChanged();
 }
@@ -1857,6 +1872,10 @@ PlaylistWidget::ConfigData PlaylistWidget::configFromLayout(const QJsonObject& l
     readInt("ImagePadding"_L1, config.imagePadding);
     readInt("ImagePaddingTop"_L1, config.imagePaddingTop);
     readInt("ArtworkCornerRadius"_L1, config.artworkCornerRadius);
+    readBool("ArtworkReflection"_L1, config.artworkReflection);
+    readInt("ArtworkReflectionHeight"_L1, config.artworkReflectionHeight);
+    readInt("ArtworkReflectionOpacity"_L1, config.artworkReflectionOpacity);
+    readInt("ArtworkReflectionGap"_L1, config.artworkReflectionGap);
     readInt("BackgroundImageMode"_L1, config.backgroundImageMode);
     readInt("BackgroundCoverType"_L1, config.backgroundCoverType);
     readInt("BackgroundScaling"_L1, config.backgroundScaling);
@@ -1895,6 +1914,10 @@ void PlaylistWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& l
     layout["ImagePadding"_L1]              = config.imagePadding;
     layout["ImagePaddingTop"_L1]           = config.imagePaddingTop;
     layout["ArtworkCornerRadius"_L1]       = config.artworkCornerRadius;
+    layout["ArtworkReflection"_L1]         = config.artworkReflection;
+    layout["ArtworkReflectionHeight"_L1]   = config.artworkReflectionHeight;
+    layout["ArtworkReflectionOpacity"_L1]  = config.artworkReflectionOpacity;
+    layout["ArtworkReflectionGap"_L1]      = config.artworkReflectionGap;
     layout["BackgroundImageMode"_L1]       = config.backgroundImageMode;
     layout["BackgroundCustomImage"_L1]     = config.backgroundCustomImage;
     layout["BackgroundCoverType"_L1]       = config.backgroundCoverType;

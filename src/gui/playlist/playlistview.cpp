@@ -19,6 +19,7 @@
 
 #include "playlistview.h"
 
+#include "playlistdelegate.h"
 #include "playlistmodel.h"
 #include "widgets/pixmapfadecontroller.h"
 
@@ -648,7 +649,7 @@ QRect PlaylistView::drawSpan(QPainter* painter, const QStyleOptionViewItem& opti
 
     QStyleOptionViewItem opt{option};
     const int height
-        = std::max(opt.rect.width(), itemDelegateForIndex(artwork)->sizeHint(opt, artwork).height()) + topInset;
+        = std::max(spanHeight(artwork), itemDelegateForIndex(artwork)->sizeHint(opt, artwork).height()) + topInset;
     const int naturalTop = visualRect(artwork).top() - topInset;
 
     int pinnedTop{0};
@@ -680,6 +681,25 @@ QRect PlaylistView::drawSpan(QPainter* painter, const QStyleOptionViewItem& opti
     painter->restore();
 
     return opt.rect;
+}
+
+int PlaylistView::spanHeight(const QModelIndex& index) const
+{
+    const int width = ExpandedTreeView::spanHeight(index);
+    if(!index.isValid() || width <= 0) {
+        return width;
+    }
+
+    const auto* delegate = qobject_cast<PlaylistDelegate*>(itemDelegate());
+    if(!delegate) {
+        return width;
+    }
+
+    QModelIndex track = index.siblingAtColumn(0);
+    while(model()->hasChildren(track)) {
+        track = model()->index(0, 0, track);
+    }
+    return delegate->artworkSpanHeight(width, track.siblingAtColumn(index.column()));
 }
 
 int PlaylistView::adjustVerticalScrollMaximum(int maximum) const

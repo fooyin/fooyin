@@ -87,6 +87,10 @@ public:
         int imagePadding{5};
         int imagePaddingTop{0};
         int artworkCornerRadius{0};
+        bool artworkReflection{false};
+        int artworkReflectionHeight{33};
+        int artworkReflectionOpacity{35};
+        int artworkReflectionGap{3};
         int backgroundImageMode{0};
         QString backgroundCustomImage;
         int backgroundCoverType{0};

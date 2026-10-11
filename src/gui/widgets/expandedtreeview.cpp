@@ -1436,7 +1436,7 @@ int TreeView::indexSizeHint(const QModelIndex& index, bool span) const
 
     int height{0};
     if(span && m_view->isSpanning(index.column())) {
-        height = header()->sectionSize(index.column());
+        height = m_view->spanHeight(index);
     }
 
     if(m_p->m_uniformRowHeights && m_uniformRowHeight > 0) {
@@ -1537,7 +1537,7 @@ void TreeView::recalculatePadding()
         const auto columnIndex = model()->index(0, section, {});
         if(columnIndex.isValid()) {
             if(m_view->isSpanning(section)) {
-                max = std::max(max, header()->sectionSize(section));
+                max = std::max(max, m_view->spanHeight(columnIndex));
             }
         }
     }
@@ -1548,7 +1548,7 @@ void TreeView::recalculatePadding()
     for(auto& item : items) {
         item.padding = 0;
 
-        if(item.hasChildren || item.parentItem == -1) {
+        if(item.hasChildren) {
             continue;
         }
 
@@ -4272,6 +4272,11 @@ void ExpandedTreeView::drawFocus(QPainter* painter, const QStyleOptionViewItem& 
             style()->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOpt, painter);
         }
     }
+}
+
+int ExpandedTreeView::spanHeight(const QModelIndex& index) const
+{
+    return header()->sectionSize(index.column());
 }
 
 QRect ExpandedTreeView::drawSpan(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const

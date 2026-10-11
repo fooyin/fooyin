@@ -48,6 +48,7 @@ protected:
 private:
     void browseBackgroundImage();
     void updateBackgroundControls() const;
+    void updateReflectionControls() const;
     void updateStartPlaybackState() const;
 
     QCheckBox* m_header;
@@ -58,6 +59,10 @@ private:
     QSpinBox* m_imagePadding;
     QSpinBox* m_imagePaddingTop;
     QSpinBox* m_artworkCornerRadius;
+    QCheckBox* m_artworkReflection;
+    QSpinBox* m_artworkReflectionHeight;
+    QSpinBox* m_artworkReflectionOpacity;
+    QSpinBox* m_artworkReflectionGap;
     QComboBox* m_backgroundImage;
     QLabel* m_backgroundCoverTypeLabel;
     QComboBox* m_backgroundCoverType;

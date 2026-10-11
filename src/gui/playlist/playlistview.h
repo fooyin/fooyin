@@ -97,6 +97,7 @@ protected:
 
     DropIndicatorPosition dropPosition(const QPoint& pos, const QRect& rect, const QModelIndex& index) override;
     QRect drawSpan(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+    [[nodiscard]] int spanHeight(const QModelIndex& index) const override;
     [[nodiscard]] int adjustVerticalScrollMaximum(int maximum) const override;
 
 Q_SIGNALS:
