@@ -56,6 +56,8 @@ void addComboItem(QComboBox* combo, const QString& text, int data, const QString
 PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QString& title, QWidget* parent)
     : WidgetConfigDialog{playlist, title, parent}
     , m_header{new QCheckBox(tr("Show header"), this)}
+    , m_stickyHeaders{new QCheckBox(tr("Keep group headers in view while scrolling"), this)}
+    , m_stickyArtwork{new QCheckBox(tr("Keep artwork in view while scrolling"), this)}
     , m_scrollBar{new QCheckBox(tr("Show scrollbar"), this)}
     , m_alternatingRows{new QCheckBox(tr("Alternating row colours"), this)}
     , m_imagePadding{new QSpinBox(this)}
@@ -92,6 +94,8 @@ PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QStri
 
     int row{0};
     appearanceLayout->addWidget(m_header, row++, 0, 1, 2);
+    appearanceLayout->addWidget(m_stickyHeaders, row++, 0, 1, 2);
+    appearanceLayout->addWidget(m_stickyArtwork, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_scrollBar, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_alternatingRows, row++, 0, 1, 2);
     appearanceLayout->addWidget(Gui::createSectionHeader(tr("Artwork"), this), row++, 0, 1, 2);
@@ -243,6 +247,8 @@ PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QStri
 void PlaylistConfigDialog::setConfig(const PlaylistWidget::ConfigData& config)
 {
     m_header->setChecked(config.showHeader);
+    m_stickyHeaders->setChecked(config.stickyHeaders);
+    m_stickyArtwork->setChecked(config.stickyArtwork);
     m_scrollBar->setChecked(config.showScrollBar);
     m_alternatingRows->setChecked(config.alternatingRows);
     m_imagePadding->setValue(config.imagePadding);
@@ -270,6 +276,8 @@ PlaylistWidget::ConfigData PlaylistConfigDialog::config() const
 {
     return {
         .showHeader             = m_header->isChecked(),
+        .stickyHeaders          = m_stickyHeaders->isChecked(),
+        .stickyArtwork          = m_stickyArtwork->isChecked(),
         .showScrollBar          = m_scrollBar->isChecked(),
         .alternatingRows        = m_alternatingRows->isChecked(),
         .imagePadding           = m_imagePadding->value(),
@@ -297,6 +305,7 @@ void PlaylistConfigDialog::mergeExternalConfig(const PlaylistWidget::ConfigData&
 {
     mergeExternalFields(
         previous, current, &PlaylistWidget::ConfigData::showHeader, &PlaylistWidget::ConfigData::showScrollBar,
+        &PlaylistWidget::ConfigData::stickyHeaders, &PlaylistWidget::ConfigData::stickyArtwork,
         &PlaylistWidget::ConfigData::alternatingRows, &PlaylistWidget::ConfigData::imagePadding,
         &PlaylistWidget::ConfigData::imagePaddingTop, &PlaylistWidget::ConfigData::artworkCornerRadius,
         &PlaylistWidget::ConfigData::backgroundImageMode, &PlaylistWidget::ConfigData::backgroundCustomImage,

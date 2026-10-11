@@ -153,6 +153,9 @@ public:
     void updateColours();
     void setMatchPlayingTrackByIdentity(bool enabled);
 
+    [[nodiscard]] QModelIndex imageColumnGroupIndex(const QModelIndex& index) const;
+    [[nodiscard]] QModelIndex firstImageColumnTrackIndex(const QModelIndex& index) const;
+
     void reset(const PlaylistTrackList& tracks);
     void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist,
                const PlaylistTrackList& tracks);
@@ -291,7 +294,6 @@ private:
 
     [[nodiscard]] static QModelIndex topLevelContainerIndex(const QModelIndex& index);
     [[nodiscard]] QModelIndex firstLeafIndex(const QModelIndex& index) const;
-    [[nodiscard]] QModelIndex firstImageColumnTrackIndex(const QModelIndex& index) const;
     std::vector<int> pixmapColumns() const;
     std::set<int> columnsNeedUpdating() const;
     void updateLivePlaybackDependencies();

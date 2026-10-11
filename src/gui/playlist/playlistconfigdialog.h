@@ -51,6 +51,8 @@ private:
     void updateStartPlaybackState() const;
 
     QCheckBox* m_header;
+    QCheckBox* m_stickyHeaders;
+    QCheckBox* m_stickyArtwork;
     QCheckBox* m_scrollBar;
     QCheckBox* m_alternatingRows;
     QSpinBox* m_imagePadding;

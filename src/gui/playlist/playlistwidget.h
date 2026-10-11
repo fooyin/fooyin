@@ -80,6 +80,8 @@ public:
     struct ConfigData
     {
         bool showHeader{true};
+        bool stickyHeaders{false};
+        bool stickyArtwork{false};
         bool showScrollBar{true};
         bool alternatingRows{true};
         int imagePadding{5};

@@ -641,6 +641,8 @@ void PlaylistWidget::applyConfig(const ConfigData& config)
     }
 
     setHeaderVisible(m_config.showHeader);
+    m_playlistView->setStickyHeaders(m_config.stickyHeaders);
+    m_playlistView->setStickyArtwork(m_config.stickyArtwork);
     setScrollbarVisible(m_config.showScrollBar);
     setAlternatingRowColors(m_config.alternatingRows);
     m_model->setPixmapPadding(m_config.imagePadding, m_config.imagePaddingTop);
@@ -1848,6 +1850,8 @@ PlaylistWidget::ConfigData PlaylistWidget::configFromLayout(const QJsonObject& l
     };
 
     readBool("ShowHeader"_L1, config.showHeader);
+    readBool("StickyHeaders"_L1, config.stickyHeaders);
+    readBool("StickyArtwork"_L1, config.stickyArtwork);
     readBool("ShowScrollbar"_L1, config.showScrollBar);
     readBool("AlternatingRows"_L1, config.alternatingRows);
     readInt("ImagePadding"_L1, config.imagePadding);
@@ -1884,6 +1888,8 @@ PlaylistWidget::ConfigData PlaylistWidget::configFromLayout(const QJsonObject& l
 void PlaylistWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
 {
     layout["ShowHeader"_L1]                = config.showHeader;
+    layout["StickyHeaders"_L1]             = config.stickyHeaders;
+    layout["StickyArtwork"_L1]             = config.stickyArtwork;
     layout["ShowScrollbar"_L1]             = config.showScrollBar;
     layout["AlternatingRows"_L1]           = config.alternatingRows;
     layout["ImagePadding"_L1]              = config.imagePadding;

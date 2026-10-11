@@ -155,6 +155,9 @@ protected:
     [[nodiscard]] std::set<int> spans() const;
 
     void drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, int y) const;
+    virtual QRect drawSpan(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+
+    [[nodiscard]] virtual int adjustVerticalScrollMaximum(int maximum) const;
 
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;
     [[nodiscard]] int horizontalOffset() const override;

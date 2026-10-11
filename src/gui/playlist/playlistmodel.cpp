@@ -1319,6 +1319,29 @@ void PlaylistModel::setMatchPlayingTrackByIdentity(bool enabled)
     }
 }
 
+QModelIndex PlaylistModel::imageColumnGroupIndex(const QModelIndex& index) const
+{
+    return m_currentPreset.showCoverBelowEverySubheader ? index.parent() : topLevelContainerIndex(index);
+}
+
+QModelIndex PlaylistModel::firstImageColumnTrackIndex(const QModelIndex& index) const
+{
+    if(!index.isValid()) {
+        return {};
+    }
+
+    if(m_currentPreset.showCoverBelowEverySubheader) {
+        return index.siblingAtRow(0);
+    }
+
+    const QModelIndex topLevelContainer = topLevelContainerIndex(index);
+    if(!topLevelContainer.isValid()) {
+        return firstLeafIndex(index.siblingAtRow(0));
+    }
+
+    return firstLeafIndex(this->index(0, 0, topLevelContainer));
+}
+
 void PlaylistModel::reset(const PlaylistTrackList& tracks)
 {
     m_populator.stopThread();
@@ -3326,24 +3349,6 @@ QModelIndex PlaylistModel::firstLeafIndex(const QModelIndex& index) const
         leaf = this->index(0, 0, leaf);
     }
     return leaf;
-}
-
-QModelIndex PlaylistModel::firstImageColumnTrackIndex(const QModelIndex& index) const
-{
-    if(!index.isValid()) {
-        return {};
-    }
-
-    if(m_currentPreset.showCoverBelowEverySubheader) {
-        return index.siblingAtRow(0);
-    }
-
-    const QModelIndex topLevelContainer = topLevelContainerIndex(index);
-    if(!topLevelContainer.isValid()) {
-        return firstLeafIndex(index.siblingAtRow(0));
-    }
-
-    return firstLeafIndex(this->index(0, 0, topLevelContainer));
 }
 
 std::vector<int> PlaylistModel::pixmapColumns() const
