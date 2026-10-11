@@ -850,28 +850,28 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
         <source>Layout</source>
-        <translation type="unfinished">配置</translation>
+        <translation>配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="273"/>
         <source>Draws a separator in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>畫出分隔符號於所支援的檢視中</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="276"/>
         <source>Alignment</source>
-        <translation type="unfinished">對齊</translation>
+        <translation>對齊</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="275"/>
         <source>Aligns enclosed text to the left in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>將圈選的文字靠左對齊，於所支援的檢視中</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="277"/>
         <source>Aligns enclosed text to the right in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>將圈選的文字靠右對齊，於所支援的檢視中</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="278"/>
@@ -913,7 +913,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="289"/>
         <source>Sets the font weight from 1 to 1000</source>
-        <translation type="unfinished"></translation>
+        <translation>設定字重 1 ~ 1000</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="291"/>
@@ -4161,12 +4161,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="87"/>
         <source>Playing (no track at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>進行播放 (無曲目於啟動時)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="89"/>
         <source>Playing (no track when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>進行播放 (無曲目當已停止時)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="93"/>
@@ -4230,7 +4230,7 @@ Paranoid: performs the most thorough available checking and additional retries (
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="1227"/>
         <source>Add %1</source>
         <extracomment>%1 is the name of a widget e.g. Add Playlist</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>新增 %1</translation>
     </message>
 </context>
 <context>
@@ -5148,12 +5148,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="341"/>
         <source>Layout Editing</source>
-        <translation type="unfinished">配置編輯</translation>
+        <translation>配置進行編輯</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="342"/>
         <source>Add and arrange widgets to customise your layout.</source>
-        <translation type="unfinished"></translation>
+        <translation>新增並安排小工具至自訂您的版面配置。</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="345"/>
@@ -5164,12 +5164,18 @@ Effects here process the final combined output.</source>
 • Select a widget to see its parent containers in the breadcrumb bar. Select a parent to move an entire section.
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>• 在右側面盤中尋找小工具 (若是隱藏則停置在右側邊緣)。
+
+• 從面盤中拖動小工具以新增，或將現有元件拖放移動。拖放同時按住 Ctrl 鍵，以取代目標小工具。
+
+• 選取一個小工具，即可在路徑導覽列中查看其上層容器。選取上層來移動整個區段。
+
+• 滑鼠右鍵點按一下任何小工具，即可透過前後選單進行分割、替換或刪除。</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="352"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished"></translation>
+        <translation>勿再顯示此項</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="449"/>
@@ -5239,32 +5245,32 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="598"/>
         <source>Left</source>
-        <translation type="unfinished">左</translation>
+        <translation>左</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="598"/>
         <source>Top</source>
-        <translation type="unfinished">頂部</translation>
+        <translation>頂部</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="598"/>
         <source>Right</source>
-        <translation type="unfinished">右</translation>
+        <translation>右</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="599"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="609"/>
         <source>Restore defaults</source>
-        <translation type="unfinished">還原預設</translation>
+        <translation>還原預設</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="645"/>
         <source>Margins</source>
-        <translation type="unfinished">邊距</translation>
+        <translation>邊距</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="676"/>
@@ -5792,17 +5798,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="70"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text and &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; to draw a separator.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; 用於靠右對齊的文字；而使用 &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; 來畫出分隔符號。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="75"/>
         <source>Leave empty to group by the display script</source>
-        <translation type="unfinished"></translation>
+        <translation>留下空白至群組，依照顯示腳本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="86"/>
         <source>Display script</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示腳本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="84"/>
@@ -7446,12 +7452,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="113"/>
         <source>Open Cache Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟快取資料夾</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
         <source>Open State Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟狀態資料夾</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="130"/>
@@ -7720,7 +7726,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1044"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1048"/>
         <source>Show Main Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示主要功能選單</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1059"/>
@@ -7916,7 +7922,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1342"/>
         <source>View the artwork for the selected track at full size</source>
-        <translation type="unfinished"></translation>
+        <translation>檢視圖面，用於所選的曲目，以全尺寸大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1345"/>
@@ -8445,7 +8451,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="136"/>
         <source>Place menu bar in a toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>將功能選單列置於工具列中</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="140"/>
@@ -9509,55 +9515,55 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="160"/>
         <source>Close</source>
-        <translation type="unfinished">關閉</translation>
+        <translation>關閉</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="517"/>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1150"/>
         <source>Move tabs and content</source>
-        <translation type="unfinished"></translation>
+        <translation>移動分頁與內容</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="518"/>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1150"/>
         <source>Move tab stack</source>
-        <translation type="unfinished"></translation>
+        <translation>移動分頁堆疊</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="518"/>
         <source>Drag to move this panel</source>
-        <translation type="unfinished"></translation>
+        <translation>拖放來移動此面板</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="531"/>
         <source>Drop a widget here</source>
-        <translation type="unfinished"></translation>
+        <translation>在此處放置一個小工具</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="601"/>
         <source>Moving %1</source>
         <extracomment>%1 is the name of a widget e.g. Moving Playlist</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>進行移動 %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1027"/>
         <source>Horizontal split</source>
-        <translation type="unfinished"></translation>
+        <translation>水平分割</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1027"/>
         <source>Vertical split</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直分割</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1031"/>
         <source>Select %1</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇 %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1054"/>
         <source>Move %1</source>
-        <translation type="unfinished"></translation>
+        <translation>移動 %1</translation>
     </message>
 </context>
 <context>
@@ -9567,17 +9573,17 @@ If the default half-star does not render correctly with your system font, choose
         <location filename="../../src/gui/layout/layoutdragsurface.cpp" line="104"/>
         <source>Replace %1 with %2</source>
         <extracomment>%1 and %2 are widget names. e.g. Replace Playlist with Lyrics</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>取代 %1 使用 %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragsurface.cpp" line="150"/>
         <source>Drop into the layout</source>
-        <translation type="unfinished"></translation>
+        <translation>放置進入版面配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragsurface.cpp" line="157"/>
         <source>This widget is no longer available</source>
-        <translation type="unfinished"></translation>
+        <translation>此小工具已無供用</translation>
     </message>
 </context>
 <context>
@@ -9585,84 +9591,84 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="94"/>
         <source>Drop beside a panel or on a tab bar</source>
-        <translation type="unfinished"></translation>
+        <translation>放置在面板旁側或分頁列上</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="120"/>
         <source>Cannot move this panel here</source>
-        <translation type="unfinished"></translation>
+        <translation>無法移動此面板此處</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="135"/>
         <source>Choose a widget to replace</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇小工具以取代</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="144"/>
         <source>Cannot replace this widget</source>
-        <translation type="unfinished"></translation>
+        <translation>無法取代此小工具</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="152"/>
         <source>Replace %1</source>
-        <translation type="unfinished"></translation>
+        <translation>取代 %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="194"/>
         <source>Insert tab</source>
-        <translation type="unfinished"></translation>
+        <translation>插入分頁</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="219"/>
         <source>Fill empty area</source>
-        <translation type="unfinished"></translation>
+        <translation>填滿空白區域</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="237"/>
         <location filename="../../src/gui/layout/layoututils.cpp" line="299"/>
         <location filename="../../src/gui/layout/layoututils.cpp" line="307"/>
         <source>Move into empty area</source>
-        <translation type="unfinished"></translation>
+        <translation>移動至空白區域</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="267"/>
         <source>Split %1: place below</source>
-        <translation type="unfinished"></translation>
+        <translation>分割 %1：放置下方</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="267"/>
         <source>Split %1: place above</source>
-        <translation type="unfinished"></translation>
+        <translation>分割 %1：放置上方</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="268"/>
         <source>Split %1: place right</source>
-        <translation type="unfinished"></translation>
+        <translation>分割 %1：放置右方</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="268"/>
         <source>Split %1: place left</source>
-        <translation type="unfinished"></translation>
+        <translation>分割 %1：放置左方</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="292"/>
         <source>Place below %1</source>
-        <translation type="unfinished"></translation>
+        <translation>放置下方 %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="292"/>
         <source>Place above %1</source>
-        <translation type="unfinished"></translation>
+        <translation>放置上方 %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="293"/>
         <source>Place after %1</source>
-        <translation type="unfinished"></translation>
+        <translation>放置 %1 之後</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="293"/>
         <source>Place before %1</source>
-        <translation type="unfinished"></translation>
+        <translation>放置 %1 之前</translation>
     </message>
 </context>
 <context>
@@ -11823,7 +11829,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/controls/mainmenubutton.cpp" line="52"/>
         <source>Main Menu Button</source>
-        <translation type="unfinished"></translation>
+        <translation>主要選單按鈕</translation>
     </message>
 </context>
 <context>
@@ -15110,12 +15116,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="61"/>
         <source>Display script</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示腳本</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="72"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; 用於靠右對齊文字。</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="65"/>
@@ -15172,7 +15178,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="267"/>
         <source>Leave empty to group by the display script</source>
-        <translation type="unfinished"></translation>
+        <translation>留下空白至群組，依照顯示腳本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="403"/>
@@ -15221,27 +15227,27 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="275"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="344"/>
         <source>Display script</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示腳本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="278"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text and &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; to draw a separator.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; 用於靠右對齊文字。使用 &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; 畫出分隔符號。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="295"/>
         <source>Artwork</source>
-        <translation type="unfinished">圖面</translation>
+        <translation>圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="298"/>
         <source>Left/Right</source>
-        <translation type="unfinished">左/右</translation>
+        <translation>左/右</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="300"/>
         <source>Top/Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>上/下</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="318"/>
@@ -15252,7 +15258,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="338"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; 用於靠右對齊文字。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="351"/>
@@ -16816,12 +16822,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="65"/>
         <source>Display script</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示腳本</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="67"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; 用於靠右對齊文字。</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="71"/>
@@ -18936,22 +18942,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="295"/>
         <source>Automatic</source>
-        <translation type="unfinished">自動</translation>
+        <translation>自動</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="296"/>
         <source>Horizontal</source>
-        <translation type="unfinished">水平</translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="297"/>
         <source>Vertical</source>
-        <translation type="unfinished">垂直</translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="299"/>
         <source>Orientation</source>
-        <translation type="unfinished">方向</translation>
+        <translation>方向</translation>
     </message>
 </context>
 <context>
@@ -19608,12 +19614,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="123"/>
         <source>Playing (no track at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>進行播放 (無曲目於啟動時)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="125"/>
         <source>Playing (no track when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>進行播放 (無曲目當已停止時)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="132"/>
@@ -19698,7 +19704,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="543"/>
         <source>Function parameter hints</source>
-        <translation type="unfinished"></translation>
+        <translation>功能參數提示</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="544"/>
@@ -19743,7 +19749,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="660"/>
         <source>Formatting tags</source>
-        <translation type="unfinished"></translation>
+        <translation>進行格式化標籤</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="671"/>
@@ -20623,7 +20629,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="142"/>
         <source>Change widget margins</source>
-        <translation type="unfinished"></translation>
+        <translation>變更小工具邊界</translation>
     </message>
 </context>
 <context>
@@ -21955,7 +21961,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="1071"/>
         <source>Split and move widget</source>
-        <translation type="unfinished"></translation>
+        <translation>分割與移動小工具</translation>
     </message>
 </context>
 <context>
@@ -22657,95 +22663,95 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="58"/>
         <source>Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>選單</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="60"/>
         <source>&amp;Place menu bar in a toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>放置選單列於工具列(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="61"/>
         <source>&amp;Lock toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>鎖定工具列(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="65"/>
         <location filename="../../src/gui/toolbarmanager.cpp" line="505"/>
         <source>Toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>工具列</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="83"/>
         <location filename="../../src/gui/toolbarmanager.cpp" line="84"/>
         <source>Layout</source>
-        <translation type="unfinished">配置</translation>
+        <translation>配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="88"/>
         <source>Allow the menu bar to share rows and positions with other toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>允許選單列與其他工具列共用列和位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="96"/>
         <source>Prevent toolbars from being moved</source>
-        <translation type="unfinished"></translation>
+        <translation>防止工具列被移動</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="193"/>
         <location filename="../../src/gui/toolbarmanager.cpp" line="503"/>
         <source>Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>工具列</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="425"/>
         <source>Missing Widget: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>遺失小工具： %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="515"/>
         <source>Remove toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>移除工具列</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="576"/>
         <source>Add widget</source>
-        <translation type="unfinished"></translation>
+        <translation>新增小工具</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="579"/>
         <source>Add separator</source>
-        <translation type="unfinished">新增分隔符號</translation>
+        <translation>新增分隔符號</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="588"/>
         <source>Insert widget before</source>
-        <translation type="unfinished"></translation>
+        <translation>插入小工具在此之前</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="591"/>
         <source>Insert widget after</source>
-        <translation type="unfinished"></translation>
+        <translation>插入小工具在此之後</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="594"/>
         <source>Insert separator before</source>
-        <translation type="unfinished">在前面插入分隔符號</translation>
+        <translation>插入分隔符號在此之前</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="598"/>
         <source>Insert separator after</source>
-        <translation type="unfinished">在後面插入分隔符號</translation>
+        <translation>插入分隔符號在此之後</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="602"/>
         <source>Remove separator</source>
-        <translation type="unfinished">移除分隔符號</translation>
+        <translation>移除分隔符號</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="602"/>
         <source>Remove widget</source>
-        <translation type="unfinished"></translation>
+        <translation>移除小工具</translation>
     </message>
 </context>
 <context>
@@ -23064,7 +23070,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="645"/>
         <source>Move widget</source>
-        <translation type="unfinished"></translation>
+        <translation>移動小工具</translation>
     </message>
 </context>
 <context>
@@ -24323,28 +24329,29 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="66"/>
         <source>Search widgets…</source>
-        <translation type="unfinished"></translation>
+        <translation>搜尋小工具…</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="71"/>
         <source>Dock widget palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Dock 小工具面盤</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="107"/>
         <source>Widgets</source>
-        <translation type="unfinished">小工具</translation>
+        <translation>小工具</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="130"/>
         <source>Drag to add %1.
 Hold Ctrl to replace a widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>拖放以新增 % 1。
+按住 Ctrl 鍵來取代小工具。</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="131"/>
         <source>Instance limit reached</source>
-        <translation type="unfinished"></translation>
+        <translation>實例限制已達</translation>
     </message>
 </context>
 <context>
@@ -24479,7 +24486,7 @@ Hold Ctrl to replace a widget.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="278"/>
         <source>Main Menu Button</source>
-        <translation type="unfinished"></translation>
+        <translation>主要選單按鈕</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="303"/>
@@ -24612,12 +24619,12 @@ Hold Ctrl to replace a widget.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="625"/>
         <source>Inline editing delay</source>
-        <translation type="unfinished"></translation>
+        <translation>內嵌編輯延遲</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="626"/>
         <source>Delay before starting inline editing after clicking a selected editable cell</source>
-        <translation type="unfinished"></translation>
+        <translation>在點按所選的可編輯格子之後，開始進行內嵌編輯之前，會有延遲</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="635"/>
