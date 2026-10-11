@@ -55,9 +55,9 @@ void addComboItem(QComboBox* combo, const QString& text, int data, const QString
 
 PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QString& title, QWidget* parent)
     : WidgetConfigDialog{playlist, title, parent}
-    , m_header{new QCheckBox(tr("Show column headers"), this)}
-    , m_stickyHeaders{new QCheckBox(tr("Keep group headers in view while scrolling"), this)}
-    , m_stickyArtwork{new QCheckBox(tr("Keep artwork in view while scrolling"), this)}
+    , m_header{new QCheckBox(tr("Show header"), this)}
+    , m_stickyHeaders{new QCheckBox(tr("Keep group headers in view"), this)}
+    , m_stickyArtwork{new QCheckBox(tr("Keep artwork in view"), this)}
     , m_scrollBar{new QCheckBox(tr("Show scrollbar"), this)}
     , m_alternatingRows{new QCheckBox(tr("Alternating row colours"), this)}
     , m_imagePadding{new QSpinBox(this)}
