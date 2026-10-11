@@ -5194,7 +5194,18 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 • Select a widget to see its parent containers in the breadcrumb bar. Select a parent to move an entire section.
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>• Dostupné widgety najdeš v panelu napravo (pokud je skrytý, podrž ukazatel
+   myši u pravého okraje).
+
+• Widget přidáš jeho přetažením z panelu do okna. Polohu existujících widgetů
+   v okně můžeš změnit jejich přetažením. Pokud při přetahování podržíš Ctrl,
+   nahradíš přetahovaným widgetem cílový widget.
+
+• Vyber widget pro zobrazení jeho nadřazených widgetů v navigační liště. Vyber
+   nadřazený widget pro přesun celé skupiny.
+
+• Kliknutím pravým tlačítkem otevřeš místní nabídku pro rozdělení, nahrazení,
+   nebo odstranění widgetu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="351"/>
@@ -7311,7 +7322,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="51"/>
         <source>Filter</source>
-        <translation type="unfinished">Filtr</translation>
+        <translation>Filtr</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="53"/>
@@ -7326,7 +7337,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="125"/>
         <source>Show label</source>
-        <translation type="unfinished">Zobrazit popisek</translation>
+        <translation>Zobrazit popisek</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="130"/>
