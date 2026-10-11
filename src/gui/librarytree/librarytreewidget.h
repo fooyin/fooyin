@@ -90,6 +90,7 @@ public:
 
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
+    void populateContextMenu(QMenu* menu) override;
 
     void enableIntegratedControls(SearchController* searchController, bool visibleByDefault = false);
     void searchEvent(const SearchRequest& request) override;
@@ -143,7 +144,6 @@ private:
     void setControlsPosition(ControlsPosition position);
     void setControlsVisible(bool visible);
     void reset();
-    void populateContextMenu(QMenu* menu);
 
     void addDisplayMenu(QMenu* parent);
     void changeGrouping(const LibraryTreeGrouping& newGrouping);

@@ -97,6 +97,7 @@ void LibraryTreeView::mousePressEvent(QMouseEvent* event)
     }
 
     if(event->button() == Qt::MiddleButton) {
+        QTreeView::mousePressEvent(event);
         Q_EMIT middleClicked(index);
         return;
     }
