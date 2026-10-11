@@ -34,19 +34,15 @@
 #include <gui/scripting/scriptformatter.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/colourbutton.h>
-#include <gui/widgets/fontbutton.h>
 #include <utils/utils.h>
 
-#include <QApplication>
 #include <QBasicTimer>
 #include <QCheckBox>
 #include <QCompleter>
 #include <QDesktopServices>
 #include <QDir>
 #include <QFocusEvent>
-#include <QFontDatabase>
 #include <QGridLayout>
-#include <QGroupBox>
 #include <QHeaderView>
 #include <QItemSelection>
 #include <QLineEdit>
@@ -88,7 +84,6 @@ constexpr auto ConditionalColourKey    = "Interface/ScriptEditor/ConditionalColo
 constexpr auto OperatorColourKey       = "Interface/ScriptEditor/OperatorColour";
 constexpr auto QuotedTextColourKey     = "Interface/ScriptEditor/QuotedTextColour";
 constexpr auto FormattingTagColourKey  = "Interface/ScriptEditor/FormattingTagColour";
-constexpr auto FontKey                 = "Interface/ScriptEditor/Font";
 constexpr auto WordWrapKey             = "Interface/ScriptEditor/WordWrap";
 constexpr auto AutocompleteKey         = "Interface/ScriptEditor/Autocomplete";
 constexpr auto FunctionHintsKey        = "Interface/ScriptEditor/FunctionHints";
@@ -230,7 +225,6 @@ public:
     QTextBrowser* m_results;
     ScriptHighlighter m_highlighter;
 
-    FontButton* m_font{nullptr};
     QCheckBox* m_wordWrap{nullptr};
     QCheckBox* m_autocomplete{nullptr};
     QCheckBox* m_functionHints{nullptr};
@@ -525,31 +519,19 @@ void ScriptEditorPrivate::setupSettings()
 {
     const auto defaults = ScriptHighlighter::defaultColours();
 
-    auto* settingsTab    = new QWidget(m_self);
+    auto* settingsTabs   = new QTabWidget(m_sideTabs);
+    auto* settingsTab    = new QWidget(settingsTabs);
     auto* settingsLayout = new QGridLayout(settingsTab);
-    auto* editorGroup    = new QGroupBox(ScriptEditor::tr("Editor"), settingsTab);
-    auto* editorLayout   = new QGridLayout(editorGroup);
-    auto* coloursGroup   = new QGroupBox(ScriptEditor::tr("Syntax highlighting"), settingsTab);
-    auto* coloursLayout  = new QGridLayout(coloursGroup);
+    auto* coloursTab     = new QWidget(settingsTabs);
+    auto* coloursLayout  = new QGridLayout(coloursTab);
 
-    QFont defaultFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
-    if(defaultFont.pointSize() <= 0) {
-        defaultFont.setPointSize(QApplication::font().pointSize());
-    }
-
-    m_font                 = new FontButton(ScriptEditor::tr("Font") + u":"_s, true, editorGroup);
-    m_wordWrap             = new QCheckBox(ScriptEditor::tr("Word wrap"), editorGroup);
-    m_autocomplete         = new QCheckBox(ScriptEditor::tr("Autocomplete"), editorGroup);
-    m_functionHints        = new QCheckBox(ScriptEditor::tr("Function parameter hints"), editorGroup);
-    m_showWhitespace       = new QCheckBox(ScriptEditor::tr("Show whitespace"), editorGroup);
-    m_highlightBrackets    = new QCheckBox(ScriptEditor::tr("Highlight matching brackets"), editorGroup);
-    m_highlightCurrentLine = new QCheckBox(ScriptEditor::tr("Highlight current line"), editorGroup);
-    m_showLineNumbers      = new QCheckBox(ScriptEditor::tr("Show line numbers"), editorGroup);
-
-    const QVariant savedFont = m_settings.value(FontKey);
-    const bool customFont    = savedFont.canConvert<QFont>();
-    m_font->setButtonFont(customFont ? savedFont.value<QFont>() : defaultFont);
-    m_font->setChecked(customFont);
+    m_wordWrap             = new QCheckBox(ScriptEditor::tr("Word wrap"), settingsTab);
+    m_autocomplete         = new QCheckBox(ScriptEditor::tr("Autocomplete"), settingsTab);
+    m_functionHints        = new QCheckBox(ScriptEditor::tr("Function parameter hints"), settingsTab);
+    m_showWhitespace       = new QCheckBox(ScriptEditor::tr("Show whitespace"), settingsTab);
+    m_highlightBrackets    = new QCheckBox(ScriptEditor::tr("Highlight matching brackets"), settingsTab);
+    m_highlightCurrentLine = new QCheckBox(ScriptEditor::tr("Highlight current line"), settingsTab);
+    m_showLineNumbers      = new QCheckBox(ScriptEditor::tr("Show line numbers"), settingsTab);
 
     m_wordWrap->setChecked(m_settings.value(WordWrapKey, true).toBool());
     m_autocomplete->setChecked(m_settings.value(AutocompleteKey, true).toBool());
@@ -560,28 +542,11 @@ void ScriptEditorPrivate::setupSettings()
     m_showLineNumbers->setChecked(m_settings.value(ShowLineNumbersKey, false).toBool());
 
     int row{0};
-    editorLayout->addWidget(m_font, row++, 0, 1, 2);
     for(auto* option : {m_wordWrap, m_autocomplete, m_functionHints, m_showWhitespace, m_highlightBrackets,
                         m_highlightCurrentLine, m_showLineNumbers}) {
-        editorLayout->addWidget(option, row++, 0, 1, 2);
+        settingsLayout->addWidget(option, row++, 0, 1, 2);
     }
-    editorLayout->setColumnStretch(2, 1);
-
-    QObject::connect(m_font, &FontButton::fontUpdated, this, [this](const QFont& font) {
-        if(m_font->isChecked()) {
-            m_settings.setValue(FontKey, font);
-            updateEditorSettings();
-        }
-    });
-    QObject::connect(m_font, &FontButton::toggled, this, [this](bool checked) {
-        if(checked) {
-            m_settings.setValue(FontKey, m_font->buttonFont());
-        }
-        else {
-            m_settings.remove(FontKey);
-        }
-        updateEditorSettings();
-    });
+    settingsLayout->setColumnStretch(2, 1);
 
     const auto connectOption = [this](QCheckBox* option, const char* key) {
         QObject::connect(option, &QCheckBox::clicked, this, [this, key](bool checked) {
@@ -598,13 +563,10 @@ void ScriptEditorPrivate::setupSettings()
     connectOption(m_highlightCurrentLine, HighlightCurrentLineKey);
     connectOption(m_showLineNumbers, ShowLineNumbersKey);
 
-    auto* resetEditor = new QPushButton(ScriptEditor::tr("Reset editor settings"), editorGroup);
-    editorLayout->addWidget(resetEditor, row++, 0, 1, 2, Qt::AlignLeft);
-    QObject::connect(resetEditor, &QPushButton::clicked, this, [this, defaultFont]() {
-        const QSignalBlocker fontBlocker{m_font};
-
-        m_font->setButtonFont(defaultFont);
-        m_font->setChecked(false);
+    auto* resetEditor = new QPushButton(ScriptEditor::tr("Reset editor settings"), settingsTab);
+    settingsLayout->addWidget(resetEditor, row++, 0, 1, 2, Qt::AlignLeft);
+    settingsLayout->setRowStretch(row, 1);
+    QObject::connect(resetEditor, &QPushButton::clicked, this, [this]() {
         m_wordWrap->setChecked(true);
         m_autocomplete->setChecked(true);
         m_functionHints->setChecked(true);
@@ -613,22 +575,20 @@ void ScriptEditorPrivate::setupSettings()
         m_highlightCurrentLine->setChecked(true);
         m_showLineNumbers->setChecked(false);
 
-        for(const char* key : {FontKey, WordWrapKey, AutocompleteKey, FunctionHintsKey, ShowWhitespaceKey,
-                               HighlightBracketsKey, HighlightCurrentLineKey, ShowLineNumbersKey}) {
+        for(const char* key : {WordWrapKey, AutocompleteKey, FunctionHintsKey, ShowWhitespaceKey, HighlightBracketsKey,
+                               HighlightCurrentLineKey, ShowLineNumbersKey}) {
             m_settings.remove(key);
         }
-        m_settings.remove(u"Interface/ScriptEditor/FontFamily"_s);
-        m_settings.remove(u"Interface/ScriptEditor/FontSize"_s);
 
         updateEditorSettings();
     });
 
     const auto createColourButton
-        = [this, coloursGroup](const QString& label, const char* key, const QColor& defaultColour) {
+        = [this, coloursTab](const QString& label, const char* key, const QColor& defaultColour) {
               const QVariant savedColour = m_settings.value(key);
               const bool custom          = savedColour.canConvert<QColor>() && savedColour.value<QColor>().isValid();
               auto* button = new ColourButton(label + u":"_s, custom ? savedColour.value<QColor>() : defaultColour,
-                                              true, coloursGroup);
+                                              true, coloursTab);
               button->setChecked(custom);
 
               QObject::connect(button, &ColourButton::colourUpdated, this, [this, button, key](const QColor& colour) {
@@ -668,7 +628,7 @@ void ScriptEditorPrivate::setupSettings()
         coloursLayout->addWidget(button, row++, 0);
     }
 
-    auto* resetColours = new QPushButton(ScriptEditor::tr("Reset colours"), coloursGroup);
+    auto* resetColours = new QPushButton(ScriptEditor::tr("Reset colours"), coloursTab);
     coloursLayout->addWidget(resetColours, row++, 0, Qt::AlignLeft);
     coloursLayout->setRowStretch(row, 1);
 
@@ -690,10 +650,9 @@ void ScriptEditorPrivate::setupSettings()
         updateSyntaxColours();
     });
 
-    settingsLayout->addWidget(editorGroup, 0, 0);
-    settingsLayout->addWidget(coloursGroup, 1, 0);
-    settingsLayout->setRowStretch(2, 1);
-    m_sideTabs->addTab(settingsTab, ScriptEditor::tr("Settings"));
+    settingsTabs->addTab(settingsTab, ScriptEditor::tr("Editor"));
+    settingsTabs->addTab(coloursTab, ScriptEditor::tr("Colours"));
+    m_sideTabs->addTab(settingsTabs, ScriptEditor::tr("Settings"));
 
     updateSyntaxColours();
     updateEditorSettings();
@@ -714,7 +673,6 @@ void ScriptEditorPrivate::updateSyntaxColours()
 
 void ScriptEditorPrivate::updateEditorSettings()
 {
-    m_editor->setFont(m_font->buttonFont());
     m_editor->setLineWrapMode(m_wordWrap->isChecked() ? QPlainTextEdit::WidgetWidth : QPlainTextEdit::NoWrap);
     m_editor->setAutocompleteEnabled(m_autocomplete->isChecked());
     m_editor->setFunctionHintsEnabled(m_functionHints->isChecked());

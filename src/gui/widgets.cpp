@@ -887,6 +887,7 @@ void Widgets::registerFontEntries() const
     themeReg->registerFontEntry(tr("Library Tree"), u"Fooyin::LibraryTreeView"_s);
     themeReg->registerFontEntry(tr("Playlist"), u"Fooyin::PlaylistView"_s);
     themeReg->registerFontEntry(tr("Script Display"), u"Fooyin::ScriptDisplay"_s);
+    themeReg->registerFontEntry(tr("Script Editor"), u"Fooyin::ScriptEditorTextEdit"_s);
     themeReg->registerFontEntry(tr("Status bar"), u"Fooyin::StatusLabel"_s);
     themeReg->registerFontEntry(tr("Tabs"), u"Fooyin::EditableTabBar"_s);
     themeReg->registerFontEntry(tr("Filters"), u"Fooyin::Filters::FilterView"_s);

@@ -435,8 +435,8 @@ void GuiColoursPageWidget::loadDefaults()
     }
 
     const auto systemFont = m_settings->value<Settings::Gui::Internal::SystemFont>().value<QFont>();
-    for(const auto& button : m_fontMapping | std::views::values) {
-        button->setButtonFont(systemFont);
+    for(const auto& [className, button] : m_fontMapping) {
+        button->setButtonFont(ThemeRegistry::defaultFont(className, systemFont));
         button->setChecked(false);
     }
 }

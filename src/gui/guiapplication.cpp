@@ -1761,19 +1761,22 @@ void GuiApplication::applyTheme()
         const auto systemFont = QApplication::font();
         m_settings->set<Settings::Gui::Internal::SystemFont>(systemFont);
 
+        const auto currTheme = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
+        if(currTheme.fonts.contains(QString{})) {
+            QApplication::setFont(currTheme.fonts.value(QString{}));
+        }
+
+        const auto defaultFont = QApplication::font();
         const auto fontEntries = m_themeRegistry->fontEntries();
         for(const auto& className : fontEntries | std::views::keys) {
             if(!className.isEmpty()) {
-                QApplication::setFont(systemFont, className.toUtf8().constData());
+                QApplication::setFont(ThemeRegistry::defaultFont(className, defaultFont),
+                                      className.toUtf8().constData());
             }
         }
 
-        const auto currTheme = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
         for(const auto& [className, font] : Utils::asRange(currTheme.fonts)) {
-            if(className.isEmpty()) {
-                QApplication::setFont(font);
-            }
-            else {
+            if(!className.isEmpty()) {
                 QApplication::setFont(font, className.toUtf8().constData());
             }
         }

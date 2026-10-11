@@ -280,5 +280,18 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
         static_cast<int>(NowPlayingOutputService::OutputDefaultOptions), u"NowPlayingOutput/Options"_s);
     m_settings->createSetting<Internal::NowPlayingOutputAppendLineLimit>(0, u"NowPlayingOutput/AppendLineLimit"_s);
     m_settings->createSetting<Internal::OutputDeviceRefreshMs>(0, u"Engine/OutputDeviceRefreshMs"_s);
+
+    const auto scriptEditorFont = m_settings->fileValue(u"Interface/ScriptEditor/Font"_s);
+    if(scriptEditorFont.canConvert<QFont>()) {
+        auto theme           = m_settings->value<CustomTheme>().value<FyTheme>();
+        const auto className = u"Fooyin::ScriptEditorTextEdit"_s;
+        if(!theme.fonts.contains(className)) {
+            theme.fonts.insert(className, scriptEditorFont.value<QFont>());
+            m_settings->set<CustomTheme>(QVariant::fromValue(theme));
+        }
+    }
+    m_settings->fileRemove(u"Interface/ScriptEditor/Font"_s);
+    m_settings->fileRemove(u"Interface/ScriptEditor/FontFamily"_s);
+    m_settings->fileRemove(u"Interface/ScriptEditor/FontSize"_s);
 }
 } // namespace Fooyin

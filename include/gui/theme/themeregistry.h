@@ -37,6 +37,8 @@ public:
     [[nodiscard]] std::map<QString, QString> fontEntries() const;
     void registerFontEntry(const QString& title, const QString& className);
 
+    static QFont defaultFont(const QString& className, const QFont& systemFont);
+
 protected:
     void loadDefaults() override;
 
