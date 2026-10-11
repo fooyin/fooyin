@@ -275,7 +275,7 @@ void FyWidget::showStandaloneWindow(const QString& title, const QString& stateKe
     }
 
     windows.insert_or_assign(stateKey, this);
-    QObject::connect(this, &QObject::destroyed, [stateKey, window = this]() {
+    QObject::connect(this, &QObject::destroyed, this, [stateKey, window = this]() {
         auto& widgetWindows = standaloneWindows();
         if(const auto it = widgetWindows.find(stateKey);
            it != widgetWindows.end() && (!it->second || it->second.data() == window)) {
