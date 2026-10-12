@@ -30,7 +30,6 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QActionGroup>
-#include <QBasicTimer>
 #include <QContextMenuEvent>
 #include <QElapsedTimer>
 #include <QJsonObject>
@@ -243,7 +242,7 @@ void OscilloscopeWidget::saveDefaults(const ConfigData& config) const
 
     validated.curveDurationMs = std::clamp(validated.curveDurationMs, MinCurveDurationMs, MaxCurveDurationMs);
     validated.zoomPercent     = std::clamp(validated.zoomPercent, MinZoomPercent, MaxZoomPercent);
-    validated.updateFps       = Gui::FrameRate::nearestPresetFps(validated.updateFps);
+    validated.updateFps       = Gui::FrameRate::clampFps(validated.updateFps);
 
     if(!validated.colours.canConvert<Colours>()
        || (validated.colours.isValid() && validated.colours.value<Colours>().isEmpty())) {
@@ -274,7 +273,7 @@ void OscilloscopeWidget::applyConfig(const ConfigData& config)
 
     validated.curveDurationMs = std::clamp(validated.curveDurationMs, MinCurveDurationMs, MaxCurveDurationMs);
     validated.zoomPercent     = std::clamp(validated.zoomPercent, MinZoomPercent, MaxZoomPercent);
-    validated.updateFps       = Gui::FrameRate::nearestPresetFps(validated.updateFps);
+    validated.updateFps       = Gui::FrameRate::clampFps(validated.updateFps);
 
     if(!validated.colours.canConvert<Colours>()
        || (validated.colours.isValid() && validated.colours.value<Colours>().isEmpty())) {
@@ -320,6 +319,7 @@ void OscilloscopeWidget::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == m_updateTimer.timerId()) {
         tick();
+        m_updateTimer.scheduleNext(this);
     }
     FyWidget::timerEvent(event);
 }
@@ -422,7 +422,7 @@ void OscilloscopeWidget::updateSessionConfig()
 
 void OscilloscopeWidget::startUpdateTimer()
 {
-    m_updateTimer.start(Gui::FrameRate::intervalMsForFps(m_config.updateFps), Qt::PreciseTimer, this);
+    m_updateTimer.start(m_config.updateFps, this);
 }
 
 void OscilloscopeWidget::settlePresentationClock()

@@ -21,9 +21,9 @@
 
 #include <core/engine/visualisationservice.h>
 #include <core/player/playerdefs.h>
+#include <gui/frametimer.h>
 #include <gui/fywidget.h>
 
-#include <QBasicTimer>
 #include <QElapsedTimer>
 #include <QVariant>
 
@@ -135,7 +135,7 @@ private:
     bool m_paused;
     bool m_clockSettling;
     double m_presentationTimeMs;
-    QBasicTimer m_updateTimer;
+    Gui::FrameTimer m_updateTimer;
     QElapsedTimer m_presentationClock;
     QElapsedTimer m_clockSettleTimer;
 };

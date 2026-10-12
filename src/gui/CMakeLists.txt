@@ -10,6 +10,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/dsp/dspsettingsprovider.h
     ${CMAKE_SOURCE_DIR}/include/gui/fywidget.h
     ${CMAKE_SOURCE_DIR}/include/gui/framerate.h
+    ${CMAKE_SOURCE_DIR}/include/gui/frametimer.h
     ${CMAKE_SOURCE_DIR}/include/gui/guiconstants.h
     ${CMAKE_SOURCE_DIR}/include/gui/iconloader.h
     ${CMAKE_SOURCE_DIR}/include/gui/guipaths.h
