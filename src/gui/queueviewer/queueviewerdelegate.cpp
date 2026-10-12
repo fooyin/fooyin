@@ -29,8 +29,7 @@
 #include <QApplication>
 #include <QPainter>
 
-constexpr auto RightContentPadding = 5;
-constexpr auto TextElideMargin     = 1;
+constexpr auto TextElideMargin = 1;
 
 namespace Fooyin {
 namespace {
@@ -198,20 +197,17 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     const auto rightRichText = index.data(QueueViewerItem::RightRichTitle).value<RichText>();
     const QSize rightSize    = richTextNaturalSize(opt, rightRichText);
 
-    QRect rightContentRect{textRect};
-    rightContentRect.setRight(std::max(rightContentRect.left(), rightContentRect.right() - RightContentPadding));
-
-    const int rightWidth = std::min(rightSize.width() + TextElideMargin, rightContentRect.width());
+    const int rightWidth = std::min(rightSize.width() + TextElideMargin, textRect.width());
     int leftWidth        = textRect.width();
     if(rightWidth > 0) {
-        leftWidth = std::max(0, rightContentRect.width() - rightWidth - textMargin);
+        leftWidth = std::max(0, textRect.width() - rightWidth - textMargin);
     }
 
     QRect leftRect{textRect};
     leftRect.setWidth(leftWidth);
 
-    QRect rightRect{rightContentRect};
-    rightRect.setLeft(rightContentRect.right() - rightWidth + 1);
+    QRect rightRect{textRect};
+    rightRect.setLeft(textRect.right() - rightWidth + 1);
 
     const auto leftLines  = prepareTextLines(opt, leftRect.width(), leftRichText);
     const auto rightLines = prepareTextLines(opt, rightRect.width(), rightRichText);
@@ -252,8 +248,7 @@ QSize QueueViewerDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
     const int textGap     = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, opt.widget) * 2;
     const QSize leftSize  = richTextNaturalSize(opt, index.data(QueueViewerItem::RichTitle).value<RichText>());
     const QSize rightSize = richTextNaturalSize(opt, index.data(QueueViewerItem::RightRichTitle).value<RichText>());
-    const QSize textSize{leftSize.width() + rightSize.width()
-                             + (rightSize.width() > 0 ? textGap + RightContentPadding + TextElideMargin : 0),
+    const QSize textSize{leftSize.width() + rightSize.width() + (rightSize.width() > 0 ? textGap + TextElideMargin : 0),
                          std::max(leftSize.height(), rightSize.height())};
 
     return Gui::itemViewTextSizeHint(opt, textSize);
