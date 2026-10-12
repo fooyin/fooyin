@@ -963,12 +963,19 @@ VariableKind ScriptRegistry::resolveVariableInternal(const QString& var) const
 
 ScriptResult ScriptRegistry::valueInternal(VariableKind kind, const QString& var, const ScriptSubject& subject) const
 {
+    const auto* playlist = subject.playlist ? subject.playlist : m_context.playlist;
+    if(kind == VariableKind::PlaylistName && customVariableInvoker(kind, var) == nullptr) {
+        ScriptResult result = calculateResult(playlist ? playlist->name() : QString{});
+        applyVariableOutputPolicy(m_context, kind, result);
+        return result;
+    }
+
     if(subject.track) {
-        return valueForTrack(kind, var, *subject.track, subject.playlist ? subject.playlist : m_context.playlist);
+        return valueForTrack(kind, var, *subject.track, playlist);
     }
 
     if(subject.tracks) {
-        return valueForTrackList(kind, var, *subject.tracks, subject.playlist ? subject.playlist : m_context.playlist);
+        return valueForTrackList(kind, var, *subject.tracks, playlist);
     }
 
     if(subject.playlist) {

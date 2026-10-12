@@ -19,6 +19,8 @@
 
 #include "playlisttabsconfigdialog.h"
 
+#include <gui/widgets/scriptlineedit.h>
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QGridLayout>
@@ -30,6 +32,7 @@ using namespace Qt::StringLiterals;
 namespace Fooyin {
 PlaylistTabsConfigDialog::PlaylistTabsConfigDialog(PlaylistTabs* playlistTabs, QWidget* parent)
     : WidgetConfigDialog{playlistTabs, tr("Playlist Tabs Settings"), parent}
+    , m_titleScript{new ScriptLineEdit(this)}
     , m_position{new QComboBox(this)}
     , m_expand{new QCheckBox(tr("Expand tabs to fill empty space"), this)}
     , m_showAddButton{new QCheckBox(tr("Show add button"), this)}
@@ -42,7 +45,18 @@ PlaylistTabsConfigDialog::PlaylistTabsConfigDialog(PlaylistTabs* playlistTabs, Q
 
     auto* layout{contentLayout()};
 
+    auto* scriptHint
+        = new QLabel(u"🛈 "_s
+                         + tr("Available variables: <code>%playlist_name%</code>, <code>%trackcount%</code>, "
+                              "<code>%playlist_duration%</code>, <code>%playlist_size%</code>"),
+                     this);
+    scriptHint->setTextFormat(Qt::RichText);
+    scriptHint->setWordWrap(true);
+
     int row{0};
+    layout->addWidget(new QLabel(tr("Tab title") + u":"_s, this), row, 0);
+    layout->addWidget(m_titleScript, row++, 1, 1, 2);
+    layout->addWidget(scriptHint, row++, 0, 1, 3);
     layout->addWidget(new QLabel(tr("Position") + u":"_s, this), row, 0);
     layout->addWidget(m_position, row++, 1);
     layout->addWidget(m_expand, row++, 0, 1, 3);
@@ -61,6 +75,7 @@ PlaylistTabsConfigDialog::PlaylistTabsConfigDialog(PlaylistTabs* playlistTabs, Q
 PlaylistTabs::ConfigData PlaylistTabsConfigDialog::config() const
 {
     return {
+        .titleScript        = m_titleScript->text(),
         .position           = static_cast<PlaylistTabPosition>(m_position->currentData().toInt()),
         .expand             = m_expand->isChecked(),
         .showAddButton      = m_showAddButton->isChecked(),
@@ -72,6 +87,7 @@ PlaylistTabs::ConfigData PlaylistTabsConfigDialog::config() const
 
 void PlaylistTabsConfigDialog::setConfig(const PlaylistTabs::ConfigData& config)
 {
+    m_titleScript->setText(config.titleScript);
     m_position->setCurrentIndex(m_position->findData(static_cast<int>(config.position)));
     m_expand->setChecked(config.expand);
     m_showAddButton->setChecked(config.showAddButton);
@@ -83,8 +99,9 @@ void PlaylistTabsConfigDialog::setConfig(const PlaylistTabs::ConfigData& config)
 void PlaylistTabsConfigDialog::mergeExternalConfig(const PlaylistTabs::ConfigData& previous,
                                                    const PlaylistTabs::ConfigData& current)
 {
-    mergeExternalFields(previous, current, &PlaylistTabs::ConfigData::position, &PlaylistTabs::ConfigData::expand,
-                        &PlaylistTabs::ConfigData::showAddButton, &PlaylistTabs::ConfigData::showClearButton,
-                        &PlaylistTabs::ConfigData::showCloseButton, &PlaylistTabs::ConfigData::closeOnMiddleClick);
+    mergeExternalFields(previous, current, &PlaylistTabs::ConfigData::titleScript, &PlaylistTabs::ConfigData::position,
+                        &PlaylistTabs::ConfigData::expand, &PlaylistTabs::ConfigData::showAddButton,
+                        &PlaylistTabs::ConfigData::showClearButton, &PlaylistTabs::ConfigData::showCloseButton,
+                        &PlaylistTabs::ConfigData::closeOnMiddleClick);
 }
 } // namespace Fooyin

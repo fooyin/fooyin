@@ -205,6 +205,8 @@ const std::vector<ScriptReferenceEntry>& scriptReferenceEntries()
                       QT_TRANSLATE_NOOP("Fooyin", "Number of tracks in the list")),
         variableEntry("playtime", QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
                       QT_TRANSLATE_NOOP("Fooyin", "Combined duration of the track list")),
+        variableEntry("playlist_name", QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
+                      QT_TRANSLATE_NOOP("Fooyin", "Name of the playlist")),
         variableEntry("playlist_size", QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
                       QT_TRANSLATE_NOOP("Fooyin", "Combined file size of the track list")),
         variableEntry("playlist_duration", QT_TRANSLATE_NOOP("Fooyin", "Playlist"),

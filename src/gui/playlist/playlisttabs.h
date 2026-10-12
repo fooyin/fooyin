@@ -20,6 +20,7 @@
 #pragma once
 
 #include <core/player/playerdefs.h>
+#include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <gui/widgetcontainer.h>
 
@@ -56,6 +57,7 @@ class PlaylistTabs : public WidgetContainer
 public:
     struct ConfigData
     {
+        QString titleScript{QStringLiteral("%playlist_name%")};
         PlaylistTabPosition position{PlaylistTabPosition::Top};
         bool expand{false};
         bool showAddButton{false};
@@ -137,13 +139,16 @@ private:
 
     void playlistChanged(Playlist* oldPlaylist, Playlist* playlist);
     void activePlaylistChanged(Playlist* playlist);
-    void playlistRenamed(const Playlist* playlist) const;
     void playlistUpdated(const Playlist* playlist);
 
-    void playStateChanged(Player::PlayState state) const;
+    void playStateChanged(Player::PlayState state);
+    void refreshTabTitle(const Playlist* playlist);
+    void refreshTabTitles();
     void refreshTabIcons();
     void updateTabIcon(int i, Player::PlayState state) const;
     void createEmptyPlaylist() const;
+
+    [[nodiscard]] QString playlistTitle(const Playlist* playlist, const QString& script);
 
     ActionManager* m_actionManager;
     PlaylistController* m_playlistController;
@@ -155,6 +160,7 @@ private:
     WidgetContext* m_context;
     QAction* m_savePlaylistAction;
     Command* m_savePlaylistCmd;
+    ScriptParser m_parser;
 
     QVBoxLayout* m_layout;
     SingleTabbedWidget* m_tabs;
