@@ -850,7 +850,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
         <source>Layout</source>
-        <translation type="unfinished">Layout</translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="273"/>
@@ -913,7 +913,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="289"/>
         <source>Sets the font weight from 1 to 1000</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätter typsnittsvikten från 1 till 1000</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="291"/>
@@ -4166,7 +4166,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="84"/>
         <source>Selected track</source>
-        <translation type="unfinished">Valt spår</translation>
+        <translation>Valt spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="85"/>
@@ -4186,7 +4186,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="93"/>
         <source>Preferred track</source>
-        <translation type="unfinished">Föredraget spår</translation>
+        <translation>Föredraget spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="105"/>
@@ -5163,7 +5163,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="340"/>
         <source>Layout Editing</source>
-        <translation type="unfinished">Layoutredigering</translation>
+        <translation>Layoutredigering</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="341"/>
@@ -5265,27 +5265,27 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="596"/>
         <source>Top</source>
-        <translation type="unfinished">Topp</translation>
+        <translation>Topp</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="596"/>
         <source>Right</source>
-        <translation type="unfinished">Höger</translation>
+        <translation>Höger</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="597"/>
         <source>Bottom</source>
-        <translation type="unfinished">Botten</translation>
+        <translation>Botten</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="607"/>
         <source>Restore defaults</source>
-        <translation type="unfinished">Återställ defaulter</translation>
+        <translation>Återställ defaulter</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="643"/>
         <source>Margins</source>
-        <translation type="unfinished">Marginaler</translation>
+        <translation>Marginaler</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="674"/>
@@ -7287,32 +7287,32 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="51"/>
         <source>Filter</source>
-        <translation type="unfinished">Filter</translation>
+        <translation>Filter</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="53"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alla</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="91"/>
         <source>Saved Filter Selector</source>
-        <translation type="unfinished">Sparad filterväljare</translation>
+        <translation>Sparad filter-väljare</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="125"/>
         <source>Show label</source>
-        <translation type="unfinished">Visa etikett</translation>
+        <translation>Visa etikett</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="130"/>
         <source>Rename &apos;All&apos; filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Döp om ”Alla”-filter</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="133"/>
         <source>Rename &apos;All&apos; Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Döp om ”Alla”-filter</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="133"/>
@@ -7335,7 +7335,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="52"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alla</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="65"/>
@@ -7494,12 +7494,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="113"/>
         <source>Open Cache Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna cachemapp</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
         <source>Open State Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna lägesmapp</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="130"/>
@@ -7768,7 +7768,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <location filename="../../src/gui/guiapplication.cpp" line="1044"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1048"/>
         <source>Show Main Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa huvudmeny</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1059"/>
@@ -9556,7 +9556,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="160"/>
         <source>Close</source>
-        <translation type="unfinished">Stäng</translation>
+        <translation>Stäng</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="517"/>
@@ -9578,7 +9578,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="531"/>
         <source>Drop a widget here</source>
-        <translation>Lägg in en widget här</translation>
+        <translation>Släpp en widget här</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="601"/>
@@ -9614,17 +9614,17 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
         <location filename="../../src/gui/layout/layoutdragsurface.cpp" line="104"/>
         <source>Replace %1 with %2</source>
         <extracomment>%1 and %2 are widget names. e.g. Replace Playlist with Lyrics</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ersätt %1 med %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragsurface.cpp" line="150"/>
         <source>Drop into the layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Släpp in i layouten</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragsurface.cpp" line="157"/>
         <source>This widget is no longer available</source>
-        <translation type="unfinished"></translation>
+        <translation>Den här widgeten är inte längre tillgänglig</translation>
     </message>
 </context>
 <context>
@@ -9684,32 +9684,32 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="268"/>
         <source>Split %1: place right</source>
-        <translation type="unfinished"></translation>
+        <translation>Splitta %1: placera höger</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="268"/>
         <source>Split %1: place left</source>
-        <translation type="unfinished"></translation>
+        <translation>Splitta %1: placera vänster</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="292"/>
         <source>Place below %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Placera under %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="292"/>
         <source>Place above %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Placera ovanför %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="293"/>
         <source>Place after %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Placera efter %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="293"/>
         <source>Place before %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Placera innan %1</translation>
     </message>
 </context>
 <context>
@@ -11874,7 +11874,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/controls/mainmenubutton.cpp" line="52"/>
         <source>Main Menu Button</source>
-        <translation type="unfinished"></translation>
+        <translation>Huvudmenyknapp</translation>
     </message>
 </context>
 <context>
@@ -14250,7 +14250,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="67"/>
         <source>Preferred track</source>
-        <translation type="unfinished">Föredraget spår</translation>
+        <translation>Föredraget spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="69"/>
@@ -14396,7 +14396,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="141"/>
         <source>Playing track</source>
-        <translation type="unfinished">Spelande spår</translation>
+        <translation>Spelande spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="143"/>
@@ -25673,7 +25673,7 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Remove</source>
-        <translation type="unfinished">Ta bort</translation>
+        <translation>Ta bort</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="187"/>
@@ -25683,27 +25683,27 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="190"/>
         <source>Sort</source>
-        <translation type="unfinished">Sortera</translation>
+        <translation>Sortera</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="194"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">Lägg till i spellista</translation>
+        <translation>Lägg till i spellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="198"/>
         <source>Configure</source>
-        <translation type="unfinished">Konfigurera</translation>
+        <translation>Konfigurera</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="202"/>
         <source>Track menu</source>
-        <translation type="unfinished">Spårmeny</translation>
+        <translation>Spårmeny</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="491"/>
         <source>Playback Queue</source>
-        <translation type="unfinished">Uppspelningskö</translation>
+        <translation>Uppspelningskö</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="493"/>
