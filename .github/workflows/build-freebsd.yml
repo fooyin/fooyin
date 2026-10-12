@@ -23,7 +23,7 @@ jobs:
     name: FreeBSD
     runs-on: ubuntu-latest
     env:
-      FREEBSD_VERSION: '15.0'
+      FREEBSD_VERSION: '15.1'
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -67,7 +67,8 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: freebsd-${{ env.FREEBSD_VERSION }}
-          path: pkg
+          path: pkg/*.pkg
+          if-no-files-found: error
 
       - name: Save ccache
         if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
