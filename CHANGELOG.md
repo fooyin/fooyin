@@ -18,6 +18,7 @@
 - **Playlist**
   - Add options to keep headers and artwork visible while scrolling ([#1739](https://github.com/fooyin/fooyin/issues/1739))
   - Add configurable artwork reflections
+  - Add scriptable Playlist Tabs text with `%playlist_name%`
 
 ### Improvements
 
@@ -42,6 +43,7 @@
   - Support transparent standalone lyrics window backgrounds
   - Cache the no-lyrics document
   - Suppress known noisy Qt log messages
+  - Add custom frame rates with improved frame pacing for visualisations ([#1736](https://github.com/fooyin/fooyin/issues/1736))
 - **Library & Metadata**
   - Add MusicBrainz release page link and scrollable release details ([#1741](https://github.com/fooyin/fooyin/issues/1741))
   - Arrange Library Tree settings in two columns
@@ -66,6 +68,7 @@
   - Clarify rating and Love editor options ([#1684](https://github.com/fooyin/fooyin/issues/1684))
   - Add an FFmpeg decoder settings dialog
   - Show supported URI schemes in decoder tooltips
+  - Migrate account and network settings from the configuration file to the database
 - **Scripting**
   - Add playback output information fields
   - Add font weight formatting with `<weight>`
@@ -94,6 +97,7 @@
   - Preserve configured columns in Radio Browser on startup ([#1686](https://github.com/fooyin/fooyin/issues/1686))
   - Preserve track order when applying ReplayGain values in Properties ([#1727](https://github.com/fooyin/fooyin/issues/1727))
   - Rescale the waveform when label visibility changes ([#1689](https://github.com/fooyin/fooyin/issues/1689))
+  - Hide unreachable played threshold markers in seek bars and WaveBar
 - **Library & Metadata**
   - Fix DSD detection on Windows ([#1633](https://github.com/fooyin/fooyin/issues/1633), [#1735](https://github.com/fooyin/fooyin/issues/1735))
   - Initialise audio readers before metadata and artwork writes
@@ -103,7 +107,9 @@
 - **Playback**
   - Preserve active DSP preset identity across edits and restarts
   - Preserve played threshold state when restoring playback
+  - Restore queued playlist references when the original playlist returns
 - **Playlists**
+  - Fix empty subheader editors in playlist preset settings
   - Fix extra padding in subheaders ([#1725](https://github.com/fooyin/fooyin/issues/1725))
   - Follow the playing track by playlist entry ID ([#1765](https://github.com/fooyin/fooyin/issues/1765))
   - Restore queue-led source order for temporary playlists
@@ -119,12 +125,15 @@
 
 - **CI:** Enable ccache for Linux, FreeBSD, Windows, and Flatpak builds
 - **Dependencies:** Add JACK, libFLAC, libmpg123, libopusfile, and libvorbis; make libarchive required
-- **Flatpak:** Include the version in bundle filenames
+- **Flatpak**
+  - Include the version in bundle filenames
+  - Allow access to `/mnt` and `/media`
 - **Translations:** Update translations and translation sources ([#1687](https://github.com/fooyin/fooyin/pull/1687), [#1688](https://github.com/fooyin/fooyin/pull/1688), [#1701](https://github.com/fooyin/fooyin/pull/1701), [#1713](https://github.com/fooyin/fooyin/pull/1713), [#1714](https://github.com/fooyin/fooyin/pull/1714), [#1748](https://github.com/fooyin/fooyin/pull/1748), [#1749](https://github.com/fooyin/fooyin/pull/1749), [#1762](https://github.com/fooyin/fooyin/pull/1762), [#1763](https://github.com/fooyin/fooyin/pull/1763))
 - **Windows:** Sign release artifacts with SignPath
 
 ### Dev/API
 
+- **Database:** Expose fooyin's database pool through `CorePluginContext`
 - **Audio Encoders:** Add the `EncoderPlugin` interface for registering encoder plugins
 - **Plugins:** Add API version checks and audio input priorities
 
