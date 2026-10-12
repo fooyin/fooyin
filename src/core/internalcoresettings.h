@@ -21,6 +21,7 @@
 
 #include "fycore_export.h"
 
+#include <utils/database/dbconnectionpool.h>
 #include <utils/settings/settingsentry.h>
 
 #include <QStringList>
@@ -124,7 +125,7 @@ Q_ENUM_NS(CoreInternalSettings)
 class FYCORE_EXPORT CoreSettings
 {
 public:
-    explicit CoreSettings(SettingsManager* settingsManager);
+    explicit CoreSettings(SettingsManager* settingsManager, DbConnectionPoolPtr dbPool = {});
     ~CoreSettings();
 
 private:

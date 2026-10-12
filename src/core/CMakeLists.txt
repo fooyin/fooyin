@@ -1,4 +1,5 @@
 set(SOURCES
+    ${CMAKE_SOURCE_DIR}/include/core/accountstore.h
     ${CMAKE_SOURCE_DIR}/include/core/constants.h
     ${CMAKE_SOURCE_DIR}/include/core/coresettings.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audiobuffer.h
@@ -62,10 +63,13 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/stringpool.h
     ${CMAKE_SOURCE_DIR}/include/core/track.h
     ${CMAKE_SOURCE_DIR}/include/core/trackmetadatastore.h
+    accountstore.cpp
     application.cpp
     application.h
     corepaths.cpp
     corepaths.h
+    database/accountdatabase.cpp
+    database/accountdatabase.h
     database/database.cpp
     database/database.h
     database/dbschema.cpp

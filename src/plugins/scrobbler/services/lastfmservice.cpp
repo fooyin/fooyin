@@ -22,6 +22,7 @@
 #include "scrobblerauthsession.h"
 #include "settings/scrobblersettings.h"
 
+#include <core/accountstore.h>
 #include <core/coresettings.h>
 #include <core/network/networkaccessmanager.h>
 #include <core/network/networkutils.h>
@@ -137,8 +138,8 @@ QString trackStatsKey(const Fooyin::Track& track)
 
 namespace Fooyin::Scrobbler {
 LastFmService::LastFmService(ServiceDetails service, NetworkAccessManager* network, SettingsManager* settings,
-                             QObject* parent)
-    : ScrobblerService{std::move(service), network, settings, parent}
+                             DbConnectionPoolPtr dbPool, QObject* parent)
+    : ScrobblerService{std::move(service), network, settings, std::move(dbPool), parent}
 { }
 
 QString LastFmService::apiKey() const
@@ -189,13 +190,15 @@ bool LastFmService::supportsTrackStatsSync() const
 void LastFmService::saveSession()
 {
     FySettings settings;
-    settings.beginGroup(isCustom() ? u"Scrobbler-"_s + name() : name());
+    settings.beginGroup(accountName());
 
     settings.setValue("IsEnabled", details().isEnabled);
     settings.setValue("SubmitLoved", details().submitLoved);
     settings.setValue("SyncPlaybackStats", details().syncPlaybackStats);
-    settings.setValue("Username", m_username);
-    settings.setValue("SessionKey", m_sessionKey);
+
+    if(!accountStore().save(accountName(), {{u"Username"_s, m_username}, {u"SessionKey"_s, m_sessionKey}})) {
+        qCWarning(SCROBBLER) << "Unable to persist account:" << name();
+    }
 
     settings.endGroup();
 }
@@ -203,28 +206,28 @@ void LastFmService::saveSession()
 void LastFmService::loadSession()
 {
     FySettings settings;
-    settings.beginGroup(isCustom() ? u"Scrobbler-"_s + name() : name());
+    settings.beginGroup(accountName());
 
     if(settings.contains("IsEnabled")) {
         detailsRef().isEnabled = settings.value("IsEnabled").toBool();
     }
     detailsRef().submitLoved       = settings.value("SubmitLoved", false).toBool();
     detailsRef().syncPlaybackStats = settings.value("SyncPlaybackStats", false).toBool();
-    m_username                     = settings.value("Username").toString();
-    m_sessionKey                   = settings.value("SessionKey").toString();
+
+    if(const auto account = accountStore().load(accountName(), {u"Username"_s, u"SessionKey"_s});
+       account && !account->empty()) {
+        m_username   = account->at(u"Username"_s);
+        m_sessionKey = account->at(u"SessionKey"_s);
+    }
 
     settings.endGroup();
 }
 
 void LastFmService::deleteSession()
 {
-    FySettings settings;
-    settings.beginGroup(isCustom() ? u"Scrobbler-"_s + name() : name());
-
-    settings.remove("Username");
-    settings.remove("SessionKey");
-
-    settings.endGroup();
+    if(!accountStore().remove(accountName(), {u"Username"_s, u"SessionKey"_s})) {
+        qCWarning(SCROBBLER) << "Unable to delete account:" << name();
+    }
 }
 
 void LastFmService::logout()

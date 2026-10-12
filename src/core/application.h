@@ -109,9 +109,9 @@ private:
     void saveDatabaseSettings() const;
 
     SettingsManager* m_settings;
+    Database* m_database;
     CoreSettings m_coreSettings;
     TranslationLoader m_translations;
-    Database* m_database;
     std::shared_ptr<AudioLoader> m_audioLoader;
     std::unique_ptr<AudioEncoderRegistry> m_audioEncoderRegistry;
     std::unique_ptr<DspRegistry> m_dspRegistry;

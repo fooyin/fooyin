@@ -98,8 +98,8 @@ namespace Fooyin {
 Application::Application(QObject* parent)
     : QObject{parent}
     , m_settings{new SettingsManager(Core::settingsPath(), this)}
-    , m_coreSettings{m_settings}
     , m_database{new Database(this)}
+    , m_coreSettings{m_settings, m_database->connectionPool()}
     , m_audioLoader{std::make_shared<AudioLoader>()}
     , m_audioEncoderRegistry{std::make_unique<AudioEncoderRegistry>()}
     , m_dspRegistry{std::make_unique<DspRegistry>()}
@@ -116,8 +116,17 @@ Application::Application(QObject* parent)
     , m_engine{std::make_unique<EngineHandler>(m_audioLoader, m_playerController, m_settings, m_dspRegistry.get())}
     , m_sortingRegistry{new SortingRegistry(m_settings, this)}
     , m_pluginManager{std::make_unique<PluginManager>(m_settings)}
-    , m_corePluginContext{m_engine.get(), m_playerController, m_libraryManager, m_library,         m_playlistHandler,
-                          m_settings,     m_audioLoader,      m_playlistLoader, m_sortingRegistry, m_networkManager}
+    , m_corePluginContext{m_engine.get(),
+                          m_playerController,
+                          m_libraryManager,
+                          m_library,
+                          m_playlistHandler,
+                          m_settings,
+                          m_audioLoader,
+                          m_playlistLoader,
+                          m_sortingRegistry,
+                          m_networkManager,
+                          m_database->connectionPool()}
 {
     m_audioLoader->setRemoteSourceProvider(m_remoteIo);
     m_translations.initialiseTranslations(m_settings->value<Settings::Core::Language>());

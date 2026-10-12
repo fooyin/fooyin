@@ -59,10 +59,11 @@ bool canBeScrobbled(const Fooyin::Track& track)
 
 namespace Fooyin::Scrobbler {
 ScrobblerService::ScrobblerService(ServiceDetails details, NetworkAccessManager* network, SettingsManager* settings,
-                                   QObject* parent)
+                                   DbConnectionPoolPtr dbPool, QObject* parent)
     : QObject{parent}
     , m_network{network}
     , m_settings{settings}
+    , m_accountStore{std::move(dbPool)}
     , m_details{std::move(details)}
     , m_authSession{nullptr}
     , m_cache{nullptr}
@@ -405,22 +406,19 @@ LovedCache* ScrobblerService::lovedCache() const
     return m_lovedCache;
 }
 
-void ScrobblerService::submitLoved(const LovedItem& /*item*/) { }
-
-void ScrobblerService::lovedUpdateFinished(const LovedItem& item, const LovedUpdateResult result)
-{
-    m_lovedSubmitted = false;
-
-    if(result != LovedUpdateResult::Retry) {
-        m_lovedCache->remove(item.key, item.revision);
-    }
-    m_lovedSubmitError = result == LovedUpdateResult::Retry;
-    doDelayedLovedSubmit();
-}
-
 SettingsManager* ScrobblerService::settings() const
 {
     return m_settings;
+}
+
+const AccountStore& ScrobblerService::accountStore() const
+{
+    return m_accountStore;
+}
+
+QString ScrobblerService::accountName() const
+{
+    return isCustom() ? u"Scrobbler-"_s + name() : name();
 }
 
 ServiceDetails& ScrobblerService::detailsRef()
@@ -488,6 +486,19 @@ bool ScrobblerService::extractJsonObj(const QByteArray& data, QJsonObject* obj, 
     }
 
     return true;
+}
+
+void ScrobblerService::submitLoved(const LovedItem& /*item*/) { }
+
+void ScrobblerService::lovedUpdateFinished(const LovedItem& item, const LovedUpdateResult result)
+{
+    m_lovedSubmitted = false;
+
+    if(result != LovedUpdateResult::Retry) {
+        m_lovedCache->remove(item.key, item.revision);
+    }
+    m_lovedSubmitError = result == LovedUpdateResult::Retry;
+    doDelayedLovedSubmit();
 }
 
 void ScrobblerService::handleTestError(const char* error)

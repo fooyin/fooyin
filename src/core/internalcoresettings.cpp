@@ -22,6 +22,8 @@
 #include "corepaths.h"
 #include "version.h"
 
+#include <core/accountstore.h>
+
 #include <core/coresettings.h>
 #include <core/engine/audioformat.h>
 #include <core/engine/enginedefs.h>
@@ -31,6 +33,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QFileInfo>
+#include <utility>
 
 using namespace Qt::StringLiterals;
 
@@ -38,11 +41,11 @@ constexpr auto LogLevel = "LogLevel";
 
 namespace Fooyin {
 FySettings::FySettings(QObject* parent)
-    : QSettings{Core::settingsPath(), QSettings::IniFormat, parent}
+    : QSettings{Core::settingsPath(), IniFormat, parent}
 { }
 
 FyStateSettings::FyStateSettings(QObject* parent)
-    : QSettings{Core::statePath(), QSettings::IniFormat, parent}
+    : QSettings{Core::statePath(), IniFormat, parent}
 { }
 
 namespace Settings::Core::Internal {
@@ -62,7 +65,34 @@ QStringList defaultOutputResamplerPreference()
 }
 } // namespace Settings::Core::Internal
 
-CoreSettings::CoreSettings(SettingsManager* settingsManager)
+namespace {
+void setupProxyAccount(SettingsManager* settingsManager, DbConnectionPoolPtr dbPool)
+{
+    if(!dbPool) {
+        return;
+    }
+
+    using namespace Settings::Core;
+
+    const AccountStore accountStore{dbPool};
+    if(const auto account = accountStore.load(u"Networking"_s, {u"ProxyUsername"_s, u"ProxyPassword"_s});
+       account && !account->empty()) {
+        settingsManager->set<Internal::ProxyUsername>(account->at(u"ProxyUsername"_s));
+        settingsManager->set<Internal::ProxyPassword>(account->at(u"ProxyPassword"_s));
+    }
+    const auto saveProxyAccount = [settings = settingsManager, dbPool = std::move(dbPool)]() {
+        const AccountStore accounts{dbPool};
+        if(!accounts.save(u"Networking"_s, {{u"ProxyUsername"_s, settings->value<Internal::ProxyUsername>()},
+                                            {u"ProxyPassword"_s, settings->value<Internal::ProxyPassword>()}})) {
+            qWarning() << "Unable to persist proxy credentials";
+        }
+    };
+    settingsManager->subscribe<Internal::ProxyUsername>(settingsManager, saveProxyAccount);
+    settingsManager->subscribe<Internal::ProxyPassword>(settingsManager, saveProxyAccount);
+}
+} // namespace
+
+CoreSettings::CoreSettings(SettingsManager* settingsManager, DbConnectionPoolPtr dbPool)
     : m_settings{settingsManager}
 {
     using namespace Settings::Core;
@@ -146,8 +176,11 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::ProxyHost>(u""_s, u"Networking/ProxyHost"_s);
     m_settings->createSetting<Internal::ProxyPort>(8080, u"Networking/ProxyPort"_s);
     m_settings->createSetting<Internal::ProxyAuth>(false, u"Networking/ProxyAuth"_s);
-    m_settings->createSetting<Internal::ProxyUsername>(u""_s, u"Networking/ProxyUsername"_s);
-    m_settings->createSetting<Internal::ProxyPassword>(u""_s, u"Networking/ProxyPassword"_s);
+
+    m_settings->createTempSetting<Internal::ProxyUsername>(QString{});
+    m_settings->createTempSetting<Internal::ProxyPassword>(QString{});
+    setupProxyAccount(m_settings, std::move(dbPool));
+
     m_settings->createSetting<Internal::DecodeLowWatermarkRatio>(0.50, u"Engine/DecodeLowWatermarkRatio"_s);
     m_settings->createSetting<Internal::DecodeHighWatermarkRatio>(0.95, u"Engine/DecodeHighWatermarkRatio"_s);
     m_settings->createSetting<Internal::CrossfadeSwitchPolicy>(
