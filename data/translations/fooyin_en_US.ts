@@ -5164,7 +5164,13 @@ Effects here process the final combined output.</translation>
 • Select a widget to see its parent containers in the breadcrumb bar. Select a parent to move an entire section.
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>• Find widgets in the palette on the right (hover near the right edge if it’s hidden).
+
+• Drag widgets from the palette to add them, or drag existing ones to move them. Hold Ctrl to replace the target widget.
+
+• Select a widget to see its parent containers in the breadcrumb bar. Select a parent to move an entire section.
+
+• Right-click any widget to split, replace, or remove it using the context menu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="558"/>
@@ -5194,7 +5200,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="351"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished"></translation>
+        <translation>Don’t show this again</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="447"/>
