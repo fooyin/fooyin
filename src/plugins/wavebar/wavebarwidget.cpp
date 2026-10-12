@@ -112,6 +112,8 @@ WaveBarWidget::WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnect
         }
         updatePlayedThresholdMarker();
     });
+    QObject::connect(playerController, &PlayerController::positionMoved, this,
+                     &WaveBarWidget::updatePlayedThresholdMarker);
     QObject::connect(playerController, &PlayerController::playStateChanged, this,
                      [this](Player::PlayState) { refreshTrack(); });
     QObject::connect(playerController, &PlayerController::currentTrackSeekableChanged, this,
@@ -844,8 +846,14 @@ void WaveBarWidget::updatePlayedThresholdMarker()
 
     const uint64_t listened  = m_playerController->currentTimeListened();
     const uint64_t remaining = threshold > listened ? threshold - listened : 0;
-    m_seekbar->setPlayedThresholdPosition(
-        std::min(track.duration(), m_playerController->currentPosition() + remaining));
+    const uint64_t position  = m_playerController->currentPosition();
+
+    if(position > track.duration() || remaining > track.duration() - position) {
+        m_seekbar->setPlayedThresholdPosition({});
+    }
+    else {
+        m_seekbar->setPlayedThresholdPosition(position + remaining);
+    }
 }
 } // namespace Fooyin::WaveBar
 

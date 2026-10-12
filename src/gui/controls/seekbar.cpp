@@ -658,7 +658,14 @@ void SeekBar::updatePlayedMarker()
 
     const uint64_t listened  = m_playerController->currentTimeListened();
     const uint64_t remaining = threshold > listened ? threshold - listened : 0;
-    m_slider->updatePlayedMarker(std::min(m_max, m_playerController->currentPosition() + remaining));
+    const uint64_t position  = m_playerController->currentPosition();
+
+    if(position > m_max || remaining > m_max - position) {
+        m_slider->updatePlayedMarker({});
+    }
+    else {
+        m_slider->updatePlayedMarker(position + remaining);
+    }
 }
 
 void SeekBar::stateChanged(Player::PlayState state)
