@@ -5168,7 +5168,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="341"/>
         <source>Add and arrange widgets to customise your layout.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till och arrangera widgetar för att anpassa din layout.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="344"/>
@@ -5179,12 +5179,18 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
 • Select a widget to see its parent containers in the breadcrumb bar. Select a parent to move an entire section.
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>• Hitta widgetar i rutan till höger (hovra nära högra kanten om den är gömd).
+
+• Dra widgetar från rutan för att lägga till dem eller dra existerande för att flytta dem. Håll i &lt;b&gt;Ctrl&lt;/b&gt; för att ersätta målwidgeten.
+
+• Välj en widget för att se dess föräldracontainrar i brödsmulsfältet. Välj en förälder för att flytta en hel sektion.
+
+• Högerklicka på en widget för att splitta, byta ut eller ta bort den med snabbmenyn.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="351"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa inte igen</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="447"/>
@@ -5254,7 +5260,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="596"/>
         <source>Left</source>
-        <translation type="unfinished">Vänster</translation>
+        <translation>Vänster</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="596"/>
@@ -9556,49 +9562,49 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="517"/>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1150"/>
         <source>Move tabs and content</source>
-        <translation type="unfinished"></translation>
+        <translation>Flytta flikar och innehåll</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="518"/>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1150"/>
         <source>Move tab stack</source>
-        <translation type="unfinished"></translation>
+        <translation>Flytta flikbunt</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="518"/>
         <source>Drag to move this panel</source>
-        <translation type="unfinished"></translation>
+        <translation>Dra för att flytta den här panelen</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="531"/>
         <source>Drop a widget here</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg in en widget här</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="601"/>
         <source>Moving %1</source>
         <extracomment>%1 is the name of a widget e.g. Moving Playlist</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Flyttar</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1027"/>
         <source>Horizontal split</source>
-        <translation type="unfinished"></translation>
+        <translation>Horisontell splitt</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1027"/>
         <source>Vertical split</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikal splitt</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1031"/>
         <source>Select %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1054"/>
         <source>Move %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Flytta %1</translation>
     </message>
 </context>
 <context>
@@ -9626,54 +9632,54 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="94"/>
         <source>Drop beside a panel or on a tab bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Släpp bredvid en panel eller på ett flikfält</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="120"/>
         <source>Cannot move this panel here</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan inte flytta den här panelen hit</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="135"/>
         <source>Choose a widget to replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj en widget att ersätta</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="144"/>
         <source>Cannot replace this widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan inte ersätta den här widgeten</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="152"/>
         <source>Replace %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ersätt %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="194"/>
         <source>Insert tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Infoga flik</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="219"/>
         <source>Fill empty area</source>
-        <translation type="unfinished"></translation>
+        <translation>Fyll tom area</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="237"/>
         <location filename="../../src/gui/layout/layoututils.cpp" line="299"/>
         <location filename="../../src/gui/layout/layoututils.cpp" line="307"/>
         <source>Move into empty area</source>
-        <translation type="unfinished"></translation>
+        <translation>Flytta till tom area</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="267"/>
         <source>Split %1: place below</source>
-        <translation type="unfinished"></translation>
+        <translation>Splitta %1: placera under</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="267"/>
         <source>Split %1: place above</source>
-        <translation type="unfinished"></translation>
+        <translation>Splitta %1: placera ovan</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="268"/>
@@ -24396,28 +24402,29 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="66"/>
         <source>Search widgets…</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök widgetar…</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="71"/>
         <source>Dock widget palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Fäst fast widgetrutan</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="107"/>
         <source>Widgets</source>
-        <translation type="unfinished">Widgetar</translation>
+        <translation>Widgetar</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="130"/>
         <source>Drag to add %1.
 Hold Ctrl to replace a widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dra för att lägga till %1.
+Håll i &lt;b&gt;Ctrl&gt; för att ersätta en widget.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="131"/>
         <source>Instance limit reached</source>
-        <translation type="unfinished"></translation>
+        <translation>Instansgräns nådd</translation>
     </message>
 </context>
 <context>
