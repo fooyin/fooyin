@@ -529,6 +529,10 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
         createGroupPresetInputs(subheader, m_subHeaders, this);
     }
 
+    if(m_subHeaders->blockCount() == 0) {
+        m_subHeaders->addEmptyBlock();
+    }
+
     m_trackText->setText(preset.track.text.script);
 
     m_overrideTrackHeight->setChecked(preset.track.rowHeight > 0);
