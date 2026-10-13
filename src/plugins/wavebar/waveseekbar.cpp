@@ -21,6 +21,7 @@
 
 #include <utils/stringutils.h>
 
+#include <QApplication>
 #include <QImage>
 #include <QMouseEvent>
 #include <QPainter>
@@ -87,11 +88,6 @@ WaveSeekBar::WaveSeekBar(QWidget* parent)
     setFocusPolicy(Qt::TabFocus);
 }
 
-void WaveSeekBar::setMouseFocusEnabled(bool enabled)
-{
-    setFocusPolicy(enabled ? Qt::StrongFocus : Qt::TabFocus);
-}
-
 void WaveSeekBar::processData(const WaveformData<float>& waveData)
 {
     m_data  = waveData;
@@ -115,6 +111,10 @@ void WaveSeekBar::setSeekable(bool seekable)
 
 void WaveSeekBar::setPosition(uint64_t pos)
 {
+    if(isSeeking() && !QApplication::mouseButtons().testFlag(Qt::LeftButton)) {
+        stopSeeking();
+    }
+
     const uint64_t oldPos = std::exchange(m_position, pos);
 
     if(oldPos == pos) {
@@ -224,6 +224,11 @@ void WaveSeekBar::setSupersampleFactor(int factor)
     }
 }
 
+void WaveSeekBar::setMouseFocusEnabled(bool enabled)
+{
+    setFocusPolicy(enabled ? Qt::StrongFocus : Qt::TabFocus);
+}
+
 bool WaveSeekBar::isSeeking() const
 {
     return !m_seekPos.isNull();
@@ -232,11 +237,23 @@ bool WaveSeekBar::isSeeking() const
 void WaveSeekBar::stopSeeking()
 {
     if(m_seekTip) {
+        m_seekTip->hide();
         m_seekTip->deleteLater();
     }
 
-    m_seekPos = {};
+    m_seekPos  = {};
+    m_pressPos = {};
     update();
+}
+
+bool WaveSeekBar::event(QEvent* event)
+{
+    if(isSeeking()
+       && (event->type() == QEvent::UngrabMouse || event->type() == QEvent::WindowDeactivate
+           || event->type() == QEvent::Hide)) {
+        stopSeeking();
+    }
+    return QWidget::event(event);
 }
 
 void WaveSeekBar::paintEvent(QPaintEvent* event)
@@ -272,6 +289,13 @@ void WaveSeekBar::mouseMoveEvent(QMouseEvent* event)
 
 void WaveSeekBar::mousePressEvent(QMouseEvent* event)
 {
+    if((event->button() == Qt::RightButton && isSeeking())
+       || (event->button() == Qt::LeftButton && event->buttons() != Qt::LeftButton)) {
+        stopSeeking();
+        event->accept();
+        return;
+    }
+
     if(!m_seekable) {
         event->ignore();
         return;
@@ -424,15 +448,10 @@ void WaveSeekBar::invalidateWaveformCache()
     m_waveformCacheDirty = true;
 }
 
-int WaveSeekBar::cachedRenderWidth() const
-{
-    const int widgetWidth = std::max(1, width());
-    return std::max(widgetWidth * m_supersampleFactor, m_data.sampleCount() * m_sampleWidth);
-}
-
 void WaveSeekBar::ensureWaveformCache()
 {
     const QSize targetSize{cachedRenderWidth(), height()};
+    const qreal dpr = devicePixelRatioF();
     if(targetSize.isEmpty()) {
         m_unplayedWaveformCache    = {};
         m_playedWaveformCache      = {};
@@ -443,14 +462,17 @@ void WaveSeekBar::ensureWaveformCache()
         return;
     }
 
-    if(!m_waveformCacheDirty && m_waveformCacheSize == targetSize) {
+    if(!m_waveformCacheDirty && m_waveformCacheSize == targetSize
+       && qFuzzyCompare(m_unplayedWaveformCache.devicePixelRatio(), dpr)) {
         return;
     }
 
     m_waveformCacheSize        = targetSize;
     m_waveformCacheRenderWidth = targetSize.width();
 
-    m_unplayedWaveformCache = QImage{targetSize, QImage::Format_ARGB32_Premultiplied};
+    const QSize pixelSize{qCeil(targetSize.width() * dpr), qCeil(targetSize.height() * dpr)};
+    m_unplayedWaveformCache = QImage{pixelSize, QImage::Format_ARGB32_Premultiplied};
+    m_unplayedWaveformCache.setDevicePixelRatio(dpr);
     m_unplayedWaveformCache.fill(Qt::transparent);
     {
         QPainter painter{&m_unplayedWaveformCache};
@@ -458,7 +480,8 @@ void WaveSeekBar::ensureWaveformCache()
                       PlaybackColourMode::Unplayed);
     }
 
-    m_playedWaveformCache = QImage{targetSize, QImage::Format_ARGB32_Premultiplied};
+    m_playedWaveformCache = QImage{pixelSize, QImage::Format_ARGB32_Premultiplied};
+    m_playedWaveformCache.setDevicePixelRatio(dpr);
     m_playedWaveformCache.fill(Qt::transparent);
     {
         QPainter painter{&m_playedWaveformCache};
@@ -466,6 +489,12 @@ void WaveSeekBar::ensureWaveformCache()
     }
 
     m_waveformCacheDirty = false;
+}
+
+int WaveSeekBar::cachedRenderWidth() const
+{
+    const int widgetWidth = std::max(1, width());
+    return std::max(widgetWidth * m_supersampleFactor, m_data.sampleCount() * m_sampleWidth);
 }
 
 void WaveSeekBar::drawCachedWaveform(QPainter& painter, const QRect& dirtyRect)

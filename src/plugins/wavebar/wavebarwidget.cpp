@@ -34,6 +34,7 @@
 #include <utils/stringutils.h>
 
 #include <QActionGroup>
+#include <QApplication>
 #include <QContextMenuEvent>
 #include <QDialog>
 #include <QFile>
@@ -398,6 +399,11 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
 {
     if(m_seekbar->isSeeking()) {
         m_seekbar->stopSeeking();
+        return;
+    }
+
+    if(event->reason() == QContextMenuEvent::Mouse && QApplication::mouseButtons().testFlag(Qt::LeftButton)) {
+        event->accept();
         return;
     }
 
