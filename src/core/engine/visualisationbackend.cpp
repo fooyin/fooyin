@@ -19,6 +19,8 @@
 
 #include "visualisationbackend.h"
 
+#include "audioutils.h"
+
 #include <QLoggingCategory>
 
 #include <algorithm>
@@ -345,6 +347,14 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
 
     if(frame.streamId != 0) {
         m_currentStreamId = frame.streamId;
+    }
+
+    if(hasPresentationTime) {
+        const auto lead = std::clamp(
+            frame.presentationTime - std::chrono::steady_clock::now(), std::chrono::steady_clock::duration::zero(),
+            std::chrono::duration_cast<std::chrono::steady_clock::duration>(Audio::MaxPresentationDelay));
+        const auto leadMs    = static_cast<uint64_t>(std::chrono::ceil<std::chrono::milliseconds>(lead).count());
+        m_presentationLeadMs = std::max(m_presentationLeadMs, leadMs);
     }
 
     const size_t requiredFrames = std::max<size_t>(
@@ -808,12 +818,13 @@ int VisualisationBackend::spectrumFramesForDuration(uint64_t durationMs) const
 
 void VisualisationBackend::resetLocked()
 {
-    m_headFrame        = 0;
-    m_frameCount       = 0;
-    m_startStreamFrame = 0;
-    m_nextStreamFrame  = 0;
-    m_currentStreamId  = 0;
-    m_format           = AudioFormat{SampleFormat::F32, 0, 0};
+    m_presentationLeadMs = 0;
+    m_headFrame          = 0;
+    m_frameCount         = 0;
+    m_startStreamFrame   = 0;
+    m_nextStreamFrame    = 0;
+    m_currentStreamId    = 0;
+    m_format             = AudioFormat{SampleFormat::F32, 0, 0};
     m_sourceTimelines.clear();
 }
 
@@ -828,6 +839,8 @@ void VisualisationBackend::ensureCapacity(size_t requiredFrames)
         return;
     }
 
+    // Leave room for latency changes
+    requiredFrames = std::max(requiredFrames, m_capacityFrames + (m_capacityFrames / 2));
     std::vector<float> newSamples(requiredFrames * channelCount, 0.0);
 
     for(size_t frameIndex{0}; frameIndex < m_frameCount; ++frameIndex) {
@@ -855,7 +868,7 @@ size_t VisualisationBackend::requestedBacklogFrames(int sampleRate) const
     }
 
     const AudioFormat format{SampleFormat::F32, sampleRate, std::max(1, m_format.channelCount())};
-    return static_cast<size_t>(format.framesForDuration(requestedBacklogMs + BacklogPaddingMs));
+    return static_cast<size_t>(format.framesForDuration(requestedBacklogMs + BacklogPaddingMs + m_presentationLeadMs));
 }
 
 void VisualisationBackend::appendFrames(std::span<const float> samples, size_t frameCount, int channelCount,

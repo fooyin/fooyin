@@ -89,7 +89,6 @@ constexpr auto RemotePrebufferMinMs         = 500;
 constexpr auto RemotePrebufferMaxMs         = 5000;
 constexpr auto InputRebufferFloorMs         = 100;
 constexpr auto RemoteCrossfadePrefillMaxMs  = 1500;
-constexpr auto MaxPendingLevelFrames        = 64;
 
 bool outputReinitRequired(const Fooyin::AudioFormat& currentOutput, const Fooyin::AudioFormat& desiredOutput)
 {
@@ -3969,33 +3968,30 @@ void AudioEngine::handleOutputStateChange(const AudioOutput::State state)
 
 void AudioEngine::dispatchPendingLevelFrames()
 {
-    auto reader = m_levelFrameMailbox.reader();
+    const auto latestPresentationTime = std::chrono::steady_clock::now() + Audio::MaxPresentationDelay;
+    auto reader                       = m_levelFrameMailbox.reader();
 
     LevelFrame frame;
     while(reader.read(&frame, 1) == 1) {
-        m_pendingLevelFrames.push_back(frame);
-        while(std::cmp_greater(m_pendingLevelFrames.size(), MaxPendingLevelFrames)) {
-            m_pendingLevelFrames.pop_front();
+        if(frame.presentationTime > latestPresentationTime) {
+            continue;
         }
+        m_pendingLevelFrames.push_back(frame);
     }
 
     const auto now = std::chrono::steady_clock::now();
 
     LevelFrame latestDueFrame;
     bool hasDueFrame{false};
-    std::deque<LevelFrame> futureFrames;
-
-    for(const LevelFrame& pendingFrame : m_pendingLevelFrames) {
-        if(pendingFrame.presentationTime <= now) {
-            latestDueFrame = pendingFrame;
-            hasDueFrame    = true;
-            continue;
+    // Retain future frames for their full output latency
+    std::erase_if(m_pendingLevelFrames, [&](const LevelFrame& pendingFrame) {
+        if(pendingFrame.presentationTime > now) {
+            return false;
         }
-
-        futureFrames.push_back(pendingFrame);
-    }
-
-    m_pendingLevelFrames = std::move(futureFrames);
+        latestDueFrame = pendingFrame;
+        hasDueFrame    = true;
+        return true;
+    });
 
     if(hasDueFrame) {
         Q_EMIT levelReady(latestDueFrame);

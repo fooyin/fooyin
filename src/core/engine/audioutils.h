@@ -21,7 +21,11 @@
 
 #include <core/engine/audioformat.h>
 
+#include <chrono>
+
 namespace Fooyin::Audio {
+constexpr auto MaxPresentationDelay = std::chrono::seconds{60};
+
 [[nodiscard]] size_t bufferSamplesFromMs(int ms, int sampleRate, int channels);
 [[nodiscard]] bool inputFormatsMatch(const AudioFormat& lhs, const AudioFormat& rhs);
 [[nodiscard]] bool outputFormatsMatch(const AudioFormat& lhs, const AudioFormat& rhs);

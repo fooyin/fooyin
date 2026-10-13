@@ -1607,8 +1607,15 @@ void AudioPipeline::processAudio()
     const int desiredBufferedFrames = std::max({0, freeFrames, prerollFrames});
     const int processChunkFrames    = processFrameChunkLimit(m_renderer.outputFormat());
     const int initialQueuedFrames   = pendingOutputFrames();
-    const auto initialPlaybackDelay = std::chrono::milliseconds{m_timelineUnit.playbackDelayMs()};
-    const int initialDeficitFrames  = std::max(1, desiredBufferedFrames - initialQueuedFrames);
+    // Analysis runs after the master DSP chain, so use the current output queue rather than the previous
+    // cycle's playback delay, which may include DSP latency
+    const int backendQueuedFrames = backendQueuedFramesForState(stateWithWrites(state, framesWrittenThisCycle));
+    const auto queuedFramesBeforeRender
+        = static_cast<uint64_t>(backendQueuedFrames) + static_cast<uint64_t>(initialQueuedFrames);
+    const auto initialPlaybackDelay = std::chrono::nanoseconds{
+        static_cast<int64_t>((queuedFramesBeforeRender * Time::NsPerSecond)
+                             / static_cast<uint64_t>(m_renderer.outputFormat().sampleRate()))};
+    const int initialDeficitFrames = std::max(1, desiredBufferedFrames - initialQueuedFrames);
     const int topUpPullBudget
         = std::max(1, (initialDeficitFrames + processChunkFrames - 1) / std::max(1, processChunkFrames));
     const int maxTopUpPulls = std::clamp(topUpPullBudget, MasterTopUpMinPulls, MasterTopUpMaxPulls);
