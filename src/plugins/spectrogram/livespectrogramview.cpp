@@ -23,6 +23,7 @@
 
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
+#include <utils/timeconstants.h>
 
 #include <QLoggingCategory>
 #include <QPainter>
@@ -520,7 +521,8 @@ void LiveSpectrogramView::renderFrame()
         m_presentationTimeMs = static_cast<double>(observedAudioTimeMs);
     }
     else {
-        const double elapsedMs = static_cast<double>(m_presentationClock.nsecsElapsed()) / 1'000'000.0;
+        const double elapsedMs
+            = static_cast<double>(m_presentationClock.nsecsElapsed()) / static_cast<double>(Time::NsPerMs);
         m_presentationClock.restart();
         const double predictedTimeMs = m_presentationTimeMs + std::max(0.0, elapsedMs);
         const double clockErrorMs    = static_cast<double>(observedAudioTimeMs) - predictedTimeMs;

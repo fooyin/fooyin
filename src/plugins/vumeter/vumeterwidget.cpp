@@ -27,6 +27,7 @@
 #include <gui/guisettings.h>
 #include <gui/widgets/gradienteditor.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/timeconstants.h>
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
@@ -177,8 +178,8 @@ public:
     int m_barSections{1};
     float m_sectionSpacing{1};
     qint64 m_peakHoldTimeMs{500};
-    float m_falloffPerMs{13.0F / 1000.0F};
-    float m_peakFalloffPerMs{13.0F / 1000.0F};
+    float m_falloffPerMs{13.0F / static_cast<float>(Time::MsPerSecond)};
+    float m_peakFalloffPerMs{13.0F / static_cast<float>(Time::MsPerSecond)};
 
     float m_meterWidth{0};
     float m_meterHeight{0};
@@ -330,7 +331,7 @@ void VuMeterWidgetPrivate::updateSize()
 
 void VuMeterWidgetPrivate::calculatePeak()
 {
-    const double elapsedTime = static_cast<double>(m_elapsedTimer.nsecsElapsed()) / 1'000'000.0;
+    const double elapsedTime = static_cast<double>(m_elapsedTimer.nsecsElapsed()) / static_cast<double>(Time::NsPerMs);
     m_elapsedTimer.restart();
     const auto peakTime    = m_peakHoldTimeMs;
     const auto falloff     = m_falloffPerMs;
@@ -1055,8 +1056,8 @@ VuMeterWidget::ConfigData VuMeterWidget::defaultConfig() const
         config.peakHoldTimeMs = peakHoldTimeMs.toInt();
     }
     else {
-        config.peakHoldTimeMs
-            = static_cast<int>(m_settings->fileValue(settingsKey(PeakHoldTimeKey), 1.5).toDouble() * 1000.0);
+        config.peakHoldTimeMs = static_cast<int>(m_settings->fileValue(settingsKey(PeakHoldTimeKey), 1.5).toDouble()
+                                                 * static_cast<double>(Time::MsPerSecond));
     }
 
     config.falloffTime     = m_settings->fileValue(settingsKey(FalloffTimeKey), config.falloffTime).toInt();
@@ -1179,9 +1180,10 @@ void VuMeterWidget::applyConfig(const ConfigData& config)
 
     m_config = validated;
 
-    p->m_peakHoldTimeMs        = m_config.peakHoldTimeMs;
-    p->m_falloffPerMs          = static_cast<float>(m_config.falloffTime) / DbRange / 1000.0F;
-    p->m_peakFalloffPerMs      = static_cast<float>(m_config.peakFalloffTime) / DbRange / 1000.0F;
+    p->m_peakHoldTimeMs = m_config.peakHoldTimeMs;
+    p->m_falloffPerMs   = static_cast<float>(m_config.falloffTime) / DbRange / static_cast<float>(Time::MsPerSecond);
+    p->m_peakFalloffPerMs
+        = static_cast<float>(m_config.peakFalloffTime) / DbRange / static_cast<float>(Time::MsPerSecond);
     p->m_showPeaks             = m_config.showPeaks;
     p->m_showTopLabels         = m_config.showTopLabels;
     p->m_showBottomLabels      = m_config.showBottomLabels;
@@ -1290,7 +1292,8 @@ VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& lay
         config.peakHoldTimeMs = layout.value("PeakHoldTimeMs"_L1).toInt();
     }
     else if(layout.contains("PeakHoldTime"_L1)) {
-        config.peakHoldTimeMs = static_cast<int>(layout.value("PeakHoldTime"_L1).toDouble() * 1000.0);
+        config.peakHoldTimeMs
+            = static_cast<int>(layout.value("PeakHoldTime"_L1).toDouble() * static_cast<double>(Time::MsPerSecond));
     }
 
     config.falloffTime           = layout.value("FalloffTime"_L1).toInt(config.falloffTime);

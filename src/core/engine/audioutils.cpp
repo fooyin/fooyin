@@ -19,6 +19,8 @@
 
 #include "audioutils.h"
 
+#include <utils/timeconstants.h>
+
 #include <algorithm>
 #include <limits>
 
@@ -41,13 +43,14 @@ size_t bufferSamplesFromMs(int ms, int sampleRate, int channels)
         return a * b;
     };
 
-    const int64_t msRate    = checkedMul(static_cast<int64_t>(ms), sampleRate);
-    const int64_t samples   = checkedMul(msRate, channels);
-    const int64_t numerator = samples >= (std::numeric_limits<int64_t>::max() - 999)
-                                ? std::numeric_limits<int64_t>::max()
-                                : (samples + 999);
+    constexpr auto msPerSecond = static_cast<int64_t>(Time::MsPerSecond);
+    const int64_t msRate       = checkedMul(ms, sampleRate);
+    const int64_t samples      = checkedMul(msRate, channels);
+    const int64_t numerator    = samples >= (std::numeric_limits<int64_t>::max() - (msPerSecond - 1))
+                                   ? std::numeric_limits<int64_t>::max()
+                                   : (samples + (msPerSecond - 1));
 
-    const int64_t roundedSamples = numerator / 1000;
+    const int64_t roundedSamples = numerator / msPerSecond;
     const auto maxSamples        = static_cast<int64_t>(MaxStreamBufferSamples);
 
     return static_cast<size_t>(std::clamp<int64_t>(roundedSamples, 0, maxSamples));

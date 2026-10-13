@@ -19,6 +19,8 @@
 
 #include "playbackprogresstracker.h"
 
+#include <utils/timeconstants.h>
+
 #include <algorithm>
 #include <utility>
 
@@ -180,7 +182,7 @@ PlaybackProgressTracker::PositionUpdate PlaybackProgressTracker::currentPosition
         .reachedPlayedThreshold = reachedPlayedThreshold,
     };
 
-    const uint64_t seconds = m_position / 1000;
+    const uint64_t seconds = m_position / Time::MsPerSecond;
     if(!m_hasLastPositionSecond || m_lastPositionSecond != seconds) {
         m_lastPositionSecond    = seconds;
         m_hasLastPositionSecond = true;

@@ -28,6 +28,7 @@
 #include <gui/configdialog.h>
 #include <gui/framerate.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/timeconstants.h>
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
@@ -456,7 +457,8 @@ void OscilloscopeWidget::tick()
         m_presentationClock.start();
     }
     else {
-        const double elapsedMs = static_cast<double>(m_presentationClock.nsecsElapsed()) / 1'000'000.0;
+        const double elapsedMs
+            = static_cast<double>(m_presentationClock.nsecsElapsed()) / static_cast<double>(Time::NsPerMs);
         m_presentationClock.restart();
 
         const double predictedTimeMs = m_presentationTimeMs + std::max(0.0, elapsedMs);

@@ -20,6 +20,7 @@
 #include "plsparser.h"
 
 #include <core/track.h>
+#include <utils/timeconstants.h>
 
 #include <QBuffer>
 #include <QDir>
@@ -212,7 +213,7 @@ TrackList PlsParser::readPlaylist(QIODevice* device, const QString& filepath, co
                 track.setTitle(entry.title);
             }
             if(track.duration() == 0 && entry.durationSeconds > 0) {
-                track.setDuration(static_cast<uint64_t>(entry.durationSeconds) * 1000);
+                track.setDuration(static_cast<uint64_t>(entry.durationSeconds) * Time::MsPerSecond);
             }
             tracks.emplace_back(track);
         }
@@ -249,7 +250,7 @@ void PlsParser::savePlaylist(QIODevice* device, const QString& /*extension*/, co
                 stream << "Title" << entryIndex << "=" << title << "\n";
             }
             if(track.duration() > 0) {
-                stream << "Length" << entryIndex << "=" << (track.duration() / 1000) << "\n";
+                stream << "Length" << entryIndex << "=" << (track.duration() / Time::MsPerSecond) << "\n";
             }
         }
     }

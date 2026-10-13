@@ -21,6 +21,8 @@
 
 #include "audioutils.h"
 
+#include <utils/timeconstants.h>
+
 #include <QLoggingCategory>
 
 #include <algorithm>
@@ -262,7 +264,7 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
     const uint64_t reportedStartFrame = msToFrames(frame.streamTimeMs, sampleRate);
     const uint64_t reportedNextFrame  = reportedStartFrame + static_cast<uint64_t>(frameCount);
     const bool hasPresentationTime    = frame.presentationTime != std::chrono::steady_clock::time_point{};
-    const auto presentationDuration   = std::chrono::nanoseconds{(static_cast<uint64_t>(frameCount) * 1'000'000'000ULL)
+    const auto presentationDuration   = std::chrono::nanoseconds{(static_cast<uint64_t>(frameCount) * Time::NsPerSecond)
                                                                  / static_cast<uint64_t>(sampleRate)};
     const auto reportedNextPresentationTime = frame.presentationTime + presentationDuration;
 
@@ -337,7 +339,7 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
     }
 
     const uint64_t visualStartFrame = m_nextStreamFrame;
-    const uint64_t visualStartMs    = (visualStartFrame * 1000ULL) / static_cast<uint64_t>(sampleRate);
+    const uint64_t visualStartMs    = (visualStartFrame * Time::MsPerSecond) / static_cast<uint64_t>(sampleRate);
 
     auto& sourceTimeline              = m_sourceTimelines[sourceKey];
     sourceTimeline.nextFrame          = reportedNextFrame;
@@ -363,7 +365,7 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
     appendFrames(std::span{frame.samples.data(), sampleCount}, static_cast<size_t>(frameCount), channelCount,
                  visualStartFrame);
 
-    const uint64_t availableEndMs      = (m_nextStreamFrame * 1000ULL) / static_cast<uint64_t>(sampleRate);
+    const uint64_t availableEndMs      = (m_nextStreamFrame * Time::MsPerSecond) / static_cast<uint64_t>(sampleRate);
     const CurrentTimeSnapshot snapshot = currentTimeSnapshot();
     if(availableEndMs > 0 && (!snapshot.published || snapshot.timeMs == 0)) {
         publishCurrentTime(availableEndMs, 0, true, false);
@@ -611,7 +613,7 @@ uint64_t VisualisationBackend::mapSourceTimeToVisualTime(uint32_t streamId, uint
     }
 
     if(m_format.isValid() && m_format.sampleRate() > 0 && m_nextStreamFrame > m_startStreamFrame) {
-        return (m_nextStreamFrame * 1000ULL) / static_cast<uint64_t>(m_format.sampleRate());
+        return (m_nextStreamFrame * Time::MsPerSecond) / static_cast<uint64_t>(m_format.sampleRate());
     }
 
     return sourceTimeMs;
@@ -631,7 +633,7 @@ bool VisualisationBackend::fillWindow(VisualisationSession::PcmWindow& out, uint
     const int sampleRate = m_format.sampleRate();
 
     out.frameCount  = frameCount;
-    out.startTimeMs = (startFrame * 1000ULL) / static_cast<uint64_t>(sampleRate);
+    out.startTimeMs = (startFrame * Time::MsPerSecond) / static_cast<uint64_t>(sampleRate);
     out.samples.resize(static_cast<size_t>(frameCount) * static_cast<size_t>(out.format.channelCount()));
 
     const int sourceChannels = m_format.channelCount();
@@ -794,7 +796,7 @@ uint64_t VisualisationBackend::msToFrames(uint64_t ms, int sampleRate)
         return 0;
     }
 
-    return (ms * static_cast<uint64_t>(sampleRate)) / 1000ULL;
+    return (ms * static_cast<uint64_t>(sampleRate)) / Time::MsPerSecond;
 }
 
 int VisualisationBackend::spectrumFramesForDuration(uint64_t durationMs) const
@@ -808,7 +810,8 @@ int VisualisationBackend::spectrumFramesForDuration(uint64_t durationMs) const
         return 0;
     }
 
-    const uint64_t requestedFrames = std::max<uint64_t>(MinimumSpectrumFrameCount, (durationMs * sampleRate) / 1000ULL);
+    const uint64_t requestedFrames
+        = std::max<uint64_t>(MinimumSpectrumFrameCount, (durationMs * sampleRate) / Time::MsPerSecond);
     if(requestedFrames > static_cast<uint64_t>(std::numeric_limits<int>::max())) {
         return 0;
     }

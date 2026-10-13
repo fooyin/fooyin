@@ -43,6 +43,7 @@
 #include <core/playlist/playlist.h>
 #include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/timeconstants.h>
 
 #include <QCoreApplication>
 #include <QEvent>
@@ -153,8 +154,9 @@ int startupPrefillFromOutputQueueMs(const Fooyin::AudioPipeline::OutputQueueSnap
             return 0;
         }
 
-        const auto scaledMs = std::llround((static_cast<long double>(safeFrames) * 1000.0L)
-                                           / static_cast<long double>(outputSampleRate));
+        const auto scaledMs
+            = std::llround((static_cast<long double>(safeFrames) * static_cast<long double>(Fooyin::Time::MsPerSecond))
+                           / static_cast<long double>(outputSampleRate));
         return static_cast<int>(std::clamp<long double>(scaledMs, 0.0L, std::numeric_limits<int>::max()));
     };
 
@@ -164,7 +166,8 @@ int startupPrefillFromOutputQueueMs(const Fooyin::AudioPipeline::OutputQueueSnap
     const int bufferFrames    = std::max(0, snapshot.bufferFrames);
 
     const int queueDemandFrames = std::max({freeFrames, bufferFrames, queuedFrames});
-    const int delayDemandMs     = std::max(0, static_cast<int>(std::llround(delaySeconds * 1000.0)));
+    const int delayDemandMs
+        = std::max(0, static_cast<int>(std::llround(delaySeconds * static_cast<double>(Fooyin::Time::MsPerSecond))));
 
     return std::max(framesToMs(queueDemandFrames), delayDemandMs);
 }
@@ -191,8 +194,8 @@ size_t prefillFramesPerChunk(int sampleRate)
         return BasePrefillDecodeFrames;
     }
 
-    const uint64_t desiredFrames
-        = (static_cast<uint64_t>(sampleRate) * static_cast<uint64_t>(PrefillChunkDurationMs)) / 1000ULL;
+    const uint64_t desiredFrames = (static_cast<uint64_t>(sampleRate) * static_cast<uint64_t>(PrefillChunkDurationMs))
+                                 / Fooyin::Time::MsPerSecond;
 
     return std::clamp<uint64_t>(desiredFrames, BasePrefillDecodeFrames, MaxPrefillDecodeFrames);
 }
@@ -222,12 +225,15 @@ bool audiblePauseDrainComplete(const Fooyin::AudioPipeline::OutputQueueSnapshot&
     const int outputRate      = outputFormat.sampleRate();
 
     if(outputRate <= 0) {
-        return queuedFrames == 0 && delaySeconds <= (static_cast<double>(AudiblePauseWatchdogMarginMs) / 1000.0);
+        return queuedFrames == 0
+            && delaySeconds <= (static_cast<double>(AudiblePauseWatchdogMarginMs)
+                                / static_cast<double>(Fooyin::Time::MsPerSecond));
     }
 
     const int delayFrames = std::max(0, static_cast<int>(std::llround(delaySeconds * outputRate)));
     const int thresholdFrames
-        = std::max(1, static_cast<int>((static_cast<int64_t>(outputRate) * AudiblePauseWatchdogMarginMs) / 1000));
+        = std::max(1, static_cast<int>((static_cast<int64_t>(outputRate) * AudiblePauseWatchdogMarginMs)
+                                       / static_cast<int64_t>(Fooyin::Time::MsPerSecond)));
 
     return std::max(queuedFrames, delayFrames) <= thresholdFrames;
 }
@@ -238,7 +244,9 @@ int audiblePauseWatchdogMs(int playbackBufferLengthMs, const Fooyin::AudioPipeli
     int initialDelayMs{0};
     if(snapshot.valid) {
         if(std::isfinite(snapshot.state.delay) && snapshot.state.delay > 0.0) {
-            initialDelayMs = std::max(initialDelayMs, static_cast<int>(std::llround(snapshot.state.delay * 1000.0)));
+            initialDelayMs = std::max(
+                initialDelayMs,
+                static_cast<int>(std::llround(snapshot.state.delay * static_cast<double>(Fooyin::Time::MsPerSecond))));
         }
 
         if(outputFormat.isValid() && outputFormat.sampleRate() > 0) {
@@ -2570,9 +2578,10 @@ void AudioEngine::maybeCompletePendingAudiblePause(const uint64_t serial)
 
     if(!drainComplete && watchdogExpired) {
         const int queuedFrames = outputSnapshot.valid ? std::max(0, outputSnapshot.state.queuedFrames) : -1;
-        const int delayMs      = outputSnapshot.valid && std::isfinite(outputSnapshot.state.delay)
-                                   ? std::max(0, static_cast<int>(std::llround(outputSnapshot.state.delay * 1000.0)))
-                                   : -1;
+        const int delayMs = outputSnapshot.valid && std::isfinite(outputSnapshot.state.delay)
+                              ? std::max(0, static_cast<int>(std::llround(outputSnapshot.state.delay
+                                                                          * static_cast<double>(Time::MsPerSecond))))
+                              : -1;
         qCWarning(ENGINE) << "Audible pause drain watchdog expired:"
                           << "watchdogMs=" << m_pendingAudiblePause.watchdogMs << "elapsedMs=" << elapsedMs
                           << "queuedFrames=" << queuedFrames << "delayMs=" << delayMs;
@@ -3587,9 +3596,10 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
                             << "backendQueuedFrames="
                             << (outputSnapshot.valid ? std::max(0, outputSnapshot.state.queuedFrames) : -1)
                             << "backendDelayMs="
-                            << (outputSnapshot.valid ? static_cast<int64_t>(std::llround(
-                                                           std::max(0.0, outputSnapshot.state.delay) * 1000.0))
-                                                     : int64_t{-1});
+                            << (outputSnapshot.valid
+                                    ? static_cast<int64_t>(std::llround(std::max(0.0, outputSnapshot.state.delay)
+                                                                        * static_cast<double>(Time::MsPerSecond)))
+                                    : int64_t{-1});
         }
 
         boundedSegmentDrainDeadlineReached
@@ -4115,7 +4125,7 @@ int AudioEngine::remotePrebufferTargetMs(const AudioStreamPtr& stream) const
 
     const auto capacityFrames
         = stream->writer().capacity() / static_cast<uint64_t>(std::max(1, stream->channelCount()));
-    const auto capacityMs64 = (capacityFrames * 1000ULL) / static_cast<uint64_t>(stream->sampleRate());
+    const auto capacityMs64 = (capacityFrames * Time::MsPerSecond) / static_cast<uint64_t>(stream->sampleRate());
     const int capacityMs    = static_cast<int>(std::min<uint64_t>(capacityMs64, std::numeric_limits<int>::max()));
     return remotePrebufferTargetMs(capacityMs);
 }
@@ -4133,7 +4143,7 @@ int AudioEngine::inputPrebufferTargetMs(const AudioStreamPtr& stream) const
 
     const auto capacityFrames
         = stream->writer().capacity() / static_cast<uint64_t>(std::max(1, stream->channelCount()));
-    const auto capacityMs64 = (capacityFrames * 1000ULL) / static_cast<uint64_t>(stream->sampleRate());
+    const auto capacityMs64 = (capacityFrames * Time::MsPerSecond) / static_cast<uint64_t>(stream->sampleRate());
     const int capacityMs    = static_cast<int>(std::min<uint64_t>(capacityMs64, std::numeric_limits<int>::max()));
     return std::clamp(preferredMs, 0, std::max(0, capacityMs));
 }

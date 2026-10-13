@@ -22,6 +22,7 @@
 #include "cueparser.h"
 
 #include <core/track.h>
+#include <utils/timeconstants.h>
 
 #include <QBuffer>
 #include <QDir>
@@ -64,7 +65,7 @@ bool processMetadata(const QString& line, Metadata& metadata)
         return false;
     }
 
-    metadata.duration = static_cast<uint64_t>(duration) * 1000;
+    metadata.duration = static_cast<uint64_t>(duration) * Time::MsPerSecond;
 
     const QString trackSection = info.section(u',', 1);
     const QStringList list     = trackSection.split(" - "_L1);
@@ -335,7 +336,8 @@ void M3uParser::savePlaylist(QIODevice* device, const QString& extension, const 
         previousCueExportPath.clear();
 
         if(writeMetdata) {
-            stream << u"#EXTINF:%1,%2 - %3\n"_s.arg(track.duration() / 1000).arg(track.artist(), track.title());
+            stream << u"#EXTINF:%1,%2 - %3\n"_s.arg(track.duration() / Time::MsPerSecond)
+                          .arg(track.artist(), track.title());
         }
 
         QString path = track.filepath();

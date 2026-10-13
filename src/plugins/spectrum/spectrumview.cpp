@@ -22,6 +22,7 @@
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <gui/widgets/gradienteditor.h>
+#include <utils/timeconstants.h>
 
 #include <QContextMenuEvent>
 #include <QFont>
@@ -322,11 +323,13 @@ size_t SpectrumView::effectiveBandCount() const
 
 void SpectrumView::tick()
 {
-    const double elapsedMs = static_cast<double>(m_elapsedTimer.nsecsElapsed()) / 1'000'000.0;
+    const double elapsedMs = static_cast<double>(m_elapsedTimer.nsecsElapsed()) / static_cast<double>(Time::NsPerMs);
     m_elapsedTimer.restart();
-    const float dbRange          = static_cast<float>(std::max(1, m_config.amplitudeMaxDb - m_config.amplitudeMinDb));
-    const float barFalloffPerMs  = static_cast<float>(std::max(0, m_config.amplitudeGravity)) / dbRange / 1000.0F;
-    const float peakFalloffPerMs = static_cast<float>(std::max(0, m_config.peakGravity)) / dbRange / 1000.0F;
+    const float dbRange = static_cast<float>(std::max(1, m_config.amplitudeMaxDb - m_config.amplitudeMinDb));
+    const float barFalloffPerMs
+        = static_cast<float>(std::max(0, m_config.amplitudeGravity)) / dbRange / static_cast<float>(Time::MsPerSecond);
+    const float peakFalloffPerMs
+        = static_cast<float>(std::max(0, m_config.peakGravity)) / dbRange / static_cast<float>(Time::MsPerSecond);
 
     QRegion dirtyRegion;
     bool changed{false};

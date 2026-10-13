@@ -21,6 +21,8 @@
 
 #include "framerate.h"
 
+#include <utils/timeconstants.h>
+
 #include <QBasicTimer>
 #include <QElapsedTimer>
 
@@ -30,7 +32,7 @@ class FrameTimer
 public:
     void start(int fps, QObject* receiver)
     {
-        m_intervalNs = 1'000'000'000 / std::clamp(fps, 1, FrameRate::maxFps());
+        m_intervalNs = static_cast<qint64>(Time::NsPerSecond) / std::clamp(fps, 1, FrameRate::maxFps());
         m_clock.start();
         scheduleNext(receiver);
     }
@@ -59,7 +61,8 @@ public:
 
         const qint64 elapsedNs  = m_clock.nsecsElapsed();
         const qint64 deadlineNs = ((elapsedNs / m_intervalNs) + 1) * m_intervalNs;
-        const int delayMs       = static_cast<int>((deadlineNs - elapsedNs + 999'999) / 1'000'000);
+        constexpr auto nsPerMs  = static_cast<qint64>(Time::NsPerMs);
+        const int delayMs       = static_cast<int>((deadlineNs - elapsedNs + nsPerMs - 1) / nsPerMs);
         m_timer.start(delayMs, Qt::PreciseTimer, receiver);
     }
 
