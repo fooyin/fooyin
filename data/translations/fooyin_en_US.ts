@@ -24694,7 +24694,7 @@ Hold Ctrl to replace a widget.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="626"/>
         <source>Delay before starting inline editing after clicking a selected editable cell</source>
-        <translation type="unfinished"></translation>
+        <translation>Delay before starting inline editing after clicking a selected editable cell</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="635"/>
