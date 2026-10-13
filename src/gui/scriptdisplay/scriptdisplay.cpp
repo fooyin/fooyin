@@ -389,30 +389,15 @@ ScriptDisplay::ConfigData ScriptDisplay::configFromLayout(const QJsonObject& lay
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("Script"_L1)) {
-        config.script = layout.value("Script"_L1).toString();
-    }
-    if(layout.contains("Font"_L1)) {
-        config.font = layout.value("Font"_L1).toString();
-    }
-    if(layout.contains("BackgroundColour"_L1)) {
-        config.bgColour = normaliseColour(layout.value("BackgroundColour"_L1).toString());
-    }
-    if(layout.contains("ForegroundColour"_L1)) {
-        config.fgColour = normaliseColour(layout.value("ForegroundColour"_L1).toString());
-    }
-    if(layout.contains("LinkColour"_L1)) {
-        config.linkColour = normaliseColour(layout.value("LinkColour"_L1).toString());
-    }
-    if(layout.contains("HorizontalAlignment"_L1)) {
-        config.horizontalAlignment = layout.value("HorizontalAlignment"_L1).toInt();
-    }
-    if(layout.contains("VerticalAlignment"_L1)) {
-        config.verticalAlignment = layout.value("VerticalAlignment"_L1).toInt();
-    }
-    if(layout.contains("ShowScrollbar"_L1)) {
-        config.showScrollBar = layout.value("ShowScrollbar"_L1).toBool();
-    }
+    config.script              = layout.value("Script"_L1).toString(config.script);
+    config.font                = layout.value("Font"_L1).toString(config.font);
+    config.bgColour            = normaliseColour(layout.value("BackgroundColour"_L1).toString(config.bgColour));
+    config.fgColour            = normaliseColour(layout.value("ForegroundColour"_L1).toString(config.fgColour));
+    config.linkColour          = normaliseColour(layout.value("LinkColour"_L1).toString(config.linkColour));
+    config.horizontalAlignment = layout.value("HorizontalAlignment"_L1).toInt(config.horizontalAlignment);
+    config.verticalAlignment   = layout.value("VerticalAlignment"_L1).toInt(config.verticalAlignment);
+    config.showScrollBar       = layout.value("ShowScrollbar"_L1).toBool(config.showScrollBar);
+
     if(layout.contains("TrackPreference"_L1)) {
         config.trackPreference = static_cast<TrackDisplayPreference>(layout.value("TrackPreference"_L1).toInt());
     }

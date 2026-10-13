@@ -592,21 +592,12 @@ OscilloscopeWidget::ConfigData OscilloscopeWidget::configFromLayout(const QJsonO
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("CurveDurationMs"_L1)) {
-        config.curveDurationMs = layout.value("CurveDurationMs"_L1).toInt();
-    }
-    if(layout.contains("ZoomPercent"_L1)) {
-        config.zoomPercent = layout.value("ZoomPercent"_L1).toInt();
-    }
-    if(layout.contains("UpdateFps"_L1)) {
-        config.updateFps = layout.value("UpdateFps"_L1).toInt();
-    }
-    if(layout.contains("DownmixMode"_L1)) {
-        config.downmixMode = static_cast<DownmixMode>(layout.value("DownmixMode"_L1).toInt());
-    }
-    if(layout.contains("ShowZeroLine"_L1)) {
-        config.showZeroLine = layout.value("ShowZeroLine"_L1).toBool();
-    }
+    config.curveDurationMs = layout.value("CurveDurationMs"_L1).toInt(config.curveDurationMs);
+    config.zoomPercent     = layout.value("ZoomPercent"_L1).toInt(config.zoomPercent);
+    config.updateFps       = layout.value("UpdateFps"_L1).toInt(config.updateFps);
+    config.downmixMode
+        = static_cast<DownmixMode>(layout.value("DownmixMode"_L1).toInt(static_cast<int>(config.downmixMode)));
+    config.showZeroLine = layout.value("ShowZeroLine"_L1).toBool(config.showZeroLine);
 
     if(layout.contains("UseCustomColours"_L1)) {
         if(layout.value("UseCustomColours"_L1).toBool()) {

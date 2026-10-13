@@ -747,56 +747,24 @@ LyricsWidget::ConfigData LyricsWidget::configFromLayout(const QJsonObject& layou
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("SeekOnClick"_L1)) {
-        config.seekOnClick = layout.value("SeekOnClick"_L1).toBool();
-    }
-    if(layout.contains("NoLyricsScript"_L1)) {
-        config.noLyricsScript = layout.value("NoLyricsScript"_L1).toString();
-    }
-    if(layout.contains("ScrollDuration"_L1)) {
-        config.scrollDuration = layout.value("ScrollDuration"_L1).toInt();
-    }
-    if(layout.contains("ScrollMode"_L1)) {
-        config.scrollMode = layout.value("ScrollMode"_L1).toInt();
-    }
-    if(layout.contains("EdgeFadeMode"_L1)) {
-        config.edgeFadeMode = layout.value("EdgeFadeMode"_L1).toInt();
-    }
-    if(layout.contains("EdgeFadeSize"_L1)) {
-        config.edgeFadeSize = layout.value("EdgeFadeSize"_L1).toInt();
-    }
-    if(layout.contains("ShowScrollbar"_L1)) {
-        config.showScrollbar = layout.value("ShowScrollbar"_L1).toBool();
-    }
-    if(layout.contains("Alignment"_L1)) {
-        config.alignment = layout.value("Alignment"_L1).toInt();
-    }
-    if(layout.contains("LineSpacing"_L1)) {
-        config.lineSpacing = layout.value("LineSpacing"_L1).toInt();
-    }
-    if(layout.contains("CentreFirstSyncedLine"_L1)) {
-        config.centreFirstLine = layout.value("CentreFirstSyncedLine"_L1).toBool();
-    }
-    if(layout.contains("CentreLastSyncedLine"_L1)) {
-        config.centreLastLine = layout.value("CentreLastSyncedLine"_L1).toBool();
-    }
-    if(layout.contains("ProgressFill"_L1)) {
-        config.progressMode = layout.value("ProgressFill"_L1).toInt();
-    }
+    config.seekOnClick     = layout.value("SeekOnClick"_L1).toBool(config.seekOnClick);
+    config.noLyricsScript  = layout.value("NoLyricsScript"_L1).toString(config.noLyricsScript);
+    config.scrollDuration  = layout.value("ScrollDuration"_L1).toInt(config.scrollDuration);
+    config.scrollMode      = layout.value("ScrollMode"_L1).toInt(config.scrollMode);
+    config.edgeFadeMode    = layout.value("EdgeFadeMode"_L1).toInt(config.edgeFadeMode);
+    config.edgeFadeSize    = layout.value("EdgeFadeSize"_L1).toInt(config.edgeFadeSize);
+    config.showScrollbar   = layout.value("ShowScrollbar"_L1).toBool(config.showScrollbar);
+    config.alignment       = layout.value("Alignment"_L1).toInt(config.alignment);
+    config.lineSpacing     = layout.value("LineSpacing"_L1).toInt(config.lineSpacing);
+    config.centreFirstLine = layout.value("CentreFirstSyncedLine"_L1).toBool(config.centreFirstLine);
+    config.centreLastLine  = layout.value("CentreLastSyncedLine"_L1).toBool(config.centreLastLine);
+    config.progressMode    = layout.value("ProgressFill"_L1).toInt(config.progressMode);
 
     QMargins margins{config.margins};
-    if(layout.contains("LeftMargin"_L1)) {
-        margins.setLeft(layout.value("LeftMargin"_L1).toInt());
-    }
-    if(layout.contains("TopMargin"_L1)) {
-        margins.setTop(layout.value("TopMargin"_L1).toInt());
-    }
-    if(layout.contains("RightMargin"_L1)) {
-        margins.setRight(layout.value("RightMargin"_L1).toInt());
-    }
-    if(layout.contains("BottomMargin"_L1)) {
-        margins.setBottom(layout.value("BottomMargin"_L1).toInt());
-    }
+    margins.setLeft(layout.value("LeftMargin"_L1).toInt(margins.left()));
+    margins.setTop(layout.value("TopMargin"_L1).toInt(margins.top()));
+    margins.setRight(layout.value("RightMargin"_L1).toInt(margins.right()));
+    margins.setBottom(layout.value("BottomMargin"_L1).toInt(margins.bottom()));
     config.margins = margins;
 
     if(layout.contains("UseCustomColours"_L1)) {
@@ -828,18 +796,10 @@ LyricsWidget::ConfigData LyricsWidget::configFromLayout(const QJsonObject& layou
         }
     }
 
-    if(layout.contains("LineFont"_L1)) {
-        config.lineFont = layout.value("LineFont"_L1).toString();
-    }
-    if(layout.contains("BaseFont"_L1)) {
-        config.baseFont = layout.value("BaseFont"_L1).toString();
-    }
-    if(layout.contains("WordLineFont"_L1)) {
-        config.wordLineFont = layout.value("WordLineFont"_L1).toString();
-    }
-    if(layout.contains("WordFont"_L1)) {
-        config.wordFont = layout.value("WordFont"_L1).toString();
-    }
+    config.lineFont     = layout.value("LineFont"_L1).toString(config.lineFont);
+    config.baseFont     = layout.value("BaseFont"_L1).toString(config.baseFont);
+    config.wordLineFont = layout.value("WordLineFont"_L1).toString(config.wordLineFont);
+    config.wordFont     = layout.value("WordFont"_L1).toString(config.wordFont);
 
     return config;
 }

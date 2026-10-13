@@ -681,72 +681,39 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObj
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("DoubleClickAction"_L1)) {
-        config.doubleClickAction = layout.value("DoubleClickAction"_L1).toInt();
-    }
-    if(layout.contains("MiddleClickAction"_L1)) {
-        config.middleClickAction = layout.value("MiddleClickAction"_L1).toInt();
-    }
-    if(layout.contains("SendPlayback"_L1)) {
-        config.sendPlayback = layout.value("SendPlayback"_L1).toBool();
-    }
-    if(layout.contains("PlaylistEnabled"_L1)) {
-        config.playlistEnabled = layout.value("PlaylistEnabled"_L1).toBool();
-    }
-    if(layout.contains("AutoSwitch"_L1)) {
-        config.autoSwitch = layout.value("AutoSwitch"_L1).toBool();
-    }
-    if(layout.contains("KeepAlive"_L1)) {
-        config.preservePlaybackPlaylist = layout.value("KeepAlive"_L1).toBool();
-    }
-    if(layout.contains("PlaylistName"_L1)) {
-        config.playlistName = layout.value("PlaylistName"_L1).toString();
-    }
-    if(layout.contains("RestoreState"_L1)) {
-        config.restoreState = layout.value("RestoreState"_L1).toBool();
-    }
-    if(layout.contains("ExpandOnSingleClick"_L1)) {
-        config.expandOnSingleClick = layout.value("ExpandOnSingleClick"_L1).toBool();
-    }
-    if(layout.contains("ShowControls"_L1)) {
-        config.showControls = layout.value("ShowControls"_L1).toBool();
-    }
+    config.doubleClickAction        = layout.value("DoubleClickAction"_L1).toInt(config.doubleClickAction);
+    config.middleClickAction        = layout.value("MiddleClickAction"_L1).toInt(config.middleClickAction);
+    config.sendPlayback             = layout.value("SendPlayback"_L1).toBool(config.sendPlayback);
+    config.playlistEnabled          = layout.value("PlaylistEnabled"_L1).toBool(config.playlistEnabled);
+    config.autoSwitch               = layout.value("AutoSwitch"_L1).toBool(config.autoSwitch);
+    config.preservePlaybackPlaylist = layout.value("KeepAlive"_L1).toBool(config.preservePlaybackPlaylist);
+    config.playlistName             = layout.value("PlaylistName"_L1).toString(config.playlistName);
+    config.restoreState             = layout.value("RestoreState"_L1).toBool(config.restoreState);
+    config.expandOnSingleClick      = layout.value("ExpandOnSingleClick"_L1).toBool(config.expandOnSingleClick);
+    config.showControls             = layout.value("ShowControls"_L1).toBool(config.showControls);
+
     if(layout.contains("ControlsPosition"_L1)) {
         const auto position = static_cast<ControlsPosition>(layout.value("ControlsPosition"_L1).toInt());
         if(position == ControlsPosition::Top || position == ControlsPosition::Bottom) {
             config.controlsPosition = position;
         }
     }
-    if(layout.contains("AutoExpandSearchResultLimit"_L1)) {
-        config.autoExpandSearchResultLimit = layout.value("AutoExpandSearchResultLimit"_L1).toInt();
-    }
-    if(layout.contains("Animated"_L1)) {
-        config.animated = layout.value("Animated"_L1).toBool();
-    }
-    if(layout.contains("ShowHeader"_L1)) {
-        config.showHeader = layout.value("ShowHeader"_L1).toBool();
-    }
-    if(layout.contains("ShowScrollbar"_L1)) {
-        config.showScrollbar = layout.value("ShowScrollbar"_L1).toBool();
-    }
-    if(layout.contains("AlternatingRows"_L1)) {
-        config.alternatingRows = layout.value("AlternatingRows"_L1).toBool();
-    }
-    if(layout.contains("ShowSummaryNode"_L1)) {
-        config.showSummaryNode = layout.value("ShowSummaryNode"_L1).toBool();
-    }
-    if(layout.contains("SummaryNodeTitle"_L1)) {
-        config.summaryNodeTitle = layout.value("SummaryNodeTitle"_L1).toString();
-    }
-    if(layout.contains("RowHeight"_L1)) {
-        config.rowHeight = layout.value("RowHeight"_L1).toInt();
-    }
+
+    config.autoExpandSearchResultLimit
+        = layout.value("AutoExpandSearchResultLimit"_L1).toInt(config.autoExpandSearchResultLimit);
+    config.animated         = layout.value("Animated"_L1).toBool(config.animated);
+    config.showHeader       = layout.value("ShowHeader"_L1).toBool(config.showHeader);
+    config.showScrollbar    = layout.value("ShowScrollbar"_L1).toBool(config.showScrollbar);
+    config.alternatingRows  = layout.value("AlternatingRows"_L1).toBool(config.alternatingRows);
+    config.showSummaryNode  = layout.value("ShowSummaryNode"_L1).toBool(config.showSummaryNode);
+    config.summaryNodeTitle = layout.value("SummaryNodeTitle"_L1).toString(config.summaryNodeTitle);
+    config.rowHeight        = layout.value("RowHeight"_L1).toInt(config.rowHeight);
+
     if(layout.contains("IconWidth"_L1) && layout.contains("IconHeight"_L1)) {
         config.iconSize = {layout.value("IconWidth"_L1).toInt(), layout.value("IconHeight"_L1).toInt()};
     }
-    if(layout.contains("ArtworkCornerRadius"_L1)) {
-        config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt();
-    }
+
+    config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt(config.artworkCornerRadius);
 
     if(!config.iconSize.isValid()) {
         config.iconSize = factoryConfig().iconSize;

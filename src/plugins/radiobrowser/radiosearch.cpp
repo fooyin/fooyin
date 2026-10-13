@@ -291,9 +291,7 @@ void RadioSearch::saveLayoutData(QJsonObject& layout)
 
 void RadioSearch::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(ShowFilterTextKey)) {
-        m_showFilterButtonText = layout.value(ShowFilterTextKey).toBool(true);
-    }
+    m_showFilterButtonText = layout.value(ShowFilterTextKey).toBool(m_showFilterButtonText);
 
     for(size_t i{0}; i < filterIndex(FilterControl::Count); ++i) {
         const auto control          = static_cast<FilterControl>(i);

@@ -606,123 +606,53 @@ SpectrumWidget::ConfigData SpectrumWidget::configFromLayout(const QJsonObject& l
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("BandCount"_L1)) {
-        config.bandCount = layout.value("BandCount"_L1).toInt();
-    }
-    if(layout.contains("BarSpacing"_L1)) {
-        config.barSpacing = layout.value("BarSpacing"_L1).toInt();
-    }
-    if(layout.contains("BarSections"_L1)) {
-        config.barSections = layout.value("BarSections"_L1).toInt();
-    }
-    if(layout.contains("SectionSpacing"_L1)) {
-        config.sectionSpacing = layout.value("SectionSpacing"_L1).toInt();
-    }
-    if(layout.contains("MinFrequencyHz"_L1)) {
-        config.minFrequencyHz = layout.value("MinFrequencyHz"_L1).toInt();
-    }
-    if(layout.contains("MaxFrequencyHz"_L1)) {
-        config.maxFrequencyHz = layout.value("MaxFrequencyHz"_L1).toInt();
-    }
-    if(layout.contains("MinNote"_L1)) {
-        config.minNote = layout.value("MinNote"_L1).toInt();
-    }
-    if(layout.contains("MaxNote"_L1)) {
-        config.maxNote = layout.value("MaxNote"_L1).toInt();
-    }
-    if(layout.contains("PitchHz"_L1)) {
-        config.pitchHz = layout.value("PitchHz"_L1).toInt();
-    }
-    if(layout.contains("Transpose"_L1)) {
-        config.transpose = layout.value("Transpose"_L1).toInt();
-    }
-    if(layout.contains("AmplitudeMinDb"_L1)) {
-        config.amplitudeMinDb = layout.value("AmplitudeMinDb"_L1).toInt();
-    }
-    if(layout.contains("AmplitudeMaxDb"_L1)) {
-        config.amplitudeMaxDb = layout.value("AmplitudeMaxDb"_L1).toInt();
-    }
-    if(layout.contains("AmplitudesEnabled"_L1)) {
-        config.amplitudesEnabled = layout.value("AmplitudesEnabled"_L1).toBool();
-    }
-    if(layout.contains("AmplitudeHoldTimeMs"_L1)) {
-        config.amplitudeHoldTimeMs = layout.value("AmplitudeHoldTimeMs"_L1).toInt();
-    }
-    if(layout.contains("AmplitudeGravity"_L1)) {
-        config.amplitudeGravity = layout.value("AmplitudeGravity"_L1).toInt();
-    }
-    if(layout.contains("PeaksEnabled"_L1)) {
-        config.peaksEnabled = layout.value("PeaksEnabled"_L1).toBool();
-    }
-    if(layout.contains("PeakHoldTimeMs"_L1)) {
-        config.peakHoldTimeMs = layout.value("PeakHoldTimeMs"_L1).toInt();
-    }
-    if(layout.contains("PeakGravity"_L1)) {
-        config.peakGravity = layout.value("PeakGravity"_L1).toInt();
-    }
-    if(layout.contains("UpdateFps"_L1)) {
-        config.updateFps = layout.value("UpdateFps"_L1).toInt();
-    }
-    if(layout.contains("FftSize"_L1)) {
-        config.fftSize = layout.value("FftSize"_L1).toInt();
-    }
-    if(layout.contains("FftDurationMs"_L1)) {
-        config.fftDurationMs = layout.value("FftDurationMs"_L1).toInt();
-    }
+    config.bandCount           = layout.value("BandCount"_L1).toInt(config.bandCount);
+    config.barSpacing          = layout.value("BarSpacing"_L1).toInt(config.barSpacing);
+    config.barSections         = layout.value("BarSections"_L1).toInt(config.barSections);
+    config.sectionSpacing      = layout.value("SectionSpacing"_L1).toInt(config.sectionSpacing);
+    config.minFrequencyHz      = layout.value("MinFrequencyHz"_L1).toInt(config.minFrequencyHz);
+    config.maxFrequencyHz      = layout.value("MaxFrequencyHz"_L1).toInt(config.maxFrequencyHz);
+    config.minNote             = layout.value("MinNote"_L1).toInt(config.minNote);
+    config.maxNote             = layout.value("MaxNote"_L1).toInt(config.maxNote);
+    config.pitchHz             = layout.value("PitchHz"_L1).toInt(config.pitchHz);
+    config.transpose           = layout.value("Transpose"_L1).toInt(config.transpose);
+    config.amplitudeMinDb      = layout.value("AmplitudeMinDb"_L1).toInt(config.amplitudeMinDb);
+    config.amplitudeMaxDb      = layout.value("AmplitudeMaxDb"_L1).toInt(config.amplitudeMaxDb);
+    config.amplitudesEnabled   = layout.value("AmplitudesEnabled"_L1).toBool(config.amplitudesEnabled);
+    config.amplitudeHoldTimeMs = layout.value("AmplitudeHoldTimeMs"_L1).toInt(config.amplitudeHoldTimeMs);
+    config.amplitudeGravity    = layout.value("AmplitudeGravity"_L1).toInt(config.amplitudeGravity);
+    config.peaksEnabled        = layout.value("PeaksEnabled"_L1).toBool(config.peaksEnabled);
+    config.peakHoldTimeMs      = layout.value("PeakHoldTimeMs"_L1).toInt(config.peakHoldTimeMs);
+    config.peakGravity         = layout.value("PeakGravity"_L1).toInt(config.peakGravity);
+    config.updateFps           = layout.value("UpdateFps"_L1).toInt(config.updateFps);
+    config.fftSize             = layout.value("FftSize"_L1).toInt(config.fftSize);
+    config.fftDurationMs       = layout.value("FftDurationMs"_L1).toInt(config.fftDurationMs);
+
     if(layout.contains("FftSizingMode"_L1)) {
         config.fftSizingMode = static_cast<FftSizingMode>(layout.value("FftSizingMode"_L1).toInt());
     }
     else if(layout.contains("FftSize"_L1)) {
         config.fftSizingMode = FftSizingMode::Samples;
     }
-    if(layout.contains("WindowFunction"_L1)) {
-        config.windowFunction = static_cast<WindowFunction>(layout.value("WindowFunction"_L1).toInt());
-    }
-    if(layout.contains("GradientOrientation"_L1)) {
-        config.gradientOrientation = static_cast<GradientOrientation>(layout.value("GradientOrientation"_L1).toInt());
-    }
-    if(layout.contains("LabelMode"_L1)) {
-        config.labelMode = static_cast<LabelMode>(layout.value("LabelMode"_L1).toInt());
-    }
-    if(layout.contains("DrawStyle"_L1)) {
-        config.drawStyle = static_cast<DrawStyle>(layout.value("DrawStyle"_L1).toInt());
-    }
-    if(layout.contains("ShowTopLabels"_L1)) {
-        config.showTopLabels = layout.value("ShowTopLabels"_L1).toBool();
-    }
-    if(layout.contains("ShowBottomLabels"_L1)) {
-        config.showBottomLabels = layout.value("ShowBottomLabels"_L1).toBool();
-    }
-    if(layout.contains("ShowLeftLabels"_L1)) {
-        config.showLeftLabels = layout.value("ShowLeftLabels"_L1).toBool();
-    }
-    if(layout.contains("ShowRightLabels"_L1)) {
-        config.showRightLabels = layout.value("ShowRightLabels"_L1).toBool();
-    }
-    if(layout.contains("ShowHorizontalGrid"_L1)) {
-        config.showHorizontalGrid = layout.value("ShowHorizontalGrid"_L1).toBool();
-    }
-    if(layout.contains("ShowVerticalGrid"_L1)) {
-        config.showVerticalGrid = layout.value("ShowVerticalGrid"_L1).toBool();
-    }
-    if(layout.contains("ShowWhiteKeys"_L1)) {
-        config.showWhiteKeys = layout.value("ShowWhiteKeys"_L1).toBool();
-    }
-    if(layout.contains("ShowBlackKeys"_L1)) {
-        config.showBlackKeys = layout.value("ShowBlackKeys"_L1).toBool();
-    }
-    if(layout.contains("ShowTooltip"_L1)) {
-        config.showTooltip = layout.value("ShowTooltip"_L1).toBool();
-    }
-    if(layout.contains("FillSpectrum"_L1)) {
-        config.fillSpectrum = layout.value("FillSpectrum"_L1).toBool();
-    }
-    if(layout.contains("Interpolate"_L1)) {
-        config.interpolate = layout.value("Interpolate"_L1).toBool();
-    }
-    if(layout.contains("AxisFont"_L1)) {
-        config.axisFont = layout.value("AxisFont"_L1).toString();
-    }
+
+    config.windowFunction
+        = static_cast<WindowFunction>(layout.value("WindowFunction"_L1).toInt(static_cast<int>(config.windowFunction)));
+    config.gradientOrientation = static_cast<GradientOrientation>(
+        layout.value("GradientOrientation"_L1).toInt(static_cast<int>(config.gradientOrientation)));
+    config.labelMode = static_cast<LabelMode>(layout.value("LabelMode"_L1).toInt(static_cast<int>(config.labelMode)));
+    config.drawStyle = static_cast<DrawStyle>(layout.value("DrawStyle"_L1).toInt(static_cast<int>(config.drawStyle)));
+    config.showTopLabels      = layout.value("ShowTopLabels"_L1).toBool(config.showTopLabels);
+    config.showBottomLabels   = layout.value("ShowBottomLabels"_L1).toBool(config.showBottomLabels);
+    config.showLeftLabels     = layout.value("ShowLeftLabels"_L1).toBool(config.showLeftLabels);
+    config.showRightLabels    = layout.value("ShowRightLabels"_L1).toBool(config.showRightLabels);
+    config.showHorizontalGrid = layout.value("ShowHorizontalGrid"_L1).toBool(config.showHorizontalGrid);
+    config.showVerticalGrid   = layout.value("ShowVerticalGrid"_L1).toBool(config.showVerticalGrid);
+    config.showWhiteKeys      = layout.value("ShowWhiteKeys"_L1).toBool(config.showWhiteKeys);
+    config.showBlackKeys      = layout.value("ShowBlackKeys"_L1).toBool(config.showBlackKeys);
+    config.showTooltip        = layout.value("ShowTooltip"_L1).toBool(config.showTooltip);
+    config.fillSpectrum       = layout.value("FillSpectrum"_L1).toBool(config.fillSpectrum);
+    config.interpolate        = layout.value("Interpolate"_L1).toBool(config.interpolate);
+    config.axisFont           = layout.value("AxisFont"_L1).toString(config.axisFont);
 
     if(layout.contains("UseCustomColours"_L1)) {
         if(layout.value("UseCustomColours"_L1).toBool()) {

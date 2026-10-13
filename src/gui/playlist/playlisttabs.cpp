@@ -829,27 +829,14 @@ PlaylistTabs::ConfigData PlaylistTabs::configFromLayout(const QJsonObject& layou
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("TitleScript"_L1)) {
-        config.titleScript = layout.value("TitleScript"_L1).toString();
-    }
-    if(layout.contains("TabPosition"_L1)) {
-        config.position = static_cast<PlaylistTabPosition>(layout.value("TabPosition"_L1).toInt());
-    }
-    if(layout.contains("ExpandTabs"_L1)) {
-        config.expand = layout.value("ExpandTabs"_L1).toBool();
-    }
-    if(layout.contains("ShowAddButton"_L1)) {
-        config.showAddButton = layout.value("ShowAddButton"_L1).toBool();
-    }
-    if(layout.contains("ShowClearButton"_L1)) {
-        config.showClearButton = layout.value("ShowClearButton"_L1).toBool();
-    }
-    if(layout.contains("ShowCloseButton"_L1)) {
-        config.showCloseButton = layout.value("ShowCloseButton"_L1).toBool();
-    }
-    if(layout.contains("CloseOnMiddleClick"_L1)) {
-        config.closeOnMiddleClick = layout.value("CloseOnMiddleClick"_L1).toBool();
-    }
+    config.titleScript = layout.value("TitleScript"_L1).toString(config.titleScript);
+    config.position
+        = static_cast<PlaylistTabPosition>(layout.value("TabPosition"_L1).toInt(static_cast<int>(config.position)));
+    config.expand             = layout.value("ExpandTabs"_L1).toBool(config.expand);
+    config.showAddButton      = layout.value("ShowAddButton"_L1).toBool(config.showAddButton);
+    config.showClearButton    = layout.value("ShowClearButton"_L1).toBool(config.showClearButton);
+    config.showCloseButton    = layout.value("ShowCloseButton"_L1).toBool(config.showCloseButton);
+    config.closeOnMiddleClick = layout.value("CloseOnMiddleClick"_L1).toBool(config.closeOnMiddleClick);
 
     if(config.position != PlaylistTabPosition::Bottom) {
         config.position = PlaylistTabPosition::Top;

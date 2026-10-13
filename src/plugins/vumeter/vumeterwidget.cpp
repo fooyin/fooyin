@@ -1292,18 +1292,12 @@ VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& lay
     else if(layout.contains("PeakHoldTime"_L1)) {
         config.peakHoldTimeMs = static_cast<int>(layout.value("PeakHoldTime"_L1).toDouble() * 1000.0);
     }
-    if(layout.contains("FalloffTime"_L1)) {
-        config.falloffTime = layout.value("FalloffTime"_L1).toInt();
-    }
-    if(layout.contains("PeakFalloffTime"_L1)) {
-        config.peakFalloffTime = layout.value("PeakFalloffTime"_L1).toInt();
-    }
-    if(layout.contains("ShowPeaks"_L1)) {
-        config.showPeaks = layout.value("ShowPeaks"_L1).toBool();
-    }
-    if(layout.contains("RightAlignScaleLabels"_L1)) {
-        config.rightAlignScaleLabels = layout.value("RightAlignScaleLabels"_L1).toBool();
-    }
+
+    config.falloffTime           = layout.value("FalloffTime"_L1).toInt(config.falloffTime);
+    config.peakFalloffTime       = layout.value("PeakFalloffTime"_L1).toInt(config.peakFalloffTime);
+    config.showPeaks             = layout.value("ShowPeaks"_L1).toBool(config.showPeaks);
+    config.rightAlignScaleLabels = layout.value("RightAlignScaleLabels"_L1).toBool(config.rightAlignScaleLabels);
+
     const bool hasLabelSettings = layout.contains("ShowTopLabels"_L1) || layout.contains("ShowBottomLabels"_L1)
                                || layout.contains("ShowLeftLabels"_L1) || layout.contains("ShowRightLabels"_L1);
     if(hasLabelSettings) {
@@ -1318,24 +1312,13 @@ VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& lay
         config.showLeftLabels   = config.showBottomLabels;
         config.showRightLabels  = false;
     }
-    if(layout.contains("UpdateFps"_L1)) {
-        config.updateFps = layout.value("UpdateFps"_L1).toInt();
-    }
-    if(layout.contains("ChannelSpacing"_L1)) {
-        config.channelSpacing = layout.value("ChannelSpacing"_L1).toInt();
-    }
-    if(layout.contains("BarSize"_L1)) {
-        config.barSize = layout.value("BarSize"_L1).toInt();
-    }
-    if(layout.contains("BarSpacing"_L1)) {
-        config.barSpacing = layout.value("BarSpacing"_L1).toInt();
-    }
-    if(layout.contains("BarSections"_L1)) {
-        config.barSections = layout.value("BarSections"_L1).toInt();
-    }
-    if(layout.contains("SectionSpacing"_L1)) {
-        config.sectionSpacing = layout.value("SectionSpacing"_L1).toInt();
-    }
+
+    config.updateFps      = layout.value("UpdateFps"_L1).toInt(config.updateFps);
+    config.channelSpacing = layout.value("ChannelSpacing"_L1).toInt(config.channelSpacing);
+    config.barSize        = layout.value("BarSize"_L1).toInt(config.barSize);
+    config.barSpacing     = layout.value("BarSpacing"_L1).toInt(config.barSpacing);
+    config.barSections    = layout.value("BarSections"_L1).toInt(config.barSections);
+    config.sectionSpacing = layout.value("SectionSpacing"_L1).toInt(config.sectionSpacing);
 
     if(layout.contains("UseCustomColours"_L1)) {
         if(layout.value("UseCustomColours"_L1).toBool()) {

@@ -403,55 +403,31 @@ void RadioBrowserWidget::loadLayoutData(const QJsonObject& layout)
 {
     const QScopedValueRollback loadingLayout{m_loadingLayout, true};
 
-    if(layout.contains("Display"_L1)) {
-        m_viewConfig.viewMode = static_cast<ExpandedTreeView::ViewMode>(layout.value("Display"_L1).toInt());
-    }
-    if(layout.contains("Captions"_L1)) {
-        m_viewConfig.captions = static_cast<ExpandedTreeView::CaptionDisplay>(layout.value("Captions"_L1).toInt());
-    }
-    if(layout.contains("SeparateSavedView"_L1)) {
-        m_viewConfig.separateSavedStationsViewState = layout.value("SeparateSavedView"_L1).toBool();
-    }
-    if(layout.contains("ShowHeader"_L1)) {
-        m_viewConfig.showHeader = layout.value("ShowHeader"_L1).toBool();
-    }
-    if(layout.contains("ShowScrollbar"_L1)) {
-        m_viewConfig.showScrollbar = layout.value("ShowScrollbar"_L1).toBool();
-    }
-    if(layout.contains("AlternatingRows"_L1)) {
-        m_viewConfig.alternatingRows = layout.value("AlternatingRows"_L1).toBool();
-    }
-    if(layout.contains("ShowIcons"_L1)) {
-        m_viewConfig.showIcons = layout.value("ShowIcons"_L1).toBool();
-    }
-    if(layout.contains("ShowSavedIcons"_L1)) {
-        m_viewConfig.showSavedStationIcons = layout.value("ShowSavedIcons"_L1).toBool();
-    }
-    if(layout.contains("ShowToolTips"_L1)) {
-        m_viewConfig.showToolTips = layout.value("ShowToolTips"_L1).toBool();
-    }
-    if(layout.contains("RowHeight"_L1)) {
-        m_viewConfig.rowHeight = layout.value("RowHeight"_L1).toInt();
-    }
+    m_viewConfig.viewMode = static_cast<ExpandedTreeView::ViewMode>(
+        layout.value("Display"_L1).toInt(static_cast<int>(m_viewConfig.viewMode)));
+    m_viewConfig.captions = static_cast<ExpandedTreeView::CaptionDisplay>(
+        layout.value("Captions"_L1).toInt(static_cast<int>(m_viewConfig.captions)));
+    m_viewConfig.separateSavedStationsViewState
+        = layout.value("SeparateSavedView"_L1).toBool(m_viewConfig.separateSavedStationsViewState);
+    m_viewConfig.showHeader            = layout.value("ShowHeader"_L1).toBool(m_viewConfig.showHeader);
+    m_viewConfig.showScrollbar         = layout.value("ShowScrollbar"_L1).toBool(m_viewConfig.showScrollbar);
+    m_viewConfig.alternatingRows       = layout.value("AlternatingRows"_L1).toBool(m_viewConfig.alternatingRows);
+    m_viewConfig.showIcons             = layout.value("ShowIcons"_L1).toBool(m_viewConfig.showIcons);
+    m_viewConfig.showSavedStationIcons = layout.value("ShowSavedIcons"_L1).toBool(m_viewConfig.showSavedStationIcons);
+    m_viewConfig.showToolTips          = layout.value("ShowToolTips"_L1).toBool(m_viewConfig.showToolTips);
+    m_viewConfig.rowHeight             = layout.value("RowHeight"_L1).toInt(m_viewConfig.rowHeight);
+
     if(layout.contains("IconSize"_L1)) {
         const int iconSize    = layout.value("IconSize"_L1).toInt();
         m_viewConfig.iconSize = {iconSize, iconSize};
     }
-    if(layout.contains("IconHorizontalGap"_L1)) {
-        m_viewConfig.iconHorizontalGap = layout.value("IconHorizontalGap"_L1).toInt();
-    }
-    if(layout.contains("IconVerticalGap"_L1)) {
-        m_viewConfig.iconVerticalGap = layout.value("IconVerticalGap"_L1).toInt();
-    }
-    if(layout.contains("UseIconGapsForSideCaptions"_L1)) {
-        m_viewConfig.useIconGapsForSideCaptions = layout.value("UseIconGapsForSideCaptions"_L1).toBool();
-    }
-    if(layout.contains("IconItemBorder"_L1)) {
-        m_viewConfig.iconItemBorderWidth = layout.value("IconItemBorder"_L1).toInt();
-    }
-    if(layout.contains("UniformIcons"_L1)) {
-        m_viewConfig.uniformStationIcons = layout.value("UniformIcons"_L1).toBool();
-    }
+
+    m_viewConfig.iconHorizontalGap = layout.value("IconHorizontalGap"_L1).toInt(m_viewConfig.iconHorizontalGap);
+    m_viewConfig.iconVerticalGap   = layout.value("IconVerticalGap"_L1).toInt(m_viewConfig.iconVerticalGap);
+    m_viewConfig.useIconGapsForSideCaptions
+        = layout.value("UseIconGapsForSideCaptions"_L1).toBool(m_viewConfig.useIconGapsForSideCaptions);
+    m_viewConfig.iconItemBorderWidth = layout.value("IconItemBorder"_L1).toInt(m_viewConfig.iconItemBorderWidth);
+    m_viewConfig.uniformStationIcons = layout.value("UniformIcons"_L1).toBool(m_viewConfig.uniformStationIcons);
 
     m_browseViewState.viewMode = m_viewConfig.viewMode;
     m_browseViewState.captions = m_viewConfig.captions;
@@ -460,15 +436,12 @@ void RadioBrowserWidget::loadLayoutData(const QJsonObject& layout)
         m_browseViewState.headerState = decodeHeaderState(layout.value("State"_L1));
     }
 
-    m_savedStationsViewState = m_browseViewState;
-    if(layout.contains("SavedDisplay"_L1)) {
-        m_savedStationsViewState.viewMode
-            = static_cast<ExpandedTreeView::ViewMode>(layout.value("SavedDisplay"_L1).toInt());
-    }
-    if(layout.contains("SavedCaptions"_L1)) {
-        m_savedStationsViewState.captions
-            = static_cast<ExpandedTreeView::CaptionDisplay>(layout.value("SavedCaptions"_L1).toInt());
-    }
+    m_savedStationsViewState          = m_browseViewState;
+    m_savedStationsViewState.viewMode = static_cast<ExpandedTreeView::ViewMode>(
+        layout.value("SavedDisplay"_L1).toInt(static_cast<int>(m_savedStationsViewState.viewMode)));
+    m_savedStationsViewState.captions = static_cast<ExpandedTreeView::CaptionDisplay>(
+        layout.value("SavedCaptions"_L1).toInt(static_cast<int>(m_savedStationsViewState.captions)));
+
     if(layout.contains("SavedState"_L1)) {
         m_savedStationsViewState.headerState = decodeHeaderState(layout.value("SavedState"_L1));
     }

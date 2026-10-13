@@ -112,12 +112,9 @@ void LibraryFilterSwitcher::loadLayoutData(const QJsonObject& layout)
     if(const QString name = layout.value("AllLibraryName"_L1).toString().trimmed(); !name.isEmpty()) {
         m_allLibraryName = name;
     }
-    if(layout.contains("RememberLastFilter"_L1)) {
-        m_rememberLastFilter = layout.value("RememberLastFilter"_L1).toBool();
-    }
-    if(layout.contains("LastFilter"_L1)) {
-        m_lastFilterId = layout.value("LastFilter"_L1).toInt(-1);
-    }
+
+    m_rememberLastFilter = layout.value("RememberLastFilter"_L1).toBool(m_rememberLastFilter);
+    m_lastFilterId       = layout.value("LastFilter"_L1).toInt(m_lastFilterId);
 }
 
 void LibraryFilterSwitcher::populateContextMenu(QMenu* menu)

@@ -603,58 +603,28 @@ WaveBarWidget::ConfigData WaveBarWidget::configFromLayout(const QJsonObject& lay
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("ShowLabels"_L1)) {
-        config.showLabels = layout.value("ShowLabels"_L1).toBool();
-    }
+    config.showLabels = layout.value("ShowLabels"_L1).toBool(config.showLabels);
+
     if(layout.contains("ShowRemainingTime"_L1) || layout.contains("ElapsedTotal"_L1)) {
         const auto key           = layout.contains("ShowRemainingTime"_L1) ? "ShowRemainingTime"_L1 : "ElapsedTotal"_L1;
         config.showRemainingTime = layout.value(key).toBool();
     }
-    if(layout.contains("ShowPlayedThreshold"_L1)) {
-        config.showPlayedThreshold = layout.value("ShowPlayedThreshold"_L1).toBool();
-    }
-    if(layout.contains("TrackPreference"_L1)) {
-        config.trackPreference = layout.value("TrackPreference"_L1).toInt();
-    }
-    if(layout.contains("ShowCursor"_L1)) {
-        config.showCursor = layout.value("ShowCursor"_L1).toBool();
-    }
-    if(layout.contains("CursorWidth"_L1)) {
-        config.cursorWidth = layout.value("CursorWidth"_L1).toInt();
-    }
-    if(layout.contains("Mode"_L1)) {
-        config.mode = layout.value("Mode"_L1).toInt();
-    }
-    if(layout.contains("Downmix"_L1)) {
-        config.downmix = layout.value("Downmix"_L1).toInt();
-    }
-    if(layout.contains("BarWidth"_L1)) {
-        config.barWidth = layout.value("BarWidth"_L1).toInt();
-    }
-    if(layout.contains("BarGap"_L1)) {
-        config.barGap = layout.value("BarGap"_L1).toInt();
-    }
-    if(layout.contains("SupersampleFactor"_L1)) {
-        config.supersampleFactor = layout.value("SupersampleFactor"_L1).toInt();
-    }
-    if(layout.contains("PeakDisplayMode"_L1)) {
-        config.peakDisplayMode = layout.value("PeakDisplayMode"_L1).toInt();
-    }
-    if(layout.contains("NormaliseToPeak"_L1)) {
-        config.normaliseToPeak = layout.value("NormaliseToPeak"_L1).toBool();
-    }
-    if(layout.contains("DecibelScale"_L1)) {
-        config.decibelScale = layout.value("DecibelScale"_L1).toBool();
-    }
-    if(layout.contains("MaxScale"_L1)) {
-        config.maxScale = layout.value("MaxScale"_L1).toDouble();
-    }
-    if(layout.contains("CentreGap"_L1)) {
-        config.centreGap = layout.value("CentreGap"_L1).toInt();
-    }
-    if(layout.contains("ChannelScale"_L1)) {
-        config.channelScale = layout.value("ChannelScale"_L1).toDouble();
-    }
+
+    config.showPlayedThreshold = layout.value("ShowPlayedThreshold"_L1).toBool(config.showPlayedThreshold);
+    config.trackPreference     = layout.value("TrackPreference"_L1).toInt(config.trackPreference);
+    config.showCursor          = layout.value("ShowCursor"_L1).toBool(config.showCursor);
+    config.cursorWidth         = layout.value("CursorWidth"_L1).toInt(config.cursorWidth);
+    config.mode                = layout.value("Mode"_L1).toInt(config.mode);
+    config.downmix             = layout.value("Downmix"_L1).toInt(config.downmix);
+    config.barWidth            = layout.value("BarWidth"_L1).toInt(config.barWidth);
+    config.barGap              = layout.value("BarGap"_L1).toInt(config.barGap);
+    config.supersampleFactor   = layout.value("SupersampleFactor"_L1).toInt(config.supersampleFactor);
+    config.peakDisplayMode     = layout.value("PeakDisplayMode"_L1).toInt(config.peakDisplayMode);
+    config.normaliseToPeak     = layout.value("NormaliseToPeak"_L1).toBool(config.normaliseToPeak);
+    config.decibelScale        = layout.value("DecibelScale"_L1).toBool(config.decibelScale);
+    config.maxScale            = layout.value("MaxScale"_L1).toDouble(config.maxScale);
+    config.centreGap           = layout.value("CentreGap"_L1).toInt(config.centreGap);
+    config.channelScale        = layout.value("ChannelScale"_L1).toDouble(config.channelScale);
 
     if(layout.contains("UseCustomColours"_L1)) {
         if(layout.value("UseCustomColours"_L1).toBool()) {

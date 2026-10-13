@@ -471,12 +471,10 @@ SpectrogramConfig SpectrogramWidget::configFromLayout(const QJsonObject& layout)
 
     config.trackPreference = layout.value("TrackPreference"_L1).toInt(config.trackPreference);
 
-    if(layout.contains("ChannelMode"_L1)) {
-        config.channelMode = static_cast<ChannelMode>(layout.value("ChannelMode"_L1).toInt());
-    }
-    if(layout.contains("PresentationMode"_L1)) {
-        config.presentationMode = static_cast<PresentationMode>(layout.value("PresentationMode"_L1).toInt());
-    }
+    config.channelMode
+        = static_cast<ChannelMode>(layout.value("ChannelMode"_L1).toInt(static_cast<int>(config.channelMode)));
+    config.presentationMode = static_cast<PresentationMode>(
+        layout.value("PresentationMode"_L1).toInt(static_cast<int>(config.presentationMode)));
 
     config.logFrequency       = layout.value("LogFrequency"_L1).toBool(config.logFrequency);
     config.clearOnTrackChange = layout.value("ClearOnTrackChange"_L1).toBool(config.clearOnTrackChange);

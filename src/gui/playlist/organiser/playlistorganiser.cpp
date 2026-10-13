@@ -812,12 +812,10 @@ PlaylistOrganiser::ConfigData PlaylistOrganiser::configFromLayout(const QJsonObj
                                  : m_settings->fileValue(OrganiserRightScript, LegacyRightScript).toString();
         config.displayScript = combineAlignedScripts(left, right);
     }
-    if(layout.contains("PlayingTextColour"_L1)) {
-        config.playingTextColour = normaliseColour(layout.value("PlayingTextColour"_L1).toString());
-    }
-    if(layout.contains("PlayingBackgroundColour"_L1)) {
-        config.playingBackgroundColour = normaliseColour(layout.value("PlayingBackgroundColour"_L1).toString());
-    }
+
+    config.playingTextColour = normaliseColour(layout.value("PlayingTextColour"_L1).toString(config.playingTextColour));
+    config.playingBackgroundColour
+        = normaliseColour(layout.value("PlayingBackgroundColour"_L1).toString(config.playingBackgroundColour));
 
     return config;
 }

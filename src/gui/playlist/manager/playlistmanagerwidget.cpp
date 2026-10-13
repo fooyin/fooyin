@@ -234,9 +234,7 @@ void PlaylistManagerWidget::loadLayoutData(const QJsonObject& layout)
 
     resetToPlaylistIndexOrder();
 
-    if(layout.contains(ActivateOnSelection)) {
-        m_activateOnSelection = layout.value(ActivateOnSelection).toBool();
-    }
+    m_activateOnSelection = layout.value(ActivateOnSelection).toBool(m_activateOnSelection);
 }
 
 void PlaylistManagerWidget::finalise()

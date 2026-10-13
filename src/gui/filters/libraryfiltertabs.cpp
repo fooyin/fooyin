@@ -115,19 +115,16 @@ void LibraryFilterTabs::loadLayoutData(const QJsonObject& layout)
     if(const QString name = layout.value("AllLibraryName"_L1).toString().trimmed(); !name.isEmpty()) {
         m_allLibraryName = name;
     }
-    if(layout.contains("AllLibraryIndex"_L1)) {
-        m_allLibraryIndex = layout.value("AllLibraryIndex"_L1).toInt();
-    }
+
+    m_allLibraryIndex = layout.value("AllLibraryIndex"_L1).toInt(m_allLibraryIndex);
+
     if(layout.contains("TabPosition"_L1)) {
         const auto position = static_cast<SingleTabbedWidget::TabPosition>(layout.value("TabPosition"_L1).toInt());
         m_tabs->setTabPosition(position);
     }
-    if(layout.contains("RememberLastFilter"_L1)) {
-        m_rememberLastFilter = layout.value("RememberLastFilter"_L1).toBool();
-    }
-    if(layout.contains("LastFilter"_L1)) {
-        m_lastFilterId = layout.value("LastFilter"_L1).toInt(-1);
-    }
+
+    m_rememberLastFilter = layout.value("RememberLastFilter"_L1).toBool(m_rememberLastFilter);
+    m_lastFilterId       = layout.value("LastFilter"_L1).toInt(m_lastFilterId);
 
     if(layout.contains("Widgets"_L1)) {
         WidgetContainer::loadWidgets(layout.value("Widgets"_L1).toArray());

@@ -414,9 +414,8 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
             }
         }
     }
-    if(layout.contains("SingleMode"_L1)) {
-        m_layoutState.singleMode = layout.value("SingleMode"_L1).toBool();
-    }
+
+    m_layoutState.singleMode = layout.value("SingleMode"_L1).toBool(m_layoutState.singleMode);
 
     if(layout.contains("Columns"_L1)) {
         m_layoutState.columns.clear();
@@ -1855,53 +1854,37 @@ PlaylistWidget::ConfigData PlaylistWidget::configFromLayout(const QJsonObject& l
 {
     ConfigData config{defaultConfig()};
 
-    const auto readBool = [&layout](QLatin1StringView key, bool& value) {
-        if(layout.contains(key)) {
-            value = layout.value(key).toBool();
-        }
-    };
-    const auto readInt = [&layout](QLatin1StringView key, int& value) {
-        if(layout.contains(key)) {
-            value = layout.value(key).toInt();
-        }
-    };
+    config.showHeader              = layout.value("ShowHeader"_L1).toBool(config.showHeader);
+    config.stickyHeaders           = layout.value("StickyHeaders"_L1).toBool(config.stickyHeaders);
+    config.stickyArtwork           = layout.value("StickyArtwork"_L1).toBool(config.stickyArtwork);
+    config.showScrollBar           = layout.value("ShowScrollbar"_L1).toBool(config.showScrollBar);
+    config.alternatingRows         = layout.value("AlternatingRows"_L1).toBool(config.alternatingRows);
+    config.imagePadding            = layout.value("ImagePadding"_L1).toInt(config.imagePadding);
+    config.imagePaddingTop         = layout.value("ImagePaddingTop"_L1).toInt(config.imagePaddingTop);
+    config.artworkCornerRadius     = layout.value("ArtworkCornerRadius"_L1).toInt(config.artworkCornerRadius);
+    config.artworkReflection       = layout.value("ArtworkReflection"_L1).toBool(config.artworkReflection);
+    config.artworkReflectionHeight = layout.value("ArtworkReflectionHeight"_L1).toInt(config.artworkReflectionHeight);
+    config.artworkReflectionOpacity
+        = layout.value("ArtworkReflectionOpacity"_L1).toInt(config.artworkReflectionOpacity);
+    config.artworkReflectionGap   = layout.value("ArtworkReflectionGap"_L1).toInt(config.artworkReflectionGap);
+    config.backgroundImageMode    = layout.value("BackgroundImageMode"_L1).toInt(config.backgroundImageMode);
+    config.backgroundCoverType    = layout.value("BackgroundCoverType"_L1).toInt(config.backgroundCoverType);
+    config.backgroundScaling      = layout.value("BackgroundScaling"_L1).toInt(config.backgroundScaling);
+    config.backgroundPosition     = layout.value("BackgroundPosition"_L1).toInt(config.backgroundPosition);
+    config.backgroundMaxSize      = layout.value("BackgroundMaxSize"_L1).toInt(config.backgroundMaxSize);
+    config.backgroundBlur         = layout.value("BackgroundBlur"_L1).toInt(config.backgroundBlur);
+    config.backgroundOpacity      = layout.value("BackgroundOpacity"_L1).toInt(config.backgroundOpacity);
+    config.backgroundFadeDuration = layout.value("BackgroundFadeDuration"_L1).toInt(config.backgroundFadeDuration);
 
-    readBool("ShowHeader"_L1, config.showHeader);
-    readBool("StickyHeaders"_L1, config.stickyHeaders);
-    readBool("StickyArtwork"_L1, config.stickyArtwork);
-    readBool("ShowScrollbar"_L1, config.showScrollBar);
-    readBool("AlternatingRows"_L1, config.alternatingRows);
-    readInt("ImagePadding"_L1, config.imagePadding);
-    readInt("ImagePaddingTop"_L1, config.imagePaddingTop);
-    readInt("ArtworkCornerRadius"_L1, config.artworkCornerRadius);
-    readBool("ArtworkReflection"_L1, config.artworkReflection);
-    readInt("ArtworkReflectionHeight"_L1, config.artworkReflectionHeight);
-    readInt("ArtworkReflectionOpacity"_L1, config.artworkReflectionOpacity);
-    readInt("ArtworkReflectionGap"_L1, config.artworkReflectionGap);
-    readInt("BackgroundImageMode"_L1, config.backgroundImageMode);
-    readInt("BackgroundCoverType"_L1, config.backgroundCoverType);
-    readInt("BackgroundScaling"_L1, config.backgroundScaling);
-    readInt("BackgroundPosition"_L1, config.backgroundPosition);
-    readInt("BackgroundMaxSize"_L1, config.backgroundMaxSize);
-    readInt("BackgroundBlur"_L1, config.backgroundBlur);
-    readInt("BackgroundOpacity"_L1, config.backgroundOpacity);
-    readInt("BackgroundFadeDuration"_L1, config.backgroundFadeDuration);
+    config.backgroundCustomImage     = layout.value("BackgroundCustomImage"_L1).toString(config.backgroundCustomImage);
+    config.backgroundTrackPreference = static_cast<TrackDisplayPreference>(
+        layout.value("BackgroundTrackPreference"_L1).toInt(static_cast<int>(config.backgroundTrackPreference)));
 
-    if(layout.contains("BackgroundCustomImage"_L1)) {
-        config.backgroundCustomImage = layout.value("BackgroundCustomImage"_L1).toString();
-    }
-    if(layout.contains("BackgroundTrackPreference"_L1)) {
-        config.backgroundTrackPreference
-            = static_cast<TrackDisplayPreference>(layout.value("BackgroundTrackPreference"_L1).toInt());
-    }
-
-    if(layout.contains("DoubleClickAction"_L1)) {
-        config.doubleClickAction = static_cast<TrackAction>(layout.value("DoubleClickAction"_L1).toInt());
-    }
-    if(layout.contains("MiddleClickAction"_L1)) {
-        config.middleClickAction = static_cast<TrackAction>(layout.value("MiddleClickAction"_L1).toInt());
-    }
-    readBool("StartPlaybackOnSend"_L1, config.startPlaybackOnSend);
+    config.doubleClickAction = static_cast<TrackAction>(
+        layout.value("DoubleClickAction"_L1).toInt(static_cast<int>(config.doubleClickAction)));
+    config.middleClickAction = static_cast<TrackAction>(
+        layout.value("MiddleClickAction"_L1).toInt(static_cast<int>(config.middleClickAction)));
+    config.startPlaybackOnSend = layout.value("StartPlaybackOnSend"_L1).toBool(config.startPlaybackOnSend);
 
     return config;
 }

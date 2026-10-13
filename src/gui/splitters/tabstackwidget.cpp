@@ -122,9 +122,7 @@ void TabStackWidget::loadLayoutData(const QJsonObject& layout)
         }
     }
 
-    if(layout.contains("RememberLastTab"_L1)) {
-        m_rememberLast = layout.value("RememberLastTab"_L1).toBool();
-    }
+    m_rememberLast = layout.value("RememberLastTab"_L1).toBool(m_rememberLast);
 
     if(m_rememberLast && layout.contains("LastTab"_L1) && m_tabs->count() > 1) {
         auto lastIndex = layout.value("LastTab"_L1).toInt();

@@ -1170,27 +1170,19 @@ QueueViewer::ConfigData QueueViewer::configFromLayout(const QJsonObject& layout)
                                  : m_settings->fileValue(QueueViewerRightScriptKey, LegacyRightScript).toString();
         config.displayScript = combineAlignedScripts(left, right);
     }
-    if(layout.contains("ShowCurrent"_L1)) {
-        config.showCurrent = layout.value("ShowCurrent"_L1).toBool();
-    }
-    if(layout.contains("ShowIcon"_L1)) {
-        config.showIcon = layout.value("ShowIcon"_L1).toBool();
-    }
+
+    config.showCurrent = layout.value("ShowCurrent"_L1).toBool(config.showCurrent);
+    config.showIcon    = layout.value("ShowIcon"_L1).toBool(config.showIcon);
+
     if(layout.contains("IconWidth"_L1) && layout.contains("IconHeight"_L1)) {
         config.iconSize = {layout.value("IconWidth"_L1).toInt(), layout.value("IconHeight"_L1).toInt()};
     }
-    if(layout.contains("ArtworkCornerRadius"_L1)) {
-        config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt();
-    }
-    if(layout.contains("ShowHeader"_L1)) {
-        config.showHeader = layout.value("ShowHeader"_L1).toBool();
-    }
-    if(layout.contains("ShowScrollbar"_L1)) {
-        config.showScrollBar = layout.value("ShowScrollbar"_L1).toBool();
-    }
-    if(layout.contains("AlternatingRows"_L1)) {
-        config.alternatingRows = layout.value("AlternatingRows"_L1).toBool();
-    }
+
+    config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt(config.artworkCornerRadius);
+    config.showHeader          = layout.value("ShowHeader"_L1).toBool(config.showHeader);
+    config.showScrollBar       = layout.value("ShowScrollbar"_L1).toBool(config.showScrollBar);
+    config.alternatingRows     = layout.value("AlternatingRows"_L1).toBool(config.alternatingRows);
+
     if(layout.contains("DisplayMode"_L1)
        && layout.value("DisplayMode"_L1).toInt() == static_cast<int>(DisplayMode::UpcomingTracks)) {
         config.displayMode = DisplayMode::UpcomingTracks;
