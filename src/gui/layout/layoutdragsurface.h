@@ -25,6 +25,8 @@
 #include <QUndoCommand>
 #include <QWidget>
 
+class QLabel;
+
 namespace Fooyin {
 class LayoutDragController;
 
@@ -49,6 +51,7 @@ private:
     [[nodiscard]] LayoutDropTarget dropTarget(const QPointF& position, Qt::KeyboardModifiers modifiers) const;
 
     LayoutDragController* m_controller;
+    QLabel* m_hint;
     LayoutDropTarget m_target;
 };
 } // namespace Fooyin

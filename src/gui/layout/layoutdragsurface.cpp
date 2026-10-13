@@ -26,13 +26,21 @@
 #include <gui/layout/editablelayout.h>
 #include <gui/widgetprovider.h>
 
+#include <QLabel>
 #include <QPainter>
 
 namespace Fooyin {
 LayoutDragSurface::LayoutDragSurface(LayoutDragController* controller, QWidget* parent)
     : QWidget{parent}
     , m_controller{controller}
+    , m_hint{new QLabel(this, Qt::ToolTip | Qt::FramelessWindowHint | Qt::WindowTransparentForInput)}
 {
+    m_hint->setAttribute(Qt::WA_ShowWithoutActivating);
+    m_hint->setAttribute(Qt::WA_TransparentForMouseEvents);
+    m_hint->setTextFormat(Qt::PlainText);
+    m_hint->setContentsMargins(8, 5, 8, 5);
+    m_hint->setAutoFillBackground(true);
+
     setAttribute(Qt::WA_NoSystemBackground);
     setAcceptDrops(true);
     hide();
@@ -41,6 +49,7 @@ LayoutDragSurface::LayoutDragSurface(LayoutDragController* controller, QWidget* 
 void LayoutDragSurface::reset()
 {
     m_target = {};
+    m_hint->hide();
     update();
 }
 
@@ -48,6 +57,19 @@ void LayoutDragSurface::updateTarget(const QPointF& position, Qt::KeyboardModifi
 {
     m_controller->updateTabHover(position);
     m_target = dropTarget(position, modifiers);
+
+    if(m_controller->hasActiveDrag() && !m_target.description.isEmpty()) {
+        m_hint->setText(m_target.description);
+        m_hint->adjustSize();
+
+        const auto cursor = m_controller->m_layout->mapToGlobal(position.toPoint());
+        m_hint->setGeometry(QRect{cursor + QPoint{12, 18 - m_hint->height() - 6}, m_hint->size()});
+        m_hint->show();
+    }
+    else {
+        m_hint->hide();
+    }
+
     update();
 }
 
@@ -122,18 +144,6 @@ void LayoutDragSurface::paintEvent(QPaintEvent* /*event*/)
         painter.fillRect(preview, fill);
         painter.setPen(QPen{highlight, 2, m_target.placement == Placement::Split ? Qt::DashLine : Qt::SolidLine});
         painter.drawRect(preview.adjusted(0, 0, -1, -1));
-    }
-
-    if(m_controller->hasActiveDrag() && !m_target.description.isEmpty()) {
-        QRect textRect = painter.fontMetrics().boundingRect(m_target.description).adjusted(-8, -5, 8, 5);
-        textRect.moveTopLeft(mapFrom(m_controller->m_layout, m_controller->m_drag->position).toPoint()
-                             + QPoint{12, 18 - textRect.height() - 6});
-        textRect.moveLeft(std::clamp(textRect.left(), 0, std::max(0, width() - textRect.width())));
-        textRect.moveTop(std::clamp(textRect.top(), 0, std::max(0, height() - textRect.height())));
-
-        painter.fillRect(textRect, palette().color(QPalette::Window));
-        painter.setPen(palette().color(QPalette::WindowText));
-        painter.drawText(textRect, Qt::AlignCenter, m_target.description);
     }
 }
 
