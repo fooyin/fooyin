@@ -68,6 +68,10 @@ public:
     {
         return -1;
     }
+    [[nodiscard]] virtual QString playlistName() const
+    {
+        return {};
+    }
     [[nodiscard]] virtual int playlistTrackCount() const                   = 0;
     [[nodiscard]] virtual int trackDepth() const                           = 0;
     [[nodiscard]] virtual std::span<const int> currentQueueIndexes() const = 0;

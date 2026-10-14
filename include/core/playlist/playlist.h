@@ -80,8 +80,10 @@ struct FYCORE_EXPORT PlaylistTrack
 
 /*!
  * Represents a list of tracks for playback.
- * Playlists are saved to the database and restored
- * on startup unless marked temporary.
+ * Playlists are saved to the database and restored on startup unless marked temporary.
+ *
+ * Owned by PlaylistHandler and accessed only on the main thread. Pass
+ * copied track data and metadata to workers instead of the live playlist.
  */
 class FYCORE_EXPORT Playlist final
 {

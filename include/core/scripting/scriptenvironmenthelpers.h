@@ -28,7 +28,6 @@
 
 namespace Fooyin {
 class LibraryManager;
-class PlaybackQueue;
 class PlayerController;
 
 /*!
@@ -86,11 +85,9 @@ class FYCORE_EXPORT PlaylistScriptEnvironment : public ScriptEnvironment,
 public:
     PlaylistScriptEnvironment();
 
-    void setPlaylistData(const Playlist* playlist, const PlaybackQueue* playbackQueue,
-                         const TrackList* tracks = nullptr, int queueTotal = 0);
+    void setPlaylistData(QString name, int trackCount, const TrackList* tracks = nullptr);
     void setQueueState(std::span<const int> queueIndexes, int queueTotal);
     void setQueueItemState(ScriptQueueItemState state);
-    void setQueueIndexesVisible(bool visible);
     void setTrackState(int playlistTrackIndex, int currentPlayingTrackIndex, int currentPlayingTrackId, int trackDepth);
     void setPlaybackState(uint64_t currentPosition, uint64_t currentTrackDuration, int bitrate,
                           Player::PlayState playState, QString decoder = {},
@@ -107,6 +104,7 @@ public:
     [[nodiscard]] int currentPlaylistTrackIndex() const override;
     [[nodiscard]] int currentPlayingTrackIndex() const override;
     [[nodiscard]] int currentPlayingTrackId() const override;
+    [[nodiscard]] QString playlistName() const override;
     [[nodiscard]] int playlistTrackCount() const override;
     [[nodiscard]] int trackDepth() const override;
     [[nodiscard]] std::span<const int> currentQueueIndexes() const override;
@@ -124,14 +122,12 @@ public:
     [[nodiscard]] bool escapeRichText() const override;
     [[nodiscard]] bool useVariousArtists() const override;
     [[nodiscard]] RatingStarSymbols ratingStarSymbols() const override;
-    [[nodiscard]] bool hasDirectQueueState() const;
 
 private:
-    const Playlist* m_playlist;
-    const PlaybackQueue* m_playbackQueue;
+    QString m_playlistName;
+    int m_playlistTrackCount;
     const TrackList* m_tracks;
-    std::vector<int> m_directQueueIndexes;
-    mutable std::vector<int> m_currentQueueIndexes;
+    std::vector<int> m_queueIndexes;
     int m_playlistTrackIndex;
     int m_currentPlayingTrackIndex;
     int m_currentPlayingTrackId;
@@ -149,8 +145,6 @@ private:
     bool m_escapeRichText;
     bool m_useVariousArtists;
     RatingStarSymbols m_ratingSymbols;
-    bool m_hasDirectQueueState;
-    bool m_queueIndexesVisible;
 };
 
 struct FYCORE_EXPORT PlaybackScriptContext

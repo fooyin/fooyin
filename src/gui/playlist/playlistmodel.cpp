@@ -28,6 +28,7 @@
 #include <core/constants.h>
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
+#include <core/player/playercontroller.h>
 #include <core/playlist/playlist.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scripttrackwriter.h>
@@ -730,6 +731,7 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     : TreeModel{parent}
     , m_audioLoader{audioLoader}
     , m_library{playlistInteractor->library()}
+    , m_playerController{playlistInteractor->playerController()}
     , m_settings{settings}
     , m_styleProvider{styleProvider}
     , m_coverProvider{coverProvider}
@@ -738,7 +740,7 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     , m_playingColour{playingRowColour(*settings)}
     , m_playingFont{settings->value<Settings::Gui::Internal::PlaylistPlayingRowFont>()}
     , m_disabledColour{disabledRowColor()}
-    , m_populator{playlistInteractor->playerController(), settings}
+    , m_populationGeneration{0}
     , m_playlistLoaded{false}
     , m_loadingTextPending{false}
     , m_pixmapPadding{settings->value<Settings::Gui::Internal::PlaylistImagePadding>()}
@@ -756,8 +758,6 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     , m_matchPlayingTrackByIdentity{false}
     , m_currentPlayState{Player::PlayState::Stopped}
 {
-    m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
-    m_populator.setPreloadCount(m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>());
     m_populator.moveToThread(&m_populatorThread);
     m_populatorThread.start();
 
@@ -808,7 +808,10 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     m_settings->subscribe<Settings::Gui::IconTheme>(
         this, [this]() { notifyDataChangedForSubtree({}, {Qt::DecorationRole, Qt::SizeHintRole}); });
 
-    QObject::connect(&m_populator, &PlaylistPopulator::finished, this, [this]() {
+    QObject::connect(&m_populator, &PlaylistPopulator::populationFinished, this, [this](uint64_t generation) {
+        if(generation != m_populationGeneration) {
+            return;
+        }
         const bool loadingTextVisible = shouldShowLoadingText();
         m_playlistLoaded              = true;
         m_loadingTextPending          = false;
@@ -827,18 +830,27 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
 
     QObject::connect(&m_populator, &PlaylistPopulator::populated, this, &PlaylistModel::populateModel);
     QObject::connect(&m_populator, &PlaylistPopulator::populatedTrackGroup, this, &PlaylistModel::populateTrackGroup);
-    QObject::connect(&m_populator, &PlaylistPopulator::headersUpdated, this, &PlaylistModel::updateModel);
+    QObject::connect(&m_populator, &PlaylistPopulator::headersUpdated, this,
+                     [this](uint64_t generation, const ItemKeyMap& data) {
+                         if(generation == m_populationGeneration) {
+                             updateModel(data);
+                         }
+                     });
 
-    QObject::connect(
-        &m_populator, &PlaylistPopulator::tracksUpdated, this,
-        [this](const ItemList& data, const std::set<int>& columnsUpdated) { updateTracks(data, columnsUpdated); });
+    QObject::connect(&m_populator, &PlaylistPopulator::tracksUpdated, this,
+                     [this](uint64_t generation, const ItemList& data, const std::set<int>& columnsUpdated) {
+                         if(generation == m_populationGeneration) {
+                             updateTracks(data, columnsUpdated);
+                         }
+                     });
 
     QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, &PlaylistModel::coverUpdated);
 }
 
 PlaylistModel::~PlaylistModel()
 {
-    m_populator.stopThread();
+    m_populationStopSource.request_stop();
+    m_populator.closeThread();
     m_populatorThread.quit();
     m_populatorThread.wait();
 }
@@ -1344,7 +1356,10 @@ QModelIndex PlaylistModel::firstImageColumnTrackIndex(const QModelIndex& index) 
 
 void PlaylistModel::reset(const PlaylistTrackList& tracks)
 {
-    m_populator.stopThread();
+    m_populationStopSource.request_stop();
+    m_populationStopSource = std::stop_source{};
+    ++m_populationGeneration;
+    m_indexesPendingRemoval.clear();
 
     const bool loadingTextVisible = shouldShowLoadingText();
     m_playlistLoaded              = false;
@@ -1372,11 +1387,8 @@ void PlaylistModel::reset(const PlaylistTrackList& tracks)
     }
 
     const PlaylistTrackList displayTracks = tracksWithPlayingTrackOverlay(tracks);
-    QMetaObject::invokeMethod(&m_populator, [this, displayTracks] {
-        m_populator.setFont(playlistFont());
-        m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
-        m_populator.setPreloadCount(m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>());
-        m_populator.run(m_currentPlaylist, m_currentPreset, m_columns, displayTracks);
+    QMetaObject::invokeMethod(&m_populator, [populator = &m_populator, request = populationRequest(), displayTracks] {
+        populator->run(request, displayTracks);
     });
 }
 
@@ -1519,9 +1531,8 @@ QModelIndexList PlaylistModel::indexesOfTrackId(int id)
 void PlaylistModel::insertTracks(const TrackGroups& tracks)
 {
     if(m_currentPlaylist) {
-        QMetaObject::invokeMethod(&m_populator, [this, tracks] {
-            m_populator.setFont(playlistFont());
-            m_populator.runTracks(m_currentPlaylist, m_currentPreset, m_columns, tracks);
+        QMetaObject::invokeMethod(&m_populator, [populator = &m_populator, request = populationRequest(), tracks] {
+            populator->runTracks(request, tracks);
         });
     }
 }
@@ -1594,10 +1605,8 @@ void PlaylistModel::refreshTracks(const std::vector<int>& indexes, const std::se
         }
     }
 
-    QMetaObject::invokeMethod(&m_populator, [this, columns, items] {
-        m_populator.setFont(playlistFont());
-        m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
-        m_populator.updateTracks(m_currentPlaylist, m_currentPreset, m_columns, columns, items);
+    QMetaObject::invokeMethod(&m_populator, [populator = &m_populator, request = populationRequest(), columns, items] {
+        populator->updateTracks(request, columns, items);
     });
 }
 
@@ -1968,9 +1977,42 @@ PlaylistTrackList PlaylistModel::tracksWithPlayingTrackOverlay(const PlaylistTra
     return displayTracks;
 }
 
+PlaylistPopulationRequest PlaylistModel::populationRequest() const
+{
+    Q_ASSERT(QThread::currentThread() == thread());
+
+    PlaylistPopulationRequest request;
+    request.generation   = m_populationGeneration;
+    request.stopToken    = m_populationStopSource.get_token();
+    request.playlistId   = m_currentPlaylist ? m_currentPlaylist->id() : UId{};
+    request.trackCount   = m_currentPlaylist ? m_currentPlaylist->trackCount() : 0;
+    request.preset       = m_currentPreset;
+    request.columns      = m_columns;
+    request.font         = playlistFont();
+    request.preloadCount = m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>();
+    request.playingTrack = m_playerController->currentPlaylistTrack();
+    request.queueTotal   = m_playerController->playbackQueue().trackCount();
+
+    const bool showQueueIndexes = m_playerController->playbackQueueMode() == PlaybackQueueMode::PlaylistWithOverrides
+                               && m_settings->value<Settings::Gui::PlaylistShowQueueIndexes>();
+    if(showQueueIndexes && m_currentPlaylist) {
+        request.queueIndexes = m_playerController->playbackQueue().indexesForPlaylist(request.playlistId);
+    }
+
+    request.environment.setPlaylistData(m_currentPlaylist ? m_currentPlaylist->name() : QString{}, request.trackCount);
+    request.environment.setRatingStarSymbols(Gui::ratingStarSymbols(*m_settings));
+    request.environment.setEvaluationPolicy(TrackListContextPolicy::Placeholder, QStringLiteral("|Loading|"), true,
+                                            m_settings->value<Settings::Core::UseVariousForCompilations>());
+    request.environment.setPlaybackState(m_playerController->currentPosition(),
+                                         m_playerController->currentTrack().duration(), m_playerController->bitrate(),
+                                         m_playerController->playState(), m_playerController->decoder(),
+                                         m_playerController->playbackOutputInfo());
+    return request;
+}
+
 void PlaylistModel::populateModel(PendingData data)
 {
-    if(m_currentPlaylist && m_currentPlaylist->id() != data.playlistId) {
+    if(data.generation != m_populationGeneration || (m_currentPlaylist && m_currentPlaylist->id() != data.playlistId)) {
         return;
     }
 
@@ -2032,7 +2074,7 @@ void PlaylistModel::populateModel(PendingData data)
 
 void PlaylistModel::populateTrackGroup(PendingData data)
 {
-    if(m_currentPlaylist && m_currentPlaylist->id() != data.playlistId) {
+    if(data.generation != m_populationGeneration || (m_currentPlaylist && m_currentPlaylist->id() != data.playlistId)) {
         return;
     }
 
@@ -3267,9 +3309,8 @@ void PlaylistModel::updateHeaders()
         updatedHeaders.emplace_back(*header, collectHeaderTracks(header));
     }
 
-    QMetaObject::invokeMethod(&m_populator, [this, updatedHeaders]() {
-        m_populator.setFont(playlistFont());
-        m_populator.updateHeaders(m_currentPlaylist, m_currentPreset, updatedHeaders);
+    QMetaObject::invokeMethod(&m_populator, [populator = &m_populator, request = populationRequest(), updatedHeaders] {
+        populator->updateHeaders(request, updatedHeaders);
     });
 }
 

@@ -127,8 +127,7 @@ RatingStarSymbols LibraryScriptEnvironment::ratingStarSymbols() const
 }
 
 PlaylistScriptEnvironment::PlaylistScriptEnvironment()
-    : m_playlist{nullptr}
-    , m_playbackQueue{nullptr}
+    : m_playlistTrackCount{0}
     , m_tracks{nullptr}
     , m_playlistTrackIndex{-1}
     , m_currentPlayingTrackIndex{-1}
@@ -144,33 +143,22 @@ PlaylistScriptEnvironment::PlaylistScriptEnvironment()
     , m_escapeRichText{false}
     , m_useVariousArtists{false}
     , m_ratingSymbols{defaultRatingStarSymbols()}
-    , m_hasDirectQueueState{false}
-    , m_queueIndexesVisible{true}
 { }
 
-void PlaylistScriptEnvironment::setPlaylistData(const Playlist* playlist, const PlaybackQueue* playbackQueue,
-                                                const TrackList* tracks, const int queueTotal)
+void PlaylistScriptEnvironment::setPlaylistData(QString name, int trackCount, const TrackList* tracks)
 {
-    m_playlist      = playlist;
-    m_playbackQueue = playbackQueue;
-    m_tracks        = tracks;
-    m_queueTotal    = queueTotal;
-    m_currentQueueIndexes.clear();
-    m_directQueueIndexes.clear();
-    m_hasDirectQueueState = false;
-    m_queueItemState      = ScriptQueueItemState::None;
+    m_playlistName       = std::move(name);
+    m_playlistTrackCount = trackCount;
+    m_tracks             = tracks;
+    m_queueIndexes.clear();
+    m_queueTotal     = 0;
+    m_queueItemState = ScriptQueueItemState::None;
 }
 
 void PlaylistScriptEnvironment::setQueueState(std::span<const int> queueIndexes, const int queueTotal)
 {
-    m_directQueueIndexes.assign(queueIndexes.begin(), queueIndexes.end());
-    m_queueTotal          = queueTotal;
-    m_hasDirectQueueState = true;
-}
-
-void PlaylistScriptEnvironment::setQueueIndexesVisible(bool visible)
-{
-    m_queueIndexesVisible = visible;
+    m_queueIndexes.assign(queueIndexes.begin(), queueIndexes.end());
+    m_queueTotal = queueTotal;
 }
 
 void PlaylistScriptEnvironment::setQueueItemState(ScriptQueueItemState state)
@@ -248,9 +236,14 @@ int PlaylistScriptEnvironment::currentPlayingTrackId() const
     return m_currentPlayingTrackId;
 }
 
+QString PlaylistScriptEnvironment::playlistName() const
+{
+    return m_playlistName;
+}
+
 int PlaylistScriptEnvironment::playlistTrackCount() const
 {
-    return m_playlist ? m_playlist->trackCount() : 0;
+    return m_playlistTrackCount;
 }
 
 int PlaylistScriptEnvironment::trackDepth() const
@@ -260,18 +253,7 @@ int PlaylistScriptEnvironment::trackDepth() const
 
 std::span<const int> PlaylistScriptEnvironment::currentQueueIndexes() const
 {
-    static const std::vector<int> Empty;
-
-    if(m_hasDirectQueueState) {
-        return m_directQueueIndexes;
-    }
-
-    if(!m_queueIndexesVisible || !m_playbackQueue || !m_playlist || m_playlistTrackIndex < 0) {
-        return Empty;
-    }
-
-    m_currentQueueIndexes = m_playbackQueue->indexesForTrack(m_playlist->id(), m_playlistTrackIndex);
-    return m_currentQueueIndexes.empty() ? std::span{Empty} : std::span<const int>{m_currentQueueIndexes};
+    return m_queueIndexes;
 }
 
 int PlaylistScriptEnvironment::currentQueueTotal() const
@@ -353,11 +335,6 @@ RatingStarSymbols PlaylistScriptEnvironment::ratingStarSymbols() const
     return symbols;
 }
 
-bool PlaylistScriptEnvironment::hasDirectQueueState() const
-{
-    return m_hasDirectQueueState;
-}
-
 PlaybackScriptContext::PlaybackScriptContext()
 {
     context.environment = &environment;
@@ -405,9 +382,12 @@ PlaybackScriptContext makePlaybackScriptContext(PlayerController* playerControll
         playState            = playerController->playState();
     }
 
-    data.environment.setPlaylistData(playlist, playerController ? &playerController->playbackQueue() : nullptr,
-                                     playlist ? &playlist->tracks() : nullptr,
-                                     playerController ? playerController->queuedTracksCount() : 0);
+    data.environment.setPlaylistData(playlist ? playlist->name() : QString{}, playlist ? playlist->trackCount() : 0,
+                                     playlist ? &playlist->tracks() : nullptr);
+    const auto queueIndexes = playerController && playlist && playlistTrackIndex >= 0
+                                ? playerController->playbackQueue().indexesForTrack(playlist->id(), playlistTrackIndex)
+                                : std::vector<int>{};
+    data.environment.setQueueState(queueIndexes, playerController ? playerController->queuedTracksCount() : 0);
     data.environment.setTrackState(playlistTrackIndex, playlistTrackIndex,
                                    playerController ? playerController->currentTrackId() : -1, 0);
     data.environment.setPlaybackState(currentPosition, currentTrackDuration, bitrate, playState, std::move(decoder),

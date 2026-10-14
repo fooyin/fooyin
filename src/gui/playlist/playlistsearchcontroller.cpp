@@ -72,7 +72,7 @@ std::vector<int> evaluateMatches(const MatchEvalRequest& request)
     const TrackList trackList = PlaylistTrack::toTracks(request.tracks);
 
     PlaylistScriptEnvironment environment;
-    environment.setPlaylistData(nullptr, nullptr, &trackList);
+    environment.setPlaylistData({}, 0, &trackList);
 
     ScriptContext context;
     context.environment = &environment;

@@ -965,7 +965,15 @@ ScriptResult ScriptRegistry::valueInternal(VariableKind kind, const QString& var
 {
     const auto* playlist = subject.playlist ? subject.playlist : m_context.playlist;
     if(kind == VariableKind::PlaylistName && customVariableInvoker(kind, var) == nullptr) {
-        ScriptResult result = calculateResult(playlist ? playlist->name() : QString{});
+        QString name;
+        if(playlist) {
+            name = playlist->name();
+        }
+        else if(const auto* environment
+                = m_context.environment ? m_context.environment->playlistEnvironment() : nullptr) {
+            name = environment->playlistName();
+        }
+        ScriptResult result = calculateResult(name);
         applyVariableOutputPolicy(m_context, kind, result);
         return result;
     }

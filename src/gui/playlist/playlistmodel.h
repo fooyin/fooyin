@@ -233,6 +233,7 @@ private:
     [[nodiscard]] bool playingTrackMatchesPlaylistTrack(const PlaylistTrack& track, int index) const;
     [[nodiscard]] PlaylistTrackList tracksWithPlayingTrackOverlay(const PlaylistTrackList& tracks) const;
 
+    [[nodiscard]] PlaylistPopulationRequest populationRequest() const;
     void populateModel(PendingData data);
     void populateTrackGroup(PendingData data);
     void updateModel(ItemKeyMap data);
@@ -333,6 +334,7 @@ private:
 
     AudioLoader* m_audioLoader;
     MusicLibrary* m_library;
+    PlayerController* m_playerController;
     SettingsManager* m_settings;
     GuiStyleProvider* m_styleProvider;
     CoverProvider* m_coverProvider;
@@ -347,6 +349,8 @@ private:
 
     QThread m_populatorThread;
     PlaylistPopulator m_populator;
+    std::stop_source m_populationStopSource;
+    uint64_t m_populationGeneration;
 
     bool m_playlistLoaded;
     bool m_loadingTextPending;

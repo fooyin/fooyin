@@ -418,8 +418,13 @@ PlaybackScriptContext StatusWidgetPrivate::makeSelectionContext(const TrackSelec
         playlistTrackIndex = currentPlaylist->currentTrackIndex();
     }
 
-    contextData.environment.setPlaylistData(currentPlaylist, &m_playerController->playbackQueue(), trackList,
-                                            m_playerController->queuedTracksCount());
+    contextData.environment.setPlaylistData(currentPlaylist ? currentPlaylist->name() : QString{},
+                                            currentPlaylist ? currentPlaylist->trackCount() : 0, trackList);
+    const auto queueIndexes
+        = currentPlaylist && playlistTrackIndex >= 0
+            ? m_playerController->playbackQueue().indexesForTrack(currentPlaylist->id(), playlistTrackIndex)
+            : std::vector<int>{};
+    contextData.environment.setQueueState(queueIndexes, m_playerController->queuedTracksCount());
     contextData.environment.setTrackState(playlistTrackIndex, currentPlayingTrackIndex, currentPlayingTrackId, 0);
     contextData.environment.setPlaybackState(m_playerController->currentPosition(),
                                              m_playerController->currentTrack().duration(),

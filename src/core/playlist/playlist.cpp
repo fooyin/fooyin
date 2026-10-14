@@ -28,8 +28,10 @@
 #include <utils/datastream.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QCoreApplication>
 #include <QDataStream>
 #include <QIODevice>
+#include <QThread>
 
 #include <random>
 #include <ranges>
@@ -44,6 +46,11 @@ namespace Fooyin {
 using AlbumTracks = std::vector<int>;
 
 namespace {
+void assertMainThread()
+{
+    Q_ASSERT(!QCoreApplication::instance() || QThread::currentThread() == qApp->thread());
+}
+
 bool readExtraProperties(QDataStream& stream, Playlist::ExtraProperties& out)
 {
     out.clear();
@@ -838,37 +845,54 @@ void PlaylistPrivate::replacePlaylistTracks(const PlaylistTrackList& tracks)
 
 Playlist::Playlist(PrivateKey /*key*/, int dbId, QString name, int index, SettingsManager* settings)
     : p{std::make_unique<PlaylistPrivate>(dbId, std::move(name), index, settings)}
-{ }
+{
+    assertMainThread();
+}
 
-Playlist::~Playlist() = default;
+Playlist::~Playlist()
+{
+    assertMainThread();
+}
 
 UId Playlist::id() const
 {
+    assertMainThread();
+
     return p->m_id;
 }
 
 int Playlist::dbId() const
 {
+    assertMainThread();
+
     return p->m_dbId;
 }
 
 QString Playlist::name() const
 {
+    assertMainThread();
+
     return p->m_name;
 }
 
 int Playlist::index() const
 {
+    assertMainThread();
+
     return p->m_index;
 }
 
 const TrackList& Playlist::tracks() const
 {
+    assertMainThread();
+
     return p->m_tracks;
 }
 
 PlaylistTrackList Playlist::playlistTracks() const
 {
+    assertMainThread();
+
     PlaylistTrackList tracks;
     for(int i{0}; const auto& track : p->m_tracks) {
         const UId entryId = std::cmp_less(i, p->m_trackEntryIds.size()) ? p->m_trackEntryIds.at(i) : UId{};
@@ -879,36 +903,50 @@ PlaylistTrackList Playlist::playlistTracks() const
 
 std::optional<Track> Playlist::track(int index) const
 {
+    assertMainThread();
+
     return p->getTrack(index);
 }
 
 std::optional<PlaylistTrack> Playlist::playlistTrack(int index) const
 {
+    assertMainThread();
+
     return p->getPlaylistTrack(index);
 }
 
 std::optional<PlaylistTrack> Playlist::playlistTrack(const UId& entryId) const
 {
+    assertMainThread();
+
     return playlistTrack(indexOfTrackEntry(entryId));
 }
 
 int Playlist::trackCount() const
 {
+    assertMainThread();
+
     return static_cast<int>(p->m_tracks.size());
 }
 
 int Playlist::indexOfTrackEntry(const UId& entryId) const
 {
+    assertMainThread();
+
     return p->indexOfTrackEntry(entryId);
 }
 
 int Playlist::currentTrackIndex() const
 {
+    assertMainThread();
+
     return p->m_currentTrackIndex;
 }
 
 Track Playlist::currentTrack() const
 {
+    assertMainThread();
+
     if(p->m_currentTrackIndex >= 0 && p->m_currentTrackIndex < trackCount()) {
         return p->m_tracks.at(p->m_currentTrackIndex);
     }
@@ -918,31 +956,43 @@ Track Playlist::currentTrack() const
 
 bool Playlist::modified() const
 {
+    assertMainThread();
+
     return p->m_modified;
 }
 
 bool Playlist::tracksModified() const
 {
+    assertMainThread();
+
     return p->m_tracksModified;
 }
 
 bool Playlist::isTemporary() const
 {
+    assertMainThread();
+
     return p->m_isTemporary;
 }
 
 bool Playlist::isAutoPlaylist() const
 {
+    assertMainThread();
+
     return p->m_isAutoPlaylist;
 }
 
 bool Playlist::isLocked() const
 {
+    assertMainThread();
+
     return p->m_extraProps.value(PlaylistLockedProperty) == "1"_L1;
 }
 
 void Playlist::setLocked(bool locked)
 {
+    assertMainThread();
+
     if(locked) {
         setExtraProperty(PlaylistLockedProperty, u"1"_s);
     }
@@ -953,21 +1003,29 @@ void Playlist::setLocked(bool locked)
 
 QString Playlist::query() const
 {
+    assertMainThread();
+
     return p->m_query;
 }
 
 QString Playlist::sortQuery() const
 {
+    assertMainThread();
+
     return p->m_sortQuery;
 }
 
 bool Playlist::forceSorted() const
 {
+    assertMainThread();
+
     return p->m_forceSorted;
 }
 
 TrackList Playlist::autoPlaylistTracks(const TrackList& tracks) const
 {
+    assertMainThread();
+
     if(!isAutoPlaylist()) {
         return p->m_tracks;
     }
@@ -977,16 +1035,22 @@ TrackList Playlist::autoPlaylistTracks(const TrackList& tracks) const
 
 bool Playlist::hasExtraProperty(const QString& prop) const
 {
+    assertMainThread();
+
     return p->m_extraProps.contains(prop);
 }
 
 Playlist::ExtraProperties Playlist::extraProperties() const
 {
+    assertMainThread();
+
     return p->m_extraProps;
 }
 
 void Playlist::setExtraProperty(const QString& prop, const QString& value)
 {
+    assertMainThread();
+
     if(prop.isEmpty()) {
         return;
     }
@@ -1007,6 +1071,8 @@ void Playlist::setExtraProperty(const QString& prop, const QString& value)
 
 void Playlist::removeExtraProperty(const QString& prop)
 {
+    assertMainThread();
+
     if(p->m_extraProps.erase(prop)) {
         p->m_modified = true;
     }
@@ -1014,6 +1080,8 @@ void Playlist::removeExtraProperty(const QString& prop)
 
 void Playlist::clearExtraProperties()
 {
+    assertMainThread();
+
     if(!p->m_extraProps.empty()) {
         p->m_extraProps.clear();
         p->m_modified = true;
@@ -1022,6 +1090,8 @@ void Playlist::clearExtraProperties()
 
 QByteArray Playlist::serialiseExtraProperties() const
 {
+    assertMainThread();
+
     if(p->m_extraProps.empty()) {
         return {};
     }
@@ -1037,6 +1107,8 @@ QByteArray Playlist::serialiseExtraProperties() const
 
 void Playlist::storeExtraProperties(const QByteArray& props)
 {
+    assertMainThread();
+
     p->m_extraProps.clear();
 
     if(props.isEmpty()) {
@@ -1055,6 +1127,8 @@ void Playlist::storeExtraProperties(const QByteArray& props)
 
 bool Playlist::regenerateTracks(const TrackList& tracks)
 {
+    assertMainThread();
+
     if(!isAutoPlaylist()) {
         return false;
     }
@@ -1071,16 +1145,22 @@ bool Playlist::regenerateTracks(const TrackList& tracks)
 
 int Playlist::nextIndex(int delta, PlayModes mode)
 {
+    assertMainThread();
+
     return p->getNextIndex(delta, mode, true);
 }
 
 int Playlist::nextIndexFrom(int currentIndex, int delta, PlayModes mode)
 {
+    assertMainThread();
+
     return p->getNextIndexFrom(currentIndex, delta, mode, true);
 }
 
 int Playlist::firstIndex(PlayModes mode)
 {
+    assertMainThread();
+
     if(trackCount() <= 0) {
         return -1;
     }
@@ -1121,6 +1201,8 @@ int Playlist::firstIndex(PlayModes mode)
 
 int Playlist::lastIndex(PlayModes mode)
 {
+    assertMainThread();
+
     if(trackCount() <= 0) {
         return -1;
     }
@@ -1161,26 +1243,36 @@ int Playlist::lastIndex(PlayModes mode)
 
 int Playlist::randomTrackIndexFrom(const int currentIndex)
 {
+    assertMainThread();
+
     return p->randomTrackIndexFrom(currentIndex);
 }
 
 int Playlist::randomAlbumIndexFrom(const int currentIndex)
 {
+    assertMainThread();
+
     return p->randomAlbumIndexFrom(currentIndex);
 }
 
 int Playlist::previousAlbumIndexFrom(const int currentIndex, const PlayModes mode)
 {
+    assertMainThread();
+
     return p->adjacentAlbumIndexFrom(currentIndex, -1, mode);
 }
 
 int Playlist::nextAlbumIndexFrom(const int currentIndex, const PlayModes mode)
 {
+    assertMainThread();
+
     return p->adjacentAlbumIndexFrom(currentIndex, 1, mode);
 }
 
 Track Playlist::nextTrack(int delta, PlayModes mode)
 {
+    assertMainThread();
+
     const int index = p->getNextIndex(delta, mode, true);
 
     if(index < 0 || index >= trackCount()) {
@@ -1192,6 +1284,8 @@ Track Playlist::nextTrack(int delta, PlayModes mode)
 
 Track Playlist::nextTrackFrom(int currentIndex, int delta, PlayModes mode)
 {
+    assertMainThread();
+
     const int index = p->getNextIndexFrom(currentIndex, delta, mode, true);
 
     if(index < 0 || index >= trackCount()) {
@@ -1203,6 +1297,8 @@ Track Playlist::nextTrackFrom(int currentIndex, int delta, PlayModes mode)
 
 Track Playlist::nextTrackChangeFrom(int currentIndex, int delta, PlayModes mode)
 {
+    assertMainThread();
+
     p->m_currentTrackIndex = currentIndex;
     p->syncShuffleStateToCurrentTrack();
 
@@ -1220,6 +1316,8 @@ Track Playlist::nextTrackChangeFrom(int currentIndex, int delta, PlayModes mode)
 
 Track Playlist::nextTrackChange(int delta, PlayModes mode)
 {
+    assertMainThread();
+
     const int index = p->getNextIndex(delta, mode, false);
 
     if(index < 0 || index >= trackCount()) {
@@ -1234,12 +1332,16 @@ Track Playlist::nextTrackChange(int delta, PlayModes mode)
 
 void Playlist::changeCurrentIndex(int index)
 {
+    assertMainThread();
+
     p->m_currentTrackIndex = index;
     p->syncShuffleStateToCurrentTrack();
 }
 
 void Playlist::reset()
 {
+    assertMainThread();
+
     p->m_trackShuffleOrder.clear();
     p->m_trackShuffleIndex = -1;
 
@@ -1251,6 +1353,8 @@ void Playlist::reset()
 
 void Playlist::resetFlags()
 {
+    assertMainThread();
+
     p->m_modified       = false;
     p->m_tracksModified = false;
 }
@@ -1286,6 +1390,8 @@ std::unique_ptr<Playlist> Playlist::createAuto(int dbId, const QString& name, in
 
 void Playlist::setName(const QString& name)
 {
+    assertMainThread();
+
     if(std::exchange(p->m_name, name) != name) {
         p->m_modified = true;
     }
@@ -1293,11 +1399,15 @@ void Playlist::setName(const QString& name)
 
 void Playlist::setDbId(int id)
 {
+    assertMainThread();
+
     p->m_dbId = id;
 }
 
 void Playlist::setIndex(int index)
 {
+    assertMainThread();
+
     if(std::exchange(p->m_index, index) != index) {
         p->m_modified = true;
     }
@@ -1305,6 +1415,8 @@ void Playlist::setIndex(int index)
 
 void Playlist::setQuery(const QString& query)
 {
+    assertMainThread();
+
     if(std::exchange(p->m_query, query) != query) {
         p->m_modified = true;
     }
@@ -1312,6 +1424,8 @@ void Playlist::setQuery(const QString& query)
 
 void Playlist::setSortQuery(const QString& query)
 {
+    assertMainThread();
+
     if(std::exchange(p->m_sortQuery, query) != query) {
         p->m_modified = true;
     }
@@ -1319,6 +1433,8 @@ void Playlist::setSortQuery(const QString& query)
 
 void Playlist::setForceSorted(bool forceSorted)
 {
+    assertMainThread();
+
     if(std::exchange(p->m_forceSorted, forceSorted) != forceSorted) {
         p->m_modified = true;
     }
@@ -1326,21 +1442,29 @@ void Playlist::setForceSorted(bool forceSorted)
 
 void Playlist::setModified(bool modified)
 {
+    assertMainThread();
+
     p->m_modified = modified;
 }
 
 void Playlist::setTracksModified(bool modified)
 {
+    assertMainThread();
+
     p->m_tracksModified = modified;
 }
 
 void Playlist::replaceTracks(const TrackList& tracks)
 {
+    assertMainThread();
+
     replaceTracks(PlaylistTrack::fromTracks(tracks, p->m_id));
 }
 
 void Playlist::replaceTracks(const PlaylistTrackList& tracks)
 {
+    assertMainThread();
+
     const PlaylistTrackList updatedTracks = PlaylistTrack::updateIndexes(tracks);
     const PlaylistTrackList currentTracks{playlistTracks()};
 
@@ -1378,6 +1502,8 @@ void Playlist::replaceTracks(const PlaylistTrackList& tracks)
 
 void Playlist::appendTracks(const TrackList& tracks)
 {
+    assertMainThread();
+
     if(tracks.empty()) {
         return;
     }
@@ -1399,6 +1525,8 @@ void Playlist::appendTracks(const TrackList& tracks)
 
 void Playlist::updateTrackAtIndex(int index, const Track& track)
 {
+    assertMainThread();
+
     if(index < 0 || std::cmp_greater_equal(index, p->m_tracks.size())) {
         return;
     }
@@ -1410,6 +1538,8 @@ void Playlist::updateTrackAtIndex(int index, const Track& track)
 
 std::vector<int> Playlist::removeTracks(const std::vector<int>& indexes)
 {
+    assertMainThread();
+
     if(indexes.empty()) {
         return {};
     }

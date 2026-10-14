@@ -129,8 +129,8 @@ public:
 
     void updatePlaybackState(PlayerController* playerController)
     {
-        m_playbackEnvironment.setPlaylistData(nullptr, playerController ? &playerController->playbackQueue() : nullptr,
-                                              nullptr, playerController ? playerController->queuedTracksCount() : 0);
+        m_playbackEnvironment.setPlaylistData({}, 0);
+        m_playbackEnvironment.setQueueState({}, playerController ? playerController->queuedTracksCount() : 0);
 
         int currentPlayingTrackIndex{-1};
         int currentPlayingTrackId{-1};
