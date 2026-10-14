@@ -34,6 +34,7 @@
 #include <QByteArray>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QCompleter>
 #include <QDialogButtonBox>
 #include <QDir>
 #include <QFileDialog>
@@ -65,6 +66,7 @@ public:
                          LibraryManager* libraryManager);
 
     void setup();
+    void focusInitialAction();
 
     void changeOperation(Operation operation);
     void updateOptionState() const;
@@ -77,14 +79,14 @@ public:
     void deletePreset();
 
     void saveCurrentPreset() const;
-    void loadCurrentPreset() const;
+    void loadCurrentPreset();
     void loadPresets();
     void populatePresets();
 
     void saveState() const;
     void restoreState() const;
 
-    void simulateOp() const;
+    void simulateOp();
     void toggleRun();
     void modelUpdated();
     void runFinished();
@@ -119,6 +121,7 @@ public:
     FileOpsModel* m_model;
     QLabel* m_status;
     QPushButton* m_runButton{nullptr};
+    QPushButton* m_closeButton{nullptr};
 
     std::vector<FileOpPreset> m_presets;
     bool m_supportsFileOperations{false};
@@ -126,6 +129,7 @@ public:
     bool m_loading{false};
     bool m_running{false};
     bool m_presetsChanged{false};
+    bool m_initialFocusPending{true};
 };
 
 FileOpsDialogPrivate::FileOpsDialogPrivate(FileOpsDialog* self, MusicLibrary* library, const TrackList& tracks,
@@ -163,6 +167,7 @@ void FileOpsDialogPrivate::setup()
     Gui::setThemeIcon(browseAction, Constants::Icons::Options);
     QObject::connect(browseAction, &QAction::triggered, this, &FileOpsDialogPrivate::browseDestination);
     m_destination->setEditable(true);
+    m_destination->completer()->setCaseSensitivity(Qt::CaseSensitive);
     auto* destLine = m_destination->lineEdit();
     destLine->addAction(browseAction, QLineEdit::TrailingPosition);
 
@@ -206,7 +211,14 @@ void FileOpsDialogPrivate::setup()
 
     auto* buttonBox = new QDialogButtonBox(QDialogButtonBox::Apply | QDialogButtonBox::Close, m_self);
     m_runButton     = buttonBox->button(QDialogButtonBox::Apply);
+    m_closeButton   = buttonBox->button(QDialogButtonBox::Close);
     m_runButton->setText(tr("&Run"));
+
+    for(auto* button : {m_loadButton, m_saveButton, m_deleteButton, m_runButton, m_closeButton}) {
+        button->setAutoDefault(false);
+    }
+    m_runButton->setDefault(true);
+
     QObject::connect(m_runButton, &QAbstractButton::clicked, this, &FileOpsDialogPrivate::toggleRun);
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, m_self, &QDialog::accept);
     QObject::connect(buttonBox, &QDialogButtonBox::rejected, m_self, &QDialog::reject);
@@ -253,7 +265,10 @@ void FileOpsDialogPrivate::setup()
     QObject::connect(m_removeArchive, &QCheckBox::clicked, this, &FileOpsDialogPrivate::simulateOp);
     QObject::connect(m_presetBox, &QComboBox::currentTextChanged, this, &FileOpsDialogPrivate::updateButtonState);
 
-    QObject::connect(m_model, &FileOpsModel::simulated, this, &FileOpsDialogPrivate::modelUpdated);
+    QObject::connect(m_model, &FileOpsModel::simulated, this, [this]() {
+        modelUpdated();
+        focusInitialAction();
+    });
     QObject::connect(m_model, &QAbstractItemModel::rowsRemoved, this, &FileOpsDialogPrivate::modelUpdated);
     QObject::connect(m_model, &QAbstractItemModel::rowsInserted, this, &FileOpsDialogPrivate::modelUpdated);
     QObject::connect(m_model, &FileOpsModel::finished, this, &FileOpsDialogPrivate::runFinished);
@@ -264,7 +279,28 @@ void FileOpsDialogPrivate::setup()
     loadCurrentPreset();
     updateButtonState();
 
+    QMetaObject::invokeMethod(this, &FileOpsDialogPrivate::focusInitialAction);
+
     m_self->resize(720, 480);
+}
+
+void FileOpsDialogPrivate::focusInitialAction()
+{
+    if(!m_initialFocusPending || !m_self->isVisible()) {
+        return;
+    }
+
+    auto* input = m_operation == Operation::Rename ? static_cast<QWidget*>(m_filename) : m_destination;
+    auto* focus = m_self->focusWidget();
+    if(focus && focus != input && focus != m_destination->lineEdit() && focus != m_closeButton) {
+        m_initialFocusPending = false;
+        return;
+    }
+
+    const bool ready      = m_runButton->isEnabled();
+    m_initialFocusPending = !ready;
+    QWidget* target       = ready ? m_runButton : input;
+    target->setFocus(Qt::OtherFocusReason);
 }
 
 void FileOpsDialogPrivate::changeOperation(Operation operation)
@@ -388,7 +424,7 @@ void FileOpsDialogPrivate::saveCurrentPreset() const
     m_settings->fileSet(CurrentPreset, byteArray);
 }
 
-void FileOpsDialogPrivate::loadCurrentPreset() const
+void FileOpsDialogPrivate::loadCurrentPreset()
 {
     auto byteArray = m_settings->fileValue(CurrentPreset).toByteArray();
 
@@ -447,12 +483,18 @@ void FileOpsDialogPrivate::restoreState() const
     }
 }
 
-void FileOpsDialogPrivate::simulateOp() const
+void FileOpsDialogPrivate::simulateOp()
 {
     if(m_loading) {
         return;
     }
 
+    if(m_self->isVisible()) {
+        m_initialFocusPending = false;
+    }
+
+    m_closeButton->setDefault(false);
+    m_runButton->setDefault(!m_running);
     m_runButton->setEnabled(false);
     m_model->simulate(currentPreset());
 
@@ -497,6 +539,10 @@ void FileOpsDialogPrivate::toggleRun()
         }
 
         m_runButton->setText(tr("&Abort"));
+        m_runButton->setDefault(false);
+        if(m_runButton->hasFocus()) {
+            m_resultsTable->setFocus(Qt::OtherFocusReason);
+        }
         m_model->run();
     }
 
@@ -540,6 +586,14 @@ void FileOpsDialogPrivate::runFinished()
     const int failedCount    = m_model->failedCount();
     const int skippedCount   = m_model->skippedCount();
     const int cancelledCount = m_model->cancelledCount();
+
+    m_runButton->setDefault(pendingCount > 0);
+    m_closeButton->setDefault(pendingCount == 0);
+
+    if(m_resultsTable->hasFocus() || m_runButton->hasFocus()) {
+        auto* button = pendingCount > 0 ? m_runButton : m_closeButton;
+        button->setFocus(Qt::OtherFocusReason);
+    }
 
     if(pendingCount > 0) {
         m_status->setText(FileOpsDialog::tr("Aborted: %Ln operation(s) not run", nullptr, pendingCount));
