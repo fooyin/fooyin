@@ -50,10 +50,6 @@ Fooyin::ScriptResult nodeVariable(const Fooyin::ScriptContext& context, const QS
 } // namespace
 
 namespace Fooyin {
-LibraryTreeScriptEnvironment::LibraryTreeScriptEnvironment(const LibraryManager* libraryManager)
-    : LibraryScriptEnvironment{libraryManager}
-{ }
-
 void LibraryTreeScriptEnvironment::setNodeVariablePolicy(LibraryTreeNodePolicy policy)
 {
     m_nodeVariablePolicy = policy;

@@ -33,7 +33,6 @@
 #include <vector>
 
 namespace Fooyin {
-class LibraryManager;
 struct ParsedScript;
 class TrackSorterPrivate;
 
@@ -51,7 +50,7 @@ public:
     };
 
     TrackSorter();
-    explicit TrackSorter(LibraryManager* libraryManager);
+    explicit TrackSorter(LibraryInfoMap libraries);
     ~TrackSorter();
 
     /*!

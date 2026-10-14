@@ -279,7 +279,6 @@ public:
     std::shared_ptr<TrackMetadataStore> m_metadataStore;
 
     LibraryThreadHandler m_threadHandler;
-    TrackSorter m_sorter;
     QFuture<TrackList> m_sortFuture;
 
     TrackList m_tracks;
@@ -299,15 +298,13 @@ UnifiedMusicLibraryPrivate::UnifiedMusicLibraryPrivate(UnifiedMusicLibrary* self
     , m_dbPool{std::move(dbPool)}
     , m_settings{settings}
     , m_metadataStore{std::make_shared<TrackMetadataStore>()}
-    , m_threadHandler{m_dbPool,
-                      m_self,
-                      std::move(playlistLoader),
-                      m_metadataStore,
-                      std::move(audioLoader),
-                      std::move(remoteIo),
-                      m_settings}
-    , m_sorter{m_libraryManager}
+    , m_threadHandler{
+          m_dbPool,  m_self, std::move(playlistLoader), m_metadataStore, std::move(audioLoader), std::move(remoteIo),
+          m_settings}
 {
+    QObject::connect(m_libraryManager, &LibraryManager::librariesChanged, m_self,
+                     [this]() { changeSort(librarySortScript()); });
+
     m_settings->subscribe<Settings::Core::LibrarySortScript>(m_self, [this](const QString& sort) { changeSort(sort); });
     m_settings->subscribe<Settings::Core::Internal::MonitorLibraryDirectories>(m_self,
                                                                                [this]() { setupLibraryWatchers(); });
@@ -338,9 +335,11 @@ QCoro::Task<TrackList> UnifiedMusicLibraryPrivate::sortTracks(QString sort, Trac
 
 QFuture<TrackList> UnifiedMusicLibraryPrivate::sortTracksFuture(const QString& sort, TrackList tracks)
 {
-    m_sortFuture = Utils::asyncExec([this, sort, tracks = std::move(tracks)]() mutable {
-        return m_sorter.calcSortTracks(sort, std::move(tracks));
-    });
+    m_sortFuture
+        = Utils::asyncExec([libraries = m_libraryManager->allLibraries(), sort, tracks = std::move(tracks)]() mutable {
+              TrackSorter sorter{std::move(libraries)};
+              return sorter.calcSortTracks(sort, std::move(tracks));
+          });
     return m_sortFuture;
 }
 
@@ -448,7 +447,7 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitLoadTracks(TrackList tracksToLoa
 
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitChangeSort(QString sort)
 {
-    m_tracks = co_await sortTracks(std::move(sort), std::move(m_tracks));
+    m_tracks = co_await sortTracks(std::move(sort), m_tracks);
     Q_EMIT m_self->tracksSorted(m_tracks);
 }
 

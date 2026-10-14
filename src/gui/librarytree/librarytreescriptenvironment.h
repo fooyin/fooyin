@@ -38,8 +38,6 @@ enum class LibraryTreeNodePolicy : uint8_t
 class LibraryTreeScriptEnvironment : public LibraryScriptEnvironment
 {
 public:
-    explicit LibraryTreeScriptEnvironment(const LibraryManager* libraryManager = nullptr);
-
     void setNodeVariablePolicy(LibraryTreeNodePolicy policy);
     void setNodeCounts(int trackCount, int childCount);
 

@@ -21,6 +21,7 @@
 
 #include "fileopsdefs.h"
 
+#include <core/library/libraryinfo.h>
 #include <core/scripting/scriptparser.h>
 #include <utils/worker.h>
 
@@ -81,6 +82,8 @@ public:
     FileOpsWorker(MusicLibrary* library, std::shared_ptr<AudioLoader> audioLoader, TrackList tracks,
                   SettingsManager* settings, QObject* parent = nullptr);
 
+    void setLibraryData(LibraryInfoMap libraries, TrackList tracks);
+
     void simulate(const FileOpPreset& preset);
     void run();
     void deleteFiles(bool forceImmediateDelete = false);
@@ -118,7 +121,11 @@ private:
     [[nodiscard]] QString libraryRootForDeletedPath(const QString& filePath, int libraryId) const;
     [[nodiscard]] int archiveLibraryId(const QString& archivePath) const;
 
+    [[nodiscard]] std::optional<LibraryInfo> libraryForPath(const QString& path) const;
+
     MusicLibrary* m_library;
+    LibraryInfoMap m_libraries;
+    TrackList m_libraryTracks;
     std::shared_ptr<AudioLoader> m_audioLoader;
     SettingsManager* m_settings;
     ScriptParser m_scriptParser;

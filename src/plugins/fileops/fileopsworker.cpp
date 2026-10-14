@@ -117,7 +117,20 @@ FileOpsWorker::FileOpsWorker(MusicLibrary* library, std::shared_ptr<AudioLoader>
     , m_settings{settings}
     , m_tracks{std::move(tracks)}
     , m_isMonitoring{settings->value<Fooyin::Settings::Core::Internal::MonitorLibraryDirectories>()}
-{ }
+{
+    m_libraryTracks = library->tracks();
+    for(const Track& track : m_tracks) {
+        if(const auto info = library->libraryInfo(track.libraryId())) {
+            m_libraries.insert_or_assign(info->id, *info);
+        }
+    }
+}
+
+void FileOpsWorker::setLibraryData(LibraryInfoMap libraries, TrackList tracks)
+{
+    m_libraries     = std::move(libraries);
+    m_libraryTracks = std::move(tracks);
+}
 
 void FileOpsWorker::simulate(const FileOpPreset& preset)
 {
@@ -328,8 +341,7 @@ bool FileOpsWorker::prepareOperations(const FileOpPreset& preset, bool emitSimul
 
 bool FileOpsWorker::populateTrackPaths()
 {
-    const auto tracks = m_library->tracks();
-    for(const Track& track : tracks) {
+    for(const Track& track : m_libraryTracks) {
         if(!mayRun()) {
             return false;
         }
@@ -638,7 +650,7 @@ FileOpResult FileOpsWorker::renameFile(const FileOpsItem& item)
                 track.setFilePath(item.destination);
             }
 
-            if(const auto library = m_library->libraryForPath(item.destination)) {
+            if(const auto library = libraryForPath(item.destination)) {
                 if(track.libraryId() != library->id) {
                     track.setLibraryId(library->id);
                 }
@@ -788,7 +800,7 @@ void FileOpsWorker::updateExtractedArchiveTracks(const QString& archivePath)
             }
 
             track.setFilePath(destination);
-            if(const auto library = m_library->libraryForPath(destination)) {
+            if(const auto library = libraryForPath(destination)) {
                 if(track.libraryId() != library->id) {
                     track.setLibraryId(library->id);
                 }
@@ -822,7 +834,7 @@ void FileOpsWorker::addEmptyDirs(const QDir& dir, const QDir& sourceRoot)
     QString libraryRoot;
 
     if(removeEmptyParentFolders) {
-        if(const auto libraryInfo = m_library->libraryForPath(sourceRoot.absolutePath())) {
+        if(const auto libraryInfo = libraryForPath(sourceRoot.absolutePath())) {
             libraryRoot = QDir::cleanPath(QFileInfo{libraryInfo->path}.absoluteFilePath());
         }
     }
@@ -907,15 +919,15 @@ QString FileOpsWorker::libraryRootForDeletedPath(const QString& filePath, int li
     const QString fileDir = QFileInfo{filePath}.absolutePath();
 
     if(libraryId >= 0) {
-        if(const auto libraryInfo = m_library->libraryInfo(libraryId)) {
-            const QString libraryRoot = QDir::cleanPath(QFileInfo{libraryInfo->path}.absoluteFilePath());
+        if(const auto libraryInfo = m_libraries.find(libraryId); libraryInfo != m_libraries.end()) {
+            const QString libraryRoot = QDir::cleanPath(QFileInfo{libraryInfo->second.path}.absoluteFilePath());
             if(Utils::File::isSamePath(fileDir, libraryRoot) || Utils::File::isSubdir(fileDir, libraryRoot)) {
                 return libraryRoot;
             }
         }
     }
 
-    if(const auto libraryInfo = m_library->libraryForPath(fileDir)) {
+    if(const auto libraryInfo = libraryForPath(fileDir)) {
         return QDir::cleanPath(QFileInfo{libraryInfo->path}.absoluteFilePath());
     }
 
@@ -931,5 +943,15 @@ int FileOpsWorker::archiveLibraryId(const QString& archivePath) const
     }
 
     return -1;
+}
+
+std::optional<LibraryInfo> FileOpsWorker::libraryForPath(const QString& path) const
+{
+    for(const auto& library : m_libraries | std::views::values) {
+        if(Utils::File::isSamePath(path, library.path) || Utils::File::isSubdir(path, library.path)) {
+            return library;
+        }
+    }
+    return {};
 }
 } // namespace Fooyin::FileOps

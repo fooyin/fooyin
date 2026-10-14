@@ -23,11 +23,11 @@
 
 namespace Fooyin {
 TrackSorter::TrackSorter()
-    : TrackSorter{nullptr}
+    : TrackSorter{LibraryInfoMap{}}
 { }
 
-TrackSorter::TrackSorter(LibraryManager* libraryManager)
-    : m_scriptEnvironment{libraryManager}
+TrackSorter::TrackSorter(LibraryInfoMap libraries)
+    : m_scriptEnvironment{std::move(libraries)}
 { }
 
 TrackSorter::~TrackSorter() = default;

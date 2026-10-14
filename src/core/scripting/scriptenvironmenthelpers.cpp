@@ -28,13 +28,22 @@
 #include <QDir>
 
 namespace Fooyin {
-LibraryScriptEnvironment::LibraryScriptEnvironment(const LibraryManager* libraryManager)
-    : m_libraryManager{libraryManager}
+LibraryScriptEnvironment::LibraryScriptEnvironment(LibraryInfoMap libraries)
+    : m_libraries{std::move(libraries)}
     , m_trackListContextPolicy{TrackListContextPolicy::Unresolved}
     , m_escapeRichText{false}
     , m_useVariousArtists{false}
     , m_ratingSymbols{defaultRatingStarSymbols()}
 { }
+
+LibraryScriptEnvironment::LibraryScriptEnvironment(const LibraryManager* libraryManager)
+    : LibraryScriptEnvironment{libraryManager ? libraryManager->allLibraries() : LibraryInfoMap{}}
+{ }
+
+void LibraryScriptEnvironment::setLibraries(LibraryInfoMap libraries)
+{
+    m_libraries = std::move(libraries);
+}
 
 void LibraryScriptEnvironment::setEvaluationPolicy(TrackListContextPolicy policy, QString placeholder,
                                                    bool escapeRichText, bool useVariousArtists)
@@ -62,27 +71,17 @@ const ScriptEvaluationEnvironment* LibraryScriptEnvironment::evaluationEnvironme
 
 QString LibraryScriptEnvironment::libraryName(const Track& track) const
 {
-    if(!m_libraryManager) {
-        return {};
+    if(const auto it = m_libraries.find(track.libraryId()); it != m_libraries.end()) {
+        return it->second.name;
     }
-
-    if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
-        return library->name;
-    }
-
     return {};
 }
 
 QString LibraryScriptEnvironment::libraryPath(const Track& track) const
 {
-    if(!m_libraryManager) {
-        return {};
+    if(const auto it = m_libraries.find(track.libraryId()); it != m_libraries.end()) {
+        return it->second.path;
     }
-
-    if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
-        return library->path;
-    }
-
     return {};
 }
 

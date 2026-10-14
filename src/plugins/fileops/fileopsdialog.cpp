@@ -149,7 +149,7 @@ FileOpsDialogPrivate::FileOpsDialogPrivate(FileOpsDialog* self, MusicLibrary* li
     , m_saveButton{new QPushButton(FileOpsDialog::tr("&Save"), self)}
     , m_deleteButton{new QPushButton(FileOpsDialog::tr("&Delete"), self)}
     , m_resultsTable{new QTreeView(self)}
-    , m_model{new FileOpsModel(library, std::move(audioLoader), tracks, m_settings, self)}
+    , m_model{new FileOpsModel(library, std::move(audioLoader), tracks, m_settings, m_libraryManager, self)}
     , m_status{new QLabel(self)}
     , m_supportsFileOperations{std::ranges::all_of(tracks, [](const Track& track) { return !track.isInArchive(); })}
     , m_supportsExtract{std::ranges::all_of(tracks, [](const Track& track) { return track.isInArchive(); })}

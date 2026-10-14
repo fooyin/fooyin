@@ -21,6 +21,7 @@
 
 #include "fycore_export.h"
 
+#include <core/library/libraryinfo.h>
 #include <core/ratingsymbols.h>
 #include <core/scripting/scripttypes.h>
 
@@ -42,7 +43,10 @@ class FYCORE_EXPORT LibraryScriptEnvironment : public ScriptEnvironment,
                                                public ScriptEvaluationEnvironment
 {
 public:
+    explicit LibraryScriptEnvironment(LibraryInfoMap libraries = {});
     explicit LibraryScriptEnvironment(const LibraryManager* libraryManager);
+
+    void setLibraries(LibraryInfoMap libraries);
 
     void setEvaluationPolicy(TrackListContextPolicy policy, QString placeholder = {}, bool escapeRichText = false,
                              bool useVariousArtists = false);
@@ -61,7 +65,7 @@ public:
     [[nodiscard]] RatingStarSymbols ratingStarSymbols() const override;
 
 private:
-    const LibraryManager* m_libraryManager;
+    LibraryInfoMap m_libraries;
     TrackListContextPolicy m_trackListContextPolicy;
     QString m_trackListPlaceholder;
     bool m_escapeRichText;

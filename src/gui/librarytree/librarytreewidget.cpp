@@ -34,6 +34,7 @@
 #include <core/application.h>
 #include <core/coresettings.h>
 #include <core/library/libraryinfo.h>
+#include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/player/playerdefs.h>
@@ -198,6 +199,7 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
                                      GuiStyleProvider* styleProvider, QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
+    , m_libraryManager{core->libraryManager()}
     , m_library{core->library()}
     , m_playlistHandler{playlistController->playlistHandler()}
     , m_playerController{playlistController->playerController()}
@@ -841,6 +843,8 @@ void LibraryTreeWidget::setupConnections()
         }
     });
     QObject::connect(m_library, &MusicLibrary::visibleLibraryTracksChanged, this, &LibraryTreeWidget::refreshSearch);
+
+    QObject::connect(m_libraryManager, &LibraryManager::librariesChanged, this, &LibraryTreeWidget::reset);
 
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
                      [this](Player::PlayState state) { m_model->setPlayState(state); });

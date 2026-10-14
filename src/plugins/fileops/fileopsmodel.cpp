@@ -19,6 +19,7 @@
 
 #include "fileopsmodel.h"
 
+#include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <utils/enum.h>
 
@@ -26,8 +27,10 @@
 
 namespace Fooyin::FileOps {
 FileOpsModel::FileOpsModel(MusicLibrary* library, std::shared_ptr<AudioLoader> audioLoader, TrackList tracks,
-                           SettingsManager* settings, QObject* parent)
+                           SettingsManager* settings, LibraryManager* libraryManager, QObject* parent)
     : QAbstractItemModel{parent}
+    , m_library{library}
+    , m_libraryManager{libraryManager}
     , m_worker{library, std::move(audioLoader), std::move(tracks), settings}
     , m_succeededCount{0}
 {
@@ -51,7 +54,11 @@ void FileOpsModel::simulate(const FileOpPreset& preset)
 {
     m_worker.stopThread();
 
-    QMetaObject::invokeMethod(&m_worker, [this, preset]() { m_worker.simulate(preset); });
+    QMetaObject::invokeMethod(&m_worker, [worker = &m_worker, preset, libraries = m_libraryManager->allLibraries(),
+                                          tracks = m_library->tracks()]() mutable {
+        worker->setLibraryData(std::move(libraries), std::move(tracks));
+        worker->simulate(preset);
+    });
 }
 
 void FileOpsModel::run()

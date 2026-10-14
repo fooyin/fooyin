@@ -24,10 +24,8 @@
 
 #include <core/constants.h>
 #include <core/scripting/scriptparser.h>
-#include <gui/guiutils.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
-#include <utils/settings/settingsmanager.h>
 
 #include <unordered_map>
 #include <unordered_set>
@@ -48,11 +46,8 @@ QString identityText(const RichText& richText)
 class LibraryTreePopulatorPrivate
 {
 public:
-    explicit LibraryTreePopulatorPrivate(LibraryTreePopulator* self, LibraryManager* libraryManager,
-                                         SettingsManager* settings)
+    explicit LibraryTreePopulatorPrivate(LibraryTreePopulator* self)
         : m_self{self}
-        , m_settings{settings}
-        , m_scriptEnvironment{libraryManager}
     {
         m_scriptContext.environment = &m_scriptEnvironment;
         m_parser.addProvider(artworkMarkerVariableProvider());
@@ -70,7 +65,22 @@ public:
     bool runBatch(int size);
 
     LibraryTreePopulator* m_self;
-    SettingsManager* m_settings;
+    LibraryTreePopulationContext m_context;
+
+    bool mayRun() const
+    {
+        return m_self->mayRun() && !m_context.stopToken.stop_requested();
+    }
+
+    void setContext(LibraryTreePopulationContext context)
+    {
+        m_context = std::move(context);
+        m_formatter.setBaseFont(m_context.font);
+        m_scriptEnvironment.setLibraries(std::move(m_context.libraries));
+        m_scriptEnvironment.setRatingStarSymbols(m_context.ratingSymbols);
+        m_scriptEnvironment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true, m_context.useVarious);
+        m_scriptEnvironment.setNodeVariablePolicy(LibraryTreeNodePolicy::Unresolved);
+    }
 
     ScriptParser m_parser;
     ScriptFormatter m_formatter;
@@ -139,6 +149,7 @@ void LibraryTreePopulatorPrivate::updateRichTitle(LibraryTreeItem& item)
 PendingTreeData LibraryTreePopulatorPrivate::buildBatchData()
 {
     PendingTreeData data;
+    data.generation   = m_context.generation;
     data.nodes        = m_data.nodes;
     data.trackParents = m_data.trackParents;
 
@@ -173,6 +184,7 @@ PendingTreeData LibraryTreePopulatorPrivate::buildCompleteData()
     }
 
     PendingTreeData data;
+    data.generation   = m_context.generation;
     data.items        = std::move(m_items);
     data.nodes        = std::move(m_data.nodes);
     data.trackParents = std::move(m_data.trackParents);
@@ -261,7 +273,7 @@ bool LibraryTreePopulatorPrivate::runBatch(int size)
     const size_t batchEnd = std::min(m_pendingTrackIndex + static_cast<size_t>(size), m_pendingTracks.size());
 
     for(size_t index{m_pendingTrackIndex}; index < batchEnd; ++index) {
-        if(!m_self->mayRun()) {
+        if(!mayRun()) {
             return false;
         }
 
@@ -271,7 +283,7 @@ bool LibraryTreePopulatorPrivate::runBatch(int size)
         }
     }
 
-    if(!m_self->mayRun()) {
+    if(!mayRun()) {
         return false;
     }
 
@@ -290,22 +302,22 @@ bool LibraryTreePopulatorPrivate::runBatch(int size)
     return runBatch(std::min(remaining, BatchSize));
 }
 
-LibraryTreePopulator::LibraryTreePopulator(LibraryManager* libraryManager, SettingsManager* settings, QObject* parent)
+LibraryTreePopulator::LibraryTreePopulator(QObject* parent)
     : Worker{parent}
-    , p{std::make_unique<LibraryTreePopulatorPrivate>(this, libraryManager, settings)}
+    , p{std::make_unique<LibraryTreePopulatorPrivate>(this)}
 { }
 
 LibraryTreePopulator::~LibraryTreePopulator() = default;
 
-void LibraryTreePopulator::setFont(const QFont& font)
+void LibraryTreePopulator::run(const LibraryTreeGrouping& grouping, const TrackList& tracks,
+                               LibraryTreePopulationContext context, PopulationMode mode)
 {
-    p->m_formatter.setBaseFont(font);
-}
+    if(context.stopToken.stop_requested()) {
+        return;
+    }
 
-void LibraryTreePopulator::run(const LibraryTreeGrouping& grouping, const TrackList& tracks, bool useVarious,
-                               PopulationMode mode)
-{
     setState(Running);
+    p->setContext(std::move(context));
 
     p->m_data.clear();
     p->m_items.clear();
@@ -313,10 +325,6 @@ void LibraryTreePopulator::run(const LibraryTreeGrouping& grouping, const TrackL
     p->m_emittedItems.clear();
     p->m_childKeys.clear();
     p->m_nodeKeyCache.clear();
-
-    p->m_scriptEnvironment.setRatingStarSymbols(Gui::ratingStarSymbols(*p->m_settings));
-    p->m_scriptEnvironment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true, useVarious);
-    p->m_scriptEnvironment.setNodeVariablePolicy(LibraryTreeNodePolicy::Unresolved);
 
     if(std::exchange(p->m_currentGrouping, grouping) != grouping) {
         p->m_displayScript = p->m_parser.parse(p->m_currentGrouping.script);
@@ -333,21 +341,24 @@ void LibraryTreePopulator::run(const LibraryTreeGrouping& grouping, const TrackL
     setState(Idle);
 
     if(success) {
-        Q_EMIT finished();
+        Q_EMIT populationFinished(p->m_context.generation, p->m_context.requestId);
     }
 }
 
-void LibraryTreePopulator::updateItems(ItemKeyMap items, bool useVarious)
+void LibraryTreePopulator::updateItems(ItemKeyMap items, LibraryTreePopulationContext context)
 {
-    setState(Running);
+    if(context.stopToken.stop_requested()) {
+        return;
+    }
 
-    p->m_scriptEnvironment.setRatingStarSymbols(Gui::ratingStarSymbols(*p->m_settings));
-    p->m_scriptEnvironment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true, useVarious);
-    p->m_scriptEnvironment.setNodeVariablePolicy(LibraryTreeNodePolicy::Unresolved);
+    setState(Running);
+    p->setContext(std::move(context));
 
     PendingTreeData data;
+    data.generation = p->m_context.generation;
+
     for(auto& [key, item] : items) {
-        if(!mayRun()) {
+        if(!p->mayRun()) {
             setState(Idle);
             return;
         }
@@ -356,7 +367,7 @@ void LibraryTreePopulator::updateItems(ItemKeyMap items, bool useVarious)
     }
 
     Q_EMIT populated(std::make_shared<PendingTreeData>(std::move(data)));
-    Q_EMIT finished();
+    Q_EMIT populationFinished(p->m_context.generation, p->m_context.requestId);
 
     setState(Idle);
 }

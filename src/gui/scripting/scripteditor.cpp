@@ -127,6 +127,11 @@ public:
         m_libraryEnvironment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true);
     }
 
+    void setLibraries(LibraryInfoMap libraries)
+    {
+        m_libraryEnvironment.setLibraries(std::move(libraries));
+    }
+
     void updatePlaybackState(PlayerController* playerController)
     {
         m_playbackEnvironment.setPlaylistData({}, 0);
@@ -378,6 +383,10 @@ void ScriptEditorPrivate::setupConnections()
     if(m_selectionController) {
         QObject::connect(m_selectionController, &TrackSelectionController::displaySelectionChanged, this,
                          &ScriptEditorPrivate::trackContextChanged);
+    }
+    if(m_libraryManager) {
+        QObject::connect(m_libraryManager, &LibraryManager::librariesChanged, this,
+                         qOverload<>(&ScriptEditorPrivate::updateResults));
     }
     if(m_playerController) {
         QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
@@ -706,6 +715,7 @@ void ScriptEditorPrivate::updateResults(const Expression& expression)
 
     m_formatter.setBaseFont(m_results->font());
 
+    m_environment.setLibraries(m_libraryManager->allLibraries());
     m_environment.updatePlaybackState(m_playerController);
 
     const Track track      = m_track.isValid() ? m_track : m_placeholderTrack;

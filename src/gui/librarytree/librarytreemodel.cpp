@@ -24,6 +24,7 @@
 #include "librarytreescriptenvironment.h"
 
 #include <core/coresettings.h>
+#include <core/library/librarymanager.h>
 #include <core/library/tracksort.h>
 #include <core/scripting/scriptparser.h>
 #include <gui/coverprovider.h>
@@ -261,6 +262,7 @@ public:
     void queueRichTitleUpdate(ItemKeyMap items);
     void startRichTitleUpdate(ItemKeyMap items);
     [[nodiscard]] QFont libraryTreeFont() const;
+    [[nodiscard]] LibraryTreePopulationContext populationContext();
     [[nodiscard]] int childCountForScript(const LibraryTreeItem& item) const;
     [[nodiscard]] int summaryChildCountForScript();
 
@@ -283,6 +285,10 @@ public:
     void beginReset();
 
     LibraryTreeModel* m_self;
+    LibraryManager* m_libraryManager;
+    uint64_t m_populationGeneration{0};
+    uint64_t m_populationRequestId{0};
+    std::stop_source m_populationStopSource;
     std::shared_ptr<AudioLoader> m_audioLoader;
     SettingsManager* m_settings;
     GuiStyleProvider* m_styleProvider;
@@ -322,11 +328,11 @@ LibraryTreeModelPrivate::LibraryTreeModelPrivate(LibraryTreeModel* self, Library
                                                  CoverRepository* coverRepository, SettingsManager* settings,
                                                  GuiStyleProvider* styleProvider)
     : m_self{self}
+    , m_libraryManager{libraryManager}
     , m_audioLoader{std::move(audioLoader)}
     , m_settings{settings}
     , m_styleProvider{styleProvider}
     , m_coverProvider{coverRepository}
-    , m_populator{libraryManager, settings}
     , m_playingColour{m_styleProvider->palette().highlight().color()}
     , m_iconSize{
           CoverProvider::findThumbnailSize(m_settings->value<Settings::Gui::Internal::LibTreeIconSize>().toSize())}
@@ -437,17 +443,26 @@ void LibraryTreeModelPrivate::startRichTitleUpdate(ItemKeyMap items)
         m_populatorThread.start();
     }
 
-    const QFont font      = libraryTreeFont();
-    const bool useVarious = m_settings->value<Settings::Core::UseVariousForCompilations>();
-    QMetaObject::invokeMethod(&m_populator, [this, font, items = std::move(items), useVarious]() mutable {
-        m_populator.setFont(font);
-        m_populator.updateItems(std::move(items), useVarious);
-    });
+    QMetaObject::invokeMethod(
+        &m_populator, [worker = &m_populator, items = std::move(items), context = populationContext()]() mutable {
+            worker->updateItems(std::move(items), std::move(context));
+        });
 }
 
 QFont LibraryTreeModelPrivate::libraryTreeFont() const
 {
     return m_styleProvider->font(u"Fooyin::LibraryTreeView"_s);
+}
+
+LibraryTreePopulationContext LibraryTreeModelPrivate::populationContext()
+{
+    return {.libraries     = m_libraryManager->allLibraries(),
+            .font          = libraryTreeFont(),
+            .ratingSymbols = Gui::ratingStarSymbols(*m_settings),
+            .useVarious    = m_settings->value<Settings::Core::UseVariousForCompilations>(),
+            .generation    = m_populationGeneration,
+            .requestId     = ++m_populationRequestId,
+            .stopToken     = m_populationStopSource.get_token()};
 }
 
 void LibraryTreeModelPrivate::removeTracks(const TrackList& tracks)
@@ -863,29 +878,36 @@ LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, const std::sh
 {
     qRegisterMetaType<PendingTreeDataPtr>("Fooyin::PendingTreeDataPtr");
 
-    QObject::connect(&p->m_populator, &LibraryTreePopulator::populated, this,
-                     [this](const PendingTreeDataPtr& data) { p->batchFinished(data); });
-
-    QObject::connect(&p->m_populator, &Worker::finished, this, [this]() {
-        p->updateSummary();
-
-        if(!p->m_pendingRichTitleUpdates.empty()) {
-            ItemKeyMap items = std::move(p->m_pendingRichTitleUpdates);
-            p->m_pendingRichTitleUpdates.clear();
-            p->startRichTitleUpdate(std::move(items));
-            return;
-        }
-
-        p->m_populator.stopThread();
-        p->m_populatorThread.quit();
-        if(!p->m_loaded) {
-            p->m_loaded = true;
-            Q_EMIT modelLoaded();
-        }
-        if(std::exchange(p->m_resetPendingFinish, false)) {
-            Q_EMIT modelResetFinished();
+    QObject::connect(&p->m_populator, &LibraryTreePopulator::populated, this, [this](const PendingTreeDataPtr& data) {
+        if(data && data->generation == p->m_populationGeneration) {
+            p->batchFinished(data);
         }
     });
+
+    QObject::connect(&p->m_populator, &LibraryTreePopulator::populationFinished, this,
+                     [this](uint64_t generation, uint64_t requestId) {
+                         if(generation != p->m_populationGeneration || requestId != p->m_populationRequestId) {
+                             return;
+                         }
+                         p->updateSummary();
+
+                         if(!p->m_pendingRichTitleUpdates.empty()) {
+                             ItemKeyMap items = std::move(p->m_pendingRichTitleUpdates);
+                             p->m_pendingRichTitleUpdates.clear();
+                             p->startRichTitleUpdate(std::move(items));
+                             return;
+                         }
+
+                         p->m_populator.stopThread();
+                         p->m_populatorThread.quit();
+                         if(!p->m_loaded) {
+                             p->m_loaded = true;
+                             Q_EMIT modelLoaded();
+                         }
+                         if(std::exchange(p->m_resetPendingFinish, false)) {
+                             Q_EMIT modelResetFinished();
+                         }
+                     });
 
     QObject::connect(&p->m_coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) {
         if(p->m_trackParents.contains(track.id())) {
@@ -907,6 +929,7 @@ LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, const std::sh
 
 LibraryTreeModel::~LibraryTreeModel()
 {
+    p->m_populationStopSource.request_stop();
     p->m_populator.stopThread();
     p->m_populatorThread.quit();
     p->m_populatorThread.wait();
@@ -1273,10 +1296,9 @@ void LibraryTreeModel::addTracks(const TrackList& tracks)
     p->m_addingTracks = true;
     p->m_populatorThread.start();
 
-    QMetaObject::invokeMethod(&p->m_populator, [this, tracksToAdd = std::move(tracksToAdd)] {
-        p->m_populator.setFont(p->libraryTreeFont());
-        p->m_populator.run(p->m_grouping, tracksToAdd,
-                           p->m_settings->value<Settings::Core::UseVariousForCompilations>());
+    QMetaObject::invokeMethod(&p->m_populator, [worker = &p->m_populator, tracksToAdd = std::move(tracksToAdd),
+                                                grouping = p->m_grouping, context = p->populationContext()]() mutable {
+        worker->run(grouping, tracksToAdd, std::move(context));
     });
 }
 
@@ -1296,10 +1318,9 @@ void LibraryTreeModel::updateTracks(const TrackList& tracks)
     p->m_addingTracks         = false;
     p->m_populatorThread.start();
 
-    QMetaObject::invokeMethod(&p->m_populator, [this, tracksToUpdate = std::move(tracksToUpdate)] {
-        p->m_populator.setFont(p->libraryTreeFont());
-        p->m_populator.run(p->m_grouping, tracksToUpdate,
-                           p->m_settings->value<Settings::Core::UseVariousForCompilations>());
+    QMetaObject::invokeMethod(&p->m_populator, [worker = &p->m_populator, tracksToUpdate = std::move(tracksToUpdate),
+                                                grouping = p->m_grouping, context = p->populationContext()]() mutable {
+        worker->run(grouping, tracksToUpdate, std::move(context));
     });
 
     addTracks(tracks);
@@ -1333,6 +1354,10 @@ void LibraryTreeModel::changeGrouping(const LibraryTreeGrouping& grouping)
 
 void LibraryTreeModel::reset(const TrackList& tracks)
 {
+    p->m_populationStopSource.request_stop();
+    p->m_populationStopSource = std::stop_source{};
+    ++p->m_populationGeneration;
+    p->m_pendingRichTitleUpdates.clear();
     if(p->m_populatorThread.isRunning()) {
         p->m_populator.stopThread();
     }
@@ -1341,6 +1366,8 @@ void LibraryTreeModel::reset(const TrackList& tracks)
     }
 
     if(tracks.empty()) {
+        p->m_resetting = false;
+        p->m_tracksPendingRemoval.clear();
         beginResetModel();
         p->beginReset();
         endResetModel();
@@ -1353,10 +1380,9 @@ void LibraryTreeModel::reset(const TrackList& tracks)
     p->m_resetting = true;
     p->m_tracksPendingRemoval.clear();
 
-    QMetaObject::invokeMethod(&p->m_populator, [this, tracks] {
-        p->m_populator.setFont(p->libraryTreeFont());
-        p->m_populator.run(p->m_grouping, tracks, p->m_settings->value<Settings::Core::UseVariousForCompilations>(),
-                           LibraryTreePopulator::PopulationMode::Atomic);
+    QMetaObject::invokeMethod(&p->m_populator, [worker = &p->m_populator, tracks, grouping = p->m_grouping,
+                                                context = p->populationContext()]() mutable {
+        worker->run(grouping, tracks, std::move(context), LibraryTreePopulator::PopulationMode::Atomic);
     });
 }
 

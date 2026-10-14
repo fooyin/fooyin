@@ -27,11 +27,20 @@
 #include <utils/fileutils.h>
 #include <utils/helpers.h>
 
+#include <QCoreApplication>
+#include <QThread>
+
 #include <utility>
 
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
+namespace {
+void assertMainThread()
+{
+    Q_ASSERT(!QCoreApplication::instance() || QThread::currentThread() == qApp->thread());
+}
+
 bool checkNewPath(const QString& path, const LibraryInfoMap& libraries, int libraryId = -1)
 {
     if(path.isEmpty()) {
@@ -50,6 +59,7 @@ void eraseLibrary(LibraryInfoMap& libraries, int id)
         libraries.erase(id);
     }
 }
+} // namespace
 
 class LibraryManagerPrivate
 {
@@ -89,17 +99,24 @@ LibraryManager::~LibraryManager() = default;
 
 void LibraryManager::reset()
 {
+    assertMainThread();
+
     p->m_libraries.clear();
     p->m_libraryConnector.getAllLibraries(p->m_libraries);
+    Q_EMIT librariesChanged();
 }
 
 const LibraryInfoMap& LibraryManager::allLibraries() const
 {
+    assertMainThread();
+
     return p->m_libraries;
 }
 
 int LibraryManager::addLibrary(const QString& path, const QString& name)
 {
+    assertMainThread();
+
     if(!checkNewPath(path, p->m_libraries)) {
         return -1;
     }
@@ -112,6 +129,7 @@ int LibraryManager::addLibrary(const QString& path, const QString& name)
         LibraryInfo& info = p->m_libraries.emplace(id, LibraryInfo{libraryName, path, id}).first->second;
         Q_EMIT libraryAdded(info);
         info.status = LibraryInfo::Status::Initialised;
+        Q_EMIT librariesChanged();
         return id;
     }
 
@@ -120,6 +138,8 @@ int LibraryManager::addLibrary(const QString& path, const QString& name)
 
 bool LibraryManager::removeLibrary(int id)
 {
+    assertMainThread();
+
     if(!hasLibrary(id)) {
         return false;
     }
@@ -132,6 +152,7 @@ bool LibraryManager::removeLibrary(int id)
 
         const auto tracksRemoved = p->m_trackConnector.deleteLibraryTracks(id);
         Q_EMIT libraryRemoved(library, tracksRemoved);
+        Q_EMIT librariesChanged();
 
         return true;
     }
@@ -141,6 +162,8 @@ bool LibraryManager::removeLibrary(int id)
 
 bool LibraryManager::renameLibrary(int id, const QString& name)
 {
+    assertMainThread();
+
     if(!hasLibrary(id)) {
         return false;
     }
@@ -150,6 +173,7 @@ bool LibraryManager::renameLibrary(int id, const QString& name)
     if(p->m_libraryConnector.renameLibrary(id, libraryName)) {
         p->m_libraries.at(id).name = libraryName;
         Q_EMIT libraryRenamed(p->m_libraries.at(id));
+        Q_EMIT librariesChanged();
         return true;
     }
 
@@ -158,6 +182,8 @@ bool LibraryManager::renameLibrary(int id, const QString& name)
 
 void LibraryManager::updateLibraryStatus(const LibraryInfo& library)
 {
+    assertMainThread();
+
     if(!hasLibrary(library.id)) {
         return;
     }
@@ -167,16 +193,22 @@ void LibraryManager::updateLibraryStatus(const LibraryInfo& library)
 
 bool LibraryManager::hasLibrary() const
 {
+    assertMainThread();
+
     return !p->m_libraries.empty();
 }
 
 bool LibraryManager::hasLibrary(int id) const
 {
+    assertMainThread();
+
     return p->m_libraries.contains(id);
 }
 
 std::optional<LibraryInfo> LibraryManager::findLibraryByPath(const QString& path) const
 {
+    assertMainThread();
+
     auto it = std::ranges::find_if(std::as_const(p->m_libraries),
                                    [path](const auto& info) { return info.second.path == path; });
     if(it != p->m_libraries.end()) {
@@ -187,6 +219,8 @@ std::optional<LibraryInfo> LibraryManager::findLibraryByPath(const QString& path
 
 std::optional<LibraryInfo> LibraryManager::libraryInfo(int id) const
 {
+    assertMainThread();
+
     if(hasLibrary(id)) {
         return p->m_libraries.at(id);
     }

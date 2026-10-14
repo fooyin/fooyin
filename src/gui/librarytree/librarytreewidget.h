@@ -48,6 +48,7 @@ namespace Fooyin {
 class ActionManager;
 class Application;
 class CoverRepository;
+class LibraryManager;
 class LibraryTreeController;
 class LibraryTreeGroupRegistry;
 class LibraryTreeDelegate;
@@ -184,6 +185,7 @@ private:
     void restoreState(const QByteArray& state, bool force = false);
 
     ActionManager* m_actionManager;
+    LibraryManager* m_libraryManager;
     MusicLibrary* m_library;
     PlaylistHandler* m_playlistHandler;
     PlayerController* m_playerController;

@@ -26,6 +26,8 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
+#include <core/library/librarymanager.h>
+#include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
 #include <gui/plugins/guiplugincontext.h>
@@ -270,6 +272,7 @@ void FileOpsPlugin::runDelete(const TrackList& tracks, bool forceImmediateDelete
 {
     auto* worker = new FileOpsWorker(m_library, m_audioLoader, tracks, m_settings);
     auto* thread = new QThread(this);
+    worker->setLibraryData(m_libraryManager->allLibraries(), m_library->tracks());
     worker->moveToThread(thread);
 
     QObject::connect(
