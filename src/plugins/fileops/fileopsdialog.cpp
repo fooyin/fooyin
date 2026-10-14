@@ -28,6 +28,7 @@
 #include <gui/iconloader.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/stringcollator.h>
 #include <utils/utils.h>
 
 #include <QAction>
@@ -171,7 +172,10 @@ void FileOpsDialogPrivate::setup()
     auto* destLine = m_destination->lineEdit();
     destLine->addAction(browseAction, QLineEdit::TrailingPosition);
 
-    m_resultsTable->setModel(m_model);
+    auto* sortModel = new StringSortProxyModel(m_self);
+    sortModel->setSourceModel(m_model);
+    sortModel->sort(1);
+    m_resultsTable->setModel(sortModel);
     m_resultsTable->header()->setStretchLastSection(true);
 
     const auto firstHint = m_resultsTable->header()->sectionSizeHint(0);
