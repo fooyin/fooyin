@@ -23,18 +23,16 @@
 
 #include <core/application.h>
 #include <core/coresettings.h>
-#include <core/internalcoresettings.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/playlist/playlistloader.h>
-#include <core/playlist/playlistparser.h>
-#include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 #include <QComboBox>
 #include <QDialogButtonBox>
-#include <QFile>
+#include <QDir>
 #include <QFileDialog>
 #include <QLabel>
+#include <QLoggingCategory>
 #include <QMainWindow>
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -45,7 +43,6 @@ namespace Fooyin {
 SavePlaylistsDialog::SavePlaylistsDialog(Application* core, QWidget* parent)
     : QDialog{parent}
     , m_core{core}
-    , m_settings{core->settingsManager()}
     , m_formats{new QComboBox(this)}
 {
     const auto extensions = m_core->playlistLoader()->supportedSaveExtensions();
@@ -90,8 +87,7 @@ void SavePlaylistsDialog::accept()
         return;
     }
 
-    auto* parser = m_core->playlistLoader()->parserForExtension(extension);
-    if(!parser) {
+    if(!m_core->playlistLoader()->parserForExtension(extension)) {
         qCInfo(log) << "Could not save playlists: No parser found for" << extension;
         QDialog::accept();
         return;
@@ -104,22 +100,10 @@ void SavePlaylistsDialog::accept()
         }
 
         const QString filepath = u"%1/%2.%3"_s.arg(saveDir, playlist->name(), extension);
-        QFile playlistFile{QDir::cleanPath(filepath)};
-        if(!playlistFile.open(QIODevice::WriteOnly)) {
-            qCWarning(log) << "Could not open playlist file" << filepath
-                           << "for writing:" << playlistFile.errorString();
+        if(!m_core->exportPlaylist(*playlist, QDir::cleanPath(filepath), extension)) {
             QDialog::accept();
             return;
         }
-
-        const QFileInfo info{playlistFile};
-        const QDir playlistDir{info.absolutePath()};
-        const auto pathType = static_cast<PlaylistParser::PathType>(
-            m_settings->fileValue(Settings::Core::Internal::PlaylistSavePathType, 0).toInt());
-        const bool writeMetadata
-            = m_settings->fileValue(Settings::Core::Internal::PlaylistSaveMetadata, false).toBool();
-
-        parser->savePlaylist(&playlistFile, extension, playlist->tracks(), playlistDir, pathType, writeMetadata);
     }
 
     QDialog::accept();

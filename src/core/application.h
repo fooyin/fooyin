@@ -47,6 +47,7 @@ class MusicLibrary;
 class NetworkAccessManager;
 class PendingTrackCoverProvider;
 class PlayerController;
+class Playlist;
 class PlaylistHandler;
 class PlaylistLoader;
 class PluginManager;
@@ -67,6 +68,8 @@ public:
     void shutdown();
     static void quit();
     static void restart();
+
+    bool exportPlaylist(const Playlist& playlist, const QString& filepath, const QString& extension) const;
 
     [[nodiscard]] const CorePluginContext& corePluginContext() const;
     [[nodiscard]] Database* database() const;

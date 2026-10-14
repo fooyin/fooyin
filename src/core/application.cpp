@@ -57,6 +57,8 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QCoreApplication>
+#include <QFile>
+#include <QFileInfo>
 #include <QLoggingCategory>
 #include <QProcess>
 #include <QTimerEvent>
@@ -510,21 +512,41 @@ void Application::startPlaybackQueueSaveTimer()
     m_playbackQueueSaveTimer.start(PlaybackQueueSaveInterval, this);
 }
 
+bool Application::exportPlaylist(const Playlist& playlist, const QString& filepath, const QString& extension) const
+{
+    auto* parser = m_playlistLoader->parserForExtension(extension);
+    if(!parser) {
+        qCInfo(APP) << "Could not save playlist: No parser found for" << extension;
+        return false;
+    }
+
+    QFile file{filepath};
+    if(!file.open(QIODevice::WriteOnly)) {
+        qCWarning(APP) << "Could not open playlist file" << filepath << "for writing:" << file.errorString();
+        return false;
+    }
+
+    const QDir playlistDir{QFileInfo{file}.absolutePath()};
+    const auto pathType = static_cast<PlaylistParser::PathType>(
+        m_settings->fileValue(Settings::Core::Internal::PlaylistSavePathType, 0).toInt());
+    const bool writeMetadata = m_settings->fileValue(Settings::Core::Internal::PlaylistSaveMetadata, false).toBool();
+
+    parser->savePlaylist(&file, extension, playlist.tracks(), playlistDir, pathType, writeMetadata);
+    return true;
+}
+
 void Application::exportAllPlaylists(bool shutdown)
 {
     using namespace Settings::Core::Internal;
 
     const auto ext = m_settings->fileValue(AutoExportPlaylistsType).toString();
 
-    auto* parser = m_playlistLoader->parserForExtension(ext);
-    if(!parser) {
+    if(!m_playlistLoader->parserForExtension(ext)) {
         return;
     }
 
     const QString path = m_settings->fileValue(AutoExportPlaylistsPath, Core::playlistsPath()).toString();
     const QDir playlistPath{path};
-    const auto pathType = static_cast<PlaylistParser::PathType>(m_settings->fileValue(PlaylistSavePathType, 0).toInt());
-    const bool writeMetadata = m_settings->fileValue(PlaylistSaveMetadata, false).toBool();
 
     enum ExportType : uint8_t
     {
@@ -537,24 +559,15 @@ void Application::exportAllPlaylists(bool shutdown)
         const QString playlistFilepath = playlistPath.absoluteFilePath(playlist->name() + u'.' + ext);
         playlistPath.mkpath(path);
 
-        QFile playlistFile{playlistFilepath};
         const bool emptyPlaylist = playlist->trackCount() == 0;
         if(exportType == ForceDelete || (exportType == SaveAndDeleteEmpty && emptyPlaylist)) {
-            if(playlistFile.exists() && !Utils::File::moveToTrash(playlistFilepath)) {
+            if(QFile::exists(playlistFilepath) && !Utils::File::moveToTrash(playlistFilepath)) {
                 qCInfo(APP) << "Could not remove" << (emptyPlaylist ? "empty" : "") << "playlist:" << playlistFilepath;
             }
             return;
         }
 
-        if(!playlistFile.open(QIODevice::WriteOnly)) {
-            qCWarning(APP) << "Could not open playlist file" << playlistPath
-                           << "for writing:" << playlistFile.errorString();
-            return;
-        }
-
-        const QFileInfo info{playlistFile};
-        const QDir playlistDir{info.absolutePath()};
-        parser->savePlaylist(&playlistFile, ext, playlist->tracks(), playlistDir, pathType, writeMetadata);
+        exportPlaylist(*playlist, playlistFilepath, ext);
     };
 
     auto playlists       = m_playlistHandler->playlists();

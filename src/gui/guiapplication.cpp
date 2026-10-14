@@ -69,7 +69,6 @@
 #include <core/network/networkutils.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/playlist/playlistloader.h>
-#include <core/playlist/playlistparser.h>
 #include <core/plugins/plugininfo.h>
 #include <core/plugins/pluginmanager.h>
 #include <core/scripting/scriptenvironmenthelpers.h>
@@ -2495,22 +2494,7 @@ void GuiApplication::savePlaylistToFile(const Playlist* playlist) const
     const QFileInfo info{file};
     m_settings->fileSet(Settings::Gui::Internal::LastPlaylistPath, info.absolutePath());
 
-    if(auto* parser = m_core->playlistLoader()->parserForExtension(extension)) {
-        QFile playlistFile{file};
-        if(!playlistFile.open(QIODevice::WriteOnly)) {
-            qCWarning(GUI_APP) << "Could not open playlist file" << file
-                               << "for writing:" << playlistFile.errorString();
-            return;
-        }
-
-        const QDir playlistDir{info.absolutePath()};
-        const auto pathType = static_cast<PlaylistParser::PathType>(
-            m_settings->fileValue(Settings::Core::Internal::PlaylistSavePathType, 0).toInt());
-        const bool writeMetadata
-            = m_settings->fileValue(Settings::Core::Internal::PlaylistSaveMetadata, false).toBool();
-
-        parser->savePlaylist(&playlistFile, extension, playlist->tracks(), playlistDir, pathType, writeMetadata);
-    }
+    m_core->exportPlaylist(*playlist, file, extension);
 }
 
 void GuiApplication::saveAllPlaylist() const
