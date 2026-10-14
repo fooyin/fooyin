@@ -715,7 +715,7 @@ void ScriptEditorPrivate::updateResults(const Expression& expression)
 
     m_formatter.setBaseFont(m_results->font());
 
-    m_environment.setLibraries(m_libraryManager->allLibraries());
+    m_environment.setLibraries(m_libraryManager ? m_libraryManager->allLibraries() : LibraryInfoMap{});
     m_environment.updatePlaybackState(m_playerController);
 
     const Track track      = m_track.isValid() ? m_track : m_placeholderTrack;
