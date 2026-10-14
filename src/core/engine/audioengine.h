@@ -32,9 +32,9 @@
 #include "audioclock.h"
 #include "control/enginetaskqueue.h"
 #include "control/playbackphase.h"
+#include "control/playbacktransitioncoordinator.h"
 #include "control/positioncoordinator.h"
 #include "control/trackloadplanner.h"
-#include "control/transitionorchestrator.h"
 #include "decode/decodingcontroller.h"
 #include "decode/nexttrackpreparer.h"
 #include "output/fadecontroller.h"
@@ -59,6 +59,7 @@ class DspRegistry;
 class SettingsManager;
 class VisualisationBackend;
 class AudioEngine;
+
 namespace Testing {
 class AudioEngineTestAccessor;
 }
@@ -78,7 +79,8 @@ class FYCORE_EXPORT AudioEngine : public QObject
     Q_OBJECT
 
 public:
-    using TrackEndingResult = TransitionOrchestrator::TrackEndingResult;
+    using AutoTransitionMode = PlaybackTransitionCoordinator::AutoTransitionMode;
+    using TrackEndingResult  = PlaybackTransitionCoordinator::TrackEndingResult;
 
     struct AutoTransitionEligibility
     {
@@ -229,7 +231,6 @@ private:
     bool handleManualChangeFade(const Engine::PlaybackItem& item);
     bool startTrackCrossfade(const Engine::PlaybackItem& item, bool isManualChange);
     void performSeek(uint64_t positionMs, uint64_t requestId);
-    void checkPendingSeek();
     void startSeekCrossfade(uint64_t positionMs, int fadeOutDurationMs, int fadeInDurationMs, uint64_t requestId);
     void performSimpleSeek(uint64_t positionMs, uint64_t requestId = 0, int prefillTargetMs = 0);
     void prefillActiveStream(int targetMs);
@@ -402,6 +403,7 @@ private:
     uint64_t m_trackGeneration;
     uint64_t m_streamToTrackOriginMs;
     uint64_t m_nextTransitionId;
+    uint64_t m_activeTransportTransitionId{0};
     uint64_t m_pendingManualTrackItemId{0};
     AudioFormat m_format;
     QString m_decoderName;
@@ -460,7 +462,7 @@ private:
     AudioPipeline m_pipeline;
     FadeController m_fadeController;
     OutputController m_outputController;
-    TransitionOrchestrator m_transitions;
+    PlaybackTransitionCoordinator m_transitions;
     ReplayGainProcessor::SharedSettingsPtr m_replayGainSharedSettings;
     std::vector<QString> m_activeDspNames;
     QString m_activeDspPreset;

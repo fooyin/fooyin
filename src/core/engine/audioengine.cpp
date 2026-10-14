@@ -1217,7 +1217,6 @@ void AudioEngine::pause()
 void AudioEngine::stop()
 {
     clearPendingAudiblePause();
-    m_transitions.cancelPendingSeek();
 
     // A transport fade advances only while the pipeline is rendering audio.
     // Remote rebuffering pauses that pipeline, so waiting for a fade callback
@@ -2007,8 +2006,6 @@ void AudioEngine::performSeek(uint64_t positionMs, uint64_t requestId)
         m_visualisationAnalysisBus->flush();
     }
 
-    m_transitions.cancelPendingSeek();
-
     // Sources with mechanical/network startup latency mustn't begin a seek crossfade with an empty replacement stream
     if(m_decoder.playbackPrebufferMs() > 0) {
         performSimpleSeek(positionMs, requestId);
@@ -2067,24 +2064,6 @@ void AudioEngine::performSeek(uint64_t positionMs, uint64_t requestId)
     }
 
     startSeekCrossfade(positionMs, plan.fadeOutDurationMs, plan.fadeInDurationMs, requestId);
-}
-
-void AudioEngine::checkPendingSeek()
-{
-    if(!m_transitions.hasPendingSeek()) {
-        return;
-    }
-
-    auto currentStream = m_decoder.activeStream();
-    if(!currentStream) {
-        m_transitions.cancelPendingSeek();
-        return;
-    }
-
-    if(const auto params = m_transitions.pendingSeekIfBuffered(currentStream->bufferedDurationMs())) {
-        m_transitions.cancelPendingSeek();
-        startSeekCrossfade(params->seekPositionMs, params->fadeOutDurationMs, params->fadeInDurationMs, 0);
-    }
 }
 
 void AudioEngine::startSeekCrossfade(uint64_t positionMs, int fadeOutDurationMs, int fadeInDurationMs,
@@ -2382,7 +2361,6 @@ bool AudioEngine::rebuildCurrentTrackStreamAt(uint64_t positionMs, uint64_t requ
     clearPreparedNextTrackAndCancelPendingJobs();
     clearPendingAnalysisData();
     clearTrackEndLatch();
-    m_transitions.cancelPendingSeek();
     m_transitions.setSeekInProgress(false);
     m_transitions.clearTrackEnding();
     m_positionCoordinator.clearGaplessHold();
@@ -2468,7 +2446,6 @@ void AudioEngine::reinitOutputForCurrentFormat()
 
     clearAutoCrossfadeTailFadeState();
     clearAutoBoundaryFadeState();
-    m_transitions.cancelPendingSeek();
     m_transitions.setSeekInProgress(false);
     clearPendingAnalysisData();
 
@@ -2508,7 +2485,7 @@ void AudioEngine::reinitOutputForCurrentFormat()
 void AudioEngine::applyFadeResult(const FadeController::FadeResult& result)
 {
     if((result.pauseNow || result.stopImmediateNow) && result.transportTransitionId != 0
-       && !m_transitions.isActiveTransportTransition(result.transportTransitionId)) {
+       && result.transportTransitionId != m_activeTransportTransitionId) {
         return;
     }
 
@@ -2554,8 +2531,7 @@ void AudioEngine::maybeCompletePendingAudiblePause(const uint64_t serial)
         return;
     }
 
-    if(m_pendingAudiblePause.transitionId != 0
-       && !m_transitions.isActiveTransportTransition(m_pendingAudiblePause.transitionId)) {
+    if(m_pendingAudiblePause.transitionId != 0 && m_pendingAudiblePause.transitionId != m_activeTransportTransitionId) {
         clearPendingAudiblePause();
         return;
     }
@@ -3028,7 +3004,7 @@ void AudioEngine::rememberAutoTransitionMode(const AutoTransitionMode mode)
     m_autoAdvanceState.mode       = mode;
 }
 
-AutoTransitionMode AudioEngine::effectiveAutoTransitionMode() const
+AudioEngine::AutoTransitionMode AudioEngine::effectiveAutoTransitionMode() const
 {
     const auto liveMode = m_transitions.autoTransitionMode();
     if(liveMode != AutoTransitionMode::None) {
@@ -3042,7 +3018,7 @@ AutoTransitionMode AudioEngine::effectiveAutoTransitionMode() const
     return m_autoAdvanceState.mode;
 }
 
-AutoTransitionMode AudioEngine::configuredTrackEndAutoTransitionMode() const
+AudioEngine::AutoTransitionMode AudioEngine::configuredTrackEndAutoTransitionMode() const
 {
     const auto configuredMode = configuredTrackEndAutoTransitionMode(m_currentTrack);
     if(configuredMode == AutoTransitionMode::Crossfade && m_skipAutoCrossfadeSameAlbum
@@ -3053,7 +3029,7 @@ AutoTransitionMode AudioEngine::configuredTrackEndAutoTransitionMode() const
     return configuredMode;
 }
 
-AutoTransitionMode AudioEngine::configuredTrackEndAutoTransitionMode(const Track& track) const
+AudioEngine::AutoTransitionMode AudioEngine::configuredTrackEndAutoTransitionMode(const Track& track) const
 {
     if(!m_trackEndAutoTransitionEnabled) {
         return AutoTransitionMode::None;
@@ -3895,7 +3871,6 @@ void AudioEngine::handleTimerTick(int timerId)
     if(auto decodeResult = m_decoder.handleTimer(timerId, m_transitions.isSeekInProgress())) {
         syncDecoderTrackMetadata();
         syncDecoderBitrate();
-        checkPendingSeek();
         cleanupOrphanedStream();
         maybeUpdateInputBuffering("decode-timer");
 
@@ -4260,12 +4235,13 @@ void AudioEngine::schedulePipelineWakeDrainTask()
 
 uint64_t AudioEngine::beginTransportTransition()
 {
-    return m_transitions.beginTransportTransition(nextTransitionId());
+    m_activeTransportTransitionId = nextTransitionId();
+    return m_activeTransportTransitionId;
 }
 
 void AudioEngine::clearTransportTransition()
 {
-    m_transitions.clearTransportTransition();
+    m_activeTransportTransitionId = 0;
 }
 
 uint64_t AudioEngine::nextTransitionId()

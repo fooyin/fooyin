@@ -46,14 +46,6 @@ public:
     };
     Q_ENUM(AutoTransitionMode)
 
-    struct CrossfadeParams
-    {
-        uint64_t seekPositionMs{0};
-        int fadeOutDurationMs{0};
-        int fadeInDurationMs{0};
-        uint64_t transitionId{0};
-    };
-
     struct InitialSeekRequest
     {
         uint64_t positionMs{0};
@@ -90,13 +82,6 @@ public:
 
     [[nodiscard]] TrackEndingResult evaluateTrackEnding(const TrackEndingInput& input);
 
-    //! Queue a seek transition that waits until buffered audio is sufficient.
-    void beginPendingSeek(uint64_t positionMs, int fadeOutDurationMs, int fadeInDurationMs, uint64_t transitionId = 0);
-    void cancelPendingSeek();
-    [[nodiscard]] bool hasPendingSeek() const;
-    //! Pending seek params when buffered duration is enough to start fade-out.
-    [[nodiscard]] std::optional<CrossfadeParams> pendingSeekIfBuffered(uint64_t bufferedMs) const;
-
     [[nodiscard]] bool isReadyForAutoTransition() const;
     [[nodiscard]] AutoTransitionMode autoTransitionMode() const;
     void clearAutoTransitionReadiness();
@@ -122,12 +107,10 @@ private:
     [[nodiscard]] static bool inTimelineWindow(const TrackEndingInput& input, uint64_t windowMs);
 
     AutoTransitionMode m_autoTransitionMode;
-    CrossfadeParams m_crossfadeParams;
     bool m_trackEnding;
     bool m_switchReady;
     bool m_boundaryReached;
     bool m_seekInProgress;
-    bool m_pendingSeekActive;
 
     bool m_pendingInitialSeekActive;
     uint64_t m_pendingInitialSeekPositionMs;

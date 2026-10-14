@@ -61,32 +61,6 @@ TEST(PlaybackTransitionCoordinatorTest, MarksReadyAndEndsTrack)
     EXPECT_FALSE(state.isReadyForAutoTransition());
 }
 
-TEST(PlaybackTransitionCoordinatorTest, ExposesPendingSeekWhenBuffered)
-{
-    PlaybackTransitionCoordinator state;
-    state.beginPendingSeek(1500, 400, 200, 42);
-
-    EXPECT_TRUE(state.hasPendingSeek());
-    EXPECT_FALSE(state.pendingSeekIfBuffered(399).has_value());
-
-    const auto ready = state.pendingSeekIfBuffered(400);
-    ASSERT_TRUE(ready.has_value());
-    EXPECT_EQ(ready->seekPositionMs, 1500);
-    EXPECT_EQ(ready->fadeOutDurationMs, 400);
-    EXPECT_EQ(ready->fadeInDurationMs, 200);
-    EXPECT_EQ(ready->transitionId, 42);
-}
-
-TEST(PlaybackTransitionCoordinatorTest, CancelPendingSeekClearsPendingState)
-{
-    PlaybackTransitionCoordinator state;
-    state.beginPendingSeek(1000, 300, 150, 7);
-    EXPECT_TRUE(state.hasPendingSeek());
-    state.cancelPendingSeek();
-    EXPECT_FALSE(state.hasPendingSeek());
-    EXPECT_FALSE(state.pendingSeekIfBuffered(300).has_value());
-}
-
 TEST(PlaybackTransitionCoordinatorTest, EndOfInputDoesNotBecomeReadyUntilRemainingThreshold)
 {
     PlaybackTransitionCoordinator state;

@@ -119,8 +119,6 @@ set(SOURCES
     engine/control/seekplanner.h
     engine/control/trackloadplanner.cpp
     engine/control/trackloadplanner.h
-    engine/control/transitionorchestrator.cpp
-    engine/control/transitionorchestrator.h
     engine/decode/decodercontext.cpp
     engine/decode/decodercontext.h
     engine/decode/decodingcontroller.cpp
