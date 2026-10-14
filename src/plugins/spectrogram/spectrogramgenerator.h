@@ -50,7 +50,7 @@ public:
 
     void generate(uint64_t request, const Track& track, int fftSize, int timeColumns,
                   VisualisationSession::SpectrumWindowFunction windowFunction, bool mono, int firstChannel,
-                  int channelCount);
+                  int channelCount, std::stop_token token);
 
 Q_SIGNALS:
     void columnsReady(uint64_t request, const Fooyin::Spectrogram::SpectrogramBatch& batch);

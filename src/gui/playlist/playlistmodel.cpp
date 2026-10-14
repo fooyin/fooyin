@@ -857,7 +857,6 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
 
 PlaylistModel::~PlaylistModel()
 {
-    m_populationStopSource.request_stop();
     m_populator.closeThread();
     m_populatorThread.quit();
     m_populatorThread.wait();
@@ -1364,8 +1363,7 @@ QModelIndex PlaylistModel::firstImageColumnTrackIndex(const QModelIndex& index) 
 
 void PlaylistModel::reset(const PlaylistTrackList& tracks)
 {
-    m_populationStopSource.request_stop();
-    m_populationStopSource = std::stop_source{};
+    m_populator.stopThread();
     ++m_populationGeneration;
     m_indexesPendingRemoval.clear();
 
@@ -1985,13 +1983,13 @@ PlaylistTrackList PlaylistModel::tracksWithPlayingTrackOverlay(const PlaylistTra
     return displayTracks;
 }
 
-PlaylistPopulationRequest PlaylistModel::populationRequest() const
+PlaylistPopulationRequest PlaylistModel::populationRequest()
 {
     Q_ASSERT(QThread::currentThread() == thread());
 
     PlaylistPopulationRequest request;
     request.generation   = m_populationGeneration;
-    request.stopToken    = m_populationStopSource.get_token();
+    request.stopToken    = m_populator.prepareWork();
     request.playlistId   = m_currentPlaylist ? m_currentPlaylist->id() : UId{};
     request.trackCount   = m_currentPlaylist ? m_currentPlaylist->trackCount() : 0;
     request.preset       = m_currentPreset;

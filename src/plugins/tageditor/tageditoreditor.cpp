@@ -125,6 +125,7 @@ TagEditorEditor::TagEditorEditor(ActionManager* actionManager, TagEditorFieldReg
 TagEditorEditor::~TagEditorEditor()
 {
     m_populator.request(++m_populationRequest);
+    m_populator.closeThread();
     m_populatorThread.quit();
     m_populatorThread.wait();
 }
@@ -234,8 +235,9 @@ void TagEditorEditor::refreshModel()
     const auto separators = multiValueSeparators(*m_settings);
 
     auto* populator = &m_populator;
-    QMetaObject::invokeMethod(populator, [populator, requestId = m_populationRequest, tracks = m_tracks, items,
-                                          separators] { populator->run(requestId, tracks, items, separators); });
+    QMetaObject::invokeMethod(
+        populator, [populator, requestId = m_populationRequest, tracks = m_tracks, items, separators,
+                    token = populator->prepareWork()] { populator->run(requestId, tracks, items, separators, token); });
 }
 
 void TagEditorEditor::scheduleRefresh()

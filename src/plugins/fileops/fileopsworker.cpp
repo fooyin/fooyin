@@ -132,14 +132,17 @@ void FileOpsWorker::setLibraryData(LibraryInfoMap libraries, TrackList tracks)
     m_libraryTracks = std::move(tracks);
 }
 
-void FileOpsWorker::simulate(const FileOpPreset& preset)
+void FileOpsWorker::simulate(const FileOpPreset& preset, std::stop_token token)
 {
-    prepareOperations(preset, true);
+    prepareOperations(preset, true, token);
 }
 
-void FileOpsWorker::run()
+void FileOpsWorker::run(std::stop_token token)
 {
-    setState(Running);
+    if(!startWork(token.stop_possible() ? token : prepareWork())) {
+        Q_EMIT finished();
+        return;
+    }
 
     if(m_isMonitoring) {
         m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraryDirectories>(false);
@@ -223,9 +226,13 @@ void FileOpsWorker::run()
     Q_EMIT finished();
 }
 
-void FileOpsWorker::deleteFiles(bool forceImmediateDelete)
+void FileOpsWorker::deleteFiles(bool forceImmediateDelete, std::stop_token token)
 {
-    setState(Running);
+    if(!startWork(token.stop_possible() ? token : prepareWork())) {
+        Q_EMIT deleteFinished({}, {});
+        Q_EMIT finished();
+        return;
+    }
 
     reset();
 
@@ -298,9 +305,11 @@ void FileOpsWorker::deleteFiles(bool forceImmediateDelete)
     Q_EMIT finished();
 }
 
-bool FileOpsWorker::prepareOperations(const FileOpPreset& preset, bool emitSimulation)
+bool FileOpsWorker::prepareOperations(const FileOpPreset& preset, bool emitSimulation, std::stop_token token)
 {
-    setState(Running);
+    if(!startWork(token.stop_possible() ? token : prepareWork())) {
+        return false;
+    }
 
     reset();
     m_preset = preset;
@@ -331,7 +340,7 @@ bool FileOpsWorker::prepareOperations(const FileOpPreset& preset, bool emitSimul
 
     const bool shouldContinue = canContinue && mayRun();
     if(emitSimulation && shouldContinue) {
-        Q_EMIT simulated(m_operations);
+        Q_EMIT simulated(m_operations, stopToken());
     }
 
     setState(Idle);

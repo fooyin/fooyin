@@ -70,7 +70,6 @@ private:
 
     LibraryManager* m_libraryManager;
     uint64_t m_generation;
-    std::stop_source m_stopSource;
     QThread m_populatorThread;
     InfoPopulator m_populator;
     SelectionInfoFieldRegistry* m_fieldRegistry;

@@ -81,9 +81,12 @@ void Ebur128Scanner::closeThread()
     });
 }
 
-void Ebur128Scanner::calculatePerTrack(const TrackList& tracks, bool truePeak)
+void Ebur128Scanner::calculatePerTrack(const TrackList& tracks, bool truePeak, std::stop_token token)
 {
-    setState(Running);
+    if(!startWork(token)) {
+        Q_EMIT finished();
+        return;
+    }
 
     qCDebug(EBUR128) << "Calculating RG using ebur128 for" << tracks.size() << "tracks";
 
@@ -98,13 +101,14 @@ void Ebur128Scanner::calculatePerTrack(const TrackList& tracks, bool truePeak)
         }
     });
 
-    auto future = QtConcurrent::map(m_scannedTracks, [this, truePeak](Track& track) { scanTrack(track, truePeak); });
+    auto future = QtConcurrent::map(m_scannedTracks,
+                                    [this, truePeak, token](Track& track) { scanTrack(track, truePeak, token); });
 
     m_watcher->setFuture(future);
     m_runningWatchers.fetch_add(1, std::memory_order_acquire);
 
-    future.then(this, [this]() {
-        if(mayRun()) {
+    future.then(this, [this, token]() {
+        if(mayRun(token)) {
             qCDebug(EBUR128) << "Finished calculating RG for" << m_scannedTracks.size() << "tracks";
             Q_EMIT calculationFinished(m_scannedTracks);
         }
@@ -115,9 +119,12 @@ void Ebur128Scanner::calculatePerTrack(const TrackList& tracks, bool truePeak)
     });
 }
 
-void Ebur128Scanner::calculateAsAlbum(const TrackList& tracks, bool truePeak)
+void Ebur128Scanner::calculateAsAlbum(const TrackList& tracks, bool truePeak, std::stop_token token)
 {
-    setState(Running);
+    if(!startWork(token)) {
+        Q_EMIT finished();
+        return;
+    }
 
     qCDebug(EBUR128) << "Calculating RG using ebur128 for" << tracks.size() << "tracks";
 
@@ -132,14 +139,14 @@ void Ebur128Scanner::calculateAsAlbum(const TrackList& tracks, bool truePeak)
         }
     });
 
-    auto future = QtConcurrent::map(m_scannedTracks, [this, truePeak](Track& track) {
-        scanTrack(track, truePeak, QString::fromLatin1(SingleAlbumKey));
+    auto future = QtConcurrent::map(m_scannedTracks, [this, truePeak, token](Track& track) {
+        scanTrack(track, truePeak, token, QString::fromLatin1(SingleAlbumKey));
     });
 
     m_watcher->setFuture(future);
     m_runningWatchers.fetch_add(1, std::memory_order_acquire);
 
-    future.then(this, [this]() {
+    future.then(this, [this, token]() {
         const auto albumState = m_albumStates.find(QString::fromLatin1(SingleAlbumKey));
         if(albumState != m_albumStates.cend()) {
             const auto& trackStates = albumState->second;
@@ -163,7 +170,7 @@ void Ebur128Scanner::calculateAsAlbum(const TrackList& tracks, bool truePeak)
             }
         }
 
-        if(mayRun()) {
+        if(mayRun(token)) {
             qCDebug(EBUR128) << "Finished calculating RG for" << m_scannedTracks.size() << "tracks";
             Q_EMIT calculationFinished(m_scannedTracks);
         }
@@ -174,9 +181,13 @@ void Ebur128Scanner::calculateAsAlbum(const TrackList& tracks, bool truePeak)
     });
 }
 
-void Ebur128Scanner::calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak)
+void Ebur128Scanner::calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak,
+                                          std::stop_token token)
 {
-    setState(Running);
+    if(!startWork(token)) {
+        Q_EMIT finished();
+        return;
+    }
 
     qCDebug(EBUR128) << "Calculating RG using ebur128 for" << tracks.size() << "tracks";
 
@@ -188,12 +199,12 @@ void Ebur128Scanner::calculateByAlbumTags(const TrackList& tracks, const QString
     }
 
     m_currentAlbum = m_albums.begin();
-    scanAlbum(truePeak);
+    scanAlbum(truePeak, token);
 }
 
-void Ebur128Scanner::scanTrack(Track& track, bool truePeak, const QString& album)
+void Ebur128Scanner::scanTrack(Track& track, bool truePeak, std::stop_token token, const QString& album)
 {
-    if(!mayRun()) {
+    if(!mayRun(token)) {
         return;
     }
 
@@ -215,7 +226,7 @@ void Ebur128Scanner::scanTrack(Track& track, bool truePeak, const QString& album
 
     AudioBuffer buffer;
     while((buffer = decoder->readBuffer(BufferSize)).isValid()) {
-        if(!mayRun()) {
+        if(!mayRun(token)) {
             return;
         }
 
@@ -226,7 +237,7 @@ void Ebur128Scanner::scanTrack(Track& track, bool truePeak, const QString& album
         }
     }
 
-    if(!mayRun()) {
+    if(!mayRun(token)) {
         return;
     }
 
@@ -266,10 +277,10 @@ void Ebur128Scanner::scanTrack(Track& track, bool truePeak, const QString& album
     }
 }
 
-void Ebur128Scanner::scanAlbum(bool truePeak)
+void Ebur128Scanner::scanAlbum(bool truePeak, std::stop_token token)
 {
-    if(m_currentAlbum == m_albums.cend()) {
-        if(mayRun()) {
+    if(!mayRun(token) || m_currentAlbum == m_albums.cend()) {
+        if(mayRun(token)) {
             for(const auto& [_, tracks] : m_albums) {
                 m_scannedTracks.insert(m_scannedTracks.end(), tracks.cbegin(), tracks.cend());
             }
@@ -286,8 +297,9 @@ void Ebur128Scanner::scanAlbum(bool truePeak)
     const auto album = m_currentAlbum->first;
     m_tracks         = m_currentAlbum->second;
 
-    auto albumFuture = QtConcurrent::map(m_currentAlbum->second,
-                                         [this, truePeak, album](Track& track) { scanTrack(track, truePeak, album); });
+    auto albumFuture = QtConcurrent::map(m_currentAlbum->second, [this, truePeak, album, token](Track& track) {
+        scanTrack(track, truePeak, token, album);
+    });
 
     auto* albumWatcher = new QFutureWatcher<void>(this);
     m_albumWatchers.emplace(album, albumWatcher);
@@ -298,7 +310,7 @@ void Ebur128Scanner::scanAlbum(bool truePeak)
         }
     });
 
-    QObject::connect(albumWatcher, &QFutureWatcher<void>::finished, this, [this, truePeak, album]() {
+    QObject::connect(albumWatcher, &QFutureWatcher<void>::finished, this, [this, truePeak, album, token]() {
         const auto albumState = m_albumStates.find(album);
         if(albumState != m_albumStates.cend()) {
             const auto& trackStates = albumState->second;
@@ -331,7 +343,7 @@ void Ebur128Scanner::scanAlbum(bool truePeak)
         }
 
         ++m_currentAlbum;
-        scanAlbum(truePeak);
+        scanAlbum(truePeak, token);
     });
 
     albumWatcher->setFuture(albumFuture);

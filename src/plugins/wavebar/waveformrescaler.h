@@ -33,7 +33,7 @@ public:
     explicit WaveformRescaler(QObject* parent = nullptr);
 
 Q_SIGNALS:
-    void waveformRescaled(const Fooyin::WaveBar::WaveformData<float>& data);
+    void waveformRescaled(const Fooyin::WaveBar::WaveformData<float>& data, std::stop_token token);
 
 public Q_SLOTS:
     void rescale();

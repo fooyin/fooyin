@@ -472,12 +472,12 @@ void SpectrogramSeekBar::generate()
     const int firstChannel = m_config.channelMode == ChannelMode::BackOnly ? 1 : 0;
     const int channels     = m_config.channelMode == ChannelMode::Unchanged ? 2 : 1;
 
-    QMetaObject::invokeMethod(
-        &m_generator, [this, request = m_request, track = m_track, config = m_config, mono, firstChannel, channels]() {
-            m_generator.generate(request, track, config.fftSize, config.timeColumns,
-                                 static_cast<VisualisationSession::SpectrumWindowFunction>(config.windowFunction), mono,
-                                 firstChannel, channels);
-        });
+    QMetaObject::invokeMethod(&m_generator, [this, request = m_request, track = m_track, config = m_config, mono,
+                                             firstChannel, channels, token = m_generator.prepareWork()]() {
+        m_generator.generate(request, track, config.fftSize, config.timeColumns,
+                             static_cast<VisualisationSession::SpectrumWindowFunction>(config.windowFunction), mono,
+                             firstChannel, channels, token);
+    });
 }
 
 void SpectrogramSeekBar::rebuildImage(int firstColumn)

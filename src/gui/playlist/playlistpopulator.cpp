@@ -125,7 +125,7 @@ public:
 
 bool PlaylistPopulatorPrivate::mayRun() const
 {
-    return m_self->mayRun() && !m_request.stopToken.stop_requested();
+    return m_self->mayRun();
 }
 
 void PlaylistPopulatorPrivate::resetState()
@@ -169,11 +169,10 @@ void PlaylistPopulatorPrivate::prepareScripts()
 
 bool PlaylistPopulatorPrivate::prepareRequest(const PlaylistPopulationRequest& request)
 {
-    if(m_self->closing() || request.stopToken.stop_requested()) {
+    if(!m_self->startWork(request.stopToken)) {
         return false;
     }
 
-    m_self->setState(Worker::Running);
     m_request = request;
     m_formatter.setBaseFont(request.font);
     prepareScripts();

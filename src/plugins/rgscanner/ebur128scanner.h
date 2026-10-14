@@ -38,9 +38,10 @@ public:
 
     void closeThread() override;
 
-    void calculatePerTrack(const TrackList& tracks, bool truePeak) override;
-    void calculateAsAlbum(const TrackList& tracks, bool truePeak) override;
-    void calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak) override;
+    void calculatePerTrack(const TrackList& tracks, bool truePeak, std::stop_token token) override;
+    void calculateAsAlbum(const TrackList& tracks, bool truePeak, std::stop_token token) override;
+    void calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak,
+                              std::stop_token token) override;
 
 private:
     struct EburStateDeleter
@@ -58,8 +59,8 @@ private:
     using AlbumWatchers = std::unordered_map<QString, QFutureWatcher<void>*>;
     using AlbumStates   = std::unordered_map<QString, std::vector<EburStatePtr>>;
 
-    void scanTrack(Track& track, bool truePeak, const QString& album = {});
-    void scanAlbum(bool truePeak);
+    void scanTrack(Track& track, bool truePeak, std::stop_token token, const QString& album = {});
+    void scanAlbum(bool truePeak, std::stop_token token);
 
     std::shared_ptr<AudioLoader> m_audioLoader;
     ScriptParser m_parser;

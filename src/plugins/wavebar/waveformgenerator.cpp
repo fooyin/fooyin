@@ -121,24 +121,24 @@ void WaveformGenerator::initialiseThread()
     m_waveDb.initialiseDatabase();
 }
 
-void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool render, bool update)
+void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool render, bool update,
+                                 std::stop_token token)
 {
-    if(closing()) {
+    if(!startWork(token)) {
         return;
     }
 
     const QString trackKey = setup(track, samplesPerChannel);
     if(trackKey.isEmpty()) {
-        Q_EMIT waveformGenerated(track, {});
+        setState(Idle);
+        Q_EMIT waveformGenerated(track, {}, token);
         return;
     }
-
-    setState(Running);
 
     if(!update && m_waveDb.existsInCache(trackKey)) {
         if(!render) {
             setState(Idle);
-            Q_EMIT waveformGenerated(track, {});
+            Q_EMIT waveformGenerated(track, {}, token);
             return;
         }
 
@@ -149,7 +149,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
             m_data.complete      = true;
 
             setState(Idle);
-            Q_EMIT waveformGenerated(track, m_data);
+            Q_EMIT waveformGenerated(track, m_data, token);
             return;
         }
 
@@ -165,7 +165,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
     if(bpf <= 0) {
         qCWarning(WAVEBAR) << "Invalid format while generating waveform for track:" << track.filepath();
         setState(Idle);
-        Q_EMIT waveformGenerated(track, {});
+        Q_EMIT waveformGenerated(track, {}, token);
         return;
     }
 
@@ -176,7 +176,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
         qCWarning(WAVEBAR) << "Unable to determine frame count while generating waveform for track:"
                            << track.filepath();
         setState(Idle);
-        Q_EMIT waveformGenerated(track, {});
+        Q_EMIT waveformGenerated(track, {}, token);
         return;
     }
 
@@ -184,7 +184,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
     if(!accumulator.isValid()) {
         qCWarning(WAVEBAR) << "Unable to initialise waveform accumulator for track:" << track.filepath();
         setState(Idle);
-        Q_EMIT waveformGenerated(track, {});
+        Q_EMIT waveformGenerated(track, {}, token);
         return;
     }
 
@@ -252,7 +252,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
         }
 
         buffer            = Audio::convert(buffer, m_requiredFormat);
-        const auto result = accumulator.process(buffer, stopToken());
+        const auto result = accumulator.process(buffer, token);
         if(result == WaveformAccumulator::ProcessResult::Cancelled) {
             m_loadedDecoder.decoder->stop();
             return;
@@ -268,7 +268,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
         if(render && result != WaveformAccumulator::ProcessResult::Complete
            && m_data.sampleCount() >= nextUpdateSample) {
             nextUpdateSample = m_data.sampleCount() + updateThreshold;
-            Q_EMIT waveformGenerated(track, m_data);
+            Q_EMIT waveformGenerated(track, m_data, token);
         }
     }
 
@@ -279,7 +279,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
         if(!closing()) {
             setState(Idle);
         }
-        Q_EMIT waveformGenerated(track, {});
+        Q_EMIT waveformGenerated(track, {}, token);
         return;
     }
 
@@ -293,7 +293,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
         setState(Idle);
     }
 
-    Q_EMIT waveformGenerated(track, m_data);
+    Q_EMIT waveformGenerated(track, m_data, token);
 }
 
 QString WaveformGenerator::setup(const Track& track, int samplesPerChannel)

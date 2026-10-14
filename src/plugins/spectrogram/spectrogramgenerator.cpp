@@ -52,15 +52,12 @@ uint64_t SpectrogramGenerator::cancel()
 
 void SpectrogramGenerator::generate(uint64_t request, const Track& track, int fftSize, int timeColumns,
                                     VisualisationSession::SpectrumWindowFunction windowFunction, bool mono,
-                                    int firstChannel, int channelCount)
+                                    int firstChannel, int channelCount, std::stop_token token)
 {
-    if(request != m_request.load() || closing()) {
+    if(request != m_request.load() || !startWork(token)) {
         return;
     }
 
-    setState(Running);
-
-    const auto token      = stopToken();
     const auto resetState = qScopeGuard([this]() { setState(Idle); });
     const auto cancelled  = [this, request, &token]() {
         return request != m_request.load() || token.stop_requested() || closing();

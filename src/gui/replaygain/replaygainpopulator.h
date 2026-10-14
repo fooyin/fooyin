@@ -28,6 +28,7 @@ class ReplayGainPopulatorPrivate;
 
 struct RGInfoData
 {
+    std::stop_token stopToken;
     std::unordered_map<QString, std::vector<QString>> parents;
     std::unordered_map<QString, ReplayGainItem> nodes;
 
@@ -46,7 +47,7 @@ public:
     explicit ReplayGainPopulator(QObject* parent = nullptr);
     ~ReplayGainPopulator();
 
-    void run(const TrackList& tracks);
+    void run(const TrackList& tracks, std::stop_token token);
 
 Q_SIGNALS:
     void populated(Fooyin::RGInfoData data);

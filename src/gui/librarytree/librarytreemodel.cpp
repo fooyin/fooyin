@@ -288,7 +288,6 @@ public:
     LibraryManager* m_libraryManager;
     uint64_t m_populationGeneration{0};
     uint64_t m_populationRequestId{0};
-    std::stop_source m_populationStopSource;
     std::shared_ptr<AudioLoader> m_audioLoader;
     SettingsManager* m_settings;
     GuiStyleProvider* m_styleProvider;
@@ -462,7 +461,7 @@ LibraryTreePopulationContext LibraryTreeModelPrivate::populationContext()
             .useVarious    = m_settings->value<Settings::Core::UseVariousForCompilations>(),
             .generation    = m_populationGeneration,
             .requestId     = ++m_populationRequestId,
-            .stopToken     = m_populationStopSource.get_token()};
+            .stopToken     = m_populator.prepareWork()};
 }
 
 void LibraryTreeModelPrivate::removeTracks(const TrackList& tracks)
@@ -929,8 +928,7 @@ LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, const std::sh
 
 LibraryTreeModel::~LibraryTreeModel()
 {
-    p->m_populationStopSource.request_stop();
-    p->m_populator.stopThread();
+    p->m_populator.closeThread();
     p->m_populatorThread.quit();
     p->m_populatorThread.wait();
 }
@@ -1354,14 +1352,10 @@ void LibraryTreeModel::changeGrouping(const LibraryTreeGrouping& grouping)
 
 void LibraryTreeModel::reset(const TrackList& tracks)
 {
-    p->m_populationStopSource.request_stop();
-    p->m_populationStopSource = std::stop_source{};
     ++p->m_populationGeneration;
     p->m_pendingRichTitleUpdates.clear();
-    if(p->m_populatorThread.isRunning()) {
-        p->m_populator.stopThread();
-    }
-    else {
+    p->m_populator.stopThread();
+    if(!p->m_populatorThread.isRunning()) {
         p->m_populatorThread.start();
     }
 

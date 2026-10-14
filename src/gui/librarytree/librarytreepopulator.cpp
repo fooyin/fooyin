@@ -69,7 +69,7 @@ public:
 
     bool mayRun() const
     {
-        return m_self->mayRun() && !m_context.stopToken.stop_requested();
+        return m_self->mayRun();
     }
 
     void setContext(LibraryTreePopulationContext context)
@@ -312,11 +312,10 @@ LibraryTreePopulator::~LibraryTreePopulator() = default;
 void LibraryTreePopulator::run(const LibraryTreeGrouping& grouping, const TrackList& tracks,
                                LibraryTreePopulationContext context, PopulationMode mode)
 {
-    if(context.stopToken.stop_requested()) {
+    if(!startWork(context.stopToken)) {
         return;
     }
 
-    setState(Running);
     p->setContext(std::move(context));
 
     p->m_data.clear();
@@ -347,11 +346,10 @@ void LibraryTreePopulator::run(const LibraryTreeGrouping& grouping, const TrackL
 
 void LibraryTreePopulator::updateItems(ItemKeyMap items, LibraryTreePopulationContext context)
 {
-    if(context.stopToken.stop_requested()) {
+    if(!startWork(context.stopToken)) {
         return;
     }
 
-    setState(Running);
     p->setContext(std::move(context));
 
     PendingTreeData data;

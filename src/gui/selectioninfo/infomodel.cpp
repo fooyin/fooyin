@@ -78,8 +78,7 @@ Qt::ItemFlags InfoModel::flags(const QModelIndex& index) const
 
 InfoModel::~InfoModel()
 {
-    m_stopSource.request_stop();
-    m_populator.stopThread();
+    m_populator.closeThread();
     m_populatorThread.quit();
     m_populatorThread.wait();
 }
@@ -174,23 +173,19 @@ void InfoModel::setOptions(InfoItem::Options options)
 
 void InfoModel::resetModel(const TrackList& tracks)
 {
-    m_stopSource.request_stop();
-    m_stopSource = std::stop_source{};
     ++m_generation;
 
     m_tracks = tracks;
 
-    if(m_populatorThread.isRunning()) {
-        m_populator.stopThread();
-    }
-    else {
+    m_populator.stopThread();
+    if(!m_populatorThread.isRunning()) {
         m_populatorThread.start();
     }
 
     const auto fields = m_fieldRegistry->items();
     QMetaObject::invokeMethod(&m_populator, [worker = &m_populator, tracks, fields, options = m_options,
                                              libraries = m_libraryManager->allLibraries(), generation = m_generation,
-                                             stopToken = m_stopSource.get_token()]() mutable {
+                                             stopToken = m_populator.prepareWork()]() mutable {
         worker->run(options, tracks, fields, std::move(libraries), generation, stopToken);
     });
 }

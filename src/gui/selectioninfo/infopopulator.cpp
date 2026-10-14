@@ -107,7 +107,6 @@ public:
 
     InfoPopulator* m_self;
     LibraryInfoMap m_libraries;
-    std::stop_token m_stopToken;
 
     InfoData m_data;
     std::set<float> m_trackGain;
@@ -402,7 +401,7 @@ void InfoPopulatorPrivate::addTrackNodes(InfoItem::Options options, const TrackL
     const int total = static_cast<int>(tracks.size());
 
     for(const Track& track : tracks) {
-        if(!m_self->mayRun() || m_stopToken.stop_requested()) {
+        if(!m_self->mayRun()) {
             return;
         }
 
@@ -439,20 +438,18 @@ void InfoPopulator::run(InfoItem::Options options, const TrackList& tracks,
                         const std::vector<SelectionInfoField>& fields, LibraryInfoMap libraries, uint64_t generation,
                         std::stop_token stopToken)
 {
-    if(stopToken.stop_requested()) {
+    if(!startWork(stopToken)) {
         return;
     }
 
-    setState(Running);
     p->m_libraries       = std::move(libraries);
-    p->m_stopToken       = stopToken;
     p->m_data.generation = generation;
 
     p->reset();
 
     p->addTrackNodes(options, tracks, fields);
 
-    if(mayRun() && !stopToken.stop_requested()) {
+    if(mayRun()) {
         Q_EMIT populated(std::make_shared<InfoData>(std::move(p->m_data)));
         Q_EMIT finished();
     }

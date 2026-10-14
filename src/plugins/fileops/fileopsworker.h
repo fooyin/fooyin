@@ -84,17 +84,17 @@ public:
 
     void setLibraryData(LibraryInfoMap libraries, TrackList tracks);
 
-    void simulate(const FileOpPreset& preset);
-    void run();
-    void deleteFiles(bool forceImmediateDelete = false);
+    void simulate(const FileOpPreset& preset, std::stop_token token = {});
+    void run(std::stop_token token = {});
+    void deleteFiles(bool forceImmediateDelete = false, std::stop_token token = {});
 
 Q_SIGNALS:
-    void simulated(const Fooyin::FileOps::FileOperations& operations);
+    void simulated(const Fooyin::FileOps::FileOperations& operations, std::stop_token token);
     void deleteFinished(const Fooyin::TrackList& deletedTracks, const Fooyin::TrackList& failedTrashTracks);
     void operationCompleted(const Fooyin::FileOps::FileOpResult& result);
 
 private:
-    bool prepareOperations(const FileOpPreset& preset, bool emitSimulation);
+    bool prepareOperations(const FileOpPreset& preset, bool emitSimulation, std::stop_token token);
     bool populateTrackPaths();
 
     void simulateMove();

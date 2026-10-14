@@ -67,7 +67,7 @@ Q_SIGNALS:
     void finished();
 
 private:
-    void populate(const FileOperations& operations);
+    void populate(const FileOperations& operations, std::stop_token token);
     void operationCompleted(const FileOpResult& result);
     void workerFinished();
     QString operationToString(Operation op) const;

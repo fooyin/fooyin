@@ -93,9 +93,11 @@ void TrackDatabaseManager::initialiseThread()
     m_trackDatabase.setMetadataStore(m_metadataStore);
 }
 
-void TrackDatabaseManager::getAllTracks()
+void TrackDatabaseManager::getAllTracks(std::stop_token workerToken)
 {
-    setState(Running);
+    if(!startWork(workerToken)) {
+        return;
+    }
 
     const TrackList tracks = m_trackDatabase.getAllTracks();
     Q_EMIT gotTracks(tracks);
@@ -103,9 +105,11 @@ void TrackDatabaseManager::getAllTracks()
     setState(Idle);
 }
 
-void TrackDatabaseManager::checkTrackAvailability(const TrackList& tracks)
+void TrackDatabaseManager::checkTrackAvailability(const TrackList& tracks, std::stop_token workerToken)
 {
-    setState(Running);
+    if(!startWork(workerToken)) {
+        return;
+    }
 
     TrackList updatedTracks;
     updatedTracks.reserve(tracks.size());
@@ -132,14 +136,21 @@ void TrackDatabaseManager::checkTrackAvailability(const TrackList& tracks)
     setState(Idle);
 }
 
-void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write)
+void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, std::stop_token workerToken)
 {
-    updateTracks(tracks, write, -1, {});
+    updateTracks(tracks, write, -1, {}, workerToken);
 }
 
-void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int operationId, std::stop_token stopToken)
+void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int operationId, std::stop_token stopToken,
+                                        std::stop_token workerToken)
 {
-    setState(Running);
+    if(!startWork(workerToken)) {
+        Q_EMIT updatedTracks({});
+        if(operationId >= 0) {
+            Q_EMIT trackWriteCompleted(operationId, {}, 0, true);
+        }
+        return;
+    }
 
     TrackList tracksToUpdate{tracks};
     TrackList tracksUpdated;
@@ -205,9 +216,12 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
     setState(Idle);
 }
 
-void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, Track::Stats updatedStats, bool writeToFiles)
+void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, Track::Stats updatedStats, bool writeToFiles,
+                                            std::stop_token workerToken)
 {
-    setState(Running);
+    if(!startWork(workerToken)) {
+        return;
+    }
 
     TrackList tracksToUpdate{tracks};
     TrackList tracksUpdated;
@@ -270,14 +284,21 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, Track::Stat
     setState(Idle);
 }
 
-void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks)
+void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks, std::stop_token workerToken)
 {
-    writeCovers(tracks, -1, {});
+    writeCovers(tracks, -1, {}, workerToken);
 }
 
-void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks, int operationId, std::stop_token stopToken)
+void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks, int operationId, std::stop_token stopToken,
+                                       std::stop_token workerToken)
 {
-    setState(Running);
+    if(!startWork(workerToken)) {
+        Q_EMIT updatedTracks({});
+        if(operationId >= 0) {
+            Q_EMIT trackCoverWriteCompleted(operationId, {}, 0, true);
+        }
+        return;
+    }
 
     TrackList tracksToUpdate{tracks.tracks};
     TrackList tracksUpdated;
@@ -326,19 +347,25 @@ void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks, int operati
     setState(Idle);
 }
 
-void TrackDatabaseManager::removeUnavailbleTracks(const TrackList& tracks)
+void TrackDatabaseManager::removeUnavailbleTracks(const TrackList& tracks, std::stop_token workerToken)
 {
-    removeUnavailbleTracks(tracks, -1, {});
+    removeUnavailbleTracks(tracks, -1, {}, workerToken);
 }
 
-void TrackDatabaseManager::deleteTracks(const TrackList& tracks)
+void TrackDatabaseManager::deleteTracks(const TrackList& tracks, std::stop_token workerToken)
 {
-    deleteTracks(tracks, -1, {});
+    deleteTracks(tracks, -1, {}, workerToken);
 }
 
-void TrackDatabaseManager::deleteTracks(const TrackList& tracks, int operationId, std::stop_token stopToken)
+void TrackDatabaseManager::deleteTracks(const TrackList& tracks, int operationId, std::stop_token stopToken,
+                                        std::stop_token workerToken)
 {
-    setState(Running);
+    if(!startWork(workerToken)) {
+        if(operationId >= 0) {
+            Q_EMIT tracksDeleted(operationId, {}, 0, true);
+        }
+        return;
+    }
 
     TrackList tracksToDelete;
     int failedCount{0};
@@ -367,9 +394,15 @@ void TrackDatabaseManager::deleteTracks(const TrackList& tracks, int operationId
     setState(Idle);
 }
 
-void TrackDatabaseManager::removeUnavailbleTracks(const TrackList& tracks, int operationId, std::stop_token stopToken)
+void TrackDatabaseManager::removeUnavailbleTracks(const TrackList& tracks, int operationId, std::stop_token stopToken,
+                                                  std::stop_token workerToken)
 {
-    setState(Running);
+    if(!startWork(workerToken)) {
+        if(operationId >= 0) {
+            Q_EMIT unavailableTracksRemoved(operationId, {}, 0, true);
+        }
+        return;
+    }
 
     TrackList trackstoRemove;
     int failedCount{0};
@@ -400,9 +433,11 @@ void TrackDatabaseManager::removeUnavailbleTracks(const TrackList& tracks, int o
     setState(Idle);
 }
 
-void TrackDatabaseManager::cleanupTracks()
+void TrackDatabaseManager::cleanupTracks(std::stop_token workerToken)
 {
-    setState(Running);
+    if(!startWork(workerToken)) {
+        return;
+    }
 
     m_settings->set<Settings::Core::ActiveTrackId>(-2);
     m_trackDatabase.cleanupTracks();

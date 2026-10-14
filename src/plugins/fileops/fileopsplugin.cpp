@@ -309,7 +309,9 @@ void FileOpsPlugin::runDelete(const TrackList& tracks, bool forceImmediateDelete
     QObject::connect(thread, &QThread::finished, thread, &QObject::deleteLater);
 
     thread->start();
-    QMetaObject::invokeMethod(worker, [worker, forceImmediateDelete]() { worker->deleteFiles(forceImmediateDelete); });
+    QMetaObject::invokeMethod(worker, [worker, forceImmediateDelete, token = worker->prepareWork()]() {
+        worker->deleteFiles(forceImmediateDelete, token);
+    });
 }
 
 void FileOpsPlugin::openDialog(const TrackSelection& selection, Operation operation, const QString& presetName)

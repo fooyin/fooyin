@@ -453,6 +453,7 @@ void FileOpsDialogPrivate::simulateOp() const
         return;
     }
 
+    m_runButton->setEnabled(false);
     m_model->simulate(currentPreset());
 
     m_status->setText(FileOpsDialog::tr("Determining operations…"));
