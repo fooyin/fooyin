@@ -30,6 +30,7 @@
 #include <core/engine/audioloader.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlist.h>
+#include <core/playlist/playlisthandler.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scripttrackwriter.h>
 #include <core/track.h>
@@ -841,6 +842,13 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
                      [this](uint64_t generation, const ItemList& data, const std::set<int>& columnsUpdated) {
                          if(generation == m_populationGeneration) {
                              updateTracks(data, columnsUpdated);
+                         }
+                     });
+
+    QObject::connect(playlistInteractor->handler(), &PlaylistHandler::playlistRenamed, this,
+                     [this](Playlist* playlist) {
+                         if(playlist == m_currentPlaylist) {
+                             updateHeader(playlist);
                          }
                      });
 
