@@ -230,8 +230,8 @@ bool TrackDatabase::updateTracks(TrackList& tracks)
     }
 
     for(auto& track : tracks) {
-        if(track.id() >= 0) {
-            updateTrack(track);
+        if(track.id() >= 0 && !updateTrack(track)) {
+            return false;
         }
     }
 
@@ -442,17 +442,22 @@ bool TrackDatabase::updateTrackStats(Track& track, Track::Stats updatedStats)
 
 bool TrackDatabase::updateTrackStats(const TrackList& tracks)
 {
-    bool success{true};
+    if(tracks.empty()) {
+        return true;
+    }
 
     DbTransaction transaction{db()};
+    if(!transaction) {
+        return false;
+    }
 
     for(const Track& track : tracks) {
         if(!insertOrUpdateStats(track)) {
-            success = false;
+            return false;
         }
     }
 
-    return success && transaction.commit();
+    return transaction.commit();
 }
 
 bool TrackDatabase::deleteTrack(int id)
@@ -478,12 +483,13 @@ bool TrackDatabase::deleteTracks(const TrackList& tracks)
         return false;
     }
 
-    const int fileCount = static_cast<int>(
-        std::count_if(tracks.cbegin(), tracks.cend(), [this](const Track& track) { return deleteTrack(track.id()); }));
+    for(const Track& track : tracks) {
+        if(!deleteTrack(track.id())) {
+            return false;
+        }
+    }
 
-    const auto success = transaction.commit();
-
-    return (success && (fileCount == static_cast<int>(tracks.size())));
+    return transaction.commit();
 }
 
 std::set<int> TrackDatabase::deleteLibraryTracks(int libraryId)
