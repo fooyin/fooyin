@@ -1118,7 +1118,7 @@ bool PropertiesDialogWidget::commitPendingChanges(PropertiesTabWidget* widget)
     }
 
     QMessageBox::warning(this, tr("Pending Changes"),
-                         tr("Apply or clear the current tab's pending changes before switching tracks or tabs."));
+                         tr("Apply or clear the current tab’s pending changes before switching tracks or tabs."));
     return false;
 }
 

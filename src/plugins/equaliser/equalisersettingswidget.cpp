@@ -582,7 +582,7 @@ void EqualiserLayoutEditor::savePreset()
     const int existingIndex = m_presetStore.indexByName(name);
     if(existingIndex >= 0) {
         const auto answer = QMessageBox::question(this, tr("Preset already exists"),
-                                                  tr("Preset \"%1\" already exists. Overwrite?").arg(name));
+                                                  tr("Preset ‘%1’ already exists. Overwrite?").arg(name));
         if(answer != QMessageBox::Yes) {
             return;
         }
@@ -922,7 +922,7 @@ void EqualiserSettingsWidget::savePreset()
     const int existingIndex = m_presetStore.indexByName(name);
     if(existingIndex >= 0) {
         QMessageBox msg{QMessageBox::Question, tr("Preset already exists"),
-                        tr("Preset \"%1\" already exists. Overwrite?").arg(name), QMessageBox::Yes | QMessageBox::No};
+                        tr("Preset ‘%1’ already exists. Overwrite?").arg(name), QMessageBox::Yes | QMessageBox::No};
         if(msg.exec() != QMessageBox::Yes) {
             return;
         }
@@ -967,7 +967,7 @@ void EqualiserSettingsWidget::importPreset()
     QFile file(filePath);
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::warning(this, tr("Import Equaliser Preset"),
-                             tr("Unable to open \"%1\" for reading.").arg(filePath));
+                             tr("Unable to open ‘%1’ for reading.").arg(filePath));
         return;
     }
 
@@ -1047,7 +1047,7 @@ void EqualiserSettingsWidget::exportPreset()
     QFile file(filePath);
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
         QMessageBox::warning(this, tr("Export Equaliser Preset"),
-                             tr("Unable to open \"%1\" for writing.").arg(filePath));
+                             tr("Unable to open ‘%1’ for writing.").arg(filePath));
         return;
     }
 
@@ -1059,7 +1059,7 @@ void EqualiserSettingsWidget::exportPreset()
 
     if(stream.status() != QTextStream::Ok) {
         QMessageBox::warning(this, tr("Export Equaliser Preset"),
-                             tr("An error occurred while writing \"%1\".").arg(filePath));
+                             tr("An error occurred while writing ‘%1’.").arg(filePath));
         return;
     }
 

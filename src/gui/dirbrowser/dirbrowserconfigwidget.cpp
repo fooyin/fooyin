@@ -50,7 +50,7 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
     , m_playbackOnSend{new QCheckBox(tr("Start playback immediately"), this)}
 {
     m_playbackOnSend->setToolTip(
-        tr("For \"Replace current playlist\" and \"Create new playlist\", start playback immediately."));
+        tr("For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately."));
     m_restoreSort->setToolTip(tr("Restore the sort column on startup and when changing directories."));
 
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);

@@ -310,7 +310,7 @@ bool QuickTaggerPlugin::confirmQuickTag(const QString& field, int trackCount, in
 
     const auto response = QMessageBox::question(Utils::getMainWindow(), tr("Quick Tagger"),
                                                 //: %1 is the Quick Tagger entry name, for example "Rating".
-                                                tr("Set \"%1\" on %Ln track(s)?", nullptr, trackCount).arg(field));
+                                                tr("Set ‘%1’ on %Ln track(s)?", nullptr, trackCount).arg(field));
     return response == QMessageBox::Yes;
 }
 

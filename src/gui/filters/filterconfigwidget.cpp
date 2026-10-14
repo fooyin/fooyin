@@ -60,7 +60,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_manageColumns{new QPushButton(tr("Manage columns…"), this)}
 {
     m_playbackOnSend->setToolTip(
-        tr("For \"Replace current playlist\" and \"Create new playlist\", start playback immediately."));
+        tr("For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately."));
 
     auto* tabs = new QTabWidget(this);
 
@@ -90,7 +90,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
         tr("In current playlist mode, matching tracks are selected directly in the playlist."));
 
     m_preservePlaybackPlaylist->setToolTip(
-        tr("When this selection playlist is used for playback, preserve it with \"(Playback)\" appended to its "
+        tr("When this selection playlist is used for playback, preserve it with ‘(Playback)’ appended to its "
            "name instead of replacing its tracks."));
 
     selectionPlaylistLayout->addWidget(m_playlistEnabled, 0, 0, 1, 3);

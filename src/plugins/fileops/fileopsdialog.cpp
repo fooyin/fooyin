@@ -372,7 +372,7 @@ void FileOpsDialogPrivate::savePreset()
     auto existingPreset = findPreset(name);
     if(existingPreset != m_presets.cend()) {
         QMessageBox msg{QMessageBox::Question, tr("Preset already exists"),
-                        tr("A preset named \"%1\" already exists. Overwrite it?").arg(name),
+                        tr("A preset named ‘%1’ already exists. Overwrite it?").arg(name),
                         QMessageBox::Yes | QMessageBox::No};
         if(msg.exec() == QMessageBox::Yes) {
             *existingPreset = preset;
@@ -529,7 +529,7 @@ void FileOpsDialogPrivate::toggleRun()
             QMessageBox confirmation{QMessageBox::Question, tr("Delete source archive after extraction?"), message,
                                      QMessageBox::Yes | QMessageBox::No, m_self};
             confirmation.setDefaultButton(QMessageBox::No);
-            auto* dontAskAgain = new QCheckBox(tr("Don't ask again"), &confirmation);
+            auto* dontAskAgain = new QCheckBox(tr("Don’t ask again"), &confirmation);
             confirmation.setCheckBox(dontAskAgain);
 
             if(confirmation.exec() != QMessageBox::Yes) {

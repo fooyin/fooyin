@@ -106,7 +106,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     int row{0};
     behaviourLayout->addWidget(preloadCountLabel, row, 0);
     behaviourLayout->addWidget(m_preloadCount, row++, 1);
-    behaviourLayout->addWidget(new QLabel(u"🛈 "_s + tr("Set to '0' to disable preloading."), this), row++, 0, 1, 2);
+    behaviourLayout->addWidget(new QLabel(u"🛈 "_s + tr("Set to ‘0’ to disable preloading."), this), row++, 0, 1, 2);
     behaviourLayout->addWidget(m_inlineTagEditing, row++, 0, 1, 2);
     behaviourLayout->setColumnStretch(behaviourLayout->columnCount(), 1);
 

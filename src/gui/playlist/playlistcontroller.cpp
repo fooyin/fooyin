@@ -433,13 +433,13 @@ bool PlaylistController::confirmPlaylistRemoval(std::span<const UId> playlistIds
     message.setIcon(QMessageBox::Question);
     message.setWindowTitle(tr("Remove Playlist"));
     if(playlists.size() == 1) {
-        message.setText(tr("Remove playlist \"%1\"?").arg(playlists.front()->name()));
+        message.setText(tr("Remove playlist ‘%1’?").arg(playlists.front()->name()));
     }
     else {
         message.setText(tr("Remove %Ln playlist(s)?", nullptr, static_cast<int>(playlists.size())));
     }
 
-    auto* dontAskAgain = new QCheckBox(tr("Don't ask again"), &message);
+    auto* dontAskAgain = new QCheckBox(tr("Don’t ask again"), &message);
     message.setCheckBox(dontAskAgain);
 
     auto* removeButton = message.addButton(tr("Remove"), QMessageBox::DestructiveRole);

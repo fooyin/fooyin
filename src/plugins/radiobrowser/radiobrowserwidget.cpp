@@ -1119,7 +1119,7 @@ void RadioBrowserWidget::showSavedSearchMenu()
     menu->setAttribute(Qt::WA_DeleteOnClose);
     Utils::forwardMenuStatusTips(menu);
 
-    auto* titleAction = menu->addAction(tr("Saved as \"%1\"").arg(search.name));
+    auto* titleAction = menu->addAction(tr("Saved as ‘%1’").arg(search.name));
     titleAction->setEnabled(false);
     menu->addSeparator();
 
