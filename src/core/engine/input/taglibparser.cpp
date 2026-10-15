@@ -1169,19 +1169,17 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Track& track, bool 
         else if(field == PlayCount) {
             readPlaycountTag(track, policy.playcount, QString::fromLatin1(PlayCount), convertString(value.toString()));
         }
-        else if(field.startsWith(ReplayGain::ReplayGainStart)) {
-            if(field == ReplayGain::TrackGain || field == ReplayGain::TrackGainAlt) {
-                track.setRGTrackGain(gainStringToFloat(value.toString()));
-            }
-            else if(field == ReplayGain::AlbumGain || field == ReplayGain::AlbumGainAlt) {
-                track.setRGAlbumGain(gainStringToFloat(value.toString()));
-            }
-            else if(field == ReplayGain::TrackPeak || field == ReplayGain::TrackPeakAlt) {
-                track.setRGTrackPeak(peakStringToFloat(value.toString()));
-            }
-            else if(field == ReplayGain::AlbumPeak || field == ReplayGain::AlbumPeakAlt) {
-                track.setRGAlbumPeak(peakStringToFloat(value.toString()));
-            }
+        else if(field == ReplayGain::TrackGain || field == ReplayGain::TrackGainAlt) {
+            track.setRGTrackGain(gainStringToFloat(value.toString()));
+        }
+        else if(field == ReplayGain::AlbumGain || field == ReplayGain::AlbumGainAlt) {
+            track.setRGAlbumGain(gainStringToFloat(value.toString()));
+        }
+        else if(field == ReplayGain::TrackPeak || field == ReplayGain::TrackPeakAlt) {
+            track.setRGTrackPeak(peakStringToFloat(value.toString()));
+        }
+        else if(field == ReplayGain::AlbumPeak || field == ReplayGain::AlbumPeakAlt) {
+            track.setRGAlbumPeak(peakStringToFloat(value.toString()));
         }
         else {
             const auto tagEntry = convertString(field);
