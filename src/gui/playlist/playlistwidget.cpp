@@ -127,135 +127,6 @@ qsizetype selectedRowCount(const QAbstractItemView* view)
 
     return count;
 }
-
-class PlaylistWidgetHost : public EditablePlaylistSessionHost
-{
-public:
-    explicit PlaylistWidgetHost(PlaylistWidget* widget)
-        : m_widget{widget}
-    { }
-
-    [[nodiscard]] ActionManager* actionManager() const override
-    {
-        return m_widget->actionManager();
-    }
-    [[nodiscard]] PresetRegistry* presetRegistry() const override
-    {
-        return m_widget->presetRegistry();
-    }
-    void handlePresetChanged(const PlaylistPreset& preset) override
-    {
-        m_widget->handlePresetChanged(preset);
-    }
-    void changePlaylistLayout(Playlist* previousPlaylist, Playlist* playlist) override
-    {
-        m_widget->changePlaylistLayout(previousPlaylist, playlist);
-    }
-    void setHeaderVisible(bool visible) override
-    {
-        m_widget->setHeaderVisible(visible);
-    }
-    void setScrollbarVisible(bool visible) override
-    {
-        m_widget->setScrollbarVisible(visible);
-    }
-    void setAlternatingRowColors(bool enabled) override
-    {
-        m_widget->setAlternatingRowColors(enabled);
-    }
-    [[nodiscard]] PlaylistWidget* sessionWidget() override
-    {
-        return m_widget;
-    }
-    [[nodiscard]] bool sessionVisible() const override
-    {
-        return m_widget->isVisible();
-    }
-    [[nodiscard]] PlaylistController* playlistController() const override
-    {
-        return m_widget->playlistController();
-    }
-    [[nodiscard]] PlayerController* playerController() const override
-    {
-        return m_widget->playerController();
-    }
-    [[nodiscard]] MusicLibrary* musicLibrary() const override
-    {
-        return m_widget->musicLibrary();
-    }
-    [[nodiscard]] PlaylistInteractor* playlistInteractor() const override
-    {
-        return m_widget->playlistInteractor();
-    }
-    [[nodiscard]] SettingsManager* settingsManager() const override
-    {
-        return m_widget->settingsManager();
-    }
-    [[nodiscard]] SignalThrottler* resetThrottler() const override
-    {
-        return m_widget->resetThrottler();
-    }
-    [[nodiscard]] LibraryManager* libraryManager() const override
-    {
-        return m_widget->libraryManager();
-    }
-    [[nodiscard]] TrackSelectionController* selectionController() const override
-    {
-        return m_widget->selectionController();
-    }
-    [[nodiscard]] WidgetContext* playlistContext() const override
-    {
-        return m_widget->playlistContext();
-    }
-    [[nodiscard]] PlaylistModel* playlistModel() const override
-    {
-        return m_widget->playlistModel();
-    }
-    [[nodiscard]] PlaylistView* playlistView() const override
-    {
-        return m_widget->playlistView();
-    }
-    [[nodiscard]] const PlaylistWidgetLayoutState& layoutState() const override
-    {
-        return m_widget->layoutState();
-    }
-    [[nodiscard]] bool hasDelayedStateLoad() const override
-    {
-        return m_widget->hasDelayedStateLoad();
-    }
-
-    void resetModel() override
-    {
-        m_widget->resetModel();
-    }
-    void resetModelThrottled() const override
-    {
-        m_widget->resetModelThrottled();
-    }
-    void resetSort(bool force) override
-    {
-        m_widget->resetSort(force);
-    }
-    bool followCurrentTrack() override
-    {
-        return m_widget->followCurrentTrack();
-    }
-    void sessionHandleRestoredState() override
-    {
-        m_widget->sessionHandleRestoredState();
-    }
-    void clearDelayedStateLoad() override
-    {
-        m_widget->clearDelayedStateLoad();
-    }
-    void setDelayedStateLoad(QMetaObject::Connection connection) override
-    {
-        m_widget->setDelayedStateLoad(std::move(connection));
-    }
-
-private:
-    PlaylistWidget* m_widget;
-};
 } // namespace
 
 PlaylistWidget* PlaylistWidget::createMainPlaylist(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
@@ -795,7 +666,7 @@ void PlaylistWidget::handlePresetChanged(const PlaylistPreset& preset)
     }
 }
 
-void PlaylistWidget::changePlaylistLayout(Playlist* previousPlaylist, const Playlist* playlist)
+void PlaylistWidget::changePlaylistLayout(Playlist* previousPlaylist, Playlist* playlist)
 {
     if(!m_session->capabilities().editablePlaylist) {
         return;
@@ -952,14 +823,24 @@ PlaylistView* PlaylistWidget::playlistView() const
     return m_playlistView;
 }
 
+PlaylistWidget* PlaylistWidget::sessionWidget()
+{
+    return this;
+}
+
+bool PlaylistWidget::sessionVisible() const
+{
+    return isVisible();
+}
+
 PlaylistWidgetSessionHost& PlaylistWidget::sessionHost()
 {
-    return *m_host;
+    return *this;
 }
 
 EditablePlaylistSessionHost& PlaylistWidget::editableSessionHost()
 {
-    return *m_host;
+    return *this;
 }
 
 void PlaylistWidget::openConfigDialog()
@@ -1050,7 +931,6 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     , m_bgImageMode{PlaylistBgImage::None}
     , m_bgCoverType{Track::Cover::Front}
     , m_bgTrackPreference{TrackDisplayPreference::PlayingTrack}
-    , m_host{std::make_unique<PlaylistWidgetHost>(this)}
     , m_searchController{
           new PlaylistSearchController(m_playlistController, m_model, m_playlistView, m_header, m_settings, this)}
 {

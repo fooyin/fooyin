@@ -350,8 +350,6 @@ set(SOURCES
     playlist/playlistuicontroller.h
     playlist/playlistworkspace.cpp
     playlist/playlistworkspace.h
-    playlist/playlistworkspacestate.cpp
-    playlist/playlistworkspacestate.h
     playlist/playlistdelegate.cpp
     playlist/playlistdelegate.h
     playlist/playlistheaderlayout.cpp

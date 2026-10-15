@@ -19,10 +19,17 @@
 
 #include "playlistworkspace.h"
 
+#include <core/coresettings.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 
-#include <utility>
+#include <QDataStream>
+#include <QIODevice>
+#include <QUndoCommand>
+#include <QUndoStack>
+
+constexpr auto LastPlaylistId = "PlaylistWidget/LastPlaylistId";
+constexpr auto PlaylistStates = "PlaylistWidget/PlaylistStates";
 
 namespace Fooyin {
 PlaylistWorkspace::PlaylistWorkspace()
@@ -34,7 +41,38 @@ PlaylistWorkspace::~PlaylistWorkspace() = default;
 
 void PlaylistWorkspace::restorePlaylistStates(PlaylistHandler* handler)
 {
-    m_state.restorePlaylistStates(handler);
+    if(!handler) {
+        return;
+    }
+
+    const FyStateSettings stateSettings;
+    QByteArray in = stateSettings.value(PlaylistStates).toByteArray();
+
+    if(in.isEmpty()) {
+        return;
+    }
+
+    in = qUncompress(in);
+
+    QDataStream stream{&in, QIODevice::ReadOnly};
+    stream.setVersion(QDataStream::Qt_6_0);
+
+    qint32 size;
+    stream >> size;
+    m_states.clear();
+
+    for(qint32 i{0}; i < size; ++i) {
+        int dbId;
+        stream >> dbId;
+
+        PlaylistViewState value;
+        stream >> value.topIndex;
+        stream >> value.scrollPos;
+
+        if(auto* playlist = handler->playlistByDbId(dbId)) {
+            m_states[playlist] = value;
+        }
+    }
 }
 
 void PlaylistWorkspace::restoreLastPlaylist(PlaylistHandler* handler, PlayerController* playerController)
@@ -43,7 +81,8 @@ void PlaylistWorkspace::restoreLastPlaylist(PlaylistHandler* handler, PlayerCont
         return;
     }
 
-    const int lastId = PlaylistWorkspaceState::lastPlaylistDbId();
+    const FyStateSettings stateSettings;
+    const int lastId = stateSettings.value(LastPlaylistId, -1).toInt();
 
     if(lastId >= 0) {
         m_currentPlaylist = handler->playlistByDbId(lastId);
@@ -62,9 +101,28 @@ void PlaylistWorkspace::restoreLastPlaylist(PlaylistHandler* handler, PlayerCont
 
 void PlaylistWorkspace::savePersistentState() const
 {
-    if(m_currentPlaylist) {
-        m_state.savePersistentState(m_currentPlaylist);
+    if(!m_currentPlaylist) {
+        return;
     }
+
+    QByteArray out;
+    QDataStream stream{&out, QIODevice::WriteOnly};
+    stream.setVersion(QDataStream::Qt_6_0);
+
+    stream << static_cast<qint32>(m_states.size());
+    for(const auto& [playlist, state] : m_states) {
+        if(playlist) {
+            stream << playlist->dbId();
+            stream << state.topIndex;
+            stream << state.scrollPos;
+        }
+    }
+
+    out = qCompress(out, 9);
+
+    FyStateSettings stateSettings;
+    stateSettings.setValue(PlaylistStates, out);
+    stateSettings.setValue(LastPlaylistId, m_currentPlaylist->dbId());
 }
 
 bool PlaylistWorkspace::playlistsHaveLoaded() const
@@ -113,47 +171,86 @@ Playlist* PlaylistWorkspace::changeCurrentPlaylist(PlaylistHandler* handler, Pla
 
 void PlaylistWorkspace::resetPlaylistViewState(Playlist* playlist)
 {
-    m_state.resetPlaylistViewState(playlist);
+    if(!playlist) {
+        return;
+    }
+
+    m_states.erase(playlist);
 }
 
 void PlaylistWorkspace::clearPlaylistHistory(Playlist* playlist)
 {
-    m_state.clearPlaylistHistory(playlist);
+    if(!playlist) {
+        return;
+    }
+
+    m_histories.erase(playlist);
 }
 
 void PlaylistWorkspace::resetPlaylistSessionState(Playlist* playlist)
 {
-    m_state.resetPlaylistSessionState(playlist);
+    if(!playlist) {
+        return;
+    }
+
+    clearPlaylistHistory(playlist);
+    resetPlaylistViewState(playlist);
 }
 
 void PlaylistWorkspace::resetCurrentPlaylistSessionState()
 {
-    m_state.resetPlaylistSessionState(m_currentPlaylist);
+    resetPlaylistSessionState(m_currentPlaylist);
 }
 
 void PlaylistWorkspace::removePlaylist(Playlist* playlist)
 {
-    m_state.removePlaylist(playlist);
+    if(!playlist) {
+        return;
+    }
+
+    resetPlaylistSessionState(playlist);
+    m_currentSearches.erase(playlist);
 }
 
 QString PlaylistWorkspace::currentSearch(Playlist* playlist) const
 {
-    return m_state.currentSearch(playlist);
+    if(!playlist || !m_currentSearches.contains(playlist)) {
+        return {};
+    }
+
+    return m_currentSearches.at(playlist);
 }
 
 void PlaylistWorkspace::setCurrentSearch(Playlist* playlist, const QString& search)
 {
-    m_state.setCurrentSearch(playlist, search);
+    if(!playlist) {
+        return;
+    }
+
+    m_currentSearches[playlist] = search;
 }
 
 std::optional<PlaylistViewState> PlaylistWorkspace::playlistState(Playlist* playlist) const
 {
-    return m_state.playlistState(playlist);
+    if(!playlist || !m_states.contains(playlist)) {
+        return {};
+    }
+
+    return m_states.at(playlist);
 }
 
 void PlaylistWorkspace::savePlaylistState(Playlist* playlist, const PlaylistViewState& state)
 {
-    m_state.savePlaylistState(playlist, state);
+    if(!playlist) {
+        return;
+    }
+
+    if(state.scrollPos == 0 || state.topIndex < 0) {
+        m_states.erase(playlist);
+    }
+    else {
+        m_states[playlist] = state;
+    }
 }
 
 void PlaylistWorkspace::addToHistory(QUndoCommand* command)
@@ -163,7 +260,15 @@ void PlaylistWorkspace::addToHistory(QUndoCommand* command)
 
 void PlaylistWorkspace::addToHistory(Playlist* playlist, QUndoCommand* command)
 {
-    m_state.addToHistory(playlist, command);
+    if(!playlist || !command) {
+        return;
+    }
+
+    auto& history = m_histories[playlist];
+    if(!history) {
+        history = std::make_unique<QUndoStack>();
+    }
+    history->push(command);
 }
 
 bool PlaylistWorkspace::canUndo() const
@@ -173,7 +278,11 @@ bool PlaylistWorkspace::canUndo() const
 
 bool PlaylistWorkspace::canUndo(Playlist* playlist) const
 {
-    return m_state.canUndo(playlist);
+    if(const auto* undoHistory = history(playlist)) {
+        return undoHistory->canUndo();
+    }
+
+    return false;
 }
 
 bool PlaylistWorkspace::canRedo() const
@@ -183,7 +292,11 @@ bool PlaylistWorkspace::canRedo() const
 
 bool PlaylistWorkspace::canRedo(Playlist* playlist) const
 {
-    return m_state.canRedo(playlist);
+    if(const auto* undoHistory = history(playlist)) {
+        return undoHistory->canRedo();
+    }
+
+    return false;
 }
 
 void PlaylistWorkspace::undo()
@@ -193,7 +306,9 @@ void PlaylistWorkspace::undo()
 
 void PlaylistWorkspace::undo(Playlist* playlist)
 {
-    m_state.undo(playlist);
+    if(auto* undoHistory = history(playlist); undoHistory && undoHistory->canUndo()) {
+        undoHistory->undo();
+    }
 }
 
 void PlaylistWorkspace::redo()
@@ -203,26 +318,48 @@ void PlaylistWorkspace::redo()
 
 void PlaylistWorkspace::redo(Playlist* playlist)
 {
-    m_state.redo(playlist);
+    if(auto* undoHistory = history(playlist); undoHistory && undoHistory->canRedo()) {
+        undoHistory->redo();
+    }
 }
 
 void PlaylistWorkspace::clearHistory()
 {
-    m_state.clearHistory();
+    m_histories.clear();
 }
 
 bool PlaylistWorkspace::clipboardEmpty() const
 {
-    return m_state.clipboardEmpty();
+    return m_clipboard.empty();
 }
 
 TrackList PlaylistWorkspace::clipboard() const
 {
-    return m_state.clipboard();
+    return m_clipboard;
 }
 
 void PlaylistWorkspace::setClipboard(const TrackList& tracks)
 {
-    m_state.setClipboard(tracks);
+    m_clipboard = tracks;
+}
+
+QUndoStack* PlaylistWorkspace::history(Playlist* playlist)
+{
+    if(!playlist) {
+        return nullptr;
+    }
+
+    const auto historyIt = m_histories.find(playlist);
+    return historyIt != m_histories.end() ? historyIt->second.get() : nullptr;
+}
+
+const QUndoStack* PlaylistWorkspace::history(Playlist* playlist) const
+{
+    if(!playlist) {
+        return nullptr;
+    }
+
+    const auto historyIt = m_histories.find(playlist);
+    return historyIt != m_histories.cend() ? historyIt->second.get() : nullptr;
 }
 } // namespace Fooyin
