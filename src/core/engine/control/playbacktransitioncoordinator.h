@@ -105,7 +105,8 @@ public:
 private:
     bool shouldSignalTrackEnding(const TrackEndingInput& input);
     [[nodiscard]] bool shouldSignalReadyToSwitch(const TrackEndingInput& input) const;
-    [[nodiscard]] static bool inTimelineWindow(const TrackEndingInput& input, uint64_t windowMs);
+    static bool inTimelineWindow(const TrackEndingInput& input, uint64_t windowMs);
+    static bool inTransitionWindow(const TrackEndingInput& input, uint64_t leadMs, bool timelineEnabled);
 
     AutoTransitionMode m_autoTransitionMode;
     bool m_trackEnding;

@@ -19,7 +19,7 @@
 
 #include "playbacktransitioncoordinator.h"
 
-#include "core/engine/enginehelpers.h"
+#include "enginehelpers.h"
 
 namespace Fooyin {
 PlaybackTransitionCoordinator::PlaybackTransitionCoordinator()
@@ -85,6 +85,15 @@ bool PlaybackTransitionCoordinator::inTimelineWindow(const TrackEndingInput& inp
     return input.positionMs >= triggerPos;
 }
 
+bool PlaybackTransitionCoordinator::inTransitionWindow(const TrackEndingInput& input, uint64_t leadMs,
+                                                       bool timelineEnabled)
+{
+    const uint64_t windowMs    = saturatingAdd(leadMs, input.timelineDelayMs);
+    const bool readyByTimeline = timelineEnabled && inTimelineWindow(input, windowMs);
+    const bool readyByDrain    = input.endOfInput && input.remainingOutputMs <= windowMs;
+    return readyByTimeline || readyByDrain;
+}
+
 bool PlaybackTransitionCoordinator::shouldSignalTrackEnding(const TrackEndingInput& input)
 {
     if(input.endOfInput && input.bufferEmpty) {
@@ -98,29 +107,21 @@ bool PlaybackTransitionCoordinator::shouldSignalTrackEnding(const TrackEndingInp
 
     bool crossfadeReady = false;
     if(input.autoCrossfadeEnabled) {
-        const uint64_t fadeOutWindowMs  = static_cast<uint64_t>(std::max(0, input.autoFadeOutMs));
-        const uint64_t timelineWindowMs = saturatingAdd(fadeOutWindowMs, input.timelineDelayMs);
-        const bool readyByTimeline      = timelineWindowEligible && inTimelineWindow(input, timelineWindowMs);
-        const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
-        crossfadeReady                  = readyByTimeline || readyByDrain;
+        const uint64_t fadeOutWindowMs = static_cast<uint64_t>(std::max(0, input.autoFadeOutMs));
+        crossfadeReady                 = inTransitionWindow(input, fadeOutWindowMs, timelineWindowEligible);
     }
 
     bool boundaryFadeReady = false;
     if(input.boundaryFadeEnabled) {
-        const uint64_t fadeOutWindowMs  = static_cast<uint64_t>(std::max(0, input.boundaryFadeOutMs));
-        const uint64_t prepareWindowMs  = std::max(fadeOutWindowMs, input.gaplessPrepareWindowMs);
-        const uint64_t timelineWindowMs = saturatingAdd(prepareWindowMs, input.timelineDelayMs);
-        const bool readyByTimeline      = inTimelineWindow(input, timelineWindowMs);
-        const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
-        boundaryFadeReady               = readyByTimeline || readyByDrain;
+        const uint64_t fadeOutWindowMs = static_cast<uint64_t>(std::max(0, input.boundaryFadeOutMs));
+        const uint64_t prepareWindowMs = std::max(fadeOutWindowMs, input.gaplessPrepareWindowMs);
+        boundaryFadeReady              = inTransitionWindow(input, prepareWindowMs, true);
     }
 
     bool gaplessReady = false;
     if(input.gaplessEnabled) {
-        const uint64_t timelineWindowMs = saturatingAdd(input.gaplessPrepareWindowMs, input.timelineDelayMs);
-        const bool readyByTimeline      = timelineWindowEligible && inTimelineWindow(input, timelineWindowMs);
-        const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
-        gaplessReady                    = input.endOfInput || readyByTimeline || readyByDrain;
+        gaplessReady
+            = input.endOfInput || inTransitionWindow(input, input.gaplessPrepareWindowMs, timelineWindowEligible);
     }
 
     const bool crossfadeConfigured = input.autoCrossfadeEnabled;
@@ -160,23 +161,14 @@ bool PlaybackTransitionCoordinator::shouldSignalReadyToSwitch(const TrackEndingI
 {
     switch(m_autoTransitionMode) {
         case AutoTransitionMode::Crossfade: {
-            const uint64_t fadeOutWindowMs  = static_cast<uint64_t>(std::max(0, input.autoFadeOutMs));
-            const uint64_t fadeInWindowMs   = static_cast<uint64_t>(std::max(0, input.autoFadeInMs));
-            const uint64_t overlapWindowMs  = std::min(fadeOutWindowMs, fadeInWindowMs);
-            const uint64_t timelineWindowMs = saturatingAdd(overlapWindowMs, input.timelineDelayMs);
-            const bool readyByTimeline      = inTimelineWindow(input, timelineWindowMs);
-            const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
-            return readyByTimeline || readyByDrain;
+            const uint64_t fadeOutWindowMs = static_cast<uint64_t>(std::max(0, input.autoFadeOutMs));
+            const uint64_t fadeInWindowMs  = static_cast<uint64_t>(std::max(0, input.autoFadeInMs));
+            const uint64_t overlapWindowMs = std::min(fadeOutWindowMs, fadeInWindowMs);
+            return inTransitionWindow(input, overlapWindowMs, true);
         }
-        case AutoTransitionMode::Gapless: {
-            const uint64_t switchLeadMs     = input.gaplessPrepareWindowMs;
-            const uint64_t timelineWindowMs = saturatingAdd(switchLeadMs, input.timelineDelayMs);
-            const bool readyByTimeline      = inTimelineWindow(input, timelineWindowMs);
-            const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
-            return readyByTimeline || readyByDrain;
-        }
+        case AutoTransitionMode::Gapless:
+            return inTransitionWindow(input, input.gaplessPrepareWindowMs, true);
         case AutoTransitionMode::BoundaryFade:
-            return false;
         case AutoTransitionMode::None:
             return false;
     }
