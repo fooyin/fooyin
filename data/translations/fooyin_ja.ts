@@ -5164,7 +5164,13 @@ Effects here process the final combined output.</source>
 • Select a widget to see its parent containers in the breadcrumb bar. Select a parent to move an entire section.
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>• 右側のパレットからウィジェットを探します (パレットが表示されていない場合は、右端付近にカーソルを合わせてください）。
+
+• パレットからウィジェットをドラッグして追加したり、既存のウィジェットをドラッグして移動したりできます。Ctrl キーを押しながらドラッグすると、対象のウィジェットを置き換えることができます。
+
+• ウィジェットを選択すると、ブレッドクラムバーにその親コンテナが表示されます。親コンテナを選択すると、セクション全体を移動できます。
+
+• 任意のウィジェットを右クリックして、コンテキストメニューから分割、置換、または削除を行うことができます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="351"/>
@@ -7251,7 +7257,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="51"/>
         <source>Filter</source>
-        <translation type="unfinished">フィルター</translation>
+        <translation>フィルター</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="53"/>
@@ -7266,7 +7272,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="125"/>
         <source>Show label</source>
-        <translation type="unfinished">ラベルを表示</translation>
+        <translation>ラベルを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="130"/>

@@ -5194,7 +5194,13 @@ Effects here process the final combined output.</source>
 • Select a widget to see its parent containers in the breadcrumb bar. Select a parent to move an entire section.
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>• Найдите виджеты на панели справа (наведите курсор у правого края, если она скрыта).
+
+• Перетаскивайте виджеты с панели, чтобы добавить их, или перетаскивайте существующие, чтобы переместить их. Удерживайте Ctrl, чтобы заменить целевой виджет.
+
+• Выберите виджет, чтобы увидеть его родительские контейнеры в строке навигации. Выберите родительский элемент, чтобы переместить целый раздел.
+
+• Щёлкните правой кнопкой мыши по любому виджету, чтобы разделить, заменить или удалить его с помощью контекстного меню.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="351"/>
@@ -7311,7 +7317,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="51"/>
         <source>Filter</source>
-        <translation type="unfinished">Фильтр</translation>
+        <translation>Фильтр</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="53"/>
@@ -7326,7 +7332,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="125"/>
         <source>Show label</source>
-        <translation type="unfinished">Показывать метку</translation>
+        <translation>Показывать метку</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="130"/>
