@@ -966,8 +966,7 @@ void EqualiserSettingsWidget::importPreset()
 
     QFile file(filePath);
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QMessageBox::warning(this, tr("Import Equaliser Preset"),
-                             tr("Unable to open ‘%1’ for reading.").arg(filePath));
+        QMessageBox::warning(this, tr("Import Equaliser Preset"), tr("Unable to open ‘%1’ for reading.").arg(filePath));
         return;
     }
 
@@ -1046,8 +1045,7 @@ void EqualiserSettingsWidget::exportPreset()
     const QString filePath = selectedFiles.constFirst();
     QFile file(filePath);
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
-        QMessageBox::warning(this, tr("Export Equaliser Preset"),
-                             tr("Unable to open ‘%1’ for writing.").arg(filePath));
+        QMessageBox::warning(this, tr("Export Equaliser Preset"), tr("Unable to open ‘%1’ for writing.").arg(filePath));
         return;
     }
 

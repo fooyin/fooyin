@@ -300,7 +300,7 @@ TEST_F(ScriptFormatterTest, KnownTagWithInvalidOptionStillRendersText)
     EXPECT_EQ(u"text"_s, result.blocks.front().text);
     ASSERT_EQ(1, m_formattter.errors().size());
     EXPECT_EQ(0, m_formattter.errors().front().position);
-    EXPECT_EQ(u"[0] Error in formatting tag '<size=large>': invalid formatting option."_s,
+    EXPECT_EQ(u"[0] Error in formatting tag ‘<size=large>’: invalid formatting option."_s,
               m_formattter.errors().front().message);
 }
 

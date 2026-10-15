@@ -1399,7 +1399,7 @@
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="528"/>
-        <source>Looks up a raw tag field by name. Multiple values are joined with &quot;, &quot;.</source>
+        <source>Looks up a raw tag field by name. Multiple values are joined with ‘, ’.</source>
         <translation>按名称查找原始标签字段。多个值用“,”连接。</translation>
     </message>
     <message>
@@ -2071,7 +2071,7 @@
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="134"/>
-        <source>Use the track&apos;s front cover when artist artwork is unavailable</source>
+        <source>Use the track’s front cover when artist artwork is unavailable</source>
         <translation>当没有艺人图片时，使用曲目的封面图片</translation>
     </message>
     <message>
@@ -2238,7 +2238,7 @@ When disabled, existing track order is preserved and only newly added matching t
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="177"/>
-        <source>A query named &quot;%1&quot; already exists. Overwrite it?</source>
+        <source>A query named ‘%1’ already exists. Overwrite it?</source>
         <translation>名为“%1”的查询已存在。是否覆盖它？</translation>
     </message>
     <message>
@@ -2368,12 +2368,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="77"/>
-        <source>Limits the drive&apos;s read speed while ripping; playback is unaffected.</source>
+        <source>Limits the drive’s read speed while ripping; playback is unaffected.</source>
         <translation>在刻录时限制驱动器的读取速度，播放不受影响。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="78"/>
-        <source>This drive doesn&apos;t support read-speed control.</source>
+        <source>This drive doesn’t support read-speed control.</source>
         <translation>此驱动不支持读取速度控制。</translation>
     </message>
     <message>
@@ -3182,7 +3182,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="115"/>
-        <source>Choose a built-in icon or custom image. If none is set, the button uses the command&apos;s default icon.</source>
+        <source>Choose a built-in icon or custom image. If none is set, the button uses the command’s default icon.</source>
         <translation>选择内置图标或自定义图像。如果未设置，按钮将使用命令的默认图标。</translation>
     </message>
     <message>
@@ -3496,7 +3496,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="108"/>
-        <source>Don&apos;t reset DSP between tracks</source>
+        <source>Don’t reset DSP between tracks</source>
         <translation>曲目之间不要重置 DSP</translation>
     </message>
     <message>
@@ -3812,7 +3812,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="757"/>
-        <source>Unable to open settings for DSP &quot;%1&quot;.</source>
+        <source>Unable to open settings for DSP ‘%1’.</source>
         <translation>无法打开 DSP“%1”的设置。</translation>
     </message>
     <message>
@@ -4569,7 +4569,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="53"/>
-        <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
+        <source>For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately.</source>
         <translation>对于“替换当前播放列表”和“创建新播放列表”，立即开始播放。</translation>
     </message>
     <message>
@@ -4939,7 +4939,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="721"/>
-        <source>Unable to open settings for DSP &quot;%1&quot;.</source>
+        <source>Unable to open settings for DSP ‘%1’.</source>
         <translation>无法打开 DSP“%1”的设置。</translation>
     </message>
     <message>
@@ -4989,7 +4989,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1247"/>
-        <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
+        <source>Preset ‘%1’ already exists. Overwrite?</source>
         <translation>预设“%1”已存在。是否覆盖？</translation>
     </message>
 </context>
@@ -5028,12 +5028,12 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="468"/>
-        <source>Unable to open settings for DSP &quot;%1&quot;.</source>
+        <source>Unable to open settings for DSP ‘%1’.</source>
         <translation>无法打开 DSP“%1”的设置。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="478"/>
-        <source>Unable to find DSP &quot;%1&quot;.</source>
+        <source>Unable to find DSP ‘%1’.</source>
         <translation>找不到 DSP“%1”。</translation>
     </message>
     <message>
@@ -5619,7 +5619,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="585"/>
-        <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
+        <source>Preset ‘%1’ already exists. Overwrite?</source>
         <translation>预设“%1”已存在。是否覆盖？</translation>
     </message>
 </context>
@@ -5716,7 +5716,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="925"/>
-        <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
+        <source>Preset ‘%1’ already exists. Overwrite?</source>
         <translation>预设“%1”已存在。是否覆盖？</translation>
     </message>
     <message>
@@ -5735,7 +5735,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="970"/>
-        <source>Unable to open &quot;%1&quot; for reading.</source>
+        <source>Unable to open ‘%1’ for reading.</source>
         <translation>无法打开“%1”进行读取。</translation>
     </message>
     <message>
@@ -5773,12 +5773,12 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1050"/>
-        <source>Unable to open &quot;%1&quot; for writing.</source>
+        <source>Unable to open ‘%1’ for writing.</source>
         <translation>无法打开“%1”进行写入。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1062"/>
-        <source>An error occurred while writing &quot;%1&quot;.</source>
+        <source>An error occurred while writing ‘%1’.</source>
         <translation>写入“%1”时发生错误。</translation>
     </message>
 </context>
@@ -5976,7 +5976,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="113"/>
-        <source>Don&apos;t crossfade within the same album</source>
+        <source>Don’t crossfade within the same album</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6174,12 +6174,12 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="48"/>
-        <source>Are you sure you want to permanently delete &quot;%1&quot;?</source>
+        <source>Are you sure you want to permanently delete ‘%1’?</source>
         <translation>你确定想要永久删除“%1”吗？</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="49"/>
-        <source>Are you sure you want to delete &quot;%1&quot;?</source>
+        <source>Are you sure you want to delete ‘%1’?</source>
         <translation>您确定要删除“%1”吗？</translation>
     </message>
     <message numerus="yes">
@@ -6389,7 +6389,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="335"/>
-        <source>A preset named &quot;%1&quot; already exists. Overwrite it?</source>
+        <source>A preset named ‘%1’ already exists. Overwrite it?</source>
         <translation>已存在名为“%1”的预设。是否覆盖它？</translation>
     </message>
     <message>
@@ -6409,7 +6409,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="485"/>
-        <source>Don&apos;t ask again</source>
+        <source>Don’t ask again</source>
         <translation>不再询问</translation>
     </message>
     <message>
@@ -6606,7 +6606,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="288"/>
-        <source>Could not move &quot;%1&quot; to the trash. Delete it permanently?</source>
+        <source>Could not move ‘%1’ to the trash. Delete it permanently?</source>
         <translation>无法将“%1”移至回收站。是否将其永久删除？</translation>
     </message>
     <message numerus="yes">
@@ -6794,7 +6794,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="63"/>
-        <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
+        <source>For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately.</source>
         <translation>对于“替换当前播放列表”和“创建新的播放列表”，立即开始播放。</translation>
     </message>
     <message>
@@ -6839,7 +6839,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="93"/>
-        <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
+        <source>When this selection playlist is used for playback, preserve it with ‘(Playback)’ appended to its name instead of replacing its tracks.</source>
         <translation>当使用此选择播放列表进行播放时，请保留该播放列表，并在其名称后附加“（播放）”，而不是替换其曲目。</translation>
     </message>
     <message>
@@ -7195,7 +7195,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="57"/>
-        <source>The expression for library filter &quot;%1&quot; is invalid.</source>
+        <source>The expression for library filter ‘%1’ is invalid.</source>
         <translation>库筛选“%1”的表达式无效。</translation>
     </message>
     <message>
@@ -7270,12 +7270,12 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="130"/>
-        <source>Rename &apos;All&apos; filter</source>
+        <source>Rename ‘All’ filter</source>
         <translation>重命名“全部”筛选器</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="133"/>
-        <source>Rename &apos;All&apos; Filter</source>
+        <source>Rename ‘All’ Filter</source>
         <translation>重命名“全部”筛选器</translation>
     </message>
     <message>
@@ -7836,7 +7836,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1210"/>
-        <source>Look up metadata using the selected tracks&apos; artist and album</source>
+        <source>Look up metadata using the selected tracks’ artist and album</source>
         <translation>使用所选曲目的艺人和专辑信息查找元数据</translation>
     </message>
     <message>
@@ -7860,7 +7860,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1219"/>
-        <source>Look up metadata using the selected tracks&apos; disc TOC</source>
+        <source>Look up metadata using the selected tracks’ disc TOC</source>
         <translation>使用所选曲目的光盘 TOC 查找元数据</translation>
     </message>
     <message>
@@ -8749,7 +8749,7 @@ Effects here process the final combined output.</source>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="889"/>
-        <source>Delete layout &quot;%1&quot;?</source>
+        <source>Delete layout ‘%1’?</source>
         <translation>删除布局“%1”？</translation>
     </message>
     <message>
@@ -9885,7 +9885,7 @@ If the default half-star does not render correctly with your system font, choose
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="168"/>
-        <source>e.g. &quot;%1&quot;</source>
+        <source>e.g. ‘%1’</source>
         <extracomment>Example of semicolon-separated file extensions (e.g. mp3;m4a)</extracomment>
         <translation>例如“%1”</translation>
     </message>
@@ -10132,7 +10132,7 @@ If the default half-star does not render correctly with your system font, choose
     <name>Fooyin::LibraryMetadataPageWidget</name>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="54"/>
-        <source>Use &apos;Various Artists&apos; for compilations</source>
+        <source>Use ‘Various Artists’ for compilations</source>
         <translation>合辑请使用“群星”字样</translation>
     </message>
     <message>
@@ -10518,7 +10518,7 @@ This improves compatibility with other players, but stores whole-star values onl
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="78"/>
-        <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
+        <source>For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately.</source>
         <translation>对于“替换当前播放列表”和“创建新的播放列表”，立即开始播放。</translation>
     </message>
     <message>
@@ -10590,7 +10590,7 @@ This improves compatibility with other players, but stores whole-star values onl
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="96"/>
-        <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
+        <source>When this selection playlist is used for playback, preserve it with ‘(Playback)’ appended to its name instead of replacing its tracks.</source>
         <translation>当使用此选择播放列表进行播放时，请保留该播放列表，并在其名称后附加“（播放）”，而不是替换其曲目。</translation>
     </message>
     <message>
@@ -11075,7 +11075,7 @@ This improves compatibility with other players, but stores whole-star values onl
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="84"/>
-        <source>This will be displayed if lyrics for the current track can&apos;t be found.</source>
+        <source>This will be displayed if lyrics for the current track can’t be found.</source>
         <translation>如果找不到当前歌曲的歌词，则会显示此信息。</translation>
     </message>
     <message>
@@ -12087,7 +12087,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="454"/>
-        <source>Choose how retrieved metadata is combined with the track&apos;s existing tags.</source>
+        <source>Choose how retrieved metadata is combined with the track’s existing tags.</source>
         <translation>选择如何将获取的元数据与曲目现有的标签进行合并。</translation>
     </message>
     <message>
@@ -12137,7 +12137,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="470"/>
-        <source>Use the original release date for the Date tag instead of this specific release&apos;s date.</source>
+        <source>Use the original release date for the Date tag instead of this specific release’s date.</source>
         <translation>请使用原始发布日期作为“日期”标签的值，而不是该特定版本的发行日期。</translation>
     </message>
     <message>
@@ -12194,7 +12194,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1012"/>
-        <source>Don&apos;t ask again</source>
+        <source>Don’t ask again</source>
         <translation>不再询问</translation>
     </message>
     <message>
@@ -12568,7 +12568,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="158"/>
-        <source>&lt;p&gt;The Flatpak notification portal does not support custom timeouts or album art. To use the desktop notification service directly, add &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt; to fooyin&apos;s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Restart fooyin after changing its permissions.&lt;/p&gt;</source>
+        <source>&lt;p&gt;The Flatpak notification portal does not support custom timeouts or album art. To use the desktop notification service directly, add &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt; to fooyin’s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Restart fooyin after changing its permissions.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Flatpak 通知门户不支持自定义超时时间或专辑封面。要直接使用桌面通知服务，请将 &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt; 添加到 Flatseal 中 fooyin 的会话总线“talk”权限，或者运行：&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;更改 fooyin 的权限后，重新启动它。&lt;/p&gt;</translation>
     </message>
     <message>
@@ -13478,7 +13478,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="257"/>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="261"/>
-        <source>Reset &apos;Stop after current&apos; after stopping</source>
+        <source>Reset ‘Stop after current’ after stopping</source>
         <translation>停止后重置‘播放一曲后停止’选项</translation>
     </message>
     <message>
@@ -13614,7 +13614,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="115"/>
-        <source>Track is counted as &apos;played&apos; once either threshold is reached</source>
+        <source>Track is counted as ‘played’ once either threshold is reached</source>
         <translation>一旦达到任一阈值，该曲目即被计为已播放</translation>
     </message>
     <message>
@@ -13755,7 +13755,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="104"/>
-        <source>Replace Playing Tracks with the first selected track&apos;s group and start playback at that track</source>
+        <source>Replace Playing Tracks with the first selected track’s group and start playback at that track</source>
         <translation>将当前播放曲目替换为所选的第一首曲目所属的组，并从该曲目开始播放</translation>
     </message>
     <message>
@@ -14298,7 +14298,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="132"/>
-        <source>Use the currently playing track&apos;s artwork as the playlist background</source>
+        <source>Use the currently playing track’s artwork as the playlist background</source>
         <translation type="unfinished">将当前播放曲目的封面用作播放列表背景</translation>
     </message>
     <message>
@@ -14645,7 +14645,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="436"/>
-        <source>Remove playlist &quot;%1&quot;?</source>
+        <source>Remove playlist ‘%1’?</source>
         <translation>移除播放列表“%1”？</translation>
     </message>
     <message numerus="yes">
@@ -14657,7 +14657,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="442"/>
-        <source>Don&apos;t ask again</source>
+        <source>Don’t ask again</source>
         <translation>不再询问</translation>
     </message>
     <message>
@@ -14723,7 +14723,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="109"/>
-        <source>Set to &apos;0&apos; to disable preloading.</source>
+        <source>Set to ‘0’ to disable preloading.</source>
         <translation>设置为&apos;0&apos;以禁用预加载。</translation>
     </message>
     <message>
@@ -16279,7 +16279,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="153"/>
-        <source>Sensitivity of projectM&apos;s beat detection</source>
+        <source>Sensitivity of projectM’s beat detection</source>
         <translation>projectM 的节拍检测灵敏度</translation>
     </message>
     <message>
@@ -16624,7 +16624,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1121"/>
-        <source>Apply or clear the current tab&apos;s pending changes before switching tracks or tabs.</source>
+        <source>Apply or clear the current tab’s pending changes before switching tracks or tabs.</source>
         <translation>切换曲目或标签页之前，请先应用或清除当前标签页的待处理更改。</translation>
     </message>
     <message>
@@ -17051,7 +17051,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="313"/>
-        <source>Set &quot;%1&quot; on %Ln track(s)?</source>
+        <source>Set ‘%1’ on %Ln track(s)?</source>
         <extracomment>%1 is the Quick Tagger entry name, for example &quot;Rating&quot;.</extracomment>
         <translation>
             <numerusform>在 %Ln 曲目上设置“%1”？</numerusform>
@@ -17156,7 +17156,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="84"/>
-        <source>Used with the &quot;Calculate as albums (by tags)&quot; action</source>
+        <source>Used with the ‘Calculate as albums (by tags)’ action</source>
         <translation>与“按标签计算专辑”操作一起使用</translation>
     </message>
 </context>
@@ -17321,7 +17321,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="64"/>
-        <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately</source>
+        <source>For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately</source>
         <translation>对于“替换当前播放列表”和“创建新播放列表”，立即开始播放</translation>
     </message>
     <message>
@@ -17366,7 +17366,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="91"/>
-        <source>Horizontal spacing between stations in icon display mode. Auto uses the view&apos;s default spacing.</source>
+        <source>Horizontal spacing between stations in icon display mode. Auto uses the view’s default spacing.</source>
         <translation>图标显示模式下，电台之间的水平间距。选择“自动”将使用视图的默认间距。</translation>
     </message>
     <message>
@@ -17746,7 +17746,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1149"/>
-        <source>Saved as &quot;%1&quot;</source>
+        <source>Saved as ‘%1’</source>
         <translation>已保存为“%1”</translation>
     </message>
     <message>
@@ -19363,7 +19363,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="135"/>
-        <source>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin&apos;s Session Bus &quot;talk&quot; permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to execute arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</source>
+        <source>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin’s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to execute arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Flatpak 沙盒无法直接启动宿主机上安装的应用程序。要允许 fooyin 启动宿主应用程序，请在 Flatseal 中将 &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; 添加到 fooyin 的会话总线“talk”权限，或者运行：&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;然后在每个服务命令前加上 &lt;code&gt;flatpak-spawn --host&lt;/code&gt;。 例如：&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;此权限允许 fooyin 在沙盒之外执行任意命令。仅在您信任所配置的服务时才启用此权限。&lt;/p&gt;</translation>
     </message>
     <message>
@@ -19776,7 +19776,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <name>Fooyin::ScriptFormatter</name>
     <message>
         <location filename="../../src/gui/scripting/scriptformatter.cpp" line="256"/>
-        <source>[%1] Error in formatting tag &apos;%2&apos;: invalid formatting option.</source>
+        <source>[%1] Error in formatting tag ‘%2’: invalid formatting option.</source>
         <translation>[%1] 格式化标签“%2”出错：格式化选项无效。</translation>
     </message>
 </context>
@@ -20718,7 +20718,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="77"/>
-        <source>e.g. &quot;%1&quot;</source>
+        <source>e.g. ‘%1’</source>
         <extracomment>Example of semicolon-separated file extensions (e.g. mp3;m4a)</extracomment>
         <translation>例如“%1”</translation>
     </message>
@@ -22511,7 +22511,7 @@ This does not support full scripting.</source>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="146"/>
-        <source>Use any of &quot;%1&quot; in the editor to enter multiple values.</source>
+        <source>Use any of ‘%1’ in the editor to enter multiple values.</source>
         <translation>在编辑器中使用“%1”输入多个值。</translation>
     </message>
 </context>
@@ -22552,7 +22552,7 @@ This does not support full scripting.</source>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="143"/>
-        <source>Don&apos;t ask again</source>
+        <source>Don’t ask again</source>
         <translation>不再显示此消息</translation>
     </message>
 </context>
@@ -22615,7 +22615,7 @@ This does not support full scripting.</source>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpropertiestab.cpp" line="160"/>
-        <source>Don&apos;t ask again</source>
+        <source>Don’t ask again</source>
         <translation>不再显示此消息</translation>
     </message>
 </context>
@@ -23122,7 +23122,7 @@ This does not support full scripting.</source>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="174"/>
-        <source>Item: &quot;%1&quot;</source>
+        <source>Item: ‘%1’</source>
         <translation>项目：“%1”</translation>
     </message>
     <message>
@@ -24763,7 +24763,7 @@ Set to 0 to choose automatically from the remote buffer length.</source>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="751"/>
-        <source>Split ID3v2.3 values with non-standard &quot;;&quot; separators when reading tags.</source>
+        <source>Split ID3v2.3 values with non-standard ‘;’ separators when reading tags.</source>
         <translation>读取标签时，使用非标准“;”分隔符拆分 ID3v2.3 值。</translation>
     </message>
     <message>
@@ -25517,7 +25517,7 @@ Changes apply to newly opened streams.</source>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="91"/>
-        <source>Use fooyin&apos;s default POPM byte conversion when reading and writing MP3 ratings.
+        <source>Use fooyin’s default POPM byte conversion when reading and writing MP3 ratings.
 This supports intermediate rating steps, but does not treat the POPM byte as a fully linear 0–255 scale.</source>
         <translation>读写 MP3 音调评分时，请使用 fooyin 的默认 POPM 字节转换。
 此转换支持中间音调评分级别，但不会将 POPM 字节视为完全线性的 0-255 刻度。</translation>

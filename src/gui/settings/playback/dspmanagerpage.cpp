@@ -717,8 +717,7 @@ void DspManagerPageWidget::configureActiveDsp(DspModel* model, const QModelIndex
 
     auto* settingsDialog = provider->createSettingsWidget(this);
     if(!settingsDialog) {
-        QMessageBox::warning(this, tr("DSP Settings"),
-                             tr("Unable to open settings for DSP ‘%1’.").arg(dspEntry.name));
+        QMessageBox::warning(this, tr("DSP Settings"), tr("Unable to open settings for DSP ‘%1’.").arg(dspEntry.name));
         return;
     }
     settingsDialog->setWindowTitle(dspEntry.name);
