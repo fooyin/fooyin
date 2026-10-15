@@ -693,7 +693,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="209"/>
         <source>Name of the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Název seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
@@ -833,17 +833,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="270"/>
         <source>Returns 1 for the current queue viewer entry, including while paused</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí 1 pro aktuální položku prohlížeče fronty i pokud je pozastavená</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
         <source>Returns 1 for a queue viewer entry ahead of the queue cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí 1 pro položku následující za kurzorem v prohlížeči fronty</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
         <source>Returns 1 for a queue viewer entry in queue history</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí 1 pro položku v historii prohlížeče fronty</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="275"/>
@@ -1602,7 +1602,7 @@
     <message>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="169"/>
         <source>Advanced</source>
-        <translation type="unfinished">Pokročilé</translation>
+        <translation>Pokročilé</translation>
     </message>
 </context>
 <context>
@@ -7515,7 +7515,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
         <source>Wait for tracks to load before showing the window</source>
-        <translation type="unfinished"></translation>
+        <translation>Před zobrazením okna počkat na načtení skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="93"/>
