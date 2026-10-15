@@ -23,6 +23,7 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QKeySequence>
+#include <QStringDecoder>
 
 #include <algorithm>
 #include <vector>
@@ -198,6 +199,44 @@ std::optional<QString> decodeText(const QByteArray& content, const QByteArray& e
     }
 
     return QString::fromUtf16(decoded.data(), decodedSize);
+}
+
+QString decodeTextWithDetection(const QByteArray& content, const DetectEncodingOptions& options)
+{
+    if(content.isEmpty()) {
+        return {};
+    }
+
+    QStringDecoder toUtf16;
+
+    auto encoding = QStringConverter::encodingForData(content);
+    if(encoding) {
+        toUtf16 = QStringDecoder{encoding.value()};
+    }
+    else {
+        const auto encodingName = detectEncoding(content, options);
+        if(encodingName.isEmpty()) {
+            return {};
+        }
+
+        encoding = QStringConverter::encodingForName(encodingName.constData());
+        if(encoding) {
+            toUtf16 = QStringDecoder{encoding.value()};
+        }
+        else {
+            toUtf16 = QStringDecoder{encodingName.constData()};
+        }
+    }
+
+    if(!toUtf16.isValid()) {
+        toUtf16 = QStringDecoder{QStringConverter::Utf8};
+    }
+
+    QString string = toUtf16(content);
+    string.replace("\n\n"_L1, "\n"_L1);
+    string.replace('\r'_L1, '\n'_L1);
+
+    return string;
 }
 
 QString foldForSearch(QStringView text)
