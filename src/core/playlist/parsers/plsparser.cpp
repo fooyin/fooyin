@@ -19,6 +19,8 @@
 
 #include "plsparser.h"
 
+#include "playlistparserutils.h"
+
 #include <core/track.h>
 #include <utils/timeconstants.h>
 
@@ -26,7 +28,6 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
-#include <QRegularExpression>
 #include <QTextStream>
 #include <QUrl>
 
@@ -44,42 +45,6 @@ struct PlsEntry
     QString title;
     int durationSeconds{-1};
 };
-
-int endingSubsong(QString* filepath)
-{
-    static const QRegularExpression regex{uR"(#(\d+)$)"_s};
-    const QRegularExpressionMatch match = regex.match(*filepath);
-    if(!match.hasMatch()) {
-        return -1;
-    }
-
-    const int subsong = match.captured(1).toInt();
-    filepath->remove(match.capturedStart(), match.capturedLength());
-    return subsong;
-}
-
-QString resolvePlaylistEntryPath(const QString& playlistPath, const QString& entry, const QDir& dir)
-{
-    if(Track::isArchivePath(entry) || Track::isRemotePath(entry) || Track::isVirtualPath(entry)) {
-        return entry;
-    }
-
-    const QUrl playlistUrl{playlistPath};
-
-    if(Track::isRemotePath(playlistUrl.toString())) {
-        const QUrl resolved = playlistUrl.resolved(QUrl{entry});
-        if(resolved.isValid() && !resolved.scheme().isEmpty()) {
-            return resolved.toString();
-        }
-    }
-
-    const QString localEntry = QDir::fromNativeSeparators(entry);
-    if(dir.exists() && !QDir::isAbsolutePath(localEntry)) {
-        return QDir::cleanPath(dir.absoluteFilePath(localEntry));
-    }
-
-    return localEntry;
-}
 
 std::map<int, PlsEntry> parseEntries(QIODevice* device)
 {
@@ -193,8 +158,8 @@ TrackList PlsParser::readPlaylist(QIODevice* device, const QString& filepath, co
             continue;
         }
 
-        QString path      = resolvePlaylistEntryPath(filepath, entry.file, dir);
-        const int subsong = endingSubsong(&path);
+        QString path      = Utils::resolveEntryPath(filepath, entry.file, dir);
+        const int subsong = Utils::takeSubsongSuffix(path);
 
         Track track{path};
         if(subsong > 0) {

@@ -301,6 +301,8 @@ set(SOURCES
     playlist/parsers/cueparser.h
     playlist/parsers/m3uparser.cpp
     playlist/parsers/m3uparser.h
+    playlist/parsers/playlistparserutils.cpp
+    playlist/parsers/playlistparserutils.h
     playlist/parsers/plsparser.cpp
     playlist/parsers/plsparser.h
     playlist/playlist.cpp
