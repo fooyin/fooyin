@@ -534,7 +534,7 @@ const std::vector<ScriptReferenceEntry>& scriptReferenceEntries()
                       QT_TRANSLATE_NOOP("Fooyin", "Conditional")),
         functionEntry(
             "meta", u"$meta(field)"_s,
-            QT_TRANSLATE_NOOP("Fooyin", "Looks up a raw tag field by name. Multiple values are joined with \", \"."),
+            QT_TRANSLATE_NOOP("Fooyin", "Looks up a raw tag field by name. Multiple values are joined with ‘, ’."),
             QT_TRANSLATE_NOOP("Fooyin", "Lookup")),
         functionEntry(
             "meta", u"$meta(field,index)"_s,

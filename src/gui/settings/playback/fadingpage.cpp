@@ -110,7 +110,7 @@ FadingPageWidget::FadingPageWidget(SettingsManager* settings)
     , m_crossfadeAutoOut{new QSpinBox(this)}
     , m_crossfadeAutoSwitchPolicyLabel{new QLabel(tr("Auto switch policy") + u":"_s, this)}
     , m_crossfadeAutoSwitchPolicy{new QComboBox(this)}
-    , m_skipAutoCrossfadeSameAlbum{new QCheckBox(tr("Don't crossfade within the same album"), this)}
+    , m_skipAutoCrossfadeSameAlbum{new QCheckBox(tr("Don’t crossfade within the same album"), this)}
     , m_autoCrossfadeAlbumGroupingLabel{new QLabel(tr("Album matching pattern") + u":"_s, this)}
     , m_autoCrossfadeAlbumGroupingScript{new ScriptLineEdit(this)}
     , m_crossfadeSeekIn{new QSpinBox(this)}

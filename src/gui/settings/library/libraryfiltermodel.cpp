@@ -54,7 +54,7 @@ QString LibraryFilterModel::validationError() const
 
         const QString expression = preset.expression.trimmed();
         if(expression.isEmpty() || !ScriptParser::canEvaluateAsQuery(parser.parseQuery(expression))) {
-            return tr("The expression for library filter \"%1\" is invalid.").arg(preset.name);
+            return tr("The expression for library filter ‘%1’ is invalid.").arg(preset.name);
         }
     }
     return {};

@@ -254,7 +254,7 @@ void ScriptFormatterPrivate::processFormat(const FormatTag& tag, qsizetype tagPo
 void ScriptFormatterPrivate::addError(qsizetype position, QStringView value)
 {
     QString errorMessage = QCoreApplication::translate("Fooyin::ScriptFormatter",
-                                                       "[%1] Error in formatting tag '%2': invalid formatting option.")
+                                                       "[%1] Error in formatting tag ‘%2’: invalid formatting option.")
                                .arg(position)
                                .arg(value);
 

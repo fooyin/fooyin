@@ -124,10 +124,10 @@ void LibraryFilterSwitcher::populateContextMenu(QMenu* menu)
     showLabel->setChecked(m_showLabel);
     QObject::connect(showLabel, &QAction::triggered, this, &LibraryFilterSwitcher::setShowLabel);
 
-    auto* rename = menu->addAction(tr("Rename 'All' filter"));
+    auto* rename = menu->addAction(tr("Rename ‘All’ filter"));
     QObject::connect(rename, &QAction::triggered, this, [this]() {
         bool ok{false};
-        const QString newName = QInputDialog::getText(this, tr("Rename 'All' Filter"), tr("Name:"), QLineEdit::Normal,
+        const QString newName = QInputDialog::getText(this, tr("Rename ‘All’ Filter"), tr("Name:"), QLineEdit::Normal,
                                                       m_allLibraryName, &ok);
 
         if(ok && !newName.trimmed().isEmpty()) {

@@ -886,7 +886,7 @@ void GuiLayoutPageWidget::onDeleteLayout()
         return;
     }
 
-    QMessageBox msg{QMessageBox::Question, tr("Delete Layout"), tr("Delete layout \"%1\"?").arg(name),
+    QMessageBox msg{QMessageBox::Question, tr("Delete Layout"), tr("Delete layout ‘%1’?").arg(name),
                     QMessageBox::Yes | QMessageBox::No, this};
     msg.setDefaultButton(QMessageBox::No);
     if(msg.exec() != QMessageBox::Yes) {

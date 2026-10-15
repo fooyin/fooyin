@@ -74,7 +74,7 @@ ShellIntegrationPageWidget::ShellIntegrationPageWidget(SettingsManager* settings
     fileTypesLayout->addWidget(new QLabel(tr("Exclude") + ":"_L1, this), row, 0);
     fileTypesLayout->addWidget(m_excludeTypes, row++, 1);
     //: Example of semicolon-separated file extensions (e.g. mp3;m4a)
-    fileTypesLayout->addWidget(new QLabel(u"🛈 "_s + tr("e.g. \"%1\"").arg("mp3;m4a"_L1), this), row++, 1);
+    fileTypesLayout->addWidget(new QLabel(u"🛈 "_s + tr("e.g. ‘%1’").arg("mp3;m4a"_L1), this), row++, 1);
     fileTypesLayout->setColumnStretch(1, 1);
 
     auto* playlistGroup       = new QGroupBox(tr("Playlist"), this);

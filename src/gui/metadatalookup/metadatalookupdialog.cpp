@@ -473,7 +473,7 @@ void MetadataLookupDialog::buildUi()
     m_policy->addItem(tr("Fill missing metadata"), static_cast<int>(ExistingMetadataPolicy::FillMissing));
     m_policy->addItem(tr("Replace lookup fields"), static_cast<int>(ExistingMetadataPolicy::ReplaceLookupFields));
     m_policy->addItem(tr("Wipe writable tags, then apply"), static_cast<int>(ExistingMetadataPolicy::WipeWritableTags));
-    m_policy->setToolTip(tr("Choose how retrieved metadata is combined with the track's existing tags."));
+    m_policy->setToolTip(tr("Choose how retrieved metadata is combined with the track’s existing tags."));
 
     m_allowUnresolved = new QCheckBox(m_purpose == Purpose::ReturnTracks ? tr("Allow applying unresolved tracks")
                                                                          : tr("Allow updating unresolved tracks"),
@@ -489,7 +489,7 @@ void MetadataLookupDialog::buildUi()
     m_writeGenres->setToolTip(tr("Write genres supplied by the selected metadata provider when available."));
     m_writeIds->setToolTip(tr("Write identifiers supplied by the selected metadata provider."));
     m_originalDate->setToolTip(
-        tr("Use the original release date for the Date tag instead of this specific release's date."));
+        tr("Use the original release date for the Date tag instead of this specific release’s date."));
 
     m_allowUnresolved->hide();
     m_writeGenres->setChecked(true);
@@ -1037,7 +1037,7 @@ bool MetadataLookupDialog::confirmMetadataWipe()
            "ReplayGain, technical information, playback statistics, and artwork will be preserved."),
         QMessageBox::Yes | QMessageBox::No, this};
     confirmation.setDefaultButton(QMessageBox::No);
-    auto* dontAskAgain = new QCheckBox(tr("Don't ask again"), &confirmation);
+    auto* dontAskAgain = new QCheckBox(tr("Don’t ask again"), &confirmation);
     confirmation.setCheckBox(dontAskAgain);
 
     if(confirmation.exec() != QMessageBox::Yes) {

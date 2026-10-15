@@ -143,7 +143,7 @@ void TagEditorFieldsPageWidget::updateHint()
 {
     const QStringList separators = multiValueSeparators(*m_settings);
     m_hintLabel->setText(u"🛈 "_s
-                         + tr("Use any of \"%1\" in the editor to enter multiple values.").arg(separators.join(u' ')));
+                         + tr("Use any of ‘%1’ in the editor to enter multiple values.").arg(separators.join(u' ')));
 }
 
 TagEditorFieldsPage::TagEditorFieldsPage(TagEditorFieldRegistry* registry, SettingsManager* settings, QObject* parent)

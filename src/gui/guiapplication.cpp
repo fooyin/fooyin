@@ -1213,7 +1213,7 @@ void GuiApplication::registerActions()
         toggleMenubar, [toggleMenubar](bool visible) { toggleMenubar->setChecked(visible); });
 
     m_lookupArtistAlbumAction = new QAction(tr("Look up metadata by artist and album…"), this);
-    m_lookupArtistAlbumAction->setStatusTip(tr("Look up metadata using the selected tracks' artist and album"));
+    m_lookupArtistAlbumAction->setStatusTip(tr("Look up metadata using the selected tracks’ artist and album"));
     QObject::connect(m_lookupArtistAlbumAction, &QAction::triggered, this,
                      [this] { showMetadataLookupDialog(LookupMode::ArtistAlbum); });
     Command* artistAlbumCommand
@@ -1222,7 +1222,7 @@ void GuiApplication::registerActions()
     artistAlbumCommand->setCategories({tr("Tagging")});
 
     m_lookupDiscTocAction = new QAction(tr("Look up metadata by disc TOC…"), this);
-    m_lookupDiscTocAction->setStatusTip(tr("Look up metadata using the selected tracks' disc TOC"));
+    m_lookupDiscTocAction->setStatusTip(tr("Look up metadata using the selected tracks’ disc TOC"));
     QObject::connect(m_lookupDiscTocAction, &QAction::triggered, this, &GuiApplication::showMetadataLookupByDiscToc);
     Command* discTocCommand
         = m_actionManager->registerAction(m_lookupDiscTocAction, Constants::Actions::LookupMetadataByDiscToc);
