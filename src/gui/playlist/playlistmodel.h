@@ -173,6 +173,7 @@ public:
     void updateTracks(const std::vector<int>& indexes);
     void refreshTracks(const std::vector<int>& indexes);
     void refreshTracks(const std::vector<int>& indexes, const std::set<int>& columns);
+    void refreshPlaylistRows(const UId& playlistId, const std::vector<UId>& entryIds);
     void removeTracks(const QModelIndexList& indexes);
     void removeTracks(const TrackGroups& groups);
 

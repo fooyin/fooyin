@@ -850,6 +850,9 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
                          }
                      });
 
+    QObject::connect(playlistInteractor, &PlaylistInteractor::playlistRefreshRequested, this,
+                     &PlaylistModel::refreshPlaylistRows);
+
     QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, &PlaylistModel::coverUpdated);
 }
 
@@ -1612,6 +1615,49 @@ void PlaylistModel::refreshTracks(const std::vector<int>& indexes, const std::se
     QMetaObject::invokeMethod(&m_populator, [populator = &m_populator, request = populationRequest(), columns, items] {
         populator->updateTracks(request, columns, items);
     });
+}
+
+void PlaylistModel::refreshPlaylistRows(const UId& playlistId, const std::vector<UId>& entryIds)
+{
+    if(m_currentPlaylist && m_currentPlaylist->id() != playlistId) {
+        return;
+    }
+
+    if(!m_playlistLoaded) {
+        QObject::connect(
+            this, &PlaylistModel::playlistLoaded, this,
+            [this, playlistId, entryIds]() { refreshPlaylistRows(playlistId, entryIds); }, Qt::SingleShotConnection);
+        return;
+    }
+
+    std::vector<int> indexes;
+    if(entryIds.empty()) {
+        indexes.reserve(m_trackIndexes.size());
+        for(const auto& index : m_trackIndexes | std::views::keys) {
+            indexes.emplace_back(index);
+        }
+    }
+    else {
+        indexes.reserve(entryIds.size());
+        for(const auto& entryId : entryIds) {
+            if(const int index = playlistIndexForTrackEntry(entryId); index >= 0) {
+                indexes.push_back(index);
+            }
+        }
+        std::ranges::sort(indexes);
+        indexes.erase(std::ranges::unique(indexes).begin(), indexes.end());
+    }
+
+    if(!m_currentPlaylist) {
+        std::erase_if(indexes, [this, &playlistId](int index) {
+            const auto& node = m_nodes.at(m_trackIndexes.at(index));
+            return std::get<PlaylistTrackItem>(node.data()).track().playlistId != playlistId;
+        });
+    }
+
+    if(!indexes.empty()) {
+        refreshTracks(indexes);
+    }
 }
 
 void PlaylistModel::removeTracks(const QModelIndexList& indexes)

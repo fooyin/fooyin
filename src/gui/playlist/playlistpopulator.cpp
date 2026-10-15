@@ -451,8 +451,9 @@ void PlaylistPopulatorPrivate::iterateSubheaders(const Track& track, PlaylistIte
 
 PlaylistItem* PlaylistPopulatorPrivate::iterateTrack(const PlaylistTrack& track, int index)
 {
-    PlaylistItem* parent                      = &m_root;
-    m_request.scriptData.playlistData.entryId = track.entryId;
+    PlaylistItem* parent                         = &m_root;
+    m_request.scriptData.playlistData.playlistId = track.playlistId.isValid() ? track.playlistId : m_request.playlistId;
+    m_request.scriptData.playlistData.entryId    = track.entryId;
 
     iterateHeader(track.track, parent, index);
     iterateSubheaders(track.track, parent, index);
@@ -633,6 +634,8 @@ void PlaylistPopulator::updateTracks(const PlaylistPopulationRequest& request, c
         PlaylistTrackItem& trackData = std::get<0>(item.data());
 
         trackData.setTrack(track);
+        p->m_request.scriptData.playlistData.playlistId
+            = track.playlistId.isValid() ? track.playlistId : p->m_request.playlistId;
         p->m_request.scriptData.playlistData.entryId = track.entryId;
         const auto& context
             = p->makeContext(trackData.track().indexInPlaylist, trackData.depth(), &trackData.track().track);
