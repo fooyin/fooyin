@@ -28,6 +28,9 @@
   - Arrange metadata options across two columns
   - Remember the current configuration between uses ([#1756](https://github.com/fooyin/fooyin/issues/1756))
   - Show destination subdirectories in the preview ([#1705](https://github.com/fooyin/fooyin/issues/1705))
+- **File Operations**
+  - Improve keyboard focus and preserve destination path case
+  - Sort preview paths naturally
 - **Interface**
   - Add favourite support to projectM presets ([#1674](https://github.com/fooyin/fooyin/issues/1674))
   - Improve equaliser layout and size preamp and band columns independently ([#1712](https://github.com/fooyin/fooyin/issues/1712))
@@ -49,6 +52,7 @@
   - Cache the no-lyrics document
   - Suppress known noisy Qt log messages
   - Add custom frame rates with improved frame pacing for visualisations ([#1736](https://github.com/fooyin/fooyin/issues/1736))
+  - Use proper quotation marks and apostrophes ([#1771](https://github.com/fooyin/fooyin/pull/1771))
 - **Filters**
   - Add an option to remember the selected saved filter ([#1690](https://github.com/fooyin/fooyin/issues/1690))
   - Add an option to restore Library Filter state on startup ([#1699](https://github.com/fooyin/fooyin/pull/1699))
@@ -64,6 +68,7 @@
 - **Playlists**
   - Add scripted separators and unify preset display scripts ([#1732](https://github.com/fooyin/fooyin/pull/1732))
   - Make the inline editing delay configurable
+  - Sort playlists naturally in Playlist Manager
 - **Settings**
   - Add search across settings categories, pages, and advanced options
   - Add buttons for opening cache and state directories
@@ -78,6 +83,7 @@
   - Add alignment tag support to rich-text HTML rendering ([#1733](https://github.com/fooyin/fooyin/issues/1733))
   - Add Queue Viewer variables for current, upcoming, and played queue entries
   - Add Script Editor formatting tag highlighting and optional function parameter hints
+  - Snapshot library metadata for background sorting, filtering, tree population, and file operations
   - Improve binding and evaluation performance
   - Reorganise Script Editor settings and move font configuration to theme settings
   - Reduce the default minimum height of script text editors
@@ -88,7 +94,9 @@
 
 ### Fixes
 
-- **Audio Conversion:** Sanitise path separators in metadata-derived paths ([#1706](https://github.com/fooyin/fooyin/issues/1706))
+- **General** 
+  - Preserve cancellation across queued background jobs and make direct settings file access thread-safe
+  - Sanitise path separators in metadata-derived paths during conversion ([#1706](https://github.com/fooyin/fooyin/issues/1706))
 - **Interface**
   - Fix alternating row selection backgrounds in right-caption tree views
   - Fix a crash when closing a widget window with its configuration dialog open
@@ -117,15 +125,17 @@
   - Fix empty subheader editors in playlist preset settings
   - Fix extra padding in subheaders ([#1725](https://github.com/fooyin/fooyin/issues/1725))
   - Follow the playing track by playlist entry ID ([#1765](https://github.com/fooyin/fooyin/issues/1765))
+  - Refresh single-column header when playlists are renamed
   - Restore queue-led source order for temporary playlists
   - Use folding for automatic playlist names ([#1694](https://github.com/fooyin/fooyin/issues/1694))
   - Allow Return to commit playlist renames ([#1700](https://github.com/fooyin/fooyin/issues/1700))
-- **ProjectM:** Find lowercase texture directories ([#1709](https://github.com/fooyin/fooyin/issues/1709))
 - **Scripting**
   - Correctly escape metadata in rich-text scripts ([#1729](https://github.com/fooyin/fooyin/issues/1729))
   - Preserve literal backslashes in formatted text ([#1678](https://github.com/fooyin/fooyin/issues/1678))
   - Restore two-argument `$split` behaviour
-- **Visualisations:** Fix retention and timing with high-latency audio outputs ([#1736](https://github.com/fooyin/fooyin/issues/1736))
+- **Visualisations** 
+  - Fix retention and timing with high-latency audio outputs ([#1736](https://github.com/fooyin/fooyin/issues/1736))
+  - Find lowercase texture directories for projectM ([#1709](https://github.com/fooyin/fooyin/issues/1709))
 
 ### Build/System
 
@@ -134,13 +144,14 @@
 - **Flatpak**
   - Include the version in bundle filenames
   - Allow access to `/mnt` and `/media`
-- **Translations:** Update translations and translation sources ([#1687](https://github.com/fooyin/fooyin/pull/1687), [#1688](https://github.com/fooyin/fooyin/pull/1688), [#1701](https://github.com/fooyin/fooyin/pull/1701), [#1713](https://github.com/fooyin/fooyin/pull/1713), [#1714](https://github.com/fooyin/fooyin/pull/1714), [#1748](https://github.com/fooyin/fooyin/pull/1748), [#1749](https://github.com/fooyin/fooyin/pull/1749), [#1762](https://github.com/fooyin/fooyin/pull/1762), [#1763](https://github.com/fooyin/fooyin/pull/1763))
+- **Translations:** Update translations and translation sources ([#1687](https://github.com/fooyin/fooyin/pull/1687), [#1688](https://github.com/fooyin/fooyin/pull/1688), [#1701](https://github.com/fooyin/fooyin/pull/1701), [#1713](https://github.com/fooyin/fooyin/pull/1713), [#1714](https://github.com/fooyin/fooyin/pull/1714), [#1748](https://github.com/fooyin/fooyin/pull/1748), [#1749](https://github.com/fooyin/fooyin/pull/1749), [#1762](https://github.com/fooyin/fooyin/pull/1762), [#1763](https://github.com/fooyin/fooyin/pull/1763), [#1772](https://github.com/fooyin/fooyin/pull/1772), [#1773](https://github.com/fooyin/fooyin/pull/1773))
 - **Windows:** Sign release artifacts with SignPath
 
 ### Dev/API
 
 - **Database:** Expose fooyin's database pool through `CorePluginContext`
 - **Audio Encoders:** Add the `EncoderPlugin` interface for registering encoder plugins
+- **Playlists:** Add `PlaylistInteractor` APIs to refresh whole playlists or individual entries
 - **Plugins:** Add API version checks and audio input priorities
 
 
