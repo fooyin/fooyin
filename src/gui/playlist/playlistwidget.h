@@ -260,6 +260,7 @@ private:
     [[nodiscard]] QString serialiseLayoutState(const PlaylistWidgetLayoutState& state) const;
     [[nodiscard]] std::optional<PlaylistWidgetLayoutState> deserialiseLayoutState(const QString& encoded) const;
     void applyLayoutState(const PlaylistWidgetLayoutState& state);
+    void restoreLayoutHeader();
     [[nodiscard]] bool columnAvailable(const PlaylistColumn& column) const;
     void saveRememberedLayout(Playlist* playlist);
     [[nodiscard]] bool remembersLayout(const Playlist* playlist) const;
@@ -302,6 +303,7 @@ private:
     PlaylistDelegate* m_delgate;
     PlaylistView* m_playlistView;
     AutoHeaderView* m_header;
+    QMetaObject::Connection m_pendingHeaderRestore;
     PlaylistWidgetLayoutState m_layoutState;
     PlaylistWidgetLayoutState m_defaultLayoutState;
     ConfigData m_config;
