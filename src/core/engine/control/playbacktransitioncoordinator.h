@@ -99,6 +99,7 @@ public:
     //! Queue initial seek to apply once matching track becomes active.
     void queueInitialSeek(uint64_t positionMs, int trackId, uint64_t requestId = 0);
     [[nodiscard]] bool hasPendingInitialSeekForTrack(int trackId) const;
+    //! Consume the pending request, discarding it if the track does not match.
     [[nodiscard]] std::optional<InitialSeekRequest> takePendingInitialSeekForTrack(int trackId);
 
 private:
@@ -112,9 +113,11 @@ private:
     bool m_boundaryReached;
     bool m_seekInProgress;
 
-    bool m_pendingInitialSeekActive;
-    uint64_t m_pendingInitialSeekPositionMs;
-    uint64_t m_pendingInitialSeekRequestId;
-    int m_pendingInitialSeekTrackId;
+    struct PendingInitialSeek
+    {
+        InitialSeekRequest request;
+        int trackId{-1};
+    };
+    std::optional<PendingInitialSeek> m_pendingInitialSeek;
 };
 } // namespace Fooyin

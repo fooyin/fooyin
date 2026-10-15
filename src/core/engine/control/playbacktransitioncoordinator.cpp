@@ -28,10 +28,6 @@ PlaybackTransitionCoordinator::PlaybackTransitionCoordinator()
     , m_switchReady{false}
     , m_boundaryReached{false}
     , m_seekInProgress{false}
-    , m_pendingInitialSeekActive{false}
-    , m_pendingInitialSeekPositionMs{0}
-    , m_pendingInitialSeekRequestId{0}
-    , m_pendingInitialSeekTrackId{-1}
 { }
 
 PlaybackTransitionCoordinator::TrackEndingResult
@@ -217,11 +213,10 @@ bool PlaybackTransitionCoordinator::isReadyForGaplessHandoff() const
 void PlaybackTransitionCoordinator::clearForStop()
 {
     clearAutoTransitionReadiness();
-    m_trackEnding                 = false;
-    m_switchReady                 = false;
-    m_boundaryReached             = false;
-    m_pendingInitialSeekActive    = false;
-    m_pendingInitialSeekRequestId = 0;
+    m_trackEnding     = false;
+    m_switchReady     = false;
+    m_boundaryReached = false;
+    m_pendingInitialSeek.reset();
 }
 
 void PlaybackTransitionCoordinator::clearTrackEnding()
@@ -244,40 +239,25 @@ void PlaybackTransitionCoordinator::setSeekInProgress(bool inProgress)
 
 void PlaybackTransitionCoordinator::queueInitialSeek(uint64_t positionMs, int trackId, uint64_t requestId)
 {
-    m_pendingInitialSeekActive     = true;
-    m_pendingInitialSeekPositionMs = positionMs;
-    m_pendingInitialSeekRequestId  = requestId;
-    m_pendingInitialSeekTrackId    = trackId;
+    m_pendingInitialSeek = PendingInitialSeek{
+        .request = {.positionMs = positionMs, .requestId = requestId},
+        .trackId = trackId,
+    };
 }
 
 bool PlaybackTransitionCoordinator::hasPendingInitialSeekForTrack(int trackId) const
 {
-    if(!m_pendingInitialSeekActive) {
-        return false;
-    }
-    return m_pendingInitialSeekTrackId == -1 || m_pendingInitialSeekTrackId == trackId;
+    return m_pendingInitialSeek && (m_pendingInitialSeek->trackId == -1 || m_pendingInitialSeek->trackId == trackId);
 }
 
 std::optional<PlaybackTransitionCoordinator::InitialSeekRequest>
 PlaybackTransitionCoordinator::takePendingInitialSeekForTrack(int trackId)
 {
-    if(!m_pendingInitialSeekActive) {
+    const auto pending = std::exchange(m_pendingInitialSeek, std::nullopt);
+    if(!pending || (pending->trackId != -1 && pending->trackId != trackId)) {
         return {};
     }
 
-    const bool applies            = m_pendingInitialSeekTrackId == -1 || m_pendingInitialSeekTrackId == trackId;
-    const auto positionMs         = m_pendingInitialSeekPositionMs;
-    const auto requestId          = m_pendingInitialSeekRequestId;
-    m_pendingInitialSeekActive    = false;
-    m_pendingInitialSeekRequestId = 0;
-
-    if(!applies) {
-        return {};
-    }
-
-    return InitialSeekRequest{
-        .positionMs = positionMs,
-        .requestId  = requestId,
-    };
+    return pending->request;
 }
 } // namespace Fooyin
