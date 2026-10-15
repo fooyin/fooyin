@@ -19,6 +19,7 @@
 
 #include "playlistview.h"
 
+#include "playlistdelegate.h"
 #include "playlistmodel.h"
 #include "widgets/pixmapfadecontroller.h"
 
@@ -27,20 +28,22 @@
 #include <utils/stardelegate.h>
 #include <utils/stareditor.h>
 
+#include <QAbstractItemDelegate>
 #include <QApplication>
 #include <QHeaderView>
 #include <QKeyEvent>
 #include <QLineEdit>
 #include <QMouseEvent>
+#include <QPaintEvent>
 #include <QPainter>
 #include <QResizeEvent>
+#include <QScopedValueRollback>
 #include <QScrollBar>
 
 #include <algorithm>
 
 using namespace Qt::StringLiterals;
 
-constexpr auto EditorDelay           = 600;
 constexpr auto BackgroundResizeDelay = 100;
 constexpr auto MultipleValuesPrefix  = "<<multiple values>>"_L1;
 
@@ -80,12 +83,17 @@ namespace Fooyin {
 PlaylistView::PlaylistView(QWidget* parent)
     : ExpandedTreeView{parent}
     , m_playlistLoaded{false}
+    , m_stickyHeaders{false}
+    , m_stickyArtwork{false}
+    , m_snappingScroll{false}
+    , m_stickyHeaderPressed{false}
     , m_starDelegate{new StarDelegate(this)}
     , m_ratingColumn{-1}
     , m_heartDelegate{new HeartDelegate(this)}
     , m_lovedColumn{-1}
     , m_bgFadeController{new PixmapFadeController(this)}
     , m_bulkEditor{nullptr}
+    , m_inlineEditDelayMs{600}
     , m_bulkEditColumnIndex{-1}
     , m_cancelledPendingEditClick{false}
     , m_cancelledActiveEditorClick{false}
@@ -110,6 +118,11 @@ PlaylistView::PlaylistView(QWidget* parent)
     m_bgFadeController->setUpdateCallback([this] { viewport()->update(); });
 }
 
+void PlaylistView::setInlineEditDelay(int delayMs)
+{
+    m_inlineEditDelayMs = std::clamp(delayMs, 0, 10000);
+}
+
 void PlaylistView::setLoadingText(const QString& text)
 {
     m_loadingText = text;
@@ -119,6 +132,28 @@ void PlaylistView::setLoadingText(const QString& text)
 void PlaylistView::setEmptyText(const QString& text)
 {
     m_emptyText = text;
+    viewport()->update();
+}
+
+void PlaylistView::setStickyHeaders(bool enabled)
+{
+    if(std::exchange(m_stickyHeaders, enabled) == enabled) {
+        return;
+    }
+
+    updateGeometries();
+    if(enabled) {
+        snapScrollToStickyHeader(0);
+    }
+    viewport()->update();
+}
+
+void PlaylistView::setStickyArtwork(bool enabled)
+{
+    if(std::exchange(m_stickyArtwork, enabled) == enabled) {
+        return;
+    }
+
     viewport()->update();
 }
 
@@ -281,7 +316,7 @@ void PlaylistView::keyPressEvent(QKeyEvent* event)
 
 void PlaylistView::mouseMoveEvent(QMouseEvent* event)
 {
-    if(m_bulkWriteInProgress) {
+    if(m_bulkWriteInProgress || m_stickyHeaderPressed) {
         event->accept();
         return;
     }
@@ -312,6 +347,8 @@ void PlaylistView::mouseMoveEvent(QMouseEvent* event)
 
 void PlaylistView::mousePressEvent(QMouseEvent* event)
 {
+    m_stickyHeaderPressed = false;
+
     const QModelIndex index = indexAt(event->pos());
 
     if(m_bulkEditor && m_bulkEditor->isVisible() && !m_bulkEditor->geometry().contains(event->pos())) {
@@ -328,6 +365,25 @@ void PlaylistView::mousePressEvent(QMouseEvent* event)
     if(m_bulkWriteInProgress) {
         event->accept();
         return;
+    }
+
+    if(event->button() == Qt::LeftButton) {
+        const QModelIndex group = stickyHeaderIndex();
+        if(stickyHeaderRect(group).contains(event->pos())) {
+            m_stickyHeaderPressed = true;
+
+            QModelIndex firstTrack{group};
+            while(model()->hasChildren(firstTrack)) {
+                firstTrack = model()->index(0, 0, firstTrack);
+            }
+            if(firstTrack.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
+                setCurrentIndex(firstTrack);
+                scrollTo(group, PositionAtTop);
+            }
+
+            event->accept();
+            return;
+        }
     }
 
     if(editTriggers() & NoEditTriggers || event->button() != Qt::LeftButton) {
@@ -368,6 +424,11 @@ void PlaylistView::mousePressEvent(QMouseEvent* event)
 
 void PlaylistView::mouseReleaseEvent(QMouseEvent* event)
 {
+    if(std::exchange(m_stickyHeaderPressed, false)) {
+        event->accept();
+        return;
+    }
+
     if(m_bulkWriteInProgress) {
         event->accept();
         return;
@@ -407,6 +468,9 @@ void PlaylistView::resizeEvent(QResizeEvent* event)
 void PlaylistView::scrollContentsBy(int dx, int dy)
 {
     ExpandedTreeView::scrollContentsBy(dx, dy);
+    if(dy != 0) {
+        snapScrollToStickyHeader(dy);
+    }
     updateBulkEditorGeometry();
 }
 
@@ -455,6 +519,7 @@ void PlaylistView::leaveEvent(QEvent* event)
 void PlaylistView::paintEvent(QPaintEvent* event)
 {
     QPainter painter{viewport()};
+    painter.setClipRegion(event->region());
 
     const auto drawCentreText = [this, &painter](const QString& text) {
         drawBackground(painter);
@@ -466,14 +531,18 @@ void PlaylistView::paintEvent(QPaintEvent* event)
         }
     };
 
-    if(auto* playlistModel = qobject_cast<PlaylistModel*>(model())) {
+    if(const auto* playlistModel = qobject_cast<PlaylistModel*>(model())) {
         if(playlistModel->haveTracks()) {
             if(playlistModel->shouldShowLoadingText()) {
                 drawCentreText(m_loadingText);
             }
             else {
                 drawBackground(painter);
+                painter.end();
                 ExpandedTreeView::paintEvent(event);
+                painter.begin(viewport());
+                painter.setClipRegion(event->region());
+                drawStickyHeader(painter);
             }
         }
         else if(!m_playlistLoaded) {
@@ -485,26 +554,6 @@ void PlaylistView::paintEvent(QPaintEvent* event)
     }
 }
 
-QAbstractItemView::DropIndicatorPosition PlaylistView::dropPosition(const QPoint& pos, const QRect& rect,
-                                                                    const QModelIndex& index)
-{
-    DropIndicatorPosition dropPos{OnViewport};
-    const int midpoint = static_cast<int>(std::round(static_cast<double>((rect.height())) / 2));
-    const auto type    = index.data(PlaylistItem::Type).toInt();
-
-    if(type == PlaylistItem::Subheader) {
-        dropPos = OnItem;
-    }
-    else if(pos.y() - rect.top() < midpoint || type == PlaylistItem::Header) {
-        dropPos = AboveItem;
-    }
-    else if(rect.bottom() - pos.y() < midpoint) {
-        dropPos = BelowItem;
-    }
-
-    return dropPos;
-}
-
 bool PlaylistView::eventFilter(QObject* watched, QEvent* event)
 {
     if(!m_bulkEditor || watched != m_bulkEditor) {
@@ -512,7 +561,7 @@ bool PlaylistView::eventFilter(QObject* watched, QEvent* event)
     }
 
     if(event->type() == QEvent::KeyPress) {
-        auto* keyEvent = static_cast<QKeyEvent*>(event);
+        const auto* keyEvent = static_cast<QKeyEvent*>(event);
 
         switch(keyEvent->key()) {
             case Qt::Key_Tab:
@@ -535,13 +584,166 @@ bool PlaylistView::eventFilter(QObject* watched, QEvent* event)
                 break;
         }
     }
-    else if(event->type() == QEvent::FocusOut && m_bulkEditor->isVisible()) {
-        if(m_bulkEditor && m_bulkEditor->isVisible() && !m_bulkEditor->hasFocus()) {
-            endBulkEditSession(true);
-        }
+    else if(event->type() == QEvent::FocusOut && m_bulkEditor && m_bulkEditor->isVisible()
+            && !m_bulkEditor->hasFocus()) {
+        endBulkEditSession(true);
     }
 
     return ExpandedTreeView::eventFilter(watched, event);
+}
+
+QAbstractItemView::DropIndicatorPosition PlaylistView::dropPosition(const QPoint& pos, const QRect& rect,
+                                                                    const QModelIndex& index)
+{
+    DropIndicatorPosition dropPos{OnViewport};
+    const int midpoint = static_cast<int>(std::round(static_cast<double>(rect.height()) / 2));
+    const auto type    = index.data(PlaylistItem::Type).toInt();
+
+    if(type == PlaylistItem::Subheader) {
+        dropPos = OnItem;
+    }
+    else if(pos.y() - rect.top() < midpoint || type == PlaylistItem::Header) {
+        dropPos = AboveItem;
+    }
+    else if(rect.bottom() - pos.y() < midpoint) {
+        dropPos = BelowItem;
+    }
+
+    return dropPos;
+}
+
+QRect PlaylistView::drawSpan(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    if(!m_stickyArtwork) {
+        return ExpandedTreeView::drawSpan(painter, option, index);
+    }
+
+    const auto* playlistModel = qobject_cast<PlaylistModel*>(model());
+    if(!playlistModel) {
+        return ExpandedTreeView::drawSpan(painter, option, index);
+    }
+
+    const QModelIndex first   = playlistModel->firstImageColumnTrackIndex(index);
+    const QModelIndex artwork = first.siblingAtColumn(index.column());
+    if(!artwork.isValid()) {
+        return ExpandedTreeView::drawSpan(painter, option, index);
+    }
+
+    const QModelIndex group = playlistModel->imageColumnGroupIndex(first);
+    int topInset{0};
+    if(extendSpansIntoParents()) {
+        QModelIndex topLevel{first};
+        while(topLevel.parent().isValid()) {
+            topLevel = topLevel.parent();
+        }
+        QModelIndex firstLeaf{topLevel};
+        while(model()->hasChildren(firstLeaf)) {
+            firstLeaf = model()->index(0, 0, firstLeaf);
+        }
+        if(sameRow(first, firstLeaf)) {
+            for(QModelIndex parent = first.parent(); parent.parent().isValid(); parent = parent.parent()) {
+                topInset += visualRect(parent.siblingAtColumn(index.column())).height();
+            }
+        }
+    }
+
+    QStyleOptionViewItem opt{option};
+    const int height
+        = std::max(spanHeight(artwork), itemDelegateForIndex(artwork)->sizeHint(opt, artwork).height()) + topInset;
+    const int naturalTop = visualRect(artwork).top() - topInset;
+
+    int pinnedTop{0};
+    QModelIndex headerIndex{first.parent()};
+    while(headerIndex.isValid() && headerIndex.data(PlaylistItem::Type).toInt() != PlaylistItem::Header) {
+        headerIndex = headerIndex.parent();
+    }
+    if(m_stickyHeaders) {
+        // Keep the artwork below the pinned main header when both options are enabled
+        pinnedTop = std::max(0, stickyHeaderRect(headerIndex).bottom() + 1);
+    }
+
+    if(naturalTop >= pinnedTop) {
+        return ExpandedTreeView::drawSpan(painter, option, index);
+    }
+
+    QModelIndex last{group};
+    while(model()->rowCount(last) > 0) {
+        last = model()->index(model()->rowCount(last) - 1, 0, last);
+    }
+
+    const int groupBottom = visualRect(last.siblingAtColumn(index.column())).bottom() + 1;
+    const int top         = std::max(naturalTop, std::min(pinnedTop, groupBottom - height));
+    opt.rect              = {opt.rect.x(), top, opt.rect.width(), height};
+
+    painter->save();
+    painter->setClipRect(opt.rect.intersected(viewport()->rect()), Qt::IntersectClip);
+    itemDelegateForIndex(artwork)->paint(painter, opt, artwork);
+    painter->restore();
+
+    return opt.rect;
+}
+
+int PlaylistView::spanHeight(const QModelIndex& index) const
+{
+    const int width = ExpandedTreeView::spanHeight(index);
+    if(!index.isValid() || width <= 0) {
+        return width;
+    }
+
+    const auto* delegate = qobject_cast<PlaylistDelegate*>(itemDelegate());
+    if(!delegate) {
+        return width;
+    }
+
+    QModelIndex track = index.siblingAtColumn(0);
+    while(model()->hasChildren(track)) {
+        track = model()->index(0, 0, track);
+    }
+    return delegate->artworkSpanHeight(width, track.siblingAtColumn(index.column()));
+}
+
+int PlaylistView::adjustVerticalScrollMaximum(int maximum) const
+{
+    if(!m_stickyHeaders || !model() || viewMode() != ViewMode::Tree || verticalScrollMode() != ScrollPerPixel
+       || maximum <= 0) {
+        return maximum;
+    }
+
+    const int scrollOffset = maximum - verticalScrollBar()->value();
+    QModelIndex group      = findIndexAt({0, scrollOffset}, true, true);
+    while(group.isValid() && group.data(PlaylistItem::Type).toInt() != PlaylistItem::Header) {
+        group = group.parent();
+    }
+
+    const QRect headerRect = stickyHeaderRect(group, scrollOffset);
+    if(headerRect.isEmpty()) {
+        return maximum;
+    }
+
+    const int boundary = headerRect.bottom() + 1;
+    if(boundary >= viewport()->height()) {
+        return maximum;
+    }
+
+    const QModelIndex index = findIndexAt({0, scrollOffset + boundary}, true, true);
+    if(index.data(PlaylistItem::Type).toInt() != PlaylistItem::Track) {
+        return maximum;
+    }
+
+    int column{0};
+    while(column < header()->count() && (header()->isSectionHidden(column) || isSpanning(column))) {
+        ++column;
+    }
+    if(column == header()->count()) {
+        return maximum;
+    }
+
+    const QRect rowRect = visualRect(index.siblingAtColumn(column)).translated(0, -scrollOffset);
+    if(rowRect.top() >= boundary || rowRect.bottom() < boundary) {
+        return maximum;
+    }
+
+    return maximum + rowRect.bottom() + 1 - boundary;
 }
 
 QModelIndexList PlaylistView::selectedTrackRows() const
@@ -571,7 +773,8 @@ void PlaylistView::editTrackStat(const QModelIndex& index, const QVariant& value
     QModelIndexList indexes;
 
     if(selectedIndexes().contains(index)) {
-        for(const QModelIndex& selectedIndex : selectedTrackRows()) {
+        const auto selectedRows = selectedTrackRows();
+        for(const QModelIndex& selectedIndex : selectedRows) {
             const QModelIndex statIndex = selectedIndex.siblingAtColumn(index.column());
             if(statIndex.isValid()) {
                 indexes.push_back(statIndex);
@@ -933,7 +1136,7 @@ void PlaylistView::queueEditor(const QModelIndex& index)
     }
 
     m_pendingEditIndex = index;
-    m_editTimer.start(EditorDelay, this);
+    m_editTimer.start(m_inlineEditDelayMs, this);
 }
 
 void PlaylistView::cancelPendingEditor()
@@ -1065,6 +1268,131 @@ void PlaylistView::updateHoveredRow(const QModelIndex& index)
 
     updateEditorCells(previousRow);
     updateEditorCells(hoveredRow);
+}
+
+QModelIndex PlaylistView::stickyHeaderIndex() const
+{
+    if(!m_stickyHeaders || !model() || viewMode() != ViewMode::Tree) {
+        return {};
+    }
+
+    const auto indexes = visibleIndexes();
+    if(indexes.isEmpty()) {
+        return {};
+    }
+
+    QModelIndex group{indexes.front()};
+    while(group.isValid() && group.data(PlaylistItem::Type).toInt() != PlaylistItem::Header) {
+        group = group.parent();
+    }
+    return group.siblingAtColumn(0);
+}
+
+QRect PlaylistView::stickyHeaderRect(const QModelIndex& group, int scrollOffset) const
+{
+    if(!group.isValid()) {
+        return {};
+    }
+
+    int column{0};
+    while(column < header()->count() && header()->isSectionHidden(column)) {
+        ++column;
+    }
+    if(column == header()->count()) {
+        return {};
+    }
+
+    const QRect rect = visualRect(group.siblingAtColumn(column)).translated(0, -scrollOffset);
+    if(rect.height() <= 0 || rect.top() >= 0) {
+        return {};
+    }
+
+    int top{0};
+    const QModelIndex nextGroup = model()->index(group.row() + 1, column, group.parent());
+    if(nextGroup.isValid()) {
+        const QRect nextRect = visualRect(nextGroup).translated(0, -scrollOffset);
+        if(nextRect.isValid()) {
+            top = std::min(0, nextRect.top() - rect.height());
+        }
+    }
+
+    return {0, top, header()->length(), rect.height()};
+}
+
+void PlaylistView::drawStickyHeader(QPainter& painter) const
+{
+    const QModelIndex group = stickyHeaderIndex();
+    const QRect rect        = stickyHeaderRect(group);
+    if(rect.isEmpty()) {
+        return;
+    }
+
+    QStyleOptionViewItem opt;
+    initViewItemOption(&opt);
+    opt.rect = rect;
+    opt.state.setFlag(QStyle::State_Selected, selectionModel()->isSelected(group));
+    opt.state.setFlag(QStyle::State_MouseOver, false);
+
+    painter.save();
+
+    painter.setClipRect(rect, Qt::IntersectClip);
+    painter.fillRect(rect, opt.palette.brush(QPalette::Base));
+    style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, &painter, this);
+    itemDelegate()->paint(&painter, opt, group);
+
+    painter.restore();
+}
+
+void PlaylistView::snapScrollToStickyHeader(int delta)
+{
+    if(m_snappingScroll || verticalScrollMode() != ScrollPerPixel) {
+        return;
+    }
+
+    const QRect headerRect = stickyHeaderRect(stickyHeaderIndex());
+    if(headerRect.isEmpty()) {
+        return;
+    }
+
+    const int boundary = headerRect.bottom() + 1;
+
+    int column{0};
+    while(column < header()->count() && (header()->isSectionHidden(column) || isSpanning(column))) {
+        ++column;
+    }
+    if(column == header()->count()) {
+        return;
+    }
+
+    const auto indexes = visibleIndexes();
+    for(const auto& index : indexes) {
+        if(index.data(PlaylistItem::Type).toInt() != PlaylistItem::Track) {
+            continue;
+        }
+
+        const QRect rowRect = visualRect(index.siblingAtColumn(column));
+        if(rowRect.top() >= boundary || rowRect.bottom() < boundary) {
+            continue;
+        }
+
+        const int above = rowRect.top() - boundary;
+        const int below = rowRect.bottom() + 1 - boundary;
+
+        int adjustment = below < -above ? below : above;
+        if(delta < 0) {
+            adjustment = below;
+        }
+        else if(delta > 0) {
+            adjustment = above;
+        }
+
+        auto* scrollbar  = verticalScrollBar();
+        const int target = std::max(scrollbar->minimum(), scrollbar->value() + adjustment);
+
+        const QScopedValueRollback snapGuard{m_snappingScroll, true};
+        scrollbar->setValue(target);
+        return;
+    }
 }
 
 void PlaylistView::drawBackground(QPainter& painter)

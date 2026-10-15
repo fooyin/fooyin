@@ -22,6 +22,7 @@
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <gui/widgets/gradienteditor.h>
+#include <utils/timeconstants.h>
 
 #include <QContextMenuEvent>
 #include <QFont>
@@ -120,12 +121,6 @@ float interpolate(std::span<const float> values, size_t index, float t)
     const float a2 = t3 - t2;
     const float a3 = (-2.0F * t3) + (3.0F * t2);
     return (a0 * y1) + (a1 * m0) + (a2 * m1) + (a3 * y2);
-}
-
-int updateIntervalFromFps(int fps)
-{
-    const int clampedFps = std::clamp(fps, MinUpdateFps, MaxUpdateFps);
-    return std::max(1, 1000 / clampedFps);
 }
 
 QFont fontFromString(const QString& fontString)
@@ -245,6 +240,7 @@ void SpectrumView::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == m_updateTimer.timerId()) {
         tick();
+        m_updateTimer.scheduleNext(this);
         return;
     }
 
@@ -283,7 +279,7 @@ void SpectrumView::engineStateChanged(Engine::PlaybackState state)
 void SpectrumView::startUpdateTimer()
 {
     m_elapsedTimer.restart();
-    m_updateTimer.start(updateIntervalFromFps(m_config.updateFps), Qt::PreciseTimer, this);
+    m_updateTimer.start(m_config.updateFps, this);
 }
 
 void SpectrumView::clearLevels()
@@ -327,21 +323,24 @@ size_t SpectrumView::effectiveBandCount() const
 
 void SpectrumView::tick()
 {
-    const int elapsedMs          = std::max(1, static_cast<int>(m_elapsedTimer.restart()));
-    const float dbRange          = static_cast<float>(std::max(1, m_config.amplitudeMaxDb - m_config.amplitudeMinDb));
-    const float barFalloffPerMs  = static_cast<float>(std::max(0, m_config.amplitudeGravity)) / dbRange / 1000.0F;
-    const float peakFalloffPerMs = static_cast<float>(std::max(0, m_config.peakGravity)) / dbRange / 1000.0F;
+    const double elapsedMs = static_cast<double>(m_elapsedTimer.nsecsElapsed()) / static_cast<double>(Time::NsPerMs);
+    m_elapsedTimer.restart();
+    const float dbRange = static_cast<float>(std::max(1, m_config.amplitudeMaxDb - m_config.amplitudeMinDb));
+    const float barFalloffPerMs
+        = static_cast<float>(std::max(0, m_config.amplitudeGravity)) / dbRange / static_cast<float>(Time::MsPerSecond);
+    const float peakFalloffPerMs
+        = static_cast<float>(std::max(0, m_config.peakGravity)) / dbRange / static_cast<float>(Time::MsPerSecond);
 
     QRegion dirtyRegion;
     bool changed{false};
 
     for(size_t index{0}; index < m_levels.size(); ++index) {
-        float& current = m_levels[index];
-        int& barHoldMs = m_barHoldRemainingMs[index];
+        float& current    = m_levels[index];
+        double& barHoldMs = m_barHoldRemainingMs[index];
         float next{current};
 
         if(m_config.amplitudesEnabled && barHoldMs > 0) {
-            barHoldMs = std::max(0, barHoldMs - elapsedMs);
+            barHoldMs = std::max(0.0, barHoldMs - elapsedMs);
         }
         else if(m_config.amplitudesEnabled || m_paused) {
             next = std::max(0.0F, current - (barFalloffPerMs * static_cast<float>(elapsedMs)));
@@ -352,11 +351,11 @@ void SpectrumView::tick()
         }
 
         if(m_config.peaksEnabled && index < m_peakLevels.size()) {
-            float& peak = m_peakLevels[index];
-            int& holdMs = m_peakHoldRemainingMs[index];
+            float& peak    = m_peakLevels[index];
+            double& holdMs = m_peakHoldRemainingMs[index];
 
             if(holdMs > 0) {
-                holdMs = std::max(0, holdMs - elapsedMs);
+                holdMs = std::max(0.0, holdMs - elapsedMs);
             }
             else {
                 const float nextPeak = std::max(current, peak - (peakFalloffPerMs * static_cast<float>(elapsedMs)));
@@ -382,9 +381,9 @@ void SpectrumView::tick()
         const bool barsActive  = std::ranges::any_of(m_levels, [](float level) { return level > 0.0F; });
         const bool peaksActive = std::ranges::any_of(m_peakLevels, [](float level) { return level > 0.0F; });
         const bool barHoldsActive
-            = std::ranges::any_of(m_barHoldRemainingMs, [](int remainingMs) { return remainingMs > 0; });
+            = std::ranges::any_of(m_barHoldRemainingMs, [](double remainingMs) { return remainingMs > 0; });
         const bool peakHoldsActive
-            = std::ranges::any_of(m_peakHoldRemainingMs, [](int remainingMs) { return remainingMs > 0; });
+            = std::ranges::any_of(m_peakHoldRemainingMs, [](double remainingMs) { return remainingMs > 0; });
         if(!barsActive && !peaksActive && !barHoldsActive && !peakHoldsActive) {
             m_updateTimer.stop();
         }

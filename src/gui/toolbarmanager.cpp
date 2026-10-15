@@ -21,10 +21,10 @@
 
 #include "widgets/menuheader.h"
 
-#include <gui/editablelayout.h>
 #include <gui/fywidget.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/layout/editablelayout.h>
 #include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
@@ -44,6 +44,8 @@
 #include <QToolBar>
 
 using namespace Qt::StringLiterals;
+
+constexpr auto ToolbarStateVersion = 1;
 
 namespace Fooyin {
 ToolbarManager::ToolbarManager(QMainWindow* window, QMenuBar* menuBar, ActionManager* actionManager,
@@ -70,6 +72,7 @@ ToolbarManager::ToolbarManager(QMainWindow* window, QMenuBar* menuBar, ActionMan
 {
     qApp->installEventFilter(this);
 
+    m_menuToolbar->setObjectName(u"MenuToolbar"_s);
     m_menuToolbar->setFloatable(true);
     m_menuToolbar->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
     m_menuToolbar->toggleViewAction()->setVisible(false);
@@ -96,8 +99,9 @@ ToolbarManager::ToolbarManager(QMainWindow* window, QMenuBar* menuBar, ActionMan
     m_settings->subscribe<Settings::Gui::ToolbarsLocked>(m_lockToolbarsAction, &QAction::setChecked);
 
     QObject::connect(m_toolbarsMenu, &QMenu::aboutToShow, this, [this] { populateToolbarsMenu(m_toolbarsMenu); });
-    if(auto* layoutMenu = actionManager->actionContainer(Constants::Menus::Layout); layoutMenu && layoutMenu->menu()) {
-        auto setupLayoutMenu = [this, menu = layoutMenu->menu()] {
+    if(const auto* layoutMenu = actionManager->actionContainer(Constants::Menus::Layout);
+       layoutMenu && layoutMenu->menu()) {
+        const auto setupLayoutMenu = [this, menu = layoutMenu->menu()] {
             const auto actions = menu->actions();
             if(actions.contains(m_menuBarMovableCommand->action())) {
                 return;
@@ -167,7 +171,7 @@ QJsonArray ToolbarManager::saveLayout() const
 
 QByteArray ToolbarManager::saveState() const
 {
-    return m_window->saveState();
+    return m_window->saveState(ToolbarStateVersion);
 }
 
 void ToolbarManager::loadLayout(const QJsonArray& toolbars, const QByteArray& state)
@@ -229,8 +233,12 @@ void ToolbarManager::loadLayout(const QJsonArray& toolbars, const QByteArray& st
         }
     }
 
-    if(!state.isEmpty()) {
+    if(!state.isEmpty() && !m_window->restoreState(state, ToolbarStateVersion)) {
+        // Legacy states identified the menu toolbar by its empty object name
+        const auto menuToolbarName = m_menuToolbar->objectName();
+        m_menuToolbar->setObjectName({});
         m_window->restoreState(state);
+        m_menuToolbar->setObjectName(menuToolbarName);
     }
     setMenuVisible(m_settings->value<Settings::Gui::ShowMenuBar>());
 }
@@ -270,6 +278,13 @@ bool ToolbarManager::eventFilter(QObject* watched, QEvent* event)
     if(event->type() == QEvent::ContextMenu) {
         auto* contextMenuEvent = static_cast<QContextMenuEvent*>(event);
         if(auto* toolbar = toolbarFor(watched)) {
+            if(contextMenuEvent->reason() == QContextMenuEvent::Mouse
+               && QApplication::mouseButtons() & Qt::LeftButton) {
+                // Avoid showing context menu if right-click is used to cancel a current mouse action e.g. seeking
+                event->accept();
+                return true;
+            }
+
             auto* source = static_cast<QWidget*>(watched);
             showContextMenu(toolbar, source->mapTo(toolbar, contextMenuEvent->pos()), contextMenuEvent->globalPos(),
                             source);
@@ -504,7 +519,7 @@ void ToolbarManager::showContextMenu(QToolBar* toolbar, const QPoint& toolbarPos
     menu->addAction(m_lockToolbarsCommand->action());
 
     if(toolbar != m_menuToolbar) {
-        auto* remove = menu->addAction(tr("Remove toolbar"));
+        const auto* remove = menu->addAction(tr("Remove toolbar"));
         QObject::connect(remove, &QAction::triggered, menu, [this, toolbar] { removeToolbar(toolbar); });
     }
 
@@ -546,7 +561,7 @@ QAction* ToolbarManager::contextAction(QToolBar* toolbar, const ToolbarEntry& en
         return item.action && item.action->isSeparator()
             && toolbar->actionGeometry(item.action).adjusted(-4, -4, 4, 4).contains(toolbarPos);
     });
-    return nearbySeparator != entry.items.cend() ? nearbySeparator->action.data() : nullptr;
+    return nearbySeparator != entry.items.cend() ? nearbySeparator->action : nullptr;
 }
 
 FyWidget* ToolbarManager::populateItemContextMenu(QMenu* menu, QToolBar* toolbar, const QPoint& toolbarPos,
@@ -568,14 +583,14 @@ FyWidget* ToolbarManager::populateItemContextMenu(QMenu* menu, QToolBar* toolbar
         auto* addWidget = menu->addMenu(tr("Add widget"));
         populateInsertWidgetMenu(addWidget, toolbar, nullptr);
 
-        auto* addSeparator = menu->addAction(tr("Add separator"));
+        const auto* addSeparator = menu->addAction(tr("Add separator"));
         QObject::connect(addSeparator, &QAction::triggered, menu,
                          [this, toolbar] { insertSeparator(toolbar, nullptr); });
         return nullptr;
     }
 
     const auto next = std::next(selectedItem);
-    QAction* after  = next != entry->items.cend() ? next->action.data() : nullptr;
+    QAction* after  = next != entry->items.cend() ? next->action : nullptr;
 
     auto* insertBefore = menu->addMenu(tr("Insert widget before"));
     populateInsertWidgetMenu(insertBefore, toolbar, selectedAction);
@@ -583,16 +598,16 @@ FyWidget* ToolbarManager::populateItemContextMenu(QMenu* menu, QToolBar* toolbar
     auto* insertAfter = menu->addMenu(tr("Insert widget after"));
     populateInsertWidgetMenu(insertAfter, toolbar, after);
 
-    auto* separatorBefore = menu->addAction(tr("Insert separator before"));
+    const auto* separatorBefore = menu->addAction(tr("Insert separator before"));
     QObject::connect(separatorBefore, &QAction::triggered, menu,
                      [this, toolbar, selectedAction] { insertSeparator(toolbar, selectedAction); });
 
-    auto* separatorAfter = menu->addAction(tr("Insert separator after"));
+    const auto* separatorAfter = menu->addAction(tr("Insert separator after"));
     QObject::connect(separatorAfter, &QAction::triggered, menu,
                      [this, toolbar, after] { insertSeparator(toolbar, after); });
 
     const QString removeText = selectedAction->isSeparator() ? tr("Remove separator") : tr("Remove widget");
-    auto* remove             = menu->addAction(removeText);
+    const auto* remove       = menu->addAction(removeText);
     QObject::connect(remove, &QAction::triggered, menu,
                      [this, toolbar, selectedAction] { removeItem(toolbar, selectedAction); });
 

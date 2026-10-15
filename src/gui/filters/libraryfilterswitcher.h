@@ -22,6 +22,8 @@
 #include <gui/fywidget.h>
 
 class QComboBox;
+class QContextMenuEvent;
+class QLabel;
 
 namespace Fooyin {
 struct LibraryFilter;
@@ -43,20 +45,27 @@ public:
     [[nodiscard]] QString layoutName() const override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
+    void populateContextMenu(QMenu* menu) override;
     void finalise() override;
+
+protected:
+    void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
     void populate();
     void filterChanged(const LibraryFilter& filter);
     void activateCurrent();
-    void showContextMenu(const QPoint& pos);
+    void setShowLabel(bool showLabel);
+    void showContextMenu(const QPoint& globalPos);
 
     LibraryFilterRegistry* m_registry;
     MusicLibrary* m_library;
     SettingsManager* m_settings;
 
+    QLabel* m_label;
     QComboBox* m_presets;
     QString m_allLibraryName;
+    bool m_showLabel;
     bool m_rememberLastFilter;
     int m_lastFilterId;
 };

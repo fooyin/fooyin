@@ -22,6 +22,18 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
+namespace {
+QString albumHeaderScript(const QString& albumScript)
+{
+    return u"<b><sized=2>$if2(%albumartist%,Unknown Artist)</sized></b>\n$crlf()\n"
+           "<sized=1>"_s
+         + albumScript
+         + u"</sized><hr/><right><b><sized=2>%year%</sized></b></right>\n$crlf()\n"
+           "<sized=-1>[%genres% | ]%trackcount% $ifgreater(%trackcount%,1,Tracks,Track) | %playtime%</sized>\n$crlf()\n"
+           "<hr/>"_s;
+}
+} // namespace
+
 PresetRegistry::PresetRegistry(SettingsManager* settings, QObject* parent)
     : ItemRegistry{u"PlaylistWidget/Presets"_s, settings, u"PlaylistWidget/PresetOverrides"_s, parent}
 {
@@ -40,23 +52,21 @@ void PresetRegistry::loadDefaults()
 
     preset.name = tr("Track list");
 
-    preset.track.leftText.script  = u" $padright(,$mul($sub(%depth%,1),5))[\\[%queueindexes%\\]  ]"
-                                    "[$num(%track%,2).  ]%title%[<alpha=180>  ▪  %trackartist%]"_s;
-    preset.track.rightText.script = u"$ifgreater(%playcount%,0,%playcount% |)      %duration% "_s;
+    preset.track.text.script = u"$padright(,$mul($sub(%depth%,1),5))[\\[%queueindexes%\\]  ]"
+                               "[$num(%track%,2).  ]%title%[<alpha=180>  ▪  %trackartist%</alpha>]\n"
+                               "<right>\n"
+                               "$ifgreater(%playcount%,0,%playcount% |)      %duration%"_s;
 
     addDefaultItem(preset);
 
     preset.name = tr("Albums grouped by disc");
 
-    preset.header.title.script    = u"<b><sized=2>$if2(%albumartist%,Unknown Artist)"_s;
-    preset.header.subtitle.script = u"<sized=1>$if2(%album%,Unknown Album)"_s;
-    preset.header.sideText.script = u"<b><sized=2>%year%</sized></b>"_s;
-    preset.header.info.script
-        = u"<sized=-1>[%genres% | ]%trackcount% $ifgreater(%trackcount%,1,Tracks,Track) | %playtime%"_s;
+    preset.header.text.script = albumHeaderScript(u"$if2(%album%,Unknown Album)"_s);
 
     SubheaderRow subheader;
-    subheader.leftText.script  = u"$ifgreater(%disctotal%,1,Disc #%disc%)"_s;
-    subheader.rightText.script = u"$ifgreater(%disctotal%,1,%playtime%)"_s;
+    subheader.text.script = u"$ifgreater(%disctotal%,1,Disc #%disc%)\n<hr/>\n"
+                            "<right>\n"
+                            "$ifgreater(%disctotal%,1,%playtime%)"_s;
     preset.subHeaders.push_back(subheader);
 
     addDefaultItem(preset);
@@ -65,16 +75,17 @@ void PresetRegistry::loadDefaults()
 
     preset.name = tr("Albums with disc headers");
 
-    preset.header.subtitle.script = u"<sized=1>$if2(%album%,Unknown Album)$ifgreater(%disctotal%,1, ▪ Disc #%disc%)"_s;
+    preset.header.text.script
+        = albumHeaderScript(u"$if2(%album%,Unknown Album)$ifgreater(%disctotal%,1, ▪ Disc #%disc%)"_s);
 
     addDefaultItem(preset);
 
     preset.name = tr("Compact album headers");
 
-    preset.header.simple = true;
-    preset.header.subtitle.script.clear();
-    preset.header.info.script.clear();
-    preset.header.title.script = u"<b><sized=2>$if2(%albumartist%,Unknown Artist) ▪ $if2(%album%,Unknown Album)"_s;
+    preset.header.showCover = false;
+    preset.header.text.script
+        = u"<b><sized=2>$if2(%albumartist%,Unknown Artist) ▪ $if2(%album%,Unknown Album)</sized></b>\n"
+          "<hr/>\n<right><b><sized=2>%year%</sized></b>"_s;
 
     addDefaultItem(preset);
 }

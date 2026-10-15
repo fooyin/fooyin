@@ -68,9 +68,12 @@ OscilloscopeConfigDialog::OscilloscopeConfigDialog(OscilloscopeWidget* oscillosc
         new QIntValidator(OscilloscopeWidget::MinZoomPercent, OscilloscopeWidget::MaxZoomPercent, m_zoomPercent));
     m_zoomPercent->setToolTip(tr("Vertical amplitude scale; high values may overlap stereo channels"));
 
+    m_updateFps->setEditable(true);
+    m_updateFps->setValidator(new QIntValidator(Gui::FrameRate::minFps(), Gui::FrameRate::maxFps(), m_updateFps));
+
     for(const auto preset : Gui::FrameRate::Presets) {
         const int fps = Gui::FrameRate::toFps(preset);
-        m_updateFps->addItem(tr("%1 fps").arg(fps), fps);
+        m_updateFps->addItem(QString::number(fps), fps);
     }
     m_updateFps->setToolTip(tr("Maximum waveform refresh rate; lower values can reduce motion blending"));
 
@@ -113,10 +116,13 @@ OscilloscopeConfigDialog::OscilloscopeConfigDialog(OscilloscopeWidget* oscillosc
 
 OscilloscopeWidget::ConfigData OscilloscopeConfigDialog::config() const
 {
+    bool fpsValid{false};
+    const int fps = m_updateFps->currentText().toInt(&fpsValid);
+
     OscilloscopeWidget::ConfigData config{
         .curveDurationMs = m_curveDurationMs->currentText().toInt(),
         .zoomPercent     = m_zoomPercent->currentText().toInt(),
-        .updateFps       = m_updateFps->currentData().toInt(),
+        .updateFps       = fpsValid ? Gui::FrameRate::clampFps(fps) : OscilloscopeWidget::DefaultUpdateFps,
         .downmixMode     = static_cast<OscilloscopeWidget::DownmixMode>(m_downmixMode->currentData().toInt()),
         .showZeroLine    = m_showZeroLine->isChecked(),
         .colours         = QVariant{},
@@ -157,12 +163,12 @@ void OscilloscopeConfigDialog::setConfig(const OscilloscopeWidget::ConfigData& c
         m_zoomPercent->setEditText(QString::number(config.zoomPercent));
     }
 
-    const int nearestFps = Gui::FrameRate::nearestPresetFps(config.updateFps);
-    int fpsIndex         = m_updateFps->findData(nearestFps);
-    if(fpsIndex < 0) {
-        fpsIndex = m_updateFps->findData(OscilloscopeWidget::DefaultUpdateFps);
-    }
+    const int fps      = Gui::FrameRate::clampFps(config.updateFps);
+    const int fpsIndex = m_updateFps->findData(fps);
     m_updateFps->setCurrentIndex(fpsIndex);
+    if(fpsIndex < 0) {
+        m_updateFps->setEditText(QString::number(fps));
+    }
 
     int downmixIndex = m_downmixMode->findData(static_cast<int>(config.downmixMode));
     if(downmixIndex < 0) {

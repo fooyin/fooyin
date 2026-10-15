@@ -53,10 +53,13 @@
 #include <core/playlist/playlisthandler.h>
 #include <core/playlist/playlistloader.h>
 #include <core/plugins/coreplugin.h>
+#include <core/scripting/scriptregistry.h>
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCoreApplication>
+#include <QFile>
+#include <QFileInfo>
 #include <QLoggingCategory>
 #include <QProcess>
 #include <QTimerEvent>
@@ -98,8 +101,8 @@ namespace Fooyin {
 Application::Application(QObject* parent)
     : QObject{parent}
     , m_settings{new SettingsManager(Core::settingsPath(), this)}
-    , m_coreSettings{m_settings}
     , m_database{new Database(this)}
+    , m_coreSettings{m_settings, m_database->connectionPool()}
     , m_audioLoader{std::make_shared<AudioLoader>()}
     , m_audioEncoderRegistry{std::make_unique<AudioEncoderRegistry>()}
     , m_dspRegistry{std::make_unique<DspRegistry>()}
@@ -116,8 +119,17 @@ Application::Application(QObject* parent)
     , m_engine{std::make_unique<EngineHandler>(m_audioLoader, m_playerController, m_settings, m_dspRegistry.get())}
     , m_sortingRegistry{new SortingRegistry(m_settings, this)}
     , m_pluginManager{std::make_unique<PluginManager>(m_settings)}
-    , m_corePluginContext{m_engine.get(), m_playerController, m_libraryManager, m_library,         m_playlistHandler,
-                          m_settings,     m_audioLoader,      m_playlistLoader, m_sortingRegistry, m_networkManager}
+    , m_corePluginContext{m_engine.get(),
+                          m_playerController,
+                          m_libraryManager,
+                          m_library,
+                          m_playlistHandler,
+                          m_settings,
+                          m_audioLoader,
+                          m_playlistLoader,
+                          m_sortingRegistry,
+                          m_networkManager,
+                          m_database->connectionPool()}
 {
     m_audioLoader->setRemoteSourceProvider(m_remoteIo);
     m_translations.initialiseTranslations(m_settings->value<Settings::Core::Language>());
@@ -189,6 +201,12 @@ void Application::startup()
     initialise();
 }
 
+void Application::completeStartup()
+{
+    Q_ASSERT(ScriptRegistry::instance().isFinalised());
+    m_library->loadAllTracks();
+}
+
 void Application::shutdown()
 {
     m_playbackQueueSaveTimer.stop();
@@ -201,6 +219,7 @@ void Application::shutdown()
     m_playbackQueueStore.save(m_playerController->playbackQueue());
 
     m_playlistHandler->savePlaylists();
+    ScriptRegistry::instance().shutdown();
     m_pluginManager->unloadPlugins();
     m_audioLoader->saveState();
     m_settings->storeSettings();
@@ -354,7 +373,6 @@ void Application::initialise()
     m_audioLoader->restoreState();
     m_settingsSaveTimer.start(SettingsSaveInterval, this);
 
-    m_library->loadAllTracks();
     m_engine->setup();
 }
 
@@ -501,21 +519,41 @@ void Application::startPlaybackQueueSaveTimer()
     m_playbackQueueSaveTimer.start(PlaybackQueueSaveInterval, this);
 }
 
+bool Application::exportPlaylist(const Playlist& playlist, const QString& filepath, const QString& extension) const
+{
+    auto* parser = m_playlistLoader->parserForExtension(extension);
+    if(!parser) {
+        qCInfo(APP) << "Could not save playlist: No parser found for" << extension;
+        return false;
+    }
+
+    QFile file{filepath};
+    if(!file.open(QIODevice::WriteOnly)) {
+        qCWarning(APP) << "Could not open playlist file" << filepath << "for writing:" << file.errorString();
+        return false;
+    }
+
+    const QDir playlistDir{QFileInfo{file}.absolutePath()};
+    const auto pathType = static_cast<PlaylistParser::PathType>(
+        m_settings->fileValue(Settings::Core::Internal::PlaylistSavePathType, 0).toInt());
+    const bool writeMetadata = m_settings->fileValue(Settings::Core::Internal::PlaylistSaveMetadata, false).toBool();
+
+    parser->savePlaylist(&file, extension, playlist.tracks(), playlistDir, pathType, writeMetadata);
+    return true;
+}
+
 void Application::exportAllPlaylists(bool shutdown)
 {
     using namespace Settings::Core::Internal;
 
     const auto ext = m_settings->fileValue(AutoExportPlaylistsType).toString();
 
-    auto* parser = m_playlistLoader->parserForExtension(ext);
-    if(!parser) {
+    if(!m_playlistLoader->parserForExtension(ext)) {
         return;
     }
 
     const QString path = m_settings->fileValue(AutoExportPlaylistsPath, Core::playlistsPath()).toString();
     const QDir playlistPath{path};
-    const auto pathType = static_cast<PlaylistParser::PathType>(m_settings->fileValue(PlaylistSavePathType, 0).toInt());
-    const bool writeMetadata = m_settings->fileValue(PlaylistSaveMetadata, false).toBool();
 
     enum ExportType : uint8_t
     {
@@ -528,24 +566,15 @@ void Application::exportAllPlaylists(bool shutdown)
         const QString playlistFilepath = playlistPath.absoluteFilePath(playlist->name() + u'.' + ext);
         playlistPath.mkpath(path);
 
-        QFile playlistFile{playlistFilepath};
         const bool emptyPlaylist = playlist->trackCount() == 0;
         if(exportType == ForceDelete || (exportType == SaveAndDeleteEmpty && emptyPlaylist)) {
-            if(playlistFile.exists() && !Utils::File::moveToTrash(playlistFilepath)) {
+            if(QFile::exists(playlistFilepath) && !Utils::File::moveToTrash(playlistFilepath)) {
                 qCInfo(APP) << "Could not remove" << (emptyPlaylist ? "empty" : "") << "playlist:" << playlistFilepath;
             }
             return;
         }
 
-        if(!playlistFile.open(QIODevice::WriteOnly)) {
-            qCWarning(APP) << "Could not open playlist file" << playlistPath
-                           << "for writing:" << playlistFile.errorString();
-            return;
-        }
-
-        const QFileInfo info{playlistFile};
-        const QDir playlistDir{info.absolutePath()};
-        parser->savePlaylist(&playlistFile, ext, playlist->tracks(), playlistDir, pathType, writeMetadata);
+        exportPlaylist(*playlist, playlistFilepath, ext);
     };
 
     auto playlists       = m_playlistHandler->playlists();

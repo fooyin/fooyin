@@ -44,22 +44,23 @@ ReplayGainModel::ReplayGainModel(bool readOnly, QObject* parent)
 
 ReplayGainModel::~ReplayGainModel()
 {
+    m_populator.closeThread();
     m_populatorThread.quit();
     m_populatorThread.wait();
 }
 
 void ReplayGainModel::resetModel(const TrackList& tracks)
 {
-    if(m_populatorThread.isRunning()) {
-        m_populator.stopThread();
-    }
-    else {
+    m_populator.stopThread();
+    if(!m_populatorThread.isRunning()) {
         m_populatorThread.start();
     }
 
     m_tracks = tracks;
 
-    QMetaObject::invokeMethod(&m_populator, [this, tracks] { m_populator.run(tracks); });
+    QMetaObject::invokeMethod(&m_populator, [worker = &m_populator, tracks, token = m_populator.prepareWork()] {
+        worker->run(tracks, token);
+    });
 }
 
 void ReplayGainModel::updateTracks(const TrackList& tracks)
@@ -417,6 +418,9 @@ bool ReplayGainModel::setData(const QModelIndex& index, const QVariant& value, i
 
 void ReplayGainModel::populate(const RGInfoData& data)
 {
+    if(data.stopToken.stop_requested()) {
+        return;
+    }
     beginResetModel();
     resetRoot();
     m_nodes.clear();
@@ -441,8 +445,6 @@ void ReplayGainModel::populate(const RGInfoData& data)
             }
         }
     }
-
-    rootItem()->sortChildren();
 
     updateSummary();
 

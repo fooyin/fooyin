@@ -50,6 +50,7 @@ public:
     ~SingleTabbedWidget() override;
 
     void setWidget(QWidget* widget);
+    QWidget* takeWidget();
 
     int addTab(const QString& label);
     int addTab(const QIcon& icon, const QString& label);

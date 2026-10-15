@@ -26,6 +26,8 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
+#include <core/library/librarymanager.h>
+#include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
 #include <gui/plugins/guiplugincontext.h>
@@ -270,6 +272,7 @@ void FileOpsPlugin::runDelete(const TrackList& tracks, bool forceImmediateDelete
 {
     auto* worker = new FileOpsWorker(m_library, m_audioLoader, tracks, m_settings);
     auto* thread = new QThread(this);
+    worker->setLibraryData(m_libraryManager->allLibraries(), m_library->tracks());
     worker->moveToThread(thread);
 
     QObject::connect(
@@ -285,7 +288,7 @@ void FileOpsPlugin::runDelete(const TrackList& tracks, bool forceImmediateDelete
             }
 
             const QString message = failedTrashTracks.size() == 1
-                                      ? tr("Could not move \"%1\" to the trash. Delete it permanently?")
+                                      ? tr("Could not move ‘%1’ to the trash. Delete it permanently?")
                                             .arg(failedTrashTracks.front().filepath())
                                       : tr("Could not move %Ln file(s) to the trash. Delete them permanently?", nullptr,
                                            static_cast<int>(failedTrashTracks.size()));
@@ -306,7 +309,9 @@ void FileOpsPlugin::runDelete(const TrackList& tracks, bool forceImmediateDelete
     QObject::connect(thread, &QThread::finished, thread, &QObject::deleteLater);
 
     thread->start();
-    QMetaObject::invokeMethod(worker, [worker, forceImmediateDelete]() { worker->deleteFiles(forceImmediateDelete); });
+    QMetaObject::invokeMethod(worker, [worker, forceImmediateDelete, token = worker->prepareWork()]() {
+        worker->deleteFiles(forceImmediateDelete, token);
+    });
 }
 
 void FileOpsPlugin::openDialog(const TrackSelection& selection, Operation operation, const QString& presetName)

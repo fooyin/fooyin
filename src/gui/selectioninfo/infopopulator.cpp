@@ -21,7 +21,6 @@
 
 #include "infomodel.h"
 
-#include <core/library/librarymanager.h>
 #include <core/track.h>
 #include <utils/fileutils.h>
 #include <utils/stringutils.h>
@@ -63,9 +62,8 @@ QString parentKey(ItemParent parent)
 class InfoPopulatorPrivate
 {
 public:
-    explicit InfoPopulatorPrivate(InfoPopulator* self, LibraryManager* libraryManager)
+    explicit InfoPopulatorPrivate(InfoPopulator* self)
         : m_self{self}
-        , m_libraryManager{libraryManager}
     { }
 
     void reset();
@@ -108,7 +106,7 @@ public:
                        const std::vector<SelectionInfoField>& fields);
 
     InfoPopulator* m_self;
-    LibraryManager* m_libraryManager;
+    LibraryInfoMap m_libraries;
 
     InfoData m_data;
     std::set<float> m_trackGain;
@@ -178,7 +176,7 @@ void InfoPopulatorPrivate::addTrackMetadata(const Track& track, bool extended,
                                             const std::vector<SelectionInfoField>& fields)
 {
     for(const auto& field : fields) {
-        if(!field.enabled || field.name.isEmpty() || field.scriptField.isEmpty()) {
+        if(!field.isEnabled || field.name.isEmpty() || field.scriptField.isEmpty()) {
             continue;
         }
 
@@ -190,7 +188,7 @@ void InfoPopulatorPrivate::addTrackMetadata(const Track& track, bool extended,
         const auto extras = track.extraTags();
         for(const auto& [tag, values] : extras) {
             const bool isConfigured = std::ranges::any_of(fields, [&tag](const auto& field) {
-                return field.enabled && field.scriptField.compare(tag, Qt::CaseInsensitive) == 0;
+                return field.isEnabled && field.scriptField.compare(tag, Qt::CaseInsensitive) == 0;
             });
             if(isConfigured) {
                 continue;
@@ -240,8 +238,8 @@ void InfoPopulatorPrivate::addTrackLocation(int total, const Track& track)
     }
 
     if(track.isInLibrary()) {
-        if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
-            checkAddEntryNode(u"Library"_s, InfoPopulator::tr("Library"), ItemParent::Location, library->name);
+        if(const auto library = m_libraries.find(track.libraryId()); library != m_libraries.end()) {
+            checkAddEntryNode(u"Library"_s, InfoPopulator::tr("Library"), ItemParent::Location, library->second.name);
         }
     }
 
@@ -429,17 +427,23 @@ void InfoPopulatorPrivate::addTrackNodes(InfoItem::Options options, const TrackL
     }
 }
 
-InfoPopulator::InfoPopulator(LibraryManager* libraryManager, QObject* parent)
+InfoPopulator::InfoPopulator(QObject* parent)
     : Worker{parent}
-    , p{std::make_unique<InfoPopulatorPrivate>(this, libraryManager)}
+    , p{std::make_unique<InfoPopulatorPrivate>(this)}
 { }
 
 InfoPopulator::~InfoPopulator() = default;
 
 void InfoPopulator::run(InfoItem::Options options, const TrackList& tracks,
-                        const std::vector<SelectionInfoField>& fields)
+                        const std::vector<SelectionInfoField>& fields, LibraryInfoMap libraries, uint64_t generation,
+                        std::stop_token stopToken)
 {
-    setState(Running);
+    if(!startWork(stopToken)) {
+        return;
+    }
+
+    p->m_libraries       = std::move(libraries);
+    p->m_data.generation = generation;
 
     p->reset();
 

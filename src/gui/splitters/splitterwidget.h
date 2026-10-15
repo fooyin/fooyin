@@ -28,7 +28,7 @@ class SettingsManager;
 class Splitter;
 class WidgetProvider;
 
-class SplitterWidget : public WidgetContainer
+class FYGUI_EXPORT SplitterWidget : public WidgetContainer
 {
     Q_OBJECT
 
@@ -43,6 +43,7 @@ public:
     bool restoreState(const QByteArray& state) override;
 
     [[nodiscard]] bool canAddWidget() const override;
+    [[nodiscard]] bool canInsertWidget(int index) const override;
     [[nodiscard]] bool canMoveWidget(int index, int newIndex) const override;
     [[nodiscard]] int widgetIndex(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtId(const Id& id) const override;
@@ -54,8 +55,14 @@ public:
     int addWidget(FyWidget* widget) override;
     void insertWidget(int index, FyWidget* widget) override;
     void removeWidget(int index) override;
-    void replaceWidget(int index, FyWidget* newWidget) override;
     void moveWidget(int index, int newIndex) override;
+    FyWidget* takeWidget(int index) override;
+
+    [[nodiscard]] QJsonObject saveChildState(int index) const override;
+    void restoreChildState(int index, const QJsonObject& state) override;
+    void restoreEditingState(const QJsonObject& state) override;
+
+    void expandSingleWidget();
 
     [[nodiscard]] bool isWidgetLocked(int index) const;
     [[nodiscard]] bool canLockWidget(int index) const;
@@ -67,6 +74,9 @@ public:
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
     void finalise() override;
+
+protected:
+    FyWidget* exchangeWidgetImpl(int index, FyWidget* newWidget) override;
 
 private:
     SettingsManager* m_settings;

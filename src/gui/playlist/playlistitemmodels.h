@@ -36,7 +36,6 @@ public:
     enum class LayoutKind : uint8_t
     {
         Header = 0,
-        SimpleHeader,
         Subheader,
     };
 
@@ -44,8 +43,6 @@ public:
 
     [[nodiscard]] const RichText& title() const;
     [[nodiscard]] const RichText& subtitle() const;
-    [[nodiscard]] const RichText& sideText() const;
-    [[nodiscard]] const RichText& info() const;
     [[nodiscard]] LayoutKind layoutKind() const;
     [[nodiscard]] int rowHeight() const;
     [[nodiscard]] QSize size() const;
@@ -55,8 +52,7 @@ public:
 
     void setTitle(const RichText& title);
     void setSubtitle(const RichText& subtitle);
-    void setSideText(const RichText& text);
-    void setInfo(const RichText& info);
+    void setShowCover(bool showCover);
     void setRowHeight(int height);
     void setScriptIndex(int index);
     void setCoverTrack(const Track& track);
@@ -69,13 +65,12 @@ private:
 
     RichText m_title;
     RichText m_subtitle;
-    RichText m_sideText;
-    RichText m_info;
 
     LayoutKind m_layoutKind;
     mutable QSize m_size;
     mutable bool m_widthCalculated{false};
     int m_rowHeight;
+    bool m_showCover{false};
     int m_scriptIndex{-1};
     std::optional<Track> m_coverTrack;
 };

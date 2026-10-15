@@ -27,6 +27,14 @@ class PlaylistDelegate : public QStyledItemDelegate
     Q_OBJECT
 
 public:
+    struct ReflectionOptions
+    {
+        bool enabled{false};
+        int height{33};
+        int opacity{35};
+        int gap{3};
+    };
+
     using QStyledItemDelegate::QStyledItemDelegate;
 
     [[nodiscard]] QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
@@ -36,8 +44,12 @@ public:
     void setEditorData(QWidget* editor, const QModelIndex& index) const override;
 
     void setArtworkCornerRadius(int radius);
+    void setArtworkReflection(const ReflectionOptions& options);
+
+    [[nodiscard]] int artworkSpanHeight(int width, const QModelIndex& index) const;
 
 private:
     int m_artworkCornerRadius{0};
+    ReflectionOptions m_reflectionOptions;
 };
 } // namespace Fooyin

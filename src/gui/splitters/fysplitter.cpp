@@ -18,6 +18,8 @@
  */
 
 #include "fysplitter.h"
+
+#include "splittergraboverlay.h"
 #include "splitterstate.h"
 
 #include <QEvent>
@@ -989,6 +991,8 @@ void FySplitterPrivate::setItemGeometry(SplitterLayoutStruct* item, int position
                                 contentsRect.width(),
                                 handleSizeHint.height() + handleMargins.top() + handleMargins.bottom());
         }
+
+        handle->raise();
     }
 }
 
@@ -1717,19 +1721,52 @@ int FySplitter::closestLegalPosition(int requestedPosition, int handleIndex)
 class FySplitterHandlePrivate
 {
 public:
-    FySplitterHandlePrivate(FySplitter* splitter, Qt::Orientation orientation)
-        : m_splitter{splitter}
+    FySplitterHandlePrivate(FySplitterHandle* self, FySplitter* splitter, Qt::Orientation orientation)
+        : m_self{self}
+        , m_splitter{splitter}
         , m_orientation{orientation}
     { }
+
+    ~FySplitterHandlePrivate()
+    {
+        delete m_grabOverlay;
+    }
 
     [[nodiscard]] int axisPosition(const QPoint& position) const
     {
         return m_orientation == Qt::Horizontal ? position.x() : position.y();
     }
 
+    void updateGrabArea()
+    {
+        const auto size        = m_self->sizeHint();
+        const int width        = m_orientation == Qt::Horizontal ? size.width() : size.height();
+        const int handleMargin = (m_minimumGrabWidth - width + 1) / 2;
+
+        const bool useTinyMode = handleMargin > 0;
+        m_self->setAttribute(Qt::WA_MouseNoMask, useTinyMode);
+
+        if(useTinyMode) {
+            if(m_orientation == Qt::Horizontal) {
+                m_self->setContentsMargins(handleMargin, 0, handleMargin, 0);
+            }
+            else {
+                m_self->setContentsMargins(0, handleMargin, 0, handleMargin);
+            }
+            m_self->setMask(QRegion(m_self->contentsRect()));
+        }
+        else {
+            m_self->setContentsMargins({});
+            m_self->clearMask();
+        }
+    }
+
+    FySplitterHandle* m_self;
     FySplitter* m_splitter;
     Qt::Orientation m_orientation;
     int m_mouseOffset{0};
+    int m_minimumGrabWidth{10};
+    QPointer<SplitterGrabOverlay> m_grabOverlay;
     bool m_opaq{false};
     bool m_hover{false};
     bool m_pressed{false};
@@ -1737,9 +1774,10 @@ public:
 
 FySplitterHandle::FySplitterHandle(Qt::Orientation orientation, FySplitter* parent)
     : QWidget{parent}
-    , p{std::make_unique<FySplitterHandlePrivate>(parent, orientation)}
+    , p{std::make_unique<FySplitterHandlePrivate>(this, parent, orientation)}
 {
     setOrientation(orientation);
+    p->m_grabOverlay = new SplitterGrabOverlay(this);
 }
 
 FySplitterHandle::~FySplitterHandle() = default;
@@ -1765,6 +1803,16 @@ bool FySplitterHandle::opaqueResize() const
 FySplitter* FySplitterHandle::splitter() const
 {
     return p->m_splitter;
+}
+
+void FySplitterHandle::setMinimumGrabWidth(int width)
+{
+    width = std::max(5, width);
+    if(std::exchange(p->m_minimumGrabWidth, width) == width) {
+        return;
+    }
+    p->updateGrabArea();
+    p->m_splitter->refresh();
 }
 
 QSize FySplitterHandle::sizeHint() const
@@ -1829,7 +1877,8 @@ void FySplitterHandle::mouseMoveEvent(QMouseEvent* event)
 void FySplitterHandle::mousePressEvent(QMouseEvent* event)
 {
     if(event->button() == Qt::LeftButton) {
-        p->m_mouseOffset = p->axisPosition(event->position().toPoint());
+        p->m_mouseOffset = p->axisPosition(event->position().toPoint())
+                         - (orientation() == Qt::Horizontal ? contentsMargins().left() : contentsMargins().top());
         p->m_pressed     = true;
         update();
     }
@@ -1854,38 +1903,30 @@ void FySplitterHandle::mouseReleaseEvent(QMouseEvent* event)
 
 void FySplitterHandle::resizeEvent(QResizeEvent* event)
 {
-    // Ensure the actual grab area is at least 4 or 5 pixels
-    const int handleMargin = (5 - p->m_splitter->handleWidth()) / 2;
-
-    const bool useTinyMode = handleMargin > 0;
-    setAttribute(Qt::WA_MouseNoMask, useTinyMode);
-
-    if(useTinyMode) {
-        if(orientation() == Qt::Horizontal) {
-            setContentsMargins(handleMargin, 0, handleMargin, 0);
-        }
-        else {
-            setContentsMargins(0, handleMargin, 0, handleMargin);
-        }
-        setMask(QRegion(contentsRect()));
-    }
-    else {
-        setContentsMargins({});
-        clearMask();
-    }
-
+    p->updateGrabArea();
     QWidget::resizeEvent(event);
 }
 
 bool FySplitterHandle::event(QEvent* event)
 {
     switch(event->type()) {
+        case QEvent::Enter: {
+            auto* windowSplitter = qobject_cast<FySplitter*>(window());
+            if(windowSplitter) {
+                const QScopedValueRollback blockChildAdd{windowSplitter->p->m_blockChildAdd, true};
+                p->m_grabOverlay->showForHandle();
+            }
+            else {
+                p->m_grabOverlay->showForHandle();
+            }
+            break;
+        }
         case QEvent::HoverEnter:
             p->m_hover = true;
             update();
             break;
         case QEvent::HoverLeave:
-            p->m_hover = false;
+            p->m_hover = p->m_grabOverlay && p->m_grabOverlay->isVisible();
             update();
             break;
         default:

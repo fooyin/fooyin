@@ -34,6 +34,7 @@
 #include <core/application.h>
 #include <core/coresettings.h>
 #include <core/library/libraryinfo.h>
+#include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/player/playerdefs.h>
@@ -66,6 +67,7 @@
 #include <QJsonObject>
 #include <QKeyEvent>
 #include <QMenu>
+#include <QPersistentModelIndex>
 #include <QSignalBlocker>
 #include <QTreeView>
 #include <QVBoxLayout>
@@ -197,6 +199,7 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
                                      GuiStyleProvider* styleProvider, QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
+    , m_libraryManager{core->libraryManager()}
     , m_library{core->library()}
     , m_playlistHandler{playlistController->playlistHandler()}
     , m_playerController{playlistController->playerController()}
@@ -329,6 +332,135 @@ void LibraryTreeWidget::loadLayoutData(const QJsonObject& layout)
     if(m_searchBar && layout.value("SearchBar"_L1).isObject()) {
         m_searchBar->loadLayoutData(layout.value("SearchBar"_L1).toObject());
     }
+}
+
+void LibraryTreeWidget::populateContextMenu(QMenu* menu)
+{
+    const bool hasSelection = m_libraryTree->selectionModel()->hasSelection();
+
+    ContextMenuUtils::renderStaticContextMenu(
+        menu, ContextMenuIds::LibraryTree::DefaultItems, m_settings->value<ContextMenuLibraryTreeLayout>(),
+        m_settings->value<ContextMenuLibraryTreeDisabledSections>(),
+        [&](const auto& id, QMenu* targetMenu, const auto& sectionEnabled) {
+            if(id == QLatin1StringView{ContextMenuIds::LibraryTree::Play}) {
+                if(hasSelection && sectionEnabled(ContextMenuIds::LibraryTree::Play)) {
+                    targetMenu->addAction(m_playAction);
+                }
+                return;
+            }
+            if(id == QLatin1StringView{Constants::Actions::AddToCurrent}) {
+                if(!hasSelection || !sectionEnabled(Constants::Actions::AddToCurrent)) {
+                    return;
+                }
+
+                if(auto* addCurrentCmd = m_actionManager->command(Constants::Actions::AddToCurrent)) {
+                    targetMenu->addAction(addCurrentCmd->action());
+                }
+                return;
+            }
+            if(id == QLatin1StringView{Constants::Actions::AddToActive}) {
+                if(!hasSelection || !sectionEnabled(Constants::Actions::AddToActive)) {
+                    return;
+                }
+
+                if(auto* addActiveCmd = m_actionManager->command(Constants::Actions::AddToActive)) {
+                    targetMenu->addAction(addActiveCmd->action());
+                }
+                return;
+            }
+            if(id == QLatin1StringView{Constants::Actions::SendToCurrent}) {
+                if(!hasSelection || !sectionEnabled(Constants::Actions::SendToCurrent)) {
+                    return;
+                }
+
+                if(auto* sendCurrentCmd = m_actionManager->command(Constants::Actions::SendToCurrent)) {
+                    targetMenu->addAction(sendCurrentCmd->action());
+                }
+                return;
+            }
+            if(id == QLatin1StringView{Constants::Actions::SendToNew}) {
+                if(!hasSelection || !sectionEnabled(Constants::Actions::SendToNew)) {
+                    return;
+                }
+
+                if(auto* sendNewCmd = m_actionManager->command(Constants::Actions::SendToNew)) {
+                    targetMenu->addAction(sendNewCmd->action());
+                }
+                return;
+            }
+            if(id == QLatin1StringView{Constants::Actions::AddToPlaylist}) {
+                if(hasSelection && sectionEnabled(Constants::Actions::AddToPlaylist)) {
+                    auto* playlistMenu = new QMenu(tr("Add to playlist"), targetMenu);
+                    m_trackSelection->addTrackAddToPlaylistContextMenu(playlistMenu, m_widgetContext);
+                    if(!playlistMenu->actions().empty()) {
+                        targetMenu->addMenu(playlistMenu);
+                    }
+                    else {
+                        playlistMenu->deleteLater();
+                    }
+                }
+                return;
+            }
+            if(id == QLatin1StringView{Constants::Actions::AddToQueue}) {
+                if(!hasSelection || !sectionEnabled(Constants::Actions::AddToQueue)) {
+                    return;
+                }
+
+                if(auto* addQueueCmd = m_actionManager->command(Constants::Actions::AddToQueue)) {
+                    targetMenu->addAction(addQueueCmd->action());
+                }
+                return;
+            }
+            if(id == QLatin1StringView{Constants::Actions::QueueNext}) {
+                if(!hasSelection || !sectionEnabled(Constants::Actions::QueueNext)) {
+                    return;
+                }
+
+                if(auto* queueNextCmd = m_actionManager->command(Constants::Actions::QueueNext)) {
+                    targetMenu->addAction(queueNextCmd->action());
+                }
+                return;
+            }
+            if(id == QLatin1StringView{Constants::Actions::RemoveFromQueue}) {
+                if(!hasSelection || !sectionEnabled(Constants::Actions::RemoveFromQueue)) {
+                    return;
+                }
+
+                if(auto* removeQueueCmd = m_actionManager->command(Constants::Actions::RemoveFromQueue)) {
+                    targetMenu->addAction(removeQueueCmd->action());
+                }
+                return;
+            }
+            if(id == QLatin1StringView{ContextMenuIds::LibraryTree::Grouping}) {
+                if(sectionEnabled(ContextMenuIds::LibraryTree::Grouping)) {
+                    addGroupMenu(targetMenu);
+                }
+                return;
+            }
+            if(id == QLatin1StringView{ContextMenuIds::LibraryTree::Display}) {
+                if(sectionEnabled(ContextMenuIds::LibraryTree::Display)) {
+                    addDisplayMenu(targetMenu);
+                }
+                return;
+            }
+            if(id == QLatin1StringView{ContextMenuIds::LibraryTree::Configure}) {
+                if(sectionEnabled(ContextMenuIds::LibraryTree::Configure)) {
+                    addConfigureAction(targetMenu, false);
+                }
+            }
+            if(id == QLatin1StringView{ContextMenuIds::LibraryTree::OpenFolder}) {
+                if(hasSelection && sectionEnabled(ContextMenuIds::LibraryTree::OpenFolder)) {
+                    addOpenMenu(targetMenu);
+                }
+                return;
+            }
+            if(id == QLatin1StringView{ContextMenuIds::LibraryTree::TrackActions}) {
+                if(hasSelection && sectionEnabled(ContextMenuIds::LibraryTree::TrackActions)) {
+                    m_trackSelection->addTrackContextMenu(targetMenu, m_widgetContext);
+                }
+                return;
+            }
+        });
 }
 
 void LibraryTreeWidget::enableIntegratedControls(SearchController* searchController, bool visibleByDefault)
@@ -551,72 +683,39 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObj
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("DoubleClickAction"_L1)) {
-        config.doubleClickAction = layout.value("DoubleClickAction"_L1).toInt();
-    }
-    if(layout.contains("MiddleClickAction"_L1)) {
-        config.middleClickAction = layout.value("MiddleClickAction"_L1).toInt();
-    }
-    if(layout.contains("SendPlayback"_L1)) {
-        config.sendPlayback = layout.value("SendPlayback"_L1).toBool();
-    }
-    if(layout.contains("PlaylistEnabled"_L1)) {
-        config.playlistEnabled = layout.value("PlaylistEnabled"_L1).toBool();
-    }
-    if(layout.contains("AutoSwitch"_L1)) {
-        config.autoSwitch = layout.value("AutoSwitch"_L1).toBool();
-    }
-    if(layout.contains("KeepAlive"_L1)) {
-        config.preservePlaybackPlaylist = layout.value("KeepAlive"_L1).toBool();
-    }
-    if(layout.contains("PlaylistName"_L1)) {
-        config.playlistName = layout.value("PlaylistName"_L1).toString();
-    }
-    if(layout.contains("RestoreState"_L1)) {
-        config.restoreState = layout.value("RestoreState"_L1).toBool();
-    }
-    if(layout.contains("ExpandOnSingleClick"_L1)) {
-        config.expandOnSingleClick = layout.value("ExpandOnSingleClick"_L1).toBool();
-    }
-    if(layout.contains("ShowControls"_L1)) {
-        config.showControls = layout.value("ShowControls"_L1).toBool();
-    }
+    config.doubleClickAction        = layout.value("DoubleClickAction"_L1).toInt(config.doubleClickAction);
+    config.middleClickAction        = layout.value("MiddleClickAction"_L1).toInt(config.middleClickAction);
+    config.sendPlayback             = layout.value("SendPlayback"_L1).toBool(config.sendPlayback);
+    config.playlistEnabled          = layout.value("PlaylistEnabled"_L1).toBool(config.playlistEnabled);
+    config.autoSwitch               = layout.value("AutoSwitch"_L1).toBool(config.autoSwitch);
+    config.preservePlaybackPlaylist = layout.value("KeepAlive"_L1).toBool(config.preservePlaybackPlaylist);
+    config.playlistName             = layout.value("PlaylistName"_L1).toString(config.playlistName);
+    config.restoreState             = layout.value("RestoreState"_L1).toBool(config.restoreState);
+    config.expandOnSingleClick      = layout.value("ExpandOnSingleClick"_L1).toBool(config.expandOnSingleClick);
+    config.showControls             = layout.value("ShowControls"_L1).toBool(config.showControls);
+
     if(layout.contains("ControlsPosition"_L1)) {
         const auto position = static_cast<ControlsPosition>(layout.value("ControlsPosition"_L1).toInt());
         if(position == ControlsPosition::Top || position == ControlsPosition::Bottom) {
             config.controlsPosition = position;
         }
     }
-    if(layout.contains("AutoExpandSearchResultLimit"_L1)) {
-        config.autoExpandSearchResultLimit = layout.value("AutoExpandSearchResultLimit"_L1).toInt();
-    }
-    if(layout.contains("Animated"_L1)) {
-        config.animated = layout.value("Animated"_L1).toBool();
-    }
-    if(layout.contains("ShowHeader"_L1)) {
-        config.showHeader = layout.value("ShowHeader"_L1).toBool();
-    }
-    if(layout.contains("ShowScrollbar"_L1)) {
-        config.showScrollbar = layout.value("ShowScrollbar"_L1).toBool();
-    }
-    if(layout.contains("AlternatingRows"_L1)) {
-        config.alternatingRows = layout.value("AlternatingRows"_L1).toBool();
-    }
-    if(layout.contains("ShowSummaryNode"_L1)) {
-        config.showSummaryNode = layout.value("ShowSummaryNode"_L1).toBool();
-    }
-    if(layout.contains("SummaryNodeTitle"_L1)) {
-        config.summaryNodeTitle = layout.value("SummaryNodeTitle"_L1).toString();
-    }
-    if(layout.contains("RowHeight"_L1)) {
-        config.rowHeight = layout.value("RowHeight"_L1).toInt();
-    }
+
+    config.autoExpandSearchResultLimit
+        = layout.value("AutoExpandSearchResultLimit"_L1).toInt(config.autoExpandSearchResultLimit);
+    config.animated         = layout.value("Animated"_L1).toBool(config.animated);
+    config.showHeader       = layout.value("ShowHeader"_L1).toBool(config.showHeader);
+    config.showScrollbar    = layout.value("ShowScrollbar"_L1).toBool(config.showScrollbar);
+    config.alternatingRows  = layout.value("AlternatingRows"_L1).toBool(config.alternatingRows);
+    config.showSummaryNode  = layout.value("ShowSummaryNode"_L1).toBool(config.showSummaryNode);
+    config.summaryNodeTitle = layout.value("SummaryNodeTitle"_L1).toString(config.summaryNodeTitle);
+    config.rowHeight        = layout.value("RowHeight"_L1).toInt(config.rowHeight);
+
     if(layout.contains("IconWidth"_L1) && layout.contains("IconHeight"_L1)) {
         config.iconSize = {layout.value("IconWidth"_L1).toInt(), layout.value("IconHeight"_L1).toInt()};
     }
-    if(layout.contains("ArtworkCornerRadius"_L1)) {
-        config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt();
-    }
+
+    config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt(config.artworkCornerRadius);
 
     if(!config.iconSize.isValid()) {
         config.iconSize = factoryConfig().iconSize;
@@ -745,6 +844,8 @@ void LibraryTreeWidget::setupConnections()
     });
     QObject::connect(m_library, &MusicLibrary::visibleLibraryTracksChanged, this, &LibraryTreeWidget::refreshSearch);
 
+    QObject::connect(m_libraryManager, &LibraryManager::librariesChanged, this, &LibraryTreeWidget::reset);
+
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
                      [this](Player::PlayState state) { m_model->setPlayState(state); });
     QObject::connect(m_playerController, &PlayerController::playlistTrackUpdated, this,
@@ -778,6 +879,9 @@ void LibraryTreeWidget::refreshGroupingSelector()
 
     m_groupSelector->clear();
     for(const auto& grouping : m_groupsRegistry->items()) {
+        if(!grouping.isEnabled && grouping.id != m_grouping.id) {
+            continue;
+        }
         m_groupSelector->addItem(grouping.name, grouping.id);
     }
     m_groupSelector->setCurrentIndex(m_groupSelector->findData(m_grouping.id));
@@ -815,135 +919,6 @@ void LibraryTreeWidget::reset()
     m_resetThrottler->throttle();
 }
 
-void LibraryTreeWidget::populateContextMenu(QMenu* menu)
-{
-    const bool hasSelection = m_libraryTree->selectionModel()->hasSelection();
-
-    ContextMenuUtils::renderStaticContextMenu(
-        menu, ContextMenuIds::LibraryTree::DefaultItems, m_settings->value<ContextMenuLibraryTreeLayout>(),
-        m_settings->value<ContextMenuLibraryTreeDisabledSections>(),
-        [&](const auto& id, QMenu* targetMenu, const auto& sectionEnabled) {
-            if(id == QLatin1StringView{ContextMenuIds::LibraryTree::Play}) {
-                if(hasSelection && sectionEnabled(ContextMenuIds::LibraryTree::Play)) {
-                    targetMenu->addAction(m_playAction);
-                }
-                return;
-            }
-            if(id == QLatin1StringView{Constants::Actions::AddToCurrent}) {
-                if(!hasSelection || !sectionEnabled(Constants::Actions::AddToCurrent)) {
-                    return;
-                }
-
-                if(auto* addCurrentCmd = m_actionManager->command(Constants::Actions::AddToCurrent)) {
-                    targetMenu->addAction(addCurrentCmd->action());
-                }
-                return;
-            }
-            if(id == QLatin1StringView{Constants::Actions::AddToActive}) {
-                if(!hasSelection || !sectionEnabled(Constants::Actions::AddToActive)) {
-                    return;
-                }
-
-                if(auto* addActiveCmd = m_actionManager->command(Constants::Actions::AddToActive)) {
-                    targetMenu->addAction(addActiveCmd->action());
-                }
-                return;
-            }
-            if(id == QLatin1StringView{Constants::Actions::SendToCurrent}) {
-                if(!hasSelection || !sectionEnabled(Constants::Actions::SendToCurrent)) {
-                    return;
-                }
-
-                if(auto* sendCurrentCmd = m_actionManager->command(Constants::Actions::SendToCurrent)) {
-                    targetMenu->addAction(sendCurrentCmd->action());
-                }
-                return;
-            }
-            if(id == QLatin1StringView{Constants::Actions::SendToNew}) {
-                if(!hasSelection || !sectionEnabled(Constants::Actions::SendToNew)) {
-                    return;
-                }
-
-                if(auto* sendNewCmd = m_actionManager->command(Constants::Actions::SendToNew)) {
-                    targetMenu->addAction(sendNewCmd->action());
-                }
-                return;
-            }
-            if(id == QLatin1StringView{Constants::Actions::AddToPlaylist}) {
-                if(hasSelection && sectionEnabled(Constants::Actions::AddToPlaylist)) {
-                    auto* playlistMenu = new QMenu(tr("Add to playlist"), targetMenu);
-                    m_trackSelection->addTrackAddToPlaylistContextMenu(playlistMenu, m_widgetContext);
-                    if(!playlistMenu->actions().empty()) {
-                        targetMenu->addMenu(playlistMenu);
-                    }
-                    else {
-                        playlistMenu->deleteLater();
-                    }
-                }
-                return;
-            }
-            if(id == QLatin1StringView{Constants::Actions::AddToQueue}) {
-                if(!hasSelection || !sectionEnabled(Constants::Actions::AddToQueue)) {
-                    return;
-                }
-
-                if(auto* addQueueCmd = m_actionManager->command(Constants::Actions::AddToQueue)) {
-                    targetMenu->addAction(addQueueCmd->action());
-                }
-                return;
-            }
-            if(id == QLatin1StringView{Constants::Actions::QueueNext}) {
-                if(!hasSelection || !sectionEnabled(Constants::Actions::QueueNext)) {
-                    return;
-                }
-
-                if(auto* queueNextCmd = m_actionManager->command(Constants::Actions::QueueNext)) {
-                    targetMenu->addAction(queueNextCmd->action());
-                }
-                return;
-            }
-            if(id == QLatin1StringView{Constants::Actions::RemoveFromQueue}) {
-                if(!hasSelection || !sectionEnabled(Constants::Actions::RemoveFromQueue)) {
-                    return;
-                }
-
-                if(auto* removeQueueCmd = m_actionManager->command(Constants::Actions::RemoveFromQueue)) {
-                    targetMenu->addAction(removeQueueCmd->action());
-                }
-                return;
-            }
-            if(id == QLatin1StringView{ContextMenuIds::LibraryTree::Grouping}) {
-                if(sectionEnabled(ContextMenuIds::LibraryTree::Grouping)) {
-                    addGroupMenu(targetMenu);
-                }
-                return;
-            }
-            if(id == QLatin1StringView{ContextMenuIds::LibraryTree::Display}) {
-                if(sectionEnabled(ContextMenuIds::LibraryTree::Display)) {
-                    addDisplayMenu(targetMenu);
-                }
-                return;
-            }
-            if(id == QLatin1StringView{ContextMenuIds::LibraryTree::Configure}) {
-                if(sectionEnabled(ContextMenuIds::LibraryTree::Configure)) {
-                    addConfigureAction(targetMenu, false);
-                }
-            }
-            if(id == QLatin1StringView{ContextMenuIds::LibraryTree::OpenFolder}) {
-                if(hasSelection && sectionEnabled(ContextMenuIds::LibraryTree::OpenFolder)) {
-                    addOpenMenu(targetMenu);
-                }
-                return;
-            }
-            if(id == QLatin1StringView{ContextMenuIds::LibraryTree::TrackActions}) {
-                if(hasSelection && sectionEnabled(ContextMenuIds::LibraryTree::TrackActions)) {
-                    m_trackSelection->addTrackContextMenu(targetMenu, m_widgetContext);
-                }
-                return;
-            }
-        });
-}
-
 void LibraryTreeWidget::addDisplayMenu(QMenu* parent)
 {
     auto* displayMenu = new QMenu(tr("Display"), parent);
@@ -976,10 +951,7 @@ void LibraryTreeWidget::changeGrouping(const LibraryTreeGrouping& newGrouping)
         reset();
     }
 
-    if(m_groupSelector) {
-        const QSignalBlocker blocker{m_groupSelector};
-        m_groupSelector->setCurrentIndex(m_groupSelector->findData(m_grouping.id));
-    }
+    refreshGroupingSelector();
 }
 
 void LibraryTreeWidget::activePlaylistChanged(Playlist* playlist) const
@@ -1024,6 +996,10 @@ void LibraryTreeWidget::addGroupMenu(QMenu* parent)
 
     const auto groups = m_groupsRegistry->items();
     for(const auto& group : groups) {
+        if(!group.isEnabled) {
+            continue;
+        }
+
         auto* switchGroup = new QAction(group.name, groupMenu);
         QObject::connect(switchGroup, &QAction::triggered, this, [this, group]() { changeGrouping(group); });
         switchGroup->setCheckable(true);
@@ -1318,10 +1294,12 @@ TrackList LibraryTreeWidget::sourceTracks() const
     return m_library->visibleLibraryTracks();
 }
 
-void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, int row, bool singleTrackSelection)
+void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, const QModelIndex& selectedIndex)
 {
     m_playlistGroups.clear();
 
+    const bool singleTrackSelection = selectedIndex.isValid();
+    const QPersistentModelIndex selectedTrackIndex{selectedIndex};
     const QModelIndexList leafNodes = filterLeafNodes(m_sortProxy, indexes);
 
     if(leafNodes.empty()) {
@@ -1329,6 +1307,7 @@ void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, int row, 
     }
 
     TrackList tracks;
+    int row = singleTrackSelection ? -1 : 0;
 
     QModelIndex parent;
     for(const QModelIndex& index : leafNodes) {
@@ -1336,7 +1315,7 @@ void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, int row, 
             continue;
         }
 
-        if(!parent.isValid()) {
+        if(tracks.empty()) {
             parent = index.parent();
         }
         else if(index.parent() != parent) {
@@ -1348,14 +1327,16 @@ void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, int row, 
             m_playlistGroups[static_cast<int>(tracks.size())] = parent.data(Qt::DisplayRole).toString();
         }
         const auto indexTracks = index.data(LibraryTreeItem::Tracks).value<TrackList>();
+        if(index == selectedTrackIndex) {
+            row = static_cast<int>(tracks.size());
+        }
         tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
     }
 
-    if(tracks.empty()) {
+    if(tracks.empty() || row < 0) {
         return;
     }
 
-    row                  = std::clamp(row, 0, static_cast<int>(tracks.size()) - 1);
     const auto queueMode = static_cast<PlaybackQueueMode>(m_settings->value<Settings::Core::PlaybackQueueMode>());
     const auto playNowAction
         = static_cast<PlayNowAction>(m_settings->value<Settings::Core::PlaybackQueuePlayNowAction>());
@@ -1411,7 +1392,6 @@ void LibraryTreeWidget::handlePlayTrack(const QModelIndex& index)
         return;
     }
 
-    const int row            = index.row();
     const QModelIndex parent = index.parent();
     const int count          = m_sortProxy->rowCount(parent);
 
@@ -1421,7 +1401,7 @@ void LibraryTreeWidget::handlePlayTrack(const QModelIndex& index)
         trackIndexes.emplace_back(m_sortProxy->index(i, 0, parent));
     }
 
-    handlePlayback(trackIndexes, row, true);
+    handlePlayback(trackIndexes, index);
 }
 
 void LibraryTreeWidget::handleDoubleClick(const QModelIndex& index)

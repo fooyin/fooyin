@@ -1232,27 +1232,14 @@ DirBrowser::ConfigData DirBrowser::configFromLayout(const QJsonObject& layout) c
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("DoubleClickAction"_L1)) {
-        config.doubleClickAction = layout.value("DoubleClickAction"_L1).toInt();
-    }
-    if(layout.contains("MiddleClickAction"_L1)) {
-        config.middleClickAction = layout.value("MiddleClickAction"_L1).toInt();
-    }
-    if(layout.contains("SendPlayback"_L1)) {
-        config.sendPlayback = layout.value("SendPlayback"_L1).toBool();
-    }
-    if(layout.contains("ShowIcons"_L1)) {
-        config.showIcons = layout.value("ShowIcons"_L1).toBool();
-    }
-    if(layout.contains("IndentList"_L1)) {
-        config.indentList = layout.value("IndentList"_L1).toBool();
-    }
-    if(layout.contains("ShowHeader"_L1)) {
-        config.showHeader = layout.value("ShowHeader"_L1).toBool();
-    }
-    if(layout.contains("RestoreSort"_L1)) {
-        config.restoreSort = layout.value("RestoreSort"_L1).toBool();
-    }
+    config.doubleClickAction = layout.value("DoubleClickAction"_L1).toInt(config.doubleClickAction);
+    config.middleClickAction = layout.value("MiddleClickAction"_L1).toInt(config.middleClickAction);
+    config.sendPlayback      = layout.value("SendPlayback"_L1).toBool(config.sendPlayback);
+    config.showIcons         = layout.value("ShowIcons"_L1).toBool(config.showIcons);
+    config.indentList        = layout.value("IndentList"_L1).toBool(config.indentList);
+    config.showHeader        = layout.value("ShowHeader"_L1).toBool(config.showHeader);
+    config.restoreSort       = layout.value("RestoreSort"_L1).toBool(config.restoreSort);
+
     if(layout.contains("Mode"_L1)) {
         const int mode = layout.value("Mode"_L1).toInt();
         if(mode == static_cast<int>(Mode::Tree) || mode == static_cast<int>(Mode::List)) {
@@ -1265,21 +1252,12 @@ DirBrowser::ConfigData DirBrowser::configFromLayout(const QJsonObject& layout) c
             config.controlsPosition = position;
         }
     }
-    if(layout.contains("ShowControls"_L1)) {
-        config.showControls = layout.value("ShowControls"_L1).toBool();
-    }
-    if(layout.contains("ShowLocation"_L1)) {
-        config.showLocation = layout.value("ShowLocation"_L1).toBool();
-    }
-    if(layout.contains("ShowSymLinks"_L1)) {
-        config.showSymLinks = layout.value("ShowSymLinks"_L1).toBool();
-    }
-    if(layout.contains("ShowHidden"_L1)) {
-        config.showHidden = layout.value("ShowHidden"_L1).toBool();
-    }
-    if(layout.contains("RootPath"_L1)) {
-        config.rootPath = layout.value("RootPath"_L1).toString();
-    }
+
+    config.showControls = layout.value("ShowControls"_L1).toBool(config.showControls);
+    config.showLocation = layout.value("ShowLocation"_L1).toBool(config.showLocation);
+    config.showSymLinks = layout.value("ShowSymLinks"_L1).toBool(config.showSymLinks);
+    config.showHidden   = layout.value("ShowHidden"_L1).toBool(config.showHidden);
+    config.rootPath     = layout.value("RootPath"_L1).toString(config.rootPath);
 
     if(config.rootPath.isEmpty()) {
         config.rootPath = QDir::homePath();

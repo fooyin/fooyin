@@ -391,9 +391,19 @@ bool PlaybackQueue::updateTracks(const QueueTracks& tracks)
 
     bool changed{false};
     for(size_t i{0}; i < tracks.size(); ++i) {
-        if(p->m_items[i].track != tracks[i]) {
-            p->m_items[i].track = tracks[i];
-            changed             = true;
+        auto& item = p->m_items[i];
+        if(item.track != tracks[i]) {
+            if(tracks[i].isInPlaylist()) {
+                item.detachedPlaylistTrack.reset();
+            }
+            else if(item.track.isInPlaylist() && item.track.track.sameIdentityAs(tracks[i].track)) {
+                item.detachedPlaylistTrack = item.track;
+            }
+            else if(item.detachedPlaylistTrack && !item.detachedPlaylistTrack->track.sameIdentityAs(tracks[i].track)) {
+                item.detachedPlaylistTrack.reset();
+            }
+            item.track = tracks[i];
+            changed    = true;
         }
     }
 

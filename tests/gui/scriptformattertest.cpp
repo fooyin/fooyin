@@ -17,11 +17,17 @@
  *
  */
 
+#include <core/scripting/scriptparser.h>
+#include <core/scripting/scriptregistry.h>
+#include <core/track.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
 #include <gui/scripting/scriptformatterregistry.h>
+#include <gui/scripting/scriptreferenceentries.h>
 
 #include <gtest/gtest.h>
+
+#include <algorithm>
 
 using namespace Qt::StringLiterals;
 
@@ -31,6 +37,52 @@ class ScriptFormatterTest : public ::testing::Test
 protected:
     ScriptFormatter m_formattter;
 };
+
+TEST(ScriptReferenceTest, RegisteredMetadataAndAliasesReachTheEditor)
+{
+    ScriptRegistry registry;
+    ASSERT_TRUE(registry.registerVariable(makeScriptVariableDescriptor<[]() {
+        return u"value"_s;
+    }>(VariableKind::Generic, u"plugin_value"_s, u"Plugin"_s, u"Plugin variable"_s, {u"plugin_alias"_s})));
+    ASSERT_TRUE(registry.registerFunction(makeScriptFunctionDescriptor<[]() {
+        return u"value"_s;
+    }>(u"plugin_function"_s, u"$plugin_function(value)"_s, u"Plugin"_s, u"Plugin function"_s, {u"plugin_alias"_s})));
+    ASSERT_TRUE(registry.registerFunction(makeScriptFunctionDescriptor<[]() {
+        return u"value"_s;
+    }>(u"undocumented"_s)));
+    registry.finalise();
+
+    const auto entries   = scriptReferenceEntries(registry);
+    const auto findEntry = [&entries](const QString& insertion) {
+        return std::ranges::find(entries, insertion, &ScriptReferenceEntry::insertText);
+    };
+    for(const auto& name : {u"%plugin_value%"_s, u"%plugin_alias%"_s}) {
+        const auto entry = findEntry(name);
+        ASSERT_NE(entries.end(), entry);
+        EXPECT_EQ(name, entry->label);
+        EXPECT_EQ(u"Plugin", entry->category);
+        EXPECT_EQ(u"Plugin variable", entry->description);
+    }
+    for(const auto& name : {u"plugin_function"_s, u"plugin_alias"_s}) {
+        const auto entry = findEntry(u"$%1()"_s.arg(name));
+        ASSERT_NE(entries.end(), entry);
+        EXPECT_EQ(u"$%1(value)"_s.arg(name), entry->label);
+        EXPECT_EQ(u"Plugin", entry->category);
+        EXPECT_EQ(u"Plugin function", entry->description);
+    }
+    const auto cut = findEntry(u"$cut()"_s);
+    ASSERT_NE(entries.end(), cut);
+    EXPECT_EQ(u"$cut(text,count)", cut->label);
+    EXPECT_FALSE(cut->description.isEmpty());
+    const auto trackNumber = findEntry(u"%tracknumber%"_s);
+    ASSERT_NE(entries.end(), trackNumber);
+    EXPECT_EQ(u"Track number", trackNumber->description);
+    const auto undocumented = findEntry(u"$undocumented()"_s);
+    ASSERT_NE(entries.end(), undocumented);
+    EXPECT_EQ(u"$undocumented()", undocumented->label);
+    EXPECT_EQ(u"Plugins", undocumented->category);
+    EXPECT_TRUE(undocumented->description.isEmpty());
+}
 
 TEST_F(ScriptFormatterTest, NoFormat)
 {
@@ -231,6 +283,31 @@ TEST_F(ScriptFormatterTest, LiteralBackslashes)
     EXPECT_EQ(uR"(C:\Music\Track.flac\)"_s, result.blocks.front().text);
 }
 
+TEST_F(ScriptFormatterTest, MetadataSeparatorsCanContainFormatting)
+{
+    ScriptRegistry registry;
+    registry.finalise();
+    ScriptParser parser{&registry};
+    const ScriptEvaluationOptions options{.escapeRichText = true};
+    Track track;
+    track.setArtists({uR"(first\)"_s, uR"(<b>second</b>\)"_s, uR"(third\\)"_s});
+
+    const QString script = u"$meta_sep(artist,<rgb=1,2,3> / </rgb>,<rgb=4,5,6> and </rgb>)"_s;
+    const auto result    = m_formattter.evaluate(parser.evaluate(script, track, {}, options));
+    ASSERT_EQ(5, result.size());
+    EXPECT_EQ(track.artists().at(0), result.blocks.at(0).text);
+    EXPECT_EQ(u" / "_s, result.blocks.at(1).text);
+    EXPECT_EQ(QColor(1, 2, 3), result.blocks.at(1).format.colour.colour);
+    EXPECT_EQ(track.artists().at(1), result.blocks.at(2).text);
+    EXPECT_EQ(u" and "_s, result.blocks.at(3).text);
+    EXPECT_EQ(QColor(4, 5, 6), result.blocks.at(3).format.colour.colour);
+    EXPECT_EQ(track.artists().at(2), result.blocks.at(4).text);
+    EXPECT_FALSE(result.blocks.at(0).format.font.bold());
+    EXPECT_FALSE(result.blocks.at(2).format.font.bold());
+    EXPECT_EQ(uR"(first\<rgb=1,2,3> / </rgb><b>second</b>\<rgb=4,5,6> and </rgb>third\\)"_s,
+              parser.evaluate(script, track));
+}
+
 TEST_F(ScriptFormatterTest, Link)
 {
     const auto result = m_formattter.evaluate(u"<a href=\"https://example.com\">Example</a>"_s);
@@ -272,7 +349,7 @@ TEST_F(ScriptFormatterTest, KnownTagWithInvalidOptionStillRendersText)
     EXPECT_EQ(u"text"_s, result.blocks.front().text);
     ASSERT_EQ(1, m_formattter.errors().size());
     EXPECT_EQ(0, m_formattter.errors().front().position);
-    EXPECT_EQ(u"[0] Error in formatting tag '<size=large>': invalid formatting option."_s,
+    EXPECT_EQ(u"[0] Error in formatting tag ‘<size=large>’: invalid formatting option."_s,
               m_formattter.errors().front().message);
 }
 
@@ -324,5 +401,31 @@ TEST_F(ScriptFormatterTest, KeywordWordsCannotCloseTag)
     ASSERT_EQ(1, result.size());
     EXPECT_EQ(u"LESS/b GREATER"_s, result.blocks.front().text);
     EXPECT_TRUE(result.blocks.front().format.font.bold());
+}
+
+TEST_F(ScriptFormatterTest, AlignmentScopesCloseUnclosedFormatting)
+{
+    const auto result = m_formattter.evaluate(u"<left><b><color=red>Title</left><right>Duration</right>"_s);
+    ASSERT_EQ(2, result.size());
+    EXPECT_EQ(u"TitleDuration"_s, result.joinedText());
+    EXPECT_TRUE(result.blocks.front().format.font.bold());
+    EXPECT_EQ(QColor(Qt::red), result.blocks.front().format.colour.colour);
+    EXPECT_EQ(RichAlignment::Left, result.blocks.front().format.alignment);
+    EXPECT_FALSE(result.blocks.back().format.font.bold());
+    EXPECT_FALSE(result.blocks.back().format.colour.isExplicit());
+    EXPECT_EQ(RichAlignment::Right, result.blocks.back().format.alignment);
+    EXPECT_TRUE(m_formattter.errors().empty());
+}
+
+TEST_F(ScriptFormatterTest, AlignmentTextPreservesFormattingAndLineBreaks)
+{
+    const auto result = m_formattter.evaluate(u"<b>Title</b>\nArtist<right><i>Duration\nCount</i></right>"_s);
+    const auto left   = richTextForAlignment(result, RichAlignment::Left);
+    const auto right  = richTextForAlignment(result, RichAlignment::Right);
+    EXPECT_EQ(u"Title\nArtist"_s, left.joinedText());
+    EXPECT_EQ(u"Duration\nCount"_s, right.joinedText());
+    EXPECT_TRUE(left.blocks.front().format.font.bold());
+    EXPECT_TRUE(right.blocks.front().format.font.italic());
+    EXPECT_EQ(RichAlignment::Left, right.blocks.front().format.alignment);
 }
 } // namespace Fooyin::Testing

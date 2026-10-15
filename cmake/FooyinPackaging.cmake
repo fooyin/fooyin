@@ -82,6 +82,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
     qt6-qpa-plugins,
     zlib1g,
     libasound2,
+    libjack-jackd2-0,
     ffmpeg (>= 7:4.4),
     pipewire,
     libpulse0,

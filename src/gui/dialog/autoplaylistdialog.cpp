@@ -174,7 +174,7 @@ void AutoPlaylistDialog::saveQuery()
     auto existingQuery = findQuery(name);
     if(existingQuery != m_queries.cend()) {
         QMessageBox msg{QMessageBox::Question, tr("Query already exists"),
-                        tr("A query named \"%1\" already exists. Overwrite it?").arg(name),
+                        tr("A query named ‘%1’ already exists. Overwrite it?").arg(name),
                         QMessageBox::Yes | QMessageBox::No};
         if(msg.exec() == QMessageBox::Yes) {
             *existingQuery = query;

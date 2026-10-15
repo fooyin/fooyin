@@ -641,7 +641,7 @@ public:
         engine.updateAutoCrossfadeAlbumMatch();
     }
 
-    static AutoTransitionMode configuredTrackEndAutoTransitionMode(const AudioEngine& engine)
+    static AudioEngine::AutoTransitionMode configuredTrackEndAutoTransitionMode(const AudioEngine& engine)
     {
         return engine.configuredTrackEndAutoTransitionMode();
     }
@@ -658,7 +658,7 @@ public:
         return engine.m_phase;
     }
 
-    static void setAutoAdvanceState(AudioEngine& engine, uint64_t generation, AutoTransitionMode mode,
+    static void setAutoAdvanceState(AudioEngine& engine, uint64_t generation, AudioEngine::AutoTransitionMode mode,
                                     bool overlapStartAnchorSeen, bool overlapMidpointAnchorSeen,
                                     bool boundaryAnchorSeen)
     {
@@ -851,36 +851,37 @@ FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, SameAlbumPolicyUsesGroupingScri
         harness.engine, true, QString::fromLatin1(Settings::Core::Internal::DefaultAutoCrossfadeAlbumScript));
     AudioEngineTestAccessor::setAutoCrossfadeTracks(harness.engine, current, upcoming);
     EXPECT_EQ(AudioEngineTestAccessor::configuredTrackEndAutoTransitionMode(harness.engine),
-              AutoTransitionMode::Gapless);
+              AudioEngine::AutoTransitionMode::Gapless);
 
     upcoming.setAlbum(u"Another Album"_s);
     AudioEngineTestAccessor::setAutoCrossfadeTracks(harness.engine, current, upcoming);
     EXPECT_EQ(AudioEngineTestAccessor::configuredTrackEndAutoTransitionMode(harness.engine),
-              AutoTransitionMode::Crossfade);
+              AudioEngine::AutoTransitionMode::Crossfade);
 
     current.setAlbum({});
     upcoming.setAlbum({});
     AudioEngineTestAccessor::setAutoCrossfadeTracks(harness.engine, current, upcoming);
     EXPECT_EQ(AudioEngineTestAccessor::configuredTrackEndAutoTransitionMode(harness.engine),
-              AutoTransitionMode::Crossfade);
+              AudioEngine::AutoTransitionMode::Crossfade);
 
     current.setGenres({u"Continuous"_s});
     upcoming.setGenres({u"Continuous"_s});
     AudioEngineTestAccessor::setAutoCrossfadeAlbumPolicy(harness.engine, true, u"%genre%"_s);
     AudioEngineTestAccessor::setAutoCrossfadeTracks(harness.engine, current, upcoming);
     EXPECT_EQ(AudioEngineTestAccessor::configuredTrackEndAutoTransitionMode(harness.engine),
-              AutoTransitionMode::Gapless);
+              AudioEngine::AutoTransitionMode::Gapless);
 
     AudioEngineTestAccessor::setGaplessEnabled(harness.engine, false);
-    EXPECT_EQ(AudioEngineTestAccessor::configuredTrackEndAutoTransitionMode(harness.engine), AutoTransitionMode::None);
+    EXPECT_EQ(AudioEngineTestAccessor::configuredTrackEndAutoTransitionMode(harness.engine),
+              AudioEngine::AutoTransitionMode::None);
 
     AudioEngineTestAccessor::setAutoCrossfadeAlbumPolicy(harness.engine, false, u"%genre%"_s);
     EXPECT_EQ(AudioEngineTestAccessor::configuredTrackEndAutoTransitionMode(harness.engine),
-              AutoTransitionMode::Crossfade);
+              AudioEngine::AutoTransitionMode::Crossfade);
 
     AudioEngineTestAccessor::setAutoCrossfadeAlbumPolicy(harness.engine, true, u"$if("_s);
     EXPECT_EQ(AudioEngineTestAccessor::configuredTrackEndAutoTransitionMode(harness.engine),
-              AutoTransitionMode::Crossfade);
+              AudioEngine::AutoTransitionMode::Crossfade);
 }
 
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, LoadTrackFullReinitInitialisesDecoderAndOutput)
@@ -1441,8 +1442,8 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, PausedSeekRebuildsCurrentTrac
 
     const uint64_t generation = AudioEngineTestAccessor::trackGeneration(harness.engine);
     AudioEngineTestAccessor::setUpcomingTrackCandidate(harness.engine, nextItem);
-    AudioEngineTestAccessor::setAutoAdvanceState(harness.engine, generation, AutoTransitionMode::Gapless, false, false,
-                                                 false);
+    AudioEngineTestAccessor::setAutoAdvanceState(harness.engine, generation, AudioEngine::AutoTransitionMode::Gapless,
+                                                 false, false, false);
 
     ASSERT_TRUE(AudioEngineTestAccessor::prepareNextTrackImmediate(harness.engine, nextItem, 1200));
     ASSERT_TRUE(harness.engine.armPreparedGaplessTransition(nextItem, generation));
@@ -1518,16 +1519,16 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, OverlapMidpointSwitchPolicyCo
     ASSERT_TRUE(AudioEngineTestAccessor::preparedCrossfadeActive(harness.engine));
     EXPECT_GT(AudioEngineTestAccessor::overlapMidpointLeadMs(harness.engine), 0);
 
-    AudioEngineTestAccessor::setAutoAdvanceState(harness.engine, initialGeneration, AutoTransitionMode::Crossfade, true,
-                                                 false, false);
+    AudioEngineTestAccessor::setAutoAdvanceState(harness.engine, initialGeneration,
+                                                 AudioEngine::AutoTransitionMode::Crossfade, true, false, false);
     AudioEngineTestAccessor::tryAutoAdvanceCommit(harness.engine);
 
     EXPECT_TRUE(commits.empty());
     EXPECT_EQ(AudioEngineTestAccessor::currentTrackId(harness.engine), currentTrack.id());
     EXPECT_EQ(AudioEngineTestAccessor::currentTrackItemId(harness.engine), currentItem.itemId);
 
-    AudioEngineTestAccessor::setAutoAdvanceState(harness.engine, initialGeneration, AutoTransitionMode::Crossfade, true,
-                                                 true, false);
+    AudioEngineTestAccessor::setAutoAdvanceState(harness.engine, initialGeneration,
+                                                 AudioEngine::AutoTransitionMode::Crossfade, true, true, false);
     AudioEngineTestAccessor::tryAutoAdvanceCommit(harness.engine);
 
     ASSERT_EQ(commits.size(), 1U);
@@ -2383,8 +2384,8 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, FiniteRepeatOccurrenceUsesPre
     const uint64_t generation    = AudioEngineTestAccessor::trackGeneration(harness.engine);
     const int outputUninitBefore = harness.outputStats->uninitCalls.load();
     const int decoderInitBefore  = harness.decoderStats->initCalls.load();
-    AudioEngineTestAccessor::setAutoAdvanceState(harness.engine, generation, AutoTransitionMode::Gapless, false, false,
-                                                 false);
+    AudioEngineTestAccessor::setAutoAdvanceState(harness.engine, generation, AudioEngine::AutoTransitionMode::Gapless,
+                                                 false, false, false);
 
     ASSERT_TRUE(harness.engine.armPreparedGaplessTransition(repeatItem, generation));
     ASSERT_TRUE(harness.engine.commitPreparedGaplessTransition(repeatItem));

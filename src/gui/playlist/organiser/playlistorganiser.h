@@ -52,8 +52,7 @@ public:
 
     struct ConfigData
     {
-        QString leftScript;
-        QString rightScript;
+        QString displayScript;
         QString playingTextColour;
         QString playingBackgroundColour;
     };

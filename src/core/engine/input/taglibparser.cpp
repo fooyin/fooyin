@@ -74,6 +74,7 @@
 #include <QLoggingCategory>
 #include <QMimeDatabase>
 #include <QPixmap>
+#include <QtEndian>
 
 #include <cmath>
 #include <cstring>
@@ -850,24 +851,6 @@ std::optional<OpusHeadPage> readOpusHeadPage(QIODevice* device)
     };
 }
 
-enum class AudioFileFormat : uint8_t
-{
-    Unknown = 0,
-    Mpeg,
-    Aiff,
-    Wav,
-    Musepack,
-    Ape,
-    WavPack,
-    Mp4,
-    Flac,
-    Vorbis,
-    Opus,
-    Asf,
-    Dsf,
-    Dsdiff,
-};
-
 AudioFileFormat audioFileFormat(const QString& mimeType)
 {
     if(mimeType == "audio/mpeg"_L1 || mimeType == "audio/mpeg3"_L1 || mimeType == "audio/x-mpeg"_L1) {
@@ -904,12 +887,14 @@ AudioFileFormat audioFileFormat(const QString& mimeType)
     if(mimeType == "audio/x-ms-wma"_L1 || mimeType == "video/x-ms-asf"_L1 || mimeType == "application/vnd.ms-asf"_L1) {
         return AudioFileFormat::Asf;
     }
+#if (TAGLIB_MAJOR_VERSION >= 2)
     if(mimeType == "audio/x-dsf"_L1) {
         return AudioFileFormat::Dsf;
     }
     if(mimeType == "audio/x-dff"_L1) {
         return AudioFileFormat::Dsdiff;
     }
+#endif
 
     return AudioFileFormat::Unknown;
 }
@@ -930,7 +915,24 @@ DetectedAudioFileFormat detectAudioFileFormat(const AudioSource& source)
         mimeType = mimeDb.mimeTypeForData(source.device).name();
     }
 
-    return {.format = audioFileFormat(mimeType), .mimeType = std::move(mimeType)};
+    auto format = audioFileFormat(mimeType);
+
+#if (TAGLIB_MAJOR_VERSION >= 2)
+    if(format == AudioFileFormat::Unknown) {
+        // Qt's MIME database may not recognise DSD on some systems
+        const QByteArray header = source.device->peek(16);
+        if(header.size() >= 12 && header.startsWith("DSD ")
+           && qFromLittleEndian<uint64_t>(header.constData() + 4) == 28) {
+            format = AudioFileFormat::Dsf;
+        }
+        else if(header.size() >= 16 && header.startsWith("FRM8")
+                && std::memcmp(header.constData() + 12, "DSD ", 4) == 0) {
+            format = AudioFileFormat::Dsdiff;
+        }
+    }
+#endif
+
+    return {.format = format, .mimeType = std::move(mimeType)};
 }
 
 QString codecForFormat(AudioFileFormat format)
@@ -3020,6 +3022,17 @@ bool TagLibReader::canWriteMetaData() const
     return true;
 }
 
+bool TagLibReader::init(const AudioSource& source)
+{
+    m_format = AudioFileFormat::Unknown;
+    m_mimeType.clear();
+
+    auto detected = detectAudioFileFormat(source);
+    m_format      = detected.format;
+    m_mimeType    = std::move(detected.mimeType);
+    return m_format != AudioFileFormat::Unknown;
+}
+
 enum VbrMethod : uint8_t
 {
     Unknown  = 0,
@@ -3198,9 +3211,6 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
         return false;
     }
 
-    const auto detected    = detectAudioFileFormat(source);
-    const auto format      = detected.format;
-    const auto& mimeType   = detected.mimeType;
     const auto style       = TagLib::AudioProperties::Average;
     const TagPolicy policy = tagPolicy();
 
@@ -3209,7 +3219,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
         readGeneralProperties(file.properties(), track, false, true, policy);
     };
 
-    switch(format) {
+    switch(m_format) {
         case AudioFileFormat::Mpeg: {
 #if (TAGLIB_MAJOR_VERSION >= 2)
             TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
@@ -3581,13 +3591,13 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
         case AudioFileFormat::Dsdiff:
 #endif
         case AudioFileFormat::Unknown: {
-            qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
+            qCInfo(TAGLIB) << "Unsupported mime type (" << m_mimeType << "):" << source.filepath;
             return false;
         }
     }
 
     if(track.codec().isEmpty()) {
-        track.setCodec(codecForFormat(format));
+        track.setCodec(codecForFormat(m_format));
     }
 
     return true;
@@ -3601,12 +3611,9 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
         return {};
     }
 
-    const auto detected  = detectAudioFileFormat(source);
-    const auto format    = detected.format;
-    const auto& mimeType = detected.mimeType;
-    const auto style     = TagLib::AudioProperties::Average;
+    const auto style = TagLib::AudioProperties::Average;
 
-    switch(format) {
+    switch(m_format) {
         case AudioFileFormat::Mpeg: {
 #if (TAGLIB_MAJOR_VERSION >= 2)
             TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
@@ -3712,7 +3719,7 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
         case AudioFileFormat::Dsdiff:
 #endif
         case AudioFileFormat::Unknown: {
-            qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
+            qCInfo(TAGLIB) << "Unsupported mime type (" << m_mimeType << "):" << source.filepath;
             return {};
         }
     }
@@ -3746,15 +3753,12 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
               file.setProperties(savedProperties);
           };
 
-    const auto detected    = detectAudioFileFormat(source);
-    const auto format      = detected.format;
-    const auto& mimeType   = detected.mimeType;
     const auto style       = TagLib::AudioProperties::Average;
     const TagPolicy policy = tagPolicy();
     bool success{false};
     bool failureLogged{false};
 
-    switch(format) {
+    switch(m_format) {
         case AudioFileFormat::Mpeg: {
 #if (TAGLIB_MAJOR_VERSION >= 2)
             TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
@@ -3779,7 +3783,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                 }
 
                 success = saveModifiedMpegFile(file, true, tagTypes, policy, u"write metadata"_s, source.filepath,
-                                               mimeType, failureLogged);
+                                               m_mimeType, failureLogged);
             }
             break;
         }
@@ -3791,12 +3795,12 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                     writeID3v2Tags(file.tag(), track, options, policy, false);
                 }
                 else {
-                    logWriteFailure(u"write metadata"_s, source.filepath, mimeType, u"file has no ID3v2 tag block"_s);
+                    logWriteFailure(u"write metadata"_s, source.filepath, m_mimeType, u"file has no ID3v2 tag block"_s);
                     failureLogged = true;
                 }
 
                 success = failureLogged ? false
-                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType,
+                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType,
                                                            failureLogged);
             }
             break;
@@ -3809,12 +3813,12 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                     writeID3v2Tags(tag, track, options, policy, false);
                 }
                 else {
-                    logWriteFailure(u"write metadata"_s, source.filepath, mimeType, u"file has no ID3v2 tag block"_s);
+                    logWriteFailure(u"write metadata"_s, source.filepath, m_mimeType, u"file has no ID3v2 tag block"_s);
                     failureLogged = true;
                 }
 
                 success = failureLogged ? false
-                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType,
+                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType,
                                                            failureLogged);
             }
             break;
@@ -3826,7 +3830,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                 if(auto* tag = file.APETag(true)) {
                     writeApeTags(tag, track, options, policy);
                 }
-                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType, failureLogged);
+                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType, failureLogged);
             }
             break;
         }
@@ -3837,7 +3841,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                 if(auto* tag = file.APETag(true)) {
                     writeApeTags(tag, track, options, policy);
                 }
-                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType, failureLogged);
+                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType, failureLogged);
             }
             break;
         }
@@ -3848,7 +3852,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                 if(auto* tag = file.APETag(true)) {
                     writeApeTags(tag, track, options, policy);
                 }
-                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType, failureLogged);
+                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType, failureLogged);
             }
             break;
         }
@@ -3859,7 +3863,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                 if(file.hasMP4Tag()) {
                     writeMp4Tags(file.tag(), track, options, policy);
                 }
-                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType, failureLogged);
+                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType, failureLogged);
             }
             break;
         }
@@ -3874,7 +3878,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                 if(auto* tags = file.xiphComment(true)) {
                     writeXiphComment(tags, track, options, policy);
                 }
-                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType, failureLogged);
+                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType, failureLogged);
             }
             break;
         }
@@ -3886,13 +3890,13 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                     writeXiphComment(file.tag(), track, options, policy);
                 }
                 else {
-                    logWriteFailure(u"write metadata"_s, source.filepath, mimeType,
+                    logWriteFailure(u"write metadata"_s, source.filepath, m_mimeType,
                                     u"file has no Xiph comment block"_s);
                     failureLogged = true;
                 }
 
                 success = failureLogged ? false
-                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType,
+                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType,
                                                            failureLogged);
             }
             break;
@@ -3906,20 +3910,20 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                     writeOpusReplayGain(file.tag(), track, options);
                 }
                 else {
-                    logWriteFailure(u"write metadata"_s, source.filepath, mimeType,
+                    logWriteFailure(u"write metadata"_s, source.filepath, m_mimeType,
                                     u"file has no Xiph comment block"_s);
                     failureLogged = true;
                 }
 
                 if(const auto headerGain = track.opusHeaderGainQ78(); headerGain.has_value()) {
                     if(!writeOpusHeaderGainQ78(source.device, *headerGain)) {
-                        logWriteFailure(u"write opus header gain"_s, source.filepath, mimeType, u"failed"_s);
+                        logWriteFailure(u"write opus header gain"_s, source.filepath, m_mimeType, u"failed"_s);
                         failureLogged = true;
                     }
                 }
 
                 success = failureLogged ? false
-                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType,
+                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType,
                                                            failureLogged);
             }
             break;
@@ -3932,12 +3936,12 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                     writeAsfTags(file.tag(), track, options, policy);
                 }
                 else {
-                    logWriteFailure(u"write metadata"_s, source.filepath, mimeType, u"file has no ASF tag block"_s);
+                    logWriteFailure(u"write metadata"_s, source.filepath, m_mimeType, u"file has no ASF tag block"_s);
                     failureLogged = true;
                 }
 
                 success = failureLogged ? false
-                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType,
+                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType,
                                                            failureLogged);
             }
             break;
@@ -3951,12 +3955,12 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                     writeID3v2Tags(file.tag(), track, options, policy, false);
                 }
                 else {
-                    logWriteFailure(u"write metadata"_s, source.filepath, mimeType, u"file has no ID3v2 tag block"_s);
+                    logWriteFailure(u"write metadata"_s, source.filepath, m_mimeType, u"file has no ID3v2 tag block"_s);
                     failureLogged = true;
                 }
 
                 success = failureLogged ? false
-                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType,
+                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType,
                                                            failureLogged);
             }
             break;
@@ -3968,7 +3972,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                 if(auto* tag = file.ID3v2Tag(true)) {
                     writeID3v2Tags(tag, track, options, policy, false);
                 }
-                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType, failureLogged);
+                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType, failureLogged);
             }
             break;
         }
@@ -3977,13 +3981,13 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
         case AudioFileFormat::Dsdiff:
 #endif
         case AudioFileFormat::Unknown: {
-            qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
+            qCInfo(TAGLIB) << "Unsupported mime type (" << m_mimeType << "):" << source.filepath;
             return false;
         }
     }
 
     if(!success && !failureLogged) {
-        logWriteFailure(u"write metadata"_s, source.filepath, mimeType,
+        logWriteFailure(u"write metadata"_s, source.filepath, m_mimeType,
                         u"file is invalid or no writable tag handler was available"_s);
     }
 
@@ -4020,15 +4024,12 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
         mtime = info.lastModified();
     }
 
-    const auto detected    = detectAudioFileFormat(source);
-    const auto format      = detected.format;
-    const auto& mimeType   = detected.mimeType;
     const auto style       = TagLib::AudioProperties::Average;
     const TagPolicy policy = tagPolicy();
     bool success{false};
     bool failureLogged{false};
 
-    switch(format) {
+    switch(m_format) {
         case AudioFileFormat::Mpeg: {
 #if (TAGLIB_MAJOR_VERSION >= 2)
             TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
@@ -4048,10 +4049,10 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
 
                 if(modified) {
                     success = saveModifiedMpegFile(file, true, tagTypes, policy, u"write cover artwork"_s,
-                                                   source.filepath, mimeType, failureLogged);
+                                                   source.filepath, m_mimeType, failureLogged);
                 }
                 else if(!(tagTypes & (TagLib::MPEG::File::ID3v2 | TagLib::MPEG::File::APE))) {
-                    logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType,
+                    logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType,
                                     u"existing tag scheme cannot store cover artwork"_s);
                     failureLogged = true;
                 }
@@ -4065,10 +4066,11 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             TagLib::RIFF::AIFF::File file(&stream, false);
             if(file.isValid() && file.hasID3v2Tag()) {
                 success = saveModifiedFile(file, writeId3Cover(file.tag(), covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
+                                           source.filepath, m_mimeType, failureLogged);
             }
             else if(file.isValid()) {
-                logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType, u"file has no ID3v2 tag block"_s);
+                logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType,
+                                u"file has no ID3v2 tag block"_s);
                 failureLogged = true;
             }
             break;
@@ -4078,7 +4080,7 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             if(file.isValid()) {
                 if(auto* tag = file.ID3v2Tag()) {
                     success = saveModifiedFile(file, writeId3Cover(tag, covers), u"write cover artwork"_s,
-                                               source.filepath, mimeType, failureLogged);
+                                               source.filepath, m_mimeType, failureLogged);
                 }
             }
             break;
@@ -4088,7 +4090,7 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             if(file.isValid()) {
                 if(auto* tag = file.APETag(true)) {
                     success = saveModifiedFile(file, writeApeCover(tag, covers), u"write cover artwork"_s,
-                                               source.filepath, mimeType, failureLogged);
+                                               source.filepath, m_mimeType, failureLogged);
                 }
             }
             break;
@@ -4098,7 +4100,7 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             if(file.isValid()) {
                 if(auto* tag = file.APETag(true)) {
                     success = saveModifiedFile(file, writeApeCover(tag, covers), u"write cover artwork"_s,
-                                               source.filepath, mimeType, failureLogged);
+                                               source.filepath, m_mimeType, failureLogged);
                 }
             }
             break;
@@ -4108,7 +4110,7 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             if(file.isValid()) {
                 if(auto* tag = file.APETag(true)) {
                     success = saveModifiedFile(file, writeApeCover(tag, covers), u"write cover artwork"_s,
-                                               source.filepath, mimeType, failureLogged);
+                                               source.filepath, m_mimeType, failureLogged);
                 }
             }
             break;
@@ -4117,10 +4119,10 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             TagLib::MP4::File file(&stream, false);
             if(file.isValid() && file.hasMP4Tag()) {
                 success = saveModifiedFile(file, writeMp4Cover(file.tag(), covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
+                                           source.filepath, m_mimeType, failureLogged);
             }
             else if(file.isValid()) {
-                logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType, u"file has no MP4 tag block"_s);
+                logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType, u"file has no MP4 tag block"_s);
                 failureLogged = true;
             }
             break;
@@ -4133,7 +4135,7 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
 #endif
             if(file.isValid() && file.xiphComment(true)) {
                 success = saveModifiedFile(file, writeXiphCover(&file, covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
+                                           source.filepath, m_mimeType, failureLogged);
             }
             break;
         }
@@ -4141,10 +4143,10 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             TagLib::Ogg::Vorbis::File file(&stream, false);
             if(file.isValid() && file.tag()) {
                 success = saveModifiedFile(file, writeXiphCover(file.tag(), covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
+                                           source.filepath, m_mimeType, failureLogged);
             }
             else if(file.isValid()) {
-                logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType,
+                logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType,
                                 u"file has no Xiph comment block"_s);
                 failureLogged = true;
             }
@@ -4154,10 +4156,10 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             TagLib::Ogg::Opus::File file(&stream, false);
             if(file.isValid() && file.tag()) {
                 success = saveModifiedFile(file, writeXiphCover(file.tag(), covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
+                                           source.filepath, m_mimeType, failureLogged);
             }
             else if(file.isValid()) {
-                logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType,
+                logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType,
                                 u"file has no Xiph comment block"_s);
                 failureLogged = true;
             }
@@ -4167,10 +4169,10 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             TagLib::ASF::File file(&stream, false);
             if(file.isValid() && file.tag()) {
                 success = saveModifiedFile(file, writeAsfCover(file.tag(), covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
+                                           source.filepath, m_mimeType, failureLogged);
             }
             else if(file.isValid()) {
-                logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType, u"file has no ASF tag block"_s);
+                logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType, u"file has no ASF tag block"_s);
                 failureLogged = true;
             }
             break;
@@ -4180,10 +4182,11 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             TagLib::DSF::File file(&stream, false);
             if(file.isValid() && file.tag()) {
                 success = saveModifiedFile(file, writeId3Cover(file.tag(), covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
+                                           source.filepath, m_mimeType, failureLogged);
             }
             else if(file.isValid()) {
-                logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType, u"file has no ID3v2 tag block"_s);
+                logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType,
+                                u"file has no ID3v2 tag block"_s);
                 failureLogged = true;
             }
             break;
@@ -4192,10 +4195,11 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             TagLib::DSDIFF::File file(&stream, false);
             if(file.isValid() && file.hasID3v2Tag()) {
                 success = saveModifiedFile(file, writeId3Cover(file.ID3v2Tag(), covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
+                                           source.filepath, m_mimeType, failureLogged);
             }
             else if(file.isValid()) {
-                logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType, u"file has no ID3v2 tag block"_s);
+                logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType,
+                                u"file has no ID3v2 tag block"_s);
                 failureLogged = true;
             }
             break;
@@ -4205,13 +4209,13 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
         case AudioFileFormat::Dsdiff:
 #endif
         case AudioFileFormat::Unknown: {
-            qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
+            qCInfo(TAGLIB) << "Unsupported mime type (" << m_mimeType << "):" << source.filepath;
             return false;
         }
     }
 
     if(!success && !failureLogged) {
-        logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType,
+        logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType,
                         u"file is invalid or no writable tag handler was available"_s);
     }
 

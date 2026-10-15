@@ -19,8 +19,8 @@
 
 #include "searchcontroller.h"
 
-#include <gui/editablelayout.h>
 #include <gui/fywidget.h>
+#include <gui/layout/editablelayout.h>
 #include <gui/widgetfilter.h>
 #include <gui/widgets/overlaywidget.h>
 

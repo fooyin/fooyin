@@ -46,7 +46,6 @@
 #include "filters/libraryfilterswitcher.h"
 #include "filters/libraryfiltertabs.h"
 #include "filters/tracklistwidget.h"
-#include "gui/editablelayout.h"
 #include "gui/plugins/guiplugincontext.h"
 #include "guiapplication.h"
 #include "internalguisettings.h"
@@ -121,6 +120,7 @@
 #include <gui/coverrepository.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/layout/editablelayout.h>
 #include <gui/output/outputprofilemanager.h>
 #include <gui/playlist/playlistinteractor.h>
 #include <gui/settings/context/staticcontextmenupage.h>
@@ -130,6 +130,7 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/settings/advancedsettingsregistry.h>
+#include <utils/settings/settingsdialogcontroller.h>
 #include <utils/stringutils.h>
 
 using namespace Qt::StringLiterals;
@@ -300,7 +301,7 @@ void Widgets::registerWidgets()
                              [library](const Track& track) { library->updateTrackStats(track, Track::Stat::Rating); });
             return control;
         },
-        tr("Rating Control"));
+        tr("Rating Control"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     provider->setSubMenus(u"RatingControl"_s, {tr("Controls")});
 
     provider->registerWidget(
@@ -312,7 +313,7 @@ void Widgets::registerWidgets()
                              [library](const Track& track) { library->updateTrackStats(track, Track::Stat::Loved); });
             return control;
         },
-        tr("Love Control"));
+        tr("Love Control"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     provider->setSubMenus(u"LoveControl"_s, {tr("Controls")});
 
     provider->registerWidget(u"VolumeControls"_s,
@@ -435,7 +436,7 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"SavedFilterSelector"_s,
         [this]() { return new Filters::LibraryFilterSwitcher(m_libraryFilterRegistry, m_core->library(), m_settings); },
-        tr("Saved Filter Selector"));
+        tr("Saved Filter Selector"), {.supportsToolbar = true});
     provider->setSubMenus(u"SavedFilterSelector"_s, {tr("Filters")});
 }
 
@@ -559,6 +560,20 @@ void Widgets::registerAdvancedSettings()
 {
     auto* advancedSettingsRegistry = m_gui->advancedSettingsRegistry();
 
+    using SearchBarPosition = SettingsDialogController::SearchBarPosition;
+    advancedSettingsRegistry->add<Settings::Gui::SettingsSearchBarPosition>(
+        {.category    = {tr("Interface"), tr("Settings Dialog")},
+         .label       = tr("Search bar"),
+         .description = tr("Visibility and position of the search bar in the settings dialog"),
+         .editor
+         = AdvancedSettingRadioButtons{.options
+                                       = {{.value = static_cast<int>(SearchBarPosition::Hidden), .label = tr("Hidden")},
+                                          {.value = static_cast<int>(SearchBarPosition::Top), .label = tr("Top")},
+                                          {.value = static_cast<int>(SearchBarPosition::Bottom),
+                                           .label = tr("Bottom")}}},
+         .normalise = {},
+         .validate  = {}});
+
     advancedSettingsRegistry->add(
         {.id           = QString::fromLatin1(Settings::Gui::Internal::ConfirmMetadataWipe),
          .category     = {tr("Tagging"), tr("Metadata Lookup")},
@@ -618,6 +633,17 @@ void Widgets::registerAdvancedSettings()
          .label       = tr("Confirm before removing playlists"),
          .description = {},
          .editor      = AdvancedSettingCheckBox{},
+         .normalise   = {},
+         .validate    = {}});
+    advancedSettingsRegistry->add<Settings::Gui::Internal::PlaylistInlineEditDelayMs>(
+        {.category    = {tr("Playlist"), tr("General")},
+         .label       = tr("Inline editing delay"),
+         .description = tr("Delay before starting inline editing after clicking a selected editable cell"),
+         .editor      = AdvancedSettingSpinBox{.minimum          = 0,
+                                               .maximum          = 10000,
+                                               .singleStep       = 100,
+                                               .suffix           = u" ms"_s,
+                                               .specialValueText = {}},
          .normalise   = {},
          .validate    = {}});
     advancedSettingsRegistry->add<Settings::Core::Internal::VBRUpdateInterval>(
@@ -737,7 +763,7 @@ void Widgets::registerAdvancedSettings()
         Settings::Core::Internal::SplitId3v23SemicolonSeparatedTags, true,
         {.category    = {tr("Tagging"), u"ID3"_s},
          .label       = tr("Split ID3v2.3 semicolon-separated tags"),
-         .description = tr("Split ID3v2.3 values with non-standard \";\" separators when reading tags."),
+         .description = tr("Split ID3v2.3 values with non-standard ‘;’ separators when reading tags."),
          .editor      = AdvancedSettingCheckBox{},
          .normalise   = {},
          .validate    = {}});
@@ -861,6 +887,7 @@ void Widgets::registerFontEntries() const
     themeReg->registerFontEntry(tr("Library Tree"), u"Fooyin::LibraryTreeView"_s);
     themeReg->registerFontEntry(tr("Playlist"), u"Fooyin::PlaylistView"_s);
     themeReg->registerFontEntry(tr("Script Display"), u"Fooyin::ScriptDisplay"_s);
+    themeReg->registerFontEntry(tr("Script Editor"), u"Fooyin::ScriptEditorTextEdit"_s);
     themeReg->registerFontEntry(tr("Status bar"), u"Fooyin::StatusLabel"_s);
     themeReg->registerFontEntry(tr("Tabs"), u"Fooyin::EditableTabBar"_s);
     themeReg->registerFontEntry(tr("Filters"), u"Fooyin::Filters::FilterView"_s);

@@ -26,6 +26,7 @@
 #include "playlistuicontroller.h"
 #include "playlistview.h"
 
+#include <core/library/librarymanager.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
@@ -1179,15 +1180,15 @@ void EditablePlaylistSession::sortTracks(PlaylistWidgetSessionHost& sessionHost,
 
         std::ranges::sort(indexesToSort);
 
-        Utils::asyncExec([libraryManager = host.libraryManager(), currentTracks, script, indexesToSort]() {
-            TrackSorter sorter{libraryManager};
+        Utils::asyncExec([libraries = host.libraryManager()->allLibraries(), currentTracks, script, indexesToSort]() {
+            TrackSorter sorter{libraries};
             auto tracks = sorter.calcSortTracks(script, currentTracks, indexesToSort, PlaylistTrack::extractor);
             return PlaylistTrack::updateIndexes(tracks);
         }).then(widget, handleSortedTracks);
     }
     else {
-        Utils::asyncExec([libraryManager = host.libraryManager(), currentTracks, script]() {
-            TrackSorter sorter{libraryManager};
+        Utils::asyncExec([libraries = host.libraryManager()->allLibraries(), currentTracks, script]() {
+            TrackSorter sorter{libraries};
             auto tracks = sorter.calcSortTracks(script, currentTracks, PlaylistTrack::extractor);
             return PlaylistTrack::updateIndexes(tracks);
         }).then(widget, handleSortedTracks);
@@ -1287,8 +1288,8 @@ void EditablePlaylistSession::sortColumn(PlaylistWidgetSessionHost& sessionHost,
     const QString sortField          = !sortColumn.sortField.isEmpty() ? sortColumn.sortField : sortColumn.field;
     const auto sortToken             = beginSortRequest();
 
-    Utils::asyncExec([libraryManager = host.libraryManager(), sortField, currentTracks, order]() {
-        TrackSorter sorter{libraryManager};
+    Utils::asyncExec([libraries = host.libraryManager()->allLibraries(), sortField, currentTracks, order]() {
+        TrackSorter sorter{libraries};
         auto tracks = sorter.calcSortTracks(sortField, currentTracks, PlaylistTrack::extractor, order);
         return PlaylistTrack::updateIndexes(tracks);
     })

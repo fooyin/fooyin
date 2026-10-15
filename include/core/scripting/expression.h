@@ -145,6 +145,7 @@ enum class VariableKind : uint8_t
     RGAlbumPeakDB,
     TrackCount,
     Playtime,
+    PlaylistName,
     PlaylistSize,
     PlaylistDuration,
     PlaylistElapsed,
@@ -182,6 +183,9 @@ enum class VariableKind : uint8_t
     FrontCover,
     BackCover,
     ArtistPicture,
+    IsQueueCurrent,
+    IsQueueUpcoming,
+    IsQueuePlayed,
 };
 
 struct Expression;

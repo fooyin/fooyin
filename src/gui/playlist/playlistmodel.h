@@ -153,6 +153,9 @@ public:
     void updateColours();
     void setMatchPlayingTrackByIdentity(bool enabled);
 
+    [[nodiscard]] QModelIndex imageColumnGroupIndex(const QModelIndex& index) const;
+    [[nodiscard]] QModelIndex firstImageColumnTrackIndex(const QModelIndex& index) const;
+
     void reset(const PlaylistTrackList& tracks);
     void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist,
                const PlaylistTrackList& tracks);
@@ -170,6 +173,7 @@ public:
     void updateTracks(const std::vector<int>& indexes);
     void refreshTracks(const std::vector<int>& indexes);
     void refreshTracks(const std::vector<int>& indexes, const std::set<int>& columns);
+    void refreshPlaylistRows(const UId& playlistId, const std::vector<UId>& entryIds);
     void removeTracks(const QModelIndexList& indexes);
     void removeTracks(const TrackGroups& groups);
 
@@ -230,6 +234,7 @@ private:
     [[nodiscard]] bool playingTrackMatchesPlaylistTrack(const PlaylistTrack& track, int index) const;
     [[nodiscard]] PlaylistTrackList tracksWithPlayingTrackOverlay(const PlaylistTrackList& tracks) const;
 
+    PlaylistPopulationRequest populationRequest();
     void populateModel(PendingData data);
     void populateTrackGroup(PendingData data);
     void updateModel(ItemKeyMap data);
@@ -291,7 +296,6 @@ private:
 
     [[nodiscard]] static QModelIndex topLevelContainerIndex(const QModelIndex& index);
     [[nodiscard]] QModelIndex firstLeafIndex(const QModelIndex& index) const;
-    [[nodiscard]] QModelIndex firstImageColumnTrackIndex(const QModelIndex& index) const;
     std::vector<int> pixmapColumns() const;
     std::set<int> columnsNeedUpdating() const;
     void updateLivePlaybackDependencies();
@@ -331,6 +335,7 @@ private:
 
     AudioLoader* m_audioLoader;
     MusicLibrary* m_library;
+    PlayerController* m_playerController;
     SettingsManager* m_settings;
     GuiStyleProvider* m_styleProvider;
     CoverProvider* m_coverProvider;
@@ -345,6 +350,7 @@ private:
 
     QThread m_populatorThread;
     PlaylistPopulator m_populator;
+    uint64_t m_populationGeneration;
 
     bool m_playlistLoaded;
     bool m_loadingTextPending;

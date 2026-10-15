@@ -489,6 +489,7 @@ void ProjectMView::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == m_renderTimer.timerId()) {
         requestUpdate();
+        m_renderTimer.scheduleNext(this);
         return;
     }
 
@@ -896,7 +897,7 @@ void ProjectMView::emitAvailability()
 void ProjectMView::updateRenderTimer()
 {
     if(isReady() && isExposed()) {
-        m_renderTimer.start(Gui::FrameRate::intervalMsForFps(m_settings.maxFps), this);
+        m_renderTimer.start(m_settings.maxFps, this);
         requestUpdate();
     }
     else {

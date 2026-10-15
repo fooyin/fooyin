@@ -1102,7 +1102,7 @@ void TreeView::updateScrollBars()
             contentsHeight += itemHeight(i) + itemPadding(i);
         }
 
-        const int vMax = contentsHeight - viewportHeight;
+        const int vMax = m_view->adjustVerticalScrollMaximum(std::max(0, contentsHeight - viewportHeight));
         if(verticalBar->isVisible() && vMax <= 0) {
             m_p->m_hidingScrollbar = 2;
         }
@@ -1437,7 +1437,7 @@ int TreeView::indexSizeHint(const QModelIndex& index, bool span) const
 
     int height{0};
     if(span && m_view->isSpanning(index.column())) {
-        height = header()->sectionSize(index.column());
+        height = m_view->spanHeight(index);
     }
 
     if(m_p->m_uniformRowHeights && m_uniformRowHeight > 0) {
@@ -1538,7 +1538,7 @@ void TreeView::recalculatePadding()
         const auto columnIndex = model()->index(0, section, {});
         if(columnIndex.isValid()) {
             if(m_view->isSpanning(section)) {
-                max = std::max(max, header()->sectionSize(section));
+                max = std::max(max, m_view->spanHeight(columnIndex));
             }
         }
     }
@@ -1549,7 +1549,7 @@ void TreeView::recalculatePadding()
     for(auto& item : items) {
         item.padding = 0;
 
-        if(item.hasChildren || item.parentItem == -1) {
+        if(item.hasChildren) {
             continue;
         }
 
@@ -1672,8 +1672,7 @@ void TreeView::drawAndClipSpans(QPainter* painter, const QStyleOptionViewItem& o
             const int topInset = spanTopInset(index);
 
             opt.rect = {position, y - topInset, width, indexSizeHint(modelIndex, true) + topInset};
-            delegate(modelIndex)->paint(painter, opt, modelIndex);
-            region -= opt.rect;
+            region -= m_view->drawSpan(painter, opt, modelIndex);
         }
 
         y += itemHeight(i) + item.padding;
@@ -2168,6 +2167,7 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
 
     if(m_view->selectionModel()->isSelected(index)) {
         opt.state |= QStyle::State_Selected;
+        opt.features.setFlag(QStyleOptionViewItem::Alternate, false);
     }
     if(rowFocused && current.parent() == index.parent() && current.row() == index.row()) {
         currentRowHasFocus = true;
@@ -3914,6 +3914,39 @@ void ExpandedTreeView::dragLeaveEvent(QDragLeaveEvent* /*event*/)
     viewport()->update();
 }
 
+void ExpandedTreeView::dropEvent(QDropEvent* event)
+{
+    if(dragDropMode() == InternalMove && event->source() != this) {
+        return;
+    }
+
+    int col{-1};
+    int row{-1};
+    QModelIndex index = p->indexAtDropPosition(event->position().toPoint());
+
+    if(!index.isValid() && p->itemCount() > 0) {
+        index = p->m_viewItems.back().index;
+    }
+
+    if(p->dropOn(event, row, col, index)) {
+        const Qt::DropAction action = p->dropAction(event);
+
+        if(p->m_model->dropMimeData(event->mimeData(), action, row, col, index)) {
+            if(action != event->dropAction()) {
+                event->setDropAction(action);
+                event->accept();
+            }
+            else {
+                event->acceptProposedAction();
+            }
+        }
+    }
+
+    p->stopAutoScroll();
+    setState(NoState);
+    viewport()->update();
+}
+
 void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
 {
     if(event->button() > Qt::MiddleButton) {
@@ -4006,39 +4039,6 @@ void ExpandedTreeView::resizeEvent(QResizeEvent* event)
     else {
         QAbstractItemView::resizeEvent(event);
     }
-}
-
-void ExpandedTreeView::dropEvent(QDropEvent* event)
-{
-    if(dragDropMode() == InternalMove && event->source() != this) {
-        return;
-    }
-
-    int col{-1};
-    int row{-1};
-    QModelIndex index = p->indexAtDropPosition(event->position().toPoint());
-
-    if(!index.isValid() && p->itemCount() > 0) {
-        index = p->m_viewItems.back().index;
-    }
-
-    if(p->dropOn(event, row, col, index)) {
-        const Qt::DropAction action = p->dropAction(event);
-
-        if(p->m_model->dropMimeData(event->mimeData(), action, row, col, index)) {
-            if(action != event->dropAction()) {
-                event->setDropAction(action);
-                event->accept();
-            }
-            else {
-                event->acceptProposedAction();
-            }
-        }
-    }
-
-    p->stopAutoScroll();
-    setState(NoState);
-    viewport()->update();
 }
 
 void ExpandedTreeView::paintEvent(QPaintEvent* event)
@@ -4306,6 +4306,22 @@ void ExpandedTreeView::drawFocus(QPainter* painter, const QStyleOptionViewItem& 
             style()->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOpt, painter);
         }
     }
+}
+
+int ExpandedTreeView::spanHeight(const QModelIndex& index) const
+{
+    return header()->sectionSize(index.column());
+}
+
+QRect ExpandedTreeView::drawSpan(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    itemDelegateForIndex(index)->paint(painter, option, index);
+    return option.rect;
+}
+
+int ExpandedTreeView::adjustVerticalScrollMaximum(int maximum) const
+{
+    return maximum;
 }
 
 QModelIndex ExpandedTreeView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers /*modifiers*/)

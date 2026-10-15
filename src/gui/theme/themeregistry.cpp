@@ -19,6 +19,8 @@
 
 #include <gui/theme/themeregistry.h>
 
+#include <QFontDatabase>
+
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
@@ -100,6 +102,20 @@ void ThemeRegistry::registerFontEntry(const QString& title, const QString& class
     if(!m_fontEntries.contains(className)) {
         m_fontEntries.emplace(className, title);
     }
+}
+
+QFont ThemeRegistry::defaultFont(const QString& className, const QFont& systemFont)
+{
+    // Handle migration of default Script Editor font
+    if(className == u"Fooyin::ScriptEditorTextEdit"_s) {
+        auto font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+        if(font.pointSize() <= 0) {
+            font.setPointSize(systemFont.pointSize());
+        }
+        return font;
+    }
+
+    return systemFont;
 }
 
 void ThemeRegistry::loadDefaults()

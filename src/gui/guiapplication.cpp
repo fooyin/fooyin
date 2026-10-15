@@ -47,7 +47,6 @@
 #include "queueviewer/queueviewer.h"
 #include "quicksetup/quicksetupdialog.h"
 #include "scripting/scriptcommandhandler.h"
-#include "scripting/scriptvariableproviders.h"
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
 #include "systemtrayicon.h"
@@ -69,19 +68,18 @@
 #include <core/network/networkutils.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/playlist/playlistloader.h>
-#include <core/playlist/playlistparser.h>
 #include <core/plugins/plugininfo.h>
 #include <core/plugins/pluginmanager.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/scripting/scriptregistry.h>
+#include <core/scripting/scripttypes.h>
 #include <gui/coverprovider.h>
 #include <gui/coverrepository.h>
-#include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
-#include <gui/layoutprovider.h>
+#include <gui/layout/editablelayout.h>
 #include <gui/playlist/currentplaylistcontroller.h>
 #include <gui/plugins/dspguiplugin.h>
 #include <gui/plugins/guiplugin.h>
@@ -161,23 +159,6 @@ QString commonMetadataValue(const TrackList& tracks, const QString& field)
                                        [&field, &value](const Track& track) { return track.metaValue(field) == value; })
              ? value
              : QString{};
-}
-
-std::optional<Track> commonArtworkTrack(const TrackList& tracks, CoverRepository* coverRepository)
-{
-    if(tracks.empty()) {
-        return {};
-    }
-
-    const Track& firstTrack     = tracks.front();
-    const QString firstCoverKey = coverRepository->thumbnailCoverKey(firstTrack);
-    if(firstCoverKey.isEmpty() || !std::ranges::all_of(tracks, [coverRepository, &firstCoverKey](const Track& track) {
-           return coverRepository->thumbnailCoverKey(track) == firstCoverKey;
-       })) {
-        return {};
-    }
-
-    return firstTrack;
 }
 
 std::optional<LookupMode> musicBrainzLookupMode(const TrackList& tracks)
@@ -339,7 +320,6 @@ GuiApplication::GuiApplication(Application* core)
                      &GuiApplication::showConvertedFiles);
 
     m_editableLayout->setToolbarManager(m_mainWindow->toolbarManager());
-    m_scriptParser.addProvider(playlistVariableProvider());
 
     QObject::connect(m_settings->settingsDialog(), &SettingsDialogController::opening, this, [this]() {
         const bool isLayoutEditing = m_settings->value<Settings::Gui::LayoutEditing>();
@@ -728,6 +708,7 @@ void GuiApplication::initialise()
     m_actionManager->addContextObject(m_mainContext);
 
     initialisePlugins();
+    ScriptRegistry::instance().finalise();
 
     m_widgets->registerDspWidgets();
     m_viewMenu->registerDspSettingsActions(m_widgets->dspSettingsRegistry(), m_widgets->dspSettingsController());
@@ -860,6 +841,13 @@ void GuiApplication::setupConnections()
 
     m_settings->subscribe<Settings::Gui::LayoutEditing>(this, &GuiApplication::updateWindowTitle);
 
+    const auto updateSettingsSearchBar = [this](int position) {
+        m_settings->settingsDialog()->setSearchBarPosition(
+            static_cast<SettingsDialogController::SearchBarPosition>(position));
+    };
+    m_settings->subscribe<Settings::Gui::SettingsSearchBarPosition>(this, updateSettingsSearchBar);
+    updateSettingsSearchBar(m_settings->value<Settings::Gui::SettingsSearchBarPosition>());
+
     m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
         setIconTheme();
         QPixmapCache::clear();
@@ -982,11 +970,11 @@ void GuiApplication::updateWindowTitle()
         return;
     }
 
-    auto contextData     = makePlaybackScriptContext(m_playerController, m_playlistHandler->activePlaylist(),
-                                                     TrackListContextPolicy::Fallback, {}, false, false,
-                                                     Gui::ratingStarSymbols(*m_settings));
+    const auto data = makePlaybackScriptData(m_playerController, m_playlistHandler->activePlaylist());
+    const ScriptEvaluationOptions options{.trackListContextPolicy = TrackListContextPolicy::Fallback,
+                                          .ratingSymbols          = Gui::ratingStarSymbols(*m_settings)};
     const QString script = m_settings->value<Settings::Gui::Internal::WindowTitleTrackScript>();
-    const QString title  = m_scriptParser.evaluate(script, currentTrack, contextData.context);
+    const QString title  = m_scriptParser.evaluate(script, currentTrack, data.context(), options);
     m_mainWindow->setTitle(title);
 }
 
@@ -1225,7 +1213,7 @@ void GuiApplication::registerActions()
         toggleMenubar, [toggleMenubar](bool visible) { toggleMenubar->setChecked(visible); });
 
     m_lookupArtistAlbumAction = new QAction(tr("Look up metadata by artist and album…"), this);
-    m_lookupArtistAlbumAction->setStatusTip(tr("Look up metadata using the selected tracks' artist and album"));
+    m_lookupArtistAlbumAction->setStatusTip(tr("Look up metadata using the selected tracks’ artist and album"));
     QObject::connect(m_lookupArtistAlbumAction, &QAction::triggered, this,
                      [this] { showMetadataLookupDialog(LookupMode::ArtistAlbum); });
     Command* artistAlbumCommand
@@ -1234,7 +1222,7 @@ void GuiApplication::registerActions()
     artistAlbumCommand->setCategories({tr("Tagging")});
 
     m_lookupDiscTocAction = new QAction(tr("Look up metadata by disc TOC…"), this);
-    m_lookupDiscTocAction->setStatusTip(tr("Look up metadata using the selected tracks' disc TOC"));
+    m_lookupDiscTocAction->setStatusTip(tr("Look up metadata using the selected tracks’ disc TOC"));
     QObject::connect(m_lookupDiscTocAction, &QAction::triggered, this, &GuiApplication::showMetadataLookupByDiscToc);
     Command* discTocCommand
         = m_actionManager->registerAction(m_lookupDiscTocAction, Constants::Actions::LookupMetadataByDiscToc);
@@ -1357,7 +1345,7 @@ void GuiApplication::setupScanMenu()
 void GuiApplication::setupArtworkMenu()
 {
     auto* viewArtwork = new QAction(tr("View full size"), this);
-    viewArtwork->setStatusTip(tr("View the common artwork for the selected tracks at full size"));
+    viewArtwork->setStatusTip(tr("View the artwork for the selected track at full size"));
 
     auto* command = m_actionManager->registerAction(viewArtwork, Constants::Actions::ViewArtwork);
     command->setCategories({tr("Tracks"), tr("Artwork")});
@@ -1368,15 +1356,15 @@ void GuiApplication::setupArtworkMenu()
             return;
         }
 
-        const auto track = commonArtworkTrack(selection->tracks, m_coverRepository);
-        if(!track) {
+        if(selection->tracks.empty()) {
             return;
         }
 
-        auto* dialog = new ArtworkViewerDialog(*track, m_coverRepository->trackCover(*track), m_mainWindow.get());
+        const Track& track = selection->tracks.front();
+        auto* dialog       = new ArtworkViewerDialog(track, m_coverRepository->trackCover(track), m_mainWindow.get());
         dialog->show();
 
-        m_coverRepository->trackCoverOriginal(*track).then(dialog, [dialog](const QPixmap& cover) {
+        m_coverRepository->trackCoverOriginal(track).then(dialog, [dialog](const QPixmap& cover) {
             if(!cover.isNull()) {
                 dialog->setCover(cover);
             }
@@ -1386,8 +1374,8 @@ void GuiApplication::setupArtworkMenu()
     m_selectionController->registerTrackContextAction(
         this, TrackContextMenuArea::Track, Constants::Menus::Context::Artwork, Constants::Actions::ViewArtwork,
         viewArtwork->text(),
-        [this, viewArtwork](QMenu* menu, const TrackSelection& selection) {
-            viewArtwork->setEnabled(commonArtworkTrack(selection.tracks, m_coverRepository).has_value());
+        [viewArtwork](QMenu* menu, const TrackSelection& selection) {
+            viewArtwork->setEnabled(!selection.tracks.empty());
             menu->addAction(viewArtwork);
         },
         Constants::Actions::SearchArtwork);
@@ -1772,19 +1760,22 @@ void GuiApplication::applyTheme()
         const auto systemFont = QApplication::font();
         m_settings->set<Settings::Gui::Internal::SystemFont>(systemFont);
 
+        const auto currTheme = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
+        if(currTheme.fonts.contains(QString{})) {
+            QApplication::setFont(currTheme.fonts.value(QString{}));
+        }
+
+        const auto defaultFont = QApplication::font();
         const auto fontEntries = m_themeRegistry->fontEntries();
         for(const auto& className : fontEntries | std::views::keys) {
             if(!className.isEmpty()) {
-                QApplication::setFont(systemFont, className.toUtf8().constData());
+                QApplication::setFont(ThemeRegistry::defaultFont(className, defaultFont),
+                                      className.toUtf8().constData());
             }
         }
 
-        const auto currTheme = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
         for(const auto& [className, font] : Utils::asRange(currTheme.fonts)) {
-            if(className.isEmpty()) {
-                QApplication::setFont(font);
-            }
-            else {
+            if(!className.isEmpty()) {
                 QApplication::setFont(font, className.toUtf8().constData());
             }
         }
@@ -2503,22 +2494,7 @@ void GuiApplication::savePlaylistToFile(const Playlist* playlist) const
     const QFileInfo info{file};
     m_settings->fileSet(Settings::Gui::Internal::LastPlaylistPath, info.absolutePath());
 
-    if(auto* parser = m_core->playlistLoader()->parserForExtension(extension)) {
-        QFile playlistFile{file};
-        if(!playlistFile.open(QIODevice::WriteOnly)) {
-            qCWarning(GUI_APP) << "Could not open playlist file" << file
-                               << "for writing:" << playlistFile.errorString();
-            return;
-        }
-
-        const QDir playlistDir{info.absolutePath()};
-        const auto pathType = static_cast<PlaylistParser::PathType>(
-            m_settings->fileValue(Settings::Core::Internal::PlaylistSavePathType, 0).toInt());
-        const bool writeMetadata
-            = m_settings->fileValue(Settings::Core::Internal::PlaylistSaveMetadata, false).toBool();
-
-        parser->savePlaylist(&playlistFile, extension, playlist->tracks(), playlistDir, pathType, writeMetadata);
-    }
+    m_core->exportPlaylist(*playlist, file, extension);
 }
 
 void GuiApplication::saveAllPlaylist() const

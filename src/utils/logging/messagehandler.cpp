@@ -31,18 +31,37 @@ QString levelToFilterRule(QtMsgType level)
     using namespace Qt::StringLiterals;
 
     switch(level) {
-        case(QtDebugMsg):
+        case QtDebugMsg:
             return u"fy.*.critical=true\nfy.*.warning=true\nfy.*.info=true\nfy.*.debug=true\n"_s;
-        case(QtInfoMsg):
+        case QtInfoMsg:
             return u"fy.*.critical=true\nfy.*.warning=true\nfy.*.info=true\nfy.*.debug=false\n"_s;
-        case(QtWarningMsg):
+        case QtWarningMsg:
             return u"fy.*.critical=true\nfy.*.warning=true\nfy.*.info=false\nfy.*.debug=false\n"_s;
-        case(QtCriticalMsg):
+        case QtCriticalMsg:
             return u"fy.*.critical=true\nfy.*.warning=false\nfy.*.info=false\nfy.*.debug=false\n"_s;
-        case(QtFatalMsg):
+        case QtFatalMsg:
         default:
             return {};
     }
+}
+
+bool filterLogMessage(QtMsgType type, const QString& message)
+{
+    // Qt's Wayland backend emits this warning for non-popup mouse grabs
+    if(type == QtWarningMsg
+       && message == QLatin1StringView{"This plugin supports grabbing the mouse only for popup windows"}) {
+        return true;
+    }
+
+    if((type == QtInfoMsg)
+       && (message.startsWith(QLatin1StringView{"OpenType support missing for"})
+           || message == QLatin1StringView{"libpng warning: eXIf: duplicate"}
+           || message == QLatin1StringView{"libpng warning: sRGB: out of place"}
+           || message.startsWith(QLatin1StringView{"libpng warning: iCCP: profile '"}))) {
+        return true;
+    }
+
+    return false;
 }
 } // namespace
 
@@ -56,8 +75,8 @@ MessageHandler::MessageHandler(QObject* parent)
 
 void MessageHandler::install(LogWidget* widget)
 {
-    auto* self = MessageHandler::instance();
-    qInstallMessageHandler(MessageHandler::handler);
+    const auto* self = instance();
+    qInstallMessageHandler(handler);
 
     if(widget) {
         connect(self, &MessageHandler::showMessage, widget, &LogWidget::addEntry, Qt::QueuedConnection);
@@ -66,21 +85,23 @@ void MessageHandler::install(LogWidget* widget)
 
 void MessageHandler::handler(QtMsgType type, const QMessageLogContext& context, const QString& message)
 {
+    if(filterLogMessage(type, message)) {
+        return;
+    }
+
     const QString formattedMsg = qFormatLogMessage(type, context, message);
     const std::string msg      = formattedMsg.toLocal8Bit().constData();
 
     switch(type) {
-        case(QtDebugMsg):
-        case(QtInfoMsg):
+        case QtDebugMsg:
+        case QtInfoMsg:
+        case QtWarningMsg:
             std::clog << msg << '\n';
             break;
-        case(QtWarningMsg):
-            std::clog << msg << '\n';
-            break;
-        case(QtCriticalMsg):
+        case QtCriticalMsg:
             std::cerr << msg << '\n';
             break;
-        case(QtFatalMsg):
+        case QtFatalMsg:
             throw std::runtime_error(msg);
     }
 

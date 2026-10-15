@@ -31,6 +31,7 @@
 #include <utils/crypto.h>
 #include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/timeconstants.h>
 
 #include <QApplication>
 #include <QDBusObjectPath>
@@ -184,8 +185,9 @@ void MprisPlugin::initialise(const CorePluginContext& context)
                              Q_EMIT Seeked(0);
                          }
                      });
-    QObject::connect(m_playerController, &PlayerController::positionMoved, this,
-                     [this](uint64_t ms) { Q_EMIT Seeked(static_cast<qlonglong>(ms) * 1000); });
+    QObject::connect(m_playerController, &PlayerController::positionMoved, this, [this](uint64_t ms) {
+        Q_EMIT Seeked(static_cast<qlonglong>(ms) * static_cast<qlonglong>(Time::UsPerMs));
+    });
     QObject::connect(context.engine, &EngineController::audiblePauseDrainCompleted, this, [this]() {
         if(!m_mprisPausePending || m_playerController->playState() != Player::PlayState::Paused) {
             return;
@@ -412,7 +414,7 @@ QVariantMap MprisPlugin::metadata() const
 
 int64_t MprisPlugin::position() const
 {
-    return static_cast<int64_t>(m_playerController->currentPosition()) * 1000;
+    return static_cast<int64_t>(m_playerController->currentPosition()) * static_cast<int64_t>(Time::UsPerMs);
 }
 
 double MprisPlugin::minimumRate() const
@@ -468,7 +470,7 @@ void MprisPlugin::Play()
 void MprisPlugin::Seek(int64_t offset)
 {
     const int64_t newPosition = std::max<int64_t>(0, position() + offset);
-    m_playerController->seek(static_cast<uint64_t>(newPosition / 1000));
+    m_playerController->seek(static_cast<uint64_t>(newPosition / static_cast<int64_t>(Time::UsPerMs)));
 }
 
 void MprisPlugin::SetPosition(const QDBusObjectPath& path, int64_t position)
@@ -482,7 +484,7 @@ void MprisPlugin::SetPosition(const QDBusObjectPath& path, int64_t position)
         return;
     }
 
-    m_playerController->seek(static_cast<uint64_t>(position / 1000));
+    m_playerController->seek(static_cast<uint64_t>(position / static_cast<int64_t>(Time::UsPerMs)));
 }
 
 QString MprisPlugin::currentCoverPath() const
@@ -552,7 +554,7 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
         };
 
         m_currentMetaData[u"mpris:trackid"_s]   = formatTrackId(playlistTrack);
-        m_currentMetaData[u"mpris:length"_s]    = static_cast<quint64>(track.duration() * 1000);
+        m_currentMetaData[u"mpris:length"_s]    = static_cast<quint64>(track.duration() * Time::UsPerMs);
         m_currentMetaData[u"xesam:url"_s]       = QUrl::fromLocalFile(track.filepath()).toString();
         m_currentMetaData[u"xesam:title"_s]     = track.effectiveTitle();
         m_currentMetaData[u"xesam:album"_s]     = track.album();

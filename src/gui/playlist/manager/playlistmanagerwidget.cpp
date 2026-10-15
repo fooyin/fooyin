@@ -37,6 +37,7 @@
 #include <utils/actions/proxyaction.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/stringcollator.h>
 #include <utils/stringutils.h>
 #include <utils/utils.h>
 
@@ -52,7 +53,6 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QSignalBlocker>
-#include <QSortFilterProxyModel>
 #include <QVBoxLayout>
 
 using namespace Qt::StringLiterals;
@@ -123,7 +123,7 @@ PlaylistManagerWidget::PlaylistManagerWidget(ActionManager* actionManager, Playl
     , m_selectionController{selectionController}
     , m_settings{settings}
     , m_model{new PlaylistManagerModel(playlistInteractor, this)}
-    , m_proxyModel{new QSortFilterProxyModel(this)}
+    , m_proxyModel{new StringSortProxyModel(this)}
     , m_view{new PlaylistManagerView(this)}
     , m_context{new WidgetContext(this, Context{IdList{Id{"Fooyin.Context.PlaylistManager."}.append(id())}}, this)}
     , m_activateAction{new QAction(tr("Activate"), this)}
@@ -234,9 +234,7 @@ void PlaylistManagerWidget::loadLayoutData(const QJsonObject& layout)
 
     resetToPlaylistIndexOrder();
 
-    if(layout.contains(ActivateOnSelection)) {
-        m_activateOnSelection = layout.value(ActivateOnSelection).toBool();
-    }
+    m_activateOnSelection = layout.value(ActivateOnSelection).toBool(m_activateOnSelection);
 }
 
 void PlaylistManagerWidget::finalise()

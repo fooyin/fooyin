@@ -306,9 +306,8 @@ void ProjectMWidget::loadLayoutData(const QJsonObject& layout)
     if(layout.contains(PresetShuffleKey)) {
         m_view->setShuffle(layout.value(PresetShuffleKey).toBool());
     }
-    if(layout.contains(RememberPresetKey)) {
-        m_rememberPreset = layout.value(RememberPresetKey).toBool(true);
-    }
+
+    m_rememberPreset      = layout.value(RememberPresetKey).toBool(m_rememberPreset);
     m_cycleFavouritesOnly = layout.value(CycleFavouritesOnlyKey).toBool(false);
 
     m_config.settings.scanRecursive = layout.value(ScanRecursiveLayoutKey).toBool(m_config.settings.scanRecursive);

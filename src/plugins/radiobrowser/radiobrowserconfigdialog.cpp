@@ -61,7 +61,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     TrackSelectionController::addStandardActions(m_middleClick);
 
     m_playbackOnSend->setToolTip(
-        tr(R"(For "Replace current playlist" and "Create new playlist", start playback immediately)"));
+        tr(R"(For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately)"));
     m_hideBroken->setToolTip(tr("Exclude stations marked as broken by radio-browser.info from search results"));
     m_sendClicks->setToolTip(
         tr("Report played stations to radio-browser.info so click counts and station statistics stay up to date"));
@@ -88,7 +88,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     m_iconHorizontalGap->setSpecialValueText(tr("Auto"));
     m_iconHorizontalGap->setSuffix(u" px"_s);
     m_iconHorizontalGap->setToolTip(
-        tr("Horizontal spacing between stations in icon display mode. Auto uses the view's default spacing."));
+        tr("Horizontal spacing between stations in icon display mode. Auto uses the view’s default spacing."));
 
     m_iconVerticalGap->setRange(0, 256);
     m_iconVerticalGap->setSuffix(u" px"_s);

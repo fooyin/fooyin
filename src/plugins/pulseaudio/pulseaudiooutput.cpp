@@ -19,6 +19,8 @@
 
 #include "pulseaudiooutput.h"
 
+#include <utils/timeconstants.h>
+
 #include <QLoggingCategory>
 
 #include <algorithm>
@@ -292,7 +294,7 @@ OutputState PulseAudioOutput::currentState()
     pa_usec_t latency{0};
     int negative{0};
     if(pa_stream_get_latency(m_stream, &latency, &negative) >= 0 && !negative) {
-        state.delay = static_cast<double>(latency) / 1'000'000.0;
+        state.delay = static_cast<double>(latency) / static_cast<double>(Time::UsPerSecond);
     }
 
     pa_threaded_mainloop_unlock(m_mainLoop.get());

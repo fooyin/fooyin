@@ -36,7 +36,7 @@ enum Type : uint32_t
     StringList = 6 << 28,
     ByteArray  = 7 << 28,
 };
-}
+} // namespace Settings
 
 class FYUTILS_EXPORT SettingsEntry : public QObject
 {
@@ -56,7 +56,7 @@ public:
     bool setValue(const QVariant& value);
     bool setValueSilently(const QVariant& value);
     void setIsTemporary(bool isTemporary);
-    void notifySubscribers();
+    void notifySubscribers(const QVariant& value);
 
     bool reset();
 

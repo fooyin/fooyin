@@ -19,6 +19,7 @@
 
 #include "ffmpegencoder.h"
 
+#include "audioutils.h"
 #include "ffmpegutils.h"
 
 #include <QStringList>
@@ -280,24 +281,6 @@ SelectedSampleFormat selectSampleFormat(const AVCodec* codec, SampleFormat reque
     }
 
     return {.format = formats.front(), .sampleFormat = Utils::sampleFormat(formats.front(), 0)};
-}
-
-bool shouldAutomaticallyDither(SampleFormat input, SampleFormat output)
-{
-    const bool integerOutput = output == SampleFormat::U8 || output == SampleFormat::S16
-                            || output == SampleFormat::S24In32 || output == SampleFormat::S32;
-    if(!integerOutput) {
-        return false;
-    }
-
-    if(input == SampleFormat::F32 || input == SampleFormat::F64) {
-        return true;
-    }
-
-    const AudioFormat inputFormat{input, 1, 1};
-    const AudioFormat outputFormat{output, 1, 1};
-    return inputFormat.isValid() && outputFormat.isValid()
-        && outputFormat.bitsPerSample() < inputFormat.bitsPerSample();
 }
 
 int selectSampleRate(const AVCodec* codec, int requestedRate)
@@ -595,7 +578,7 @@ AudioEncoder::Result FFmpegEncoder::init(const QString& outputPath, const AudioF
 
     m_dither = settings.ditherMode == DitherMode::Always
             || (settings.ditherMode == DitherMode::Automatic
-                && shouldAutomaticallyDither(input.sampleFormat(), selectedFormat.sampleFormat));
+                && Audio::shouldAutomaticallyDither(input.sampleFormat(), selectedFormat.sampleFormat));
 
     const bool constantQuality = settings.profile.mode == EncoderMode::ConstantQuality;
     if(constantQuality) {

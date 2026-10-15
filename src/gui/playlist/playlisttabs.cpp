@@ -25,6 +25,7 @@
 
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
+#include <core/scripting/scripttypes.h>
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
 #include <gui/trackmimedata.h>
@@ -61,6 +62,7 @@
 using namespace std::chrono_literals;
 using namespace Qt::StringLiterals;
 
+constexpr auto PlaylistTabsTitleScriptKey = u"PlaylistTabs/TitleScript";
 constexpr auto PlaylistTabsPositionKey    = u"PlaylistTabs/Position";
 constexpr auto PlaylistTabsExpandKey      = u"PlaylistTabs/ExpandToFill";
 constexpr auto PlaylistTabsAddButtonKey   = u"PlaylistTabs/ShowAddButton";
@@ -109,6 +111,10 @@ PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetP
     m_layout->setAlignment(Qt::AlignTop);
     m_layout->addWidget(m_tabs);
 
+    m_tabs->tabBar()->setEditTextProvider([this](int index) {
+        const auto* playlist = m_playlistHandler->playlistById(m_tabs->tabBar()->tabData(index).value<UId>());
+        return playlist ? playlist->name() : m_tabs->tabBar()->tabText(index);
+    });
     m_tabs->setDocumentMode(true);
     m_tabs->setMovable(true);
 
@@ -132,7 +138,8 @@ PlaylistTabs::ConfigData PlaylistTabs::defaultConfig() const
 {
     auto config{factoryConfig()};
 
-    config.position = static_cast<PlaylistTabPosition>(
+    config.titleScript = m_settings->fileValue(PlaylistTabsTitleScriptKey, config.titleScript).toString();
+    config.position    = static_cast<PlaylistTabPosition>(
         m_settings->fileValue(PlaylistTabsPositionKey, static_cast<int>(config.position)).toInt());
     config.expand             = m_settings->fileValue(PlaylistTabsExpandKey, config.expand).toBool();
     config.showAddButton      = m_settings->fileValue(PlaylistTabsAddButtonKey, config.showAddButton).toBool();
@@ -162,7 +169,11 @@ void PlaylistTabs::applyConfig(const ConfigData& config)
                                                                             : SingleTabbedWidget::TabPosition::Top);
     m_tabs->setTabsClosable(m_config.showCloseButton);
     m_tabs->tabBar()->setExpanding(m_config.expand);
+
     setupButtons();
+
+    refreshTabTitles();
+
     m_tabs->update();
 
     Q_EMIT configChanged();
@@ -170,6 +181,7 @@ void PlaylistTabs::applyConfig(const ConfigData& config)
 
 void PlaylistTabs::saveDefaults(const ConfigData& config) const
 {
+    m_settings->fileSet(PlaylistTabsTitleScriptKey, config.titleScript);
     m_settings->fileSet(PlaylistTabsPositionKey, static_cast<int>(config.position));
     m_settings->fileSet(PlaylistTabsExpandKey, config.expand);
     m_settings->fileSet(PlaylistTabsAddButtonKey, config.showAddButton);
@@ -180,6 +192,7 @@ void PlaylistTabs::saveDefaults(const ConfigData& config) const
 
 void PlaylistTabs::clearSavedDefaults() const
 {
+    m_settings->fileRemove(PlaylistTabsTitleScriptKey);
     m_settings->fileRemove(PlaylistTabsPositionKey);
     m_settings->fileRemove(PlaylistTabsExpandKey);
     m_settings->fileRemove(PlaylistTabsAddButtonKey);
@@ -204,7 +217,7 @@ int PlaylistTabs::addPlaylist(const Playlist* playlist)
         return -1;
     }
 
-    const int index = addNewTab(playlist->name());
+    const int index = addNewTab(playlistTitle(playlist, m_config.titleScript));
     if(index >= 0) {
         m_tabs->tabBar()->setTabData(index, QVariant::fromValue(playlist->id()));
         updateTabIcon(index, Player::PlayState::Stopped);
@@ -282,6 +295,11 @@ void PlaylistTabs::loadLayoutData(const QJsonObject& layout)
 bool PlaylistTabs::canAddWidget() const
 {
     return !m_tabsWidget;
+}
+
+bool PlaylistTabs::canInsertWidget(int index) const
+{
+    return index == 0 && !m_tabsWidget;
 }
 
 bool PlaylistTabs::canMoveWidget(int /*index*/, int /*newIndex*/) const
@@ -390,25 +408,31 @@ void PlaylistTabs::insertWidget(int index, FyWidget* widget)
     addWidget(widget);
 }
 
-void PlaylistTabs::removeWidget(int index)
-{
-    if(index == 0 && m_tabsWidget) {
-        m_tabs->setWidget(nullptr);
-        m_tabsWidget = nullptr;
-    }
-}
-
-void PlaylistTabs::replaceWidget(int index, FyWidget* newWidget)
-{
-    if(index != 0) {
-        return;
-    }
-
-    m_tabsWidget = newWidget;
-    m_tabs->setWidget(m_tabsWidget);
-}
-
 void PlaylistTabs::moveWidget(int /*index*/, int /*newIndex*/) { }
+
+FyWidget* PlaylistTabs::takeWidget(int index)
+{
+    if(index != 0 || !m_tabsWidget) {
+        return nullptr;
+    }
+
+    auto* widget = qobject_cast<FyWidget*>(m_tabs->takeWidget());
+    m_tabsWidget = nullptr;
+    return widget;
+}
+
+QJsonObject PlaylistTabs::saveEditingState() const
+{
+    auto state          = WidgetContainer::saveEditingState();
+    state["Current"_L1] = m_tabs->currentIndex();
+    return state;
+}
+
+void PlaylistTabs::restoreEditingState(const QJsonObject& state)
+{
+    WidgetContainer::restoreEditingState(state);
+    m_tabs->setCurrentIndex(state.value("Current"_L1).toInt(-1));
+}
 
 void PlaylistTabs::changeEvent(QEvent* event)
 {
@@ -700,6 +724,14 @@ void PlaylistTabs::openConfigDialog()
     showConfigDialog(new PlaylistTabsConfigDialog(this, this), Qt::NonModal);
 }
 
+FyWidget* PlaylistTabs::exchangeWidgetImpl(int index, FyWidget* newWidget)
+{
+    auto* previous = takeWidget(index);
+    m_tabsWidget   = newWidget;
+    m_tabs->setWidget(m_tabsWidget);
+    return previous;
+}
+
 void PlaylistTabs::setupConnections()
 {
     QObject::connect(m_tabs->tabBar(), &EditableTabBar::middleClicked, this, [this](const int index) {
@@ -725,8 +757,12 @@ void PlaylistTabs::setupConnections()
         }
     });
     QObject::connect(m_tabs->tabBar(), &EditableTabBar::tabTextChanged, this, [this](int index, const QString& text) {
-        const auto id = m_tabs->tabBar()->tabData(index).value<UId>();
-        m_playlistHandler->renamePlaylist(id, text);
+        const auto id        = m_tabs->tabBar()->tabData(index).value<UId>();
+        const auto* playlist = m_playlistHandler->playlistById(id);
+        if(playlist && text != playlist->name()) {
+            m_playlistHandler->renamePlaylist(id, text);
+            refreshTabTitle(playlist);
+        }
     });
     QObject::connect(m_tabs, &SingleTabbedWidget::currentChanged, this, [this](int index) { tabChanged(index); });
     QObject::connect(m_tabs, &SingleTabbedWidget::tabBarClicked, this, [this](int index) { tabChanged(index); });
@@ -741,8 +777,14 @@ void PlaylistTabs::setupConnections()
                      &PlaylistTabs::activePlaylistChanged);
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistAdded, this, &PlaylistTabs::addPlaylist);
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistRemoved, this, &PlaylistTabs::removePlaylist);
-    QObject::connect(m_playlistHandler, &PlaylistHandler::playlistRenamed, this, &PlaylistTabs::playlistRenamed);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::playlistRenamed, this, &PlaylistTabs::refreshTabTitle);
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistUpdated, this, &PlaylistTabs::playlistUpdated);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksAdded, this, &PlaylistTabs::refreshTabTitle);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksChanged, this, &PlaylistTabs::refreshTabTitle);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksPatched, this, &PlaylistTabs::refreshTabTitle);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksUpdated, this, &PlaylistTabs::refreshTabTitle);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::playlistsPopulated, this, &PlaylistTabs::refreshTabTitles);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksRemoved, this, &PlaylistTabs::refreshTabTitle);
 }
 
 void PlaylistTabs::setupButtons()
@@ -787,24 +829,14 @@ PlaylistTabs::ConfigData PlaylistTabs::configFromLayout(const QJsonObject& layou
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("TabPosition"_L1)) {
-        config.position = static_cast<PlaylistTabPosition>(layout.value("TabPosition"_L1).toInt());
-    }
-    if(layout.contains("ExpandTabs"_L1)) {
-        config.expand = layout.value("ExpandTabs"_L1).toBool();
-    }
-    if(layout.contains("ShowAddButton"_L1)) {
-        config.showAddButton = layout.value("ShowAddButton"_L1).toBool();
-    }
-    if(layout.contains("ShowClearButton"_L1)) {
-        config.showClearButton = layout.value("ShowClearButton"_L1).toBool();
-    }
-    if(layout.contains("ShowCloseButton"_L1)) {
-        config.showCloseButton = layout.value("ShowCloseButton"_L1).toBool();
-    }
-    if(layout.contains("CloseOnMiddleClick"_L1)) {
-        config.closeOnMiddleClick = layout.value("CloseOnMiddleClick"_L1).toBool();
-    }
+    config.titleScript = layout.value("TitleScript"_L1).toString(config.titleScript);
+    config.position
+        = static_cast<PlaylistTabPosition>(layout.value("TabPosition"_L1).toInt(static_cast<int>(config.position)));
+    config.expand             = layout.value("ExpandTabs"_L1).toBool(config.expand);
+    config.showAddButton      = layout.value("ShowAddButton"_L1).toBool(config.showAddButton);
+    config.showClearButton    = layout.value("ShowClearButton"_L1).toBool(config.showClearButton);
+    config.showCloseButton    = layout.value("ShowCloseButton"_L1).toBool(config.showCloseButton);
+    config.closeOnMiddleClick = layout.value("CloseOnMiddleClick"_L1).toBool(config.closeOnMiddleClick);
 
     if(config.position != PlaylistTabPosition::Bottom) {
         config.position = PlaylistTabPosition::Top;
@@ -815,6 +847,7 @@ PlaylistTabs::ConfigData PlaylistTabs::configFromLayout(const QJsonObject& layou
 
 void PlaylistTabs::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
 {
+    layout["TitleScript"_L1]        = config.titleScript;
     layout["TabPosition"_L1]        = static_cast<int>(config.position);
     layout["ExpandTabs"_L1]         = config.expand;
     layout["ShowAddButton"_L1]      = config.showAddButton;
@@ -844,8 +877,15 @@ void PlaylistTabs::tabMoved(int /*from*/, int to) const
     }
 }
 
-void PlaylistTabs::playlistChanged(Playlist* /*oldPlaylist*/, Playlist* playlist)
+void PlaylistTabs::playlistChanged(Playlist* oldPlaylist, Playlist* playlist)
 {
+    if(oldPlaylist && oldPlaylist != playlist) {
+        refreshTabTitle(oldPlaylist);
+    }
+    if(playlist) {
+        refreshTabTitle(playlist);
+    }
+
     if(!m_contextMenuPlaylist.isValid()) {
         m_savePlaylistAction->setEnabled(playlist && playlist->trackCount() > 0);
     }
@@ -868,17 +908,21 @@ void PlaylistTabs::playlistChanged(Playlist* /*oldPlaylist*/, Playlist* playlist
 
 void PlaylistTabs::activePlaylistChanged(Playlist* playlist)
 {
-    if(!playlist) {
-        return;
+    const auto* oldPlaylist = m_playlistHandler->playlistById(m_lastActivePlaylist);
+    if(oldPlaylist && oldPlaylist != playlist) {
+        refreshTabTitle(oldPlaylist);
+    }
+    if(playlist) {
+        refreshTabTitle(playlist);
     }
 
     const int count = m_tabs->tabBar()->count();
-    const UId id    = playlist->id();
+    const UId id    = playlist ? playlist->id() : UId{};
 
     for(int i{0}; i < count; ++i) {
         const auto tabId = m_tabs->tabBar()->tabData(i).value<UId>();
 
-        if(tabId == id) {
+        if(playlist && tabId == id) {
             updateTabIcon(i, m_playlistController->playState());
         }
         else if(!m_lastActivePlaylist.isNull() && tabId == m_lastActivePlaylist) {
@@ -889,26 +933,12 @@ void PlaylistTabs::activePlaylistChanged(Playlist* playlist)
     m_lastActivePlaylist = id;
 }
 
-void PlaylistTabs::playlistRenamed(const Playlist* playlist) const
-{
-    if(!playlist) {
-        return;
-    }
-
-    const int count = m_tabs->tabBar()->count();
-
-    for(int i{0}; i < count; ++i) {
-        if(m_tabs->tabBar()->tabData(i).value<UId>() == playlist->id()) {
-            m_tabs->tabBar()->setTabText(i, playlist->name());
-        }
-    }
-}
-
 void PlaylistTabs::playlistUpdated(const Playlist* playlist)
 {
     if(!playlist) {
         return;
     }
+    refreshTabTitle(playlist);
 
     if(playlist->id() == m_playlistController->currentPlaylistId()) {
         setAcceptDrops(!playlist->isAutoPlaylist() && !playlist->isLocked());
@@ -928,8 +958,11 @@ void PlaylistTabs::playlistUpdated(const Playlist* playlist)
     }
 }
 
-void PlaylistTabs::playStateChanged(Player::PlayState state) const
+void PlaylistTabs::playStateChanged(Player::PlayState state)
 {
+    if(const auto* playlist = m_playlistHandler->activePlaylist()) {
+        refreshTabTitle(playlist);
+    }
     if(!m_lastActivePlaylist.isValid()) {
         return;
     }
@@ -941,6 +974,31 @@ void PlaylistTabs::playStateChanged(Player::PlayState state) const
 
         if(tabId == m_lastActivePlaylist) {
             updateTabIcon(i, state);
+        }
+    }
+}
+
+void PlaylistTabs::refreshTabTitle(const Playlist* playlist)
+{
+    if(!playlist) {
+        return;
+    }
+
+    const int count = m_tabs->tabBar()->count();
+    for(int i{0}; i < count; ++i) {
+        if(m_tabs->tabBar()->tabData(i).value<UId>() == playlist->id()) {
+            m_tabs->tabBar()->setTabText(i, playlistTitle(playlist, m_config.titleScript));
+        }
+    }
+}
+
+void PlaylistTabs::refreshTabTitles()
+{
+    const int count = m_tabs->tabBar()->count();
+    for(int i{0}; i < count; ++i) {
+        const auto id = m_tabs->tabBar()->tabData(i).value<UId>();
+        if(const auto* playlist = m_playlistHandler->playlistById(id)) {
+            m_tabs->tabBar()->setTabText(i, playlistTitle(playlist, m_config.titleScript));
         }
     }
 }
@@ -982,6 +1040,18 @@ void PlaylistTabs::createEmptyPlaylist() const
     if(auto* playlist = m_playlistHandler->createEmptyPlaylist()) {
         m_playlistController->changeCurrentPlaylist(playlist);
     }
+}
+
+QString PlaylistTabs::playlistTitle(const Playlist* playlist, const QString& script)
+{
+    if(!playlist) {
+        return {};
+    }
+
+    const auto parsed = m_parser.parse(script);
+    const ScriptContext context{.playlist = playlist};
+    const QString title = parsed.isValid() ? m_parser.evaluate(parsed, *playlist, context) : QString{};
+    return title.trimmed().isEmpty() ? playlist->name() : title;
 }
 } // namespace Fooyin
 

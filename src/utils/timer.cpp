@@ -37,6 +37,11 @@ std::chrono::milliseconds Timer::elapsed() const
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - m_start);
 }
 
+std::chrono::nanoseconds Timer::elapsedNanoseconds() const
+{
+    return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now() - m_start);
+}
+
 QString Timer::elapsedFormatted() const
 {
     auto elapsedMs     = elapsed();

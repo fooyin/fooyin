@@ -34,10 +34,7 @@ struct FYGUI_EXPORT PaletteKey
     QPalette::ColorRole role;
     QPalette::ColorGroup group{QPalette::All};
 
-    bool operator==(const PaletteKey& other) const
-    {
-        return std::tie(role, group) == std::tie(other.role, other.group);
-    };
+    bool operator==(const PaletteKey& other) const = default;
 
     bool operator<(const PaletteKey& other) const
     {
@@ -69,11 +66,7 @@ struct FYGUI_EXPORT FyTheme
         return !colours.empty() || !fonts.empty();
     }
 
-    bool operator==(const FyTheme& other) const
-    {
-        return std::tie(id, name, index, isDefault, colours, fonts)
-            == std::tie(other.id, other.name, other.index, other.isDefault, other.colours, other.fonts);
-    };
+    bool operator==(const FyTheme& other) const = default;
 
     friend QDataStream& operator<<(QDataStream& stream, const FyTheme& scheme);
     friend QDataStream& operator>>(QDataStream& stream, FyTheme& scheme);

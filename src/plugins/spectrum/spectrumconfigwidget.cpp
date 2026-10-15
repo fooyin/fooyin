@@ -36,6 +36,7 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
+#include <QIntValidator>
 #include <QLabel>
 #include <QSizePolicy>
 #include <QSpinBox>
@@ -239,9 +240,12 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     m_fftDuration->setRange(MinFftDurationMs, MaxFftDurationMs);
     m_fftDuration->setSuffix(u" ms"_s);
 
+    m_updateFps->setEditable(true);
+    m_updateFps->setValidator(new QIntValidator(Gui::FrameRate::minFps(), Gui::FrameRate::maxFps(), m_updateFps));
+
     for(const auto preset : Gui::FrameRate::Presets) {
         const int fps = Gui::FrameRate::toFps(preset);
-        m_updateFps->addItem(tr("%1 fps").arg(fps), fps);
+        m_updateFps->addItem(QString::number(fps), fps);
     }
 
     for(const int fftSize : {256, 512, 1024, 2048, 4096, 8192, 16384}) {
@@ -513,6 +517,9 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
 
 SpectrumWidget::ConfigData SpectrumConfigDialog::config() const
 {
+    bool fpsValid{false};
+    const int fps = m_updateFps->currentText().toInt(&fpsValid);
+
     SpectrumWidget::ConfigData config{
         .bandCount           = m_bandCount->value(),
         .barSpacing          = m_barSpacing->value(),
@@ -532,7 +539,7 @@ SpectrumWidget::ConfigData SpectrumConfigDialog::config() const
         .peaksEnabled        = m_peaksGroup->isChecked(),
         .peakHoldTimeMs      = m_peakHoldTime->value(),
         .peakGravity         = m_peakGravity->value(),
-        .updateFps           = m_updateFps->currentData().toInt(),
+        .updateFps           = fpsValid ? Gui::FrameRate::clampFps(fps) : DefaultUpdateFps,
         .fftSize             = m_fftSize->currentData().toInt(),
         .fftDurationMs       = m_fftDuration->value(),
         .fftSizingMode       = static_cast<FftSizingMode>(m_fftSizingMode->currentData().toInt()),
@@ -605,12 +612,12 @@ void SpectrumConfigDialog::setConfig(const SpectrumWidget::ConfigData& config)
     m_peakHoldTime->setValue(config.peakHoldTimeMs);
     m_peakGravity->setValue(config.peakGravity);
 
-    const int nearestFps = Gui::FrameRate::nearestPresetFps(config.updateFps);
-    int fpsIndex         = m_updateFps->findData(nearestFps);
-    if(fpsIndex < 0) {
-        fpsIndex = m_updateFps->findData(DefaultUpdateFps);
-    }
+    const int fps      = Gui::FrameRate::clampFps(config.updateFps);
+    const int fpsIndex = m_updateFps->findData(fps);
     m_updateFps->setCurrentIndex(fpsIndex);
+    if(fpsIndex < 0) {
+        m_updateFps->setEditText(QString::number(fps));
+    }
 
     int fftIndex = m_fftSize->findData(config.fftSize);
     if(fftIndex < 0) {

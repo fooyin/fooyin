@@ -892,7 +892,7 @@ bool AudioLoader::writeTrackMetadata(const Track& track, AudioReader::WriteOptio
         }
         source.device = &file;
 
-        if(reader->writeTrack(source, track, options)) {
+        if(reader->init(source) && reader->writeTrack(source, track, options)) {
             return true;
         }
     }
@@ -923,7 +923,7 @@ bool AudioLoader::writeTrackCover(const Track& track, const TrackCovers& coverDa
         }
         source.device = &file;
 
-        if(reader->writeCover(source, track, coverData, options)) {
+        if(reader->init(source) && reader->writeCover(source, track, coverData, options)) {
             return true;
         }
     }

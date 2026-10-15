@@ -1,4 +1,5 @@
 set(SOURCES
+    ${CMAKE_SOURCE_DIR}/include/core/accountstore.h
     ${CMAKE_SOURCE_DIR}/include/core/constants.h
     ${CMAKE_SOURCE_DIR}/include/core/coresettings.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audiobuffer.h
@@ -52,7 +53,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/plugins/plugin.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/expression.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptparser.h
-    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptenvironmenthelpers.h
+    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptregistry.h
+    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptdefs.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scripttrackwriter.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scripttypes.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptscanner.h
@@ -62,10 +64,13 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/stringpool.h
     ${CMAKE_SOURCE_DIR}/include/core/track.h
     ${CMAKE_SOURCE_DIR}/include/core/trackmetadatastore.h
+    accountstore.cpp
     application.cpp
     application.h
     corepaths.cpp
     corepaths.h
+    database/accountdatabase.cpp
+    database/accountdatabase.h
     database/database.cpp
     database/database.h
     database/dbschema.cpp
@@ -115,8 +120,6 @@ set(SOURCES
     engine/control/seekplanner.h
     engine/control/trackloadplanner.cpp
     engine/control/trackloadplanner.h
-    engine/control/transitionorchestrator.cpp
-    engine/control/transitionorchestrator.h
     engine/decode/decodercontext.cpp
     engine/decode/decodercontext.h
     engine/decode/decodingcontroller.cpp
@@ -298,6 +301,8 @@ set(SOURCES
     playlist/parsers/cueparser.h
     playlist/parsers/m3uparser.cpp
     playlist/parsers/m3uparser.h
+    playlist/parsers/playlistparserutils.cpp
+    playlist/parsers/playlistparserutils.h
     playlist/parsers/plsparser.cpp
     playlist/parsers/plsparser.h
     playlist/playlist.cpp
@@ -326,11 +331,12 @@ set(SOURCES
     scripting/scriptbinder.cpp
     scripting/scriptcache.h
     scripting/scriptbinder.h
-    scripting/scriptregistry.h
-    scripting/scriptenvironmenthelpers.cpp
+    scripting/scriptevaluator.h
+    scripting/scriptevaluator.cpp
     scripting/scriptparser.cpp
     scripting/scriptregistry.cpp
     scripting/scripttrackwriter.cpp
+    scripting/scripttypes.cpp
     scripting/scriptruntime.cpp
     scripting/scriptruntime.h
     scripting/scriptscanner.cpp

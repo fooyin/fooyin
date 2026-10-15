@@ -23,6 +23,7 @@
 
 #include "filterfwd.h"
 
+#include <core/library/libraryinfo.h>
 #include <core/ratingsymbols.h>
 #include <core/track.h>
 #include <gui/scripting/richtext.h>
@@ -56,7 +57,13 @@ struct FYGUI_EXPORT FilterRowBuildContext
 
 FYGUI_EXPORT FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumnList& columns,
                                            const TrackList& tracks, const FilterRowBuildContext& context);
+FYGUI_EXPORT FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColumnList& columns,
+                                           const TrackList& tracks, const FilterRowBuildContext& context);
 FYGUI_EXPORT FilterRowList patchFilterRows(LibraryManager* libraryManager, const FilterColumnList& columns,
+                                           const FilterRowList& previousRows, const TrackList& previousTracks,
+                                           const TrackList& tracks, const TrackIds& changedTrackIds,
+                                           const FilterRowBuildContext& context);
+FYGUI_EXPORT FilterRowList patchFilterRows(const LibraryInfoMap& libraries, const FilterColumnList& columns,
                                            const FilterRowList& previousRows, const TrackList& previousTracks,
                                            const TrackList& tracks, const TrackIds& changedTrackIds,
                                            const FilterRowBuildContext& context);

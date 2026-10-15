@@ -23,12 +23,12 @@
 #include "playlistitem.h"
 #include "playlistpopulator.h"
 #include "playlistpreset.h"
-#include "scripting/scriptvariableproviders.h"
-
 #include <core/constants.h>
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
+#include <core/player/playercontroller.h>
 #include <core/playlist/playlist.h>
+#include <core/playlist/playlisthandler.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scripttrackwriter.h>
 #include <core/track.h>
@@ -156,7 +156,7 @@ Data mergeUpdatedItemData(const Data& currentData, const Data& updatedData, cons
 bool isEditablePlaylistColumn(const PlaylistColumn& column)
 {
     const QString writeField = normaliseWriteField(column.writeField);
-    return !writeField.isEmpty() && !column.isPixmap && column.field != QString::fromLatin1(PlayingIcon);
+    return !writeField.isEmpty() && !column.isPixmap && column.field != QString::fromLatin1(Constants::PlayingIcon);
 }
 
 QString editStringForTrack(const Track& track, const QString& writeField)
@@ -620,7 +620,7 @@ TrackList collectHeaderTracks(PlaylistItem* header)
 
 QStyleOptionViewItem::Position getIconPosition(const QString& text)
 {
-    const auto iconPos = text.indexOf(QLatin1String(PlayingIcon));
+    const auto iconPos = text.indexOf(QLatin1String(Constants::PlayingIcon));
 
     if(iconPos <= 0) {
         return QStyleOptionViewItem::Left;
@@ -730,6 +730,7 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     : TreeModel{parent}
     , m_audioLoader{audioLoader}
     , m_library{playlistInteractor->library()}
+    , m_playerController{playlistInteractor->playerController()}
     , m_settings{settings}
     , m_styleProvider{styleProvider}
     , m_coverProvider{coverProvider}
@@ -738,7 +739,7 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     , m_playingColour{playingRowColour(*settings)}
     , m_playingFont{settings->value<Settings::Gui::Internal::PlaylistPlayingRowFont>()}
     , m_disabledColour{disabledRowColor()}
-    , m_populator{playlistInteractor->playerController(), settings}
+    , m_populationGeneration{0}
     , m_playlistLoaded{false}
     , m_loadingTextPending{false}
     , m_pixmapPadding{settings->value<Settings::Gui::Internal::PlaylistImagePadding>()}
@@ -756,8 +757,6 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     , m_matchPlayingTrackByIdentity{false}
     , m_currentPlayState{Player::PlayState::Stopped}
 {
-    m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
-    m_populator.setPreloadCount(m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>());
     m_populator.moveToThread(&m_populatorThread);
     m_populatorThread.start();
 
@@ -808,7 +807,10 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     m_settings->subscribe<Settings::Gui::IconTheme>(
         this, [this]() { notifyDataChangedForSubtree({}, {Qt::DecorationRole, Qt::SizeHintRole}); });
 
-    QObject::connect(&m_populator, &PlaylistPopulator::finished, this, [this]() {
+    QObject::connect(&m_populator, &PlaylistPopulator::populationFinished, this, [this](uint64_t generation) {
+        if(generation != m_populationGeneration) {
+            return;
+        }
         const bool loadingTextVisible = shouldShowLoadingText();
         m_playlistLoaded              = true;
         m_loadingTextPending          = false;
@@ -827,18 +829,36 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
 
     QObject::connect(&m_populator, &PlaylistPopulator::populated, this, &PlaylistModel::populateModel);
     QObject::connect(&m_populator, &PlaylistPopulator::populatedTrackGroup, this, &PlaylistModel::populateTrackGroup);
-    QObject::connect(&m_populator, &PlaylistPopulator::headersUpdated, this, &PlaylistModel::updateModel);
+    QObject::connect(&m_populator, &PlaylistPopulator::headersUpdated, this,
+                     [this](uint64_t generation, const ItemKeyMap& data) {
+                         if(generation == m_populationGeneration) {
+                             updateModel(data);
+                         }
+                     });
 
-    QObject::connect(
-        &m_populator, &PlaylistPopulator::tracksUpdated, this,
-        [this](const ItemList& data, const std::set<int>& columnsUpdated) { updateTracks(data, columnsUpdated); });
+    QObject::connect(&m_populator, &PlaylistPopulator::tracksUpdated, this,
+                     [this](uint64_t generation, const ItemList& data, const std::set<int>& columnsUpdated) {
+                         if(generation == m_populationGeneration) {
+                             updateTracks(data, columnsUpdated);
+                         }
+                     });
+
+    QObject::connect(playlistInteractor->handler(), &PlaylistHandler::playlistRenamed, this,
+                     [this](Playlist* playlist) {
+                         if(playlist == m_currentPlaylist) {
+                             updateHeader(playlist);
+                         }
+                     });
+
+    QObject::connect(playlistInteractor, &PlaylistInteractor::playlistRefreshRequested, this,
+                     &PlaylistModel::refreshPlaylistRows);
 
     QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, &PlaylistModel::coverUpdated);
 }
 
 PlaylistModel::~PlaylistModel()
 {
-    m_populator.stopThread();
+    m_populator.closeThread();
     m_populatorThread.quit();
     m_populatorThread.wait();
 }
@@ -1319,9 +1339,34 @@ void PlaylistModel::setMatchPlayingTrackByIdentity(bool enabled)
     }
 }
 
+QModelIndex PlaylistModel::imageColumnGroupIndex(const QModelIndex& index) const
+{
+    return m_currentPreset.showCoverBelowEverySubheader ? index.parent() : topLevelContainerIndex(index);
+}
+
+QModelIndex PlaylistModel::firstImageColumnTrackIndex(const QModelIndex& index) const
+{
+    if(!index.isValid()) {
+        return {};
+    }
+
+    if(m_currentPreset.showCoverBelowEverySubheader) {
+        return index.siblingAtRow(0);
+    }
+
+    const QModelIndex topLevelContainer = topLevelContainerIndex(index);
+    if(!topLevelContainer.isValid()) {
+        return firstLeafIndex(index.siblingAtRow(0));
+    }
+
+    return firstLeafIndex(this->index(0, 0, topLevelContainer));
+}
+
 void PlaylistModel::reset(const PlaylistTrackList& tracks)
 {
     m_populator.stopThread();
+    ++m_populationGeneration;
+    m_indexesPendingRemoval.clear();
 
     const bool loadingTextVisible = shouldShowLoadingText();
     m_playlistLoaded              = false;
@@ -1349,11 +1394,8 @@ void PlaylistModel::reset(const PlaylistTrackList& tracks)
     }
 
     const PlaylistTrackList displayTracks = tracksWithPlayingTrackOverlay(tracks);
-    QMetaObject::invokeMethod(&m_populator, [this, displayTracks] {
-        m_populator.setFont(playlistFont());
-        m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
-        m_populator.setPreloadCount(m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>());
-        m_populator.run(m_currentPlaylist, m_currentPreset, m_columns, displayTracks);
+    QMetaObject::invokeMethod(&m_populator, [populator = &m_populator, request = populationRequest(), displayTracks] {
+        populator->run(request, displayTracks);
     });
 }
 
@@ -1496,9 +1538,8 @@ QModelIndexList PlaylistModel::indexesOfTrackId(int id)
 void PlaylistModel::insertTracks(const TrackGroups& tracks)
 {
     if(m_currentPlaylist) {
-        QMetaObject::invokeMethod(&m_populator, [this, tracks] {
-            m_populator.setFont(playlistFont());
-            m_populator.runTracks(m_currentPlaylist, m_currentPreset, m_columns, tracks);
+        QMetaObject::invokeMethod(&m_populator, [populator = &m_populator, request = populationRequest(), tracks] {
+            populator->runTracks(request, tracks);
         });
     }
 }
@@ -1571,11 +1612,52 @@ void PlaylistModel::refreshTracks(const std::vector<int>& indexes, const std::se
         }
     }
 
-    QMetaObject::invokeMethod(&m_populator, [this, columns, items] {
-        m_populator.setFont(playlistFont());
-        m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
-        m_populator.updateTracks(m_currentPlaylist, m_currentPreset, m_columns, columns, items);
+    QMetaObject::invokeMethod(&m_populator, [populator = &m_populator, request = populationRequest(), columns, items] {
+        populator->updateTracks(request, columns, items);
     });
+}
+
+void PlaylistModel::refreshPlaylistRows(const UId& playlistId, const std::vector<UId>& entryIds)
+{
+    if(m_currentPlaylist && m_currentPlaylist->id() != playlistId) {
+        return;
+    }
+
+    if(!m_playlistLoaded) {
+        QObject::connect(
+            this, &PlaylistModel::playlistLoaded, this,
+            [this, playlistId, entryIds]() { refreshPlaylistRows(playlistId, entryIds); }, Qt::SingleShotConnection);
+        return;
+    }
+
+    std::vector<int> indexes;
+    if(entryIds.empty()) {
+        indexes.reserve(m_trackIndexes.size());
+        for(const auto& index : m_trackIndexes | std::views::keys) {
+            indexes.emplace_back(index);
+        }
+    }
+    else {
+        indexes.reserve(entryIds.size());
+        for(const auto& entryId : entryIds) {
+            if(const int index = playlistIndexForTrackEntry(entryId); index >= 0) {
+                indexes.push_back(index);
+            }
+        }
+        std::ranges::sort(indexes);
+        indexes.erase(std::ranges::unique(indexes).begin(), indexes.end());
+    }
+
+    if(!m_currentPlaylist) {
+        std::erase_if(indexes, [this, &playlistId](int index) {
+            const auto& node = m_nodes.at(m_trackIndexes.at(index));
+            return std::get<PlaylistTrackItem>(node.data()).track().playlistId != playlistId;
+        });
+    }
+
+    if(!indexes.empty()) {
+        refreshTracks(indexes);
+    }
 }
 
 void PlaylistModel::removeTracks(const QModelIndexList& indexes)
@@ -1945,9 +2027,43 @@ PlaylistTrackList PlaylistModel::tracksWithPlayingTrackOverlay(const PlaylistTra
     return displayTracks;
 }
 
+PlaylistPopulationRequest PlaylistModel::populationRequest()
+{
+    Q_ASSERT(QThread::currentThread() == thread());
+
+    PlaylistPopulationRequest request;
+    request.generation   = m_populationGeneration;
+    request.stopToken    = m_populator.prepareWork();
+    request.playlistId   = m_currentPlaylist ? m_currentPlaylist->id() : UId{};
+    request.trackCount   = m_currentPlaylist ? m_currentPlaylist->trackCount() : 0;
+    request.preset       = m_currentPreset;
+    request.columns      = m_columns;
+    request.font         = playlistFont();
+    request.preloadCount = m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>();
+    request.playingTrack = m_playerController->currentPlaylistTrack();
+    request.queueTotal   = m_playerController->playbackQueue().trackCount();
+
+    const bool showQueueIndexes = m_playerController->playbackQueueMode() == PlaybackQueueMode::PlaylistWithOverrides
+                               && m_settings->value<Settings::Gui::PlaylistShowQueueIndexes>();
+    if(showQueueIndexes && m_currentPlaylist) {
+        request.queueIndexes = m_playerController->playbackQueue().indexesForPlaylist(request.playlistId);
+    }
+
+    request.scriptData                         = makePlaybackScriptData(m_playerController);
+    request.scriptData.playlistData.playlistId = request.playlistId;
+    request.scriptData.playlistData.name       = m_currentPlaylist ? m_currentPlaylist->name() : QString{};
+    request.scriptData.playlistData.trackCount = request.trackCount;
+    request.scriptOptions = {.trackListContextPolicy = TrackListContextPolicy::Placeholder,
+                             .trackListPlaceholder   = u"|Loading|"_s,
+                             .escapeRichText         = true,
+                             .useVariousArtists      = m_settings->value<Settings::Core::UseVariousForCompilations>(),
+                             .ratingSymbols          = Gui::ratingStarSymbols(*m_settings)};
+    return request;
+}
+
 void PlaylistModel::populateModel(PendingData data)
 {
-    if(m_currentPlaylist && m_currentPlaylist->id() != data.playlistId) {
+    if(data.generation != m_populationGeneration || (m_currentPlaylist && m_currentPlaylist->id() != data.playlistId)) {
         return;
     }
 
@@ -2009,7 +2125,7 @@ void PlaylistModel::populateModel(PendingData data)
 
 void PlaylistModel::populateTrackGroup(PendingData data)
 {
-    if(m_currentPlaylist && m_currentPlaylist->id() != data.playlistId) {
+    if(data.generation != m_populationGeneration || (m_currentPlaylist && m_currentPlaylist->id() != data.playlistId)) {
         return;
     }
 
@@ -2414,16 +2530,16 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
 
             const QString field = m_columns.at(column).field;
 
-            if(field == QLatin1String(Constants::FrontCover)) {
+            if(field == QLatin1StringView(Constants::FrontCover)) {
                 return getCover(Track::Cover::Front);
             }
-            if(field == QLatin1String(Constants::BackCover)) {
+            if(field == QLatin1StringView(Constants::BackCover)) {
                 return getCover(Track::Cover::Back);
             }
-            if(field == QLatin1String(Constants::ArtistPicture)) {
+            if(field == QLatin1StringView(Constants::ArtistPicture)) {
                 return getCover(Track::Cover::Artist);
             }
-            if(field == QLatin1String(PlayingIcon) && isPlaying) {
+            if(field == QLatin1StringView(Constants::PlayingIcon) && isPlaying) {
                 break;
             }
 
@@ -2507,7 +2623,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
             return trackItem.size(column);
         }
         case Qt::DecorationRole: {
-            if(singleColumnMode || m_columns.at(column).field.contains(QLatin1String(PlayingIcon))) {
+            if(singleColumnMode || m_columns.at(column).field.contains(QLatin1String(Constants::PlayingIcon))) {
                 if(!track.isEnabled()) {
                     return Gui::pixmapFromTheme(Constants::Icons::Close);
                 }
@@ -2547,34 +2663,30 @@ QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) con
         return {};
     }
 
-    const auto height = header.height();
+    const int coverSize = std::max(0, header.height() - (2 * m_currentPreset.header.artworkPaddingVertical));
 
     switch(role) {
         case PlaylistItem::Role::UniformHeightKey:
-            return uniformHeightKey(PlaylistItem::Header, height);
+            return uniformHeightKey(PlaylistItem::Header, header.height());
         case PlaylistItem::Role::Title:
             return header.title();
-        case PlaylistItem::Role::Simple:
-            return m_currentPreset.header.simple;
-        case PlaylistItem::Role::Subtitle:
-            return header.subtitle();
-        case PlaylistItem::Role::Info:
-            return header.info();
-        case PlaylistItem::Role::Right:
-            return header.sideText();
+        case PlaylistItem::Role::ImagePadding:
+            return m_currentPreset.header.artworkPadding;
+        case PlaylistItem::Role::ImagePaddingTop:
+            return m_currentPreset.header.artworkPaddingVertical;
         case Qt::DecorationRole: {
-            if(m_currentPreset.header.simple || !m_currentPreset.header.showCover) {
+            if(!m_currentPreset.header.showCover || coverSize <= 0) {
                 return {};
             }
             if(header.coverTrack().has_value()) {
-                return m_coverProvider->trackCoverThumbnail(*header.coverTrack(), QSize{height, height},
+                return m_coverProvider->trackCoverThumbnail(*header.coverTrack(), QSize{coverSize, coverSize},
                                                             Track::Cover::Front);
             }
             return {};
         }
         case PlaylistItem::Role::CoverKey:
-            if(!m_currentPreset.header.simple && m_currentPreset.header.showCover && header.coverTrack().has_value()) {
-                return m_coverProvider->thumbnailCacheKey(*header.coverTrack(), QSize{height, height},
+            if(m_currentPreset.header.showCover && coverSize > 0 && header.coverTrack().has_value()) {
+                return m_coverProvider->thumbnailCacheKey(*header.coverTrack(), QSize{coverSize, coverSize},
                                                           Track::Cover::Front);
             }
             break;
@@ -3248,9 +3360,8 @@ void PlaylistModel::updateHeaders()
         updatedHeaders.emplace_back(*header, collectHeaderTracks(header));
     }
 
-    QMetaObject::invokeMethod(&m_populator, [this, updatedHeaders]() {
-        m_populator.setFont(playlistFont());
-        m_populator.updateHeaders(m_currentPlaylist, m_currentPreset, updatedHeaders);
+    QMetaObject::invokeMethod(&m_populator, [populator = &m_populator, request = populationRequest(), updatedHeaders] {
+        populator->updateHeaders(request, updatedHeaders);
     });
 }
 
@@ -3332,24 +3443,6 @@ QModelIndex PlaylistModel::firstLeafIndex(const QModelIndex& index) const
     return leaf;
 }
 
-QModelIndex PlaylistModel::firstImageColumnTrackIndex(const QModelIndex& index) const
-{
-    if(!index.isValid()) {
-        return {};
-    }
-
-    if(m_currentPreset.showCoverBelowEverySubheader) {
-        return index.siblingAtRow(0);
-    }
-
-    const QModelIndex topLevelContainer = topLevelContainerIndex(index);
-    if(!topLevelContainer.isValid()) {
-        return firstLeafIndex(index.siblingAtRow(0));
-    }
-
-    return firstLeafIndex(this->index(0, 0, topLevelContainer));
-}
-
 std::vector<int> PlaylistModel::pixmapColumns() const
 {
     std::vector<int> columns;
@@ -3408,9 +3501,7 @@ void PlaylistModel::updateLivePlaybackDependencies()
         return;
     }
 
-    const auto leftDependencies  = dependenciesForScript(parser.parse(m_currentPreset.track.leftText.script));
-    const auto rightDependencies = dependenciesForScript(parser.parse(m_currentPreset.track.rightText.script));
-    const auto dependencies      = leftDependencies | rightDependencies;
+    const auto dependencies = dependenciesForScript(parser.parse(m_currentPreset.track.text.script));
 
     m_singleColumnHasPositionDependency      = dependencies.testFlag(Position);
     m_singleColumnHasBitrateDependency       = dependencies.testFlag(Bitrate);

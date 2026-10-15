@@ -116,14 +116,16 @@ void ScriptTextEdit::setText(const QString& text)
 QSize ScriptTextEdit::sizeHint() const
 {
     QSize hint = QPlainTextEdit::sizeHint();
-    hint.rheight() += m_toolArea->height();
+    hint.setHeight((3 * fontMetrics().lineSpacing()) + (2 * frameWidth()) + viewportMargins().bottom()
+                   + m_toolArea->height());
     return hint;
 }
 
 QSize ScriptTextEdit::minimumSizeHint() const
 {
     QSize hint = QPlainTextEdit::minimumSizeHint();
-    hint.rheight() += m_toolArea->height();
+    hint.setHeight((3 * fontMetrics().lineSpacing()) + (2 * frameWidth()) + viewportMargins().bottom()
+                   + m_toolArea->height());
     return hint;
 }
 

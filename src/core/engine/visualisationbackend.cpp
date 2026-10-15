@@ -19,6 +19,10 @@
 
 #include "visualisationbackend.h"
 
+#include "audioutils.h"
+
+#include <utils/timeconstants.h>
+
 #include <QLoggingCategory>
 
 #include <algorithm>
@@ -67,23 +71,6 @@ int previousPowerOfTwo(int value)
         power *= 2;
     }
     return power;
-}
-
-float spectrumWindowGain(Fooyin::VisualisationSession::SpectrumWindowFunction windowFunction, float phase)
-{
-    using WindowFunction = Fooyin::VisualisationSession::SpectrumWindowFunction;
-
-    switch(windowFunction) {
-        case WindowFunction::BlackmanHarris:
-            return 0.35875F - (0.48829F * std::cos(phase)) + (0.14128F * std::cos(2.0F * phase))
-                 - (0.01168F * std::cos(3.0F * phase));
-        case WindowFunction::Hann:
-            return 0.5F * (1.0F - std::cos(phase));
-        case WindowFunction::None:
-            return 1.0F;
-    }
-
-    return 1.0F;
 }
 
 } // namespace
@@ -277,7 +264,7 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
     const uint64_t reportedStartFrame = msToFrames(frame.streamTimeMs, sampleRate);
     const uint64_t reportedNextFrame  = reportedStartFrame + static_cast<uint64_t>(frameCount);
     const bool hasPresentationTime    = frame.presentationTime != std::chrono::steady_clock::time_point{};
-    const auto presentationDuration   = std::chrono::nanoseconds{(static_cast<uint64_t>(frameCount) * 1'000'000'000ULL)
+    const auto presentationDuration   = std::chrono::nanoseconds{(static_cast<uint64_t>(frameCount) * Time::NsPerSecond)
                                                                  / static_cast<uint64_t>(sampleRate)};
     const auto reportedNextPresentationTime = frame.presentationTime + presentationDuration;
 
@@ -352,7 +339,7 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
     }
 
     const uint64_t visualStartFrame = m_nextStreamFrame;
-    const uint64_t visualStartMs    = (visualStartFrame * 1000ULL) / static_cast<uint64_t>(sampleRate);
+    const uint64_t visualStartMs    = (visualStartFrame * Time::MsPerSecond) / static_cast<uint64_t>(sampleRate);
 
     auto& sourceTimeline              = m_sourceTimelines[sourceKey];
     sourceTimeline.nextFrame          = reportedNextFrame;
@@ -364,13 +351,21 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
         m_currentStreamId = frame.streamId;
     }
 
+    if(hasPresentationTime) {
+        const auto lead = std::clamp(
+            frame.presentationTime - std::chrono::steady_clock::now(), std::chrono::steady_clock::duration::zero(),
+            std::chrono::duration_cast<std::chrono::steady_clock::duration>(Audio::MaxPresentationDelay));
+        const auto leadMs    = static_cast<uint64_t>(std::chrono::ceil<std::chrono::milliseconds>(lead).count());
+        m_presentationLeadMs = std::max(m_presentationLeadMs, leadMs);
+    }
+
     const size_t requiredFrames = std::max<size_t>(
         static_cast<size_t>(frameCount), requestedBacklogFrames(sampleRate) + static_cast<size_t>(frameCount));
     ensureCapacity(requiredFrames);
     appendFrames(std::span{frame.samples.data(), sampleCount}, static_cast<size_t>(frameCount), channelCount,
                  visualStartFrame);
 
-    const uint64_t availableEndMs      = (m_nextStreamFrame * 1000ULL) / static_cast<uint64_t>(sampleRate);
+    const uint64_t availableEndMs      = (m_nextStreamFrame * Time::MsPerSecond) / static_cast<uint64_t>(sampleRate);
     const CurrentTimeSnapshot snapshot = currentTimeSnapshot();
     if(availableEndMs > 0 && (!snapshot.published || snapshot.timeMs == 0)) {
         publishCurrentTime(availableEndMs, 0, true, false);
@@ -618,7 +613,7 @@ uint64_t VisualisationBackend::mapSourceTimeToVisualTime(uint32_t streamId, uint
     }
 
     if(m_format.isValid() && m_format.sampleRate() > 0 && m_nextStreamFrame > m_startStreamFrame) {
-        return (m_nextStreamFrame * 1000ULL) / static_cast<uint64_t>(m_format.sampleRate());
+        return (m_nextStreamFrame * Time::MsPerSecond) / static_cast<uint64_t>(m_format.sampleRate());
     }
 
     return sourceTimeMs;
@@ -638,7 +633,7 @@ bool VisualisationBackend::fillWindow(VisualisationSession::PcmWindow& out, uint
     const int sampleRate = m_format.sampleRate();
 
     out.frameCount  = frameCount;
-    out.startTimeMs = (startFrame * 1000ULL) / static_cast<uint64_t>(sampleRate);
+    out.startTimeMs = (startFrame * Time::MsPerSecond) / static_cast<uint64_t>(sampleRate);
     out.samples.resize(static_cast<size_t>(frameCount) * static_cast<size_t>(out.format.channelCount()));
 
     const int sourceChannels = m_format.channelCount();
@@ -801,7 +796,7 @@ uint64_t VisualisationBackend::msToFrames(uint64_t ms, int sampleRate)
         return 0;
     }
 
-    return (ms * static_cast<uint64_t>(sampleRate)) / 1000ULL;
+    return (ms * static_cast<uint64_t>(sampleRate)) / Time::MsPerSecond;
 }
 
 int VisualisationBackend::spectrumFramesForDuration(uint64_t durationMs) const
@@ -815,7 +810,8 @@ int VisualisationBackend::spectrumFramesForDuration(uint64_t durationMs) const
         return 0;
     }
 
-    const uint64_t requestedFrames = std::max<uint64_t>(MinimumSpectrumFrameCount, (durationMs * sampleRate) / 1000ULL);
+    const uint64_t requestedFrames
+        = std::max<uint64_t>(MinimumSpectrumFrameCount, (durationMs * sampleRate) / Time::MsPerSecond);
     if(requestedFrames > static_cast<uint64_t>(std::numeric_limits<int>::max())) {
         return 0;
     }
@@ -825,12 +821,13 @@ int VisualisationBackend::spectrumFramesForDuration(uint64_t durationMs) const
 
 void VisualisationBackend::resetLocked()
 {
-    m_headFrame        = 0;
-    m_frameCount       = 0;
-    m_startStreamFrame = 0;
-    m_nextStreamFrame  = 0;
-    m_currentStreamId  = 0;
-    m_format           = AudioFormat{SampleFormat::F32, 0, 0};
+    m_presentationLeadMs = 0;
+    m_headFrame          = 0;
+    m_frameCount         = 0;
+    m_startStreamFrame   = 0;
+    m_nextStreamFrame    = 0;
+    m_currentStreamId    = 0;
+    m_format             = AudioFormat{SampleFormat::F32, 0, 0};
     m_sourceTimelines.clear();
 }
 
@@ -845,6 +842,8 @@ void VisualisationBackend::ensureCapacity(size_t requiredFrames)
         return;
     }
 
+    // Leave room for latency changes
+    requiredFrames = std::max(requiredFrames, m_capacityFrames + (m_capacityFrames / 2));
     std::vector<float> newSamples(requiredFrames * channelCount, 0.0);
 
     for(size_t frameIndex{0}; frameIndex < m_frameCount; ++frameIndex) {
@@ -872,7 +871,7 @@ size_t VisualisationBackend::requestedBacklogFrames(int sampleRate) const
     }
 
     const AudioFormat format{SampleFormat::F32, sampleRate, std::max(1, m_format.channelCount())};
-    return static_cast<size_t>(format.framesForDuration(requestedBacklogMs + BacklogPaddingMs));
+    return static_cast<size_t>(format.framesForDuration(requestedBacklogMs + BacklogPaddingMs + m_presentationLeadMs));
 }
 
 void VisualisationBackend::appendFrames(std::span<const float> samples, size_t frameCount, int channelCount,

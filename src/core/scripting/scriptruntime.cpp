@@ -21,12 +21,16 @@
 
 #include <core/constants.h>
 #include <core/library/tracksort.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/scripting/scripttypes.h>
 #include <utils/helpers.h>
+#include <utils/scopeguard.h>
 #include <utils/stringutils.h>
 #include <utils/utils.h>
 
 #include <QDir>
+#include <QScopedValueRollback>
+
+#include <optional>
 
 using namespace Qt::StringLiterals;
 
@@ -218,8 +222,9 @@ Expression normaliseQueryField(Expression field)
 }
 } // namespace
 
-ScriptRuntime::ScriptRuntime()
-    : m_registry{std::make_unique<ScriptRegistry>()}
+ScriptRuntime::ScriptRuntime(ScriptRegistry* registry)
+    : m_registry{registry}
+    , m_evaluator{registry}
     , m_isQuery{false}
     , m_sortOrder{Qt::AscendingOrder}
     , m_limit{0}
@@ -227,16 +232,6 @@ ScriptRuntime::ScriptRuntime()
 { }
 
 ScriptRuntime::~ScriptRuntime() = default;
-
-void ScriptRuntime::addProvider(const ScriptVariableProvider& provider)
-{
-    m_registry->addProvider(provider);
-}
-
-void ScriptRuntime::addProvider(const ScriptFunctionProvider& provider)
-{
-    m_registry->addProvider(provider);
-}
 
 void ScriptRuntime::advance()
 {
@@ -459,7 +454,7 @@ Expression ScriptRuntime::function()
     FuncValue funcExpr;
     funcExpr.name = m_previous.value.toString().toLower();
 
-    if(resolveBuiltInFunctionKind(funcExpr.name) == FunctionKind::Generic && !m_registry->isFunction(funcExpr.name)) {
+    if(m_registry->isFinalised() && m_registry->resolveFunctionId(funcExpr.name) == InvalidScriptFunctionId) {
         error(u"Function not found"_s);
     }
 
@@ -936,10 +931,10 @@ ScriptResult ScriptRuntime::evalExpression(const BoundExpression& exp, const aut
 ScriptResult ScriptRuntime::evalVariable(const BoundExpression& exp, const auto& tracks)
 {
     const auto& var     = std::get<QString>(exp.value);
-    ScriptResult result = m_registry->value(exp.variableKind, var, makeScriptSubject(tracks));
+    ScriptResult result = m_evaluator.value(exp.variableKind, var, makeScriptSubject(tracks));
 
     if(!result.cond) {
-        return {};
+        return {.value = m_missingVariableText, .cond = false};
     }
 
     if(result.value.contains(QLatin1String{Constants::UnitSeparator})) {
@@ -951,8 +946,12 @@ ScriptResult ScriptRuntime::evalVariable(const BoundExpression& exp, const auto&
 
 ScriptResult ScriptRuntime::evalVariableList(const BoundExpression& exp, const auto& tracks)
 {
-    const auto& var = std::get<QString>(exp.value);
-    return m_registry->value(exp.variableKind, var, makeScriptSubject(tracks));
+    const auto& var     = std::get<QString>(exp.value);
+    ScriptResult result = m_evaluator.value(exp.variableKind, var, makeScriptSubject(tracks));
+    if(!result.cond && !m_missingVariableText.isEmpty()) {
+        result.value = m_missingVariableText;
+    }
+    return result;
 }
 
 ScriptResult ScriptRuntime::evalVariableRaw(const BoundExpression& exp, const auto& tracks)
@@ -969,7 +968,7 @@ ScriptResult ScriptRuntime::evalVariableRaw(const BoundExpression& exp, const au
     result.cond = !result.value.isEmpty();
 
     if(!result.cond) {
-        return {};
+        return {.value = m_missingVariableText, .cond = false};
     }
 
     if(result.value.contains(QLatin1String{Constants::UnitSeparator})) {
@@ -1235,7 +1234,7 @@ ScriptResult ScriptRuntime::evalFunction(const BoundExpression& exp, const auto&
     args.reserve(func.args.size());
     std::ranges::transform(func.args, std::back_inserter(args),
                            [this, &tracks](const BoundExpression& arg) { return evalExpression(arg, tracks); });
-    return m_registry->function(func.functionId, func.name, args, makeScriptSubject(tracks));
+    return m_evaluator.function(func.functionId, func.name, args, makeScriptSubject(tracks));
 }
 
 ScriptResult ScriptRuntime::evalFunctionArg(const BoundExpression& exp, const auto& tracks)
@@ -1570,9 +1569,11 @@ ScriptResult ScriptRuntime::evalSort(const BoundExpression& exp)
 
 ParsedScript ScriptRuntime::parse(const QString& input, ScriptScanner::WhitespaceMode whitespaceMode)
 {
-    if(input.isEmpty()) {
+    if(input.isEmpty() || !m_registry->beginOperation()) {
         return {};
     }
+
+    const auto operation = scopeGuard([this]() { m_registry->endOperation(); });
 
     m_isQuery = false;
     m_scanner.setWhitespaceMode(whitespaceMode);
@@ -1614,9 +1615,11 @@ ParsedScript ScriptRuntime::parse(const QString& input, ScriptScanner::Whitespac
 
 ParsedScript ScriptRuntime::parseQuery(const QString& input)
 {
-    if(input.isEmpty()) {
+    if(input.isEmpty() || !m_registry->beginOperation()) {
         return {};
     }
+
+    const auto operation = scopeGuard([this]() { m_registry->endOperation(); });
 
     m_isQuery = true;
     m_scanner.setWhitespaceMode(ScriptScanner::WhitespaceMode::IgnoreAll);
@@ -1663,7 +1666,13 @@ const BoundScript& ScriptRuntime::bind(const ParsedScript& input)
         }
     }
 
-    BoundScript bound = bindScript(input, m_registry.get());
+    if(!m_registry->isFinalised()) {
+        qWarning() << "Cannot bind a script before registration is finalised";
+        m_currentBoundScript = {};
+        return m_currentBoundScript;
+    }
+
+    BoundScript bound = bindScript(input, m_registry, !m_isQuery);
 
     if(input.cacheId == 0) {
         m_currentBoundScript = std::move(bound);
@@ -1674,27 +1683,35 @@ const BoundScript& ScriptRuntime::bind(const ParsedScript& input)
     return *cache.find(input.cacheId);
 }
 
-QString ScriptRuntime::evaluate(const ParsedScript& input, const Track& track)
+QString ScriptRuntime::evaluate(const ParsedScript& input, const Track& track, const ScriptEvaluationOptions& options)
 {
-    return evaluateImpl(input, track);
+    return evaluateImpl(input, track, options);
 }
 
-QString ScriptRuntime::evaluate(const ParsedScript& input, const TrackList& tracks)
+QString ScriptRuntime::evaluate(const ParsedScript& input, const TrackList& tracks,
+                                const ScriptEvaluationOptions& options)
 {
-    return evaluateImpl(input, tracks);
+    return evaluateImpl(input, tracks, options);
 }
 
-QString ScriptRuntime::evaluate(const ParsedScript& input, const Playlist& playlist)
+QString ScriptRuntime::evaluate(const ParsedScript& input, const Playlist& playlist,
+                                const ScriptEvaluationOptions& options)
 {
-    return evaluateImpl(input, playlist);
+    return evaluateImpl(input, playlist, options);
 }
 
 template <typename Tracks>
-QString ScriptRuntime::evaluateImpl(const ParsedScript& input, const Tracks& tracks)
+QString ScriptRuntime::evaluateImpl(const ParsedScript& input, const Tracks& tracks,
+                                    const ScriptEvaluationOptions& options)
 {
-    if(!input.isValid()) {
+    if(!input.isValid() || !m_registry->beginOperation()) {
         return {};
     }
+
+    const auto evaluation = scopeGuard([this]() { m_registry->endOperation(); });
+
+    const QScopedValueRollback evaluationOptions{m_evaluator.options, options};
+    const QScopedValueRollback missingVariableText{m_missingVariableText, options.missingVariableText};
 
     const BoundScript& bound = bind(input);
     if(!bound.isValid()) {
@@ -1722,23 +1739,23 @@ QString ScriptRuntime::evaluateImpl(const ParsedScript& input, const Tracks& tra
                 m_currentResult.push_back(evalExpr.value);
             }
             else {
-                std::ranges::transform(m_currentResult, m_currentResult.begin(),
-                                       [&](const QString& retValue) -> QString { return retValue + evalExpr.value; });
+                for(auto& result : m_currentResult) {
+                    result.append(evalExpr.value);
+                }
             }
         }
     }
 
+    QString result;
     if(m_currentResult.size() == 1) {
         // Calling join on a QStringList with a single empty string will return a null QString, so return the first
         // result.
-        return m_currentResult.constFirst();
+        result = m_currentResult.constFirst();
     }
-
-    if(m_currentResult.size() > 1) {
-        return m_currentResult.join(QLatin1String{Constants::UnitSeparator});
+    else if(m_currentResult.size() > 1) {
+        result = m_currentResult.join(QLatin1StringView{Constants::UnitSeparator});
     }
-
-    return {};
+    return result;
 }
 
 template <typename TrackListType, typename UpdateContext>
@@ -1746,9 +1763,11 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
                                            const ScriptSearchOptions& options, const ScriptContext& context,
                                            UpdateContext&& updateContext)
 {
-    if(!input.isValid()) {
+    if(!input.isValid() || !m_registry->beginOperation()) {
         return {};
     }
+
+    const auto evaluation = scopeGuard([this]() { m_registry->endOperation(); });
 
     const BoundScript bound = bind(input);
     if(!bound.isValid()) {
@@ -1762,6 +1781,27 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
     const bool wasQuery             = std::exchange(m_isQuery, false);
     const ParsedScript searchScript = useSearchScript ? parse(options.script) : ParsedScript{};
     m_isQuery                       = wasQuery;
+
+    ScriptPlaylistData row;
+    if(context.playlistData) {
+        row = *context.playlistData;
+    }
+
+    ScriptContext queryContext{context};
+    if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
+        queryContext.playlistData = &row;
+    }
+
+    const auto applyItemContext = [&](const auto& item) {
+        if(updateContext) {
+            updateContext(item);
+        }
+        if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
+            row.playlistId = item.playlistId;
+            row.entryId    = item.entryId;
+            row.trackIndex = item.indexInPlaylist;
+        }
+    };
 
     const auto literalMatches = [&](const auto& item, const QString& search, bool phraseMatch) {
         const Track& track = [&]() -> const Track& {
@@ -1780,13 +1820,11 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
             return false;
         }
 
-        if(updateContext) {
-            updateContext(item);
-        }
+        applyItemContext(item);
 
         const bool wasQueryEval = m_isQuery;
         m_isQuery               = false;
-        const QString text      = m_registry->withContext(context, [&] { return evaluate(searchScript, track); });
+        const QString text      = m_evaluator.withContext(queryContext, [&] { return evaluate(searchScript, track); });
         m_isQuery               = wasQueryEval;
         return TrackQueryFilter::matchesSearch(text, search, options.mode, phraseMatch);
     };
@@ -1814,12 +1852,15 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
                     return literalMatches(track, search, expr.type == Expr::QuotedLiteral);
                 }
 
-                if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
-                    return evalExpression(expr, track.track).cond;
-                }
-                else {
-                    return evalExpression(expr, track).cond;
-                }
+                applyItemContext(track);
+                return m_evaluator.withContext(queryContext, [&] {
+                    if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
+                        return evalExpression(expr, track.track).cond;
+                    }
+                    else {
+                        return evalExpression(expr, track).cond;
+                    }
+                });
             });
 
             if(matches) {
@@ -1829,7 +1870,7 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
     }
 
     if(!m_sortScript.isEmpty()) {
-        TrackSorter m_sorter;
+        TrackSorter sorter{context.libraries ? *context.libraries : LibraryInfoMap{}, m_registry};
         ParsedScript sort = parse(m_sortScript);
         if(sort.expressions.size() == 1) {
             auto& sortExpr = sort.expressions.front();
@@ -1838,10 +1879,10 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
             }
         }
         if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
-            filteredTracks = m_sorter.calcSortTracks(sort, filteredTracks, PlaylistTrack::extractor, m_sortOrder);
+            filteredTracks = sorter.calcSortTracks(sort, filteredTracks, PlaylistTrack::extractor, m_sortOrder);
         }
         else {
-            filteredTracks = m_sorter.calcSortTracks(sort, filteredTracks, m_sortOrder);
+            filteredTracks = sorter.calcSortTracks(sort, filteredTracks, m_sortOrder);
         }
     }
 

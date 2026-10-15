@@ -57,6 +57,7 @@ public:
         Suffix,
         SpecialValueText,
         StableKey,
+        SearchText,
     };
 
     explicit AdvancedSettingsModel(AdvancedSettingsRegistry* registry, QObject* parent = nullptr);
@@ -64,11 +65,13 @@ public:
     void load();
     void apply();
     void reset();
-    [[nodiscard]] QString validationError() const;
 
-    [[nodiscard]] QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    [[nodiscard]] QString validationError() const;
+    [[nodiscard]] static QString searchText(const AdvancedSettingDescriptor& descriptor);
+
+    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
-    bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
 private:
     [[nodiscard]] AdvancedNode* appendNode(AdvancedNode* parent, AdvancedItemType type, QString label);

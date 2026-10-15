@@ -21,7 +21,7 @@
 
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
-#include <gui/layoutprovider.h>
+#include <gui/layout/layoutprovider.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>

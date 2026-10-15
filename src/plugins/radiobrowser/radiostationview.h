@@ -38,7 +38,6 @@ public:
     [[nodiscard]] AutoHeaderView* stationHeader() const;
 
     void clearSort();
-    void finaliseView(const QByteArray& headerState);
     void resetColumnsToDefault();
     void setEmptyText(const QString& text);
     void setFailureText(const QString& text);

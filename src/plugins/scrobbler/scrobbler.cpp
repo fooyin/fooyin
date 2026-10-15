@@ -60,11 +60,13 @@ QString trackStatsSyncKey(const ScrobblerService* service, const Fooyin::Track& 
 } // namespace
 
 Scrobbler::Scrobbler(PlayerController* playerController, MusicLibrary* library,
-                     std::shared_ptr<NetworkAccessManager> network, SettingsManager* settings)
+                     std::shared_ptr<NetworkAccessManager> network, SettingsManager* settings,
+                     DbConnectionPoolPtr dbPool)
     : m_playerController{playerController}
     , m_library{library}
     , m_network{std::move(network)}
     , m_settings{settings}
+    , m_dbPool{std::move(dbPool)}
 {
     addDefaultServices();
     restoreServices();
@@ -123,9 +125,9 @@ std::unique_ptr<ScrobblerService> Scrobbler::createCustomService(const ServiceDe
 {
     switch(details.customType) {
         case ServiceDetails::CustomType::AudioScrobbler:
-            return std::make_unique<LibreFmService>(details, m_network.get(), m_settings);
+            return std::make_unique<LibreFmService>(details, m_network.get(), m_settings, m_dbPool);
         case ServiceDetails::CustomType::ListenBrainz:
-            return std::make_unique<ListenBrainzService>(details, m_network.get(), m_settings);
+            return std::make_unique<ListenBrainzService>(details, m_network.get(), m_settings, m_dbPool);
         case ServiceDetails::CustomType::None:
             break;
     }
@@ -140,12 +142,15 @@ ScrobblerService* Scrobbler::addCustomService(const ServiceDetails& details, boo
     switch(details.customType) {
         case ServiceDetails::CustomType::AudioScrobbler:
             service
-                = m_services.emplace_back(std::make_unique<LibreFmService>(details, m_network.get(), m_settings)).get();
+                = m_services
+                      .emplace_back(std::make_unique<LibreFmService>(details, m_network.get(), m_settings, m_dbPool))
+                      .get();
             break;
         case ServiceDetails::CustomType::ListenBrainz:
-            service
-                = m_services.emplace_back(std::make_unique<ListenBrainzService>(details, m_network.get(), m_settings))
-                      .get();
+            service = m_services
+                          .emplace_back(
+                              std::make_unique<ListenBrainzService>(details, m_network.get(), m_settings, m_dbPool))
+                          .get();
             break;
         case ServiceDetails::CustomType::None:
             break;
@@ -155,7 +160,6 @@ ScrobblerService* Scrobbler::addCustomService(const ServiceDetails& details, boo
         setupService(service);
         if(init) {
             service->initialise();
-            service->loadSession();
         }
         return service;
     }
@@ -462,7 +466,7 @@ void Scrobbler::addDefaultServices()
                                                                    .token      = {},
                                                                    .customType = ServiceDetails::CustomType::None,
                                                                    .isEnabled  = true},
-                                                    m_network.get(), m_settings));
+                                                    m_network.get(), m_settings, m_dbPool));
     };
 
     addService.template operator()<LastFmService>(u"LastFM"_s);

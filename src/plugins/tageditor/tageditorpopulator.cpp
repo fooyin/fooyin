@@ -30,7 +30,7 @@ namespace {
 bool hasEnabledDefaultField(const std::vector<TagEditorField>& fields, const QString& field)
 {
     return std::ranges::any_of(fields, [&field](const TagEditorField& editorField) {
-        return editorField.enabled && editorField.scriptField.compare(field, Qt::CaseInsensitive) == 0;
+        return editorField.isEnabled && editorField.scriptField.compare(field, Qt::CaseInsensitive) == 0;
     });
 }
 } // namespace
@@ -47,13 +47,15 @@ void TagEditorPopulator::request(uint64_t requestId)
 }
 
 void TagEditorPopulator::run(uint64_t requestId, const TrackList& tracks, const std::vector<TagEditorField>& fields,
-                             const QStringList& multiValueSeparators)
+                             const QStringList& multiValueSeparators, std::stop_token token)
 {
     if(requestId != m_latestRequest.load(std::memory_order_acquire)) {
         return;
     }
 
-    setState(Running);
+    if(!startWork(token)) {
+        return;
+    }
 
     auto data       = std::make_shared<TagEditorData>();
     data->requestId = requestId;
@@ -61,7 +63,7 @@ void TagEditorPopulator::run(uint64_t requestId, const TrackList& tracks, const 
     data->fields    = fields;
 
     for(const auto& field : fields) {
-        if(!field.enabled) {
+        if(!field.isEnabled) {
             continue;
         }
 

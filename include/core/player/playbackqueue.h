@@ -63,6 +63,7 @@ struct FYCORE_EXPORT PlaybackQueueItem
     PlaylistTrack track;
     PlaybackQueueItemOrigin origin{PlaybackQueueItemOrigin::Manual};
     int sourceOrder{-1};
+    std::optional<PlaylistTrack> detachedPlaylistTrack{};
 
     bool operator==(const PlaybackQueueItem& other) const = default;
 };

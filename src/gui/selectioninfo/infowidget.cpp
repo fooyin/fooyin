@@ -347,18 +347,12 @@ void InfoPanel::loadLayoutData(const QJsonObject& layout)
         const auto options = static_cast<InfoItem::Options>(layout.value("Options"_L1).toInt());
         m_model->setOptions(options);
     }
-    if(layout.contains("ShowHeader"_L1)) {
-        m_showHeader = layout.value("ShowHeader"_L1).toBool();
-    }
-    if(layout.contains("ShowVerticalScrollbar"_L1)) {
-        m_showVerticalScrollbar = layout.value("ShowVerticalScrollbar"_L1).toBool();
-    }
-    if(layout.contains("ShowHorizontalScrollbar"_L1)) {
-        m_showHorizontalScrollbar = layout.value("ShowHorizontalScrollbar"_L1).toBool();
-    }
-    if(layout.contains("AlternatingRows"_L1)) {
-        m_alternatingColours = layout.value("AlternatingRows"_L1).toBool();
-    }
+
+    m_showHeader              = layout.value("ShowHeader"_L1).toBool(m_showHeader);
+    m_showVerticalScrollbar   = layout.value("ShowVerticalScrollbar"_L1).toBool(m_showVerticalScrollbar);
+    m_showHorizontalScrollbar = layout.value("ShowHorizontalScrollbar"_L1).toBool(m_showHorizontalScrollbar);
+    m_alternatingColours      = layout.value("AlternatingRows"_L1).toBool(m_alternatingColours);
+
     if(layout.contains("State"_L1)) {
         const auto state = QByteArray::fromBase64(layout["State"_L1].toString().toUtf8());
         m_view->header()->restoreState(state);

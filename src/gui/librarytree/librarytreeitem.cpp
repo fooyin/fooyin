@@ -21,6 +21,7 @@
 
 #include <core/constants.h>
 #include <core/library/tracksort.h>
+#include <gui/scripting/richtextutils.h>
 
 namespace {
 Fooyin::RichText plainTextToRichText(const QString& text)
@@ -63,18 +64,6 @@ QString normaliseTitle(QString text)
     text.remove(QLatin1String{Fooyin::Constants::BackCover});
     text.remove(QLatin1String{Fooyin::Constants::ArtistPicture});
     return text;
-}
-
-Fooyin::RichText richTextForAlignment(const Fooyin::RichText& richText, Fooyin::RichAlignment alignment)
-{
-    Fooyin::RichText alignedText;
-    for(auto block : richText.blocks) {
-        if(block.format.alignment == alignment) {
-            block.format.alignment = Fooyin::RichAlignment::Left;
-            alignedText.blocks.push_back(std::move(block));
-        }
-    }
-    return alignedText;
 }
 } // namespace
 

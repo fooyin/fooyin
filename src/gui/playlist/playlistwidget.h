@@ -72,7 +72,8 @@ struct PlaylistWidgetLayoutState
     QByteArray headerState;
 };
 
-class PlaylistWidget : public FyWidget
+class PlaylistWidget : public FyWidget,
+                       public EditablePlaylistSessionHost
 {
     Q_OBJECT
 
@@ -80,11 +81,17 @@ public:
     struct ConfigData
     {
         bool showHeader{true};
+        bool stickyHeaders{false};
+        bool stickyArtwork{false};
         bool showScrollBar{true};
         bool alternatingRows{true};
         int imagePadding{5};
         int imagePaddingTop{0};
         int artworkCornerRadius{0};
+        bool artworkReflection{false};
+        int artworkReflectionHeight{33};
+        int artworkReflectionOpacity{35};
+        int artworkReflectionGap{3};
         int backgroundImageMode{0};
         QString backgroundCustomImage;
         int backgroundCoverType{0};
@@ -158,7 +165,6 @@ public:
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
     void finalise() override;
-    void layoutEditingMenu(QMenu* menu) override;
     void setConfigDialogTitle(QString title);
     void openConfigDialog(const QString& title);
 
@@ -172,40 +178,43 @@ public:
     void searchEvent(const SearchRequest& request) override;
     bool openIntegratedSearch();
 
-    void resetModel();
-    void resetModelThrottled() const;
+    void resetModel() override;
+    void resetModelThrottled() const override;
     void changePreset(const PlaylistPreset& preset);
     void setReadOnly(bool readOnly, bool allowSorting);
     void doubleClicked(const QModelIndex& index);
     void middleClicked(const QModelIndex& index);
-    void resetSort(bool force = false);
-    void setHeaderVisible(bool visible);
-    void setScrollbarVisible(bool visible);
-    void setAlternatingRowColors(bool enabled);
+    void resetSort(bool force = false) override;
+    void setHeaderVisible(bool visible) override;
+    void setScrollbarVisible(bool visible) override;
+    void setAlternatingRowColors(bool enabled) override;
     void selectAll();
 
-    void handlePresetChanged(const PlaylistPreset& preset);
-    void changePlaylistLayout(Playlist* previousPlaylist, const Playlist* playlist);
-    bool followCurrentTrack();
-    void sessionHandleRestoredState();
-    [[nodiscard]] bool hasDelayedStateLoad() const;
-    void clearDelayedStateLoad();
-    void setDelayedStateLoad(QMetaObject::Connection connection);
+    void handlePresetChanged(const PlaylistPreset& preset) override;
+    void changePlaylistLayout(Playlist* previousPlaylist, Playlist* playlist) override;
+    bool followCurrentTrack() override;
+    void sessionHandleRestoredState() override;
+    [[nodiscard]] bool hasDelayedStateLoad() const override;
+    void clearDelayedStateLoad() override;
+    void setDelayedStateLoad(QMetaObject::Connection connection) override;
 
-    [[nodiscard]] const PlaylistWidgetLayoutState& layoutState() const;
-    [[nodiscard]] ActionManager* actionManager() const;
-    [[nodiscard]] PresetRegistry* presetRegistry() const;
-    [[nodiscard]] PlaylistController* playlistController() const;
-    [[nodiscard]] PlayerController* playerController() const;
-    [[nodiscard]] MusicLibrary* musicLibrary() const;
-    [[nodiscard]] PlaylistInteractor* playlistInteractor() const;
-    [[nodiscard]] SettingsManager* settingsManager() const;
-    [[nodiscard]] SignalThrottler* resetThrottler() const;
-    [[nodiscard]] LibraryManager* libraryManager() const;
-    [[nodiscard]] TrackSelectionController* selectionController() const;
-    [[nodiscard]] WidgetContext* playlistContext() const;
-    [[nodiscard]] PlaylistModel* playlistModel() const;
-    [[nodiscard]] PlaylistView* playlistView() const;
+    [[nodiscard]] const PlaylistWidgetLayoutState& layoutState() const override;
+    [[nodiscard]] ActionManager* actionManager() const override;
+    [[nodiscard]] PresetRegistry* presetRegistry() const override;
+    [[nodiscard]] PlaylistController* playlistController() const override;
+    [[nodiscard]] PlayerController* playerController() const override;
+    [[nodiscard]] MusicLibrary* musicLibrary() const override;
+    [[nodiscard]] PlaylistInteractor* playlistInteractor() const override;
+    [[nodiscard]] SettingsManager* settingsManager() const override;
+    [[nodiscard]] SignalThrottler* resetThrottler() const override;
+    [[nodiscard]] LibraryManager* libraryManager() const override;
+    [[nodiscard]] TrackSelectionController* selectionController() const override;
+    [[nodiscard]] WidgetContext* playlistContext() const override;
+    [[nodiscard]] PlaylistModel* playlistModel() const override;
+    [[nodiscard]] PlaylistView* playlistView() const override;
+
+    [[nodiscard]] PlaylistWidget* sessionWidget() override;
+    [[nodiscard]] bool sessionVisible() const override;
 
     [[nodiscard]] PlaylistWidgetSessionHost& sessionHost();
     [[nodiscard]] EditablePlaylistSessionHost& editableSessionHost();
@@ -312,7 +321,6 @@ private:
     QString m_bgCustomImage;
     Track m_bgCoverTrack;
 
-    std::unique_ptr<EditablePlaylistSessionHost> m_host;
     PlaylistSearchController* m_searchController;
 };
 } // namespace Fooyin

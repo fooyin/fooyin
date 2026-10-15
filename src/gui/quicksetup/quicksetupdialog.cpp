@@ -22,10 +22,10 @@
 #include "playlist/playlistwidget.h"
 #include "playlist/presetregistry.h"
 
-#include <gui/editablelayout.h>
 #include <gui/guisettings.h>
 #include <gui/guiutils.h>
-#include <gui/layoutprovider.h>
+#include <gui/layout/editablelayout.h>
+#include <gui/layout/layoutprovider.h>
 #include <gui/theme/themeregistry.h>
 
 #include <QApplication>

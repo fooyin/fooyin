@@ -21,7 +21,7 @@
 
 #include "librarytreecontroller.h"
 #include "librarytreegroup.h"
-#include "librarytreescriptenvironment.h"
+#include "librarytreescriptcontext.h"
 
 #include <core/track.h>
 #include <gui/fywidget.h>
@@ -48,6 +48,7 @@ namespace Fooyin {
 class ActionManager;
 class Application;
 class CoverRepository;
+class LibraryManager;
 class LibraryTreeController;
 class LibraryTreeGroupRegistry;
 class LibraryTreeDelegate;
@@ -90,6 +91,7 @@ public:
 
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
+    void populateContextMenu(QMenu* menu) override;
 
     void enableIntegratedControls(SearchController* searchController, bool visibleByDefault = false);
     void searchEvent(const SearchRequest& request) override;
@@ -143,7 +145,6 @@ private:
     void setControlsPosition(ControlsPosition position);
     void setControlsVisible(bool visible);
     void reset();
-    void populateContextMenu(QMenu* menu);
 
     void addDisplayMenu(QMenu* parent);
     void changeGrouping(const LibraryTreeGrouping& newGrouping);
@@ -169,7 +170,7 @@ private:
 
     [[nodiscard]] TrackList sourceTracks() const;
 
-    void handlePlayback(const QModelIndexList& indexes, int row = 0, bool singleTrackSelection = false);
+    void handlePlayback(const QModelIndexList& indexes, const QModelIndex& selectedIndex = {});
     void handlePlaySelection();
     void handlePlayTrack(const QModelIndex& index);
     void handleDoubleClick(const QModelIndex& index);
@@ -184,6 +185,7 @@ private:
     void restoreState(const QByteArray& state, bool force = false);
 
     ActionManager* m_actionManager;
+    LibraryManager* m_libraryManager;
     MusicLibrary* m_library;
     PlaylistHandler* m_playlistHandler;
     PlayerController* m_playerController;

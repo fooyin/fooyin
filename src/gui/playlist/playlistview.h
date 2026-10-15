@@ -59,8 +59,11 @@ public:
 
     explicit PlaylistView(QWidget* parent = nullptr);
 
+    void setInlineEditDelay(int delayMs);
     void setLoadingText(const QString& text);
     void setEmptyText(const QString& text);
+    void setStickyHeaders(bool enabled);
+    void setStickyArtwork(bool enabled);
     void setRatingColumn(int column);
     void setLovedColumn(int column);
     void setRatingEditorOnlyOnHover(bool enabled);
@@ -90,8 +93,12 @@ protected:
     void closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint) override;
     void leaveEvent(QEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
-    DropIndicatorPosition dropPosition(const QPoint& pos, const QRect& rect, const QModelIndex& index) override;
     bool eventFilter(QObject* watched, QEvent* event) override;
+
+    DropIndicatorPosition dropPosition(const QPoint& pos, const QRect& rect, const QModelIndex& index) override;
+    QRect drawSpan(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+    [[nodiscard]] int spanHeight(const QModelIndex& index) const override;
+    [[nodiscard]] int adjustVerticalScrollMaximum(int maximum) const override;
 
 Q_SIGNALS:
     void bulkWriteRequested(const Fooyin::TrackList& tracks);
@@ -126,9 +133,15 @@ private:
     void loveHoverOut();
     void updateHoveredRow(const QModelIndex& index);
 
+    [[nodiscard]] QModelIndex stickyHeaderIndex() const;
+    [[nodiscard]] QRect stickyHeaderRect(const QModelIndex& index, int scrollOffset = 0) const;
+    void drawStickyHeader(QPainter& painter) const;
+    void snapScrollToStickyHeader(int delta);
+
     void drawBackground(QPainter& painter);
     void updateBackgroundTransparency();
     void invalidateScaledBackground();
+
     struct BackgroundPixmapCache
     {
         qint64 sourceKey{0};
@@ -136,6 +149,7 @@ private:
         qreal dpr{1.0};
         QPixmap pixmap;
     };
+
     [[nodiscard]] QPixmap preparedBackgroundPixmap(const QPixmap& source, BackgroundPixmapCache& cache) const;
     [[nodiscard]] QPoint backgroundPixmapPosition(const QSize& pixmapSize) const;
     void drawBackgroundPixmap(QPainter& painter, const QPixmap& pixmap);
@@ -143,6 +157,10 @@ private:
     QString m_emptyText;
     QString m_loadingText;
     bool m_playlistLoaded;
+    bool m_stickyHeaders;
+    bool m_stickyArtwork;
+    bool m_snappingScroll;
+    bool m_stickyHeaderPressed;
 
     StarDelegate* m_starDelegate;
     int m_ratingColumn;
@@ -160,6 +178,7 @@ private:
     QPersistentModelIndex m_pendingEditIndex;
     QLineEdit* m_bulkEditor;
     QBasicTimer m_editTimer;
+    int m_inlineEditDelayMs;
     QModelIndexList m_bulkEditRows;
     std::vector<int> m_bulkEditColumns;
     int m_bulkEditColumnIndex;

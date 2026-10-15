@@ -115,19 +115,16 @@ void LibraryFilterTabs::loadLayoutData(const QJsonObject& layout)
     if(const QString name = layout.value("AllLibraryName"_L1).toString().trimmed(); !name.isEmpty()) {
         m_allLibraryName = name;
     }
-    if(layout.contains("AllLibraryIndex"_L1)) {
-        m_allLibraryIndex = layout.value("AllLibraryIndex"_L1).toInt();
-    }
+
+    m_allLibraryIndex = layout.value("AllLibraryIndex"_L1).toInt(m_allLibraryIndex);
+
     if(layout.contains("TabPosition"_L1)) {
         const auto position = static_cast<SingleTabbedWidget::TabPosition>(layout.value("TabPosition"_L1).toInt());
         m_tabs->setTabPosition(position);
     }
-    if(layout.contains("RememberLastFilter"_L1)) {
-        m_rememberLastFilter = layout.value("RememberLastFilter"_L1).toBool();
-    }
-    if(layout.contains("LastFilter"_L1)) {
-        m_lastFilterId = layout.value("LastFilter"_L1).toInt(-1);
-    }
+
+    m_rememberLastFilter = layout.value("RememberLastFilter"_L1).toBool(m_rememberLastFilter);
+    m_lastFilterId       = layout.value("LastFilter"_L1).toInt(m_lastFilterId);
 
     if(layout.contains("Widgets"_L1)) {
         WidgetContainer::loadWidgets(layout.value("Widgets"_L1).toArray());
@@ -166,7 +163,7 @@ void LibraryFilterTabs::setupTabs()
     std::vector<int> enabledFilterIds;
     enabledFilterIds.reserve(filters.size());
     for(const LibraryFilter& filter : filters) {
-        if(filter.enabled) {
+        if(filter.isEnabled) {
             enabledFilterIds.push_back(filter.id);
         }
     }
@@ -202,7 +199,7 @@ void LibraryFilterTabs::setupTabs()
 int LibraryFilterTabs::addFilter(int id)
 {
     const auto filter = m_registry->itemById(id);
-    if(!filter || !filter->enabled) {
+    if(!filter || !filter->isEnabled) {
         return -1;
     }
 
@@ -246,6 +243,11 @@ int LibraryFilterTabs::addNewTab(const QString& name, const QIcon& icon)
 bool LibraryFilterTabs::canAddWidget() const
 {
     return !m_tabsWidget;
+}
+
+bool LibraryFilterTabs::canInsertWidget(int index) const
+{
+    return index == 0 && !m_tabsWidget;
 }
 
 bool LibraryFilterTabs::canMoveWidget(int /*index*/, int /*newIndex*/) const
@@ -354,32 +356,46 @@ void LibraryFilterTabs::insertWidget(int index, FyWidget* widget)
     addWidget(widget);
 }
 
-void LibraryFilterTabs::removeWidget(int index)
-{
-    if(index == 0 && m_tabsWidget) {
-        m_tabs->setWidget(nullptr);
-        m_tabsWidget = nullptr;
-    }
-}
-
-void LibraryFilterTabs::replaceWidget(int index, FyWidget* newWidget)
-{
-    if(index != 0) {
-        return;
-    }
-
-    m_tabsWidget = newWidget;
-    m_tabs->setWidget(m_tabsWidget);
-}
-
 void LibraryFilterTabs::moveWidget(int /*index*/, int /*newIndex*/) { }
+
+FyWidget* LibraryFilterTabs::takeWidget(int index)
+{
+    if(index != 0 || !m_tabsWidget) {
+        return nullptr;
+    }
+
+    auto* widget = qobject_cast<FyWidget*>(m_tabs->takeWidget());
+    m_tabsWidget = nullptr;
+    return widget;
+}
+
+QJsonObject LibraryFilterTabs::saveEditingState() const
+{
+    auto state          = WidgetContainer::saveEditingState();
+    state["Current"_L1] = m_tabs->currentIndex();
+    return state;
+}
+
+void LibraryFilterTabs::restoreEditingState(const QJsonObject& state)
+{
+    WidgetContainer::restoreEditingState(state);
+    m_tabs->setCurrentIndex(state.value("Current"_L1).toInt(-1));
+}
+
+FyWidget* LibraryFilterTabs::exchangeWidgetImpl(int index, FyWidget* newWidget)
+{
+    auto* previous = takeWidget(index);
+    m_tabsWidget   = newWidget;
+    m_tabs->setWidget(m_tabsWidget);
+    return previous;
+}
 
 void LibraryFilterTabs::filterChanged(const LibraryFilter& filter)
 {
     auto activeFilters = m_library->activeLibraryFilters();
     const auto active  = std::ranges::find(activeFilters, filter.id, &LibraryFilter::id);
     if(active != activeFilters.end()) {
-        if(filter.enabled) {
+        if(filter.isEnabled) {
             *active = filter;
         }
         else {
@@ -389,6 +405,20 @@ void LibraryFilterTabs::filterChanged(const LibraryFilter& filter)
     }
 
     setupTabs();
+}
+
+void LibraryFilterTabs::activateCurrent()
+{
+    const int index = m_tabs->currentIndex();
+    const int id    = m_tabs->tabBar()->tabData(index).toInt();
+    if(id < 0) {
+        m_library->clearActiveLibraryFilters();
+        return;
+    }
+
+    if(const auto preset = m_registry->itemById(id)) {
+        m_library->setActiveLibraryFilters({*preset});
+    }
 }
 
 void LibraryFilterTabs::tabMoved(int /*from*/, int to)
@@ -409,7 +439,7 @@ void LibraryFilterTabs::tabMoved(int /*from*/, int to)
     std::vector<int> currentVisibleFilterIds;
     auto filters = m_registry->items();
     for(const LibraryFilter& filter : filters) {
-        if(filter.enabled) {
+        if(filter.isEnabled) {
             currentVisibleFilterIds.push_back(filter.id);
         }
     }
@@ -466,20 +496,6 @@ void LibraryFilterTabs::tabRenamed(int index, const QString& text)
         if(!m_registry->changeItem(*filter)) {
             setupTabs();
         }
-    }
-}
-
-void LibraryFilterTabs::activateCurrent()
-{
-    const int index = m_tabs->currentIndex();
-    const int id    = m_tabs->tabBar()->tabData(index).toInt();
-    if(id < 0) {
-        m_library->clearActiveLibraryFilters();
-        return;
-    }
-
-    if(const auto preset = m_registry->itemById(id)) {
-        m_library->setActiveLibraryFilters({*preset});
     }
 }
 

@@ -48,7 +48,7 @@ class Scrobbler : public QObject
 
 public:
     Scrobbler(PlayerController* playerController, MusicLibrary* library, std::shared_ptr<NetworkAccessManager> network,
-              SettingsManager* settings);
+              SettingsManager* settings, DbConnectionPoolPtr dbPool);
     ~Scrobbler() override;
 
     [[nodiscard]] std::vector<ScrobblerService*> services() const;
@@ -101,6 +101,7 @@ private:
     MusicLibrary* m_library;
     std::shared_ptr<NetworkAccessManager> m_network;
     SettingsManager* m_settings;
+    DbConnectionPoolPtr m_dbPool;
 
     std::vector<std::unique_ptr<ScrobblerService>> m_services;
     std::unordered_map<QString, int64_t> m_lastTrackStatsSync;

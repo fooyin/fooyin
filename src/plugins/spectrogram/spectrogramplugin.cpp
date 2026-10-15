@@ -36,6 +36,7 @@ using namespace Qt::StringLiterals;
 namespace Fooyin::Spectrogram {
 void SpectrogramPlugin::initialise(const CorePluginContext& context)
 {
+    m_audioLoader      = context.audioLoader;
     m_playerController = context.playerController;
     m_engine           = context.engine;
     m_settings         = context.settingsManager;
@@ -43,18 +44,23 @@ void SpectrogramPlugin::initialise(const CorePluginContext& context)
 
 void SpectrogramPlugin::initialise(const GuiPluginContext& context)
 {
+    m_trackSelection = context.trackSelection;
+
     auto* showSpectrogram = new QAction(tr("Spectro&gram"), this);
     showSpectrogram->setStatusTip(tr("Open a spectrogram in a separate window"));
     auto* showSpectrogramCmd = context.actionManager->registerAction(showSpectrogram, "Spectrogram.ShowWindow");
     showSpectrogramCmd->setCategories({tr("View"), tr("Visualisations")});
     context.actionManager->actionContainer(Constants::Menus::Visualisations)->addAction(showSpectrogramCmd);
     QObject::connect(showSpectrogram, &QAction::triggered, this, [this]() {
-        auto* window = new SpectrogramWidget(m_playerController, m_engine, m_settings);
+        auto* window = new SpectrogramWidget(m_audioLoader, m_playerController, m_engine, m_trackSelection, m_settings);
         window->showStandaloneWindow(tr("Spectrogram"), u"Spectrogram/WindowState"_s, true);
     });
 
     context.widgetProvider->registerWidget(
-        u"Spectrogram"_s, [this]() { return new SpectrogramWidget(m_playerController, m_engine, m_settings); },
+        u"Spectrogram"_s,
+        [this]() {
+            return new SpectrogramWidget(m_audioLoader, m_playerController, m_engine, m_trackSelection, m_settings);
+        },
         tr("Spectrogram"));
     context.widgetProvider->setSubMenus(u"Spectrogram"_s, {tr("Visualisations")});
 }

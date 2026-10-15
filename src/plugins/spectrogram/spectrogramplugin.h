@@ -38,8 +38,10 @@ public:
     void initialise(const GuiPluginContext& context) override;
 
 private:
+    std::shared_ptr<AudioLoader> m_audioLoader;
     PlayerController* m_playerController;
     EngineController* m_engine;
     SettingsManager* m_settings;
+    TrackSelectionController* m_trackSelection;
 };
 } // namespace Fooyin::Spectrogram

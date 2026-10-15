@@ -43,15 +43,17 @@ EditableTabBar::EditableTabBar(QWidget* parent)
 
 void EditableTabBar::showEditor(int index)
 {
+    const QString currentText = m_editTextProvider ? m_editTextProvider(index) : tabText(index);
+
     if(m_mode == EditMode::Inline) {
-        m_lineEdit = new PopupLineEdit(tabText(index), this);
+        m_lineEdit = new PopupLineEdit(currentText, this);
         m_lineEdit->setAttribute(Qt::WA_DeleteOnClose);
 
         QObject::connect(m_lineEdit, &QObject::destroyed, this, [this]() { m_lineEdit = nullptr; });
         QObject::connect(m_lineEdit, &PopupLineEdit::editingCancelled, m_lineEdit, &QWidget::close);
-        QObject::connect(m_lineEdit, &PopupLineEdit::editingFinished, this, [this, index]() {
+        QObject::connect(m_lineEdit, &PopupLineEdit::editingFinished, this, [this, index, currentText]() {
             const QString text = m_lineEdit->text();
-            if(!text.isEmpty() && text != tabText(index)) {
+            if(!text.isEmpty() && text != currentText) {
                 setTabText(index, m_lineEdit->text());
                 Q_EMIT tabTextChanged(index, m_lineEdit->text());
             }
@@ -66,8 +68,6 @@ void EditableTabBar::showEditor(int index)
         m_lineEdit->setFocus(Qt::ActiveWindowFocusReason);
     }
     else {
-        const QString currentText = tabText(index);
-
         bool ok{false};
         const QString text = QInputDialog::getText(Utils::getMainWindow(), tr("Rename Tab"), tr("Name:"),
                                                    QLineEdit::Normal, currentText, &ok);
@@ -100,6 +100,11 @@ void EditableTabBar::setEditTitle(const QString& title)
 void EditableTabBar::setEditMode(EditMode mode)
 {
     m_mode = mode;
+}
+
+void EditableTabBar::setEditTextProvider(std::function<QString(int)> provider)
+{
+    m_editTextProvider = std::move(provider);
 }
 
 bool EditableTabBar::event(QEvent* event)

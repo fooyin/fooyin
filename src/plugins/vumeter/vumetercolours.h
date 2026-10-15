@@ -142,15 +142,7 @@ struct Colours
         }
     }
 
-    bool operator==(const Colours& other) const
-    {
-        return std::tie(meterColours, barGradient) == std::tie(other.meterColours, other.barGradient);
-    };
-
-    bool operator!=(const Colours& other) const
-    {
-        return !(*this == other);
-    };
+    bool operator==(const Colours& other) const = default;
 
     friend QDataStream& operator<<(QDataStream& stream, const Colours& colours)
     {

@@ -178,6 +178,8 @@ private:
     std::unique_ptr<VisualisationSessionPrivate> p;
 };
 
+FYCORE_EXPORT float spectrumWindowGain(VisualisationSession::SpectrumWindowFunction windowFunction, float phase);
+
 using VisualisationSessionPtr = std::shared_ptr<VisualisationSession>;
 
 class FYCORE_EXPORT VisualisationService : public QObject

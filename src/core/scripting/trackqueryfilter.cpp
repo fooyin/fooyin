@@ -22,7 +22,7 @@
 #include "scripting/scriptruntime.h"
 
 #include <core/coresettings.h>
-#include <core/scripting/scriptproviders.h>
+#include <core/scripting/scriptdefs.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/stringutils.h>
 
@@ -77,12 +77,11 @@ class TrackSearchFilterPrivate
 public:
     TrackSearchFilterPrivate();
     explicit TrackSearchFilterPrivate(ScriptSearchOptions options);
+    TrackSearchFilterPrivate(ScriptSearchOptions options, ScriptRegistry* registry);
 
-    void addProvider(const ScriptVariableProvider& provider);
-    void addProvider(const ScriptFunctionProvider& provider);
-
-    [[nodiscard]] TrackList filter(const QString& search, const TrackList& tracks);
-    [[nodiscard]] PlaylistTrackList filter(const QString& search, const PlaylistTrackList& tracks);
+    [[nodiscard]] TrackList filter(const QString& search, const TrackList& tracks, const ScriptContext& context);
+    [[nodiscard]] PlaylistTrackList filter(const QString& search, const PlaylistTrackList& tracks,
+                                           const ScriptContext& context);
 
 private:
     ScriptRuntime m_runtime;
@@ -104,24 +103,20 @@ TrackSearchFilterPrivate::TrackSearchFilterPrivate(ScriptSearchOptions options)
     : m_options{std::move(options)}
 { }
 
-void TrackSearchFilterPrivate::addProvider(const ScriptVariableProvider& provider)
+TrackSearchFilterPrivate::TrackSearchFilterPrivate(ScriptSearchOptions options, ScriptRegistry* registry)
+    : m_runtime{registry}
+    , m_options{std::move(options)}
+{ }
+
+TrackList TrackSearchFilterPrivate::filter(const QString& search, const TrackList& tracks, const ScriptContext& context)
 {
-    m_runtime.addProvider(provider);
+    return m_runtime.filterQuery(search, tracks, m_options, context);
 }
 
-void TrackSearchFilterPrivate::addProvider(const ScriptFunctionProvider& provider)
+PlaylistTrackList TrackSearchFilterPrivate::filter(const QString& search, const PlaylistTrackList& tracks,
+                                                   const ScriptContext& context)
 {
-    m_runtime.addProvider(provider);
-}
-
-TrackList TrackSearchFilterPrivate::filter(const QString& search, const TrackList& tracks)
-{
-    return m_runtime.filterQuery(search, tracks, m_options);
-}
-
-PlaylistTrackList TrackSearchFilterPrivate::filter(const QString& search, const PlaylistTrackList& tracks)
-{
-    return m_runtime.filterQuery(search, tracks, m_options);
+    return m_runtime.filterQuery(search, tracks, m_options, context);
 }
 
 TrackQueryFilter::TrackQueryFilter()
@@ -132,17 +127,11 @@ TrackQueryFilter::TrackQueryFilter(ScriptSearchOptions options)
     : p{std::make_unique<TrackSearchFilterPrivate>(std::move(options))}
 { }
 
+TrackQueryFilter::TrackQueryFilter(ScriptSearchOptions options, ScriptRegistry* registry)
+    : p{std::make_unique<TrackSearchFilterPrivate>(std::move(options), registry)}
+{ }
+
 TrackQueryFilter::~TrackQueryFilter() = default;
-
-void TrackQueryFilter::addProvider(const ScriptVariableProvider& provider)
-{
-    p->addProvider(provider);
-}
-
-void TrackQueryFilter::addProvider(const ScriptFunctionProvider& provider)
-{
-    p->addProvider(provider);
-}
 
 bool TrackQueryFilter::matchesSearch(const QString& text, const QString& search, ScriptSearchMode mode,
                                      bool phraseMatch)
@@ -165,14 +154,15 @@ bool TrackQueryFilter::matchesSearch(const QString& text, const QString& search,
     return std::ranges::all_of(terms, [&foldedText](const QString& term) { return foldedText.contains(term); });
 }
 
-TrackList TrackQueryFilter::filter(const QString& search, const TrackList& tracks)
+TrackList TrackQueryFilter::filter(const QString& search, const TrackList& tracks, const ScriptContext& context)
 {
-    return p->filter(search, tracks);
+    return p->filter(search, tracks, context);
 }
 
-PlaylistTrackList TrackQueryFilter::filter(const QString& search, const PlaylistTrackList& tracks)
+PlaylistTrackList TrackQueryFilter::filter(const QString& search, const PlaylistTrackList& tracks,
+                                           const ScriptContext& context)
 {
-    return p->filter(search, tracks);
+    return p->filter(search, tracks, context);
 }
 
 } // namespace Fooyin

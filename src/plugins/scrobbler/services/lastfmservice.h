@@ -30,7 +30,7 @@ class LastFmService : public ScrobblerService
 {
 public:
     LastFmService(ServiceDetails service, NetworkAccessManager* network, SettingsManager* settings,
-                  QObject* parent = nullptr);
+                  DbConnectionPoolPtr dbPool, QObject* parent = nullptr);
 
     [[nodiscard]] QUrl url() const override;
     [[nodiscard]] QUrl authUrl() const override;

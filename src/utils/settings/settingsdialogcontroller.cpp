@@ -102,6 +102,7 @@ public:
     PageList pages;
     Id lastOpenPage;
     QPointer<SettingsDialog> dialog;
+    SettingsDialogController::SearchBarPosition searchBarPosition{SettingsDialogController::SearchBarPosition::Top};
 
     void applyPageStates() const
     {
@@ -149,7 +150,8 @@ void SettingsDialogController::openAtPage(const Id& page)
     p->applyPageStates();
 
     auto* settingsDialog = new SettingsDialog{p->pages, p->mainWindow};
-    p->dialog            = settingsDialog;
+    settingsDialog->setSearchBarPosition(p->searchBarPosition);
+    p->dialog = settingsDialog;
 
     QObject::connect(settingsDialog, &QDialog::finished, this, [this, settingsDialog]() {
         p->updatePageStates();
@@ -231,6 +233,19 @@ void SettingsDialogController::setWindowIcon(const QIcon& icon)
 {
     if(p->dialog) {
         p->dialog->setWindowIcon(icon);
+    }
+}
+
+void SettingsDialogController::setSearchBarPosition(SearchBarPosition position)
+{
+    if(position != SearchBarPosition::Hidden && position != SearchBarPosition::Top
+       && position != SearchBarPosition::Bottom) {
+        position = SearchBarPosition::Top;
+    }
+
+    p->searchBarPosition = position;
+    if(p->dialog) {
+        p->dialog->setSearchBarPosition(position);
     }
 }
 } // namespace Fooyin

@@ -47,85 +47,21 @@ RichTextMetrics measureRichTextLine(const RichText& richText, const QFont& baseF
     metrics.height = baseline.height();
     return metrics;
 }
-} // namespace
 
-QColor resolvedRichTextColour(const RichFormatting& formatting, const QColor& baseColour, const QColor& linkColour)
-{
-    QColor colour;
-    if(formatting.colour.isExplicit()) {
-        colour = formatting.colour.colour;
-    }
-    else if(!formatting.link.isEmpty() && linkColour.isValid()) {
-        colour = linkColour;
-    }
-    else {
-        colour = baseColour;
-    }
-
-    if(formatting.colour.alpha >= 0) {
-        colour.setAlpha(formatting.colour.alpha);
-    }
-    return colour;
-}
-
-QFont resolvedRichTextFont(const RichFormatting& formatting, const QFont& baseFont)
-{
-    return formatting.font == QFont{} ? baseFont : formatting.font.resolve(baseFont);
-}
-
-TextBaselineMetrics textBaselineMetrics(const QFont& font)
-{
-    TextBaselineMetrics metrics;
-    metrics.expand(QFontMetrics{font});
-    return metrics;
-}
-
-RichText trimRichText(RichText richText)
-{
-    while(!richText.blocks.empty()) {
-        auto& block = richText.blocks.front();
-
-        int firstNonSpace{0};
-        while(firstNonSpace < block.text.size() && block.text.at(firstNonSpace).isSpace()) {
-            ++firstNonSpace;
-        }
-
-        if(firstNonSpace > 0) {
-            block.text.remove(0, firstNonSpace);
-        }
-
-        if(!block.text.isEmpty()) {
-            break;
-        }
-
-        richText.blocks.erase(richText.blocks.begin());
-    }
-
-    while(!richText.blocks.empty()) {
-        auto& block = richText.blocks.back();
-
-        int lastNonSpace = block.text.size() - 1;
-        while(lastNonSpace >= 0 && block.text.at(lastNonSpace).isSpace()) {
-            --lastNonSpace;
-        }
-
-        block.text.truncate(lastNonSpace + 1);
-        if(!block.text.isEmpty()) {
-            break;
-        }
-
-        richText.blocks.pop_back();
-    }
-
-    return richText;
-}
-
-QString richTextToHtml(const RichText& richText, const QColor& linkColour)
+QString richTextSpansToHtml(const RichText& richText, const QColor& linkColour)
 {
     QString html;
     html.reserve(richText.joinedText().size() * 2);
 
-    for(const auto& [text, format] : richText.blocks) {
+    for(const auto& block : richText.blocks) {
+        if(block.type == RichTextBlock::Type::Line) {
+            html += u"<hr/>"_s;
+            continue;
+        }
+
+        const auto& text   = block.text;
+        const auto& format = block.format;
+
         QStringList styles;
 
         const bool isLink = !format.link.isEmpty();
@@ -136,8 +72,11 @@ QString richTextToHtml(const RichText& richText, const QColor& linkColour)
         if(format.font.pointSizeF() > 0) {
             styles.emplace_back(u"font-size:%1pt"_s.arg(format.font.pointSizeF()));
         }
-        if(format.font.bold()) {
+        if(format.font.weight() == QFont::Bold) {
             styles.emplace_back(u"font-weight:bold"_s);
+        }
+        else if(format.font.resolveMask() & QFont::WeightResolved) {
+            styles.emplace_back(u"font-weight:%1"_s.arg(format.font.weight()));
         }
         if(format.font.italic()) {
             styles.emplace_back(u"font-style:italic"_s);
@@ -178,10 +117,106 @@ QString richTextToHtml(const RichText& richText, const QColor& linkColour)
             html += u"<span style=\"%1\">%2</span>"_s.arg(style, htmlText);
         }
         else {
-            html += u"<a href=\"%1\"><span style=\"%2\">%3</span></a>"_s.arg(format.link.toHtmlEscaped(), style, text);
+            html += u"<a href=\"%1\"><span style=\"%2\">%3</span></a>"_s.arg(format.link.toHtmlEscaped(), style,
+                                                                             htmlText);
         }
     }
 
+    return html;
+}
+} // namespace
+
+QColor resolvedRichTextColour(const RichFormatting& formatting, const QColor& baseColour, const QColor& linkColour)
+{
+    QColor colour;
+    if(formatting.colour.isExplicit()) {
+        colour = formatting.colour.colour;
+    }
+    else if(!formatting.link.isEmpty() && linkColour.isValid()) {
+        colour = linkColour;
+    }
+    else {
+        colour = baseColour;
+    }
+
+    if(formatting.colour.alpha >= 0) {
+        colour.setAlpha(formatting.colour.alpha);
+    }
+    return colour;
+}
+
+QFont resolvedRichTextFont(const RichFormatting& formatting, const QFont& baseFont)
+{
+    return formatting.font == QFont{} ? baseFont : formatting.font.resolve(baseFont);
+}
+
+TextBaselineMetrics textBaselineMetrics(const QFont& font)
+{
+    TextBaselineMetrics metrics;
+    metrics.expand(QFontMetrics{font});
+    return metrics;
+}
+
+QString richTextToHtml(const RichText& richText, const QColor& linkColour, int defaultAlignment)
+{
+    const bool hasAlignment = std::ranges::any_of(
+        richText.blocks, [](const auto& block) { return block.format.alignment != RichAlignment::Default; });
+    if(!hasAlignment) {
+        return richTextSpansToHtml(richText, linkColour);
+    }
+
+    const QString defaultAlign = (defaultAlignment & Qt::AlignRight) != 0   ? u"right"_s
+                               : (defaultAlignment & Qt::AlignHCenter) != 0 ? u"center"_s
+                                                                            : u"left"_s;
+
+    QString html = u"<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">"_s;
+
+    const auto appendLine = [&html, &linkColour, &defaultAlign](const RichText& line) {
+        const bool aligned = std::ranges::any_of(
+            line.blocks, [](const auto& block) { return block.format.alignment != RichAlignment::Default; });
+        if(!aligned) {
+            const QString text = line.empty() ? u"&nbsp;"_s : richTextSpansToHtml(line, linkColour);
+            html += u"<tr><td colspan=\"2\" align=\"%1\">%2</td></tr>"_s.arg(defaultAlign, text);
+            return;
+        }
+
+        const auto left  = richTextForAlignment(line, RichAlignment::Left);
+        const auto right = richTextForAlignment(line, RichAlignment::Right);
+        if(left.empty() || right.empty()) {
+            const bool rightOnly = left.empty();
+            html += u"<tr><td colspan=\"2\" align=\"%1\">%2</td></tr>"_s.arg(
+                rightOnly ? u"right"_s : u"left"_s, richTextSpansToHtml(rightOnly ? right : left, linkColour));
+        }
+        else {
+            html += u"<tr><td align=\"left\" valign=\"top\">%1</td>"
+                    "<td align=\"right\" valign=\"top\">%2</td></tr>"_s.arg(richTextSpansToHtml(left, linkColour),
+                                                                            richTextSpansToHtml(right, linkColour));
+        }
+    };
+
+    const auto lines = splitRichTextLines(richText);
+    for(const auto& line : lines) {
+        RichText text;
+        bool hasRule{false};
+        for(const auto& block : line.blocks) {
+            if(block.type == RichTextBlock::Type::Line) {
+                if(!text.empty()) {
+                    appendLine(text);
+                    text.clear();
+                }
+                html += u"<tr><td colspan=\"2\"><hr/></td></tr>"_s;
+                hasRule = true;
+            }
+            else {
+                text.blocks.push_back(block);
+            }
+        }
+        if(!text.empty() || !hasRule) {
+            appendLine(text);
+        }
+    }
+
+    html += u"</table>"_s;
     return html;
 }
 
@@ -198,6 +233,25 @@ bool richTextHasLineBreaks(const RichText& richText)
     return false;
 }
 
+int richTextHeight(const RichText& richText, const QFont& baseFont)
+{
+    int height{0};
+    const auto baseMetrics = textBaselineMetrics(baseFont);
+    for(const auto& line : splitRichTextLines(richText)) {
+        auto baseline = baseMetrics;
+        for(const auto& block : line.blocks) {
+            baseline.expand(QFontMetrics{resolvedRichTextFont(block.format, baseFont)});
+        }
+        height += baseline.height();
+    }
+    return height;
+}
+
+int richTextExtraLineHeight(const RichText& richText, const QFont& baseFont)
+{
+    return measureRichText(richText, baseFont).extraLineHeight;
+}
+
 std::vector<RichText> splitRichTextLines(const RichText& richText)
 {
     if(richText.empty()) {
@@ -207,6 +261,11 @@ std::vector<RichText> splitRichTextLines(const RichText& richText)
     std::vector<RichText> lines(1);
 
     for(const auto& block : richText.blocks) {
+        if(block.type == RichTextBlock::Type::Line) {
+            lines.back().blocks.push_back(block);
+            continue;
+        }
+
         const QStringView text{block.text};
         if(text.isEmpty()) {
             continue;
@@ -239,25 +298,6 @@ std::vector<RichText> splitRichTextLines(const RichText& richText)
     }
 
     return lines;
-}
-
-int richTextHeight(const RichText& richText, const QFont& baseFont)
-{
-    int height{0};
-    const auto baseMetrics = textBaselineMetrics(baseFont);
-    for(const auto& line : splitRichTextLines(richText)) {
-        auto baseline = baseMetrics;
-        for(const auto& block : line.blocks) {
-            baseline.expand(QFontMetrics{resolvedRichTextFont(block.format, baseFont)});
-        }
-        height += baseline.height();
-    }
-    return height;
-}
-
-int richTextExtraLineHeight(const RichText& richText, const QFont& baseFont)
-{
-    return measureRichText(richText, baseFont).extraLineHeight;
 }
 
 RichTextMetrics measureRichText(const RichText& richText, const QFont& baseFont)
@@ -304,5 +344,70 @@ RichTextBlockMetrics measureRichTextBlock(const std::vector<RichText>& lines, co
     }
 
     return blockMetrics;
+}
+
+QString combineAlignedScripts(const QString& left, const QString& right)
+{
+    QString script;
+    if(!left.isEmpty()) {
+        script = u"<left>\n"_s + left + u"\n</left>\n"_s;
+    }
+    if(!right.isEmpty()) {
+        script += u"<right>\n"_s + right + u"\n</right>\n"_s;
+    }
+    return script;
+}
+
+RichText richTextForAlignment(const RichText& richText, RichAlignment alignment)
+{
+    RichText alignedText;
+    for(auto block : richText.blocks) {
+        if(block.format.alignment == alignment
+           || (alignment == RichAlignment::Left && block.format.alignment == RichAlignment::Default)) {
+            block.format.alignment = RichAlignment::Left;
+            alignedText.blocks.push_back(std::move(block));
+        }
+    }
+    return alignedText;
+}
+
+RichText trimRichText(RichText richText)
+{
+    while(!richText.blocks.empty()) {
+        auto& block = richText.blocks.front();
+
+        int firstNonSpace{0};
+        while(firstNonSpace < block.text.size() && block.text.at(firstNonSpace).isSpace()) {
+            ++firstNonSpace;
+        }
+
+        if(firstNonSpace > 0) {
+            block.text.remove(0, firstNonSpace);
+        }
+
+        if(!block.text.isEmpty()) {
+            break;
+        }
+
+        richText.blocks.erase(richText.blocks.begin());
+    }
+
+    while(!richText.blocks.empty()) {
+        auto& block = richText.blocks.back();
+
+        int lastNonSpace = block.text.size() - 1;
+        while(lastNonSpace >= 0 && block.text.at(lastNonSpace).isSpace()) {
+            --lastNonSpace;
+        }
+
+        block.text.truncate(lastNonSpace + 1);
+        if(!block.text.isEmpty()) {
+            break;
+        }
+
+        richText.blocks.pop_back();
+    }
+
+    return richText;
 }
 } // namespace Fooyin

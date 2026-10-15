@@ -127,135 +127,6 @@ qsizetype selectedRowCount(const QAbstractItemView* view)
 
     return count;
 }
-
-class PlaylistWidgetHost : public EditablePlaylistSessionHost
-{
-public:
-    explicit PlaylistWidgetHost(PlaylistWidget* widget)
-        : m_widget{widget}
-    { }
-
-    [[nodiscard]] ActionManager* actionManager() const override
-    {
-        return m_widget->actionManager();
-    }
-    [[nodiscard]] PresetRegistry* presetRegistry() const override
-    {
-        return m_widget->presetRegistry();
-    }
-    void handlePresetChanged(const PlaylistPreset& preset) override
-    {
-        m_widget->handlePresetChanged(preset);
-    }
-    void changePlaylistLayout(Playlist* previousPlaylist, Playlist* playlist) override
-    {
-        m_widget->changePlaylistLayout(previousPlaylist, playlist);
-    }
-    void setHeaderVisible(bool visible) override
-    {
-        m_widget->setHeaderVisible(visible);
-    }
-    void setScrollbarVisible(bool visible) override
-    {
-        m_widget->setScrollbarVisible(visible);
-    }
-    void setAlternatingRowColors(bool enabled) override
-    {
-        m_widget->setAlternatingRowColors(enabled);
-    }
-    [[nodiscard]] PlaylistWidget* sessionWidget() override
-    {
-        return m_widget;
-    }
-    [[nodiscard]] bool sessionVisible() const override
-    {
-        return m_widget->isVisible();
-    }
-    [[nodiscard]] PlaylistController* playlistController() const override
-    {
-        return m_widget->playlistController();
-    }
-    [[nodiscard]] PlayerController* playerController() const override
-    {
-        return m_widget->playerController();
-    }
-    [[nodiscard]] MusicLibrary* musicLibrary() const override
-    {
-        return m_widget->musicLibrary();
-    }
-    [[nodiscard]] PlaylistInteractor* playlistInteractor() const override
-    {
-        return m_widget->playlistInteractor();
-    }
-    [[nodiscard]] SettingsManager* settingsManager() const override
-    {
-        return m_widget->settingsManager();
-    }
-    [[nodiscard]] SignalThrottler* resetThrottler() const override
-    {
-        return m_widget->resetThrottler();
-    }
-    [[nodiscard]] LibraryManager* libraryManager() const override
-    {
-        return m_widget->libraryManager();
-    }
-    [[nodiscard]] TrackSelectionController* selectionController() const override
-    {
-        return m_widget->selectionController();
-    }
-    [[nodiscard]] WidgetContext* playlistContext() const override
-    {
-        return m_widget->playlistContext();
-    }
-    [[nodiscard]] PlaylistModel* playlistModel() const override
-    {
-        return m_widget->playlistModel();
-    }
-    [[nodiscard]] PlaylistView* playlistView() const override
-    {
-        return m_widget->playlistView();
-    }
-    [[nodiscard]] const PlaylistWidgetLayoutState& layoutState() const override
-    {
-        return m_widget->layoutState();
-    }
-    [[nodiscard]] bool hasDelayedStateLoad() const override
-    {
-        return m_widget->hasDelayedStateLoad();
-    }
-
-    void resetModel() override
-    {
-        m_widget->resetModel();
-    }
-    void resetModelThrottled() const override
-    {
-        m_widget->resetModelThrottled();
-    }
-    void resetSort(bool force) override
-    {
-        m_widget->resetSort(force);
-    }
-    bool followCurrentTrack() override
-    {
-        return m_widget->followCurrentTrack();
-    }
-    void sessionHandleRestoredState() override
-    {
-        m_widget->sessionHandleRestoredState();
-    }
-    void clearDelayedStateLoad() override
-    {
-        m_widget->clearDelayedStateLoad();
-    }
-    void setDelayedStateLoad(QMetaObject::Connection connection) override
-    {
-        m_widget->setDelayedStateLoad(std::move(connection));
-    }
-
-private:
-    PlaylistWidget* m_widget;
-};
 } // namespace
 
 PlaylistWidget* PlaylistWidget::createMainPlaylist(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
@@ -414,9 +285,8 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
             }
         }
     }
-    if(layout.contains("SingleMode"_L1)) {
-        m_layoutState.singleMode = layout.value("SingleMode"_L1).toBool();
-    }
+
+    m_layoutState.singleMode = layout.value("SingleMode"_L1).toBool(m_layoutState.singleMode);
 
     if(layout.contains("Columns"_L1)) {
         m_layoutState.columns.clear();
@@ -488,11 +358,6 @@ void PlaylistWidget::finalise()
     }
 
     m_session->finalise(sessionHost());
-}
-
-void PlaylistWidget::layoutEditingMenu(QMenu* menu)
-{
-    addConfigureAction(menu, false);
 }
 
 void PlaylistWidget::setConfigDialogTitle(QString title)
@@ -602,16 +467,23 @@ void PlaylistWidget::clearSavedDefaults() const
 
 void PlaylistWidget::applyConfig(const ConfigData& config)
 {
+    const bool reflectionChanged = m_config.artworkReflection != config.artworkReflection
+                                || m_config.artworkReflectionHeight != config.artworkReflectionHeight
+                                || m_config.artworkReflectionGap != config.artworkReflectionGap;
+
     m_config = config;
     const ConfigData factory{factoryConfig()};
 
-    m_config.imagePadding           = std::clamp(m_config.imagePadding, 0, 100);
-    m_config.imagePaddingTop        = std::clamp(m_config.imagePaddingTop, 0, 100);
-    m_config.artworkCornerRadius    = std::clamp(m_config.artworkCornerRadius, 0, 100);
-    m_config.backgroundMaxSize      = std::clamp(m_config.backgroundMaxSize, 0, 4096);
-    m_config.backgroundBlur         = std::clamp(m_config.backgroundBlur, 0, 100);
-    m_config.backgroundOpacity      = std::clamp(m_config.backgroundOpacity, 0, 100);
-    m_config.backgroundFadeDuration = std::max(m_config.backgroundFadeDuration, 0);
+    m_config.imagePadding             = std::clamp(m_config.imagePadding, 0, 100);
+    m_config.imagePaddingTop          = std::clamp(m_config.imagePaddingTop, 0, 100);
+    m_config.artworkCornerRadius      = std::clamp(m_config.artworkCornerRadius, 0, 100);
+    m_config.artworkReflectionHeight  = std::clamp(m_config.artworkReflectionHeight, 1, 100);
+    m_config.artworkReflectionOpacity = std::clamp(m_config.artworkReflectionOpacity, 0, 100);
+    m_config.artworkReflectionGap     = std::clamp(m_config.artworkReflectionGap, 0, 100);
+    m_config.backgroundMaxSize        = std::clamp(m_config.backgroundMaxSize, 0, 4096);
+    m_config.backgroundBlur           = std::clamp(m_config.backgroundBlur, 0, 100);
+    m_config.backgroundOpacity        = std::clamp(m_config.backgroundOpacity, 0, 100);
+    m_config.backgroundFadeDuration   = std::max(m_config.backgroundFadeDuration, 0);
 
     if(m_config.backgroundImageMode < static_cast<int>(PlaylistBgImage::None)
        || m_config.backgroundImageMode > static_cast<int>(PlaylistBgImage::Custom)) {
@@ -646,15 +518,25 @@ void PlaylistWidget::applyConfig(const ConfigData& config)
     }
 
     setHeaderVisible(m_config.showHeader);
+    m_playlistView->setStickyHeaders(m_config.stickyHeaders);
+    m_playlistView->setStickyArtwork(m_config.stickyArtwork);
     setScrollbarVisible(m_config.showScrollBar);
     setAlternatingRowColors(m_config.alternatingRows);
     m_model->setPixmapPadding(m_config.imagePadding, m_config.imagePaddingTop);
     m_delgate->setArtworkCornerRadius(m_config.artworkCornerRadius);
+    m_delgate->setArtworkReflection({.enabled = m_config.artworkReflection,
+                                     .height  = m_config.artworkReflectionHeight,
+                                     .opacity = m_config.artworkReflectionOpacity,
+                                     .gap     = m_config.artworkReflectionGap});
     m_doubleClickAction   = m_config.doubleClickAction;
     m_middleClickAction   = m_config.middleClickAction;
     m_startPlaybackOnSend = m_config.startPlaybackOnSend;
     applyBackgroundSettings();
     m_playlistView->viewport()->update();
+
+    if(reflectionChanged) {
+        m_playlistView->doItemsLayout();
+    }
 
     Q_EMIT configChanged();
 }
@@ -784,7 +666,7 @@ void PlaylistWidget::handlePresetChanged(const PlaylistPreset& preset)
     }
 }
 
-void PlaylistWidget::changePlaylistLayout(Playlist* previousPlaylist, const Playlist* playlist)
+void PlaylistWidget::changePlaylistLayout(Playlist* previousPlaylist, Playlist* playlist)
 {
     if(!m_session->capabilities().editablePlaylist) {
         return;
@@ -820,7 +702,9 @@ bool PlaylistWidget::followCurrentTrack()
         return false;
     }
 
-    QModelIndex modelIndex = m_model->indexAtPlaylistIndex(playingTrack.indexInPlaylist, true);
+    QModelIndex modelIndex = playingTrack.entryId.isValid()
+                               ? m_model->indexAtTrackEntry(playingTrack.entryId)
+                               : m_model->indexAtPlaylistIndex(playingTrack.indexInPlaylist);
     while(modelIndex.isValid() && m_header->isSectionHidden(modelIndex.column())) {
         modelIndex = modelIndex.siblingAtColumn(modelIndex.column() + 1);
     }
@@ -939,14 +823,24 @@ PlaylistView* PlaylistWidget::playlistView() const
     return m_playlistView;
 }
 
+PlaylistWidget* PlaylistWidget::sessionWidget()
+{
+    return this;
+}
+
+bool PlaylistWidget::sessionVisible() const
+{
+    return isVisible();
+}
+
 PlaylistWidgetSessionHost& PlaylistWidget::sessionHost()
 {
-    return *m_host;
+    return *this;
 }
 
 EditablePlaylistSessionHost& PlaylistWidget::editableSessionHost()
 {
-    return *m_host;
+    return *this;
 }
 
 void PlaylistWidget::openConfigDialog()
@@ -1037,7 +931,6 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     , m_bgImageMode{PlaylistBgImage::None}
     , m_bgCoverType{Track::Cover::Front}
     , m_bgTrackPreference{TrackDisplayPreference::PlayingTrack}
-    , m_host{std::make_unique<PlaylistWidgetHost>(this)}
     , m_searchController{
           new PlaylistSearchController(m_playlistController, m_model, m_playlistView, m_header, m_settings, this)}
 {
@@ -1064,6 +957,9 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
 
     m_playlistView->setSelectBeforeDrag(m_settings->value<Settings::Gui::DragOnlyAfterSelect>());
     m_settings->subscribe<Settings::Gui::DragOnlyAfterSelect>(m_playlistView, &PlaylistView::setSelectBeforeDrag);
+
+    m_playlistView->setInlineEditDelay(m_settings->value<PlaylistInlineEditDelayMs>());
+    m_settings->subscribe<PlaylistInlineEditDelayMs>(m_playlistView, &PlaylistView::setInlineEditDelay);
 
     m_playlistView->setRatingEditorOnlyOnHover(m_settings->value<Settings::Gui::RatingEditorOnlyOnHover>());
     m_playlistView->setLoveEditorOnlyOnHover(m_settings->value<Settings::Gui::LoveEditorOnlyOnHover>());
@@ -1393,7 +1289,7 @@ void PlaylistWidget::addColumnsMenu(QMenu* parent)
         }
 
         const bool columnVisible = hasColumn(column.id);
-        if(!column.enabled && !columnVisible) {
+        if(!column.isEnabled && !columnVisible) {
             continue;
         }
 
@@ -1838,47 +1734,37 @@ PlaylistWidget::ConfigData PlaylistWidget::configFromLayout(const QJsonObject& l
 {
     ConfigData config{defaultConfig()};
 
-    const auto readBool = [&layout](QLatin1StringView key, bool& value) {
-        if(layout.contains(key)) {
-            value = layout.value(key).toBool();
-        }
-    };
-    const auto readInt = [&layout](QLatin1StringView key, int& value) {
-        if(layout.contains(key)) {
-            value = layout.value(key).toInt();
-        }
-    };
+    config.showHeader              = layout.value("ShowHeader"_L1).toBool(config.showHeader);
+    config.stickyHeaders           = layout.value("StickyHeaders"_L1).toBool(config.stickyHeaders);
+    config.stickyArtwork           = layout.value("StickyArtwork"_L1).toBool(config.stickyArtwork);
+    config.showScrollBar           = layout.value("ShowScrollbar"_L1).toBool(config.showScrollBar);
+    config.alternatingRows         = layout.value("AlternatingRows"_L1).toBool(config.alternatingRows);
+    config.imagePadding            = layout.value("ImagePadding"_L1).toInt(config.imagePadding);
+    config.imagePaddingTop         = layout.value("ImagePaddingTop"_L1).toInt(config.imagePaddingTop);
+    config.artworkCornerRadius     = layout.value("ArtworkCornerRadius"_L1).toInt(config.artworkCornerRadius);
+    config.artworkReflection       = layout.value("ArtworkReflection"_L1).toBool(config.artworkReflection);
+    config.artworkReflectionHeight = layout.value("ArtworkReflectionHeight"_L1).toInt(config.artworkReflectionHeight);
+    config.artworkReflectionOpacity
+        = layout.value("ArtworkReflectionOpacity"_L1).toInt(config.artworkReflectionOpacity);
+    config.artworkReflectionGap   = layout.value("ArtworkReflectionGap"_L1).toInt(config.artworkReflectionGap);
+    config.backgroundImageMode    = layout.value("BackgroundImageMode"_L1).toInt(config.backgroundImageMode);
+    config.backgroundCoverType    = layout.value("BackgroundCoverType"_L1).toInt(config.backgroundCoverType);
+    config.backgroundScaling      = layout.value("BackgroundScaling"_L1).toInt(config.backgroundScaling);
+    config.backgroundPosition     = layout.value("BackgroundPosition"_L1).toInt(config.backgroundPosition);
+    config.backgroundMaxSize      = layout.value("BackgroundMaxSize"_L1).toInt(config.backgroundMaxSize);
+    config.backgroundBlur         = layout.value("BackgroundBlur"_L1).toInt(config.backgroundBlur);
+    config.backgroundOpacity      = layout.value("BackgroundOpacity"_L1).toInt(config.backgroundOpacity);
+    config.backgroundFadeDuration = layout.value("BackgroundFadeDuration"_L1).toInt(config.backgroundFadeDuration);
 
-    readBool("ShowHeader"_L1, config.showHeader);
-    readBool("ShowScrollbar"_L1, config.showScrollBar);
-    readBool("AlternatingRows"_L1, config.alternatingRows);
-    readInt("ImagePadding"_L1, config.imagePadding);
-    readInt("ImagePaddingTop"_L1, config.imagePaddingTop);
-    readInt("ArtworkCornerRadius"_L1, config.artworkCornerRadius);
-    readInt("BackgroundImageMode"_L1, config.backgroundImageMode);
-    readInt("BackgroundCoverType"_L1, config.backgroundCoverType);
-    readInt("BackgroundScaling"_L1, config.backgroundScaling);
-    readInt("BackgroundPosition"_L1, config.backgroundPosition);
-    readInt("BackgroundMaxSize"_L1, config.backgroundMaxSize);
-    readInt("BackgroundBlur"_L1, config.backgroundBlur);
-    readInt("BackgroundOpacity"_L1, config.backgroundOpacity);
-    readInt("BackgroundFadeDuration"_L1, config.backgroundFadeDuration);
+    config.backgroundCustomImage     = layout.value("BackgroundCustomImage"_L1).toString(config.backgroundCustomImage);
+    config.backgroundTrackPreference = static_cast<TrackDisplayPreference>(
+        layout.value("BackgroundTrackPreference"_L1).toInt(static_cast<int>(config.backgroundTrackPreference)));
 
-    if(layout.contains("BackgroundCustomImage"_L1)) {
-        config.backgroundCustomImage = layout.value("BackgroundCustomImage"_L1).toString();
-    }
-    if(layout.contains("BackgroundTrackPreference"_L1)) {
-        config.backgroundTrackPreference
-            = static_cast<TrackDisplayPreference>(layout.value("BackgroundTrackPreference"_L1).toInt());
-    }
-
-    if(layout.contains("DoubleClickAction"_L1)) {
-        config.doubleClickAction = static_cast<TrackAction>(layout.value("DoubleClickAction"_L1).toInt());
-    }
-    if(layout.contains("MiddleClickAction"_L1)) {
-        config.middleClickAction = static_cast<TrackAction>(layout.value("MiddleClickAction"_L1).toInt());
-    }
-    readBool("StartPlaybackOnSend"_L1, config.startPlaybackOnSend);
+    config.doubleClickAction = static_cast<TrackAction>(
+        layout.value("DoubleClickAction"_L1).toInt(static_cast<int>(config.doubleClickAction)));
+    config.middleClickAction = static_cast<TrackAction>(
+        layout.value("MiddleClickAction"_L1).toInt(static_cast<int>(config.middleClickAction)));
+    config.startPlaybackOnSend = layout.value("StartPlaybackOnSend"_L1).toBool(config.startPlaybackOnSend);
 
     return config;
 }
@@ -1886,11 +1772,17 @@ PlaylistWidget::ConfigData PlaylistWidget::configFromLayout(const QJsonObject& l
 void PlaylistWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
 {
     layout["ShowHeader"_L1]                = config.showHeader;
+    layout["StickyHeaders"_L1]             = config.stickyHeaders;
+    layout["StickyArtwork"_L1]             = config.stickyArtwork;
     layout["ShowScrollbar"_L1]             = config.showScrollBar;
     layout["AlternatingRows"_L1]           = config.alternatingRows;
     layout["ImagePadding"_L1]              = config.imagePadding;
     layout["ImagePaddingTop"_L1]           = config.imagePaddingTop;
     layout["ArtworkCornerRadius"_L1]       = config.artworkCornerRadius;
+    layout["ArtworkReflection"_L1]         = config.artworkReflection;
+    layout["ArtworkReflectionHeight"_L1]   = config.artworkReflectionHeight;
+    layout["ArtworkReflectionOpacity"_L1]  = config.artworkReflectionOpacity;
+    layout["ArtworkReflectionGap"_L1]      = config.artworkReflectionGap;
     layout["BackgroundImageMode"_L1]       = config.backgroundImageMode;
     layout["BackgroundCustomImage"_L1]     = config.backgroundCustomImage;
     layout["BackgroundCoverType"_L1]       = config.backgroundCoverType;

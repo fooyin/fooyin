@@ -177,6 +177,7 @@ constexpr auto PlaylistCurrentPreset = "PlaylistWidget/CurrentPreset";
 constexpr auto LastFilePath          = "Interface/LastFilePath";
 constexpr auto LastPlaylistPath      = "Playlist/LastPlaylistPath";
 constexpr auto ConfirmMetadataWipe   = "MetadataLookup/ConfirmWipeWritableTags";
+constexpr auto ShowLayoutEditingHint = "Interface/ShowLayoutEditingHint";
 
 enum GuiInternalSettings : uint32_t
 {
@@ -254,6 +255,7 @@ enum GuiInternalSettings : uint32_t
     StatusMiddleClick                        = 79 | Type::Int,
     ContextMenuQueueViewerDisabledSections   = 80 | Type::StringList,
     ContextMenuQueueViewerLayout             = 81 | Type::StringList,
+    PlaylistInlineEditDelayMs                = 82 | Type::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

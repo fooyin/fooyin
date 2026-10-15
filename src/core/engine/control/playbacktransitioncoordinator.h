@@ -46,14 +46,6 @@ public:
     };
     Q_ENUM(AutoTransitionMode)
 
-    struct CrossfadeParams
-    {
-        uint64_t seekPositionMs{0};
-        int fadeOutDurationMs{0};
-        int fadeInDurationMs{0};
-        uint64_t transitionId{0};
-    };
-
     struct InitialSeekRequest
     {
         uint64_t positionMs{0};
@@ -90,13 +82,6 @@ public:
 
     [[nodiscard]] TrackEndingResult evaluateTrackEnding(const TrackEndingInput& input);
 
-    //! Queue a seek transition that waits until buffered audio is sufficient.
-    void beginPendingSeek(uint64_t positionMs, int fadeOutDurationMs, int fadeInDurationMs, uint64_t transitionId = 0);
-    void cancelPendingSeek();
-    [[nodiscard]] bool hasPendingSeek() const;
-    //! Pending seek params when buffered duration is enough to start fade-out.
-    [[nodiscard]] std::optional<CrossfadeParams> pendingSeekIfBuffered(uint64_t bufferedMs) const;
-
     [[nodiscard]] bool isReadyForAutoTransition() const;
     [[nodiscard]] AutoTransitionMode autoTransitionMode() const;
     void clearAutoTransitionReadiness();
@@ -114,6 +99,7 @@ public:
     //! Queue initial seek to apply once matching track becomes active.
     void queueInitialSeek(uint64_t positionMs, int trackId, uint64_t requestId = 0);
     [[nodiscard]] bool hasPendingInitialSeekForTrack(int trackId) const;
+    //! Consume the pending request, discarding it if the track does not match.
     [[nodiscard]] std::optional<InitialSeekRequest> takePendingInitialSeekForTrack(int trackId);
 
 private:
@@ -122,16 +108,16 @@ private:
     [[nodiscard]] static bool inTimelineWindow(const TrackEndingInput& input, uint64_t windowMs);
 
     AutoTransitionMode m_autoTransitionMode;
-    CrossfadeParams m_crossfadeParams;
     bool m_trackEnding;
     bool m_switchReady;
     bool m_boundaryReached;
     bool m_seekInProgress;
-    bool m_pendingSeekActive;
 
-    bool m_pendingInitialSeekActive;
-    uint64_t m_pendingInitialSeekPositionMs;
-    uint64_t m_pendingInitialSeekRequestId;
-    int m_pendingInitialSeekTrackId;
+    struct PendingInitialSeek
+    {
+        InitialSeekRequest request;
+        int trackId{-1};
+    };
+    std::optional<PendingInitialSeek> m_pendingInitialSeek;
 };
 } // namespace Fooyin

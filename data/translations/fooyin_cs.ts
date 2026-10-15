@@ -64,12 +64,12 @@
         <translation>Nastavit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="470"/>
+        <location filename="../../src/gui/widgets.cpp" line="481"/>
         <source>Directory Browser</source>
         <translation>Správce souborů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="472"/>
+        <location filename="../../src/gui/widgets.cpp" line="483"/>
         <source>Unchecked items will be hidden from the directory browser context menu.</source>
         <translation>Nezaškrtnuté položky se nebudou zobrazovat v místní nabídce průzkumníka souborů.</translation>
     </message>
@@ -122,12 +122,12 @@
         <translation>Odstranit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="492"/>
+        <location filename="../../src/gui/widgets.cpp" line="503"/>
         <source>Layout Editing</source>
         <translation>Úprava vzhledu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="494"/>
+        <location filename="../../src/gui/widgets.cpp" line="505"/>
         <source>Unchecked items will be hidden from the layout editing context menu.</source>
         <translation>Nezaškrtnuté položky se nebudou zobrazovat v místní nabídce úpravy vzhledu.</translation>
     </message>
@@ -190,12 +190,12 @@
         <translation>Nabídka skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="503"/>
+        <location filename="../../src/gui/widgets.cpp" line="514"/>
         <source>Library Filter</source>
         <translation>Filtr knihovny</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="505"/>
+        <location filename="../../src/gui/widgets.cpp" line="516"/>
         <source>Unchecked items will be hidden from the library filter context menu.</source>
         <translation>Nezaškrtnuté položky se nebudou zobrazovat v místní nabídce filtru knihovny.</translation>
     </message>
@@ -532,7 +532,8 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="206"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="208"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="210"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="214"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="212"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="216"/>
         <source>Playlist</source>
         <translation>Seznam skladeb</translation>
     </message>
@@ -547,13 +548,12 @@
         <translation>Celková délka seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="213"/>
         <source>Alias for total playlist duration</source>
         <translation>Alias pro celkovou délku seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="212"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="222"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="214"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="224"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="226"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="228"/>
@@ -575,91 +575,92 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="260"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="262"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="264"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="266"/>
         <source>Playback</source>
         <translation>Přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="213"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="215"/>
         <source>Elapsed time within the active playlist</source>
         <translation>Uplynulý čas v přehrávaném seznamu skladeb ( [hh:]mm:ss )</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="215"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="217"/>
         <source>Unique genres across the track list</source>
         <translation>Unikátní žánry v seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="315"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="332"/>
         <source>Returns true when x is greater than y</source>
         <translation>Vrátí hodnotu ‚true‘ pokud je x větší než y</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="350"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="367"/>
         <source>Finds the first substring position (1-based)</source>
         <translation>Najde pozici prvního výskytu řetězce (počítáno od 1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="353"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="370"/>
         <source>Finds the first substring position ignoring case (1-based)</source>
         <translation>Najde pozici prvního výskytu řetězce bez ohledu na velikost písmen (počítáno od 1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="356"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="373"/>
         <source>Finds the last substring position (1-based)</source>
         <translation>Najde pozici posledního výskytu řetězce (počítáno od 1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="359"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="376"/>
         <source>Finds the last substring position ignoring case (1-based)</source>
         <translation>Najde pozici posledního výskytu řetězce bez ohledu na velikost písmen (počítáno od 1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="373"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="390"/>
         <source>Returns the first shortest string</source>
         <translation>Vrátí první nejkratší řetězec</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="376"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="393"/>
         <source>Finds the first character position (1-based)</source>
         <translation>Najde pozici prvního výskytu znaku (počítáno od 1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="379"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="396"/>
         <source>Finds the last character position (1-based)</source>
         <translation>Najde pozici posledního výskytu znaku (počítáno od 1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="388"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="405"/>
         <source>Returns true when a is longer than b</source>
         <translation>Vrátí hodnotu ‚true‘ pokud je a delší než b</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="390"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="407"/>
         <source>Returns the platform path separator</source>
         <translation>Vrátí rozdělovač souborové cesty aktuální platformy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="445"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="462"/>
         <source>Builds a clickable link that launches an application</source>
         <translation>Vytvoří klikatelný odkaz pro spuštění aplikace</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="451"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="468"/>
         <source>Returns the CRC-32 checksum of the text</source>
         <translation>Vrátí kontrolní součet CRC-32 zadaného textu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="507"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="524"/>
         <source>Returns the value at the one-based index</source>
         <translation>Vrátí hodnotu na pozici daného indexu počítaného od 1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="516"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="533"/>
         <source>Checks whether two numeric values are equal</source>
         <translation>Zkontroluje, zda jsou dvě číselné hodnoty shodné</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="217"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="219"/>
         <source>First playback queue index for the specified item</source>
         <translation>První index fronty přehrávání pro zadanou položku</translation>
     </message>
@@ -691,759 +692,814 @@
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="209"/>
+        <source>Name of the playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
         <source>Combined file size of the track list</source>
         <translation>Celková velikost souborů v seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="216"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="218"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="220"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="222"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="269"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="271"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="273"/>
         <source>Queue</source>
         <translation>Fronta</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="219"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="221"/>
         <source>Playback queue indexes for the specified item</source>
         <translation>Indexy fronty přehrávání pro zadanou položku</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="221"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="223"/>
         <source>Total amount of tracks in the playback queue for queued items</source>
         <translation>Celkový počet skladeb ve frontě přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="223"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="225"/>
         <source>Current playback position formatted as time</source>
         <translation>Aktuální pozice přehrávání ( [hh:]mm:ss )</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="225"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="227"/>
         <source>Current playback position in seconds</source>
         <translation>Aktuální pozice přehrávání v sekundách</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="227"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="229"/>
         <source>Remaining playback time formatted as time</source>
         <translation>Zbývající doba přehrávání ( [hh:]mm:ss )</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="229"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="231"/>
         <source>Remaining playback time in seconds</source>
         <translation>Zbývající doba přehrávání v sekundách</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="231"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="233"/>
         <source>Input decoder backend used for the current playing track</source>
         <translation>Backend vstupního dekodéru použitého pro aktuálně přehrávanou skladbu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="233"/>
-        <source>Sample rate entering the active output</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="235"/>
-        <source>Number of channels entering the active output</source>
-        <translation type="unfinished"></translation>
+        <source>Sample rate entering the active output</source>
+        <translation>Vzorkovací frekvence pro aktivní výstup</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="237"/>
-        <source>Channel layout entering the active output</source>
-        <translation type="unfinished"></translation>
+        <source>Number of channels entering the active output</source>
+        <translation>Počet kanálů pro aktivní výstup</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="239"/>
-        <source>Bit depth used by the active output</source>
-        <translation type="unfinished"></translation>
+        <source>Channel layout entering the active output</source>
+        <translation>Rozložení kanálů pro aktivní výstup</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="241"/>
-        <source>Active output device</source>
-        <translation type="unfinished"></translation>
+        <source>Bit depth used by the active output</source>
+        <translation>Bitová hloubka používaná aktivním výstupem</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
-        <source>Enabled DSPs in processing order</source>
-        <translation type="unfinished"></translation>
+        <source>Active output device</source>
+        <translation>Zařízení aktivního výstupu</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
-        <source>Explicitly selected DSP chain preset</source>
-        <translation type="unfinished"></translation>
+        <source>Enabled DSPs in processing order</source>
+        <translation>Povolené DSP v pořadí zpracování</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="247"/>
-        <source>Playback volume in dB</source>
-        <translation type="unfinished"></translation>
+        <source>Explicitly selected DSP chain preset</source>
+        <translation>Explicitně vybraná předvolba DSP řetězce</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="249"/>
-        <source>Active ReplayGain source mode</source>
-        <translation type="unfinished"></translation>
+        <source>Playback volume in dB</source>
+        <translation>Hlasitost přehrávání v dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="251"/>
-        <source>Active ReplayGain processing mode</source>
-        <translation type="unfinished"></translation>
+        <source>Active ReplayGain source mode</source>
+        <translation>Aktivní ReplayGain režim zdroje</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="253"/>
-        <source>Effective ReplayGain adjustment in dB</source>
-        <translation type="unfinished"></translation>
+        <source>Active ReplayGain processing mode</source>
+        <translation>Aktivní ReplayGain režim zpracování</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="255"/>
-        <source>Effective ReplayGain peak</source>
-        <translation type="unfinished"></translation>
+        <source>Effective ReplayGain adjustment in dB</source>
+        <translation>Efektivní ReplayGain úprava v dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="257"/>
-        <source>Effective ReplayGain peak in dBFS</source>
-        <translation type="unfinished"></translation>
+        <source>Effective ReplayGain peak</source>
+        <translation>Efektivní ReplayGain špička</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="259"/>
-        <source>Active output buffer length in milliseconds</source>
-        <translation type="unfinished"></translation>
+        <source>Effective ReplayGain peak in dBFS</source>
+        <translation>Efektivní ReplayGain špička v dBFS</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="261"/>
+        <source>Active output buffer length in milliseconds</source>
+        <translation>Délka výstupní vyrovnávací paměti v milisekundách</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="263"/>
         <source>Returns 1 while playback is active</source>
         <translation>Vrací 1 během přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="263"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="265"/>
         <source>Returns 1 while playback is paused</source>
         <translation>Vrací 1 pokud je přehrávání pozastaveno</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="265"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="267"/>
         <source>Returns 1 while playback is stopped</source>
         <translation>Vrátí 1 pokud je přehrávání pozastaveno</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="266"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="270"/>
+        <source>Returns 1 for the current queue viewer entry, including while paused</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
+        <source>Returns 1 for a queue viewer entry ahead of the queue cursor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
+        <source>Returns 1 for a queue viewer entry in queue history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="275"/>
         <source>System</source>
         <translation>Systém</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="267"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="276"/>
         <source>Current date and time formatted as YYYY-MM-DD HH:MM:SS</source>
         <translation>Aktuální datum a čas ve formátu RRRR-MM-DD hh:mm:ss</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="268"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="270"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="277"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="279"/>
         <source>Library</source>
         <translation>Knihovna</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="269"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="278"/>
         <source>Current library name</source>
         <translation>Název aktivní knihovny</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="271"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="280"/>
         <source>Current library path</source>
         <translation>Cesta aktivní knihovny</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="276"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="278"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="280"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="282"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="284"/>
-        <source>Style</source>
-        <translation>Styl</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="273"/>
-        <source>Makes the enclosed text bold</source>
-        <translation>Zobrazí text uvnitř tagu tučně</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="275"/>
-        <source>Makes the enclosed text italic</source>
-        <translation>Zobrazí text uvnitř tagu kurzívou</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="277"/>
-        <source>Underlines the enclosed text</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="279"/>
-        <source>Strikes through the enclosed text</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="281"/>
-        <source>Sets the font family for the enclosed text</source>
-        <translation>Nastaví rodinu písma pro text uvnitř tagu</translation>
+        <source>Layout</source>
+        <translation>Vzhled</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="282"/>
+        <source>Draws a separator in supported views</source>
+        <translation>V podporovaných zobrazeních vykreslí oddělovač</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="283"/>
-        <source>Sets the font size in points</source>
-        <translation>Nastaví velikost písma v bodech pro text uvnitř tagu</translation>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="285"/>
+        <source>Alignment</source>
+        <translation>Zarovnání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="285"/>
-        <source>Adjusts the current font size by a positive or negative delta</source>
-        <translation>Změní velikost písma uvnitř tagu o zadanou kladnou nebo zápornou hodnotu</translation>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="284"/>
+        <source>Aligns enclosed text to the left in supported views</source>
+        <translation>V podporovaných zobrazeních zarovná text uvnitř tagu doleva</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="286"/>
+        <source>Aligns enclosed text to the right in supported views</source>
+        <translation>V podporovaných zobrazeních zarovná text uvnitř tagu doprava</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="287"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="289"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="291"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="293"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="295"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="297"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="299"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="301"/>
+        <source>Style</source>
+        <translation>Styl</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="288"/>
+        <source>Makes the enclosed text bold</source>
+        <translation>Zobrazí text uvnitř tagu tučně</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="290"/>
+        <source>Makes the enclosed text italic</source>
+        <translation>Zobrazí text uvnitř tagu kurzívou</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="292"/>
+        <source>Underlines the enclosed text</source>
+        <translation>Podtrhne text uvnitř tagu</translation>
+    </message>
+    <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="294"/>
+        <source>Strikes through the enclosed text</source>
+        <translation>Škrtne text uvnitř tagu</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="296"/>
+        <source>Sets the font family for the enclosed text</source>
+        <translation>Nastaví rodinu písma pro text uvnitř tagu</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="298"/>
+        <source>Sets the font weight from 1 to 1000</source>
+        <translation>Nastaví tloušťku textu uvnitř tagu od 1 do 1000</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="300"/>
+        <source>Sets the font size in points</source>
+        <translation>Nastaví velikost písma v bodech pro text uvnitř tagu</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="302"/>
+        <source>Adjusts the current font size by a positive or negative delta</source>
+        <translation>Změní velikost písma uvnitř tagu o zadanou kladnou nebo zápornou hodnotu</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="304"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="306"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="308"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="311"/>
         <source>Colour</source>
         <translation>Barva</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="288"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="305"/>
         <source>Sets the text alpha channel from 0 to 255</source>
         <translation>Nastaví průhlednost textu uvnitř tagu ( 0 - 255 )</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="290"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="307"/>
         <source>Sets the text colour from red, green and blue components</source>
         <translation>Nastaví barvu textu uvnitř tagu ( červená,zelená,modrá )</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="292"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="309"/>
         <source>Sets the text colour from red, green, blue, and alpha components</source>
         <translation>Nastaví barvu textu uvnitř tagu ( červená,zelená,modrá,průhlednost )</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="295"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="312"/>
         <source>Sets the text colour from a named colour or hex code</source>
         <translation>Nastaví barvu textu uvnitř tagu (pojmenované barvy nebo hex kód)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="296"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="313"/>
         <source>Adds numeric arguments</source>
         <translation>Sečte číselné argumenty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="297"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="299"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="301"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="303"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="305"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="307"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="309"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="311"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="313"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="319"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="314"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="316"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="318"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="320"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="322"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="463"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="324"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="326"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="328"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="330"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="336"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="339"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="480"/>
         <source>Numeric</source>
         <translation>Čísla</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="298"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="315"/>
         <source>Subtracts later values from the first</source>
         <translation>Odečte číselné argumenty v daném pořadí</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="300"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="317"/>
         <source>Multiplies numeric arguments</source>
         <translation>Vynásobí číselné argumenty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="302"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="319"/>
         <source>Divides the first value by the second</source>
         <translation>Vydělí první argument druhým</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="304"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="321"/>
         <source>Returns the smallest numeric value</source>
         <translation>Vrátí nejmenší číselnou hodnotu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="306"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="323"/>
         <source>Returns the largest numeric value</source>
         <translation>Vrátí největší číselnou hodnotu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="308"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="325"/>
         <source>Returns the remainder of a division</source>
         <translation>Vrátí modulo dělení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="310"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="327"/>
         <source>Returns a random number in range</source>
         <translation>Vrátí náhodné číslo v zadaném rozsahu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="312"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="329"/>
         <source>Rounds a numeric value</source>
         <translation>Zaokrouhlí číselnou hodnotu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="318"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="335"/>
         <source>Formats a number with leading zeroes</source>
         <translation>Zformátuje číslo s úvodními nulami</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="321"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="338"/>
         <source>Formats a number in hexadecimal with leading zeroes</source>
         <translation>Zformátuje číslo do hexadecimálního tvaru s úvodními nulami</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="323"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="340"/>
         <source>Replaces text fragments</source>
         <translation>Nahradí část textu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="324"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="327"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="330"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="333"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="335"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="337"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="339"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="341"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="344"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="346"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="348"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="351"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="347"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="350"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="352"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="354"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="357"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="360"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="364"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="367"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="369"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="356"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="358"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="361"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="363"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="365"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="368"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="371"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="374"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="377"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="380"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="382"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="381"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="384"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="387"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="389"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="386"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="388"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="391"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="393"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="395"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="398"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="400"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="402"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="394"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="397"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="399"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="401"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="404"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="406"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="408"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="410"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="412"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="414"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="416"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="424"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="426"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="449"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="452"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="455"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="458"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="461"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="415"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="417"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="419"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="421"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="423"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="425"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="427"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="429"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="431"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="433"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="441"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="443"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="466"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="469"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="472"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="475"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="478"/>
         <source>String</source>
         <translation>Řetězce</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="326"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="343"/>
         <source>Returns the first match or capture; group 0 is the full match</source>
         <translation>Vrátí první shodu nebo záchytnou skupinu; skupina 0 je celá shoda</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="329"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="346"/>
         <source>Returns all matches or captures; group 0 is the full match</source>
         <translation>Vrátí všechny shody nebo záchytné skupiny; skupina 0 je celá shoda</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="332"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="349"/>
         <source>Replaces all regular expression matches; flags: i, m, s, x, U</source>
         <translation>Nahradí všechny shody regulárního výrazu; příznaky: i, m, s, x, U</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="334"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="351"/>
         <source>Converts text to ASCII</source>
         <translation>Převede text do ASCII</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="336"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="353"/>
         <source>Returns a slice of text</source>
         <translation>Vrátí vymezenou část textu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="338"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="355"/>
         <source>Removes characters from the end</source>
         <translation>Smaže znaky na konci textu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="340"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="357"/>
         <source>Returns characters from the left</source>
         <translation>Vrátí daný počet znaků zleva</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="343"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="360"/>
         <source>Returns characters from the right</source>
         <translation>Vrátí daný počet znaků zprava</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="346"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="363"/>
         <source>Inserts text at a position</source>
         <translation>Vloží text na danou pozici</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="347"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="364"/>
         <source>Returns a substring</source>
         <translation>Vrátí část řetězce vymezenou začátkem a délkou</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="362"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="379"/>
         <source>Splits text into multiple values, or returns one split segment when given a 1-based index</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozdělí text na několik hodnot, nebo vrátí jeden z rozdělených segmentů podle zadaného indexu (počítáno od 1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="366"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="383"/>
         <source>Joins non-empty values with a separator</source>
         <translation>Spojí neprázdné hodnoty pomocí rozdělovače</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="368"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="385"/>
         <source>Returns the text length</source>
         <translation>Vrátí délku textu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="370"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="387"/>
         <source>Returns the longest string</source>
         <translation>Vrátí nejdelší řetězec</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="381"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="398"/>
         <source>Compares two strings</source>
         <translation>Porovná dva řetězce</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="383"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="400"/>
         <source>Compares two strings ignoring case</source>
         <translation>Porovná dva řetězce bez ohledu na velikost písmen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="386"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="403"/>
         <source>Tests a regular expression match; flags: i, m, s, x, U</source>
         <translation>Testuje shodu regulárního výrazu; příznaky? i, m, s, x, U</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="392"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="409"/>
         <source>Returns a newline</source>
         <translation>Vrátí odřádkování</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="394"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="411"/>
         <source>Returns a tab character</source>
         <translation>Vrátí tabulátor</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="397"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="414"/>
         <source>Moves leading articles to the end</source>
         <translation>Přesune úvodní člen na konec</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="399"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="416"/>
         <source>Removes leading articles</source>
         <translation>Odstraní úvodní člen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="401"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="418"/>
         <source>Pads text on the left</source>
         <translation>Odsadí text zleva</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="404"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="421"/>
         <source>Pads text on the right</source>
         <translation>Odsadí text zprava</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="405"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="422"/>
         <source>Repeats text</source>
         <translation>Opakuje text</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="407"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="424"/>
         <source>Trims surrounding whitespace</source>
         <translation>Odstraní bílé znaky na začátku a konci</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="409"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="426"/>
         <source>Converts text to lowercase</source>
         <translation>Převede text na malá písmena</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="411"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="428"/>
         <source>Converts text to uppercase</source>
         <translation>Převede text na velká písmena</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="413"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="430"/>
         <source>Builds an abbreviation</source>
         <translation>Vytvoří zkratku</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="415"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="432"/>
         <source>Capitalises words</source>
         <translation>Převede text na první ve slovech velká</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="418"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="435"/>
         <source>Returns a directory name from a path</source>
         <translation>Vrátí název složky z cesty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="419"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="422"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="428"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="431"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="436"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="439"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="445"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="448"/>
         <source>Path</source>
         <translation>Cesty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="421"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="438"/>
         <source>Returns a parent directory path</source>
         <translation>Vrátí cestu nadřazené složky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="424"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="441"/>
         <source>Elides text at the end</source>
         <translation>Zkrátí text a přidá výpustku na konec</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="426"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="443"/>
         <source>Elides text in the middle</source>
         <translation>Zkrátí text a přidá výpustku doprostřed</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="427"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="444"/>
         <source>Returns a file extension</source>
         <translation>Vrátí příponu souboru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="430"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="447"/>
         <source>Returns a filename without extension</source>
         <translation>Vrátí název souboru bez přípony</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="433"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="450"/>
         <source>Builds a text progress bar</source>
         <translation>Vytvoří textový ukazatel průběhu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="434"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="437"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="440"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="443"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="446"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="451"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="454"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="457"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="460"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="463"/>
         <source>Utility</source>
         <translation>Nástroje</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="436"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="453"/>
         <source>Builds an alternate text progress bar</source>
         <translation>Vytvoří alternativní textový ukazatel průběhu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="439"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="456"/>
         <source>Builds a clickable document or web link</source>
         <translation>Vytvoří aktivní odkaz na dokument nebo web</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="442"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="459"/>
         <source>Builds a clickable link to a fooyin command</source>
         <translation>Vytvoří aktivní odkaz na fooyin příkaz</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="448"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="465"/>
         <source>Percent-encodes text for use in URLs</source>
         <translation>Převede text na formát použitelný pro URL adresy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="454"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="471"/>
         <source>Checks if text contains only alphabetic characters</source>
         <translation>Zkontroluje, zda text obsahuje pouze abecední znaky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="457"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="474"/>
         <source>Checks if text contains only alphanumeric characters</source>
         <translation>Zkontroluje, zda text obsahuje pouze alfanumerické znaky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="460"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="477"/>
         <source>Checks if text contains only numeric characters</source>
         <translation>Zkontroluje, zda text obsahuje pouze číselné znaky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="462"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="479"/>
         <source>Formats milliseconds as time</source>
         <translation>Převede milisekundy na čas ( [hh:]mm:ss )</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="464"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="481"/>
         <source>Returns the four-digit year from a date</source>
         <translation>Vrátí čtyřmístné číslo roku</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="465"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="468"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="471"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="473"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="476"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="482"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="485"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="488"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="490"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="493"/>
         <source>Time</source>
         <translation>Čas</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="467"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="484"/>
         <source>Returns the two-digit month from a date</source>
         <translation>Vrátí dvoumístné číslo měsíce</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="470"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="487"/>
         <source>Returns the two-digit day of month from a date</source>
         <translation>Vrátí dvoumístné číslo dne měsíce</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="472"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="489"/>
         <source>Returns the date formatted as YYYY-MM-DD</source>
         <translation>Vrátí datum ve formátu RRRR-MM-DD</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="475"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="492"/>
         <source>Returns the time formatted as HH:MM or HH:MM:SS</source>
         <translation>Vrátí čas ve formátu hh:mm nebo hh:mm:ss</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="478"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="495"/>
         <source>Returns the value stored in a script variable</source>
         <translation>Vrátí hodnotu proměnné</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="479"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="482"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="485"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="496"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="499"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="502"/>
         <source>Variable</source>
         <translation>Proměnné</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="481"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="498"/>
         <source>Stores a script variable and returns the value</source>
         <translation>Uloží proměnnou a vrátí její hodnotu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="484"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="501"/>
         <source>Stores a script variable and returns nothing</source>
         <translation>Uloží proměnnou a nic nevrátí</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="487"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="504"/>
         <source>Returns true when all expressions are true</source>
         <translation>Vrátí hodnotu ‚true‘ pokud jsou všechny výrazy pravdivé</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="489"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="506"/>
         <source>Returns the opposite truth value</source>
         <translation>Vrátí opačnou logickou hodnotu výsledku výrazu (true -&gt; false, false -&gt; true)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="492"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="509"/>
         <source>Returns true when at least one expression is true</source>
         <translation>Vrátí hodnotu ‚true‘ pokud je aspoň jeden výraz pravdivý</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="495"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="512"/>
         <source>Returns true when an odd number of expressions are true</source>
         <translation>Vrátí hodnotu ‚true‘ pokud je pravdivý lichý počet výrazů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="498"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="515"/>
         <source>Returns then when condition is true</source>
         <translation>Vyhodnotí podmínku a pokud je pravdivá, vrátí hodnotu za then</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="520"/>
-        <source>Looks up a raw tag field by name. Multiple values are joined with &quot;, &quot;.</source>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="537"/>
+        <source>Looks up a raw tag field by name. Multiple values are joined with ‘, ’.</source>
         <translation>Vyhledá tag podle názvu. Vícehodnotové použijí oddělovač &quot;, &quot;.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="316"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="488"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="490"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="493"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="496"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="499"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="502"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="333"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="505"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="508"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="511"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="514"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="517"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="507"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="510"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="513"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="516"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="519"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="522"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="525"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="528"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="531"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="534"/>
         <source>Conditional</source>
         <translation>Podmínky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="501"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="518"/>
         <source>Returns the first non-empty value</source>
         <translation>Vrátí první neprázdnou hodnotu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="504"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="521"/>
         <source>Returns the first true value from a list, or else when none match</source>
         <translation>Vrátí první pravdivou hodnotu ze seznamu nebo hodnotu za else</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="510"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="527"/>
         <source>Compares numeric values</source>
         <translation>Porovná číselné hodnoty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="513"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="530"/>
         <source>Checks whether text is longer than a limit</source>
         <translation>Zkontroluje, zda je text delší než zadaný limit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="521"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="525"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="529"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="535"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="538"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="541"/>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="543"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="542"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="546"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="552"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="555"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="558"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="560"/>
         <source>Lookup</source>
         <translation>Dotazy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="524"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="541"/>
         <source>Looks up a raw tag field by name and returns the zero-based indexed value.</source>
         <translation>Vyhledá tag podle názvu a vrátí od 0 indexované pole hodnot.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="528"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="545"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with sep.</source>
         <translation>Vyhledá tag podle názvu. Vícenásobné hodnoty použijí zadaný oddělovač (sep).</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="532"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="549"/>
         <source>Looks up a raw tag field by name. Multiple values are joined with sep, using lastsep between the final two values.</source>
         <translation>Vyhledá tag podle názvu. Vícenásobné hodnoty použijí zadaný oddělovač (sep), poslední dvě hodnoty pak znak koncového oddělovače (lastsep).</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="537"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="554"/>
         <source>Returns 1 when all named tag fields exist.</source>
         <translation>Vrátí 1 pokud všechny zadané tagy existují.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="540"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="557"/>
         <source>Returns the number of values in a raw tag field.</source>
         <translation>Vrátí počet hodnot tagu.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="542"/>
+        <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="559"/>
         <source>Looks up technical track information</source>
         <translation>Vrátí technické informace skladby</translation>
     </message>
@@ -1487,42 +1543,42 @@
 <context>
     <name>Fooyin::ActionManager</name>
     <message>
-        <location filename="../../src/gui/menubar/mainmenubar.cpp" line="51"/>
+        <location filename="../../src/gui/menubar/mainmenubar.cpp" line="52"/>
         <source>&amp;File</source>
         <translation>&amp;Soubor</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/mainmenubar.cpp" line="55"/>
+        <location filename="../../src/gui/menubar/mainmenubar.cpp" line="56"/>
         <source>&amp;Edit</source>
         <translation>Úpr&amp;avy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
+        <location filename="../../src/gui/menubar/mainmenubar.cpp" line="60"/>
         <source>&amp;View</source>
         <translation>&amp;Zobrazit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/mainmenubar.cpp" line="62"/>
+        <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
         <source>&amp;Visualisations</source>
         <translation>&amp;Vizualizace</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/mainmenubar.cpp" line="84"/>
+        <location filename="../../src/gui/menubar/mainmenubar.cpp" line="85"/>
         <source>La&amp;yout</source>
         <translation>&amp;Vzhled</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/mainmenubar.cpp" line="88"/>
+        <location filename="../../src/gui/menubar/mainmenubar.cpp" line="89"/>
         <source>&amp;Playback</source>
         <translation>&amp;Přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/mainmenubar.cpp" line="92"/>
+        <location filename="../../src/gui/menubar/mainmenubar.cpp" line="93"/>
         <source>&amp;Library</source>
         <translation>&amp;Knihovna</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/mainmenubar.cpp" line="96"/>
+        <location filename="../../src/gui/menubar/mainmenubar.cpp" line="97"/>
         <source>&amp;Help</source>
         <translation>&amp;Nápověda</translation>
     </message>
@@ -1530,8 +1586,8 @@
 <context>
     <name>Fooyin::AdvancedPage</name>
     <message>
-        <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="211"/>
-        <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="212"/>
+        <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="254"/>
+        <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="255"/>
         <source>Advanced</source>
         <translation>Pokročilé</translation>
     </message>
@@ -1539,9 +1595,14 @@
 <context>
     <name>Fooyin::AdvancedPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="77"/>
+        <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="80"/>
         <source>Filter</source>
         <translation>Filtr</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="169"/>
+        <source>Advanced</source>
+        <translation type="unfinished">Pokročilé</translation>
     </message>
 </context>
 <context>
@@ -2047,7 +2108,7 @@
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="134"/>
-        <source>Use the track&apos;s front cover when artist artwork is unavailable</source>
+        <source>Use the track’s front cover when artist artwork is unavailable</source>
         <translation>Pokud není obrázek interpreta k dispozici, použít přední přebal alba</translation>
     </message>
     <message>
@@ -2214,7 +2275,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     </message>
     <message>
         <location filename="../../src/gui/dialog/autoplaylistdialog.cpp" line="177"/>
-        <source>A query named &quot;%1&quot; already exists. Overwrite it?</source>
+        <source>A query named ‘%1’ already exists. Overwrite it?</source>
         <translation>Dotaz s názvem „%1“ již existuje. Přepsat?</translation>
     </message>
     <message>
@@ -2344,12 +2405,12 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="77"/>
-        <source>Limits the drive&apos;s read speed while ripping; playback is unaffected.</source>
+        <source>Limits the drive’s read speed while ripping; playback is unaffected.</source>
         <translation>Omezí rychlost čtení při extrakci; přehrávání není ovlivněno.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="78"/>
-        <source>This drive doesn&apos;t support read-speed control.</source>
+        <source>This drive doesn’t support read-speed control.</source>
         <translation>Tato mechanika nepodporuje kontrolu rychlosti.</translation>
     </message>
     <message>
@@ -3016,24 +3077,24 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
         <translation>Příkazové tlačítko</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/commandbutton.cpp" line="471"/>
-        <location filename="../../src/gui/controls/commandbutton.cpp" line="482"/>
+        <location filename="../../src/gui/controls/commandbutton.cpp" line="463"/>
+        <location filename="../../src/gui/controls/commandbutton.cpp" line="474"/>
         <source>Right-click to configure this button.</source>
         <translation>Pro nastavení tlačítka klikněte pravým tlačítkem.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/commandbutton.cpp" line="375"/>
-        <location filename="../../src/gui/controls/commandbutton.cpp" line="497"/>
+        <location filename="../../src/gui/controls/commandbutton.cpp" line="368"/>
+        <location filename="../../src/gui/controls/commandbutton.cpp" line="489"/>
         <source>Command is currently unavailable.</source>
         <translation>Příkaz aktuálně nelze použít.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/commandbutton.cpp" line="501"/>
+        <location filename="../../src/gui/controls/commandbutton.cpp" line="493"/>
         <source>Built-in icon missing.</source>
         <translation>Vestavěná ikona chybí.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/commandbutton.cpp" line="505"/>
+        <location filename="../../src/gui/controls/commandbutton.cpp" line="497"/>
         <source>Custom icon missing; using fallback icon.</source>
         <translation>Uživatelská ikona nedostupná; použita záložní ikona.</translation>
     </message>
@@ -3178,7 +3239,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="115"/>
-        <source>Choose a built-in icon or custom image. If none is set, the button uses the command&apos;s default icon.</source>
+        <source>Choose a built-in icon or custom image. If none is set, the button uses the command’s default icon.</source>
         <translation>Vyber vestavěnou ikonu, nebo vlastní obrázek. Pokud není nastaveno, tlačítko použije výchozí ikonu příkazu.</translation>
     </message>
     <message>
@@ -3245,7 +3306,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="42"/>
         <source>Restore defaults</source>
-        <translation>Obnovit</translation>
+        <translation>Obnovit výchozí</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="44"/>
@@ -3441,7 +3502,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="85"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1123"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1141"/>
         <source>Remove</source>
         <translation>Odstranit</translation>
     </message>
@@ -3492,7 +3553,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="108"/>
-        <source>Don&apos;t reset DSP between tracks</source>
+        <source>Don’t reset DSP between tracks</source>
         <translation>Neresetovat DSP při přechodu mezi skladbami</translation>
     </message>
     <message>
@@ -3517,31 +3578,31 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="127"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="219"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="233"/>
         <source>Converter Setup</source>
         <translation>Nastavení převodu</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="131"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="283"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="297"/>
         <source>Output</source>
         <translation>Výstup</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="132"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="284"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="298"/>
         <source>Destination</source>
         <translation>Cíl</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="133"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="285"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="299"/>
         <source>Processing</source>
         <translation>Zpracování</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="134"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="286"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="300"/>
         <source>Other</source>
         <translation>Ostatní</translation>
     </message>
@@ -3551,383 +3612,383 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
         <translation>Převést</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="219"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="233"/>
         <source>No output encoder is available.</source>
         <translation>Není k dispozici žádný kodér.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="224"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1087"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="238"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1105"/>
         <source>Choose destination</source>
         <translation>Výběr cílové složky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="249"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="263"/>
         <source>Saved presets</source>
         <translation>Uložené předvolby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="270"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="284"/>
         <source>Current settings</source>
         <translation>Aktuální nastavení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="307"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="321"/>
         <source>Automatic (preserve source)</source>
         <translation>Automaticky (zachovat zdroj)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="308"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="322"/>
         <source>8-bit integer</source>
         <translation>8bitová celá čísla</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="309"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="323"/>
         <source>16-bit integer</source>
         <translation>16bitová celá čísla</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="310"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="324"/>
         <source>24-bit integer</source>
         <translation>24bitová celá čísla</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="311"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="325"/>
         <source>32-bit integer</source>
         <translation>32bitová celá čísla</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="312"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="326"/>
         <source>32-bit floating point</source>
         <translation>32bitová čísla s plovoucí čárkou</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="314"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="328"/>
         <source>Automatic (when reducing bit depth)</source>
         <translation>Automaticky (snížení bitové hloubky)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="315"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="329"/>
         <source>Never</source>
         <translation>Nikdy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="316"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="330"/>
         <source>Lossy sources only</source>
         <translation>Pouze ztrátové zdroje</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="317"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="331"/>
         <source>Always</source>
         <translation>Vždy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="323"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="337"/>
         <source>Output sample format</source>
         <translation>Výstupní formát vzorkování</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="325"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="339"/>
         <source>Dither</source>
         <translation>Dither</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="351"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1192"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="365"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1210"/>
         <source>Ask when conversion starts</source>
         <translation>Zeptat se na začátku převodu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="352"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1195"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="366"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1213"/>
         <source>Source track folder</source>
         <translation>Složka zdrojových skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="353"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="367"/>
         <source>Specified folder</source>
         <translation>Zadaná složka</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="354"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="368"/>
         <source>Ask</source>
         <translation>Zeptat se</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="355"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="369"/>
         <source>Skip</source>
         <translation>Přeskočit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="356"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="370"/>
         <source>Overwrite</source>
         <translation>Přepsat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="357"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="371"/>
         <source>Convert each track to an individual file</source>
         <translation>Převést každou skladbu do samostatného souboru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="359"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="373"/>
         <source>Generate one multi-track file per name group</source>
         <translation>Vytvořit jeden vícestopý soubor pro každou skupinu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="361"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="375"/>
         <source>Merge all tracks into one output file</source>
         <translation>Spojit všechny skladby do jednoho souboru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="371"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="385"/>
         <source>Output path</source>
         <translation>Cíl převodu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="373"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="387"/>
         <source>Folder</source>
         <translation>Složka</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="375"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="389"/>
         <source>Output style</source>
         <translation>Typ výstupu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="377"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="391"/>
         <source>Name format</source>
         <translation>Šablona názvu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="379"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="393"/>
         <source>If file already exists</source>
         <translation>Pokud již soubor existuje</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="385"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="399"/>
         <source>Preview</source>
         <translation>Náhled</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="403"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1251"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1271"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="417"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1269"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1289"/>
         <source>None</source>
         <translation>Žádný</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="404"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="418"/>
         <source>Track gain</source>
         <translation>Zisk skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="405"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="419"/>
         <source>Album gain</source>
         <translation>Zisk alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="412"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="426"/>
         <source> dB</source>
         <translation> dB</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="415"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="429"/>
         <source>ReplayGain processing</source>
         <translation>Zpracování ReplayGain</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="418"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="432"/>
         <source>Mode</source>
         <translation>Režim</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="421"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="435"/>
         <source>Preamp</source>
         <translation>Předzesílení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="423"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="437"/>
         <source>Without ReplayGain info</source>
         <translation>Bez ReplayGain</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="426"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="440"/>
         <source>ReplayGain is applied permanently to the converted audio.</source>
         <translation>Pokud použijete při převodu ReplayGain, budou převedené soubory trvale změněny.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="457"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="471"/>
         <source>DSP chain</source>
         <translation>Řetězec DSP</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="459"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="473"/>
         <source>Active DSPs</source>
         <translation>Aktivní DSP</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="462"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="476"/>
         <source>Available DSPs</source>
         <translation>Dostupné DSP</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="471"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="485"/>
         <source>Metadata</source>
         <translation>Metadata</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="524"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="542"/>
         <source>Preview generation</source>
         <translation>Tvorba náhledů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="529"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="547"/>
         <source>Length</source>
         <translation>Délka</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="533"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="551"/>
         <source>When done</source>
         <translation>Po dokončení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="539"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="557"/>
         <source>Copy other files to the destination folder</source>
         <translation>Zkopírovat do cílové složky další soubory</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="732"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="738"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="750"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="756"/>
         <source>DSP Settings</source>
         <translation>Nastavení DSP</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="732"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="750"/>
         <source>This DSP has no configurable settings.</source>
         <translation>Tento DSP nepodporuje nastavení.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="739"/>
-        <source>Unable to open settings for DSP &quot;%1&quot;.</source>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="757"/>
+        <source>Unable to open settings for DSP ‘%1’.</source>
         <translation>Nepodařilo se otevřít nastavení pro DSP „%1“.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="792"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="810"/>
         <source>Default settings</source>
         <translation>Výchozí nastavení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="821"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="839"/>
         <source>Save Converter Preset</source>
         <translation>Uložit předvolbu převodu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="821"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="839"/>
         <source>Name</source>
         <translation>Název</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="879"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="888"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="894"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="900"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="897"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="906"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="912"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="918"/>
         <source>Import Converter Presets</source>
         <translation>Importovat předvolbu převodu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="880"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="948"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="898"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="966"/>
         <source>fooyin Converter Presets (*.fycp)</source>
         <translation>fooyin předvolby převodu (*.fycp)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="888"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="906"/>
         <source>The preset file could not be opened.</source>
         <translation>Soubor předvolby převodu se nepodařilo otevřít.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="894"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="912"/>
         <source>The preset file is invalid or empty.</source>
         <translation>Soubor předvolby převodu není platný nebo je prázdný.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="901"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="919"/>
         <source>Encoder is unavailable for preset: %1</source>
         <translation>Předvolba %1: Kodér není dostupný</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="947"/>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="957"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="965"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="975"/>
         <source>Export Converter Preset</source>
         <translation>Exportovat předvolbu převodu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="957"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="975"/>
         <source>The preset file could not be written.</source>
         <translation>Soubor předvolby převodu se nepodařilo uložit.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1123"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1141"/>
         <source>Reset</source>
         <translation>Obnovit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1186"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1204"/>
         <source>No encoder available</source>
         <translation>K dispozici není žádný kodér</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1199"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1217"/>
         <source>No folder specified</source>
         <translation>Nebyla zadána žádná složka</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1207"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1225"/>
         <source>group tracks by output name</source>
         <translation>seskupit skladby podle výstupního názvu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1210"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1228"/>
         <source>merge tracks</source>
         <translation>spojit skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1214"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1232"/>
         <source>No name format</source>
         <translation>Žádná šablona názvu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1221"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1239"/>
         <source>metadata</source>
         <translation>metadata</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1224"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1242"/>
         <source>rating</source>
         <translation>hodnocení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1227"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1245"/>
         <source>play count</source>
         <translation>počet přehrání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1230"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1248"/>
         <source>attached pictures</source>
         <translation>vložené obrázky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1235"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1253"/>
         <source>ReplayGain (track)</source>
         <translation>ReplayGain (skladba)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1238"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1256"/>
         <source>ReplayGain (album)</source>
         <translation>ReplayGain (album)</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1245"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1263"/>
         <source>%Ln DSP(s)</source>
         <translation>
             <numerusform>%Ln DSP</numerusform>
@@ -3936,32 +3997,32 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1247"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1265"/>
         <source>continuous DSP</source>
         <translation>kontinuální DSP</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1256"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1274"/>
         <source>%1% previews</source>
         <translation>%1% náhledy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1259"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1277"/>
         <source>Show status report</source>
         <translation>Zobrazit zprávu o stavu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1262"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1280"/>
         <source>Show converted files</source>
         <translation>Zobrazit převedené soubory</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1265"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1283"/>
         <source>Copy matching files</source>
         <translation>Kopírovat odpovídající soubory</translation>
     </message>
     <message>
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1268"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1286"/>
         <source>Verify output</source>
         <translation>Ověřit výstup</translation>
     </message>
@@ -3974,102 +4035,102 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
         <translation>Panel přebalu alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="480"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="472"/>
         <source>Keep aspect ratio</source>
         <translation>Zachovat poměr stran</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="493"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="485"/>
         <source>Align to centre</source>
         <translation>Zarovnat na střed</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="494"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="486"/>
         <source>Align to left</source>
         <translation>Zarovnat doleva</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="495"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="487"/>
         <source>Align to right</source>
         <translation>Zarovnat doprava</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="517"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="509"/>
         <source>Front cover</source>
         <translation>Přední přebal</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="518"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="510"/>
         <source>Back cover</source>
         <translation>Zadní přebal</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="519"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="511"/>
         <source>Artist</source>
         <translation>Umělec</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="550"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="542"/>
         <source>Artwork settings…</source>
         <translation>Nastavení přebalů alb…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="561"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="553"/>
         <source>View full size</source>
         <translation>Zobrazit ve skutečné velikosti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="574"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="566"/>
         <source>Search for artwork…</source>
         <translation>Vyhledat přebaly alb…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="575"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="567"/>
         <source>Quicksearch for artwork</source>
         <translation>Rychlé vyhledání přebalů alb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="576"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="568"/>
         <source>Auto-extract to file</source>
         <translation>Automaticky exportovat do souboru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="577"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="569"/>
         <source>Extract as…</source>
         <translation>Exportovat jako…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="578"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="570"/>
         <source>Remove artwork</source>
         <translation>Odstranit přebaly alb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="583"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="575"/>
         <source>Search for artwork for this cover type</source>
         <translation>Vyhledat obrázek pro tento typ přebalu alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="584"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="576"/>
         <source>Search for artwork and automatically choose the best match for this cover type</source>
         <translation>Vyhledat a automaticky vybrat nejvhodnější obrázek pro tento typ přebalu alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="586"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="578"/>
         <source>Extract this embedded artwork to a file in the track directory without prompting</source>
         <translation>Extrahovat vložený přebal alba do souboru ve složce skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="587"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="579"/>
         <source>Choose where to extract this embedded artwork</source>
         <translation>Vybrat cíl pro extrakci vloženého přebalu alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="588"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="580"/>
         <source>Remove this artwork</source>
         <translation>Odstranit tento přebal alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/coverwidget.cpp" line="622"/>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="614"/>
         <source>Extracted artwork to %1</source>
         <translation>Přebal alba exportován do %1</translation>
     </message>
@@ -4158,12 +4219,12 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="87"/>
-        <source>Playing (blank at startup)</source>
+        <source>Playing (no track at startup)</source>
         <translation>Přehrávaná (po spuštění žádná)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="89"/>
-        <source>Playing (blank when stopped)</source>
+        <source>Playing (no track when stopped)</source>
         <translation>Přehrávaná (po zastavení žádná)</translation>
     </message>
     <message>
@@ -4223,6 +4284,15 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     </message>
 </context>
 <context>
+    <name>Fooyin::CreateLayoutWidgetCommand</name>
+    <message>
+        <location filename="../../src/gui/layout/layoutcommands.cpp" line="1227"/>
+        <source>Add %1</source>
+        <extracomment>%1 is the name of a widget e.g. Add Playlist</extracomment>
+        <translation>Přidat %1</translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::CustomisableInput</name>
     <message>
         <location filename="../../src/gui/widgets/customisableinput.cpp" line="85"/>
@@ -4253,7 +4323,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/settings/playback/decodermodel.cpp" line="151"/>
         <source>Supported URI schemes</source>
-        <translation type="unfinished"></translation>
+        <translation>Podporovaná schémata URI</translation>
     </message>
 </context>
 <context>
@@ -4534,12 +4604,12 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="44"/>
         <source>Show controls</source>
-        <translation>Zobrazovat tlačítka</translation>
+        <translation>Zobrazit tlačítka</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="45"/>
         <source>Show location</source>
-        <translation>Zobrazovat umístění</translation>
+        <translation>Zobrazit umístění</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="46"/>
@@ -4558,7 +4628,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="53"/>
-        <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
+        <source>For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately.</source>
         <translation>&quot;Nahradit vybraný seznam skladeb&quot; a &quot;Vytvořit nový seznam skladeb&quot; ihned spustí přehrávání.</translation>
     </message>
     <message>
@@ -4794,12 +4864,12 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
         <translation>Výběr DSP</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/dspchainselector.cpp" line="140"/>
+        <location filename="../../src/gui/controls/dspchainselector.cpp" line="149"/>
         <source>Configure…</source>
         <translation>Nastavení…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/dspchainselector.cpp" line="158"/>
+        <location filename="../../src/gui/controls/dspchainselector.cpp" line="118"/>
         <source>Show label</source>
         <translation>Zobrazit popisek</translation>
     </message>
@@ -4854,12 +4924,12 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
 <context>
     <name>Fooyin::DspManagerPage</name>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1307"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1306"/>
         <source>Playback</source>
         <translation>Přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1307"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1306"/>
         <source>DSP Manager</source>
         <translation>Správce DSP</translation>
     </message>
@@ -4927,58 +4997,58 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         <translation>Tento DSP nepodporuje úpravy nastavení.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="721"/>
-        <source>Unable to open settings for DSP &quot;%1&quot;.</source>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="720"/>
+        <source>Unable to open settings for DSP ‘%1’.</source>
         <translation>Nepodařilo se otevřít nastavení pro DSP „%1“.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1030"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1029"/>
         <source>Configure…</source>
         <translation>Nastavení…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1038"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1037"/>
         <source>Move Up</source>
         <translation>Posunout nahoru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1044"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1043"/>
         <source>Move Down</source>
         <translation>Posunout dolů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1053"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1052"/>
         <source>Disable</source>
         <translation>Zakázat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1053"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1052"/>
         <source>Enable</source>
         <translation>Povolit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1061"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1060"/>
         <source>Remove</source>
         <translation>Odebrat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1079"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1078"/>
         <source>Add to Per-Track</source>
         <translation>Přidat pro skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1080"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1079"/>
         <source>Add to Master</source>
         <translation>Přidat k hlavním</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1246"/>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1245"/>
         <source>Preset already exists</source>
         <translation>Předvolba již existuje</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1247"/>
-        <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
+        <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1246"/>
+        <source>Preset ‘%1’ already exists. Overwrite?</source>
         <translation>Předvolba „%1“ již existuje. Přepsat?</translation>
     </message>
 </context>
@@ -5017,12 +5087,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="468"/>
-        <source>Unable to open settings for DSP &quot;%1&quot;.</source>
+        <source>Unable to open settings for DSP ‘%1’.</source>
         <translation>Nepodařilo se otevřít nastavení pro DSP „%1“.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dsp/dspsettingscontroller.cpp" line="478"/>
-        <source>Unable to find DSP &quot;%1&quot;.</source>
+        <source>Unable to find DSP ‘%1’.</source>
         <translation>Nepodařilo se najít DSP „%1“.</translation>
     </message>
     <message>
@@ -5115,167 +5185,234 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 <context>
     <name>Fooyin::EditableLayout</name>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="464"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="551"/>
         <source>&amp;Before</source>
         <translation>&amp;Před</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="471"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="558"/>
         <source>&amp;After</source>
         <translation>&amp;Za</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="482"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="569"/>
         <source>&amp;Inside</source>
         <translation>&amp;Do</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="392"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="479"/>
         <source>&amp;Left</source>
         <translation>V&amp;levo</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="360"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="340"/>
+        <source>Layout Editing</source>
+        <translation>Úprava vzhledu</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="341"/>
+        <source>Add and arrange widgets to customise your layout.</source>
+        <translation>Přidat a uspořádat widgety pro přizpůsobení vzhledu.</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="344"/>
+        <source>• Find widgets in the palette on the right (hover near the right edge if it&apos;s hidden).
+
+• Drag widgets from the palette to add them, or drag existing ones to move them. Hold Ctrl to replace the target widget.
+
+• Select a widget to see its parent containers in the breadcrumb bar. Select a parent to move an entire section.
+
+• Right-click any widget to split, replace, or remove it using the context menu.</source>
+        <translation>• Dostupné widgety najdeš v panelu napravo (pokud je skrytý, podrž ukazatel
+   myši u pravého okraje).
+
+• Widget přidáš jeho přetažením z panelu do okna. Polohu existujících widgetů
+   v okně můžeš změnit jejich přetažením. Pokud při přetahování podržíš Ctrl,
+   nahradíš přetahovaným widgetem cílový widget.
+
+• Vyber widget pro zobrazení jeho nadřazených widgetů v navigační liště. Vyber
+   nadřazený widget pro přesun celé skupiny.
+
+• Kliknutím pravým tlačítkem otevřeš místní nabídku pro rozdělení, nahrazení,
+   nebo odstranění widgetu.</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="351"/>
+        <source>Don&apos;t show this again</source>
+        <translation>Příště už nezobrazovat</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="447"/>
         <source>Insert &amp;before</source>
         <translation>Vložit &amp;před</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="365"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="452"/>
         <source>Insert &amp;after</source>
         <translation>Vložit &amp;za</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="373"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="460"/>
         <source>Insert &amp;inside</source>
         <translation>Vložit &amp;do</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="392"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="479"/>
         <source>&amp;Up</source>
         <translation>&amp;Nahoru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="399"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="486"/>
         <source>&amp;Right</source>
         <translation>Vp&amp;ravo</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="399"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="486"/>
         <source>&amp;Down</source>
         <translation>&amp;Dolů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="406"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="493"/>
         <source>Far Lef&amp;t</source>
         <translation>Až &amp;doleva</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="406"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="493"/>
         <source>&amp;Top</source>
         <translation>Až na&amp;horu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="414"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="501"/>
         <source>Far Rig&amp;ht</source>
         <translation>Až do&amp;prava</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="414"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="501"/>
         <source>&amp;Bottom</source>
         <translation>Až do&amp;lů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="436"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="523"/>
         <source>Remove spli&amp;t</source>
         <translation>&amp;Odebrat rozdělení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="450"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="537"/>
         <source>&amp;Paste</source>
         <translation>V&amp;ložit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="453"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="540"/>
         <source>Rep&amp;lace</source>
         <translation>Na&amp;hradit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="512"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="596"/>
+        <source>Left</source>
+        <translation>Levý</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="596"/>
+        <source>Top</source>
+        <translation>Horní</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="596"/>
+        <source>Right</source>
+        <translation>Pravý</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="597"/>
+        <source>Bottom</source>
+        <translation>Dolní</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="607"/>
+        <source>Restore defaults</source>
+        <translation>Obnovit výchozí</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="643"/>
+        <source>Margins</source>
+        <translation>Okraje</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="674"/>
         <source>Parent: %1</source>
         <translation>Rodič: %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="532"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="698"/>
         <source>Lock width</source>
         <translation>Uzamknout šířku</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="532"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="698"/>
         <source>Lock height</source>
         <translation>Uzamknout výšku</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="535"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="701"/>
         <source>Keep the width unchanged during automatic resizing; splitter handles can still resize it</source>
         <translation>Během automatické změny velikosti zachovat šířku beze změn; velikost může být stále změněna pomocí rozdělovačů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="537"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="703"/>
         <source>Keep the height unchanged during automatic resizing; splitter handles can still resize it</source>
         <translation>Během automatické změny velikosti zachovat výšku beze změn; velikost může být stále změněna pomocí rozdělovačů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="556"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="722"/>
         <source>R&amp;eplace</source>
         <translation>Na&amp;hradit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="564"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="730"/>
         <source>&amp;Split</source>
         <translation>&amp;Rozdělit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="578"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="744"/>
         <source>&amp;Copy</source>
         <translation>&amp;Kopírovat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="601"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="767"/>
         <source>&amp;Move</source>
         <translation>&amp;Přesunout</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="611"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="777"/>
         <source>&amp;Remove</source>
         <translation>Odeb&amp;rat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="681"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="847"/>
         <source>Edit</source>
         <translation>Upravit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="683"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="849"/>
         <source>&amp;Undo</source>
         <translation>&amp;Zpět</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="684"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="850"/>
         <source>Undo the previous layout edit</source>
         <translation>Odvolat předchozí úpravu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="695"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="861"/>
         <source>&amp;Redo</source>
         <translation>Zn&amp;ovu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="696"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="862"/>
         <source>Redo the previous layout edit</source>
         <translation>Obnovit odvolanou úpravu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="351"/>
+        <location filename="../../src/gui/layout/editablelayout.cpp" line="438"/>
         <source>&amp;Insert</source>
         <translation>&amp;Vložit</translation>
     </message>
@@ -5357,7 +5494,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="68"/>
         <source>Backend</source>
-        <translation type="unfinished"></translation>
+        <translation>Backend</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="71"/>
@@ -5517,7 +5654,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="442"/>
         <source>Show controls</source>
-        <translation>Zobrazovat tlačítka</translation>
+        <translation>Zobrazit tlačítka</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="454"/>
@@ -5552,20 +5689,20 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="585"/>
-        <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
+        <source>Preset ‘%1’ already exists. Overwrite?</source>
         <translation>Předvolba „%1“ již existuje. Přepsat?</translation>
     </message>
 </context>
 <context>
     <name>Fooyin::Equaliser::EqualiserSettingsProvider</name>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1143"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1148"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1141"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1146"/>
         <source>Equaliser</source>
         <translation>Ekvalizér</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1153"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1151"/>
         <source>Open Equaliser settings</source>
         <translation>Otevřít nastavení ekvalizéru</translation>
     </message>
@@ -5649,35 +5786,35 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="925"/>
-        <source>Preset &quot;%1&quot; already exists. Overwrite?</source>
+        <source>Preset ‘%1’ already exists. Overwrite?</source>
         <translation>Předvolba „%1“ již existuje. Přepsat?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="961"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="969"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="991"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1003"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="990"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1002"/>
         <source>Import Equaliser Preset</source>
         <translation>Importovat předvolbu ekvalizéru</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="962"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1024"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1023"/>
         <source>Equaliser Preset (*.feq)</source>
         <translation>Předvolba ekvalizéru (*.feq)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="970"/>
-        <source>Unable to open &quot;%1&quot; for reading.</source>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="969"/>
+        <source>Unable to open ‘%1’ for reading.</source>
         <translation>„%1“ nelze otevřít pro čtení.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="992"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="991"/>
         <source>Invalid value on line %L1.</source>
         <translation>Neplatná hodnota na řádku %L1.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="993"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="992"/>
         <source>The first %Ln non-empty line(s) must contain integer values.</source>
         <translation>
             <numerusform>První neprázdný řádek musí být celé číslo.</numerusform>
@@ -5686,7 +5823,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1004"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1003"/>
         <source>The preset file contains %Ln band value(s).</source>
         <translation>
             <numerusform>Soubor předvolby obsahuje %Ln hodnotu pásma.</numerusform>
@@ -5695,7 +5832,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1005"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1004"/>
         <source>Expected %Ln band value(s).</source>
         <translation>
             <numerusform>Očekávána byla %Ln hodnota pásma.</numerusform>
@@ -5704,47 +5841,47 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1024"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1049"/>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1061"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1023"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1048"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1059"/>
         <source>Export Equaliser Preset</source>
         <translation>Exportovat předvolbu ekvalizéru</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1050"/>
-        <source>Unable to open &quot;%1&quot; for writing.</source>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1048"/>
+        <source>Unable to open ‘%1’ for writing.</source>
         <translation>„%1“ nelze otevřít pro zápis.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1062"/>
-        <source>An error occurred while writing &quot;%1&quot;.</source>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1060"/>
+        <source>An error occurred while writing ‘%1’.</source>
         <translation>Chyba při zápisu do „%1“.</translation>
     </message>
 </context>
 <context>
     <name>Fooyin::ExpandableGroupBox</name>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="55"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="56"/>
         <source>Override height</source>
         <translation>Přenastavit výšku</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="69"/>
-        <source>Left-aligned</source>
-        <translation>Zarovnat doleva</translation>
-    </message>
-    <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="70"/>
-        <source>Right-aligned</source>
-        <translation>Zarovnat doprava</translation>
+        <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text and &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; to draw a separator.</source>
+        <translation>Použij &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; pro text zarovnaný doprava a &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; pro vykreslení oddělovače.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="72"/>
-        <source>Leave empty to group by the displayed values</source>
-        <translation>Ponechej prázdné pro seskupení podle zobrazených hodnot</translation>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="75"/>
+        <source>Leave empty to group by the display script</source>
+        <translation>Ponech prázdné pro seskupení podle skriptu pro zobrazení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="81"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="86"/>
+        <source>Display script</source>
+        <translation>Skript pro zobrazení</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="84"/>
         <source>Grouping script</source>
         <translation>Skript seskupení</translation>
     </message>
@@ -5840,12 +5977,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/ffmpegsettings.cpp" line="39"/>
         <source>Enable all supported formats</source>
-        <translation type="unfinished"></translation>
+        <translation>Povolit všechny podporované formáty</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/ffmpegsettings.cpp" line="41"/>
         <source>FFmpeg Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení FFmpeg</translation>
     </message>
 </context>
 <context>
@@ -5915,13 +6052,13 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="113"/>
-        <source>Don&apos;t crossfade within the same album</source>
-        <translation type="unfinished"></translation>
+        <source>Don’t crossfade within the same album</source>
+        <translation>Neprolínat v rámci jednoho alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="114"/>
         <source>Album matching pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzor pro rozpoznání alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="150"/>
@@ -5966,7 +6103,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="267"/>
         <source>Tracks with the same non-empty result are treated as part of the same album</source>
-        <translation type="unfinished"></translation>
+        <translation>Skladby se shodným neprázdným výsledkem jsou považovány za součást stejného alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="195"/>
@@ -6113,12 +6250,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="48"/>
-        <source>Are you sure you want to permanently delete &quot;%1&quot;?</source>
+        <source>Are you sure you want to permanently delete ‘%1’?</source>
         <translation>Opravdu chceš trvale smazat „%1“?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="49"/>
-        <source>Are you sure you want to delete &quot;%1&quot;?</source>
+        <source>Are you sure you want to delete ‘%1’?</source>
         <translation>Opravdu chcete „%1“ smazat?</translation>
     </message>
     <message numerus="yes">
@@ -6153,68 +6290,68 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 <context>
     <name>Fooyin::FileOps::FileOpsDialog</name>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="138"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="143"/>
         <source>Copy</source>
         <translation>Kopírovat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="139"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="144"/>
         <source>Move</source>
         <translation>Přesunout</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="140"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="145"/>
         <source>Rename</source>
         <translation>Přejmenovat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="141"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="146"/>
         <source>Extract</source>
         <translation>Extrahovat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="145"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="150"/>
         <source>Remove empty source folders</source>
         <translation>Odstranit prázdné zdrojové složky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="146"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="151"/>
         <source>Delete archive after extraction</source>
         <translation>Smazat archív po rozbalení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="148"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="153"/>
         <source>&amp;Load</source>
         <translation>&amp;Načíst</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="149"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="154"/>
         <source>&amp;Save</source>
         <translation>&amp;Uložit</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="150"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="155"/>
         <source>&amp;Delete</source>
         <translation>&amp;Smazat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="458"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="505"/>
         <source>Determining operations…</source>
         <translation>Určování operací…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="514"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="565"/>
         <source>Finishing operations…</source>
         <translation>Dokončování operací…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="523"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="574"/>
         <source>Nothing to do</source>
         <translation>Žádné operace</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="511"/>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="527"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="562"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="578"/>
         <source>Pending operation(s): %Ln</source>
         <translation>
             <numerusform>Čekající operace: %Ln</numerusform>
@@ -6223,7 +6360,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="544"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="603"/>
         <source>Aborted: %Ln operation(s) not run</source>
         <translation>
             <numerusform>Přerušeno: %Ln operace neproběhla</numerusform>
@@ -6232,7 +6369,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="550"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="609"/>
         <source>Completed %Ln operation(s)</source>
         <translation>
             <numerusform>Dokončena %Ln operace</numerusform>
@@ -6241,7 +6378,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="557"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="616"/>
         <source>%Ln succeeded</source>
         <translation>
             <numerusform>%Ln úspěšná</numerusform>
@@ -6250,7 +6387,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="560"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="619"/>
         <source>%Ln failed</source>
         <translation>
             <numerusform>%Ln selhala</numerusform>
@@ -6259,7 +6396,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="563"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="622"/>
         <source>%Ln skipped</source>
         <translation>
             <numerusform>%Ln přeskočena</numerusform>
@@ -6268,7 +6405,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="566"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="625"/>
         <source>%Ln cancelled</source>
         <translation>
             <numerusform>%Ln zrušena</numerusform>
@@ -6277,7 +6414,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="571"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="630"/>
         <source>Completed %Ln operation(s): %1</source>
         <translation>
             <numerusform>Dokončena %Ln operace: %1</numerusform>
@@ -6286,12 +6423,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="599"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="658"/>
         <source>Select Directory</source>
         <translation>Vybrat složku</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="620"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="679"/>
         <source>File Operation</source>
         <translation>Operace se soubory</translation>
     </message>
@@ -6299,80 +6436,80 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 <context>
     <name>Fooyin::FileOps::FileOpsDialogPrivate</name>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="189"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="198"/>
         <source>Operation</source>
         <translation>Operace</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="191"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="200"/>
         <source>Destination</source>
         <translation>Cíl</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="192"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="201"/>
         <source>Filename</source>
         <translation>Název souboru</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="194"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="203"/>
         <source>Presets</source>
         <translation>Předvolby</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="209"/>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="464"/>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="520"/>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="535"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="219"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="511"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="571"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="586"/>
         <source>&amp;Run</source>
         <translation>&amp;Spustit</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="278"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="318"/>
         <source>Copy entire source folder contents</source>
         <translation>Zkopírovat veškerý obsah složky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="281"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="321"/>
         <source>Move entire source folder contents</source>
         <translation>Přesunout veškerý obsah složky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="284"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="324"/>
         <source>Extract entire source archive contents</source>
         <translation>Rozbalit celý obsah zdrojového archivu</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="334"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="374"/>
         <source>Preset already exists</source>
         <translation>Předvolba již existuje</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="335"/>
-        <source>A preset named &quot;%1&quot; already exists. Overwrite it?</source>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="375"/>
+        <source>A preset named ‘%1’ already exists. Overwrite it?</source>
         <translation>Předvolba s názvem „%1“ již existuje. Přepsat?</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="477"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="524"/>
         <source>Source archive files will be permanently deleted after every file from each archive has been extracted. Continue?</source>
         <translation>Soubory zdrojových archivů budou po extrakci všech obsažených souborů smazány. Pokračovat?</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="482"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="529"/>
         <source>Delete source archive after extraction?</source>
         <translation>Smazat zdrojový archiv po rozbalení?</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="479"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="526"/>
         <source>Source archive files will be moved to the trash after every file from each archive has been extracted. Continue?</source>
         <translation>Soubory zdrojových archivů budou po rozbalení všech souborů přesunuty do koše. Pokračovat?</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="485"/>
-        <source>Don&apos;t ask again</source>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="532"/>
+        <source>Don’t ask again</source>
         <translation>Příště se neptat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="498"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="545"/>
         <source>&amp;Abort</source>
         <translation>&amp;Přerušit</translation>
     </message>
@@ -6380,93 +6517,93 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 <context>
     <name>Fooyin::FileOps::FileOpsModel</name>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="118"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="125"/>
         <source>Operation</source>
         <translation>Operace</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="120"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="127"/>
         <source>Source</source>
         <translation>Zdroj</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="122"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="129"/>
         <source>Destination</source>
         <translation>Cíl</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="124"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="131"/>
         <source>Result</source>
         <translation>Výsledek</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="165"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="172"/>
         <source>Pending</source>
         <translation>Čekající</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="238"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="249"/>
         <source>Copy</source>
         <translation>Kopírovat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="240"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="251"/>
         <source>Move</source>
         <translation>Přesunout</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="242"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="253"/>
         <source>Rename</source>
         <translation>Přejmenovat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="244"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="255"/>
         <source>Create</source>
         <translation>Vytvořit</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="246"/>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="252"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="257"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="263"/>
         <source>Remove</source>
         <translation>Odebrat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="248"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="259"/>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="250"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="261"/>
         <source>Extract</source>
         <translation>Rozbalit</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="254"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="265"/>
         <source>Unknown</source>
         <translation>Neznámý</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="261"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="272"/>
         <source>Succeeded</source>
         <translation>Úspěšné</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="263"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="274"/>
         <source>Failed: %1</source>
         <translation>Selhalo: %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="265"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="276"/>
         <source>Skipped: %1</source>
         <translation>Přeskočeno: %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="267"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="278"/>
         <source>Cancelled</source>
         <translation>Zrušeno</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="267"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="278"/>
         <source>Cancelled: %1</source>
         <translation>Zrušeno: %1</translation>
     </message>
@@ -6474,90 +6611,90 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 <context>
     <name>Fooyin::FileOps::FileOpsPlugin</name>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="94"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="107"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="128"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="141"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="96"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="109"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="130"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="143"/>
         <source>File Operations</source>
         <translation>Operace se soubory</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="95"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="97"/>
         <source>Confirm before deleting tracks</source>
         <translation>Před smazáním skladeb požadovat potvrzení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="108"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="110"/>
         <source>Confirm before deleting source archives after extraction</source>
         <translation>Před smazáním archivů po extrakci požadovat potvrzení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="129"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="131"/>
         <source>Immediately delete tracks (bypass trash)</source>
         <translation>Trvale smazat skladby (nepřesouvat do koše)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="142"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="144"/>
         <source>Remove empty parent folders</source>
         <translation>Odstranit prázdné nadřazené složky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="143"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="145"/>
         <source>Remove empty parent folders after moving or deleting files, stopping at the library root</source>
         <translation>Odstranit prázdné nadřazené složky po přesunu nebo smazání souborů, omezeno na obsah knihovny</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="161"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="213"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="237"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="344"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="163"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="215"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="239"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="349"/>
         <source>File operations</source>
         <translation>Operace se soubory</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="203"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="205"/>
         <source>&amp;Copy to…</source>
         <translation>&amp;Kopírovat do…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="204"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="206"/>
         <source>&amp;Move to…</source>
         <translation>Pře&amp;sunout do…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="205"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="207"/>
         <source>&amp;Rename to…</source>
         <translation>&amp;Přejmenovat…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="206"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="208"/>
         <source>&amp;Extract to…</source>
         <translation>&amp;Rozbalit do…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="210"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="212"/>
         <source>&amp;Delete</source>
         <translation>&amp;Smazat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="213"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="237"/>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="344"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="215"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="239"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="349"/>
         <source>Tracks</source>
         <translation>Skladby</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="235"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="237"/>
         <source>Delete currently playing file</source>
         <translation>Smazat přehrávaný soubor</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="279"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="282"/>
         <source>No tracks deleted</source>
         <translation>Nebyly smazány žádné skladby</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="280"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="283"/>
         <source>Deleted %Ln track(s)</source>
         <translation>
             <numerusform>Smazána jedna skladba</numerusform>
@@ -6566,12 +6703,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="288"/>
-        <source>Could not move &quot;%1&quot; to the trash. Delete it permanently?</source>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="291"/>
+        <source>Could not move ‘%1’ to the trash. Delete it permanently?</source>
         <translation>„%1“ se nepodařilo přesunout do koše. Trvale smazat?</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="290"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="293"/>
         <source>Could not move %Ln file(s) to the trash. Delete them permanently?</source>
         <translation>
             <numerusform>%Ln soubor se nepodařilo přesunout do koše. Smazat trvale?</numerusform>
@@ -6580,42 +6717,42 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="292"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="295"/>
         <source>Move to Trash Failed</source>
         <translation>Přesun do koše se nezdařil</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="295"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="298"/>
         <source>Permanent deletion cannot be undone.</source>
         <translation>Trvalé smazání nelze vrátit zpět.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="296"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="299"/>
         <source>Delete Permanently</source>
         <translation>Trvale smazat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="329"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="334"/>
         <source>Copy</source>
         <translation>Kopírovat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="332"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="337"/>
         <source>Move</source>
         <translation>Přesunout</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="335"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="340"/>
         <source>Rename</source>
         <translation>Přejmenovat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="338"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="343"/>
         <source>Extract</source>
         <translation>Rozbalit</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="341"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="346"/>
         <source>Other</source>
         <translation>Ostatní</translation>
     </message>
@@ -6623,53 +6760,53 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 <context>
     <name>Fooyin::FileOps::FileOpsWorker</name>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="149"/>
+        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="165"/>
         <source>Could not create directory</source>
         <translation>Složku se nepodařilo vytvořit</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="158"/>
+        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="174"/>
         <source>Could not remove directory</source>
         <translation>Složku se nepodařilo odstranit</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="614"/>
-        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="663"/>
+        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="635"/>
+        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="684"/>
         <source>Source file does not exist</source>
         <translation>Zdrojový soubor neexistuje</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="679"/>
+        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="700"/>
         <source>Could not open archive</source>
         <translation>Nepodařilo se otevřít archiv</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="685"/>
+        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="706"/>
         <source>Destination file already exists</source>
         <translation>Cílový soubor již existuje</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="701"/>
+        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="722"/>
         <source>Archive extraction was interrupted</source>
         <translation>Rozbalování archivu bylo přerušeno</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="703"/>
+        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="724"/>
         <source>Could not extract archive entry</source>
         <translation>Nepodařilo se rozbalit položku archivu</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="715"/>
+        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="736"/>
         <source>One or more archive entries could not be extracted</source>
         <translation>Jednu nebo více položek archivu se nepodařilo rozbalit</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="720"/>
+        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="741"/>
         <source>No archive entries were extracted</source>
         <translation>Nebyly rozbaleny žádné položky archivu</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="728"/>
+        <location filename="../../src/plugins/fileops/fileopsworker.cpp" line="749"/>
         <source>Could not delete source archive</source>
         <translation>Zdrojový archiv se nepodařilo smazat</translation>
     </message>
@@ -6757,7 +6894,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="63"/>
-        <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
+        <source>For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately.</source>
         <translation>&quot;Nahradit vybraný seznam skladeb&quot; a &quot;Vytvořit nový seznam skladeb&quot; ihned spustí přehrávání.</translation>
     </message>
     <message>
@@ -6802,7 +6939,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="93"/>
-        <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
+        <source>When this selection playlist is used for playback, preserve it with ‘(Playback)’ appended to its name instead of replacing its tracks.</source>
         <translation>Pokud je tento seznam skladeb výběru přehráván, nenahradit v něm obsažené skladby, ale zachovat ho s názvem doplněným na konci o řetězec „(přehrávání)“.</translation>
     </message>
     <message>
@@ -6819,7 +6956,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="51"/>
         <source>Restore state on startup</source>
-        <translation type="unfinished">Po spuštění obnovit stav z předchozího spuštění</translation>
+        <translation>Po spuštění obnovit stav z předchozího spuštění</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="60"/>
@@ -6918,7 +7055,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 <context>
     <name>Fooyin::Filters::FilterController</name>
     <message>
-        <location filename="../../src/gui/filters/filtercontroller.cpp" line="1358"/>
+        <location filename="../../src/gui/filters/filtercontroller.cpp" line="1364"/>
         <source>Filter Results</source>
         <translation>Výsledky filtru</translation>
     </message>
@@ -6932,7 +7069,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="121"/>
-        <location filename="../../src/gui/filters/filtermanager.cpp" line="433"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="437"/>
         <source>Clear Groups</source>
         <translation>Zrušit skupiny</translation>
     </message>
@@ -6960,20 +7097,20 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="233"/>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="366"/>
         <source>Viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>Prohlížeč</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filtermanager.cpp" line="424"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="428"/>
         <source>Add New Group</source>
         <translation>Přidat novou skupinu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filtermanager.cpp" line="459"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="463"/>
         <source>Back</source>
         <translation>Zpět</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filtermanager.cpp" line="480"/>
+        <location filename="../../src/gui/filters/filtermanager.cpp" line="484"/>
         <source>Finish</source>
         <translation>Dokončit</translation>
     </message>
@@ -6994,130 +7131,129 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 <context>
     <name>Fooyin::Filters::FilterWidget</name>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="936"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="931"/>
         <source>Display</source>
         <translation>Zobrazení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="682"/>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="941"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="677"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="936"/>
         <source>Columns</source>
         <translation>Sloupce</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="360"/>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="774"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="769"/>
         <source>Manage filter groups…</source>
-        <translation type="unfinished"></translation>
+        <translation>Správa skupin filtrů…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="749"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="744"/>
         <source>Source</source>
         <translation>Zdroj</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="760"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="755"/>
         <source>Library</source>
         <translation>Knihovna</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="761"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="756"/>
         <source>Current playlist</source>
         <translation>Vybraný seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="942"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="937"/>
         <source>Artwork (bottom labels)</source>
         <translation>Přebaly alb (popisky dole)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="943"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="938"/>
         <source>Artwork (right labels)</source>
         <translation>Přebaly alb (popisky vpravo)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="944"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="939"/>
         <source>Artwork (no labels)</source>
         <translation>Přebaly alb (bez popisků)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="948"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="943"/>
         <source>Use embedded covers</source>
         <translation>Použít vložené přebaly alb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="949"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="944"/>
         <source>Use directory covers</source>
         <translation>Použít přebaly alb ze složky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="950"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="945"/>
         <source>Use default source</source>
         <translation>Použít výchozí zdroj</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="1029"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="1024"/>
         <source>Summary item</source>
         <translation>Souhrn</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="945"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="940"/>
         <source>Front cover</source>
         <translation>Přední přebal</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="946"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="941"/>
         <source>Back cover</source>
         <translation>Zadní přebal</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="1035"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="1030"/>
         <source>Show header</source>
         <translation>Zobrazit záhlaví</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="1040"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="1035"/>
         <source>Show scrollbar</source>
         <translation>Zobrazit posuvník</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="1048"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="1043"/>
         <source>Alternating row colours</source>
         <translation>Střídavé barvy řádků</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="725"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="720"/>
         <source>Multiple columns</source>
         <translation>Více sloupců</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="947"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="942"/>
         <source>Artist</source>
         <translation>Umělec</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="733"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="728"/>
         <source>More…</source>
         <translation>Další…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="350"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="354"/>
         <source>Library Filter</source>
         <translation>Filtr knihovny</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filtercontroller.cpp" line="338"/>
+        <location filename="../../src/gui/filters/filtercontroller.cpp" line="344"/>
         <source>Add to playlist</source>
         <translation>Přidat do seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filtercontroller.cpp" line="376"/>
+        <location filename="../../src/gui/filters/filtercontroller.cpp" line="382"/>
         <source>Filter options</source>
         <translation>Možnosti filtru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/filtercontroller.cpp" line="384"/>
-        <location filename="../../src/gui/filters/filterwidget.cpp" line="778"/>
+        <location filename="../../src/gui/filters/filtercontroller.cpp" line="390"/>
+        <location filename="../../src/gui/filters/filterwidget.cpp" line="773"/>
         <source>Configure…</source>
         <translation>Nastavení…</translation>
     </message>
@@ -7159,7 +7295,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="57"/>
-        <source>The expression for library filter &quot;%1&quot; is invalid.</source>
+        <source>The expression for library filter ‘%1’ is invalid.</source>
         <translation>Výraz filtru knihovny „%1“ není platný.</translation>
     </message>
     <message>
@@ -7213,37 +7349,47 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 <context>
     <name>Fooyin::Filters::LibraryFilterSwitcher</name>
     <message>
-        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="50"/>
+        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="51"/>
+        <source>Filter</source>
+        <translation>Filtr</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="53"/>
         <source>All</source>
         <translation>Vše</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="78"/>
+        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="91"/>
         <source>Saved Filter Selector</source>
         <translation>Výběr uložených filtrů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="186"/>
-        <source>Rename &apos;All&apos; filter</source>
+        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="122"/>
+        <source>Show label</source>
+        <translation>Zobrazit popisek</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="127"/>
+        <source>Rename ‘All’ filter</source>
         <translation>Přejmenovat filtr ‚Vše‘</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="189"/>
-        <source>Rename &apos;All&apos; Filter</source>
+        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="130"/>
+        <source>Rename ‘All’ Filter</source>
         <translation>Přejmenovat filtr ‚Vše‘</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="189"/>
+        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="130"/>
         <source>Name:</source>
         <translation>Název:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="198"/>
+        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="139"/>
         <source>Remember last filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Pamatovat si poslední filtr</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="205"/>
+        <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="146"/>
         <source>Manage library filters…</source>
         <translation>Spravovat filtry knihovny…</translation>
     </message>
@@ -7266,32 +7412,32 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         <translation>Karty uložených filtrů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="493"/>
+        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="509"/>
         <source>Rename tab</source>
         <translation>Přejmenovat kartu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="500"/>
+        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="516"/>
         <source>Tabs position</source>
         <translation>Pozice karet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="512"/>
+        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="528"/>
         <source>Top</source>
         <translation>Nahoře</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="513"/>
+        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="529"/>
         <source>Bottom</source>
         <translation>Dole</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="515"/>
+        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="531"/>
         <source>Remember last filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Pamatovat si poslední filtr</translation>
     </message>
     <message>
-        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="522"/>
+        <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="538"/>
         <source>Manage library filters…</source>
         <translation>Spravovat filtry knihovny…</translation>
     </message>
@@ -7300,26 +7446,25 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <name>Fooyin::Filters::TrackListWidget</name>
     <message>
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="47"/>
-        <location filename="../../src/gui/filters/tracklistwidget.cpp" line="163"/>
+        <location filename="../../src/gui/filters/tracklistwidget.cpp" line="157"/>
         <source>Track Viewer Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení prohlížeče skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="48"/>
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="87"/>
         <source>Tracks</source>
-        <translation type="unfinished">Skladby</translation>
+        <translation>Skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="66"/>
-        <location filename="../../src/gui/filters/tracklistwidget.cpp" line="157"/>
         <source>Manage filter groups…</source>
-        <translation type="unfinished"></translation>
+        <translation>Správa skupin filtrů…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="102"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln skladba</numerusform>
             <numerusform>%Ln skladby</numerusform>
             <numerusform>%Ln skladeb</numerusform>
@@ -7328,16 +7473,16 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message numerus="yes">
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="103"/>
         <source>%1 of %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1 z %Ln skladby</numerusform>
+            <numerusform>%1 ze %Ln skladeb</numerusform>
+            <numerusform>%1 z %Ln skladeb</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="109"/>
         <source>Track Viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>Prohlížeč skladeb</translation>
     </message>
 </context>
 <context>
@@ -7351,7 +7496,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 <context>
     <name>Fooyin::FyWidget</name>
     <message>
-        <location filename="../../src/gui/fywidget.cpp" line="296"/>
+        <location filename="../../src/gui/fywidget.cpp" line="374"/>
         <source>Configure…</source>
         <translation>Nastavení…</translation>
     </message>
@@ -7359,8 +7504,8 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 <context>
     <name>Fooyin::GeneralPage</name>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="236"/>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="237"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="252"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="253"/>
         <source>General</source>
         <translation>Obecné</translation>
     </message>
@@ -7369,8 +7514,8 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <name>Fooyin::GeneralPageWidget</name>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
-        <source>Wait for tracks</source>
-        <translation>Čekat na skladby</translation>
+        <source>Wait for tracks to load before showing the window</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="93"/>
@@ -7399,51 +7544,66 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="108"/>
+        <source>System Tray</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="115"/>
         <source>User Folders</source>
         <translation>Uživatelské složky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="118"/>
         <source>Open Configuration Folder</source>
         <translation>Otevřít složku nastavení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="112"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="119"/>
         <source>Open Data Folder</source>
         <translation>Otevřít složku dat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="120"/>
+        <source>Open Cache Folder</source>
+        <translation>Otevřít složku mezipaměti</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="128"/>
+        <source>Open State Folder</source>
+        <translation>Otevřít složku stavu</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="137"/>
         <source>Language</source>
         <translation>Jazyk</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="135"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="150"/>
         <source>Normal</source>
         <translation>Spustit normálně</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="136"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="151"/>
         <source>Start maximised</source>
         <translation>Spustit maximalizované</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="137"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="152"/>
         <source>Start hidden to tray</source>
         <translation>Spustit skryté v oznamovací oblasti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="138"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="153"/>
         <source>Remember from last run</source>
         <translation>Obnovit stav před ukončením</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="166"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="182"/>
         <source>Language changed</source>
         <translation>Jazyk byl změněn</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="167"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="183"/>
         <source>Restart for changes to take effect. Restart now?</source>
         <translation>Aby se změny projevily, je třeba aplikaci restartovat. Restartovat nyní?</translation>
     </message>
@@ -7609,48 +7769,48 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 <context>
     <name>Fooyin::GuiApplication</name>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="414"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="417"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="397"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="400"/>
         <source>New Layout</source>
         <translation>Nový vzhled</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="417"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="400"/>
         <source>Layout Name</source>
         <translation>Název vzhledu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="444"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="427"/>
         <source>Searching for artwork…</source>
         <translation>Hledání přebalu alba…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="458"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="441"/>
         <source>Artwork search finished</source>
         <translation>Hledání přebalu alba dokončeno</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="512"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="495"/>
         <source>Failed to open artwork file</source>
         <translation>Nepodařilo se otevřít soubor přebalu alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="518"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="501"/>
         <source>Artwork file is empty</source>
         <translation>Soubor přebalu alba je prázdný</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="924"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="919"/>
         <source>Plugins not found</source>
         <translation>Pluginy nenalezeny</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="925"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="920"/>
         <source>Some plugins are required for full functionality.</source>
         <translation>Pro plnou funkcionalitu jsou vyžadovány některé pluginy.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="926"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="921"/>
         <source>Plugin search locations:
 
 </source>
@@ -7659,453 +7819,460 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 </translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="929"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="924"/>
         <source>Quit</source>
         <translation>Ukončit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1055"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1060"/>
         <source>Show or hide main window</source>
         <translation>Zobrazit nebo skrýt hlavní okno</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1057"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1203"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1053"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1062"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1208"/>
         <source>View</source>
         <translation>Zobrazit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1060"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1050"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1054"/>
+        <source>Show Main Menu</source>
+        <translation>Zobrazit hlavní nabídku</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="1065"/>
         <source>Volume</source>
         <translation>Hlasitost</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1062"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1067"/>
         <source>Volume up</source>
         <translation>Zvýšit hlasitost</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1069"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1074"/>
         <source>Volume down</source>
         <translation>Snížit hlasitost</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1076"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1081"/>
         <source>Mute</source>
         <translation>Ztlumit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1086"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1091"/>
         <source>Clear Current Playlist</source>
         <translation>Vymazat vybraný seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1087"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1092"/>
         <source>Remove all tracks from the current playlist</source>
         <translation>Odstranit všechny skladby vybraného seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1090"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1117"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1190"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1095"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1122"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1195"/>
         <source>Playlist</source>
         <translation>Seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1113"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1118"/>
         <source>Lock playlist</source>
         <translation>Uzamknout seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1115"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1120"/>
         <source>Prevent changes to the contents of the current playlist</source>
         <translation>Znemožnit úpravy vybraného seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1118"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1123"/>
         <source>Lock Current Playlist</source>
         <translation>Uzamknout vybraný seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1139"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1144"/>
         <source>Playback</source>
         <translation>Přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1139"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1144"/>
         <source>Seek</source>
         <translation>Přetočit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1141"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1146"/>
         <source>Seek forward (small step)</source>
         <translation>Přetočit vpřed (málo)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1148"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1153"/>
         <source>Seek forward (large step)</source>
         <translation>Přetočit vpřed (více)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1155"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1160"/>
         <source>Seek backward (small step)</source>
         <translation>Přetočit zpět (málo)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1163"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1168"/>
         <source>Seek backward (large step)</source>
         <translation>Přetočit zpět (více)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1188"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1193"/>
         <source>Remove Playlist</source>
         <translation>Odstranit seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1191"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1196"/>
         <source>Remove Current Playlist</source>
         <translation>Odstranit aktivní seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1199"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1204"/>
         <source>Toggle Menubar</source>
         <translation>Přepnout panel nabídek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1210"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1215"/>
         <source>Look up metadata by artist and album…</source>
         <translation>Vyhledat metadata podle umělce a alba…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1211"/>
-        <source>Look up metadata using the selected tracks&apos; artist and album</source>
+        <location filename="../../src/gui/guiapplication.cpp" line="1216"/>
+        <source>Look up metadata using the selected tracks’ artist and album</source>
         <translation>Vyhledat metadata podle umělce a alba vybraných skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1216"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1221"/>
         <source>Look up metadata by artist and album</source>
         <translation>Vyhledat metadata podle umělce a alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1217"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1225"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1232"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1236"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1305"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1222"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1230"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1237"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1241"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1310"/>
         <source>Tagging</source>
         <translation>Tagování</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1219"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1224"/>
         <source>Look up metadata by disc TOC…</source>
         <translation>Vyhledat metadata podle TOC disku…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1220"/>
-        <source>Look up metadata using the selected tracks&apos; disc TOC</source>
+        <location filename="../../src/gui/guiapplication.cpp" line="1225"/>
+        <source>Look up metadata using the selected tracks’ disc TOC</source>
         <translation>Vyhledat metadata podle TOC disku vybraných skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1224"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1229"/>
         <source>Look up metadata by disc TOC</source>
         <translation>Vyhledat metadata podle TOC disku</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1227"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1232"/>
         <source>Look up metadata by MusicBrainz ID…</source>
         <translation>Vyhledat metadata podle MusicBrainz ID…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1228"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1233"/>
         <source>Look up metadata using a MusicBrainz release identifier</source>
         <translation>Vyhledat metadata pomocí identifikátoru vydání MusicBrainz</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1231"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1236"/>
         <source>Look up metadata by MusicBrainz ID</source>
         <translation>Vyhledat metadata podle MusicBrainz ID</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1264"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1269"/>
         <source>Reading tracks…</source>
         <translation>Čtení skladeb…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1264"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1269"/>
         <source>Abort</source>
         <translation>Přerušit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1292"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1297"/>
         <source>Current file</source>
         <translation>Aktuální soubor</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1307"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1312"/>
         <source>Reload tags from files</source>
         <translation>Načíst tagy ze souborů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1308"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1313"/>
         <source>Reload tags from modified files</source>
         <translation>Načíst tagy ze změněných souborů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1310"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1315"/>
         <source>Replace tags in selected tracks with tags from the files</source>
         <translation>Nahradit tagy vybraných skladeb tagy ze souborů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1311"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1316"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
         <translation>Nahradit tagy vybraných skladeb tagy ze změněných souborů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1342"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1347"/>
         <source>View full size</source>
         <translation>Zobrazit ve skutečné velikosti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1343"/>
-        <source>View the common artwork for the selected tracks at full size</source>
-        <translation>Zobrazit společné přebaly alb vybraných skladeb ve skutečné velikosti</translation>
+        <location filename="../../src/gui/guiapplication.cpp" line="1348"/>
+        <source>View the artwork for the selected track at full size</source>
+        <translation>Zobrazit přebal alba pro vybranou skladbu v původní velikosti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1346"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1399"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1557"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1588"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1598"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1607"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1652"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1661"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1351"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1404"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1562"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1593"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1603"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1612"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1657"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1666"/>
         <source>Tracks</source>
         <translation>Skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1346"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1351"/>
         <source>Artwork</source>
         <translation>Přebaly alb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1399"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1404"/>
         <source>Playback Statistics</source>
         <translation>Statistika přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1414"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1419"/>
         <source>Toggle loved</source>
         <translation>Přepnout oblíbenost</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1414"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1419"/>
         <source>Toggle Loved for selected tracks</source>
         <translation>Přepnout oblíbenost pro vybrané skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1416"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1421"/>
         <source>Love</source>
         <translation>Oblíbit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1416"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1421"/>
         <source>Love selected tracks</source>
         <translation>Nastavit vybrané skladby jako oblíbené</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1418"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1423"/>
         <source>Unlove</source>
         <translation>Neoblíbit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1418"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1423"/>
         <source>Unlove selected tracks</source>
         <translation>Zrušit u vybraných skladeb příznak oblíbenosti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1434"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1439"/>
         <source>Choose destination</source>
         <translation>Vybrat cílovou složku</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1460"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1465"/>
         <source>Converter Output</source>
         <translation>Výstup převodu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1550"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1558"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1555"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1563"/>
         <source>Convert using preset %1</source>
         <translation>Převést pomocí předvolby %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1557"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1588"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1598"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1607"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1618"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1562"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1593"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1603"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1612"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1623"/>
         <source>Convert</source>
         <translation>Převést</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1586"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1591"/>
         <source>Converter setup…</source>
         <translation>Nastavení převodu…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1595"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1600"/>
         <source>Using default settings</source>
         <translation>Pomocí výchozího nastavení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1599"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1604"/>
         <source>Convert using default settings</source>
         <translation>Převést pomocí výchozího nastavení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1604"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1609"/>
         <source>Repeat last conversion</source>
         <translation>Opakovat poslední převod</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1635"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1640"/>
         <source>Custom conversion…</source>
         <translation>Vlastní převod…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1647"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1652"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="1661"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1657"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1666"/>
         <source>Utilities</source>
         <translation>Nástroje</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1649"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1654"/>
         <source>Verify integrity</source>
         <translation>Ověřit integritu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1650"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1655"/>
         <source>Decode the selected tracks and report file or checksum errors</source>
         <translation>Dekódovat vybrané skladby a nahlásit chyby souborů nebo kontrolních součtů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1657"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1662"/>
         <source>Verify album with AccurateRip</source>
         <translation>Ověřit album pomocí AccurateRip</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1658"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1663"/>
         <source>Verify all tracks from one complete lossless CD rip against AccurateRip</source>
         <translation>Ověřit všechny skladby z bezeztrátově extrahovaného CD pomocí AccurateRip</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1964"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1972"/>
         <source>Reload Required</source>
         <translation>Vyžadováno obnovení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1966"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1974"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
         <translation>Pro aktualizaci uložených metadat z důvodu změny databáze by měly být skladby obnoveny ze souborů na disku.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1970"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1978"/>
         <source>Reload Now</source>
         <translation>Obnovit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1973"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1981"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2118"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2126"/>
         <source>Playback Error</source>
         <translation>Chyba přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2143"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2151"/>
         <source>Continue</source>
         <translation>Pokračovat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2145"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2153"/>
         <source>Stop</source>
         <translation>Zastavit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2149"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2157"/>
         <source>Always continue playing if a track is unavailable</source>
         <translation>Pokračovat v přehrávání i když je skladba nedostupná</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2171"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2179"/>
         <source>Track Not Found</source>
         <translation>Skladba nenalezena</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2176"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2184"/>
         <source>No Decoder Available</source>
         <translation>Není k dispozici dekodér</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2256"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2264"/>
         <source>All Supported Media Files (%1)</source>
         <translation>Podporované mediální soubory (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2257"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2265"/>
         <source>Audio Files (%1)</source>
         <translation>Zvukové soubory (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2268"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2276"/>
         <source>Add Files</source>
         <translation>Přidat soubory</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2282"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2290"/>
         <source>Add Folders</source>
         <translation>Přidat složky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2294"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2302"/>
         <source>Add Stream URL</source>
         <translation>Přidat adresu streamu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2294"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2302"/>
         <source>Stream URL:</source>
         <translation>Adresa streamu:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2296"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2304"/>
         <source>&amp;Add</source>
         <translation>&amp;Přidat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2300"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2308"/>
         <source>Enter a valid http:// or https:// URL.</source>
         <translation>Zadej platnou adresu http:// nebo https://.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2398"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2406"/>
         <source>All Supported Playlists (%1)</source>
         <translation>Podporované seznamy skladeb (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2408"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2416"/>
         <source>Load Playlist</source>
         <translation>Načíst seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2445"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2453"/>
         <source>Save Playlist</source>
         <translation>Uložit seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="574"/>
+        <location filename="../../src/gui/widgets.cpp" line="599"/>
         <source>Display</source>
         <translation>Zobrazení</translation>
     </message>
@@ -8337,12 +8504,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 <context>
     <name>Fooyin::GuiGeneralPage</name>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="417"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="424"/>
         <source>General</source>
         <translation>Obecné</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="418"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="425"/>
         <source>Interface</source>
         <translation>Rozhraní</translation>
     </message>
@@ -8350,162 +8517,167 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 <context>
     <name>Fooyin::GuiGeneralPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="137"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="139"/>
         <source>Show splitter handles</source>
         <translation>Zobrazit rozdělovače</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="135"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="137"/>
         <source>Override root margin</source>
         <translation>Přenastavit výchozí okraje</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="125"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="126"/>
         <source>Dark mode</source>
         <translation>Tmavý režim</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="127"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="128"/>
         <source>Auto-detect theme</source>
         <translation>Automaticky rozpoznat motiv</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="128"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="129"/>
         <source>Light</source>
         <translation>Světlý</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="129"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="130"/>
         <source>Dark</source>
         <translation>Tmavý</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="130"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="131"/>
         <source>Use system icons</source>
         <translation>Systémové ikony</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="133"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="134"/>
         <source>Browse…</source>
         <translation>Procházet…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="134"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="135"/>
         <source>Show menu bar</source>
         <translation>Zobrazit panel nabídek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="138"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="136"/>
+        <source>Place menu bar in a toolbar</source>
+        <translation>Hlavní nabídka jako panel nástrojů</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="140"/>
         <source>Lock splitters</source>
         <translation>Uzamknout rozdělovače</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="139"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="141"/>
         <source>Only resize locked widgets using adjacent handles</source>
         <translation>U uzamčených widgetů měnit velikost pouze pomocí přilehlých rozdělovačů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="140"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="142"/>
         <source>Override splitter handle size</source>
         <translation>Přenastavit velikost rozdělovačů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="142"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="144"/>
         <source>Raise</source>
         <translation>Obrys</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="143"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="145"/>
         <source>Stretch</source>
         <translation>Zvětšená</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="145"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="147"/>
         <source>Setup</source>
         <translation>Nastavení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="147"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="149"/>
         <source>Quick Setup</source>
         <translation>Rychlé nastavení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="148"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="150"/>
         <source>Import Layout</source>
         <translation>Importovat vzhled</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="149"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="151"/>
         <source>Export Layout</source>
         <translation>Exportovat vzhled</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="155"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="157"/>
         <source>Appearance</source>
         <translation>Vzhled</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="158"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="160"/>
         <source>Icons</source>
         <translation>Ikony</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="167"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="169"/>
         <source>Dragon</source>
         <translation>Drak</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="169"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="171"/>
         <source>Typographic</source>
         <translation>Typografická</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="171"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="173"/>
         <source>Custom</source>
         <translation>Vlastní</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="173"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="175"/>
         <source>Application icon</source>
         <translation>Ikona aplikace</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="183"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="185"/>
         <source>Style</source>
         <translation>Styl</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="191"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="193"/>
         <source>Layout</source>
         <translation>Vzhled</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="212"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="215"/>
         <source>Prevent other splitter handles and parent splitters from changing the size of a locked widget.</source>
         <translation>Zabránit nadřazeným a ostatním rozdělovačům měnit velikost uzamčených widgetů.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="214"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="217"/>
         <source>Tool Buttons</source>
         <translation>Tlačítka nástrojů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="244"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="247"/>
         <source>Choose application icon</source>
         <translation>Vybrat ikonu aplikace</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="245"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="248"/>
         <source>Images (*.png *.jpg *.jpeg *.svg *.ico);;All files (*)</source>
         <translation>Obrázky (*.png *.jpg *.jpeg *.svg *.ico);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="263"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="267"/>
         <source>System default</source>
         <translation>Podle systému</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="389"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="396"/>
         <source>Dark mode is not supported by this style.</source>
         <translation>Tento vzhled nepodporuje tmavý režim.</translation>
     </message>
@@ -8686,7 +8858,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="889"/>
-        <source>Delete layout &quot;%1&quot;?</source>
+        <source>Delete layout ‘%1’?</source>
         <translation>Smazat vzhled „%1“?</translation>
     </message>
     <message>
@@ -8943,12 +9115,12 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
         <translation>Otevřít dokumentaci vyhledávacích dotazů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="62"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="63"/>
         <source>&amp;Frequently asked questions</source>
         <translation>Často kladené dotazy (&amp;FAQ)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="63"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="64"/>
         <source>Open the FAQ</source>
         <translation>Otevřít FAQ</translation>
     </message>
@@ -8958,7 +9130,7 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
         <translation>O &amp;aplikaci</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/helpmenu.cpp" line="68"/>
+        <location filename="../../src/gui/menubar/helpmenu.cpp" line="69"/>
         <source>Open the about dialog</source>
         <translation>Otevřít dialog s informacemi o aplikaci</translation>
     </message>
@@ -9127,92 +9299,92 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
         <translation>&amp;Kopírovat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="482"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="476"/>
         <source>Show header</source>
         <translation>Zobrazit záhlaví</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="491"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="485"/>
         <source>Show scrollbar (vertical)</source>
         <translation>Zobrazit posuvník (svislý)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="500"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="494"/>
         <source>Show scrollbar (horizontal)</source>
         <translation>Zobrazit posuvník (vodorovný)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="509"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="503"/>
         <source>Alternating row colours</source>
         <translation>Střídavé barvy řádků</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="520"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="514"/>
         <source>Metadata</source>
         <translation>Metadata</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="529"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="523"/>
         <source>Extended metadata</source>
         <translation>Rozšířená metadata</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="538"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="532"/>
         <source>Location</source>
         <translation>Umístění</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="547"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="541"/>
         <source>General</source>
         <translation>Obecné</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="556"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="550"/>
         <source>Playback Statistics</source>
         <translation>Statistika přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="565"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="559"/>
         <source>ReplayGain</source>
         <translation>ReplayGain</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="574"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="568"/>
         <source>Other</source>
         <translation>Ostatní</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="598"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="592"/>
         <source>Preferred track</source>
         <translation>Upřednostňovaná skladba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="613"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="607"/>
         <source>Playing track</source>
         <translation>Přehrávaná skladba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="614"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="608"/>
         <source>Selected track</source>
         <translation>Vybraná skladba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="615"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="609"/>
         <source>Playing (or selected when stopped)</source>
         <translation>Přehrávaná (po zastavení vybraná)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="617"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="611"/>
         <source>Playing (blank at startup)</source>
         <translation>Přehrávaná (po spuštění žádná)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="618"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="612"/>
         <source>Playing (blank when stopped)</source>
         <translation>Přehrávaná (po zastavení žádná)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="631"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="625"/>
         <source>Edit</source>
         <translation>Upravit</translation>
     </message>
@@ -9220,217 +9392,217 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
 <context>
     <name>Fooyin::InfoPopulator</name>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="158"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="156"/>
         <source>Metadata</source>
         <translation>Metadata</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="161"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="159"/>
         <source>Location</source>
         <translation>Umístění</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="164"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="162"/>
         <source>General</source>
         <translation>Obecné</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="167"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="165"/>
         <source>Playback Statistics</source>
         <translation>Statistika přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="170"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="168"/>
         <source>ReplayGain</source>
         <translation>ReplayGain</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="173"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="171"/>
         <source>Other</source>
         <translation>Ostatní</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="212"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="210"/>
         <source>File Names</source>
         <translation>Názvy souborů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="212"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="210"/>
         <source>File Name</source>
         <translation>Název souboru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="216"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="214"/>
         <source>Folder Names</source>
         <translation>Názvy složek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="216"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="214"/>
         <source>Folder Name</source>
         <translation>Název složky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="222"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="220"/>
         <source>File Path</source>
         <translation>Cesta k souboru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="222"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="220"/>
         <source>URL</source>
         <translation>Adresa</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="226"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="224"/>
         <source>Subsong Index</source>
         <translation>Index podskladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="233"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="231"/>
         <source>Total Size</source>
         <translation>Celková velikost</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="233"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="231"/>
         <source>File Size</source>
         <translation>Velikost souboru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="237"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="235"/>
         <source>Last Modified</source>
         <translation>Změněno</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="244"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="242"/>
         <source>Library</source>
         <translation>Knihovna</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="250"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="248"/>
         <source>Created</source>
         <translation>Vytvořeno</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="254"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="252"/>
         <source>Added</source>
         <translation>Přidáno</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="263"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="261"/>
         <source>Tracks</source>
         <translation>Skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="266"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="264"/>
         <source>Duration</source>
         <translation>Délka</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="268"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="266"/>
         <source>Samples</source>
         <translation>Vzorky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="271"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="269"/>
         <source>Channels</source>
         <translation>Kanály</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="273"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="271"/>
         <source>Bit Depth</source>
         <translation>Bitová hloubka</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="277"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="275"/>
         <source>Avg. Bitrate</source>
         <translation>Prům. bitrate</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="277"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="275"/>
         <source>Bitrate</source>
         <translation>Bitrate</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="282"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="280"/>
         <source>Sample Rate</source>
         <translation>Vzorkovací frekvence</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="305"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="303"/>
         <source>Opus header gain</source>
         <translation>Zesílení v Opus hlavičce</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="310"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="308"/>
         <source>Codec</source>
         <translation>Kodek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="312"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="310"/>
         <source>Codec Profile</source>
         <translation>Profil kodeku</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="314"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="312"/>
         <source>Tool</source>
         <translation>Nástroj</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="315"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="313"/>
         <source>Tag Types</source>
         <translation>Typy tagů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="321"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="319"/>
         <source>Loved</source>
         <translation>Oblíbená</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="322"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="320"/>
         <source>Yes</source>
         <translation>Ano</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="322"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="320"/>
         <source>No</source>
         <translation>Ne</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="324"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="322"/>
         <source>Playcount</source>
         <translation>Počet přehrání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="328"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="326"/>
         <source>First Played</source>
         <translation>Poprvé přehráno</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="332"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="330"/>
         <source>Last Played</source>
         <translation>Naposledy přehráno</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="347"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="345"/>
         <source>Track Gain</source>
         <translation>Zisk skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="352"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="350"/>
         <source>Track Peak</source>
         <translation>Špička skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="357"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="355"/>
         <source>Album Gain</source>
         <translation>Zisk alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="362"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="360"/>
         <source>Album Peak</source>
         <translation>Špička alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="367"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="365"/>
         <source>Total Peak</source>
         <translation>Celková špička</translation>
     </message>
@@ -9449,6 +9621,167 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="281"/>
         <source>Selection Info</source>
         <translation>Informace výběru</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::LayoutDragController</name>
+    <message>
+        <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="160"/>
+        <source>Close</source>
+        <translation>Zavřít</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="517"/>
+        <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1150"/>
+        <source>Move tabs and content</source>
+        <translation>Přesunout karty a obsah</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="518"/>
+        <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1150"/>
+        <source>Move tab stack</source>
+        <translation>Přesunout panel karet</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="518"/>
+        <source>Drag to move this panel</source>
+        <translation>Přetáhni tento panel</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="531"/>
+        <source>Drop a widget here</source>
+        <translation>Přetáhni sem widget</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="601"/>
+        <source>Moving %1</source>
+        <extracomment>%1 is the name of a widget e.g. Moving Playlist</extracomment>
+        <translation>Přesouvá se %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1027"/>
+        <source>Horizontal split</source>
+        <translation>Horizontální rozdělovač</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1027"/>
+        <source>Vertical split</source>
+        <translation>Vertikální rozdělovač</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1031"/>
+        <source>Select %1</source>
+        <translation>Vyber %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1054"/>
+        <source>Move %1</source>
+        <translation>Přesuň %1</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::LayoutDragSurface</name>
+    <message>
+        <location filename="../../src/gui/layout/layoutdragsurface.cpp" line="99"/>
+        <location filename="../../src/gui/layout/layoutdragsurface.cpp" line="126"/>
+        <source>Replace %1 with %2</source>
+        <extracomment>%1 and %2 are widget names. e.g. Replace Playlist with Lyrics</extracomment>
+        <translation>Nahradit %1 za %2</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoutdragsurface.cpp" line="160"/>
+        <source>Drop into the layout</source>
+        <translation>Přetáhni do okna vzhledu</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoutdragsurface.cpp" line="167"/>
+        <source>This widget is no longer available</source>
+        <translation>Tento widget již není k dispozici</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::LayoutDropTarget</name>
+    <message>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="94"/>
+        <source>Drop beside a panel or on a tab bar</source>
+        <translation>Přetáhni vedle panelu nebo na panel karet</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="120"/>
+        <source>Cannot move this panel here</source>
+        <translation>Tento panel sem nelze přesunout</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="135"/>
+        <source>Choose a widget to replace</source>
+        <translation>Vyber widget pro nahrazení</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="144"/>
+        <source>Cannot replace this widget</source>
+        <translation>Nelze nahradit tento widget</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="152"/>
+        <source>Replace %1</source>
+        <translation>Nahradit %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="194"/>
+        <source>Insert tab</source>
+        <translation>Vložit kartu</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="219"/>
+        <source>Fill empty area</source>
+        <translation>Vyplnit prázdné místo</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="237"/>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="299"/>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="307"/>
+        <source>Move into empty area</source>
+        <translation>Přesunout do prázdného místa</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="267"/>
+        <source>Split %1: place below</source>
+        <translation>Rozdělit %1: umístit pod</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="267"/>
+        <source>Split %1: place above</source>
+        <translation>Rozdělit %1: umístit nad</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="268"/>
+        <source>Split %1: place right</source>
+        <translation>Rozdělit %1: umístit vpravo</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="268"/>
+        <source>Split %1: place left</source>
+        <translation>Rozdělit %1: umístit vlevo</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="292"/>
+        <source>Place below %1</source>
+        <translation>Umístit pod %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="292"/>
+        <source>Place above %1</source>
+        <translation>Umístit nad %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="293"/>
+        <source>Place after %1</source>
+        <translation>Umístit za %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/layoututils.cpp" line="293"/>
+        <source>Place before %1</source>
+        <translation>Umístit před %1</translation>
     </message>
 </context>
 <context>
@@ -9543,22 +9876,22 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
 <context>
     <name>Fooyin::LayoutProvider</name>
     <message>
-        <location filename="../../src/gui/layoutprovider.cpp" line="627"/>
+        <location filename="../../src/gui/layout/layoutprovider.cpp" line="627"/>
         <source>Open Layout</source>
         <translation>Otevřít vzhled</translation>
     </message>
     <message>
-        <location filename="../../src/gui/layoutprovider.cpp" line="627"/>
+        <location filename="../../src/gui/layout/layoutprovider.cpp" line="627"/>
         <source>fooyin Layout (*.fyl)</source>
         <translation>Vzhled aplikace fooyin ( *.fyl )</translation>
     </message>
     <message>
-        <location filename="../../src/gui/layoutprovider.cpp" line="635"/>
+        <location filename="../../src/gui/layout/layoutprovider.cpp" line="635"/>
         <source>Invalid Layout</source>
         <translation>Neplatný vzhled</translation>
     </message>
     <message>
-        <location filename="../../src/gui/layoutprovider.cpp" line="635"/>
+        <location filename="../../src/gui/layout/layoutprovider.cpp" line="635"/>
         <source>Layout could not be imported.</source>
         <translation>Vzhled se nepodařilo načíst.</translation>
     </message>
@@ -9661,7 +9994,7 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="168"/>
-        <source>e.g. &quot;%1&quot;</source>
+        <source>e.g. ‘%1’</source>
         <extracomment>Example of semicolon-separated file extensions (e.g. mp3;m4a)</extracomment>
         <translation>např. „%1“</translation>
     </message>
@@ -9914,7 +10247,7 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
     <name>Fooyin::LibraryMetadataPageWidget</name>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="54"/>
-        <source>Use &apos;Various Artists&apos; for compilations</source>
+        <source>Use ‘Various Artists’ for compilations</source>
         <translation>Pro kompilace použít ‚Various Artists‘</translation>
     </message>
     <message>
@@ -10230,7 +10563,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
 <context>
     <name>Fooyin::LibraryTree</name>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreescriptenvironment.cpp" line="94"/>
+        <location filename="../../src/gui/librarytree/librarytreescriptenvironment.cpp" line="90"/>
         <source>All Music (%trackcount%)</source>
         <extracomment>Default Library Tree summary node title. Keep %trackcount% unchanged; it is a script variable.</extracomment>
         <translation>Veškerá hudba (%trackcount%)</translation>
@@ -10300,7 +10633,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="78"/>
-        <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately.</source>
+        <source>For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately.</source>
         <translation>&quot;Nahradit vybraný seznam skladeb&quot; a &quot;Vytvořit nový seznam skladeb&quot; ihned spustí přehrávání.</translation>
     </message>
     <message>
@@ -10339,7 +10672,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
         <translation>Název</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="209"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="212"/>
         <source>Expand/collapse or play now</source>
         <translation>Rozbalit / sbalit nebo přehrát</translation>
     </message>
@@ -10357,7 +10690,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="53"/>
         <source>Show controls</source>
-        <translation type="unfinished">Zobrazovat tlačítka</translation>
+        <translation>Zobrazit tlačítka</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="67"/>
@@ -10366,13 +10699,13 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="75"/>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="141"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="143"/>
         <source>Appearance</source>
         <translation>Vzhled</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="96"/>
-        <source>When this selection playlist is used for playback, preserve it with &quot;(Playback)&quot; appended to its name instead of replacing its tracks.</source>
+        <source>When this selection playlist is used for playback, preserve it with ‘(Playback)’ appended to its name instead of replacing its tracks.</source>
         <translation>Pokud je tento seznam skladeb výběru přehráván, nenahradit v něm obsažené skladby, ale zachovat ho s názvem doplněným na konci o řetězec „(přehrávání)“.</translation>
     </message>
     <message>
@@ -10383,65 +10716,65 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="122"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahoře</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="123"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Dole</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="129"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="132"/>
         <source>Searching</source>
         <translation>Hledání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="134"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="137"/>
         <source>Controls position</source>
-        <translation type="unfinished"></translation>
+        <translation>Pozice tlačítek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="136"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="129"/>
         <source>Auto-expand if matching track count is at most</source>
         <translation>Automaticky rozbalit, pokud počet výsledků nepřesáhne</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="144"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="146"/>
         <source>Icon</source>
         <translation>Ikona</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="156"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="158"/>
         <source>Square</source>
         <translation>Hranaté</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="158"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="160"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
         <translation>Pro změnu velikosti ikon ve widgetu použij &lt;b&gt;Ctrl+Kolečko myši&lt;/b&gt;.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="162"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="164"/>
         <source>Width</source>
         <translation>Šířka</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="164"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="166"/>
         <source>Height</source>
         <translation>Výška</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="166"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="168"/>
         <source>Corner radius</source>
         <translation>Poloměr rohů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="208"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="211"/>
         <source>Expand/collapse</source>
         <translation>Rozbalit / sbalit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="212"/>
+        <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="215"/>
         <source>None</source>
         <translation>Nic</translation>
     </message>
@@ -10544,12 +10877,12 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
 <context>
     <name>Fooyin::LibraryTreeModel</name>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="850"/>
+        <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="864"/>
         <source>All Music</source>
         <translation>Všechna hudba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="991"/>
+        <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="1012"/>
         <source>Library Tree</source>
         <translation>Strom knihovny</translation>
     </message>
@@ -10557,7 +10890,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
 <context>
     <name>Fooyin::LibraryTreeView</name>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreeview.cpp" line="178"/>
+        <location filename="../../src/gui/librarytree/librarytreeview.cpp" line="179"/>
         <source>Loading Library…</source>
         <translation>Načítání knihovny…</translation>
     </message>
@@ -10565,97 +10898,97 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
 <context>
     <name>Fooyin::LibraryTreeWidget</name>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1021"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="993"/>
         <source>Grouping</source>
         <translation>Seskupení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="224"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="227"/>
         <source>&amp;Add to playback queue</source>
         <translation>Přidat do &amp;fronty přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="225"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="228"/>
         <source>&amp;Queue to play next</source>
         <translation>Přidat na &amp;začátek fronty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="226"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="229"/>
         <source>&amp;Remove from playback queue</source>
         <translation>Odeb&amp;rat z fronty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="227"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="230"/>
         <source>&amp;Play</source>
         <translation>&amp;Přehrát</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="258"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="261"/>
         <source>Start playback of the selected tracks</source>
         <translation>Spustit přehrávání vybraných skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="373"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="505"/>
         <source>Focus search</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaměřit hledání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="374"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="506"/>
         <source>Focus the integrated search bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaměřit integrovaný panel hledání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="949"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="921"/>
         <source>Display</source>
-        <translation type="unfinished">Zobrazení</translation>
+        <translation>Zobrazení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="962"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="934"/>
         <source>Show controls</source>
-        <translation type="unfinished">Zobrazovat tlačítka</translation>
+        <translation>Zobrazit tlačítka</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="964"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="936"/>
         <source>Show summary node</source>
-        <translation type="unfinished">Zobrazit uzel souhrnu</translation>
+        <translation>Zobrazit uzel souhrnu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="965"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="937"/>
         <source>Show header</source>
-        <translation type="unfinished">Zobrazit záhlaví</translation>
+        <translation>Zobrazit záhlaví</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="966"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="938"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Zobrazit posuvník</translation>
+        <translation>Zobrazit posuvník</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="967"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="939"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Střídavé barvy řádků</translation>
+        <translation>Střídavé barvy řádků</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1037"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1009"/>
         <source>Manage groupings…</source>
         <translation>Spravovat seskupení…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1081"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1053"/>
         <source>Open folder</source>
         <translation>Otevřít složku</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="874"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="393"/>
         <source>Add to playlist</source>
         <translation>Přidat do seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1171"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1143"/>
         <source>Playback</source>
         <translation>Přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="289"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="292"/>
         <source>Library Tree</source>
         <translation>Strom knihovny</translation>
     </message>
@@ -10857,7 +11190,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="84"/>
-        <source>This will be displayed if lyrics for the current track can&apos;t be found.</source>
+        <source>This will be displayed if lyrics for the current track can’t be found.</source>
         <translation>Bude zobrazeno pokud pro vybranou skladbu nebudou nalezeny žádné texty písní.</translation>
     </message>
     <message>
@@ -11314,37 +11647,37 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
 <context>
     <name>Fooyin::Lyrics::LyricsSearchDialog</name>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="77"/>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="57"/>
         <source>Title</source>
         <translation>Název</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="78"/>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="58"/>
         <source>Album</source>
         <translation>Album</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="79"/>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="59"/>
         <source>Artist</source>
         <translation>Umělec</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="80"/>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="60"/>
         <source>Search</source>
         <translation>Hledat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="90"/>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="70"/>
         <source>Search for Lyrics</source>
         <translation>Vyhledat text písně</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="205"/>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="187"/>
         <source>Searching…</source>
         <translation>Hledání…</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="238"/>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="220"/>
         <source>%Ln result(s)</source>
         <translation>
             <numerusform>%Ln výsledek</numerusform>
@@ -11353,12 +11686,12 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="241"/>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="223"/>
         <source>No lyrics found</source>
         <translation>Žádné texty písní</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="309"/>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="291"/>
         <source>Saved lyrics from %1</source>
         <translation>Uložen text písně z %1</translation>
     </message>
@@ -11613,9 +11946,17 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     </message>
 </context>
 <context>
+    <name>Fooyin::MainMenuButton</name>
+    <message>
+        <location filename="../../src/gui/controls/mainmenubutton.cpp" line="52"/>
+        <source>Main Menu Button</source>
+        <translation>Tlačítko hlavní nabídky</translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::MainWindow</name>
     <message>
-        <location filename="../../src/gui/mainwindow.cpp" line="185"/>
+        <location filename="../../src/gui/mainwindow.cpp" line="190"/>
         <source>Layout Editing Mode</source>
         <translation>Režim editace vzhledu</translation>
     </message>
@@ -11713,255 +12054,260 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
 <context>
     <name>Fooyin::MetadataLookupDialog</name>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="163"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="165"/>
         <source>Metadata Lookup</source>
         <translation>Vyhledání metadat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="271"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="278"/>
         <source>First track, last track, lead-out sector, then track offsets</source>
         <translation>První stopa, poslední stopa, ukončovací sektor, poté odstupy stop</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="280"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="287"/>
         <source>Search</source>
         <translation>Hledat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="291"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="358"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="298"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="370"/>
         <source>Artist</source>
         <translation>Umělec</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="293"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="359"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="300"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="371"/>
         <source>Album</source>
         <translation>Album</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="299"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="306"/>
         <source>TOC</source>
         <translation>TOC</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="309"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="367"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="316"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="379"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="311"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="318"/>
         <source>ID</source>
         <translation>ID</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="322"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="329"/>
         <source>Source</source>
         <translation>Zdroj</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="324"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="331"/>
         <source>Lookup by</source>
         <translation>Vyhledat podle</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="330"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="337"/>
         <source>Search for a release to see matching results</source>
         <translation>Vyhledej vydání pro zobrazení odpovídajících výsledků</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="343"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="350"/>
         <source>Release information</source>
         <translation>Informace o vydání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="360"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="372"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="361"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="373"/>
         <source>Original release date</source>
         <translation>První datum vydání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="362"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="374"/>
         <source>Country</source>
         <translation>Země</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="363"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="375"/>
         <source>Label</source>
         <translation>Vydavatelství</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="364"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="376"/>
         <source>Catalogue number</source>
         <translation>Katalogové číslo</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="365"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="377"/>
         <source>Barcode</source>
         <translation>Čárový kód</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="366"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="378"/>
         <source>Format</source>
         <translation>Formát</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="368"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="380"/>
         <source>Status</source>
         <translation>Stav</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="369"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="381"/>
         <source>Comment</source>
         <translation>Poznámka</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="374"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="387"/>
+        <source>Open release page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="396"/>
         <source>Releases</source>
         <translation>Vydání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="384"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="406"/>
         <source>Select a release above to load its tracks</source>
         <translation>Vyber vydání pro načtení jeho skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="395"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="417"/>
         <source>No local tracks were selected</source>
         <translation>Nebyly vybrány žádné lokální skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="416"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="438"/>
         <source>Retrieved tracks</source>
         <translation>Načtené skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="427"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="449"/>
         <source>Drag rows to align tracks</source>
         <translation>Přetáhněte řádky pro zarovnání skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="430"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="452"/>
         <source>Local tracks</source>
         <translation>Lokální skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="451"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="473"/>
         <source>Fill missing metadata</source>
         <translation>Doplnit chybějící metadata</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="452"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="474"/>
         <source>Replace lookup fields</source>
         <translation>Nahradit vyhledaná pole</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="453"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="475"/>
         <source>Wipe writable tags, then apply</source>
         <translation>Smazat zapisovatelné tagy, poté aplikovat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="454"/>
-        <source>Choose how retrieved metadata is combined with the track&apos;s existing tags.</source>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="476"/>
+        <source>Choose how retrieved metadata is combined with the track’s existing tags.</source>
         <translation>Vyber jak mají být načtená metadata zkombinována s existujícími tagy skladeb.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="456"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="478"/>
         <source>Allow applying unresolved tracks</source>
         <translation>Povolit použití neshodných skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="457"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="479"/>
         <source>Allow updating unresolved tracks</source>
         <translation>Povolit aktualizování neshodných skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="459"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="481"/>
         <source>Write genres</source>
         <translation>Zapsat žánry</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="460"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="482"/>
         <source>Write provider IDs</source>
         <translation>Zapsat ID poskytovatele</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="462"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="484"/>
         <source>Use original date for Date</source>
         <translation>Použít datum prvního vydání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="465"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="487"/>
         <source>Allow applying metadata when local tracks are unmatched or have an ambiguous match.</source>
         <translation>Povolit použití metadat pokud lokální skladby neodpovídají nebo nemají jednoznačnou shodu.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="466"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="488"/>
         <source>Allow writing when local tracks are unmatched or have an ambiguous match.</source>
         <translation>Povolit zápis metadat pokud lokální skladby neodpovídají nebo nemají jednoznačnou shodu.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="467"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="489"/>
         <source>Write genres supplied by the selected metadata provider when available.</source>
         <translation>Zapsat žánry dodané vybraným poskytovatelem metadat.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="468"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="490"/>
         <source>Write identifiers supplied by the selected metadata provider.</source>
         <translation>Zapsat identifikátory dodané vybraným poskytovatelem metadat.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="470"/>
-        <source>Use the original release date for the Date tag instead of this specific release&apos;s date.</source>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="492"/>
+        <source>Use the original release date for the Date tag instead of this specific release’s date.</source>
         <translation>Pro tag Datum použít datum prvního vydání místo data vydání daného vydání.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="476"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="498"/>
         <source>Metadata options</source>
         <translation>Možnosti metadat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="479"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="501"/>
         <source>Existing metadata</source>
         <translation>Existující metadata</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="486"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="569"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="740"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="780"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="846"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="508"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="591"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="762"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="805"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="874"/>
         <source>Changes…</source>
         <translation>Změny…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="489"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="570"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="511"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="592"/>
         <source>Ready.</source>
         <translation>Připraveno.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="494"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="516"/>
         <source>Apply</source>
         <translation>Použít</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="494"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="516"/>
         <source>Update files</source>
         <translation>Aktualizovat soubory</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="519"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="541"/>
         <source>No matching releases found.</source>
         <translation>Nebyla nalezena žádná odpovídající vydání.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="520"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="542"/>
         <source>Found %Ln release(s).</source>
         <translation>
             <numerusform>Nalezeno %Ln vydání.</numerusform>
@@ -11970,72 +12316,72 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="541"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="563"/>
         <source>Contacting %1…</source>
         <translation>Navazování kontaktu s %1…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1012"/>
-        <source>Don&apos;t ask again</source>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1040"/>
+        <source>Don’t ask again</source>
         <translation>Příště se neptat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="590"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="612"/>
         <source>Artist and album</source>
         <translation>Umělec a album</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="593"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="615"/>
         <source>Disc TOC</source>
         <translation>TOC disku</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="596"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="618"/>
         <source>Release</source>
         <translation>Vydání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="599"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="621"/>
         <source>Release group</source>
         <translation>Skupina vydání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="602"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="624"/>
         <source>%1 ID</source>
         <translation>%1 ID</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="781"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="806"/>
         <source>The selected release does not contain the queried disc.</source>
         <translation>Vybrané vydání neobsahuje požadovaný disk.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="852"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="880"/>
         <source>Changes (%1)…</source>
         <translation>Změny (%1)…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="896"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="924"/>
         <source>One or more selected tracks cannot be updated.</source>
         <translation>Jedna nebo více skladeb nemohou být aktualizovány.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="900"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="928"/>
         <source>Review unmatched or ambiguous tracks before applying metadata.</source>
         <translation>Před použitím metadat zkontrolujte neodpovídající nebo nejednoznačné skladby.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="901"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="929"/>
         <source>Review unmatched or ambiguous tracks before updating files.</source>
         <translation>Před aktualizací souborů zkontrolujte neodpovídající nebo nejednoznačné skladby.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="904"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="932"/>
         <source>The selected release produces no metadata changes.</source>
         <translation>Vybrané vydání nemá za následek žádné změny metadat.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="907"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="935"/>
         <source>Metadata will be applied to %Ln track(s).</source>
         <translation>
             <numerusform>Metadata budou použita pro %Ln skladbu.</numerusform>
@@ -12044,7 +12390,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="909"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="937"/>
         <source>%Ln track(s) will be updated.</source>
         <translation>
             <numerusform>Aktualizována bude %Ln skladba.</numerusform>
@@ -12053,22 +12399,22 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="949"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="977"/>
         <source>Writing metadata…</source>
         <translation>Zápis metadat…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="949"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="977"/>
         <source>Abort</source>
         <translation>Přerušit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="955"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="983"/>
         <source>Writing Metadata</source>
         <translation>Zápis metadat</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="957"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="985"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Zápis metadat do souboru…</numerusform>
@@ -12077,8 +12423,8 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="978"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="983"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1006"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1011"/>
         <source>%Ln succeeded</source>
         <translation>
             <numerusform>%Ln úspěšná</numerusform>
@@ -12087,8 +12433,8 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="979"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="984"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1007"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1012"/>
         <source>%Ln failed</source>
         <translation>
             <numerusform>%Ln selhala</numerusform>
@@ -12097,17 +12443,17 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="980"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1008"/>
         <source>Metadata writing was cancelled.</source>
         <translation>Zápis metadat byl přerušen.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="985"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1013"/>
         <source>Metadata writing finished:</source>
         <translation>Zápis metadat dokončen:</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="989"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1017"/>
         <source>Metadata was updated in %Ln track(s).</source>
         <translation>
             <numerusform>Byla aktualizována metadata %Ln skladby.</numerusform>
@@ -12116,12 +12462,12 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1007"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1035"/>
         <source>Wipe existing tags?</source>
         <translation>Smazat existující tagy?</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1008"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1036"/>
         <source>Existing metadata and custom tags will be removed before applying the selected release. Ratings, ReplayGain, technical information, playback statistics, and artwork will be preserved.</source>
         <translation>Existující metadata a uživatelské tagy budou před použitím vybraného vydání smazána. Hodnocení, ReplayGain, technické informace, statistika přehrávání a přebaly alb budou zachovány.</translation>
     </message>
@@ -12129,42 +12475,42 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
 <context>
     <name>Fooyin::MusicBrainzMetadata</name>
     <message>
-        <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="234"/>
+        <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="235"/>
         <source>MusicBrainz</source>
         <translation>MusicBrainz</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="251"/>
+        <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="252"/>
         <source>Enter an artist or album.</source>
         <translation>Zadejte umělce nebo album.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="252"/>
+        <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="253"/>
         <source>Enter a disc TOC.</source>
         <translation>Zadejte TOC disku.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="253"/>
+        <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="254"/>
         <source>Enter a MusicBrainz ID.</source>
         <translation>Zadejte MusicBrainz ID.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="267"/>
+        <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="268"/>
         <source>The selected result has no release identifier.</source>
         <translation>Zvolený výsledek nemá žádný identifikátor vydání.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="541"/>
+        <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="542"/>
         <source>MusicBrainz request failed: %1</source>
         <translation>MusicBrainz požadavek selhal: %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="555"/>
+        <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="556"/>
         <source>Could not read the MusicBrainz search response: %1</source>
         <translation>Nepodařilo se načíst odpověď na MusicBrainz hledání: %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="566"/>
+        <location filename="../../src/gui/metadatalookup/sources/musicbrainzmetadata.cpp" line="567"/>
         <source>Could not read the MusicBrainz release response: %1</source>
         <translation>Nepodařilo se načíst odpověď na MusicBrainz vydání: %1</translation>
     </message>
@@ -12362,7 +12708,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="158"/>
-        <source>&lt;p&gt;The Flatpak notification portal does not support custom timeouts or album art. To use the desktop notification service directly, add &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt; to fooyin&apos;s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Restart fooyin after changing its permissions.&lt;/p&gt;</source>
+        <source>&lt;p&gt;The Flatpak notification portal does not support custom timeouts or album art. To use the desktop notification service directly, add &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt; to fooyin’s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Restart fooyin after changing its permissions.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Portál upozornění Flatpaku nepodporuje uživatelky definované časové limity ani přebaly alb. Pro přímé využití služby upozornění přidejte v nástroji Flatseal do seznamu oprávnění pro ‘komunikaci’ v sekci Session Bus položku &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt;, nebo spusťte příkaz:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Po změně oprávnění restartujte fooyin.&lt;/p&gt;</translation>
     </message>
     <message>
@@ -12643,47 +12989,42 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         <translation>Měřítko vertikální amplitudy; vysoké hodnoty mohou vést k překryvu kanálů</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="73"/>
-        <source>%1 fps</source>
-        <translation>%1 fps</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="75"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="78"/>
         <source>Maximum waveform refresh rate; lower values can reduce motion blending</source>
         <translation>Maximální obnovovací frekvence křivky signálu; nižší hodnoty mohou snížit pohybové rozostření</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="77"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="80"/>
         <source>Stereo</source>
         <translation>Stereo</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="78"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="81"/>
         <source>Mono</source>
         <translation>Mono</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="79"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="82"/>
         <source>Display separate stereo channels or combine them into mono</source>
         <translation>Zda zobrazit stereo kanály, nebo je zkombinovat do mono</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="82"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="85"/>
         <source>Curve duration (ms)</source>
         <translation>Délka křivky (ms)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="84"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="87"/>
         <source>Zoom (%)</source>
         <translation>Velikost (%)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="86"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="89"/>
         <source>Update FPS</source>
         <translation>Obnovovací frekvence</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="88"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="91"/>
         <source>Downmix mode</source>
         <translation>Režim downmixování</translation>
     </message>
@@ -12726,62 +13067,62 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         <translation>Osciloskop</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="224"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="119"/>
         <source>Show zero line</source>
         <translation>Zobrazit středovou linii</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="233"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="128"/>
         <source>Downmix mode</source>
         <translation>Režim downmixování</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="249"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="144"/>
         <source>Stereo</source>
         <translation>Stereo</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="250"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="145"/>
         <source>Mono</source>
         <translation>Mono</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="252"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="147"/>
         <source>Curve duration</source>
         <translation>Délka křivky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="257"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="152"/>
         <source>%1 ms</source>
         <translation>%1 ms</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="268"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="163"/>
         <source>Zoom</source>
         <translation>Velikost</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="273"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="168"/>
         <source>%1%</source>
         <translation>%1%</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="285"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="180"/>
         <source>Automatic</source>
         <translation>Automaticky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="286"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="181"/>
         <source>Horizontal</source>
         <translation>Horizontální</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="287"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="182"/>
         <source>Vertical</source>
         <translation>Vertikální</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="289"/>
+        <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="184"/>
         <source>Orientation</source>
         <translation>Orientace</translation>
     </message>
@@ -13002,12 +13343,12 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
         <translation>Výběr výstupu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/outputselector.cpp" line="147"/>
+        <location filename="../../src/gui/controls/outputselector.cpp" line="107"/>
         <source>Show label</source>
         <translation>Zobrazit popisek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/outputselector.cpp" line="153"/>
+        <location filename="../../src/gui/controls/outputselector.cpp" line="113"/>
         <source>Configure listed devices…</source>
         <translation>Nastavit uvedená zařízení…</translation>
     </message>
@@ -13276,7 +13617,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="257"/>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="261"/>
-        <source>Reset &apos;Stop after current&apos; after stopping</source>
+        <source>Reset ‘Stop after current’ after stopping</source>
         <translation>Po zastavení zrušit zaškrtnutí &quot;Zastavit po aktuálním&quot;</translation>
     </message>
     <message>
@@ -13412,7 +13753,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="115"/>
-        <source>Track is counted as &apos;played&apos; once either threshold is reached</source>
+        <source>Track is counted as ‘played’ once either threshold is reached</source>
         <translation>Skladba je počítána jako ‚přehraná‘ po dosažení této meze</translation>
     </message>
     <message>
@@ -13553,7 +13894,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="104"/>
-        <source>Replace Playing Tracks with the first selected track&apos;s group and start playback at that track</source>
+        <source>Replace Playing Tracks with the first selected track’s group and start playback at that track</source>
         <translation>Nahradit Přehrávané skladby skupinou první vybrané skladby a spustit přehrávání od této skladby</translation>
     </message>
     <message>
@@ -13635,62 +13976,62 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::PlayerControl</name>
     <message>
-        <location filename="../../src/gui/controls/playercontrol.cpp" line="112"/>
+        <location filename="../../src/gui/controls/playercontrol.cpp" line="108"/>
         <source>Player Controls</source>
         <translation>Tlačítka přehrávače</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playercontrol.cpp" line="189"/>
+        <location filename="../../src/gui/controls/playercontrol.cpp" line="182"/>
         <source>Show Stop</source>
         <translation>Zobrazit Zastavit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playercontrol.cpp" line="190"/>
+        <location filename="../../src/gui/controls/playercontrol.cpp" line="183"/>
         <source>Show Previous</source>
         <translation>Zobrazit Předchozí</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playercontrol.cpp" line="191"/>
+        <location filename="../../src/gui/controls/playercontrol.cpp" line="184"/>
         <source>Show Pause</source>
         <translation>Zobrazit Pozastavit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playercontrol.cpp" line="192"/>
+        <location filename="../../src/gui/controls/playercontrol.cpp" line="185"/>
         <source>Show Play</source>
         <translation>Zobrazit Přehrát</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playercontrol.cpp" line="193"/>
+        <location filename="../../src/gui/controls/playercontrol.cpp" line="186"/>
         <source>Show Play/Pause</source>
         <translation>Zobrazit Přehrát / Pozastavit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playercontrol.cpp" line="194"/>
+        <location filename="../../src/gui/controls/playercontrol.cpp" line="187"/>
         <source>Show Next</source>
         <translation>Zobrazit Další</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playercontrol.cpp" line="195"/>
+        <location filename="../../src/gui/controls/playercontrol.cpp" line="188"/>
         <source>Show Random Track</source>
         <translation>Zobrazit Náhodná skladba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playercontrol.cpp" line="199"/>
+        <location filename="../../src/gui/controls/playercontrol.cpp" line="192"/>
         <source>Automatic</source>
         <translation>Automaticky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playercontrol.cpp" line="200"/>
+        <location filename="../../src/gui/controls/playercontrol.cpp" line="193"/>
         <source>Horizontal</source>
         <translation>Horizontálně</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playercontrol.cpp" line="201"/>
+        <location filename="../../src/gui/controls/playercontrol.cpp" line="194"/>
         <source>Vertical</source>
         <translation>Vertikálně</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playercontrol.cpp" line="203"/>
+        <location filename="../../src/gui/controls/playercontrol.cpp" line="196"/>
         <source>Orientation</source>
         <translation>Orientace</translation>
     </message>
@@ -13976,384 +14317,439 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="58"/>
         <source>Show header</source>
-        <translation type="unfinished">Zobrazit záhlaví</translation>
+        <translation>Zobrazit záhlaví</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="59"/>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="61"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Zobrazit posuvník</translation>
+        <translation>Zobrazit posuvník</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="60"/>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="62"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Střídavé barvy řádků</translation>
+        <translation>Střídavé barvy řádků</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="65"/>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="71"/>
         <source>Artwork type</source>
-        <translation type="unfinished">Typ přebalu alba</translation>
+        <translation>Typ přebalu alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="67"/>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="73"/>
         <source>Preferred track</source>
-        <translation type="unfinished">Upřednostňovaná skladba</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="69"/>
-        <source>File</source>
-        <translation type="unfinished">Soubor</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="74"/>
-        <source>Blur</source>
-        <translation type="unfinished">Rozostření</translation>
+        <translation>Upřednostňovaná skladba</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="75"/>
+        <source>File</source>
+        <translation>Soubor</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="80"/>
+        <source>Blur</source>
+        <translation>Rozostření</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="81"/>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="126"/>
         <source>Opacity</source>
-        <translation type="unfinished">Průhlednost</translation>
+        <translation>Průhlednost</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="76"/>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="82"/>
         <source>Fade length</source>
-        <translation type="unfinished"></translation>
+        <translation>Délka prolínání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="79"/>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="85"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished">Ihned spustit přehrávání</translation>
+        <translation>Ihned spustit přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="88"/>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="94"/>
         <source>Square</source>
-        <translation type="unfinished">Hranaté</translation>
+        <translation>Hranaté</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="90"/>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="105"/>
         <source>Appearance</source>
-        <translation type="unfinished">Vzhled</translation>
+        <translation>Vzhled</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="97"/>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="115"/>
         <source>Artwork</source>
-        <translation type="unfinished">Přebaly alb</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="98"/>
-        <source>Left/Right</source>
-        <translation type="unfinished">Vlevo / Vpravo</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="100"/>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="161"/>
-        <source>Top</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="102"/>
-        <source>Corner radius</source>
-        <translation type="unfinished">Poloměr rohů</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="107"/>
-        <source>None</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="108"/>
-        <source>Play now</source>
-        <translation type="unfinished">Přehrát</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="114"/>
-        <source>Click Behaviour</source>
-        <translation type="unfinished">Akce po kliknutí</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="118"/>
-        <source>Double-click</source>
-        <translation type="unfinished">Dvojklik</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="120"/>
-        <source>Middle-click</source>
-        <translation type="unfinished">Prostřední tlačítko</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="127"/>
-        <source>Choose a custom background image file</source>
-        <translation type="unfinished">Vyber vlastní obrázek pozadí</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="130"/>
-        <source>No background image</source>
-        <translation type="unfinished">Bez obrázku pozadí</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="131"/>
-        <source>Current track artwork</source>
-        <translation type="unfinished">Přebal alba aktuální skladby</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="132"/>
-        <source>Use the currently playing track&apos;s artwork as the playlist background</source>
-        <translation type="unfinished">Použít jako pozadí seznamu skladeb přebal alba přehrávané skladby</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="133"/>
-        <source>Custom image</source>
-        <translation type="unfinished">Vlastní obrázek</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="134"/>
-        <source>Use the selected image file as the playlist background</source>
-        <translation type="unfinished">Použít jako pozadí seznamu skladeb vybraný obrázek</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="135"/>
-        <source>Front</source>
-        <translation type="unfinished">Přední</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="136"/>
-        <source>Use the front cover for current track artwork</source>
-        <translation type="unfinished">Použít přední přebal alba</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="137"/>
-        <source>Back</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="138"/>
-        <source>Use the back cover for current track artwork</source>
-        <translation type="unfinished">Použít zadní přebal alba</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="139"/>
-        <source>Artist</source>
-        <translation type="unfinished">Umělec</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="140"/>
-        <source>Use the artist picture for current track artwork</source>
-        <translation type="unfinished">Použít obrázek umělce</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="141"/>
-        <source>Playing track</source>
-        <translation type="unfinished">Přehrávaná skladba</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="143"/>
-        <source>Selected track</source>
-        <translation type="unfinished">Vybraná skladba</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="145"/>
-        <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished">Přehrávaná (po zastavení vybraná)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="147"/>
-        <source>Playing (blank at startup)</source>
-        <translation type="unfinished">Přehrávaná (po spuštění žádná)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="149"/>
-        <source>Playing (blank when stopped)</source>
-        <translation type="unfinished">Přehrávaná (po zastavení žádná)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="151"/>
-        <source>Scaled and cropped</source>
-        <translation type="unfinished">Přizpůsobit a oříznout</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="152"/>
-        <source>Fill the playlist area while preserving proportions; edges may be cropped</source>
-        <translation type="unfinished">Vyplnit oblast seznamu skladeb při zachování poměru stran; okraje mohou být ořezány</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="153"/>
-        <source>Scaled</source>
-        <translation type="unfinished">Přizpůsobit</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="154"/>
-        <source>Stretch the image to fill the playlist area; proportions may change</source>
-        <translation type="unfinished">Vyplnit oblast seznamu skladeb; poměr stran může být změněn</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="155"/>
-        <source>Scaled, keep proportions</source>
-        <translation type="unfinished">Přizpůsobit, zachovat poměr</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="157"/>
-        <source>Fit the whole image inside the playlist area without cropping</source>
-        <translation type="unfinished">Vyplnit oblast seznamu skladeb při zachování poměru stran; bez ořezání</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="158"/>
-        <source>Original size</source>
-        <translation type="unfinished">Původní velikost</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="159"/>
-        <source>Draw the image at its original size, optionally limited by maximum size</source>
-        <translation type="unfinished">Zobrazit obrázek v jeho původní velikosti, volitelně omezené maximální velikostí</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="160"/>
-        <source>Top left</source>
-        <translation type="unfinished">Nahoře vlevo</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="162"/>
-        <source>Top right</source>
-        <translation type="unfinished">Nahoře vpravo</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="163"/>
-        <source>Left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="164"/>
-        <source>Middle</source>
-        <translation type="unfinished">Na střed</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="165"/>
-        <source>Right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="166"/>
-        <source>Bottom left</source>
-        <translation type="unfinished">Dole vlevo</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="167"/>
-        <source>Bottom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="168"/>
-        <source>Bottom right</source>
-        <translation type="unfinished">Dole vpravo</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="172"/>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="180"/>
-        <source>Disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="182"/>
-        <source>Path to the custom background image</source>
-        <translation type="unfinished">Cesta k vlastnímu obrázku na pozadí</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="183"/>
-        <source>Select which image source to use for the playlist background</source>
-        <translation type="unfinished">Vyber zdroj pro obrázek na pozadí seznamu skladeb</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="184"/>
-        <source>Select which artwork type to use for current track artwork</source>
-        <translation type="unfinished">Vyber který typ přebalu alba přehrávané skladby použít</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="185"/>
-        <source>Select which track supplies the background artwork</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="186"/>
-        <source>Controls how the background image is scaled to the playlist area</source>
-        <translation type="unfinished">Jak přizpůsobit zobrazený obrázek oblasti seznamu skladeb</translation>
+        <translation>Přebaly alb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="187"/>
-        <source>Alignment for original-size background images</source>
-        <translation type="unfinished">Zarovnání obrázku na pozadí zobrazeného v původní velikosti</translation>
+        <source>Top</source>
+        <translation>Nahoře</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="120"/>
+        <source>Corner radius</source>
+        <translation>Poloměr rohů</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="59"/>
+        <source>Keep group headers in view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="60"/>
+        <source>Keep artwork in view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="66"/>
+        <source>Show reflection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="97"/>
+        <source>Reflection height as a percentage of the artwork height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="100"/>
+        <source>Opacity at the top of the reflection, fading to transparent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="103"/>
+        <source>Space between the artwork and its reflection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="112"/>
+        <source>Scrolling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="116"/>
+        <source>Horizontal padding</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="118"/>
+        <source>Top padding</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="122"/>
+        <source>Artwork reflection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="124"/>
+        <source>Height</source>
+        <translation type="unfinished">Výška</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="128"/>
+        <source>Gap below artwork</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="133"/>
+        <source>None</source>
+        <translation>Nic</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="134"/>
+        <source>Play now</source>
+        <translation>Přehrát</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="140"/>
+        <source>Click Behaviour</source>
+        <translation>Akce po kliknutí</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="144"/>
+        <source>Double-click</source>
+        <translation>Dvojklik</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="146"/>
+        <source>Middle-click</source>
+        <translation>Prostřední tlačítko</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="153"/>
+        <source>Choose a custom background image file</source>
+        <translation>Vyber vlastní obrázek pozadí</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="156"/>
+        <source>No background image</source>
+        <translation>Bez obrázku pozadí</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="157"/>
+        <source>Current track artwork</source>
+        <translation>Přebal alba aktuální skladby</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="158"/>
+        <source>Use the currently playing track’s artwork as the playlist background</source>
+        <translation>Použít jako pozadí seznamu skladeb přebal alba přehrávané skladby</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="159"/>
+        <source>Custom image</source>
+        <translation>Vlastní obrázek</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="160"/>
+        <source>Use the selected image file as the playlist background</source>
+        <translation>Použít jako pozadí seznamu skladeb vybraný obrázek</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="161"/>
+        <source>Front</source>
+        <translation>Přední</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="162"/>
+        <source>Use the front cover for current track artwork</source>
+        <translation>Použít přední přebal alba</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="163"/>
+        <source>Back</source>
+        <translation>Zadní</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="164"/>
+        <source>Use the back cover for current track artwork</source>
+        <translation>Použít zadní přebal alba</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="165"/>
+        <source>Artist</source>
+        <translation>Umělec</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="166"/>
+        <source>Use the artist picture for current track artwork</source>
+        <translation>Použít obrázek umělce</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="167"/>
+        <source>Playing track</source>
+        <translation>Přehrávaná skladba</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="169"/>
+        <source>Selected track</source>
+        <translation>Vybraná skladba</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="171"/>
+        <source>Playing (or selected when stopped)</source>
+        <translation>Přehrávaná (po zastavení vybraná)</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="173"/>
+        <source>Playing (blank at startup)</source>
+        <translation>Přehrávaná (po spuštění žádná)</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="175"/>
+        <source>Playing (blank when stopped)</source>
+        <translation>Přehrávaná (po zastavení žádná)</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="177"/>
+        <source>Scaled and cropped</source>
+        <translation>Přizpůsobit a oříznout</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="178"/>
+        <source>Fill the playlist area while preserving proportions; edges may be cropped</source>
+        <translation>Vyplnit oblast seznamu skladeb při zachování poměru stran; okraje mohou být ořezány</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="179"/>
+        <source>Scaled</source>
+        <translation>Přizpůsobit</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="180"/>
+        <source>Stretch the image to fill the playlist area; proportions may change</source>
+        <translation>Vyplnit oblast seznamu skladeb; poměr stran může být změněn</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="181"/>
+        <source>Scaled, keep proportions</source>
+        <translation>Přizpůsobit, zachovat poměr</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="183"/>
+        <source>Fit the whole image inside the playlist area without cropping</source>
+        <translation>Vyplnit oblast seznamu skladeb při zachování poměru stran; bez ořezání</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="184"/>
+        <source>Original size</source>
+        <translation>Původní velikost</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="185"/>
+        <source>Draw the image at its original size, optionally limited by maximum size</source>
+        <translation>Zobrazit obrázek v jeho původní velikosti, volitelně omezené maximální velikostí</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="186"/>
+        <source>Top left</source>
+        <translation>Nahoře vlevo</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="188"/>
-        <source>Maximum width or height for original-size background images</source>
-        <translation type="unfinished">Maximální velikost obrázku na pozadí zobrazeného v původní velikosti</translation>
+        <source>Top right</source>
+        <translation>Nahoře vpravo</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="189"/>
-        <source>Applies blur to the background image</source>
-        <translation type="unfinished">Míra rozostření obrázku na pozadí</translation>
+        <source>Left</source>
+        <translation>Doleva</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="190"/>
-        <source>Controls how strongly the background image is shown</source>
-        <translation type="unfinished">Úroveň průhlednosti obrázku na pozadí</translation>
+        <source>Middle</source>
+        <translation>Na střed</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="191"/>
-        <source>Duration for fading between background images; set to 0 to disable</source>
-        <translation type="unfinished">Délka prolínání při změně zobrazeného obrázku na pozadí; pro zakázání prolínání nastavte 0</translation>
+        <source>Right</source>
+        <translation>Doprava</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="192"/>
+        <source>Bottom left</source>
+        <translation>Dole vlevo</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="193"/>
-        <source>After adding tracks to the front of or replacing the playback queue, start playback immediately</source>
-        <translation type="unfinished">Po přidání skladeb na začátek, nebo nahrazení fronty ihned spustit přehrávání</translation>
+        <source>Bottom</source>
+        <translation>Dole</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="195"/>
-        <source>Background Image</source>
-        <translation type="unfinished">Obrázek na pozadí</translation>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="194"/>
+        <source>Bottom right</source>
+        <translation>Dole vpravo</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="199"/>
-        <source>Image source</source>
-        <translation type="unfinished">Zdroj obrázku</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="200"/>
-        <source>Source</source>
-        <translation type="unfinished">Zdroj</translation>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="198"/>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="206"/>
+        <source>Disabled</source>
+        <translation>Zakázáno</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="208"/>
-        <source>Layout</source>
-        <translation type="unfinished">Vzhled</translation>
+        <source>Path to the custom background image</source>
+        <translation>Cesta k vlastnímu obrázku na pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="209"/>
-        <source>Scale mode</source>
-        <translation type="unfinished">Režim přizpůsobení</translation>
+        <source>Select which image source to use for the playlist background</source>
+        <translation>Vyber zdroj pro obrázek na pozadí seznamu skladeb</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="210"/>
+        <source>Select which artwork type to use for current track artwork</source>
+        <translation>Vyber který typ přebalu alba přehrávané skladby použít</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="211"/>
-        <source>Alignment</source>
-        <translation type="unfinished">Zarovnání</translation>
+        <source>Select which track supplies the background artwork</source>
+        <translation>Vyber která skladba poskytne obrázek na pozadí seznamu skladeb</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="212"/>
+        <source>Controls how the background image is scaled to the playlist area</source>
+        <translation>Jak přizpůsobit zobrazený obrázek oblasti seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="213"/>
-        <source>Maximum size</source>
-        <translation type="unfinished">Maximální velikost</translation>
+        <source>Alignment for original-size background images</source>
+        <translation>Zarovnání obrázku na pozadí zobrazeného v původní velikosti</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="214"/>
+        <source>Maximum width or height for original-size background images</source>
+        <translation>Maximální velikost obrázku na pozadí zobrazeného v původní velikosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="215"/>
+        <source>Applies blur to the background image</source>
+        <translation>Míra rozostření obrázku na pozadí</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="216"/>
+        <source>Controls how strongly the background image is shown</source>
+        <translation>Úroveň průhlednosti obrázku na pozadí</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="217"/>
+        <source>Duration for fading between background images; set to 0 to disable</source>
+        <translation>Délka prolínání při změně zobrazeného obrázku na pozadí; pro zakázání prolínání nastavte 0</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="219"/>
+        <source>After adding tracks to the front of or replacing the playback queue, start playback immediately</source>
+        <translation>Po přidání skladeb na začátek, nebo nahrazení fronty ihned spustit přehrávání</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="221"/>
+        <source>Background Image</source>
+        <translation>Obrázek na pozadí</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="225"/>
+        <source>Image source</source>
+        <translation>Zdroj obrázku</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="226"/>
+        <source>Source</source>
+        <translation>Zdroj</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="234"/>
+        <source>Layout</source>
+        <translation>Vzhled</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="235"/>
+        <source>Scale mode</source>
+        <translation>Režim přizpůsobení</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="237"/>
+        <source>Alignment</source>
+        <translation>Zarovnání</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="239"/>
+        <source>Maximum size</source>
+        <translation>Maximální velikost</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="241"/>
         <source>Effects</source>
-        <translation type="unfinished">Efekty</translation>
+        <translation>Efekty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="314"/>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="357"/>
         <source>Choose Background Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyber obrázek na pozadí</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="315"/>
+        <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="358"/>
         <source>Images (*.png *.jpg *.jpeg *.webp *.bmp);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Obrázky (*.png *.jpg *.jpeg *.webp *.bmp);;Všechny soubory (*)</translation>
     </message>
 </context>
 <context>
@@ -14369,62 +14765,62 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         <translation>Promíchat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="115"/>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="112"/>
         <source>Automatic</source>
         <translation>Automaticky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="116"/>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="113"/>
         <source>Horizontal</source>
         <translation>Horizontálně</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="117"/>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="114"/>
         <source>Vertical</source>
         <translation>Vertikálně</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="119"/>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="116"/>
         <source>Orientation</source>
         <translation>Orientace</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="173"/>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="180"/>
         <source>Default</source>
         <translation>Výchozí</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="174"/>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="181"/>
         <source>Repeat playlist</source>
         <translation>Opakovat seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="175"/>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="182"/>
         <source>Repeat album</source>
         <translation>Opakovat album</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="176"/>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="183"/>
         <source>Repeat track</source>
         <translation>Opakovat skladbu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="208"/>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="215"/>
         <source>Shuffle off</source>
         <translation>Zrušit promíchání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="209"/>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="216"/>
         <source>Shuffle tracks</source>
         <translation>Promíchat skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="210"/>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="217"/>
         <source>Shuffle albums</source>
         <translation>Promíchat alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="211"/>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="218"/>
         <source>Random</source>
         <translation>Náhodně</translation>
     </message>
@@ -14443,7 +14839,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="436"/>
-        <source>Remove playlist &quot;%1&quot;?</source>
+        <source>Remove playlist ‘%1’?</source>
         <translation>Odstranit seznam skladeb „%1“?</translation>
     </message>
     <message numerus="yes">
@@ -14457,7 +14853,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="442"/>
-        <source>Don&apos;t ask again</source>
+        <source>Don’t ask again</source>
         <translation>Příště se neptat</translation>
     </message>
     <message>
@@ -14523,33 +14919,33 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="109"/>
-        <source>Set to &apos;0&apos; to disable preloading.</source>
+        <source>Set to ‘0’ to disable preloading.</source>
         <translation>Pro zrušení přednačítání nastavte ‚0‘.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="84"/>
         <source>Background colour</source>
-        <translation type="unfinished">Barva pozadí</translation>
+        <translation>Barva pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="85"/>
         <source>Font</source>
-        <translation type="unfinished">Písmo</translation>
+        <translation>Písmo</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="114"/>
         <source>Use a custom background colour for the currently playing row; transparency is supported</source>
-        <translation type="unfinished">Použít vlastní barvu pozadí pro právě přehrávaný řádek; je podporována průhlednost</translation>
+        <translation>Použít vlastní barvu pozadí pro právě přehrávaný řádek; je podporována průhlednost</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="115"/>
         <source>Use a custom font for the currently playing row</source>
-        <translation type="unfinished">Použít vlastní písmo pro právě přehrávaný řádek</translation>
+        <translation>Použít vlastní písmo pro právě přehrávaný řádek</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="117"/>
         <source>Playing row</source>
-        <translation type="unfinished">Přehrávaný řádek</translation>
+        <translation>Přehrávaný řádek</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
@@ -14663,13 +15059,13 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="133"/>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="397"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="395"/>
         <source>Re&amp;name playlist</source>
         <translation>Přejme&amp;novat seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="135"/>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="404"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="402"/>
         <source>&amp;Remove playlist</source>
         <translation>Odst&amp;ranit seznam skladeb</translation>
     </message>
@@ -14690,98 +15086,98 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="215"/>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="319"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="317"/>
         <source>Playlist Manager</source>
         <translation>Správce seznamů skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="306"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="304"/>
         <source>%1 contents</source>
         <extracomment>%1 refers to the name of a playlist.</extracomment>
         <translation>Obsah %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="318"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="316"/>
         <source>Edit</source>
         <translation>Upravit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="321"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="319"/>
         <source>Activate the selected playlist</source>
         <translation>Aktivovat vybraný seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="328"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="326"/>
         <source>Edit the selected autoplaylist</source>
         <translation>Upravit vybraný dynamický seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="333"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="331"/>
         <source>Rename the selected playlist</source>
         <translation>Přejmenovat vybraný seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="336"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="334"/>
         <source>Rename</source>
         <translation>Přejmenovat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="341"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="339"/>
         <source>Remove the selected playlist</source>
         <translation>Odstranit vybraný seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="344"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="342"/>
         <source>Remove</source>
         <translation>Odstranit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="349"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="347"/>
         <source>Save the selected playlist to the specified file</source>
         <translation>Uložit vybraný seznam skladeb do souboru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="357"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="355"/>
         <source>Create a new empty playlist</source>
         <translation>Vytvořit nový prázdný seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="365"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="363"/>
         <source>Create a new autoplaylist</source>
         <translation>Vytvořit nový dynamický seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="397"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="395"/>
         <source>Re&amp;name autoplaylist</source>
         <translation>Přejme&amp;novat dynamický seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="404"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="402"/>
         <source>&amp;Remove autoplaylist</source>
         <translation>Odst&amp;ranit dynamický seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="514"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="512"/>
         <source>Lock playlist</source>
         <translation>Uzamknout seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="533"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="531"/>
         <source>Restore deleted playlist</source>
         <translation>Obnovit smazaný seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="565"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="563"/>
         <source>Options</source>
         <translation>Možnosti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="567"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="565"/>
         <source>Activate on selection</source>
         <translation>Aktivovat po výběru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="596"/>
+        <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="594"/>
         <source>Restore playlist order</source>
         <translation>Obnovit pořadí seznamu skladeb</translation>
     </message>
@@ -14789,7 +15185,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1636"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1674"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln skladba</numerusform>
@@ -14801,103 +15197,103 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::PlaylistOrganiser</name>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="190"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="195"/>
         <source>Remove</source>
         <translation>Odebrat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="192"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="197"/>
         <source>Rename</source>
         <translation>Přejmenovat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="194"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="199"/>
         <source>New group</source>
         <translation>Nová skupina</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="196"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="201"/>
         <source>Create playlist</source>
         <translation>Vytvořit seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="199"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="204"/>
         <source>Create autoplaylist</source>
         <translation>Vytvořit dynamický seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="202"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="207"/>
         <source>Edit autoplaylist</source>
         <translation>Upravit dynamický seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="206"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="211"/>
         <source>Sort all playlists</source>
         <translation>Seřadit všechny seznamy skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="210"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="215"/>
         <source>Sort playlists in group</source>
         <translation>Seřadit seznamy skladeb skupiny</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="234"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="239"/>
         <source>Edit</source>
         <translation>Upravit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="250"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="255"/>
         <source>Sort all playlists alphabetically</source>
         <translation>Abecedně seřadit všechny seznamy skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="252"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="257"/>
         <source>Sort playlists in the selected group alphabetically</source>
         <translation>Abecedně seřadit všechny seznamy skladeb ve vybrané skupině</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="461"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="472"/>
         <source>Remove the selected playlists</source>
         <translation>Odstranit vybrané seznamy skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="464"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="475"/>
         <source>Rename the selected group</source>
         <translation>Přejmenovat vybranou skupinu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="465"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="476"/>
         <source>Remove the selected groups</source>
         <translation>Odstranit vybrané skupiny</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="468"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="479"/>
         <source>Remove the selected playlists and groups</source>
         <translation>Odstranit vybrané seznamy skladeb a skupiny</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="480"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="491"/>
         <source>Restore deleted playlist</source>
         <translation>Obnovit smazaný seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="521"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="532"/>
         <source>Lock playlist</source>
         <translation>Uzamknout seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="460"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="471"/>
         <source>Rename the selected playlist</source>
         <translation>Přejmenovat vybraný seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="245"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="250"/>
         <source>Create a new empty group</source>
         <translation>Vytvořit novou prázdnou skupinu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="235"/>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="350"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="240"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="355"/>
         <source>Playlist Organiser</source>
         <translation>Organizátor seznamů skladeb</translation>
     </message>
@@ -14910,39 +15306,32 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         <translation>Nastavení Organizátoru seznamů skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="59"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="58"/>
         <source>Playing text</source>
         <translation>Text přehrávaného</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="60"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="59"/>
         <source>Playing background</source>
         <translation>Pozadí přehrávaného</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="62"/>
-        <source>Scripts</source>
-        <translation>Skripty</translation>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="61"/>
+        <source>Display script</source>
+        <translation>Skript pro zobrazení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="66"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="72"/>
+        <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text.</source>
+        <translation>Použij &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; pro text zarovnaný doprava.</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="65"/>
         <source>Available variables: &lt;code&gt;%node_name%&lt;/code&gt;, &lt;code&gt;%is_group%&lt;/code&gt;, &lt;code&gt;%count%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;</source>
         <translation>Dostupné proměnné: &lt;code&gt;%node_name%&lt;/code&gt;, &lt;code&gt;%is_group%&lt;/code&gt;, &lt;code&gt;%count%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="73"/>
-        <source>Left</source>
-        <extracomment>Refers to the left script field.</extracomment>
-        <translation>Levý</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="76"/>
-        <source>Right</source>
-        <extracomment>Refers to the right script field.</extracomment>
-        <translation>Pravý</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="81"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="78"/>
         <source>Colours</source>
         <translation>Barvy</translation>
     </message>
@@ -14950,13 +15339,13 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::PlaylistPresetsPage</name>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="563"/>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="564"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="553"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="554"/>
         <source>Presets</source>
         <translation>Předvolby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="564"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="554"/>
         <source>Playlist</source>
         <translation>Seznam skladeb</translation>
     </message>
@@ -14964,132 +15353,132 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::PlaylistPresetsPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="266"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="247"/>
         <source>New</source>
         <translation>Nová</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="267"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="248"/>
         <source>Rename</source>
         <translation>Přejmenovat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="268"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="249"/>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="269"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="250"/>
         <source>Update</source>
         <translation>Aktualizovat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="270"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="251"/>
         <source>Clone</source>
         <translation>Duplikovat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="294"/>
-        <source>Title</source>
-        <translation>Název</translation>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="267"/>
+        <source>Leave empty to group by the display script</source>
+        <translation>Ponech prázdné pro seskupení podle skriptu pro zobrazení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="295"/>
-        <source>Subtitle</source>
-        <translation>Podnázev</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="410"/>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="431"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="403"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="424"/>
         <source>Preset Name</source>
         <translation>Název předvolby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="497"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="487"/>
         <source>Copy of %1</source>
         <extracomment>%1 refers to the name of a playlist preset.</extracomment>
         <translation>%1 (kopie)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="318"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="313"/>
         <source>Header</source>
         <translation>Záhlaví</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="256"/>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="262"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="237"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="244"/>
         <source>Override height</source>
         <translation>Přenastavit výšku</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="258"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="241"/>
         <source>Align subheaders to edge of image columns</source>
         <translation>Zarovnat podzáhlaví k okraji sloupce obrázků</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="259"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="242"/>
         <source>Display covers below every subheader</source>
         <translation>Zobrazit přebaly alb pod každým podzáhlavím</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="264"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="246"/>
         <source>Show cover</source>
         <translation>Zobrazit přebal alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="265"/>
-        <source>Simple header</source>
-        <translation>Jednoduché záhlaví</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="286"/>
-        <source>Leave empty to group by the displayed values</source>
-        <translation>Ponechej prázdné pro seskupení podle zobrazených hodnot</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="292"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="273"/>
         <source>Grouping script</source>
         <translation>Skript seskupení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="323"/>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="334"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="275"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="344"/>
+        <source>Display script</source>
+        <translation>Skript pro zobrazení</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="278"/>
+        <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text and &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; to draw a separator.</source>
+        <translation>Použij &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; pro text zarovnaný doprava a &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; pro vykreslení oddělovače.</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="295"/>
+        <source>Artwork</source>
+        <translation>Přebaly alb</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="298"/>
+        <source>Left/Right</source>
+        <translation>Vlevo / Vpravo</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="300"/>
+        <source>Top/Bottom</source>
+        <translation>Nahoře / Dole</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="318"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="330"/>
         <source>Subheaders</source>
         <translation>Podzáhlaví</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="346"/>
-        <source>Left-aligned</source>
-        <translation>Zarovnaný doleva</translation>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="338"/>
+        <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text.</source>
+        <translation>Použij &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; pro text zarovnaný doprava.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="298"/>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="348"/>
-        <source>Right-aligned</source>
-        <translation>Zarovnaný doprava</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="299"/>
-        <source>Details</source>
-        <translation>Podrobnosti</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="354"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="351"/>
         <source>Tracks</source>
         <translation>Skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="407"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="400"/>
         <source>New preset</source>
         <translation>Nová předvolba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="410"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="403"/>
         <source>Add Preset</source>
         <translation>Přidat předvolbu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="431"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="424"/>
         <source>Rename Preset</source>
         <translation>Přejmenovat předvolbu</translation>
     </message>
@@ -15222,103 +15611,103 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::PlaylistTabs</name>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="439"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="463"/>
         <source>Add new playlist</source>
         <translation>Přidat nový seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="446"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="470"/>
         <source>Add new autoplaylist</source>
         <translation>Přidat nový dynamický seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="473"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="497"/>
         <source>Edit autoplaylist</source>
         <translation>Upravit dynamický seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="483"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="507"/>
         <source>Rename playlist</source>
         <translation>Přejmenovat seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="483"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="507"/>
         <source>Rename autoplaylist</source>
         <translation>Přejmenovat dynamický seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="489"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="513"/>
         <source>Lock playlist</source>
         <translation>Uzamknout seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="504"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="528"/>
         <source>Restore deleted playlist</source>
         <translation>Obnovit smazaný seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="543"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="567"/>
         <source>Remove playlist</source>
         <translation>Odstranit seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="543"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="567"/>
         <source>Remove autoplaylist</source>
         <translation>Odstranit dynamický seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="519"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="543"/>
         <source>Move left</source>
         <translation>Posunout doleva</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="82"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="84"/>
         <source>&amp;Save playlist…</source>
         <translation>&amp;Uložit seznam skladeb…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="98"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="100"/>
         <source>Save the selected playlist to the specified file</source>
         <translation>Uložit vybraný seznam skladeb do souboru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="524"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="548"/>
         <source>Move right</source>
         <translation>Posunout doprava</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="579"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="603"/>
         <source>Tab position</source>
         <translation>Pozice karet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="596"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="620"/>
         <source>Top</source>
         <translation>Nahoře</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="597"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="621"/>
         <source>Bottom</source>
         <translation>Dole</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="765"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="807"/>
         <source>Add playlist</source>
         <translation>Přidat seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="773"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="815"/>
         <source>Clear playlist</source>
         <translation>Vymazat seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="567"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="591"/>
         <source>%1 contents</source>
         <extracomment>%1 refers to the name of a playlist.</extracomment>
         <translation>Obsah %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="250"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="263"/>
         <source>Playlist Tabs</source>
         <translation>Karty seznamů skladeb</translation>
     </message>
@@ -15326,47 +15715,57 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::PlaylistTabsConfigDialog</name>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="32"/>
+        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="34"/>
         <source>Playlist Tabs Settings</source>
         <translation>Nastavení karet seznamů skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="34"/>
+        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="37"/>
         <source>Expand tabs to fill empty space</source>
         <translation>Roztáhnout karty a vyplnit volné místo</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="35"/>
+        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="38"/>
         <source>Show add button</source>
         <translation>Zobrazit tlačítko Přidat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="36"/>
+        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="39"/>
         <source>Show clear button</source>
         <translation>Zobrazit tlačítko Vymazat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="37"/>
+        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="40"/>
         <source>Show delete button on tabs</source>
         <translation>Na kartách zobrazit tlačítko Smazat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="38"/>
+        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="41"/>
         <source>Delete playlists on middle click</source>
         <translation>Smazat seznam skladeb kliknutím prostředním tlačítkem</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="40"/>
+        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="43"/>
         <source>Top</source>
         <translation>Nahoře</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="41"/>
+        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="44"/>
         <source>Bottom</source>
         <translation>Dole</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="46"/>
+        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="50"/>
+        <source>Available variables: &lt;code&gt;%playlist_name%&lt;/code&gt;, &lt;code&gt;%trackcount%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="57"/>
+        <source>Tab title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="60"/>
         <source>Position</source>
         <translation>Pozice</translation>
     </message>
@@ -15382,42 +15781,42 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1031"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1046"/>
         <source>&amp;Play</source>
         <translation>&amp;Přehrát</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1162"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1180"/>
         <source>Add to another playlist</source>
         <translation>Přidat do jiného seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1319"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1337"/>
         <source>Use custom layout for this playlist</source>
         <translation>Použít pro tento seznam skladeb vlastní rozvržení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1320"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1338"/>
         <source>Use a separate view layout instead of the default</source>
         <translation>Použít jiné rozvržení zobrazení než výchozí</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2026"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2040"/>
         <source>Writing metadata…</source>
         <translation>Zápis metadat…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2026"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2040"/>
         <source>Abort</source>
         <translation>Přerušit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2032"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2046"/>
         <source>Writing Metadata</source>
         <translation>Zápis metadat</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2033"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2047"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Zápis metadat do souboru…</numerusform>
@@ -15426,73 +15825,73 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         </translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2133"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2147"/>
         <source>Start playback of the selected track</source>
         <translation>Spustit přehrávání vybrané skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2142"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2156"/>
         <source>Edit</source>
         <translation>Upravit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2146"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2160"/>
         <source>Randomise the current playlist</source>
         <translation>Náhodně seřadit vybraný seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2149"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2163"/>
         <source>Reverse the current playlist</source>
         <translation>Obrátit pořadí vybraného seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2167"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2181"/>
         <source>Select &amp;all</source>
         <translation>Vybr&amp;at vše</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2168"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2182"/>
         <source>Select all tracks in the current playlist</source>
         <translation>Vybrat všechny skladby vybraného seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1236"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1254"/>
         <source>Reset columns to default</source>
         <translation>Obnovit výchozí sloupce</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="952"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="967"/>
         <source>Playlist Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1263"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1281"/>
         <source>Sort the current playlist using this preset</source>
         <translation>Seřadit vybraný seznam skladeb podle této předvolby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1303"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1321"/>
         <source>Single-column mode</source>
         <translation>Režim jediného sloupce</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1348"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1366"/>
         <source>Presets</source>
         <translation>Předvolby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1379"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1397"/>
         <source>Columns</source>
         <translation>Sloupce</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1367"/>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1409"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1385"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1427"/>
         <source>More…</source>
         <translation>Další…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="349"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="351"/>
         <source>Playlist</source>
         <translation>Seznam skladeb</translation>
     </message>
@@ -15507,162 +15906,162 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         <translation>Hledání…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="129"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="130"/>
         <source>Playlist empty</source>
         <translation>Prázdný seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="134"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="135"/>
         <source>Loading playlist…</source>
         <translation>Načítání seznamu skladeb…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="203"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="204"/>
         <source>&amp;Undo</source>
         <translation>&amp;Zpět</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="206"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="207"/>
         <source>&amp;Redo</source>
         <translation>Zn&amp;ovu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="209"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="210"/>
         <source>&amp;Crop</source>
         <translation>Oříz&amp;nout</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="212"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="213"/>
         <source>&amp;Stop after this</source>
         <translation>&amp;Zastavit po tomto</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="216"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="217"/>
         <source>Cu&amp;t</source>
         <translation>&amp;Vyjmout</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="219"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="220"/>
         <source>&amp;Copy</source>
         <translation>&amp;Kopírovat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="222"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="223"/>
         <source>&amp;Paste</source>
         <translation>V&amp;ložit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="225"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="226"/>
         <source>C&amp;lear</source>
         <translation>Vyči&amp;stit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="228"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="229"/>
         <source>&amp;Remove</source>
         <translation>Odeb&amp;rat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="232"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="233"/>
         <source>Remove duplicates</source>
         <translation>Odebrat duplikáty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="235"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="236"/>
         <source>Remove dead tracks</source>
         <translation>Odebrat nedostupné skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="238"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="239"/>
         <source>Add to playback &amp;queue</source>
         <translation>Přidat do &amp;fronty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="242"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="243"/>
         <source>&amp;Queue to play next</source>
         <translation>Přidat na &amp;začátek fronty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="246"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="247"/>
         <source>Remove from playback q&amp;ueue</source>
         <translation>Odeb&amp;rat z fronty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="250"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="251"/>
         <source>Randomise</source>
         <translation>Náhodně</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="253"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="254"/>
         <source>Reverse</source>
         <translation>Obrátit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="341"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="342"/>
         <source>Remove all tracks from the playlist except for the selected tracks</source>
         <translation>Odebrat ze seznamu skladeb všechny skladby kromě vybraných</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="345"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="346"/>
         <source>Stop playback at the end of the selected track</source>
         <translation>Zastavit přehrávání po dosažení konce vybrané skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="352"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="353"/>
         <source>Undo the previous playlist change</source>
         <translation>Odvolat předchozí změnu seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="362"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="363"/>
         <source>Redo the previous playlist change</source>
         <translation>Znovu provést odvolanou změnu seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="374"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="375"/>
         <source>Cut the selected tracks</source>
         <translation>Vyjmout vybrané skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="382"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="383"/>
         <source>Copy the selected tracks</source>
         <translation>Kopírovat vybrané skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="391"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="392"/>
         <source>Paste the selected tracks</source>
         <translation>Vložit vybrané skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="403"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="404"/>
         <source>Remove all tracks from the current playlist</source>
         <translation>Odstranit všechny skladby vybraného seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="411"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="412"/>
         <source>Remove the selected tracks from the current playlist</source>
         <translation>Odstranit vybrané skladby z vybraného seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="425"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="426"/>
         <source>Add the selected tracks to the playback queue</source>
         <translation>Přidat vybrané skladby do fronty přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="431"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="432"/>
         <source>Add the selected tracks to the front of the playback queue</source>
         <translation>Přidat vybrané skladby na začátek fronty přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="437"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="438"/>
         <source>Remove the selected tracks from the playback queue</source>
         <translation>Odstranit vybrané skladby z fronty přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="445"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="446"/>
         <source>Remove duplicate tracks from the playlist</source>
         <translation>Odebrat ze seznamu skladeb duplicitní skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="450"/>
+        <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="451"/>
         <source>Remove dead (non-existent) tracks from the playlist</source>
         <translation>Odebrat ze seznamu skladeb nedostupné (neexistující) skladby</translation>
     </message>
@@ -15748,12 +16147,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="251"/>
         <source>fooyin Plugins (*.fyplugin *.zip *.dll)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin pluginy (*.fyplugin *.zip *.dll)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="253"/>
         <source>fooyin Plugins (*.fyplugin *.zip *.so)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin pluginy (*.fyplugin *.zip *.so)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="255"/>
@@ -15928,22 +16327,22 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::PresetRegistry</name>
     <message>
-        <location filename="../../src/gui/playlist/presetregistry.cpp" line="41"/>
+        <location filename="../../src/gui/playlist/presetregistry.cpp" line="53"/>
         <source>Track list</source>
         <translation>Seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/presetregistry.cpp" line="49"/>
+        <location filename="../../src/gui/playlist/presetregistry.cpp" line="62"/>
         <source>Albums grouped by disc</source>
         <translation>Alba seskupená podle disků</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/presetregistry.cpp" line="66"/>
+        <location filename="../../src/gui/playlist/presetregistry.cpp" line="76"/>
         <source>Albums with disc headers</source>
         <translation>Alba se záhlavími disků</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/presetregistry.cpp" line="72"/>
+        <location filename="../../src/gui/playlist/presetregistry.cpp" line="83"/>
         <source>Compact album headers</source>
         <translation>Kompaktní záhlaví alb</translation>
     </message>
@@ -16090,7 +16489,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="153"/>
-        <source>Sensitivity of projectM&apos;s beat detection</source>
+        <source>Sensitivity of projectM’s beat detection</source>
         <translation>Sensitivita detekce rytmu projektuM</translation>
     </message>
     <message>
@@ -16187,7 +16586,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <name>Fooyin::ProjectM::ProjectMView</name>
     <message>
         <location filename="../../src/plugins/projectm/projectmview.cpp" line="98"/>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="872"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="873"/>
         <source>Initialising projectM…</source>
         <translation>Inicializace projectM…</translation>
     </message>
@@ -16207,37 +16606,37 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         <translation>projectM vyžaduje OpenGL 3.3 nebo novější.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="566"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="567"/>
         <source>projectM requires an initialised OpenGL 3.3 context.</source>
         <translation>projectM vyžaduje inicializovaný OpenGL 3.3. kontext.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="571"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="572"/>
         <source>No projectM preset folders are configured.</source>
         <translation>Nejsou nastaveny žádné složky předvoleb pro projectM.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="595"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="596"/>
         <source>Preset failed to load.</source>
         <translation>Předvolbu se nepodařilo načíst.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="614"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="615"/>
         <source>projectM initialisation failed.</source>
         <translation>Inicializace projectM se nezdařila.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="615"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="616"/>
         <source>projectM initialisation failed: %1</source>
         <translation>Inicializace projectM se nezdařila: %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="637"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="638"/>
         <source>Using presets from %1</source>
         <translation>Používají se předvolby z %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="638"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="639"/>
         <source>Using presets from %Ln folder(s)</source>
         <translation>
             <numerusform>Používány předvolby z %Ln složky</numerusform>
@@ -16250,7 +16649,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <name>Fooyin::ProjectM::ProjectMWidget</name>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="154"/>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="608"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="607"/>
         <source>&amp;Full Screen</source>
         <translation>N&amp;a celou obrazovku</translation>
     </message>
@@ -16311,72 +16710,72 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="264"/>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="745"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="744"/>
         <source>projectM</source>
         <translation>projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="548"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="547"/>
         <source>Toggle projectM full screen</source>
         <translation>Přepnout zobrazení na celou obrazovku pro projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="552"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="551"/>
         <source>Select a projectM preset</source>
         <translation>Vybrat předvolbu pro projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="558"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="557"/>
         <source>Favourite the current projectM preset</source>
         <translation>Přidat aktuální předvolbu projectM do oblíbených</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="565"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="564"/>
         <source>Cycle through favourite projectM presets only</source>
         <translation>Procházet pouze oblíbené předvolby projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="570"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="569"/>
         <source>Switch to the previous projectM preset</source>
         <translation>Přepnout na předchozí předvolbu pro projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="576"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="575"/>
         <source>Switch to the next projectM preset</source>
         <translation>Přepnout na další předvolbu pro projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="583"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="582"/>
         <source>Switch to a random projectM preset</source>
         <translation>Přepnout na náhodnou předvolbu pro projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="587"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="586"/>
         <source>Lock the current projectM preset</source>
         <translation>Uzamknout aktuální předvolbu pro projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="591"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="590"/>
         <source>Shuffle projectM presets</source>
         <translation>Promíchat předvolby pro projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="595"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="594"/>
         <source>Remember the current projectM preset</source>
         <translation>Zapamatovat si aktuální předvolbu pro projectM</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="608"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="607"/>
         <source>E&amp;xit Full Screen</source>
         <translation>&amp;Ukončit režim na celou obrazovku</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="652"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="651"/>
         <source>Preset &amp;Duration</source>
         <translation>&amp;Trvání předvolby</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="656"/>
+        <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="655"/>
         <source>%1 seconds</source>
         <translation>%1 s</translation>
     </message>
@@ -16441,7 +16840,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1121"/>
-        <source>Apply or clear the current tab&apos;s pending changes before switching tracks or tabs.</source>
+        <source>Apply or clear the current tab’s pending changes before switching tracks or tabs.</source>
         <translation>Použít nebo zrušit čekající změny aktuální karty před změnou skladeb nebo karet.</translation>
     </message>
     <message>
@@ -16480,112 +16879,112 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::QueueViewer</name>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="114"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="119"/>
         <source>&amp;Remove</source>
         <translation>Odeb&amp;rat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="116"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="121"/>
         <source>&amp;Play now</source>
         <translation>&amp;Přehrát</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="117"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="122"/>
         <source>Queue &amp;next</source>
         <translation>Zařadit jako &amp;následující</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="118"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="123"/>
         <source>&amp;Clear</source>
         <translation>&amp;Vymazat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="120"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="125"/>
         <source>&amp;Stop after this</source>
         <translation>&amp;Zastavit po tomto</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="121"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="126"/>
         <source>Randomise</source>
         <translation>Náhodně</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="122"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="127"/>
         <source>Reverse</source>
         <translation>Obrátit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="302"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="314"/>
         <source>Show playing tracks</source>
         <translation>Zobrazit přehrávané skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="303"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="315"/>
         <source>Show upcoming tracks</source>
         <translation>Zobrazit následující skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="313"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="325"/>
         <source>Show playing queue track</source>
         <translation>Zobrazit přehrávanou skladbu fronty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="369"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="381"/>
         <source>Add to playlist</source>
         <translation>Přidat do seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="428"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="440"/>
         <source>Remove the selected tracks from the playback queue</source>
         <translation>Odstranit vybrané skladby z fronty přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="441"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="453"/>
         <source>Start playback of the selected queue track</source>
         <translation>Spustit přehrávání vybrané skladby fronty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="445"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="457"/>
         <source>Move the selected tracks to play next</source>
         <translation>Zařadit skladbu jako další přehrávanou</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="449"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="461"/>
         <source>Remove all tracks in the playback queue</source>
         <translation>Odstranit všechny skladby z fronty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="455"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="467"/>
         <source>Stop playback at the end of the selected track</source>
         <translation>Zastavit přehrávání po dosažení konce vybrané skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="459"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="471"/>
         <source>&amp;Select all</source>
         <translation>Vybr&amp;at vše</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="460"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="472"/>
         <source>Select all tracks in the playback queue</source>
         <translation>Vybrat všechny skladby ve frontě</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="466"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="478"/>
         <source>Randomise the playback queue</source>
         <translation>Náhodně seřadit frontu přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="467"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="479"/>
         <source>Reverse the playback queue</source>
         <translation>Obrátit pořadí fronty přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="620"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="632"/>
         <source>Sort the playback queue using this preset</source>
         <translation>Seřadit frontu přehrávání podle této předvolby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="149"/>
+        <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="154"/>
         <source>Playback Queue</source>
         <translation>Fronta přehrávání</translation>
     </message>
@@ -16598,87 +16997,92 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         <translation>Nastavení prohlížeče fronty přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="39"/>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="38"/>
         <source>Queue view</source>
         <translation>Prohlížeč fronty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="40"/>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="39"/>
         <source>Playing Tracks</source>
         <translation>Přehrávané skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="41"/>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="40"/>
         <source>Upcoming Tracks</source>
         <translation>Nadcházející skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="42"/>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="41"/>
         <source>Show header</source>
         <translation>Zobrazit záhlaví</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="43"/>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="42"/>
         <source>Show scrollbar</source>
         <translation>Zobrazit posuvník</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="44"/>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="43"/>
         <source>Alternating row colours</source>
         <translation>Střídavé barvy řádků</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="45"/>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="44"/>
         <source>Show playing queue track</source>
         <translation>Zobrazit přehrávanou skladbu fronty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="46"/>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="45"/>
         <source>Icon</source>
         <translation>Ikona</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="59"/>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="61"/>
+        <source>Use &lt;code&gt;%is_queue_current%&lt;/code&gt;, &lt;code&gt;%is_queue_upcoming%&lt;/code&gt;, and &lt;code&gt;%is_queue_played%&lt;/code&gt; to format entries by queue state.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="66"/>
         <source>General</source>
         <translation>Obecné</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="66"/>
-        <source>Left script</source>
-        <translation>Levý skript</translation>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="73"/>
+        <source>Display script</source>
+        <translation>Skript pro zobrazení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="68"/>
-        <source>Right script</source>
-        <translation>Pravý skript</translation>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="58"/>
+        <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text.</source>
+        <translation>Použij &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; pro text zarovnaný doprava.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="71"/>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="79"/>
         <source>Appearance</source>
         <translation>Vzhled</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="87"/>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="95"/>
         <source>Square</source>
         <translation>Hranaté</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="89"/>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="97"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons.</source>
         <translation>Pro změnu velikosti ikon ve widgetu použij &lt;b&gt;Ctrl+Kolečko myši&lt;/b&gt;.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="93"/>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="101"/>
         <source>Width</source>
         <translation>Šířka</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="95"/>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="103"/>
         <source>Height</source>
         <translation>Výška</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="97"/>
+        <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="105"/>
         <source>Corner radius</source>
         <translation>Poloměr rohů</translation>
     </message>
@@ -16686,17 +17090,17 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::QueueViewerModel</name>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="215"/>
+        <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="225"/>
         <source>Upcoming Tracks</source>
         <translation>Nadcházející skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="215"/>
+        <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="225"/>
         <source>Playing Tracks</source>
         <translation>Přehrávané skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="218"/>
+        <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="228"/>
         <source>Playback Queue</source>
         <translation>Fronta přehrávání</translation>
     </message>
@@ -16870,7 +17274,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="313"/>
-        <source>Set &quot;%1&quot; on %Ln track(s)?</source>
+        <source>Set ‘%1’ on %Ln track(s)?</source>
         <extracomment>%1 is the Quick Tagger entry name, for example &quot;Rating&quot;.</extracomment>
         <translation>
             <numerusform>Nastavit tag „%1“ u %Ln skladby?</numerusform>
@@ -16977,7 +17381,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="84"/>
-        <source>Used with the &quot;Calculate as albums (by tags)&quot; action</source>
+        <source>Used with the ‘Calculate as albums (by tags)’ action</source>
         <translation>Použito pro akci „Vypočítat ReplayGain pro alba (podle tagů)“</translation>
     </message>
 </context>
@@ -17142,7 +17546,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="64"/>
-        <source>For &quot;Replace current playlist&quot; and &quot;Create new playlist&quot;, start playback immediately</source>
+        <source>For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately</source>
         <translation>&quot;Nahradit vybraný seznam skladeb&quot; a &quot;Vytvořit nový seznam skladeb&quot; ihned spustí přehrávání</translation>
     </message>
     <message>
@@ -17187,7 +17591,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="91"/>
-        <source>Horizontal spacing between stations in icon display mode. Auto uses the view&apos;s default spacing.</source>
+        <source>Horizontal spacing between stations in icon display mode. Auto uses the view’s default spacing.</source>
         <translation>Horizontální rozestupy mezi stanicemi v režimu zobrazení ikon. Automatická použije výchozí rozestupy zobrazení.</translation>
     </message>
     <message>
@@ -17243,7 +17647,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="142"/>
         <source>Item border</source>
-        <translation>Okraje</translation>
+        <translation>Rámeček</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="144"/>
@@ -17504,7 +17908,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="238"/>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="818"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="790"/>
         <source>No stations found</source>
         <translation>Žádné stanice</translation>
     </message>
@@ -17515,8 +17919,8 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="243"/>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="360"/>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="949"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="362"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="921"/>
         <source>Radio Browser</source>
         <translation>Prohlížeč rádií</translation>
     </message>
@@ -17541,233 +17945,233 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         <translation>Zobrazit nebo skrýt panel fitrování Prohlížeče rádií</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="818"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="790"/>
         <source>No saved stations</source>
         <translation>Žádné uložené stanice</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="939"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="911"/>
         <source>Failed to load stations.</source>
         <translation>Nepodařilo se načíst stanice.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="940"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="912"/>
         <source>Failed to load stations: %1</source>
         <translation>Nepodařilo se načíst stanice: %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1123"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1095"/>
         <source>Saved search</source>
         <translation>Uložené hledání</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1123"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1095"/>
         <source>Save search</source>
         <translation>Uložit hledání</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1150"/>
-        <source>Saved as &quot;%1&quot;</source>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1122"/>
+        <source>Saved as ‘%1’</source>
         <translation>Uloženo jako „%1“</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1154"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1126"/>
         <source>Rename saved search…</source>
         <translation>Přejmenovat uložené hledání…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1155"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1127"/>
         <source>Rename the saved search</source>
         <translation>Přejmenovat uložené hledání</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1158"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1130"/>
         <source>Remove saved search</source>
         <translation>Odstranit uložené hledání</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1159"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1131"/>
         <source>Remove the saved search</source>
         <translation>Odstranit uložené hledání</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1170"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1142"/>
         <source>Rename Saved Search</source>
         <translation>Přejmenovat uložené hledání</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1170"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1142"/>
         <source>Name</source>
         <translation>Název</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1200"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1172"/>
         <source>Radio Search</source>
         <translation>Vyhledat rádio</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1531"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1503"/>
         <source>Play</source>
         <translation>Přehrát</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1533"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1505"/>
         <source>Play the selected station</source>
         <translation>Přehrát vybranou stanici</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1564"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1536"/>
         <source>Add to playlist</source>
         <translation>Přidat do seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1568"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1540"/>
         <source>Add the selected stations to another playlist</source>
         <translation>Přidat vybrané stanice do jiného seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1610"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1582"/>
         <source>Edit station…</source>
         <translation>Upravit stanici…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1610"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1582"/>
         <source>View station details…</source>
         <translation>Podrobnosti o stanici…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1611"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1583"/>
         <source>Edit the selected custom station</source>
         <translation>Upravit vybranou stanici</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1612"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1584"/>
         <source>View details for the selected station</source>
         <translation>Zobrazit podrobnosti o vybrané stanici</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1619"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1591"/>
         <source>Add custom station…</source>
         <translation>Přidat vlastní stanici…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1620"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1592"/>
         <source>Add a custom station to My Stations</source>
         <translation>Přidat vlastní stanici do Mé stanice</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1629"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1601"/>
         <source>Copy stream URL</source>
         <translation>Kopírovat adresu streamu</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1630"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1602"/>
         <source>Copy the selected station stream URLs to the clipboard</source>
         <translation>Zkopírovat do schránky adresu streamu vybrané stanice</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1649"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1621"/>
         <source>Open homepage</source>
         <translation>Otevřít domovskou stránku</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1650"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1622"/>
         <source>Open the selected station homepage in a browser</source>
         <translation>Otevřít domovskou stránku vybrané stanice</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1663"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1635"/>
         <source>Open radio-browser.info page</source>
         <translation>Otevřít stránku radio-browser.info</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1664"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1636"/>
         <source>Open the selected station on radio-browser.info</source>
         <translation>Otevřít stránku vybrané stanice na radio-browser.info</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1695"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1667"/>
         <source>Import stations…</source>
         <translation>Importovat stanice…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1696"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1668"/>
         <source>Import saved stations from a playlist file</source>
         <translation>Importovat uložené stanice ze seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1699"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1671"/>
         <source>Export stations…</source>
         <translation>Exportovat stanice…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1700"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1672"/>
         <source>Export My Stations to a playlist file</source>
         <translation>Exportovat Mé stanice do souboru seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1718"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1690"/>
         <source>Auto-size sections</source>
         <translation>Automatická velikost sekcí</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1719"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1691"/>
         <source>Automatically size columns to fill the available width</source>
         <translation>Automaticky přizpůsobit šířku sloupců dostupné šířce okna</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1726"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1698"/>
         <source>Reset columns to default</source>
         <translation>Obnovit výchozí sloupce</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1744"/>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1790"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1716"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1762"/>
         <source>Columns</source>
         <translation>Sloupce</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1787"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1759"/>
         <source>Display</source>
         <translation>Zobrazení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1791"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1763"/>
         <source>Icons (right captions)</source>
         <translation>Ikony (popisky vpravo)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1792"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1764"/>
         <source>Icons (bottom captions)</source>
         <translation>Ikony (popisky dole)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1833"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1805"/>
         <source>Show station icons</source>
         <translation>Zobrazit ikony stanic</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1842"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1814"/>
         <source>Show station tooltips</source>
         <translation>Zobrazit popisky stanic</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1851"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1823"/>
         <source>Show saved station icons</source>
         <translation>Zobrazit indikátor uložených stanic</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1860"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1832"/>
         <source>Show header</source>
         <translation>Zobrazit záhlaví</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1869"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1841"/>
         <source>Show scrollbar</source>
         <translation>Zobrazit posuvník</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1878"/>
+        <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1850"/>
         <source>Alternating row colours</source>
         <translation>Střídavé barvy řádků</translation>
     </message>
@@ -18361,39 +18765,39 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="135"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="372"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="395"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="916"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="370"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="393"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="914"/>
         <source>Any country</source>
         <translation>Jakákoliv země</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="138"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="378"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="403"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="944"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="376"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="401"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="942"/>
         <source>Any language</source>
         <translation>Libovolný jazyk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="141"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="575"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="573"/>
         <source>Any genre</source>
         <translation>Jakýkoliv žánr</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="145"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="411"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="621"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="624"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="409"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="619"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="622"/>
         <source>Any tag</source>
         <translation>Libovolný tag</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="148"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="390"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="419"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1012"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="388"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="417"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1010"/>
         <source>Any codec</source>
         <translation>Jakýkoliv kodek</translation>
     </message>
@@ -18409,13 +18813,13 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="172"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="854"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="852"/>
         <source>Clear filter</source>
         <translation>Zrušit filtr</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="176"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1234"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1232"/>
         <source>Pin filter to bar</source>
         <translation>Připnout na panel</translation>
     </message>
@@ -18451,13 +18855,13 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="190"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="832"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="830"/>
         <source>Filters</source>
         <translation>Filtry</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="192"/>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="833"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="831"/>
         <source>Show filters</source>
         <translation>Zobrazit filtry</translation>
     </message>
@@ -18472,53 +18876,53 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         <translation>Vyhledat rádio</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="396"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="394"/>
         <source>Countries unavailable — select to retry</source>
         <translation>Země nedostupné — vyber pro znovunačtení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="397"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="395"/>
         <source>Countries unavailable: %1 — select to retry</source>
         <translation>Země nedostupné: %1 — vyber pro znovunačtení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="404"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="402"/>
         <source>Languages unavailable — select to retry</source>
         <translation>Jazyky nedostupné — vyber pro znovunačtení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="405"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="403"/>
         <source>Languages unavailable: %1 — select to retry</source>
         <translation>Jazyky nedostupné: %1 — vyber pro znovunačtení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="412"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="410"/>
         <source>Tags unavailable — select to retry</source>
         <translation>Tagy nedostupné — vyber pro znovunačtení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="413"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="411"/>
         <source>Tags unavailable: %1 — select to retry</source>
         <translation>Tagy nedostupné: %1 — vyber pro znovunačtení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="420"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="418"/>
         <source>Codecs unavailable — select to retry</source>
         <translation>Kodeky nedostupné — vyber pro znovunačtení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="421"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="419"/>
         <source>Codecs unavailable: %1 — select to retry</source>
         <translation>Kodeky nedostupné: %1 — vyber pro znovunačtení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="826"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="824"/>
         <source>Filters (%1)</source>
         <extracomment>%1 is the number of active search filters</extracomment>
         <translation>Filtry ( %1 )</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="827"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="825"/>
         <source>%Ln active filter(s)</source>
         <translation>
             <numerusform>%Ln aktivní filtr</numerusform>
@@ -18527,22 +18931,22 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1040"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1038"/>
         <source>Min bitrate</source>
         <translation>Minimální bitrate</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1047"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1045"/>
         <source>Max bitrate</source>
         <translation>Maximální bitrate</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1085"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1083"/>
         <source>Show label</source>
         <translation>Zobrazit popisek</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1234"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="1232"/>
         <source>Unpin filter</source>
         <translation>Odepnout filtr</translation>
     </message>
@@ -18768,9 +19172,29 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::RatingControl</name>
     <message>
-        <location filename="../../src/gui/controls/ratingcontrol.cpp" line="241"/>
+        <location filename="../../src/gui/controls/ratingcontrol.cpp" line="264"/>
         <source>Rating Control</source>
         <translation>Hodnocení</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/controls/ratingcontrol.cpp" line="294"/>
+        <source>Automatic</source>
+        <translation>Atutomaticky</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/controls/ratingcontrol.cpp" line="295"/>
+        <source>Horizontal</source>
+        <translation>Horizontální</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/controls/ratingcontrol.cpp" line="296"/>
+        <source>Vertical</source>
+        <translation>Vertikální</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/controls/ratingcontrol.cpp" line="298"/>
+        <source>Orientation</source>
+        <translation>Orientace</translation>
     </message>
 </context>
 <context>
@@ -18825,32 +19249,32 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::ReplayGainModel</name>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="164"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="165"/>
         <source>Name</source>
         <translation>Název</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="166"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="167"/>
         <source>Value</source>
         <translation>Hodnota</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="166"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="167"/>
         <source>Track Gain</source>
         <translation>Zisk skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="168"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="169"/>
         <source>Track Peak</source>
         <translation>Špička skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="170"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="171"/>
         <source>Album Gain</source>
         <translation>Zisk alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="172"/>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="173"/>
         <source>Album Peak</source>
         <translation>Špička alba</translation>
     </message>
@@ -18974,34 +19398,34 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         <translation>Podrobnosti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="123"/>
-        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="138"/>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="126"/>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="141"/>
         <source>Track Gain</source>
         <translation>Zisk skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="126"/>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="129"/>
         <source>Track Peak</source>
         <translation>Špička skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="129"/>
-        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="149"/>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="132"/>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="152"/>
         <source>Album Gain</source>
         <translation>Zisk alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="132"/>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="135"/>
         <source>Album Peak</source>
         <translation>Špička alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="171"/>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="174"/>
         <source>Lowest Gain (Loudest track)</source>
         <translation>Nejnižší zisk (nejhlasitější)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="183"/>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="186"/>
         <source>Highest Gain (Quietest track)</source>
         <translation>Nejvyšší zisk (nejtišší)</translation>
     </message>
@@ -19172,7 +19596,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="135"/>
-        <source>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin&apos;s Session Bus &quot;talk&quot; permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to execute arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</source>
+        <source>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin’s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to execute arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Sandbox Flatpaku neumožňuje přímé spouštění aplikací nainstalovaných na hostitelském systému. Pro umožnění spouštění aplikací hostitele přidejte v nástroji Flatseal do seznamu oprávnění pro ‘komunikaci’ v sekci Session Bus položku &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt;, nebo spusťte příkaz:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Poté přidejte na začátek každého příkazu pro spuštění služby &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. Například:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;Toto oprávnění umožňuje fooyinu spustit libovolný příkaz mimo sandbox. Povolte tuto volbu pouze pokud zcela důvěřujete vašim službám.&lt;/p&gt;</translation>
     </message>
     <message>
@@ -19246,12 +19670,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::SavePlaylistsDialog</name>
     <message>
-        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="56"/>
+        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="53"/>
         <source>Playlist file format</source>
         <translation>Formát seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="76"/>
+        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="73"/>
         <source>Select Directory</source>
         <translation>Vybrat složku</translation>
     </message>
@@ -19412,161 +19836,166 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="119"/>
         <source>Playing track</source>
-        <translation type="unfinished">Přehrávaná skladba</translation>
+        <translation>Přehrávaná skladba</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="120"/>
         <source>Selected track</source>
-        <translation type="unfinished">Vybraná skladba</translation>
+        <translation>Vybraná skladba</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="121"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished">Přehrávaná (po zastavení vybraná)</translation>
+        <translation>Přehrávaná (po zastavení vybraná)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="123"/>
-        <source>Playing (blank at startup)</source>
-        <translation type="unfinished">Přehrávaná (po spuštění žádná)</translation>
+        <source>Playing (no track at startup)</source>
+        <translation>Přehrávaná (po spuštění žádná)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="125"/>
-        <source>Playing (blank when stopped)</source>
-        <translation type="unfinished">Přehrávaná (po zastavení žádná)</translation>
+        <source>Playing (no track when stopped)</source>
+        <translation>Přehrávaná (po zastavení žádná)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="132"/>
         <source>Preferred track</source>
-        <translation type="unfinished">Upřednostňovaná skladba</translation>
+        <translation>Upřednostňovaná skladba</translation>
     </message>
 </context>
 <context>
     <name>Fooyin::ScriptEditor</name>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="863"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="340"/>
         <source>Structure</source>
         <translation>Struktura</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="864"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="341"/>
         <source>Reference</source>
         <translation>Reference</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="973"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="454"/>
         <source>Item</source>
         <translation>Položka</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="973"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="454"/>
         <source>Category</source>
         <translation>Kategorie</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="973"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="454"/>
         <source>Description</source>
         <translation>Popis</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1039"/>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1171"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="520"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="622"/>
         <source>Variables</source>
         <translation>Proměnné</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1040"/>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1172"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="521"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="623"/>
         <source>Functions</source>
         <translation>Funkce</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1041"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="522"/>
         <source>Formatting</source>
         <translation>Formátování</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1043"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="524"/>
         <source>Filter</source>
         <translation>Filtr</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1052"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="662"/>
         <source>Editor</source>
         <translation>Editor</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1054"/>
-        <source>Syntax highlighting</source>
-        <translation>Zvýraznění syntaxe</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1062"/>
-        <source>Font</source>
-        <translation>Písmo</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1063"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="537"/>
         <source>Word wrap</source>
         <translation>Zalamování slov</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1064"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="538"/>
         <source>Autocomplete</source>
         <translation>Automatické dokončování</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1065"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="539"/>
+        <source>Function parameter hints</source>
+        <translation>Nápověda pro parametry funkcí</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="540"/>
         <source>Show whitespace</source>
         <translation>Zobrazovat prázdné znaky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1066"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="541"/>
         <source>Highlight matching brackets</source>
         <translation>Zvýraznit odpovídající závorky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1067"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="542"/>
         <source>Highlight current line</source>
         <translation>Zvýraznit aktuální řádek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1068"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="543"/>
         <source>Show line numbers</source>
         <translation>Zobrazit čísla řádků</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1120"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="575"/>
         <source>Reset editor settings</source>
         <translation>Výchozí nastavení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1174"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="625"/>
         <source>Conditionals</source>
         <translation>Podmínky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1175"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="626"/>
         <source>Operators</source>
         <translation>Operátory</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1176"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="627"/>
         <source>Quoted text</source>
         <translation>Text v uvozovkách</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1187"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="629"/>
+        <source>Formatting tags</source>
+        <translation>Formátovací tagy</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="640"/>
         <source>Reset colours</source>
         <translation>Výchozí barvy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1211"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="663"/>
+        <source>Colours</source>
+        <translation type="unfinished">Barvy</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="664"/>
         <source>Settings</source>
         <translation>Nastavení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1415"/>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="1428"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="870"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="883"/>
         <source>Script Editor</source>
         <translation>Editor skriptů</translation>
     </message>
@@ -19574,8 +20003,8 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::ScriptFormatter</name>
     <message>
-        <location filename="../../src/gui/scripting/scriptformatter.cpp" line="241"/>
-        <source>[%1] Error in formatting tag &apos;%2&apos;: invalid formatting option.</source>
+        <location filename="../../src/gui/scripting/scriptformatter.cpp" line="256"/>
+        <source>[%1] Error in formatting tag ‘%2’: invalid formatting option.</source>
         <translation>[%1] Chyba ve formátovacím tagu &apos;%2&apos;: neplatná možnost formátování.</translation>
     </message>
 </context>
@@ -19590,35 +20019,35 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::ScriptRegistry</name>
     <message>
-        <location filename="../../src/core/scripting/scriptregistry.cpp" line="704"/>
+        <location filename="../../src/core/scripting/scriptregistry.cpp" line="716"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/scripting/scriptregistry.cpp" line="706"/>
-        <source>Album</source>
-        <translation type="unfinished">Album</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/scripting/scriptregistry.cpp" line="709"/>
-        <location filename="../../src/core/scripting/scriptregistry.cpp" line="723"/>
-        <source>None</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/scripting/scriptregistry.cpp" line="715"/>
-        <source>Gain and clip prevention</source>
-        <translation type="unfinished"></translation>
+        <translation>Skladba</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="718"/>
-        <source>Gain</source>
-        <translation type="unfinished">Zisk</translation>
+        <source>Album</source>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="721"/>
+        <location filename="../../src/core/scripting/scriptregistry.cpp" line="735"/>
+        <source>None</source>
+        <translation>Nic</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/scripting/scriptregistry.cpp" line="727"/>
+        <source>Gain and clip prevention</source>
+        <translation>Zisk a prevence zkreslení</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/scripting/scriptregistry.cpp" line="730"/>
+        <source>Gain</source>
+        <translation>Zisk</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/scripting/scriptregistry.cpp" line="733"/>
         <source>Clip prevention</source>
-        <translation type="unfinished"></translation>
+        <translation>Prevence zkreslení</translation>
     </message>
 </context>
 <context>
@@ -19804,22 +20233,22 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::Scrobbler::ScrobblerPlugin</name>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="55"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="56"/>
         <source>Toggle scrobbling</source>
         <translation>Přepnout scrobblování</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="63"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="64"/>
         <source>Scrobbler</source>
         <translation>Scroblovač</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="67"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="68"/>
         <source>Scrobble Toggle</source>
         <translation>Přepínač scroblování</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="68"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerplugin.cpp" line="69"/>
         <source>Controls</source>
         <translation>Ovládací prvky</translation>
     </message>
@@ -19827,22 +20256,22 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::Scrobbler::ScrobblerService</name>
     <message>
-        <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="195"/>
+        <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="196"/>
         <source>Authentication</source>
         <translation>Přihlášení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="197"/>
+        <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="198"/>
         <source>Open url in web browser?</source>
         <translation>Otevřít odkaz v prohlížeči?</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="204"/>
+        <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="205"/>
         <source>Open</source>
         <translation>Otevřít</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="206"/>
+        <location filename="../../src/plugins/scrobbler/services/scrobblerservice.cpp" line="207"/>
         <source>Copy URL</source>
         <translation>Kopírovat adresu</translation>
     </message>
@@ -19957,17 +20386,17 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         <translation>Přepínač scroblování</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="81"/>
+        <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="78"/>
         <source>Enable scrobbling</source>
         <translation>Povolit scrobblování</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="90"/>
+        <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="87"/>
         <source>Scrobbling settings…</source>
         <translation>Nastavení scrobblování…</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="98"/>
+        <location filename="../../src/plugins/scrobbler/scrobblertoggle.cpp" line="95"/>
         <source>Scrobbling services…</source>
         <translation>Služby scrobblování…</translation>
     </message>
@@ -20194,7 +20623,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="97"/>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="569"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="625"/>
         <source>Options</source>
         <translation>Možnosti</translation>
     </message>
@@ -20210,87 +20639,87 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="151"/>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="618"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="205"/>
         <source>Manage connected widgets</source>
         <translation>Spravovat propojené widgety</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="491"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="547"/>
         <source>Special Keys</source>
         <translation>Speciální znaky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="491"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="547"/>
         <source>Force the creation of a new results playlist</source>
         <translation>Vynutit vytvoření nového seznamu skladeb s výsledky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="492"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="548"/>
         <source>Force search in the current playlist</source>
         <translation>Vynutit hledání ve vybraném seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="492"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="548"/>
         <source>Force search in all playlists</source>
         <translation>Vynutit hledání ve všech seznamech skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="493"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="549"/>
         <source>Force new results playlist using the current playlist as the source</source>
         <translation>Vynutit nový seznam skladeb výsledků založený na vybraném seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="494"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="550"/>
         <source>Force new results playlist using all playlists</source>
         <translation>Vynutit nový seznam skladeb výsledků založený na všech seznamech skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="494"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="550"/>
         <source>Delete a word in the search box</source>
         <translation>Smazat slovo ve vstupním poli hledání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="572"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="159"/>
         <source>Autosearch</source>
         <translation>Automatické hledání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="578"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="165"/>
         <source>Show all when search is empty</source>
         <translation>Při prázdném výsledku hledání zobrazit vše</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="588"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="175"/>
         <source>Search in</source>
         <translation>Hledat v</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="590"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="177"/>
         <source>Library</source>
         <translation>Knihovna</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="596"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="183"/>
         <source>Playlist</source>
         <translation>Seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="602"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="189"/>
         <source>All Playlists</source>
         <translation>Všechny seznamy skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="613"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="200"/>
         <source>Change placeholder text</source>
         <translation>Změnit zástupný text</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="625"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="212"/>
         <source>Help</source>
         <translation>Nápověda</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="2099"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="2107"/>
         <source>Quick Search</source>
         <translation>Rychlé hledání</translation>
     </message>
@@ -20298,42 +20727,42 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::SeekBar</name>
     <message>
-        <location filename="../../src/gui/controls/seekbar.cpp" line="437"/>
+        <location filename="../../src/gui/controls/seekbar.cpp" line="462"/>
         <source>Seekbar</source>
         <translation>Časová lišta</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/seekbar.cpp" line="491"/>
+        <location filename="../../src/gui/controls/seekbar.cpp" line="508"/>
         <source>Show labels</source>
         <translation>Zobrazit popisky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/seekbar.cpp" line="498"/>
+        <location filename="../../src/gui/controls/seekbar.cpp" line="515"/>
         <source>Show remaining time</source>
         <translation>Zobrazit zbývající čas</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/seekbar.cpp" line="505"/>
+        <location filename="../../src/gui/controls/seekbar.cpp" line="522"/>
         <source>Show played threshold</source>
         <translation>Zobrazit prahovou pozici přehrání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/seekbar.cpp" line="517"/>
+        <location filename="../../src/gui/controls/seekbar.cpp" line="534"/>
         <source>Automatic</source>
         <translation>Automaticky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/seekbar.cpp" line="518"/>
+        <location filename="../../src/gui/controls/seekbar.cpp" line="535"/>
         <source>Horizontal</source>
         <translation>Horizontálně</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/seekbar.cpp" line="519"/>
+        <location filename="../../src/gui/controls/seekbar.cpp" line="536"/>
         <source>Vertical</source>
         <translation>Vertikálně</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/seekbar.cpp" line="521"/>
+        <location filename="../../src/gui/controls/seekbar.cpp" line="538"/>
         <source>Orientation</source>
         <translation>Orientace</translation>
     </message>
@@ -20430,36 +20859,55 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
 </context>
 <context>
+    <name>Fooyin::SetWidgetMarginsCommand</name>
+    <message>
+        <location filename="../../src/gui/layout/layoutcommands.cpp" line="142"/>
+        <source>Change widget margins</source>
+        <translation>Změnit okraje widgetu</translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::SettingsDialog</name>
     <message>
-        <location filename="../../src/utils/settings/settingsdialog.cpp" line="243"/>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="291"/>
+        <source>Filter…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="301"/>
+        <source>No matching settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="310"/>
         <source>Reset Page</source>
         <translation>Obnovit stránku</translation>
     </message>
     <message>
-        <location filename="../../src/utils/settings/settingsdialog.cpp" line="244"/>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="311"/>
         <source>Reset All</source>
         <translation>Obnovit vše</translation>
     </message>
     <message>
-        <location filename="../../src/utils/settings/settingsdialog.cpp" line="392"/>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="490"/>
         <source>Are you sure?</source>
         <translation>Jsi si jistý?</translation>
     </message>
     <message>
-        <location filename="../../src/utils/settings/settingsdialog.cpp" line="393"/>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="491"/>
         <source>This will reset all settings to default.</source>
         <translation>U všech nastavení budou nastaveny jejich výchozí hodnoty.</translation>
     </message>
     <message>
-        <location filename="../../src/utils/settings/settingsdialog.cpp" line="443"/>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="543"/>
         <source>Select a page from this category.</source>
         <translation>Vyber nějakou stránku z této kategorie.</translation>
     </message>
     <message>
-        <location filename="../../src/utils/settings/settingsdialog.cpp" line="232"/>
-        <location filename="../../src/utils/settings/settingsdialog.cpp" line="368"/>
-        <location filename="../../src/utils/settings/settingsdialog.cpp" line="431"/>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="278"/>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="466"/>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="531"/>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="623"/>
         <source>Settings</source>
         <translation>Nastavení</translation>
     </message>
@@ -20511,7 +20959,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="77"/>
-        <source>e.g. &quot;%1&quot;</source>
+        <source>e.g. ‘%1’</source>
         <extracomment>Example of semicolon-separated file extensions (e.g. mp3;m4a)</extracomment>
         <translation>např. „%1“</translation>
     </message>
@@ -20932,123 +21380,240 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::Spectrogram::SpectrogramConfigDialog</name>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="36"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="37"/>
         <source>Spectrogram Settings</source>
         <translation>Nastavení spektrogramu</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="37"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="38"/>
         <source>Use logarithmic frequency scale</source>
         <translation>Použít logaritmické měřítko frekvencí</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="38"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="39"/>
         <source>Clear on track change</source>
         <translation>Vymazat při změně skladby</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="48"/>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="121"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="43"/>
+        <source>Top labels</source>
+        <translation type="unfinished">Horní popisky</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="44"/>
+        <source>Bottom labels</source>
+        <translation type="unfinished">Dolní popisky</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="45"/>
+        <source>Left labels</source>
+        <translation type="unfinished">Levé popisky</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="46"/>
+        <source>Right labels</source>
+        <translation type="unfinished">Pravé popisky</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="47"/>
+        <source>Show progress cursor</source>
+        <translation type="unfinished">Zobrazit kurzor průběhu</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="56"/>
+        <source>Playing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="57"/>
+        <source>Seeking</source>
+        <translation type="unfinished">Přetáčení</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="58"/>
+        <source>Played</source>
+        <translation type="unfinished">Přehráno</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="59"/>
+        <source>Unplayed</source>
+        <translation type="unfinished">Nepřehráno</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="61"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="213"/>
         <source>General</source>
         <translation>Obecné</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="55"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="68"/>
         <source>Unchanged</source>
         <translation>Beze změny</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="56"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="69"/>
         <source>Mono</source>
         <translation>Mono</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="57"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="70"/>
         <source>Front Only</source>
         <translation>Pouze přední</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="58"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="71"/>
         <source>Back Only</source>
         <translation>Pouze zadní</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="60"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="73"/>
         <source>Scrolling</source>
         <translation>Rolující</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="61"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="74"/>
         <source>Stationary</source>
         <translation>Stacionární</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="63"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="75"/>
+        <source>Full Track (Seekbar)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="77"/>
+        <source>Track preference</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="79"/>
+        <source>Playing track</source>
+        <translation type="unfinished">Přehrávaná skladba</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="80"/>
+        <source>Selected track</source>
+        <translation type="unfinished">Vybraná skladba</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="81"/>
+        <source>Playing (or selected when stopped)</source>
+        <translation type="unfinished">Přehrávaná (po zastavení vybraná)</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="83"/>
+        <source>Playing (blank at startup)</source>
+        <translation type="unfinished">Přehrávaná (po spuštění žádná)</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="85"/>
+        <source>Playing (blank when stopped)</source>
+        <translation type="unfinished">Přehrávaná (po zastavení žádná)</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="88"/>
         <source>Hann</source>
         <translation>Hann</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="64"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="89"/>
         <source>Blackman-Harris</source>
         <translation>Blackman-Harris</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="66"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="91"/>
         <source>None</source>
         <translation>Žádná</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="70"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="95"/>
         <source>Vertical space between the left and right channel spectrograms.</source>
         <translation>Vertikální mezera mezi spektrogramy levého a pravého kanálu.</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="75"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="100"/>
         <source>Channels</source>
         <translation>Kanály</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="77"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="102"/>
         <source>Style</source>
         <translation>Styl</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="81"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="108"/>
+        <source>Axes</source>
+        <translation type="unfinished">Osy</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="121"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="189"/>
+        <source>Cursors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="126"/>
+        <source>Cursor width</source>
+        <translation type="unfinished">Šířka kurzoru</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="134"/>
+        <source>Number of time columns for Full Track analysis.
+Higher values increase detail and memory usage.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="136"/>
+        <source>Time resolution</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="138"/>
         <source>Analysis</source>
         <translation>Analýza</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="83"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="142"/>
         <source>FFT size</source>
         <translation>Velikost FFT</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="85"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="144"/>
         <source>Window function</source>
         <translation>Okenní funkce</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="89"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="155"/>
         <source>Scale</source>
         <translation>Měřítko</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="96"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="159"/>
         <source>Minimum level</source>
         <translation>Minimální úroveň</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="98"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="161"/>
         <source>Maximum level</source>
         <translation>Maximální úroveň</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="100"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="163"/>
         <source>Channel spacing</source>
         <translation>Rozestup kanálů</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="122"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="182"/>
+        <source>Spectrogram</source>
+        <translation type="unfinished">Spektrogram</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="196"/>
+        <source>Playback overlay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="214"/>
         <source>Colours</source>
         <translation>Barvy</translation>
     </message>
@@ -21056,29 +21621,29 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::Spectrogram::SpectrogramPlugin</name>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="46"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="49"/>
         <source>Spectro&amp;gram</source>
         <translation>Spektro&amp;gram</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="47"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="50"/>
         <source>Open a spectrogram in a separate window</source>
         <translation>Otevřít spektrogram v samostatném okně</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="49"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="52"/>
         <source>View</source>
         <translation>Zobrazit</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="53"/>
-        <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="58"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="56"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="64"/>
         <source>Spectrogram</source>
         <translation>Spektrogram</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="49"/>
-        <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="59"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="52"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramplugin.cpp" line="65"/>
         <source>Visualisations</source>
         <translation>Vizualizace</translation>
     </message>
@@ -21086,57 +21651,97 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::Spectrogram::SpectrogramWidget</name>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="552"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="163"/>
+        <source>Spectrogram</source>
+        <translation type="unfinished">Spektrogram</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="389"/>
         <source>Use logarithmic frequency scale</source>
         <translation>Použít logaritmické měřítko frekvencí</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="553"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="392"/>
+        <source>Show cursor</source>
+        <translation type="unfinished">Zobrazit kurzor</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="393"/>
+        <source>Labels</source>
+        <translation type="unfinished">Popisky</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="394"/>
+        <source>Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="395"/>
+        <source>Bottom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="396"/>
+        <source>Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="397"/>
+        <source>Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="400"/>
         <source>Clear on track change</source>
         <translation>Vymazat při změně skladby</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="557"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="405"/>
         <source>Channels</source>
         <translation>Kanály</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="571"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="419"/>
         <source>Unchanged</source>
         <translation>Beze změny</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="572"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="420"/>
         <source>Mono</source>
         <translation>Mono</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="573"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="421"/>
         <source>Front Only</source>
         <translation>Pouze přední</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="574"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="422"/>
         <source>Back Only</source>
         <translation>Pouze zadní</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="576"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="424"/>
         <source>Style</source>
         <translation>Styl</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="590"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="438"/>
         <source>Scrolling</source>
         <translation>Rolující</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="591"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="439"/>
         <source>Stationary</source>
         <translation>Stacionární</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="593"/>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="440"/>
+        <source>Full Track (Seekbar)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="442"/>
         <source>FFT size</source>
         <translation>Velikost FFT</translation>
     </message>
@@ -21144,467 +21749,462 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::Spectrum::SpectrumConfigDialog</name>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="143"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="144"/>
         <source>Spectrum Settings</source>
         <translation>Nastavení spektra</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="155"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="156"/>
         <source>Amplitudes</source>
         <translation>Amplitudy</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="160"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="161"/>
         <source>Peaks</source>
         <translation>Špičky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="169"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="170"/>
         <source>Top labels</source>
         <translation>Horní popisky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="170"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="171"/>
         <source>Bottom labels</source>
         <translation>Dolní popisky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="171"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="172"/>
         <source>Left labels</source>
         <translation>Levé popisky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="172"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="173"/>
         <source>Right labels</source>
         <translation>Pravé popisky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="173"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="187"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="174"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="188"/>
         <source>Horizontal gridlines</source>
         <translation>Horizontální mřížka</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="174"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="188"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="175"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="189"/>
         <source>Vertical gridlines</source>
         <translation>Vertikální mřížka</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="175"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="190"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="176"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="191"/>
         <source>White keys</source>
         <translation>Bílé klávesy</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="176"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="191"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="177"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="192"/>
         <source>Black keys</source>
         <translation>Černé klávesy</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="177"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="178"/>
         <source>Tooltip</source>
         <translation>Popisek</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="178"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="179"/>
         <source>Fill spectrum</source>
         <translation>Vyplnit spektrum</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="179"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="180"/>
         <source>Interpolate</source>
         <translation>Interpolovat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="193"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="194"/>
         <source>Scale</source>
         <translation>Měřítko</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="195"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="196"/>
         <source>Analysis</source>
         <translation>Analýza</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="199"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="200"/>
         <source>Axes</source>
         <translation>Osy</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="201"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="502"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="202"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="506"/>
         <source>Display</source>
         <translation>Zobrazení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="244"/>
-        <source>%1 fps</source>
-        <translation>%1 fps</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="251"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="255"/>
         <source>Duration (sample-rate based)</source>
         <translation>Délka (podle vzorkovací frekvence)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="252"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="256"/>
         <source>Fixed samples</source>
         <translation>Nastavený počet vzorků</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="254"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="258"/>
         <source>Blackman-Harris</source>
         <translation>Blackman-Harris</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="255"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="259"/>
         <source>Hann</source>
         <translation>Hann</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="256"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="260"/>
         <source>None</source>
         <translation>Žádné</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="258"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="262"/>
         <source>Frequencies</source>
         <translation>Frekvence</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="259"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="263"/>
         <source>Notes</source>
         <translation>Noty</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="260"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="452"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="264"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="456"/>
         <source>Bars</source>
         <translation>Sloupce</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="261"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="265"/>
         <source>Curve</source>
         <translation>Křivka</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="263"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="267"/>
         <source>Choose whether bands are spaced by frequency or by musical note</source>
         <translation>Vyber zda odstupňovat pásma podle frekvence, nebo hudebních not</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="264"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="268"/>
         <source>Lowest frequency shown</source>
         <translation>Nejnižší zobrazovaná frekvence</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="265"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="269"/>
         <source>Highest frequency</source>
         <translation>Nejvyšší frekvence</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="266"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="270"/>
         <source>Lowest note shown</source>
         <translation>Nejnižší zobrazovaná nota</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="267"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="271"/>
         <source>Highest note shown</source>
         <translation>Nejvyšší zobrazovaná nota</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="268"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="272"/>
         <source>Signal level mapped to the bottom of the spectrum</source>
         <translation>Úroveň signálu namapovaná na spodní část spektra</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="269"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="273"/>
         <source>Signal level mapped to the top of the spectrum</source>
         <translation>Úroveň signálu namapovaná na horní část spektra</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="270"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="274"/>
         <source>Number of frequency bands to draw</source>
         <translation>Počet vykreslovaných frekvenčních pásem</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="271"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="275"/>
         <source>Number of samples analysed per spectrum frame; higher values improve frequency detail but respond more slowly</source>
         <translation>Počet analyzovaných vzorků na snímek spektra; vyšší hodnoty zvýší přesnost zobrazení frekvencí, ale jsou pomalejší</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="274"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="278"/>
         <source>Length of audio analysed per spectrum frame; the FFT size adapts to the sample rate</source>
         <translation>Délka analyzovaného zvuku na snímek spektra; velikost FFT se přizpůsobí podle vzorkovací frekvence</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="276"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="280"/>
         <source>Keep the analysis duration consistent across sample rates, or use a fixed number of samples</source>
         <translation>Zda zachovat konsistentní délku analyzovaného úseku nezávislou na vzorkovací frekvenci, nebo použít pevný počet vzorků</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="277"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="281"/>
         <source>Window applied before FFT analysis</source>
         <translation>Okno použité před FFT analýzou</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="278"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="282"/>
         <source>Reference frequency for A4</source>
         <translation>Referenční frekvence pro A4</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="279"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="283"/>
         <source>Shift note labels and note-based bands by semitones</source>
         <translation>Posunout notové popisky a notová pásma o půltóny</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="280"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="284"/>
         <source>Enable smoothing for falling bar levels</source>
         <translation>Povolit vyhlazování klesání sloupců</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="281"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="285"/>
         <source>How long a raised bar level is held before it starts falling</source>
         <translation>Jak dlouho podržet po zvýšení sloupce hodnotu před tím než začne klesat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="282"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="286"/>
         <source>How quickly bar levels fall after the hold time</source>
         <translation>Jak rychle budou sloupce padat po skončení doby podržení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="283"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="287"/>
         <source>Show peak markers above the current bar levels</source>
         <translation>Zobrazit nad sloupci ukazatele špičky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="284"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="288"/>
         <source>How long each peak marker is held before it starts falling</source>
         <translation>Jak dlouho podržet ukazatel špičky před tím než začne klesat</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="285"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="289"/>
         <source>How quickly peak markers fall after the hold time</source>
         <translation>Jak rychle budou ukazatele špičky padat po skončení doby podržení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="286"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="290"/>
         <source>Maximum spectrum refresh rate</source>
         <translation>Maximální obnovovací frekvence spektra</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="287"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="291"/>
         <source>Highlight white piano-key note ranges behind the spectrum</source>
         <translation>Zvýraznit na pozadí spektra rozsahy pro bílé noty piana</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="288"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="292"/>
         <source>Highlight black piano-key note ranges behind the spectrum</source>
         <translation>Zvýraznit na pozadí spektra rozsahy pro černé noty piana</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="289"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="293"/>
         <source>Show frequency or note and level when hovering over the spectrum</source>
         <translation>Po najetí myší zobrazit frekvenci nebo notu a úroveň</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="290"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="294"/>
         <source>Fill the spectrum area instead of drawing only the outline</source>
         <translation>Místo zobrazení obrysu vyplnit celou oblast spektra</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="291"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="295"/>
         <source>Smooth low-frequency bands when several bands map to the same FFT bin</source>
         <translation>Vyhladit nízkofrekvenční pásma, když několik pásem spadá do stejného FFT koše</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="292"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="296"/>
         <source>Horizontal gap between adjacent bars</source>
         <translation>Horizontální mezera mezi sousedícími sloupci</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="293"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="297"/>
         <source>Split each bar into this many vertical segments</source>
         <translation>Rozdělit každý sloupec na zadaný počet vertikálních segmentů</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="294"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="298"/>
         <source>Vertical gap between bar segments</source>
         <translation>Vertikální mezera mezi segmenty sloupců</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="295"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="299"/>
         <source>Choose whether to draw separate bars or a continuous curve</source>
         <translation>Výběr mezi vykreslováním jednotlivých sloupců nebo spojité křivky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="296"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="300"/>
         <source>Font used for spectrum axis labels</source>
         <translation>Písmo pro popisky os</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="297"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="301"/>
         <source>Colour gradient used for bars and filled curves</source>
         <translation>Barevný přechod použitý pro sloupce a vyplněné křivky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="298"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="302"/>
         <source>Colour used for peak markers</source>
         <translation>Barva použitá pro ukazatele špiček</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="299"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="303"/>
         <source>Colour used for octave gridlines in note mode</source>
         <translation>Barva pro oktávovou mřížku režimu zobrazení not</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="331"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="335"/>
         <source>Frequency or note range covered by the spectrum</source>
         <translation>Rozsah frekvencí nebo not pokrytý spektrem</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="336"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="340"/>
         <source>Decibel range mapped to the spectrum height</source>
         <translation>Rozsah dB přiřazených pro výšku spektra</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="344"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="348"/>
         <source>Axis</source>
         <translation>Osa</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="345"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="349"/>
         <source>Range</source>
         <translation>Rozsah</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="346"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="350"/>
         <source>Amplitude</source>
         <translation>Amplituda</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="347"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="351"/>
         <source>Bands</source>
         <translation>Pásma</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="350"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="354"/>
         <source>FFT sizing</source>
         <translation>Velikost FFT</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="351"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="355"/>
         <source>FFT size</source>
         <translation>Velikost FFT</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="352"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="356"/>
         <source>Duration</source>
         <translation>Délka</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="353"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="357"/>
         <source>Window</source>
         <translation>Okno</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="354"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="358"/>
         <source>Pitch (A4)</source>
         <translation>Tón (A4)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="355"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="359"/>
         <source>Transpose</source>
         <translation>Posun</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="389"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="394"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="393"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="398"/>
         <source>Hold time</source>
         <translation>Doba přidržení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="390"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="395"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="394"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="399"/>
         <source>Falloff</source>
         <translation>Pokles</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="418"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="422"/>
         <source>Update FPS</source>
         <translation>Obnovovací frekvence</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="419"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="423"/>
         <source>Bar spacing</source>
         <translation>Rozestup sloupců</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="420"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="424"/>
         <source>Sections</source>
         <translation>Sekce</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="421"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="425"/>
         <source>Section spacing</source>
         <translation>Rozestup sekcí</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="422"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="426"/>
         <source>Style</source>
         <translation>Styl</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="180"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="181"/>
         <source>Axis font</source>
         <translation>Písmo osy</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="181"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="503"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="182"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="507"/>
         <source>Colours</source>
         <translation>Barvy</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="441"/>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="501"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="445"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="505"/>
         <source>General</source>
         <translation>Obecné</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="183"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="184"/>
         <source>Text colour</source>
         <translation>Barva textu</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="184"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="185"/>
         <source>Background colour</source>
         <translation>Barva pozadí</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="444"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="448"/>
         <source>Grid</source>
         <translation>Mřížka</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="189"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="190"/>
         <source>Octave gridlines</source>
         <translation>Oktávová mřížka</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="448"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="452"/>
         <source>Keys</source>
         <translation>Klávesy</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="182"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="183"/>
         <source>Bar gradient</source>
         <translation>Přechod sloupců</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="186"/>
+        <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="187"/>
         <source>Peaks colour</source>
         <translation>Barva špiček</translation>
     </message>
@@ -21648,130 +22248,138 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         <translation>Spektrum</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="668"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="144"/>
         <source>Style</source>
         <translation>Styl</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="671"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="147"/>
         <source>Bars</source>
         <translation>Sloupce</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="674"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="150"/>
         <source>Curve</source>
         <translation>Křivka</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="692"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="168"/>
         <source>Axis</source>
         <translation>Osa</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="695"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="171"/>
         <source>Frequencies</source>
         <translation>Frekvence</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="698"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="174"/>
         <source>Notes</source>
         <translation>Noty</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="716"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="192"/>
         <source>FFT window</source>
         <translation>FFT okno</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="719"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="195"/>
         <source>Sample rate based (%1 ms)</source>
         <translation>Podle vzorkovací frekvence (%1 ms)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="745"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="221"/>
         <source>Show peaks</source>
         <translation>Zobrazit špičky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="754"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="230"/>
         <source>Fill spectrum</source>
         <translation>Vyplnit spektrum</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="763"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="239"/>
         <source>Show tooltip</source>
         <translation>Zobrazit popisek</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="772"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="248"/>
         <source>Labels</source>
         <translation>Popisky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="774"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="250"/>
         <source>Top</source>
         <translation>Horní</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="783"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="259"/>
         <source>Bottom</source>
         <translation>Dolní</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="792"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="268"/>
         <source>Left</source>
         <translation>Levé</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="801"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="277"/>
         <source>Right</source>
         <translation>Pravé</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="815"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="291"/>
         <source>Gridlines</source>
         <translation>Mřížka</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="817"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="293"/>
         <source>Horizontal</source>
         <translation>Horizontální</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="826"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="302"/>
         <source>Vertical</source>
         <translation>Vertikální</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="835"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="311"/>
         <source>White keys</source>
         <translation>Bílé klávesy</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="845"/>
+        <location filename="../../src/plugins/spectrum/spectrumwidget.cpp" line="321"/>
         <source>Black keys</source>
         <translation>Černé klávesy</translation>
     </message>
 </context>
 <context>
+    <name>Fooyin::SplitTransferWidgetCommand</name>
+    <message>
+        <location filename="../../src/gui/layout/layoutcommands.cpp" line="1071"/>
+        <source>Split and move widget</source>
+        <translation>Rozdělit a přesunout widget</translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::SplitterWidget</name>
     <message>
-        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="441"/>
+        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="463"/>
         <source>Splitter (Top/Bottom)</source>
         <translation>Rozdělovač (vertikální)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="443"/>
+        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="465"/>
         <source>Splitter (Left/Right)</source>
         <translation>Rozdělovač (horizontální)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="453"/>
+        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="475"/>
         <source>Switch orientation</source>
         <translation>Změnit orientaci</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="456"/>
+        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="478"/>
         <source>Splitter</source>
         <translation>Rozdělovač</translation>
     </message>
@@ -21801,32 +22409,32 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::StatusWidget</name>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="576"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="581"/>
         <source>Status Bar</source>
         <translation>Stavový řádek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="655"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="660"/>
         <source>Show icon</source>
         <translation>Zobrazit ikonu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="661"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="666"/>
         <source>Show selection info</source>
         <translation>Zobrazit informace výběru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="668"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="673"/>
         <source>Show current playlist info</source>
         <translation>Zobrazit informace aktivního seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="687"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="692"/>
         <source>Status bar settings…</source>
         <translation>Nastavení stavového řádku…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="675"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="680"/>
         <source>Show action tips</source>
         <translation>Zobrazit tipy</translation>
     </message>
@@ -21950,7 +22558,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         <translation>Režim editace vzhledu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="450"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="455"/>
         <source>Buffering stream…</source>
         <translation>Načítání streamu do vyrovnávací paměti…</translation>
     </message>
@@ -21958,52 +22566,52 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
 <context>
     <name>Fooyin::TabStackWidget</name>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="54"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="53"/>
         <source>Playlist</source>
         <translation>Seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="72"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="71"/>
         <source>Tab Stack</source>
         <translation>Panel karet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="302"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="318"/>
         <source>&amp;Position</source>
         <translation>Po&amp;zice</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="306"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="322"/>
         <source>&amp;Above</source>
         <translation>N&amp;ahoře</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="307"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="323"/>
         <source>&amp;Right</source>
         <translation>Vp&amp;ravo</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="308"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="324"/>
         <source>&amp;Below</source>
         <translation>&amp;Dole</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="309"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="325"/>
         <source>&amp;Left</source>
         <translation>V&amp;levo</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="348"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="364"/>
         <source>&amp;Rename</source>
         <translation>&amp;Přejmenovat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="352"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="368"/>
         <source>Re&amp;move</source>
         <translation>&amp;Odebrat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="355"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="371"/>
         <source>Remember &amp;last tab</source>
         <translation>P&amp;amatovat si vybranou kartu</translation>
     </message>
@@ -22296,7 +22904,7 @@ Plná podpora skriptování není k dispozici.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="146"/>
-        <source>Use any of &quot;%1&quot; in the editor to enter multiple values.</source>
+        <source>Use any of ‘%1’ in the editor to enter multiple values.</source>
         <translation>Pro vložení více hodnot použijte v editoru některý ze znaků „ %1 “.</translation>
     </message>
 </context>
@@ -22337,7 +22945,7 @@ Plná podpora skriptování není k dispozici.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpanel.cpp" line="143"/>
-        <source>Don&apos;t ask again</source>
+        <source>Don’t ask again</source>
         <translation>Příště se neptat</translation>
     </message>
 </context>
@@ -22400,7 +23008,7 @@ Plná podpora skriptování není k dispozici.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorpropertiestab.cpp" line="160"/>
-        <source>Don&apos;t ask again</source>
+        <source>Don’t ask again</source>
         <translation>Příště se neptat</translation>
     </message>
 </context>
@@ -22445,6 +23053,102 @@ Plná podpora skriptování není k dispozici.</translation>
         <location filename="../../src/plugins/thumbnailtoolbar/thumbnailtoolbarplugin.cpp" line="213"/>
         <source>Play</source>
         <translation>Přehrát</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::ToolbarManager</name>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="58"/>
+        <source>Menu</source>
+        <translation>Nabídka</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="60"/>
+        <source>&amp;Place menu bar in a toolbar</source>
+        <translation>&amp;Hlavní nabídka jako panel nástrojů</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="61"/>
+        <source>&amp;Lock toolbars</source>
+        <translation>&amp;Uzamknout panely nástrojů</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="65"/>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="512"/>
+        <source>Toolbars</source>
+        <translation>Panely nástrojů</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="83"/>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="84"/>
+        <source>Layout</source>
+        <translation>Vzhled</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="88"/>
+        <source>Allow the menu bar to share rows and positions with other toolbars</source>
+        <translation>Umožnit hlavní nabídce sdílet řádek a pozici s dalšími panely nástrojů</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="96"/>
+        <source>Prevent toolbars from being moved</source>
+        <translation>Uzamknout pozici panelů nástrojů</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="193"/>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="510"/>
+        <source>Toolbar</source>
+        <translation>Panel nástrojů</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="432"/>
+        <source>Missing Widget: %1</source>
+        <translation>Chybí widget: %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="522"/>
+        <source>Remove toolbar</source>
+        <translation>Odstranit panel nástrojů</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="583"/>
+        <source>Add widget</source>
+        <translation>Přidat widget</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="586"/>
+        <source>Add separator</source>
+        <translation>Přidat oddělovač</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="595"/>
+        <source>Insert widget before</source>
+        <translation>Vložit widget před</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="598"/>
+        <source>Insert widget after</source>
+        <translation>Vložit widget za</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="601"/>
+        <source>Insert separator before</source>
+        <translation>Vložit oddělovač před</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="605"/>
+        <source>Insert separator after</source>
+        <translation>Vložit oddělovače za</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="609"/>
+        <source>Remove separator</source>
+        <translation>Odstranit oddělovač</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/toolbarmanager.cpp" line="609"/>
+        <source>Remove widget</source>
+        <translation>Odstranit widget</translation>
     </message>
 </context>
 <context>
@@ -22759,6 +23463,14 @@ Plná podpora skriptování není k dispozici.</translation>
     </message>
 </context>
 <context>
+    <name>Fooyin::TransferWidgetCommand</name>
+    <message>
+        <location filename="../../src/gui/layout/layoutcommands.cpp" line="645"/>
+        <source>Move widget</source>
+        <translation>Přesunout widget</translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::VerificationController</name>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="78"/>
@@ -22803,7 +23515,7 @@ Plná podpora skriptování není k dispozici.</translation>
     </message>
     <message>
         <location filename="../../src/gui/verification/verificationcontroller.cpp" line="174"/>
-        <source>Item: &quot;%1&quot;</source>
+        <source>Item: ‘%1’</source>
         <translation>Položka: „%1“</translation>
     </message>
     <message>
@@ -23170,12 +23882,12 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="83"/>
         <source>&amp;Library Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>St&amp;rom knihovny</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="84"/>
         <source>Open the library tree window</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít okno stromu knihovny</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="90"/>
@@ -23216,42 +23928,42 @@ Plná podpora skriptování není k dispozici.</translation>
 <context>
     <name>Fooyin::VolumeControl</name>
     <message>
-        <location filename="../../src/gui/controls/volumecontrol.cpp" line="335"/>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="355"/>
         <source>Volume Controls</source>
         <translation>Ovladač hlasitosti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/volumecontrol.cpp" line="374"/>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="391"/>
         <source>Icon</source>
         <translation>Ikona</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/volumecontrol.cpp" line="375"/>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="392"/>
         <source>Slider</source>
         <translation>Posuvník</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/volumecontrol.cpp" line="376"/>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="393"/>
         <source>Tooltip</source>
         <translation>Popisek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/volumecontrol.cpp" line="411"/>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="428"/>
         <source>Automatic</source>
         <translation>Automaticky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/volumecontrol.cpp" line="412"/>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="429"/>
         <source>Horizontal</source>
         <translation>Horizontální</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/volumecontrol.cpp" line="413"/>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="430"/>
         <source>Vertical</source>
         <translation>Vertikální</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/volumecontrol.cpp" line="415"/>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="432"/>
         <source>Orientation</source>
         <translation>Orientace</translation>
     </message>
@@ -23259,143 +23971,138 @@ Plná podpora skriptování není k dispozici.</translation>
 <context>
     <name>Fooyin::VuMeter::VuMeterConfigDialog</name>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="62"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="63"/>
         <source>Custom colours</source>
         <translation>Uživatelské barvy</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="86"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="91"/>
         <source>Display</source>
         <translation>Zobrazení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="90"/>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="113"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="95"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="118"/>
         <source>Falloff</source>
         <translation>Pokles</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="63"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="64"/>
         <source>Bar gradient</source>
         <translation>Přechod sloupců</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="180"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="185"/>
         <source>General</source>
         <translation>Obecné</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="45"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="46"/>
         <source>VU Meter Settings</source>
         <translation>Nastavení indikátoru vybuzení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="45"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="46"/>
         <source>Peak Meter Settings</source>
         <translation>Nastavení indikátoru špiček</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="55"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="56"/>
         <source>Right-align scale labels</source>
         <translation>Popisky zarovnat doprava</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="56"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="57"/>
         <source>Peaks</source>
         <translation>Špičky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="67"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="68"/>
         <source>Gridlines</source>
         <translation>Mřížka</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="84"/>
-        <source>%1 fps</source>
-        <translation>%1 fps</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="92"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="97"/>
         <source>Refresh rate</source>
         <translation>Obnovovací frekvence</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="96"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="101"/>
         <source>Axes</source>
         <translation>Osy</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="111"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="116"/>
         <source>Hold time</source>
         <translation>Doba přidržení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="117"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="122"/>
         <source>Dimension</source>
         <translation>Dimenze</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="131"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="136"/>
         <source>Channel spacing</source>
         <translation>Rozestup kanálů</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="133"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="138"/>
         <source>Bar size</source>
         <translation>Velikost pruhu</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="135"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="140"/>
         <source>Bar spacing</source>
         <translation>Rozestup pruhů</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="138"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="143"/>
         <source>Sections</source>
         <translation>Sekce</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="140"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="145"/>
         <source>Section spacing</source>
         <translation>Rozestup sekcí</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="64"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="65"/>
         <source>Background colour</source>
         <translation>Barva pozadí</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="51"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="52"/>
         <source>Top labels</source>
         <translation>Horní popisky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="52"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="53"/>
         <source>Bottom labels</source>
         <translation>Dolní popisky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="53"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="54"/>
         <source>Left labels</source>
         <translation>Levé popisky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="54"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="55"/>
         <source>Right labels</source>
         <translation>Pravé popisky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="65"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="66"/>
         <source>Peak colour</source>
         <translation>Barva špičky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="66"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="67"/>
         <source>Legend colour</source>
         <translation>Barva popisků</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="181"/>
+        <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="186"/>
         <source>Colours</source>
         <translation>Barvy</translation>
     </message>
@@ -23448,67 +24155,67 @@ Plná podpora skriptování není k dispozici.</translation>
 <context>
     <name>Fooyin::VuMeter::VuMeterWidget</name>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="847"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="843"/>
         <source>Peak Meter</source>
         <translation>Indikátor špiček</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="847"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="843"/>
         <source>VU Meter</source>
         <translation>Indikátor vybuzení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1202"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="875"/>
         <source>Show peaks</source>
         <translation>Zobrazit špičky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1237"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="910"/>
         <source>Orientation</source>
         <translation>Orientace</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1234"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="907"/>
         <source>Horizontal</source>
         <translation>Horizontální</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1213"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="886"/>
         <source>Labels</source>
         <translation>Popisky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1225"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="898"/>
         <source>Top</source>
         <translation>Horní</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1226"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="899"/>
         <source>Bottom</source>
         <translation>Dolní</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1227"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="900"/>
         <source>Left</source>
         <translation>Levé</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1228"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="901"/>
         <source>Right</source>
         <translation>Pravé</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1230"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="903"/>
         <source>Right-align scale labels</source>
         <translation>Popisky zarovnat doprava</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1233"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="906"/>
         <source>Automatic</source>
         <translation>Automaticky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="1235"/>
+        <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="908"/>
         <source>Vertical</source>
         <translation>Vertikální</translation>
     </message>
@@ -23922,684 +24629,768 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
 <context>
     <name>Fooyin::WaveBar::WaveBarWidget</name>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="368"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="371"/>
         <source>Disk cache usage</source>
         <translation>Využití mezipaměti na disku</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="405"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="413"/>
         <source>Show cursor</source>
         <translation>Zobrazit kurzor</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="414"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="422"/>
         <source>Show labels</source>
         <translation>Zobrazit popisky</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="423"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="431"/>
         <source>Show remaining time</source>
         <translation>Zobrazit zbývající čas</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="432"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="440"/>
         <source>Show played threshold</source>
         <translation>Zobrazit prahovou pozici přehrání</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="441"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="449"/>
         <source>Normalise waveform</source>
         <translation>Normalizovat křivku</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="450"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="458"/>
         <source>dB scale</source>
         <translation>Měřítko v dB</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="459"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="467"/>
         <source>Peak display</source>
         <translation>Zobrazení špiček</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="462"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="470"/>
         <source>Maximum</source>
         <translation>Maximum</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="463"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="471"/>
         <source>Average</source>
         <translation>Průměr</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="464"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="472"/>
         <source>Smoothed average</source>
         <translation>Vyrovnaný průměr</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="498"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="506"/>
         <source>Display</source>
         <translation>Zobrazení</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="500"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="508"/>
         <source>Min/Max</source>
         <translation>Min/Max</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="501"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="509"/>
         <source>RMS</source>
         <translation>RMS</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="502"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="510"/>
         <source>Silence</source>
         <translation>Ticho</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="537"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="545"/>
         <source>Downmix</source>
         <translation>Downmix</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="540"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="548"/>
         <source>Off</source>
         <translation>Vypnuto</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="541"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="549"/>
         <source>Stereo</source>
         <translation>Stereo</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="542"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="550"/>
         <source>Mono</source>
         <translation>Mono</translation>
     </message>
 </context>
 <context>
+    <name>Fooyin::WidgetPalette</name>
+    <message>
+        <location filename="../../src/gui/layout/widgetpalette.cpp" line="66"/>
+        <source>Search widgets…</source>
+        <translation>Vyhledat widget…</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/widgetpalette.cpp" line="71"/>
+        <source>Dock widget palette</source>
+        <translation>Připnout panel widgetů</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/widgetpalette.cpp" line="107"/>
+        <source>Widgets</source>
+        <translation>Widgety</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/widgetpalette.cpp" line="130"/>
+        <source>Drag to add %1.
+Hold Ctrl to replace a widget.</source>
+        <translation>Přetáhni pro přidání %1.
+Přidrž Ctrl pro nahrazení widgetu.</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/layout/widgetpalette.cpp" line="131"/>
+        <source>Instance limit reached</source>
+        <translation>Dosažen limit instancí</translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::Widgets</name>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="185"/>
+        <location filename="../../src/gui/widgets.cpp" line="189"/>
         <source>Dummy</source>
         <translation>Atrapa</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="191"/>
+        <location filename="../../src/gui/widgets.cpp" line="195"/>
         <source>Splitter (Top/Bottom)</source>
         <translation>Rozdělovač (vertikální)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="192"/>
-        <location filename="../../src/gui/widgets.cpp" line="199"/>
-        <location filename="../../src/gui/widgets.cpp" line="256"/>
+        <location filename="../../src/gui/widgets.cpp" line="196"/>
+        <location filename="../../src/gui/widgets.cpp" line="203"/>
+        <location filename="../../src/gui/widgets.cpp" line="260"/>
         <source>Splitters</source>
         <translation>Rozdělovače</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="198"/>
+        <location filename="../../src/gui/widgets.cpp" line="202"/>
         <source>Splitter (Left/Right)</source>
         <translation>Rozdělovač (horizontální)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="205"/>
+        <location filename="../../src/gui/widgets.cpp" line="209"/>
         <source>Playlist Switcher</source>
         <translation>Přepínač seznamů skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="222"/>
+        <location filename="../../src/gui/widgets.cpp" line="226"/>
         <source>Playlist Tabs</source>
         <translation>Karty seznamů skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="229"/>
+        <location filename="../../src/gui/widgets.cpp" line="233"/>
         <source>Playlist Organiser</source>
         <translation>Organizátor seznamů skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="251"/>
+        <location filename="../../src/gui/widgets.cpp" line="255"/>
         <source>Playback Queue</source>
         <translation>Fronta přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="255"/>
+        <location filename="../../src/gui/widgets.cpp" line="259"/>
         <source>Tab Stack</source>
         <translation>Panel karet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="259"/>
-        <location filename="../../src/gui/widgets.cpp" line="851"/>
-        <location filename="../../src/gui/widgets.cpp" line="882"/>
+        <location filename="../../src/gui/widgets.cpp" line="263"/>
+        <location filename="../../src/gui/widgets.cpp" line="887"/>
+        <location filename="../../src/gui/widgets.cpp" line="919"/>
         <source>Library Tree</source>
         <translation>Strom knihovny</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="275"/>
+        <location filename="../../src/gui/widgets.cpp" line="287"/>
         <source>Player Controls</source>
         <translation>Tlačítka přehrávače</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="268"/>
-        <location filename="../../src/gui/widgets.cpp" line="276"/>
-        <location filename="../../src/gui/widgets.cpp" line="282"/>
-        <location filename="../../src/gui/widgets.cpp" line="294"/>
-        <location filename="../../src/gui/widgets.cpp" line="306"/>
-        <location filename="../../src/gui/widgets.cpp" line="311"/>
-        <location filename="../../src/gui/widgets.cpp" line="316"/>
-        <location filename="../../src/gui/widgets.cpp" line="321"/>
-        <location filename="../../src/gui/widgets.cpp" line="326"/>
+        <location filename="../../src/gui/widgets.cpp" line="271"/>
+        <location filename="../../src/gui/widgets.cpp" line="280"/>
+        <location filename="../../src/gui/widgets.cpp" line="288"/>
+        <location filename="../../src/gui/widgets.cpp" line="293"/>
+        <location filename="../../src/gui/widgets.cpp" line="305"/>
+        <location filename="../../src/gui/widgets.cpp" line="317"/>
+        <location filename="../../src/gui/widgets.cpp" line="322"/>
+        <location filename="../../src/gui/widgets.cpp" line="327"/>
         <location filename="../../src/gui/widgets.cpp" line="332"/>
+        <location filename="../../src/gui/widgets.cpp" line="337"/>
+        <location filename="../../src/gui/widgets.cpp" line="343"/>
         <source>Controls</source>
         <translation>Ovládací prvky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="242"/>
+        <location filename="../../src/gui/widgets.cpp" line="246"/>
         <source>Playlist Manager</source>
         <translation>Správce seznamů skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="267"/>
+        <location filename="../../src/gui/widgets.cpp" line="270"/>
         <source>Command Button</source>
         <translation>Příkazové tlačítko</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="281"/>
+        <location filename="../../src/gui/widgets.cpp" line="292"/>
         <source>Playlist Controls</source>
         <translation>Tlačítka seznamu skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="310"/>
+        <location filename="../../src/gui/widgets.cpp" line="321"/>
         <source>Volume Controls</source>
         <translation>Ovladač hlasitosti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="315"/>
+        <location filename="../../src/gui/widgets.cpp" line="326"/>
         <source>Seekbar</source>
         <translation>Časová lišta</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="320"/>
+        <location filename="../../src/gui/widgets.cpp" line="331"/>
         <source>Output Selector</source>
         <translation>Výběr výstupu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="340"/>
+        <location filename="../../src/gui/widgets.cpp" line="351"/>
         <source>Selection Info</source>
         <translation>Informace výběru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="356"/>
+        <location filename="../../src/gui/widgets.cpp" line="367"/>
         <source>Artwork Panel</source>
         <translation>Panel přebalu alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="206"/>
-        <location filename="../../src/gui/widgets.cpp" line="223"/>
-        <location filename="../../src/gui/widgets.cpp" line="230"/>
-        <location filename="../../src/gui/widgets.cpp" line="243"/>
-        <location filename="../../src/gui/widgets.cpp" line="365"/>
-        <location filename="../../src/gui/widgets.cpp" line="366"/>
-        <location filename="../../src/gui/widgets.cpp" line="607"/>
-        <location filename="../../src/gui/widgets.cpp" line="852"/>
+        <location filename="../../src/gui/widgets.cpp" line="210"/>
+        <location filename="../../src/gui/widgets.cpp" line="227"/>
+        <location filename="../../src/gui/widgets.cpp" line="234"/>
+        <location filename="../../src/gui/widgets.cpp" line="247"/>
+        <location filename="../../src/gui/widgets.cpp" line="376"/>
+        <location filename="../../src/gui/widgets.cpp" line="377"/>
+        <location filename="../../src/gui/widgets.cpp" line="632"/>
+        <location filename="../../src/gui/widgets.cpp" line="639"/>
+        <location filename="../../src/gui/widgets.cpp" line="888"/>
         <source>Playlist</source>
         <translation>Seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="293"/>
+        <location filename="../../src/gui/widgets.cpp" line="279"/>
+        <source>Main Menu Button</source>
+        <translation>Tlačítko hlavní nabídky</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="304"/>
         <source>Rating Control</source>
         <translation>Hodnocení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="305"/>
+        <location filename="../../src/gui/widgets.cpp" line="316"/>
         <source>Love Control</source>
         <translation>Oblíbenost</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="325"/>
+        <location filename="../../src/gui/widgets.cpp" line="336"/>
         <source>ReplayGain Mode</source>
         <translation>Režim ReplayGain</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="331"/>
+        <location filename="../../src/gui/widgets.cpp" line="342"/>
         <source>DSP Selector</source>
         <translation>Výběr DSP</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="369"/>
+        <location filename="../../src/gui/widgets.cpp" line="380"/>
         <source>Spacer</source>
         <translation>Mezera</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="380"/>
+        <location filename="../../src/gui/widgets.cpp" line="392"/>
         <source>Status Bar</source>
         <translation>Stavový řádek</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="389"/>
+        <location filename="../../src/gui/widgets.cpp" line="400"/>
         <source>Search Bar</source>
         <translation>Panel hledání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="391"/>
+        <location filename="../../src/gui/widgets.cpp" line="402"/>
         <source>Directory Browser</source>
         <translation>Správce souborů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="399"/>
-        <location filename="../../src/gui/widgets.cpp" line="853"/>
+        <location filename="../../src/gui/widgets.cpp" line="410"/>
+        <location filename="../../src/gui/widgets.cpp" line="889"/>
         <source>Script Display</source>
         <translation>Zobrazení skriptu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="402"/>
+        <location filename="../../src/gui/widgets.cpp" line="413"/>
         <source>Library Filter</source>
         <translation>Filtr knihovny</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="403"/>
         <location filename="../../src/gui/widgets.cpp" line="414"/>
-        <location filename="../../src/gui/widgets.cpp" line="422"/>
-        <location filename="../../src/gui/widgets.cpp" line="429"/>
-        <location filename="../../src/gui/widgets.cpp" line="856"/>
+        <location filename="../../src/gui/widgets.cpp" line="425"/>
+        <location filename="../../src/gui/widgets.cpp" line="433"/>
+        <location filename="../../src/gui/widgets.cpp" line="440"/>
+        <location filename="../../src/gui/widgets.cpp" line="893"/>
         <source>Filters</source>
         <translation>Filtry</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="413"/>
+        <location filename="../../src/gui/widgets.cpp" line="424"/>
         <source>Track Viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>Prohlížeč skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="421"/>
+        <location filename="../../src/gui/widgets.cpp" line="432"/>
         <source>Saved Filter Tabs</source>
         <translation>Karty uložených filtrů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="428"/>
+        <location filename="../../src/gui/widgets.cpp" line="439"/>
         <source>Saved Filter Selector</source>
         <translation>Výběr uložených filtrů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="554"/>
+        <location filename="../../src/gui/widgets.cpp" line="579"/>
         <source>Metadata Lookup</source>
         <translation>Vyhledání metadat</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="555"/>
+        <location filename="../../src/gui/widgets.cpp" line="580"/>
         <source>Confirm before wiping writable tags</source>
         <translation>Před smazáním editovatelných tagů požadovat potvrzení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="574"/>
-        <location filename="../../src/gui/widgets.cpp" line="585"/>
-        <location filename="../../src/gui/widgets.cpp" line="593"/>
-        <location filename="../../src/gui/widgets.cpp" line="600"/>
+        <location filename="../../src/gui/widgets.cpp" line="565"/>
+        <location filename="../../src/gui/widgets.cpp" line="599"/>
+        <location filename="../../src/gui/widgets.cpp" line="610"/>
+        <location filename="../../src/gui/widgets.cpp" line="618"/>
+        <location filename="../../src/gui/widgets.cpp" line="625"/>
         <source>Interface</source>
         <translation>Rozhraní</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="575"/>
+        <location filename="../../src/gui/widgets.cpp" line="565"/>
+        <source>Settings Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="566"/>
+        <source>Search bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="567"/>
+        <source>Visibility and position of the search bar in the settings dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="570"/>
+        <source>Hidden</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="571"/>
+        <source>Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="573"/>
+        <source>Bottom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="600"/>
         <source>Image allocation limit</source>
         <translation>Limit alokace pro obrázky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="576"/>
+        <location filename="../../src/gui/widgets.cpp" line="601"/>
         <source>Maximum image allocation size in MB. Set to 0 to disable the limit.</source>
         <translation>Maximální velikost alokace pro obrázky v MB. 0 znamená bez limitu.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="585"/>
+        <location filename="../../src/gui/widgets.cpp" line="610"/>
         <source>Layout Editing</source>
         <translation>Úprava vzhledu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="586"/>
+        <location filename="../../src/gui/widgets.cpp" line="611"/>
         <source>Menu levels</source>
         <translation>Úrovně nabídky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="593"/>
+        <location filename="../../src/gui/widgets.cpp" line="618"/>
         <source>Seeking</source>
         <translation>Přetáčení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="594"/>
+        <location filename="../../src/gui/widgets.cpp" line="619"/>
         <source>Focus seekbars when clicked</source>
         <translation>Po kliknutí aktivovat časové lišty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="608"/>
+        <location filename="../../src/gui/widgets.cpp" line="633"/>
         <source>Confirm before removing playlists</source>
         <translation>Před odstraněním seznamu skladeb si vyžádat potvrzení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="614"/>
-        <location filename="../../src/gui/widgets.cpp" line="625"/>
-        <location filename="../../src/gui/widgets.cpp" line="637"/>
-        <location filename="../../src/gui/widgets.cpp" line="648"/>
-        <location filename="../../src/gui/widgets.cpp" line="660"/>
-        <location filename="../../src/gui/widgets.cpp" line="671"/>
-        <location filename="../../src/gui/widgets.cpp" line="686"/>
-        <location filename="../../src/gui/widgets.cpp" line="693"/>
-        <location filename="../../src/gui/widgets.cpp" line="762"/>
-        <location filename="../../src/gui/widgets.cpp" line="782"/>
+        <location filename="../../src/gui/widgets.cpp" line="640"/>
+        <source>Inline editing delay</source>
+        <translation>Zpoždění přímé úpravy</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="641"/>
+        <source>Delay before starting inline editing after clicking a selected editable cell</source>
+        <translation>Prodleva před spuštěním přímé úpravy po kliknutí na upravitelnou buňku</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="650"/>
+        <location filename="../../src/gui/widgets.cpp" line="661"/>
+        <location filename="../../src/gui/widgets.cpp" line="673"/>
+        <location filename="../../src/gui/widgets.cpp" line="684"/>
+        <location filename="../../src/gui/widgets.cpp" line="696"/>
+        <location filename="../../src/gui/widgets.cpp" line="707"/>
+        <location filename="../../src/gui/widgets.cpp" line="722"/>
+        <location filename="../../src/gui/widgets.cpp" line="729"/>
+        <location filename="../../src/gui/widgets.cpp" line="798"/>
+        <location filename="../../src/gui/widgets.cpp" line="818"/>
         <source>Playback</source>
         <translation>Přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="614"/>
-        <location filename="../../src/gui/widgets.cpp" line="762"/>
+        <location filename="../../src/gui/widgets.cpp" line="650"/>
+        <location filename="../../src/gui/widgets.cpp" line="798"/>
         <source>Decoding</source>
         <translation>Dekódování</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="615"/>
+        <location filename="../../src/gui/widgets.cpp" line="651"/>
         <source>VBR update interval</source>
         <translation>Interval aktualizace VBR</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="616"/>
+        <location filename="../../src/gui/widgets.cpp" line="652"/>
         <source>Interval used to refresh VBR playback information. Set to 0 to disable.</source>
         <translation>Interval aktualizace hodnot VBR při přehrávání. Nastav 0 pro zakázání.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="625"/>
-        <location filename="../../src/gui/widgets.cpp" line="637"/>
-        <location filename="../../src/gui/widgets.cpp" line="648"/>
-        <location filename="../../src/gui/widgets.cpp" line="660"/>
+        <location filename="../../src/gui/widgets.cpp" line="661"/>
+        <location filename="../../src/gui/widgets.cpp" line="673"/>
+        <location filename="../../src/gui/widgets.cpp" line="684"/>
+        <location filename="../../src/gui/widgets.cpp" line="696"/>
         <source>Buffering</source>
         <translation>Načítání do vyrovnávací paměti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="626"/>
+        <location filename="../../src/gui/widgets.cpp" line="662"/>
         <source>Read-ahead for remote streams</source>
         <translation>Přednačtení pro vzdálené streamy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="638"/>
+        <location filename="../../src/gui/widgets.cpp" line="674"/>
         <source>Buffer length for remote streams</source>
         <translation>Délka vyrovnávací paměti pro vzdálené streamy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="649"/>
+        <location filename="../../src/gui/widgets.cpp" line="685"/>
         <source>Prebuffer for remote streams</source>
         <translation>Délka přednačtení vyrovnávací paměti pro vzdálené streamy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="650"/>
+        <location filename="../../src/gui/widgets.cpp" line="686"/>
         <source>Decoded audio buffered before starting or resuming remote playback.
 Set to 0 to choose automatically from the remote buffer length.</source>
         <translation>Přednačtení dekódovaného zvuku před spuštěním nebo obnovením přehrávání.
 Nastav na 0 pro automatický výběr podle délky vyrovnávací paměti.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="656"/>
-        <location filename="../../src/gui/widgets.cpp" line="722"/>
+        <location filename="../../src/gui/widgets.cpp" line="692"/>
+        <location filename="../../src/gui/widgets.cpp" line="758"/>
         <source>Auto</source>
         <translation>Auto</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="661"/>
+        <location filename="../../src/gui/widgets.cpp" line="697"/>
         <source>Open timeout for remote streams</source>
         <translation>Časový limit pro otevření vzdálených streamů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="671"/>
-        <location filename="../../src/gui/widgets.cpp" line="686"/>
-        <location filename="../../src/gui/widgets.cpp" line="693"/>
+        <location filename="../../src/gui/widgets.cpp" line="707"/>
+        <location filename="../../src/gui/widgets.cpp" line="722"/>
+        <location filename="../../src/gui/widgets.cpp" line="729"/>
         <source>Output</source>
         <translation>Výstup</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="672"/>
+        <location filename="../../src/gui/widgets.cpp" line="708"/>
         <source>Device refresh interval</source>
         <translation>Interval aktualizace zařízení</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="673"/>
+        <location filename="../../src/gui/widgets.cpp" line="709"/>
         <source>Interval used to refresh the list of available output devices. Set to 0 to disable.</source>
         <translation>Interval aktualizace seznamu dostupných zařízení. Pro zakázání nastavte 0.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="678"/>
+        <location filename="../../src/gui/widgets.cpp" line="714"/>
         <source>Disabled</source>
         <translation>Zakázáno</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="687"/>
+        <location filename="../../src/gui/widgets.cpp" line="723"/>
         <source>Automatically resample unsupported output rates</source>
         <translation>Automaticky převzorkovat nepodporované výstupní frekvence</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="688"/>
+        <location filename="../../src/gui/widgets.cpp" line="724"/>
         <source>Resample audio when the selected output device uses a different sample rate</source>
         <translation>Převzorkovat zvuk, pokud výstupní zařízení používá jinou vzorkovací frekvenci</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="694"/>
+        <location filename="../../src/gui/widgets.cpp" line="730"/>
         <source>Automatic resampling preference</source>
         <translation>Nastavení automatického převzorkování</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="695"/>
+        <location filename="../../src/gui/widgets.cpp" line="731"/>
         <source>Preferred resampler DSP names, in order. Other registered resamplers are used as fallbacks.</source>
         <translation>Názvy preferovaných DSP resamplerů, v pořadí. Ostatní registrované resamplery budou použity jako záložní.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="554"/>
-        <location filename="../../src/gui/widgets.cpp" line="711"/>
-        <location filename="../../src/gui/widgets.cpp" line="728"/>
-        <location filename="../../src/gui/widgets.cpp" line="736"/>
+        <location filename="../../src/gui/widgets.cpp" line="579"/>
         <location filename="../../src/gui/widgets.cpp" line="747"/>
+        <location filename="../../src/gui/widgets.cpp" line="764"/>
+        <location filename="../../src/gui/widgets.cpp" line="772"/>
+        <location filename="../../src/gui/widgets.cpp" line="783"/>
         <source>Tagging</source>
         <translation>Tagování</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="712"/>
+        <location filename="../../src/gui/widgets.cpp" line="748"/>
         <source>Preserve timestamps</source>
         <translation>Zachovat časy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="729"/>
+        <location filename="../../src/gui/widgets.cpp" line="765"/>
         <source>Split ID3v2.3 semicolon-separated tags</source>
         <translation>Rozdělit středníkem oddělené tagy ID3v2.3</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="730"/>
-        <source>Split ID3v2.3 values with non-standard &quot;;&quot; separators when reading tags.</source>
+        <location filename="../../src/gui/widgets.cpp" line="766"/>
+        <source>Split ID3v2.3 values with non-standard ‘;’ separators when reading tags.</source>
         <translation>Při čtení tagů rozdělit nestandardní ID3v2.3 hodnoty rozdělené pomocí „ ; “.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="737"/>
+        <location filename="../../src/gui/widgets.cpp" line="773"/>
         <source>ID3v2 revision</source>
         <translation>Revize ID3v2</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="738"/>
+        <location filename="../../src/gui/widgets.cpp" line="774"/>
         <source>ID3v2 revision used when writing MP3 tags</source>
         <translation>Revize ID3v2 použitá při zápisu MP3 tagů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="740"/>
+        <location filename="../../src/gui/widgets.cpp" line="776"/>
         <source>Write ID3v2.3 tags</source>
         <translation>Zapsat ID3v2.3 tagy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="742"/>
+        <location filename="../../src/gui/widgets.cpp" line="778"/>
         <source>Write ID3v2.4 tags</source>
         <translation>Zapsat ID3v2.4 tagy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="748"/>
+        <location filename="../../src/gui/widgets.cpp" line="784"/>
         <source>Tag writing scheme for untagged files</source>
         <translation>Schéma zápisu tagů pro soubory bez tagů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="749"/>
+        <location filename="../../src/gui/widgets.cpp" line="785"/>
         <source>Tag types created when writing an MP3 file that has no existing tags</source>
         <translation>Typ tagů zapsaných do MP3 souborů, které nemají žádné existující tagy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="753"/>
+        <location filename="../../src/gui/widgets.cpp" line="789"/>
         <source>ID3v2 + ID3v1</source>
         <translation>ID3v2 + ID3v1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="754"/>
+        <location filename="../../src/gui/widgets.cpp" line="790"/>
         <source>ID3v2</source>
         <translation>ID3v2</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="756"/>
+        <location filename="../../src/gui/widgets.cpp" line="792"/>
         <source>APE + ID3v1</source>
         <translation>APE + ID3v1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="757"/>
+        <location filename="../../src/gui/widgets.cpp" line="793"/>
         <source>APE</source>
         <translation>APE</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="783"/>
+        <location filename="../../src/gui/widgets.cpp" line="819"/>
         <source>Opus header gain</source>
         <translation>Zesílení v Opus hlavičce</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="786"/>
+        <location filename="../../src/gui/widgets.cpp" line="822"/>
         <source>Use Track Gain</source>
         <translation>Použít zisk skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="788"/>
+        <location filename="../../src/gui/widgets.cpp" line="824"/>
         <source>Use Album Gain</source>
         <translation>Použít zisk alba</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="790"/>
+        <location filename="../../src/gui/widgets.cpp" line="826"/>
         <source>Leave null</source>
         <translation>Ponechat null</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="820"/>
+        <location filename="../../src/gui/widgets.cpp" line="856"/>
         <source>DSP</source>
         <translation>DSP</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="826"/>
+        <location filename="../../src/gui/widgets.cpp" line="862"/>
         <source>Details</source>
         <translation>Podrobnosti</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="782"/>
-        <location filename="../../src/gui/widgets.cpp" line="830"/>
+        <location filename="../../src/gui/widgets.cpp" line="818"/>
+        <location filename="../../src/gui/widgets.cpp" line="866"/>
         <source>ReplayGain</source>
         <translation>ReplayGain</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="587"/>
+        <location filename="../../src/gui/widgets.cpp" line="612"/>
         <source>Number of widget levels shown in the layout editing context menu</source>
         <translation>Počet úrovní widgetů zobrazených v místní nabídce úpravy vzhledu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="595"/>
+        <location filename="../../src/gui/widgets.cpp" line="620"/>
         <source>Give seekbars keyboard focus after clicking them</source>
         <translation>Po kliknutí na časovou lištu pro ni aktivovat vstup z klávesnice</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="600"/>
+        <location filename="../../src/gui/widgets.cpp" line="625"/>
         <source>Selection</source>
         <translation>Výběr</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="601"/>
+        <location filename="../../src/gui/widgets.cpp" line="626"/>
         <source>Drag only after selecting</source>
         <translation>Přesun pouze po výběru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="602"/>
+        <location filename="../../src/gui/widgets.cpp" line="627"/>
         <source>Require a row to be selected before it can be dragged from item views</source>
         <translation>Povolit přesun položek zobrazení pouze pro vybrané řádky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="627"/>
+        <location filename="../../src/gui/widgets.cpp" line="663"/>
         <source>Maximum network data buffered for remote streams.
 Changes apply to newly opened streams.</source>
         <translation>Maximum dat načtených do vyrovnávací paměti pro vzdálené streamy.
 Změny se projeví pro nově otevřené streamy.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="639"/>
+        <location filename="../../src/gui/widgets.cpp" line="675"/>
         <source>Maximum decoded audio buffered for remote streams</source>
         <translation>Maximální délka dekódovaného zvuku ve vyrovnávací paměti pro vzdálené streamy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="662"/>
+        <location filename="../../src/gui/widgets.cpp" line="698"/>
         <source>Maximum time spent opening and probing remote streams</source>
         <translation>Maximální povolený čas pro rozpoznání a otevření vzdálených streamů</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="713"/>
+        <location filename="../../src/gui/widgets.cpp" line="749"/>
         <source>Preserve file access and modification timestamps when updating tags</source>
         <translation>Při aktualizaci tagů zachovat časy posledního přístupu a změny souboru</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="607"/>
-        <location filename="../../src/gui/widgets.cpp" line="719"/>
+        <location filename="../../src/gui/widgets.cpp" line="632"/>
+        <location filename="../../src/gui/widgets.cpp" line="639"/>
+        <location filename="../../src/gui/widgets.cpp" line="755"/>
         <source>General</source>
         <translation>Obecné</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="719"/>
+        <location filename="../../src/gui/widgets.cpp" line="755"/>
         <source>Text Encoding</source>
         <translation>Kódování textu</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="720"/>
+        <location filename="../../src/gui/widgets.cpp" line="756"/>
         <source>Preferred fallback encoding</source>
         <translation>Preferované záložní kódování</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="721"/>
+        <location filename="../../src/gui/widgets.cpp" line="757"/>
         <source>Encoding preferred when the best automatic match is Latin-compatible single-byte text</source>
         <translation>Preferované kódování pro jednobajtový latinský text</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="763"/>
+        <location filename="../../src/gui/widgets.cpp" line="799"/>
         <source>Probe all readers for extensions</source>
         <translation>Dotázat se všech čteček na přípony</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="764"/>
+        <location filename="../../src/gui/widgets.cpp" line="800"/>
         <source>Semicolon-separated extensions where all readers are tried and the reader with the most subsongs or chapters is used.</source>
         <translation>Středníkem oddělený seznam přípon pro které budou vyzkoušeny všechny čtečky a bude použita čtečka s největším počtem podskladeb nebo kapitol.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="784"/>
+        <location filename="../../src/gui/widgets.cpp" line="820"/>
         <source>ReplayGain value written to the Opus header when updating metadata</source>
         <translation>Hodnota ReplayGain zapisovaná při aktualizaci metadat do Opus hlavičky</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="836"/>
+        <location filename="../../src/gui/widgets.cpp" line="872"/>
         <source>Artwork</source>
         <translation>Přebaly alb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="849"/>
+        <location filename="../../src/gui/widgets.cpp" line="885"/>
         <source>Default</source>
         <translation>Výchozí</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="855"/>
+        <location filename="../../src/gui/widgets.cpp" line="890"/>
+        <source>Script Editor</source>
+        <translation type="unfinished">Editor skriptů</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="892"/>
         <source>Tabs</source>
         <translation>Karty</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="850"/>
+        <location filename="../../src/gui/widgets.cpp" line="886"/>
         <source>Lists</source>
         <translation>Seznamy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="854"/>
+        <location filename="../../src/gui/widgets.cpp" line="891"/>
         <source>Status bar</source>
         <translation>Stavový řádek</translation>
     </message>
@@ -24659,7 +25450,7 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="264"/>
         <source>Display</source>
-        <translation type="unfinished">Zobrazení</translation>
+        <translation>Zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="267"/>
@@ -24677,12 +25468,12 @@ Změny se projeví pro nově otevřené streamy.</translation>
         <translation>Nabídka skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="448"/>
+        <location filename="../../src/gui/widgets.cpp" line="459"/>
         <source>Library Tree</source>
         <translation>Strom knihovny</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="450"/>
+        <location filename="../../src/gui/widgets.cpp" line="461"/>
         <source>Unchecked items will be hidden from the library tree context menu.</source>
         <translation>Nezaškrtnuté položky se nebudou zobrazovat v místní nabídce stromu knihovny.</translation>
     </message>
@@ -24750,12 +25541,12 @@ Změny se projeví pro nově otevřené streamy.</translation>
         <translation>Nabídka skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="459"/>
+        <location filename="../../src/gui/widgets.cpp" line="470"/>
         <source>Playlist</source>
         <translation>Seznam skladeb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="462"/>
+        <location filename="../../src/gui/widgets.cpp" line="473"/>
         <source>Unchecked items will be hidden from the playlist context menu.</source>
         <translation>Nezaškrtnuté položky se nebudou zobrazovat v místní nabídce seznamu skladeb.</translation>
     </message>
@@ -24955,50 +25746,50 @@ Změny se projeví pro nově otevřené streamy.</translation>
         <translation>Soubor nebo adresa neexistuje, nebo není podporována: %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptruntime.cpp" line="413"/>
+        <location filename="../../src/core/scripting/scriptruntime.cpp" line="416"/>
         <source>Expected %1 to close quote</source>
         <translation>očekáván znak %1 pro uzavření textu</translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptruntime.cpp" line="437"/>
+        <location filename="../../src/core/scripting/scriptruntime.cpp" line="440"/>
         <source>Expected %1 to close variable list</source>
         <translation>očekáván znak %1 pro uzavření seznamu proměnných</translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptruntime.cpp" line="446"/>
+        <location filename="../../src/core/scripting/scriptruntime.cpp" line="449"/>
         <source>Expected %1 to close variable</source>
         <translation>očekáván znak %1 pro uzavření proměnné</translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptruntime.cpp" line="466"/>
+        <location filename="../../src/core/scripting/scriptruntime.cpp" line="469"/>
         <source>Expected %1 after function name</source>
         <translation>po názvu funkce očekáván znak %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptruntime.cpp" line="476"/>
+        <location filename="../../src/core/scripting/scriptruntime.cpp" line="479"/>
         <source>Expected %1 at end of function</source>
         <translation>očekáván znak %1 pro uzavření funkce</translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptruntime.cpp" line="600"/>
+        <location filename="../../src/core/scripting/scriptruntime.cpp" line="603"/>
         <source>Expected %1 to close conditional</source>
         <translation>očekáván znak %1 pro uzavření podmínky</translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptruntime.cpp" line="629"/>
-        <location filename="../../src/core/scripting/scriptruntime.cpp" line="635"/>
+        <location filename="../../src/core/scripting/scriptruntime.cpp" line="632"/>
+        <location filename="../../src/core/scripting/scriptruntime.cpp" line="638"/>
         <source>Expected %1 to close group</source>
         <translation>očekáván znak %1 pro uzavření skupiny</translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptruntime.cpp" line="842"/>
-        <location filename="../../src/core/scripting/scriptruntime.cpp" line="847"/>
+        <location filename="../../src/core/scripting/scriptruntime.cpp" line="845"/>
+        <location filename="../../src/core/scripting/scriptruntime.cpp" line="850"/>
         <source>Expected %1 after %2</source>
         <translation>po %2 očekáváno %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/scripting/scriptruntime.cpp" line="1609"/>
-        <location filename="../../src/core/scripting/scriptruntime.cpp" line="1650"/>
+        <location filename="../../src/core/scripting/scriptruntime.cpp" line="1616"/>
+        <location filename="../../src/core/scripting/scriptruntime.cpp" line="1657"/>
         <source>Expected end of script</source>
         <translation>očekáván konec skriptu</translation>
     </message>
@@ -25163,7 +25954,7 @@ Změny se projeví pro nově otevřené streamy.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="91"/>
-        <source>Use fooyin&apos;s default POPM byte conversion when reading and writing MP3 ratings.
+        <source>Use fooyin’s default POPM byte conversion when reading and writing MP3 ratings.
 This supports intermediate rating steps, but does not treat the POPM byte as a fully linear 0–255 scale.</source>
         <translation>Při čtení a ukládání hodnocení MP3 souborů použít výchozí převod hodnocení na POPM byty.
 Podporuje neceločíselné hodnocení, ale nenakládá s POPM bytem jako s lineární stupnicí 0-255.</translation>
@@ -25275,12 +26066,12 @@ hodnocení je zaokrouhleno na jednu, dvě, tři, čtyři, nebo pět hvězd.</tra
         <translation>Nabídka skladby</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="481"/>
+        <location filename="../../src/gui/widgets.cpp" line="492"/>
         <source>Playback Queue</source>
         <translation>Fronta přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="483"/>
+        <location filename="../../src/gui/widgets.cpp" line="494"/>
         <source>Unchecked items will be hidden from the playback queue context menu.</source>
         <translation>Nezaškrtnuté položky se nebudou zobrazovat v místní nabídce fronty přehrávání.</translation>
     </message>

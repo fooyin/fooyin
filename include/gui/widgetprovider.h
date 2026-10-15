@@ -27,6 +27,7 @@
 
 #include <functional>
 #include <memory>
+#include <vector>
 
 class QUndoStack;
 class QMenu;
@@ -44,6 +45,14 @@ struct WidgetRegistrationOptions
     Qt::ToolBarAreas toolbarAreas{Qt::TopToolBarArea | Qt::BottomToolBarArea};
 };
 
+struct WidgetCatalogueEntry
+{
+    QString key;
+    QString name;
+    QStringList categories;
+    bool available;
+};
+
 /*!
  * Handles registration of FyWidgets.
  */
@@ -54,6 +63,9 @@ public:
     ~WidgetProvider();
 
     void setCommandStack(QUndoStack* layoutCommands);
+
+    /** Visible widgets in category/name order, including entries at their instance limit. */
+    [[nodiscard]] std::vector<WidgetCatalogueEntry> widgetCatalogue() const;
 
     /*!
      * Registers a widget.
@@ -102,6 +114,9 @@ public:
      * @returns the new widget instance, or nullptr if not registered or over the limit for this widget.
      */
     FyWidget* createWidget(const QString& key);
+
+    /** Excludes a widget subtree retained by undo history from active instance limits. */
+    void setWidgetRetained(FyWidget* widget, bool retained);
 
     /*!
      * Fills the passed @p menu with actions to create a new instance of each registered widget.

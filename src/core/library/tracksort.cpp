@@ -18,16 +18,22 @@
  */
 
 #include <core/library/tracksort.h>
+#include <core/scripting/scriptregistry.h>
 
 #include <utility>
 
 namespace Fooyin {
 TrackSorter::TrackSorter()
-    : TrackSorter{nullptr}
+    : TrackSorter{LibraryInfoMap{}}
 { }
 
-TrackSorter::TrackSorter(LibraryManager* libraryManager)
-    : m_scriptEnvironment{libraryManager}
+TrackSorter::TrackSorter(LibraryInfoMap libraries)
+    : TrackSorter{std::move(libraries), &ScriptRegistry::instance()}
+{ }
+
+TrackSorter::TrackSorter(LibraryInfoMap libraries, ScriptRegistry* registry)
+    : m_parser{registry}
+    , m_libraries{std::move(libraries)}
 { }
 
 TrackSorter::~TrackSorter() = default;

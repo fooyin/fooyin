@@ -19,9 +19,8 @@
 
 #include "playlistcolumnregistry.h"
 
-#include "scripting/scriptvariableproviders.h"
-
 #include <core/constants.h>
+#include <gui/guiconstants.h>
 
 using namespace Qt::StringLiterals;
 
@@ -48,7 +47,7 @@ void PlaylistColumnRegistry::loadDefaults()
     addDefaultItem({.id = 4, .name = tr("Album Artist"), .field = u"%albumartist%"_s, .sortField = {}, .writeField = u"albumartist"_s});
     addDefaultItem({.id = 5, .name = tr("Album"), .field = u"%album%"_s, .sortField = {}, .writeField = u"album"_s});
     addDefaultItem({.id = 7, .name = tr("Duration"), .field = u"%duration%"_s, .sortField = u"%duration_ms%"_s, .writeField = {}});
-    addDefaultItem({.id = 8, .name = tr("Playing"), .field = QString::fromLatin1(PlayingIcon), .sortField = {}, .writeField = {}});
+    addDefaultItem({.id = 8, .name = tr("Playing"), .field = QString::fromLatin1(Constants::PlayingIcon), .sortField = {}, .writeField = {}});
     addDefaultItem({.id = 9, .name = tr("Codec"), .field = u"%codec%[ / %codec_profile%]"_s, .sortField = {}, .writeField = {}});
     addDefaultItem({.id = 10, .name = tr("Extension"), .field = u"%extension%"_s, .sortField = {}, .writeField = {}});
     addDefaultItem({.id = 11, .name = tr("Bitrate"), .field = u"%bitrate% kbps"_s, .sortField = {}, .writeField = {}});

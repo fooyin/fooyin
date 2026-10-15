@@ -27,6 +27,8 @@ class QCheckBox;
 class QComboBox;
 
 namespace Fooyin {
+class ScriptLineEdit;
+
 class PlaylistTabsConfigDialog : public WidgetConfigDialog<PlaylistTabs, PlaylistTabs::ConfigData>
 {
     Q_OBJECT
@@ -41,6 +43,7 @@ protected:
                              const PlaylistTabs::ConfigData& current) override;
 
 private:
+    ScriptLineEdit* m_titleScript;
     QComboBox* m_position;
     QCheckBox* m_expand;
     QCheckBox* m_showAddButton;

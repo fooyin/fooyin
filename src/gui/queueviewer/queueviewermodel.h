@@ -65,7 +65,7 @@ public:
     [[nodiscard]] QModelIndex indexForQueueItem(PlaybackQueueItemId queueItemId) const;
     [[nodiscard]] int queueIndex(const QModelIndex& index) const;
 
-    void setScripts(const QString& titleScript, const QString& subtitleScript);
+    void setDisplayScript(const QString& displayScript);
     void setShowCurrent(bool showCurrent);
     void setShowUpcomingTracks(bool showUpcomingTracks);
     void setShowIcon(bool showIcon);
@@ -96,8 +96,7 @@ private:
     std::unordered_map<QString, std::vector<QueueViewerItem*>> m_trackParents;
     std::unordered_map<PlaybackQueueItemId, QueueViewerItem*> m_itemsById;
 
-    QString m_titleScript;
-    QString m_subtitleScript;
+    QString m_displayScript;
 
     bool m_showCurrent;
     bool m_showUpcomingTracks;

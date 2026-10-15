@@ -70,7 +70,8 @@ FYGUI_EXPORT QColor resolvedRichTextColour(const RichFormatting& formatting, con
                                            const QColor& linkColour = {});
 FYGUI_EXPORT QFont resolvedRichTextFont(const RichFormatting& formatting, const QFont& baseFont);
 FYGUI_EXPORT TextBaselineMetrics textBaselineMetrics(const QFont& font);
-FYGUI_EXPORT QString richTextToHtml(const RichText& richText, const QColor& linkColour = {});
+FYGUI_EXPORT QString richTextToHtml(const RichText& richText, const QColor& linkColour = {},
+                                    int defaultAlignment = Qt::AlignLeft);
 FYGUI_EXPORT bool richTextHasLineBreaks(const RichText& richText);
 FYGUI_EXPORT int richTextHeight(const RichText& richText, const QFont& baseFont = {});
 FYGUI_EXPORT int richTextExtraLineHeight(const RichText& richText, const QFont& baseFont = {});
@@ -80,5 +81,7 @@ FYGUI_EXPORT RichTextBlockMetrics measureRichTextBlock(const RichText& richText,
                                                        int minimumLineHeight = 0);
 FYGUI_EXPORT RichTextBlockMetrics measureRichTextBlock(const std::vector<RichText>& lines, const QFont& baseFont = {},
                                                        int minimumLineHeight = 0);
+FYGUI_EXPORT QString combineAlignedScripts(const QString& left, const QString& right);
+FYGUI_EXPORT RichText richTextForAlignment(const RichText& richText, RichAlignment alignment);
 FYGUI_EXPORT RichText trimRichText(RichText richText);
 } // namespace Fooyin

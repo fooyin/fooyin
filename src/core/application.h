@@ -47,6 +47,7 @@ class MusicLibrary;
 class NetworkAccessManager;
 class PendingTrackCoverProvider;
 class PlayerController;
+class Playlist;
 class PlaylistHandler;
 class PlaylistLoader;
 class PluginManager;
@@ -64,9 +65,13 @@ public:
     ~Application() override;
 
     void startup();
+    /** Completes core startup after scripting registration has been finalised. */
+    void completeStartup();
     void shutdown();
     static void quit();
     static void restart();
+
+    bool exportPlaylist(const Playlist& playlist, const QString& filepath, const QString& extension) const;
 
     [[nodiscard]] const CorePluginContext& corePluginContext() const;
     [[nodiscard]] Database* database() const;
@@ -109,9 +114,9 @@ private:
     void saveDatabaseSettings() const;
 
     SettingsManager* m_settings;
+    Database* m_database;
     CoreSettings m_coreSettings;
     TranslationLoader m_translations;
-    Database* m_database;
     std::shared_ptr<AudioLoader> m_audioLoader;
     std::unique_ptr<AudioEncoderRegistry> m_audioEncoderRegistry;
     std::unique_ptr<DspRegistry> m_dspRegistry;

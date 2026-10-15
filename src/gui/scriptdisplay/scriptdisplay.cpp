@@ -21,12 +21,11 @@
 
 #include "scriptdisplayconfigdialog.h"
 #include "scripting/scriptcommandhandler.h"
-#include "scripting/scriptvariableproviders.h"
 
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/scripttypes.h>
 #include <core/track.h>
 #include <gui/configdialog.h>
 #include <gui/guiconstants.h>
@@ -138,7 +137,6 @@ ScriptDisplay::ScriptDisplay(PlayerController* playerController, PlaylistHandler
     m_layout->addWidget(m_text, 1);
 
     m_actionManager->addContextObject(m_context);
-    m_scriptParser.addProvider(playlistVariableProvider());
 
     m_copyCmd->setCategories({tr("Edit")});
     m_copyCmd->setDefaultShortcut(QKeySequence::Copy);
@@ -389,30 +387,15 @@ ScriptDisplay::ConfigData ScriptDisplay::configFromLayout(const QJsonObject& lay
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("Script"_L1)) {
-        config.script = layout.value("Script"_L1).toString();
-    }
-    if(layout.contains("Font"_L1)) {
-        config.font = layout.value("Font"_L1).toString();
-    }
-    if(layout.contains("BackgroundColour"_L1)) {
-        config.bgColour = normaliseColour(layout.value("BackgroundColour"_L1).toString());
-    }
-    if(layout.contains("ForegroundColour"_L1)) {
-        config.fgColour = normaliseColour(layout.value("ForegroundColour"_L1).toString());
-    }
-    if(layout.contains("LinkColour"_L1)) {
-        config.linkColour = normaliseColour(layout.value("LinkColour"_L1).toString());
-    }
-    if(layout.contains("HorizontalAlignment"_L1)) {
-        config.horizontalAlignment = layout.value("HorizontalAlignment"_L1).toInt();
-    }
-    if(layout.contains("VerticalAlignment"_L1)) {
-        config.verticalAlignment = layout.value("VerticalAlignment"_L1).toInt();
-    }
-    if(layout.contains("ShowScrollbar"_L1)) {
-        config.showScrollBar = layout.value("ShowScrollbar"_L1).toBool();
-    }
+    config.script              = layout.value("Script"_L1).toString(config.script);
+    config.font                = layout.value("Font"_L1).toString(config.font);
+    config.bgColour            = normaliseColour(layout.value("BackgroundColour"_L1).toString(config.bgColour));
+    config.fgColour            = normaliseColour(layout.value("ForegroundColour"_L1).toString(config.fgColour));
+    config.linkColour          = normaliseColour(layout.value("LinkColour"_L1).toString(config.linkColour));
+    config.horizontalAlignment = layout.value("HorizontalAlignment"_L1).toInt(config.horizontalAlignment);
+    config.verticalAlignment   = layout.value("VerticalAlignment"_L1).toInt(config.verticalAlignment);
+    config.showScrollBar       = layout.value("ShowScrollbar"_L1).toBool(config.showScrollBar);
+
     if(layout.contains("TrackPreference"_L1)) {
         config.trackPreference = static_cast<TrackDisplayPreference>(layout.value("TrackPreference"_L1).toInt());
     }
@@ -486,7 +469,7 @@ void ScriptDisplay::updateText()
     const QString text     = evaluateScript();
 
     const QColor linkColour = m_config.linkColour.isEmpty() ? QColor{} : QColor{m_config.linkColour};
-    const QString body      = richTextToHtml(formatter.evaluate(text), linkColour);
+    const QString body      = richTextToHtml(formatter.evaluate(text), linkColour, m_config.horizontalAlignment);
     const QString html      = u"<html><body style=\"margin:0;text-align:%1;\">%2</body></html>"_s.arg(
         alignmentToCss(m_config.horizontalAlignment), body);
 
@@ -606,10 +589,11 @@ Playlist* ScriptDisplay::currentPlaylist() const
 
 QString ScriptDisplay::evaluateScript()
 {
-    auto contextData
-        = makePlaybackScriptContext(m_playerController, currentPlaylist(), TrackListContextPolicy::Fallback, {}, true,
-                                    false, Gui::ratingStarSymbols(*m_settings));
-    return m_scriptParser.evaluate(m_config.script, currentTrack(), contextData.context);
+    const auto scriptData = makePlaybackScriptData(m_playerController, currentPlaylist());
+    const ScriptEvaluationOptions options{.trackListContextPolicy = TrackListContextPolicy::Fallback,
+                                          .escapeRichText         = true,
+                                          .ratingSymbols          = Gui::ratingStarSymbols(*m_settings)};
+    return m_scriptParser.evaluate(m_config.script, currentTrack(), scriptData.context(), options);
 }
 
 void ScriptDisplay::activateLink(const QString& link) const

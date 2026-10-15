@@ -96,6 +96,7 @@ StarRating::StarRating(float rating, int maxStarCount, int scale, const RatingSt
     , m_scale{scale}
     , m_colours{colours}
     , m_unratedColour{unratedColour}
+    , m_orientation{Qt::Horizontal}
 {
     double angle{-0.314};
     for(int i{0}; i < 5; ++i) {
@@ -119,6 +120,11 @@ int StarRating::starScale() const
     return m_scale;
 }
 
+Qt::Orientation StarRating::orientation() const
+{
+    return m_orientation;
+}
+
 void StarRating::setRating(float rating)
 {
     m_rating = rating;
@@ -134,6 +140,11 @@ void StarRating::setStarScale(int scale)
     m_scale = scale;
 }
 
+void StarRating::setOrientation(Qt::Orientation orientation)
+{
+    m_orientation = orientation;
+}
+
 void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode,
                        Qt::Alignment alignment, bool selected) const
 {
@@ -142,8 +153,9 @@ void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& pal
     const QColor customColour = m_rating > 0 ? m_colours.at(colourIndex) : QColor{};
     const auto brushes        = getStarBrushes(palette, mode, selected, customColour, m_unratedColour);
     const qreal dpr           = painter->device()->devicePixelRatioF();
-    const QString cacheKey    = u"StarRating:%1|%2|%3|%4|%5|%6"_s.arg(m_rating)
+    const QString cacheKey    = u"StarRating:%1|%2|%3|%4|%5|%6|%7"_s.arg(m_rating)
                                     .arg(m_scale)
+                                    .arg(m_orientation)
                                     .arg(m_maxCount)
                                     .arg(mode == EditMode::Editable ? 1 : 0)
                                     .arg(rect.width())
@@ -162,18 +174,29 @@ void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& pal
         QPainter pixmapPainter(&pixmap);
         pixmapPainter.setRenderHint(QPainter::Antialiasing, true);
 
-        const int yOffset = (rect.height() - m_scale) / 2;
+        const bool vertical = m_orientation == Qt::Vertical;
 
-        int xOffset{0};
-        const int totalWidth = m_maxCount * m_scale;
-        if(alignment & Qt::AlignHCenter) {
-            xOffset = (rect.width() - totalWidth) / 2;
+        const QSize starSize = sizeHint();
+        int xOffset          = (rect.width() - starSize.width()) / 2;
+        int yOffset          = (rect.height() - starSize.height()) / 2;
+        if(vertical) {
+            if(alignment & Qt::AlignTop) {
+                yOffset = 0;
+            }
+            else if(alignment & Qt::AlignBottom) {
+                yOffset = rect.height() - starSize.height();
+            }
         }
-        else if(alignment & Qt::AlignRight) {
-            xOffset = rect.width() - totalWidth;
+        else {
+            if(alignment & Qt::AlignLeft) {
+                xOffset = 0;
+            }
+            else if(alignment & Qt::AlignRight) {
+                xOffset = rect.width() - starSize.width();
+            }
         }
 
-        pixmapPainter.translate(xOffset, yOffset);
+        pixmapPainter.translate(xOffset, vertical ? yOffset + starSize.height() - m_scale : yOffset);
         pixmapPainter.scale(m_scale, m_scale);
 
         const int fullStars     = std::floor(m_rating * static_cast<float>(m_maxCount));
@@ -198,7 +221,7 @@ void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& pal
                 drawHalfPolygon(&pixmapPainter, m_starPolygon, true);
             }
 
-            pixmapPainter.translate(1.0, 0.0);
+            pixmapPainter.translate(vertical ? 0.0 : 1.0, vertical ? -1.0 : 0.0);
         }
 
         pixmapPainter.end();
@@ -211,6 +234,6 @@ void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& pal
 
 QSize StarRating::sizeHint() const
 {
-    return m_scale * QSize{m_maxCount, 1};
+    return m_scale * (m_orientation == Qt::Vertical ? QSize{1, m_maxCount} : QSize{m_maxCount, 1});
 }
 } // namespace Fooyin

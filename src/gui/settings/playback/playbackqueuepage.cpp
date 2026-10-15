@@ -101,7 +101,7 @@ PlaybackQueuePageWidget::PlaybackQueuePageWidget(SettingsManager* settings)
     m_playSelectedTracks->setToolTip(
         tr("Replace Playing Tracks with the selected tracks and start playback at the first selection"));
     m_playContainingGroup->setToolTip(
-        tr("Replace Playing Tracks with the first selected track's group and start playback at that track"));
+        tr("Replace Playing Tracks with the first selected track’s group and start playback at that track"));
     m_playAllTracks->setToolTip(
         tr("Replace Playing Tracks with the current view and start playback at the first selected track"));
     m_queueNextAndPlay->setToolTip(

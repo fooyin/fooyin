@@ -31,6 +31,11 @@
 #include <QModelIndexList>
 #include <QStyleOptionViewItem>
 
+#include <functional>
+#include <optional>
+
+class QMenu;
+class QObject;
 class QMimeData;
 class QLabel;
 class QAbstractItemView;
@@ -44,6 +49,19 @@ class MusicLibrary;
 class SettingsManager;
 
 namespace Gui {
+struct OrientationMenuLabels
+{
+    QString title;
+    QString automatic;
+    QString horizontal;
+    QString vertical;
+};
+
+//! The callback receives no orientation when Automatic is selected.
+FYGUI_EXPORT void addOrientationMenu(QMenu* menu, QObject* context, const OrientationMenuLabels& labels, bool automatic,
+                                     Qt::Orientation orientation,
+                                     const std::function<void(std::optional<Qt::Orientation>)>& orientationChanged);
+
 FYGUI_EXPORT TrackList tracksFromMimeData(MusicLibrary* library, QByteArray data);
 FYGUI_EXPORT void populateExternalTrackMimeData(const TrackList& tracks, QMimeData* mimeData);
 FYGUI_EXPORT TrackList sortTracksForLibraryViewerPlaylist(SettingsManager* settings, const TrackList& tracks);

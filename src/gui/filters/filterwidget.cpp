@@ -359,12 +359,6 @@ QString FilterWidget::layoutName() const
     return u"LibraryFilter"_s;
 }
 
-void FilterWidget::layoutEditingMenu(QMenu* menu)
-{
-    auto* editConnections = menu->addAction(tr("Manage filter groups…"));
-    QObject::connect(editConnections, &QAction::triggered, this, &FilterWidget::requestEditConnections);
-}
-
 void FilterWidget::saveLayoutData(QJsonObject& layout)
 {
     saveConfigToLayout(m_config, layout);
@@ -499,18 +493,15 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
     if(layout.contains("ShowHeader"_L1)) {
         m_header->setCollapsed(!layout.value("ShowHeader"_L1).toBool());
     }
-    if(layout.contains("ShowScrollbar"_L1)) {
-        m_showScrollbar = layout.value("ShowScrollbar"_L1).toBool();
-    }
-    if(layout.contains("AlternatingRows"_L1)) {
-        m_alternatingColours = layout.value("AlternatingRows"_L1).toBool();
-    }
+
+    m_showScrollbar      = layout.value("ShowScrollbar"_L1).toBool(m_showScrollbar);
+    m_alternatingColours = layout.value("AlternatingRows"_L1).toBool(m_alternatingColours);
+
     if(layout.contains("Group"_L1)) {
         m_group = Id{layout.value("Group"_L1).toString()};
     }
-    if(layout.contains("Index"_L1)) {
-        m_index = layout.value("Index"_L1).toInt();
-    }
+
+    m_index = layout.value("Index"_L1).toInt(m_index);
 
     Q_EMIT filterUpdated();
 
@@ -688,11 +679,16 @@ void FilterWidget::addFilterHeaderMenu(QMenu* menu, const QPoint& pos, bool incl
     columnGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
 
     for(const auto& column : m_columnRegistry->items()) {
+        const bool columnVisible
+            = std::ranges::any_of(m_columns, [column](const FilterColumn& current) { return current.id == column.id; });
+        if(!column.isEnabled && !columnVisible) {
+            continue;
+        }
+
         auto* columnAction = new QAction(column.name, menu);
         columnAction->setData(column.id);
         columnAction->setCheckable(true);
-        columnAction->setChecked(
-            std::ranges::any_of(m_columns, [column](const FilterColumn& current) { return current.id == column.id; }));
+        columnAction->setChecked(columnVisible);
         columnAction->setEnabled(columnAction->isChecked() ? m_columns.size() > 1 : true);
         columnsMenu->addAction(columnAction);
         columnGroup->addAction(columnAction);
@@ -1120,51 +1116,23 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
 {
     ConfigData config = defaultConfig();
 
-    if(layout.contains("DoubleClickAction"_L1)) {
-        config.doubleClickAction = layout.value("DoubleClickAction"_L1).toInt();
-    }
-    if(layout.contains("MiddleClickAction"_L1)) {
-        config.middleClickAction = layout.value("MiddleClickAction"_L1).toInt();
-    }
-    if(layout.contains("SendPlayback"_L1)) {
-        config.sendPlayback = layout.value("SendPlayback"_L1).toBool();
-    }
-    if(layout.contains("FilterSource"_L1)) {
-        config.source = static_cast<FilterSource>(layout.value("FilterSource"_L1).toInt());
-    }
-    if(layout.contains("PlaylistEnabled"_L1)) {
-        config.playlistEnabled = layout.value("PlaylistEnabled"_L1).toBool();
-    }
-    if(layout.contains("AutoSwitch"_L1)) {
-        config.autoSwitch = layout.value("AutoSwitch"_L1).toBool();
-    }
-    if(layout.contains("KeepAlive"_L1)) {
-        config.preservePlaybackPlaylist = layout.value("KeepAlive"_L1).toBool();
-    }
-    if(layout.contains("PlaylistName"_L1)) {
-        config.playlistName = layout.value("PlaylistName"_L1).toString();
-    }
-    if(layout.contains("RestoreState"_L1)) {
-        config.restoreState = layout.value("RestoreState"_L1).toBool();
-    }
-    if(layout.contains("RowHeight"_L1)) {
-        config.rowHeight = layout.value("RowHeight"_L1).toInt();
-    }
+    config.doubleClickAction = layout.value("DoubleClickAction"_L1).toInt(config.doubleClickAction);
+    config.middleClickAction = layout.value("MiddleClickAction"_L1).toInt(config.middleClickAction);
+    config.sendPlayback      = layout.value("SendPlayback"_L1).toBool(config.sendPlayback);
+    config.source = static_cast<FilterSource>(layout.value("FilterSource"_L1).toInt(static_cast<int>(config.source)));
+    config.playlistEnabled          = layout.value("PlaylistEnabled"_L1).toBool(config.playlistEnabled);
+    config.autoSwitch               = layout.value("AutoSwitch"_L1).toBool(config.autoSwitch);
+    config.preservePlaybackPlaylist = layout.value("KeepAlive"_L1).toBool(config.preservePlaybackPlaylist);
+    config.playlistName             = layout.value("PlaylistName"_L1).toString(config.playlistName);
+    config.restoreState             = layout.value("RestoreState"_L1).toBool(config.restoreState);
+    config.rowHeight                = layout.value("RowHeight"_L1).toInt(config.rowHeight);
     if(layout.contains("IconWidth"_L1) && layout.contains("IconHeight"_L1)) {
         config.iconSize = {layout.value("IconWidth"_L1).toInt(), layout.value("IconHeight"_L1).toInt()};
     }
-    if(layout.contains("IconHorizontalGap"_L1)) {
-        config.iconHorizontalGap = layout.value("IconHorizontalGap"_L1).toInt();
-    }
-    if(layout.contains("IconVerticalGap"_L1)) {
-        config.iconVerticalGap = layout.value("IconVerticalGap"_L1).toInt();
-    }
-    if(layout.contains("ArtworkCornerRadius"_L1)) {
-        config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt();
-    }
-    if(layout.contains("AlignCaptionsToArtwork"_L1)) {
-        config.alignCaptionsToArtwork = layout.value("AlignCaptionsToArtwork"_L1).toBool();
-    }
+    config.iconHorizontalGap      = layout.value("IconHorizontalGap"_L1).toInt(config.iconHorizontalGap);
+    config.iconVerticalGap        = layout.value("IconVerticalGap"_L1).toInt(config.iconVerticalGap);
+    config.artworkCornerRadius    = layout.value("ArtworkCornerRadius"_L1).toInt(config.artworkCornerRadius);
+    config.alignCaptionsToArtwork = layout.value("AlignCaptionsToArtwork"_L1).toBool(config.alignCaptionsToArtwork);
 
     config.rowHeight           = std::max(config.rowHeight, 0);
     config.iconHorizontalGap   = std::max(config.iconHorizontalGap, -1);

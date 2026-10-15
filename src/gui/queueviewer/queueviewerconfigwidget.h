@@ -30,7 +30,7 @@ class QRadioButton;
 class QSpinBox;
 
 namespace Fooyin {
-class ScriptLineEdit;
+class ScriptTextEdit;
 
 class QueueViewerConfigDialog : public WidgetConfigDialog<QueueViewer, QueueViewer::ConfigData>
 {
@@ -47,8 +47,7 @@ protected:
 private:
     void setDisplayModeVisible(bool visible) const;
 
-    ScriptLineEdit* m_titleScript;
-    ScriptLineEdit* m_subtitleScript;
+    ScriptTextEdit* m_displayScript;
     QLabel* m_displayModeLabel;
     QRadioButton* m_playingTracksMode;
     QRadioButton* m_upcomingTracksMode;

@@ -262,6 +262,18 @@ void SingleTabbedWidget::setWidget(QWidget* widget)
     p->setupLayout();
 }
 
+QWidget* SingleTabbedWidget::takeWidget()
+{
+    auto* widget = p->m_widget.data();
+    p->m_widget  = nullptr;
+    if(widget) {
+        widget->hide();
+        widget->setParent(nullptr);
+    }
+    p->setupLayout();
+    return widget;
+}
+
 int SingleTabbedWidget::addTab(const QString& label)
 {
     return insertTab(-1, label);

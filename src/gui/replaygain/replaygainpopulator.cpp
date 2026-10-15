@@ -112,9 +112,12 @@ ReplayGainPopulator::ReplayGainPopulator(QObject* parent)
 
 ReplayGainPopulator::~ReplayGainPopulator() = default;
 
-void ReplayGainPopulator::run(const TrackList& tracks)
+void ReplayGainPopulator::run(const TrackList& tracks, std::stop_token token)
 {
-    setState(Running);
+    if(!startWork(token)) {
+        return;
+    }
+    p->m_data.stopToken = token;
 
     p->reset();
 

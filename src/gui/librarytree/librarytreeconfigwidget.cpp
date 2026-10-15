@@ -20,7 +20,7 @@
 #include "librarytreeconfigwidget.h"
 
 #include "librarytreegroupeditordialog.h"
-#include "librarytreescriptenvironment.h"
+#include "librarytreescriptcontext.h"
 
 #include <gui/trackselectioncontroller.h>
 
@@ -75,7 +75,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     tabs->addTab(styleTab, tr("Appearance"));
 
     m_playbackOnSend->setToolTip(
-        tr(R"(For "Replace current playlist" and "Create new playlist", start playback immediately.)"));
+        tr(R"(For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately.)"));
 
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), generalTab);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
@@ -93,7 +93,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
 
     m_preservePlaybackPlaylist->setToolTip(
-        tr("When this selection playlist is used for playback, preserve it with \"(Playback)\" appended to its "
+        tr("When this selection playlist is used for playback, preserve it with ‘(Playback)’ appended to its "
            "name instead of replacing its tracks."));
 
     row = 0;
@@ -126,15 +126,17 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     m_autoExpandSearchResultLimit->setSingleStep(5);
     m_autoExpandSearchResultLimit->setSpecialValueText(tr("Disabled"));
 
+    auto* autoExpandLabel = new QLabel(tr("Auto-expand if matching track count is at most") + u":"_s, this);
+    autoExpandLabel->setWordWrap(true);
+
     auto* searchingGroup       = new QGroupBox(tr("Searching"), generalTab);
     auto* searchingGroupLayout = new QGridLayout(searchingGroup);
 
     row = 0;
     searchingGroupLayout->addWidget(m_showControls, row++, 0, 1, 3);
-    searchingGroupLayout->addWidget(new QLabel(tr("Controls position") + u":"_s, this), row, 0, 1, 2);
-    searchingGroupLayout->addWidget(m_controlsPosition, row++, 2);
-    searchingGroupLayout->addWidget(new QLabel(tr("Auto-expand if matching track count is at most") + u":"_s, this),
-                                    row, 0, 1, 2);
+    searchingGroupLayout->addWidget(new QLabel(tr("Controls position") + u":"_s, this), row, 0);
+    searchingGroupLayout->addWidget(m_controlsPosition, row++, 1, 1, 2, Qt::AlignLeft);
+    searchingGroupLayout->addWidget(autoExpandLabel, row, 0, 1, 2);
     searchingGroupLayout->addWidget(m_autoExpandSearchResultLimit, row++, 2);
     searchingGroupLayout->setColumnStretch(3, 1);
 
@@ -185,12 +187,13 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     auto* generalLayout = new QGridLayout(generalTab);
 
     row = 0;
-    generalLayout->addWidget(generalGroup, row++, 0);
-    generalLayout->addWidget(searchingGroup, row++, 0);
-    generalLayout->addWidget(clickBehaviour, row++, 0);
-    generalLayout->addWidget(selectionPlaylist, row++, 0);
+    generalLayout->addWidget(generalGroup, row, 0);
+    generalLayout->addWidget(clickBehaviour, row++, 1);
+    generalLayout->addWidget(searchingGroup, row, 0);
+    generalLayout->addWidget(selectionPlaylist, row++, 1);
     generalLayout->setColumnStretch(0, 1);
-    generalLayout->setRowStretch(4, 1);
+    generalLayout->setColumnStretch(1, 1);
+    generalLayout->setRowStretch(2, 1);
 
     auto* styleLayout = new QGridLayout(styleTab);
 

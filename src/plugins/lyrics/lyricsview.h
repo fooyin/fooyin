@@ -25,6 +25,7 @@
 #include <QMargins>
 #include <QPersistentModelIndex>
 #include <QPointer>
+#include <QTextDocument>
 
 class QColor;
 class QPaintEvent;
@@ -81,6 +82,8 @@ private:
     [[nodiscard]] int visiblePaddingHeight(bool top) const;
 
     void updateScrollSingleStep();
+    void updateDisplayDocument();
+    void updateDisplayDocumentWidth();
     void paintItems(QPainter& painter, const QPaintEvent* event) const;
     void paintEdgeFade(QPainter& painter) const;
     void updateSeekToolTip();
@@ -88,6 +91,7 @@ private:
     void clearDragPreview();
 
     RichText m_displayString;
+    QTextDocument m_displayDocument;
     Qt::Alignment m_displayAlignment;
     QMargins m_displayMargins;
 

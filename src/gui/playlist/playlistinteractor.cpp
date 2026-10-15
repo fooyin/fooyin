@@ -377,6 +377,20 @@ PlayerController* PlaylistInteractor::playerController() const
     return p->m_controller->playerController();
 }
 
+void PlaylistInteractor::refreshPlaylist(const UId& playlistId)
+{
+    if(playlistId.isValid()) {
+        Q_EMIT playlistRefreshRequested(playlistId, {});
+    }
+}
+
+void PlaylistInteractor::refreshEntries(const UId& playlistId, std::span<const UId> entryIds)
+{
+    if(playlistId.isValid() && !entryIds.empty()) {
+        Q_EMIT playlistRefreshRequested(playlistId, {entryIds.begin(), entryIds.end()});
+    }
+}
+
 void PlaylistInteractor::filesToPlaylist(const QList<QUrl>& urls, const UId& id)
 {
     if(urls.empty()) {

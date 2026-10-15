@@ -81,7 +81,7 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
 
     auto* seekHint     = new QLabel(u"🛈 "_s + tr("This will only function with synced lyrics."), generalPage);
     auto* noLyricsHint = new QLabel(
-        u"🛈 "_s + tr("This will be displayed if lyrics for the current track can't be found."), generalPage);
+        u"🛈 "_s + tr("This will be displayed if lyrics for the current track can’t be found."), generalPage);
 
     int row = 0;
     generalLayout->addWidget(m_seekOnClick, row++, 0, 1, 2);

@@ -30,11 +30,26 @@ using namespace Qt::StringLiterals;
 
 constexpr auto EncoderProfilesKey   = "Converter/EncoderProfiles";
 constexpr auto ConversionPresetsKey = "Converter/Presets";
+constexpr auto CurrentPresetKey     = "Converter/CurrentPreset";
 constexpr auto LastUsedPresetKey    = "Converter/LastUsedPreset";
 constexpr auto DataVersion          = 1;
 
 namespace Fooyin {
 namespace {
+QByteArray conversionStateData(const char* key)
+{
+    FyStateSettings stateSettings;
+    FySettings settings;
+    if(settings.contains(key)) {
+        if(!stateSettings.contains(key)) {
+            stateSettings.setValue(key, settings.value(key));
+        }
+        stateSettings.sync();
+        settings.remove(key);
+    }
+    return stateSettings.value(key).toByteArray();
+}
+
 QJsonObject encoderProfileToJson(const EncoderProfile& profile)
 {
     return {
@@ -247,10 +262,24 @@ void setConversionPresets(const std::vector<StoredConversionPreset>& presets)
     settings.setValue(ConversionPresetsKey, serialiseConversionPresets(presets));
 }
 
+std::optional<StoredConversionPreset> currentConversionPreset()
+{
+    auto presets = deserialiseConversionPresets(conversionStateData(CurrentPresetKey));
+    if(presets.empty()) {
+        return lastUsedConversionPreset();
+    }
+    return std::move(presets.front());
+}
+
+void setCurrentConversionPreset(const StoredConversionPreset& preset)
+{
+    FyStateSettings settings;
+    settings.setValue(CurrentPresetKey, serialiseConversionPresets({preset}));
+}
+
 std::optional<StoredConversionPreset> lastUsedConversionPreset()
 {
-    const FySettings settings;
-    auto presets = deserialiseConversionPresets(settings.value(LastUsedPresetKey).toByteArray());
+    auto presets = deserialiseConversionPresets(conversionStateData(LastUsedPresetKey));
     if(presets.empty()) {
         return {};
     }
@@ -259,7 +288,7 @@ std::optional<StoredConversionPreset> lastUsedConversionPreset()
 
 void setLastUsedConversionPreset(const StoredConversionPreset& preset)
 {
-    FySettings settings;
+    FyStateSettings settings;
     settings.setValue(LastUsedPresetKey, serialiseConversionPresets({preset}));
 }
 

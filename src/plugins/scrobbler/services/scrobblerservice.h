@@ -23,6 +23,7 @@
 #include "scrobblercache.h"
 #include "servicedetails.h"
 
+#include <core/accountstore.h>
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
 
@@ -66,7 +67,7 @@ class ScrobblerService : public QObject
 
 public:
     ScrobblerService(ServiceDetails details, NetworkAccessManager* network, SettingsManager* settings,
-                     QObject* parent = nullptr);
+                     DbConnectionPoolPtr dbPool, QObject* parent = nullptr);
     ~ScrobblerService() override;
 
     [[nodiscard]] bool isEnabled() const;
@@ -123,6 +124,8 @@ protected:
     [[nodiscard]] ScrobblerCache* cache() const;
     [[nodiscard]] LovedCache* lovedCache() const;
     [[nodiscard]] SettingsManager* settings() const;
+    [[nodiscard]] const AccountStore& accountStore() const;
+    [[nodiscard]] QString accountName() const;
 
     ServiceDetails& detailsRef();
     ScriptParser* scriptParser();
@@ -167,6 +170,7 @@ protected:
 private:
     NetworkAccessManager* m_network;
     SettingsManager* m_settings;
+    AccountStore m_accountStore;
 
     ScriptParser m_scriptParser;
 

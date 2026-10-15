@@ -26,6 +26,7 @@
 
 #include <QPointer>
 
+#include <cmath>
 #include <cstdint>
 #include <cstdlib>
 #include <iterator>
@@ -228,6 +229,23 @@ bool VisualisationSession::getSpectrumWindowEndingAtDuration(SpectrumWindow& out
     return p->backend
         && p->backend->getSpectrumWindowEndingAtDuration(out, endTimeMs, durationMs, p->channelSelection,
                                                          windowFunction);
+}
+
+float spectrumWindowGain(VisualisationSession::SpectrumWindowFunction windowFunction, float phase)
+{
+    using WindowFunction = VisualisationSession::SpectrumWindowFunction;
+
+    switch(windowFunction) {
+        case WindowFunction::BlackmanHarris:
+            return 0.35875F - (0.48829F * std::cos(phase)) + (0.14128F * std::cos(2.0F * phase))
+                 - (0.01168F * std::cos(3.0F * phase));
+        case WindowFunction::Hann:
+            return 0.5F * (1.0F - std::cos(phase));
+        case WindowFunction::None:
+            return 1.0F;
+    }
+
+    return 1.0F;
 }
 
 class VisualisationServicePrivate

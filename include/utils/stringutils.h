@@ -45,6 +45,7 @@ FYUTILS_EXPORT QString elideTextWithBreaks(const QString& text, const QFontMetri
 FYUTILS_EXPORT QString capitalise(const QString& str);
 FYUTILS_EXPORT QByteArray detectEncoding(const QByteArray& content, const DetectEncodingOptions& options = {});
 FYUTILS_EXPORT std::optional<QString> decodeText(const QByteArray& content, const QByteArray& encoding);
+FYUTILS_EXPORT QString decodeTextWithDetection(const QByteArray& content, const DetectEncodingOptions& options = {});
 FYUTILS_EXPORT QString foldForSearch(QStringView text);
 
 FYUTILS_EXPORT QString msToString(std::chrono::milliseconds ms, bool includeMs);

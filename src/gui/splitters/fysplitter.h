@@ -131,6 +131,8 @@ public:
     [[nodiscard]] bool opaqueResize() const;
     [[nodiscard]] FySplitter* splitter() const;
 
+    void setMinimumGrabWidth(int width);
+
     [[nodiscard]] QSize sizeHint() const override;
 
 protected:

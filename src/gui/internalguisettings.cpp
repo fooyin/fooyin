@@ -29,6 +29,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/iconloader.h>
+#include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
@@ -100,6 +101,9 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     qRegisterMetaType<Fooyin::ResolvedAppStyle>("ResolvedAppStyle");
 
     m_settings->createTempSetting<LayoutEditing>(false);
+    m_settings->createSetting<DockWidgetPalette>(false, u"Interface/DockWidgetPalette"_s);
+    m_settings->createSetting<SettingsSearchBarPosition>(
+        static_cast<int>(SettingsDialogController::SearchBarPosition::Top), u"Interface/SettingsSearchBarPosition"_s);
     m_settings->createSetting<StartupBehaviour>(3, u"Interface/StartupBehaviour"_s);
     m_settings->createSetting<WaitForTracks>(true, u"Interface/WaitForTracks"_s);
     m_settings->createSetting<IconTheme>(0, u"Theme/IconTheme"_s);
@@ -229,6 +233,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<DragOnlyAfterSelect>(true, u"Interface/DragOnlyAfterSelect"_s);
     m_settings->createSetting<Internal::PlaylistTrackPreloadCount>(2000, u"Playlist/TrackPreloadCount"_s);
     m_settings->createSetting<Internal::PlaylistInlineTagEditing>(false, u"PlaylistWidget/InlineTagEditing"_s);
+    m_settings->createSetting<Internal::PlaylistInlineEditDelayMs>(600, u"PlaylistWidget/InlineEditDelayMs"_s);
     m_settings->createSetting<Internal::ContextMenuTrackDisabledSections>(
         QStringList{QString::fromLatin1(Constants::Actions::CopyLocation),
                     QString::fromLatin1(Constants::Actions::CopyDirectoryPath),
@@ -275,5 +280,18 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
         static_cast<int>(NowPlayingOutputService::OutputDefaultOptions), u"NowPlayingOutput/Options"_s);
     m_settings->createSetting<Internal::NowPlayingOutputAppendLineLimit>(0, u"NowPlayingOutput/AppendLineLimit"_s);
     m_settings->createSetting<Internal::OutputDeviceRefreshMs>(0, u"Engine/OutputDeviceRefreshMs"_s);
+
+    const auto scriptEditorFont = m_settings->fileValue(u"Interface/ScriptEditor/Font"_s);
+    if(scriptEditorFont.canConvert<QFont>()) {
+        auto theme           = m_settings->value<CustomTheme>().value<FyTheme>();
+        const auto className = u"Fooyin::ScriptEditorTextEdit"_s;
+        if(!theme.fonts.contains(className)) {
+            theme.fonts.insert(className, scriptEditorFont.value<QFont>());
+            m_settings->set<CustomTheme>(QVariant::fromValue(theme));
+        }
+    }
+    m_settings->fileRemove(u"Interface/ScriptEditor/Font"_s);
+    m_settings->fileRemove(u"Interface/ScriptEditor/FontFamily"_s);
+    m_settings->fileRemove(u"Interface/ScriptEditor/FontSize"_s);
 }
 } // namespace Fooyin

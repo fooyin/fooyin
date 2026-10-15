@@ -20,6 +20,7 @@
 #include "playlistorganiseritem.h"
 
 #include <core/playlist/playlist.h>
+#include <gui/scripting/richtextutils.h>
 
 namespace Fooyin {
 PlaylistOrganiserItem::PlaylistOrganiserItem()
@@ -63,5 +64,33 @@ Playlist* PlaylistOrganiserItem::playlist() const
 void PlaylistOrganiserItem::setTitle(const QString& title)
 {
     m_title = title;
+    invalidateRichText();
+}
+
+bool PlaylistOrganiserItem::hasRichText() const
+{
+    return m_hasRichText;
+}
+
+const RichText& PlaylistOrganiserItem::richTitle() const
+{
+    return m_richTitle;
+}
+
+const RichText& PlaylistOrganiserItem::rightRichTitle() const
+{
+    return m_rightRichTitle;
+}
+
+void PlaylistOrganiserItem::setRichText(RichText text)
+{
+    m_richTitle      = trimRichText(richTextForAlignment(text, RichAlignment::Left));
+    m_rightRichTitle = trimRichText(richTextForAlignment(text, RichAlignment::Right));
+    m_hasRichText    = true;
+}
+
+void PlaylistOrganiserItem::invalidateRichText()
+{
+    m_hasRichText = false;
 }
 } // namespace Fooyin

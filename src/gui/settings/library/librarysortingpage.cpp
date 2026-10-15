@@ -25,6 +25,7 @@
 #include <core/library/sortingregistry.h>
 #include <gui/guiconstants.h>
 #include <gui/scripting/scripteditor.h>
+#include <gui/widgets/checkboxdelegate.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -72,12 +73,13 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(SortingRegistry* sortingRegis
     , m_openEditor{new QToolButton(this)}
 {
     m_sortList->setExtendableModel(m_model);
-    m_sortList->setItemDelegateForColumn(2, new MultiLineEditDelegate(this));
+    m_sortList->setItemDelegateForColumn(0, new CheckBoxDelegate(this));
+    m_sortList->setItemDelegateForColumn(3, new MultiLineEditDelegate(this));
 
     // Hide index column
-    m_sortList->hideColumn(0);
+    m_sortList->hideColumn(1);
 
-    m_sortList->setExtendableColumn(1);
+    m_sortList->setExtendableColumn(2);
     m_sortList->verticalHeader()->hide();
     m_sortList->horizontalHeader()->setStretchLastSection(true);
     m_sortList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
@@ -142,7 +144,7 @@ void LibrarySortingPageWidget::updateButtonState()
         selection, [](const QModelIndex& index) { return !index.data(Qt::UserRole).value<SortScript>().isDefault; });
 
     m_sortList->removeRowAction()->setEnabled(hasCustom);
-    m_openEditor->setEnabled(selection.size() == 1 && selection.front().column() == 2);
+    m_openEditor->setEnabled(selection.size() == 1 && selection.front().column() == 3);
 }
 
 LibrarySortingPage::LibrarySortingPage(SortingRegistry* sortingRegistry, SettingsManager* settings, QObject* parent)

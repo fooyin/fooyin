@@ -20,15 +20,16 @@
 #include "m3uparser.h"
 
 #include "cueparser.h"
+#include "playlistparserutils.h"
 
 #include <core/track.h>
+#include <utils/timeconstants.h>
 
 #include <QBuffer>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QLoggingCategory>
-#include <QRegularExpression>
 #include <QTextStream>
 
 Q_LOGGING_CATEGORY(M3U, "fy.m3u")
@@ -64,7 +65,7 @@ bool processMetadata(const QString& line, Metadata& metadata)
         return false;
     }
 
-    metadata.duration = static_cast<uint64_t>(duration) * 1000;
+    metadata.duration = static_cast<uint64_t>(duration) * Time::MsPerSecond;
 
     const QString trackSection = info.section(u',', 1);
     const QStringList list     = trackSection.split(" - "_L1);
@@ -86,44 +87,9 @@ bool looksLikeHlsPlaylist(const QByteArray& data)
     return probe.startsWith("#EXTM3U") && probe.contains("#EXT-X-");
 }
 
-int endingSubsong(QString* filepath)
-{
-    static const QRegularExpression regex{uR"(#(\d+)$)"_s};
-    const QRegularExpressionMatch match = regex.match(*filepath);
-    if(match.hasMatch()) {
-        const int subsong = match.captured(1).toInt();
-        filepath->remove(match.capturedStart(), match.capturedLength());
-        return subsong;
-    }
-    return -1;
-}
-
 bool isCuePath(const QString& path)
 {
     return QFileInfo{path}.suffix().compare(u"cue"_s, Qt::CaseInsensitive) == 0;
-}
-
-QString resolvePlaylistEntryPath(const QString& playlistPath, const QString& entry, const QDir& dir)
-{
-    if(Track::isArchivePath(entry) || Track::isRemotePath(entry) || Track::isVirtualPath(entry)) {
-        return entry;
-    }
-
-    const QUrl playlistUrl{playlistPath};
-
-    if(Track::isRemotePath(playlistUrl.toString())) {
-        const QUrl resolved = playlistUrl.resolved(QUrl{entry});
-        if(resolved.isValid() && !resolved.scheme().isEmpty()) {
-            return resolved.toString();
-        }
-    }
-
-    const QString localEntry = QDir::fromNativeSeparators(entry);
-    if(dir.exists() && !QDir::isAbsolutePath(localEntry)) {
-        return QDir::cleanPath(dir.absoluteFilePath(localEntry));
-    }
-
-    return localEntry;
 }
 
 TrackList readCuePlaylist(const QString& path, const PlaylistParser::ReadPlaylistEntry& readEntry, bool skipNotFound)
@@ -256,9 +222,9 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& filepath, co
             }
         }
         else if(!line.isEmpty()) {
-            QString path{resolvePlaylistEntryPath(filepath, line, dir)};
+            QString path{Utils::resolveEntryPath(filepath, line, dir)};
 
-            const int subsong = endingSubsong(&path);
+            const int subsong = Utils::takeSubsongSuffix(path);
             if(isCuePath(path)) {
                 const auto cueTracks = readCuePlaylist(path, readEntry, skipNotFound);
                 tracks.insert(tracks.end(), cueTracks.cbegin(), cueTracks.cend());
@@ -335,7 +301,8 @@ void M3uParser::savePlaylist(QIODevice* device, const QString& extension, const 
         previousCueExportPath.clear();
 
         if(writeMetdata) {
-            stream << u"#EXTINF:%1,%2 - %3\n"_s.arg(track.duration() / 1000).arg(track.artist(), track.title());
+            stream << u"#EXTINF:%1,%2 - %3\n"_s.arg(track.duration() / Time::MsPerSecond)
+                          .arg(track.artist(), track.title());
         }
 
         QString path = track.filepath();

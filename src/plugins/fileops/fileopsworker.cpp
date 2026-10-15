@@ -41,35 +41,6 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin::FileOps {
 namespace {
-class FileOpsScriptEnvironment : public ScriptEnvironment,
-                                 public ScriptEvaluationEnvironment
-{
-public:
-    [[nodiscard]] const ScriptEvaluationEnvironment* evaluationEnvironment() const override
-    {
-        return this;
-    }
-
-    [[nodiscard]] TrackListContextPolicy trackListContextPolicy() const override
-    {
-        return TrackListContextPolicy::Unresolved;
-    }
-
-    [[nodiscard]] QString trackListPlaceholder() const override
-    {
-        return {};
-    }
-
-    [[nodiscard]] bool escapeRichText() const override
-    {
-        return false;
-    }
-
-    [[nodiscard]] bool replacePathSeparators() const override
-    {
-        return true;
-    }
-};
 
 QString replaceSeparators(const QString& input)
 {
@@ -117,16 +88,32 @@ FileOpsWorker::FileOpsWorker(MusicLibrary* library, std::shared_ptr<AudioLoader>
     , m_settings{settings}
     , m_tracks{std::move(tracks)}
     , m_isMonitoring{settings->value<Fooyin::Settings::Core::Internal::MonitorLibraryDirectories>()}
-{ }
-
-void FileOpsWorker::simulate(const FileOpPreset& preset)
 {
-    prepareOperations(preset, true);
+    m_libraryTracks = library->tracks();
+    for(const Track& track : m_tracks) {
+        if(const auto info = library->libraryInfo(track.libraryId())) {
+            m_libraries.insert_or_assign(info->id, *info);
+        }
+    }
 }
 
-void FileOpsWorker::run()
+void FileOpsWorker::setLibraryData(LibraryInfoMap libraries, TrackList tracks)
 {
-    setState(Running);
+    m_libraries     = std::move(libraries);
+    m_libraryTracks = std::move(tracks);
+}
+
+void FileOpsWorker::simulate(const FileOpPreset& preset, std::stop_token token)
+{
+    prepareOperations(preset, true, token);
+}
+
+void FileOpsWorker::run(std::stop_token token)
+{
+    if(!startWork(token.stop_possible() ? token : prepareWork())) {
+        Q_EMIT finished();
+        return;
+    }
 
     if(m_isMonitoring) {
         m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraryDirectories>(false);
@@ -210,9 +197,13 @@ void FileOpsWorker::run()
     Q_EMIT finished();
 }
 
-void FileOpsWorker::deleteFiles(bool forceImmediateDelete)
+void FileOpsWorker::deleteFiles(bool forceImmediateDelete, std::stop_token token)
 {
-    setState(Running);
+    if(!startWork(token.stop_possible() ? token : prepareWork())) {
+        Q_EMIT deleteFinished({}, {});
+        Q_EMIT finished();
+        return;
+    }
 
     reset();
 
@@ -285,9 +276,11 @@ void FileOpsWorker::deleteFiles(bool forceImmediateDelete)
     Q_EMIT finished();
 }
 
-bool FileOpsWorker::prepareOperations(const FileOpPreset& preset, bool emitSimulation)
+bool FileOpsWorker::prepareOperations(const FileOpPreset& preset, bool emitSimulation, std::stop_token token)
 {
-    setState(Running);
+    if(!startWork(token.stop_possible() ? token : prepareWork())) {
+        return false;
+    }
 
     reset();
     m_preset = preset;
@@ -318,7 +311,7 @@ bool FileOpsWorker::prepareOperations(const FileOpPreset& preset, bool emitSimul
 
     const bool shouldContinue = canContinue && mayRun();
     if(emitSimulation && shouldContinue) {
-        Q_EMIT simulated(m_operations);
+        Q_EMIT simulated(m_operations, stopToken());
     }
 
     setState(Idle);
@@ -328,8 +321,7 @@ bool FileOpsWorker::prepareOperations(const FileOpPreset& preset, bool emitSimul
 
 bool FileOpsWorker::populateTrackPaths()
 {
-    const auto tracks = m_library->tracks();
-    for(const Track& track : tracks) {
+    for(const Track& track : m_libraryTracks) {
         if(!mayRun()) {
             return false;
         }
@@ -600,9 +592,8 @@ void FileOpsWorker::simulateRename()
 
 QString FileOpsWorker::evaluatePath(const ParsedScript& script, const Track& track)
 {
-    static const FileOpsScriptEnvironment environment;
-    const ScriptContext context{.environment = &environment};
-    return m_scriptParser.evaluate(script, track, context);
+    const ScriptEvaluationOptions options{.replacePathSeparators = true};
+    return m_scriptParser.evaluate(script, track, {}, options);
 }
 
 FileOpResult FileOpsWorker::renameFile(const FileOpsItem& item)
@@ -638,7 +629,7 @@ FileOpResult FileOpsWorker::renameFile(const FileOpsItem& item)
                 track.setFilePath(item.destination);
             }
 
-            if(const auto library = m_library->libraryForPath(item.destination)) {
+            if(const auto library = libraryForPath(item.destination)) {
                 if(track.libraryId() != library->id) {
                     track.setLibraryId(library->id);
                 }
@@ -788,7 +779,7 @@ void FileOpsWorker::updateExtractedArchiveTracks(const QString& archivePath)
             }
 
             track.setFilePath(destination);
-            if(const auto library = m_library->libraryForPath(destination)) {
+            if(const auto library = libraryForPath(destination)) {
                 if(track.libraryId() != library->id) {
                     track.setLibraryId(library->id);
                 }
@@ -822,7 +813,7 @@ void FileOpsWorker::addEmptyDirs(const QDir& dir, const QDir& sourceRoot)
     QString libraryRoot;
 
     if(removeEmptyParentFolders) {
-        if(const auto libraryInfo = m_library->libraryForPath(sourceRoot.absolutePath())) {
+        if(const auto libraryInfo = libraryForPath(sourceRoot.absolutePath())) {
             libraryRoot = QDir::cleanPath(QFileInfo{libraryInfo->path}.absoluteFilePath());
         }
     }
@@ -907,15 +898,15 @@ QString FileOpsWorker::libraryRootForDeletedPath(const QString& filePath, int li
     const QString fileDir = QFileInfo{filePath}.absolutePath();
 
     if(libraryId >= 0) {
-        if(const auto libraryInfo = m_library->libraryInfo(libraryId)) {
-            const QString libraryRoot = QDir::cleanPath(QFileInfo{libraryInfo->path}.absoluteFilePath());
+        if(const auto libraryInfo = m_libraries.find(libraryId); libraryInfo != m_libraries.end()) {
+            const QString libraryRoot = QDir::cleanPath(QFileInfo{libraryInfo->second.path}.absoluteFilePath());
             if(Utils::File::isSamePath(fileDir, libraryRoot) || Utils::File::isSubdir(fileDir, libraryRoot)) {
                 return libraryRoot;
             }
         }
     }
 
-    if(const auto libraryInfo = m_library->libraryForPath(fileDir)) {
+    if(const auto libraryInfo = libraryForPath(fileDir)) {
         return QDir::cleanPath(QFileInfo{libraryInfo->path}.absoluteFilePath());
     }
 
@@ -931,5 +922,15 @@ int FileOpsWorker::archiveLibraryId(const QString& archivePath) const
     }
 
     return -1;
+}
+
+std::optional<LibraryInfo> FileOpsWorker::libraryForPath(const QString& path) const
+{
+    for(const auto& library : m_libraries | std::views::values) {
+        if(Utils::File::isSamePath(path, library.path) || Utils::File::isSubdir(path, library.path)) {
+            return library;
+        }
+    }
+    return {};
 }
 } // namespace Fooyin::FileOps

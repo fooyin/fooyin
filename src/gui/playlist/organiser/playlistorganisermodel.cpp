@@ -19,8 +19,6 @@
 
 #include "playlistorganisermodel.h"
 
-#include "organiserscripenvironment.h"
-
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
@@ -35,6 +33,7 @@
 #include <QMimeData>
 #include <QPalette>
 
+#include <array>
 #include <stack>
 
 using namespace Qt::StringLiterals;
@@ -122,11 +121,40 @@ PlaylistOrganiserModel::PlaylistOrganiserModel(PlaylistHandler* playlistHandler,
     , m_playerController{playerController}
     , m_playingColour{QApplication::palette().highlight().color()}
 {
-    m_playingColour.setAlpha(90);
-    m_scriptParser.addProvider(organiserScripVariableProvider());
-    setDisplayScripts(defaultLeftDisplayScript(), defaultRightDisplayScript());
+    QObject::connect(this, &QAbstractItemModel::dataChanged, this,
+                     [this](const QModelIndex& first, const QModelIndex& last, const QList<int>& roles) {
+                         if(!roles.isEmpty() && !roles.contains(PlaylistOrganiserItem::RichTitle)
+                            && !roles.contains(PlaylistOrganiserItem::RightRichTitle)) {
+                             return;
+                         }
+                         for(int row{first.row()}; row <= last.row(); ++row) {
+                             itemForIndex(index(row, 0, first.parent()))->invalidateRichText();
+                         }
+                     });
 
-    auto playlistChanged = [this](const QString& key, Qt::ItemDataRole role) {
+    const auto refreshGroup = [this](const QModelIndex& parent) {
+        if(parent.isValid()) {
+            Q_EMIT dataChanged(
+                parent, parent,
+                {PlaylistOrganiserItem::RichTitle, PlaylistOrganiserItem::RightRichTitle, Qt::SizeHintRole});
+        }
+    };
+    QObject::connect(this, &QAbstractItemModel::rowsInserted, this, refreshGroup);
+    QObject::connect(this, &QAbstractItemModel::rowsRemoved, this, refreshGroup);
+    QObject::connect(this, &QAbstractItemModel::rowsMoved, this,
+                     [refreshGroup](const QModelIndex& sourceStart, int /*sourceParent*/, int /*sourceEnd*/,
+                                    const QModelIndex& destinationParent, int /*destinationRow*/) {
+                         refreshGroup(sourceStart);
+                         if(sourceStart != destinationParent) {
+                             refreshGroup(destinationParent);
+                         }
+                     });
+
+    m_playingColour.setAlpha(90);
+
+    setDisplayScript(defaultDisplayScript());
+
+    const auto playlistChanged = [this](const QString& key, Qt::ItemDataRole role) {
         if(m_nodes.contains(key)) {
             const QModelIndex index = indexOfItem(&m_nodes.at(key));
             Q_EMIT dataChanged(index, index, {role});
@@ -145,8 +173,11 @@ PlaylistOrganiserModel::PlaylistOrganiserModel(PlaylistHandler* playlistHandler,
                      });
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
                      [this, playlistChanged]() { playlistChanged(m_activePlaylistKey, Qt::DecorationRole); });
+    QObject::connect(m_playlistHandler, &PlaylistHandler::playlistsPopulated, this, [this]() {
+        refreshData({PlaylistOrganiserItem::RichTitle, PlaylistOrganiserItem::RightRichTitle, Qt::SizeHintRole});
+    });
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistUpdated, this, [this](Playlist* playlist) {
-        refreshPlaylist(playlist, {PlaylistOrganiserItem::RichText, PlaylistOrganiserItem::RichRightText,
+        refreshPlaylist(playlist, {PlaylistOrganiserItem::RichTitle, PlaylistOrganiserItem::RightRichTitle,
                                    Qt::SizeHintRole, Qt::DecorationRole});
     });
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksAdded, this,
@@ -161,14 +192,14 @@ PlaylistOrganiserModel::PlaylistOrganiserModel(PlaylistHandler* playlistHandler,
                      [this](Playlist* playlist, const std::vector<int>&) { refreshPlaylist(playlist); });
 }
 
-QString PlaylistOrganiserModel::defaultLeftDisplayScript()
+QString PlaylistOrganiserModel::defaultDisplayScript()
 {
-    return u"%node_name%$if(%is_group%, \\[%count%\\],)"_s;
+    return u"%node_name%$if(%is_group%, \\[%count%\\],)<right>$if($not(%is_group%),%count%)"_s;
 }
 
-QString PlaylistOrganiserModel::defaultRightDisplayScript()
+QString PlaylistOrganiserModel::displayScript() const
 {
-    return u"$if($not(%is_group%),%count%)"_s;
+    return m_displayScriptText;
 }
 
 void PlaylistOrganiserModel::populate()
@@ -265,18 +296,14 @@ bool PlaylistOrganiserModel::restoreModel(QByteArray data)
     return true;
 }
 
-void PlaylistOrganiserModel::setDisplayScripts(const QString& leftScript, const QString& rightScript)
+void PlaylistOrganiserModel::setDisplayScript(const QString& displayScript)
 {
-    if(m_leftScriptText == leftScript && m_rightScriptText == rightScript) {
+    if(std::exchange(m_displayScriptText, displayScript) == displayScript) {
         return;
     }
 
-    m_leftScriptText  = leftScript;
-    m_rightScriptText = rightScript;
-    m_leftScript      = m_scriptParser.parse(leftScript);
-    m_rightScript     = m_scriptParser.parse(rightScript);
-
-    refreshData({PlaylistOrganiserItem::RichText, PlaylistOrganiserItem::RichRightText, Qt::SizeHintRole});
+    m_displayScript = m_scriptParser.parse(displayScript);
+    refreshData({PlaylistOrganiserItem::RichTitle, PlaylistOrganiserItem::RightRichTitle, Qt::SizeHintRole});
 }
 
 void PlaylistOrganiserModel::setColours(const QColor& playingTextColour, const QColor& playingBackgroundColour)
@@ -289,16 +316,6 @@ void PlaylistOrganiserModel::setColours(const QColor& playingTextColour, const Q
     m_playingColour     = playingBackgroundColour;
 
     refreshData({Qt::ForegroundRole, Qt::BackgroundRole});
-}
-
-QString PlaylistOrganiserModel::leftDisplayScript() const
-{
-    return m_leftScriptText;
-}
-
-QString PlaylistOrganiserModel::rightDisplayScript() const
-{
-    return m_rightScriptText;
 }
 
 QModelIndex PlaylistOrganiserModel::createGroup(const QModelIndex& parent)
@@ -379,7 +396,7 @@ void PlaylistOrganiserModel::playlistRenamed(Playlist* playlist)
 
         const QModelIndex index = indexForPlaylist(playlist);
         Q_EMIT dataChanged(index, index,
-                           {PlaylistOrganiserItem::RichText, PlaylistOrganiserItem::RichRightText, Qt::SizeHintRole});
+                           {PlaylistOrganiserItem::RichTitle, PlaylistOrganiserItem::RightRichTitle, Qt::SizeHintRole});
     }
 }
 
@@ -509,10 +526,13 @@ QVariant PlaylistOrganiserModel::data(const QModelIndex& index, int role) const
             return QVariant::fromValue(item->type());
         case PlaylistOrganiserItem::PlaylistData:
             return QVariant::fromValue(item->playlist());
-        case PlaylistOrganiserItem::RichText:
-            return leftRichText(item);
-        case PlaylistOrganiserItem::RichRightText:
-            return rightRichText(item);
+        case PlaylistOrganiserItem::RichTitle:
+        case PlaylistOrganiserItem::RightRichTitle: {
+            if(!item->hasRichText()) {
+                item->setRichText(evaluateRichScript(m_displayScript, item));
+            }
+            return role == PlaylistOrganiserItem::RichTitle ? item->richTitle() : item->rightRichTitle();
+        }
         default:
             break;
     }
@@ -549,7 +569,7 @@ bool PlaylistOrganiserModel::setData(const QModelIndex& index, const QVariant& v
     }
 
     Q_EMIT dataChanged(index, index,
-                       {PlaylistOrganiserItem::RichText, PlaylistOrganiserItem::RichRightText, Qt::SizeHintRole});
+                       {PlaylistOrganiserItem::RichTitle, PlaylistOrganiserItem::RightRichTitle, Qt::SizeHintRole});
 
     return true;
 }
@@ -566,10 +586,9 @@ bool PlaylistOrganiserModel::canDropMimeData(const QMimeData* data, Qt::DropActi
         return parent.data(PlaylistOrganiserItem::ItemType).toInt() != PlaylistOrganiserItem::PlaylistItem;
     }
 
-    if(auto* playlist = parent.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>()) {
-        if(playlist->isAutoPlaylist() || playlist->isLocked()) {
-            return false;
-        }
+    if(const auto* playlist = parent.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>();
+       playlist && (playlist->isAutoPlaylist() || playlist->isLocked())) {
+        return false;
     }
 
     if(data->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds)) || data->hasUrls()) {
@@ -609,7 +628,7 @@ bool PlaylistOrganiserModel::dropMimeData(const QMimeData* data, Qt::DropAction 
         QDataStream stream(&trackData, QIODevice::ReadOnly);
         stream >> ids;
 
-        if(auto* item = itemForIndex(parent)) {
+        if(const auto* item = itemForIndex(parent)) {
             if(item->type() == PlaylistOrganiserItem::PlaylistItem) {
                 Q_EMIT tracksDroppedOnPlaylist(ids, item->playlist()->id());
             }
@@ -620,7 +639,7 @@ bool PlaylistOrganiserModel::dropMimeData(const QMimeData* data, Qt::DropAction 
         }
     }
     else if(data->hasUrls()) {
-        if(auto* item = itemForIndex(parent)) {
+        if(const auto* item = itemForIndex(parent)) {
             if(item->type() == PlaylistOrganiserItem::PlaylistItem) {
                 Q_EMIT filesDroppedOnPlaylist(data->urls(), item->playlist()->id());
             }
@@ -727,8 +746,8 @@ void PlaylistOrganiserModel::refreshPlaylist(Playlist* playlist, const QList<int
     const QModelIndex index = indexForPlaylist(playlist);
     if(index.isValid()) {
         Q_EMIT dataChanged(index, index,
-                           roles.isEmpty() ? QList<int>{PlaylistOrganiserItem::RichText,
-                                                        PlaylistOrganiserItem::RichRightText, Qt::SizeHintRole}
+                           roles.isEmpty() ? QList<int>{PlaylistOrganiserItem::RichTitle,
+                                                        PlaylistOrganiserItem::RightRichTitle, Qt::SizeHintRole}
                                            : roles);
     }
 }
@@ -793,33 +812,26 @@ QString PlaylistOrganiserModel::evaluateScript(const ParsedScript& script, const
         return {};
     }
 
-    OrganiserScripEnvironment environment{item};
-    const ScriptContext context{.environment = &environment, .playlist = item->playlist()};
+    const bool isGroup = item->type() == PlaylistOrganiserItem::GroupItem;
+    const int count    = isGroup ? item->childCount() : item->playlist() ? item->playlist()->trackCount() : 0;
+    const ScriptResult name{.value = item->title(), .cond = !item->title().isEmpty()};
+    const std::array values{
+        ScriptVariableValue{.name = u"NODE_NAME"_s, .result = name}, ScriptVariableValue{u"NODENAME"_s, name},
+        ScriptVariableValue{.name = u"IS_GROUP"_s, .result = {.value = isGroup ? u"1"_s : QString{}, .cond = isGroup}},
+        ScriptVariableValue{.name = u"COUNT"_s, .result = {.value = QString::number(count), .cond = true}}};
+    const ScriptContext context{.playlist = item->playlist(), .values = values};
+    const ScriptEvaluationOptions options{.escapeRichText = true};
 
     if(const auto* playlist = item->playlist()) {
-        return m_scriptParser.evaluate(script, *playlist, context);
+        return m_scriptParser.evaluate(script, *playlist, context, options);
     }
 
-    return m_scriptParser.evaluate(script, context);
+    return m_scriptParser.evaluate(script, context, options);
 }
 
 RichText PlaylistOrganiserModel::evaluateRichScript(const ParsedScript& script, const PlaylistOrganiserItem* item) const
 {
-    return trimRichText(m_scriptFormatter.evaluate(evaluateScript(script, item)));
-}
-
-RichText PlaylistOrganiserModel::leftRichText(const PlaylistOrganiserItem* item) const
-{
-    return evaluateRichScript(m_leftScript, item);
-}
-
-RichText PlaylistOrganiserModel::rightRichText(const PlaylistOrganiserItem* item) const
-{
-    if(m_rightScriptText.isEmpty()) {
-        return {};
-    }
-
-    return evaluateRichScript(m_rightScript, item);
+    return m_scriptFormatter.evaluate(evaluateScript(script, item));
 }
 
 QByteArray PlaylistOrganiserModel::saveIndexes(const QModelIndexList& indexes) const
@@ -831,7 +843,7 @@ QByteArray PlaylistOrganiserModel::saveIndexes(const QModelIndexList& indexes) c
         if(!index.isValid()) {
             continue;
         }
-        auto* item = itemForIndex(index);
+        const auto* item = itemForIndex(index);
         const QString key
             = item->type() == PlaylistOrganiserItem::GroupItem ? groupKey(item->title()) : playlistKey(item->title());
         stream << key;

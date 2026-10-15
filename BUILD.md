@@ -19,6 +19,7 @@ The following libraries are required:
 At least one of the following is required for audio output:
 
 * [ALSA](https://alsa-project.org)
+* [JACK](https://jackaudio.org)
 * [PipeWire](https://pipewire.org)
 * [PulseAudio](https://www.freedesktop.org/wiki/Software/PulseAudio/)
 * [SDL2](https://www.libsdl.org)

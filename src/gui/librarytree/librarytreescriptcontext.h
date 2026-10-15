@@ -1,0 +1,41 @@
+/*
+ * Fooyin
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
+ *
+ * Fooyin is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fooyin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#pragma once
+
+#include "fygui_export.h"
+
+#include <core/scripting/scripttypes.h>
+
+#include <QStringView>
+#include <array>
+
+namespace Fooyin {
+using LibraryTreeScriptValues = std::array<ScriptVariableValue, 2>;
+
+FYGUI_EXPORT LibraryTreeScriptValues deferredLibraryTreeScriptValues();
+FYGUI_EXPORT LibraryTreeScriptValues libraryTreeScriptValues(int trackCount, int childCount);
+
+QString defaultLibraryTreeSummaryTitle();
+
+FYGUI_EXPORT QString resolveLibraryTreeNodeVariables(QString title, int trackCount, int childCount);
+
+bool usesLibraryTreeNodeVariables(QStringView text);
+bool usesLibraryTreeChildCount(QStringView text);
+} // namespace Fooyin

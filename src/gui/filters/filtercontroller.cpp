@@ -28,17 +28,18 @@
 #include "tracklistwidget.h"
 
 #include <core/coresettings.h>
+#include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/plugins/coreplugincontext.h>
 #include <gui/contextmenuutils.h>
 #include <gui/coverprovider.h>
 #include <gui/coverrepository.h>
-#include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
+#include <gui/layout/editablelayout.h>
 #include <gui/playlist/currentplaylistcontroller.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/autoheaderview.h>
@@ -257,6 +258,11 @@ FilterControllerPrivate::FilterControllerPrivate(FilterController* self, ActionM
 {
     m_settings->subscribe<Settings::Core::UseVariousForCompilations>(m_self, [this]() { scheduleAllRecomputes(); });
     m_styleProvider->subscribe(m_self, [this]() { scheduleAllRecomputes(); });
+
+    if(m_libraryManager) {
+        QObject::connect(m_libraryManager, &LibraryManager::librariesChanged, m_self,
+                         [this]() { scheduleAllRecomputes(); });
+    }
 }
 
 void FilterControllerPrivate::handleAction(FilterWidget* filter, const TrackAction& action) const
@@ -889,9 +895,9 @@ void FilterControllerPrivate::recomputeStage(const Id& groupId, int stageIndex, 
     const FilterColumnList columns = stage.widget ? stage.widget->columns() : FilterColumnList{};
     const auto context             = rowBuildContext();
 
-    Utils::asyncExec([libraryManager = m_libraryManager, columns, tracks = stage.inputTracks, context]() {
-        return buildFilterRows(libraryManager, columns, tracks, context);
-    })
+    Utils::asyncExec([libraries = m_libraryManager ? m_libraryManager->allLibraries() : LibraryInfoMap{}, columns,
+                      tracks    = stage.inputTracks,
+                      context]() { return buildFilterRows(libraries, columns, tracks, context); })
         .then(m_self, [this, groupId, stageIndex, revision, currentTracks = std::move(currentTracks),
                        constrained](const FilterRowList& rows) mutable {
             if(!m_groups.contains(groupId)) {

@@ -28,7 +28,7 @@
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <gui/coverprovider.h>
-#include <gui/layoutprovider.h>
+#include <gui/layout/layoutprovider.h>
 #include <gui/playlist/playlistinteractor.h>
 #include <gui/plugins/guiplugincontext.h>
 #include <gui/trackselectioncontroller.h>

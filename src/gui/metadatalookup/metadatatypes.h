@@ -22,6 +22,7 @@
 #include <QMetaType>
 #include <QString>
 #include <QStringList>
+#include <QUrl>
 
 #include <unordered_map>
 #include <vector>
@@ -58,6 +59,7 @@ struct ReleaseSummary
 {
     QString sourceId;
     QString id;
+    QUrl url;
     QString title;
     std::vector<ArtistCredit> artistCredit;
     QString date;

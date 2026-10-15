@@ -133,8 +133,8 @@ RunServicesPageWidget::RunServicesPageWidget(SettingsManager* settings)
             messageBox.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
             messageBox.setText(
                 tr("<p>The Flatpak sandbox cannot directly launch applications installed on the host. "
-                   "To allow fooyin to launch host applications, add <code>org.freedesktop.Flatpak</code> to fooyin's "
-                   "Session Bus \"talk\" permissions in Flatseal, or run:</p>"
+                   "To allow fooyin to launch host applications, add <code>org.freedesktop.Flatpak</code> to fooyin’s "
+                   "Session Bus ‘talk’ permissions in Flatseal, or run:</p>"
                    "<pre>flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin</pre>"
                    "<p>Then prefix each service command with <code>flatpak-spawn --host</code>. For example:</p>"
                    "<pre>flatpak-spawn --host spek \\\"%filepath%\\\"</pre>"

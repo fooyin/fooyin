@@ -105,7 +105,7 @@ ConverterSetupDialog::ConverterSetupDialog(AudioEncoderRegistry* registry, DspCh
     , m_replayGainPreventClipping{new QCheckBox(tr("Prevent clipping"), this)}
     , m_replayGainPreamp{new QDoubleSpinBox(this)}
     , m_replayGainWithoutInfoPreamp{new QDoubleSpinBox(this)}
-    , m_preserveDspState{new QCheckBox(tr("Don't reset DSP between tracks"), this)}
+    , m_preserveDspState{new QCheckBox(tr("Don’t reset DSP between tracks"), this)}
     , m_activeDsps{new QTableView(this)}
     , m_availableDspList{new QListView(this)}
     , m_activeDspModel{new DspModel(this)}
@@ -151,7 +151,21 @@ ConverterSetupDialog::ConverterSetupDialog(AudioEncoderRegistry* registry, DspCh
 
     populateProfiles();
     populatePresets();
+
     applyDefaultPreset();
+    if(const auto current = ConverterSettings::currentConversionPreset()) {
+        m_presetList->setCurrentRow(-1);
+        applyPreset(*current);
+    }
+
+    QObject::connect(this, &QDialog::finished, this, [this] {
+        ConverterSettings::setCurrentConversionPreset({
+            .name            = u"[current]"_s,
+            .preset          = job().preset,
+            .showReport      = showReport(),
+            .showOutputFiles = showOutputFiles(),
+        });
+    });
 }
 
 ConversionJob ConverterSetupDialog::job() const
@@ -740,7 +754,7 @@ void ConverterSetupDialog::configureDsp(const QModelIndex& index)
     auto settingsDialog = std::unique_ptr<DspSettingsDialog>{provider->createSettingsWidget(this)};
     if(!settingsDialog) {
         QMessageBox::warning(this, tr("DSP Settings"),
-                             tr("Unable to open settings for DSP \"%1\".").arg(dsp.name.isEmpty() ? dsp.id : dsp.name));
+                             tr("Unable to open settings for DSP ‘%1’.").arg(dsp.name.isEmpty() ? dsp.id : dsp.name));
         return;
     }
 

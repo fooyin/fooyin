@@ -19,7 +19,7 @@
 
 #include <core/scripting/scripttrackwriter.h>
 
-#include "scriptbinder.h"
+#include <core/scripting/scriptregistry.h>
 
 #include <cmath>
 #include <functional>
@@ -216,7 +216,7 @@ void setTrackScriptValue(const QString& var, const ScriptFieldValue& value, Trac
     }
 
     const QString tag = var.toUpper();
-    if(setBuiltInTrackValue(resolveBuiltInVariableKind(tag), value, track)) {
+    if(setBuiltInTrackValue(ScriptRegistry::instance().resolveVariable(tag), value, track)) {
         return;
     }
 

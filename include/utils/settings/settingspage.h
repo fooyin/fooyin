@@ -27,6 +27,8 @@
 #include <QIcon>
 #include <QWidget>
 
+#include <optional>
+
 namespace Fooyin {
 class SettingsDialogController;
 
@@ -59,6 +61,7 @@ public:
     virtual void apply() = 0;
     virtual void finish() { }
     virtual void reset() = 0;
+    virtual void setSearchFilter(const QString& /*text*/) { }
 
     [[nodiscard]] virtual QByteArray saveState() const
     {
@@ -91,6 +94,9 @@ public:
 
     QWidget* widget();
 
+    [[nodiscard]] virtual bool matches(const QString& text);
+    void setSearchFilter(const QString& text);
+
     void load();
     void apply();
     void finish();
@@ -108,6 +114,8 @@ protected:
     void setPosition(SettingsPagePosition position);
     void setRelativePosition(SettingsPageRelativePosition position, const Id& page);
     void setSelector(SettingsPageSelector selector);
+    // Overrides widget text collection for pages that are expensive to construct
+    void setSearchKeywords(const QStringList& keywords);
 
     using WidgetCreator = std::function<SettingsPageWidget*()>;
     void setWidgetCreator(const WidgetCreator& widgetCreator);
@@ -124,5 +132,7 @@ private:
     WidgetCreator m_widgetCreator;
     QWidget* m_widget;
     QByteArray m_state;
+    std::optional<QString> m_searchKeywords;
+    std::optional<QString> m_searchText;
 };
 } // namespace Fooyin

@@ -19,11 +19,9 @@
 
 #include "queueviewermodel.h"
 
-#include "scripting/scriptvariableproviders.h"
-
 #include <core/player/playbackqueue.h>
 #include <core/player/playercontroller.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/scripting/scripttypes.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/guiutils.h>
@@ -96,11 +94,20 @@ std::span<const int> queueIndexesFor(const QueueIndexLookup& queueIndexes, const
     return {};
 }
 
-PlaybackScriptContext makeQueueScriptContext(PlayerController* playerController, SettingsManager* settings,
-                                             const PlaylistTrack& queueTrack, std::span<const int> queueIndexes,
-                                             int queueTotal)
+ScriptQueueItemState queueItemState(const PlaybackQueue& queue, PlaybackQueueItemId itemId, int index, int currentIndex)
 {
-    PlaybackScriptContext data;
+    if(itemId != 0 && itemId == queue.currentItemId()) {
+        return ScriptQueueItemState::Current;
+    }
+
+    return index <= currentIndex ? ScriptQueueItemState::Played : ScriptQueueItemState::Upcoming;
+}
+
+ScriptEvaluationContext makeQueueScriptContext(PlayerController* playerController, SettingsManager* settings,
+                                               const PlaylistTrack& queueTrack, std::span<const int> queueIndexes,
+                                               int queueTotal, ScriptQueueItemState state)
+{
+    ScriptEvaluationContext data;
 
     uint64_t currentPosition{0};
     uint64_t currentTrackDuration{0};
@@ -122,12 +129,22 @@ PlaybackScriptContext makeQueueScriptContext(PlayerController* playerController,
         playState                = playerController->playState();
     }
 
-    data.environment.setTrackState(queueTrack.indexInPlaylist, currentPlayingTrackIndex, currentTrackId, 0);
-    data.environment.setPlaybackState(currentPosition, currentTrackDuration, bitrate, playState, std::move(decoder),
-                                      std::move(outputInfo));
-    data.environment.setRatingStarSymbols(Gui::ratingStarSymbols(*settings));
-    data.environment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true);
-    data.environment.setQueueState(queueIndexes, queueTotal);
+    data.data.playlistData
+        = ScriptPlaylistData{.playlistId        = queueTrack.playlistId,
+                             .entryId           = queueTrack.entryId,
+                             .trackIndex        = queueTrack.indexInPlaylist,
+                             .playingTrackIndex = currentPlayingTrackIndex,
+                             .playingTrackId    = currentTrackId,
+                             .queueIndexes      = std::vector<int>{queueIndexes.begin(), queueIndexes.end()},
+                             .queueTotal        = queueTotal,
+                             .queueItemState    = state};
+    data.data.playback = ScriptPlaybackData{.position   = currentPosition,
+                                            .duration   = currentTrackDuration,
+                                            .bitrate    = bitrate,
+                                            .decoder    = std::move(decoder),
+                                            .outputInfo = std::move(outputInfo),
+                                            .playState  = playState};
+    data.options       = {.escapeRichText = true, .ratingSymbols = Gui::ratingStarSymbols(*settings)};
 
     return data;
 }
@@ -147,9 +164,6 @@ QueueViewerModel::QueueViewerModel(CoverRepository* coverRepository, PlayerContr
     , m_iconSize{CoverProvider::findThumbnailSize({36, 36})}
     , m_currentTrackItem{nullptr}
 {
-    m_scriptParser.addProvider(playlistVariableProvider());
-    m_scriptParser.addProvider(artworkMarkerVariableProvider());
-
     QObject::connect(&m_coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) {
         if(m_trackParents.contains(track.albumHash())) {
             const auto items = m_trackParents.at(track.albumHash());
@@ -235,12 +249,10 @@ QVariant QueueViewerModel::data(const QModelIndex& index, int role) const
     switch(role) {
         case Qt::DisplayRole:
             return item->title();
-        case QueueViewerItem::RightText:
-            return item->subtitle();
         case QueueViewerItem::RichTitle:
             return item->richTitle();
-        case QueueViewerItem::RichRightText:
-            return item->richSubtitle();
+        case QueueViewerItem::RightRichTitle:
+            return item->rightRichTitle();
         case QueueViewerItem::IsPlaybackIcon:
             return isPlaying && m_playerController->playState() != Player::PlayState::Stopped;
         case Qt::DecorationRole:
@@ -380,15 +392,19 @@ void QueueViewerModel::reset(const PlaybackQueue& queue)
     tracks.reserve(queue.items().size() - static_cast<size_t>(m_firstQueueIndex));
     std::ranges::transform(queue.items() | std::views::drop(m_firstQueueIndex), std::back_inserter(tracks),
                            &PlaybackQueueItem::track);
-    const auto queueIndexes = buildQueueIndexLookup(tracks);
-    const int queueTotal    = static_cast<int>(tracks.size());
+    const auto queueIndexes     = buildQueueIndexLookup(tracks);
+    const int queueTotal        = static_cast<int>(tracks.size());
+    const int currentQueueIndex = queue.currentIndex();
 
-    for(const auto& queueItem : queue.items() | std::views::drop(m_firstQueueIndex)) {
+    for(int queueIndex{m_firstQueueIndex};
+        const auto& queueItem : queue.items() | std::views::drop(m_firstQueueIndex)) {
         const auto& track = queueItem.track;
         auto* item        = m_trackItems.emplace_back(std::make_unique<QueueViewerItem>(track, queueItem.id)).get();
-        const auto contextData = makeQueueScriptContext(m_playerController, m_settings, track,
-                                                        queueIndexesFor(queueIndexes, track), queueTotal);
-        item->generateTitle(&m_scriptParser, &m_scriptFormatter, m_titleScript, m_subtitleScript, contextData.context);
+        const auto contextData
+            = makeQueueScriptContext(m_playerController, m_settings, track, queueIndexesFor(queueIndexes, track),
+                                     queueTotal, queueItemState(queue, queueItem.id, queueIndex++, currentQueueIndex));
+        item->generateTitle(&m_scriptParser, &m_scriptFormatter, m_displayScript, contextData.data.context(),
+                            contextData.options);
         rootItem()->appendChild(item);
         m_trackParents[track.track.albumHash()].emplace_back(item);
         m_itemsById.emplace(queueItem.id, item);
@@ -455,12 +471,17 @@ bool QueueViewerModel::updatePlaybackPosition(const PlaybackQueue& queue)
         updatePlaybackRoles(currentIndex);
     }
 
+    if(previousQueueItemId != m_currentQueueItemId || rowsToRemove > 0) {
+        regenerateTitles();
+    }
+
     return true;
 }
 
 void QueueViewerModel::playbackStateChanged()
 {
     updateShowCurrent();
+    regenerateTitles();
 
     const int rows = rowCount({});
     if(rows > 0) {
@@ -500,22 +521,33 @@ void QueueViewerModel::regenerateTitles()
     const auto queueIndexes = buildQueueIndexLookup(tracks);
     const int queueTotal    = static_cast<int>(tracks.size());
 
-    for(const auto& item : m_trackItems) {
+    const auto& queue           = m_playerController->playbackQueue();
+    const int currentQueueIndex = queue.currentIndex();
+
+    for(int queueIndex{m_firstQueueIndex}; const auto& item : m_trackItems) {
         const auto track       = item->track();
-        const auto contextData = makeQueueScriptContext(m_playerController, m_settings, track,
-                                                        queueIndexesFor(queueIndexes, track), queueTotal);
-        item->generateTitle(&m_scriptParser, &m_scriptFormatter, m_titleScript, m_subtitleScript, contextData.context);
+        const auto contextData = makeQueueScriptContext(
+            m_playerController, m_settings, track, queueIndexesFor(queueIndexes, track), queueTotal,
+            queueItemState(queue, item->queueItemId(), queueIndex++, currentQueueIndex));
+        item->generateTitle(&m_scriptParser, &m_scriptFormatter, m_displayScript, contextData.data.context(),
+                            contextData.options);
     }
 
     if(m_currentTrackItem) {
-        const auto track       = m_currentTrackItem->track();
-        const auto contextData = makeQueueScriptContext(m_playerController, m_settings, track,
-                                                        queueIndexesFor(queueIndexes, track), queueTotal);
-        m_currentTrackItem->generateTitle(&m_scriptParser, &m_scriptFormatter, m_titleScript, m_subtitleScript,
-                                          contextData.context);
+        const auto track = m_currentTrackItem->track();
+        const auto contextData
+            = makeQueueScriptContext(m_playerController, m_settings, track, queueIndexesFor(queueIndexes, track),
+                                     queueTotal, ScriptQueueItemState::Current);
+        m_currentTrackItem->generateTitle(&m_scriptParser, &m_scriptFormatter, m_displayScript,
+                                          contextData.data.context(), contextData.options);
     }
 
-    invalidateData();
+    const int rows = rowCount({});
+    if(rows > 0) {
+        Q_EMIT dataChanged(
+            index(0, 0, {}), index(rows - 1, 0, {}),
+            {Qt::DisplayRole, Qt::SizeHintRole, QueueViewerItem::RichTitle, QueueViewerItem::RightRichTitle});
+    }
 }
 
 void QueueViewerModel::removeLeadingItems(const int count)
@@ -546,14 +578,11 @@ void QueueViewerModel::removeLeadingItems(const int count)
     endRemoveRows();
 }
 
-void QueueViewerModel::setScripts(const QString& titleScript, const QString& subtitleScript)
+void QueueViewerModel::setDisplayScript(const QString& displayScript)
 {
-    if(m_titleScript == titleScript && m_subtitleScript == subtitleScript) {
+    if(std::exchange(m_displayScript, displayScript) == displayScript) {
         return;
     }
-
-    m_titleScript    = titleScript;
-    m_subtitleScript = subtitleScript;
     regenerateTitles();
 }
 
@@ -599,11 +628,12 @@ std::unique_ptr<QueueViewerItem> QueueViewerModel::makeCurrentTrackItem(const Qu
     const int queueTotal    = static_cast<int>(tracks.size());
     const auto currentTrack = m_playerController->currentPlaylistTrack();
     const auto contextData  = makeQueueScriptContext(m_playerController, m_settings, currentTrack,
-                                                     queueIndexesFor(queueIndexes, currentTrack), queueTotal);
+                                                     queueIndexesFor(queueIndexes, currentTrack), queueTotal,
+                                                     ScriptQueueItemState::Current);
 
     auto currentTrackItem = std::make_unique<QueueViewerItem>(currentTrack);
-    currentTrackItem->generateTitle(&m_scriptParser, &m_scriptFormatter, m_titleScript, m_subtitleScript,
-                                    contextData.context);
+    currentTrackItem->generateTitle(&m_scriptParser, &m_scriptFormatter, m_displayScript, contextData.data.context(),
+                                    contextData.options);
     return currentTrackItem;
 }
 

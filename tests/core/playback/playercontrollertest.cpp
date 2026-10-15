@@ -26,7 +26,7 @@
 #include <core/internalcoresettings.h>
 #include <core/player/playerdefs.h>
 #include <core/playlist/playlisthandler.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/scripting/scripttypes.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/database/dbconnectionpool.h>

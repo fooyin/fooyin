@@ -9,6 +9,7 @@ set(FOOYIN_KNOWN_PLUGINS
     flac
     gme
     globalhotkeys
+    jack
     libarchive
     lyrics
     mediacontrol
@@ -86,6 +87,7 @@ if(UNIX AND NOT APPLE)
         APPEND
         FOOYIN_DEFAULT_PLUGINS
         cdda
+        jack
         mpris
         notify
         pulseaudio
@@ -125,11 +127,15 @@ endif()
 
 if(UNIX AND NOT APPLE)
     fooyin_add_selected_plugin(cdda)
+    fooyin_add_selected_plugin(jack)
     fooyin_add_selected_plugin(mpris)
     fooyin_add_selected_plugin(notify)
 else()
     if("cdda" IN_LIST FOOYIN_RESOLVED_PLUGINS)
         message(STATUS "cdda plugin is only available on Unix platforms other than macOS; skipping.")
+    endif()
+    if("jack" IN_LIST FOOYIN_RESOLVED_PLUGINS)
+        message(STATUS "jack plugin is only available on Unix platforms other than macOS; skipping.")
     endif()
     if("mpris" IN_LIST FOOYIN_RESOLVED_PLUGINS)
         message(STATUS "mpris plugin is only available on Unix platforms other than macOS; skipping.")

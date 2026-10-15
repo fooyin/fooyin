@@ -20,6 +20,7 @@
 #include <gui/fywidget.h>
 
 #include <core/coresettings.h>
+#include <gui/widgetcontainer.h>
 #include <utils/crypto.h>
 
 #include <QAction>
@@ -74,6 +75,7 @@ public:
     Id m_id{Utils::generateUniqueHash()};
     FyWidget::Features m_features;
     bool m_hasCustomMargins{false};
+    QMargins m_defaultMargins;
     QString m_standaloneStateKey;
     QPointer<QDialog> m_configDialog;
 };
@@ -137,6 +139,45 @@ QToolBar* FyWidget::findToolbar() const
     return qobject_cast<QToolBar*>(parent);
 }
 
+Qt::Orientation FyWidget::automaticOrientation() const
+{
+    if(const auto* toolbar = findToolbar()) {
+        return toolbar->orientation();
+    }
+
+    // At the square minimum, follow the surrounding row or column to avoid getting stuck
+    const auto availableSize = width() == height() && parentWidget() ? parentWidget()->size() : size();
+    return availableSize.height() > availableSize.width() ? Qt::Vertical : Qt::Horizontal;
+}
+
+void FyWidget::updateOrientationConstraints(bool automatic, const QSize& minimumSize)
+{
+    auto* widgetLayout{layout()};
+    if(!widgetLayout) {
+        return;
+    }
+
+    if(automatic && !findToolbar()) {
+        widgetLayout->setSizeConstraint(QLayout::SetNoConstraint);
+
+        const int minExtent = std::min(minimumSize.width(), minimumSize.height());
+        QSize flexibleMin{minExtent, minExtent};
+        if(const auto* container = qobject_cast<WidgetContainer*>(findParent())) {
+            if(container->orientation() == Qt::Horizontal) {
+                flexibleMin.setWidth(minimumSize.width());
+            }
+            else {
+                flexibleMin.setHeight(minimumSize.height());
+            }
+        }
+        setMinimumSize(flexibleMin);
+    }
+    else if(widgetLayout->sizeConstraint() == QLayout::SetNoConstraint) {
+        setMinimumSize(0, 0);
+        widgetLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+    }
+}
+
 QRect FyWidget::widgetGeometry() const
 {
     int x = this->x();
@@ -150,6 +191,32 @@ QRect FyWidget::widgetGeometry() const
     }
 
     return {x, y, width(), height()};
+}
+
+bool FyWidget::hasCustomLayoutMargins() const
+{
+    return p->m_hasCustomMargins;
+}
+
+void FyWidget::setLayoutMargins(const QMargins& margins)
+{
+    if(auto* widgetLayout = layout()) {
+        if(!p->m_hasCustomMargins) {
+            p->m_defaultMargins = widgetLayout->contentsMargins();
+        }
+        widgetLayout->setContentsMargins(margins);
+        p->m_hasCustomMargins = true;
+    }
+}
+
+void FyWidget::resetLayoutMargins()
+{
+    if(p->m_hasCustomMargins) {
+        if(auto* widgetLayout = layout()) {
+            widgetLayout->setContentsMargins(p->m_defaultMargins);
+        }
+        p->m_hasCustomMargins = false;
+    }
 }
 
 void FyWidget::saveLayout(QJsonArray& layout)
@@ -197,13 +264,12 @@ void FyWidget::loadLayout(const QJsonObject& layout)
         p->m_id = Id{layout["ID"_L1].toString()};
     }
 
-    p->m_hasCustomMargins = false;
+    resetLayoutMargins();
 
     if(this->layout() && layout.value("Margins"_L1).isObject()) {
         const QJsonObject marginData = layout.value("Margins"_L1).toObject();
-        this->layout()->setContentsMargins(marginData.value("Left"_L1).toInt(), marginData.value("Top"_L1).toInt(),
-                                           marginData.value("Right"_L1).toInt(), marginData.value("Bottom"_L1).toInt());
-        p->m_hasCustomMargins = true;
+        setLayoutMargins({marginData.value("Left"_L1).toInt(), marginData.value("Top"_L1).toInt(),
+                          marginData.value("Right"_L1).toInt(), marginData.value("Bottom"_L1).toInt()});
     }
 
     loadLayoutData(layout);
@@ -249,7 +315,7 @@ void FyWidget::showStandaloneWindow(const QString& title, const QString& stateKe
     }
 
     windows.insert_or_assign(stateKey, this);
-    QObject::connect(this, &QObject::destroyed, [stateKey, window = this]() {
+    QObject::connect(this, &QObject::destroyed, this, [stateKey, window = this]() {
         auto& widgetWindows = standaloneWindows();
         if(const auto it = widgetWindows.find(stateKey);
            it != widgetWindows.end() && (!it->second || it->second.data() == window)) {

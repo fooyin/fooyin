@@ -20,61 +20,72 @@
 #include "playlistpreset.h"
 
 constexpr auto PlaylistPresetVersionMarker = -1;
-constexpr auto PlaylistPresetVersion       = 4;
+constexpr auto PlaylistPresetVersion       = 5;
+
+using namespace Qt::StringLiterals;
 
 namespace Fooyin {
+namespace {
+QString combinedScript(const QString& left, const QString& right, bool addLine = false)
+{
+    QString script;
+    if(!left.isEmpty()) {
+        script = u"<left>"_s + left + u"</left>"_s;
+    }
+    if(addLine) {
+        script += u"\n<hr/>\n"_s;
+    }
+    if(!right.isEmpty()) {
+        script += u"<right>"_s + right + u"</right>"_s;
+    }
+    return script;
+}
+} // namespace
+
 QDataStream& operator<<(QDataStream& stream, const HeaderRow& header)
 {
-    stream << header.title;
-    stream << header.subtitle;
-    stream << header.sideText;
-    stream << header.info;
+    stream << header.text;
     stream << header.rowHeight;
     stream << header.showCover;
-    stream << header.simple;
+    stream << header.artworkPadding;
+    stream << header.artworkPaddingVertical;
     return stream;
 }
 
 QDataStream& operator>>(QDataStream& stream, HeaderRow& header)
 {
-    stream >> header.title;
-    stream >> header.subtitle;
-    stream >> header.sideText;
-    stream >> header.info;
+    stream >> header.text;
     stream >> header.rowHeight;
     stream >> header.showCover;
-    stream >> header.simple;
+    stream >> header.artworkPadding;
+    stream >> header.artworkPaddingVertical;
     return stream;
 }
 
 QDataStream& operator<<(QDataStream& stream, const SubheaderRow& subheader)
 {
-    stream << subheader.leftText;
-    stream << subheader.rightText;
+    stream << subheader.text;
     stream << subheader.rowHeight;
     return stream;
 }
 
 QDataStream& operator>>(QDataStream& stream, SubheaderRow& subheader)
 {
-    stream >> subheader.leftText;
-    stream >> subheader.rightText;
+    stream >> subheader.text;
     stream >> subheader.rowHeight;
     return stream;
 }
 
 QDataStream& operator<<(QDataStream& stream, const TrackRow& track)
 {
-    stream << track.leftText;
-    stream << track.rightText;
+    stream << track.text;
     stream << track.rowHeight;
     return stream;
 }
 
 QDataStream& operator>>(QDataStream& stream, TrackRow& track)
 {
-    stream >> track.leftText;
-    stream >> track.rightText;
+    stream >> track.text;
     stream >> track.rowHeight;
     return stream;
 }
@@ -115,9 +126,74 @@ QDataStream& operator>>(QDataStream& stream, PlaylistPreset& preset)
 
     stream >> preset.index;
     stream >> preset.name;
-    stream >> preset.header;
-    stream >> preset.subHeaders;
-    stream >> preset.track;
+
+    if(version >= 5) {
+        stream >> preset.header;
+    }
+    else {
+        RichScript title;
+        RichScript subtitle;
+        RichScript side;
+        RichScript info;
+        bool simple{false};
+
+        stream >> title >> subtitle >> side >> info;
+        stream >> preset.header.rowHeight >> preset.header.showCover >> simple;
+
+        auto& script = preset.header.text.script;
+
+        if(simple) {
+            preset.header.showCover = false;
+            script                  = combinedScript(title.script, side.script, !title.script.isEmpty());
+        }
+        else {
+            std::vector<QString> lines;
+
+            if(!title.script.isEmpty()) {
+                lines.push_back(u"<left>"_s + title.script + u"</left>"_s);
+            }
+            if(!subtitle.script.isEmpty() || !side.script.isEmpty()) {
+                const bool addLine = !subtitle.script.isEmpty() && !side.script.isEmpty();
+                lines.push_back(combinedScript(subtitle.script, side.script, addLine));
+            }
+            if(!info.script.isEmpty()) {
+                lines.push_back(u"<left>"_s + info.script + u"</left>"_s);
+            }
+            if(!lines.empty()) {
+                lines.push_back(u"<hr/>"_s);
+            }
+
+            for(const auto& line : lines) {
+                if(!script.isEmpty()) {
+                    script += u"\n$crlf()\n"_s;
+                }
+                script += line;
+            }
+        }
+    }
+
+    if(version >= 5) {
+        stream >> preset.subHeaders;
+        stream >> preset.track;
+    }
+    else {
+        quint32 subheaderCount{0};
+        stream >> subheaderCount;
+
+        for(quint32 i{0}; i < subheaderCount && stream.status() == QDataStream::Ok; ++i) {
+            SubheaderRow subheader;
+            RichScript left;
+            RichScript right;
+            stream >> left >> right >> subheader.rowHeight;
+            subheader.text.script = combinedScript(left.script, right.script, true);
+            preset.subHeaders.push_back(std::move(subheader));
+        }
+
+        RichScript left;
+        RichScript right;
+        stream >> left >> right >> preset.track.rowHeight;
+        preset.track.text.script = combinedScript(left.script, right.script);
+    }
 
     if(version >= 2 && !stream.atEnd()) {
         stream >> preset.insetSubheadersToImageColumns;

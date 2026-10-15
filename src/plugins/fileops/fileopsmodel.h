@@ -30,6 +30,7 @@
 namespace Fooyin {
 class AudioLoader;
 class MusicLibrary;
+class LibraryManager;
 
 namespace FileOps {
 struct FileOpsItem;
@@ -40,7 +41,7 @@ class FileOpsModel : public QAbstractItemModel
 
 public:
     FileOpsModel(MusicLibrary* library, std::shared_ptr<AudioLoader> audioLoader, TrackList tracks,
-                 SettingsManager* settings, QObject* parent = nullptr);
+                 SettingsManager* settings, LibraryManager* libraryManager, QObject* parent = nullptr);
     ~FileOpsModel() override;
 
     void simulate(const FileOpPreset& preset);
@@ -66,12 +67,14 @@ Q_SIGNALS:
     void finished();
 
 private:
-    void populate(const FileOperations& operations);
+    void populate(const FileOperations& operations, std::stop_token token);
     void operationCompleted(const FileOpResult& result);
     void workerFinished();
     QString operationToString(Operation op) const;
     static QString resultToString(const FileOpResult& result);
 
+    MusicLibrary* m_library;
+    LibraryManager* m_libraryManager;
     QThread m_workerThread;
     FileOpsWorker m_worker;
     FileOperations m_operations;

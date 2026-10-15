@@ -27,10 +27,10 @@
 #include "radiosearch.h"
 #include "radiostationstore.h"
 
-#include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
-#include <gui/layoutprovider.h>
+#include <gui/layout/editablelayout.h>
+#include <gui/layout/layoutprovider.h>
 #include <gui/settings/context/staticcontextmenupage.h>
 #include <gui/theme/themeregistry.h>
 #include <gui/widgetprovider.h>

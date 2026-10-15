@@ -721,12 +721,14 @@ void PlayerControllerPrivate::syncPlaylistTrackState(const UId& playlistId)
 
     bool queueChanged{false};
     auto queueTracks = m_queue.tracks();
-    for(auto& track : queueTracks) {
-        if(track.playlistId != playlistId) {
+    for(int i{0}; auto& track : queueTracks) {
+        const auto* item        = m_queue.item(i++);
+        const auto& sourceTrack = item && item->detachedPlaylistTrack ? *item->detachedPlaylistTrack : track;
+        if(sourceTrack.playlistId != playlistId) {
             continue;
         }
 
-        if(const auto remappedTrack = remapPlaylistTrackReference(m_playlistHandler, track)) {
+        if(const auto remappedTrack = remapPlaylistTrackReference(m_playlistHandler, sourceTrack)) {
             if(track != *remappedTrack) {
                 track        = *remappedTrack;
                 queueChanged = true;
@@ -1710,6 +1712,18 @@ void PlayerController::commitCurrentTrack(const Player::TrackChangeRequest& requ
     }
 
     const auto result = p->m_session.commitRequest(requestWithId);
+    if(result.isQueueTrack) {
+        if(const auto* item = p->m_queue.item(result.queueItemId);
+           item && item->track.track.sameIdentityAs(p->m_session.currentTrack().track)) {
+            // A prepared request may predate a change to the source playlist
+            p->m_session.updateCurrentTrackPlaylist(item->track.playlistId);
+            p->m_session.updateCurrentTrackEntry(item->track.entryId);
+            p->m_session.updateCurrentTrackIndex(item->track.indexInPlaylist);
+            if(item->detachedPlaylistTrack) {
+                p->m_session.setDetachedCurrentPlaylistTrack(*item->detachedPlaylistTrack);
+            }
+        }
+    }
     if(result.queueItemId != 0 && result.queueItemId == p->m_stopAfterQueueItemId) {
         p->setStopAfterQueueItem(0);
         p->m_settings->set<Settings::Core::StopAfterCurrent>(true);

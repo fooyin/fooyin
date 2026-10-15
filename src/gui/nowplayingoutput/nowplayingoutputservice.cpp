@@ -22,7 +22,7 @@
 #include "internalguisettings.h"
 
 #include <core/player/playercontroller.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/scripting/scripttypes.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
@@ -161,9 +161,9 @@ QString NowPlayingOutputService::formattedOutput()
         return {};
     }
 
-    auto playbackContext = makePlaybackScriptContext(m_playerController, nullptr, TrackListContextPolicy::Placeholder);
-    playbackContext.context.track = &track;
-    return m_scriptParser.evaluate(m_script, track, playbackContext.context);
+    const auto playbackContext = makePlaybackScriptData(m_playerController);
+    return m_scriptParser.evaluate(m_script, track, playbackContext.context(),
+                                   {.trackListContextPolicy = TrackListContextPolicy::Placeholder});
 }
 
 void NowPlayingOutputService::writeOutput(const QString& output)

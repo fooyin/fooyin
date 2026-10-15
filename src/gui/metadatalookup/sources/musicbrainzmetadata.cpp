@@ -139,6 +139,7 @@ ReleaseSummary parseSummary(const QJsonObject& object)
     parseReleaseGroup(object.value("release-group"_L1), result);
 
     if(!result.id.isEmpty()) {
+        result.url = QUrl{u"https://musicbrainz.org/release/%1"_s.arg(result.id)};
         result.identifiers.emplace(u"MUSICBRAINZ_ALBUMID"_s, QStringList{result.id});
     }
 

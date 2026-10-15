@@ -121,6 +121,20 @@ QString AdvancedSettingsModel::validationError() const
     return validationErrorForNode(rootItem());
 }
 
+QString AdvancedSettingsModel::searchText(const AdvancedSettingDescriptor& descriptor)
+{
+    QStringList keywords{descriptor.category};
+    keywords.append(descriptor.label);
+    keywords.append(descriptor.description);
+    keywords.append(descriptor.id);
+    if(const auto* radioButtons = radioButtonsEditor(descriptor)) {
+        for(const auto& option : radioButtons->options) {
+            keywords.append(option.label);
+        }
+    }
+    return keywords.join('\n'_L1);
+}
+
 QVariant AdvancedSettingsModel::data(const QModelIndex& index, int role) const
 {
     if(!index.isValid()) {
@@ -147,6 +161,11 @@ QVariant AdvancedSettingsModel::data(const QModelIndex& index, int role) const
             return {};
         case Qt::ToolTipRole:
             return node->description;
+        case SearchText:
+            if(isSetting) {
+                return searchText(node->descriptor);
+            }
+            return node->label;
         case Qt::CheckStateRole:
             if(isSetting && isEditor<AdvancedSettingCheckBox>(node->descriptor)) {
                 return node->value.toBool() ? Qt::Checked : Qt::Unchecked;

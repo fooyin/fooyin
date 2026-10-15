@@ -19,71 +19,32 @@
 
 #pragma once
 
-#include <core/engine/enginedefs.h>
-#include <core/engine/visualisationservice.h>
-#include <core/player/playerdefs.h>
-#include <core/track.h>
+#include "spectrogramconfig.h"
+
 #include <gui/fywidget.h>
 
-#include <QBasicTimer>
-#include <QColor>
-#include <QElapsedTimer>
-#include <QImage>
-#include <QTimer>
+#include <QPointer>
 
-#include <array>
-#include <vector>
+#include <memory>
 
-class QContextMenuEvent;
 class QJsonObject;
-class QPaintEvent;
-class QResizeEvent;
-class QShowEvent;
-class QTimerEvent;
+class QVBoxLayout;
 
 namespace Fooyin {
+class AudioLoader;
 class EngineController;
 class PlayerController;
 class SettingsManager;
-} // namespace Fooyin
+class TrackSelectionController;
 
-namespace Fooyin::Spectrogram {
+namespace Spectrogram {
+class SpectrogramView;
 class SpectrogramWidget : public FyWidget
 {
     Q_OBJECT
-
 public:
-    static constexpr std::array<int, 7> FftSizes{256, 512, 1024, 2048, 4096, 8192, 16384};
-
-    enum class ChannelMode : uint8_t
-    {
-        Unchanged = 0,
-        Mono,
-        FrontOnly,
-        BackOnly,
-    };
-
-    enum class PresentationMode : uint8_t
-    {
-        Scrolling = 0,
-        Stationary,
-    };
-
-    struct ConfigData
-    {
-        ChannelMode channelMode{ChannelMode::Unchanged};
-        PresentationMode presentationMode{PresentationMode::Scrolling};
-        bool logFrequency{true};
-        bool clearOnTrackChange{false};
-        int channelSpacing{0};
-        int fftSize{8192};
-        int minDb{-70};
-        int maxDb{0};
-        int windowFunction{static_cast<int>(VisualisationSession::SpectrumWindowFunction::BlackmanHarris)};
-        std::vector<QColor> colours;
-    };
-
-    SpectrogramWidget(PlayerController* playerController, EngineController* engine, SettingsManager* settings,
+    SpectrogramWidget(std::shared_ptr<AudioLoader> audioLoader, PlayerController* playerController,
+                      EngineController* engine, TrackSelectionController* trackSelection, SettingsManager* settings,
                       QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
@@ -91,12 +52,12 @@ public:
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 
-    [[nodiscard]] ConfigData factoryConfig() const;
-    [[nodiscard]] ConfigData defaultConfig() const;
-    [[nodiscard]] const ConfigData& currentConfig() const;
-    void saveDefaults(const ConfigData& config) const;
+    [[nodiscard]] SpectrogramConfig factoryConfig() const;
+    [[nodiscard]] SpectrogramConfig defaultConfig() const;
+    [[nodiscard]] const SpectrogramConfig& currentConfig() const;
+    void saveDefaults(const SpectrogramConfig& config) const;
     void clearSavedDefaults() const;
-    void applyConfig(const ConfigData& config);
+    void applyConfig(const SpectrogramConfig& config);
 
     [[nodiscard]] QSize minimumSizeHint() const override;
     [[nodiscard]] QSize sizeHint() const override;
@@ -105,72 +66,21 @@ Q_SIGNALS:
     void configChanged();
 
 protected:
-    void showEvent(QShowEvent* event) override;
-    void resizeEvent(QResizeEvent* event) override;
-    void timerEvent(QTimerEvent* event) override;
-    void paintEvent(QPaintEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
-
     void openConfigDialog() override;
 
 private:
-    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
-    void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
+    [[nodiscard]] SpectrogramConfig configFromLayout(const QJsonObject& layout) const;
+    void saveConfigToLayout(const SpectrogramConfig& config, QJsonObject& layout) const;
 
-    void updateTimerState();
-    void resetAnalysis();
-    void resizeBuffers();
-    void normaliseHistoryForPresentationMode();
-    void syncStreams();
-    void setTrack(const Track& track);
-    void setEngineState(Engine::PlaybackState state);
-    void setPauseDrainActive(bool active);
-    void handlePositionMoved(uint64_t positionMs);
-    void handlePositionChanged(uint64_t positionMs);
-    void renderFrame();
-    bool analyseColumn(uint64_t endTimeMs);
-    [[nodiscard]] QImage linearHistoryImage() const;
-    [[nodiscard]] double oldestColumnTimeMs() const;
-
+    std::shared_ptr<AudioLoader> m_audioLoader;
     PlayerController* m_playerController;
-    VisualisationService* m_visualisationService;
+    EngineController* m_engine;
+    TrackSelectionController* m_trackSelection;
     SettingsManager* m_settings;
-
-    VisualisationSessionPtr m_monoSession;
-    VisualisationSessionPtr m_leftSession;
-    VisualisationSessionPtr m_rightSession;
-
-    Track m_track;
-    ConfigData m_config;
-    QBasicTimer m_timer;
-
-    QImage m_image;
-    QImage m_resizeSource;
-    int m_resizeSourceWritePixel;
-    int m_resizeSourceHistoryPixelCount;
-    QTimer m_resizeSettleTimer;
-    qreal m_imageDpr;
-    bool m_renderSizeReady;
-
-    double m_pixelAdvanceRemainder;
-    int m_writePixel;
-    int m_historyPixelCount;
-    int m_historyColumnCount;
-    double m_newestColumnTimeMs;
-
-    Player::PlayState m_playState;
-    Engine::PlaybackState m_engineState;
-
-    bool m_pauseDrainActive;
-    uint64_t m_lastAnalysisTimeMs;
-    bool m_analysisTimelineReady;
-    uint64_t m_lastObservedAudioTimeMs;
-    QElapsedTimer m_presentationClock;
-    double m_presentationTimeMs;
-
-    QElapsedTimer m_seekSettleClock;
-    bool m_seekPending;
-    bool m_seekAwaitingPosition;
-    uint64_t m_requestedSeekPositionMs;
+    QVBoxLayout* m_layout;
+    QPointer<SpectrogramView> m_view;
+    SpectrogramConfig m_config;
 };
-} // namespace Fooyin::Spectrogram
+} // namespace Spectrogram
+} // namespace Fooyin

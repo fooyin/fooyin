@@ -27,10 +27,11 @@
 #include <core/player/playerdefs.h>
 #include <gui/configdialog.h>
 #include <gui/framerate.h>
+#include <gui/guiutils.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/timeconstants.h>
 
 #include <QActionGroup>
-#include <QBasicTimer>
 #include <QContextMenuEvent>
 #include <QElapsedTimer>
 #include <QJsonObject>
@@ -38,7 +39,6 @@
 #include <QPainter>
 #include <QPolygonF>
 #include <QResizeEvent>
-#include <QToolBar>
 
 using namespace Qt::StringLiterals;
 
@@ -177,38 +177,21 @@ void OscilloscopeWidget::populateContextMenu(QMenu* menu)
         });
     }
 
-    auto* orientationGroup = new QActionGroup(menu);
-    auto* automatic        = new QAction(tr("Automatic"), orientationGroup);
-    auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
-    auto* vertical         = new QAction(tr("Vertical"), orientationGroup);
+    Gui::addOrientationMenu(menu, this,
+                            {.title      = tr("Orientation"),
+                             .automatic  = tr("Automatic"),
+                             .horizontal = tr("Horizontal"),
+                             .vertical   = tr("Vertical")},
+                            m_autoOrientation, m_orientation, [this](std::optional<Qt::Orientation> orientation) {
+                                m_autoOrientation = !orientation.has_value();
+                                if(orientation) {
+                                    setOrientation(*orientation);
+                                }
+                                else {
+                                    updateOrientation();
+                                }
+                            });
 
-    auto* orientationMenu = new QMenu(tr("Orientation"), menu);
-    orientationMenu->addAction(automatic);
-    orientationMenu->addAction(horizontal);
-    orientationMenu->addAction(vertical);
-
-    automatic->setCheckable(true);
-    horizontal->setCheckable(true);
-    vertical->setCheckable(true);
-
-    automatic->setChecked(m_autoOrientation);
-    horizontal->setChecked(!m_autoOrientation && m_orientation == Qt::Horizontal);
-    vertical->setChecked(!m_autoOrientation && m_orientation == Qt::Vertical);
-
-    QObject::connect(automatic, &QAction::triggered, this, [this]() {
-        m_autoOrientation = true;
-        updateOrientation();
-    });
-    QObject::connect(horizontal, &QAction::triggered, this, [this]() {
-        m_autoOrientation = false;
-        setOrientation(Qt::Horizontal);
-    });
-    QObject::connect(vertical, &QAction::triggered, this, [this]() {
-        m_autoOrientation = false;
-        setOrientation(Qt::Vertical);
-    });
-
-    menu->addMenu(orientationMenu);
     menu->addSeparator();
     addConfigureAction(menu, false);
 }
@@ -244,7 +227,7 @@ void OscilloscopeWidget::saveDefaults(const ConfigData& config) const
 
     validated.curveDurationMs = std::clamp(validated.curveDurationMs, MinCurveDurationMs, MaxCurveDurationMs);
     validated.zoomPercent     = std::clamp(validated.zoomPercent, MinZoomPercent, MaxZoomPercent);
-    validated.updateFps       = Gui::FrameRate::nearestPresetFps(validated.updateFps);
+    validated.updateFps       = Gui::FrameRate::clampFps(validated.updateFps);
 
     if(!validated.colours.canConvert<Colours>()
        || (validated.colours.isValid() && validated.colours.value<Colours>().isEmpty())) {
@@ -275,7 +258,7 @@ void OscilloscopeWidget::applyConfig(const ConfigData& config)
 
     validated.curveDurationMs = std::clamp(validated.curveDurationMs, MinCurveDurationMs, MaxCurveDurationMs);
     validated.zoomPercent     = std::clamp(validated.zoomPercent, MinZoomPercent, MaxZoomPercent);
-    validated.updateFps       = Gui::FrameRate::nearestPresetFps(validated.updateFps);
+    validated.updateFps       = Gui::FrameRate::clampFps(validated.updateFps);
 
     if(!validated.colours.canConvert<Colours>()
        || (validated.colours.isValid() && validated.colours.value<Colours>().isEmpty())) {
@@ -291,6 +274,9 @@ void OscilloscopeWidget::applyConfig(const ConfigData& config)
 
 QSize OscilloscopeWidget::minimumSizeHint() const
 {
+    if(m_autoOrientation && !findToolbar()) {
+        return {8, 8};
+    }
     const auto orientation = m_autoOrientation ? automaticOrientation() : m_orientation;
     return orientation == Qt::Horizontal ? QSize{24, 8} : QSize{8, 24};
 }
@@ -318,6 +304,7 @@ void OscilloscopeWidget::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == m_updateTimer.timerId()) {
         tick();
+        m_updateTimer.scheduleNext(this);
     }
     FyWidget::timerEvent(event);
 }
@@ -333,14 +320,6 @@ void OscilloscopeWidget::contextMenuEvent(QContextMenuEvent* event)
 void OscilloscopeWidget::openConfigDialog()
 {
     showConfigDialog(new OscilloscopeConfigDialog(this, this), Qt::NonModal);
-}
-
-Qt::Orientation OscilloscopeWidget::automaticOrientation() const
-{
-    if(const auto* toolbar = findToolbar()) {
-        return toolbar->orientation();
-    }
-    return height() > width() ? Qt::Vertical : Qt::Horizontal;
 }
 
 void OscilloscopeWidget::setOrientation(Qt::Orientation orientation)
@@ -428,7 +407,7 @@ void OscilloscopeWidget::updateSessionConfig()
 
 void OscilloscopeWidget::startUpdateTimer()
 {
-    m_updateTimer.start(Gui::FrameRate::intervalMsForFps(m_config.updateFps), Qt::PreciseTimer, this);
+    m_updateTimer.start(m_config.updateFps, this);
 }
 
 void OscilloscopeWidget::settlePresentationClock()
@@ -462,7 +441,8 @@ void OscilloscopeWidget::tick()
         m_presentationClock.start();
     }
     else {
-        const double elapsedMs = static_cast<double>(m_presentationClock.nsecsElapsed()) / 1'000'000.0;
+        const double elapsedMs
+            = static_cast<double>(m_presentationClock.nsecsElapsed()) / static_cast<double>(Time::NsPerMs);
         m_presentationClock.restart();
 
         const double predictedTimeMs = m_presentationTimeMs + std::max(0.0, elapsedMs);
@@ -598,21 +578,12 @@ OscilloscopeWidget::ConfigData OscilloscopeWidget::configFromLayout(const QJsonO
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("CurveDurationMs"_L1)) {
-        config.curveDurationMs = layout.value("CurveDurationMs"_L1).toInt();
-    }
-    if(layout.contains("ZoomPercent"_L1)) {
-        config.zoomPercent = layout.value("ZoomPercent"_L1).toInt();
-    }
-    if(layout.contains("UpdateFps"_L1)) {
-        config.updateFps = layout.value("UpdateFps"_L1).toInt();
-    }
-    if(layout.contains("DownmixMode"_L1)) {
-        config.downmixMode = static_cast<DownmixMode>(layout.value("DownmixMode"_L1).toInt());
-    }
-    if(layout.contains("ShowZeroLine"_L1)) {
-        config.showZeroLine = layout.value("ShowZeroLine"_L1).toBool();
-    }
+    config.curveDurationMs = layout.value("CurveDurationMs"_L1).toInt(config.curveDurationMs);
+    config.zoomPercent     = layout.value("ZoomPercent"_L1).toInt(config.zoomPercent);
+    config.updateFps       = layout.value("UpdateFps"_L1).toInt(config.updateFps);
+    config.downmixMode
+        = static_cast<DownmixMode>(layout.value("DownmixMode"_L1).toInt(static_cast<int>(config.downmixMode)));
+    config.showZeroLine = layout.value("ShowZeroLine"_L1).toBool(config.showZeroLine);
 
     if(layout.contains("UseCustomColours"_L1)) {
         if(layout.value("UseCustomColours"_L1).toBool()) {
