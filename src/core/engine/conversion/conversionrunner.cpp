@@ -19,8 +19,8 @@
 
 #include <core/engine/conversion/conversionrunner.h>
 
-#include "engine/output/postprocessor/replaygainprocessor.h"
-
+#include "audioutils.h"
+#include "output/postprocessor/replaygainprocessor.h"
 #include "outputtransaction.h"
 
 #include <core/engine/audioconverter.h>
@@ -401,24 +401,6 @@ bool populateDspChain(const Engine::DspChain& definitions, const DspRegistry* re
     return true;
 }
 
-bool shouldAutomaticallyDither(SampleFormat input, SampleFormat output)
-{
-    const bool integerOutput = output == SampleFormat::U8 || output == SampleFormat::S16
-                            || output == SampleFormat::S24In32 || output == SampleFormat::S32;
-    if(!integerOutput) {
-        return false;
-    }
-
-    if(input == SampleFormat::F32 || input == SampleFormat::F64) {
-        return true;
-    }
-
-    const AudioFormat inputFormat{input, 1, 1};
-    const AudioFormat outputFormat{output, 1, 1};
-    return inputFormat.isValid() && outputFormat.isValid()
-        && outputFormat.bitsPerSample() < inputFormat.bitsPerSample();
-}
-
 AudioEncoderSettings encoderSettingsForTrack(const AudioEncoderSettings& settings, const Track& track,
                                              const AudioFormat& inputFormat)
 {
@@ -428,7 +410,7 @@ AudioEncoderSettings encoderSettingsForTrack(const AudioEncoderSettings& setting
             = track.encoding().compare(u"Lossy"_s, Qt::CaseInsensitive) == 0 ? DitherMode::Always : DitherMode::Never;
     }
     else if(resolved.ditherMode == DitherMode::Automatic && resolved.outputSampleFormat != SampleFormat::Unknown) {
-        resolved.ditherMode = shouldAutomaticallyDither(inputFormat.sampleFormat(), resolved.outputSampleFormat)
+        resolved.ditherMode = Audio::shouldAutomaticallyDither(inputFormat.sampleFormat(), resolved.outputSampleFormat)
                                 ? DitherMode::Always
                                 : DitherMode::Never;
     }
