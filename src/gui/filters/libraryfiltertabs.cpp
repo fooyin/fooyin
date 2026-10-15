@@ -163,7 +163,7 @@ void LibraryFilterTabs::setupTabs()
     std::vector<int> enabledFilterIds;
     enabledFilterIds.reserve(filters.size());
     for(const LibraryFilter& filter : filters) {
-        if(filter.enabled) {
+        if(filter.isEnabled) {
             enabledFilterIds.push_back(filter.id);
         }
     }
@@ -199,7 +199,7 @@ void LibraryFilterTabs::setupTabs()
 int LibraryFilterTabs::addFilter(int id)
 {
     const auto filter = m_registry->itemById(id);
-    if(!filter || !filter->enabled) {
+    if(!filter || !filter->isEnabled) {
         return -1;
     }
 
@@ -395,7 +395,7 @@ void LibraryFilterTabs::filterChanged(const LibraryFilter& filter)
     auto activeFilters = m_library->activeLibraryFilters();
     const auto active  = std::ranges::find(activeFilters, filter.id, &LibraryFilter::id);
     if(active != activeFilters.end()) {
-        if(filter.enabled) {
+        if(filter.isEnabled) {
             *active = filter;
         }
         else {
@@ -439,7 +439,7 @@ void LibraryFilterTabs::tabMoved(int /*from*/, int to)
     std::vector<int> currentVisibleFilterIds;
     auto filters = m_registry->items();
     for(const LibraryFilter& filter : filters) {
-        if(filter.enabled) {
+        if(filter.isEnabled) {
             currentVisibleFilterIds.push_back(filter.id);
         }
     }

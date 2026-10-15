@@ -176,7 +176,7 @@ void LibraryFilterSwitcher::populate()
     const LibraryFilterList activeFilters = m_library->activeLibraryFilters();
     int activeIndex{0};
     for(const LibraryFilter& preset : m_registry->items()) {
-        if(!preset.enabled) {
+        if(!preset.isEnabled) {
             continue;
         }
         m_presets->addItem(preset.name, preset.id);
@@ -201,7 +201,7 @@ void LibraryFilterSwitcher::filterChanged(const LibraryFilter& filter)
     auto activeFilters = m_library->activeLibraryFilters();
     const auto active  = std::ranges::find(activeFilters, filter.id, &LibraryFilter::id);
     if(active != activeFilters.end()) {
-        if(filter.enabled) {
+        if(filter.isEnabled) {
             *active = filter;
         }
         else {

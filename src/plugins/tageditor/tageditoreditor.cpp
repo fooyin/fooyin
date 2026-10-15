@@ -188,7 +188,7 @@ void TagEditorEditor::configureDelegates(const std::vector<TagEditorField>& item
     m_model->setLoveRow(-1);
 
     for(int row{0}; const auto& item : items) {
-        if(!item.enabled) {
+        if(!item.isEnabled) {
             continue;
         }
 

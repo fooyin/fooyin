@@ -252,7 +252,7 @@ QVariant TagEditorFieldsModel::data(const QModelIndex& index, int role) const
 
     if(role == Qt::CheckStateRole) {
         if(column == 1) {
-            if(item->field().enabled) {
+            if(item->field().isEnabled) {
                 return Qt::Checked;
             }
             return Qt::Unchecked;
@@ -304,7 +304,7 @@ bool TagEditorFieldsModel::setData(const QModelIndex& index, const QVariant& val
     if(role == Qt::CheckStateRole) {
         const bool checked = value.value<Qt::CheckState>() == Qt::Checked;
         if(column == 1) {
-            field.enabled = checked;
+            field.isEnabled = checked;
         }
         if(column == 4) {
             field.multiline = checked;

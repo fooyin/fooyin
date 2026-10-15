@@ -34,7 +34,7 @@ struct FYCORE_EXPORT LibraryFilter
     bool isDefault{false};
     QString name;
     QString expression;
-    bool enabled{true};
+    bool isEnabled{true};
 
     bool operator==(const LibraryFilter& other) const = default;
 

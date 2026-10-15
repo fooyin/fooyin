@@ -137,7 +137,15 @@ Qt::ItemFlags SortingModel::flags(const QModelIndex& index) const
         return Qt::NoItemFlags;
     }
 
-    return ExtendableTableModel::flags(index) | Qt::ItemIsEditable;
+    auto flags = ExtendableTableModel::flags(index);
+    if(index.column() == 0) {
+        flags |= Qt::ItemIsUserCheckable;
+    }
+    else if(index.column() >= 2) {
+        flags |= Qt::ItemIsEditable;
+    }
+
+    return flags;
 }
 
 QVariant SortingModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -152,10 +160,12 @@ QVariant SortingModel::headerData(int section, Qt::Orientation orientation, int 
 
     switch(section) {
         case 0:
-            return tr("Index");
+            return tr("Enabled");
         case 1:
-            return tr("Name");
+            return tr("Index");
         case 2:
+            return tr("Name");
+        case 3:
             return tr("Sort Script");
         default:
             break;
@@ -180,15 +190,23 @@ QVariant SortingModel::data(const QModelIndex& index, int role) const
         return QVariant::fromValue(item->sortScript());
     }
 
+    if(index.column() == 0 && role == Qt::TextAlignmentRole) {
+        return Qt::AlignCenter;
+    }
+
+    if(index.column() == 0 && role == Qt::CheckStateRole) {
+        return item->sortScript().isEnabled ? Qt::Checked : Qt::Unchecked;
+    }
+
     if(role == Qt::DisplayRole || role == Qt::EditRole) {
         switch(index.column()) {
-            case 0:
+            case 1:
                 return item->sortScript().index;
-            case 1: {
+            case 2: {
                 const QString& name = item->sortScript().name;
                 return !name.isEmpty() ? name : u"<enter name here>"_s;
             }
-            case 2: {
+            case 3: {
                 const QString& field = item->sortScript().script;
                 return !field.isEmpty() ? field : u"<enter sort script here>"_s;
             }
@@ -202,33 +220,49 @@ QVariant SortingModel::data(const QModelIndex& index, int role) const
 
 bool SortingModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    if(role != Qt::EditRole) {
+    if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
+        return false;
+    }
+
+    if(role != Qt::EditRole && role != Qt::CheckStateRole) {
         return false;
     }
 
     auto* item            = static_cast<SortingItem*>(index.internalPointer());
     SortScript sortScript = item->sortScript();
 
-    switch(index.column()) {
-        case 1: {
-            if(value.toString() == u"<enter name here>"_s || sortScript.name == value.toString()) {
-                if(item->status() == SortingItem::Added) {
-                    Q_EMIT pendingRowCancelled();
+    if(index.column() == 0 && role == Qt::CheckStateRole) {
+        const bool enabled = value.value<Qt::CheckState>() == Qt::Checked;
+        if(sortScript.isEnabled == enabled) {
+            return false;
+        }
+        sortScript.isEnabled = enabled;
+    }
+    else if(role == Qt::EditRole) {
+        switch(index.column()) {
+            case 2: {
+                if(value.toString() == u"<enter name here>"_s || sortScript.name == value.toString()) {
+                    if(item->status() == SortingItem::Added) {
+                        Q_EMIT pendingRowCancelled();
+                    }
+                    return false;
                 }
-                return false;
+                sortScript.name = value.toString();
+                break;
             }
-            sortScript.name = value.toString();
-            break;
-        }
-        case 2: {
-            if(sortScript.script == value.toString()) {
-                return false;
+            case 3: {
+                if(sortScript.script == value.toString()) {
+                    return false;
+                }
+                sortScript.script = value.toString();
+                break;
             }
-            sortScript.script = value.toString();
-            break;
+            default:
+                return false;
         }
-        default:
-            break;
+    }
+    else {
+        return false;
     }
 
     if(item->status() == SortingItem::None) {
@@ -236,7 +270,8 @@ bool SortingModel::setData(const QModelIndex& index, const QVariant& value, int 
     }
 
     item->changeSort(sortScript);
-    Q_EMIT dataChanged(index, index.siblingAtColumn(columnCount({}) - 1), {Qt::DisplayRole, Qt::FontRole});
+    Q_EMIT dataChanged(index, index.siblingAtColumn(columnCount({}) - 1),
+                       {Qt::DisplayRole, Qt::FontRole, Qt::CheckStateRole, Qt::UserRole});
 
     return true;
 }
@@ -259,7 +294,7 @@ int SortingModel::rowCount(const QModelIndex& /*parent*/) const
 
 int SortingModel::columnCount(const QModelIndex& /*parent*/) const
 {
-    return 3;
+    return 4;
 }
 
 bool SortingModel::removeRows(int row, int count, const QModelIndex& /*parent*/)

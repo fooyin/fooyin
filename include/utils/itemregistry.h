@@ -56,7 +56,8 @@ Q_SIGNALS:
 /*!
  * Represents a registry of items ordered by index.
  * Items are saved and loaded to/from a QByteArray which is stored in the passed settingKey.
- * @tparam Item A struct or class with public members: int id, int index, QString name.
+ * @tparam Item A struct or class with public members: int id, int index, QString name, bool isDefault,
+ * and optionally bool isEnabled.
  */
 template <typename Item>
     requires ValidRegistry<Item>
@@ -338,10 +339,13 @@ public:
 protected:
     virtual void loadDefaults() { }
 
-    void addDefaultItem(const Item& item, bool isEditable = false)
+    void addDefaultItem(const Item& item, bool isEditable = false, bool isEnabled = true)
     {
         Item defaultItem{item};
         defaultItem.isDefault = !isEditable;
+        if constexpr(requires { defaultItem.isEnabled = isEnabled; }) {
+            defaultItem.isEnabled = isEnabled;
+        }
 
         if(defaultItem.name.isEmpty()) {
             defaultItem.name = findUniqueName(defaultItem.name);

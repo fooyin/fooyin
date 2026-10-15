@@ -679,11 +679,16 @@ void FilterWidget::addFilterHeaderMenu(QMenu* menu, const QPoint& pos, bool incl
     columnGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
 
     for(const auto& column : m_columnRegistry->items()) {
+        const bool columnVisible
+            = std::ranges::any_of(m_columns, [column](const FilterColumn& current) { return current.id == column.id; });
+        if(!column.isEnabled && !columnVisible) {
+            continue;
+        }
+
         auto* columnAction = new QAction(column.name, menu);
         columnAction->setData(column.id);
         columnAction->setCheckable(true);
-        columnAction->setChecked(
-            std::ranges::any_of(m_columns, [column](const FilterColumn& current) { return current.id == column.id; }));
+        columnAction->setChecked(columnVisible);
         columnAction->setEnabled(columnAction->isChecked() ? m_columns.size() > 1 : true);
         columnsMenu->addAction(columnAction);
         columnGroup->addAction(columnAction);

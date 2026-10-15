@@ -1409,7 +1409,7 @@ void PlaylistWidget::addColumnsMenu(QMenu* parent)
         }
 
         const bool columnVisible = hasColumn(column.id);
-        if(!column.enabled && !columnVisible) {
+        if(!column.isEnabled && !columnVisible) {
             continue;
         }
 

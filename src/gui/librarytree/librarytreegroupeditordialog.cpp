@@ -23,6 +23,7 @@
 #include "settings/librarytree/librarytreegroupmodel.h"
 
 #include <gui/scripting/scripteditor.h>
+#include <gui/widgets/checkboxdelegate.h>
 #include <gui/widgets/extendabletableview.h>
 #include <gui/widgets/multilinedelegate.h>
 
@@ -68,15 +69,16 @@ LibraryTreeGroupEditorWidget::LibraryTreeGroupEditorWidget(LibraryTreeGroupRegis
     , m_hintFrame{new QFrame(this)}
 {
     m_groupList->setExtendableModel(m_model);
-    m_groupList->setItemDelegateForColumn(2, new MultiLineEditDelegate(this));
+    m_groupList->setItemDelegateForColumn(0, new CheckBoxDelegate(this));
     m_groupList->setItemDelegateForColumn(3, new MultiLineEditDelegate(this));
-    m_groupList->hideColumn(0);
-    m_groupList->setExtendableColumn(1);
+    m_groupList->setItemDelegateForColumn(4, new MultiLineEditDelegate(this));
+    m_groupList->hideColumn(1);
+    m_groupList->setExtendableColumn(2);
     m_groupList->verticalHeader()->hide();
     m_groupList->horizontalHeader()->setStretchLastSection(true);
     m_groupList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    m_groupList->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
     m_groupList->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
+    m_groupList->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
 
     m_openEditor->setText(tr("Script Editor"));
     m_groupList->addCustomTool(m_openEditor);
@@ -163,7 +165,7 @@ void LibraryTreeGroupEditorWidget::updateButtonState()
 
     m_groupList->removeRowAction()->setEnabled(hasCustom);
     m_openEditor->setEnabled(selection.size() == 1
-                             && (selection.front().column() == 2 || selection.front().column() == 3));
+                             && (selection.front().column() == 3 || selection.front().column() == 4));
 }
 
 LibraryTreeGroupEditorDialog::LibraryTreeGroupEditorDialog(LibraryTreeGroupRegistry* groupsRegistry, QWidget* parent)

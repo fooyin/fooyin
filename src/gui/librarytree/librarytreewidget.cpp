@@ -879,6 +879,9 @@ void LibraryTreeWidget::refreshGroupingSelector()
 
     m_groupSelector->clear();
     for(const auto& grouping : m_groupsRegistry->items()) {
+        if(!grouping.isEnabled && grouping.id != m_grouping.id) {
+            continue;
+        }
         m_groupSelector->addItem(grouping.name, grouping.id);
     }
     m_groupSelector->setCurrentIndex(m_groupSelector->findData(m_grouping.id));
@@ -948,10 +951,7 @@ void LibraryTreeWidget::changeGrouping(const LibraryTreeGrouping& newGrouping)
         reset();
     }
 
-    if(m_groupSelector) {
-        const QSignalBlocker blocker{m_groupSelector};
-        m_groupSelector->setCurrentIndex(m_groupSelector->findData(m_grouping.id));
-    }
+    refreshGroupingSelector();
 }
 
 void LibraryTreeWidget::activePlaylistChanged(Playlist* playlist) const
@@ -996,6 +996,10 @@ void LibraryTreeWidget::addGroupMenu(QMenu* parent)
 
     const auto groups = m_groupsRegistry->items();
     for(const auto& group : groups) {
+        if(!group.isEnabled) {
+            continue;
+        }
+
         auto* switchGroup = new QAction(group.name, groupMenu);
         QObject::connect(switchGroup, &QAction::triggered, this, [this, group]() { changeGrouping(group); });
         switchGroup->setCheckable(true);

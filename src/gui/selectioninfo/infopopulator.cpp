@@ -176,7 +176,7 @@ void InfoPopulatorPrivate::addTrackMetadata(const Track& track, bool extended,
                                             const std::vector<SelectionInfoField>& fields)
 {
     for(const auto& field : fields) {
-        if(!field.enabled || field.name.isEmpty() || field.scriptField.isEmpty()) {
+        if(!field.isEnabled || field.name.isEmpty() || field.scriptField.isEmpty()) {
             continue;
         }
 
@@ -188,7 +188,7 @@ void InfoPopulatorPrivate::addTrackMetadata(const Track& track, bool extended,
         const auto extras = track.extraTags();
         for(const auto& [tag, values] : extras) {
             const bool isConfigured = std::ranges::any_of(fields, [&tag](const auto& field) {
-                return field.enabled && field.scriptField.compare(tag, Qt::CaseInsensitive) == 0;
+                return field.isEnabled && field.scriptField.compare(tag, Qt::CaseInsensitive) == 0;
             });
             if(isConfigured) {
                 continue;

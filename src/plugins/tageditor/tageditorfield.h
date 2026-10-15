@@ -35,7 +35,7 @@ struct TagEditorField
     QString scriptField;
     bool multiline{false};
     bool multivalue{false};
-    bool enabled{true};
+    bool isEnabled{true};
 
     bool operator==(const TagEditorField& other) const = default;
 
@@ -55,7 +55,7 @@ struct TagEditorField
         stream << field.scriptField;
         stream << field.multiline;
         stream << field.multivalue;
-        stream << field.enabled;
+        stream << field.isEnabled;
 
         return stream;
     }
@@ -76,7 +76,7 @@ struct TagEditorField
             stream >> field.multiline;
             stream >> field.multivalue;
             if(version >= 2) {
-                stream >> field.enabled;
+                stream >> field.isEnabled;
             }
         }
         else {
