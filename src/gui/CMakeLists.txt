@@ -424,6 +424,8 @@ set(SOURCES
     scriptdisplay/scriptdisplayconfigdialog.h
     scripting/expressiontreemodel.cpp
     scripting/expressiontreemodel.h
+    scripting/richtextdelegateutils.cpp
+    scripting/richtextdelegateutils.h
     scripting/richtextutils.cpp
     scripting/scripteditor.cpp
     scripting/scripteditortextedit.cpp
