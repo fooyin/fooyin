@@ -288,7 +288,7 @@ void FileOpsPlugin::runDelete(const TrackList& tracks, bool forceImmediateDelete
             }
 
             const QString message = failedTrashTracks.size() == 1
-                                      ? tr("Could not move \"%1\" to the trash. Delete it permanently?")
+                                      ? tr("Could not move ‘%1’ to the trash. Delete it permanently?")
                                             .arg(failedTrashTracks.front().filepath())
                                       : tr("Could not move %Ln file(s) to the trash. Delete them permanently?", nullptr,
                                            static_cast<int>(failedTrashTracks.size()));

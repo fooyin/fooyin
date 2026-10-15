@@ -140,7 +140,7 @@ bool TagEditorPanel::apply()
         message.setText(tr("Are you sure?"));
         message.setInformativeText(tr("Metadata in the associated files will be overwritten."));
 
-        auto* dontAskAgain = new QCheckBox(tr("Don't ask again"), &message);
+        auto* dontAskAgain = new QCheckBox(tr("Don’t ask again"), &message);
         message.setCheckBox(dontAskAgain);
 
         message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);

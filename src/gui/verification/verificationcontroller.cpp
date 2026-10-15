@@ -171,7 +171,7 @@ QString integrityReport(const std::vector<AudioVerificationResult>& results)
     int succeeded{0};
 
     for(const auto& result : results) {
-        lines.push_back(VerificationController::tr("Item: \"%1\"").arg(result.track.prettyFilepath()));
+        lines.push_back(VerificationController::tr("Item: ‘%1’").arg(result.track.prettyFilepath()));
         lines.push_back(VerificationController::tr("Status: %1").arg(integrityStatus(result)));
         if(!result.md5.isEmpty()) {
             lines.push_back(VerificationController::tr("Decoded audio MD5: %1").arg(md5Text(result)));

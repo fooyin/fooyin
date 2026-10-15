@@ -112,7 +112,7 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     auto* generalGroup       = new QGroupBox(tr("General"), this);
     auto* generalGroupLayout = new QGridLayout(generalGroup);
 
-    const auto playedToolTip = tr("Track is counted as 'played' once either threshold is reached");
+    const auto playedToolTip = tr("Track is counted as ‘played’ once either threshold is reached");
     m_playedSlider->setToolTip(playedToolTip);
     m_playedTimeSlider->setToolTip(playedToolTip);
 

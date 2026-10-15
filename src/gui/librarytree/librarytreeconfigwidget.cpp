@@ -75,7 +75,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     tabs->addTab(styleTab, tr("Appearance"));
 
     m_playbackOnSend->setToolTip(
-        tr(R"(For "Replace current playlist" and "Create new playlist", start playback immediately.)"));
+        tr(R"(For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately.)"));
 
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), generalTab);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
@@ -93,7 +93,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
 
     m_preservePlaybackPlaylist->setToolTip(
-        tr("When this selection playlist is used for playback, preserve it with \"(Playback)\" appended to its "
+        tr("When this selection playlist is used for playback, preserve it with ‘(Playback)’ appended to its "
            "name instead of replacing its tracks."));
 
     row = 0;

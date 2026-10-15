@@ -513,11 +513,11 @@
     <name>Fooyin::QuickTagger::QuickTaggerPlugin</name>
     <message numerus="yes">
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="313"/>
-        <source>Set &quot;%1&quot; on %Ln track(s)?</source>
+        <source>Set ‘%1’ on %Ln track(s)?</source>
         <extracomment>%1 is the Quick Tagger entry name, for example &quot;Rating&quot;.</extracomment>
         <translation>
-            <numerusform>Set &quot;%1&quot; on %Ln track?</numerusform>
-            <numerusform>Set &quot;%1&quot; on %Ln tracks?</numerusform>
+            <numerusform>Set ‘%1’ on %Ln track?</numerusform>
+            <numerusform>Set ‘%1’ on %Ln tracks?</numerusform>
         </translation>
     </message>
 </context>

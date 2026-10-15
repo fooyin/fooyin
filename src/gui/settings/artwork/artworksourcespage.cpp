@@ -131,7 +131,7 @@ ArtworkSourcesPageWidget::ArtworkSourcesPageWidget(ArtworkFinder* finder, Settin
     m_placeholder->setPlaceholderText(tr("Use built-in icon theme placeholder"));
     m_placeholder->setToolTip(placeholderTooltip);
 
-    m_artistFallbackToFront->setToolTip(tr("Use the track's front cover when artist artwork is unavailable"));
+    m_artistFallbackToFront->setToolTip(tr("Use the track’s front cover when artist artwork is unavailable"));
 
     int row{0};
     placeholderLayout->addWidget(m_artistFallbackToFront, row++, 0, 1, 2);

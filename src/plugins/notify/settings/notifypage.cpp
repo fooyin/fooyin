@@ -157,7 +157,7 @@ NotifyPageWidget::NotifyPageWidget(SettingsManager* settings, NotifyPlugin* plug
             messageBox.setText(
                 tr("<p>The Flatpak notification portal does not support custom timeouts or album art. To use the "
                    "desktop notification service directly, add <code>org.freedesktop.Notifications</code> to "
-                   "fooyin's Session Bus ‘talk’ permissions in Flatseal, or run:</p>"
+                   "fooyin’s Session Bus ‘talk’ permissions in Flatseal, or run:</p>"
                    "<pre>flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin</pre>"
                    "<p>Restart fooyin after changing its permissions.</p>"));
             messageBox.exec();

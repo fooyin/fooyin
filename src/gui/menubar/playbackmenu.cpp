@@ -254,11 +254,11 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     stopCurrentCmd->setCategories(playbackCategory);
     stopCurrentCmd->setAttribute(ProxyAction::UpdateText);
 
-    m_resetStopAfterCurrent->setStatusTip(tr("Reset 'Stop after current' after stopping"));
+    m_resetStopAfterCurrent->setStatusTip(tr("Reset ‘Stop after current’ after stopping"));
     auto* resetStopCurrentCmd
         = actionManager->registerAction(m_resetStopAfterCurrent, Constants::Actions::StopAfterCurrentReset);
     resetStopCurrentCmd->setCategories(playbackCategory);
-    resetStopCurrentCmd->setDescription(tr("Reset 'Stop after current' after stopping"));
+    resetStopCurrentCmd->setDescription(tr("Reset ‘Stop after current’ after stopping"));
     resetStopCurrentCmd->setAttribute(ProxyAction::UpdateText);
 
     m_stopAfterCurrent->setCheckable(true);

@@ -155,7 +155,7 @@ PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QStri
 
     addComboItem(m_backgroundImage, tr("No background image"), static_cast<int>(PlaylistBgImage::None));
     addComboItem(m_backgroundImage, tr("Current track artwork"), static_cast<int>(PlaylistBgImage::AlbumCover),
-                 tr("Use the currently playing track's artwork as the playlist background"));
+                 tr("Use the currently playing track’s artwork as the playlist background"));
     addComboItem(m_backgroundImage, tr("Custom image"), static_cast<int>(PlaylistBgImage::Custom),
                  tr("Use the selected image file as the playlist background"));
     addComboItem(m_backgroundCoverType, tr("Front"), static_cast<int>(Track::Cover::Front),
