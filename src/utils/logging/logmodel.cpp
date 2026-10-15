@@ -169,6 +169,9 @@ std::deque<ConsoleEntry> LogModel::entries()
 QVariant LogModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if(role == Qt::TextAlignmentRole) {
+        if(orientation == Qt::Horizontal && section == Message) {
+            return (Qt::AlignLeft | Qt::AlignVCenter).toInt();
+        }
         return Qt::AlignCenter;
     }
 

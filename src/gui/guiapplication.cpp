@@ -313,6 +313,10 @@ GuiApplication::GuiApplication(Application* core)
     , m_resolvedAppStyleRevision{0}
 {
     updateApplicationIcon();
+
+    const FyStateSettings stateSettings;
+    m_logWidget->restoreState(stateSettings);
+
     m_coverRepository->setPendingTrackCoverProvider(m_core->pendingTrackCoverProvider());
 
     m_guiPluginContext.conversionService = m_conversionController;
@@ -342,6 +346,10 @@ void GuiApplication::startup()
 void GuiApplication::shutdown()
 {
     qApp->removeEventFilter(this);
+
+    FyStateSettings stateSettings;
+    m_logWidget->saveState(stateSettings);
+
     m_actionManager->saveSettings();
     m_editableLayout->saveLayout();
     m_editableLayout.reset();

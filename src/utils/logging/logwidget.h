@@ -28,7 +28,9 @@
 
 #include <queue>
 
+class QCheckBox;
 class QComboBox;
+class QSettings;
 class QTreeView;
 
 namespace Fooyin {
@@ -44,6 +46,9 @@ public:
     explicit LogWidget(SettingsManager* settings, QWidget* parent = nullptr);
 
     void addEntry(const QString& message, QtMsgType type);
+
+    void saveState(QSettings& settings) const;
+    void restoreState(const QSettings& settings);
 
     [[nodiscard]] QSize sizeHint() const override;
 
@@ -62,6 +67,7 @@ private:
     QTreeView* m_view;
     LogModel* m_model;
     QComboBox* m_level;
+    QCheckBox* m_wordWrap;
     SignalThrottler* m_scrollThrottler;
 
     bool m_scrollIsAtBottom;
