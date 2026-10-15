@@ -27,7 +27,6 @@
 #include <QRegularExpression>
 
 #include <map>
-#include <set>
 
 using namespace Qt::StringLiterals;
 
@@ -132,31 +131,21 @@ std::vector<ConversionPathResult> ConversionPathResolver::resolve(const Request&
             .error      = {},
         });
     }
-    else if(request.destination.outputStyle == OutputStyle::MultiTrackFiles) {
-        std::map<QString, size_t> groupIndices;
+    else {
+        const bool groupTracks = request.destination.outputStyle == OutputStyle::MultiTrackFiles;
+
+        std::map<QString, size_t> outputIndices;
+        results.reserve(request.tracks.size());
+
         for(const Track& track : request.tracks) {
-            const QString outputPath = previewPath(track, request.destination, request.extension, request.askFolder);
-            const QString key        = Utils::File::cleanPath(outputPath).toCaseFolded();
-            if(const auto it = groupIndices.find(key); it != groupIndices.end()) {
+            const QString outputPath  = previewPath(track, request.destination, request.extension, request.askFolder);
+            const QString key         = Utils::File::cleanPath(outputPath).toCaseFolded();
+            const auto [it, inserted] = outputIndices.emplace(key, results.size());
+            if(!inserted && groupTracks) {
                 results[it->second].tracks.push_back(track);
                 continue;
             }
-            groupIndices.emplace(key, results.size());
-            results.push_back({
-                .track      = track,
-                .tracks     = {track},
-                .outputPath = outputPath,
-                .status     = ConversionPathStatus::Error,
-                .error      = {},
-            });
-        }
-    }
-    else {
-        std::set<QString> seenPaths;
-        results.reserve(request.tracks.size());
-        for(const Track& track : request.tracks) {
-            const QString outputPath = previewPath(track, request.destination, request.extension, request.askFolder);
-            const QString key        = Utils::File::cleanPath(outputPath).toCaseFolded();
+
             ConversionPathResult result{
                 .track      = track,
                 .tracks     = {track},
@@ -164,12 +153,9 @@ std::vector<ConversionPathResult> ConversionPathResolver::resolve(const Request&
                 .status     = ConversionPathStatus::Error,
                 .error      = {},
             };
-            if(seenPaths.contains(key)) {
-                result.status = ConversionPathStatus::Error;
-                result.error  = tr("Duplicate output path");
-            }
-            else {
-                seenPaths.emplace(key);
+
+            if(!inserted) {
+                result.error = tr("Duplicate output path");
             }
             results.push_back(std::move(result));
         }
