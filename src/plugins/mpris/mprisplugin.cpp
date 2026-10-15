@@ -600,7 +600,13 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
             m_currentMetaData.remove(u"mpris:artUrl"_s);
         }
 
-        qCDebug(MPRIS) << "Sending MPRIS data:" << m_currentMetaData;
+        if(MPRIS().isDebugEnabled()) {
+            auto logData{m_currentMetaData};
+            if(auto lyrics = logData.find(u"xesam:asText"_s); lyrics != logData.end()) {
+                lyrics.value() = u"<lyrics omitted: %1 characters>"_s.arg(lyrics.value().toString().size());
+            }
+            qCDebug(MPRIS) << "Sending MPRIS data:" << logData;
+        }
         Q_EMIT reloadMetadata();
     };
 
