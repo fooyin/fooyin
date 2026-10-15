@@ -27,6 +27,14 @@
 constexpr auto MaxStreamBufferSamples = 96U * 1000U * 1000U;
 
 namespace Fooyin::Audio {
+AudioFormat normaliseProcessingFormat(AudioFormat format)
+{
+    if(format.isValid()) {
+        format.setSampleFormat(SampleFormat::F64);
+    }
+    return format;
+}
+
 size_t bufferSamplesFromMs(int ms, int sampleRate, int channels)
 {
     if(ms <= 0 || sampleRate <= 0 || channels <= 0) {

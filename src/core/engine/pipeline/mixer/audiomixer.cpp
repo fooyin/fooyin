@@ -53,13 +53,6 @@ uint64_t saturatingAddU64(uint64_t lhs, uint64_t rhs)
     return lhs + rhs;
 }
 
-Fooyin::AudioFormat normalisePrepareFormat(Fooyin::AudioFormat format)
-{
-    if(format.isValid()) {
-        format.setSampleFormat(Fooyin::SampleFormat::F64);
-    }
-    return format;
-}
 } // namespace
 
 namespace Fooyin {
@@ -387,7 +380,7 @@ void AudioMixer::addStream(AudioStreamPtr stream, std::vector<DspNodePtr> perTra
 
     if(!perTrackNodes.empty()) {
         for(auto& node : perTrackNodes) {
-            node->prepare(normalisePrepareFormat(channel.stream->format()));
+            node->prepare(Audio::normaliseProcessingFormat(channel.stream->format()));
         }
         channel.dspLatencySeconds = calculateDspLatencySeconds(perTrackNodes, channel.stream->format());
         channel.perTrackDsps      = std::move(perTrackNodes);
@@ -545,7 +538,7 @@ void AudioMixer::rebuildAllPerTrackDsps(const std::function<std::vector<DspNodeP
 
         if(!nodes.empty()) {
             for(auto& node : nodes) {
-                node->prepare(normalisePrepareFormat(channel.stream->format()));
+                node->prepare(Audio::normaliseProcessingFormat(channel.stream->format()));
             }
 
             channel.dspLatencySeconds = calculateDspLatencySeconds(nodes, channel.stream->format());
@@ -627,7 +620,7 @@ bool AudioMixer::applyIncrementalPerTrackPatch(const PerTrackPatchPlan& patchPla
                 continue;
             }
 
-            node->prepare(normalisePrepareFormat(current));
+            node->prepare(Audio::normaliseProcessingFormat(current));
             current = node->outputFormat(current);
         }
 

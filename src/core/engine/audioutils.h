@@ -26,8 +26,9 @@
 namespace Fooyin::Audio {
 constexpr auto MaxPresentationDelay = std::chrono::seconds{60};
 
-[[nodiscard]] size_t bufferSamplesFromMs(int ms, int sampleRate, int channels);
-[[nodiscard]] bool inputFormatsMatch(const AudioFormat& lhs, const AudioFormat& rhs);
-[[nodiscard]] bool outputFormatsMatch(const AudioFormat& lhs, const AudioFormat& rhs);
-[[nodiscard]] bool shouldAutomaticallyDither(SampleFormat input, SampleFormat output);
+AudioFormat normaliseProcessingFormat(AudioFormat format);
+size_t bufferSamplesFromMs(int ms, int sampleRate, int channels);
+bool inputFormatsMatch(const AudioFormat& lhs, const AudioFormat& rhs);
+bool outputFormatsMatch(const AudioFormat& lhs, const AudioFormat& rhs);
+bool shouldAutomaticallyDither(SampleFormat input, SampleFormat output);
 } // namespace Fooyin::Audio
