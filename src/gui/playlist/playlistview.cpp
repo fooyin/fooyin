@@ -84,6 +84,7 @@ PlaylistView::PlaylistView(QWidget* parent)
     : ExpandedTreeView{parent}
     , m_playlistLoaded{false}
     , m_stickyHeaders{false}
+    , m_stickySubheaders{false}
     , m_stickyArtwork{false}
     , m_snappingScroll{false}
     , m_stickyHeaderPressed{false}
@@ -145,6 +146,17 @@ void PlaylistView::setStickyHeaders(bool enabled)
     if(enabled) {
         snapScrollToStickyHeader(0);
     }
+    viewport()->update();
+}
+
+void PlaylistView::setStickySubheaders(bool enabled)
+{
+    if(std::exchange(m_stickySubheaders, enabled) == enabled) {
+        return;
+    }
+
+    updateGeometries();
+    snapScrollToStickyHeader(0);
     viewport()->update();
 }
 
@@ -251,6 +263,11 @@ void PlaylistView::playlistReset()
 bool PlaylistView::playlistLoaded() const
 {
     return m_playlistLoaded;
+}
+
+bool PlaylistView::stickyArtworkIntersects(const QRect& rect) const
+{
+    return m_stickyArtworkRegion.intersects(rect);
 }
 
 bool PlaylistView::hasActiveInlineEditor() const
@@ -368,17 +385,25 @@ void PlaylistView::mousePressEvent(QMouseEvent* event)
     }
 
     if(event->button() == Qt::LeftButton) {
-        const QModelIndex group = stickyHeaderIndex();
-        if(stickyHeaderRect(group).contains(event->pos())) {
-            m_stickyHeaderPressed = true;
+        for(const auto& pinnedHeader : stickyHeaderLayout()) {
+            if(!stickyHeaderPaintRect(pinnedHeader).contains(event->pos())) {
+                continue;
+            }
+
+            const QModelIndex group = pinnedHeader.index;
+            m_stickyHeaderPressed   = true;
 
             QModelIndex firstTrack{group};
             while(model()->hasChildren(firstTrack)) {
                 firstTrack = model()->index(0, 0, firstTrack);
             }
             if(firstTrack.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
+                const QScopedValueRollback snapGuard{m_snappingScroll, true};
                 setCurrentIndex(firstTrack);
                 scrollTo(group, PositionAtTop);
+                if(verticalScrollMode() == ScrollPerPixel) {
+                    verticalScrollBar()->setValue(verticalScrollBar()->value() - pinnedHeader.clipRect.top());
+                }
             }
 
             event->accept();
@@ -518,6 +543,8 @@ void PlaylistView::leaveEvent(QEvent* event)
 
 void PlaylistView::paintEvent(QPaintEvent* event)
 {
+    m_stickyArtworkRegion = QRegion{};
+
     QPainter painter{viewport()};
     painter.setClipRegion(event->region());
 
@@ -663,6 +690,7 @@ QRect PlaylistView::drawSpan(QPainter* painter, const QStyleOptionViewItem& opti
     }
 
     if(naturalTop >= pinnedTop) {
+        m_stickyArtworkRegion += option.rect.intersected(viewport()->rect());
         return ExpandedTreeView::drawSpan(painter, option, index);
     }
 
@@ -674,6 +702,9 @@ QRect PlaylistView::drawSpan(QPainter* painter, const QStyleOptionViewItem& opti
     const int groupBottom = visualRect(last.siblingAtColumn(index.column())).bottom() + 1;
     const int top         = std::max(naturalTop, std::min(pinnedTop, groupBottom - height));
     opt.rect              = {opt.rect.x(), top, opt.rect.width(), height};
+
+    // Spans are painted before rows, so subheaders can use the current artwork bounds when laying out their text.
+    m_stickyArtworkRegion += opt.rect.intersected(viewport()->rect());
 
     painter->save();
     painter->setClipRect(opt.rect.intersected(viewport()->rect()), Qt::IntersectClip);
@@ -710,17 +741,12 @@ int PlaylistView::adjustVerticalScrollMaximum(int maximum) const
     }
 
     const int scrollOffset = maximum - verticalScrollBar()->value();
-    QModelIndex group      = findIndexAt({0, scrollOffset}, true, true);
-    while(group.isValid() && group.data(PlaylistItem::Type).toInt() != PlaylistItem::Header) {
-        group = group.parent();
-    }
-
-    const QRect headerRect = stickyHeaderRect(group, scrollOffset);
-    if(headerRect.isEmpty()) {
+    const auto headers     = stickyHeaderLayout(scrollOffset);
+    if(headers.empty()) {
         return maximum;
     }
 
-    const int boundary = headerRect.bottom() + 1;
+    const int boundary = headers.back().rect.bottom() + 1;
     if(boundary >= viewport()->height()) {
         return maximum;
     }
@@ -1270,25 +1296,20 @@ void PlaylistView::updateHoveredRow(const QModelIndex& index)
     updateEditorCells(hoveredRow);
 }
 
-QModelIndex PlaylistView::stickyHeaderIndex() const
+QModelIndex PlaylistView::stickyHeaderIndex(int scrollOffset) const
 {
     if(!m_stickyHeaders || !model() || viewMode() != ViewMode::Tree) {
         return {};
     }
 
-    const auto indexes = visibleIndexes();
-    if(indexes.isEmpty()) {
-        return {};
-    }
-
-    QModelIndex group{indexes.front()};
+    QModelIndex group = findIndexAt({0, scrollOffset}, true, true);
     while(group.isValid() && group.data(PlaylistItem::Type).toInt() != PlaylistItem::Header) {
         group = group.parent();
     }
     return group.siblingAtColumn(0);
 }
 
-QRect PlaylistView::stickyHeaderRect(const QModelIndex& group, int scrollOffset) const
+QRect PlaylistView::stickyHeaderRect(const QModelIndex& group, int scrollOffset, int top) const
 {
     if(!group.isValid()) {
         return {};
@@ -1303,44 +1324,92 @@ QRect PlaylistView::stickyHeaderRect(const QModelIndex& group, int scrollOffset)
     }
 
     const QRect rect = visualRect(group.siblingAtColumn(column)).translated(0, -scrollOffset);
-    if(rect.height() <= 0 || rect.top() >= 0) {
+    if(rect.height() <= 0 || rect.top() >= top) {
         return {};
     }
 
-    int top{0};
-    const QModelIndex nextGroup = model()->index(group.row() + 1, column, group.parent());
-    if(nextGroup.isValid()) {
-        const QRect nextRect = visualRect(nextGroup).translated(0, -scrollOffset);
-        if(nextRect.isValid()) {
-            top = std::min(0, nextRect.top() - rect.height());
+    // A subgroup also ends when one of its ancestors gives way to its next sibling.
+    QModelIndex ancestor{group};
+    while(ancestor.isValid()) {
+        const QModelIndex nextGroup = model()->index(ancestor.row() + 1, column, ancestor.parent());
+        if(nextGroup.isValid()) {
+            const QRect nextRect = visualRect(nextGroup).translated(0, -scrollOffset);
+            if(nextRect.isValid()) {
+                top = std::min(top, nextRect.top() - rect.height());
+            }
+            break;
         }
+        ancestor = ancestor.parent();
     }
 
     return {0, top, header()->length(), rect.height()};
 }
 
-void PlaylistView::drawStickyHeader(QPainter& painter) const
+std::vector<PlaylistView::StickyHeader> PlaylistView::stickyHeaderLayout(int scrollOffset) const
 {
-    const QModelIndex group = stickyHeaderIndex();
-    const QRect rect        = stickyHeaderRect(group);
+    std::vector<StickyHeader> headers;
+    QModelIndex group = stickyHeaderIndex(scrollOffset);
+    QRect rect        = stickyHeaderRect(group, scrollOffset);
     if(rect.isEmpty()) {
-        return;
+        return headers;
+    }
+
+    headers.push_back({group, rect, rect.intersected(viewport()->rect())});
+
+    int top = std::max(0, rect.bottom() + 1);
+    while(m_stickySubheaders && top < viewport()->height()) {
+        QModelIndex child = findIndexAt({0, scrollOffset + top}, true, true);
+        while(child.isValid() && child.parent() != group) {
+            child = child.parent();
+        }
+        if(!child.isValid() || child.data(PlaylistItem::Type).toInt() != PlaylistItem::Subheader) {
+            break;
+        }
+
+        rect                 = stickyHeaderRect(child, scrollOffset, top);
+        const QRect clipRect = rect.intersected({0, top, header()->length(), viewport()->height() - top});
+        if(clipRect.isEmpty()) {
+            break;
+        }
+
+        headers.push_back({child, rect, clipRect});
+        group = child;
+        top   = rect.bottom() + 1;
+    }
+
+    return headers;
+}
+
+QRect PlaylistView::stickyHeaderPaintRect(const StickyHeader& header) const
+{
+    if(header.index.data(PlaylistItem::Type).toInt() != PlaylistItem::Subheader) {
+        return header.clipRect;
     }
 
     QStyleOptionViewItem opt;
     initViewItemOption(&opt);
-    opt.rect = rect;
-    opt.state.setFlag(QStyle::State_Selected, selectionModel()->isSelected(group));
-    opt.state.setFlag(QStyle::State_MouseOver, false);
+    opt.rect = header.rect;
+    return PlaylistDelegate::subheaderContentRect(opt, header.index).intersected(header.clipRect);
+}
 
-    painter.save();
+void PlaylistView::drawStickyHeader(QPainter& painter) const
+{
+    for(const auto& pinnedHeader : stickyHeaderLayout()) {
+        QStyleOptionViewItem opt;
+        initViewItemOption(&opt);
+        opt.rect = pinnedHeader.rect;
+        opt.state.setFlag(QStyle::State_Selected, selectionModel()->isSelected(pinnedHeader.index));
+        opt.state.setFlag(QStyle::State_MouseOver, false);
 
-    painter.setClipRect(rect, Qt::IntersectClip);
-    painter.fillRect(rect, opt.palette.brush(QPalette::Base));
-    style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, &painter, this);
-    itemDelegate()->paint(&painter, opt, group);
+        painter.save();
 
-    painter.restore();
+        painter.setClipRect(stickyHeaderPaintRect(pinnedHeader), Qt::IntersectClip);
+        painter.fillRect(opt.rect, opt.palette.brush(QPalette::Base));
+        style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, &painter, this);
+        itemDelegate()->paint(&painter, opt, pinnedHeader.index);
+
+        painter.restore();
+    }
 }
 
 void PlaylistView::snapScrollToStickyHeader(int delta)
@@ -1349,12 +1418,15 @@ void PlaylistView::snapScrollToStickyHeader(int delta)
         return;
     }
 
-    const QRect headerRect = stickyHeaderRect(stickyHeaderIndex());
-    if(headerRect.isEmpty()) {
+    const auto headers = stickyHeaderLayout();
+    if(headers.empty()) {
         return;
     }
 
-    const int boundary = headerRect.bottom() + 1;
+    const int boundary = headers.back().rect.bottom() + 1;
+    if(boundary >= viewport()->height()) {
+        return;
+    }
 
     int column{0};
     while(column < header()->count() && (header()->isSectionHidden(column) || isSpanning(column))) {

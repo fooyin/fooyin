@@ -27,6 +27,7 @@
 
 #include <QBasicTimer>
 #include <QPixmap>
+#include <QRegion>
 
 class QKeyEvent;
 class QLineEdit;
@@ -63,6 +64,7 @@ public:
     void setLoadingText(const QString& text);
     void setEmptyText(const QString& text);
     void setStickyHeaders(bool enabled);
+    void setStickySubheaders(bool enabled);
     void setStickyArtwork(bool enabled);
     void setRatingColumn(int column);
     void setLovedColumn(int column);
@@ -74,6 +76,8 @@ public:
     void playlistAboutToBeReset();
     void playlistReset();
     [[nodiscard]] bool playlistLoaded() const;
+
+    [[nodiscard]] bool stickyArtworkIntersects(const QRect& rect) const;
 
     [[nodiscard]] bool hasActiveInlineEditor() const;
     void setSingleWriteInProgress(bool inProgress);
@@ -133,8 +137,17 @@ private:
     void loveHoverOut();
     void updateHoveredRow(const QModelIndex& index);
 
-    [[nodiscard]] QModelIndex stickyHeaderIndex() const;
-    [[nodiscard]] QRect stickyHeaderRect(const QModelIndex& index, int scrollOffset = 0) const;
+    struct StickyHeader
+    {
+        QModelIndex index;
+        QRect rect;
+        QRect clipRect;
+    };
+
+    [[nodiscard]] QModelIndex stickyHeaderIndex(int scrollOffset = 0) const;
+    [[nodiscard]] QRect stickyHeaderRect(const QModelIndex& index, int scrollOffset = 0, int top = 0) const;
+    [[nodiscard]] std::vector<StickyHeader> stickyHeaderLayout(int scrollOffset = 0) const;
+    [[nodiscard]] QRect stickyHeaderPaintRect(const StickyHeader& header) const;
     void drawStickyHeader(QPainter& painter) const;
     void snapScrollToStickyHeader(int delta);
 
@@ -158,9 +171,11 @@ private:
     QString m_loadingText;
     bool m_playlistLoaded;
     bool m_stickyHeaders;
+    bool m_stickySubheaders;
     bool m_stickyArtwork;
     bool m_snappingScroll;
     bool m_stickyHeaderPressed;
+    mutable QRegion m_stickyArtworkRegion;
 
     StarDelegate* m_starDelegate;
     int m_ratingColumn;

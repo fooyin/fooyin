@@ -519,6 +519,7 @@ void PlaylistWidget::applyConfig(const ConfigData& config)
 
     setHeaderVisible(m_config.showHeader);
     m_playlistView->setStickyHeaders(m_config.stickyHeaders);
+    m_playlistView->setStickySubheaders(m_config.stickySubheaders);
     m_playlistView->setStickyArtwork(m_config.stickyArtwork);
     setScrollbarVisible(m_config.showScrollBar);
     setAlternatingRowColors(m_config.alternatingRows);
@@ -1736,6 +1737,7 @@ PlaylistWidget::ConfigData PlaylistWidget::configFromLayout(const QJsonObject& l
 
     config.showHeader              = layout.value("ShowHeader"_L1).toBool(config.showHeader);
     config.stickyHeaders           = layout.value("StickyHeaders"_L1).toBool(config.stickyHeaders);
+    config.stickySubheaders        = layout.value("StickySubheaders"_L1).toBool(config.stickySubheaders);
     config.stickyArtwork           = layout.value("StickyArtwork"_L1).toBool(config.stickyArtwork);
     config.showScrollBar           = layout.value("ShowScrollbar"_L1).toBool(config.showScrollBar);
     config.alternatingRows         = layout.value("AlternatingRows"_L1).toBool(config.alternatingRows);
@@ -1773,6 +1775,7 @@ void PlaylistWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& l
 {
     layout["ShowHeader"_L1]                = config.showHeader;
     layout["StickyHeaders"_L1]             = config.stickyHeaders;
+    layout["StickySubheaders"_L1]          = config.stickySubheaders;
     layout["StickyArtwork"_L1]             = config.stickyArtwork;
     layout["ShowScrollbar"_L1]             = config.showScrollBar;
     layout["AlternatingRows"_L1]           = config.alternatingRows;

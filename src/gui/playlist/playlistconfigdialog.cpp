@@ -57,6 +57,7 @@ PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QStri
     : WidgetConfigDialog{playlist, title, parent}
     , m_header{new QCheckBox(tr("Show header"), this)}
     , m_stickyHeaders{new QCheckBox(tr("Keep group headers in view"), this)}
+    , m_stickySubheaders{new QCheckBox(tr("Keep subheaders in view"), this)}
     , m_stickyArtwork{new QCheckBox(tr("Keep artwork in view"), this)}
     , m_scrollBar{new QCheckBox(tr("Show scrollbar"), this)}
     , m_alternatingRows{new QCheckBox(tr("Alternating row colours"), this)}
@@ -111,6 +112,7 @@ PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QStri
     appearanceLayout->addWidget(m_alternatingRows, row++, 0, 1, 2);
     appearanceLayout->addWidget(Gui::createSectionHeader(tr("Scrolling"), this), row++, 0, 1, 2);
     appearanceLayout->addWidget(m_stickyHeaders, row++, 0, 1, 2);
+    appearanceLayout->addWidget(m_stickySubheaders, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_stickyArtwork, row++, 0, 1, 2);
     appearanceLayout->addWidget(Gui::createSectionHeader(tr("Artwork"), this), row++, 0, 1, 2);
     appearanceLayout->addWidget(new QLabel(tr("Horizontal padding") + u":"_s, this), row, 0);
@@ -253,6 +255,7 @@ PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QStri
     layout->setRowStretch(2, 1);
 
     QObject::connect(browseAction, &QAction::triggered, this, &PlaylistConfigDialog::browseBackgroundImage);
+    QObject::connect(m_stickyHeaders, &QCheckBox::toggled, m_stickySubheaders, &QWidget::setEnabled);
     QObject::connect(m_artworkReflection, &QCheckBox::toggled, this, &PlaylistConfigDialog::updateReflectionControls);
     QObject::connect(m_backgroundImage, &QComboBox::currentIndexChanged, this,
                      &PlaylistConfigDialog::updateBackgroundControls);
@@ -271,6 +274,8 @@ void PlaylistConfigDialog::setConfig(const PlaylistWidget::ConfigData& config)
 {
     m_header->setChecked(config.showHeader);
     m_stickyHeaders->setChecked(config.stickyHeaders);
+    m_stickySubheaders->setChecked(config.stickySubheaders);
+    m_stickySubheaders->setEnabled(config.stickyHeaders);
     m_stickyArtwork->setChecked(config.stickyArtwork);
     m_scrollBar->setChecked(config.showScrollBar);
     m_alternatingRows->setChecked(config.alternatingRows);
@@ -305,6 +310,7 @@ PlaylistWidget::ConfigData PlaylistConfigDialog::config() const
     return {
         .showHeader               = m_header->isChecked(),
         .stickyHeaders            = m_stickyHeaders->isChecked(),
+        .stickySubheaders         = m_stickySubheaders->isChecked(),
         .stickyArtwork            = m_stickyArtwork->isChecked(),
         .showScrollBar            = m_scrollBar->isChecked(),
         .alternatingRows          = m_alternatingRows->isChecked(),
@@ -337,18 +343,18 @@ void PlaylistConfigDialog::mergeExternalConfig(const PlaylistWidget::ConfigData&
 {
     mergeExternalFields(
         previous, current, &PlaylistWidget::ConfigData::showHeader, &PlaylistWidget::ConfigData::showScrollBar,
-        &PlaylistWidget::ConfigData::stickyHeaders, &PlaylistWidget::ConfigData::stickyArtwork,
-        &PlaylistWidget::ConfigData::alternatingRows, &PlaylistWidget::ConfigData::imagePadding,
-        &PlaylistWidget::ConfigData::imagePaddingTop, &PlaylistWidget::ConfigData::artworkCornerRadius,
-        &PlaylistWidget::ConfigData::artworkReflection, &PlaylistWidget::ConfigData::artworkReflectionHeight,
-        &PlaylistWidget::ConfigData::artworkReflectionOpacity, &PlaylistWidget::ConfigData::artworkReflectionGap,
-        &PlaylistWidget::ConfigData::backgroundImageMode, &PlaylistWidget::ConfigData::backgroundCustomImage,
-        &PlaylistWidget::ConfigData::backgroundCoverType, &PlaylistWidget::ConfigData::backgroundScaling,
-        &PlaylistWidget::ConfigData::backgroundPosition, &PlaylistWidget::ConfigData::backgroundMaxSize,
-        &PlaylistWidget::ConfigData::backgroundBlur, &PlaylistWidget::ConfigData::backgroundOpacity,
-        &PlaylistWidget::ConfigData::backgroundFadeDuration, &PlaylistWidget::ConfigData::backgroundTrackPreference,
-        &PlaylistWidget::ConfigData::doubleClickAction, &PlaylistWidget::ConfigData::middleClickAction,
-        &PlaylistWidget::ConfigData::startPlaybackOnSend);
+        &PlaylistWidget::ConfigData::stickyHeaders, &PlaylistWidget::ConfigData::stickySubheaders,
+        &PlaylistWidget::ConfigData::stickyArtwork, &PlaylistWidget::ConfigData::alternatingRows,
+        &PlaylistWidget::ConfigData::imagePadding, &PlaylistWidget::ConfigData::imagePaddingTop,
+        &PlaylistWidget::ConfigData::artworkCornerRadius, &PlaylistWidget::ConfigData::artworkReflection,
+        &PlaylistWidget::ConfigData::artworkReflectionHeight, &PlaylistWidget::ConfigData::artworkReflectionOpacity,
+        &PlaylistWidget::ConfigData::artworkReflectionGap, &PlaylistWidget::ConfigData::backgroundImageMode,
+        &PlaylistWidget::ConfigData::backgroundCustomImage, &PlaylistWidget::ConfigData::backgroundCoverType,
+        &PlaylistWidget::ConfigData::backgroundScaling, &PlaylistWidget::ConfigData::backgroundPosition,
+        &PlaylistWidget::ConfigData::backgroundMaxSize, &PlaylistWidget::ConfigData::backgroundBlur,
+        &PlaylistWidget::ConfigData::backgroundOpacity, &PlaylistWidget::ConfigData::backgroundFadeDuration,
+        &PlaylistWidget::ConfigData::backgroundTrackPreference, &PlaylistWidget::ConfigData::doubleClickAction,
+        &PlaylistWidget::ConfigData::middleClickAction, &PlaylistWidget::ConfigData::startPlaybackOnSend);
 }
 
 void PlaylistConfigDialog::browseBackgroundImage()

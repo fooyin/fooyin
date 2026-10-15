@@ -48,6 +48,8 @@ public:
 
     [[nodiscard]] int artworkSpanHeight(int width, const QModelIndex& index) const;
 
+    static QRect subheaderContentRect(const QStyleOptionViewItem& option, const QModelIndex& index, int offset = 0);
+
 private:
     int m_artworkCornerRadius{0};
     ReflectionOptions m_reflectionOptions;

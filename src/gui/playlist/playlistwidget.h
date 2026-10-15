@@ -82,6 +82,7 @@ public:
     {
         bool showHeader{true};
         bool stickyHeaders{false};
+        bool stickySubheaders{false};
         bool stickyArtwork{false};
         bool showScrollBar{true};
         bool alternatingRows{true};
