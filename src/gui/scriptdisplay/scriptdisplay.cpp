@@ -21,12 +21,11 @@
 
 #include "scriptdisplayconfigdialog.h"
 #include "scripting/scriptcommandhandler.h"
-#include "scripting/scriptvariableproviders.h"
 
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/scripttypes.h>
 #include <core/track.h>
 #include <gui/configdialog.h>
 #include <gui/guiconstants.h>
@@ -138,7 +137,6 @@ ScriptDisplay::ScriptDisplay(PlayerController* playerController, PlaylistHandler
     m_layout->addWidget(m_text, 1);
 
     m_actionManager->addContextObject(m_context);
-    m_scriptParser.addProvider(playlistVariableProvider());
 
     m_copyCmd->setCategories({tr("Edit")});
     m_copyCmd->setDefaultShortcut(QKeySequence::Copy);
@@ -591,10 +589,11 @@ Playlist* ScriptDisplay::currentPlaylist() const
 
 QString ScriptDisplay::evaluateScript()
 {
-    auto contextData
-        = makePlaybackScriptContext(m_playerController, currentPlaylist(), TrackListContextPolicy::Fallback, {}, true,
-                                    false, Gui::ratingStarSymbols(*m_settings));
-    return m_scriptParser.evaluate(m_config.script, currentTrack(), contextData.context);
+    const auto scriptData = makePlaybackScriptData(m_playerController, currentPlaylist());
+    const ScriptEvaluationOptions options{.trackListContextPolicy = TrackListContextPolicy::Fallback,
+                                          .escapeRichText         = true,
+                                          .ratingSymbols          = Gui::ratingStarSymbols(*m_settings)};
+    return m_scriptParser.evaluate(m_config.script, currentTrack(), scriptData.context(), options);
 }
 
 void ScriptDisplay::activateLink(const QString& link) const

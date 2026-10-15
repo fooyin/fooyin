@@ -20,7 +20,7 @@
 #include "librarytreeconfigwidget.h"
 
 #include "librarytreegroupeditordialog.h"
-#include "librarytreescriptenvironment.h"
+#include "librarytreescriptcontext.h"
 
 #include <gui/trackselectioncontroller.h>
 

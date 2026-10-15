@@ -21,7 +21,7 @@
 
 #include "librarytreecontroller.h"
 #include "librarytreegroup.h"
-#include "librarytreescriptenvironment.h"
+#include "librarytreescriptcontext.h"
 
 #include <core/track.h>
 #include <gui/fywidget.h>

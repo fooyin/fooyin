@@ -23,8 +23,8 @@
 #include "nowplayingoutput/nowplayingoutputservice.h"
 
 #include <core/player/playercontroller.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/scripttypes.h>
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
 #include <gui/widgets/scriptlineedit.h>
@@ -269,9 +269,9 @@ void NowPlayingOutputPageWidget::updatePreview()
         return;
     }
 
-    auto playbackContext = makePlaybackScriptContext(m_playerController, nullptr, TrackListContextPolicy::Placeholder);
-    playbackContext.context.track = &track;
-    m_preview->setPlainText(m_scriptParser.evaluate(m_script->toPlainText(), track, playbackContext.context));
+    const auto playbackContext = makePlaybackScriptData(m_playerController);
+    m_preview->setPlainText(m_scriptParser.evaluate(m_script->toPlainText(), track, playbackContext.context(),
+                                                    {.trackListContextPolicy = TrackListContextPolicy::Placeholder}));
 }
 
 NowPlayingOutputService::UpdateEvents NowPlayingOutputPageWidget::updateEvents() const

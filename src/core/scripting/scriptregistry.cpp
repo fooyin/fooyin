@@ -17,82 +17,35 @@
  *
  */
 
-#include "scriptregistry.h"
+#include <core/scripting/scriptregistry.h>
 
 #include "functions/controlfuncs.h"
 #include "functions/mathfuncs.h"
 #include "functions/stringfuncs.h"
 #include "functions/timefuncs.h"
 #include "functions/tracklistfuncs.h"
-#include "scriptbinder.h"
+#include "scriptevaluator.h"
 #include "version.h"
 
 #include <core/constants.h>
-#include <core/playlist/playlist.h>
-#include <core/scripting/scriptproviders.h>
-#include <core/track.h>
-#include <utils/audioutils.h>
+#include <unordered_map>
+#include <unordered_set>
 #include <utils/stringutils.h>
 #include <utils/utils.h>
 
+#include <QCoreApplication>
 #include <QDateTime>
-#include <QDir>
-#include <QRegularExpression>
+#include <QDebug>
+
+#include <algorithm>
+#include <atomic>
+#include <cmath>
+#include <cstdint>
 
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 namespace {
-QString escapeRichText(const ScriptContext* context, QString value)
-{
-    const auto* environment = context && context->environment ? context->environment->evaluationEnvironment() : nullptr;
-    if(environment && environment->escapeRichText()) {
-        value.replace(u'\\', u"\\\\"_s);
-        value.replace(u'<', u"\\<"_s);
-    }
-    return value;
-}
-
-uint64_t remainingPlaybackSeconds(uint64_t duration, uint64_t position)
-{
-    return (duration / 1000) - (position / 1000);
-}
-
-RatingStarSymbols ratingStarSymbols(const ScriptContext& context)
-{
-    const auto* environment = context.environment ? context.environment->evaluationEnvironment() : nullptr;
-    return environment ? environment->ratingStarSymbols() : defaultRatingStarSymbols();
-}
-
-QString formattedRatingStars(const Track& track, const ScriptContext& context, bool includeEmptyStars)
-{
-    const int rating = track.ratingStars();
-
-    const RatingStarSymbols symbols = ratingStarSymbols(context);
-    const QString emptyStarSymbol   = includeEmptyStars ? symbols.emptyStarSymbol : QString{};
-
-    if(rating <= 0) {
-        return includeEmptyStars && !emptyStarSymbol.isEmpty() ? emptyStarSymbol.repeated(5) : QString{};
-    }
-
-    const int emptyStars = 5 - (rating / 2) - ((rating % 2) != 0 ? 1 : 0);
-
-    QString text;
-    for(int i{0}; i < rating / 2; ++i) {
-        text.append(symbols.fullStarSymbol);
-    }
-    if((rating % 2) != 0) {
-        text.append(symbols.halfStarSymbol);
-    }
-    if(includeEmptyStars && !emptyStarSymbol.isEmpty()) {
-        for(int i{0}; i < emptyStars; ++i) {
-            text.append(emptyStarSymbol);
-        }
-    }
-
-    return text;
-}
-
 QString trackMeta(const ScriptFunctionCallContext& call)
 {
     if(call.args.empty() || !call.subject.track) {
@@ -102,17 +55,18 @@ QString trackMeta(const ScriptFunctionCallContext& call)
     const QString tag = call.args.front().value.toUpper();
     if(tag == QLatin1StringView{Constants::MetaData::RatingStars}) {
         return escapeRichText(
-            call.context,
-            formattedRatingStars(*call.subject.track, call.context ? *call.context : ScriptContext{}, false));
+            call.options,
+            formattedRatingStars(*call.subject.track, call.options ? *call.options : ScriptEvaluationOptions{}, false));
     }
     if(tag == QLatin1StringView{Constants::MetaData::RatingStarsPadded}) {
-        return escapeRichText(call.context, formattedRatingStars(*call.subject.track,
-                                                                 call.context ? *call.context : ScriptContext{}, true));
+        return escapeRichText(
+            call.options,
+            formattedRatingStars(*call.subject.track, call.options ? *call.options : ScriptEvaluationOptions{}, true));
     }
 
     QStringList values = call.subject.track->metaValues(tag);
     for(auto& value : values) {
-        value = escapeRichText(call.context, value);
+        value = escapeRichText(call.options, value);
     }
     if(call.args.size() == 1) {
         return values.join(", "_L1);
@@ -134,7 +88,7 @@ QString trackMetaSep(const ScriptFunctionCallContext& call)
 
     QStringList values = call.subject.track->metaValues(call.args.front().value);
     for(auto& value : values) {
-        value = escapeRichText(call.context, value);
+        value = escapeRichText(call.options, value);
     }
     if(values.size() < 2) {
         return values.value(0);
@@ -185,49 +139,7 @@ QString trackInfo(const ScriptFunctionCallContext& call)
         return {};
     }
 
-    return escapeRichText(call.context, call.subject.track->techInfo(call.args.front().value));
-}
-
-QString trackChannels(const Track& track)
-{
-    switch(track.channels()) {
-        case 1:
-            return u"Mono"_s;
-        case 2:
-            return u"Stereo"_s;
-        default:
-            return u"%1ch"_s.arg(track.channels());
-    }
-}
-
-QString formatGain(const float gain)
-{
-    return u"%1 dB"_s.arg(gain);
-}
-
-QString formatPeak(const float peak)
-{
-    const double dbPeak = Audio::volumeToDb(static_cast<double>(peak));
-    return u"%1 dB"_s.arg(dbPeak, 0, 'f', 2).prepend(dbPeak > 0 ? "+"_L1 : ""_L1);
-}
-
-QString formatDateTime(const uint64_t ms)
-{
-    if(ms == 0) {
-        return {};
-    }
-
-    return Utils::msToDateString(static_cast<int64_t>(ms));
-}
-
-QString sampleRateMetadata(const Track& track)
-{
-    return track.sampleRate() > 0 ? QString::number(track.sampleRate()) : QString{};
-}
-
-int bitDepthMetadata(const Track& track)
-{
-    return track.bitDepth() > 0 ? track.bitDepth() : -1;
+    return escapeRichText(call.options, call.subject.track->techInfo(call.args.front().value));
 }
 
 ScriptResult dateTimeVariable()
@@ -241,1111 +153,847 @@ QString fooyinVersionVariable()
     return QString::fromLatin1(VERSION);
 }
 
-ScriptContext makeContext(const ScriptContext& base, const Track* track, const TrackList* tracks,
-                          const Playlist* playlist)
+QString frontCover()
 {
-    ScriptContext context = base;
-    context.track         = track;
-    context.tracks        = tracks;
-    context.playlist      = playlist;
-    return context;
+    return QString::fromLatin1(Constants::FrontCover);
 }
 
-ScriptResult unavailableTrackListResult(const ScriptContext& context, const QString& var)
+QString backCover()
 {
-    const auto* environment = context.environment ? context.environment->evaluationEnvironment() : nullptr;
-    const TrackListContextPolicy policy
-        = environment ? environment->trackListContextPolicy() : TrackListContextPolicy::Unresolved;
-    const QString placeholder = environment ? environment->trackListPlaceholder() : QString{};
+    return QString::fromLatin1(Constants::BackCover);
+}
 
-    if(policy == TrackListContextPolicy::Placeholder && !placeholder.isNull()) {
-        return {.value = placeholder, .cond = true};
+QString artistPicture()
+{
+    return QString::fromLatin1(Constants::ArtistPicture);
+}
+
+const ScriptPlaylistData* playlistData(const ScriptContext& context)
+{
+    return context.playlistData;
+}
+
+QString trackDepth(const ScriptContext& context)
+{
+    const auto* row = playlistData(context);
+    if(row == nullptr) {
+        return {};
     }
 
-    return {.value = u"%%1%"_s.arg(var), .cond = true};
+    return QString::number(row->depth);
 }
 
-void applyOutputPolicy(const ScriptContext& context, ScriptResult& result)
+QString trackIndex(const ScriptContext& context)
 {
-    const auto* environment          = context.environment ? context.environment->evaluationEnvironment() : nullptr;
-    const bool replacePathSeparators = environment && environment->replacePathSeparators();
-
-    result.value = escapeRichText(&context, result.value);
-
-    if(replacePathSeparators && !result.value.isEmpty()) {
-        static const QRegularExpression regex{uR"([/\\])"_s};
-        result.value.replace(regex, "-"_L1);
-    }
-}
-
-bool preservesPathSeparators(const VariableKind kind)
-{
-    switch(kind) {
-        case VariableKind::FilePath:
-        case VariableKind::Directory:
-        case VariableKind::Path:
-        case VariableKind::LibraryPath:
-        case VariableKind::RelativePath:
-            return true;
-        default:
-            return false;
-    }
-}
-
-void applyVariableOutputPolicy(const ScriptContext& context, const VariableKind kind, ScriptResult& result)
-{
-    if(preservesPathSeparators(kind)) {
-        result.value = escapeRichText(&context, result.value);
-        return;
+    const auto* row = playlistData(context);
+    if(row == nullptr) {
+        return {};
     }
 
-    applyOutputPolicy(context, result);
-}
-
-TrackListContextPolicy trackListContextPolicy(const ScriptContext& context)
-{
-    if(const auto* environment = context.environment ? context.environment->evaluationEnvironment() : nullptr) {
-        return environment->trackListContextPolicy();
+    const int playlistTrackIndex = row->trackIndex;
+    if(playlistTrackIndex < 0) {
+        return {};
     }
 
-    return TrackListContextPolicy::Unresolved;
+    const int playlistTrackCount = row->trackCount;
+    const int numDigits          = playlistTrackCount > 0 ? static_cast<int>(std::log10(playlistTrackCount)) + 1 : 2;
+
+    return Utils::addLeadingZero(playlistTrackIndex + 1, numDigits);
 }
 
-bool useVariousArtists(const ScriptContext& context)
+QString queueIndex(const ScriptContext& context)
 {
-    if(const auto* environment = context.environment ? context.environment->evaluationEnvironment() : nullptr) {
-        return environment->useVariousArtists();
+    const auto* row = playlistData(context);
+    if(row == nullptr) {
+        return {};
     }
 
-    return false;
-}
-
-const TrackList* contextTrackList(const ScriptContext& context)
-{
-    if(const auto* environment = context.environment ? context.environment->trackListEnvironment() : nullptr) {
-        return environment->trackList();
+    const auto& indexes = row->queueIndexes;
+    if(indexes.empty()) {
+        return {};
     }
 
-    return context.tracks;
+    return QString::number(indexes.front() + 1);
 }
 
-const ScriptPlaybackEnvironment* playbackEnvironment(const ScriptContext& context)
+QString queueIndexes(const ScriptContext& context)
 {
-    return context.environment ? context.environment->playbackEnvironment() : nullptr;
+    const auto* row = playlistData(context);
+    if(row == nullptr) {
+        return {};
+    }
+
+    const auto& indexes = row->queueIndexes;
+    if(indexes.empty()) {
+        return {};
+    }
+
+    QStringList textIndexes;
+    textIndexes.reserve(static_cast<qsizetype>(indexes.size()));
+
+    for(const int index : indexes) {
+        textIndexes.append(QString::number(index + 1));
+    }
+
+    return textIndexes.join(u", "_s);
 }
 
-const ScriptLibraryEnvironment* libraryEnvironment(const ScriptContext& context)
+QString queueTotal(const ScriptContext& context)
 {
-    return context.environment ? context.environment->libraryEnvironment() : nullptr;
+    const auto* row = playlistData(context);
+    if(row == nullptr || row->queueIndexes.empty()) {
+        return {};
+    }
+
+    return QString::number(row->queueTotal);
+}
+
+QString playingQueue(const ScriptContext& context)
+{
+    const QString indexes = queueIndexes(context);
+    return indexes.isEmpty() ? QString{} : u"[%1]"_s.arg(indexes);
+}
+
+template <ScriptQueueItemState State>
+QString queueItemState(const ScriptContext& context)
+{
+    const auto* row = playlistData(context);
+    return row && row->queueItemState == State ? u"1"_s : QString{};
 }
 } // namespace
 
-bool isTrackListVariableKind(const VariableKind kind)
+class ScriptRegistryPrivate
 {
-    switch(kind) {
-        case VariableKind::Genres:
-        case VariableKind::TrackCount:
-        case VariableKind::Playtime:
-        case VariableKind::PlaylistSize:
-        case VariableKind::PlaylistDuration:
-        case VariableKind::PlaylistElapsed:
-            return true;
-        default:
-            return false;
-    }
-}
+public:
+    static constexpr std::uint64_t ShutdownFlag = std::uint64_t{1} << 63;
 
-std::optional<ScriptRegistry::FuncRet> trackMetadataValue(const VariableKind kind, const Track& track,
-                                                          const ScriptRegistry& registry, const ScriptContext& context)
+    void addDefaultVariables();
+    void addDefaultFunctions();
+    bool registerVariable(ScriptVariableDescriptor variable);
+    bool registerFunction(ScriptFunctionDescriptor function);
+
+    bool finalised{false};
+    std::atomic_uint64_t operationState{0};
+    std::vector<ScriptVariableDescriptor> variables;
+    std::vector<ScriptFunctionDescriptor> functions;
+    std::unordered_map<QString, size_t> variableIds;
+    std::unordered_map<QString, ScriptFunctionId> functionIds;
+};
+
+void ScriptRegistryPrivate::addDefaultVariables()
 {
-    switch(kind) {
-        case VariableKind::Track:
-            return track.trackNumber();
-        case VariableKind::TrackTotal:
-            return track.trackTotal();
-        case VariableKind::Disc:
-            return track.discNumber();
-        case VariableKind::DiscTotal:
-            return track.discTotal();
-        case VariableKind::Title:
-            return track.effectiveTitle();
-        case VariableKind::Artist:
-            return track.primaryArtist();
-        case VariableKind::TrackArtist:
-            return track.uniqueArtist();
-        case VariableKind::PlayCount:
-            return track.playCount();
-        case VariableKind::Duration: {
-            const auto duration = track.duration();
-            return duration == 0 ? ScriptRegistry::FuncRet{QString{}}
-                                 : ScriptRegistry::FuncRet{Utils::msToString(duration)};
-        }
-        case VariableKind::DurationSecs: {
-            const auto duration = track.duration();
-            return duration == 0 ? ScriptRegistry::FuncRet{QString{}}
-                                 : ScriptRegistry::FuncRet{QString::number(duration / 1000)};
-        }
-        case VariableKind::DurationMSecs: {
-            const auto duration = track.duration();
-            return duration == 0 ? ScriptRegistry::FuncRet{QString{}}
-                                 : ScriptRegistry::FuncRet{QString::number(duration)};
-        }
-        case VariableKind::AlbumArtist:
-            return registry.albumArtistMetadata(track);
-        case VariableKind::Album:
-            return track.album();
-        case VariableKind::Genre:
-        case VariableKind::Genres:
-            return track.genre();
-        case VariableKind::Composer:
-            return track.composer();
-        case VariableKind::Performer:
-            return track.performer();
-        case VariableKind::Comment:
-            return track.comment();
-        case VariableKind::Date:
-            return track.date();
-        case VariableKind::Year:
-            return track.year();
-        case VariableKind::FileSize:
-            return track.fileSize();
-        case VariableKind::FileSizeNatural:
-            return Utils::formatFileSize(track.fileSize());
-        case VariableKind::Bitrate:
-            return registry.bitrateMetadata(track);
-        case VariableKind::SampleRate:
-            return sampleRateMetadata(track);
-        case VariableKind::BitDepth:
-            return bitDepthMetadata(track);
-        case VariableKind::FirstPlayed:
-            return formatDateTime(track.firstPlayed());
-        case VariableKind::LastPlayed:
-            return formatDateTime(track.lastPlayed());
-        case VariableKind::Rating:
-            return track.rating() > 0 ? track.rating() * 5.0F : -1.0F;
-        case VariableKind::RatingNormalized:
-            return track.rating();
-        case VariableKind::Stars:
-            return track.rating() > 0 ? track.rating() * 5.0F : -1.0F;
-        case VariableKind::RatingStars:
-            return formattedRatingStars(track, context, false);
-        case VariableKind::RatingStarsPadded:
-            return formattedRatingStars(track, context, true);
-        case VariableKind::Loved:
-        case VariableKind::LoveEditor:
-            return track.isLoved() ? u"1"_s : QString{};
-        case VariableKind::RatingEditor:
-            return track.ratingStars();
-        case VariableKind::Codec:
-            return !track.codec().isEmpty() ? track.codec() : track.extension().toUpper();
-        case VariableKind::CodecProfile:
-            return track.codecProfile();
-        case VariableKind::Tool:
-            return track.tool();
-        case VariableKind::TagType:
-            return track.tagType(u" | "_s);
-        case VariableKind::Encoding:
-            return track.encoding();
-        case VariableKind::Channels:
-            return trackChannels(track);
-        case VariableKind::CreatedTime:
-            return formatDateTime(track.createdTime());
-        case VariableKind::AddedTime:
-            return formatDateTime(track.addedTime());
-        case VariableKind::LastModified:
-            return formatDateTime(track.lastModified());
-        case VariableKind::FilePath:
-            return track.filepath();
-        case VariableKind::FileName:
-            return track.filename();
-        case VariableKind::Extension:
-            return track.extension();
-        case VariableKind::FileNameWithExt:
-            return track.filenameExt();
-        case VariableKind::Directory:
-            return track.directory();
-        case VariableKind::Path:
-            return track.path();
-        case VariableKind::Subsong:
-            return track.subsong();
-        case VariableKind::RGTrackGain:
-            if(track.hasEffectiveTrackGain()) {
-                return formatGain(track.effectiveRGTrackGain());
-            }
-            return QString{};
-        case VariableKind::RGTrackPeak:
-            if(track.hasEffectiveTrackPeak()) {
-                return track.effectiveRGTrackPeak();
-            }
-            return QString{};
-        case VariableKind::RGTrackPeakDB:
-            if(track.hasEffectiveTrackPeak()) {
-                return formatPeak(track.effectiveRGTrackPeak());
-            }
-            return QString{};
-        case VariableKind::RGAlbumGain:
-            if(track.hasEffectiveAlbumGain()) {
-                return formatGain(track.effectiveRGAlbumGain());
-            }
-            return QString{};
-        case VariableKind::RGAlbumPeak:
-            if(track.hasEffectiveAlbumPeak()) {
-                return track.effectiveRGAlbumPeak();
-            }
-            return QString{};
-        case VariableKind::RGAlbumPeakDB:
-            if(track.hasEffectiveAlbumPeak()) {
-                return formatPeak(track.effectiveRGAlbumPeak());
-            }
-            return QString{};
-        default:
-            return {};
-    }
-}
+    using namespace Constants;
 
-std::optional<ScriptRegistry::FuncRet> trackListValue(const VariableKind kind, const TrackList& tracks,
-                                                      const ScriptRegistry& registry)
-{
-    const auto& cache = registry.cachedTrackListValues(tracks);
-
-    switch(kind) {
-        case VariableKind::TrackCount:
-            return cache.trackCount;
-        case VariableKind::Playtime:
-        case VariableKind::PlaylistDuration:
-            return cache.playtime;
-        case VariableKind::PlaylistSize:
-            return cache.playlistSize;
-        case VariableKind::PlaylistElapsed:
-            return cache.playlistElapsed;
-        case VariableKind::Genres:
-            return cache.genres;
-        default:
-            return {};
-    }
-}
-
-std::optional<QString> playbackVariableValue(const VariableKind kind, const ScriptRegistry& registry,
-                                             const Track& track)
-{
-    switch(kind) {
-        case VariableKind::PlaybackTime:
-            return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.playbackTime()}
-                                                                  : std::optional<QString>{};
-        case VariableKind::PlaybackTimeSeconds:
-            return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.playbackTimeSeconds()}
-                                                                  : std::optional<QString>{};
-        case VariableKind::PlaybackTimeRemaining:
-            return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.playbackTimeRemaining()}
-                                                                  : std::optional<QString>{};
-        case VariableKind::PlaybackTimeRemainingSeconds:
-            return registry.playbackValueAvailableForTrack(track)
-                     ? std::optional{registry.playbackTimeRemainingSeconds()}
-                     : std::optional<QString>{};
-        case VariableKind::InputDecoder:
-            return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.decoder()}
-                                                                  : std::optional<QString>{};
-        case VariableKind::OutputSampleRate:
-        case VariableKind::OutputChannels:
-        case VariableKind::OutputChannelMask:
-        case VariableKind::OutputBitDepth:
-        case VariableKind::OutputDevice:
-        case VariableKind::OutputDsps:
-        case VariableKind::OutputDspPreset:
-        case VariableKind::OutputVolume:
-        case VariableKind::OutputRgSource:
-        case VariableKind::OutputRgMode:
-        case VariableKind::OutputRgGain:
-        case VariableKind::OutputRgPeak:
-        case VariableKind::OutputRgPeakDb:
-        case VariableKind::OutputBufferLength:
-            return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.outputInfo(kind)}
-                                                                  : std::optional<QString>{};
-        case VariableKind::IsPlaying:
-            return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.isPlaying()}
-                                                                  : std::optional<QString>{};
-        case VariableKind::IsPaused:
-            return registry.playbackValueAvailableForTrack(track) ? std::optional{registry.isPaused()}
-                                                                  : std::optional<QString>{};
-        case VariableKind::IsStopped:
-            return registry.isStopped();
-        default:
-            return {};
-    }
-}
-
-std::optional<QString> libraryVariableValue(const VariableKind kind, const Track& track, const ScriptRegistry& registry)
-{
-    switch(kind) {
-        case VariableKind::LibraryName:
-            return registry.libraryNameVariable(track);
-        case VariableKind::LibraryPath:
-            return registry.libraryPathVariable(track);
-        case VariableKind::RelativePath:
-            return registry.relativePathVariable(track);
-        default:
-            return {};
-    }
-}
-
-ScriptRegistry::FuncRet ScriptRegistry::albumArtistMetadata(const Track& track) const
-{
-    return track.effectiveAlbumArtist(useVariousArtists(m_context));
-}
-
-ScriptRegistry::FuncRet ScriptRegistry::bitrateMetadata(const Track& track) const
-{
-    return getBitrate(track);
-}
-
-QString ScriptRegistry::playbackTime() const
-{
-    if(!playbackValueAvailableForTrack()) {
-        return {};
-    }
-    if(const auto* environment = playbackEnvironment(m_context); environment != nullptr) {
-        return Utils::msToString(environment->currentPosition());
-    }
-    return {};
-}
-
-QString ScriptRegistry::playbackTimeSeconds() const
-{
-    if(!playbackValueAvailableForTrack()) {
-        return {};
-    }
-    if(const auto* environment = playbackEnvironment(m_context); environment != nullptr) {
-        return QString::number(environment->currentPosition() / 1000);
-    }
-    return {};
-}
-
-QString ScriptRegistry::playbackTimeRemaining() const
-{
-    if(!playbackValueAvailableForTrack()) {
-        return {};
-    }
-    if(const auto* environment = playbackEnvironment(m_context); environment != nullptr) {
-        if(environment->currentTrackDuration() == 0
-           || environment->currentPosition() >= environment->currentTrackDuration()) {
-            return {};
-        }
-        const auto remaining
-            = remainingPlaybackSeconds(environment->currentTrackDuration(), environment->currentPosition());
-        return Utils::msToString(remaining * 1000);
-    }
-    return {};
-}
-
-QString ScriptRegistry::playbackTimeRemainingSeconds() const
-{
-    if(!playbackValueAvailableForTrack()) {
-        return {};
-    }
-    if(const auto* environment = playbackEnvironment(m_context); environment != nullptr) {
-        if(environment->currentTrackDuration() == 0
-           || environment->currentPosition() >= environment->currentTrackDuration()) {
-            return {};
-        }
-        return QString::number(
-            remainingPlaybackSeconds(environment->currentTrackDuration(), environment->currentPosition()));
-    }
-    return {};
-}
-
-QString ScriptRegistry::isPlaying() const
-{
-    if(!playbackValueAvailableForTrack()) {
-        return {};
-    }
-    if(const auto* environment = playbackEnvironment(m_context);
-       environment != nullptr && environment->playState() == Player::PlayState::Playing) {
-        return u"1"_s;
-    }
-    return {};
-}
-
-QString ScriptRegistry::decoder() const
-{
-    if(!playbackValueAvailableForTrack()) {
-        return {};
-    }
-    if(const auto* environment = playbackEnvironment(m_context); environment != nullptr) {
-        return environment->decoder();
-    }
-    return {};
-}
-
-QString ScriptRegistry::outputInfo(VariableKind kind) const
-{
-    const auto* environment = playbackEnvironment(m_context);
-    if(!environment) {
-        return {};
-    }
-
-    const Engine::PlaybackOutputInfo info = environment->outputInfo();
-    const auto formatDb                   = [](double value) {
-        return QString::number(value, 'f', 2);
+    const auto addVariable = [this](VariableKind kind, QString name, const char* category, const char* description,
+                                    ScriptVariableInvoker invoker = {}, std::vector<QString> aliases = {}) {
+        registerVariable({.kind        = kind,
+                          .name        = std::move(name),
+                          .invoker     = invoker,
+                          .category    = QString::fromUtf8(category),
+                          .description = QString::fromUtf8(description),
+                          .aliases     = std::move(aliases)});
     };
 
-    switch(kind) {
-        case VariableKind::OutputSampleRate:
-            return info.format.isValid() ? QString::number(info.format.sampleRate()) : QString{};
-        case VariableKind::OutputChannels:
-            return info.format.isValid() ? QString::number(info.format.channelCount()) : QString{};
-        case VariableKind::OutputChannelMask:
-            return info.format.isValid() && info.format.hasChannelLayout() ? info.format.prettyChannelLayout()
-                                                                           : QString{};
-        case VariableKind::OutputBitDepth:
-            return info.format.isValid() ? QString::number(info.format.bitdepth()) : QString{};
-        case VariableKind::OutputDevice:
-            return info.device;
-        case VariableKind::OutputDsps: {
-            QStringList dsps;
-            dsps.reserve(static_cast<qsizetype>(info.dsps.size()));
-            std::ranges::copy(info.dsps, std::back_inserter(dsps));
-            return dsps.join(u", "_s);
-        }
-        case VariableKind::OutputDspPreset:
-            return info.dspPreset;
-        case VariableKind::OutputVolume:
-            return info.volume > 0.0 ? formatDb(Audio::volumeToDb(info.volume)) + u" dB"_s : u"-inf"_s;
-        case VariableKind::OutputRgSource:
-            switch(info.replayGain.source) {
-                case Engine::ReplayGainSource::Track:
-                    return tr("Track");
-                case Engine::ReplayGainSource::Album:
-                    return tr("Album");
-                case Engine::ReplayGainSource::None:
-                default:
-                    return tr("None");
-            }
-        case VariableKind::OutputRgMode: {
-            const bool gain = info.replayGain.processing.testFlag(Engine::ApplyGain);
-            const bool clip = info.replayGain.processing.testFlag(Engine::PreventClipping);
-            if(gain && clip) {
-                return tr("Gain and clip prevention");
-            }
-            if(gain) {
-                return tr("Gain");
-            }
-            if(clip) {
-                return tr("Clip prevention");
-            }
-            return tr("None");
-        }
-        case VariableKind::OutputRgGain:
-            return formatDb(info.replayGain.gainDb) + u" dB"_s;
-        case VariableKind::OutputRgPeak:
-            return info.replayGain.hasPeak ? QString::number(info.replayGain.peak, 'g', 10) : QString{};
-        case VariableKind::OutputRgPeakDb:
-            return info.replayGain.hasPeak && info.replayGain.peak > 0.0
-                     ? formatDb(Audio::volumeToDb(info.replayGain.peak)) + u" dBFS"_s
-                     : QString{};
-        case VariableKind::OutputBufferLength:
-            return info.bufferLengthMs > 0 ? QString::number(info.bufferLengthMs) : QString{};
-        default:
-            return {};
-    }
+    addVariable(VariableKind::Title, QString::fromLatin1(MetaData::Title), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Track title"));
+    addVariable(VariableKind::Artist, QString::fromLatin1(MetaData::Artist), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Primary artist"));
+    addVariable(VariableKind::TrackArtist, QString::fromLatin1(MetaData::TrackArtist),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Track artists not present in album artists"), {},
+                {u"UNIQUEARTIST"_s, u"TRACK ARTIST"_s});
+    addVariable(VariableKind::Album, QString::fromLatin1(MetaData::Album), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Album title"));
+    addVariable(VariableKind::AlbumArtist, QString::fromLatin1(MetaData::AlbumArtist),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Album artist"), {},
+                {u"ALBUM ARTIST"_s});
+    addVariable(VariableKind::Track, QString::fromLatin1(MetaData::TrackNumber),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Track number"), {},
+                {u"TRACKNUMBER"_s, u"TRACK NUMBER"_s});
+    addVariable(VariableKind::TrackTotal, QString::fromLatin1(MetaData::TrackTotal),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Total tracks on the release"), {},
+                {u"TOTALTRACKS"_s});
+    addVariable(VariableKind::Disc, QString::fromLatin1(MetaData::Disc), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Disc number"), {}, {u"DISCNUMBER"_s});
+    addVariable(VariableKind::DiscTotal, QString::fromLatin1(MetaData::DiscTotal),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Total discs on the release"), {},
+                {u"TOTALDISCS"_s});
+    addVariable(VariableKind::Genre, QString::fromLatin1(MetaData::Genre), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Genres"));
+    addVariable(VariableKind::Composer, QString::fromLatin1(MetaData::Composer),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Composers"));
+    addVariable(VariableKind::Performer, QString::fromLatin1(MetaData::Performer),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Performers"));
+    addVariable(VariableKind::Duration, QString::fromLatin1(MetaData::Duration),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Track duration formatted as time"), {}, {u"LENGTH"_s});
+    addVariable(VariableKind::DurationSecs, QString::fromLatin1(MetaData::DurationSecs),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Track duration in seconds"), {},
+                {u"LENGTH_SECONDS"_s});
+    addVariable(VariableKind::DurationMSecs, QString::fromLatin1(MetaData::DurationMSecs),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Track duration in milliseconds"));
+    addVariable(VariableKind::Comment, QString::fromLatin1(MetaData::Comment), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Comment tag"));
+    addVariable(VariableKind::Date, QString::fromLatin1(MetaData::Date), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Release date"));
+    addVariable(VariableKind::Year, QString::fromLatin1(MetaData::Year), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Release year"));
+    addVariable(VariableKind::FileSize, QString::fromLatin1(MetaData::FileSize),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "File size in bytes"));
+    addVariable(VariableKind::FileSizeNatural, QString::fromLatin1(MetaData::FileSizeNatural),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Human readable file size"));
+    addVariable(VariableKind::Bitrate, QString::fromLatin1(MetaData::Bitrate), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Track bitrate"));
+    addVariable(VariableKind::SampleRate, QString::fromLatin1(MetaData::SampleRate),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Sample rate"));
+    addVariable(VariableKind::BitDepth, QString::fromLatin1(MetaData::BitDepth),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Bit depth"));
+    addVariable(VariableKind::FirstPlayed, QString::fromLatin1(MetaData::FirstPlayed),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "First played timestamp"));
+    addVariable(VariableKind::LastPlayed, QString::fromLatin1(MetaData::LastPlayed),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Last played timestamp"));
+    addVariable(VariableKind::PlayCount, QString::fromLatin1(MetaData::PlayCount),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Play count"), {},
+                {u"PLAY_COUNT"_s});
+    addVariable(VariableKind::Rating, QString::fromLatin1(MetaData::Rating), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Numeric rating in stars"));
+    addVariable(VariableKind::RatingNormalized, QString::fromLatin1(MetaData::RatingNormalized),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Normalised rating"));
+    addVariable(VariableKind::Stars, QString::fromLatin1(MetaData::Stars), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Numeric rating in stars"));
+    addVariable(VariableKind::RatingStars, QString::fromLatin1(MetaData::RatingStars),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Rating shown as stars"));
+    addVariable(VariableKind::RatingStarsPadded, QString::fromLatin1(MetaData::RatingStarsPadded),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Rating shown as stars with trailing empty stars"));
+    addVariable(VariableKind::RatingEditor, QString::fromLatin1(MetaData::RatingEditor),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Rating editor representation"));
+    addVariable(VariableKind::Loved, QString::fromLatin1(MetaData::Loved),
+                QT_TRANSLATE_NOOP("Fooyin", "Playback Statistics"),
+                QT_TRANSLATE_NOOP("Fooyin", "Love flag: 1 when loved, empty otherwise"));
+    addVariable(VariableKind::LoveEditor, QString::fromLatin1(MetaData::LoveEditor),
+                QT_TRANSLATE_NOOP("Fooyin", "Playback Statistics"),
+                QT_TRANSLATE_NOOP("Fooyin", "Interactive heart editor for the Love flag"));
+    addVariable(VariableKind::Codec, QString::fromLatin1(MetaData::Codec), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Codec name"));
+    addVariable(VariableKind::CodecProfile, QString::fromLatin1(MetaData::CodecProfile),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Codec profile"));
+    addVariable(VariableKind::Tool, QString::fromLatin1(MetaData::Tool), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Encoding tool"));
+    addVariable(VariableKind::TagType, QString::fromLatin1(MetaData::TagType), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Tag type list"));
+    addVariable(VariableKind::Encoding, QString::fromLatin1(MetaData::Encoding),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Encoding description"));
+    addVariable(VariableKind::Channels, QString::fromLatin1(MetaData::Channels),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Channel layout"));
+    addVariable(VariableKind::CreatedTime, QString::fromLatin1(MetaData::CreatedTime),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "File created timestamp"));
+    addVariable(VariableKind::AddedTime, QString::fromLatin1(MetaData::AddedTime),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Library added timestamp"));
+    addVariable(VariableKind::LastModified, QString::fromLatin1(MetaData::LastModified),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Last modified timestamp"));
+    addVariable(VariableKind::FilePath, QString::fromLatin1(MetaData::FilePath),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Full file path"));
+    addVariable(VariableKind::RelativePath, QString::fromLatin1(MetaData::RelativePath),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Path relative to the library root"));
+    addVariable(VariableKind::FileName, QString::fromLatin1(MetaData::FileName),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Filename without extension"));
+    addVariable(VariableKind::Extension, QString::fromLatin1(MetaData::Extension),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "File extension"));
+    addVariable(VariableKind::FileNameWithExt, QString::fromLatin1(MetaData::FileNameWithExt),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Filename including extension"));
+    addVariable(VariableKind::Directory, QString::fromLatin1(MetaData::Directory),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Containing directory name"));
+    addVariable(VariableKind::Path, QString::fromLatin1(MetaData::Path), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Containing directory path"));
+    addVariable(VariableKind::Subsong, QString::fromLatin1(MetaData::Subsong), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Subsong index"));
+    addVariable(VariableKind::RGTrackGain, QString::fromLatin1(MetaData::RGTrackGain),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "ReplayGain track gain"));
+    addVariable(VariableKind::RGTrackPeak, QString::fromLatin1(MetaData::RGTrackPeak),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "ReplayGain track peak"));
+    addVariable(VariableKind::RGTrackPeakDB, QString::fromLatin1(MetaData::RGTrackPeakDB),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "ReplayGain track peak in dB"));
+    addVariable(VariableKind::RGAlbumGain, QString::fromLatin1(MetaData::RGAlbumGain),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "ReplayGain album gain"));
+    addVariable(VariableKind::RGAlbumPeak, QString::fromLatin1(MetaData::RGAlbumPeak),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "ReplayGain album peak"));
+    addVariable(VariableKind::RGAlbumPeakDB, QString::fromLatin1(MetaData::RGAlbumPeakDB),
+                QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "ReplayGain album peak in dB"));
+    addVariable(VariableKind::TrackCount, u"TRACKCOUNT"_s, QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
+                QT_TRANSLATE_NOOP("Fooyin", "Number of tracks in the list"));
+    addVariable(VariableKind::Playtime, u"PLAYTIME"_s, QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
+                QT_TRANSLATE_NOOP("Fooyin", "Combined duration of the track list"));
+    addVariable(VariableKind::PlaylistName, u"PLAYLIST_NAME"_s, QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
+                QT_TRANSLATE_NOOP("Fooyin", "Name of the playlist"));
+    addVariable(VariableKind::PlaylistSize, u"PLAYLIST_SIZE"_s, QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
+                QT_TRANSLATE_NOOP("Fooyin", "Combined file size of the track list"));
+    addVariable(VariableKind::PlaylistDuration, u"PLAYLIST_DURATION"_s, QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
+                QT_TRANSLATE_NOOP("Fooyin", "Alias for total playlist duration"));
+    addVariable(VariableKind::PlaylistElapsed, u"PLAYLIST_ELAPSED"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Elapsed time within the active playlist"));
+    addVariable(VariableKind::Genres, u"GENRES"_s, QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
+                QT_TRANSLATE_NOOP("Fooyin", "Unique genres across the track list"));
+    addVariable(VariableKind::PlaybackTime, u"PLAYBACK_TIME"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Current playback position formatted as time"));
+    addVariable(VariableKind::PlaybackTimeSeconds, u"PLAYBACK_TIME_S"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Current playback position in seconds"), {}, {u"PLAYBACK_TIME_SECONDS"_s});
+    addVariable(VariableKind::PlaybackTimeRemaining, u"PLAYBACK_TIME_REMAINING"_s,
+                QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Remaining playback time formatted as time"));
+    addVariable(VariableKind::PlaybackTimeRemainingSeconds, u"PLAYBACK_TIME_REMAINING_S"_s,
+                QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Remaining playback time in seconds"), {},
+                {u"PLAYBACK_TIME_REMAINING_SECONDS"_s});
+    addVariable(VariableKind::InputDecoder, u"INPUT_DECODER"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Input decoder backend used for the current playing track"));
+    addVariable(VariableKind::OutputSampleRate, u"OUTPUT_SAMPLERATE"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Sample rate entering the active output"));
+    addVariable(VariableKind::OutputChannels, u"OUTPUT_CHANNELS"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Number of channels entering the active output"));
+    addVariable(VariableKind::OutputChannelMask, u"OUTPUT_CHANNEL_MASK"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Channel layout entering the active output"));
+    addVariable(VariableKind::OutputBitDepth, u"OUTPUT_BITDEPTH"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Bit depth used by the active output"));
+    addVariable(VariableKind::OutputDevice, u"OUTPUT_DEVICE"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Active output device"));
+    addVariable(VariableKind::OutputDsps, u"OUTPUT_DSPS"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Enabled DSPs in processing order"));
+    addVariable(VariableKind::OutputDspPreset, u"OUTPUT_DSP_PRESET"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Explicitly selected DSP chain preset"));
+    addVariable(VariableKind::OutputVolume, u"OUTPUT_VOLUME"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Playback volume in dB"));
+    addVariable(VariableKind::OutputRgSource, u"OUTPUT_RG_SOURCE"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Active ReplayGain source mode"));
+    addVariable(VariableKind::OutputRgMode, u"OUTPUT_RG_MODE"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Active ReplayGain processing mode"));
+    addVariable(VariableKind::OutputRgGain, u"OUTPUT_RG_GAIN"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Effective ReplayGain adjustment in dB"));
+    addVariable(VariableKind::OutputRgPeak, u"OUTPUT_RG_PEAK"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Effective ReplayGain peak"));
+    addVariable(VariableKind::OutputRgPeakDb, u"OUTPUT_RG_PEAK_DB"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Effective ReplayGain peak in dBFS"));
+    addVariable(VariableKind::OutputBufferLength, u"OUTPUT_BUFFER_LENGTH"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Active output buffer length in milliseconds"));
+    addVariable(VariableKind::IsPlaying, u"ISPLAYING"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns 1 while playback is active"));
+    addVariable(VariableKind::IsPaused, u"ISPAUSED"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns 1 while playback is paused"));
+    addVariable(VariableKind::IsStopped, u"ISSTOPPED"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns 1 while playback is stopped"));
+    addVariable(VariableKind::IsQueueCurrent, u"IS_QUEUE_CURRENT"_s, QT_TRANSLATE_NOOP("Fooyin", "Queue"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns 1 for the current queue viewer entry, including while paused"),
+                makeScriptVariableInvoker<queueItemState<ScriptQueueItemState::Current>>());
+    addVariable(VariableKind::Generic, u"_FOOYIN_VERSION"_s, QT_TRANSLATE_NOOP("Fooyin", "System"),
+                QT_TRANSLATE_NOOP("Fooyin", "fooyin version"), makeScriptVariableInvoker<fooyinVersionVariable>());
+    addVariable(VariableKind::Generic, u"DATETIME"_s, QT_TRANSLATE_NOOP("Fooyin", "System"),
+                QT_TRANSLATE_NOOP("Fooyin", "Current date and time formatted as YYYY-MM-DD HH:MM:SS"),
+                makeScriptVariableInvoker<dateTimeVariable>());
+    addVariable(VariableKind::LibraryName, u"LIBRARYNAME"_s, QT_TRANSLATE_NOOP("Fooyin", "Library"),
+                QT_TRANSLATE_NOOP("Fooyin", "Current library name"));
+    addVariable(VariableKind::LibraryPath, u"LIBRARYPATH"_s, QT_TRANSLATE_NOOP("Fooyin", "Library"),
+                QT_TRANSLATE_NOOP("Fooyin", "Current library path"));
+    addVariable(VariableKind::QueueIndex, u"QUEUE_INDEX"_s, QT_TRANSLATE_NOOP("Fooyin", "Queue"),
+                QT_TRANSLATE_NOOP("Fooyin", "First playback queue index for the specified item"),
+                makeScriptVariableInvoker<queueIndex>(), {u"QUEUEINDEX"_s});
+    addVariable(VariableKind::QueueIndexes, u"QUEUE_INDEXES"_s, QT_TRANSLATE_NOOP("Fooyin", "Queue"),
+                QT_TRANSLATE_NOOP("Fooyin", "Playback queue indexes for the specified item"),
+                makeScriptVariableInvoker<queueIndexes>(), {u"QUEUEINDEXES"_s});
+    addVariable(VariableKind::QueueTotal, u"QUEUE_TOTAL"_s, QT_TRANSLATE_NOOP("Fooyin", "Queue"),
+                QT_TRANSLATE_NOOP("Fooyin", "Total amount of tracks in the playback queue for queued items"),
+                makeScriptVariableInvoker<queueTotal>(), {u"QUEUETOTAL"_s});
+    addVariable(VariableKind::IsQueueUpcoming, u"IS_QUEUE_UPCOMING"_s, QT_TRANSLATE_NOOP("Fooyin", "Queue"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns 1 for a queue viewer entry ahead of the queue cursor"),
+                makeScriptVariableInvoker<queueItemState<ScriptQueueItemState::Upcoming>>());
+    addVariable(VariableKind::IsQueuePlayed, u"IS_QUEUE_PLAYED"_s, QT_TRANSLATE_NOOP("Fooyin", "Queue"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns 1 for a queue viewer entry in queue history"),
+                makeScriptVariableInvoker<queueItemState<ScriptQueueItemState::Played>>());
+    addVariable(VariableKind::ListIndex, u"LIST_INDEX"_s, QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
+                QT_TRANSLATE_NOOP("Fooyin", "One-based index of the evaluated playlist row"),
+                makeScriptVariableInvoker<trackIndex>());
+    addVariable(VariableKind::Depth, u"DEPTH"_s, QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
+                QT_TRANSLATE_NOOP("Fooyin", "Grouping depth of the evaluated playlist row"),
+                makeScriptVariableInvoker<trackDepth>());
+    addVariable(VariableKind::PlayingIcon, u"PLAYINGICON"_s, QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
+                QT_TRANSLATE_NOOP("Fooyin", "Playback icon and queue indexes in supported views"),
+                makeScriptVariableInvoker<playingQueue>());
+    addVariable(VariableKind::FrontCover, u"FRONTCOVER"_s, QT_TRANSLATE_NOOP("Fooyin", "Artwork"),
+                QT_TRANSLATE_NOOP("Fooyin", "Front cover marker in supported views"),
+                makeScriptVariableInvoker<frontCover>());
+    addVariable(VariableKind::BackCover, u"BACKCOVER"_s, QT_TRANSLATE_NOOP("Fooyin", "Artwork"),
+                QT_TRANSLATE_NOOP("Fooyin", "Back cover marker in supported views"),
+                makeScriptVariableInvoker<backCover>());
+    addVariable(VariableKind::ArtistPicture, u"ARTISTPICTURE"_s, QT_TRANSLATE_NOOP("Fooyin", "Artwork"),
+                QT_TRANSLATE_NOOP("Fooyin", "Artist picture marker in supported views"),
+                makeScriptVariableInvoker<artistPicture>());
 }
 
-QString ScriptRegistry::isPaused() const
+void ScriptRegistryPrivate::addDefaultFunctions()
 {
-    if(!playbackValueAvailableForTrack()) {
-        return {};
-    }
-    if(const auto* environment = playbackEnvironment(m_context);
-       environment != nullptr && environment->playState() == Player::PlayState::Paused) {
-        return u"1"_s;
-    }
-    return {};
+    const auto addFunction = [this](QString name, QString signature, const char* category, const char* description,
+                                    ScriptFunctionInvoker invoker = {}, FunctionKind kind = FunctionKind::Generic,
+                                    std::vector<QString> aliases = {}) {
+        registerFunction({.name        = std::move(name),
+                          .invoker     = invoker,
+                          .signature   = std::move(signature),
+                          .category    = QString::fromUtf8(category),
+                          .description = QString::fromUtf8(description),
+                          .kind        = kind,
+                          .aliases     = std::move(aliases)});
+    };
+
+    addFunction(u"add"_s, u"$add(x,y,…)"_s, QT_TRANSLATE_NOOP("Fooyin", "Numeric"),
+                QT_TRANSLATE_NOOP("Fooyin", "Adds numeric arguments"), {}, FunctionKind::Add);
+    addFunction(u"sub"_s, u"$sub(x,y,…)"_s, QT_TRANSLATE_NOOP("Fooyin", "Numeric"),
+                QT_TRANSLATE_NOOP("Fooyin", "Subtracts later values from the first"), {}, FunctionKind::Sub);
+    addFunction(u"mul"_s, u"$mul(x,y,…)"_s, QT_TRANSLATE_NOOP("Fooyin", "Numeric"),
+                QT_TRANSLATE_NOOP("Fooyin", "Multiplies numeric arguments"), {}, FunctionKind::Mul);
+    addFunction(u"div"_s, u"$div(x,y)"_s, QT_TRANSLATE_NOOP("Fooyin", "Numeric"),
+                QT_TRANSLATE_NOOP("Fooyin", "Divides the first value by the second"), {}, FunctionKind::Div);
+    addFunction(u"min"_s, u"$min(x,y,…)"_s, QT_TRANSLATE_NOOP("Fooyin", "Numeric"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the smallest numeric value"),
+                makeScriptFunctionInvoker<Scripting::min>());
+    addFunction(u"max"_s, u"$max(x,y,…)"_s, QT_TRANSLATE_NOOP("Fooyin", "Numeric"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the largest numeric value"),
+                makeScriptFunctionInvoker<Scripting::max>());
+    addFunction(u"mod"_s, u"$mod(x,y)"_s, QT_TRANSLATE_NOOP("Fooyin", "Numeric"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the remainder of a division"), {}, FunctionKind::Mod);
+    addFunction(u"rand"_s, u"$rand(min,max)"_s, QT_TRANSLATE_NOOP("Fooyin", "Numeric"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns a random number in range"),
+                makeScriptFunctionInvoker<Scripting::rand>());
+    addFunction(u"round"_s, u"$round(value[,precision])"_s, QT_TRANSLATE_NOOP("Fooyin", "Numeric"),
+                QT_TRANSLATE_NOOP("Fooyin", "Rounds a numeric value"), makeScriptFunctionInvoker<Scripting::round>());
+    addFunction(u"greater"_s, u"$greater(x,y)"_s, QT_TRANSLATE_NOOP("Fooyin", "Conditional"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns true when x is greater than y"),
+                makeScriptFunctionInvoker<Scripting::greater>());
+    addFunction(u"num"_s, u"$num(value,length)"_s, QT_TRANSLATE_NOOP("Fooyin", "Numeric"),
+                QT_TRANSLATE_NOOP("Fooyin", "Formats a number with leading zeroes"), {}, FunctionKind::Num);
+    addFunction(u"hex"_s, u"$hex(value,length)"_s, QT_TRANSLATE_NOOP("Fooyin", "Numeric"),
+                QT_TRANSLATE_NOOP("Fooyin", "Formats a number in hexadecimal with leading zeroes"),
+                makeScriptFunctionInvoker<Scripting::hex>());
+    addFunction(u"replace"_s, u"$replace(text,from,to,…)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Replaces text fragments"),
+                makeScriptFunctionInvoker<Scripting::replace>());
+    addFunction(u"regex_match"_s, u"$regex_match(text,\"pattern\"[,group[,flags]])"_s,
+                QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the first match or capture; group 0 is the full match"),
+                makeScriptFunctionInvoker<Scripting::regexMatch>());
+    addFunction(u"regex_matches"_s, u"$regex_matches(text,\"pattern\",separator[,group[,flags]])"_s,
+                QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns all matches or captures; group 0 is the full match"),
+                makeScriptFunctionInvoker<Scripting::regexMatches>());
+    addFunction(u"regex_replace"_s, u"$regex_replace(text,\"pattern\",replacement[,flags])"_s,
+                QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Replaces all regular expression matches; flags: i, m, s, x, U"),
+                makeScriptFunctionInvoker<Scripting::regexReplace>());
+    addFunction(u"ascii"_s, u"$ascii(text)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Converts text to ASCII"), makeScriptFunctionInvoker<Scripting::ascii>());
+    addFunction(u"slice"_s, u"$slice(text,start[,end])"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns a slice of text"), makeScriptFunctionInvoker<Scripting::slice>());
+    addFunction(u"chop"_s, u"$chop(text,count)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Removes characters from the end"),
+                makeScriptFunctionInvoker<Scripting::chop>());
+    addFunction(u"left"_s, u"$left(text,count)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns characters from the left"),
+                makeScriptFunctionInvoker<Scripting::left>(), FunctionKind::Generic, {u"cut"_s});
+    addFunction(u"right"_s, u"$right(text,count)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns characters from the right"),
+                makeScriptFunctionInvoker<Scripting::right>());
+    addFunction(u"insert"_s, u"$insert(text,insert[,pos])"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Inserts text at a position"),
+                makeScriptFunctionInvoker<Scripting::insert>());
+    addFunction(u"substr"_s, u"$substr(text,start,end)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns a substring"), makeScriptFunctionInvoker<Scripting::substr>());
+    addFunction(u"strstr"_s, u"$strstr(text,needle[,start])"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Finds the first substring position (1-based)"),
+                makeScriptFunctionInvoker<Scripting::strstr>());
+    addFunction(u"stristr"_s, u"$stristr(text,needle[,start])"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Finds the first substring position ignoring case (1-based)"),
+                makeScriptFunctionInvoker<Scripting::stristr>());
+    addFunction(u"strstrlast"_s, u"$strstrlast(text,needle[,start])"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Finds the last substring position (1-based)"),
+                makeScriptFunctionInvoker<Scripting::strstrLast>());
+    addFunction(u"stristrlast"_s, u"$stristrlast(text,needle[,start])"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Finds the last substring position ignoring case (1-based)"),
+                makeScriptFunctionInvoker<Scripting::stristrLast>());
+    addFunction(u"split"_s, u"$split(text,sep[,index])"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Splits text into multiple values, or returns one split segment "
+                                            "when given a 1-based index"),
+                makeScriptFunctionInvoker<Scripting::split>());
+    addFunction(u"join"_s, u"$join(sep,value,…)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Joins non-empty values with a separator"),
+                makeScriptFunctionInvoker<Scripting::join>());
+    addFunction(u"len"_s, u"$len(text)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the text length"), makeScriptFunctionInvoker<Scripting::len>());
+    addFunction(u"longest"_s, u"$longest(a,b,…)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the longest string"),
+                makeScriptFunctionInvoker<Scripting::longest>());
+    addFunction(u"shortest"_s, u"$shortest(a,b,…)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the first shortest string"),
+                makeScriptFunctionInvoker<Scripting::shortest>());
+    addFunction(u"strchr"_s, u"$strchr(text,char)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Finds the first character position (1-based)"),
+                makeScriptFunctionInvoker<Scripting::strchr>());
+    addFunction(u"strrchr"_s, u"$strrchr(text,char)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Finds the last character position (1-based)"),
+                makeScriptFunctionInvoker<Scripting::strrchr>());
+    addFunction(u"strcmp"_s, u"$strcmp(a,b)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Compares two strings"), makeScriptFunctionInvoker<Scripting::strcmp>());
+    addFunction(u"stricmp"_s, u"$stricmp(a,b)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Compares two strings ignoring case"),
+                makeScriptFunctionInvoker<Scripting::stricmp>());
+    addFunction(u"regex_test"_s, u"$regex_test(text,\"pattern\"[,flags])"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Tests a regular expression match; flags: i, m, s, x, U"),
+                makeScriptFunctionInvoker<Scripting::regexTest>());
+    addFunction(u"longer"_s, u"$longer(a,b)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns true when a is longer than b"),
+                makeScriptFunctionInvoker<Scripting::longer>());
+    addFunction(u"sep"_s, u"$sep()"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the platform path separator"),
+                makeScriptFunctionInvoker<Scripting::sep>());
+    addFunction(u"crlf"_s, u"$crlf()"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns a newline"), makeScriptFunctionInvoker<Scripting::crlf>());
+    addFunction(u"tab"_s, u"$tab()"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns a tab character"), makeScriptFunctionInvoker<Scripting::tab>());
+    addFunction(u"swapprefix"_s, u"$swapprefix(text)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Moves leading articles to the end"),
+                makeScriptFunctionInvoker<Scripting::swapPrefix>());
+    addFunction(u"stripprefix"_s, u"$stripprefix(text)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Removes leading articles"),
+                makeScriptFunctionInvoker<Scripting::stripPrefix>());
+    addFunction(u"pad"_s, u"$pad(text,length[,char])"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Pads text on the left"), {}, FunctionKind::Pad);
+    addFunction(u"padright"_s, u"$padright(text,length[,char])"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Pads text on the right"), {}, FunctionKind::PadRight);
+    addFunction(u"repeat"_s, u"$repeat(text,count)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Repeats text"), makeScriptFunctionInvoker<Scripting::repeat>());
+    addFunction(u"trim"_s, u"$trim(text)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Trims surrounding whitespace"),
+                makeScriptFunctionInvoker<Scripting::trim>());
+    addFunction(u"lower"_s, u"$lower(text)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Converts text to lowercase"),
+                makeScriptFunctionInvoker<Scripting::lower>());
+    addFunction(u"upper"_s, u"$upper(text)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Converts text to uppercase"),
+                makeScriptFunctionInvoker<Scripting::upper>());
+    addFunction(u"abbr"_s, u"$abbr(text)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Builds an abbreviation"), makeScriptFunctionInvoker<Scripting::abbr>());
+    addFunction(u"caps"_s, u"$caps(text)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Capitalises words"), makeScriptFunctionInvoker<Scripting::caps>());
+    addFunction(u"directory"_s, u"$directory(path,level)"_s, QT_TRANSLATE_NOOP("Fooyin", "Path"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns a directory name from a path"),
+                makeScriptFunctionInvoker<Scripting::directory>());
+    addFunction(u"directory_path"_s, u"$directory_path(path,level)"_s, QT_TRANSLATE_NOOP("Fooyin", "Path"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns a parent directory path"),
+                makeScriptFunctionInvoker<Scripting::directoryPath>());
+    addFunction(u"elide_end"_s, u"$elide_end(text,width[,delim])"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Elides text at the end"),
+                makeScriptFunctionInvoker<Scripting::elideEnd>());
+    addFunction(u"elide_mid"_s, u"$elide_mid(text,width[,delim])"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Elides text in the middle"),
+                makeScriptFunctionInvoker<Scripting::elideMid>());
+    addFunction(u"ext"_s, u"$ext(path)"_s, QT_TRANSLATE_NOOP("Fooyin", "Path"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns a file extension"), makeScriptFunctionInvoker<Scripting::ext>());
+    addFunction(u"filename"_s, u"$filename(path)"_s, QT_TRANSLATE_NOOP("Fooyin", "Path"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns a filename without extension"),
+                makeScriptFunctionInvoker<Scripting::filename>());
+    addFunction(u"progress"_s, u"$progress(pos,total,length)"_s, QT_TRANSLATE_NOOP("Fooyin", "Utility"),
+                QT_TRANSLATE_NOOP("Fooyin", "Builds a text progress bar"),
+                makeScriptFunctionInvoker<Scripting::progress>());
+    addFunction(u"progress2"_s, u"$progress2(pos,total,length)"_s, QT_TRANSLATE_NOOP("Fooyin", "Utility"),
+                QT_TRANSLATE_NOOP("Fooyin", "Builds an alternate text progress bar"),
+                makeScriptFunctionInvoker<Scripting::progress2>());
+    addFunction(u"doclink"_s, u"$doclink(label,url)"_s, QT_TRANSLATE_NOOP("Fooyin", "Utility"),
+                QT_TRANSLATE_NOOP("Fooyin", "Builds a clickable document or web link"),
+                makeScriptFunctionInvoker<Scripting::doclink>());
+    addFunction(u"cmdlink"_s, u"$cmdlink(label,id)"_s, QT_TRANSLATE_NOOP("Fooyin", "Utility"),
+                QT_TRANSLATE_NOOP("Fooyin", "Builds a clickable link to a fooyin command"),
+                makeScriptFunctionInvoker<Scripting::cmdlink>());
+    addFunction(u"applink"_s, u"$applink(label,application[,arguments[,directory]])"_s,
+                QT_TRANSLATE_NOOP("Fooyin", "Utility"),
+                QT_TRANSLATE_NOOP("Fooyin", "Builds a clickable link that launches an application"),
+                makeScriptFunctionInvoker<Scripting::applink>());
+    addFunction(u"urlencode"_s, u"$urlencode(text)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Percent-encodes text for use in URLs"),
+                makeScriptFunctionInvoker<Scripting::urlencode>());
+    addFunction(u"crc32"_s, u"$crc32(text)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the CRC-32 checksum of the text"),
+                makeScriptFunctionInvoker<Scripting::crc32>());
+    addFunction(u"isalpha"_s, u"$isalpha(text)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Checks if text contains only alphabetic characters"),
+                makeScriptFunctionInvoker<Scripting::isalpha>());
+    addFunction(u"isalnum"_s, u"$isalnum(text)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Checks if text contains only alphanumeric characters"),
+                makeScriptFunctionInvoker<Scripting::isalnum>());
+    addFunction(u"isnum"_s, u"$isnum(text)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
+                QT_TRANSLATE_NOOP("Fooyin", "Checks if text contains only numeric characters"),
+                makeScriptFunctionInvoker<Scripting::isnum>());
+    addFunction(u"timems"_s, u"$timems(milliseconds)"_s, QT_TRANSLATE_NOOP("Fooyin", "Numeric"),
+                QT_TRANSLATE_NOOP("Fooyin", "Formats milliseconds as time"),
+                makeScriptFunctionInvoker<Scripting::msToString>());
+    addFunction(u"year"_s, u"$year(time)"_s, QT_TRANSLATE_NOOP("Fooyin", "Time"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the four-digit year from a date"),
+                makeScriptFunctionInvoker<Scripting::year>());
+    addFunction(u"month"_s, u"$month(time)"_s, QT_TRANSLATE_NOOP("Fooyin", "Time"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the two-digit month from a date"),
+                makeScriptFunctionInvoker<Scripting::month>());
+    addFunction(u"day_of_month"_s, u"$day_of_month(time)"_s, QT_TRANSLATE_NOOP("Fooyin", "Time"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the two-digit day of month from a date"),
+                makeScriptFunctionInvoker<Scripting::dayOfMonth>());
+    addFunction(u"date"_s, u"$date(time)"_s, QT_TRANSLATE_NOOP("Fooyin", "Time"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the date formatted as YYYY-MM-DD"),
+                makeScriptFunctionInvoker<Scripting::date>());
+    addFunction(u"time"_s, u"$time(time)"_s, QT_TRANSLATE_NOOP("Fooyin", "Time"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the time formatted as HH:MM or HH:MM:SS"),
+                makeScriptFunctionInvoker<Scripting::time>());
+    addFunction(u"get"_s, u"$get(name)"_s, QT_TRANSLATE_NOOP("Fooyin", "Variable"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the value stored in a script variable"), {}, FunctionKind::Get);
+    addFunction(u"put"_s, u"$put(name,value)"_s, QT_TRANSLATE_NOOP("Fooyin", "Variable"),
+                QT_TRANSLATE_NOOP("Fooyin", "Stores a script variable and returns the value"), {}, FunctionKind::Put);
+    addFunction(u"puts"_s, u"$puts(name,value)"_s, QT_TRANSLATE_NOOP("Fooyin", "Variable"),
+                QT_TRANSLATE_NOOP("Fooyin", "Stores a script variable and returns nothing"), {}, FunctionKind::Puts);
+    addFunction(u"and"_s, u"$and(expr,…)"_s, QT_TRANSLATE_NOOP("Fooyin", "Conditional"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns true when all expressions are true"),
+                makeScriptFunctionInvoker<Scripting::boolAnd>());
+    addFunction(u"not"_s, u"$not(expr)"_s, QT_TRANSLATE_NOOP("Fooyin", "Conditional"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the opposite truth value"),
+                makeScriptFunctionInvoker<Scripting::boolNot>());
+    addFunction(u"or"_s, u"$or(expr,…)"_s, QT_TRANSLATE_NOOP("Fooyin", "Conditional"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns true when at least one expression is true"),
+                makeScriptFunctionInvoker<Scripting::boolOr>());
+    addFunction(u"xor"_s, u"$xor(expr,…)"_s, QT_TRANSLATE_NOOP("Fooyin", "Conditional"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns true when an odd number of expressions are true"),
+                makeScriptFunctionInvoker<Scripting::boolXOr>());
+    addFunction(u"if"_s, u"$if(condition,then[,else])"_s, QT_TRANSLATE_NOOP("Fooyin", "Conditional"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns then when condition is true"), {}, FunctionKind::If);
+    addFunction(u"if2"_s, u"$if2(value[,fallback])"_s, QT_TRANSLATE_NOOP("Fooyin", "Conditional"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the first non-empty value"), {}, FunctionKind::If2);
+    addFunction(u"if3"_s, u"$if3(a1,a2,…,aN,else)"_s, QT_TRANSLATE_NOOP("Fooyin", "Conditional"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the first true value from a list, or else when none match"), {},
+                FunctionKind::If3);
+    addFunction(u"select"_s, u"$select(index,a1,…,aN)"_s, QT_TRANSLATE_NOOP("Fooyin", "Conditional"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the value at the one-based index"), {}, FunctionKind::Select);
+    addFunction(u"ifgreater"_s, u"$ifgreater(x,y,then,else)"_s, QT_TRANSLATE_NOOP("Fooyin", "Conditional"),
+                QT_TRANSLATE_NOOP("Fooyin", "Compares numeric values"), {}, FunctionKind::IfGreater);
+    addFunction(u"iflonger"_s, u"$iflonger(text,length,then,else)"_s, QT_TRANSLATE_NOOP("Fooyin", "Conditional"),
+                QT_TRANSLATE_NOOP("Fooyin", "Checks whether text is longer than a limit"), {}, FunctionKind::IfLonger);
+    addFunction(u"ifequal"_s, u"$ifequal(x,y,then,else)"_s, QT_TRANSLATE_NOOP("Fooyin", "Conditional"),
+                QT_TRANSLATE_NOOP("Fooyin", "Checks whether two numeric values are equal"), {}, FunctionKind::IfEqual);
+    addFunction(u"meta"_s, u"$meta(field[,index])"_s, QT_TRANSLATE_NOOP("Fooyin", "Lookup"),
+                QT_TRANSLATE_NOOP("Fooyin", "Looks up a raw tag field. Multiple values are joined with ‘, ’ "
+                                            "or selected by the optional zero-based index."),
+                makeScriptFunctionInvoker<trackMeta>());
+    addFunction(u"meta_sep"_s, u"$meta_sep(field,sep[,lastsep])"_s, QT_TRANSLATE_NOOP("Fooyin", "Lookup"),
+                QT_TRANSLATE_NOOP("Fooyin", "Looks up a raw tag field. Multiple values are joined with sep, "
+                                            "using lastsep between the final two values when supplied."),
+                makeScriptFunctionInvoker<trackMetaSep>());
+    addFunction(u"meta_test"_s, u"$meta_test(field,…)"_s, QT_TRANSLATE_NOOP("Fooyin", "Lookup"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns 1 when all named tag fields exist."),
+                makeScriptFunctionInvoker<trackMetaTest>());
+    addFunction(u"meta_num"_s, u"$meta_num(field)"_s, QT_TRANSLATE_NOOP("Fooyin", "Lookup"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns the number of values in a raw tag field."),
+                makeScriptFunctionInvoker<trackMetaNum>());
+    addFunction(u"info"_s, u"$info(field)"_s, QT_TRANSLATE_NOOP("Fooyin", "Lookup"),
+                QT_TRANSLATE_NOOP("Fooyin", "Looks up technical track information"),
+                makeScriptFunctionInvoker<trackInfo>());
 }
 
-QString ScriptRegistry::isStopped() const
+bool ScriptRegistryPrivate::registerVariable(ScriptVariableDescriptor variable)
 {
-    if(const auto* environment = playbackEnvironment(m_context);
-       environment != nullptr && environment->playState() == Player::PlayState::Stopped) {
-        return u"1"_s;
-    }
-    return {};
-}
-
-QString ScriptRegistry::libraryNameVariable(const Track& track) const
-{
-    if(const auto* environment = libraryEnvironment(m_context); environment != nullptr) {
-        return environment->libraryName(track);
-    }
-    return {};
-}
-
-QString ScriptRegistry::libraryPathVariable(const Track& track) const
-{
-    if(const auto* environment = libraryEnvironment(m_context); environment != nullptr) {
-        return environment->libraryPath(track);
-    }
-    return {};
-}
-
-QString ScriptRegistry::relativePathVariable(const Track& track) const
-{
-    if(const auto* environment = libraryEnvironment(m_context); environment != nullptr) {
-        return environment->relativePath(track);
-    }
-    return {};
-}
-
-void ScriptRegistry::addDefaultFunctions()
-{
-    registerFunction(u"add"_s, makeScriptFunctionInvoker<Scripting::add>());
-    registerFunction(u"sub"_s, makeScriptFunctionInvoker<Scripting::sub>());
-    registerFunction(u"mul"_s, makeScriptFunctionInvoker<Scripting::mul>());
-    registerFunction(u"div"_s, makeScriptFunctionInvoker<Scripting::div>());
-    registerFunction(u"min"_s, makeScriptFunctionInvoker<Scripting::min>());
-    registerFunction(u"max"_s, makeScriptFunctionInvoker<Scripting::max>());
-    registerFunction(u"select"_s, makeScriptFunctionInvoker<Scripting::select>());
-    registerFunction(u"mod"_s, makeScriptFunctionInvoker<Scripting::mod>());
-    registerFunction(u"rand"_s, makeScriptFunctionInvoker<Scripting::rand>());
-    registerFunction(u"round"_s, makeScriptFunctionInvoker<Scripting::round>());
-    registerFunction(u"greater"_s, makeScriptFunctionInvoker<Scripting::greater>());
-
-    registerFunction(u"num"_s, makeScriptFunctionInvoker<Scripting::num>());
-    registerFunction(u"hex"_s, makeScriptFunctionInvoker<Scripting::hex>());
-    registerFunction(u"replace"_s, makeScriptFunctionInvoker<Scripting::replace>());
-    registerFunction(u"regex_replace"_s, makeScriptFunctionInvoker<Scripting::regexReplace>());
-    registerFunction(u"regex_match"_s, makeScriptFunctionInvoker<Scripting::regexMatch>());
-    registerFunction(u"regex_matches"_s, makeScriptFunctionInvoker<Scripting::regexMatches>());
-    registerFunction(u"ascii"_s, makeScriptFunctionInvoker<Scripting::ascii>());
-    registerFunction(u"slice"_s, makeScriptFunctionInvoker<Scripting::slice>());
-    registerFunction(u"chop"_s, makeScriptFunctionInvoker<Scripting::chop>());
-    registerFunction(u"left"_s, makeScriptFunctionInvoker<Scripting::left>());
-    registerFunction(u"cut"_s, makeScriptFunctionInvoker<Scripting::left>());
-    registerFunction(u"right"_s, makeScriptFunctionInvoker<Scripting::right>());
-    registerFunction(u"insert"_s, makeScriptFunctionInvoker<Scripting::insert>());
-    registerFunction(u"substr"_s, makeScriptFunctionInvoker<Scripting::substr>());
-    registerFunction(u"strstr"_s, makeScriptFunctionInvoker<Scripting::strstr>());
-    registerFunction(u"stristr"_s, makeScriptFunctionInvoker<Scripting::stristr>());
-    registerFunction(u"strstrlast"_s, makeScriptFunctionInvoker<Scripting::strstrLast>());
-    registerFunction(u"stristrlast"_s, makeScriptFunctionInvoker<Scripting::stristrLast>());
-    registerFunction(u"split"_s, makeScriptFunctionInvoker<Scripting::split>());
-    registerFunction(u"join"_s, makeScriptFunctionInvoker<Scripting::join>());
-    registerFunction(u"len"_s, makeScriptFunctionInvoker<Scripting::len>());
-    registerFunction(u"longest"_s, makeScriptFunctionInvoker<Scripting::longest>());
-    registerFunction(u"shortest"_s, makeScriptFunctionInvoker<Scripting::shortest>());
-    registerFunction(u"strchr"_s, makeScriptFunctionInvoker<Scripting::strchr>());
-    registerFunction(u"strrchr"_s, makeScriptFunctionInvoker<Scripting::strrchr>());
-    registerFunction(u"strcmp"_s, makeScriptFunctionInvoker<Scripting::strcmp>());
-    registerFunction(u"stricmp"_s, makeScriptFunctionInvoker<Scripting::stricmp>());
-    registerFunction(u"regex_test"_s, makeScriptFunctionInvoker<Scripting::regexTest>());
-    registerFunction(u"longer"_s, makeScriptFunctionInvoker<Scripting::longer>());
-    registerFunction(u"sep"_s, makeScriptFunctionInvoker<Scripting::sep>());
-    registerFunction(u"crlf"_s, makeScriptFunctionInvoker<Scripting::crlf>());
-    registerFunction(u"tab"_s, makeScriptFunctionInvoker<Scripting::tab>());
-    registerFunction(u"swapprefix"_s, makeScriptFunctionInvoker<Scripting::swapPrefix>());
-    registerFunction(u"stripprefix"_s, makeScriptFunctionInvoker<Scripting::stripPrefix>());
-    registerFunction(u"pad"_s, makeScriptFunctionInvoker<Scripting::pad>());
-    registerFunction(u"padright"_s, makeScriptFunctionInvoker<Scripting::padRight>());
-    registerFunction(u"repeat"_s, makeScriptFunctionInvoker<Scripting::repeat>());
-    registerFunction(u"trim"_s, makeScriptFunctionInvoker<Scripting::trim>());
-    registerFunction(u"lower"_s, makeScriptFunctionInvoker<Scripting::lower>());
-    registerFunction(u"upper"_s, makeScriptFunctionInvoker<Scripting::upper>());
-    registerFunction(u"abbr"_s, makeScriptFunctionInvoker<Scripting::abbr>());
-    registerFunction(u"caps"_s, makeScriptFunctionInvoker<Scripting::caps>());
-    registerFunction(u"directory"_s, makeScriptFunctionInvoker<Scripting::directory>());
-    registerFunction(u"directory_path"_s, makeScriptFunctionInvoker<Scripting::directoryPath>());
-    registerFunction(u"elide_end"_s, makeScriptFunctionInvoker<Scripting::elideEnd>());
-    registerFunction(u"elide_mid"_s, makeScriptFunctionInvoker<Scripting::elideMid>());
-    registerFunction(u"ext"_s, makeScriptFunctionInvoker<Scripting::ext>());
-    registerFunction(u"filename"_s, makeScriptFunctionInvoker<Scripting::filename>());
-    registerFunction(u"progress"_s, makeScriptFunctionInvoker<Scripting::progress>());
-    registerFunction(u"progress2"_s, makeScriptFunctionInvoker<Scripting::progress2>());
-    registerFunction(u"doclink"_s, makeScriptFunctionInvoker<Scripting::doclink>());
-    registerFunction(u"cmdlink"_s, makeScriptFunctionInvoker<Scripting::cmdlink>());
-    registerFunction(u"applink"_s, makeScriptFunctionInvoker<Scripting::applink>());
-    registerFunction(u"urlencode"_s, makeScriptFunctionInvoker<Scripting::urlencode>());
-    registerFunction(u"crc32"_s, makeScriptFunctionInvoker<Scripting::crc32>());
-    registerFunction(u"isalpha"_s, makeScriptFunctionInvoker<Scripting::isalpha>());
-    registerFunction(u"isalnum"_s, makeScriptFunctionInvoker<Scripting::isalnum>());
-    registerFunction(u"isnum"_s, makeScriptFunctionInvoker<Scripting::isnum>());
-
-    registerFunction(u"timems"_s, makeScriptFunctionInvoker<Scripting::msToString>());
-    registerFunction(u"year"_s, makeScriptFunctionInvoker<Scripting::year>());
-    registerFunction(u"month"_s, makeScriptFunctionInvoker<Scripting::month>());
-    registerFunction(u"day_of_month"_s, makeScriptFunctionInvoker<Scripting::dayOfMonth>());
-    registerFunction(u"date"_s, makeScriptFunctionInvoker<Scripting::date>());
-    registerFunction(u"time"_s, makeScriptFunctionInvoker<Scripting::time>());
-
-    registerFunction(u"and"_s, makeScriptFunctionInvoker<Scripting::boolAnd>());
-    registerFunction(u"not"_s, makeScriptFunctionInvoker<Scripting::boolNot>());
-    registerFunction(u"or"_s, makeScriptFunctionInvoker<Scripting::boolOr>());
-    registerFunction(u"xor"_s, makeScriptFunctionInvoker<Scripting::boolXOr>());
-    registerFunction(u"if"_s, makeScriptFunctionInvoker<Scripting::cif>());
-    registerFunction(u"if2"_s, makeScriptFunctionInvoker<Scripting::cif2>());
-    registerFunction(u"if3"_s, makeScriptFunctionInvoker<Scripting::cif3>());
-    registerFunction(u"ifgreater"_s, makeScriptFunctionInvoker<Scripting::ifgreater>());
-    registerFunction(u"iflonger"_s, makeScriptFunctionInvoker<Scripting::iflonger>());
-    registerFunction(u"ifequal"_s, makeScriptFunctionInvoker<Scripting::ifequal>());
-}
-
-QString ScriptRegistry::getBitrate(const Track& track) const
-{
-    int bitrate = track.bitrate();
-    if(const auto* environment = playbackEnvironment(m_context);
-       environment != nullptr && environment->bitrate() > 0 && playbackValueAvailableForTrack(track)) {
-        bitrate = environment->bitrate();
-    }
-    return bitrate > 0 ? QString::number(bitrate) : QString{};
-}
-
-bool ScriptRegistry::playbackValueAvailableForTrack(const Track& track) const
-{
-    const auto* playback = playbackEnvironment(m_context);
-    if(playback && playback->playState() == Player::PlayState::Stopped) {
+    if(finalised) {
+        qWarning() << "Cannot register script variable:" << variable.name << "registry is finalised";
         return false;
     }
 
-    const auto* playlistEnvironment = m_context.environment ? m_context.environment->playlistEnvironment() : nullptr;
-    if(!playlistEnvironment) {
-        return true;
+    variable.name = variable.name.toUpper();
+
+    std::unordered_set names{variable.name};
+    for(auto& alias : variable.aliases) {
+        alias = alias.toUpper();
+        names.insert(alias);
     }
 
-    const int currentTrackIndex        = playlistEnvironment->currentPlaylistTrackIndex();
-    const int currentPlayingTrackIndex = playlistEnvironment->currentPlayingTrackIndex();
-    const int currentPlayingTrackId    = playlistEnvironment->currentPlayingTrackId();
-
-    if(currentTrackIndex < 0) {
-        return !track.isValid() || currentPlayingTrackId < 0 || track.id() == currentPlayingTrackId;
+    if(names.size() != variable.aliases.size() + 1 || std::ranges::any_of(names, [this](const auto& name) {
+           return name.isEmpty() || variableIds.contains(name);
+       })) {
+        qWarning() << "Cannot register script variable:" << variable.name << "empty or duplicate name";
+        return false;
     }
 
-    const bool indexMatches = currentPlayingTrackIndex >= 0 && currentTrackIndex == currentPlayingTrackIndex;
-    const bool trackMatches = !track.isValid() || currentPlayingTrackId < 0 || track.id() == currentPlayingTrackId;
+    for(const auto& name : names) {
+        variableIds.emplace(name, variables.size());
+    }
 
-    return indexMatches && trackMatches;
+    variables.push_back(std::move(variable));
+    return true;
 }
 
-QString ScriptRegistry::playlistDuration(const TrackList& tracks) const
+bool ScriptRegistryPrivate::registerFunction(ScriptFunctionDescriptor function)
 {
-    const auto* environment = playbackEnvironment(m_context);
-    if(!environment || tracks.empty()) {
-        return {};
+    if(finalised) {
+        qWarning() << "Cannot register script function:" << function.name << "registry is finalised";
+        return false;
     }
 
-    const int currentTrackIndex = m_context.environment && m_context.environment->playlistEnvironment()
-                                    ? m_context.environment->playlistEnvironment()->currentPlaylistTrackIndex()
-                                    : -1;
-    if(currentTrackIndex < 0 || std::cmp_greater_equal(currentTrackIndex, tracks.size())) {
-        return {};
-    }
-    uint64_t total{0};
+    function.name = function.name.toLower();
 
-    for(auto i{0}; i <= currentTrackIndex; ++i) {
-        total += tracks[i].duration();
+    std::unordered_set names{function.name};
+    for(auto& alias : function.aliases) {
+        alias = alias.toLower();
+        names.insert(alias);
     }
 
-    total -= environment->currentTrackDuration();
-    total += environment->currentPosition();
-
-    return Utils::msToString(total);
-}
-
-void ScriptRegistry::clearTrackListCache()
-{
-    m_trackListCache = {};
-}
-
-VariableKind ScriptRegistry::resolveVariableInternal(const QString& var) const
-{
-    if(const auto it = m_customVariableKinds.find(var); it != m_customVariableKinds.cend()) {
-        return it->second;
+    if(names.size() != function.aliases.size() + 1 || std::ranges::any_of(names, [this](const auto& name) {
+           return name.isEmpty() || functionIds.contains(name);
+       })) {
+        qWarning() << "Cannot register script function:" << function.name << "empty or duplicate name";
+        return false;
     }
 
-    return resolveBuiltInVariableKind(var);
-}
-
-ScriptResult ScriptRegistry::valueInternal(VariableKind kind, const QString& var, const ScriptSubject& subject) const
-{
-    const auto* playlist = subject.playlist ? subject.playlist : m_context.playlist;
-    if(kind == VariableKind::PlaylistName && customVariableInvoker(kind, var) == nullptr) {
-        QString name;
-        if(playlist) {
-            name = playlist->name();
-        }
-        else if(const auto* environment
-                = m_context.environment ? m_context.environment->playlistEnvironment() : nullptr) {
-            name = environment->playlistName();
-        }
-        ScriptResult result = calculateResult(name);
-        applyVariableOutputPolicy(m_context, kind, result);
-        return result;
+    const auto id = static_cast<ScriptFunctionId>(functions.size() + 1);
+    for(const auto& name : names) {
+        functionIds.emplace(name, id);
     }
 
-    if(subject.track) {
-        return valueForTrack(kind, var, *subject.track, playlist);
-    }
-
-    if(subject.tracks) {
-        return valueForTrackList(kind, var, *subject.tracks, playlist);
-    }
-
-    if(subject.playlist) {
-        return valueForPlaylist(kind, var, *subject.playlist);
-    }
-
-    return {};
-}
-
-ScriptResult ScriptRegistry::valueInternal(const QString& var, const ScriptSubject& subject) const
-{
-    if(var.isEmpty()) {
-        return {};
-    }
-
-    return value(resolveVariableInternal(var), var, subject);
-}
-
-ScriptResult ScriptRegistry::calculateResult(const FuncRet& funcRet) const
-{
-    ScriptResult result;
-
-    if(const auto* intVal = std::get_if<int>(&funcRet)) {
-        result.value = QString::number(*intVal);
-        result.cond  = (*intVal) >= 0;
-    }
-    else if(const auto* uintVal = std::get_if<uint64_t>(&funcRet)) {
-        result.value = QString::number(*uintVal);
-        result.cond  = true;
-    }
-    else if(const auto* floatVal = std::get_if<float>(&funcRet)) {
-        result.value = QString::number(*floatVal);
-        result.cond  = (*floatVal) >= 0;
-    }
-    else if(const auto* strVal = std::get_if<QString>(&funcRet)) {
-        result.value = *strVal;
-        result.cond  = !result.value.isEmpty();
-    }
-    else if(const auto* strListVal = std::get_if<QStringList>(&funcRet)) {
-        result.value = strListVal->empty() ? QString{} : strListVal->join(QLatin1String{Constants::UnitSeparator});
-        result.cond  = !result.value.isEmpty();
-    }
-
-    return result;
-}
-
-const ScriptRegistry::VariableInvoker* ScriptRegistry::customVariableInvoker(const VariableKind kind,
-                                                                             const QString& var) const
-{
-    if(kind == VariableKind::Generic) {
-        if(const auto it = m_genericVariableInvokers.find(var); it != m_genericVariableInvokers.cend()) {
-            return &it->second;
-        }
-        return nullptr;
-    }
-
-    if(const auto it = m_customVariables.find(kind); it != m_customVariables.cend()) {
-        return &it->second;
-    }
-
-    return nullptr;
-}
-
-ScriptResult ScriptRegistry::valueForTrack(VariableKind kind, const QString& var, const Track& track,
-                                           const Playlist* playlist) const
-{
-    if(const auto* invoker = customVariableInvoker(kind, var); invoker != nullptr) {
-        ScriptResult result = (*invoker)(makeContext(m_context, &track, nullptr, playlist), var);
-        applyVariableOutputPolicy(m_context, kind, result);
-        return result;
-    }
-
-    if(isTrackListVariableKind(kind)) {
-        if(trackListContextPolicy(m_context) == TrackListContextPolicy::Fallback) {
-            if(const auto* tracks = contextTrackList(m_context); tracks != nullptr) {
-                return value(kind, var, makeScriptSubject(*tracks));
-            }
-            if(playlist) {
-                return value(kind, var, makeScriptSubject(playlist->tracks()));
-            }
-        }
-        return unavailableTrackListResult(m_context, var);
-    }
-
-    if(const auto value = trackMetadataValue(kind, track, *this, m_context); value.has_value()) {
-        ScriptResult result = calculateResult(*value);
-        applyVariableOutputPolicy(m_context, kind, result);
-        return result;
-    }
-    if(const auto value = playbackVariableValue(kind, *this, track); value.has_value()) {
-        ScriptResult result = calculateResult(*value);
-        applyVariableOutputPolicy(m_context, kind, result);
-        return result;
-    }
-    if(const auto value = libraryVariableValue(kind, track, *this); value.has_value()) {
-        ScriptResult result = calculateResult(*value);
-        applyVariableOutputPolicy(m_context, kind, result);
-        return result;
-    }
-
-    ScriptResult result = calculateResult(track.extraTag(var));
-    applyOutputPolicy(m_context, result);
-    return result;
-}
-
-ScriptResult ScriptRegistry::valueForTrackList(VariableKind kind, const QString& var, const TrackList& tracks,
-                                               const Playlist* playlist) const
-{
-    if(const auto* invoker = customVariableInvoker(kind, var); invoker != nullptr) {
-        ScriptResult result = (*invoker)(makeContext(m_context, nullptr, &tracks, playlist), var);
-        applyVariableOutputPolicy(m_context, kind, result);
-        return result;
-    }
-
-    if(const auto value = trackListValue(kind, tracks, *this); value.has_value()) {
-        ScriptResult result = calculateResult(*value);
-        applyVariableOutputPolicy(m_context, kind, result);
-        return result;
-    }
-
-    if(tracks.empty()) {
-        return {};
-    }
-
-    return value(kind, var, makeScriptSubject(tracks.front()));
-}
-
-ScriptResult ScriptRegistry::valueForPlaylist(VariableKind kind, const QString& var, const Playlist& playlist) const
-{
-    if(const auto* invoker = customVariableInvoker(kind, var); invoker != nullptr) {
-        ScriptResult result = (*invoker)(makeContext(m_context, nullptr, nullptr, &playlist), var);
-        applyVariableOutputPolicy(m_context, kind, result);
-        return result;
-    }
-
-    if(var.isEmpty()) {
-        return {};
-    }
-
-    if(isTrackListVariableKind(kind)) {
-        switch(kind) {
-            case VariableKind::TrackCount:
-            case VariableKind::Playtime:
-            case VariableKind::PlaylistSize:
-            case VariableKind::PlaylistDuration:
-            case VariableKind::PlaylistElapsed:
-            case VariableKind::Genres:
-                return value(kind, var, makeScriptSubject(playlist.tracks()));
-            default:
-                break;
-        }
-    }
-
-    if(auto track = playlist.track(playlist.currentTrackIndex())) {
-        return value(kind, var, makeScriptSubject(track.value()));
-    }
-
-    return {};
-}
-
-const ScriptRegistry::TrackListAggregateCache& ScriptRegistry::cachedTrackListValues(const TrackList& tracks) const
-{
-    const int trackCount      = static_cast<int>(tracks.size());
-    const auto* environment   = playbackEnvironment(m_context);
-    const int currentPosition = environment ? static_cast<int>(environment->currentPosition()) : -1;
-    const int playlistIndex   = m_context.environment && m_context.environment->playlistEnvironment()
-                                  ? m_context.environment->playlistEnvironment()->currentPlaylistTrackIndex()
-                                  : -1;
-
-    if(m_trackListCache.tracks != &tracks || m_trackListCache.trackCount != trackCount
-       || m_trackListCache.currentPosition != currentPosition || m_trackListCache.playlistIndex != playlistIndex) {
-        m_trackListCache.tracks          = &tracks;
-        m_trackListCache.trackCount      = trackCount;
-        m_trackListCache.currentPosition = currentPosition;
-        m_trackListCache.playlistIndex   = playlistIndex;
-        m_trackListCache.playtime        = Scripting::playtime(tracks);
-        m_trackListCache.playlistSize    = Scripting::playlistSize(tracks);
-        m_trackListCache.genres          = Scripting::genres(tracks);
-        m_trackListCache.playlistElapsed = playlistDuration(tracks);
-    }
-
-    return m_trackListCache;
+    functions.push_back(std::move(function));
+    return true;
 }
 
 ScriptRegistry::ScriptRegistry()
+    : p{std::make_unique<ScriptRegistryPrivate>()}
 {
-    addDefaultFunctions();
-
-    registerFunction(u"info"_s, makeScriptFunctionInvoker<trackInfo>());
-    registerFunction(u"meta"_s, makeScriptFunctionInvoker<trackMeta>());
-    registerFunction(u"meta_sep"_s, makeScriptFunctionInvoker<trackMetaSep>());
-    registerFunction(u"meta_test"_s, makeScriptFunctionInvoker<trackMetaTest>());
-    registerFunction(u"meta_num"_s, makeScriptFunctionInvoker<trackMetaNum>());
-
-    registerVariable(VariableKind::Generic, u"datetime"_s, makeScriptVariableInvoker<dateTimeVariable>());
-    registerVariable(VariableKind::Generic, u"_fooyin_version"_s, makeScriptVariableInvoker<fooyinVersionVariable>());
+    p->addDefaultFunctions();
+    p->addDefaultVariables();
 }
 
 ScriptRegistry::~ScriptRegistry() = default;
 
-void ScriptRegistry::addProvider(const ScriptVariableProvider& provider)
+ScriptRegistry& ScriptRegistry::instance()
 {
-    for(const auto& variable : provider.variables()) {
-        registerVariable(variable.kind, variable.name, variable.invoker);
+    static ScriptRegistry registry;
+    return registry;
+}
+
+bool ScriptRegistry::registerVariable(ScriptVariableDescriptor variable)
+{
+    const bool hasBuiltInPath = variable.kind != VariableKind::Generic
+                             && std::ranges::any_of(p->variables, [&variable](const auto& existing) {
+                                    return existing.kind == variable.kind && !existing.invoker;
+                                });
+    if(!variable.invoker && !hasBuiltInPath) {
+        qWarning() << "Cannot register script variable:" << variable.name << "invalid invoker";
+        return false;
     }
+    return p->registerVariable(std::move(variable));
 }
 
-void ScriptRegistry::addProvider(const ScriptFunctionProvider& provider)
+bool ScriptRegistry::registerFunction(ScriptFunctionDescriptor function)
 {
-    for(const auto& function : provider.functions()) {
-        registerFunction(function.name, function.invoker);
+    const bool hasBuiltInPath = function.kind != FunctionKind::Generic
+                             && std::ranges::any_of(p->functions, [&function](const auto& existing) {
+                                    return existing.kind == function.kind && !existing.invoker;
+                                });
+    if(!function.invoker && !hasBuiltInPath) {
+        qWarning() << "Cannot register script function:" << function.name << "invalid invoker";
+        return false;
     }
+    return p->registerFunction(std::move(function));
 }
 
-VariableKind ScriptRegistry::resolveVariable(const QString& var) const
+void ScriptRegistry::finalise()
 {
-    return resolveVariableInternal(var);
+    p->finalised = true;
+}
+bool ScriptRegistry::isFinalised() const
+{
+    return p->finalised;
 }
 
-ScriptFunctionId ScriptRegistry::resolveFunctionId(const QString& func) const
+void ScriptRegistry::shutdown()
 {
-    const QString key = func.toLower();
-    if(const auto it = m_functionIds.find(key); it != m_functionIds.cend()) {
+    p->operationState.fetch_or(ScriptRegistryPrivate::ShutdownFlag);
+
+    auto state = p->operationState.load();
+    while(state != ScriptRegistryPrivate::ShutdownFlag) {
+        p->operationState.wait(state);
+        state = p->operationState.load();
+    }
+
+    p->variableIds.clear();
+    p->functionIds.clear();
+    p->variables.clear();
+    p->functions.clear();
+}
+
+std::span<const ScriptVariableDescriptor> ScriptRegistry::variables() const
+{
+    return p->variables;
+}
+
+std::span<const ScriptFunctionDescriptor> ScriptRegistry::functions() const
+{
+    return p->functions;
+}
+
+VariableKind ScriptRegistry::resolveVariable(const QString& name) const
+{
+    const auto key = name.toUpper();
+    if(const auto it = p->variableIds.find(key); it != p->variableIds.end()) {
+        return p->variables[it->second].kind;
+    }
+    return VariableKind::Generic;
+}
+
+bool ScriptRegistry::isVariable(const QString& name) const
+{
+    const auto key = name.toUpper();
+    return p->variableIds.contains(key);
+}
+
+ScriptFunctionId ScriptRegistry::resolveFunctionId(const QString& name) const
+{
+    if(const auto it = p->functionIds.find(name.toLower()); it != p->functionIds.end()) {
         return it->second;
     }
     return InvalidScriptFunctionId;
 }
 
-bool ScriptRegistry::isVariable(const QString& var, const Track& track) const
+FunctionKind ScriptRegistry::functionKind(ScriptFunctionId id) const
 {
-    if(resolveBuiltInVariableKind(var) != VariableKind::Generic) {
-        return true;
-    }
-
-    return track.hasExtraTag(var);
+    return id != InvalidScriptFunctionId && id <= p->functions.size() ? p->functions[id - 1].kind
+                                                                      : FunctionKind::Generic;
 }
 
-bool ScriptRegistry::isVariable(const QString& var, const TrackList& tracks) const
+const ScriptVariableInvoker* ScriptRegistry::variableInvoker(const QString& name) const
 {
-    const bool isListVariable = isTrackListVariableKind(resolveBuiltInVariableKind(var));
-    if(isListVariable) {
-        return true;
+    if(const auto it = p->variableIds.find(name.toUpper()); it != p->variableIds.end()) {
+        const auto& invoker = p->variables[it->second].invoker;
+        return invoker ? &invoker : nullptr;
     }
-
-    if(tracks.empty()) {
-        return false;
-    }
-
-    return isVariable(var, tracks.front());
+    return nullptr;
 }
 
-bool ScriptRegistry::isFunction(const QString& func) const
+const ScriptFunctionInvoker* ScriptRegistry::functionInvoker(ScriptFunctionId id) const
 {
-    const QString key = func.toLower();
-    return m_functionIds.contains(key);
+    return id != InvalidScriptFunctionId && id <= p->functions.size() ? &p->functions[id - 1].invoker : nullptr;
 }
 
-ScriptResult ScriptRegistry::value(VariableKind kind, const QString& var, const ScriptSubject& subject) const
+bool ScriptRegistry::beginOperation()
 {
-    return valueInternal(kind, var, subject);
-}
-
-ScriptResult ScriptRegistry::value(const QString& var, const ScriptSubject& subject) const
-{
-    return valueInternal(var, subject);
-}
-
-ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList& args,
-                                      const ScriptSubject& subject) const
-{
-    if(func.isEmpty()) {
-        return {};
-    }
-
-    return function(resolveFunctionId(func), func, args, subject);
-}
-
-ScriptResult ScriptRegistry::function(ScriptFunctionId functionId, const QString& func, const ScriptValueList& args,
-                                      const ScriptSubject& subject) const
-{
-    const auto* invoker = functionInvoker(functionId);
-    if(!invoker && !func.isEmpty()) {
-        functionId = resolveFunctionId(func);
-        invoker    = functionInvoker(functionId);
-    }
-    if(!invoker || !(*invoker)) {
-        return {};
-    }
-
-    const Track* track       = subject.track;
-    const TrackList* tracks  = subject.tracks ? subject.tracks : m_context.tracks;
-    const Playlist* playlist = subject.playlist ? subject.playlist : m_context.playlist;
-
-    if(track == nullptr && subject.tracks != nullptr) {
-        if(!subject.tracks->empty()) {
-            track = &subject.tracks->front();
+    auto state = p->operationState.load();
+    while(!(state & ScriptRegistryPrivate::ShutdownFlag)) {
+        if(p->operationState.compare_exchange_weak(state, state + 1)) {
+            return true;
         }
-        tracks = subject.tracks;
     }
-    else if(track == nullptr && subject.playlist != nullptr) {
-        if(const auto playlistTrack = subject.playlist->currentTrack(); playlistTrack.isValid()) {
-            track = &playlistTrack;
-        }
-
-        playlist = subject.playlist;
-    }
-
-    const ScriptFunctionCallContext call{
-        .context = &m_context,
-        .args    = args,
-        .subject = {.track = track, .tracks = tracks, .playlist = playlist},
-    };
-    return (*invoker)(call);
+    return false;
 }
 
-ScriptContext ScriptRegistry::currentContext() const
+void ScriptRegistry::endOperation()
 {
-    return m_context;
-}
-
-void ScriptRegistry::setContext(const ScriptContext& context)
-{
-    m_context = context;
-    clearTrackListCache();
-}
-
-void ScriptRegistry::registerVariable(VariableKind kind, const QString& name, VariableInvoker invoker)
-{
-    const QString upperName = name.toUpper();
-
-    m_customVariableKinds[upperName] = kind;
-
-    if(kind == VariableKind::Generic) {
-        m_genericVariableInvokers[upperName] = invoker;
+    if(p->operationState.fetch_sub(1) == ScriptRegistryPrivate::ShutdownFlag + 1) {
+        p->operationState.notify_all();
     }
-    else {
-        m_customVariables[kind] = invoker;
-    }
-}
-
-ScriptFunctionId ScriptRegistry::registerFunction(const QString& name, FunctionInvoker invoker)
-{
-    const QString key = name.toLower();
-
-    if(const auto it = m_functionIds.find(key); it != m_functionIds.cend()) {
-        m_functions[static_cast<size_t>(it->second - 1)] = {.name = key, .invoker = invoker};
-        return it->second;
-    }
-
-    const auto functionId = static_cast<ScriptFunctionId>(m_functions.size() + 1);
-    m_functionIds.emplace(key, functionId);
-    m_functions.push_back({.name = key, .invoker = invoker});
-
-    return functionId;
-}
-
-const ScriptRegistry::FunctionInvoker* ScriptRegistry::functionInvoker(ScriptFunctionId functionId) const
-{
-    if(functionId == InvalidScriptFunctionId || std::cmp_greater(functionId, m_functions.size())) {
-        return nullptr;
-    }
-
-    return &m_functions.at(static_cast<size_t>(functionId - 1)).invoker;
 }
 } // namespace Fooyin

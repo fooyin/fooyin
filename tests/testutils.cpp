@@ -24,6 +24,7 @@
 #include <core/engine/input/playcounttagpolicy.h>
 #include <core/engine/input/ratingtagpolicy.h>
 #include <core/playlist/playlist.h>
+#include <core/scripting/scriptregistry.h>
 #include <utils/fileutils.h>
 
 #include <QDir>
@@ -37,6 +38,16 @@
 
 namespace Fooyin::Testing {
 namespace {
+class ScriptTestEnvironment : public ::testing::Environment
+{
+public:
+    void SetUp() override
+    {
+        ScriptRegistry::instance().finalise();
+    }
+};
+[[maybe_unused]] const auto* ScriptCatalogueSetup = ::testing::AddGlobalTestEnvironment(new ScriptTestEnvironment());
+
 QString ratingSettingsPath()
 {
     static const QTemporaryDir configDir{QDir::tempPath() + QStringLiteral("/fooyin-rating-test-XXXXXX")};

@@ -65,6 +65,8 @@ public:
     ~Application() override;
 
     void startup();
+    /** Completes core startup after scripting registration has been finalised. */
+    void completeStartup();
     void shutdown();
     static void quit();
     static void restart();

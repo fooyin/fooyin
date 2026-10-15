@@ -47,7 +47,6 @@
 #include "queueviewer/queueviewer.h"
 #include "quicksetup/quicksetupdialog.h"
 #include "scripting/scriptcommandhandler.h"
-#include "scripting/scriptvariableproviders.h"
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
 #include "systemtrayicon.h"
@@ -71,7 +70,8 @@
 #include <core/playlist/playlistloader.h>
 #include <core/plugins/plugininfo.h>
 #include <core/plugins/pluginmanager.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/scripting/scriptregistry.h>
+#include <core/scripting/scripttypes.h>
 #include <gui/coverprovider.h>
 #include <gui/coverrepository.h>
 #include <gui/guiconstants.h>
@@ -320,7 +320,6 @@ GuiApplication::GuiApplication(Application* core)
                      &GuiApplication::showConvertedFiles);
 
     m_editableLayout->setToolbarManager(m_mainWindow->toolbarManager());
-    m_scriptParser.addProvider(playlistVariableProvider());
 
     QObject::connect(m_settings->settingsDialog(), &SettingsDialogController::opening, this, [this]() {
         const bool isLayoutEditing = m_settings->value<Settings::Gui::LayoutEditing>();
@@ -709,6 +708,7 @@ void GuiApplication::initialise()
     m_actionManager->addContextObject(m_mainContext);
 
     initialisePlugins();
+    ScriptRegistry::instance().finalise();
 
     m_widgets->registerDspWidgets();
     m_viewMenu->registerDspSettingsActions(m_widgets->dspSettingsRegistry(), m_widgets->dspSettingsController());
@@ -970,11 +970,11 @@ void GuiApplication::updateWindowTitle()
         return;
     }
 
-    auto contextData     = makePlaybackScriptContext(m_playerController, m_playlistHandler->activePlaylist(),
-                                                     TrackListContextPolicy::Fallback, {}, false, false,
-                                                     Gui::ratingStarSymbols(*m_settings));
+    const auto data = makePlaybackScriptData(m_playerController, m_playlistHandler->activePlaylist());
+    const ScriptEvaluationOptions options{.trackListContextPolicy = TrackListContextPolicy::Fallback,
+                                          .ratingSymbols          = Gui::ratingStarSymbols(*m_settings)};
     const QString script = m_settings->value<Settings::Gui::Internal::WindowTitleTrackScript>();
-    const QString title  = m_scriptParser.evaluate(script, currentTrack, contextData.context);
+    const QString title  = m_scriptParser.evaluate(script, currentTrack, data.context(), options);
     m_mainWindow->setTitle(title);
 }
 

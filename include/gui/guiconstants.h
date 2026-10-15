@@ -23,6 +23,8 @@ namespace Fooyin::Constants {
 constexpr auto LightIconTheme = "light";
 constexpr auto DarkIconTheme  = "dark";
 
+constexpr auto PlayingIcon = "%playingicon%";
+
 namespace Icons {
 constexpr auto Fooyin       = "fooyin";
 constexpr auto FooyinWindow = "org.fooyin.fooyin";

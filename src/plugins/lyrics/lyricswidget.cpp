@@ -33,8 +33,8 @@
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/scripttypes.h>
 #include <gui/configdialog.h>
 #include <gui/guisettings.h>
 #include <gui/guistyleprovider.h>
@@ -897,10 +897,12 @@ void LyricsWidget::setCurrentTime(uint64_t time)
 
 RichText LyricsWidget::noLyricsDisplayText(const Track& track)
 {
-    auto contextData = makePlaybackScriptContext(
-        m_playerController, m_playlistHandler ? m_playlistHandler->activePlaylist() : nullptr,
-        TrackListContextPolicy::Fallback, {}, true, false, Gui::ratingStarSymbols(*m_settings));
-    const QString displayText = m_parser.evaluate(m_config.noLyricsScript, track, contextData.context);
+    const auto scriptData
+        = makePlaybackScriptData(m_playerController, m_playlistHandler ? m_playlistHandler->activePlaylist() : nullptr);
+    const ScriptEvaluationOptions options{.trackListContextPolicy = TrackListContextPolicy::Fallback,
+                                          .escapeRichText         = true,
+                                          .ratingSymbols          = Gui::ratingStarSymbols(*m_settings)};
+    const QString displayText = m_parser.evaluate(m_config.noLyricsScript, track, scriptData.context(), options);
     if(displayText.isEmpty()) {
         return {};
     }

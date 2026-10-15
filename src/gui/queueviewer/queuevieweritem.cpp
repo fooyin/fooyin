@@ -55,13 +55,13 @@ PlaybackQueueItemId QueueViewerItem::queueItemId() const
 }
 
 void QueueViewerItem::generateTitle(ScriptParser* parser, ScriptFormatter* formatter, const QString& displayScript,
-                                    const ScriptContext& context)
+                                    const ScriptContext& context, const ScriptEvaluationOptions& options)
 {
     if(!parser || !formatter) {
         return;
     }
 
-    const auto text  = formatter->evaluate(parser->evaluate(displayScript, m_track.track, context));
+    const auto text  = formatter->evaluate(parser->evaluate(displayScript, m_track.track, context, options));
     m_title          = text.joinedText();
     m_richTitle      = trimRichText(richTextForAlignment(text, RichAlignment::Left));
     m_rightRichTitle = trimRichText(richTextForAlignment(text, RichAlignment::Right));

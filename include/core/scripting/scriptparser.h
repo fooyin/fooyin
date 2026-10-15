@@ -31,8 +31,7 @@
 
 namespace Fooyin {
 class ScriptRuntime;
-class ScriptVariableProvider;
-class ScriptFunctionProvider;
+class ScriptRegistry;
 
 /*!
  * Parse error emitted by the script parser.
@@ -44,18 +43,6 @@ struct ScriptError
     QString message;
 };
 using ErrorList = std::vector<ScriptError>;
-
-enum class ScriptWhitespaceMode : uint8_t
-{
-    IgnoreLayout = 0,
-    Preserve,
-};
-
-struct ScriptEvaluationOptions
-{
-    ScriptWhitespaceMode whitespaceMode{ScriptWhitespaceMode::IgnoreLayout};
-    QString missingVariableText{};
-};
 
 /*!
  * Parsed script plus cache identity and parse errors.
@@ -80,16 +67,8 @@ class FYCORE_EXPORT ScriptParser
 {
 public:
     ScriptParser();
+    explicit ScriptParser(ScriptRegistry* registry);
     ~ScriptParser();
-
-    /*!
-     * Installs all variables exported by `provider`.
-     */
-    void addProvider(const ScriptVariableProvider& provider);
-    /*!
-     * Installs all functions exported by `provider`.
-     */
-    void addProvider(const ScriptFunctionProvider& provider);
 
     ParsedScript parse(const QString& input);
     ParsedScript parseQuery(const QString& input);

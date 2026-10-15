@@ -21,94 +21,68 @@
 
 #include "scriptruntime.h"
 
+namespace Fooyin {
 namespace {
-Fooyin::ScriptScanner::WhitespaceMode whitespaceMode(Fooyin::ScriptWhitespaceMode mode)
+ScriptScanner::WhitespaceMode whitespaceMode(ScriptWhitespaceMode mode)
 {
     switch(mode) {
-        case Fooyin::ScriptWhitespaceMode::Preserve:
-            return Fooyin::ScriptScanner::WhitespaceMode::Preserve;
-        case Fooyin::ScriptWhitespaceMode::IgnoreLayout:
+        case ScriptWhitespaceMode::Preserve:
+            return ScriptScanner::WhitespaceMode::Preserve;
+        case ScriptWhitespaceMode::IgnoreLayout:
             break;
     }
-    return Fooyin::ScriptScanner::WhitespaceMode::IgnoreLayout;
+    return ScriptScanner::WhitespaceMode::IgnoreLayout;
 }
 
-bool isQueryExpression(Fooyin::Expr::Type type)
+bool isQueryExpression(Expr::Type type)
 {
-    using Type = Fooyin::Expr::Type;
     switch(type) {
-        case Type::Not:
-        case Type::Group:
-        case Type::And:
-        case Type::Or:
-        case Type::XOr:
-        case Type::Equals:
-        case Type::Contains:
-        case Type::Greater:
-        case Type::GreaterEqual:
-        case Type::Less:
-        case Type::LessEqual:
-        case Type::SortAscending:
-        case Type::SortDescending:
-        case Type::All:
-        case Type::Missing:
-        case Type::Present:
-        case Type::Before:
-        case Type::After:
-        case Type::Since:
-        case Type::During:
-        case Type::Date:
-        case Type::Limit:
+        case Expr::Type::Not:
+        case Expr::Type::Group:
+        case Expr::Type::And:
+        case Expr::Type::Or:
+        case Expr::Type::XOr:
+        case Expr::Type::Equals:
+        case Expr::Type::Contains:
+        case Expr::Type::Greater:
+        case Expr::Type::GreaterEqual:
+        case Expr::Type::Less:
+        case Expr::Type::LessEqual:
+        case Expr::Type::SortAscending:
+        case Expr::Type::SortDescending:
+        case Expr::Type::All:
+        case Expr::Type::Missing:
+        case Expr::Type::Present:
+        case Expr::Type::Before:
+        case Expr::Type::After:
+        case Expr::Type::Since:
+        case Expr::Type::During:
+        case Expr::Type::Date:
+        case Expr::Type::Limit:
             return true;
-        case Type::Null:
-        case Type::Literal:
-        case Type::Variable:
-        case Type::VariableList:
-        case Type::VariableRaw:
-        case Type::Function:
-        case Type::FunctionArg:
-        case Type::Conditional:
-        case Type::QuotedLiteral:
+        case Expr::Type::Null:
+        case Expr::Type::Literal:
+        case Expr::Type::Variable:
+        case Expr::Type::VariableList:
+        case Expr::Type::VariableRaw:
+        case Expr::Type::Function:
+        case Expr::Type::FunctionArg:
+        case Expr::Type::Conditional:
+        case Expr::Type::QuotedLiteral:
             break;
     }
 
     return false;
 }
-
-bool canEvaluateAsQuery(const Fooyin::ParsedScript& script)
-{
-    if(!script.isValid()) {
-        return false;
-    }
-
-    return std::ranges::all_of(script.expressions, [](const Fooyin::Expression& expr) {
-        return expr.type == Fooyin::Expr::Literal || expr.type == Fooyin::Expr::QuotedLiteral
-            || isQueryExpression(expr.type);
-    });
-}
-
-bool containsQueryExpression(const Fooyin::ParsedScript& script)
-{
-    return script.isValid() && std::ranges::any_of(script.expressions, [](const Fooyin::Expression& expr) {
-               return isQueryExpression(expr.type);
-           });
-}
 } // namespace
 
-namespace Fooyin {
 ScriptParser::ScriptParser()
-    : p{std::make_unique<ScriptRuntime>()}
+    : p{std::make_unique<ScriptRuntime>(&ScriptRegistry::instance())}
 { }
 
-void ScriptParser::addProvider(const ScriptVariableProvider& provider)
-{
-    p->addProvider(provider);
-}
-
-void ScriptParser::addProvider(const ScriptFunctionProvider& provider)
-{
-    p->addProvider(provider);
-}
+ScriptParser::ScriptParser(ScriptRegistry* registry)
+    : p{std::make_unique<ScriptRuntime>(registry)}
+{ }
 
 ScriptParser::~ScriptParser() = default;
 
@@ -132,12 +106,19 @@ ParsedScript ScriptParser::parseQuery(const QString& input)
 
 bool ScriptParser::canEvaluateAsQuery(const ParsedScript& input)
 {
-    return ::canEvaluateAsQuery(input);
+    if(!input.isValid()) {
+        return false;
+    }
+
+    return std::ranges::all_of(input.expressions, [](const Expression& expr) {
+        return expr.type == Expr::Literal || expr.type == Expr::QuotedLiteral || isQueryExpression(expr.type);
+    });
 }
 
 bool ScriptParser::containsQueryExpression(const ParsedScript& input)
 {
-    return ::containsQueryExpression(input);
+    return input.isValid()
+        && std::ranges::any_of(input.expressions, [](const Expression& expr) { return isQueryExpression(expr.type); });
 }
 
 QString ScriptParser::evaluate(const QString& input)
@@ -156,23 +137,41 @@ QString ScriptParser::evaluate(const ParsedScript& input)
 
 QString ScriptParser::evaluate(const QString& input, const ScriptContext& context)
 {
-    return evaluate(input, Track{}, context);
+    return evaluate(input, context, {});
 }
 
 QString ScriptParser::evaluate(const QString& input, const ScriptContext& context,
                                const ScriptEvaluationOptions& options)
 {
+    if(context.track) {
+        return evaluate(input, *context.track, context, options);
+    }
+    if(context.tracks) {
+        return evaluate(input, *context.tracks, context, options);
+    }
+    if(context.playlist) {
+        return evaluate(input, *context.playlist, context, options);
+    }
     return evaluate(input, Track{}, context, options);
 }
 
 QString ScriptParser::evaluate(const ParsedScript& input, const ScriptContext& context)
 {
-    return evaluate(input, Track{}, context);
+    return evaluate(input, context, {});
 }
 
 QString ScriptParser::evaluate(const ParsedScript& input, const ScriptContext& context,
                                const ScriptEvaluationOptions& options)
 {
+    if(context.track) {
+        return evaluate(input, *context.track, context, options);
+    }
+    if(context.tracks) {
+        return evaluate(input, *context.tracks, context, options);
+    }
+    if(context.playlist) {
+        return evaluate(input, *context.playlist, context, options);
+    }
     return evaluate(input, Track{}, context, options);
 }
 

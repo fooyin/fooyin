@@ -24,7 +24,7 @@
 #include "playlistpreset.h"
 
 #include <core/player/playbackqueue.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/scripting/scripttypes.h>
 
 #include <core/track.h>
 #include <utils/crypto.h>
@@ -53,7 +53,8 @@ struct PlaylistPopulationRequest
     PlaylistColumnList columns;
     QFont font;
     int preloadCount{2000};
-    PlaylistScriptEnvironment environment;
+    ScriptContextData scriptData;
+    ScriptEvaluationOptions scriptOptions;
     PlaylistTrack playingTrack;
     PlaylistTrackIndexes queueIndexes;
     int queueTotal{0};

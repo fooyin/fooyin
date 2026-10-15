@@ -19,15 +19,13 @@
 
 #include "statuswidget.h"
 
-#include "scripting/scriptvariableproviders.h"
-
 #include "internalguisettings.h"
 
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/scripttypes.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
@@ -76,7 +74,7 @@ public:
 
     void setupConnections();
     [[nodiscard]] RatingStarSymbols ratingSymbols() const;
-    [[nodiscard]] PlaybackScriptContext makeSelectionContext(const TrackSelection* selection) const;
+    [[nodiscard]] ScriptEvaluationContext makeSelectionContext(const TrackSelection* selection) const;
     void updateSelectionVisibility() const;
 
     void clearMessage();
@@ -149,8 +147,6 @@ StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, EngineController* e
     , m_messageText{new StatusLabel(m_self)}
     , m_selectionText{new StatusLabel(m_self)}
 {
-    m_scriptParser.addProvider(playlistVariableProvider());
-
     auto* layout = new QHBoxLayout(m_self);
     layout->setContentsMargins(5, 0, 5, 0);
 
@@ -387,16 +383,14 @@ RatingStarSymbols StatusWidgetPrivate::ratingSymbols() const
     return Gui::ratingStarSymbols(*m_settings);
 }
 
-PlaybackScriptContext StatusWidgetPrivate::makeSelectionContext(const TrackSelection* selection) const
+ScriptEvaluationContext StatusWidgetPrivate::makeSelectionContext(const TrackSelection* selection) const
 {
-    PlaybackScriptContext contextData;
+    ScriptEvaluationContext contextData;
 
     auto* currentPlaylist = m_playlistController->currentPlaylist();
     auto* trackList       = selection && !selection->tracks.empty() ? &selection->tracks
                           : currentPlaylist                         ? &currentPlaylist->tracks()
                                                                     : nullptr;
-
-    contextData.context.playlist = currentPlaylist;
 
     int playlistTrackIndex{-1};
     int currentPlayingTrackIndex{-1};
@@ -418,20 +412,24 @@ PlaybackScriptContext StatusWidgetPrivate::makeSelectionContext(const TrackSelec
         playlistTrackIndex = currentPlaylist->currentTrackIndex();
     }
 
-    contextData.environment.setPlaylistData(currentPlaylist ? currentPlaylist->name() : QString{},
-                                            currentPlaylist ? currentPlaylist->trackCount() : 0, trackList);
-    const auto queueIndexes
+    contextData.data        = makePlaybackScriptData(m_playerController, currentPlaylist);
+    contextData.data.tracks = trackList;
+    auto& row               = contextData.data.playlistData;
+    row.trackIndex          = playlistTrackIndex;
+    row.playingTrackIndex   = currentPlayingTrackIndex;
+    row.playingTrackId      = currentPlayingTrackId;
+    row.queueIndexes
         = currentPlaylist && playlistTrackIndex >= 0
             ? m_playerController->playbackQueue().indexesForTrack(currentPlaylist->id(), playlistTrackIndex)
             : std::vector<int>{};
-    contextData.environment.setQueueState(queueIndexes, m_playerController->queuedTracksCount());
-    contextData.environment.setTrackState(playlistTrackIndex, currentPlayingTrackIndex, currentPlayingTrackId, 0);
-    contextData.environment.setPlaybackState(m_playerController->currentPosition(),
-                                             m_playerController->currentTrack().duration(),
-                                             m_playerController->bitrate(), m_playerController->playState(),
-                                             m_playerController->decoder(), m_playerController->playbackOutputInfo());
-    contextData.environment.setRatingStarSymbols(ratingSymbols());
-    contextData.environment.setEvaluationPolicy(TrackListContextPolicy::Fallback, {}, true);
+    if(currentPlaylist && playlistTrackIndex >= 0) {
+        if(const auto track = currentPlaylist->playlistTrack(playlistTrackIndex)) {
+            row.entryId = track->entryId;
+        }
+    }
+    contextData.options = {.trackListContextPolicy = TrackListContextPolicy::Fallback,
+                           .escapeRichText         = true,
+                           .ratingSymbols          = ratingSymbols()};
 
     return contextData;
 }
@@ -462,10 +460,11 @@ void StatusWidgetPrivate::updatePlayingText()
         QString playingText;
 
         if(const Track currentTrack = m_playerController->currentTrack(); currentTrack.isValid()) {
-            auto contextData
-                = makePlaybackScriptContext(m_playerController, m_playlistHandler->activePlaylist(),
-                                            TrackListContextPolicy::Fallback, {}, true, false, ratingSymbols());
-            playingText = m_scriptParser.evaluate(m_playingScript, currentTrack, contextData.context);
+            const auto data = makePlaybackScriptData(m_playerController, m_playlistHandler->activePlaylist());
+            const ScriptEvaluationOptions options{.trackListContextPolicy = TrackListContextPolicy::Fallback,
+                                                  .escapeRichText         = true,
+                                                  .ratingSymbols          = ratingSymbols()};
+            playingText = m_scriptParser.evaluate(m_playingScript, currentTrack, data.context(), options);
         }
 
         setRichLabelText(m_playingText, playingText, m_playingFormatter);
@@ -507,11 +506,13 @@ void StatusWidgetPrivate::updateSelectionText()
     const auto contextData = makeSelectionContext(selection);
 
     if(showSelection && selection && !selection->tracks.empty()) {
-        selectionText = m_scriptParser.evaluate(m_selectionScript, selection->tracks, contextData.context);
+        selectionText = m_scriptParser.evaluate(m_selectionScript, selection->tracks, contextData.data.context(),
+                                                contextData.options);
     }
     else if(showPlaylist && !m_playlistScript.isEmpty()) {
         if(auto* currentPlaylist = m_playlistController->currentPlaylist()) {
-            selectionText = m_scriptParser.evaluate(m_playlistScript, *currentPlaylist, contextData.context);
+            selectionText = m_scriptParser.evaluate(m_playlistScript, *currentPlaylist, contextData.data.context(),
+                                                    contextData.options);
         }
     }
 

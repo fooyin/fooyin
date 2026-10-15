@@ -17,14 +17,17 @@
  *
  */
 
-#include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/scriptregistry.h>
 #include <core/track.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
 #include <gui/scripting/scriptformatterregistry.h>
+#include <gui/scripting/scriptreferenceentries.h>
 
 #include <gtest/gtest.h>
+
+#include <algorithm>
 
 using namespace Qt::StringLiterals;
 
@@ -34,6 +37,52 @@ class ScriptFormatterTest : public ::testing::Test
 protected:
     ScriptFormatter m_formattter;
 };
+
+TEST(ScriptReferenceTest, RegisteredMetadataAndAliasesReachTheEditor)
+{
+    ScriptRegistry registry;
+    ASSERT_TRUE(registry.registerVariable(makeScriptVariableDescriptor<[]() {
+        return u"value"_s;
+    }>(VariableKind::Generic, u"plugin_value"_s, u"Plugin"_s, u"Plugin variable"_s, {u"plugin_alias"_s})));
+    ASSERT_TRUE(registry.registerFunction(makeScriptFunctionDescriptor<[]() {
+        return u"value"_s;
+    }>(u"plugin_function"_s, u"$plugin_function(value)"_s, u"Plugin"_s, u"Plugin function"_s, {u"plugin_alias"_s})));
+    ASSERT_TRUE(registry.registerFunction(makeScriptFunctionDescriptor<[]() {
+        return u"value"_s;
+    }>(u"undocumented"_s)));
+    registry.finalise();
+
+    const auto entries   = scriptReferenceEntries(registry);
+    const auto findEntry = [&entries](const QString& insertion) {
+        return std::ranges::find(entries, insertion, &ScriptReferenceEntry::insertText);
+    };
+    for(const auto& name : {u"%plugin_value%"_s, u"%plugin_alias%"_s}) {
+        const auto entry = findEntry(name);
+        ASSERT_NE(entries.end(), entry);
+        EXPECT_EQ(name, entry->label);
+        EXPECT_EQ(u"Plugin", entry->category);
+        EXPECT_EQ(u"Plugin variable", entry->description);
+    }
+    for(const auto& name : {u"plugin_function"_s, u"plugin_alias"_s}) {
+        const auto entry = findEntry(u"$%1()"_s.arg(name));
+        ASSERT_NE(entries.end(), entry);
+        EXPECT_EQ(u"$%1(value)"_s.arg(name), entry->label);
+        EXPECT_EQ(u"Plugin", entry->category);
+        EXPECT_EQ(u"Plugin function", entry->description);
+    }
+    const auto cut = findEntry(u"$cut()"_s);
+    ASSERT_NE(entries.end(), cut);
+    EXPECT_EQ(u"$cut(text,count)", cut->label);
+    EXPECT_FALSE(cut->description.isEmpty());
+    const auto trackNumber = findEntry(u"%tracknumber%"_s);
+    ASSERT_NE(entries.end(), trackNumber);
+    EXPECT_EQ(u"Track number", trackNumber->description);
+    const auto undocumented = findEntry(u"$undocumented()"_s);
+    ASSERT_NE(entries.end(), undocumented);
+    EXPECT_EQ(u"$undocumented()", undocumented->label);
+    EXPECT_EQ(u"Plugins", undocumented->category);
+    EXPECT_TRUE(undocumented->description.isEmpty());
+}
 
 TEST_F(ScriptFormatterTest, NoFormat)
 {
@@ -236,15 +285,15 @@ TEST_F(ScriptFormatterTest, LiteralBackslashes)
 
 TEST_F(ScriptFormatterTest, MetadataSeparatorsCanContainFormatting)
 {
-    ScriptParser parser;
-    LibraryScriptEnvironment environment{nullptr};
-    environment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true);
-    const ScriptContext context{.environment = &environment};
+    ScriptRegistry registry;
+    registry.finalise();
+    ScriptParser parser{&registry};
+    const ScriptEvaluationOptions options{.escapeRichText = true};
     Track track;
     track.setArtists({uR"(first\)"_s, uR"(<b>second</b>\)"_s, uR"(third\\)"_s});
 
     const QString script = u"$meta_sep(artist,<rgb=1,2,3> / </rgb>,<rgb=4,5,6> and </rgb>)"_s;
-    const auto result    = m_formattter.evaluate(parser.evaluate(script, track, context));
+    const auto result    = m_formattter.evaluate(parser.evaluate(script, track, {}, options));
     ASSERT_EQ(5, result.size());
     EXPECT_EQ(track.artists().at(0), result.blocks.at(0).text);
     EXPECT_EQ(u" / "_s, result.blocks.at(1).text);

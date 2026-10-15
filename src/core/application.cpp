@@ -53,6 +53,7 @@
 #include <core/playlist/playlisthandler.h>
 #include <core/playlist/playlistloader.h>
 #include <core/plugins/coreplugin.h>
+#include <core/scripting/scriptregistry.h>
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -200,6 +201,12 @@ void Application::startup()
     initialise();
 }
 
+void Application::completeStartup()
+{
+    Q_ASSERT(ScriptRegistry::instance().isFinalised());
+    m_library->loadAllTracks();
+}
+
 void Application::shutdown()
 {
     m_playbackQueueSaveTimer.stop();
@@ -212,6 +219,7 @@ void Application::shutdown()
     m_playbackQueueStore.save(m_playerController->playbackQueue());
 
     m_playlistHandler->savePlaylists();
+    ScriptRegistry::instance().shutdown();
     m_pluginManager->unloadPlugins();
     m_audioLoader->saveState();
     m_settings->storeSettings();
@@ -365,7 +373,6 @@ void Application::initialise()
     m_audioLoader->restoreState();
     m_settingsSaveTimer.start(SettingsSaveInterval, this);
 
-    m_library->loadAllTracks();
     m_engine->setup();
 }
 

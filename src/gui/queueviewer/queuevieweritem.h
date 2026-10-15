@@ -50,7 +50,7 @@ public:
     [[nodiscard]] PlaybackQueueItemId queueItemId() const;
 
     void generateTitle(ScriptParser* parser, ScriptFormatter* formatter, const QString& displayScript,
-                       const ScriptContext& context);
+                       const ScriptContext& context, const ScriptEvaluationOptions& options);
 
 private:
     QString m_title;

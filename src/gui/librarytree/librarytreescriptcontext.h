@@ -19,11 +19,23 @@
 
 #pragma once
 
-#include <core/scripting/scriptproviders.h>
+#include "fygui_export.h"
+
+#include <core/scripting/scripttypes.h>
+
+#include <QStringView>
+#include <array>
 
 namespace Fooyin {
-constexpr auto PlayingIcon = "%playingicon%";
+using LibraryTreeScriptValues = std::array<ScriptVariableValue, 2>;
 
-[[nodiscard]] const ScriptVariableProvider& artworkMarkerVariableProvider();
-[[nodiscard]] const ScriptVariableProvider& playlistVariableProvider();
+FYGUI_EXPORT LibraryTreeScriptValues deferredLibraryTreeScriptValues();
+FYGUI_EXPORT LibraryTreeScriptValues libraryTreeScriptValues(int trackCount, int childCount);
+
+QString defaultLibraryTreeSummaryTitle();
+
+FYGUI_EXPORT QString resolveLibraryTreeNodeVariables(QString title, int trackCount, int childCount);
+
+bool usesLibraryTreeNodeVariables(QStringView text);
+bool usesLibraryTreeChildCount(QStringView text);
 } // namespace Fooyin

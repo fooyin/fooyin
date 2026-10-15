@@ -18,6 +18,7 @@
  */
 
 #include <core/library/tracksort.h>
+#include <core/scripting/scriptregistry.h>
 
 #include <utility>
 
@@ -27,7 +28,12 @@ TrackSorter::TrackSorter()
 { }
 
 TrackSorter::TrackSorter(LibraryInfoMap libraries)
-    : m_scriptEnvironment{std::move(libraries)}
+    : TrackSorter{std::move(libraries), &ScriptRegistry::instance()}
+{ }
+
+TrackSorter::TrackSorter(LibraryInfoMap libraries, ScriptRegistry* registry)
+    : m_parser{registry}
+    , m_libraries{std::move(libraries)}
 { }
 
 TrackSorter::~TrackSorter() = default;

@@ -23,8 +23,6 @@
 #include "playlistitem.h"
 #include "playlistpopulator.h"
 #include "playlistpreset.h"
-#include "scripting/scriptvariableproviders.h"
-
 #include <core/constants.h>
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
@@ -158,7 +156,7 @@ Data mergeUpdatedItemData(const Data& currentData, const Data& updatedData, cons
 bool isEditablePlaylistColumn(const PlaylistColumn& column)
 {
     const QString writeField = normaliseWriteField(column.writeField);
-    return !writeField.isEmpty() && !column.isPixmap && column.field != QString::fromLatin1(PlayingIcon);
+    return !writeField.isEmpty() && !column.isPixmap && column.field != QString::fromLatin1(Constants::PlayingIcon);
 }
 
 QString editStringForTrack(const Track& track, const QString& writeField)
@@ -622,7 +620,7 @@ TrackList collectHeaderTracks(PlaylistItem* header)
 
 QStyleOptionViewItem::Position getIconPosition(const QString& text)
 {
-    const auto iconPos = text.indexOf(QLatin1String(PlayingIcon));
+    const auto iconPos = text.indexOf(QLatin1String(Constants::PlayingIcon));
 
     if(iconPos <= 0) {
         return QStyleOptionViewItem::Left;
@@ -2005,14 +2003,15 @@ PlaylistPopulationRequest PlaylistModel::populationRequest()
         request.queueIndexes = m_playerController->playbackQueue().indexesForPlaylist(request.playlistId);
     }
 
-    request.environment.setPlaylistData(m_currentPlaylist ? m_currentPlaylist->name() : QString{}, request.trackCount);
-    request.environment.setRatingStarSymbols(Gui::ratingStarSymbols(*m_settings));
-    request.environment.setEvaluationPolicy(TrackListContextPolicy::Placeholder, QStringLiteral("|Loading|"), true,
-                                            m_settings->value<Settings::Core::UseVariousForCompilations>());
-    request.environment.setPlaybackState(m_playerController->currentPosition(),
-                                         m_playerController->currentTrack().duration(), m_playerController->bitrate(),
-                                         m_playerController->playState(), m_playerController->decoder(),
-                                         m_playerController->playbackOutputInfo());
+    request.scriptData                         = makePlaybackScriptData(m_playerController);
+    request.scriptData.playlistData.playlistId = request.playlistId;
+    request.scriptData.playlistData.name       = m_currentPlaylist ? m_currentPlaylist->name() : QString{};
+    request.scriptData.playlistData.trackCount = request.trackCount;
+    request.scriptOptions = {.trackListContextPolicy = TrackListContextPolicy::Placeholder,
+                             .trackListPlaceholder   = u"|Loading|"_s,
+                             .escapeRichText         = true,
+                             .useVariousArtists      = m_settings->value<Settings::Core::UseVariousForCompilations>(),
+                             .ratingSymbols          = Gui::ratingStarSymbols(*m_settings)};
     return request;
 }
 
@@ -2485,16 +2484,16 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
 
             const QString field = m_columns.at(column).field;
 
-            if(field == QLatin1String(Constants::FrontCover)) {
+            if(field == QLatin1StringView(Constants::FrontCover)) {
                 return getCover(Track::Cover::Front);
             }
-            if(field == QLatin1String(Constants::BackCover)) {
+            if(field == QLatin1StringView(Constants::BackCover)) {
                 return getCover(Track::Cover::Back);
             }
-            if(field == QLatin1String(Constants::ArtistPicture)) {
+            if(field == QLatin1StringView(Constants::ArtistPicture)) {
                 return getCover(Track::Cover::Artist);
             }
-            if(field == QLatin1String(PlayingIcon) && isPlaying) {
+            if(field == QLatin1StringView(Constants::PlayingIcon) && isPlaying) {
                 break;
             }
 
@@ -2578,7 +2577,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
             return trackItem.size(column);
         }
         case Qt::DecorationRole: {
-            if(singleColumnMode || m_columns.at(column).field.contains(QLatin1String(PlayingIcon))) {
+            if(singleColumnMode || m_columns.at(column).field.contains(QLatin1String(Constants::PlayingIcon))) {
                 if(!track.isEnabled()) {
                     return Gui::pixmapFromTheme(Constants::Icons::Close);
                 }

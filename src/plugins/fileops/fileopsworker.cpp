@@ -41,35 +41,6 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin::FileOps {
 namespace {
-class FileOpsScriptEnvironment : public ScriptEnvironment,
-                                 public ScriptEvaluationEnvironment
-{
-public:
-    [[nodiscard]] const ScriptEvaluationEnvironment* evaluationEnvironment() const override
-    {
-        return this;
-    }
-
-    [[nodiscard]] TrackListContextPolicy trackListContextPolicy() const override
-    {
-        return TrackListContextPolicy::Unresolved;
-    }
-
-    [[nodiscard]] QString trackListPlaceholder() const override
-    {
-        return {};
-    }
-
-    [[nodiscard]] bool escapeRichText() const override
-    {
-        return false;
-    }
-
-    [[nodiscard]] bool replacePathSeparators() const override
-    {
-        return true;
-    }
-};
 
 QString replaceSeparators(const QString& input)
 {
@@ -621,9 +592,8 @@ void FileOpsWorker::simulateRename()
 
 QString FileOpsWorker::evaluatePath(const ParsedScript& script, const Track& track)
 {
-    static const FileOpsScriptEnvironment environment;
-    const ScriptContext context{.environment = &environment};
-    return m_scriptParser.evaluate(script, track, context);
+    const ScriptEvaluationOptions options{.replacePathSeparators = true};
+    return m_scriptParser.evaluate(script, track, {}, options);
 }
 
 FileOpResult FileOpsWorker::renameFile(const FileOpsItem& item)

@@ -266,8 +266,8 @@ set(SOURCES
     librarytree/librarytreemodel.h
     librarytree/librarytreepopulator.cpp
     librarytree/librarytreepopulator.h
-    librarytree/librarytreescriptenvironment.cpp
-    librarytree/librarytreescriptenvironment.h
+    librarytree/librarytreescriptcontext.cpp
+    librarytree/librarytreescriptcontext.h
     librarytree/librarytreeview.cpp
     librarytree/librarytreeview.h
     librarytree/librarytreewidget.cpp
@@ -335,8 +335,6 @@ set(SOURCES
     playlist/organiser/playlistorganiserdelegate.h
     playlist/organiser/playlistorganiseritem.cpp
     playlist/organiser/playlistorganiseritem.h
-    playlist/organiser/organiserscripenvironment.cpp
-    playlist/organiser/organiserscripenvironment.h
     playlist/organiser/playlistorganisermodel.cpp
     playlist/organiser/playlistorganisermodel.h
     playlist/playlistbox.cpp
@@ -433,8 +431,6 @@ set(SOURCES
     scripting/scripteditortextedit.cpp
     scripting/scripteditortextedit.h
     scripting/scriptformatter.cpp
-    scripting/scriptvariableproviders.cpp
-    scripting/scriptvariableproviders.h
     scripting/scriptcommandhandler.cpp
     scripting/scriptcommandhandler.h
     scripting/scriptreferenceentries.cpp

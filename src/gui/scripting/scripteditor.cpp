@@ -27,8 +27,8 @@
 #include <core/coresettings.h>
 #include <core/library/librarymanager.h>
 #include <core/player/playercontroller.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/scripttypes.h>
 #include <core/track.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
@@ -118,68 +118,6 @@ protected:
     }
 };
 
-class ScriptEditorEnvironment : public ScriptEnvironment
-{
-public:
-    explicit ScriptEditorEnvironment(LibraryManager* libraryManager)
-        : m_libraryEnvironment{libraryManager}
-    {
-        m_libraryEnvironment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true);
-    }
-
-    void setLibraries(LibraryInfoMap libraries)
-    {
-        m_libraryEnvironment.setLibraries(std::move(libraries));
-    }
-
-    void updatePlaybackState(PlayerController* playerController)
-    {
-        m_playbackEnvironment.setPlaylistData({}, 0);
-        m_playbackEnvironment.setQueueState({}, playerController ? playerController->queuedTracksCount() : 0);
-
-        int currentPlayingTrackIndex{-1};
-        int currentPlayingTrackId{-1};
-
-        if(playerController) {
-            const PlaylistTrack currentTrack = playerController->currentPlaylistTrack();
-            currentPlayingTrackIndex         = currentTrack.indexInPlaylist;
-            currentPlayingTrackId            = playerController->currentTrackId();
-        }
-
-        m_playbackEnvironment.setTrackState(-1, currentPlayingTrackIndex, currentPlayingTrackId, 0);
-        m_playbackEnvironment.setPlaybackState(
-            playerController ? playerController->currentPosition() : 0,
-            playerController ? playerController->currentTrack().duration() : 0,
-            playerController ? playerController->bitrate() : 0,
-            playerController ? playerController->playState() : Player::PlayState::Stopped,
-            playerController ? playerController->decoder() : QString{},
-            playerController ? playerController->playbackOutputInfo() : Engine::PlaybackOutputInfo{});
-    }
-
-    [[nodiscard]] const ScriptPlaybackEnvironment* playbackEnvironment() const override
-    {
-        return m_playbackEnvironment.playbackEnvironment();
-    }
-
-    [[nodiscard]] const ScriptPlaylistEnvironment* playlistEnvironment() const override
-    {
-        return m_playbackEnvironment.playlistEnvironment();
-    }
-
-    [[nodiscard]] const ScriptLibraryEnvironment* libraryEnvironment() const override
-    {
-        return m_libraryEnvironment.libraryEnvironment();
-    }
-
-    [[nodiscard]] const ScriptEvaluationEnvironment* evaluationEnvironment() const override
-    {
-        return m_libraryEnvironment.evaluationEnvironment();
-    }
-
-private:
-    LibraryScriptEnvironment m_libraryEnvironment;
-    PlaylistScriptEnvironment m_playbackEnvironment;
-};
 } // namespace
 
 class ScriptEditorPrivate : public QObject
@@ -262,8 +200,6 @@ public:
 
     ScriptParser m_parser;
     ScriptFormatter m_formatter;
-    ScriptEditorEnvironment m_environment;
-    ScriptContext m_scriptContext;
 
     ParsedScript m_currentScript;
     ErrorList m_formatErrors;
@@ -297,11 +233,7 @@ ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* lib
     , m_functionReferenceFilter{new ScriptReferenceFilterModel(m_self)}
     , m_formattingReferenceFilter{new ScriptReferenceFilterModel(m_self)}
     , m_model{new ExpressionTreeModel(m_self)}
-    , m_environment{libraryManager}
 {
-    m_scriptContext.environment = &m_environment;
-    m_environment.updatePlaybackState(m_playerController);
-
     auto* mainLayout = new QGridLayout(m_self);
     mainLayout->setContentsMargins({});
     mainLayout->addWidget(m_mainSplitter);
@@ -715,11 +647,15 @@ void ScriptEditorPrivate::updateResults(const Expression& expression)
 
     m_formatter.setBaseFont(m_results->font());
 
-    m_environment.setLibraries(m_libraryManager ? m_libraryManager->allLibraries() : LibraryInfoMap{});
-    m_environment.updatePlaybackState(m_playerController);
+    const auto libraries         = m_libraryManager ? m_libraryManager->allLibraries() : LibraryInfoMap{};
+    auto data                    = makePlaybackScriptData(m_playerController);
+    data.playlistData.trackIndex = -1;
+    auto context                 = data.context();
+    context.libraries            = &libraries;
+    const ScriptEvaluationOptions options{.escapeRichText = true};
 
     const Track track      = m_track.isValid() ? m_track : m_placeholderTrack;
-    const auto result      = m_parser.evaluate(script, track, m_scriptContext);
+    const auto result      = m_parser.evaluate(script, track, context, options);
     const auto formatted   = m_formatter.evaluate(result);
     m_formatErrors         = m_formatter.errors();
     const QString htmlBody = richTextToHtml(formatted);

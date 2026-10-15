@@ -33,35 +33,6 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 namespace {
-class ConversionScriptEnvironment : public ScriptEnvironment,
-                                    public ScriptEvaluationEnvironment
-{
-public:
-    [[nodiscard]] const ScriptEvaluationEnvironment* evaluationEnvironment() const override
-    {
-        return this;
-    }
-
-    [[nodiscard]] TrackListContextPolicy trackListContextPolicy() const override
-    {
-        return TrackListContextPolicy::Unresolved;
-    }
-
-    [[nodiscard]] QString trackListPlaceholder() const override
-    {
-        return {};
-    }
-
-    [[nodiscard]] bool escapeRichText() const override
-    {
-        return false;
-    }
-
-    [[nodiscard]] bool replacePathSeparators() const override
-    {
-        return true;
-    }
-};
 
 QString normaliseExtension(QString extension)
 {
@@ -244,9 +215,8 @@ QString ConversionPathResolver::previewPath(const Track& track, const Conversion
     }
 
     ScriptParser parser;
-    const ConversionScriptEnvironment environment;
-    const ScriptContext context{.environment = &environment};
-    QString filename = parser.evaluate(destination.filenamePattern, track, context).trimmed();
+    const ScriptEvaluationOptions options{.replacePathSeparators = true};
+    QString filename = parser.evaluate(destination.filenamePattern, track, {}, options).trimmed();
     filename         = sanitisePathSegment(filename);
     if(filename.isEmpty()) {
         filename = sanitisePathSegment(sanitiseMetadataValue(fallbackFilename(track)));

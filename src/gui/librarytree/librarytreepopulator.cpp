@@ -19,8 +19,7 @@
 
 #include "librarytreepopulator.h"
 
-#include "librarytreescriptenvironment.h"
-#include "scripting/scriptvariableproviders.h"
+#include "librarytreescriptcontext.h"
 
 #include <core/constants.h>
 #include <core/scripting/scriptparser.h>
@@ -49,9 +48,7 @@ public:
     explicit LibraryTreePopulatorPrivate(LibraryTreePopulator* self)
         : m_self{self}
     {
-        m_scriptContext.environment = &m_scriptEnvironment;
-        m_parser.addProvider(artworkMarkerVariableProvider());
-        m_parser.addProvider(libraryTreeNodeVariableProvider());
+        m_scriptContext.values = m_nodeValues;
     }
 
     LibraryTreeItem* getOrInsertItem(const Md5Hash& key, const LibraryTreeItem* parent, const QString& title,
@@ -76,15 +73,16 @@ public:
     {
         m_context = std::move(context);
         m_formatter.setBaseFont(m_context.font);
-        m_scriptEnvironment.setLibraries(std::move(m_context.libraries));
-        m_scriptEnvironment.setRatingStarSymbols(m_context.ratingSymbols);
-        m_scriptEnvironment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true, m_context.useVarious);
-        m_scriptEnvironment.setNodeVariablePolicy(LibraryTreeNodePolicy::Unresolved);
+        m_scriptContext.libraries   = &m_context.libraries;
+        m_options.ratingSymbols     = m_context.ratingSymbols;
+        m_options.escapeRichText    = true;
+        m_options.useVariousArtists = m_context.useVarious;
     }
 
     ScriptParser m_parser;
     ScriptFormatter m_formatter;
-    LibraryTreeScriptEnvironment m_scriptEnvironment;
+    LibraryTreeScriptValues m_nodeValues{deferredLibraryTreeScriptValues()};
+    ScriptEvaluationOptions m_options;
     ScriptContext m_scriptContext;
     ScriptContext m_identityScriptContext;
 
@@ -203,12 +201,13 @@ void LibraryTreePopulatorPrivate::clearBatchData()
 
 void LibraryTreePopulatorPrivate::iterateTrack(const Track& track)
 {
-    const QString displayField = m_parser.evaluate(m_displayScript, track, m_scriptContext);
+    const QString displayField = m_parser.evaluate(m_displayScript, track, m_scriptContext, m_options);
     if(displayField.isNull()) {
         return;
     }
-    const QString sortField
-        = m_sortScript.input.isEmpty() ? displayField : m_parser.evaluate(m_sortScript, track, m_scriptContext);
+    const QString sortField = m_sortScript.input.isEmpty()
+                                ? displayField
+                                : m_parser.evaluate(m_sortScript, track, m_scriptContext, m_options);
 
     const QStringList displayValues = displayField.split(QLatin1String{Constants::UnitSeparator}, Qt::SkipEmptyParts);
     const QStringList sortValues    = sortField.split(QLatin1String{Constants::UnitSeparator}, Qt::SkipEmptyParts);

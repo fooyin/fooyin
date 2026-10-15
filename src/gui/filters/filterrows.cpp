@@ -21,8 +21,8 @@
 
 #include <core/constants.h>
 #include <core/library/librarymanager.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/scripttypes.h>
 #include <core/scripting/trackqueryfilter.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
@@ -129,13 +129,8 @@ FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColum
     ScriptFormatter formatter;
     formatter.setBaseFont(context.font);
 
-    LibraryScriptEnvironment scriptEnvironment{libraries};
-    scriptEnvironment.setRatingStarSymbols(context.ratingSymbols);
-    scriptEnvironment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true, context.useVarious);
-
     const ParsedScript script = parser.parse(fields.join(QLatin1StringView{Constants::RecordSeparator}));
-    ScriptContext scriptContext;
-    scriptContext.environment = &scriptEnvironment;
+    const ScriptContext scriptContext{.libraries = &libraries};
 
     std::map<RowKey, FilterRow> items;
     std::unordered_map<QString, CachedColumnData> columnDataCache;
@@ -144,7 +139,13 @@ FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColum
                                       ? parser.parse(sortFields.join(QLatin1StringView{Constants::RecordSeparator}))
                                       : ParsedScript{};
 
-    const ScriptEvaluationOptions displayOptions{.missingVariableText = u"?"_s};
+    const ScriptEvaluationOptions displayOptions{.missingVariableText = u"?"_s,
+                                                 .escapeRichText      = true,
+                                                 .useVariousArtists   = context.useVarious,
+                                                 .ratingSymbols       = context.ratingSymbols};
+
+    auto sortOptions{displayOptions};
+    sortOptions.missingVariableText.clear();
 
     for(const Track& track : tracks) {
         if(!track.isInLibrary()) {
@@ -156,7 +157,7 @@ FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColum
 
         std::vector<QStringList> sortValues;
         if(hasCustomSortField) {
-            sortValues = splitColumnValues(parser.evaluate(sortScript, track, scriptContext));
+            sortValues = splitColumnValues(parser.evaluate(sortScript, track, scriptContext, sortOptions));
         }
 
         auto addColumns = [&columns, &hasCustomSortField, &items, &formatter, &columnDataCache,

@@ -19,8 +19,6 @@
 
 #include "playlistorganisermodel.h"
 
-#include "organiserscripenvironment.h"
-
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
@@ -35,6 +33,7 @@
 #include <QMimeData>
 #include <QPalette>
 
+#include <array>
 #include <stack>
 
 using namespace Qt::StringLiterals;
@@ -152,7 +151,7 @@ PlaylistOrganiserModel::PlaylistOrganiserModel(PlaylistHandler* playlistHandler,
                      });
 
     m_playingColour.setAlpha(90);
-    m_scriptParser.addProvider(organiserScripVariableProvider());
+
     setDisplayScript(defaultDisplayScript());
 
     const auto playlistChanged = [this](const QString& key, Qt::ItemDataRole role) {
@@ -813,14 +812,21 @@ QString PlaylistOrganiserModel::evaluateScript(const ParsedScript& script, const
         return {};
     }
 
-    OrganiserScripEnvironment environment{item};
-    const ScriptContext context{.environment = &environment, .playlist = item->playlist()};
+    const bool isGroup = item->type() == PlaylistOrganiserItem::GroupItem;
+    const int count    = isGroup ? item->childCount() : item->playlist() ? item->playlist()->trackCount() : 0;
+    const ScriptResult name{.value = item->title(), .cond = !item->title().isEmpty()};
+    const std::array values{
+        ScriptVariableValue{.name = u"NODE_NAME"_s, .result = name}, ScriptVariableValue{u"NODENAME"_s, name},
+        ScriptVariableValue{.name = u"IS_GROUP"_s, .result = {.value = isGroup ? u"1"_s : QString{}, .cond = isGroup}},
+        ScriptVariableValue{.name = u"COUNT"_s, .result = {.value = QString::number(count), .cond = true}}};
+    const ScriptContext context{.playlist = item->playlist(), .values = values};
+    const ScriptEvaluationOptions options{.escapeRichText = true};
 
     if(const auto* playlist = item->playlist()) {
-        return m_scriptParser.evaluate(script, *playlist, context);
+        return m_scriptParser.evaluate(script, *playlist, context, options);
     }
 
-    return m_scriptParser.evaluate(script, context);
+    return m_scriptParser.evaluate(script, context, options);
 }
 
 RichText PlaylistOrganiserModel::evaluateRichScript(const ParsedScript& script, const PlaylistOrganiserItem* item) const

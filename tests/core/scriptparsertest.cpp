@@ -20,66 +20,38 @@
 #include <core/constants.h>
 #include <core/ratingsymbols.h>
 #include <core/scripting/scriptparser.h>
-#include <core/scripting/scriptproviders.h>
+#include <core/scripting/scriptregistry.h>
 #include <core/scripting/scripttrackwriter.h>
 #include <core/scripting/trackqueryfilter.h>
 #include <core/track.h>
-
-#include <gtest/gtest.h>
 
 #include <QDateTime>
 #include <QDir>
 #include <QFileInfo>
 
+#include <array>
+#include <future>
+
+#include <gtest/gtest.h>
+
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Testing {
-class ScriptParserTest : public ::testing::Test
+struct TestProviderContext
 {
-protected:
-    ScriptParserTest()
-        : m_filter{ScriptSearchOptions{}}
-    { }
-
-    ScriptParser m_parser;
-    TrackQueryFilter m_filter;
-};
-
-static const StaticScriptVariableProvider ProviderVariableProvider{makeScriptVariableDescriptor<[]() -> ScriptResult {
-    return {.value = QString::fromLatin1(Constants::FrontCover), .cond = true};
-}>(VariableKind::FrontCover, u"FRONTCOVER"_s)};
-
-class TestProviderEnvironment : public ScriptEnvironment
-{
-public:
+    std::array<ScriptVariableValue, 2> values;
+    ScriptContext context;
     void setState(QString variableValue, QString functionPrefix)
     {
-        m_variableValue  = std::move(variableValue);
-        m_functionPrefix = std::move(functionPrefix);
+        values         = {{{u"VALUE"_s, {.value = variableValue, .cond = !variableValue.isEmpty()}},
+                           {u"PREFIX"_s, {.value = functionPrefix, .cond = !functionPrefix.isEmpty()}}}};
+        context.values = values;
     }
-
-    [[nodiscard]] QString variableValue() const
-    {
-        return m_variableValue;
-    }
-
-    [[nodiscard]] QString functionPrefix() const
-    {
-        return m_functionPrefix;
-    }
-
-private:
-    QString m_variableValue;
-    QString m_functionPrefix;
 };
 
-static const StaticScriptVariableProvider ContextVariableProvider{
+static const std::array ContextVariables{
     makeScriptVariableDescriptor<[](const ScriptContext& context, const QString&) -> ScriptResult {
-        const auto* environment = dynamic_cast<const TestProviderEnvironment*>(context.environment);
-        if(environment == nullptr || environment->variableValue().isEmpty()) {
-            return {};
-        }
-        return {.value = environment->variableValue(), .cond = true};
+        return context.values.empty() ? ScriptResult{} : context.values.front().result;
     }>(VariableKind::FrontCover, u"STATEFULVAR"_s)};
 
 static constexpr auto PrefixFunction = [](const ScriptFunctionCallContext& call) -> ScriptResult {
@@ -91,299 +63,101 @@ static constexpr auto PrefixFunction = [](const ScriptFunctionCallContext& call)
     return {.value = value, .cond = true};
 };
 
-static const StaticScriptFunctionProvider ProviderFunctionProvider{
-    makeScriptFunctionDescriptor<PrefixFunction>(u"prefix"_s)};
+static const std::array CustomFunctions{makeScriptFunctionDescriptor<PrefixFunction>(u"prefix"_s)};
 
-static constexpr auto ListIndexVariable = [](const ScriptContext& context, const QString&) -> ScriptResult {
-    const auto* environment = context.environment ? context.environment->playlistEnvironment() : nullptr;
-    if(!environment || environment->currentPlaylistTrackIndex() < 0) {
-        return {};
-    }
-
-    return {.value = QString::number(environment->currentPlaylistTrackIndex() + 1), .cond = true};
-};
-
-static constexpr auto QueueIndexesVariable = [](const ScriptContext& context, const QString&) -> ScriptResult {
-    const auto* environment = context.environment ? context.environment->playlistEnvironment() : nullptr;
-    if(!environment) {
-        return {};
-    }
-
-    QStringList values;
-    for(const int index : environment->currentQueueIndexes()) {
-        values.push_back(QString::number(index + 1));
-    }
-    const QString value = values.join(u", "_s);
-    return {.value = value, .cond = !value.isEmpty()};
-};
-
-static constexpr auto QueueIndexVariable = [](const ScriptContext& context, const QString&) -> ScriptResult {
-    const auto* environment = context.environment ? context.environment->playlistEnvironment() : nullptr;
-    if(!environment || environment->currentQueueIndexes().empty()) {
-        return {};
-    }
-
-    return {.value = QString::number(environment->currentQueueIndexes().front() + 1), .cond = true};
-};
-
-static constexpr auto QueueTotalVariable = [](const ScriptContext& context, const QString&) -> ScriptResult {
-    const auto* environment = context.environment ? context.environment->playlistEnvironment() : nullptr;
-    if(!environment || environment->currentQueueIndexes().empty()) {
-        return {};
-    }
-
-    return {.value = QString::number(environment->currentQueueTotal()), .cond = environment->currentQueueTotal() > 0};
-};
-
-static constexpr auto DepthVariable = [](const ScriptContext& context, const QString&) -> ScriptResult {
-    const auto* environment = context.environment ? context.environment->playlistEnvironment() : nullptr;
-    if(!environment) {
-        return {};
-    }
-
-    return {.value = QString::number(environment->trackDepth()), .cond = true};
-};
-
-static const StaticScriptFunctionProvider ContextFunctionProvider{
+static const std::array ContextFunctions{
     makeScriptFunctionDescriptor<[](const ScriptFunctionCallContext& call) -> ScriptResult {
         if(call.args.empty()) {
             return {};
         }
 
-        const auto* environment
-            = call.context ? dynamic_cast<const TestProviderEnvironment*>(call.context->environment) : nullptr;
-        if(environment == nullptr || environment->functionPrefix().isEmpty()) {
+        if(!call.context || call.context->values.size() < 2) {
             return {};
         }
-
-        const QString value = u"%1%2"_s.arg(environment->functionPrefix(), call.args.front().value);
+        const QString value = call.context->values[1].result.value + call.args.front().value;
         return {.value = value, .cond = true};
     }>(u"stateful_prefix"_s)};
 
-class TestPlaylistEnvironment : public ScriptEnvironment,
-                                public ScriptPlaylistEnvironment,
-                                public ScriptTrackListEnvironment,
-                                public ScriptPlaybackEnvironment,
-                                public ScriptLibraryEnvironment,
-                                public ScriptEvaluationEnvironment
+struct TestScriptContext
 {
-public:
-    void setState(int playlistTrackIndex, int playlistTrackCount, int trackDepth, std::vector<int> queueIndexes,
-                  int queueTotal = 0)
-    {
-        m_playlistTrackIndex = playlistTrackIndex;
-        m_playlistTrackCount = playlistTrackCount;
-        m_trackDepth         = trackDepth;
-        m_queueIndexes       = std::move(queueIndexes);
-        m_queueTotal         = queueTotal;
-    }
+    ScriptPlaylistData playlistData;
+    ScriptPlaybackData playback;
+    ScriptContext context{.playlistData = &playlistData, .playback = &playback};
+    ScriptEvaluationOptions options;
+    LibraryInfoMap libraries;
 
+    void setState(int index, int count, int depth, std::vector<int> queueIndexes, int queueTotal = 0)
+    {
+        auto& row        = playlistData;
+        row.trackIndex   = index;
+        row.trackCount   = count;
+        row.depth        = depth;
+        row.queueIndexes = std::move(queueIndexes);
+        row.queueTotal   = queueTotal;
+    }
     void setTrackList(const TrackList* tracks)
     {
-        m_tracks = tracks;
+        context.tracks = tracks;
     }
-
-    void setPlaybackState(uint64_t currentPosition, uint64_t currentTrackDuration, int bitrate,
-                          Player::PlayState playState)
+    void setPlaybackState(uint64_t position, uint64_t duration, int bitrate, Player::PlayState state)
     {
-        m_currentPosition      = currentPosition;
-        m_currentTrackDuration = currentTrackDuration;
-        m_bitrate              = bitrate;
-        m_playState            = playState;
+        playback.position  = position;
+        playback.duration  = duration;
+        playback.bitrate   = bitrate;
+        playback.playState = state;
     }
-
     void setOutputInfo(Engine::PlaybackOutputInfo info)
     {
-        m_outputInfo = std::move(info);
+        playback.outputInfo = std::move(info);
     }
-
-    void setLibraryState(QString libraryName, QString libraryPath)
+    void setLibraryState(QString name, QString path)
     {
-        m_libraryName = std::move(libraryName);
-        m_libraryPath = std::move(libraryPath);
+        libraries[-1]     = {.name = std::move(name), .path = std::move(path)};
+        context.libraries = &libraries;
     }
-
     void setEvaluationState(TrackListContextPolicy policy, QString placeholder = {}, bool escapeRichText = false,
                             bool useVariousArtists = false, QString fullStarSymbol = {}, QString halfStarSymbol = {},
                             QString emptyStarSymbol = {}, bool replacePathSeparators = false)
     {
-        m_trackListContextPolicy = policy;
-        m_trackListPlaceholder   = std::move(placeholder);
-        m_escapeRichText         = escapeRichText;
-        m_useVariousArtists      = useVariousArtists;
-        m_ratingSymbols          = {std::move(fullStarSymbol), std::move(halfStarSymbol), std::move(emptyStarSymbol)};
-        m_replacePathSeparators  = replacePathSeparators;
+        auto symbols = defaultRatingStarSymbols();
+        if(!fullStarSymbol.isEmpty())
+            symbols.fullStarSymbol = std::move(fullStarSymbol);
+        if(!halfStarSymbol.isEmpty())
+            symbols.halfStarSymbol = std::move(halfStarSymbol);
+        if(!emptyStarSymbol.isEmpty())
+            symbols.emptyStarSymbol = std::move(emptyStarSymbol);
+        options = {.trackListContextPolicy = policy,
+                   .trackListPlaceholder   = std::move(placeholder),
+                   .escapeRichText         = escapeRichText,
+                   .useVariousArtists      = useVariousArtists,
+                   .ratingSymbols          = std::move(symbols),
+                   .replacePathSeparators  = replacePathSeparators};
     }
-
-    [[nodiscard]] const ScriptPlaylistEnvironment* playlistEnvironment() const override
-    {
-        return this;
-    }
-
-    [[nodiscard]] const ScriptTrackListEnvironment* trackListEnvironment() const override
-    {
-        return this;
-    }
-
-    [[nodiscard]] const ScriptPlaybackEnvironment* playbackEnvironment() const override
-    {
-        return this;
-    }
-
-    [[nodiscard]] const ScriptLibraryEnvironment* libraryEnvironment() const override
-    {
-        return this;
-    }
-
-    [[nodiscard]] const ScriptEvaluationEnvironment* evaluationEnvironment() const override
-    {
-        return this;
-    }
-
-    [[nodiscard]] int currentPlaylistTrackIndex() const override
-    {
-        return m_playlistTrackIndex;
-    }
-
-    [[nodiscard]] int playlistTrackCount() const override
-    {
-        return m_playlistTrackCount;
-    }
-
-    [[nodiscard]] int trackDepth() const override
-    {
-        return m_trackDepth;
-    }
-
-    [[nodiscard]] std::span<const int> currentQueueIndexes() const override
-    {
-        return m_queueIndexes;
-    }
-
-    [[nodiscard]] int currentQueueTotal() const override
-    {
-        return m_queueTotal;
-    }
-
-    [[nodiscard]] const TrackList* trackList() const override
-    {
-        return m_tracks;
-    }
-
-    [[nodiscard]] uint64_t currentPosition() const override
-    {
-        return m_currentPosition;
-    }
-
-    [[nodiscard]] uint64_t currentTrackDuration() const override
-    {
-        return m_currentTrackDuration;
-    }
-
-    [[nodiscard]] int bitrate() const override
-    {
-        return m_bitrate;
-    }
-
-    [[nodiscard]] Engine::PlaybackOutputInfo outputInfo() const override
-    {
-        return m_outputInfo;
-    }
-
-    [[nodiscard]] Player::PlayState playState() const override
-    {
-        return m_playState;
-    }
-
-    [[nodiscard]] QString libraryName(const Track&) const override
-    {
-        return m_libraryName;
-    }
-
-    [[nodiscard]] QString libraryPath(const Track&) const override
-    {
-        return m_libraryPath;
-    }
-
-    [[nodiscard]] QString relativePath(const Track& track) const override
-    {
-        return m_libraryPath.isEmpty() ? QString{} : QDir{m_libraryPath}.relativeFilePath(track.prettyFilepath());
-    }
-
-    [[nodiscard]] TrackListContextPolicy trackListContextPolicy() const override
-    {
-        return m_trackListContextPolicy;
-    }
-
-    [[nodiscard]] QString trackListPlaceholder() const override
-    {
-        return m_trackListPlaceholder;
-    }
-
-    [[nodiscard]] bool escapeRichText() const override
-    {
-        return m_escapeRichText;
-    }
-
-    [[nodiscard]] bool useVariousArtists() const override
-    {
-        return m_useVariousArtists;
-    }
-
-    [[nodiscard]] bool replacePathSeparators() const override
-    {
-        return m_replacePathSeparators;
-    }
-
-    [[nodiscard]] RatingStarSymbols ratingStarSymbols() const override
-    {
-        RatingStarSymbols symbols{m_ratingSymbols};
-        const RatingStarSymbols defaultSymbols = ScriptEvaluationEnvironment::ratingStarSymbols();
-
-        if(symbols.fullStarSymbol.isEmpty()) {
-            symbols.fullStarSymbol = defaultSymbols.fullStarSymbol;
-        }
-        if(symbols.halfStarSymbol.isEmpty()) {
-            symbols.halfStarSymbol = defaultSymbols.halfStarSymbol;
-        }
-        if(symbols.emptyStarSymbol.isEmpty()) {
-            symbols.emptyStarSymbol = defaultSymbols.emptyStarSymbol;
-        }
-
-        return symbols;
-    }
-
-private:
-    int m_playlistTrackIndex{-1};
-    int m_playlistTrackCount{0};
-    int m_trackDepth{0};
-    std::vector<int> m_queueIndexes;
-    int m_queueTotal{0};
-    const TrackList* m_tracks{nullptr};
-    uint64_t m_currentPosition{0};
-    uint64_t m_currentTrackDuration{0};
-    int m_bitrate{0};
-    Player::PlayState m_playState{Player::PlayState::Stopped};
-    Engine::PlaybackOutputInfo m_outputInfo;
-    QString m_libraryName;
-    QString m_libraryPath;
-    TrackListContextPolicy m_trackListContextPolicy{TrackListContextPolicy::Unresolved};
-    QString m_trackListPlaceholder;
-    bool m_escapeRichText{false};
-    bool m_useVariousArtists{false};
-    bool m_replacePathSeparators{false};
-    RatingStarSymbols m_ratingSymbols;
 };
 
-static const StaticScriptVariableProvider EnvironmentVariableProvider{
-    makeScriptVariableDescriptor<ListIndexVariable>(VariableKind::ListIndex, u"LIST_INDEX"_s),
-    makeScriptVariableDescriptor<QueueIndexVariable>(VariableKind::QueueIndex, u"QUEUEINDEX"_s),
-    makeScriptVariableDescriptor<QueueIndexVariable>(VariableKind::QueueIndex, u"QUEUE_INDEX"_s),
-    makeScriptVariableDescriptor<QueueIndexesVariable>(VariableKind::QueueIndexes, u"QUEUEINDEXES"_s),
-    makeScriptVariableDescriptor<QueueIndexesVariable>(VariableKind::QueueIndexes, u"QUEUE_INDEXES"_s),
-    makeScriptVariableDescriptor<QueueTotalVariable>(VariableKind::QueueTotal, u"QUEUETOTAL"_s),
-    makeScriptVariableDescriptor<QueueTotalVariable>(VariableKind::QueueTotal, u"QUEUE_TOTAL"_s),
-    makeScriptVariableDescriptor<DepthVariable>(VariableKind::Depth, u"DEPTH"_s)};
+class ScriptParserTest : public ::testing::Test
+{
+protected:
+    ScriptParserTest()
+        : m_parser{&m_registry}
+        , m_filter{ScriptSearchOptions{}, &m_registry}
+    {
+        for(const auto& variable : ContextVariables)
+            m_registry.registerVariable(variable);
+        for(const auto definitions : {std::span<const ScriptFunctionDescriptor>{CustomFunctions},
+                                      std::span<const ScriptFunctionDescriptor>{ContextFunctions}}) {
+            for(const auto& function : definitions)
+                m_registry.registerFunction(function);
+        }
+        m_registry.registerVariable(makeScriptVariableDescriptor<[]() {
+            return uR"(\<b>provider</b>\)"_s;
+        }>(VariableKind::Generic, u"ESCAPETEST"_s));
+        m_registry.finalise();
+    }
+    ScriptRegistry m_registry;
+    ScriptParser m_parser;
+    TrackQueryFilter m_filter;
+};
 
 TEST_F(ScriptParserTest, BasicLiteral)
 {
@@ -616,6 +390,8 @@ TEST_F(ScriptParserTest, ConditionalTest)
     EXPECT_EQ(u"", m_parser.evaluate(u"$select(0,one,two,three)"_s));
     EXPECT_EQ(u"", m_parser.evaluate(u"$select(4,one,two,three)"_s));
     EXPECT_EQ(u"oneone", m_parser.evaluate(u"$select(1,$put(value,one),$put(value,two))$get(value)"_s));
+    EXPECT_EQ(u"then", m_parser.evaluate(u"$if(1,$puts(value,then),$puts(value,else))$get(value)"_s));
+    EXPECT_EQ(u"yes", m_parser.evaluate(u"$if2(yes,$puts(value,fallback))$get(value)"_s));
     EXPECT_EQ(u"<A", m_parser.evaluate(u"$if(1,<A,X)"_s));
     EXPECT_EQ(u"<rgb=255,0,0>A", m_parser.evaluate(u"$if(1,<rgb=255,0,0>A,X)"_s));
     EXPECT_EQ(u"\\<A", m_parser.evaluate(u"$if(1,\\<A,X)"_s));
@@ -725,23 +501,21 @@ TEST_F(ScriptParserTest, ReplaceCanSanitiseUserFilenameExpression)
 
 TEST_F(ScriptParserTest, RatingStarsFormattingTest)
 {
-    ScriptParser parser;
-    parser.addProvider(EnvironmentVariableProvider);
+    ScriptParser parser{&m_registry};
 
-    TestPlaylistEnvironment environment;
+    TestScriptContext environment;
     environment.setEvaluationState(TrackListContextPolicy::Unresolved, {}, false, false, u"*"_s, u"+"_s, u"."_s);
 
-    ScriptContext context;
-    context.environment = &environment;
+    auto& context = environment.context;
 
     Track track;
 
-    EXPECT_EQ(u"", parser.evaluate(u"%rating_stars%"_s, track, context));
-    EXPECT_EQ(u".....", parser.evaluate(u"%rating_stars_padded%"_s, track, context));
+    EXPECT_EQ(u"", parser.evaluate(u"%rating_stars%"_s, track, context, environment.options));
+    EXPECT_EQ(u".....", parser.evaluate(u"%rating_stars_padded%"_s, track, context, environment.options));
 
     track.setRatingStars(7);
-    EXPECT_EQ(u"***+", parser.evaluate(u"%rating_stars%"_s, track, context));
-    EXPECT_EQ(u"***+.", parser.evaluate(u"%rating_stars_padded%"_s, track, context));
+    EXPECT_EQ(u"***+", parser.evaluate(u"%rating_stars%"_s, track, context, environment.options));
+    EXPECT_EQ(u"***+.", parser.evaluate(u"%rating_stars_padded%"_s, track, context, environment.options));
 }
 
 TEST_F(ScriptParserTest, RatingScriptWritesUseExpectedScales)
@@ -808,16 +582,15 @@ TEST_F(ScriptParserTest, TrackListTest)
 
 TEST_F(ScriptParserTest, EmptyTrackListStillEvaluatesGenericFunctions)
 {
-    ScriptParser parser;
+    ScriptParser parser{&m_registry};
 
-    TestPlaylistEnvironment environment;
+    TestScriptContext environment;
     environment.setEvaluationState(TrackListContextPolicy::Fallback);
 
-    ScriptContext context;
-    context.environment = &environment;
+    auto& context = environment.context;
 
     const QString script = u"[%trackcount% $ifequal(%trackcount%,1,Track,Tracks) | %playtime%]$crlf()Test"_s;
-    EXPECT_EQ(u"0 Tracks | 00:00\nTest", parser.evaluate(script, TrackList{}, context));
+    EXPECT_EQ(u"0 Tracks | 00:00\nTest", parser.evaluate(script, TrackList{}, context, environment.options));
 }
 
 TEST_F(ScriptParserTest, MetaTest)
@@ -883,185 +656,167 @@ TEST_F(ScriptParserTest, InfoTest)
     EXPECT_EQ(u"2", m_parser.evaluate(u"$info(channels)"_s, track));
 }
 
-TEST_F(ScriptParserTest, RegistryContextVariables)
+TEST_F(ScriptParserTest, PlaylistRowContextVariables)
 {
-    ScriptParser parser;
-    parser.addProvider(EnvironmentVariableProvider);
+    ScriptParser parser{&m_registry};
 
-    TestPlaylistEnvironment environment;
+    TestScriptContext environment;
     environment.setState(4, 12, 2, {});
 
-    ScriptContext context;
-    context.environment = &environment;
+    auto& context = environment.context;
     const Track track;
 
-    EXPECT_EQ(u"5", parser.evaluate(u"%list_index%"_s, track, context));
-    EXPECT_EQ(u"2", parser.evaluate(u"%depth%"_s, track, context));
+    EXPECT_EQ(u"05", parser.evaluate(u"%list_index%"_s, track, context, environment.options));
+    EXPECT_EQ(u"2", parser.evaluate(u"%depth%"_s, track, context, environment.options));
 }
 
-TEST_F(ScriptParserTest, VariableProvidersInstallIntoRegistry)
+TEST_F(ScriptParserTest, VariableDefinitionsInstallIntoRegistry)
 {
-    ScriptParser parser;
-    parser.addProvider(ProviderVariableProvider);
+    ScriptParser parser{&m_registry};
     const Track track;
 
     EXPECT_EQ(QString::fromLatin1(Constants::FrontCover), parser.evaluate(u"%frontcover%"_s, track));
 }
 
-TEST_F(ScriptParserTest, StatefulVariableProvidersInstallIntoRegistry)
+TEST_F(ScriptParserTest, StatefulVariableDefinitionsInstallIntoRegistry)
 {
-    ScriptParser parser;
-    parser.addProvider(ContextVariableProvider);
-    TestProviderEnvironment environment;
+    ScriptParser parser{&m_registry};
+    TestProviderContext environment;
     environment.setState(u"stateful"_s, {});
-    ScriptContext context;
-    context.environment = &environment;
+    auto& context = environment.context;
     const Track track;
 
     EXPECT_EQ(u"stateful", parser.evaluate(u"%statefulvar%"_s, track, context));
 }
 
-TEST_F(ScriptParserTest, FunctionProvidersInstallIntoRegistry)
+TEST_F(ScriptParserTest, FunctionDefinitionsInstallIntoRegistry)
 {
-    ScriptParser parser;
-    parser.addProvider(ProviderFunctionProvider);
+    ScriptParser parser{&m_registry};
     const ParsedScript parsed = parser.parse(u"$prefix(test)"_s);
 
     EXPECT_EQ(u"fn:test", parser.evaluate(parsed));
     EXPECT_EQ(u"fn:test", parser.evaluate(parsed));
 }
 
-TEST_F(ScriptParserTest, StatefulFunctionProvidersInstallIntoRegistry)
+TEST_F(ScriptParserTest, StatefulFunctionDefinitionsInstallIntoRegistry)
 {
-    ScriptParser parser;
-    parser.addProvider(ContextFunctionProvider);
-    TestProviderEnvironment environment;
+    ScriptParser parser{&m_registry};
+    TestProviderContext environment;
     environment.setState({}, u"ctx:"_s);
-    ScriptContext context;
-    context.environment       = &environment;
+    auto& context             = environment.context;
     const ParsedScript parsed = parser.parse(u"$stateful_prefix(test)"_s);
 
     EXPECT_EQ(u"ctx:test", parser.evaluate(parsed, context));
     EXPECT_EQ(u"ctx:test", parser.evaluate(parsed, context));
 }
 
-TEST_F(ScriptParserTest, ContextEnvironmentVariables)
+TEST_F(ScriptParserTest, ContextVariables)
 {
-    ScriptParser parser;
-    parser.addProvider(EnvironmentVariableProvider);
+    ScriptParser parser{&m_registry};
 
-    TestPlaylistEnvironment environment;
+    TestScriptContext environment;
     environment.setState(4, 12, 2, {0, 2}, 7);
 
-    ScriptContext context;
-    context.environment = &environment;
+    auto& context = environment.context;
     const Track track;
 
-    EXPECT_EQ(u"5", parser.evaluate(u"%list_index%"_s, track, context));
-    EXPECT_EQ(u"2", parser.evaluate(u"%depth%"_s, track, context));
-    EXPECT_EQ(u"1", parser.evaluate(u"%queueindex%"_s, track, context));
-    EXPECT_EQ(u"1", parser.evaluate(u"%queue_index%"_s, track, context));
-    EXPECT_EQ(u"1, 3", parser.evaluate(u"%queueindexes%"_s, track, context));
-    EXPECT_EQ(u"1, 3", parser.evaluate(u"%queue_indexes%"_s, track, context));
-    EXPECT_EQ(u"[1, 3]", parser.evaluate(uR"([\[%queueindexes%\]])"_s, track, context));
-    EXPECT_EQ(u"7", parser.evaluate(u"%queuetotal%"_s, track, context));
-    EXPECT_EQ(u"7", parser.evaluate(u"%queue_total%"_s, track, context));
+    EXPECT_EQ(u"05", parser.evaluate(u"%list_index%"_s, track, context, environment.options));
+    EXPECT_EQ(u"2", parser.evaluate(u"%depth%"_s, track, context, environment.options));
+    EXPECT_EQ(u"1", parser.evaluate(u"%queueindex%"_s, track, context, environment.options));
+    EXPECT_EQ(u"1", parser.evaluate(u"%queue_index%"_s, track, context, environment.options));
+    EXPECT_EQ(u"1, 3", parser.evaluate(u"%queueindexes%"_s, track, context, environment.options));
+    EXPECT_EQ(u"1, 3", parser.evaluate(u"%queue_indexes%"_s, track, context, environment.options));
+    EXPECT_EQ(u"[1, 3]", parser.evaluate(uR"([\[%queueindexes%\]])"_s, track, context, environment.options));
+    EXPECT_EQ(u"7", parser.evaluate(u"%queuetotal%"_s, track, context, environment.options));
+    EXPECT_EQ(u"7", parser.evaluate(u"%queue_total%"_s, track, context, environment.options));
 }
 
 TEST_F(ScriptParserTest, QueueTotalRequiresQueuedTrack)
 {
-    ScriptParser parser;
-    parser.addProvider(EnvironmentVariableProvider);
+    ScriptParser parser{&m_registry};
 
-    TestPlaylistEnvironment environment;
+    TestScriptContext environment;
     environment.setState(4, 12, 2, {}, 7);
 
-    ScriptContext context;
-    context.environment = &environment;
+    auto& context = environment.context;
     const Track track;
 
-    EXPECT_EQ(u"", parser.evaluate(u"%queuetotal%"_s, track, context));
-    EXPECT_EQ(u"", parser.evaluate(u"%queue_total%"_s, track, context));
+    EXPECT_EQ(u"", parser.evaluate(u"%queuetotal%"_s, track, context, environment.options));
+    EXPECT_EQ(u"", parser.evaluate(u"%queue_total%"_s, track, context, environment.options));
 }
 
-TEST_F(ScriptParserTest, ContextEvaluationEnvironmentControlsPolicyAndEscaping)
+TEST_F(ScriptParserTest, EvaluationOptionsControlPolicyAndEscaping)
 {
-    ScriptParser parser;
+    ScriptParser parser{&m_registry};
 
-    TestPlaylistEnvironment environment;
+    TestScriptContext environment;
     environment.setEvaluationState(TrackListContextPolicy::Placeholder, u"|Loading|"_s, true);
 
-    ScriptContext context;
-    context.environment = &environment;
+    auto& context = environment.context;
     Track track;
     track.setTitle(u"A < B"_s);
 
-    EXPECT_EQ(u"|Loading|", parser.evaluate(u"%trackcount%"_s, track, context));
-    EXPECT_EQ(u"A \\< B", parser.evaluate(u"%title%"_s, track, context));
+    EXPECT_EQ(u"|Loading|", parser.evaluate(u"%trackcount%"_s, track, context, environment.options));
+    EXPECT_EQ(u"A \\< B", parser.evaluate(u"%title%"_s, track, context, environment.options));
 }
 
-TEST_F(ScriptParserTest, ContextEvaluationEnvironmentPreservesPathVariableSeparators)
+TEST_F(ScriptParserTest, EvaluationOptionsPreservePathVariableSeparators)
 {
-    ScriptParser parser;
+    ScriptParser parser{&m_registry};
 
     const QString libraryPath = QFileInfo{u"/tmp/music"_s}.absoluteFilePath();
     const QString filePath    = QFileInfo{u"/tmp/music/foo/bar.mp3"_s}.absoluteFilePath();
 
-    TestPlaylistEnvironment environment;
+    TestScriptContext environment;
     environment.setEvaluationState(TrackListContextPolicy::Unresolved, {}, false, false, {}, {}, {}, true);
     environment.setLibraryState({}, libraryPath);
 
-    ScriptContext context;
-    context.environment = &environment;
+    auto& context = environment.context;
     Track track;
     track.setFilePath(filePath);
     track.setTitle(u"foo/bar"_s);
 
-    EXPECT_EQ(QFileInfo{filePath}.path(), parser.evaluate(u"%path%"_s, track, context));
-    EXPECT_EQ(filePath, parser.evaluate(u"%filepath%"_s, track, context));
-    EXPECT_EQ(u"foo/bar.mp3", parser.evaluate(u"%relativepath%"_s, track, context));
-    EXPECT_EQ(u"foo-bar", parser.evaluate(u"%title%"_s, track, context));
+    EXPECT_EQ(QFileInfo{filePath}.path(), parser.evaluate(u"%path%"_s, track, context, environment.options));
+    EXPECT_EQ(filePath, parser.evaluate(u"%filepath%"_s, track, context, environment.options));
+    EXPECT_EQ(u"foo/bar.mp3", parser.evaluate(u"%relativepath%"_s, track, context, environment.options));
+    EXPECT_EQ(u"foo-bar", parser.evaluate(u"%title%"_s, track, context, environment.options));
 }
 
 TEST_F(ScriptParserTest, RichTextEscapingPreservesMetadataAndPathBackslashes)
 {
-    TestPlaylistEnvironment environment;
+    TestScriptContext environment;
     environment.setEvaluationState(TrackListContextPolicy::Unresolved, {}, true);
 
-    ScriptContext context;
-    context.environment = &environment;
+    auto& context = environment.context;
     Track track;
     track.setAlbum(uR"(/// ABCD \\)"_s);
     track.setFilePath(uR"(/tmp/music/\<album>\track.flac)"_s);
 
-    EXPECT_EQ(uR"(/// ABCD \\\\)"_s, m_parser.evaluate(u"%album%"_s, track, context));
-    EXPECT_EQ(uR"(/tmp/music/\\\<album>\\track.flac)"_s, m_parser.evaluate(u"%filepath%"_s, track, context));
+    EXPECT_EQ(uR"(/// ABCD \\\\)"_s, m_parser.evaluate(u"%album%"_s, track, context, environment.options));
+    EXPECT_EQ(uR"(/tmp/music/\\\<album>\\track.flac)"_s,
+              m_parser.evaluate(u"%filepath%"_s, track, context, environment.options));
     EXPECT_EQ(track.album(), m_parser.evaluate(u"%album%"_s, track));
     EXPECT_EQ(track.filepath(), m_parser.evaluate(u"%filepath%"_s, track));
 }
 
 TEST_F(ScriptParserTest, ProviderVariablesRespectRichTextEscaping)
 {
-    const StaticScriptVariableProvider provider{makeScriptVariableDescriptor<[]() {
-        return uR"(\<b>provider</b>\)"_s;
-    }>(VariableKind::Generic, u"ESCAPETEST"_s)};
-    m_parser.addProvider(provider);
-    TestPlaylistEnvironment environment;
+    TestScriptContext environment;
     environment.setEvaluationState(TrackListContextPolicy::Unresolved, {}, true);
-    const ScriptContext context{.environment = &environment};
+    const auto& context = environment.context;
     const Track track;
     const TrackList tracks{track};
     const QString escaped = uR"(\\\<b>provider\</b>\\)"_s;
 
-    EXPECT_EQ(escaped, m_parser.evaluate(u"%escapetest%"_s, track, context));
-    EXPECT_EQ(escaped, m_parser.evaluate(u"%escapetest%"_s, tracks, context));
-    EXPECT_EQ(escaped, m_parser.evaluate(u"%escapetest%"_s, context));
+    EXPECT_EQ(escaped, m_parser.evaluate(u"%escapetest%"_s, track, context, environment.options));
+    EXPECT_EQ(escaped, m_parser.evaluate(u"%escapetest%"_s, tracks, context, environment.options));
+    EXPECT_EQ(escaped, m_parser.evaluate(u"%escapetest%"_s, context, environment.options));
     EXPECT_EQ(uR"(\<b>provider</b>\)"_s, m_parser.evaluate(u"%escapetest%"_s, track));
 }
 
-TEST_F(ScriptParserTest, ContextTrackListEnvironmentProvidesFallbackData)
+TEST_F(ScriptParserTest, ContextTrackListProvidesFallbackData)
 {
-    ScriptParser parser;
+    ScriptParser parser{&m_registry};
 
     TrackList tracks;
 
@@ -1075,62 +830,59 @@ TEST_F(ScriptParserTest, ContextTrackListEnvironmentProvidesFallbackData)
     track2.setDuration(3000);
     tracks.push_back(track2);
 
-    TestPlaylistEnvironment environment;
+    TestScriptContext environment;
     environment.setTrackList(&tracks);
     environment.setEvaluationState(TrackListContextPolicy::Fallback);
 
-    ScriptContext context;
-    context.environment = &environment;
+    auto& context = environment.context;
     const Track track;
 
-    EXPECT_EQ(u"2", parser.evaluate(u"%trackcount%"_s, track, context));
-    EXPECT_EQ(u"00:05", parser.evaluate(u"%playtime%"_s, track, context));
+    EXPECT_EQ(u"2", parser.evaluate(u"%trackcount%"_s, track, context, environment.options));
+    EXPECT_EQ(u"00:05", parser.evaluate(u"%playtime%"_s, track, context, environment.options));
 }
 
-TEST_F(ScriptParserTest, ContextPlaybackEnvironmentProvidesPlaybackVariables)
+TEST_F(ScriptParserTest, PlaybackContextProvidesPlaybackVariables)
 {
-    ScriptParser parser;
+    ScriptParser parser{&m_registry};
 
-    TestPlaylistEnvironment environment;
+    TestScriptContext environment;
     environment.setPlaybackState(45000, 120000, 320, Player::PlayState::Playing);
 
-    ScriptContext context;
-    context.environment = &environment;
+    auto& context = environment.context;
     Track track;
     track.setBitrate(192);
 
-    EXPECT_EQ(u"00:45", parser.evaluate(u"%playback_time%"_s, track, context));
-    EXPECT_EQ(u"45", parser.evaluate(u"%playback_time_seconds%"_s, track, context));
-    EXPECT_EQ(u"75", parser.evaluate(u"%playback_time_remaining_s%"_s, track, context));
-    EXPECT_EQ(u"75", parser.evaluate(u"%playback_time_remaining_seconds%"_s, track, context));
-    EXPECT_EQ(u"1", parser.evaluate(u"%isplaying%"_s, track, context));
-    EXPECT_EQ(u"320", parser.evaluate(u"%bitrate%"_s, track, context));
+    EXPECT_EQ(u"00:45", parser.evaluate(u"%playback_time%"_s, track, context, environment.options));
+    EXPECT_EQ(u"45", parser.evaluate(u"%playback_time_seconds%"_s, track, context, environment.options));
+    EXPECT_EQ(u"75", parser.evaluate(u"%playback_time_remaining_s%"_s, track, context, environment.options));
+    EXPECT_EQ(u"75", parser.evaluate(u"%playback_time_remaining_seconds%"_s, track, context, environment.options));
+    EXPECT_EQ(u"1", parser.evaluate(u"%isplaying%"_s, track, context, environment.options));
+    EXPECT_EQ(u"320", parser.evaluate(u"%bitrate%"_s, track, context, environment.options));
 }
 
 TEST_F(ScriptParserTest, PlaybackTimeRemainingFollowsElapsedSecondBoundaries)
 {
-    ScriptParser parser;
+    ScriptParser parser{&m_registry};
 
-    TestPlaylistEnvironment environment;
-    ScriptContext context;
-    context.environment = &environment;
+    TestScriptContext environment;
+    auto& context = environment.context;
 
     const Track track;
 
     environment.setPlaybackState(1005, 254013, 320, Player::PlayState::Playing);
-    EXPECT_EQ(u"04:13", parser.evaluate(u"%playback_time_remaining%"_s, track, context));
-    EXPECT_EQ(u"253", parser.evaluate(u"%playback_time_remaining_s%"_s, track, context));
+    EXPECT_EQ(u"04:13", parser.evaluate(u"%playback_time_remaining%"_s, track, context, environment.options));
+    EXPECT_EQ(u"253", parser.evaluate(u"%playback_time_remaining_s%"_s, track, context, environment.options));
 
     environment.setPlaybackState(2015, 254013, 320, Player::PlayState::Playing);
-    EXPECT_EQ(u"04:12", parser.evaluate(u"%playback_time_remaining%"_s, track, context));
-    EXPECT_EQ(u"252", parser.evaluate(u"%playback_time_remaining_s%"_s, track, context));
+    EXPECT_EQ(u"04:12", parser.evaluate(u"%playback_time_remaining%"_s, track, context, environment.options));
+    EXPECT_EQ(u"252", parser.evaluate(u"%playback_time_remaining_s%"_s, track, context, environment.options));
 }
 
-TEST_F(ScriptParserTest, ContextPlaybackEnvironmentProvidesOutputVariables)
+TEST_F(ScriptParserTest, PlaybackContextProvidesOutputVariables)
 {
-    ScriptParser parser;
+    ScriptParser parser{&m_registry};
 
-    TestPlaylistEnvironment environment;
+    TestScriptContext environment;
     environment.setPlaybackState(1000, 120000, 320, Player::PlayState::Playing);
     Engine::PlaybackOutputInfo info{
         .format         = AudioFormat{SampleFormat::S24In32, 96000, 2},
@@ -1148,46 +900,44 @@ TEST_F(ScriptParserTest, ContextPlaybackEnvironmentProvidesOutputVariables)
     info.format.setChannelLayout({AudioFormat::ChannelPosition::FrontLeft, AudioFormat::ChannelPosition::FrontRight});
     environment.setOutputInfo(std::move(info));
 
-    ScriptContext context;
-    context.environment = &environment;
+    auto& context = environment.context;
     const Track track;
 
-    EXPECT_EQ(u"96000", parser.evaluate(u"%output_samplerate%"_s, track, context));
-    EXPECT_EQ(u"2", parser.evaluate(u"%output_channels%"_s, track, context));
-    EXPECT_EQ(u"FL,FR", parser.evaluate(u"%output_channel_mask%"_s, track, context));
-    EXPECT_EQ(u"24", parser.evaluate(u"%output_bitdepth%"_s, track, context));
-    EXPECT_EQ(u"DAC", parser.evaluate(u"%output_device%"_s, track, context));
-    EXPECT_EQ(u"Resampler, Equalizer", parser.evaluate(u"%output_dsps%"_s, track, context));
-    EXPECT_EQ(u"Headphones", parser.evaluate(u"%output_dsp_preset%"_s, track, context));
-    EXPECT_EQ(u"-6.02 dB", parser.evaluate(u"%output_volume%"_s, track, context));
-    EXPECT_EQ(u"Track", parser.evaluate(u"%output_rg_source%"_s, track, context));
-    EXPECT_EQ(u"Gain and clip prevention", parser.evaluate(u"%output_rg_mode%"_s, track, context));
-    EXPECT_EQ(u"-3.50 dB", parser.evaluate(u"%output_rg_gain%"_s, track, context));
-    EXPECT_EQ(u"0.9", parser.evaluate(u"%output_rg_peak%"_s, track, context));
-    EXPECT_EQ(u"-0.92 dBFS", parser.evaluate(u"%output_rg_peak_db%"_s, track, context));
-    EXPECT_EQ(u"200", parser.evaluate(u"%output_buffer_length%"_s, track, context));
+    EXPECT_EQ(u"96000", parser.evaluate(u"%output_samplerate%"_s, track, context, environment.options));
+    EXPECT_EQ(u"2", parser.evaluate(u"%output_channels%"_s, track, context, environment.options));
+    EXPECT_EQ(u"FL,FR", parser.evaluate(u"%output_channel_mask%"_s, track, context, environment.options));
+    EXPECT_EQ(u"24", parser.evaluate(u"%output_bitdepth%"_s, track, context, environment.options));
+    EXPECT_EQ(u"DAC", parser.evaluate(u"%output_device%"_s, track, context, environment.options));
+    EXPECT_EQ(u"Resampler, Equalizer", parser.evaluate(u"%output_dsps%"_s, track, context, environment.options));
+    EXPECT_EQ(u"Headphones", parser.evaluate(u"%output_dsp_preset%"_s, track, context, environment.options));
+    EXPECT_EQ(u"-6.02 dB", parser.evaluate(u"%output_volume%"_s, track, context, environment.options));
+    EXPECT_EQ(u"Track", parser.evaluate(u"%output_rg_source%"_s, track, context, environment.options));
+    EXPECT_EQ(u"Gain and clip prevention", parser.evaluate(u"%output_rg_mode%"_s, track, context, environment.options));
+    EXPECT_EQ(u"-3.50 dB", parser.evaluate(u"%output_rg_gain%"_s, track, context, environment.options));
+    EXPECT_EQ(u"0.9", parser.evaluate(u"%output_rg_peak%"_s, track, context, environment.options));
+    EXPECT_EQ(u"-0.92 dBFS", parser.evaluate(u"%output_rg_peak_db%"_s, track, context, environment.options));
+    EXPECT_EQ(u"200", parser.evaluate(u"%output_buffer_length%"_s, track, context, environment.options));
 }
 
-TEST_F(ScriptParserTest, ContextLibraryEnvironmentProvidesLibraryVariables)
+TEST_F(ScriptParserTest, LibraryContextProvidesLibraryVariables)
 {
-    ScriptParser parser;
+    ScriptParser parser{&m_registry};
 
-    TestPlaylistEnvironment environment;
+    TestScriptContext environment;
     environment.setLibraryState(u"Main"_s, u"/music"_s);
 
-    ScriptContext context;
-    context.environment = &environment;
+    auto& context = environment.context;
     Track track;
     track.setFilePath(u"/music/Artist/Album/Track.flac"_s);
 
-    EXPECT_EQ(u"Main", parser.evaluate(u"%libraryname%"_s, track, context));
-    EXPECT_EQ(u"/music", parser.evaluate(u"%librarypath%"_s, track, context));
-    EXPECT_EQ(u"Artist/Album/Track.flac", parser.evaluate(u"%relativepath%"_s, track, context));
+    EXPECT_EQ(u"Main", parser.evaluate(u"%libraryname%"_s, track, context, environment.options));
+    EXPECT_EQ(u"/music", parser.evaluate(u"%librarypath%"_s, track, context, environment.options));
+    EXPECT_EQ(u"Artist/Album/Track.flac", parser.evaluate(u"%relativepath%"_s, track, context, environment.options));
 }
 
 TEST_F(ScriptParserTest, TrackEvaluationDoesNotUseTrackListContextByDefault)
 {
-    ScriptParser parser;
+    ScriptParser parser{&m_registry};
 
     TrackList tracks;
 
@@ -1199,19 +949,18 @@ TEST_F(ScriptParserTest, TrackEvaluationDoesNotUseTrackListContextByDefault)
     track2.setDuration(3000);
     tracks.push_back(track2);
 
-    TestPlaylistEnvironment environment;
+    TestScriptContext environment;
     environment.setTrackList(&tracks);
 
-    ScriptContext context;
-    context.environment = &environment;
+    auto& context = environment.context;
 
-    EXPECT_EQ(u"%TRACKCOUNT%", parser.evaluate(u"%trackcount%"_s, track1, context));
-    EXPECT_EQ(u"%PLAYLIST_DURATION%", parser.evaluate(u"%playlist_duration%"_s, track1, context));
+    EXPECT_EQ(u"%TRACKCOUNT%", parser.evaluate(u"%trackcount%"_s, track1, context, environment.options));
+    EXPECT_EQ(u"%PLAYLIST_DURATION%", parser.evaluate(u"%playlist_duration%"_s, track1, context, environment.options));
 }
 
 TEST_F(ScriptParserTest, TrackEvaluationCanUseTrackListContextWhenEnabled)
 {
-    ScriptParser parser;
+    ScriptParser parser{&m_registry};
 
     TrackList tracks;
 
@@ -1223,20 +972,19 @@ TEST_F(ScriptParserTest, TrackEvaluationCanUseTrackListContextWhenEnabled)
     track2.setDuration(3000);
     tracks.push_back(track2);
 
-    TestPlaylistEnvironment environment;
+    TestScriptContext environment;
     environment.setTrackList(&tracks);
     environment.setEvaluationState(TrackListContextPolicy::Fallback);
 
-    ScriptContext context;
-    context.environment = &environment;
+    auto& context = environment.context;
 
-    EXPECT_EQ(u"2", parser.evaluate(u"%trackcount%"_s, track1, context));
-    EXPECT_EQ(u"00:05", parser.evaluate(u"%playlist_duration%"_s, track1, context));
+    EXPECT_EQ(u"2", parser.evaluate(u"%trackcount%"_s, track1, context, environment.options));
+    EXPECT_EQ(u"00:05", parser.evaluate(u"%playlist_duration%"_s, track1, context, environment.options));
 }
 
 TEST_F(ScriptParserTest, TrackEvaluationCanUseTrackListPlaceholderPolicy)
 {
-    ScriptParser parser;
+    ScriptParser parser{&m_registry};
 
     TrackList tracks;
 
@@ -1244,15 +992,14 @@ TEST_F(ScriptParserTest, TrackEvaluationCanUseTrackListPlaceholderPolicy)
     track1.setDuration(2000);
     tracks.push_back(track1);
 
-    TestPlaylistEnvironment environment;
+    TestScriptContext environment;
     environment.setTrackList(&tracks);
     environment.setEvaluationState(TrackListContextPolicy::Placeholder, u"|Loading|"_s);
 
-    ScriptContext context;
-    context.environment = &environment;
+    auto& context = environment.context;
 
-    EXPECT_EQ(u"|Loading|", parser.evaluate(u"%trackcount%"_s, track1, context));
-    EXPECT_EQ(u"|Loading|", parser.evaluate(u"%playlist_duration%"_s, track1, context));
+    EXPECT_EQ(u"|Loading|", parser.evaluate(u"%trackcount%"_s, track1, context, environment.options));
+    EXPECT_EQ(u"|Loading|", parser.evaluate(u"%playlist_duration%"_s, track1, context, environment.options));
 }
 
 TEST_F(ScriptParserTest, QueryTest)
@@ -1501,7 +1248,7 @@ TEST_F(ScriptParserTest, QueryLiteralSearchOptions)
     titleOnly.script = u"%title%"_s;
     titleOnly.mode   = ScriptSearchMode::MatchWordBeginnings;
 
-    TrackQueryFilter filter{titleOnly};
+    TrackQueryFilter filter{titleOnly, &m_registry};
     EXPECT_EQ(1, filter.filter(u"Moon"_s, tracks).size());
     EXPECT_EQ(0, filter.filter(u"light"_s, tracks).size());
     EXPECT_EQ(0, filter.filter(u"Hidden"_s, tracks).size());
@@ -1510,7 +1257,7 @@ TEST_F(ScriptParserTest, QueryLiteralSearchOptions)
     EXPECT_EQ(0, filter.filter(u"\"Moon Sketches\""_s, tracks).size());
 
     titleOnly.mode = ScriptSearchMode::MatchAnywhere;
-    TrackQueryFilter anywhereFilter{titleOnly};
+    TrackQueryFilter anywhereFilter{titleOnly, &m_registry};
     EXPECT_EQ(1, anywhereFilter.filter(u"light"_s, tracks).size());
 }
 
@@ -1528,7 +1275,7 @@ TEST_F(ScriptParserTest, QueryWordBeginningSearchIgnoresAccents)
     artistOnly.script = u"%artist%"_s;
     artistOnly.mode   = ScriptSearchMode::MatchWordBeginnings;
 
-    TrackQueryFilter filter{artistOnly};
+    TrackQueryFilter filter{artistOnly, &m_registry};
     const TrackList tracks{composedTrack, decomposedTrack};
 
     EXPECT_EQ(2, filter.filter(u"Asgeir"_s, tracks).size());
@@ -1538,7 +1285,7 @@ TEST_F(ScriptParserTest, QueryWordBeginningSearchIgnoresAccents)
 
 TEST_F(ScriptParserTest, QueryClassification)
 {
-    ScriptParser parser;
+    ScriptParser parser{&m_registry};
 
     const ParsedScript literal = parser.parseQuery(u"radiohead moon"_s);
     EXPECT_TRUE(ScriptParser::canEvaluateAsQuery(literal));
@@ -1563,5 +1310,103 @@ TEST_F(ScriptParserTest, QueryAndLiteralCachesStaySeparate)
 
     EXPECT_EQ(1, m_filter.filter(u"playcount>1"_s, tracks).size());
     EXPECT_EQ(u"playcount>1", m_parser.evaluate(u"playcount>1"_s, track));
+}
+
+TEST(ScriptRegistryTest, AliasCollisionsRejectTheWholeRegistration)
+{
+    ScriptRegistry registry;
+    const auto variable = makeScriptVariableDescriptor<[]() {
+        return u"plugin"_s;
+    }>(VariableKind::Generic, u"plugin_title"_s, {}, {}, {u"plugin_alias"_s, u"TRACKNUMBER"_s});
+
+    EXPECT_FALSE(registry.registerVariable(variable));
+    EXPECT_FALSE(registry.isVariable(u"plugin_title"_s));
+    EXPECT_FALSE(registry.isVariable(u"plugin_alias"_s));
+    EXPECT_FALSE(registry.registerVariable(makeScriptVariableDescriptor<[]() {
+        return u"plugin"_s;
+    }>(VariableKind::Generic, u"plugin_title"_s, {}, {}, {u"same"_s, u"SAME"_s})));
+    EXPECT_FALSE(registry.registerVariable(makeScriptVariableDescriptor<[]() {
+        return u"plugin"_s;
+    }>(VariableKind::Generic, u"plugin_title"_s, {}, {}, {QString{}})));
+
+    EXPECT_FALSE(registry.registerFunction(
+        makeScriptFunctionDescriptor<PrefixFunction>(u"plugin_prefix"_s, {}, {}, {}, {u"plugin_alias"_s, u"GET"_s})));
+    EXPECT_EQ(InvalidScriptFunctionId, registry.resolveFunctionId(u"plugin_prefix"_s));
+    EXPECT_EQ(InvalidScriptFunctionId, registry.resolveFunctionId(u"plugin_alias"_s));
+    EXPECT_FALSE(registry.registerFunction(
+        makeScriptFunctionDescriptor<PrefixFunction>(u"plugin_prefix"_s, {}, {}, {}, {u"same"_s, u"SAME"_s})));
+    EXPECT_FALSE(registry.registerFunction(
+        makeScriptFunctionDescriptor<PrefixFunction>(u"plugin_prefix"_s, {}, {}, {}, {QString{}})));
+}
+
+TEST(ScriptRegistryTest, BindingWaitsForFinalisation)
+{
+    ScriptRegistry registry;
+    ScriptParser parser{&registry};
+
+    const auto parsed = parser.parse(u"%title%"_s);
+    Track track;
+    track.setTitle(u"Ready"_s);
+
+    EXPECT_TRUE(parser.evaluate(parsed, track).isEmpty());
+    registry.finalise();
+    EXPECT_EQ(u"Ready", parser.evaluate(parsed, track));
+}
+
+TEST(ScriptRegistryTest, RejectsDuplicateReservedAndLateDefinitions)
+{
+    ScriptRegistry registry;
+    const auto resolver = makeScriptVariableInvoker<[]() {
+        return u"plugin"_s;
+    }>();
+
+    ASSERT_TRUE(registry.registerVariable({.kind = VariableKind::Generic, .name = u"custom"_s, .invoker = resolver}));
+    EXPECT_FALSE(registry.registerVariable({.kind = VariableKind::Generic, .name = u"CUSTOM"_s, .invoker = resolver}));
+    EXPECT_FALSE(registry.registerVariable({.kind = VariableKind::Generic, .name = u"artist"_s, .invoker = resolver}));
+    EXPECT_FALSE(
+        registry.registerVariable({.kind = VariableKind::Generic, .name = u"tracknumber"_s, .invoker = resolver}));
+    EXPECT_FALSE(registry.registerFunction(makeScriptFunctionDescriptor<PrefixFunction>(u"GET"_s)));
+    ASSERT_TRUE(registry.registerFunction(makeScriptFunctionDescriptor<PrefixFunction>(u"custom"_s)));
+    EXPECT_FALSE(registry.registerFunction(makeScriptFunctionDescriptor<PrefixFunction>(u"CUSTOM"_s)));
+    registry.finalise();
+    EXPECT_FALSE(registry.registerVariable({.kind = VariableKind::Generic, .name = u"late"_s, .invoker = resolver}));
+    EXPECT_FALSE(registry.registerFunction(makeScriptFunctionDescriptor<PrefixFunction>(u"late"_s)));
+    ScriptParser parser{&registry};
+    EXPECT_EQ(u"pluginfn:value", parser.evaluate(u"%custom%$custom(value)"_s));
+}
+
+TEST(ScriptRegistryTest, ContextValuesPreserveConditionAndListFallback)
+{
+    ScriptRegistry registry;
+    registry.finalise();
+    ScriptParser parser{&registry};
+
+    const std::array values{ScriptVariableValue{u"TRACKCOUNT"_s, {.value = u"deferred"_s, .cond = true}},
+                            ScriptVariableValue{u"NODE"_s, {.value = QString{}, .cond = true}}};
+    const ScriptContext context{.values = values};
+
+    EXPECT_EQ(u"deferred", parser.evaluate(u"%trackcount%"_s, context));
+    EXPECT_EQ(u"visible", parser.evaluate(u"[%node%visible]"_s, context));
+    EXPECT_EQ(u"%TRACKCOUNT%", parser.evaluate(u"%trackcount%"_s));
+    EXPECT_EQ(u"", parser.evaluate(u"%node%"_s));
+    EXPECT_EQ(u"0", parser.evaluate(u"%trackcount%"_s, TrackList{}));
+}
+
+TEST(ScriptRegistryTest, PlaybackValuesMatchTheEvaluatedRow)
+{
+    ScriptRegistry registry;
+    registry.finalise();
+    ScriptParser parser{&registry};
+    Track track;
+
+    const ScriptPlaybackData playback{.position = 45000, .playState = Player::PlayState::Playing};
+    ScriptPlaylistData row{.trackIndex = 1, .playingTrackIndex = 0};
+    const ScriptContext context{.playlistData = &row, .playback = &playback};
+
+    EXPECT_EQ(u"", parser.evaluate(u"%playback_time%"_s, track, context));
+    row.trackIndex = 0;
+    EXPECT_EQ(u"00:45", parser.evaluate(u"%playback_time%"_s, track, context));
+    row.trackIndex = -1;
+    EXPECT_EQ(u"00:45", parser.evaluate(u"%playback_time%"_s, track, context));
 }
 } // namespace Fooyin::Testing

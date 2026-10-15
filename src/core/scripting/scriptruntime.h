@@ -21,7 +21,7 @@
 
 #include "scriptbinder.h"
 #include "scriptcache.h"
-#include "scriptregistry.h"
+#include "scriptevaluator.h"
 
 #include <core/scripting/scriptscanner.h>
 #include <core/scripting/trackqueryfilter.h>
@@ -34,17 +34,12 @@
 #include <utility>
 
 namespace Fooyin {
-class ScriptFunctionProvider;
-class ScriptVariableProvider;
 
 class ScriptRuntime
 {
 public:
-    ScriptRuntime();
+    explicit ScriptRuntime(ScriptRegistry* registry = &ScriptRegistry::instance());
     ~ScriptRuntime();
-
-    void addProvider(const ScriptVariableProvider& provider);
-    void addProvider(const ScriptFunctionProvider& provider);
 
     ParsedScript parse(const QString& input,
                        ScriptScanner::WhitespaceMode whitespaceMode = ScriptScanner::WhitespaceMode::IgnoreLayout);
@@ -68,7 +63,7 @@ public:
     template <typename Func>
     auto withContext(const ScriptContext& context, Func&& func)
     {
-        return m_registry->withContext(context, std::forward<Func>(func));
+        return m_evaluator.withContext(context, std::forward<Func>(func));
     }
 
     void setQueryMode(bool isQuery);
@@ -142,7 +137,8 @@ private:
     void reset();
 
     ScriptScanner m_scanner;
-    std::unique_ptr<ScriptRegistry> m_registry;
+    ScriptRegistry* m_registry;
+    ScriptEvaluator m_evaluator;
 
     ScriptScanner::Token m_current;
     ScriptScanner::Token m_previous;

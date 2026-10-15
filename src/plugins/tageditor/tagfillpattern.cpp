@@ -22,7 +22,7 @@
 #include "tageditorsettings.h"
 
 #include <core/constants.h>
-#include <core/scripting/scriptbinder.h>
+#include <core/scripting/scriptregistry.h>
 #include <core/track.h>
 
 #include <ranges>
@@ -252,14 +252,14 @@ bool isWritableFillField(const QString& field)
         return false;
     }
 
-    const VariableKind kind = resolveBuiltInVariableKind(tag);
+    const VariableKind kind = ScriptRegistry::instance().resolveVariable(tag);
     return kind == VariableKind::Generic || isWritableBuiltInField(kind);
 }
 
 bool isMultiValueFillField(const QString& field)
 {
     const QString tag = normaliseField(field);
-    return Track::isMultiValueTag(tag) || resolveBuiltInVariableKind(tag) == VariableKind::Genres;
+    return Track::isMultiValueTag(tag) || ScriptRegistry::instance().resolveVariable(tag) == VariableKind::Genres;
 }
 
 ScriptFieldValue fillFieldValue(const QString& field, const QString& value, const QStringList& multiValueSeparators)

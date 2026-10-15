@@ -21,7 +21,7 @@
 
 #include "internalguisettings.h"
 #include "librarytreepopulator.h"
-#include "librarytreescriptenvironment.h"
+#include "librarytreescriptcontext.h"
 
 #include <core/coresettings.h>
 #include <core/library/librarymanager.h>
@@ -352,14 +352,9 @@ void LibraryTreeModelPrivate::updateSummary()
         title = defaultLibraryTreeSummaryTitle();
     }
 
-    LibraryTreeScriptEnvironment environment;
-    environment.setNodeVariablePolicy(LibraryTreeNodePolicy::Value);
-    environment.setNodeCounts(static_cast<int>(m_trackParents.size()), summaryChildCountForScript());
-
+    const auto values = libraryTreeScriptValues(static_cast<int>(m_trackParents.size()), summaryChildCountForScript());
     ScriptParser parser;
-    parser.addProvider(libraryTreeNodeVariableProvider());
-    title = parser.evaluate(title, ScriptContext{.environment = &environment},
-                            {.whitespaceMode = ScriptWhitespaceMode::Preserve});
+    title = parser.evaluate(title, ScriptContext{.values = values}, {.whitespaceMode = ScriptWhitespaceMode::Preserve});
 
     ScriptFormatter formatter;
     const RichText richTitle = trimRichText(formatter.evaluate(title));

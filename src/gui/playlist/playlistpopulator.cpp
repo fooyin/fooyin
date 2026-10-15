@@ -21,9 +21,8 @@
 
 #include "playlistitemmodels.h"
 #include "playlistpreset.h"
-#include "scripting/scriptvariableproviders.h"
 
-#include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/scripting/scripttypes.h>
 #include <gui/scripting/richtextutils.h>
 
 #include <QThread>
@@ -37,11 +36,7 @@ class PlaylistPopulatorPrivate
 public:
     explicit PlaylistPopulatorPrivate(PlaylistPopulator* self)
         : m_self{self}
-    {
-        m_scriptContext.environment = &m_request.environment;
-        m_parser.addProvider(playlistVariableProvider());
-        m_parser.addProvider(artworkMarkerVariableProvider());
-    }
+    { }
 
     [[nodiscard]] bool mayRun() const;
 
@@ -56,7 +51,7 @@ public:
     RichText evaluateTrackScript(const ParsedScript& parsedScript, const Track& track, const ScriptContext& context);
     RichText evaluateGroupScript(const ParsedScript& parsedScript, const TrackList& tracks,
                                  const ScriptContext& context);
-    [[nodiscard]] const ScriptContext& makeContext(int index = -1, int depth = 0, const Track* track = nullptr);
+    ScriptContext makeContext(int index = -1, int depth = 0, const Track* track = nullptr);
     PendingData buildBatchData() const;
     void clearBatchData();
     void updateContainerText(PlaylistContainerItem& container, PlaylistItem::ItemType type, int scriptIndex,
@@ -96,7 +91,6 @@ public:
 
     ScriptParser m_parser;
     ScriptFormatter m_formatter;
-    ScriptContext m_scriptContext;
 
     int m_trackDepth{0};
     Md5Hash m_prevBaseHeaderKey;
@@ -202,7 +196,7 @@ PlaylistItem* PlaylistPopulatorPrivate::getOrInsertItem(const UId& key, Playlist
 RichText PlaylistPopulatorPrivate::evaluateTrackScript(const ParsedScript& parsedScript, const Track& track,
                                                        const ScriptContext& context)
 {
-    const auto evalScript = m_parser.evaluate(parsedScript, track, context);
+    const auto evalScript = m_parser.evaluate(parsedScript, track, context, m_request.scriptOptions);
     if(evalScript.isEmpty()) {
         return {};
     }
@@ -212,14 +206,14 @@ RichText PlaylistPopulatorPrivate::evaluateTrackScript(const ParsedScript& parse
 RichText PlaylistPopulatorPrivate::evaluateGroupScript(const ParsedScript& parsedScript, const TrackList& tracks,
                                                        const ScriptContext& context)
 {
-    const auto evalScript = m_parser.evaluate(parsedScript, tracks, context);
+    const auto evalScript = m_parser.evaluate(parsedScript, tracks, context, m_request.scriptOptions);
     if(evalScript.isEmpty()) {
         return {};
     }
     return m_formatter.evaluate(evalScript);
 }
 
-const ScriptContext& PlaylistPopulatorPrivate::makeContext(int index, int depth, const Track* track)
+ScriptContext PlaylistPopulatorPrivate::makeContext(int index, int depth, const Track* track)
 {
     int currentPlayingTrackIndex{-1};
     int currentPlayingTrackId{-1};
@@ -235,14 +229,22 @@ const ScriptContext& PlaylistPopulatorPrivate::makeContext(int index, int depth,
     }
 
     if(const auto queueIndexes = m_request.queueIndexes.find(index); queueIndexes != m_request.queueIndexes.cend()) {
-        m_request.environment.setQueueState(queueIndexes->second, m_request.queueTotal);
+        m_request.scriptData.playlistData.queueIndexes = queueIndexes->second;
     }
     else {
-        m_request.environment.setQueueState({}, m_request.queueTotal);
+        m_request.scriptData.playlistData.queueIndexes.clear();
     }
 
-    m_request.environment.setTrackState(index, currentPlayingTrackIndex, currentPlayingTrackId, depth);
-    return m_scriptContext;
+    auto& row             = m_request.scriptData.playlistData;
+    row.trackIndex        = index;
+    row.playingTrackIndex = currentPlayingTrackIndex;
+    row.playingTrackId    = currentPlayingTrackId;
+    row.depth             = depth;
+    row.queueTotal        = m_request.queueTotal;
+    if(index < 0) {
+        row.entryId = {};
+    }
+    return m_request.scriptData.context();
 }
 
 PendingData PlaylistPopulatorPrivate::buildBatchData() const
@@ -351,9 +353,10 @@ void PlaylistPopulatorPrivate::iterateHeader(const Track& track, PlaylistItem*& 
     }
 
     const auto& context = makeContext(index, m_trackDepth);
-    const auto script   = m_parser.evaluate(m_parsedHeader.text, track, context);
+    const auto script   = m_parser.evaluate(m_parsedHeader.text, track, context, m_request.scriptOptions);
     const auto baseKey  = !m_request.preset.header.grouping.isEmpty()
-                            ? Utils::generateMd5Hash(m_parser.evaluate(m_parsedHeader.grouping, track, context))
+                            ? Utils::generateMd5Hash(
+                                  m_parser.evaluate(m_parsedHeader.grouping, track, context, m_request.scriptOptions))
                             : Utils::generateMd5Hash(script);
 
     UId key;
@@ -398,7 +401,7 @@ void PlaylistPopulatorPrivate::iterateSubheaders(const Track& track, PlaylistIte
         auto subheader              = m_request.preset.subHeaders.at(i);
         const auto& parsedSubheader = m_parsedSubheaders.at(i);
         const auto& context         = makeContext(index, m_trackDepth);
-        const auto subheaderScript  = m_parser.evaluate(parsedSubheader.text, track, context);
+        const auto subheaderScript  = m_parser.evaluate(parsedSubheader.text, track, context, m_request.scriptOptions);
         const auto subheaderText    = m_formatter.evaluate(subheaderScript);
 
         if(subheaderText.joinedText().isEmpty()) {
@@ -407,9 +410,9 @@ void PlaylistPopulatorPrivate::iterateSubheaders(const Track& track, PlaylistIte
             continue;
         }
 
-        const auto groupingKey = !subheader.grouping.isEmpty()
-                                   ? m_parser.evaluate(parsedSubheader.grouping, track, context)
-                                   : subheaderScript;
+        const auto groupingKey = !subheader.grouping.isEmpty() ? m_parser.evaluate(parsedSubheader.grouping, track,
+                                                                                   context, m_request.scriptOptions)
+                                                               : subheaderScript;
         const auto baseKey     = Utils::generateMd5Hash(parent->baseKey(), groupingKey);
 
         UId key;
@@ -448,7 +451,8 @@ void PlaylistPopulatorPrivate::iterateSubheaders(const Track& track, PlaylistIte
 
 PlaylistItem* PlaylistPopulatorPrivate::iterateTrack(const PlaylistTrack& track, int index)
 {
-    PlaylistItem* parent = &m_root;
+    PlaylistItem* parent                      = &m_root;
+    m_request.scriptData.playlistData.entryId = track.entryId;
 
     iterateHeader(track.track, parent, index);
     iterateSubheaders(track.track, parent, index);
@@ -464,7 +468,8 @@ PlaylistItem* PlaylistPopulatorPrivate::iterateTrack(const PlaylistTrack& track,
             std::vector<RichText> trackColumns;
             trackColumns.reserve(m_request.columns.size());
             for(size_t i{0}; i < m_request.columns.size(); ++i) {
-                const auto evalScript = m_parser.evaluate(m_parsedTrack.columns.at(i), track.track, context);
+                const auto evalScript
+                    = m_parser.evaluate(m_parsedTrack.columns.at(i), track.track, context, m_request.scriptOptions);
                 trackColumns.emplace_back(m_formatter.evaluate(evalScript));
             }
             return PlaylistTrackItem{std::move(trackColumns), track};
@@ -628,6 +633,7 @@ void PlaylistPopulator::updateTracks(const PlaylistPopulationRequest& request, c
         PlaylistTrackItem& trackData = std::get<0>(item.data());
 
         trackData.setTrack(track);
+        p->m_request.scriptData.playlistData.entryId = track.entryId;
         const auto& context
             = p->makeContext(trackData.track().indexInPlaylist, trackData.depth(), &trackData.track().track);
 
@@ -637,7 +643,8 @@ void PlaylistPopulator::updateTracks(const PlaylistPopulationRequest& request, c
             for(size_t i{0}; i < columns.size(); ++i) {
                 const int columnIndex = static_cast<int>(i);
                 if(columnsToUpdate.contains(columnIndex)) {
-                    const auto evalScript = p->m_parser.evaluate(p->m_parsedTrack.columns.at(i), track.track, context);
+                    const auto evalScript = p->m_parser.evaluate(p->m_parsedTrack.columns.at(i), track.track, context,
+                                                                 p->m_request.scriptOptions);
                     trackColumns.emplace_back(p->m_formatter.evaluate(evalScript));
                 }
                 else {
