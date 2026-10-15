@@ -1131,32 +1131,9 @@ void AudioEngine::play()
 
     const bool preserveTransportFade
         = !m_fadeController.hasPendingResumeFadeIn() && m_fadeController.fadeOnNext() && hasActiveTransportFade;
-    const auto restoreLoadedTrackPhase = [this, resumeLoadedTrack]() {
-        if(resumeLoadedTrack && m_phase == Playback::Phase::Loading) {
-            setPhase(Playback::Phase::Playing, PhaseChangeReason::PlaybackStatePlaying);
-        }
-    };
-    if(preserveTransportFade) {
-        if(auto stream = m_decoder.activeStream()) {
-            m_pipeline.sendStreamCommand(stream->id(), AudioStream::Command::Play);
-        }
-
-        m_decoder.startDecoding();
-        m_pipeline.play();
-        updatePosition();
-        updatePlaybackState(Engine::PlaybackState::Playing);
-        restoreLoadedTrackPhase();
-        updateTrackStatus(Engine::TrackStatus::Buffered);
-        maybeUpdateInputBuffering("play");
-
-        if(!m_inputBuffering.active) {
-            m_audioClock.start();
-        }
-
-        return;
+    if(!preserveTransportFade) {
+        m_fadeController.applyPlayFade(prevState, m_fadingEnabled, m_fadingValues, m_volume);
     }
-
-    m_fadeController.applyPlayFade(prevState, m_fadingEnabled, m_fadingValues, m_volume);
 
     if(auto stream = m_decoder.activeStream()) {
         m_pipeline.sendStreamCommand(stream->id(), AudioStream::Command::Play);
@@ -1166,7 +1143,9 @@ void AudioEngine::play()
     m_pipeline.play();
     updatePosition();
     updatePlaybackState(Engine::PlaybackState::Playing);
-    restoreLoadedTrackPhase();
+    if(resumeLoadedTrack && m_phase == Playback::Phase::Loading) {
+        setPhase(Playback::Phase::Playing, PhaseChangeReason::PlaybackStatePlaying);
+    }
     updateTrackStatus(Engine::TrackStatus::Buffered);
     maybeUpdateInputBuffering("play");
 
@@ -5007,27 +4986,12 @@ void AudioEngine::clearPreparedNextTrack()
 
 void AudioEngine::clearPreparedCrossfadeTransition()
 {
-    m_preparedCrossfadeTransition.active                = false;
-    m_preparedCrossfadeTransition.targetTrack           = {};
-    m_preparedCrossfadeTransition.targetItemId          = 0;
-    m_preparedCrossfadeTransition.sourceGeneration      = 0;
-    m_preparedCrossfadeTransition.streamId              = InvalidStreamId;
-    m_preparedCrossfadeTransition.boundaryLeadMs        = 0;
-    m_preparedCrossfadeTransition.overlapMidpointLeadMs = 0;
-    m_preparedCrossfadeTransition.bufferedAtArmMs       = 0;
-    m_preparedCrossfadeTransition.boundarySignalled     = false;
+    m_preparedCrossfadeTransition = {};
 }
 
 void AudioEngine::clearPreparedGaplessTransition()
 {
-    m_preparedGaplessTransition.active           = false;
-    m_preparedGaplessTransition.targetTrack      = {};
-    m_preparedGaplessTransition.targetItemId     = 0;
-    m_preparedGaplessTransition.sourceGeneration = 0;
-    m_preparedGaplessTransition.streamId         = InvalidStreamId;
-    m_preparedGaplessTransition.boundaryFadeMode = false;
-    m_preparedGaplessTransition.decoderAdopted   = false;
-    m_preparedGaplessTransition.preCommitTimingStream.reset();
+    m_preparedGaplessTransition = {};
 }
 
 void AudioEngine::discardPreparedGaplessTransition(bool preserveDecoderOwnedStream)
