@@ -31,7 +31,6 @@ struct DspChainPreset
     int id{-1};
     int index{-1};
     QString name;
-    bool isDefault{false};
     Engine::DspChains chain;
 
     [[nodiscard]] bool isValid() const

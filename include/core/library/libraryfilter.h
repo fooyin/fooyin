@@ -31,7 +31,6 @@ struct FYCORE_EXPORT LibraryFilter
 {
     int id{-1};
     int index{-1};
-    bool isDefault{false};
     QString name;
     QString expression;
     bool isEnabled{true};
