@@ -189,22 +189,6 @@ void prioritisePreferredLoaders(std::vector<std::unique_ptr<T>>& loaders, const 
     });
 }
 
-QStringList readerProbeAllExtensions()
-{
-    const FySettings settings;
-    const QVariant value = settings.contains(Settings::Core::Internal::ReaderProbeAllExtensions)
-                             ? settings.value(Settings::Core::Internal::ReaderProbeAllExtensions)
-                             : settings.value(Settings::Core::Internal::FFmpegPriorityExtensions,
-                                              Settings::Core::Internal::defaultReaderProbeAllExtensions());
-    return normaliseExtensions(value.toStringList());
-}
-
-bool shouldProbeAllReadersForFile(const QString& file)
-{
-    const QString ext = QFileInfo{file}.suffix().toLower();
-    return !ext.isEmpty() && readerProbeAllExtensions().contains(ext);
-}
-
 bool openFileSource(LoadedSource& input, const QString& filepath)
 {
     if(!input.device) {
@@ -566,7 +550,7 @@ LoadedReader AudioLoader::loadReaderForTrack(const Track& track) const
         return {};
     }
 
-    const bool probeAllReaders = shouldProbeAllReadersForFile(track.filepath());
+    const bool probeAllReaders = Settings::Core::Internal::shouldProbeAllReadersForFile(track.filepath());
 
     LoadedReader best;
     int bestSubsongCount{0};
@@ -653,7 +637,7 @@ LoadedReader AudioLoader::loadReaderForArchiveTrack(const Track& track) const
         return {};
     }
 
-    const bool probeAllReaders = shouldProbeAllReadersForFile(track.pathInArchive());
+    const bool probeAllReaders = Settings::Core::Internal::shouldProbeAllReadersForFile(track.pathInArchive());
 
     LoadedReader best;
     int bestSubsongCount{0};

@@ -33,7 +33,6 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QFileInfo>
-#include <utility>
 
 using namespace Qt::StringLiterals;
 
@@ -57,6 +56,22 @@ QStringList defaultFFmpegPriorityExtensions()
 QStringList defaultReaderProbeAllExtensions()
 {
     return defaultFFmpegPriorityExtensions();
+}
+
+bool shouldProbeAllReadersForFile(const QString& file)
+{
+    const QString ext = QFileInfo{file}.suffix().toLower();
+    if(ext.isEmpty()) {
+        return false;
+    }
+
+    const FySettings settings;
+    const QVariant value         = settings.contains(ReaderProbeAllExtensions)
+                                     ? settings.value(ReaderProbeAllExtensions)
+                                     : settings.value(FFmpegPriorityExtensions, defaultReaderProbeAllExtensions());
+    const QStringList extensions = value.toStringList();
+    return std::ranges::any_of(extensions,
+                               [&ext](const QString& extension) { return extension.trimmed().toLower() == ext; });
 }
 
 QStringList defaultOutputResamplerPreference()

@@ -24,7 +24,6 @@
 #include "libraryscanutils.h"
 #include "libraryscanwriter.h"
 
-#include <core/coresettings.h>
 #include <core/engine/audioloader.h>
 #include <core/internalcoresettings.h>
 #include <core/network/remoteioservice.h>
@@ -40,7 +39,6 @@
 #include <QUrl>
 
 #include <optional>
-#include <utility>
 
 Q_DECLARE_LOGGING_CATEGORY(LIB_SCANNER)
 
@@ -50,34 +48,6 @@ constexpr auto ArchivePath = R"(unpack://%1|%2|file://%3!)";
 
 namespace Fooyin {
 namespace {
-QStringList normaliseExtensions(QStringList extensions)
-{
-    for(QString& extension : extensions) {
-        extension = extension.trimmed().toLower();
-    }
-
-    extensions.removeAll(QString{});
-    std::ranges::sort(extensions);
-    extensions.removeDuplicates();
-
-    return extensions;
-}
-
-bool shouldProbeAllReadersForFile(const QString& file)
-{
-    const QString ext = QFileInfo{file}.suffix().toLower();
-    if(ext.isEmpty()) {
-        return false;
-    }
-
-    const FySettings settings;
-    const QVariant value = settings.contains(Settings::Core::Internal::ReaderProbeAllExtensions)
-                             ? settings.value(Settings::Core::Internal::ReaderProbeAllExtensions)
-                             : settings.value(Settings::Core::Internal::FFmpegPriorityExtensions,
-                                              Settings::Core::Internal::defaultReaderProbeAllExtensions());
-    return normaliseExtensions(value.toStringList()).contains(ext);
-}
-
 void applyExistingTrackIdentity(Track& track, const Track& existingTrack)
 {
     track.setId(existingTrack.id());
@@ -659,7 +629,7 @@ TrackList LibraryTrackResolver::readArchiveTracks(const QString& filepath)
         QIODevice* device    = entryData.device.get();
 
         bool readersFound{false};
-        const bool probeAllReaders = shouldProbeAllReadersForFile(entry);
+        const bool probeAllReaders = Settings::Core::Internal::shouldProbeAllReadersForFile(entry);
         std::unique_ptr<AudioReader> selectedReader;
         AudioSource selectedSource;
         int selectedSubsongCount{0};

@@ -81,9 +81,10 @@ constexpr auto DefaultRemotePrebufferMs        = 0;
 constexpr auto DefaultRemoteOpenTimeoutMs      = 8000;
 constexpr auto DefaultAutoCrossfadeAlbumScript = "$if(%album%,%albumartist%|%date%|%album%,)";
 
-[[nodiscard]] FYCORE_EXPORT QStringList defaultFFmpegPriorityExtensions();
-[[nodiscard]] FYCORE_EXPORT QStringList defaultReaderProbeAllExtensions();
-[[nodiscard]] FYCORE_EXPORT QStringList defaultOutputResamplerPreference();
+FYCORE_EXPORT QStringList defaultFFmpegPriorityExtensions();
+FYCORE_EXPORT QStringList defaultReaderProbeAllExtensions();
+FYCORE_EXPORT bool shouldProbeAllReadersForFile(const QString& file);
+FYCORE_EXPORT QStringList defaultOutputResamplerPreference();
 
 enum CoreInternalSettings : uint32_t
 {
