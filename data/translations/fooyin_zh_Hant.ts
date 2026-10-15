@@ -693,7 +693,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="209"/>
         <source>Name of the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>播放清單的名稱</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
