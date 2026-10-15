@@ -66,11 +66,7 @@ struct RichFormatting
     QString link;
     RichAlignment alignment{RichAlignment::Default};
 
-    bool operator==(const RichFormatting& other) const
-    {
-        return std::tie(font, colour, link, alignment)
-            == std::tie(other.font, other.colour, other.link, other.alignment);
-    };
+    bool operator==(const RichFormatting& other) const = default;
 };
 
 struct RichTextBlock
@@ -85,20 +81,14 @@ struct RichTextBlock
     RichFormatting format;
     Type type{Type::Text};
 
-    bool operator==(const RichTextBlock& other) const
-    {
-        return std::tie(text, format, type) == std::tie(other.text, other.format, other.type);
-    };
+    bool operator==(const RichTextBlock& other) const = default;
 };
 
 struct RichText
 {
     std::vector<RichTextBlock> blocks;
 
-    bool operator==(const RichText& other) const
-    {
-        return blocks == other.blocks;
-    };
+    bool operator==(const RichText& other) const = default;
 
     operator QVariant() const
     {
@@ -135,10 +125,7 @@ struct RichScript
     QString script;
     RichText text;
 
-    bool operator==(const RichScript& other) const
-    {
-        return std::tie(script, text) == std::tie(other.script, other.text);
-    };
+    bool operator==(const RichScript& other) const = default;
 
     friend QDataStream& operator<<(QDataStream& stream, const RichScript& richScript)
     {

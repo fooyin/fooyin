@@ -38,10 +38,7 @@ struct DspChainPreset
         return !name.isEmpty();
     }
 
-    bool operator==(const DspChainPreset& other) const
-    {
-        return std::tie(id, index, name, chain) == std::tie(other.id, other.index, other.name, other.chain);
-    }
+    bool operator==(const DspChainPreset& other) const = default;
 };
 
 QDataStream& operator<<(QDataStream& stream, const DspChainPreset& preset);

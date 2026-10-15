@@ -49,15 +49,7 @@ struct ParsedWord
     uint64_t timestamp{0};
     uint64_t duration{0};
 
-    bool operator==(const ParsedWord& other) const noexcept
-    {
-        return std::tie(word, timestamp, duration) == std::tie(other.word, other.timestamp, other.duration);
-    }
-
-    bool operator!=(const ParsedWord& other) const noexcept
-    {
-        return !(*this == other);
-    }
+    bool operator==(const ParsedWord& other) const noexcept = default;
 
     [[nodiscard]] constexpr uint64_t isCurrent(uint64_t otherTimestamp) const
     {
@@ -76,15 +68,7 @@ struct ParsedLine
     uint64_t duration{0};
     std::vector<ParsedWord> words;
 
-    bool operator==(const ParsedLine& other) const noexcept
-    {
-        return std::tie(timestamp, duration, words) == std::tie(other.timestamp, other.duration, other.words);
-    }
-
-    bool operator!=(const ParsedLine& other) const noexcept
-    {
-        return !(*this == other);
-    }
+    bool operator==(const ParsedLine& other) const noexcept = default;
 
     [[nodiscard]] constexpr uint64_t isCurrent(uint64_t otherTimestamp) const
     {
