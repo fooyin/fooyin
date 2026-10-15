@@ -26,7 +26,6 @@
 #include <utils/stareditor.h>
 #include <utils/starrating.h>
 
-#include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QJsonObject>
@@ -290,40 +289,18 @@ void RatingControl::loadLayoutData(const QJsonObject& layout)
 
 void RatingControl::populateContextMenu(QMenu* menu)
 {
-    auto* orientationGroup = new QActionGroup(menu);
-    auto* automatic        = new QAction(tr("Automatic"), orientationGroup);
-    auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
-    auto* vertical         = new QAction(tr("Vertical"), orientationGroup);
-
-    auto* orientationMenu = new QMenu(tr("Orientation"), menu);
-    orientationMenu->addAction(automatic);
-    orientationMenu->addAction(horizontal);
-    orientationMenu->addAction(vertical);
-
-    automatic->setCheckable(true);
-    horizontal->setCheckable(true);
-    vertical->setCheckable(true);
-
-    automatic->setChecked(m_autoOrientation);
-    horizontal->setChecked(!m_autoOrientation && m_orientation == Qt::Horizontal);
-    vertical->setChecked(!m_autoOrientation && m_orientation == Qt::Vertical);
-
-    QObject::connect(automatic, &QAction::triggered, this, [this]() {
-        m_autoOrientation = true;
-        updateOrientation();
-    });
-    QObject::connect(horizontal, &QAction::triggered, this, [this]() {
-        m_autoOrientation = false;
-        m_orientation     = Qt::Horizontal;
-        updateOrientation();
-    });
-    QObject::connect(vertical, &QAction::triggered, this, [this]() {
-        m_autoOrientation = false;
-        m_orientation     = Qt::Vertical;
-        updateOrientation();
-    });
-
-    menu->addMenu(orientationMenu);
+    Gui::addOrientationMenu(menu, this,
+                            {.title      = tr("Orientation"),
+                             .automatic  = tr("Automatic"),
+                             .horizontal = tr("Horizontal"),
+                             .vertical   = tr("Vertical")},
+                            m_autoOrientation, m_orientation, [this](std::optional<Qt::Orientation> orientation) {
+                                m_autoOrientation = !orientation.has_value();
+                                if(orientation) {
+                                    m_orientation = *orientation;
+                                }
+                                updateOrientation();
+                            });
 }
 
 void RatingControl::contextMenuEvent(QContextMenuEvent* event)

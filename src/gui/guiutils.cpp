@@ -29,12 +29,14 @@
 #include <gui/widgets/expandedtreeview.h>
 
 #include <QAbstractItemView>
+#include <QActionGroup>
 #include <QApplication>
 #include <QDir>
 #include <QFileInfo>
 #include <QHeaderView>
 #include <QIODevice>
 #include <QLabel>
+#include <QMenu>
 #include <QMimeData>
 #include <QPainter>
 #include <QPainterPath>
@@ -42,8 +44,6 @@
 #include <QStyle>
 #include <QTreeView>
 #include <QUrl>
-
-#include <algorithm>
 
 using namespace Qt::StringLiterals;
 
@@ -61,121 +61,35 @@ QHeaderView* itemViewHeader(QAbstractItemView* view)
 }
 } // namespace
 
-bool styleSupportsCustomPalette(const QString& styleName)
+void addOrientationMenu(QMenu* menu, QObject* context, const OrientationMenuLabels& labels, bool automatic,
+                        Qt::Orientation orientation,
+                        const std::function<void(std::optional<Qt::Orientation>)>& orientationChanged)
 {
-#ifdef Q_OS_WIN
-    return styleName.compare("windows11"_L1, Qt::CaseInsensitive) != 0
-        && styleName.compare("windowsvista"_L1, Qt::CaseInsensitive) != 0
-        && styleName.compare("windows"_L1, Qt::CaseInsensitive) != 0;
-#else
-    Q_UNUSED(styleName)
-    return true;
-#endif
-}
+    auto* orientationMenu = menu->addMenu(labels.title);
+    auto* group           = new QActionGroup(orientationMenu);
 
-bool styleSupportsDarkMode(const QString& styleName)
-{
-#ifdef Q_OS_WIN
-    return styleName.compare("windows11"_L1, Qt::CaseInsensitive) == 0
-        || styleName.compare("windows"_L1, Qt::CaseInsensitive) == 0;
-#else
-    Q_UNUSED(styleName)
-    return false;
-#endif
-}
+    auto* autoAction = orientationMenu->addAction(labels.automatic);
+    auto* horizontal = orientationMenu->addAction(labels.horizontal);
+    auto* vertical   = orientationMenu->addAction(labels.vertical);
 
-bool styleUsesNormalItemViewSelectionText(const QString& styleName, bool alternatingRows)
-{
-    if(styleName.compare("windows11"_L1, Qt::CaseInsensitive) == 0) {
-        // Windows 11 uses an accent selection with contrasting text for alternating rows
-        return !alternatingRows;
-    }
-    return styleName.compare("windowsvista"_L1, Qt::CaseInsensitive) == 0;
-}
-
-QPalette::ColorRole itemViewSelectionTextRole(const QStyleOptionViewItem& option)
-{
-    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
-    const auto* view    = qobject_cast<const QAbstractItemView*>(option.widget);
-    const bool normalSelectionText
-        = style && styleUsesNormalItemViewSelectionText(style->name(), view && view->alternatingRowColors());
-
-    return normalSelectionText ? QPalette::Text : QPalette::HighlightedText;
-}
-
-QIcon::Mode itemViewIconMode(const QStyleOptionViewItem& option)
-{
-    if(!(option.state & QStyle::State_Enabled)) {
-        return QIcon::Disabled;
-    }
-    if(option.state & QStyle::State_Selected) {
-        return QIcon::Selected;
-    }
-    return QIcon::Normal;
-}
-
-QSize itemViewTextSizeHint(const QStyleOptionViewItem& option, const QSize& textSize)
-{
-    QStyleOptionViewItem textOption{option};
-    textOption.features |= QStyleOptionViewItem::HasDisplay;
-
-    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
-    QSize size          = style->sizeFromContents(QStyle::CT_ItemViewItem, &textOption, textSize, option.widget);
-
-    const int verticalPadding
-        = std::max(2, style->pixelMetric(QStyle::PM_FocusFrameHMargin, &textOption, option.widget));
-    size.setHeight(std::max(size.height(), textSize.height() + (2 * verticalPadding)));
-    return size;
-}
-
-QRect itemViewTextRect(const QStyleOptionViewItem& option)
-{
-    const QStyle* style     = option.widget ? option.widget->style() : QApplication::style();
-    QRect textRect          = style->subElementRect(QStyle::SE_ItemViewItemText, &option, option.widget);
-    const int textMargin    = itemViewTextMargin(option.widget, &option);
-    const int frameWidth    = style->pixelMetric(QStyle::PM_DefaultFrameWidth, &option, option.widget);
-    const int leadingInset  = textMargin + frameWidth + 1;
-    const bool leadingCell  = option.viewItemPosition == QStyleOptionViewItem::Beginning
-                           || option.viewItemPosition == QStyleOptionViewItem::OnlyOne
-                           || option.viewItemPosition == QStyleOptionViewItem::Invalid;
-    const int leadingMargin = leadingCell ? leadingInset : textMargin;
-
-    if(option.direction == Qt::RightToLeft) {
-        textRect.adjust(textMargin, 0, -leadingMargin, 0);
-    }
-    else {
-        textRect.adjust(leadingMargin, 0, -textMargin, 0);
+    for(auto* action : {autoAction, horizontal, vertical}) {
+        action->setCheckable(true);
+        group->addAction(action);
     }
 
-    return textRect;
-}
+    autoAction->setChecked(automatic);
+    horizontal->setChecked(!automatic && orientation == Qt::Horizontal);
+    vertical->setChecked(!automatic && orientation == Qt::Vertical);
 
-int itemViewTextMargin(const QWidget* widget, const QStyleOption* option)
-{
-    const QStyle* style = widget ? widget->style() : QApplication::style();
-    return style->pixelMetric(QStyle::PM_FocusFrameHMargin, option, widget) + 1;
-}
-
-void drawRoundedPixmap(QPainter& painter, const QRect& rect, Qt::Alignment alignment, const QPixmap& pixmap,
-                       int radiusPercent)
-{
-    if(pixmap.isNull() || rect.isEmpty()) {
-        return;
-    }
-
-    const QSize pixmapSize = pixmap.deviceIndependentSize().toSize();
-    const QRect pixmapRect = QStyle::alignedRect(Qt::LeftToRight, alignment, pixmapSize, rect);
-
-    painter.save();
-    painter.setRenderHint(QPainter::Antialiasing);
-
-    const qreal radius = std::min(pixmapRect.width(), pixmapRect.height()) * std::clamp(radiusPercent, 0, 100) / 200.0;
-    QPainterPath clipPath;
-    clipPath.addRoundedRect(pixmapRect, radius, radius);
-    painter.setClipPath(clipPath, Qt::IntersectClip);
-    painter.drawPixmap(pixmapRect.topLeft(), pixmap);
-
-    painter.restore();
+    QObject::connect(group, &QActionGroup::triggered, context,
+                     [autoAction, horizontal, orientationChanged](QAction* action) {
+                         if(action == autoAction) {
+                             orientationChanged({});
+                         }
+                         else {
+                             orientationChanged(action == horizontal ? Qt::Horizontal : Qt::Vertical);
+                         }
+                     });
 }
 
 TrackList tracksFromMimeData(MusicLibrary* library, QByteArray data)
@@ -378,6 +292,123 @@ QMap<PaletteKey, QColor> coloursFromPalette(const QPalette& palette)
     colours[PaletteKey{P::PlaceholderText}]              = palette.color(P::Active, P::PlaceholderText);
 
     return colours;
+}
+
+bool styleSupportsCustomPalette(const QString& styleName)
+{
+#ifdef Q_OS_WIN
+    return styleName.compare("windows11"_L1, Qt::CaseInsensitive) != 0
+        && styleName.compare("windowsvista"_L1, Qt::CaseInsensitive) != 0
+        && styleName.compare("windows"_L1, Qt::CaseInsensitive) != 0;
+#else
+    Q_UNUSED(styleName)
+    return true;
+#endif
+}
+
+bool styleSupportsDarkMode(const QString& styleName)
+{
+#ifdef Q_OS_WIN
+    return styleName.compare("windows11"_L1, Qt::CaseInsensitive) == 0
+        || styleName.compare("windows"_L1, Qt::CaseInsensitive) == 0;
+#else
+    Q_UNUSED(styleName)
+    return false;
+#endif
+}
+
+bool styleUsesNormalItemViewSelectionText(const QString& styleName, bool alternatingRows)
+{
+    if(styleName.compare("windows11"_L1, Qt::CaseInsensitive) == 0) {
+        // Windows 11 uses an accent selection with contrasting text for alternating rows
+        return !alternatingRows;
+    }
+    return styleName.compare("windowsvista"_L1, Qt::CaseInsensitive) == 0;
+}
+
+QPalette::ColorRole itemViewSelectionTextRole(const QStyleOptionViewItem& option)
+{
+    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
+    const auto* view    = qobject_cast<const QAbstractItemView*>(option.widget);
+    const bool normalSelectionText
+        = style && styleUsesNormalItemViewSelectionText(style->name(), view && view->alternatingRowColors());
+
+    return normalSelectionText ? QPalette::Text : QPalette::HighlightedText;
+}
+
+QIcon::Mode itemViewIconMode(const QStyleOptionViewItem& option)
+{
+    if(!(option.state & QStyle::State_Enabled)) {
+        return QIcon::Disabled;
+    }
+    if(option.state & QStyle::State_Selected) {
+        return QIcon::Selected;
+    }
+    return QIcon::Normal;
+}
+
+QSize itemViewTextSizeHint(const QStyleOptionViewItem& option, const QSize& textSize)
+{
+    QStyleOptionViewItem textOption{option};
+    textOption.features |= QStyleOptionViewItem::HasDisplay;
+
+    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
+    QSize size          = style->sizeFromContents(QStyle::CT_ItemViewItem, &textOption, textSize, option.widget);
+
+    const int verticalPadding
+        = std::max(2, style->pixelMetric(QStyle::PM_FocusFrameHMargin, &textOption, option.widget));
+    size.setHeight(std::max(size.height(), textSize.height() + (2 * verticalPadding)));
+    return size;
+}
+
+QRect itemViewTextRect(const QStyleOptionViewItem& option)
+{
+    const QStyle* style     = option.widget ? option.widget->style() : QApplication::style();
+    QRect textRect          = style->subElementRect(QStyle::SE_ItemViewItemText, &option, option.widget);
+    const int textMargin    = itemViewTextMargin(option.widget, &option);
+    const int frameWidth    = style->pixelMetric(QStyle::PM_DefaultFrameWidth, &option, option.widget);
+    const int leadingInset  = textMargin + frameWidth + 1;
+    const bool leadingCell  = option.viewItemPosition == QStyleOptionViewItem::Beginning
+                           || option.viewItemPosition == QStyleOptionViewItem::OnlyOne
+                           || option.viewItemPosition == QStyleOptionViewItem::Invalid;
+    const int leadingMargin = leadingCell ? leadingInset : textMargin;
+
+    if(option.direction == Qt::RightToLeft) {
+        textRect.adjust(textMargin, 0, -leadingMargin, 0);
+    }
+    else {
+        textRect.adjust(leadingMargin, 0, -textMargin, 0);
+    }
+
+    return textRect;
+}
+
+int itemViewTextMargin(const QWidget* widget, const QStyleOption* option)
+{
+    const QStyle* style = widget ? widget->style() : QApplication::style();
+    return style->pixelMetric(QStyle::PM_FocusFrameHMargin, option, widget) + 1;
+}
+
+void drawRoundedPixmap(QPainter& painter, const QRect& rect, Qt::Alignment alignment, const QPixmap& pixmap,
+                       int radiusPercent)
+{
+    if(pixmap.isNull() || rect.isEmpty()) {
+        return;
+    }
+
+    const QSize pixmapSize = pixmap.deviceIndependentSize().toSize();
+    const QRect pixmapRect = QStyle::alignedRect(Qt::LeftToRight, alignment, pixmapSize, rect);
+
+    painter.save();
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    const qreal radius = std::min(pixmapRect.width(), pixmapRect.height()) * std::clamp(radiusPercent, 0, 100) / 200.0;
+    QPainterPath clipPath;
+    clipPath.addRoundedRect(pixmapRect, radius, radius);
+    painter.setClipPath(clipPath, Qt::IntersectClip);
+    painter.drawPixmap(pixmapRect.topLeft(), pixmap);
+
+    painter.restore();
 }
 
 void refreshItemViewPalette(QAbstractItemView* view)

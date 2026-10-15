@@ -27,6 +27,7 @@
 #include <core/player/playerdefs.h>
 #include <gui/configdialog.h>
 #include <gui/framerate.h>
+#include <gui/guiutils.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/timeconstants.h>
 
@@ -176,38 +177,21 @@ void OscilloscopeWidget::populateContextMenu(QMenu* menu)
         });
     }
 
-    auto* orientationGroup = new QActionGroup(menu);
-    auto* automatic        = new QAction(tr("Automatic"), orientationGroup);
-    auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
-    auto* vertical         = new QAction(tr("Vertical"), orientationGroup);
+    Gui::addOrientationMenu(menu, this,
+                            {.title      = tr("Orientation"),
+                             .automatic  = tr("Automatic"),
+                             .horizontal = tr("Horizontal"),
+                             .vertical   = tr("Vertical")},
+                            m_autoOrientation, m_orientation, [this](std::optional<Qt::Orientation> orientation) {
+                                m_autoOrientation = !orientation.has_value();
+                                if(orientation) {
+                                    setOrientation(*orientation);
+                                }
+                                else {
+                                    updateOrientation();
+                                }
+                            });
 
-    auto* orientationMenu = new QMenu(tr("Orientation"), menu);
-    orientationMenu->addAction(automatic);
-    orientationMenu->addAction(horizontal);
-    orientationMenu->addAction(vertical);
-
-    automatic->setCheckable(true);
-    horizontal->setCheckable(true);
-    vertical->setCheckable(true);
-
-    automatic->setChecked(m_autoOrientation);
-    horizontal->setChecked(!m_autoOrientation && m_orientation == Qt::Horizontal);
-    vertical->setChecked(!m_autoOrientation && m_orientation == Qt::Vertical);
-
-    QObject::connect(automatic, &QAction::triggered, this, [this]() {
-        m_autoOrientation = true;
-        updateOrientation();
-    });
-    QObject::connect(horizontal, &QAction::triggered, this, [this]() {
-        m_autoOrientation = false;
-        setOrientation(Qt::Horizontal);
-    });
-    QObject::connect(vertical, &QAction::triggered, this, [this]() {
-        m_autoOrientation = false;
-        setOrientation(Qt::Vertical);
-    });
-
-    menu->addMenu(orientationMenu);
     menu->addSeparator();
     addConfigureAction(menu, false);
 }
