@@ -12121,7 +12121,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="387"/>
         <source>Open release page</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna utsläppssida</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="396"/>
@@ -16226,7 +16226,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="278"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Visning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="281"/>
@@ -16241,7 +16241,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="287"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>Inmatning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="290"/>
