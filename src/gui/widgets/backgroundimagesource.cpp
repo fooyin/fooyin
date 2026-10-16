@@ -108,6 +108,8 @@ BackgroundImageSource::BackgroundImageSource(CoverProvider* coverProvider, Playe
     });
 }
 
+BackgroundImageSource::~BackgroundImageSource() = default;
+
 void BackgroundImageSource::setConfig(const BackgroundConfig& config)
 {
     auto validated{config};

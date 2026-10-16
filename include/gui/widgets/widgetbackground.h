@@ -36,6 +36,7 @@ class FYGUI_EXPORT WidgetBackground : public QObject
 {
 public:
     explicit WidgetBackground(QWidget* viewport);
+    ~WidgetBackground() override;
 
     void setConfig(const BackgroundConfig& config);
     void setPixmap(const QPixmap& pixmap);

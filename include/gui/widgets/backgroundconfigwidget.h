@@ -34,6 +34,7 @@ class FYGUI_EXPORT BackgroundConfigWidget : public QWidget
 
 public:
     explicit BackgroundConfigWidget(QWidget* parent = nullptr);
+    ~BackgroundConfigWidget() override;
 
     [[nodiscard]] BackgroundConfig config() const;
     void setConfig(const BackgroundConfig& config);

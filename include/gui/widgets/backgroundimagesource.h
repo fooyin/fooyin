@@ -41,6 +41,7 @@ class FYGUI_EXPORT BackgroundImageSource : public QObject
 public:
     explicit BackgroundImageSource(CoverProvider* coverProvider, PlayerController* playerController,
                                    TrackSelectionController* selectionController, QObject* parent = nullptr);
+    ~BackgroundImageSource() override;
 
     void setConfig(const BackgroundConfig& config);
 

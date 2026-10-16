@@ -232,6 +232,8 @@ BackgroundConfigWidget::BackgroundConfigWidget(QWidget* parent)
     setConfig({});
 }
 
+BackgroundConfigWidget::~BackgroundConfigWidget() = default;
+
 BackgroundConfig BackgroundConfigWidget::config() const
 {
     return {

@@ -225,6 +225,8 @@ WidgetBackground::WidgetBackground(QWidget* viewport)
     p->m_viewport->installEventFilter(this);
 }
 
+WidgetBackground::~WidgetBackground() = default;
+
 void WidgetBackground::setConfig(const BackgroundConfig& config)
 {
     p->m_config = config;
