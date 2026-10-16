@@ -79,6 +79,8 @@ GlobalShortcutPortalBackend::GlobalShortcutPortalBackend(QObject* parent)
                 SLOT(shortcutActivated(QDBusObjectPath,QString,qulonglong,QVariantMap)));
     bus.connect(PortalService, PortalPath, PortalInterface, u"Deactivated"_s, this,
                 SLOT(shortcutDeactivated(QDBusObjectPath,QString,qulonglong,QVariantMap)));
+    bus.connect(PortalService, PortalPath, PortalInterface, u"ShortcutsChanged"_s, this,
+                SLOT(shortcutsChanged(QDBusObjectPath,Fooyin::GlobalHotkeys::PortalShortcutList)));
     // clang-format on
 }
 
@@ -164,6 +166,105 @@ void GlobalShortcutPortalBackend::configure()
                         QVariantMap{});
 }
 
+void GlobalShortcutPortalBackend::requestResponse(uint response, const QVariantMap& results)
+{
+    const RequestStage stage{m_requestStage};
+    endRequest();
+
+    if(response != 0) {
+        failBindings(response == 1 ? tr("Global shortcut registration was cancelled")
+                                   : tr("The Wayland portal rejected the global shortcuts"));
+        return;
+    }
+
+    if(stage == RequestStage::CreateSession) {
+        m_sessionPath = results.value(u"session_handle"_s).toString();
+
+        if(m_sessionPath.isEmpty()) {
+            failBindings(tr("The Wayland portal returned an invalid shortcut session"));
+            return;
+        }
+
+        QDBusConnection::sessionBus().connect(PortalService, m_sessionPath, PortalSessionInterface, u"Closed"_s, this,
+                                              SLOT(sessionClosed()));
+        bindShortcuts();
+        return;
+    }
+
+    if(stage != RequestStage::BindShortcuts) {
+        return;
+    }
+
+    const auto boundShortcuts = qdbus_cast<PortalShortcutList>(results.value(u"shortcuts"_s));
+    m_boundShortcutIds.clear();
+
+    for(const auto& shortcut : boundShortcuts) {
+        m_boundShortcutIds.emplace(shortcut.id);
+        if(const auto it = m_shortcutDescriptors.find(shortcut.id); it != m_shortcutDescriptors.end()) {
+            Q_EMIT shortcutDescriptionChanged(it->second.commandId,
+                                              shortcut.options.value(u"trigger_description"_s).toString());
+        }
+    }
+
+    for(const auto& [shortcutId, binding] : m_shortcutDescriptors) {
+        if(!m_boundShortcutIds.contains(shortcutId)) {
+            Q_EMIT registrationFailed(binding.commandId, binding.shortcut,
+                                      tr("The Wayland portal did not bind this shortcut"));
+        }
+    }
+
+    if(std::exchange(m_configurePending, false)) {
+        configure();
+    }
+}
+
+void GlobalShortcutPortalBackend::shortcutActivated(const QDBusObjectPath& sessionHandle, const QString& shortcutId,
+                                                    qulonglong /*timestamp*/, const QVariantMap& /*options*/)
+{
+    const auto binding = m_shortcutDescriptors.find(shortcutId);
+    if(sessionHandle.path() != m_sessionPath || !m_boundShortcutIds.contains(shortcutId)
+       || binding == m_shortcutDescriptors.cend()) {
+        return;
+    }
+
+    m_repeater.press(shortcutId, binding->second.commandId);
+}
+
+void GlobalShortcutPortalBackend::shortcutDeactivated(const QDBusObjectPath& sessionHandle, const QString& shortcutId,
+                                                      qulonglong /*timestamp*/, const QVariantMap& /*options*/)
+{
+    if(sessionHandle.path() == m_sessionPath) {
+        m_repeater.release(shortcutId);
+    }
+}
+
+void GlobalShortcutPortalBackend::shortcutsChanged(const QDBusObjectPath& sessionHandle,
+                                                   const PortalShortcutList& shortcuts)
+{
+    if(sessionHandle.path() != m_sessionPath) {
+        return;
+    }
+
+    for(const auto& shortcut : shortcuts) {
+        if(const auto it = m_shortcutDescriptors.find(shortcut.id); it != m_shortcutDescriptors.end()) {
+            m_repeater.release(shortcut.id);
+            Q_EMIT shortcutDescriptionChanged(it->second.commandId,
+                                              shortcut.options.value(u"trigger_description"_s).toString());
+        }
+    }
+}
+
+void GlobalShortcutPortalBackend::sessionClosed()
+{
+    m_repeater.clear();
+    m_sessionPath.clear();
+    m_boundShortcutIds.clear();
+
+    if(!m_bindings.empty()) {
+        failBindings(tr("The Wayland global shortcut session was closed"));
+    }
+}
+
 void GlobalShortcutPortalBackend::createSession()
 {
     const QString handleToken  = nextToken(u"fooyin_global_shortcuts"_s);
@@ -241,6 +342,10 @@ void GlobalShortcutPortalBackend::closeSession()
 {
     m_repeater.clear();
 
+    for(const auto& binding : m_bindings) {
+        Q_EMIT shortcutDescriptionChanged(binding.commandId, {});
+    }
+
     if(m_sessionPath.isEmpty()) {
         m_boundShortcutIds.clear();
         return;
@@ -270,85 +375,6 @@ void GlobalShortcutPortalBackend::failBindings(const QString& error)
 QString GlobalShortcutPortalBackend::nextToken(const QString& prefix)
 {
     return prefix + u'_' + QString::number(++m_token);
-}
-
-void GlobalShortcutPortalBackend::requestResponse(uint response, const QVariantMap& results)
-{
-    const RequestStage stage{m_requestStage};
-    endRequest();
-
-    if(response != 0) {
-        failBindings(response == 1 ? tr("Global shortcut registration was cancelled")
-                                   : tr("The Wayland portal rejected the global shortcuts"));
-        return;
-    }
-
-    if(stage == RequestStage::CreateSession) {
-        m_sessionPath = results.value(u"session_handle"_s).toString();
-
-        if(m_sessionPath.isEmpty()) {
-            failBindings(tr("The Wayland portal returned an invalid shortcut session"));
-            return;
-        }
-
-        QDBusConnection::sessionBus().connect(PortalService, m_sessionPath, PortalSessionInterface, u"Closed"_s, this,
-                                              SLOT(sessionClosed()));
-        bindShortcuts();
-        return;
-    }
-
-    if(stage != RequestStage::BindShortcuts) {
-        return;
-    }
-
-    const auto boundShortcuts = qdbus_cast<PortalShortcutList>(results.value(u"shortcuts"_s));
-    m_boundShortcutIds.clear();
-
-    for(const auto& shortcut : boundShortcuts) {
-        m_boundShortcutIds.emplace(shortcut.id);
-    }
-
-    for(const auto& [shortcutId, binding] : m_shortcutDescriptors) {
-        if(!m_boundShortcutIds.contains(shortcutId)) {
-            Q_EMIT registrationFailed(binding.commandId, binding.shortcut,
-                                      tr("The Wayland portal did not bind this shortcut"));
-        }
-    }
-
-    if(std::exchange(m_configurePending, false)) {
-        configure();
-    }
-}
-
-void GlobalShortcutPortalBackend::shortcutActivated(const QDBusObjectPath& sessionHandle, const QString& shortcutId,
-                                                    qulonglong /*timestamp*/, const QVariantMap& /*options*/)
-{
-    const auto binding = m_shortcutDescriptors.find(shortcutId);
-    if(sessionHandle.path() != m_sessionPath || !m_boundShortcutIds.contains(shortcutId)
-       || binding == m_shortcutDescriptors.cend()) {
-        return;
-    }
-
-    m_repeater.press(shortcutId, binding->second.commandId);
-}
-
-void GlobalShortcutPortalBackend::shortcutDeactivated(const QDBusObjectPath& sessionHandle, const QString& shortcutId,
-                                                      qulonglong /*timestamp*/, const QVariantMap& /*options*/)
-{
-    if(sessionHandle.path() == m_sessionPath) {
-        m_repeater.release(shortcutId);
-    }
-}
-
-void GlobalShortcutPortalBackend::sessionClosed()
-{
-    m_repeater.clear();
-    m_sessionPath.clear();
-    m_boundShortcutIds.clear();
-
-    if(!m_bindings.empty()) {
-        failBindings(tr("The Wayland global shortcut session was closed"));
-    }
 }
 } // namespace Fooyin::GlobalHotkeys
 

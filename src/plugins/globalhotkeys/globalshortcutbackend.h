@@ -64,6 +64,7 @@ public:
 
 Q_SIGNALS:
     void activated(const Fooyin::Id& commandId);
+    void shortcutDescriptionChanged(const Fooyin::Id& commandId, const QString& description);
     void registrationFailed(const Fooyin::Id& commandId, const QKeySequence& shortcut, const QString& error);
 };
 } // namespace Fooyin::GlobalHotkeys

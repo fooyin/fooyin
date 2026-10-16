@@ -61,6 +61,7 @@ public:
     ShortcutList m_defaultKeys;
     ShortcutList m_globalKeys;
     QString m_defaultText;
+    QString m_globalShortcutDescription;
     QStringList m_categories;
 
     bool m_active{false};
@@ -179,6 +180,13 @@ void Command::setGlobalShortcutRegistered(bool registered)
     }
 }
 
+void Command::setGlobalShortcutDescription(const QString& description)
+{
+    if(std::exchange(p->m_globalShortcutDescription, description) != description) {
+        Q_EMIT globalShortcutDescriptionChanged();
+    }
+}
+
 QString Command::stringWithShortcut(const QString& str) const
 {
     return Utils::appendShortcut(str, shortcut());
@@ -227,6 +235,11 @@ ShortcutList Command::globalShortcuts() const
 bool Command::isGlobalShortcutRegistered() const
 {
     return p->m_globalShortcutRegistered;
+}
+
+QString Command::globalShortcutDescription() const
+{
+    return p->m_globalShortcutDescription;
 }
 
 QKeySequence Command::shortcut() const

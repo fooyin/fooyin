@@ -175,7 +175,7 @@ ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
     , m_shortcutRowsLayout{new QVBoxLayout(m_shortcutRows)}
     , m_resetShortcut{new QPushButton(tr("Reset to default"), this)}
     , m_addShortcut{new QPushButton(Gui::iconFromTheme(Constants::Icons::Add), tr("Add shortcut"), this)}
-    , m_globalShortcut{new QCheckBox(tr("Global"), this)}
+    , m_globalShortcut{new QCheckBox(tr("Enable system shortcuts"), this)}
     , m_configureGlobalShortcuts{new QPushButton(tr("Configure global shortcuts…"), this)}
     , m_conflictLabel{new QLabel(this)}
     , m_reassignButton{new QPushButton(tr("Overwrite Shortcut"), this)}
@@ -191,7 +191,7 @@ ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
     m_shortcutTable->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     auto* layout = new QGridLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins({});
 
     layout->addWidget(m_filter, 0, 0);
     layout->addWidget(m_shortcutTable, 1, 0);
@@ -206,7 +206,7 @@ ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
     shortcutHeader->addWidget(shortcutLabel);
     shortcutHeader->addStretch(1);
 
-    m_shortcutRowsLayout->setContentsMargins(0, 0, 0, 0);
+    m_shortcutRowsLayout->setContentsMargins({});
 
     auto* shortcutActions = new QHBoxLayout();
     shortcutActions->addWidget(m_addShortcut);
@@ -214,6 +214,8 @@ ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
     shortcutActions->addWidget(m_configureGlobalShortcuts);
     shortcutActions->addStretch(1);
     shortcutActions->addWidget(m_resetShortcut);
+
+    m_globalShortcut->setToolTip(tr("Key combinations are managed in your system settings."));
 
     groupLayout->addLayout(shortcutHeader);
     groupLayout->addWidget(m_shortcutRows);

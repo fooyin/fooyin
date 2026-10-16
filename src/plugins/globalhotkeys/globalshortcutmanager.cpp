@@ -88,6 +88,12 @@ GlobalShortcutManager::GlobalShortcutManager(ActionManager* actionManager, QObje
     , m_backend{createGlobalShortcutBackend()}
 {
     QObject::connect(m_backend.get(), &GlobalShortcutBackend::activated, this, &GlobalShortcutManager::activate);
+    QObject::connect(m_backend.get(), &GlobalShortcutBackend::shortcutDescriptionChanged, this,
+                     [this](const Id& commandId, const QString& description) {
+                         if(const auto it = m_commands.find(commandId); it != m_commands.end() && it->second) {
+                             it->second->setGlobalShortcutDescription(description);
+                         }
+                     });
     QObject::connect(m_backend.get(), &GlobalShortcutBackend::registrationFailed, this,
                      &GlobalShortcutManager::registrationFailure);
 }

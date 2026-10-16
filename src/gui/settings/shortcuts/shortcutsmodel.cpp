@@ -34,7 +34,8 @@ ShortcutBindingList removeEmptyBindings(const ShortcutBindingList& bindings)
     return Utils::filter(bindings, [](const Fooyin::ShortcutBinding& binding) { return !binding.shortcut.isEmpty(); });
 }
 
-QString bindingsToString(const ShortcutBindingList& bindings, bool globalShortcutRegistered)
+QString bindingsToString(const ShortcutBindingList& bindings, bool globalShortcutRegistered,
+                         const QString& globalShortcutDescription)
 {
     QStringList keys;
 
@@ -47,7 +48,10 @@ QString bindingsToString(const ShortcutBindingList& bindings, bool globalShortcu
     });
 
     if(globalShortcutRegistered) {
-        keys.append(ShortcutsModel::tr("Global"));
+        //: %1 is the key combination of a shortcut
+        keys.append(ShortcutsModel::tr("System: %1")
+                        .arg(globalShortcutDescription.isEmpty() ? ShortcutsModel::tr("None assigned")
+                                                                 : globalShortcutDescription));
     }
 
     return keys.join(" | "_L1);
@@ -120,7 +124,8 @@ ShortcutItem::ShortcutItem(QString title, Command* command, ShortcutItem* parent
             }
         }
 
-        m_shortcut = bindingsToString(m_bindings, m_globalShortcutRegistered);
+        m_shortcut = bindingsToString(m_bindings, m_globalShortcutRegistered,
+                                      m_command ? m_command->globalShortcutDescription() : QString{});
     }
 }
 
@@ -171,13 +176,15 @@ bool ShortcutItem::isCategory() const
 void ShortcutItem::updateBindings(const ShortcutBindingList& bindings)
 {
     m_bindings = bindings;
-    m_shortcut = bindingsToString(m_bindings, m_globalShortcutRegistered);
+    m_shortcut = bindingsToString(m_bindings, m_globalShortcutRegistered,
+                                  m_command ? m_command->globalShortcutDescription() : QString{});
 }
 
 void ShortcutItem::updateGlobalShortcutRegistration(bool registered)
 {
     m_globalShortcutRegistered = registered;
-    m_shortcut                 = bindingsToString(m_bindings, m_globalShortcutRegistered);
+    m_shortcut                 = bindingsToString(m_bindings, m_globalShortcutRegistered,
+                                                  m_command ? m_command->globalShortcutDescription() : QString{});
 }
 
 ShortcutsModel::ShortcutsModel(QObject* parent)
@@ -237,6 +244,15 @@ void ShortcutsModel::populate(ActionManager* actionManager)
             QObject::connect(command, &Command::shortcutChanged, this, synchronise, Qt::QueuedConnection));
         m_commandConnections.push_back(
             QObject::connect(command, &Command::globalShortcutsChanged, this, synchronise, Qt::QueuedConnection));
+        m_commandConnections.push_back(QObject::connect(
+            command, &Command::globalShortcutDescriptionChanged, this,
+            [this, commandGuard] {
+                if(auto* item = itemForCommand(commandGuard)) {
+                    item->updateBindings(item->bindings());
+                    emitDataChanged({commandGuard->id()});
+                }
+            },
+            Qt::QueuedConnection));
         m_commandConnections.push_back(QObject::connect(command, &Command::globalShortcutRegistrationChanged, this,
                                                         synchronise, Qt::QueuedConnection));
     }
