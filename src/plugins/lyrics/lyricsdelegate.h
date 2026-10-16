@@ -22,9 +22,10 @@
 #include <QStyledItemDelegate>
 
 #include <QFont>
-#include <QRect>
-#include <QString>
+#include <QRectF>
+#include <QTextLayout>
 
+#include <memory>
 #include <vector>
 
 namespace Fooyin {
@@ -45,26 +46,35 @@ public:
 
     void clearLayoutCache();
 
+    struct TextRange
+    {
+        int start{0};
+        int length{0};
+    };
+
     struct LaidOutChunk
     {
-        QRect rect;
-        int baseline{0};
+        QRectF rect;
         int blockIndex{0};
-        QString text;
+        bool rightToLeft{false};
     };
 
     struct CachedLayout
     {
         int row{-1};
         QFont font;
+        QColor baseColour;
         int width{0};
-        std::vector<LaidOutChunk> chunks;
+        std::unique_ptr<QTextLayout> textLayout;
+        std::vector<TextRange> words;
+        mutable std::vector<LaidOutChunk> chunks;
         int totalHeight{0};
         uint64_t lastUsed{0};
     };
 
 private:
-    [[nodiscard]] const CachedLayout& layoutForIndex(const QModelIndex& index, int width, const QFont& font) const;
+    [[nodiscard]] const CachedLayout& layoutForIndex(const QModelIndex& index, int width, const QFont& font,
+                                                     const QColor& baseColour) const;
 
     mutable std::vector<CachedLayout> m_layoutCache;
     mutable uint64_t m_layoutCacheUseCounter{0};
