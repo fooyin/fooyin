@@ -34,7 +34,6 @@
 #include <QKeyEvent>
 #include <QLineEdit>
 #include <QMouseEvent>
-#include <QPaintEvent>
 #include <QPainter>
 #include <QResizeEvent>
 #include <QScopedValueRollback>
@@ -504,7 +503,6 @@ void PlaylistView::paintEvent(QPaintEvent* event)
     m_stickyArtworkRegion = QRegion{};
 
     QPainter painter{viewport()};
-    painter.setClipRegion(event->region());
 
     const auto drawCentreText = [this, &painter](const QString& text) {
         drawBackground(painter);
@@ -526,7 +524,6 @@ void PlaylistView::paintEvent(QPaintEvent* event)
                 painter.end();
                 ExpandedTreeView::paintEvent(event);
                 painter.begin(viewport());
-                painter.setClipRegion(event->region());
                 drawStickyHeader(painter);
             }
         }
