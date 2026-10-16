@@ -136,6 +136,7 @@ public:
 
         bool isActive{false};
         bool selectionRestorePending{false};
+        FilterScrollPolicy scrollPolicy{FilterScrollPolicy::Preserve};
         uint64_t revision{0};
         uint64_t searchRevision{0};
     };
@@ -174,15 +175,16 @@ public:
     void updateWidgetSelection(FilterStageState& stage) const;
     static const FilterRowList& rowsForSelection(const FilterStageState& stage);
     static void markStagesCurrent(FilterGroupState& group, int lastStageIndex);
+    static void requestScrollReset(FilterGroupState& group, int firstStageIndex);
     void handleSelectionChanged(FilterWidget* filter, const std::vector<RowKey>& keys);
     void handleSearchChanged(FilterWidget* filter, const QString& search);
 
     void syncStages(FilterGroupState& group);
     void rebuildWidgetLocations(const FilterGroupState& group);
     void sortGroupedFilters(FilterGroupState& group);
-    void scheduleRecompute(const Id& groupId);
+    void scheduleRecompute(const Id& groupId, FilterScrollPolicy scrollPolicy = FilterScrollPolicy::Preserve);
     void scheduleAllRecomputes();
-    void schedulePlaylistRecomputes();
+    void schedulePlaylistRecomputes(FilterScrollPolicy scrollPolicy = FilterScrollPolicy::Preserve);
     [[nodiscard]] bool usesCurrentPlaylist(const FilterGroupState& group) const;
     [[nodiscard]] TrackList sourceTracks(const FilterGroupState& group) const;
     void publishCurrentPlaylistSelection(const FilterGroupState& group) const;
@@ -531,6 +533,14 @@ void FilterControllerPrivate::markStagesCurrent(FilterGroupState& group, int las
     }
 }
 
+void FilterControllerPrivate::requestScrollReset(FilterGroupState& group, int firstStageIndex)
+{
+    // Keep requests until publication so queued refreshes and async work can't discard them
+    for(auto& stage : group.stages | std::views::drop(firstStageIndex)) {
+        stage.scrollPolicy = FilterScrollPolicy::ResetIfChanged;
+    }
+}
+
 void FilterControllerPrivate::handleSelectionChanged(FilterWidget* filter, const std::vector<RowKey>& keys)
 {
     const auto location = widgetLocation(filter);
@@ -580,6 +590,7 @@ void FilterControllerPrivate::handleSelectionChanged(FilterWidget* filter, const
     const TrackList nextTracks = stage->isActive ? stage->selectedTracks : stage->inputTracks;
     const bool nextConstrained = hasPriorActive || stage->isActive;
 
+    requestScrollReset(*group, stageIndex + 1);
     recomputeStage(group->id, stageIndex + 1, group->revision, nextTracks, nextConstrained);
 }
 
@@ -607,9 +618,12 @@ void FilterControllerPrivate::handleSearchChanged(FilterWidget* filter, const QS
         markStagesCurrent(*group, location->stageIndex);
 
         publishStage(group->id, location->stageIndex);
+        requestScrollReset(*group, location->stageIndex);
         scheduleRecompute(group->id);
         return;
     }
+
+    stage->scrollPolicy = FilterScrollPolicy::ResetIfChanged;
 
     if(group->recomputePending) {
         return;
@@ -677,7 +691,7 @@ void FilterControllerPrivate::sortGroupedFilters(FilterGroupState& group)
     });
 }
 
-void FilterControllerPrivate::scheduleRecompute(const Id& groupId)
+void FilterControllerPrivate::scheduleRecompute(const Id& groupId, FilterScrollPolicy scrollPolicy)
 {
     if(!m_styleProvider->isResolved()) {
         return;
@@ -688,6 +702,9 @@ void FilterControllerPrivate::scheduleRecompute(const Id& groupId)
     }
 
     auto& group = m_groups.at(groupId);
+    if(scrollPolicy == FilterScrollPolicy::ResetIfChanged) {
+        requestScrollReset(group, 0);
+    }
     if(std::exchange(group.recomputePending, true)) {
         return;
     }
@@ -713,11 +730,11 @@ void FilterControllerPrivate::scheduleAllRecomputes()
     }
 }
 
-void FilterControllerPrivate::schedulePlaylistRecomputes()
+void FilterControllerPrivate::schedulePlaylistRecomputes(FilterScrollPolicy scrollPolicy)
 {
     for(const auto& [groupId, group] : m_groups) {
         if(usesCurrentPlaylist(group)) {
-            scheduleRecompute(groupId);
+            scheduleRecompute(groupId, scrollPolicy);
         }
     }
 }
@@ -778,7 +795,11 @@ void FilterControllerPrivate::handleLibraryTracksPatched(const TrackList& change
     }
 
     for(const auto& groupId : m_groups | std::views::keys) {
-        if(usesCurrentPlaylist(m_groups.at(groupId))) {
+        const auto& group = m_groups.at(groupId);
+        if(usesCurrentPlaylist(group) || group.recomputePending
+           || std::ranges::any_of(group.stages, [](const FilterStageState& stage) {
+                  return stage.scrollPolicy == FilterScrollPolicy::ResetIfChanged;
+              })) {
             scheduleRecompute(groupId);
             continue;
         }
@@ -1008,6 +1029,9 @@ void FilterControllerPrivate::refreshStageSearch(const Id& groupId, int stageInd
                           = currentStage.isActive ? currentStage.selectedTracks : currentStage.inputTracks;
                       const bool nextConstrained = hasPriorActive || currentStage.isActive;
 
+                      if(currentStage.scrollPolicy == FilterScrollPolicy::ResetIfChanged) {
+                          requestScrollReset(currentGroup, stageIndex + 1);
+                      }
                       recomputeStage(groupId, stageIndex + 1, revision, nextTracks, nextConstrained);
                   }
 
@@ -1036,6 +1060,7 @@ void FilterControllerPrivate::publishStage(const Id& groupId, int stageIndex)
     viewState.selectedKeys            = stage.selectedKeys;
     viewState.searchText              = stage.searchText;
     viewState.selectionRestorePending = stage.selectionRestorePending;
+    viewState.scrollPolicy            = std::exchange(stage.scrollPolicy, FilterScrollPolicy::Preserve);
 
     stage.widget->setViewState(viewState);
     updateWidgetSelection(stage);
@@ -1054,7 +1079,7 @@ void FilterControllerPrivate::handleFilterUpdated(FilterWidget* widget)
                 widget->setIndex(static_cast<int>(group.filters.size()) - 1);
             }
             syncStages(group);
-            scheduleRecompute(newGroupId);
+            scheduleRecompute(newGroupId, FilterScrollPolicy::ResetIfChanged);
         }
         return;
     }
@@ -1063,9 +1088,9 @@ void FilterControllerPrivate::handleFilterUpdated(FilterWidget* widget)
     attachWidget(widget, newPublicGroup);
 
     if(removedGroupId) {
-        scheduleRecompute(removedGroupId.value());
+        scheduleRecompute(removedGroupId.value(), FilterScrollPolicy::ResetIfChanged);
     }
-    scheduleRecompute(newGroupId);
+    scheduleRecompute(newGroupId, FilterScrollPolicy::ResetIfChanged);
 }
 
 void FilterControllerPrivate::handleConfigChanged(FilterWidget* widget)
@@ -1103,7 +1128,7 @@ void FilterControllerPrivate::handleConfigChanged(FilterWidget* widget)
         m_selectPlaylistMatches = false;
     }
 
-    scheduleRecompute(*groupId);
+    scheduleRecompute(*groupId, FilterScrollPolicy::ResetIfChanged);
 }
 
 void FilterControllerPrivate::attachWidget(FilterWidget* widget, const Id& publicGroupId)
@@ -1333,7 +1358,7 @@ FilterController::FilterController(ActionManager* actionManager, const CorePlugi
         }
     });
     QObject::connect(p->m_playlistController, &CurrentPlaylistController::currentPlaylistChanged, this,
-                     [this]() { p->schedulePlaylistRecomputes(); });
+                     [this]() { p->schedulePlaylistRecomputes(FilterScrollPolicy::ResetIfChanged); });
 
     const auto currentPlaylistChanged = [this](const Playlist* playlist) {
         if(p->m_playlistController && playlist == p->m_playlistController->currentPlaylist()) {
@@ -1393,7 +1418,7 @@ FilterWidget* FilterController::createFilter()
     p->updateFilterPlaylistActions(widget);
 
     if(const auto group = p->widgetGroupId(widget)) {
-        p->scheduleRecompute(group.value());
+        p->scheduleRecompute(group.value(), FilterScrollPolicy::ResetIfChanged);
     }
 
     return widget;
@@ -1485,7 +1510,7 @@ void FilterController::addFilterToGroup(FilterWidget* widget, const Id& groupId)
         widget->setGroup(groupId);
     }
     if(const auto group = p->widgetGroupId(widget)) {
-        p->scheduleRecompute(group.value());
+        p->scheduleRecompute(group.value(), FilterScrollPolicy::ResetIfChanged);
     }
 }
 
@@ -1497,7 +1522,7 @@ bool FilterController::removeFilter(FilterWidget* widget)
     }
 
     if(p->m_groups.contains(groupId.value())) {
-        p->scheduleRecompute(groupId.value());
+        p->scheduleRecompute(groupId.value(), FilterScrollPolicy::ResetIfChanged);
     }
     return true;
 }

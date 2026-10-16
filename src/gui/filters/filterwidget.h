@@ -58,6 +58,12 @@ enum class FilterSource : uint8_t
     CurrentPlaylist,
 };
 
+enum class FilterScrollPolicy : uint8_t
+{
+    Preserve = 0,
+    ResetIfChanged,
+};
+
 class FYGUI_EXPORT FilterWidget : public FyWidget
 {
     Q_OBJECT
@@ -69,6 +75,7 @@ public:
         std::vector<RowKey> selectedKeys;
         QString searchText;
         bool selectionRestorePending{false};
+        FilterScrollPolicy scrollPolicy{FilterScrollPolicy::Preserve};
     };
 
     explicit FilterWidget(ActionManager* actionManager, FilterColumnRegistry* columnRegistry, MusicLibrary* library,

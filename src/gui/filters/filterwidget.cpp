@@ -301,7 +301,7 @@ void FilterWidget::setViewState(const FilterViewState& state)
 
     const bool rowsChanged = m_model->setRows(m_columns, state.rows);
 
-    if(rowsChanged && m_pendingScrollPosition < 0) {
+    if(state.scrollPolicy == FilterScrollPolicy::ResetIfChanged && rowsChanged && m_pendingScrollPosition < 0) {
         m_view->scrollToTop();
     }
 
