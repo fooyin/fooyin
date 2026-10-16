@@ -322,7 +322,11 @@ void LyricsWidget::updateLyrics(const Track& track, bool force)
 
     m_lyricsView->setDisplayString(noLyricsDisplayText(track));
 
-    if(!sameTrack && m_settings->fileValue(Settings::AutoSearch, false).toBool()) {
+    const QString skipScript
+        = m_settings->fileValue(Settings::AutoSearchSkip, Defaults::autoSearchSkipScript()).toString();
+    const bool autoSearch = !sameTrack && m_settings->fileValue(Settings::AutoSearch, false).toBool()
+                         && m_parser.evaluate(skipScript, track).isEmpty();
+    if(autoSearch) {
         m_lyricsFinder->findLyrics(track);
     }
     else {

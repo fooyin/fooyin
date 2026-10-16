@@ -38,6 +38,11 @@ QStringList searchTags()
     return values;
 }
 
+QString autoSearchSkipScript()
+{
+    return u"$if($stristr(%title%,instrumental),skip,)$if($stristr(%genre%,instrumental),skip,)$if($stristr(%genre%,classical),skip,)"_s;
+}
+
 QMargins margins()
 {
     return {20, 20, 20, 20};
