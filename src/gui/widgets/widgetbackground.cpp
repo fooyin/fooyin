@@ -65,7 +65,6 @@ public:
     [[nodiscard]] QPoint backgroundPixmapPosition(const QSize& pixmapSize) const;
     void drawBackgroundPixmap(QPainter& painter, const QPixmap& pixmap);
 
-    WidgetBackground* m_self;
     QWidget* m_viewport;
     BackgroundConfig m_config;
     PixmapFadeController* m_bgFadeController;
@@ -75,8 +74,7 @@ public:
 };
 
 WidgetBackgroundPrivate::WidgetBackgroundPrivate(WidgetBackground* self, QWidget* viewport)
-    : m_self{self}
-    , m_viewport{viewport}
+    : m_viewport{viewport}
     , m_bgFadeController{new PixmapFadeController(self)}
 {
     m_bgFadeController->setUpdateCallback([this] { m_viewport->update(); });
@@ -240,9 +238,8 @@ void WidgetBackground::setConfig(const BackgroundConfig& config)
 
 void WidgetBackground::setPixmap(const QPixmap& pixmap)
 {
-    p->m_bgFadeController->setPixmap(pixmap);
     p->invalidateScaledBackground();
-    p->m_viewport->update();
+    p->m_bgFadeController->setPixmap(pixmap);
 }
 
 bool WidgetBackground::hasImage() const

@@ -405,7 +405,8 @@ void Widgets::registerWidgets()
         u"ScriptDisplay"_s,
         [this]() {
             return new ScriptDisplay(m_core->playerController(), m_core->playlistHandler(), m_gui->trackSelection(),
-                                     m_scriptCommandHandler, m_gui->actionManager(), m_settings, m_window);
+                                     m_coverProvider, m_scriptCommandHandler, m_gui->actionManager(), m_settings,
+                                     m_window);
         },
         tr("Script Display"));
 

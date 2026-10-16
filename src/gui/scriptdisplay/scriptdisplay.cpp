@@ -35,8 +35,10 @@
 #include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/backgroundimagesource.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/scriptlineedit.h>
+#include <gui/widgets/widgetbackground.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
@@ -52,6 +54,7 @@
 #include <QJsonObject>
 #include <QLoggingCategory>
 #include <QMenu>
+#include <QPainter>
 #include <QPalette>
 #include <QProcess>
 #include <QScrollBar>
@@ -67,6 +70,7 @@ using namespace Qt::StringLiterals;
 
 constexpr auto ScriptKey              = "TextWidget/Script";
 constexpr auto FontKey                = "TextWidget/Font";
+constexpr auto BackgroundKey          = "TextWidget/Background";
 constexpr auto BackgroundColourKey    = "TextWidget/BackgroundColour";
 constexpr auto ForegroundColourKey    = "TextWidget/ForegroundColour";
 constexpr auto LinkColourKey          = "TextWidget/LinkColour";
@@ -118,8 +122,9 @@ public:
 };
 
 ScriptDisplay::ScriptDisplay(PlayerController* playerController, PlaylistHandler* playlistHandler,
-                             TrackSelectionController* trackSelection, ScriptCommandHandler* commandHandler,
-                             ActionManager* actionManager, SettingsManager* settings, QWidget* parent)
+                             TrackSelectionController* trackSelection, CoverProvider* coverProvider,
+                             ScriptCommandHandler* commandHandler, ActionManager* actionManager,
+                             SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerController{playerController}
     , m_playlistHandler{playlistHandler}
@@ -127,6 +132,8 @@ ScriptDisplay::ScriptDisplay(PlayerController* playerController, PlaylistHandler
     , m_commandHandler{commandHandler}
     , m_actionManager{actionManager}
     , m_settings{settings}
+    , m_backgroundSource{new BackgroundImageSource(coverProvider, playerController, trackSelection, this)}
+    , m_background{new WidgetBackground(this)}
     , m_layout{new QHBoxLayout(this)}
     , m_text{new TextBrowser(this)}
     , m_context{new WidgetContext(this, Context{Id{"Fooyin.Context.ScriptDisplay."}.append(id())}, this)}
@@ -151,6 +158,9 @@ ScriptDisplay::ScriptDisplay(PlayerController* playerController, PlaylistHandler
     m_text->setContextMenuPolicy(Qt::NoContextMenu);
     m_text->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     m_text->document()->setDocumentMargin(0);
+
+    QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_background,
+                     &WidgetBackground::setPixmap);
 
     applyConfig(defaultConfig());
 
@@ -198,6 +208,7 @@ QString ScriptDisplay::layoutName() const
 ScriptDisplay::ConfigData ScriptDisplay::defaultConfig() const
 {
     auto config{factoryConfig()};
+    config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(BackgroundKey).toMap()));
 
     config.script              = m_settings->fileValue(ScriptKey, config.script).toString();
     config.font                = m_settings->fileValue(FontKey, config.font).toString();
@@ -250,6 +261,11 @@ void ScriptDisplay::applyConfig(const ConfigData& config)
     m_config.verticalAlignment   = config.verticalAlignment;
     m_config.showScrollBar       = config.showScrollBar;
     m_config.trackPreference     = config.trackPreference;
+    m_config.background          = config.background;
+    m_config.background.normalise();
+
+    m_background->setConfig(m_config.background);
+    m_backgroundSource->setConfig(m_config.background);
 
     applyAppearance();
     updateText();
@@ -269,6 +285,10 @@ void ScriptDisplay::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(ScrollBarKey, config.showScrollBar);
     m_settings->fileSet(TrackPreferenceKey, static_cast<int>(config.trackPreference));
     m_settings->fileRemove(ShowStoppedTrackKey);
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    m_settings->fileSet(BackgroundKey, background.toVariantMap());
 }
 
 void ScriptDisplay::clearSavedDefaults() const
@@ -283,6 +303,7 @@ void ScriptDisplay::clearSavedDefaults() const
     m_settings->fileRemove(ScrollBarKey);
     m_settings->fileRemove(ShowStoppedTrackKey);
     m_settings->fileRemove(TrackPreferenceKey);
+    m_settings->fileRemove(BackgroundKey);
 }
 
 void ScriptDisplay::saveLayoutData(QJsonObject& layout)
@@ -383,9 +404,16 @@ void ScriptDisplay::resizeEvent(QResizeEvent* event)
     updateViewportAlignment();
 }
 
+void ScriptDisplay::paintEvent(QPaintEvent*)
+{
+    QPainter painter{this};
+    m_background->draw(painter);
+}
+
 ScriptDisplay::ConfigData ScriptDisplay::configFromLayout(const QJsonObject& layout) const
 {
     ConfigData config{defaultConfig()};
+    config.background.loadLayout(layout);
 
     config.script              = layout.value("Script"_L1).toString(config.script);
     config.font                = layout.value("Font"_L1).toString(config.font);
@@ -410,6 +438,7 @@ ScriptDisplay::ConfigData ScriptDisplay::configFromLayout(const QJsonObject& lay
 
 void ScriptDisplay::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
 {
+    config.background.saveLayout(layout);
     layout["Script"_L1]              = config.script;
     layout["Font"_L1]                = config.font;
     layout["BackgroundColour"_L1]    = normaliseColour(config.bgColour);
@@ -431,25 +460,28 @@ void ScriptDisplay::applyAppearance()
         m_text->setFont(fontFromString(m_config.font));
     }
 
-    if(m_config.bgColour.isEmpty()) {
-        setAutoFillBackground(false);
-        setPalette(QPalette{});
-        QPalette browserPalette = m_text->palette();
-        browserPalette.setBrush(QPalette::Base, Qt::NoBrush);
-        m_text->setPalette(browserPalette);
-        m_text->viewport()->setAutoFillBackground(false);
-    }
-    else {
-        QPalette pal = palette();
+    const bool customBackground = !m_config.bgColour.isEmpty();
+    if(customBackground) {
+        QPalette pal{palette()};
         pal.setColor(QPalette::Window, QColor{m_config.bgColour});
         setPalette(pal);
-        setAutoFillBackground(true);
-
-        QPalette browserPalette = m_text->palette();
-        browserPalette.setColor(QPalette::Base, QColor{m_config.bgColour});
-        m_text->setPalette(browserPalette);
-        m_text->viewport()->setAutoFillBackground(true);
     }
+    else {
+        setPalette(QPalette{});
+    }
+    setAutoFillBackground(customBackground);
+
+    const bool fillBrowserBackground
+        = customBackground && m_config.background.imageMode == static_cast<int>(BackgroundImageMode::None);
+    QPalette browserPalette{m_text->palette()};
+    if(fillBrowserBackground) {
+        browserPalette.setColor(QPalette::Base, QColor{m_config.bgColour});
+    }
+    else {
+        browserPalette.setBrush(QPalette::Base, Qt::NoBrush);
+    }
+    m_text->setPalette(browserPalette);
+    m_text->viewport()->setAutoFillBackground(fillBrowserBackground);
 
     m_text->show();
     m_text->setVerticalScrollBarPolicy(m_config.showScrollBar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);

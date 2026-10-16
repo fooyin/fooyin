@@ -19,9 +19,10 @@
 
 #include "scriptdisplayconfigdialog.h"
 
-#include "gui/widgets/colourbutton.h"
-#include "gui/widgets/fontbutton.h"
-#include "gui/widgets/scriptlineedit.h"
+#include <gui/widgets/backgroundconfigwidget.h>
+#include <gui/widgets/colourbutton.h>
+#include <gui/widgets/fontbutton.h>
+#include <gui/widgets/scriptlineedit.h>
 
 #include <QComboBox>
 #include <QGridLayout>
@@ -61,6 +62,7 @@ ScriptDisplayConfigDialog::ScriptDisplayConfigDialog(ScriptDisplay* widget, QWid
     , m_tabs{new QTabWidget(this)}
     , m_formatTab{new QWidget(this)}
     , m_styleTab{new QWidget(this)}
+    , m_background{new BackgroundConfigWidget(this)}
     , m_horizontalAlignment{new QComboBox(this)}
     , m_verticalAlignment{new QComboBox(this)}
     , m_font{new FontButton(tr("Default") + u":"_s, true, this)}
@@ -75,6 +77,7 @@ ScriptDisplayConfigDialog::ScriptDisplayConfigDialog(ScriptDisplay* widget, QWid
     m_tabs->setDocumentMode(true);
     m_tabs->addTab(m_formatTab, tr("Format"));
     m_tabs->addTab(m_styleTab, tr("Appearance"));
+    m_tabs->addTab(m_background, tr("Background"));
 
     m_horizontalAlignment->addItem(tr("Left"), Qt::AlignLeft);
     m_horizontalAlignment->addItem(tr("Centre"), Qt::AlignHCenter);
@@ -157,11 +160,13 @@ ScriptDisplay::ConfigData ScriptDisplayConfigDialog::config() const
         .verticalAlignment   = m_verticalAlignment->currentData().toInt(),
         .showScrollBar       = widget()->currentConfig().showScrollBar,
         .trackPreference     = static_cast<TrackDisplayPreference>(m_trackPreference->currentData().toInt()),
+        .background          = m_background->config(),
     };
 }
 
 void ScriptDisplayConfigDialog::setConfig(const ScriptDisplay::ConfigData& config)
 {
+    m_background->setConfig(config.background);
     m_script->setText(config.script);
     m_trackPreference->setCurrentIndex(m_trackPreference->findData(static_cast<int>(config.trackPreference)));
 
@@ -193,6 +198,6 @@ void ScriptDisplayConfigDialog::mergeExternalConfig(const ScriptDisplay::ConfigD
                         &ScriptDisplay::ConfigData::bgColour, &ScriptDisplay::ConfigData::fgColour,
                         &ScriptDisplay::ConfigData::linkColour, &ScriptDisplay::ConfigData::horizontalAlignment,
                         &ScriptDisplay::ConfigData::verticalAlignment, &ScriptDisplay::ConfigData::showScrollBar,
-                        &ScriptDisplay::ConfigData::trackPreference);
+                        &ScriptDisplay::ConfigData::trackPreference, &ScriptDisplay::ConfigData::background);
 }
 } // namespace Fooyin
