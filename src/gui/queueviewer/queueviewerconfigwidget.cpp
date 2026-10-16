@@ -19,6 +19,7 @@
 
 #include "queueviewerconfigwidget.h"
 
+#include <gui/widgets/backgroundconfigwidget.h>
 #include <gui/widgets/scriptlineedit.h>
 
 #include <QButtonGroup>
@@ -28,12 +29,14 @@
 #include <QLabel>
 #include <QRadioButton>
 #include <QSpinBox>
+#include <QTabWidget>
 
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 QueueViewerConfigDialog::QueueViewerConfigDialog(QueueViewer* queueViewer, bool showDisplayMode, QWidget* parent)
     : WidgetConfigDialog{queueViewer, tr("Queue Viewer Settings"), parent}
+    , m_background{new BackgroundConfigWidget(this)}
     , m_displayScript{new ScriptTextEdit(this)}
     , m_displayModeLabel{new QLabel(tr("Queue view") + u":"_s, this)}
     , m_playingTracksMode{new QRadioButton(tr("Playing Tracks"), this)}
@@ -63,21 +66,22 @@ QueueViewerConfigDialog::QueueViewerConfigDialog(QueueViewer* queueViewer, bool 
                                   this);
     scriptHint->setWordWrap(true);
 
-    auto* general       = new QGroupBox(tr("General"), this);
-    auto* generalLayout = new QGridLayout(general);
+    auto* generalPage   = new QWidget(this);
+    auto* generalLayout = new QGridLayout(generalPage);
 
     int row{0};
     generalLayout->addWidget(m_displayModeLabel, row, 0);
     generalLayout->addWidget(m_playingTracksMode, row, 1);
     generalLayout->addWidget(m_upcomingTracksMode, row++, 2);
     generalLayout->addWidget(new QLabel(tr("Display script") + u":"_s, this), row, 0);
+    generalLayout->setRowStretch(row, 1);
     generalLayout->addWidget(m_displayScript, row++, 1, 1, 2);
     generalLayout->addWidget(rightHint, row++, 1, 1, 3);
     generalLayout->addWidget(scriptHint, row++, 1, 1, 3);
     generalLayout->setColumnStretch(2, 1);
 
-    auto* appearance       = new QGroupBox(tr("Appearance"), this);
-    auto* appearanceLayout = new QGridLayout(appearance);
+    auto* appearancePage   = new QWidget(this);
+    auto* appearanceLayout = new QGridLayout(appearancePage);
 
     m_showIcon->setCheckable(true);
 
@@ -113,12 +117,13 @@ QueueViewerConfigDialog::QueueViewerConfigDialog(QueueViewer* queueViewer, bool 
     appearanceLayout->addWidget(m_altRowColours, row++, 0);
     appearanceLayout->addWidget(m_showCurrent, row++, 0);
     appearanceLayout->addWidget(m_showIcon, row++, 0);
+    appearanceLayout->setRowStretch(row, 1);
 
-    auto* layout = contentLayout();
-    layout->addWidget(general, 0, 0);
-    layout->addWidget(appearance, 1, 0);
-    layout->setColumnStretch(0, 1);
-    layout->setRowStretch(2, 1);
+    auto* tabs = new QTabWidget(this);
+    tabs->addTab(generalPage, tr("General"));
+    tabs->addTab(appearancePage, tr("Appearance"));
+    tabs->addTab(m_background, tr("Background"));
+    contentLayout()->addWidget(tabs);
 
     if(queueViewer->isWindowWidget()) {
         m_headers->setChecked(false);
@@ -132,6 +137,7 @@ QueueViewerConfigDialog::QueueViewerConfigDialog(QueueViewer* queueViewer, bool 
 
 void QueueViewerConfigDialog::setConfig(const QueueViewer::ConfigData& config)
 {
+    m_background->setConfig(config.background);
     m_displayScript->setText(config.displayScript);
     m_playingTracksMode->setChecked(config.displayMode == QueueViewer::DisplayMode::PlayingTracks);
     m_upcomingTracksMode->setChecked(config.displayMode == QueueViewer::DisplayMode::UpcomingTracks);
@@ -158,6 +164,7 @@ QueueViewer::ConfigData QueueViewerConfigDialog::config() const
         .alternatingRows     = m_altRowColours->isChecked(),
         .displayMode         = m_upcomingTracksMode->isChecked() ? QueueViewer::DisplayMode::UpcomingTracks
                                                                  : QueueViewer::DisplayMode::PlayingTracks,
+        .background          = m_background->config(),
     };
 }
 
@@ -168,6 +175,7 @@ void QueueViewerConfigDialog::mergeExternalConfig(const QueueViewer::ConfigData&
                         &QueueViewer::ConfigData::showCurrent, &QueueViewer::ConfigData::showIcon,
                         &QueueViewer::ConfigData::iconSize, &QueueViewer::ConfigData::artworkCornerRadius,
                         &QueueViewer::ConfigData::showHeader, &QueueViewer::ConfigData::showScrollBar,
-                        &QueueViewer::ConfigData::alternatingRows, &QueueViewer::ConfigData::displayMode);
+                        &QueueViewer::ConfigData::alternatingRows, &QueueViewer::ConfigData::displayMode,
+                        &QueueViewer::ConfigData::background);
 }
 } // namespace Fooyin

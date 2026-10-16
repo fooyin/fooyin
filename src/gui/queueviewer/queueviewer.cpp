@@ -34,6 +34,7 @@
 #include <core/player/playercontroller.h>
 #include <gui/configdialog.h>
 #include <gui/contextmenuutils.h>
+#include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/guiutils.h>
@@ -42,6 +43,7 @@
 #include <gui/scripting/richtextutils.h>
 #include <gui/trackmimedata.h>
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/backgroundimagesource.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
@@ -85,6 +87,7 @@ constexpr auto QueueViewerLeftScriptKey    = u"PlaybackQueue/LeftScript";
 constexpr auto QueueViewerRightScriptKey   = u"PlaybackQueue/RightScript";
 constexpr auto QueueViewerShowCurrentKey   = u"PlaybackQueue/ShowCurrent";
 constexpr auto QueueViewerDisplayModeKey   = u"PlaybackQueue/DisplayMode";
+constexpr auto QueueViewerBackgroundKey    = u"PlaybackQueue/Background";
 constexpr auto QueueViewerStateKey         = "PlaybackQueue/State"_L1;
 
 constexpr auto LegacyLeftScript  = "%title%$crlf()%album%"_L1;
@@ -111,6 +114,8 @@ QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playl
     , m_selectionController{selectionController}
     , m_sortingRegistry{sortingRegistry}
     , m_settings{settings}
+    , m_backgroundSource{new BackgroundImageSource(new CoverProvider(coverRepository, this), m_playerController,
+                                                   m_selectionController, this)}
     , m_view{new QueueViewerView(this)}
     , m_delegate{new QueueViewerDelegate(this)}
     , m_model{new QueueViewerModel(coverRepository, m_playerController, settings, this)}
@@ -140,6 +145,9 @@ QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playl
 
     m_view->setModel(m_model);
     m_view->setItemDelegate(m_delegate);
+
+    QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_view,
+                     &QueueViewerView::setBackgroundPixmap);
 
     m_config = defaultConfig();
     applyConfig(m_config);
@@ -197,6 +205,7 @@ QueueViewer::ConfigData QueueViewer::factoryConfig() const
 QueueViewer::ConfigData QueueViewer::defaultConfig() const
 {
     auto config{factoryConfig()};
+    config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(QueueViewerBackgroundKey).toMap()));
 
     if(m_settings->fileContains(QueueViewerDisplayScriptKey)) {
         config.displayScript = m_settings->fileValue(QueueViewerDisplayScriptKey).toString();
@@ -239,6 +248,10 @@ void QueueViewer::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(QueueViewerScrollBarKey, config.showScrollBar);
     m_settings->fileSet(QueueViewerAltColoursKey, config.alternatingRows);
     m_settings->fileSet(QueueViewerDisplayModeKey, static_cast<int>(config.displayMode));
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    m_settings->fileSet(QueueViewerBackgroundKey, background.toVariantMap());
 }
 
 void QueueViewer::clearSavedDefaults() const
@@ -254,13 +267,20 @@ void QueueViewer::clearSavedDefaults() const
     m_settings->fileRemove(QueueViewerScrollBarKey);
     m_settings->fileRemove(QueueViewerAltColoursKey);
     m_settings->fileRemove(QueueViewerDisplayModeKey);
+    m_settings->fileRemove(QueueViewerBackgroundKey);
 }
 
 void QueueViewer::applyConfig(const ConfigData& config)
 {
     const bool displayModeChanged = m_config.displayMode != config.displayMode;
-    m_config                      = config;
-    m_config.artworkCornerRadius  = std::clamp(m_config.artworkCornerRadius, 0, 100);
+
+    m_config = config;
+
+    m_config.artworkCornerRadius = std::clamp(m_config.artworkCornerRadius, 0, 100);
+
+    m_config.background.normalise();
+    m_view->setBackgroundConfig(m_config.background);
+    m_backgroundSource->setConfig(m_config.background);
 
     if(isWindowWidget()) {
         m_config.showHeader = false;
@@ -1158,6 +1178,8 @@ QueueViewer::ConfigData QueueViewer::configFromLayout(const QJsonObject& layout)
 {
     ConfigData config{defaultConfig()};
 
+    config.background.loadLayout(layout);
+
     if(layout.contains("DisplayScript"_L1)) {
         config.displayScript = layout.value("DisplayScript"_L1).toString();
     }
@@ -1198,6 +1220,7 @@ QueueViewer::ConfigData QueueViewer::configFromLayout(const QJsonObject& layout)
 
 void QueueViewer::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
 {
+    config.background.saveLayout(layout);
     layout.remove("LeftScript"_L1);
     layout.remove("RightScript"_L1);
     layout["DisplayScript"_L1]       = config.displayScript;

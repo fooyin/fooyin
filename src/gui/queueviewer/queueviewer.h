@@ -22,6 +22,7 @@
 #include <core/player/playbackqueue.h>
 #include <core/playlist/playlist.h>
 #include <gui/fywidget.h>
+#include <gui/widgets/backgroundconfig.h>
 
 #include "sortactionhandler.h"
 
@@ -37,6 +38,7 @@ class QShowEvent;
 
 namespace Fooyin {
 class ActionManager;
+class BackgroundImageSource;
 class Command;
 class AudioLoader;
 class PlayerController;
@@ -85,6 +87,7 @@ public:
         bool showScrollBar{true};
         bool alternatingRows{false};
         DisplayMode displayMode{DisplayMode::PlayingTracks};
+        BackgroundConfig background{};
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -185,6 +188,7 @@ private:
     SortingRegistry* m_sortingRegistry;
     SettingsManager* m_settings;
 
+    BackgroundImageSource* m_backgroundSource;
     QueueViewerView* m_view;
     QueueViewerDelegate* m_delegate;
     QueueViewerModel* m_model;
