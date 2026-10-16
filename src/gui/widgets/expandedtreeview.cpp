@@ -21,6 +21,7 @@
 
 #include "expandedtreeview_p.h"
 
+#include <gui/contextmenuutils.h>
 #include <utils/treemodel.h>
 #include <utils/utils.h>
 
@@ -3921,6 +3922,8 @@ void ExpandedTreeView::dropEvent(QDropEvent* event)
 
 void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
 {
+    const auto modifierGuard = ContextMenuUtils::normaliseContextMenuModifiers(event);
+
     if(event->button() > Qt::MiddleButton) {
         event->ignore();
         return;

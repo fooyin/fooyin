@@ -19,6 +19,8 @@
 
 #include "librarytreeview.h"
 
+#include <gui/contextmenuutils.h>
+
 #include <QHeaderView>
 #include <QMouseEvent>
 #include <QPaintEvent>
@@ -83,6 +85,8 @@ void LibraryTreeView::changeEvent(QEvent* event)
 
 void LibraryTreeView::mousePressEvent(QMouseEvent* event)
 {
+    const auto modifierGuard = ContextMenuUtils::normaliseContextMenuModifiers(event);
+
     if(event->button() > Qt::MiddleButton) {
         event->ignore();
         return;

@@ -19,6 +19,7 @@
 
 #include "dirtree.h"
 
+#include <gui/contextmenuutils.h>
 #include <gui/widgets/autoheaderview.h>
 
 #include <QAction>
@@ -228,6 +229,8 @@ void DirTree::resizeEvent(QResizeEvent* event)
 
 void DirTree::mousePressEvent(QMouseEvent* event)
 {
+    const auto modifierGuard = ContextMenuUtils::normaliseContextMenuModifiers(event);
+
     const auto button = event->button();
 
     if(button == Qt::ForwardButton) {
