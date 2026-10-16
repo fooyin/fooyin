@@ -29,7 +29,7 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QSpinBox>
-#include <QVBoxLayout>
+#include <QTabWidget>
 
 using namespace Qt::StringLiterals;
 
@@ -72,7 +72,8 @@ PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QStri
     m_artworkReflectionGap->setSuffix(u" px"_s);
     m_artworkReflectionGap->setToolTip(tr("Space between the artwork and its reflection"));
 
-    auto* appearance       = new QGroupBox(tr("Appearance"), this);
+    auto* generalPage      = new QWidget(this);
+    auto* appearance       = new QGroupBox(tr("Appearance"), generalPage);
     auto* appearanceLayout = new QGridLayout(appearance);
 
     int row{0};
@@ -83,22 +84,28 @@ PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QStri
     appearanceLayout->addWidget(m_stickyHeaders, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_stickySubheaders, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_stickyArtwork, row++, 0, 1, 2);
-    appearanceLayout->addWidget(Gui::createSectionHeader(tr("Artwork"), this), row++, 0, 1, 2);
-    appearanceLayout->addWidget(new QLabel(tr("Horizontal padding") + u":"_s, this), row, 0);
-    appearanceLayout->addWidget(m_imagePadding, row++, 1);
-    appearanceLayout->addWidget(new QLabel(tr("Top padding") + u":"_s, this), row, 0);
-    appearanceLayout->addWidget(m_imagePaddingTop, row++, 1);
-    appearanceLayout->addWidget(new QLabel(tr("Corner radius") + u":"_s, this), row, 0);
-    appearanceLayout->addWidget(m_artworkCornerRadius, row++, 1);
-    appearanceLayout->addWidget(Gui::createSectionHeader(tr("Artwork reflection"), this), row++, 0, 1, 2);
-    appearanceLayout->addWidget(m_artworkReflection, row++, 0, 1, 2);
-    appearanceLayout->addWidget(new QLabel(tr("Height") + u":"_s, this), row, 0);
-    appearanceLayout->addWidget(m_artworkReflectionHeight, row++, 1);
-    appearanceLayout->addWidget(new QLabel(tr("Opacity") + u":"_s, this), row, 0);
-    appearanceLayout->addWidget(m_artworkReflectionOpacity, row++, 1);
-    appearanceLayout->addWidget(new QLabel(tr("Gap below artwork") + u":"_s, this), row, 0);
-    appearanceLayout->addWidget(m_artworkReflectionGap, row++, 1);
     appearanceLayout->setColumnStretch(1, 1);
+    appearanceLayout->setRowStretch(row, 1);
+
+    auto* artwork       = new QGroupBox(tr("Artwork"), generalPage);
+    auto* artworkLayout = new QGridLayout(artwork);
+
+    row = 0;
+    artworkLayout->addWidget(new QLabel(tr("Horizontal padding") + u":"_s, this), row, 0);
+    artworkLayout->addWidget(m_imagePadding, row++, 1);
+    artworkLayout->addWidget(new QLabel(tr("Top padding") + u":"_s, this), row, 0);
+    artworkLayout->addWidget(m_imagePaddingTop, row++, 1);
+    artworkLayout->addWidget(new QLabel(tr("Corner radius") + u":"_s, this), row, 0);
+    artworkLayout->addWidget(m_artworkCornerRadius, row++, 1);
+    artworkLayout->addWidget(Gui::createSectionHeader(tr("Artwork reflection"), this), row++, 0, 1, 2);
+    artworkLayout->addWidget(m_artworkReflection, row++, 0, 1, 2);
+    artworkLayout->addWidget(new QLabel(tr("Height") + u":"_s, this), row, 0);
+    artworkLayout->addWidget(m_artworkReflectionHeight, row++, 1);
+    artworkLayout->addWidget(new QLabel(tr("Opacity") + u":"_s, this), row, 0);
+    artworkLayout->addWidget(m_artworkReflectionOpacity, row++, 1);
+    artworkLayout->addWidget(new QLabel(tr("Gap below artwork") + u":"_s, this), row, 0);
+    artworkLayout->addWidget(m_artworkReflectionGap, row++, 1);
+    artworkLayout->setColumnStretch(1, 1);
 
     const auto addClickActions = [](QComboBox* combo) {
         TrackSelectionController::addAction(combo, tr("None"), TrackAction::None);
@@ -108,7 +115,7 @@ PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QStri
     addClickActions(m_doubleClick);
     addClickActions(m_middleClick);
 
-    auto* clicks       = new QGroupBox(tr("Click Behaviour"), this);
+    auto* clicks       = new QGroupBox(tr("Click Behaviour"), generalPage);
     auto* clicksLayout = new QGridLayout(clicks);
 
     row = 0;
@@ -122,18 +129,18 @@ PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QStri
     m_startPlaybackOnSend->setToolTip(
         tr("After adding tracks to the front of or replacing the playback queue, start playback immediately"));
 
-    auto* background       = new QGroupBox(tr("Background Image"), this);
-    auto* backgroundLayout = new QVBoxLayout(background);
-    backgroundLayout->setContentsMargins({});
-    backgroundLayout->addWidget(m_background);
+    auto* generalLayout = new QGridLayout(generalPage);
+    generalLayout->addWidget(appearance, 0, 0);
+    generalLayout->addWidget(artwork, 0, 1);
+    generalLayout->addWidget(clicks, 1, 0, 1, 2);
+    generalLayout->setColumnStretch(0, 1);
+    generalLayout->setColumnStretch(1, 1);
+    generalLayout->setRowStretch(2, 1);
 
-    auto* layout{contentLayout()};
-    layout->addWidget(appearance, 0, 0);
-    layout->addWidget(background, 0, 1);
-    layout->addWidget(clicks, 1, 0, 1, 2);
-    layout->setColumnStretch(0, 1);
-    layout->setColumnStretch(1, 1);
-    layout->setRowStretch(2, 1);
+    auto* tabs = new QTabWidget(this);
+    tabs->addTab(generalPage, tr("General"));
+    tabs->addTab(m_background, tr("Background"));
+    contentLayout()->addWidget(tabs);
 
     QObject::connect(m_stickyHeaders, &QCheckBox::toggled, m_stickySubheaders, &QWidget::setEnabled);
     QObject::connect(m_artworkReflection, &QCheckBox::toggled, this, &PlaylistConfigDialog::updateReflectionControls);
