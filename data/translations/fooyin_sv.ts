@@ -693,7 +693,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="209"/>
         <source>Name of the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Spellistans namn</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
@@ -768,7 +768,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
         <source>Active output device</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiv utmatningsenhet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
@@ -879,13 +879,13 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="282"/>
         <source>Draws a separator in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Ritar en separator i stödda vyer</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="283"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="285"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Positionering</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="284"/>
@@ -3146,12 +3146,12 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="68"/>
         <source>Now playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="69"/>
         <source>Use the currently playing track for selection-based commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd det spelande spåret för selektionsbaserade kommandon</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="70"/>
@@ -3206,7 +3206,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="103"/>
         <source>Display</source>
-        <translation>Visa</translation>
+        <translation>Visning</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="105"/>
