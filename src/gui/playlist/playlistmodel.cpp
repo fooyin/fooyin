@@ -3150,25 +3150,7 @@ bool PlaylistModel::removePlaylistRows(int row, int count, PlaylistItem* parent)
         return false;
     }
 
-    const int numRows = parent->childCount();
-    if(row < 0 || (row + count - 1) >= numRows) {
-        return false;
-    }
-
-    const QModelIndex parentIndex = indexOfItem(parent);
-    int lastRow                   = row + count - 1;
-
-    beginRemoveRows(parentIndex, row, lastRow);
-    while(lastRow >= row) {
-        auto* childItem = parent->child(lastRow);
-        parent->removeChild(lastRow);
-        deleteNodes(childItem);
-        --lastRow;
-    }
-    parent->resetChildren();
-    endRemoveRows();
-
-    return true;
+    return removePlaylistRows(row, count, indexOfItem(parent));
 }
 
 void PlaylistModel::cleanupHeaders()
