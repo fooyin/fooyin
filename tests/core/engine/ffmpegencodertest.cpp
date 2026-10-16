@@ -20,13 +20,13 @@
 #include <core/engine/audioconverter.h>
 #include <core/engine/input/ffmpeg/ffmpegencoder.h>
 #include <core/engine/input/ffmpeg/ffmpeginput.h>
+#include <utils/scopeguard.h>
 
 #include <gtest/gtest.h>
 
 #include <QBuffer>
 #include <QDir>
 #include <QFileInfo>
-#include <QScopeGuard>
 #include <QTemporaryDir>
 
 extern "C"
@@ -137,7 +137,7 @@ QByteArray makeTimedId3TransportStream()
     if(avformat_alloc_output_context2(&context, nullptr, "mpegts", nullptr) < 0 || !context) {
         return {};
     }
-    const auto freeContext = qScopeGuard([&context] { avformat_free_context(context); });
+    const auto freeContext = scopeGuard([&context] { avformat_free_context(context); });
 
     AVStream* audio = avformat_new_stream(context, nullptr);
     AVStream* id3   = avformat_new_stream(context, nullptr);
@@ -177,7 +177,7 @@ QByteArray makeTimedId3TransportStream()
     if(!packet) {
         return {};
     }
-    const auto freePacket = qScopeGuard([&packet] { av_packet_free(&packet); });
+    const auto freePacket = scopeGuard([&packet] { av_packet_free(&packet); });
 
     const auto writePacket = [context, packet](AVStream* stream, QByteArrayView data, int64_t pts, int64_t duration,
                                                AVRational sourceTimeBase) {
@@ -282,7 +282,7 @@ bool outputHasAudioStream(const QString& path, AVCodecID expectedCodec, int expe
         return false;
     }
 
-    const auto close = qScopeGuard([&context] { avformat_close_input(&context); });
+    const auto close = scopeGuard([&context] { avformat_close_input(&context); });
 
     if(avformat_find_stream_info(context, nullptr) < 0) {
         return false;

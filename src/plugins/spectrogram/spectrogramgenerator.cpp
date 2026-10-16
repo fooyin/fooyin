@@ -23,8 +23,7 @@
 
 #include <core/engine/audioconverter.h>
 #include <core/engine/dsp/realfft.h>
-
-#include <QScopeGuard>
+#include <utils/scopeguard.h>
 
 #include <cmath>
 #include <limits>
@@ -58,7 +57,7 @@ void SpectrogramGenerator::generate(uint64_t request, const Track& track, int ff
         return;
     }
 
-    const auto resetState = qScopeGuard([this]() { setState(Idle); });
+    const auto resetState = scopeGuard([this]() { setState(Idle); });
     const auto cancelled  = [this, request, &token]() {
         return request != m_request.load() || token.stop_requested() || closing();
     };
@@ -73,7 +72,7 @@ void SpectrogramGenerator::generate(uint64_t request, const Track& track, int ff
         return;
     }
 
-    const auto cleanup = qScopeGuard([&loaded]() { loaded.decoder->stop(); });
+    const auto cleanup = scopeGuard([&loaded]() { loaded.decoder->stop(); });
 
     if(!loaded.decoder->allowsConcurrentDecoding()) {
         return;

@@ -23,11 +23,11 @@
 #include <core/engine/input/ffmpeg/ffmpegencoder.h>
 #include <core/engine/input/ffmpeg/ffmpeginput.h>
 #include <core/engine/input/taglibparser.h>
+#include <utils/scopeguard.h>
 
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
-#include <QScopeGuard>
 #include <QTemporaryDir>
 
 #include <gtest/gtest.h>
@@ -62,7 +62,7 @@ bool hasCodec(const QString& path, AVCodecID codecId)
         return false;
     }
 
-    const auto close = qScopeGuard([&context] { avformat_close_input(&context); });
+    const auto close = scopeGuard([&context] { avformat_close_input(&context); });
     if(avformat_find_stream_info(context, nullptr) < 0) {
         return false;
     }
@@ -84,7 +84,7 @@ int audioChannelCount(const QString& path)
         return 0;
     }
 
-    const auto close = qScopeGuard([&context] { avformat_close_input(&context); });
+    const auto close = scopeGuard([&context] { avformat_close_input(&context); });
     if(avformat_find_stream_info(context, nullptr) < 0) {
         return 0;
     }
@@ -108,7 +108,7 @@ uint64_t audioDurationMs(const QString& path)
         return 0;
     }
 
-    const auto close = qScopeGuard([&context] { avformat_close_input(&context); });
+    const auto close = scopeGuard([&context] { avformat_close_input(&context); });
     if(avformat_find_stream_info(context, nullptr) < 0 || context->duration <= 0) {
         return 0;
     }
@@ -122,7 +122,7 @@ QString outputTitle(const QString& path)
         return {};
     }
 
-    const auto close = qScopeGuard([&context] { avformat_close_input(&context); });
+    const auto close = scopeGuard([&context] { avformat_close_input(&context); });
     if(avformat_find_stream_info(context, nullptr) < 0) {
         return {};
     }
@@ -139,7 +139,7 @@ double decodedPeak(AudioLoader& loader, const QString& path)
     }
 
     loaded.decoder->start();
-    const auto stop = qScopeGuard([&loaded] { loaded.decoder->stop(); });
+    const auto stop = scopeGuard([&loaded] { loaded.decoder->stop(); });
     double peak{0.0};
 
     while(true) {
