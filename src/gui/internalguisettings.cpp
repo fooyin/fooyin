@@ -162,9 +162,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<ConfirmPlaylistRemoval>(true, u"Playlist/ConfirmRemoval"_s);
 
     m_settings->createSetting<Internal::EditingMenuLevels>(2, u"Interface/EditingMenuLevels"_s);
-    m_settings->createSetting<Internal::PlaylistAltColours>(true, u"PlaylistWidget/AlternatingColours"_s);
-    m_settings->createSetting<Internal::PlaylistHeader>(true, u"PlaylistWidget/Header"_s);
-    m_settings->createSetting<Internal::PlaylistScrollBar>(true, u"PlaylistWidget/Scrollbar"_s);
     m_settings->createSetting<Internal::StatusShowIcon>(false, u"StatusWidget/ShowIcon"_s);
     m_settings->createSetting<Internal::StatusShowSelection>(false, u"StatusWidget/ShowSelection"_s);
     m_settings->createSetting<Internal::StatusShowPlaylist>(false, u"StatusWidget/ShowPlaylist"_s);
@@ -193,32 +190,12 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::ArtistCoverFallbackToFront>(false, u"Artwork/ArtistFallbackToFront"_s);
     m_settings->createSetting<Internal::TrackCoverThumbnailGroupScript>(
         u"[%date%|][%albumartist%|][%artist%|]$if2(%album%,%path%)"_s, u"Artwork/ThumbnailGroupScript"_s);
-    m_settings->createSetting<Internal::PlaylistImagePadding>(5, u"PlaylistWidget/ImagePadding"_s);
-    m_settings->createSetting<Internal::PlaylistImagePaddingTop>(0, u"PlaylistWidget/ImagePaddingTop"_s);
-    m_settings->createSetting<Internal::PlaylistArtworkCornerRadius>(0, u"PlaylistWidget/ArtworkCornerRadius"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundImageMode>(static_cast<int>(PlaylistBgImage::None),
-                                                                     u"PlaylistWidget/BackgroundImage"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundCustomImage>(QString{},
-                                                                       u"PlaylistWidget/BackgroundCustomImage"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundScaling>(
-        static_cast<int>(PlaylistBgScaling::ScaledAndCropped), u"PlaylistWidget/BackgroundScaling"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundPosition>(static_cast<int>(PlaylistBgImagePosition::Middle),
-                                                                    u"PlaylistWidget/BackgroundPosition"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundMaxSize>(0, u"PlaylistWidget/BackgroundMaxSize"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundBlur>(0, u"PlaylistWidget/BackgroundBlur"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundOpacity>(40, u"PlaylistWidget/BackgroundOpacity"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundFadeDuration>(0, u"PlaylistWidget/BackgroundFadeDuration"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundCoverType>(static_cast<int>(Track::Cover::Front),
-                                                                     u"PlaylistWidget/BackgroundCoverType"_s);
     m_settings->createSetting<Internal::PlaylistPlayingRowColour>(QVariant{}, u"PlaylistWidget/PlayingRowColour"_s);
     m_settings->createSetting<Internal::PlaylistPlayingRowFont>(QVariant{}, u"PlaylistWidget/PlayingRowFont"_s);
     m_settings->createSetting<Internal::PixmapCacheSize>(PixmapCacheSize, u"Interface/PixmapCacheSize"_s);
     m_settings->createSetting<Internal::EditableLayoutMargin>(-1, u"Interface/EditableLayoutMargin"_s);
     m_settings->createSetting<Internal::ShowTrayIcon>(false, u"Interface/ShowTrayIcon"_s);
     m_settings->createSetting<Internal::TrayOnClose>(false, u"Interface/TrayOnClose"_s);
-    m_settings->createSetting<Internal::PlaylistMiddleClick>(0, u"PlaylistWidget/MiddleClickBehaviour"_s);
-    m_settings->createSetting<Internal::PlaylistDoubleClick>(5, u"PlaylistWidget/DoubleClickBehaviour"_s);
-    m_settings->createSetting<Internal::PlaylistStartPlaybackOnSend>(false, u"PlaylistWidget/StartPlaybackOnSend"_s);
     m_settings->createSetting<Internal::LibTreeIconSize>(QSize{36, 36}, u"LibraryTree/IconSize"_s);
     m_settings->createSetting<Internal::ArtworkSaveMethods>(QVariant::fromValue(defaultArtworkSaveMethods()),
                                                             u"Artwork/SaveMethods"_s);

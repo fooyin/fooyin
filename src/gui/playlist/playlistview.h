@@ -23,8 +23,6 @@
 #include <core/track.h>
 #include <gui/widgets/expandedtreeview.h>
 
-#include "internalguisettings.h"
-
 #include <QBasicTimer>
 #include <QPixmap>
 #include <QRegion>
@@ -38,26 +36,15 @@ class QWidget;
 
 namespace Fooyin {
 class HeartDelegate;
-class PixmapFadeController;
 class StarDelegate;
+class WidgetBackground;
+struct BackgroundConfig;
 
 class PlaylistView : public ExpandedTreeView
 {
     Q_OBJECT
 
 public:
-    struct BackgroundOptions
-    {
-        PlaylistBgImage imageMode{PlaylistBgImage::None};
-        PlaylistBgScaling scaling{PlaylistBgScaling::ScaledAndCropped};
-        PlaylistBgImagePosition position{PlaylistBgImagePosition::Middle};
-        int maxSize{0};
-        int blur{0};
-        int opacity{40};
-        bool fadeChanges{false};
-        int fadeDurationMs{1000};
-    };
-
     explicit PlaylistView(QWidget* parent = nullptr);
 
     void setInlineEditDelay(int delayMs);
@@ -70,7 +57,7 @@ public:
     void setLovedColumn(int column);
     void setRatingEditorOnlyOnHover(bool enabled);
     void setLoveEditorOnlyOnHover(bool enabled);
-    void setBackgroundOptions(const BackgroundOptions& options);
+    void setBackgroundConfig(const BackgroundConfig& config);
     void setBackgroundPixmap(const QPixmap& pixmap);
 
     void playlistAboutToBeReset();
@@ -153,19 +140,6 @@ private:
 
     void drawBackground(QPainter& painter);
     void updateBackgroundTransparency();
-    void invalidateScaledBackground();
-
-    struct BackgroundPixmapCache
-    {
-        qint64 sourceKey{0};
-        QSize viewportSize;
-        qreal dpr{1.0};
-        QPixmap pixmap;
-    };
-
-    [[nodiscard]] QPixmap preparedBackgroundPixmap(const QPixmap& source, BackgroundPixmapCache& cache) const;
-    [[nodiscard]] QPoint backgroundPixmapPosition(const QSize& pixmapSize) const;
-    void drawBackgroundPixmap(QPainter& painter, const QPixmap& pixmap);
 
     QString m_emptyText;
     QString m_loadingText;
@@ -183,11 +157,7 @@ private:
     int m_lovedColumn;
     QPersistentModelIndex m_hoveredRow;
 
-    BackgroundOptions m_bgOptions;
-    PixmapFadeController* m_bgFadeController;
-    QBasicTimer m_bgResizeTimer;
-    mutable BackgroundPixmapCache m_cachedBg;
-    mutable BackgroundPixmapCache m_cachedPreviousBg;
+    WidgetBackground* m_background;
 
     QPersistentModelIndex m_pressedSelectedIndex;
     QPersistentModelIndex m_pendingEditIndex;

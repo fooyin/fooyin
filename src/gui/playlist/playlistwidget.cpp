@@ -50,6 +50,7 @@
 #include <gui/playlist/playlistinteractor.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/autoheaderview.h>
+#include <gui/widgets/backgroundimagesource.h>
 #include <gui/widgets/elapsedprogressdialog.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
@@ -88,8 +89,26 @@ using namespace Qt::StringLiterals;
 constexpr auto PlaylistLayoutProperty        = "gui/playlist-layout"_L1;
 constexpr auto PlaylistLayoutVersion         = 1;
 constexpr auto PlayingColumnId               = 8;
+constexpr auto HeaderKey                     = "PlaylistWidget/Header"_L1;
+constexpr auto ScrollBarKey                  = "PlaylistWidget/Scrollbar"_L1;
+constexpr auto AlternatingColoursKey         = "PlaylistWidget/AlternatingColours"_L1;
+constexpr auto ImagePaddingKey               = "PlaylistWidget/ImagePadding"_L1;
+constexpr auto ImagePaddingTopKey            = "PlaylistWidget/ImagePaddingTop"_L1;
+constexpr auto ArtworkCornerRadiusKey        = "PlaylistWidget/ArtworkCornerRadius"_L1;
+constexpr auto BackgroundImageKey            = "PlaylistWidget/BackgroundImage"_L1;
+constexpr auto BackgroundCustomImageKey      = "PlaylistWidget/BackgroundCustomImage"_L1;
+constexpr auto BackgroundCoverTypeKey        = "PlaylistWidget/BackgroundCoverType"_L1;
+constexpr auto BackgroundScalingKey          = "PlaylistWidget/BackgroundScaling"_L1;
+constexpr auto BackgroundPositionKey         = "PlaylistWidget/BackgroundPosition"_L1;
+constexpr auto BackgroundMaxSizeKey          = "PlaylistWidget/BackgroundMaxSize"_L1;
+constexpr auto BackgroundBlurKey             = "PlaylistWidget/BackgroundBlur"_L1;
+constexpr auto BackgroundOpacityKey          = "PlaylistWidget/BackgroundOpacity"_L1;
+constexpr auto BackgroundFadeDurationKey     = "PlaylistWidget/BackgroundFadeDuration"_L1;
 constexpr auto BackgroundTrackPreferenceKey  = "PlaylistWidget/BackgroundTrackPreference"_L1;
 constexpr auto BackgroundShowStoppedTrackKey = "PlaylistWidget/BackgroundShowStoppedTrack"_L1;
+constexpr auto DoubleClickKey                = "PlaylistWidget/DoubleClickBehaviour"_L1;
+constexpr auto MiddleClickKey                = "PlaylistWidget/MiddleClickBehaviour"_L1;
+constexpr auto StartPlaybackOnSendKey        = "PlaylistWidget/StartPlaybackOnSend"_L1;
 
 namespace Fooyin {
 using namespace Settings::Gui::Internal;
@@ -176,7 +195,6 @@ PlaylistWidget* PlaylistWidget::createDetachedTracks(ActionManager* actionManage
 PlaylistWidget::~PlaylistWidget()
 {
     QObject::disconnect(m_selectionController, &TrackSelectionController::displaySelectionChanged, this, nullptr);
-    ++m_bgCoverRequestId;
 
     resetSort();
     saveRememberedLayout(m_playlistController->currentPlaylist());
@@ -377,37 +395,41 @@ PlaylistWidget::ConfigData PlaylistWidget::factoryConfig() const
 
 PlaylistWidget::ConfigData PlaylistWidget::defaultConfig() const
 {
-    ConfigData config;
-    config.showHeader             = m_settings->value<PlaylistHeader>();
-    config.showScrollBar          = m_settings->value<PlaylistScrollBar>();
-    config.alternatingRows        = m_settings->value<PlaylistAltColours>();
-    config.imagePadding           = m_settings->value<PlaylistImagePadding>();
-    config.imagePaddingTop        = m_settings->value<PlaylistImagePaddingTop>();
-    config.artworkCornerRadius    = m_settings->value<PlaylistArtworkCornerRadius>();
-    config.backgroundImageMode    = m_settings->value<PlaylistBackgroundImageMode>();
-    config.backgroundCustomImage  = m_settings->value<PlaylistBackgroundCustomImage>();
-    config.backgroundCoverType    = m_settings->value<PlaylistBackgroundCoverType>();
-    config.backgroundScaling      = m_settings->value<PlaylistBackgroundScaling>();
-    config.backgroundPosition     = m_settings->value<PlaylistBackgroundPosition>();
-    config.backgroundMaxSize      = m_settings->value<PlaylistBackgroundMaxSize>();
-    config.backgroundBlur         = m_settings->value<PlaylistBackgroundBlur>();
-    config.backgroundOpacity      = m_settings->value<PlaylistBackgroundOpacity>();
-    config.backgroundFadeDuration = m_settings->value<PlaylistBackgroundFadeDuration>();
+    auto config{factoryConfig()};
+    config.showHeader           = m_settings->fileValue(HeaderKey, config.showHeader).toBool();
+    config.showScrollBar        = m_settings->fileValue(ScrollBarKey, config.showScrollBar).toBool();
+    config.alternatingRows      = m_settings->fileValue(AlternatingColoursKey, config.alternatingRows).toBool();
+    config.imagePadding         = m_settings->fileValue(ImagePaddingKey, config.imagePadding).toInt();
+    config.imagePaddingTop      = m_settings->fileValue(ImagePaddingTopKey, config.imagePaddingTop).toInt();
+    config.artworkCornerRadius  = m_settings->fileValue(ArtworkCornerRadiusKey, config.artworkCornerRadius).toInt();
+    config.background.imageMode = m_settings->fileValue(BackgroundImageKey, config.background.imageMode).toInt();
+    config.background.customImage
+        = m_settings->fileValue(BackgroundCustomImageKey, config.background.customImage).toString();
+    config.background.coverType = m_settings->fileValue(BackgroundCoverTypeKey, config.background.coverType).toInt();
+    config.background.scaling   = m_settings->fileValue(BackgroundScalingKey, config.background.scaling).toInt();
+    config.background.position  = m_settings->fileValue(BackgroundPositionKey, config.background.position).toInt();
+    config.background.maxSize   = m_settings->fileValue(BackgroundMaxSizeKey, config.background.maxSize).toInt();
+    config.background.blur      = m_settings->fileValue(BackgroundBlurKey, config.background.blur).toInt();
+    config.background.opacity   = m_settings->fileValue(BackgroundOpacityKey, config.background.opacity).toInt();
+    config.background.fadeDuration
+        = m_settings->fileValue(BackgroundFadeDurationKey, config.background.fadeDuration).toInt();
 
     if(m_settings->fileContains(BackgroundTrackPreferenceKey)) {
-        config.backgroundTrackPreference = static_cast<TrackDisplayPreference>(
-            m_settings->fileValue(BackgroundTrackPreferenceKey, static_cast<int>(config.backgroundTrackPreference))
+        config.background.trackPreference = static_cast<TrackDisplayPreference>(
+            m_settings->fileValue(BackgroundTrackPreferenceKey, static_cast<int>(config.background.trackPreference))
                 .toInt());
     }
     else {
-        const bool showStoppedTrack      = m_settings->fileValue(BackgroundShowStoppedTrackKey, true).toBool();
-        config.backgroundTrackPreference = showStoppedTrack ? TrackDisplayPreference::PlayingTrack
-                                                            : TrackDisplayPreference::PlayingTrackBlankWhenStopped;
+        const bool showStoppedTrack       = m_settings->fileValue(BackgroundShowStoppedTrackKey, true).toBool();
+        config.background.trackPreference = showStoppedTrack ? TrackDisplayPreference::PlayingTrack
+                                                             : TrackDisplayPreference::PlayingTrackBlankWhenStopped;
     }
 
-    config.doubleClickAction   = static_cast<TrackAction>(m_settings->value<PlaylistDoubleClick>());
-    config.middleClickAction   = static_cast<TrackAction>(m_settings->value<PlaylistMiddleClick>());
-    config.startPlaybackOnSend = m_settings->value<PlaylistStartPlaybackOnSend>();
+    config.doubleClickAction = static_cast<TrackAction>(
+        m_settings->fileValue(DoubleClickKey, static_cast<int>(config.doubleClickAction)).toInt());
+    config.middleClickAction = static_cast<TrackAction>(
+        m_settings->fileValue(MiddleClickKey, static_cast<int>(config.middleClickAction)).toInt());
+    config.startPlaybackOnSend = m_settings->fileValue(StartPlaybackOnSendKey, config.startPlaybackOnSend).toBool();
 
     return config;
 }
@@ -419,50 +441,50 @@ const PlaylistWidget::ConfigData& PlaylistWidget::currentConfig() const
 
 void PlaylistWidget::saveDefaults(const ConfigData& config) const
 {
-    m_settings->set<PlaylistHeader>(config.showHeader);
-    m_settings->set<PlaylistScrollBar>(config.showScrollBar);
-    m_settings->set<PlaylistAltColours>(config.alternatingRows);
-    m_settings->set<PlaylistImagePadding>(config.imagePadding);
-    m_settings->set<PlaylistImagePaddingTop>(config.imagePaddingTop);
-    m_settings->set<PlaylistArtworkCornerRadius>(config.artworkCornerRadius);
-    m_settings->set<PlaylistBackgroundImageMode>(config.backgroundImageMode);
-    m_settings->set<PlaylistBackgroundCustomImage>(config.backgroundCustomImage);
-    m_settings->set<PlaylistBackgroundCoverType>(config.backgroundCoverType);
-    m_settings->set<PlaylistBackgroundScaling>(config.backgroundScaling);
-    m_settings->set<PlaylistBackgroundPosition>(config.backgroundPosition);
-    m_settings->set<PlaylistBackgroundMaxSize>(config.backgroundMaxSize);
-    m_settings->set<PlaylistBackgroundBlur>(config.backgroundBlur);
-    m_settings->set<PlaylistBackgroundOpacity>(config.backgroundOpacity);
-    m_settings->set<PlaylistBackgroundFadeDuration>(config.backgroundFadeDuration);
-    m_settings->fileSet(BackgroundTrackPreferenceKey, static_cast<int>(config.backgroundTrackPreference));
+    m_settings->fileSet(HeaderKey, config.showHeader);
+    m_settings->fileSet(ScrollBarKey, config.showScrollBar);
+    m_settings->fileSet(AlternatingColoursKey, config.alternatingRows);
+    m_settings->fileSet(ImagePaddingKey, config.imagePadding);
+    m_settings->fileSet(ImagePaddingTopKey, config.imagePaddingTop);
+    m_settings->fileSet(ArtworkCornerRadiusKey, config.artworkCornerRadius);
+    m_settings->fileSet(BackgroundImageKey, config.background.imageMode);
+    m_settings->fileSet(BackgroundCustomImageKey, config.background.customImage);
+    m_settings->fileSet(BackgroundCoverTypeKey, config.background.coverType);
+    m_settings->fileSet(BackgroundScalingKey, config.background.scaling);
+    m_settings->fileSet(BackgroundPositionKey, config.background.position);
+    m_settings->fileSet(BackgroundMaxSizeKey, config.background.maxSize);
+    m_settings->fileSet(BackgroundBlurKey, config.background.blur);
+    m_settings->fileSet(BackgroundOpacityKey, config.background.opacity);
+    m_settings->fileSet(BackgroundFadeDurationKey, config.background.fadeDuration);
+    m_settings->fileSet(BackgroundTrackPreferenceKey, static_cast<int>(config.background.trackPreference));
     m_settings->fileRemove(BackgroundShowStoppedTrackKey);
-    m_settings->set<PlaylistDoubleClick>(static_cast<int>(config.doubleClickAction));
-    m_settings->set<PlaylistMiddleClick>(static_cast<int>(config.middleClickAction));
-    m_settings->set<PlaylistStartPlaybackOnSend>(config.startPlaybackOnSend);
+    m_settings->fileSet(DoubleClickKey, static_cast<int>(config.doubleClickAction));
+    m_settings->fileSet(MiddleClickKey, static_cast<int>(config.middleClickAction));
+    m_settings->fileSet(StartPlaybackOnSendKey, config.startPlaybackOnSend);
 }
 
 void PlaylistWidget::clearSavedDefaults() const
 {
-    m_settings->reset<PlaylistHeader>();
-    m_settings->reset<PlaylistScrollBar>();
-    m_settings->reset<PlaylistAltColours>();
-    m_settings->reset<PlaylistImagePadding>();
-    m_settings->reset<PlaylistImagePaddingTop>();
-    m_settings->reset<PlaylistArtworkCornerRadius>();
-    m_settings->reset<PlaylistBackgroundImageMode>();
-    m_settings->reset<PlaylistBackgroundCustomImage>();
-    m_settings->reset<PlaylistBackgroundCoverType>();
-    m_settings->reset<PlaylistBackgroundScaling>();
-    m_settings->reset<PlaylistBackgroundPosition>();
-    m_settings->reset<PlaylistBackgroundMaxSize>();
-    m_settings->reset<PlaylistBackgroundBlur>();
-    m_settings->reset<PlaylistBackgroundOpacity>();
-    m_settings->reset<PlaylistBackgroundFadeDuration>();
+    m_settings->fileRemove(HeaderKey);
+    m_settings->fileRemove(ScrollBarKey);
+    m_settings->fileRemove(AlternatingColoursKey);
+    m_settings->fileRemove(ImagePaddingKey);
+    m_settings->fileRemove(ImagePaddingTopKey);
+    m_settings->fileRemove(ArtworkCornerRadiusKey);
+    m_settings->fileRemove(BackgroundImageKey);
+    m_settings->fileRemove(BackgroundCustomImageKey);
+    m_settings->fileRemove(BackgroundCoverTypeKey);
+    m_settings->fileRemove(BackgroundScalingKey);
+    m_settings->fileRemove(BackgroundPositionKey);
+    m_settings->fileRemove(BackgroundMaxSizeKey);
+    m_settings->fileRemove(BackgroundBlurKey);
+    m_settings->fileRemove(BackgroundOpacityKey);
+    m_settings->fileRemove(BackgroundFadeDurationKey);
     m_settings->fileRemove(BackgroundTrackPreferenceKey);
     m_settings->fileRemove(BackgroundShowStoppedTrackKey);
-    m_settings->reset<PlaylistDoubleClick>();
-    m_settings->reset<PlaylistMiddleClick>();
-    m_settings->reset<PlaylistStartPlaybackOnSend>();
+    m_settings->fileRemove(DoubleClickKey);
+    m_settings->fileRemove(MiddleClickKey);
+    m_settings->fileRemove(StartPlaybackOnSendKey);
 }
 
 void PlaylistWidget::applyConfig(const ConfigData& config)
@@ -480,31 +502,7 @@ void PlaylistWidget::applyConfig(const ConfigData& config)
     m_config.artworkReflectionHeight  = std::clamp(m_config.artworkReflectionHeight, 1, 100);
     m_config.artworkReflectionOpacity = std::clamp(m_config.artworkReflectionOpacity, 0, 100);
     m_config.artworkReflectionGap     = std::clamp(m_config.artworkReflectionGap, 0, 100);
-    m_config.backgroundMaxSize        = std::clamp(m_config.backgroundMaxSize, 0, 4096);
-    m_config.backgroundBlur           = std::clamp(m_config.backgroundBlur, 0, 100);
-    m_config.backgroundOpacity        = std::clamp(m_config.backgroundOpacity, 0, 100);
-    m_config.backgroundFadeDuration   = std::max(m_config.backgroundFadeDuration, 0);
-
-    if(m_config.backgroundImageMode < static_cast<int>(PlaylistBgImage::None)
-       || m_config.backgroundImageMode > static_cast<int>(PlaylistBgImage::Custom)) {
-        m_config.backgroundImageMode = factory.backgroundImageMode;
-    }
-    if(m_config.backgroundCoverType < static_cast<int>(Track::Cover::Front)
-       || m_config.backgroundCoverType > static_cast<int>(Track::Cover::Other)) {
-        m_config.backgroundCoverType = factory.backgroundCoverType;
-    }
-    if(m_config.backgroundScaling < static_cast<int>(PlaylistBgScaling::ScaledAndCropped)
-       || m_config.backgroundScaling > static_cast<int>(PlaylistBgScaling::OriginalSize)) {
-        m_config.backgroundScaling = factory.backgroundScaling;
-    }
-    if(m_config.backgroundPosition < static_cast<int>(PlaylistBgImagePosition::TopLeft)
-       || m_config.backgroundPosition > static_cast<int>(PlaylistBgImagePosition::BottomRight)) {
-        m_config.backgroundPosition = factory.backgroundPosition;
-    }
-    if(m_config.backgroundTrackPreference < TrackDisplayPreference::PlayingTrack
-       || m_config.backgroundTrackPreference > TrackDisplayPreference::PlayingTrackBlankWhenStopped) {
-        m_config.backgroundTrackPreference = factory.backgroundTrackPreference;
-    }
+    m_config.background.normalise();
 
     const auto validTrackAction = [](TrackAction action) {
         return action >= TrackAction::None && action <= TrackAction::AddCurrentPlaylistAndPlayIfStopped;
@@ -532,7 +530,8 @@ void PlaylistWidget::applyConfig(const ConfigData& config)
     m_doubleClickAction   = m_config.doubleClickAction;
     m_middleClickAction   = m_config.middleClickAction;
     m_startPlaybackOnSend = m_config.startPlaybackOnSend;
-    applyBackgroundSettings();
+    m_playlistView->setBackgroundConfig(m_config.background);
+    m_backgroundSource->setConfig(m_config.background);
     m_playlistView->viewport()->update();
 
     if(reflectionChanged) {
@@ -928,10 +927,7 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     , m_playAction{new QAction(tr("&Play"), this)}
     , m_sortActions{std::make_unique<SortActionHandler>(m_actionManager, m_sortRegistry, m_playlistContext->context(),
                                                         this)}
-    , m_bgCoverRequestId{0}
-    , m_bgImageMode{PlaylistBgImage::None}
-    , m_bgCoverType{Track::Cover::Front}
-    , m_bgTrackPreference{TrackDisplayPreference::PlayingTrack}
+    , m_backgroundSource{new BackgroundImageSource(m_coverProvider, m_playerController, m_selectionController, this)}
     , m_searchController{
           new PlaylistSearchController(m_playlistController, m_model, m_playlistView, m_header, m_settings, this)}
 {
@@ -968,6 +964,9 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
                                                                   &PlaylistView::setRatingEditorOnlyOnHover);
     m_settings->subscribe<Settings::Gui::LoveEditorOnlyOnHover>(m_playlistView,
                                                                 &PlaylistView::setLoveEditorOnlyOnHover);
+
+    QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_playlistView,
+                     &PlaylistView::setBackgroundPixmap);
 
     QObject::connect(m_searchController, &PlaylistSearchController::playCurrentRequested, this,
                      &PlaylistWidget::startPlayback);
@@ -1688,52 +1687,6 @@ void PlaylistWidget::updateSpans()
     m_playlistView->setLovedColumn(loveColumn);
 }
 
-void PlaylistWidget::applyBackgroundSettings()
-{
-    PlaylistView::BackgroundOptions options;
-    options.imageMode      = static_cast<PlaylistBgImage>(m_config.backgroundImageMode);
-    options.scaling        = static_cast<PlaylistBgScaling>(m_config.backgroundScaling);
-    options.position       = static_cast<PlaylistBgImagePosition>(m_config.backgroundPosition);
-    options.maxSize        = m_config.backgroundMaxSize;
-    options.blur           = m_config.backgroundBlur;
-    options.opacity        = m_config.backgroundOpacity;
-    options.fadeDurationMs = m_config.backgroundFadeDuration;
-    options.fadeChanges    = options.fadeDurationMs > 0;
-
-    m_playlistView->setBackgroundOptions(options);
-
-    const bool modeChanged      = std::exchange(m_bgImageMode, options.imageMode) != options.imageMode;
-    const auto coverType        = static_cast<Track::Cover>(m_config.backgroundCoverType);
-    const bool coverTypeChanged = std::exchange(m_bgCoverType, coverType) != coverType;
-    const bool trackPreferenceChanged
-        = std::exchange(m_bgTrackPreference, m_config.backgroundTrackPreference) != m_config.backgroundTrackPreference;
-
-    switch(options.imageMode) {
-        case PlaylistBgImage::AlbumCover:
-            if(modeChanged || coverTypeChanged || trackPreferenceChanged || !m_bgCoverTrack.isValid()) {
-                reloadBackgroundCover();
-            }
-            break;
-        case PlaylistBgImage::Custom: {
-            const QString customImage = m_config.backgroundCustomImage;
-            if(!modeChanged && std::exchange(m_bgCustomImage, customImage) == customImage) {
-                break;
-            }
-            ++m_bgCoverRequestId;
-            m_bgCoverTrack = {};
-            m_playlistView->setBackgroundPixmap(QPixmap{customImage});
-            break;
-        }
-        case PlaylistBgImage::None:
-            if(modeChanged) {
-                ++m_bgCoverRequestId;
-                m_bgCoverTrack = {};
-                m_playlistView->setBackgroundPixmap({});
-            }
-            break;
-    }
-}
-
 PlaylistWidget::ConfigData PlaylistWidget::configFromLayout(const QJsonObject& layout) const
 {
     ConfigData config{defaultConfig()};
@@ -1751,20 +1704,8 @@ PlaylistWidget::ConfigData PlaylistWidget::configFromLayout(const QJsonObject& l
     config.artworkReflectionHeight = layout.value("ArtworkReflectionHeight"_L1).toInt(config.artworkReflectionHeight);
     config.artworkReflectionOpacity
         = layout.value("ArtworkReflectionOpacity"_L1).toInt(config.artworkReflectionOpacity);
-    config.artworkReflectionGap   = layout.value("ArtworkReflectionGap"_L1).toInt(config.artworkReflectionGap);
-    config.backgroundImageMode    = layout.value("BackgroundImageMode"_L1).toInt(config.backgroundImageMode);
-    config.backgroundCoverType    = layout.value("BackgroundCoverType"_L1).toInt(config.backgroundCoverType);
-    config.backgroundScaling      = layout.value("BackgroundScaling"_L1).toInt(config.backgroundScaling);
-    config.backgroundPosition     = layout.value("BackgroundPosition"_L1).toInt(config.backgroundPosition);
-    config.backgroundMaxSize      = layout.value("BackgroundMaxSize"_L1).toInt(config.backgroundMaxSize);
-    config.backgroundBlur         = layout.value("BackgroundBlur"_L1).toInt(config.backgroundBlur);
-    config.backgroundOpacity      = layout.value("BackgroundOpacity"_L1).toInt(config.backgroundOpacity);
-    config.backgroundFadeDuration = layout.value("BackgroundFadeDuration"_L1).toInt(config.backgroundFadeDuration);
-
-    config.backgroundCustomImage     = layout.value("BackgroundCustomImage"_L1).toString(config.backgroundCustomImage);
-    config.backgroundTrackPreference = static_cast<TrackDisplayPreference>(
-        layout.value("BackgroundTrackPreference"_L1).toInt(static_cast<int>(config.backgroundTrackPreference)));
-
+    config.artworkReflectionGap = layout.value("ArtworkReflectionGap"_L1).toInt(config.artworkReflectionGap);
+    config.background.loadLayout(layout);
     config.doubleClickAction = static_cast<TrackAction>(
         layout.value("DoubleClickAction"_L1).toInt(static_cast<int>(config.doubleClickAction)));
     config.middleClickAction = static_cast<TrackAction>(
@@ -1776,74 +1717,23 @@ PlaylistWidget::ConfigData PlaylistWidget::configFromLayout(const QJsonObject& l
 
 void PlaylistWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
 {
-    layout["ShowHeader"_L1]                = config.showHeader;
-    layout["StickyHeaders"_L1]             = config.stickyHeaders;
-    layout["StickySubheaders"_L1]          = config.stickySubheaders;
-    layout["StickyArtwork"_L1]             = config.stickyArtwork;
-    layout["ShowScrollbar"_L1]             = config.showScrollBar;
-    layout["AlternatingRows"_L1]           = config.alternatingRows;
-    layout["ImagePadding"_L1]              = config.imagePadding;
-    layout["ImagePaddingTop"_L1]           = config.imagePaddingTop;
-    layout["ArtworkCornerRadius"_L1]       = config.artworkCornerRadius;
-    layout["ArtworkReflection"_L1]         = config.artworkReflection;
-    layout["ArtworkReflectionHeight"_L1]   = config.artworkReflectionHeight;
-    layout["ArtworkReflectionOpacity"_L1]  = config.artworkReflectionOpacity;
-    layout["ArtworkReflectionGap"_L1]      = config.artworkReflectionGap;
-    layout["BackgroundImageMode"_L1]       = config.backgroundImageMode;
-    layout["BackgroundCustomImage"_L1]     = config.backgroundCustomImage;
-    layout["BackgroundCoverType"_L1]       = config.backgroundCoverType;
-    layout["BackgroundScaling"_L1]         = config.backgroundScaling;
-    layout["BackgroundPosition"_L1]        = config.backgroundPosition;
-    layout["BackgroundMaxSize"_L1]         = config.backgroundMaxSize;
-    layout["BackgroundBlur"_L1]            = config.backgroundBlur;
-    layout["BackgroundOpacity"_L1]         = config.backgroundOpacity;
-    layout["BackgroundFadeDuration"_L1]    = config.backgroundFadeDuration;
-    layout["BackgroundTrackPreference"_L1] = static_cast<int>(config.backgroundTrackPreference);
-    layout["DoubleClickAction"_L1]         = static_cast<int>(config.doubleClickAction);
-    layout["MiddleClickAction"_L1]         = static_cast<int>(config.middleClickAction);
-    layout["StartPlaybackOnSend"_L1]       = config.startPlaybackOnSend;
-}
-
-void PlaylistWidget::reloadBackgroundCover()
-{
-    if(static_cast<PlaylistBgImage>(m_config.backgroundImageMode) != PlaylistBgImage::AlbumCover) {
-        return;
-    }
-
-    const int requestId{++m_bgCoverRequestId};
-
-    const auto source = preferredTrackSource(m_config.backgroundTrackPreference, m_playerController->playState(),
-                                             m_playerController->playbackStarted());
-    if(source == PreferredTrackSource::None) {
-        m_bgCoverTrack = {};
-        m_playlistView->setBackgroundPixmap({});
-        return;
-    }
-
-    const Track playingTrack = m_playerController->currentTrack();
-    const Track selectedTrack
-        = m_selectionController->hasDisplayTracks() ? m_selectionController->displayTrack() : Track{};
-
-    Track coverTrack;
-    if(source == PreferredTrackSource::Selected) {
-        coverTrack = selectedTrack.isValid() ? selectedTrack : playingTrack;
-    }
-    else {
-        coverTrack = playingTrack.isValid() ? playingTrack : selectedTrack;
-    }
-
-    if(!coverTrack.isValid()) {
-        m_bgCoverTrack = {};
-        m_playlistView->setBackgroundPixmap({});
-        return;
-    }
-
-    m_bgCoverTrack = coverTrack;
-    m_coverProvider->trackCoverFull(coverTrack, m_bgCoverType).then(this, [this, requestId](const QPixmap& cover) {
-        if(requestId == m_bgCoverRequestId) {
-            m_playlistView->setBackgroundPixmap(cover);
-        }
-    });
+    layout["ShowHeader"_L1]               = config.showHeader;
+    layout["StickyHeaders"_L1]            = config.stickyHeaders;
+    layout["StickySubheaders"_L1]         = config.stickySubheaders;
+    layout["StickyArtwork"_L1]            = config.stickyArtwork;
+    layout["ShowScrollbar"_L1]            = config.showScrollBar;
+    layout["AlternatingRows"_L1]          = config.alternatingRows;
+    layout["ImagePadding"_L1]             = config.imagePadding;
+    layout["ImagePaddingTop"_L1]          = config.imagePaddingTop;
+    layout["ArtworkCornerRadius"_L1]      = config.artworkCornerRadius;
+    layout["ArtworkReflection"_L1]        = config.artworkReflection;
+    layout["ArtworkReflectionHeight"_L1]  = config.artworkReflectionHeight;
+    layout["ArtworkReflectionOpacity"_L1] = config.artworkReflectionOpacity;
+    layout["ArtworkReflectionGap"_L1]     = config.artworkReflectionGap;
+    config.background.saveLayout(layout);
+    layout["DoubleClickAction"_L1]   = static_cast<int>(config.doubleClickAction);
+    layout["MiddleClickAction"_L1]   = static_cast<int>(config.middleClickAction);
+    layout["StartPlaybackOnSend"_L1] = config.startPlaybackOnSend;
 }
 
 void PlaylistWidget::updateVisibleCoverPins()
@@ -1984,11 +1874,6 @@ void PlaylistWidget::setupConnections()
         m_session->handleDeferredFollowTrack(sessionHost());
     }, Qt::QueuedConnection);
     QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, &PlaylistWidget::updateVisibleCoverPins);
-    QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) {
-        if(m_bgCoverTrack.isValid() && sameTrackIdentity(track, m_bgCoverTrack)) {
-            reloadBackgroundCover();
-        }
-    });
     QObject::connect(m_model, &PlaylistModel::metadataWriteRequested, this, &PlaylistWidget::handleMetadataWriteRequested);
     QObject::connect(m_model, &PlaylistModel::tracksRated, m_library,
                      [this](const TrackList& tracks) { m_library->updateTrackStats(tracks, Track::Stat::Rating); });
@@ -1997,10 +1882,6 @@ void PlaylistWidget::setupConnections()
     QObject::connect(m_playlistView, &PlaylistView::bulkWriteRequested, this, &PlaylistWidget::handleBulkWriteRequested);
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistTracksUpdated, m_model, [this](const std::vector<int>& indexes) { m_model->refreshTracks(indexes); });
     QObject::connect(m_playlistController, &PlaylistController::currentPlaylistUpdated, this, &PlaylistWidget::resetModelThrottled);
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &PlaylistWidget::reloadBackgroundCover);
-    QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, &PlaylistWidget::reloadBackgroundCover);
-    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &PlaylistWidget::reloadBackgroundCover);
-    QObject::connect(m_selectionController, &TrackSelectionController::displaySelectionChanged, this, &PlaylistWidget::reloadBackgroundCover);
 
     QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::itemRemoved, this, &PlaylistWidget::handleColumnRemoved);
     QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::columnChanged, this, &PlaylistWidget::handleColumnChanged);

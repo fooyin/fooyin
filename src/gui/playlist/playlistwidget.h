@@ -31,6 +31,7 @@
 #include <gui/trackdisplay.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/autoheaderview.h>
+#include <gui/widgets/backgroundconfig.h>
 
 #include <core/library/sortingregistry.h>
 
@@ -48,6 +49,7 @@ class QMenu;
 namespace Fooyin {
 class ActionManager;
 class Application;
+class BackgroundImageSource;
 class CoverProvider;
 class GuiStyleProvider;
 class MusicLibrary;
@@ -93,16 +95,7 @@ public:
         int artworkReflectionHeight{33};
         int artworkReflectionOpacity{35};
         int artworkReflectionGap{3};
-        int backgroundImageMode{0};
-        QString backgroundCustomImage;
-        int backgroundCoverType{0};
-        int backgroundScaling{0};
-        int backgroundPosition{4};
-        int backgroundMaxSize{0};
-        int backgroundBlur{0};
-        int backgroundOpacity{40};
-        int backgroundFadeDuration{0};
-        TrackDisplayPreference backgroundTrackPreference{TrackDisplayPreference::PlayingTrack};
+        BackgroundConfig background;
         TrackAction doubleClickAction{TrackAction::Play};
         TrackAction middleClickAction{TrackAction::None};
         bool startPlaybackOnSend{false};
@@ -265,10 +258,8 @@ private:
     void saveRememberedLayout(Playlist* playlist);
     [[nodiscard]] bool remembersLayout(const Playlist* playlist) const;
     void updateSpans();
-    void applyBackgroundSettings();
     [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
     void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
-    void reloadBackgroundCover();
     void updateVisibleCoverPins();
     void executeClickAction(TrackAction action);
 
@@ -317,12 +308,7 @@ private:
     QAction* m_playAction;
     std::unique_ptr<SortActionHandler> m_sortActions;
 
-    int m_bgCoverRequestId;
-    PlaylistBgImage m_bgImageMode;
-    Track::Cover m_bgCoverType;
-    TrackDisplayPreference m_bgTrackPreference;
-    QString m_bgCustomImage;
-    Track m_bgCoverTrack;
+    BackgroundImageSource* m_backgroundSource;
 
     PlaylistSearchController* m_searchController;
 };

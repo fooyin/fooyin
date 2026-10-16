@@ -49,6 +49,9 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgetprovider.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/actiondelegate.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/autoheaderview.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/backgroundconfig.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/backgroundconfigwidget.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/backgroundimagesource.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/checkboxdelegate.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/clickablelabel.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/colourbutton.h
@@ -79,6 +82,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/textinputdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/toolbutton.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/tooltip.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/widgetbackground.h
     ${CMAKE_SOURCE_DIR}/include/gui/windowcontroller.h
     artwork/artworkdelegate.cpp
     artwork/artworkdelegate.h
@@ -604,6 +608,9 @@ set(SOURCES
     widgets.h
     widgets/actiondelegate.cpp
     widgets/autoheaderview.cpp
+    widgets/backgroundconfig.cpp
+    widgets/backgroundconfigwidget.cpp
+    widgets/backgroundimagesource.cpp
     widgets/checkboxdelegate.cpp
     widgets/clickablelabel.cpp
     widgets/colourbutton.cpp
@@ -655,6 +662,7 @@ set(SOURCES
     widgets/textinputdialog.cpp
     widgets/toolbutton.cpp
     widgets/tooltip.cpp
+    widgets/widgetbackground.cpp
     widgets/widgetcontainer.cpp
     windowcontroller.cpp
 )

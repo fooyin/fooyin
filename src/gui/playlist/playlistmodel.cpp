@@ -742,8 +742,8 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     , m_populationGeneration{0}
     , m_playlistLoaded{false}
     , m_loadingTextPending{false}
-    , m_pixmapPadding{settings->value<Settings::Gui::Internal::PlaylistImagePadding>()}
-    , m_pixmapPaddingTop{settings->value<Settings::Gui::Internal::PlaylistImagePaddingTop>()}
+    , m_pixmapPadding{0}
+    , m_pixmapPaddingTop{0}
     , m_starRatingSize{settings->value<Settings::Gui::StarRatingSize>()}
     , m_loveHeartSize{settings->value<Settings::Gui::LoveHeartSize>()}
     , m_ratingStarColours{Gui::ratingStarColours(*settings)}

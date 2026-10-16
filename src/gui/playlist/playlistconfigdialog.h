@@ -26,11 +26,10 @@
 class QCheckBox;
 class QComboBox;
 class QLabel;
-class QLineEdit;
 class QSpinBox;
 
 namespace Fooyin {
-class SliderEditor;
+class BackgroundConfigWidget;
 
 class PlaylistConfigDialog final : public WidgetConfigDialog<PlaylistWidget, PlaylistWidget::ConfigData>
 {
@@ -46,8 +45,6 @@ protected:
                              const PlaylistWidget::ConfigData& current) override;
 
 private:
-    void browseBackgroundImage();
-    void updateBackgroundControls() const;
     void updateReflectionControls() const;
     void updateStartPlaybackState() const;
 
@@ -64,19 +61,7 @@ private:
     QSpinBox* m_artworkReflectionHeight;
     QSpinBox* m_artworkReflectionOpacity;
     QSpinBox* m_artworkReflectionGap;
-    QComboBox* m_backgroundImage;
-    QLabel* m_backgroundCoverTypeLabel;
-    QComboBox* m_backgroundCoverType;
-    QLabel* m_backgroundTrackPreferenceLabel;
-    QComboBox* m_backgroundTrackPreference;
-    QLabel* m_customImageLabel;
-    QLineEdit* m_customImage;
-    QComboBox* m_backgroundScaling;
-    QComboBox* m_backgroundPosition;
-    QSpinBox* m_backgroundMaxSize;
-    SliderEditor* m_backgroundBlur;
-    SliderEditor* m_backgroundOpacity;
-    SliderEditor* m_backgroundFadeDuration;
+    BackgroundConfigWidget* m_background;
     QComboBox* m_doubleClick;
     QComboBox* m_middleClick;
     QCheckBox* m_startPlaybackOnSend;
