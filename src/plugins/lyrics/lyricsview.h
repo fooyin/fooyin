@@ -33,6 +33,8 @@ class QPainter;
 
 namespace Fooyin {
 class SettingsManager;
+class WidgetBackground;
+struct BackgroundConfig;
 class ToolTip;
 
 namespace Lyrics {
@@ -45,6 +47,9 @@ class LyricsView : public QListView
 
 public:
     explicit LyricsView(QWidget* parent = nullptr);
+
+    void setBackgroundConfig(const BackgroundConfig& config);
+    void setBackgroundPixmap(const QPixmap& pixmap);
 
     void setDisplayAlignment(Qt::Alignment alignment);
     void setEdgeFadeEnabled(bool enabled);
@@ -90,6 +95,7 @@ private:
     void updateDragPreview(const QPoint& pos);
     void clearDragPreview();
 
+    WidgetBackground* m_background;
     RichText m_displayString;
     QTextDocument m_displayDocument;
     Qt::Alignment m_displayAlignment;

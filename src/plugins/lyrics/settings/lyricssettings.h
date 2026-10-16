@@ -26,6 +26,7 @@
 namespace Fooyin::Lyrics {
 namespace Settings {
 constexpr auto Paths           = u"Lyrics/Paths";
+constexpr auto Background      = u"Lyrics/Background";
 constexpr auto Colours         = u"Lyrics/Colours";
 constexpr auto BaseFont        = u"Lyrics/BaseFont";
 constexpr auto LineFont        = u"Lyrics/CurrentLineFont";

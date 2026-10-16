@@ -36,10 +36,12 @@
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scripttypes.h>
 #include <gui/configdialog.h>
+#include <gui/coverprovider.h>
 #include <gui/guisettings.h>
 #include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/scripting/scriptformatter.h>
+#include <gui/widgets/backgroundimagesource.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsdialogcontroller.h>
@@ -177,12 +179,15 @@ int centredViewportPadding(int viewportHeight, int lineHeight)
 
 LyricsWidget::LyricsWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
                            LyricsFinder* lyricsFinder, LyricsSaver* lyricsSaver, SettingsManager* settings,
-                           GuiStyleProvider* styleProvider, QWidget* parent)
+                           GuiStyleProvider* styleProvider, CoverRepository* coverRepository,
+                           TrackSelectionController* trackSelection, QWidget* parent)
     : FyWidget{parent}
     , m_playerController{playerController}
     , m_playlistHandler{playlistHandler}
     , m_settings{settings}
     , m_styleProvider{styleProvider}
+    , m_backgroundSource{new BackgroundImageSource(new CoverProvider(coverRepository, this), playerController,
+                                                   trackSelection, this)}
     , m_lyricsView{new LyricsView(this)}
     , m_model{new LyricsModel(m_styleProvider, this)}
     , m_delegate{new LyricsDelegate(this)}
@@ -274,6 +279,9 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, PlaylistHandler* 
         m_scrollTimer.start(ScrollTimeout, this);
     });
 
+    QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_lyricsView,
+                     &LyricsView::setBackgroundPixmap);
+
     m_styleProvider->subscribe(this, [this]() { applyConfig(m_config); });
 
     updateLyrics(m_playerController->currentTrack());
@@ -362,6 +370,7 @@ LyricsWidget::ConfigData LyricsWidget::factoryConfig() const
 LyricsWidget::ConfigData LyricsWidget::defaultConfig() const
 {
     auto config{factoryConfig()};
+    config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(Settings::Background).toMap()));
 
     config.seekOnClick    = m_settings->fileValue(Settings::SeekOnClick, config.seekOnClick).toBool();
     config.noLyricsScript = m_settings->fileValue(Settings::NoLyricsScript, config.noLyricsScript).toString();
@@ -438,6 +447,11 @@ void LyricsWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(Settings::LineFont, validated.lineFont);
     m_settings->fileSet(Settings::WordLineFont, validated.wordLineFont);
     m_settings->fileSet(Settings::WordFont, validated.wordFont);
+
+    QJsonObject background;
+    validated.background.normalise();
+    validated.background.saveLayout(background);
+    m_settings->fileSet(Settings::Background, background.toVariantMap());
 }
 
 void LyricsWidget::clearSavedDefaults() const
@@ -460,6 +474,7 @@ void LyricsWidget::clearSavedDefaults() const
     m_settings->fileRemove(Settings::LineFont);
     m_settings->fileRemove(Settings::WordLineFont);
     m_settings->fileRemove(Settings::WordFont);
+    m_settings->fileRemove(Settings::Background);
 }
 
 void LyricsWidget::applyConfig(const ConfigData& config)
@@ -482,7 +497,12 @@ void LyricsWidget::applyConfig(const ConfigData& config)
     validated.wordLineFont = validatedFontString(validated.wordLineFont);
     validated.wordFont     = validatedFontString(validated.wordFont);
 
-    m_config = validated;
+    validated.background.normalise();
+
+    m_config = std::move(validated);
+
+    m_lyricsView->setBackgroundConfig(m_config.background);
+    m_backgroundSource->setConfig(m_config.background);
 
     m_lyricsView->setVerticalScrollBarPolicy(m_config.showScrollbar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
     m_lyricsView->setDisplayAlignment(static_cast<Qt::Alignment>(m_config.alignment));
@@ -751,6 +771,8 @@ LyricsWidget::ConfigData LyricsWidget::configFromLayout(const QJsonObject& layou
 {
     ConfigData config{defaultConfig()};
 
+    config.background.loadLayout(layout);
+
     config.seekOnClick     = layout.value("SeekOnClick"_L1).toBool(config.seekOnClick);
     config.noLyricsScript  = layout.value("NoLyricsScript"_L1).toString(config.noLyricsScript);
     config.scrollDuration  = layout.value("ScrollDuration"_L1).toInt(config.scrollDuration);
@@ -810,6 +832,8 @@ LyricsWidget::ConfigData LyricsWidget::configFromLayout(const QJsonObject& layou
 
 void LyricsWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
 {
+    config.background.saveLayout(layout);
+
     layout["SeekOnClick"_L1]           = config.seekOnClick;
     layout["NoLyricsScript"_L1]        = config.noLyricsScript;
     layout["ScrollDuration"_L1]        = config.scrollDuration;

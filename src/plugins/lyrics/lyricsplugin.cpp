@@ -69,10 +69,11 @@ void LyricsPlugin::initialise(const GuiPluginContext& context)
     m_trackSelection = context.trackSelection;
     m_widgetProvider = context.widgetProvider;
 
-    const auto createLyricsWidget = [this, styleProvider = context.styleProvider]() {
-        return new LyricsWidget(m_playerController, m_playlistHandler, m_lyricsFinder, m_lyricsSaver, m_settings,
-                                styleProvider);
-    };
+    const auto createLyricsWidget
+        = [this, styleProvider = context.styleProvider, coverRepository = context.coverRepository]() {
+              return new LyricsWidget(m_playerController, m_playlistHandler, m_lyricsFinder, m_lyricsSaver, m_settings,
+                                      styleProvider, coverRepository, m_trackSelection);
+          };
 
     auto* showLyrics = new QAction(tr("Ly&rics"), this);
     showLyrics->setStatusTip(tr("Open lyrics in a separate window"));

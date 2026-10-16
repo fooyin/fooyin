@@ -24,6 +24,7 @@
 
 #include <gui/scripting/richtextutils.h>
 #include <gui/widgets/tooltip.h>
+#include <gui/widgets/widgetbackground.h>
 #include <utils/stringutils.h>
 
 #include <QAbstractTextDocumentLayout>
@@ -57,6 +58,7 @@ QString alignmentToCss(const Qt::Alignment alignment)
 namespace Fooyin::Lyrics {
 LyricsView::LyricsView(QWidget* parent)
     : QListView{parent}
+    , m_background{new WidgetBackground(viewport())}
     , m_displayAlignment{Qt::AlignCenter}
     , m_edgeFadeEnabled{false}
     , m_edgeFadeSizePercent{10}
@@ -81,6 +83,16 @@ LyricsView::LyricsView(QWidget* parent)
     m_displayDocument.setUndoRedoEnabled(false);
     updateDisplayDocumentWidth();
     updateScrollSingleStep();
+}
+
+void LyricsView::setBackgroundConfig(const BackgroundConfig& config)
+{
+    m_background->setConfig(config);
+}
+
+void LyricsView::setBackgroundPixmap(const QPixmap& pixmap)
+{
+    m_background->setPixmap(pixmap);
 }
 
 void LyricsView::setDisplayAlignment(Qt::Alignment alignment)
@@ -155,6 +167,7 @@ void LyricsView::paintEvent(QPaintEvent* event)
     const QColor background = backgroundColour();
     QPainter painter{viewport()};
     painter.fillRect(event->rect(), background);
+    m_background->draw(painter);
 
     if(!m_displayString.empty()) {
         const QRect textRect = viewport()->rect().adjusted(m_displayMargins.left(), m_displayMargins.top(),
@@ -311,7 +324,7 @@ void LyricsView::scrollContentsBy(const int dx, const int dy)
 {
     QListView::scrollContentsBy(dx, dy);
 
-    if(m_edgeFadeEnabled && dy != 0) {
+    if((m_edgeFadeEnabled || m_background->hasImage()) && (dx != 0 || dy != 0)) {
         viewport()->update();
     }
 }

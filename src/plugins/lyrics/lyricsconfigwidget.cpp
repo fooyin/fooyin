@@ -22,6 +22,7 @@
 #include "lyricscolours.h"
 
 #include <gui/guiutils.h>
+#include <gui/widgets/backgroundconfigwidget.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/fontbutton.h>
 #include <gui/widgets/scriptlineedit.h>
@@ -44,6 +45,7 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
     : WidgetConfigDialog{lyricsWidget, LyricsWidget::tr("Lyrics Settings"), parent}
     , m_styleProvider{styleProvider}
     , m_tabs{new QTabWidget(this)}
+    , m_background{new BackgroundConfigWidget(this)}
     , m_seekOnClick{new QCheckBox(tr("Seek on click"), this)}
     , m_noLyricsScript{new ScriptLineEdit(this)}
     , m_scrollDuration{new SliderEditor(tr("Synced scroll duration"), this)}
@@ -251,6 +253,7 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
 
     m_tabs->addTab(layoutPage, tr("Layout"));
     m_tabs->addTab(stylePage, tr("Style"));
+    m_tabs->addTab(m_background, tr("Background"));
     m_tabs->addTab(generalPage, tr("General"));
 
     auto* layout = contentLayout();
@@ -287,6 +290,7 @@ LyricsWidget::ConfigData LyricsConfigDialog::config() const
         .lineFont     = m_lineFontBtn->isChecked() ? m_lineFontBtn->buttonFont().toString() : QString{},
         .wordLineFont = m_wordLineFontBtn->isChecked() ? m_wordLineFontBtn->buttonFont().toString() : QString{},
         .wordFont     = m_wordFontBtn->isChecked() ? m_wordFontBtn->buttonFont().toString() : QString{},
+        .background   = m_background->config(),
     };
 
     Colours colours;
@@ -314,6 +318,7 @@ LyricsWidget::ConfigData LyricsConfigDialog::config() const
 
 void LyricsConfigDialog::setConfig(const LyricsWidget::ConfigData& config)
 {
+    m_background->setConfig(config.background);
     m_seekOnClick->setChecked(config.seekOnClick);
     m_noLyricsScript->setText(config.noLyricsScript);
     m_scrollDuration->setValue(config.scrollDuration);
@@ -395,7 +400,7 @@ void LyricsConfigDialog::mergeExternalConfig(const LyricsWidget::ConfigData& pre
                         &LyricsWidget::ConfigData::progressMode, &LyricsWidget::ConfigData::margins,
                         &LyricsWidget::ConfigData::colours, &LyricsWidget::ConfigData::baseFont,
                         &LyricsWidget::ConfigData::lineFont, &LyricsWidget::ConfigData::wordLineFont,
-                        &LyricsWidget::ConfigData::wordFont);
+                        &LyricsWidget::ConfigData::wordFont, &LyricsWidget::ConfigData::background);
 }
 
 ScrollMode LyricsConfigDialog::scrollMode() const

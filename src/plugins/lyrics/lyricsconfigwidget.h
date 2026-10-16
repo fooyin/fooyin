@@ -32,6 +32,7 @@ class QTabWidget;
 
 namespace Fooyin {
 class ColourButton;
+class BackgroundConfigWidget;
 class FontButton;
 class ScriptLineEdit;
 class SliderEditor;
@@ -57,6 +58,7 @@ private:
     GuiStyleProvider* m_styleProvider;
 
     QTabWidget* m_tabs;
+    BackgroundConfigWidget* m_background;
 
     QCheckBox* m_seekOnClick;
     ScriptLineEdit* m_noLyricsScript;

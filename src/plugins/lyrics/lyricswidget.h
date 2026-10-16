@@ -25,6 +25,7 @@
 #include <core/engine/enginedefs.h>
 #include <core/scripting/scriptparser.h>
 #include <gui/fywidget.h>
+#include <gui/widgets/backgroundconfig.h>
 
 #include <QBasicTimer>
 #include <QMargins>
@@ -35,12 +36,15 @@ class QJsonObject;
 class QPropertyAnimation;
 
 namespace Fooyin {
+class BackgroundImageSource;
+class CoverRepository;
 class EngineController;
 class GuiStyleProvider;
 class PlayerController;
 class PlaylistHandler;
 class SettingsManager;
 class Track;
+class TrackSelectionController;
 struct RichText;
 
 namespace Lyrics {
@@ -57,7 +61,8 @@ class LyricsWidget : public FyWidget
 public:
     explicit LyricsWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
                           LyricsFinder* lyricsFinder, LyricsSaver* lyricsSaver, SettingsManager* settings,
-                          GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
+                          GuiStyleProvider* styleProvider, CoverRepository* coverRepository,
+                          TrackSelectionController* trackSelection, QWidget* parent = nullptr);
 
     static QString defaultNoLyricsScript();
 
@@ -88,6 +93,7 @@ public:
         QString lineFont;
         QString wordLineFont;
         QString wordFont;
+        BackgroundConfig background;
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -143,6 +149,7 @@ private:
     SettingsManager* m_settings;
     GuiStyleProvider* m_styleProvider;
 
+    BackgroundImageSource* m_backgroundSource;
     LyricsView* m_lyricsView;
     LyricsModel* m_model;
     LyricsDelegate* m_delegate;
