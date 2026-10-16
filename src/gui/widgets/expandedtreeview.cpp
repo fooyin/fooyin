@@ -4172,9 +4172,11 @@ void ExpandedTreeView::startDrag(Qt::DropActions supportedActions)
     pixmap.setDevicePixelRatio(dpr);
 
     pixmap.fill(Qt::transparent);
-    QPainter painter{&pixmap};
+    {
+        QPainter painter{&pixmap};
+        p->m_view->renderToPixmap(&painter, paintPairs, rect);
+    }
 
-    p->m_view->renderToPixmap(&painter, paintPairs, rect);
     rect.adjust(horizontalOffset(), verticalOffset(), 0, 0);
 
     auto* drag = new QDrag(this);

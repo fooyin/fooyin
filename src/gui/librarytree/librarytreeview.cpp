@@ -167,16 +167,14 @@ void LibraryTreeView::wheelEvent(QWheelEvent* event)
 
 void LibraryTreeView::paintEvent(QPaintEvent* event)
 {
-    QPainter painter{viewport()};
-
-    auto drawCentreText = [this, &painter](const QString& text) {
-        QRect textRect = painter.fontMetrics().boundingRect(text);
-        textRect.moveCenter(viewport()->rect().center());
-        painter.drawText(textRect, Qt::AlignCenter, text);
-    };
-
     if(m_isLoading) {
-        drawCentreText(tr("Loading Library…"));
+        QPainter painter{viewport()};
+
+        const QString text = tr("Loading Library…");
+        QRect textRect     = painter.fontMetrics().boundingRect(text);
+        textRect.moveCenter(viewport()->rect().center());
+
+        painter.drawText(textRect, Qt::AlignCenter, text);
         return;
     }
 
