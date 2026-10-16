@@ -277,9 +277,6 @@ private:
 
     int dropInsertRows(const PlaylistItemList& rows, const QModelIndex& target, int row);
     int dropMoveRows(const QModelIndex& source, const PlaylistItemList& rows, const QModelIndex& target, int row);
-    int dropCopyRows(const QModelIndex& source, const PlaylistItemList& rows, const QModelIndex& target, int row);
-    int dropCopyRowsRecursive(const QModelIndex& source, const PlaylistItemList& rows, const QModelIndex& target,
-                              int row);
 
     bool insertPlaylistRows(const QModelIndex& target, int firstRow, int lastRow, const PlaylistItemList& children);
     bool movePlaylistRows(const QModelIndex& source, int firstRow, int lastRow, const QModelIndex& target, int row,

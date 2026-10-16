@@ -3117,45 +3117,6 @@ int PlaylistModel::dropMoveRows(const QModelIndex& source, const PlaylistItemLis
     return currRow;
 }
 
-int PlaylistModel::dropCopyRows(const QModelIndex& source, const PlaylistItemList& rows, const QModelIndex& target,
-                                int row)
-{
-    return dropCopyRowsRecursive(source, rows, target, row);
-}
-
-int PlaylistModel::dropCopyRowsRecursive(const QModelIndex& source, const PlaylistItemList& rows,
-                                         const QModelIndex& target, int row)
-{
-    int currRow{row};
-    auto* targetParent = itemForIndex(target);
-    if(!targetParent) {
-        return currRow;
-    }
-
-    auto* sourceParent = itemForIndex(source);
-    for(PlaylistItem* childItem : rows) {
-        childItem->resetRow();
-        const auto newKey{UId::create()};
-        auto* newChild = &m_nodes.emplace(newKey, *childItem).first->second;
-        newChild->clearChildren();
-        newChild->setKey(newKey);
-
-        targetParent->insertChild(currRow, newChild);
-
-        const QModelIndex childSourceIndex = indexOfItem(childItem);
-        const QModelIndex childTargetIndex = indexOfItem(newChild);
-
-        dropCopyRowsRecursive(childSourceIndex, childItem->children(), childTargetIndex, 0);
-
-        ++currRow;
-    }
-
-    sourceParent->resetChildren();
-    targetParent->resetChildren();
-
-    return currRow;
-}
-
 bool PlaylistModel::insertPlaylistRows(const QModelIndex& target, int firstRow, int lastRow,
                                        const PlaylistItemList& children)
 {
