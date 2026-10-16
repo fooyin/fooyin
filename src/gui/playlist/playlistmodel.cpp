@@ -2864,12 +2864,10 @@ QModelIndex PlaylistModel::findDropTarget(PlaylistItem* source, PlaylistItem* ta
             if(finalRow >= row || !splitParents.empty()) {
                 PlaylistItem* newParent = cloneParent(m_nodes, parent);
 
-                PlaylistItemList children;
-                PlaylistItemList parentChildren = parent->children();
-                const auto childrenToMove       = parentChildren | std::views::drop(row);
-                std::ranges::copy(childrenToMove, std::back_inserter(children));
+                PlaylistItemList children = parent->children();
+                children.erase(children.begin(), std::ranges::next(children.begin(), row, children.end()));
 
-                splitParents.emplace_back(parent, newParent, row, finalRow, children);
+                splitParents.emplace_back(parent, newParent, row, finalRow, std::move(children));
             }
             row = parent->row() + (row > 0 ? 1 : 0);
         }
