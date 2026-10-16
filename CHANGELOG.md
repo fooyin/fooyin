@@ -35,6 +35,7 @@
   - Add favourite support to projectM presets ([#1674](https://github.com/fooyin/fooyin/issues/1674))
   - Improve equaliser layout and size preamp and band columns independently ([#1712](https://github.com/fooyin/fooyin/issues/1712))
   - Allow viewing artwork for mixed-metadata selections ([#1702](https://github.com/fooyin/fooyin/issues/1702))
+  - Allow filter columns, Library Tree groupings, and sorting presets to be enabled or disabled
   - Add widget margin controls to layout editing context menus
   - Refine the dragon icon and restore it as the default application icon
   - Add a layout button and command for opening the hidden vertical main menu
@@ -53,6 +54,7 @@
   - Suppress known noisy Qt log messages
   - Add custom frame rates with improved frame pacing for visualisations ([#1736](https://github.com/fooyin/fooyin/issues/1736))
   - Use proper quotation marks and apostrophes ([#1771](https://github.com/fooyin/fooyin/pull/1771))
+  - Add horizontal scrolling and optional word wrapping to the log ([#1777](https://github.com/fooyin/fooyin/issues/1777))
 - **Filters**
   - Add an option to remember the selected saved filter ([#1690](https://github.com/fooyin/fooyin/issues/1690))
   - Add an option to restore Library Filter state on startup ([#1699](https://github.com/fooyin/fooyin/pull/1699))
@@ -110,6 +112,7 @@
   - Fix WaveBar seek cancellation and high-DPI rendering
   - Hide unreachable played threshold markers in seek bars and WaveBar
 - **Library & Metadata**
+  - Fix reading custom ReplayGain tags ([#1775](https://github.com/fooyin/fooyin/issues/1775))
   - Fix DSD detection on Windows ([#1633](https://github.com/fooyin/fooyin/issues/1633), [#1735](https://github.com/fooyin/fooyin/issues/1735))
   - Initialise audio readers before metadata and artwork writes
   - Fix playback and playing indicators for Library Tree root tracks ([#1759](https://github.com/fooyin/fooyin/issues/1759))
@@ -125,6 +128,7 @@
   - Fix empty subheader editors in playlist preset settings
   - Fix extra padding in subheaders ([#1725](https://github.com/fooyin/fooyin/issues/1725))
   - Follow the playing track by playlist entry ID ([#1765](https://github.com/fooyin/fooyin/issues/1765))
+  - Preserve column layouts while header restoration is pending ([#1776](https://github.com/fooyin/fooyin/issues/1776))
   - Refresh single-column header when playlists are renamed
   - Restore queue-led source order for temporary playlists
   - Use folding for automatic playlist names ([#1694](https://github.com/fooyin/fooyin/issues/1694))
