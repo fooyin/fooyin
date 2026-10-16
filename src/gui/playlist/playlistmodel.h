@@ -251,28 +251,16 @@ private:
     QVariant headerData(PlaylistItem* item, int column, int role) const;
     QVariant subheaderData(PlaylistItem* item, int column, int role) const;
 
-    struct DropTargetResult
+    enum class MergeResult : uint8_t
     {
-        QModelIndex fullMergeTarget;
-        QModelIndex partMergeTarget;
-        QModelIndex target;
-
-        [[nodiscard]] QModelIndex dropTarget() const
-        {
-            if(fullMergeTarget.isValid()) {
-                return fullMergeTarget;
-            }
-            if(partMergeTarget.isValid()) {
-                return partMergeTarget;
-            }
-            return target;
-        }
+        None = 0,
+        Partial,
+        Full,
     };
 
-    bool prepareDrop(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent);
-    DropTargetResult findDropTarget(PlaylistItem* source, PlaylistItem* target, int& row);
-    DropTargetResult canBeMerged(PlaylistItem*& currTarget, int& targetRow, PlaylistItemList& sourceParents,
-                                 int targetOffset);
+    QModelIndex findDropTarget(PlaylistItem* source, PlaylistItem* target, int& row);
+    MergeResult canBeMerged(PlaylistItem*& currTarget, int& targetRow, PlaylistItemList& sourceParents,
+                            int targetOffset);
     void handleTrackGroup(PendingData& data);
 
     int dropInsertRows(const PlaylistItemList& rows, const QModelIndex& target, int row);

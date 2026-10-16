@@ -534,7 +534,7 @@ QByteArray saveIndexes(const QModelIndexList& indexes, Playlist* playlist)
             localIndex = localIndex.parent();
         }
 
-        stream << static_cast<qsizetype>(indexParentStack.size());
+        stream << static_cast<qint32>(indexParentStack.size());
 
         while(!indexParentStack.empty()) {
             stream << indexParentStack.top();
@@ -544,21 +544,7 @@ QByteArray saveIndexes(const QModelIndexList& indexes, Playlist* playlist)
     return result;
 }
 
-bool dropOnSamePlaylist(QByteArray data, Playlist* playlist)
-{
-    if(!playlist) {
-        return {};
-    }
-
-    QDataStream stream(&data, QIODevice::ReadOnly);
-
-    UId playlistId;
-    stream >> playlistId;
-
-    return playlistId == playlist->id();
-}
-
-QModelIndexList restoreIndexes(QAbstractItemModel* model, QByteArray data, Playlist* playlist)
+std::optional<QModelIndexList> restoreIndexes(QAbstractItemModel* model, QByteArray data, Playlist* playlist)
 {
     if(!playlist) {
         return {};
@@ -575,7 +561,7 @@ QModelIndexList restoreIndexes(QAbstractItemModel* model, QByteArray data, Playl
     }
 
     while(!stream.atEnd()) {
-        int childDepth{0};
+        qint32 childDepth{0};
         stream >> childDepth;
 
         QModelIndex currentIndex;
@@ -1102,7 +1088,73 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
         return false;
     }
 
-    return prepareDrop(data, action, row, column, parent);
+    const int dropIndex = determineDropIndex(this, parent, row);
+    bool sameModel{false};
+
+    if(data->hasFormat(QString::fromLatin1(MimeModelId))) {
+        QByteArray modelData = data->data(QString::fromLatin1(MimeModelId));
+        QDataStream stream{&modelData, QIODevice::ReadOnly};
+
+        UId modelId;
+        stream >> modelId;
+
+        sameModel = modelId == m_id;
+    }
+
+    const QByteArray playlistData = data->data(QString::fromLatin1(Constants::Mime::PlaylistItems));
+    const auto indexes
+        = sameModel && action == Qt::MoveAction ? restoreIndexes(this, playlistData, m_currentPlaylist) : std::nullopt;
+
+    if(indexes) {
+        const TrackIndexRangeList indexRanges = determineTrackIndexGroups(*indexes, parent, row);
+
+        const int finalIndex = m_currentPlaylist->trackCount() - 1;
+        const bool validMove = !std::ranges::all_of(indexRanges, [dropIndex, finalIndex](const auto& range) {
+            return ((dropIndex >= range.first && dropIndex <= range.last + 1)
+                    || (dropIndex == -1 && range.last >= finalIndex));
+        });
+
+        if(!validMove) {
+            return false;
+        }
+
+        MoveOperation operation;
+        operation.emplace_back(dropIndex, indexRanges);
+
+        Q_EMIT tracksMoved({operation});
+
+        return true;
+    }
+
+    TrackList tracks;
+
+    if(const auto mimeTracks = TrackMimeData::tracksFrom(data)) {
+        tracks = *mimeTracks;
+    }
+    else {
+        tracks = Gui::tracksFromMimeData(m_library, data->data(QString::fromLatin1(Constants::Mime::TrackIds)));
+    }
+
+    if(!tracks.empty()) {
+        PlaylistTrackList playlistTracks;
+        playlistTracks.reserve(tracks.size());
+
+        for(const auto& track : tracks) {
+            playlistTracks.emplace_back(track, m_currentPlaylist ? m_currentPlaylist->id() : UId{});
+        }
+
+        const TrackGroups groups{{dropIndex, playlistTracks}};
+        Q_EMIT tracksInserted(groups);
+
+        return true;
+    }
+
+    if(data->hasUrls()) {
+        Q_EMIT filesDropped(data->urls(), dropIndex);
+        return true;
+    }
+
+    return false;
 }
 
 bool PlaylistModel::playlistIsLoaded() const
@@ -1218,9 +1270,7 @@ MoveOperation PlaylistModel::moveTracks(const MoveOperation& operation)
                 continue;
             }
 
-            const auto targetResult = findDropTarget(sourceParentItem, targetParentItem, row);
-
-            targetParent     = targetResult.dropTarget();
+            targetParent     = findDropTarget(sourceParentItem, targetParentItem, row);
             targetParentItem = itemForIndex(targetParent);
 
             const int firstRow = children.front()->row();
@@ -2725,87 +2775,10 @@ QVariant PlaylistModel::subheaderData(PlaylistItem* item, int column, int role) 
     return {};
 }
 
-bool PlaylistModel::prepareDrop(const QMimeData* data, Qt::DropAction action, int row, int /*column*/,
-                                const QModelIndex& parent)
+QModelIndex PlaylistModel::findDropTarget(PlaylistItem* source, PlaylistItem* target, int& row)
 {
-    const int dropIndex = determineDropIndex(this, parent, row);
-
-    bool sameModel{false};
-
-    if(data->hasFormat(QString::fromLatin1(MimeModelId))) {
-        QByteArray modelData = data->data(QString::fromLatin1(MimeModelId));
-        QDataStream stream{&modelData, QIODevice::ReadOnly};
-
-        UId modelId;
-        stream >> modelId;
-
-        sameModel = modelId == m_id;
-    }
-
-    const QByteArray playlistData = data->data(QString::fromLatin1(Constants::Mime::PlaylistItems));
-    const bool samePlaylist       = sameModel && dropOnSamePlaylist(playlistData, m_currentPlaylist);
-
-    if(samePlaylist && action == Qt::MoveAction) {
-        const QModelIndexList indexes
-            = restoreIndexes(this, data->data(QString::fromLatin1(Constants::Mime::PlaylistItems)), m_currentPlaylist);
-        const TrackIndexRangeList indexRanges = determineTrackIndexGroups(indexes, parent, row);
-
-        const int finalIndex = m_currentPlaylist->trackCount() - 1;
-        const bool validMove = !std::ranges::all_of(indexRanges, [dropIndex, finalIndex](const auto& range) {
-            return ((dropIndex >= range.first && dropIndex <= range.last + 1)
-                    || (dropIndex == -1 && range.last >= finalIndex));
-        });
-
-        if(!validMove) {
-            return false;
-        }
-
-        MoveOperation operation;
-        operation.emplace_back(dropIndex, indexRanges);
-
-        Q_EMIT tracksMoved({operation});
-
-        return true;
-    }
-
-    TrackList tracks;
-
-    if(const auto mimeTracks = TrackMimeData::tracksFrom(data)) {
-        tracks = *mimeTracks;
-    }
-    else {
-        tracks = Gui::tracksFromMimeData(m_library, data->data(QString::fromLatin1(Constants::Mime::TrackIds)));
-    }
-
-    if(!tracks.empty()) {
-        PlaylistTrackList playlistTracks;
-        playlistTracks.reserve(tracks.size());
-
-        for(const auto& track : tracks) {
-            playlistTracks.emplace_back(track, m_currentPlaylist ? m_currentPlaylist->id() : UId{});
-        }
-
-        const TrackGroups groups{{dropIndex, playlistTracks}};
-        Q_EMIT tracksInserted(groups);
-
-        return true;
-    }
-
-    if(data->hasUrls()) {
-        Q_EMIT filesDropped(data->urls(), dropIndex);
-        return true;
-    }
-
-    return false;
-}
-
-PlaylistModel::DropTargetResult PlaylistModel::findDropTarget(PlaylistItem* source, PlaylistItem* target, int& row)
-{
-    DropTargetResult dropResult;
-
     if(source->baseKey() == target->baseKey()) {
-        dropResult.fullMergeTarget = indexOfItem(target);
-        return dropResult;
+        return indexOfItem(target);
     }
 
     int targetRow{row};
@@ -2845,14 +2818,16 @@ PlaylistModel::DropTargetResult PlaylistModel::findDropTarget(PlaylistItem* sour
                              return parent->type() == PlaylistItem::Header || parent->row() == 0;
                          }));
 
+    MergeResult mergeResult{MergeResult::None};
+
     // Check left
     if(canMergeleft) {
-        dropResult = canBeMerged(currTarget, targetRow, sourceParents, -1);
-        if(dropResult.fullMergeTarget.isValid()) {
+        mergeResult = canBeMerged(currTarget, targetRow, sourceParents, -1);
+        if(mergeResult == MergeResult::Full) {
             row = targetRow + 1;
-            return dropResult;
+            return indexOfItem(currTarget);
         }
-        if(dropResult.partMergeTarget.isValid()) {
+        if(mergeResult == MergeResult::Partial) {
             row = targetRow + 1;
         }
     }
@@ -2866,13 +2841,13 @@ PlaylistModel::DropTargetResult PlaylistModel::findDropTarget(PlaylistItem* sour
                                 }));
 
     // Check right
-    if(canMergeRight && !dropResult.partMergeTarget.isValid()) {
-        dropResult = canBeMerged(currTarget, targetRow, sourceParents, targetIsRoot ? 0 : 1);
-        if(dropResult.fullMergeTarget.isValid()) {
+    if(canMergeRight && mergeResult != MergeResult::Partial) {
+        mergeResult = canBeMerged(currTarget, targetRow, sourceParents, targetIsRoot ? 0 : 1);
+        if(mergeResult == MergeResult::Full) {
             row = 0;
-            return dropResult;
+            return indexOfItem(currTarget);
         }
-        if(dropResult.partMergeTarget.isValid()) {
+        if(mergeResult == MergeResult::Partial) {
             row = 0;
         }
     }
@@ -2880,7 +2855,7 @@ PlaylistModel::DropTargetResult PlaylistModel::findDropTarget(PlaylistItem* sour
     int newParentRow = targetRow + 1;
     PlaylistItem* prevParentItem{currTarget};
 
-    if(!dropResult.partMergeTarget.isValid()) {
+    if(mergeResult != MergeResult::Partial) {
         // Create parents for tracks after drop index (if any)
         std::vector<SplitParent> splitParents;
 
@@ -2938,37 +2913,26 @@ PlaylistModel::DropTargetResult PlaylistModel::findDropTarget(PlaylistItem* sour
         row = 0;
     }
 
-    if(dropResult.partMergeTarget.isValid()) {
-        dropResult.partMergeTarget = indexOfItem(prevParentItem);
-    }
-    else {
-        dropResult.target = indexOfItem(prevParentItem);
-    }
-
-    return dropResult;
+    return indexOfItem(prevParentItem);
 }
 
-PlaylistModel::DropTargetResult PlaylistModel::canBeMerged(PlaylistItem*& currTarget, int& targetRow,
-                                                           PlaylistItemList& sourceParents, int targetOffset)
+PlaylistModel::MergeResult PlaylistModel::canBeMerged(PlaylistItem*& currTarget, int& targetRow,
+                                                      PlaylistItemList& sourceParents, int targetOffset)
 {
     PlaylistItem* checkItem = currTarget->child(targetRow + targetOffset);
 
     if(!checkItem) {
-        return {};
+        return MergeResult::None;
     }
 
     if(sourceParents.empty() || sourceParents.front()->baseKey() != checkItem->baseKey()) {
-        return {};
+        return MergeResult::None;
     }
 
-    PlaylistItemList newSourceParents;
-    bool diffFound{false};
-
-    for(PlaylistItem* parent : sourceParents) {
-        if(diffFound || parent->baseKey() != checkItem->baseKey()) {
-            diffFound = true;
-            newSourceParents.push_back(parent);
-            continue;
+    auto firstUnmatched = sourceParents.begin();
+    for(; firstUnmatched != sourceParents.end(); ++firstUnmatched) {
+        if((*firstUnmatched)->baseKey() != checkItem->baseKey()) {
+            break;
         }
 
         currTarget     = checkItem;
@@ -2980,12 +2944,12 @@ PlaylistModel::DropTargetResult PlaylistModel::canBeMerged(PlaylistItem*& currTa
         }
     }
 
-    if(!diffFound) {
-        return {.fullMergeTarget = indexOfItem(currTarget), .partMergeTarget = {}, .target = {}};
+    if(firstUnmatched == sourceParents.end()) {
+        return MergeResult::Full;
     }
 
-    sourceParents = newSourceParents;
-    return {.fullMergeTarget = {}, .partMergeTarget = indexOfItem(currTarget), .target = {}};
+    sourceParents.erase(sourceParents.begin(), firstUnmatched);
+    return MergeResult::Partial;
 }
 
 void PlaylistModel::handleTrackGroup(PendingData& data)
@@ -3045,8 +3009,7 @@ void PlaylistModel::handleTrackGroup(PendingData& data)
 
             PlaylistItem* targetParentItem = itemForIndex(targetParent);
 
-            const auto targetResult = findDropTarget(sourceParentItem, targetParentItem, row);
-            targetParent            = targetResult.dropTarget();
+            targetParent = findDropTarget(sourceParentItem, targetParentItem, row);
 
             const int total = row + static_cast<int>(children.size()) - 1;
 
