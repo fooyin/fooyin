@@ -37,6 +37,27 @@ public:
         , m_selectionController{selectionController}
     { }
 
+    void scheduleCoverReload()
+    {
+        if(static_cast<BackgroundImageMode>(m_config.imageMode) != BackgroundImageMode::AlbumCover) {
+            return;
+        }
+
+        ++m_requestId;
+        if(m_reloadPending) {
+            return;
+        }
+
+        m_reloadPending = true;
+        QMetaObject::invokeMethod(
+            m_self,
+            [this]() {
+                m_reloadPending = false;
+                reloadCover();
+            },
+            Qt::QueuedConnection);
+    }
+
     void reloadCover()
     {
         if(static_cast<BackgroundImageMode>(m_config.imageMode) != BackgroundImageMode::AlbumCover) {
@@ -86,6 +107,7 @@ public:
     BackgroundConfig m_config;
     Track m_coverTrack;
     int m_requestId{0};
+    bool m_reloadPending{false};
 };
 
 BackgroundImageSource::BackgroundImageSource(CoverProvider* coverProvider, PlayerController* playerController,
@@ -100,7 +122,8 @@ BackgroundImageSource::BackgroundImageSource(CoverProvider* coverProvider, Playe
     QObject::connect(p->m_playerController, &PlayerController::currentTrackChanged, this, reloadCover);
     QObject::connect(p->m_playerController, &PlayerController::currentTrackUpdated, this, reloadCover);
     QObject::connect(p->m_playerController, &PlayerController::playStateChanged, this, reloadCover);
-    QObject::connect(p->m_selectionController, &TrackSelectionController::displaySelectionChanged, this, reloadCover);
+    QObject::connect(p->m_selectionController, &TrackSelectionController::displaySelectionChanged, this,
+                     [this]() { p->scheduleCoverReload(); });
     QObject::connect(p->m_coverProvider, &CoverProvider::coverAdded, this, [this, reloadCover](const Track& track) {
         if(p->m_coverTrack.isValid() && p->m_coverTrack.sameIdentityAs(track)) {
             reloadCover();
