@@ -73,7 +73,7 @@ LyricsSearchingPageWidget::LyricsSearchingPageWidget(SettingsManager* settings)
     , m_albumParam{new ScriptLineEdit(this)}
     , m_matchThreshold{new SliderEditor(tr("Minimum match threshold"), this)}
 {
-    m_autoSearchSkipScript->setToolTip(tr("Return any text to skip automatic searches, or nothing to allow them. "
+    m_autoSearchSkipScript->setToolTip(tr("Return any text to skip automatic searches, or nothing to allow them.\n"
                                           "Local lyrics will still be loaded."));
 
     auto* behaviourGroup  = new QGroupBox(tr("Behaviour"), this);
