@@ -15,6 +15,7 @@
   - Add Track Viewer and per-widget playlist settings ([#1699](https://github.com/fooyin/fooyin/pull/1699))
   - Add a standalone Library Tree window with integrated controls ([#1708](https://github.com/fooyin/fooyin/issues/1708))
   - Add customisable toolbar layouts
+  - Add configurable backgrounds to Lyrics, Script Display, and Queue Viewer
   - Add a full-track seekbar mode to Spectrogram
 - **Playlist**
   - Add options to keep headers and artwork visible while scrolling ([#1739](https://github.com/fooyin/fooyin/issues/1739))
@@ -50,11 +51,13 @@
   - Add MusicBrainz release page link and scrollable release details ([#1741](https://github.com/fooyin/fooyin/issues/1741))
   - Arrange Library Tree settings in two columns
   - Support transparent standalone lyrics window backgrounds
+  - Add a configurable script for skipping automatic lyric searches
   - Cache the no-lyrics document
   - Suppress known noisy Qt log messages
   - Add custom frame rates with improved frame pacing for visualisations ([#1736](https://github.com/fooyin/fooyin/issues/1736))
   - Use proper quotation marks and apostrophes ([#1771](https://github.com/fooyin/fooyin/pull/1771))
   - Add horizontal scrolling and optional word wrapping to the log ([#1777](https://github.com/fooyin/fooyin/issues/1777))
+  - Show portal-assigned global shortcuts and track system changes ([#1731](https://github.com/fooyin/fooyin/issues/1731))
 - **Filters**
   - Add an option to remember the selected saved filter ([#1690](https://github.com/fooyin/fooyin/issues/1690))
   - Add an option to restore Library Filter state on startup ([#1699](https://github.com/fooyin/fooyin/pull/1699))
@@ -70,6 +73,7 @@
 - **Playlists**
   - Add scripted separators and unify preset display scripts ([#1732](https://github.com/fooyin/fooyin/pull/1732))
   - Make the inline editing delay configurable
+  - Move background controls to a separate configuration tab
   - Sort playlists naturally in Playlist Manager
 - **Settings**
   - Add search across settings categories, pages, and advanced options
@@ -102,6 +106,7 @@
 - **Interface**
   - Fix alternating row selection backgrounds in right-caption tree views
   - Fix a crash when closing a widget window with its configuration dialog open
+  - Fix painting lifecycle issues in item views and editors
   - Fix Properties action icons in Windows dark mode ([#1691](https://github.com/fooyin/fooyin/issues/1691))
   - Update the search help link ([#1715](https://github.com/fooyin/fooyin/issues/1715))
   - Fix truncation around bracketed text in Lyrics ([#1737](https://github.com/fooyin/fooyin/issues/1737))
@@ -109,6 +114,7 @@
   - Preserve configured columns in Radio Browser on startup ([#1686](https://github.com/fooyin/fooyin/issues/1686))
   - Preserve track order when applying ReplayGain values in Properties ([#1727](https://github.com/fooyin/fooyin/issues/1727))
   - Rescale the waveform when label visibility changes ([#1689](https://github.com/fooyin/fooyin/issues/1689))
+  - Preserve artwork fades when the upcoming image is unchanged
   - Fix WaveBar seek cancellation and high-DPI rendering
   - Hide unreachable played threshold markers in seek bars and WaveBar
 - **Library & Metadata**
@@ -119,6 +125,9 @@
   - Update the Library Tree selection before handling middle-click actions ([#1766](https://github.com/fooyin/fooyin/issues/1766))
   - Recognise spaced `ALBUM ARTIST` tags ([#1693](https://github.com/fooyin/fooyin/issues/1693))
   - Make track update and deletion batches and playlist saves atomic
+- **Lyrics**
+  - Fix right-to-left word order ([#1675](https://github.com/fooyin/fooyin/issues/1675))
+  - Ignore instrumental placeholders from NetEase and QQ
 - **Playback**
   - Preserve active DSP preset identity across edits and restarts
   - Preserve played threshold state when restoring playback
