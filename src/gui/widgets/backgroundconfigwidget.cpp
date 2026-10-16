@@ -57,8 +57,7 @@ public:
         , m_backgroundImage{new QComboBox(self)}
         , m_backgroundCoverTypeLabel{new QLabel(BackgroundConfigWidget::tr("Artwork type") + u":"_s, self)}
         , m_backgroundCoverType{new QComboBox(self)}
-        , m_backgroundTrackPreferenceLabel{new QLabel(BackgroundConfigWidget::tr("Preferred Background Track") + u":"_s,
-                                                      self)}
+        , m_backgroundTrackPreferenceLabel{new QLabel(BackgroundConfigWidget::tr("Preferred track") + u":"_s, self)}
         , m_backgroundTrackPreference{new QComboBox(self)}
         , m_customImageLabel{new QLabel(BackgroundConfigWidget::tr("File") + u":"_s, self)}
         , m_customImage{new QLineEdit(self)}
