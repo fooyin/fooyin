@@ -129,7 +129,7 @@
     <message>
         <location filename="../../src/gui/widgets.cpp" line="505"/>
         <source>Unchecked items will be hidden from the layout editing context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Item yang tidak dipilih akan disembunyikan dari menu konteks penyuntingan tata letak.</translation>
     </message>
 </context>
 <context>
@@ -172,12 +172,12 @@
     <message>
         <location filename="../../src/gui/filters/filtercontextmenu.h" line="71"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Hapus dari antrian pemutaran</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtercontextmenu.h" line="75"/>
         <source>Filter options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opsi filter</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtercontextmenu.h" line="78"/>
@@ -187,17 +187,17 @@
     <message>
         <location filename="../../src/gui/filters/filtercontextmenu.h" line="82"/>
         <source>Track menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menu trek</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="514"/>
         <source>Library Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter Pustaka</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="516"/>
         <source>Unchecked items will be hidden from the library filter context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Item yang tidak dipilih akan disembunyikan dari menu konteks filer pustaka.</translation>
     </message>
 </context>
 <context>
@@ -259,52 +259,52 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="200"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="202"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadata</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="92"/>
         <source>Track title</source>
-        <translation type="unfinished"></translation>
+        <translation>Judul trek</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="94"/>
         <source>Primary artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Artis utama</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="98"/>
         <source>Album title</source>
-        <translation type="unfinished"></translation>
+        <translation>Judul album</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="100"/>
         <source>Album artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Artis album</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="102"/>
         <source>Track number</source>
-        <translation type="unfinished"></translation>
+        <translation>Nomer trek</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="104"/>
         <source>Total tracks on the release</source>
-        <translation type="unfinished"></translation>
+        <translation>Jumlah trek rilis</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="106"/>
         <source>Disc number</source>
-        <translation type="unfinished"></translation>
+        <translation>Nomer disk</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="108"/>
         <source>Total discs on the release</source>
-        <translation type="unfinished"></translation>
+        <translation>Total disk rilis</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="109"/>
         <source>Genres</source>
-        <translation type="unfinished"></translation>
+        <translation>Genre</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="111"/>
