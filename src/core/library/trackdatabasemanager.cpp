@@ -235,8 +235,8 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, Track::Stat
         options |= AudioReader::Playcount;
     }
 
-    AudioReader::WriteOptions writeOptions
-        = writeToFiles ? writeOptionsForStats(updatedStats) & options : AudioReader::None;
+    const AudioReader::WriteOptions requestedWriteOptions = writeOptionsForStats(updatedStats) & options;
+    AudioReader::WriteOptions writeOptions                = writeToFiles ? requestedWriteOptions : AudioReader::None;
     if(writeOptions != AudioReader::None && m_settings->value<Settings::Core::PreserveTimestamps>()) {
         writeOptions |= AudioReader::PreserveTimestamps;
     }
@@ -248,6 +248,7 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, Track::Stat
 
         Track updatedTrack{track};
         bool needsTrackUpdate{false};
+        bool ratingWritten{false};
 
         if(updatedTrack.hash().isEmpty()) {
             updatedTrack.generateHash();
@@ -255,21 +256,36 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, Track::Stat
 
         if(!track.isInArchive() && !updatedTrack.isDatabaseOnlyMetadata() && writeOptions != AudioReader::None) {
             if(m_audioLoader->writeTrackMetadata(updatedTrack, writeOptions)) {
-                const bool rawRatingChanged
-                    = writeOptions.testFlag(AudioReader::Rating) && syncRawRatingTag(updatedTrack);
+                ratingWritten = writeOptions.testFlag(AudioReader::Rating);
+                if(ratingWritten) {
+                    syncRawRatingTag(updatedTrack);
+                }
                 const QDateTime modifiedTime   = QFileInfo{updatedTrack.filepath()}.lastModified();
                 const uint64_t newModifiedTime = modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0;
                 updatedTrack.setModifiedTime(newModifiedTime);
                 updatedTrack.normaliseExtraProperties();
-                needsTrackUpdate = rawRatingChanged || newModifiedTime != track.modifiedTime();
+                needsTrackUpdate = ratingWritten || newModifiedTime != track.modifiedTime();
             }
             else {
                 qCWarning(TRK_DBMAN) << "Failed to write track playback statistics to file:" << updatedTrack.filepath();
             }
         }
 
+        if(writeToFiles && updatedStats.testFlag(Track::Stat::Rating) && !ratingWritten) {
+            Track storedTrack{track};
+            const QString tag = ratingTagPolicy().effectiveWriteTag();
+            if(!tag.isEmpty() && m_trackDatabase.reloadTrack(storedTrack)) {
+                updatedTrack.setRawRatingTag(tag, storedTrack.rawRatingTag(tag));
+            }
+        }
+
         if((!needsTrackUpdate || m_trackDatabase.updateTrack(updatedTrack))
            && m_trackDatabase.updateTrackStats(updatedTrack, updatedStats)) {
+            if(!writeToFiles && requestedWriteOptions.testFlag(AudioReader::Rating) && !track.isInArchive()
+               && !track.isDatabaseOnlyMetadata()) {
+                // Publish the pending value for scripts, but persist the raw tag only after the file write succeeds
+                syncRawRatingTag(updatedTrack);
+            }
             tracksUpdated.push_back(updatedTrack);
         }
         else {
