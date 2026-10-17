@@ -2943,7 +2943,7 @@ void PlaylistModel::handleTrackGroup(PendingData& data)
         keyPositionMap[data.containerOrder.at(i)] = i;
     }
 
-    auto cmpParentKeys = [keyPositionMap](const UId& key1, const UId& key2) {
+    auto cmpParentKeys = [&keyPositionMap](const UId& key1, const UId& key2) {
         if(key1 == key2) {
             return false;
         }
