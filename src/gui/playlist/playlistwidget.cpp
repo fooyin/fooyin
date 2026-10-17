@@ -918,6 +918,7 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     , m_delgate{new PlaylistDelegate(this)}
     , m_playlistView{new PlaylistView(this)}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
+    , m_pendingHeaderRestore{false}
     , m_playlistContext{new WidgetContext(
           this, Context{IdList{Constants::Context::TrackSelection, Id{Constants::Context::Playlist}.append(id())}},
           this)}
@@ -1429,8 +1430,7 @@ void PlaylistWidget::setSingleMode(bool enabled)
         m_layoutState = captureLayoutState();
     }
 
-    QObject::disconnect(m_pendingHeaderRestore);
-    m_pendingHeaderRestore = {};
+    m_pendingHeaderRestore = false;
 
     const bool wasSingleMode = std::exchange(m_layoutState.singleMode, enabled);
     if(!wasSingleMode && m_layoutState.singleMode) {
@@ -1447,8 +1447,7 @@ void PlaylistWidget::setSingleMode(bool enabled)
             restoreLayoutHeader();
         }
         else {
-            m_pendingHeaderRestore = QObject::connect(m_model, &QAbstractItemModel::modelReset, this,
-                                                      &PlaylistWidget::restoreLayoutHeader, Qt::SingleShotConnection);
+            m_pendingHeaderRestore = true;
         }
     }
 
@@ -1590,8 +1589,7 @@ std::optional<PlaylistWidgetLayoutState> PlaylistWidget::deserialiseLayoutState(
 
 void PlaylistWidget::applyLayoutState(const PlaylistWidgetLayoutState& state)
 {
-    QObject::disconnect(m_pendingHeaderRestore);
-    m_pendingHeaderRestore = {};
+    m_pendingHeaderRestore = false;
 
     m_layoutState = state;
     if(!m_layoutState.singleMode) {
@@ -1608,8 +1606,7 @@ void PlaylistWidget::applyLayoutState(const PlaylistWidgetLayoutState& state)
     m_playlistView->setExtendSpansIntoParents(m_layoutState.currentPreset.insetSubheadersToImageColumns);
 
     if(!m_layoutState.singleMode) {
-        m_pendingHeaderRestore = QObject::connect(m_model, &QAbstractItemModel::modelReset, this,
-                                                  &PlaylistWidget::restoreLayoutHeader, Qt::SingleShotConnection);
+        m_pendingHeaderRestore = true;
     }
 
     updateSpans();
@@ -1625,8 +1622,7 @@ void PlaylistWidget::restoreLayoutHeader()
     }
     updateSpans();
 
-    QObject::disconnect(m_pendingHeaderRestore);
-    m_pendingHeaderRestore = {};
+    m_pendingHeaderRestore = false;
 }
 
 bool PlaylistWidget::columnAvailable(const PlaylistColumn& column) const
@@ -1860,7 +1856,13 @@ void PlaylistWidget::setupConnections()
     QObject::connect(m_model, &QAbstractItemModel::modelAboutToBeReset, m_playlistView, &PlaylistView::playlistAboutToBeReset);
     QObject::connect(m_model, &QAbstractItemModel::modelAboutToBeReset, this, [this]() { m_coverProvider->clearVisibleThumbnailKeys(this); });
     QObject::connect(m_model, &QAbstractItemModel::modelAboutToBeReset, this, [this]() { m_session->handleAboutToBeReset(sessionHost()); });
-    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, &PlaylistWidget::updateVisibleCoverPins);
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() {
+        // Artwork column widths determine group padding, so restore them before the scroll position
+        if(m_pendingHeaderRestore) {
+            restoreLayoutHeader();
+        }
+        updateVisibleCoverPins();
+    });
     QObject::connect(m_model, &PlaylistModel::loadingStateChanged, m_playlistView->viewport(), qOverload<>(&QWidget::update));
     QObject::connect(m_model, &PlaylistModel::loadingStateChanged, m_header->viewport(), qOverload<>(&QWidget::update));
     QObject::connect(m_model, &PlaylistModel::playlistLoaded, m_playlistView, &PlaylistView::playlistReset);

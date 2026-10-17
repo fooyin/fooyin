@@ -294,7 +294,7 @@ private:
     PlaylistDelegate* m_delgate;
     PlaylistView* m_playlistView;
     AutoHeaderView* m_header;
-    QMetaObject::Connection m_pendingHeaderRestore;
+    bool m_pendingHeaderRestore;
     PlaylistWidgetLayoutState m_layoutState;
     PlaylistWidgetLayoutState m_defaultLayoutState;
     ConfigData m_config;
