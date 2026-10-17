@@ -744,6 +744,52 @@ void Widgets::registerAdvancedSettings()
                  return QVariant::fromValue(result);
              },
          .validate = {}});
+    advancedSettingsRegistry->add(
+        Settings::Core::Internal::ExtraTagCompressionMinSize,
+        Settings::Core::Internal::DefaultExtraTagCompressionMinSize,
+        {.category    = {tr("Library"), tr("Metadata Compression")},
+         .label       = tr("Minimum extra tag size"),
+         .description = tr("Compress extra tags whose combined UTF-16 value size reaches this threshold.\n"
+                           "Set to 0 to disable compression. Changes take effect after restarting fooyin."),
+         .editor      = AdvancedSettingSpinBox{.minimum          = 0,
+                                               .maximum          = 64 * 1024 * 1024,
+                                               .singleStep       = 1,
+                                               .suffix           = tr(" bytes"),
+                                               .specialValueText = tr("Disabled")},
+         .normalise   = {},
+         .validate    = {}});
+
+    const auto normaliseExtraTagNames = [](const QVariant& value) {
+        QStringList fields;
+        for(const auto& field : value.toStringList()) {
+            const QString normalised = field.trimmed().toUpper();
+            if(!normalised.isEmpty() && !fields.contains(normalised)) {
+                fields.push_back(normalised);
+            }
+        }
+        return QVariant::fromValue(fields);
+    };
+
+    advancedSettingsRegistry->add(
+        Settings::Core::Internal::ExtraTagCompressionAlways, QStringList{},
+        {.category    = {tr("Library"), tr("Metadata Compression")},
+         .label       = tr("Extra tags to compress below the threshold"),
+         .description = tr("Semicolon-separated extra tag names that bypass the size threshold when compression "
+                           "is enabled.\nValues are compressed only when this saves space.\n"
+                           "Changes take effect after restarting fooyin."),
+         .editor      = AdvancedSettingStringListLineEdit{.separator = u';'},
+         .normalise   = normaliseExtraTagNames,
+         .validate    = {}});
+    advancedSettingsRegistry->add(
+        Settings::Core::Internal::ExtraTagCompressionNever, QStringList{},
+        {.category    = {tr("Library"), tr("Metadata Compression")},
+         .label       = tr("Extra tags to keep uncompressed"),
+         .description = tr("Semicolon-separated extra tag names to keep uncompressed.\nThis takes precedence over "
+                           "the size threshold and other field overrides.\n"
+                           "Changes take effect after restarting fooyin."),
+         .editor      = AdvancedSettingStringListLineEdit{.separator = u';'},
+         .normalise   = normaliseExtraTagNames,
+         .validate    = {}});
     advancedSettingsRegistry->add<Settings::Core::PreserveTimestamps>(
         {.category    = {tr("Tagging")},
          .label       = tr("Preserve timestamps"),
