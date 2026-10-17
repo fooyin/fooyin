@@ -20,6 +20,7 @@
 #include "discogsartwork.h"
 
 #include <core/network/networkaccessmanager.h>
+#include <core/network/networkutils.h>
 #include <utils/stringutils.h>
 
 #include <QCryptographicHash>
@@ -36,6 +37,23 @@ constexpr auto Secret    = "Z0NDTU1LYm9SblpnTmpOU2VxQWR6ek1aZVdxZkJZTVE=";
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
+namespace {
+QNetworkRequest createDiscogsRequest(const QUrl& url, const std::map<QString, QString>& params)
+{
+    QUrlQuery query{url};
+    for(const auto& [key, value] : params) {
+        query.addQueryItem(key, value);
+    }
+
+    QUrl requestUrl{url};
+    requestUrl.setQuery(query);
+    auto request = Fooyin::makeNetworkRequest(requestUrl);
+    request.setTransferTimeout(15000);
+    request.setRawHeader("Accept", "application/json");
+    return request;
+}
+} // namespace
+
 DiscogsArtwork::DiscogsArtwork(NetworkAccessManager* network, SettingsManager* settings, int index, bool enabled,
                                QObject* parent)
     : ArtworkSource{network, settings, index, enabled, parent}
@@ -66,7 +84,7 @@ void DiscogsArtwork::search(const SearchParams& params)
                                                  {u"track"_s, params.title.toLower()},
                                                  {u"type"_s, u"master"_s}};
 
-    const QNetworkRequest req = createRequest(QString::fromLatin1(SearchUrl), queryParams, m_secret);
+    const QNetworkRequest req = createDiscogsRequest(QString::fromLatin1(SearchUrl), queryParams);
 
     setReply(network()->get(req));
     QObject::connect(reply(), &QNetworkReply::finished, this, &DiscogsArtwork::handleSearchReply);
@@ -127,8 +145,7 @@ void DiscogsArtwork::handleSearchReply()
             }
         }
 
-        const QNetworkRequest req
-            = createRequest(releaseUrl, {{u"key"_s, m_apiKey}, {u"secret"_s, m_secret}}, m_secret);
+        const QNetworkRequest req = createDiscogsRequest(releaseUrl, {{u"key"_s, m_apiKey}, {u"secret"_s, m_secret}});
 
         const auto& releaseReply = m_requests.emplace(releaseId, network()->get(req)).first->second;
         QObject::connect(releaseReply, &QNetworkReply::finished, this,
@@ -199,7 +216,7 @@ void DiscogsArtwork::handleReleaseReply(uint64_t id)
     if(m_params.type == Track::Cover::Artist) {
         if(!artistUrl.isEmpty()) {
             const QNetworkRequest req
-                = createRequest(artistUrl, {{u"key"_s, m_apiKey}, {u"secret"_s, m_secret}}, m_secret);
+                = createDiscogsRequest(artistUrl, {{u"key"_s, m_apiKey}, {u"secret"_s, m_secret}});
 
             auto* artistReply = network()->get(req);
             QObject::connect(artistReply, &QNetworkReply::finished, this,
