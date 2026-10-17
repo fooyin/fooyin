@@ -31,6 +31,7 @@
 #include <utils/id.h>
 #include <utils/worker.h>
 
+#include <memory>
 #include <stop_token>
 
 namespace Fooyin {
@@ -96,6 +97,7 @@ struct PendingData
         indexNodes.clear();
     }
 };
+using PendingDataPtr = std::shared_ptr<PendingData>;
 
 class PlaylistPopulator : public Worker
 {
@@ -113,8 +115,8 @@ public:
 
 Q_SIGNALS:
     void populationFinished(uint64_t generation);
-    void populated(const Fooyin::PendingData& data);
-    void populatedTrackGroup(const Fooyin::PendingData& data);
+    void populated(Fooyin::PendingDataPtr data);
+    void populatedTrackGroup(Fooyin::PendingDataPtr data);
     void tracksUpdated(uint64_t generation, const Fooyin::ItemList& tracks, const std::set<int>& columnsUpdated);
     void headersUpdated(uint64_t generation, const Fooyin::ItemKeyMap& headers);
 
@@ -122,3 +124,5 @@ private:
     std::unique_ptr<PlaylistPopulatorPrivate> p;
 };
 } // namespace Fooyin
+
+Q_DECLARE_METATYPE(Fooyin::PendingDataPtr)

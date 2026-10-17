@@ -803,8 +803,10 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
         Q_EMIT playlistLoaded();
     });
 
-    QObject::connect(&m_populator, &PlaylistPopulator::populated, this, &PlaylistModel::populateModel);
-    QObject::connect(&m_populator, &PlaylistPopulator::populatedTrackGroup, this, &PlaylistModel::populateTrackGroup);
+    QObject::connect(&m_populator, &PlaylistPopulator::populated, this,
+                     [this](PendingDataPtr data) { populateModel(std::move(*data)); });
+    QObject::connect(&m_populator, &PlaylistPopulator::populatedTrackGroup, this,
+                     [this](PendingDataPtr data) { populateTrackGroup(std::move(*data)); });
     QObject::connect(&m_populator, &PlaylistPopulator::headersUpdated, this,
                      [this](uint64_t generation, const ItemKeyMap& data) {
                          if(generation == m_populationGeneration) {
@@ -2201,7 +2203,7 @@ void PlaylistModel::populateTrackGroup(PendingData data)
 
     if(m_nodes.empty()) {
         m_resetting = true;
-        populateModel(data);
+        populateModel(std::move(data));
         tracksChanged();
         Q_EMIT trackGroupApplied();
         return;

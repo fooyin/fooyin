@@ -52,7 +52,7 @@ public:
     RichText evaluateGroupScript(const ParsedScript& parsedScript, const TrackList& tracks,
                                  const ScriptContext& context);
     ScriptContext makeContext(int index = -1, int depth = 0, const Track* track = nullptr);
-    PendingData buildBatchData() const;
+    PendingData takeBatchData();
     void clearBatchData();
     void updateContainerText(PlaylistContainerItem& container, PlaylistItem::ItemType type, int scriptIndex,
                              const TrackList& tracks);
@@ -263,23 +263,29 @@ ScriptContext PlaylistPopulatorPrivate::makeContext(int index, int depth, const 
     return m_request.scriptData.context();
 }
 
-PendingData PlaylistPopulatorPrivate::buildBatchData() const
+PendingData PlaylistPopulatorPrivate::takeBatchData()
 {
     PendingData batchData;
     batchData.generation     = m_request.generation;
     batchData.playlistId     = m_request.playlistId;
-    batchData.updatedItems   = m_data.updatedItems;
-    batchData.nodes          = m_data.nodes;
-    batchData.containerOrder = m_data.containerOrder;
-    batchData.trackParents   = m_data.trackParents;
-    batchData.parent         = m_data.parent;
+    batchData.updatedItems   = std::move(m_data.updatedItems);
+    batchData.nodes          = std::move(m_data.nodes);
+    batchData.containerOrder = std::move(m_data.containerOrder);
+    batchData.trackParents   = std::move(m_data.trackParents);
+    batchData.parent         = std::move(m_data.parent);
     batchData.row            = m_data.row;
-    batchData.indexNodes     = m_data.indexNodes;
+    batchData.indexNodes     = std::move(m_data.indexNodes);
 
     for(const auto& childKeys : batchData.nodes | std::views::values) {
         for(const auto& childKey : childKeys) {
             if(const auto it = m_data.items.find(childKey); it != m_data.items.cend()) {
-                batchData.items.emplace(childKey, it->second);
+                if(it->second.type() == PlaylistItem::Track) {
+                    batchData.items.insert(m_data.items.extract(it));
+                }
+                else {
+                    // Containers remain available for grouping and text updates in subsequent batches
+                    batchData.items.emplace(childKey, it->second);
+                }
             }
         }
     }
@@ -289,15 +295,6 @@ PendingData PlaylistPopulatorPrivate::buildBatchData() const
 
 void PlaylistPopulatorPrivate::clearBatchData()
 {
-    for(auto itemIt = m_data.items.begin(); itemIt != m_data.items.end();) {
-        if(itemIt->second.type() == PlaylistItem::Track) {
-            itemIt = m_data.items.erase(itemIt);
-        }
-        else {
-            ++itemIt;
-        }
-    }
-
     m_data.updatedItems.clear();
     m_data.nodes.clear();
     m_data.containerOrder.clear();
@@ -537,8 +534,7 @@ void PlaylistPopulatorPrivate::runBatch(int size, int index)
         return;
     }
 
-    const PendingData batchData = buildBatchData();
-    Q_EMIT m_self->populated(batchData);
+    Q_EMIT m_self->populated(std::make_shared<PendingData>(takeBatchData()));
 
     m_nextTrack += batchSize;
     clearBatchData();
@@ -575,8 +571,7 @@ void PlaylistPopulatorPrivate::runTracksGroup(const std::map<int, PlaylistTrackL
         return;
     }
 
-    const PendingData batchData = buildBatchData();
-    Q_EMIT m_self->populatedTrackGroup(batchData);
+    Q_EMIT m_self->populatedTrackGroup(std::make_shared<PendingData>(takeBatchData()));
     clearBatchData();
 }
 
@@ -584,7 +579,7 @@ PlaylistPopulator::PlaylistPopulator(QObject* parent)
     : Worker{parent}
     , p{std::make_unique<PlaylistPopulatorPrivate>(this)}
 {
-    qRegisterMetaType<PendingData>();
+    qRegisterMetaType<PendingDataPtr>("Fooyin::PendingDataPtr");
 }
 
 PlaylistPopulator::~PlaylistPopulator() = default;
