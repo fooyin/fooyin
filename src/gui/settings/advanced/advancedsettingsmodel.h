@@ -51,8 +51,10 @@ public:
     {
         ItemType = Qt::UserRole,
         IsSpinBoxEditor,
+        IsDoubleSpinBoxEditor,
         MinimumValue,
         MaximumValue,
+        Decimals,
         SingleStep,
         Suffix,
         SpecialValueText,

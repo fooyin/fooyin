@@ -84,9 +84,24 @@ struct AdvancedSettingSpinBox
     QString specialValueText;
 };
 
+/*!
+ * Floating-point spin box editor configuration.
+ *
+ * The setting is displayed as "Label: value"; a spin box is created only while the row is being edited.
+ */
+struct AdvancedSettingDoubleSpinBox
+{
+    double minimum{0.0};
+    double maximum{100.0};
+    double singleStep{1.0};
+    int decimals{2};
+    QString suffix;
+    QString specialValueText;
+};
+
 using AdvancedSettingEditor
     = std::variant<AdvancedSettingCheckBox, AdvancedSettingRadioButtons, AdvancedSettingLineEdit,
-                   AdvancedSettingStringListLineEdit, AdvancedSettingSpinBox>;
+                   AdvancedSettingStringListLineEdit, AdvancedSettingSpinBox, AdvancedSettingDoubleSpinBox>;
 
 /*!
  * Runtime descriptor for a single advanced setting.
