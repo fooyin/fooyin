@@ -412,6 +412,9 @@ void ScriptEditorPrivate::setupReference()
     };
 
     for(const auto& entry : scriptReferenceEntries()) {
+        if(entry.isAlias) {
+            continue;
+        }
         switch(entry.kind) {
             case ScriptReferenceKind::Variable:
                 appendRow(m_variableReferenceModel, entry);

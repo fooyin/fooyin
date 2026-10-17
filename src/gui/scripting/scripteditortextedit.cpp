@@ -450,6 +450,9 @@ bool ScriptEditorTextEdit::isCompletionDismissKey(const QKeyEvent* event)
 void ScriptEditorTextEdit::populateCompletionModels()
 {
     for(const auto& entry : scriptReferenceEntries()) {
+        if(entry.isAlias) {
+            continue;
+        }
         auto* item = new QStandardItem(entry.label);
         item->setData(entry.insertText, InsertTextRole);
         item->setData(entry.cursorOffset, CursorOffsetRole);

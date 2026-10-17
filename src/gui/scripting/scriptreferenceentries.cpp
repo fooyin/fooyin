@@ -98,7 +98,8 @@ std::vector<ScriptReferenceEntry> scriptReferenceEntries(const ScriptRegistry& r
                                ? translate("Plugins")
                                : QCoreApplication::translate("Fooyin", variable.category.toUtf8().constData()),
              .description  = QCoreApplication::translate("Fooyin", variable.description.toUtf8().constData()),
-             .cursorOffset = 0});
+             .cursorOffset = 0,
+             .isAlias      = name != variable.name});
     };
     for(const auto& variable : registry.variables()) {
         addVariable(variable, variable.name);
@@ -121,7 +122,8 @@ std::vector<ScriptReferenceEntry> scriptReferenceEntries(const ScriptRegistry& r
                                ? translate("Plugins")
                                : QCoreApplication::translate("Fooyin", function.category.toUtf8().constData()),
              .description  = QCoreApplication::translate("Fooyin", function.description.toUtf8().constData()),
-             .cursorOffset = 1});
+             .cursorOffset = 1,
+             .isAlias      = name != function.name});
     };
     for(const auto& function : registry.functions()) {
         addFunction(function, function.name);

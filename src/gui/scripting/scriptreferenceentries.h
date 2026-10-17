@@ -44,6 +44,7 @@ struct ScriptReferenceEntry
     QString category;
     QString description;
     int cursorOffset{0};
+    bool isAlias{false};
 };
 
 FYGUI_EXPORT std::vector<ScriptReferenceEntry> scriptReferenceEntries(const ScriptRegistry& registry
