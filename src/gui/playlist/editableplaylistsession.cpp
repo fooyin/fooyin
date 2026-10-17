@@ -280,8 +280,12 @@ void EditablePlaylistSession::setupConnections(PlaylistWidgetSessionHost& sessio
                          handleTracksChanged(widgetSessionHost(widget), indexes, allNew);
                      });
     QObject::connect(widget->playlistController(), &PlaylistController::currentPlaylistQueueChanged,
-                     widget->playlistModel(),
-                     [widget](const std::vector<int>& indexes) { widget->playlistModel()->refreshTracks(indexes); });
+                     widget->playlistModel(), [widget](const std::vector<int>& indexes) {
+                         if(widget->playerController()->playbackQueueMode()
+                            == PlaybackQueueMode::PlaylistWithOverrides) {
+                             widget->playlistModel()->refreshTracks(indexes);
+                         }
+                     });
     QObject::connect(widget->playlistController(), &PlaylistController::currentPlaylistChanged, widget,
                      [widget, this](Playlist* prevPlaylist, Playlist* playlist) {
                          changePlaylist(widgetSessionHost(widget), prevPlaylist, playlist);

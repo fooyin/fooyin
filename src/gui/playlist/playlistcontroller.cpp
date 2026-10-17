@@ -730,6 +730,11 @@ void PlaylistController::handleTracksDequeued(const PlaylistIndexes& indexes)
 
 void PlaylistController::handleQueueChanged(const QueueTracks& removed, const QueueTracks& added)
 {
+    // Playlist queue indicators are only displayed for queue overrides
+    if(m_playerController->playbackQueueMode() == PlaybackQueueMode::QueueAsPlaybackSource) {
+        return;
+    }
+
     auto* currentPlaylist = m_workspace->currentPlaylist();
     if(!currentPlaylist) {
         return;
