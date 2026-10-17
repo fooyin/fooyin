@@ -61,7 +61,9 @@
 - **Filters**
   - Add an option to remember the selected saved filter ([#1690](https://github.com/fooyin/fooyin/issues/1690))
   - Add an option to restore Library Filter state on startup ([#1699](https://github.com/fooyin/fooyin/pull/1699))
+  - Improve metadata update performance
   - Scroll to the top for changed results and preserve position for unchanged results
+- **Library & Metadata:** Compress large extra tag values to reduce memory usage
 - **Playback**
   - Add TTA playback support ([#764](https://github.com/fooyin/fooyin/issues/764))
   - Add an option to skip automatic crossfading within albums
@@ -72,6 +74,8 @@
   - Standardise and translate plugin categories and statuses
 - **Playlists**
   - Add scripted separators and unify preset display scripts ([#1732](https://github.com/fooyin/fooyin/pull/1732))
+  - Enable queue indexes by default in playlist-led mode
+  - Improve autoplaylist update performance ([#1787](https://github.com/fooyin/fooyin/issues/1787))
   - Make the inline editing delay configurable
   - Move background controls to a separate configuration tab
   - Sort playlists naturally in Playlist Manager
@@ -89,6 +93,8 @@
   - Add alignment tag support to rich-text HTML rendering ([#1733](https://github.com/fooyin/fooyin/issues/1733))
   - Add Queue Viewer variables for current, upcoming, and played queue entries
   - Add Script Editor formatting tag highlighting and optional function parameter hints
+  - Make playlist playback icon fully scriptable with `%playingicon%`
+  - Add `%queue_mode%` for the current queue playback mode
   - Snapshot library metadata for background sorting, filtering, tree population, and file operations
   - Improve binding and evaluation performance
   - Reorganise Script Editor settings and move font configuration to theme settings
@@ -105,7 +111,9 @@
   - Sanitise path separators in metadata-derived paths during conversion ([#1706](https://github.com/fooyin/fooyin/issues/1706))
 - **Interface**
   - Fix alternating row selection backgrounds in right-caption tree views
+  - Fix artwork background flicker when changing selection
   - Fix a crash when closing a widget window with its configuration dialog open
+  - Fix Shift + right-click selection when showing hidden actions
   - Fix painting lifecycle issues in item views and editors
   - Fix Properties action icons in Windows dark mode ([#1691](https://github.com/fooyin/fooyin/issues/1691))
   - Update the search help link ([#1715](https://github.com/fooyin/fooyin/issues/1715))
@@ -118,6 +126,7 @@
   - Fix WaveBar seek cancellation and high-DPI rendering
   - Hide unreachable played threshold markers in seek bars and WaveBar
 - **Library & Metadata**
+  - Fix Discogs artwork requests
   - Fix reading custom ReplayGain tags ([#1775](https://github.com/fooyin/fooyin/issues/1775))
   - Fix DSD detection on Windows ([#1633](https://github.com/fooyin/fooyin/issues/1633), [#1735](https://github.com/fooyin/fooyin/issues/1735))
   - Initialise audio readers before metadata and artwork writes
@@ -125,6 +134,7 @@
   - Update the Library Tree selection before handling middle-click actions ([#1766](https://github.com/fooyin/fooyin/issues/1766))
   - Recognise spaced `ALBUM ARTIST` tags ([#1693](https://github.com/fooyin/fooyin/issues/1693))
   - Make track update and deletion batches and playlist saves atomic
+  - Update raw ratings while file writes are deferred ([#1787](https://github.com/fooyin/fooyin/issues/1787))
 - **Lyrics**
   - Fix right-to-left word order ([#1675](https://github.com/fooyin/fooyin/issues/1675))
   - Ignore instrumental placeholders from NetEase and QQ
@@ -134,10 +144,13 @@
   - Restore queued playlist references when the original playlist returns
   - Snapshot scripting state before background playlist population
 - **Playlists**
+  - Avoid unnecessary history refreshes in queue-led mode
+  - Fix dangling parent references during playlist population
   - Fix empty subheader editors in playlist preset settings
   - Fix extra padding in subheaders ([#1725](https://github.com/fooyin/fooyin/issues/1725))
   - Follow the playing track by playlist entry ID ([#1765](https://github.com/fooyin/fooyin/issues/1765))
   - Preserve column layouts while header restoration is pending ([#1776](https://github.com/fooyin/fooyin/issues/1776))
+  - Restore the correct scroll position at startup
   - Refresh single-column header when playlists are renamed
   - Restore queue-led source order for temporary playlists
   - Use folding for automatic playlist names ([#1694](https://github.com/fooyin/fooyin/issues/1694))
@@ -157,6 +170,7 @@
 - **Flatpak**
   - Include the version in bundle filenames
   - Allow access to `/mnt` and `/media`
+- **Packaging:** Update desktop entry text and translations ([#1785](https://github.com/fooyin/fooyin/pull/1785), [#1789](https://github.com/fooyin/fooyin/pull/1789))
 - **Translations:** Update translations and translation sources ([#1687](https://github.com/fooyin/fooyin/pull/1687), [#1688](https://github.com/fooyin/fooyin/pull/1688), [#1701](https://github.com/fooyin/fooyin/pull/1701), [#1713](https://github.com/fooyin/fooyin/pull/1713), [#1714](https://github.com/fooyin/fooyin/pull/1714), [#1748](https://github.com/fooyin/fooyin/pull/1748), [#1749](https://github.com/fooyin/fooyin/pull/1749), [#1762](https://github.com/fooyin/fooyin/pull/1762), [#1763](https://github.com/fooyin/fooyin/pull/1763), [#1772](https://github.com/fooyin/fooyin/pull/1772), [#1773](https://github.com/fooyin/fooyin/pull/1773))
 - **Windows:** Sign release artifacts with SignPath
 
