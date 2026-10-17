@@ -309,223 +309,223 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="111"/>
         <source>Composers</source>
-        <translation type="unfinished"></translation>
+        <translation>Komposer</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="113"/>
         <source>Performers</source>
-        <translation type="unfinished"></translation>
+        <translation>Performer</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="115"/>
         <source>Track duration formatted as time</source>
-        <translation type="unfinished"></translation>
+        <translation>Durasi trek menggunakan format waktu</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="117"/>
         <source>Track duration in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Durasi trek dalam detik</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="119"/>
         <source>Track duration in milliseconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Durasi trek dalam milidetik</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="121"/>
         <source>Comment tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag komentar</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="123"/>
         <source>Release date</source>
-        <translation type="unfinished"></translation>
+        <translation>Tanggal rilis</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="125"/>
         <source>Release year</source>
-        <translation type="unfinished"></translation>
+        <translation>Tahun rilis</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="127"/>
         <source>File size in bytes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukuran berkas dalam bytes</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="129"/>
         <source>Human readable file size</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukuran berkas yang mudah dibaca manusia</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="131"/>
         <source>Track bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitrate trek</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="133"/>
         <source>Sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Rate sampel</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="135"/>
         <source>Bit depth</source>
-        <translation type="unfinished"></translation>
+        <translation>Bit depth</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="137"/>
         <source>First played timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Timestamp pemutaran pertama</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="139"/>
         <source>Last played timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Timestamp pemutaran terakhir</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="141"/>
         <source>Play count</source>
-        <translation type="unfinished"></translation>
+        <translation>Jumlah pemutaran</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="145"/>
         <source>Normalised rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Rating Normalised</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="149"/>
         <source>Rating shown as stars</source>
-        <translation type="unfinished"></translation>
+        <translation>Rating ditampilkan sebagai stars</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="153"/>
         <source>Rating editor representation</source>
-        <translation type="unfinished"></translation>
+        <translation>Representasi penyunting rating</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="154"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="156"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Statistik Pemutaran</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="155"/>
         <source>Love flag: 1 when loved, empty otherwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Bendera love: 1 ketika di love, jika tidak kosong</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="157"/>
         <source>Interactive heart editor for the Love flag</source>
-        <translation type="unfinished"></translation>
+        <translation>Penyunting heart interaktif untuk bendera Love</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="159"/>
         <source>Codec name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nama kodek</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="161"/>
         <source>Codec profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil kodek</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="163"/>
         <source>Encoding tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Alat enkoding</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="165"/>
         <source>Tag type list</source>
-        <translation type="unfinished"></translation>
+        <translation>Daftar tipe tag</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="167"/>
         <source>Encoding description</source>
-        <translation type="unfinished"></translation>
+        <translation>Deskripsi enkoding</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="169"/>
         <source>Channel layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Tata letak saluran</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="173"/>
         <source>Library added timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Timestamp ditambahkan ke pustaka</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="175"/>
         <source>Last modified timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Timestamp terakhir diubah</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="177"/>
         <source>Full file path</source>
-        <translation type="unfinished"></translation>
+        <translation>Lokasi penuh berkas</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="179"/>
         <source>Path relative to the library root</source>
-        <translation type="unfinished"></translation>
+        <translation>Lokasi relatif ke akar pustaka</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="181"/>
         <source>Filename without extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Nama berkas tanpa ekstensi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="183"/>
         <source>File extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekstensi berkas</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="185"/>
         <source>Filename including extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Nama berkas termasuk ekstensi</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="187"/>
         <source>Containing directory name</source>
-        <translation type="unfinished"></translation>
+        <translation>Mengandung nama direktori</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="189"/>
         <source>Containing directory path</source>
-        <translation type="unfinished"></translation>
+        <translation>Mengandung lokasi direktori</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="191"/>
         <source>Subsong index</source>
-        <translation type="unfinished"></translation>
+        <translation>Indeks subsong</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="193"/>
         <source>ReplayGain track gain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain Trek gain</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="195"/>
         <source>ReplayGain track peak</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain Tingkat trek</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="197"/>
         <source>ReplayGain track peak in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain tingkat trek dalam dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="199"/>
         <source>ReplayGain album gain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain gain album</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="201"/>
         <source>ReplayGain album peak</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain tingkat album</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="203"/>
         <source>ReplayGain album peak in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain tingkat album dalam dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="204"/>
@@ -535,22 +535,22 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="212"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="216"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Daftar Putar</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="205"/>
         <source>Number of tracks in the list</source>
-        <translation type="unfinished"></translation>
+        <translation>Nomer trek di daftar</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="207"/>
         <source>Combined duration of the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Kombinasikan durasi daftar trek</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="213"/>
         <source>Alias for total playlist duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Alias untuk jumlah durasi daftar putar</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="214"/>
@@ -577,37 +577,37 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="264"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="266"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Pemutaran</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="215"/>
         <source>Elapsed time within the active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Waktu yang telah berlalu dalam daftar putar yang sedang aktif</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="217"/>
         <source>Unique genres across the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Genre unik antar daftar trek</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="332"/>
         <source>Returns true when x is greater than y</source>
-        <translation type="unfinished"></translation>
+        <translation>Kembali true ketika x itu greather dari y</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="367"/>
         <source>Finds the first substring position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Cari posisi substring pertama (1-based)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="370"/>
         <source>Finds the first substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Cari posisi substring pertama yang diabaikan berdasarkan case (1-base)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="373"/>
         <source>Finds the last substring position (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Cari posisi substring terakhir (1-based)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="376"/>
@@ -788,27 +788,27 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="251"/>
         <source>Active ReplayGain source mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktifkan mode sumber ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="253"/>
         <source>Active ReplayGain processing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktifkan mode prosesing ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="255"/>
         <source>Effective ReplayGain adjustment in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesuaikan ReplayGain efektif di dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="257"/>
         <source>Effective ReplayGain peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Tingkat efektif ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="259"/>
         <source>Effective ReplayGain peak in dBFS</source>
-        <translation type="unfinished"></translation>
+        <translation>Tingkat efektif ReplayGain di dBFS</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="261"/>
@@ -3759,7 +3759,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="429"/>
         <source>ReplayGain processing</source>
-        <translation type="unfinished"></translation>
+        <translation>Memproses ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="432"/>
@@ -3774,12 +3774,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="437"/>
         <source>Without ReplayGain info</source>
-        <translation type="unfinished"></translation>
+        <translation>Tanpa info ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="440"/>
         <source>ReplayGain is applied permanently to the converted audio.</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain diterapkan permanen pada audio yang terkonversi.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="471"/>
@@ -3945,12 +3945,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1253"/>
         <source>ReplayGain (track)</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain (trek)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1256"/>
         <source>ReplayGain (album)</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain (album)</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1263"/>
@@ -9257,7 +9257,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="559"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="568"/>
@@ -9325,7 +9325,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="168"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="171"/>
@@ -12347,7 +12347,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1036"/>
         <source>Existing metadata and custom tags will be removed before applying the selected release. Ratings, ReplayGain, technical information, playback statistics, and artwork will be preserved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadata yang sudah ada dan tag kustom akan dihapus sebelum menerapkan rilis yang dipilih. Rating, ReplayGain, informasi teknis, statistik pemutaran, dan sampul album tetap dipertahankan.</translation>
     </message>
 </context>
 <context>
@@ -17144,7 +17144,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="85"/>
         <source>ReplayGain Scan Results</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain Hasil Pemindaian</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresults.cpp" line="97"/>
@@ -17205,7 +17205,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="145"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain</translation>
     </message>
 </context>
 <context>
@@ -17257,7 +17257,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="74"/>
         <source>ReplayGain Scan Progress</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain Kemajuan Pemindaian</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="96"/>
@@ -17267,22 +17267,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="118"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="120"/>
         <source>Calculate ReplayGain values per-file</source>
-        <translation type="unfinished"></translation>
+        <translation>Kalkulasikan value ReplayGain per-berkas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="121"/>
         <source>Calculate ReplayGain values as a single album</source>
-        <translation type="unfinished"></translation>
+        <translation>Kalkulasikan value ReplayGain sebagai album singel</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="122"/>
         <source>Calculate ReplayGain values as albums (by tags)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kalkulasikan value ReplayGain sebagai album (oleh tag)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="123"/>
@@ -17292,22 +17292,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="124"/>
         <source>Remove ReplayGain information from files</source>
-        <translation type="unfinished"></translation>
+        <translation>Hapus informasi ReplayGain dari berkas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="126"/>
         <source>Calculate ReplayGain values for selected files, considering each file individually</source>
-        <translation type="unfinished"></translation>
+        <translation>Kalkulasikan nilai ReplayGain untuk berkas yang dipilih, pertimbangkan masing-masing berkas individual</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="128"/>
         <source>Calculate ReplayGain values for selected files, considering all files as part of one album</source>
-        <translation type="unfinished"></translation>
+        <translation>Kalkulasikan value ReplayGain untuk berkas yang dipilih, pertimbangkan semua berkas adalah bagian dari satu album</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="129"/>
         <source>Calculate ReplayGain values for selected files, dividing into albums by tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Kalkulasikan value ReplayGain untuk berkas yang dipilih, bagi ke dalam album berdasarkan tag</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="130"/>
@@ -17317,12 +17317,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="131"/>
         <source>Remove ReplayGain values from the selected files</source>
-        <translation type="unfinished"></translation>
+        <translation>Hapus value ReplayGain dari berkas yang dipilih</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="223"/>
         <source>Remove ReplayGain Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Hapus Info ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="226"/>
@@ -19050,48 +19050,48 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="54"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="70"/>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="149"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Nonaktif</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="71"/>
         <source>Prefer track gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Utamakan trek gain</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="72"/>
         <source>Prefer album gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Utamakan album gain</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="73"/>
         <source>By playback order</source>
-        <translation type="unfinished"></translation>
+        <translation>Berdasarkan urutan pemutaran</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="112"/>
         <source>ReplayGain Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="149"/>
         <source>ReplayGain disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain mati</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="160"/>
         <source>Show label</source>
-        <translation type="unfinished"></translation>
+        <translation>Tampilkan label</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/replaygainmodeselector.cpp" line="166"/>
         <source>Configure ReplayGain…</source>
-        <translation type="unfinished"></translation>
+        <translation>Konfigurasikan ReplayGain…</translation>
     </message>
 </context>
 <context>
@@ -19104,27 +19104,27 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="167"/>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Value</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="167"/>
         <source>Track Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Trek Gain</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="169"/>
         <source>Track Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Tingkat Trek</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="171"/>
         <source>Album Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Album Gain</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="173"/>
         <source>Album Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Tingkat Album</translation>
     </message>
 </context>
 <context>
@@ -19137,12 +19137,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="227"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Pemutaran</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="227"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain</translation>
     </message>
 </context>
 <context>
@@ -19150,87 +19150,87 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="71"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Nonaktif</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="72"/>
         <source>Apply gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Terapkan gain</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="73"/>
         <source>Apply gain and prevent clipping according to peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Terapkan gain dan cegah kliping berdasarkan tingkatan</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="74"/>
         <source>Only prevent clipping according to peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Hanya cegah kliping berdasarkan tingkatan</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="75"/>
         <source>Use track-based gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Gunakan gain track-based</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="76"/>
         <source>Use album-based gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Gunakan gain album-based</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="77"/>
         <source>Use gain based on playback order</source>
-        <translation type="unfinished"></translation>
+        <translation>Gunakan gain berdasarkan urutan pemutaran</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="81"/>
         <source>Base normalisation on track loudness</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalisasi dasar di trek loudness</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="82"/>
         <source>Base normalisation on album loudness</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalisasi dasar di album loudness</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="83"/>
         <source>Base normalisation on track loudness if shuffling tracks, else album loudness</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalisasi dasar di trek loudness jika pengacakan trek, jika tidak gunakan loudness album</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="87"/>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="101"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="113"/>
         <source>Pre-amplification</source>
-        <translation type="unfinished"></translation>
+        <translation>Pra-amplifikasi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="116"/>
         <source>With RG info</source>
-        <translation type="unfinished"></translation>
+        <translation>Dengan info RG</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="117"/>
         <source>Without RG info</source>
-        <translation type="unfinished"></translation>
+        <translation>Tanpa info RG</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="127"/>
         <source>Amount of gain to apply in combination with ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>Besaran gain yang diterapkan dikombinasikan dengan ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="130"/>
         <source>Amount of gain to apply for tracks without ReplayGain info</source>
-        <translation type="unfinished"></translation>
+        <translation>Besaran gain yang diterapkan untuk info trek tanpa ReplayGain</translation>
     </message>
 </context>
 <context>
@@ -19238,44 +19238,44 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="101"/>
         <source>Summary</source>
-        <translation type="unfinished"></translation>
+        <translation>Ikhtisar</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="104"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Rincian</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="126"/>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="141"/>
         <source>Track Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Gain Trek</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="129"/>
         <source>Track Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Tingkat Trek</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="132"/>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="152"/>
         <source>Album Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Gain Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="135"/>
         <source>Album Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Tingkat Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="174"/>
         <source>Lowest Gain (Loudest track)</source>
-        <translation type="unfinished"></translation>
+        <translation>Gain Rendah (Trek loudest)</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="186"/>
         <source>Highest Gain (Quietest track)</source>
-        <translation type="unfinished"></translation>
+        <translation>Gain Tertinggi (Trek quietest)</translation>
     </message>
 </context>
 <context>
@@ -19283,12 +19283,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/replaygain/replaygainwidget.cpp" line="173"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>Tampilkan tajuk</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainwidget.cpp" line="182"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Warna row alternatif</translation>
     </message>
 </context>
 <context>
@@ -24731,7 +24731,7 @@ Hold Ctrl to replace a widget.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="336"/>
         <source>ReplayGain Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="342"/>
@@ -25107,7 +25107,7 @@ Set to 0 to choose automatically from the remote buffer length.</source>
         <location filename="../../src/gui/widgets.cpp" line="818"/>
         <location filename="../../src/gui/widgets.cpp" line="866"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="612"/>
@@ -25190,7 +25190,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="820"/>
         <source>ReplayGain value written to the Opus header when updating metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Value ReplayGain ditulis ke tajuk Opus ketika memperbarui metadata</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="872"/>
