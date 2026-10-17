@@ -619,7 +619,7 @@ QRect PlaylistView::drawSpan(QPainter* painter, const QStyleOptionViewItem& opti
             topLevel = topLevel.parent();
         }
         QModelIndex firstLeaf{topLevel};
-        while(model()->hasChildren(firstLeaf)) {
+        while(firstLeaf.isValid() && model()->rowCount(firstLeaf) > 0) {
             firstLeaf = model()->index(0, 0, firstLeaf);
         }
         if(sameRow(first, firstLeaf)) {
@@ -682,7 +682,7 @@ int PlaylistView::spanHeight(const QModelIndex& index) const
     }
 
     QModelIndex track = index.siblingAtColumn(0);
-    while(model()->hasChildren(track)) {
+    while(track.isValid() && model()->rowCount(track) > 0) {
         track = model()->index(0, 0, track);
     }
     return delegate->artworkSpanHeight(width, track.siblingAtColumn(index.column()));
