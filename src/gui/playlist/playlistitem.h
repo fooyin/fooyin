@@ -58,7 +58,7 @@ public:
         Column,
         ImagePadding,
         ImagePaddingTop,
-        DecorationPosition,
+        PlayingIcon,
         InsetSubheadersToImageColumns,
         UniformHeightKey,
         UsesStyleBaseHeight,

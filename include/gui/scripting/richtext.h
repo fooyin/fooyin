@@ -75,6 +75,7 @@ struct RichTextBlock
     {
         Text = 0,
         Line,
+        PlayingIcon,
     };
 
     QString text;

@@ -56,6 +56,7 @@ struct PlaylistPopulationRequest
     ScriptContextData scriptData;
     ScriptEvaluationOptions scriptOptions;
     PlaylistTrack playingTrack;
+    int stopAfterIndex{-1};
     PlaylistTrackIndexes queueIndexes;
     int queueTotal{0};
 };

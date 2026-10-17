@@ -241,6 +241,22 @@ ScriptContext PlaylistPopulatorPrivate::makeContext(int index, int depth, const 
     row.playingTrackId    = currentPlayingTrackId;
     row.depth             = depth;
     row.queueTotal        = m_request.queueTotal;
+    row.playingIcon       = ScriptPlayingIcon::None;
+    if(track && index >= 0) {
+        const auto playState = m_request.scriptData.playback.playState;
+        if(!track->isEnabled()) {
+            row.playingIcon = ScriptPlayingIcon::Disabled;
+        }
+        else if(index == currentPlayingTrackIndex && playState == Player::PlayState::Playing) {
+            row.playingIcon = ScriptPlayingIcon::Play;
+        }
+        else if(index == currentPlayingTrackIndex && playState == Player::PlayState::Paused) {
+            row.playingIcon = ScriptPlayingIcon::Pause;
+        }
+        else if(index == m_request.stopAfterIndex) {
+            row.playingIcon = ScriptPlayingIcon::Stop;
+        }
+    }
     if(index < 0) {
         row.entryId = {};
     }
@@ -481,6 +497,7 @@ PlaylistItem* PlaylistPopulatorPrivate::iterateTrack(const PlaylistTrack& track,
                                  richTextForAlignment(text, RichAlignment::Right), track};
     }();
 
+    playlistTrack.setPlayingIcon(context.playlistData->playingIcon);
     playlistTrack.setRowHeight(m_request.preset.track.rowHeight);
     playlistTrack.setDepth(m_trackDepth);
     playlistTrack.calculateHeight();
@@ -639,6 +656,7 @@ void PlaylistPopulator::updateTracks(const PlaylistPopulationRequest& request, c
         p->m_request.scriptData.playlistData.entryId = track.entryId;
         const auto& context
             = p->makeContext(trackData.track().indexInPlaylist, trackData.depth(), &trackData.track().track);
+        trackData.setPlayingIcon(context.playlistData->playingIcon);
 
         if(!columnsToUpdate.empty()) {
             std::vector<RichText> trackColumns;

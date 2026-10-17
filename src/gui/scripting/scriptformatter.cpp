@@ -19,6 +19,7 @@
 
 #include <gui/scripting/scriptformatter.h>
 
+#include <core/constants.h>
 #include <gui/scripting/scriptformatterregistry.h>
 
 #include <QCoreApplication>
@@ -119,6 +120,14 @@ void ScriptFormatterPrivate::expression()
 {
     const QChar current = m_input.at(m_position);
 
+    if(current == Constants::PlayingIconMarker) {
+        flushCurrentBlock();
+        m_formatResult.blocks.push_back(
+            {.text = {}, .format = m_currentBlock.format, .type = RichTextBlock::Type::PlayingIcon});
+        ++m_position;
+        return;
+    }
+
     if(current == u'<' && formatBlock()) {
         return;
     }
@@ -137,7 +146,8 @@ void ScriptFormatterPrivate::expression()
     }
 
     const qsizetype start = m_position++;
-    while(m_position < m_input.size() && m_input.at(m_position) != u'<' && m_input.at(m_position) != u'\\') {
+    while(m_position < m_input.size() && m_input.at(m_position) != u'<' && m_input.at(m_position) != u'\\'
+          && m_input.at(m_position) != Constants::PlayingIconMarker) {
         ++m_position;
     }
     m_currentBlock.text += m_input.sliced(start, m_position - start);
@@ -299,7 +309,7 @@ RichText ScriptFormatter::evaluate(const QString& input)
 
     p->resetFormat();
 
-    if(!input.contains(u'<') && !input.contains(u'\\')) {
+    if(!input.contains(u'<') && !input.contains(u'\\') && !input.contains(Constants::PlayingIconMarker)) {
         p->m_currentBlock.text = input;
         p->m_formatResult.blocks.emplace_back(p->m_currentBlock);
         return p->m_formatResult;

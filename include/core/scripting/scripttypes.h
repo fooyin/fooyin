@@ -54,6 +54,15 @@ enum class ScriptQueueItemState : uint8_t
     Played,
 };
 
+enum class ScriptPlayingIcon : uint8_t
+{
+    None = 0,
+    Play,
+    Pause,
+    Stop,
+    Disabled,
+};
+
 enum class ScriptWhitespaceMode : uint8_t
 {
     IgnoreLayout = 0,
@@ -85,6 +94,7 @@ struct ScriptPlaylistData
     std::vector<int> queueIndexes{};
     int queueTotal{0};
     ScriptQueueItemState queueItemState{ScriptQueueItemState::None};
+    ScriptPlayingIcon playingIcon{ScriptPlayingIcon::None};
 };
 
 struct ScriptPlaybackData

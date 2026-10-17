@@ -52,7 +52,7 @@ void PresetRegistry::loadDefaults()
 
     preset.name = tr("Track list");
 
-    preset.track.text.script = u"$padright(,$mul($sub(%depth%,1),5))[\\[%queueindexes%\\]  ]"
+    preset.track.text.script = u"$padright(,$mul($sub(%depth%,1),5))[%playingicon%  ][\\[%queueindexes%\\]  ]"
                                "[$num(%track%,2).  ]%title%[<alpha=180>  ▪  %trackartist%</alpha>]\n"
                                "<right>\n"
                                "$ifgreater(%playcount%,0,%playcount% |)      %duration%"_s;

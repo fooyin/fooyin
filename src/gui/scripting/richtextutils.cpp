@@ -40,7 +40,8 @@ RichTextMetrics measureRichTextLine(const RichText& richText, const QFont& baseF
         const QFont font = resolvedRichTextFont(block.format, baseFont);
         const QFontMetrics fm{font};
 
-        metrics.width += fm.horizontalAdvance(block.text);
+        metrics.width
+            += block.type == RichTextBlock::Type::PlayingIcon ? fm.height() : fm.horizontalAdvance(block.text);
         baseline.expand(fm);
     }
 
@@ -261,7 +262,7 @@ std::vector<RichText> splitRichTextLines(const RichText& richText)
     std::vector<RichText> lines(1);
 
     for(const auto& block : richText.blocks) {
-        if(block.type == RichTextBlock::Type::Line) {
+        if(block.type != RichTextBlock::Type::Text) {
             lines.back().blocks.push_back(block);
             continue;
         }
@@ -375,6 +376,9 @@ RichText trimRichText(RichText richText)
 {
     while(!richText.blocks.empty()) {
         auto& block = richText.blocks.front();
+        if(block.type == RichTextBlock::Type::PlayingIcon) {
+            break;
+        }
 
         int firstNonSpace{0};
         while(firstNonSpace < block.text.size() && block.text.at(firstNonSpace).isSpace()) {
@@ -394,6 +398,9 @@ RichText trimRichText(RichText richText)
 
     while(!richText.blocks.empty()) {
         auto& block = richText.blocks.back();
+        if(block.type == RichTextBlock::Type::PlayingIcon) {
+            break;
+        }
 
         int lastNonSpace = block.text.size() - 1;
         while(lastNonSpace >= 0 && block.text.at(lastNonSpace).isSpace()) {

@@ -248,10 +248,10 @@ QString queueTotal(const ScriptContext& context)
     return QString::number(row->queueTotal);
 }
 
-QString playingQueue(const ScriptContext& context)
+QString playingIcon(const ScriptContext& context)
 {
-    const QString indexes = queueIndexes(context);
-    return indexes.isEmpty() ? QString{} : u"[%1]"_s.arg(indexes);
+    const auto* row = playlistData(context);
+    return row && row->playingIcon != ScriptPlayingIcon::None ? QString{Constants::PlayingIconMarker} : QString{};
 }
 
 template <ScriptQueueItemState State>
@@ -516,8 +516,8 @@ void ScriptRegistryPrivate::addDefaultVariables()
                 QT_TRANSLATE_NOOP("Fooyin", "Grouping depth of the evaluated playlist row"),
                 makeScriptVariableInvoker<trackDepth>());
     addVariable(VariableKind::PlayingIcon, u"PLAYINGICON"_s, QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
-                QT_TRANSLATE_NOOP("Fooyin", "Playback icon and queue indexes in supported views"),
-                makeScriptVariableInvoker<playingQueue>());
+                QT_TRANSLATE_NOOP("Fooyin", "Playback icon marker in supported views"),
+                makeScriptVariableInvoker<playingIcon>());
     addVariable(VariableKind::FrontCover, u"FRONTCOVER"_s, QT_TRANSLATE_NOOP("Fooyin", "Artwork"),
                 QT_TRANSLATE_NOOP("Fooyin", "Front cover marker in supported views"),
                 makeScriptVariableInvoker<frontCover>());

@@ -73,6 +73,7 @@ struct PreparedTextBlock
     QFont font;
     QColor colour;
     int width{0};
+    bool playingIcon{false};
 };
 
 struct PreparedTextLine
@@ -83,7 +84,8 @@ struct PreparedTextLine
 };
 
 DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
-                              const std::vector<RichTextBlock>& blocks, Qt::Alignment alignment)
+                              const std::vector<RichTextBlock>& blocks, Qt::Alignment alignment,
+                              const QIcon& playingIcon = {})
 {
     DrawTextResult result;
 
@@ -104,12 +106,23 @@ DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& opt
         int remainingWidth = rect.width();
 
         for(const auto& block : logicalLine.blocks) {
-            if(block.text.isEmpty() || remainingWidth <= 0) {
+            const bool isIcon = block.type == RichTextBlock::Type::PlayingIcon;
+            if((block.text.isEmpty() && !isIcon) || remainingWidth <= 0 || (isIcon && playingIcon.isNull())) {
                 continue;
             }
 
             const QFont font = resolvedRichTextFont(block.format, option.font);
             const QFontMetrics metrics{font};
+
+            if(isIcon) {
+                const int width = std::min(metrics.height(), remainingWidth);
+                line.blocks.push_back({.text = {}, .font = font, .colour = {}, .width = width, .playingIcon = true});
+                line.baseline.expand(metrics);
+                line.width += width;
+                remainingWidth -= width;
+                continue;
+            }
+
             const QString text = metrics.elidedText(block.text, Qt::ElideRight, remainingWidth);
             if(text.isEmpty()) {
                 continue;
@@ -163,9 +176,15 @@ DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& opt
         }
 
         for(const auto& block : line.blocks) {
-            painter->setFont(block.font);
-            painter->setPen(block.colour);
-            painter->drawText(QPoint{x, y + line.baseline.ascent}, block.text);
+            if(block.playingIcon) {
+                const QRect iconRect{x, y + ((line.baseline.height() - block.width) / 2), block.width, block.width};
+                Gui::drawItemViewIcon(painter, option, playingIcon, iconRect, Qt::AlignCenter);
+            }
+            else {
+                painter->setFont(block.font);
+                painter->setPen(block.colour);
+                painter->drawText(QPoint{x, y + line.baseline.ascent}, block.text);
+            }
             x += block.width;
         }
 
@@ -274,31 +293,21 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 {
     QStyleOptionViewItem opt{option};
 
-    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
-
     const bool singleColumn = index.data(PlaylistItem::Role::SingleColumnMode).toBool();
-
-    const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) + 1;
+    const QIcon playingIcon{index.data(PlaylistItem::Role::PlayingIcon).value<QPixmap>()};
 
     if(singleColumn) {
-        QRect iconRect       = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
         const QRect textRect = Gui::itemViewTextRect(opt);
 
-        const int indent     = opt.icon.isNull() ? 0 : textMargin;
         const auto leftSide  = index.data(PlaylistItem::Role::Left).value<RichText>().blocks;
         const auto rightSide = index.data(PlaylistItem::Role::Right).value<RichText>().blocks;
 
         const QRect rightRect = textRect.adjusted(textRect.center().x() - textRect.left(), 0, 0, 0);
         auto [_, totalRightWidth]
-            = drawTextBlocks(painter, opt, rightRect, rightSide, Qt::AlignVCenter | Qt::AlignRight);
+            = drawTextBlocks(painter, opt, rightRect, rightSide, Qt::AlignVCenter | Qt::AlignRight, playingIcon);
 
         const QRect leftRect = textRect.adjusted(0, 0, -totalRightWidth, 0);
-        drawTextBlocks(painter, opt, leftRect, leftSide, Qt::AlignVCenter | Qt::AlignLeft);
-
-        if(!opt.icon.isNull()) {
-            iconRect.moveLeft(iconRect.x() + indent);
-            Gui::drawItemViewIcon(painter, opt, opt.icon, iconRect, Qt::AlignVCenter | Qt::AlignLeft);
-        }
+        drawTextBlocks(painter, opt, leftRect, leftSide, Qt::AlignVCenter | Qt::AlignLeft, playingIcon);
     }
     else {
         if(index.data(PlaylistItem::Role::Column).canConvert<QPixmap>()) {
@@ -328,30 +337,11 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
             }
         }
         else {
-            const auto decPos
-                = index.data(PlaylistItem::Role::DecorationPosition).value<QStyleOptionViewItem::Position>();
-
-            if(!opt.icon.isNull()) {
-                opt.decorationPosition = decPos;
-            }
-
             const QRect textRect = Gui::itemViewTextRect(opt);
 
             const auto columnText = index.data(PlaylistItem::Role::Column).value<RichText>().blocks;
 
-            const auto& [bound, totalWidth]
-                = drawTextBlocks(painter, opt, textRect, columnText, Qt::AlignVCenter | opt.displayAlignment);
-
-            if(!opt.icon.isNull()) {
-                QRect iconRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
-                if(columnText.empty()) {
-                    iconRect = QStyle::alignedRect(opt.direction, opt.displayAlignment, iconRect.size(), opt.rect);
-                }
-                else if(decPos == QStyleOptionViewItem::Right) {
-                    iconRect = textRect.adjusted(totalWidth + textMargin, 0, totalWidth + textMargin, 0);
-                }
-                Gui::drawItemViewIcon(painter, opt, opt.icon, iconRect, opt.displayAlignment);
-            }
+            drawTextBlocks(painter, opt, textRect, columnText, Qt::AlignVCenter | opt.displayAlignment, playingIcon);
         }
     }
 }

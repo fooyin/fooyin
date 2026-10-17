@@ -23,6 +23,8 @@ namespace Fooyin::Constants {
 constexpr auto RecordSeparator = "\036";
 constexpr auto UnitSeparator   = "\037";
 
+constexpr auto PlayingIconMarker = u'\uE000';
+
 constexpr auto InvalidGain        = -1000;
 constexpr auto InvalidPeak        = -1;
 constexpr auto OpusHeaderGainQ78  = "_OPUS_HEADER_GAIN_Q78";

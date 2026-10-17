@@ -132,6 +132,7 @@ Data mergeUpdatedItemData(const Data& currentData, const Data& updatedData, cons
 
     PlaylistTrackItem mergedTrack{*currentTrack};
     mergedTrack.setTrack(updatedTrack->track());
+    mergedTrack.setPlayingIcon(updatedTrack->playingIcon());
     mergedTrack.setIndex(updatedTrack->index());
     mergedTrack.setRowHeight(updatedTrack->rowHeight());
     mergedTrack.setDepth(updatedTrack->depth());
@@ -602,17 +603,6 @@ TrackList collectHeaderTracks(PlaylistItem* header)
     }
 
     return tracks;
-}
-
-QStyleOptionViewItem::Position getIconPosition(const QString& text)
-{
-    const auto iconPos = text.indexOf(QLatin1String(Constants::PlayingIcon));
-
-    if(iconPos <= 0) {
-        return QStyleOptionViewItem::Left;
-    }
-
-    return QStyleOptionViewItem::Right;
 }
 
 PlaylistModel::PlaybackDependency dependencyForVariable(const QString& variable)
@@ -1478,6 +1468,8 @@ PlaylistTrack PlaylistModel::playingTrack() const
 
 void PlaylistModel::stopAfterTrack(const QModelIndex& index)
 {
+    const int previousStopIndex = m_stopAtIndex.isValid() ? m_stopAtIndex.data(PlaylistItem::Index).toInt() : -1;
+
     if(std::exchange(m_stopAtIndex, index) == index) {
         m_stopAtIndex = QPersistentModelIndex{};
         m_stopAtTrack = PlaylistTrack{};
@@ -1493,6 +1485,8 @@ void PlaylistModel::stopAfterTrack(const QModelIndex& index)
 
     const bool stopAfterCurrent = index.siblingAtColumn(0) == m_playingIndex;
     m_settings->set<Settings::Core::StopAfterCurrent>(stopAfterCurrent && m_stopAtIndex.isValid());
+
+    refreshTracksForDependency({previousStopIndex, index.data(PlaylistItem::Index).toInt()}, PlaybackState);
 }
 
 TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index) const
@@ -1913,6 +1907,8 @@ void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
 
 void PlaylistModel::playStateChanged(Player::PlayState state)
 {
+    const int previousStopIndex = m_stopAtIndex.isValid() ? m_stopAtIndex.data(PlaylistItem::Index).toInt() : -1;
+
     if(state == Player::PlayState::Stopped) {
         m_stopAtIndex = QPersistentModelIndex{};
     }
@@ -1926,6 +1922,9 @@ void PlaylistModel::playStateChanged(Player::PlayState state)
     }
 
     refreshPlayingTrackForDependency(PlaybackState);
+    if(state == Player::PlayState::Stopped) {
+        refreshTracksForDependency({previousStopIndex}, PlaybackState);
+    }
 }
 
 void PlaylistModel::refreshPlayingTrackPositionData()
@@ -2082,16 +2081,17 @@ PlaylistPopulationRequest PlaylistModel::populationRequest()
     Q_ASSERT(QThread::currentThread() == thread());
 
     PlaylistPopulationRequest request;
-    request.generation   = m_populationGeneration;
-    request.stopToken    = m_populator.prepareWork();
-    request.playlistId   = m_currentPlaylist ? m_currentPlaylist->id() : UId{};
-    request.trackCount   = m_currentPlaylist ? m_currentPlaylist->trackCount() : 0;
-    request.preset       = m_currentPreset;
-    request.columns      = m_columns;
-    request.font         = playlistFont();
-    request.preloadCount = m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>();
-    request.playingTrack = m_playerController->currentPlaylistTrack();
-    request.queueTotal   = m_playerController->playbackQueue().trackCount();
+    request.generation     = m_populationGeneration;
+    request.stopToken      = m_populator.prepareWork();
+    request.playlistId     = m_currentPlaylist ? m_currentPlaylist->id() : UId{};
+    request.trackCount     = m_currentPlaylist ? m_currentPlaylist->trackCount() : 0;
+    request.preset         = m_currentPreset;
+    request.columns        = m_columns;
+    request.font           = playlistFont();
+    request.preloadCount   = m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>();
+    request.playingTrack   = m_playerController->currentPlaylistTrack();
+    request.stopAfterIndex = m_stopAtIndex.isValid() ? m_stopAtIndex.data(PlaylistItem::Index).toInt() : -1;
+    request.queueTotal     = m_playerController->playbackQueue().trackCount();
 
     const bool showQueueIndexes = m_playerController->playbackQueueMode() == PlaybackQueueMode::PlaylistWithOverrides
                                && m_settings->value<Settings::Gui::PlaylistShowQueueIndexes>();
@@ -2589,18 +2589,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
             if(field == QLatin1StringView(Constants::ArtistPicture)) {
                 return getCover(Track::Cover::Artist);
             }
-            if(field == QLatin1StringView(Constants::PlayingIcon) && isPlaying) {
-                break;
-            }
-
             return trackItem.column(column);
-        }
-        case PlaylistItem::Role::DecorationPosition: {
-            if(singleColumnMode) {
-                break;
-            }
-            const QString field = m_columns.at(column).field;
-            return getIconPosition(field);
         }
         case PlaylistItem::Role::TrackId:
             return track.id();
@@ -2672,25 +2661,18 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
             }
             return trackItem.size(column);
         }
-        case Qt::DecorationRole: {
-            if(singleColumnMode || m_columns.at(column).field.contains(QLatin1String(Constants::PlayingIcon))) {
-                if(!track.isEnabled()) {
-                    return Gui::pixmapFromTheme(Constants::Icons::Close);
-                }
-
-                if(isPlaying) {
-                    switch(m_currentPlayState) {
-                        case Player::PlayState::Playing:
-                            return Gui::pixmapFromTheme(Constants::Icons::Play);
-                        case Player::PlayState::Paused:
-                            return Gui::pixmapFromTheme(Constants::Icons::Pause);
-                        case Player::PlayState::Stopped:
-                            break;
-                    }
-                }
-                if(index.row() == m_stopAtIndex.row() && index.parent() == m_stopAtIndex.parent()) {
+        case PlaylistItem::Role::PlayingIcon: {
+            switch(trackItem.playingIcon()) {
+                case ScriptPlayingIcon::Play:
+                    return Gui::pixmapFromTheme(Constants::Icons::Play);
+                case ScriptPlayingIcon::Pause:
+                    return Gui::pixmapFromTheme(Constants::Icons::Pause);
+                case ScriptPlayingIcon::Stop:
                     return Gui::pixmapFromTheme(Constants::Icons::Stop);
-                }
+                case ScriptPlayingIcon::Disabled:
+                    return Gui::pixmapFromTheme(Constants::Icons::Close);
+                case ScriptPlayingIcon::None:
+                    break;
             }
             break;
         }

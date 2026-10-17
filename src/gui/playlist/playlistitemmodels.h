@@ -20,6 +20,7 @@
 #pragma once
 
 #include <core/playlist/playlist.h>
+#include <core/scripting/scripttypes.h>
 #include <core/track.h>
 #include <gui/scripting/scriptformatter.h>
 
@@ -87,6 +88,7 @@ public:
     [[nodiscard]] const RichText& left() const;
     [[nodiscard]] const RichText& right() const;
     [[nodiscard]] const PlaylistTrack& track() const;
+    [[nodiscard]] ScriptPlayingIcon playingIcon() const;
     [[nodiscard]] int index() const;
     [[nodiscard]] int rowHeight() const;
     [[nodiscard]] int depth() const;
@@ -95,6 +97,7 @@ public:
     void setColumns(const std::vector<RichText>& columns);
     void setLeftRight(const RichText& left, const RichText& right);
     void setTrack(const PlaylistTrack& track);
+    void setPlayingIcon(ScriptPlayingIcon icon);
     void setIndex(int index);
 
     void setRowHeight(int height);
@@ -110,6 +113,7 @@ private:
     RichText m_right;
 
     PlaylistTrack m_track;
+    ScriptPlayingIcon m_playingIcon{ScriptPlayingIcon::None};
     mutable std::vector<QSize> m_sizes;
     int m_rowHeight;
     int m_depth;

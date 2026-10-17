@@ -35,7 +35,8 @@ QSize singleLineTrackSize(const RichText& richText)
 
     for(const auto& block : richText.blocks) {
         const QFontMetrics fm{block.format.font};
-        blockSize.rwidth() += fm.horizontalAdvance(block.text);
+        blockSize.rwidth()
+            += block.type == RichTextBlock::Type::PlayingIcon ? fm.height() : fm.horizontalAdvance(block.text);
     }
 
     return blockSize;
@@ -227,6 +228,11 @@ const PlaylistTrack& PlaylistTrackItem::track() const
     return m_track;
 }
 
+ScriptPlayingIcon PlaylistTrackItem::playingIcon() const
+{
+    return m_playingIcon;
+}
+
 int PlaylistTrackItem::index() const
 {
     return m_track.indexInPlaylist;
@@ -282,6 +288,11 @@ void PlaylistTrackItem::setLeftRight(const RichText& left, const RichText& right
 void PlaylistTrackItem::setTrack(const PlaylistTrack& track)
 {
     m_track = track;
+}
+
+void PlaylistTrackItem::setPlayingIcon(ScriptPlayingIcon icon)
+{
+    m_playingIcon = icon;
 }
 
 void PlaylistTrackItem::setIndex(int index)
