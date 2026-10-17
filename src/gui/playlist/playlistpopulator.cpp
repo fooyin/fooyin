@@ -27,9 +27,6 @@
 
 #include <QThread>
 
-#include <ranges>
-#include <utility>
-
 namespace Fooyin {
 class PlaylistPopulatorPrivate
 {
@@ -290,6 +287,7 @@ PendingData PlaylistPopulatorPrivate::takeBatchData()
         }
     }
 
+    batchData.rebindParents();
     return batchData;
 }
 

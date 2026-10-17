@@ -32,6 +32,7 @@
 #include <utils/worker.h>
 
 #include <memory>
+#include <ranges>
 #include <stop_token>
 
 namespace Fooyin {
@@ -83,6 +84,25 @@ struct PendingData
     int row{-1};
 
     IndexGroupMap indexNodes;
+
+    void rebindParents(PlaylistItem* root = nullptr)
+    {
+        for(const auto& [parentKey, children] : nodes) {
+            PlaylistItem* parentItem{nullptr};
+            if(parentKey.isNull()) {
+                parentItem = root;
+            }
+            else if(const auto it = items.find(parentKey); it != items.end()) {
+                parentItem = &it->second;
+            }
+            for(const auto& childKey : children) {
+                items.at(childKey).setParent(parentItem);
+            }
+        }
+        for(auto& item : updatedItems | std::views::values) {
+            item.setParent(nullptr);
+        }
+    }
 
     void clear()
     {

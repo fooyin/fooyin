@@ -21,8 +21,6 @@
 
 #include <utils/helpers.h>
 
-#include <utility>
-
 namespace Fooyin {
 PlaylistItem::PlaylistItem()
     : PlaylistItem{Root, {}, nullptr}
@@ -68,7 +66,7 @@ UId PlaylistItem::key() const
 
 int PlaylistItem::index() const
 {
-    if(m_type != PlaylistItem::Track) {
+    if(m_type != Track) {
         return -1;
     }
     const auto& trackItem = std::get<PlaylistTrackItem>(m_data);
@@ -102,11 +100,17 @@ void PlaylistItem::setKey(const UId& key)
 
 void PlaylistItem::setIndex(int index)
 {
-    if(m_type != PlaylistItem::Track) {
+    if(m_type != Track) {
         return;
     }
     auto& trackItem = std::get<PlaylistTrackItem>(m_data);
     trackItem.setIndex(index);
+}
+
+void PlaylistItem::setParent(PlaylistItem* parent)
+{
+    m_parent = parent;
+    resetRow();
 }
 
 void PlaylistItem::removeColumn(int column)

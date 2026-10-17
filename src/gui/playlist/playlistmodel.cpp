@@ -2181,6 +2181,7 @@ void PlaylistModel::populateTrackGroup(PendingData data)
         return;
     }
 
+    data.rebindParents(rootItem());
     tracksAboutToBeChanged();
 
     if(!m_indexesPendingRemoval.empty() && tryUpdateTrackGroupInPlace(data)) {
