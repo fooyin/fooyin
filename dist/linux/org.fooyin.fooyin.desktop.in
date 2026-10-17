@@ -3,6 +3,7 @@ Name=fooyin
 Type=Application
 GenericName=fooyin Music Player
 Comment=Manage and play your local music collection
+Comment[cs]=Spravuj a přehrávej svou lokální hudební kolekci
 Comment[ru]=Организация и воспроизведение вашей локальной фонотеки
 Comment[sv]=Hantera och spela din lokala musiksamling
 Exec=fooyin %F
