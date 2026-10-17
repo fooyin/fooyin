@@ -35,6 +35,8 @@ namespace Testing {
 class PlaylistTestUtils;
 }
 struct PlaylistTrack;
+struct PlaylistChangeset;
+struct ScriptSearchOptions;
 class SettingsManager;
 
 using PlaylistTrackList = std::vector<PlaylistTrack>;
@@ -215,8 +217,15 @@ private:
     void setModified(bool modified);
     void setTracksModified(bool modified);
 
+    [[nodiscard]] uint64_t contentRevision() const;
+    static TrackList calculateAutoPlaylistTracks(const TrackList& libraryTracks, const TrackList& previousTracks,
+                                                 const QString& query, const QString& sortQuery, bool forceSorted,
+                                                 const ScriptSearchOptions& searchOptions);
     void replaceTracks(const TrackList& tracks);
     void replaceTracks(const PlaylistTrackList& tracks);
+    void replaceTracksUnchecked(const PlaylistTrackList& tracks);
+    void applyTrackChanges(const PlaylistTrackList& tracks, const PlaylistChangeset& changeSet);
+    std::vector<int> updateTrackMetadata(const TrackList& tracks);
     void appendTracks(const TrackList& tracks);
     void updateTrackAtIndex(int index, const Track& track);
     std::vector<int> removeTracks(const std::vector<int>& indexes);

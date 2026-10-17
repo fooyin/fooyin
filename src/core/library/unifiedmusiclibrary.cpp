@@ -40,6 +40,7 @@
 #include <QDateTime>
 #include <QFuture>
 #include <QLoggingCategory>
+#include <QPointer>
 
 #include <deque>
 #include <functional>
@@ -230,7 +231,7 @@ public:
     QCoro::Task<TrackList> sortTracks(QString sort, TrackList tracks);
     QFuture<TrackList> sortTracksFuture(const QString& sort, TrackList tracks);
     void attachMetadataStore(TrackList& tracks) const;
-    QCoro::Task<> resortLibraryTracks();
+    QCoro::Task<> resortLibraryTracks(TrackList tracks);
 
     void enqueueCommit(CommitOperation operation);
     void processNextCommit();
@@ -243,8 +244,8 @@ public:
     QCoro::Task<> commitLoadTracks(TrackList tracksToLoad);
     QCoro::Task<> commitChangeSort(QString sort);
     QCoro::Task<> commitAddTracks(TrackList newTracks);
-    void updateLibraryTracks(const TrackList& updatedTracks);
-    void updateLibraryTracks(const TrackList& updatedTracks, const TrackLookup& lookup);
+    [[nodiscard]] TrackList updatedLibraryTracks(const TrackList& updatedTracks) const;
+    [[nodiscard]] TrackList updatedLibraryTracks(const TrackList& updatedTracks, const TrackLookup& lookup) const;
     void updateTracksMetadata(TrackList tracksToUpdate);
     void updateTracksAvailability(TrackList tracksToUpdate);
     void updateTracksStats(TrackList tracksToUpdate, Track::Stats stats);
@@ -328,8 +329,14 @@ QString UnifiedMusicLibraryPrivate::externalSortScript() const
 
 QCoro::Task<TrackList> UnifiedMusicLibraryPrivate::sortTracks(QString sort, TrackList tracks)
 {
+    const QPointer lifetime{m_self};
+
     TrackList sortedTracks = co_await sortTracksFuture(sort, std::move(tracks));
-    m_sortFuture           = {};
+
+    if(lifetime) {
+        m_sortFuture = {};
+    }
+
     co_return sortedTracks;
 }
 
@@ -350,9 +357,15 @@ void UnifiedMusicLibraryPrivate::attachMetadataStore(TrackList& tracks) const
     }
 }
 
-QCoro::Task<> UnifiedMusicLibraryPrivate::resortLibraryTracks()
+QCoro::Task<> UnifiedMusicLibraryPrivate::resortLibraryTracks(TrackList tracks)
 {
-    m_tracks = co_await sortTracks(librarySortScript(), std::move(m_tracks));
+    const QPointer lifetime{m_self};
+
+    auto sortedTracks = co_await sortTracks(librarySortScript(), std::move(tracks));
+
+    if(lifetime) {
+        m_tracks = std::move(sortedTracks);
+    }
 }
 
 void UnifiedMusicLibraryPrivate::enqueueCommit(CommitOperation operation)
@@ -378,7 +391,10 @@ void UnifiedMusicLibraryPrivate::processNextCommit()
     auto operation = std::move(m_commitQueue.front());
     m_commitQueue.pop_front();
 
-    m_activeCommitTask = operation().then([this]() {
+    m_activeCommitTask = operation().then([this, lifetime = QPointer{m_self}]() {
+        if(!lifetime) {
+            return;
+        }
         QMetaObject::invokeMethod(
             m_self,
             [this]() {
@@ -434,6 +450,8 @@ void UnifiedMusicLibraryPrivate::changeSort(const QString& sort)
 
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitLoadTracks(TrackList tracksToLoad)
 {
+    const QPointer lifetime{m_self};
+
     if(tracksToLoad.empty()) {
         m_tracks.clear();
         Q_EMIT m_self->tracksLoaded({});
@@ -441,22 +459,44 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitLoadTracks(TrackList tracksToLoa
     }
 
     attachMetadataStore(tracksToLoad);
-    m_tracks = co_await sortTracks(librarySortScript(), std::move(tracksToLoad));
+    auto tracks = co_await sortTracks(librarySortScript(), std::move(tracksToLoad));
+
+    if(!lifetime) {
+        co_return;
+    }
+
+    m_tracks = std::move(tracks);
     Q_EMIT m_self->tracksLoaded(m_tracks);
 }
 
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitChangeSort(QString sort)
 {
-    m_tracks = co_await sortTracks(std::move(sort), m_tracks);
+    const QPointer lifetime{m_self};
+
+    auto tracks = co_await sortTracks(std::move(sort), m_tracks);
+
+    if(!lifetime) {
+        co_return;
+    }
+
+    m_tracks = std::move(tracks);
     Q_EMIT m_self->tracksSorted(m_tracks);
 }
 
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitAddTracks(TrackList newTracks)
 {
+    const QPointer lifetime{m_self};
+
     attachMetadataStore(newTracks);
 
     const TrackList sortedTracks = co_await sortTracks(librarySortScript(), std::move(newTracks));
+
+    if(!lifetime) {
+        co_return;
+    }
+
     TrackLookup lookup{m_tracks};
+    TrackList tracks{m_tracks};
 
     TrackList addedTracks;
     addedTracks.reserve(sortedTracks.size());
@@ -465,18 +505,22 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitAddTracks(TrackList newTracks)
 
     for(const Track& track : sortedTracks) {
         if(const auto index = lookup.findForAdd(track)) {
-            m_tracks.at(*index) = track;
-            m_tracks.at(*index).clearWasModified();
+            tracks.at(*index) = track;
+            tracks.at(*index).clearWasModified();
             updatedTracks.emplace_back(track);
         }
         else {
             addedTracks.push_back(track);
-            lookup.add(track, m_tracks.size(), TrackLookup::Type::All);
-            m_tracks.push_back(track);
+            lookup.add(track, tracks.size(), TrackLookup::Type::All);
+            tracks.push_back(track);
         }
     }
 
-    co_await resortLibraryTracks();
+    co_await resortLibraryTracks(std::move(tracks));
+
+    if(!lifetime) {
+        co_return;
+    }
 
     if(!updatedTracks.empty()) {
         Q_EMIT m_self->tracksMetadataChanged(updatedTracks);
@@ -488,20 +532,23 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitAddTracks(TrackList newTracks)
     setupLibraryWatchers();
 }
 
-void UnifiedMusicLibraryPrivate::updateLibraryTracks(const TrackList& updatedTracks)
+TrackList UnifiedMusicLibraryPrivate::updatedLibraryTracks(const TrackList& updatedTracks) const
 {
     const TrackLookup lookup{m_tracks, TrackLookup::Id};
-    updateLibraryTracks(updatedTracks, lookup);
+    return updatedLibraryTracks(updatedTracks, lookup);
 }
 
-void UnifiedMusicLibraryPrivate::updateLibraryTracks(const TrackList& updatedTracks, const TrackLookup& lookup)
+TrackList UnifiedMusicLibraryPrivate::updatedLibraryTracks(const TrackList& updatedTracks,
+                                                           const TrackLookup& lookup) const
 {
+    TrackList tracks{m_tracks};
     for(const auto& track : updatedTracks) {
         if(const auto index = lookup.findById(track)) {
-            m_tracks.at(*index) = track;
-            m_tracks.at(*index).clearWasModified();
+            tracks.at(*index) = track;
+            tracks.at(*index).clearWasModified();
         }
     }
+    return tracks;
 }
 
 void UnifiedMusicLibraryPrivate::updateTracksMetadata(TrackList tracksToUpdate)
@@ -534,6 +581,8 @@ void UnifiedMusicLibraryPrivate::updateTracks(TrackList tracksToUpdate)
 
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksMetadata(TrackList tracksToUpdate)
 {
+    const QPointer lifetime{m_self};
+
     if(tracksToUpdate.empty()) {
         Q_EMIT m_self->tracksMetadataChanged({});
         co_return;
@@ -542,6 +591,10 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksMetadata(TrackList t
     attachMetadataStore(tracksToUpdate);
 
     const TrackList sortedTracks = co_await sortTracks(librarySortScript(), std::move(tracksToUpdate));
+
+    if(!lifetime) {
+        co_return;
+    }
 
     bool monitoredPathsChanged{false};
     const TrackLookup lookup{m_tracks, TrackLookup::Id};
@@ -553,8 +606,12 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksMetadata(TrackList t
         }
     }
 
-    updateLibraryTracks(sortedTracks, lookup);
-    co_await resortLibraryTracks();
+    auto updatedTracks = updatedLibraryTracks(sortedTracks, lookup);
+    co_await resortLibraryTracks(std::move(updatedTracks));
+    if(!lifetime) {
+        co_return;
+    }
+
     Q_EMIT m_self->tracksMetadataChanged(sortedTracks);
 
     if(monitoredPathsChanged) {
@@ -585,22 +642,38 @@ TrackList UnifiedMusicLibraryPrivate::mergeTrackUpdates(const TrackList& tracksT
 
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksAvailability(TrackList tracksToUpdate)
 {
+    const QPointer lifetime{m_self};
+
     attachMetadataStore(tracksToUpdate);
     TrackList mergedTracks = mergeTrackUpdates(tracksToUpdate, LibraryTrackUpdateType::Availability);
 
     const TrackList sortedTracks = co_await sortTracks(librarySortScript(), std::move(mergedTracks));
 
-    updateLibraryTracks(sortedTracks);
-    co_await resortLibraryTracks();
+    if(!lifetime) {
+        co_return;
+    }
+
+    co_await resortLibraryTracks(updatedLibraryTracks(sortedTracks));
+
+    if(!lifetime) {
+        co_return;
+    }
+
     Q_EMIT m_self->tracksUpdated(sortedTracks);
 }
 
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksStats(TrackList tracksToUpdate, Track::Stats stats)
 {
+    const QPointer lifetime{m_self};
+
     attachMetadataStore(tracksToUpdate);
     TrackList mergedTracks = mergeTrackUpdates(tracksToUpdate, LibraryTrackUpdateType::Stats, stats);
 
     const TrackList sortedTracks = co_await sortTracks(librarySortScript(), std::move(mergedTracks));
+
+    if(!lifetime) {
+        co_return;
+    }
 
     TrackList ratingsChanged;
     TrackList playcountsChanged;
@@ -626,8 +699,12 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksStats(TrackList trac
         }
     }
 
-    updateLibraryTracks(sortedTracks);
-    co_await resortLibraryTracks();
+    auto updatedTracks = updatedLibraryTracks(sortedTracks);
+    co_await resortLibraryTracks(std::move(updatedTracks));
+
+    if(!lifetime) {
+        co_return;
+    }
 
     Q_EMIT m_self->tracksUpdated(sortedTracks);
     if(!ratingsChanged.empty()) {
@@ -643,12 +720,22 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksStats(TrackList trac
 
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracks(TrackList tracksToUpdate)
 {
+    const QPointer lifetime{m_self};
+
     attachMetadataStore(tracksToUpdate);
 
     const TrackList sortedTracks = co_await sortTracks(librarySortScript(), std::move(tracksToUpdate));
 
-    updateLibraryTracks(sortedTracks);
-    co_await resortLibraryTracks();
+    if(!lifetime) {
+        co_return;
+    }
+
+    co_await resortLibraryTracks(updatedLibraryTracks(sortedTracks));
+
+    if(!lifetime) {
+        co_return;
+    }
+
     Q_EMIT m_self->tracksUpdated(sortedTracks);
     setupLibraryWatchers();
 }
@@ -694,11 +781,19 @@ void UnifiedMusicLibraryPrivate::handleScanResult(int id, const ScanRequest::Typ
 
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitApplyScanResult(int id, ScanResult result)
 {
+    const QPointer lifetime{m_self};
+
     if(!result.addedTracks.empty()) {
         co_await commitAddTracks(std::move(result.addedTracks));
+        if(!lifetime) {
+            co_return;
+        }
     }
     if(!result.updatedTracks.empty()) {
         co_await commitUpdateTracksMetadata(std::move(result.updatedTracks));
+        if(!lifetime) {
+            co_return;
+        }
     }
 
     Q_EMIT m_self->scanApplyCompleted(id);
@@ -706,20 +801,38 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitApplyScanResult(int id, ScanResu
 
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitPublishScannedTracks(int id, TrackList tracks)
 {
+    const QPointer lifetime{m_self};
+
     TrackList scannedTracks{tracks};
 
     co_await commitAddTracks(std::move(tracks));
-    const TrackList sortedScannedTracks = co_await sortTracks(externalSortScript(), std::move(scannedTracks));
-    Q_EMIT m_self->tracksScanned(id, sortedScannedTracks);
 
+    if(!lifetime) {
+        co_return;
+    }
+
+    const TrackList sortedScannedTracks = co_await sortTracks(externalSortScript(), std::move(scannedTracks));
+
+    if(!lifetime) {
+        co_return;
+    }
+
+    Q_EMIT m_self->tracksScanned(id, sortedScannedTracks);
     m_threadHandler.acknowledgeTracksScanned(id);
 }
 
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitPublishPlaylistTracks(int id, TrackList tracks)
 {
+    const QPointer lifetime{m_self};
+
     const TrackList playlistTracks{tracks};
 
     co_await commitAddTracks(std::move(tracks));
+
+    if(!lifetime) {
+        co_return;
+    }
+
     Q_EMIT m_self->tracksScanned(id, playlistTracks);
 
     m_threadHandler.acknowledgeTracksScanned(id);

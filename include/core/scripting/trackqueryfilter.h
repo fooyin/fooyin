@@ -57,6 +57,8 @@ public:
     TrackQueryFilter(ScriptSearchOptions options, ScriptRegistry* registry);
     ~TrackQueryFilter();
 
+    static ScriptSearchOptions defaultSearchOptions();
+
     [[nodiscard]] static bool matchesSearch(const QString& text, const QString& search, ScriptSearchMode mode,
                                             bool phraseMatch = false);
 

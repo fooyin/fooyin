@@ -717,6 +717,10 @@ bool Track::sameIdentityAs(const Track& other) const
 
 bool Track::sameDataAs(const Track& other) const
 {
+    if(p.constData() == other.p.constData()) {
+        return true;
+    }
+
     return p->libraryId == other.p->libraryId && p->enabled == other.p->enabled && p->id == other.p->id
         && p->hash == other.p->hash
         && resolveString(*p, StringPool::Domain::Codec, p->codec)

@@ -89,15 +89,8 @@ private:
 };
 
 TrackSearchFilterPrivate::TrackSearchFilterPrivate()
-{
-    const FySettings settings;
-    m_options
-        = {.script
-           = settings.value(Settings::Core::SearchScriptKey, QString::fromLatin1(TrackQueryFilter::DefaultSearchScript))
-                 .toString(),
-           .mode = static_cast<ScriptSearchMode>(
-               settings.value(Settings::Core::SearchModeKey, TrackQueryFilter::DefaultSearchMode).toInt())};
-}
+    : m_options{TrackQueryFilter::defaultSearchOptions()}
+{ }
 
 TrackSearchFilterPrivate::TrackSearchFilterPrivate(ScriptSearchOptions options)
     : m_options{std::move(options)}
@@ -132,6 +125,15 @@ TrackQueryFilter::TrackQueryFilter(ScriptSearchOptions options, ScriptRegistry* 
 { }
 
 TrackQueryFilter::~TrackQueryFilter() = default;
+
+ScriptSearchOptions TrackQueryFilter::defaultSearchOptions()
+{
+    const FySettings settings;
+    return {.script
+            = settings.value(Settings::Core::SearchScriptKey, QString::fromLatin1(DefaultSearchScript)).toString(),
+            .mode
+            = static_cast<ScriptSearchMode>(settings.value(Settings::Core::SearchModeKey, DefaultSearchMode).toInt())};
+}
 
 bool TrackQueryFilter::matchesSearch(const QString& text, const QString& search, ScriptSearchMode mode,
                                      bool phraseMatch)
