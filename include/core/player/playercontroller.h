@@ -214,6 +214,7 @@ Q_SIGNALS:
     void tracksDequeued(const Fooyin::QueueTracks& tracks);
     void trackIndexesDequeued(const Fooyin::PlaylistIndexes& indexes);
     void trackQueueChanged(const Fooyin::QueueTracks& removed, const Fooyin::QueueTracks& added);
+    void playbackQueueModeChanged(Fooyin::PlaybackQueueMode queueMode);
 
     void playbackSnapshotChanged(const Fooyin::Player::PlaybackSnapshot& snapshot);
     void playbackQueuePositionChanged(Fooyin::PlaybackQueueItemId currentItemId);

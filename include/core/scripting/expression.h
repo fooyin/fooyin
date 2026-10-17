@@ -186,6 +186,7 @@ enum class VariableKind : uint8_t
     IsQueueCurrent,
     IsQueueUpcoming,
     IsQueuePlayed,
+    QueueMode,
 };
 
 struct Expression;

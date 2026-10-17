@@ -248,6 +248,21 @@ QString queueTotal(const ScriptContext& context)
     return QString::number(row->queueTotal);
 }
 
+QString queueMode(const ScriptContext& context)
+{
+    if(!context.playback) {
+        return {};
+    }
+
+    switch(context.playback->queueMode) {
+        case PlaybackQueueMode::PlaylistWithOverrides:
+            return u"playlist"_s;
+        case PlaybackQueueMode::QueueAsPlaybackSource:
+            return u"queue"_s;
+    }
+    return {};
+}
+
 QString playingIcon(const ScriptContext& context)
 {
     const auto* row = playlistData(context);
@@ -497,6 +512,9 @@ void ScriptRegistryPrivate::addDefaultVariables()
     addVariable(VariableKind::QueueIndex, u"QUEUE_INDEX"_s, QT_TRANSLATE_NOOP("Fooyin", "Queue"),
                 QT_TRANSLATE_NOOP("Fooyin", "First playback queue index for the specified item"),
                 makeScriptVariableInvoker<queueIndex>(), {u"QUEUEINDEX"_s});
+    addVariable(VariableKind::QueueMode, u"QUEUE_MODE"_s, QT_TRANSLATE_NOOP("Fooyin", "Queue"),
+                QT_TRANSLATE_NOOP("Fooyin", "Playback queue mode: playlist or queue"),
+                makeScriptVariableInvoker<queueMode>(), {u"QUEUEMODE"_s});
     addVariable(VariableKind::QueueIndexes, u"QUEUE_INDEXES"_s, QT_TRANSLATE_NOOP("Fooyin", "Queue"),
                 QT_TRANSLATE_NOOP("Fooyin", "Playback queue indexes for the specified item"),
                 makeScriptVariableInvoker<queueIndexes>(), {u"QUEUEINDEXES"_s});

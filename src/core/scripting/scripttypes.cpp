@@ -36,6 +36,7 @@ ScriptContextData makePlaybackScriptData(PlayerController* playerController, Pla
     QString decoder;
     Engine::PlaybackOutputInfo outputInfo;
     auto playState{Player::PlayState::Stopped};
+    auto queueMode{PlaybackQueueMode::PlaylistWithOverrides};
 
     if(playerController) {
         playlistTrackIndex   = playerController->currentPlaylistTrack().indexInPlaylist;
@@ -45,6 +46,7 @@ ScriptContextData makePlaybackScriptData(PlayerController* playerController, Pla
         decoder              = playerController->decoder();
         outputInfo           = playerController->playbackOutputInfo();
         playState            = playerController->playState();
+        queueMode            = playerController->playbackQueueMode();
     }
 
     const auto playingTrack = playerController ? playerController->currentPlaylistTrack() : PlaylistTrack{};
@@ -69,6 +71,7 @@ ScriptContextData makePlaybackScriptData(PlayerController* playerController, Pla
         .decoder    = std::move(decoder),
         .outputInfo = std::move(outputInfo),
         .playState  = playState,
+        .queueMode  = queueMode,
     };
 
     return context;

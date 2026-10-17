@@ -22,6 +22,7 @@
 #include "fycore_export.h"
 
 #include <core/library/libraryinfo.h>
+#include <core/player/playbackqueue.h>
 #include <core/player/playerdefs.h>
 #include <core/ratingsymbols.h>
 #include <core/scripting/expression.h>
@@ -105,6 +106,7 @@ struct ScriptPlaybackData
     QString decoder{};
     Engine::PlaybackOutputInfo outputInfo{};
     Player::PlayState playState{Player::PlayState::Stopped};
+    PlaybackQueueMode queueMode{PlaybackQueueMode::PlaylistWithOverrides};
 };
 
 struct ScriptVariableValue

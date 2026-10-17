@@ -321,6 +321,8 @@ void ScriptEditorPrivate::setupConnections()
                          qOverload<>(&ScriptEditorPrivate::updateResults));
     }
     if(m_playerController) {
+        QObject::connect(m_playerController, &PlayerController::playbackQueueModeChanged, this,
+                         &ScriptEditorPrivate::trackContextChanged);
         QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
                          &ScriptEditorPrivate::trackContextChanged);
         QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,

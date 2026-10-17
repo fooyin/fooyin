@@ -1328,6 +1328,7 @@ PlayerController::PlayerController(SettingsManager* settings, PlaylistHandler* p
     settings->subscribe<Settings::Core::PlaybackQueueMode>(this, [this]() {
         const auto mode = static_cast<PlaybackQueueMode>(p->m_settings->value<Settings::Core::PlaybackQueueMode>());
         p->normalisePlaybackQueueMode(mode);
+        Q_EMIT playbackQueueModeChanged(mode);
     });
     settings->subscribe<Settings::Core::PlaybackQueueHistoryLimit>(this, [this]() { p->prunePlaybackQueueHistory(); });
     settings->subscribe<Settings::Core::StopAfterCurrent>(this, [this](bool enabled) {

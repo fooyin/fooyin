@@ -757,6 +757,8 @@ void GuiApplication::setupConnections()
     QObject::connect(m_library, &MusicLibrary::tracksDeleted, this, &GuiApplication::handleTracksDeleted);
 
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &GuiApplication::updateWindowTitle);
+    QObject::connect(m_playerController, &PlayerController::playbackQueueModeChanged, this,
+                     &GuiApplication::updateWindowTitle);
     QObject::connect(m_playerController, &PlayerController::playlistTrackUpdated, this,
                      &GuiApplication::updateWindowTitle);
     QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,

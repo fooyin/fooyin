@@ -117,6 +117,7 @@ ScriptEvaluationContext makeQueueScriptContext(PlayerController* playerControlle
     int currentTrackId{-1};
     int currentPlayingTrackIndex{-1};
     auto playState{Player::PlayState::Stopped};
+    auto queueMode{PlaybackQueueMode::PlaylistWithOverrides};
 
     if(playerController) {
         currentPosition          = playerController->currentPosition();
@@ -127,6 +128,7 @@ ScriptEvaluationContext makeQueueScriptContext(PlayerController* playerControlle
         currentTrackId           = playerController->currentTrackId();
         currentPlayingTrackIndex = playerController->currentPlaylistTrack().indexInPlaylist;
         playState                = playerController->playState();
+        queueMode                = playerController->playbackQueueMode();
     }
 
     data.data.playlistData
@@ -143,7 +145,8 @@ ScriptEvaluationContext makeQueueScriptContext(PlayerController* playerControlle
                                             .bitrate    = bitrate,
                                             .decoder    = std::move(decoder),
                                             .outputInfo = std::move(outputInfo),
-                                            .playState  = playState};
+                                            .playState  = playState,
+                                            .queueMode  = queueMode};
     data.options       = {.escapeRichText = true, .ratingSymbols = Gui::ratingStarSymbols(*settings)};
 
     return data;
@@ -178,6 +181,8 @@ QueueViewerModel::QueueViewerModel(CoverRepository* coverRepository, PlayerContr
     m_settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(this, [this](const QString&) { regenerateTitles(); });
     m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, [this](const QString&) { regenerateTitles(); });
 
+    QObject::connect(m_playerController, &PlayerController::playbackQueueModeChanged, this,
+                     &QueueViewerModel::regenerateTitles);
     QObject::connect(m_playerController, &PlayerController::stopAfterQueueItemChanged, this, [this]() {
         const int rows = rowCount({});
         if(rows > 0) {
