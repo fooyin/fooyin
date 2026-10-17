@@ -33,6 +33,7 @@
 
 namespace Fooyin {
 class LibraryManager;
+struct ScriptSearchOptions;
 
 namespace Filters {
 using RowKey = Md5Hash;
@@ -70,5 +71,7 @@ FYGUI_EXPORT FilterRowList patchFilterRows(const LibraryInfoMap& libraries, cons
 FYGUI_EXPORT TrackList filterTracksBySearch(const QString& search, const TrackList& tracks);
 FYGUI_EXPORT FilterRowList filterRowsBySearch(const QString& search, const FilterRowList& rows,
                                               const TrackList& tracks);
+FYGUI_EXPORT FilterRowList filterRowsBySearch(const QString& search, const FilterRowList& rows, const TrackList& tracks,
+                                              const ScriptSearchOptions& searchOptions);
 } // namespace Filters
 } // namespace Fooyin

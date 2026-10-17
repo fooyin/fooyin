@@ -32,6 +32,7 @@
 #include <core/library/musiclibrary.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/plugins/coreplugincontext.h>
+#include <core/scripting/trackqueryfilter.h>
 #include <gui/contextmenuutils.h>
 #include <gui/coverprovider.h>
 #include <gui/coverrepository.h>
@@ -49,11 +50,13 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
+#include <QFuture>
 #include <QMenu>
 #include <QPointer>
 #include <QScopedValueRollback>
 
 #include <ranges>
+#include <stop_token>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
@@ -108,6 +111,75 @@ bool containsSummaryKey(const std::vector<RowKey>& keys)
 {
     return std::ranges::any_of(keys, [](const RowKey& key) { return key.isEmpty(); });
 }
+
+struct FilterPatchStage
+{
+    Id widgetId;
+    FilterColumnList columns;
+    TrackList inputTracks;
+    FilterRowList rows;
+    std::optional<FilterRowList> searchedRows;
+    FilterRowLookup rowLookup;
+    std::vector<RowKey> selectedKeys;
+    TrackList selectedTracks;
+    QString searchText;
+    bool selectionRestorePending{false};
+    bool isActive{false};
+};
+
+struct FilterPatchResult
+{
+    std::vector<FilterPatchStage> stages;
+    TrackList filteredTracks;
+    bool hasActiveStages{false};
+    bool cancelled{false};
+};
+
+FilterPatchResult calculateGroupPatch(FilterPatchResult snapshot, TrackList tracks, const TrackIds& changedTrackIds,
+                                      const LibraryInfoMap& libraries, const FilterRowBuildContext& context,
+                                      const ScriptSearchOptions& searchOptions, std::stop_token token)
+{
+    TrackList currentTracks = std::move(tracks);
+
+    for(auto& stage : snapshot.stages) {
+        if(token.stop_requested()) {
+            snapshot.cancelled = true;
+            break;
+        }
+
+        stage.rows        = patchFilterRows(libraries, stage.columns, stage.rows, stage.inputTracks, currentTracks,
+                                            changedTrackIds, context);
+        stage.inputTracks = std::move(currentTracks);
+
+        if(!stage.searchText.isEmpty()) {
+            stage.searchedRows = filterRowsBySearch(stage.searchText, stage.rows, stage.inputTracks, searchOptions);
+        }
+
+        const auto& rows = stage.searchedRows ? *stage.searchedRows : stage.rows;
+        stage.rowLookup.rebuildRows(rows);
+
+        if(stage.selectionRestorePending && stage.inputTracks.empty()) {
+            stage.isActive = !stage.selectedKeys.empty();
+        }
+        else {
+            auto selection       = resolveFilterSelection(rows, stage.inputTracks, stage.selectedKeys, stage.rowLookup);
+            stage.selectedKeys   = std::move(selection.selectedKeys);
+            stage.selectedTracks = std::move(selection.selectedTracks);
+            stage.isActive       = selection.isActive;
+            stage.selectionRestorePending = false;
+        }
+
+        currentTracks            = stage.isActive ? stage.selectedTracks : stage.inputTracks;
+        snapshot.hasActiveStages = snapshot.hasActiveStages || stage.isActive;
+    }
+
+    snapshot.cancelled = snapshot.cancelled || token.stop_requested();
+    if(snapshot.hasActiveStages && !snapshot.cancelled) {
+        snapshot.filteredTracks = std::move(currentTracks);
+    }
+
+    return snapshot;
+}
 } // namespace
 
 class FilterControllerPrivate
@@ -153,6 +225,13 @@ public:
         bool hasActiveStages{false};
         uint64_t revision{0};
         bool recomputePending{false};
+        bool recomputing{false};
+        bool patchPending{false};
+        bool patchRunning{false};
+        uint64_t patchToken{0};
+        std::unordered_set<int> pendingPatchIds;
+        std::stop_source patchStop;
+        QFuture<FilterPatchResult> patchFuture;
     };
 
     explicit FilterControllerPrivate(FilterController* self, ActionManager* actionManager,
@@ -191,6 +270,8 @@ public:
     void publishGroupResult(const Id& groupId) const;
     void handleLibraryTracksPatched(const TrackList& changedTracks);
     bool patchGroup(const Id& groupId, const TrackList& sourceTracks, const TrackIds& changedTrackIds);
+    void startGroupPatch(const Id& groupId);
+    void applyGroupPatch(const Id& groupId, uint64_t revision, FilterPatchResult result);
     void recomputeGroup(const Id& groupId);
     void recomputeStage(const Id& groupId, int stageIndex, uint64_t revision, TrackList currentTracks,
                         bool constrained);
@@ -235,6 +316,7 @@ public:
     std::optional<Id> m_playlistSelectionGroup;
     bool m_selectPlaylistMatches{false};
     bool m_syncingSource{false};
+    uint64_t m_nextPatchToken{0};
 };
 
 FilterControllerPrivate::FilterControllerPrivate(FilterController* self, ActionManager* actionManager,
@@ -587,6 +669,12 @@ void FilterControllerPrivate::handleSelectionChanged(FilterWidget* filter, const
     ++group->revision;
     markStagesCurrent(*group, stageIndex);
 
+    if(group->patchRunning || group->patchPending) {
+        requestScrollReset(*group, stageIndex + 1);
+        scheduleRecompute(group->id);
+        return;
+    }
+
     const TrackList nextTracks = stage->isActive ? stage->selectedTracks : stage->inputTracks;
     const bool nextConstrained = hasPriorActive || stage->isActive;
 
@@ -604,6 +692,17 @@ void FilterControllerPrivate::handleSearchChanged(FilterWidget* filter, const QS
     }
 
     if(std::exchange(stage->searchText, search) == search) {
+        return;
+    }
+
+    if(group->patchRunning || group->patchPending) {
+        stage->selectedKeys.clear();
+        stage->selectedTracks.clear();
+        stage->isActive                = false;
+        stage->selectionRestorePending = false;
+        updateWidgetSelection(*stage);
+        requestScrollReset(*group, location->stageIndex);
+        scheduleRecompute(group->id);
         return;
     }
 
@@ -701,13 +800,18 @@ void FilterControllerPrivate::scheduleRecompute(const Id& groupId, FilterScrollP
         return;
     }
 
-    auto& group = m_groups.at(groupId);
+    auto& group        = m_groups.at(groupId);
+    group.patchPending = false;
+    group.pendingPatchIds.clear();
+    group.patchStop.request_stop();
+
     if(scrollPolicy == FilterScrollPolicy::ResetIfChanged) {
         requestScrollReset(group, 0);
     }
     if(std::exchange(group.recomputePending, true)) {
         return;
     }
+    ++group.revision;
 
     QMetaObject::invokeMethod(
         m_self,
@@ -716,7 +820,10 @@ void FilterControllerPrivate::scheduleRecompute(const Id& groupId, FilterScrollP
                 return;
             }
 
-            auto& currentGroup            = m_groups.at(groupId);
+            auto& currentGroup = m_groups.at(groupId);
+            if(!currentGroup.recomputePending || currentGroup.patchRunning) {
+                return;
+            }
             currentGroup.recomputePending = false;
             recomputeGroup(groupId);
         },
@@ -796,7 +903,7 @@ void FilterControllerPrivate::handleLibraryTracksPatched(const TrackList& change
 
     for(const auto& groupId : m_groups | std::views::keys) {
         const auto& group = m_groups.at(groupId);
-        if(usesCurrentPlaylist(group) || group.recomputePending
+        if(usesCurrentPlaylist(group) || group.recomputePending || group.recomputing
            || std::ranges::any_of(group.stages, [](const FilterStageState& stage) {
                   return stage.scrollPolicy == FilterScrollPolicy::ResetIfChanged;
               })) {
@@ -819,50 +926,137 @@ bool FilterControllerPrivate::patchGroup(const Id& groupId, const TrackList& sou
     auto& group = m_groups.at(groupId);
     ++group.revision;
     group.sourceTracks = sourceTracks;
+    group.pendingPatchIds.insert(changedTrackIds.begin(), changedTrackIds.end());
+    group.patchPending = true;
+    group.patchStop.request_stop();
 
-    const auto context      = rowBuildContext();
-    TrackList currentTracks = group.sourceTracks;
-    bool constrained{false};
+    if(!group.patchRunning) {
+        QMetaObject::invokeMethod(m_self, [this, groupId]() { startGroupPatch(groupId); }, Qt::QueuedConnection);
+    }
+    return true;
+}
 
-    for(int stageIndex{0}; std::cmp_less(stageIndex, group.stages.size()); ++stageIndex) {
-        auto& stage                         = group.stages.at(stageIndex);
-        const TrackList previousInputTracks = stage.inputTracks;
-        const FilterColumnList columns      = stage.widget ? stage.widget->columns() : FilterColumnList{};
+void FilterControllerPrivate::startGroupPatch(const Id& groupId)
+{
+    if(!m_groups.contains(groupId)) {
+        return;
+    }
 
-        stage.inputTracks = currentTracks;
-        stage.rows     = patchFilterRows(m_libraryManager, columns, stage.rows, previousInputTracks, stage.inputTracks,
-                                         changedTrackIds, context);
-        stage.revision = group.revision;
-        stage.rowLookup.rebuildRows(stage.rows);
+    auto& group = m_groups.at(groupId);
+    if(!group.patchPending || group.patchRunning || group.recomputePending) {
+        return;
+    }
 
-        if(stage.selectionRestorePending && stage.inputTracks.empty()) {
-            stage.selectedTracks.clear();
-            stage.isActive = !stage.selectedKeys.empty();
-        }
-        else {
-            const FilterSelectionResolution selection
-                = resolveFilterSelection(stage.rows, stage.inputTracks, stage.selectedKeys, stage.rowLookup);
-            stage.selectedKeys            = selection.selectedKeys;
-            stage.selectedTracks          = selection.selectedTracks;
-            stage.isActive                = selection.isActive;
-            stage.selectionRestorePending = false;
-        }
+    FilterPatchResult snapshot;
+    snapshot.stages.reserve(group.stages.size());
 
-        refreshStageSearch(groupId, stageIndex, group.revision);
+    for(const auto& stage : group.stages) {
+        FilterPatchStage patch;
+        patch.widgetId                = stage.widgetId;
+        patch.columns                 = stage.widget ? stage.widget->columns() : FilterColumnList{};
+        patch.inputTracks             = stage.inputTracks;
+        patch.rows                    = stage.rows;
+        patch.selectedKeys            = stage.selectedKeys;
+        patch.searchText              = stage.searchText;
+        patch.selectionRestorePending = stage.selectionRestorePending;
+        snapshot.stages.push_back(std::move(patch));
+    }
 
-        if(stage.isActive) {
-            currentTracks = stage.selectedTracks;
-            constrained   = true;
-        }
-        else {
-            currentTracks = stage.inputTracks;
+    const auto revision      = group.revision;
+    const auto patchToken    = ++m_nextPatchToken;
+    const auto searchOptions = TrackQueryFilter::defaultSearchOptions();
+
+    group.patchToken   = patchToken;
+    group.patchStop    = std::stop_source{};
+    group.patchRunning = true;
+    group.patchPending = false;
+
+    group.patchFuture
+        = Utils::asyncExec([snapshot = std::move(snapshot), tracks = group.sourceTracks,
+                            changedTrackIds = TrackIds{group.pendingPatchIds.cbegin(), group.pendingPatchIds.cend()},
+                            libraries       = m_libraryManager ? m_libraryManager->allLibraries() : LibraryInfoMap{},
+                            context = rowBuildContext(), searchOptions, token = group.patchStop.get_token()]() mutable {
+              return calculateGroupPatch(std::move(snapshot), std::move(tracks), changedTrackIds, libraries, context,
+                                         searchOptions, token);
+          });
+
+    group.patchFuture.then(
+        m_self, [this, groupId, revision, patchToken, searchOptions](QFuture<FilterPatchResult> future) {
+            auto result = future.takeResult();
+            if(!m_groups.contains(groupId)) {
+                return;
+            }
+
+            auto& currentGroup = m_groups.at(groupId);
+            if(currentGroup.patchToken != patchToken) {
+                return;
+            }
+
+            currentGroup.patchRunning       = false;
+            const auto currentSearchOptions = TrackQueryFilter::defaultSearchOptions();
+            if(searchOptions.script != currentSearchOptions.script || searchOptions.mode != currentSearchOptions.mode) {
+                scheduleRecompute(groupId);
+            }
+            if(currentGroup.recomputePending) {
+                currentGroup.recomputePending = false;
+                recomputeGroup(groupId);
+                return;
+            }
+            if(currentGroup.revision != revision || result.cancelled) {
+                startGroupPatch(groupId);
+                return;
+            }
+            applyGroupPatch(groupId, revision, std::move(result));
+        });
+}
+
+void FilterControllerPrivate::applyGroupPatch(const Id& groupId, uint64_t revision, FilterPatchResult result)
+{
+    auto& currentGroup = m_groups.at(groupId);
+    if(result.stages.size() != currentGroup.stages.size()) {
+        scheduleRecompute(groupId);
+        return;
+    }
+
+    for(size_t i{0}; i < result.stages.size(); ++i) {
+        if(result.stages[i].widgetId != currentGroup.stages[i].widgetId) {
+            scheduleRecompute(groupId);
+            return;
         }
     }
 
-    group.finalFilteredTracks = constrained ? currentTracks : TrackList{};
-    group.hasActiveStages     = constrained;
-    publishGroupResult(group.id);
-    return true;
+    currentGroup.pendingPatchIds.clear();
+    for(size_t i{0}; i < result.stages.size(); ++i) {
+        auto& stage                   = currentGroup.stages[i];
+        auto& patch                   = result.stages[i];
+        stage.inputTracks             = std::move(patch.inputTracks);
+        stage.rows                    = std::move(patch.rows);
+        stage.searchedRows            = std::move(patch.searchedRows);
+        stage.rowLookup               = std::move(patch.rowLookup);
+        stage.selectedKeys            = std::move(patch.selectedKeys);
+        stage.selectedTracks          = std::move(patch.selectedTracks);
+        stage.selectionRestorePending = patch.selectionRestorePending;
+        stage.isActive                = patch.isActive;
+        stage.revision                = revision;
+        ++stage.searchRevision;
+    }
+
+    currentGroup.finalFilteredTracks = std::move(result.filteredTracks);
+    currentGroup.hasActiveStages     = result.hasActiveStages;
+
+    for(int i{0}; std::cmp_less(i, result.stages.size()); ++i) {
+        if(!m_groups.contains(groupId) || m_groups.at(groupId).revision != revision) {
+            return;
+        }
+        publishStage(groupId, i);
+    }
+
+    if(!m_groups.contains(groupId) || m_groups.at(groupId).revision != revision) {
+        return;
+    }
+
+    publishCurrentPlaylistSelection(m_groups.at(groupId));
+    publishGroupResult(groupId);
 }
 
 void FilterControllerPrivate::recomputeGroup(const Id& groupId)
@@ -872,6 +1066,7 @@ void FilterControllerPrivate::recomputeGroup(const Id& groupId)
     }
 
     auto& group        = m_groups.at(groupId);
+    group.recomputing  = true;
     group.sourceTracks = sourceTracks(group);
     group.finalFilteredTracks.clear();
     group.hasActiveStages = false;
@@ -894,6 +1089,7 @@ void FilterControllerPrivate::recomputeStage(const Id& groupId, int stageIndex, 
     }
 
     if(std::cmp_greater_equal(stageIndex, group.stages.size())) {
+        group.recomputing         = false;
         group.finalFilteredTracks = constrained ? std::move(currentTracks) : TrackList{};
         group.hasActiveStages     = constrained;
         publishCurrentPlaylistSelection(group);
@@ -902,6 +1098,7 @@ void FilterControllerPrivate::recomputeStage(const Id& groupId, int stageIndex, 
     }
 
     auto& stage                = group.stages.at(stageIndex);
+    group.recomputing          = true;
     const bool hadSearchedRows = stage.searchedRows.has_value();
 
     stage.inputTracks = currentTracks;
@@ -990,9 +1187,10 @@ void FilterControllerPrivate::refreshStageSearch(const Id& groupId, int stageInd
     }
 
     const QString searchText = stage.searchText;
+    const auto searchOptions = TrackQueryFilter::defaultSearchOptions();
 
-    Utils::asyncExec([rows = stage.rows, tracks = stage.inputTracks, searchText]() {
-        return filterRowsBySearch(searchText, rows, tracks);
+    Utils::asyncExec([rows = stage.rows, tracks = stage.inputTracks, searchText, searchOptions]() {
+        return filterRowsBySearch(searchText, rows, tracks, searchOptions);
     })
         .then(m_self,
               [this, groupId, stageIndex, revision, searchRevision, searchText](const FilterRowList& searchedRows) {
@@ -1196,6 +1394,7 @@ std::optional<Id> FilterControllerPrivate::detachWidget(FilterWidget* widget)
             m_selectPlaylistMatches = false;
         }
         if(group.viewers.empty()) {
+            group.patchStop.request_stop();
             m_groups.erase(groupId.value());
             Q_EMIT m_self->filterGroupRemoved(groupId.value());
             return groupId;
@@ -1251,6 +1450,7 @@ std::optional<Id> FilterControllerPrivate::detachViewer(TrackListWidget* widget)
     std::erase(group.viewers, widget);
 
     if(group.filters.empty() && group.viewers.empty()) {
+        group.patchStop.request_stop();
         m_groups.erase(groupId);
         Q_EMIT m_self->filterGroupRemoved(groupId);
     }
@@ -1377,7 +1577,12 @@ FilterController::FilterController(ActionManager* actionManager, const CorePlugi
                      [currentPlaylistChanged](const Playlist* playlist) { currentPlaylistChanged(playlist); });
 }
 
-FilterController::~FilterController() = default;
+FilterController::~FilterController()
+{
+    for(auto& group : p->m_groups | std::views::values) {
+        group.patchStop.request_stop();
+    }
+}
 
 FilterColumnRegistry* FilterController::columnRegistry() const
 {

@@ -352,11 +352,18 @@ TrackList filterTracksBySearch(const QString& search, const TrackList& tracks)
 
 FilterRowList filterRowsBySearch(const QString& search, const FilterRowList& rows, const TrackList& tracks)
 {
+    return filterRowsBySearch(search, rows, tracks, TrackQueryFilter::defaultSearchOptions());
+}
+
+FilterRowList filterRowsBySearch(const QString& search, const FilterRowList& rows, const TrackList& tracks,
+                                 const ScriptSearchOptions& searchOptions)
+{
     if(search.isEmpty() || rows.empty()) {
         return rows;
     }
 
-    const TrackList filteredTracks = filterTracksBySearch(search, tracks);
+    TrackQueryFilter filter{searchOptions};
+    const TrackList filteredTracks = filter.filter(search, tracks);
     if(filteredTracks.empty()) {
         return {};
     }

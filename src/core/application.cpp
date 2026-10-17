@@ -138,6 +138,7 @@ Application::Application(QObject* parent)
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistAdded, this, &Application::startSaveTimer);
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistRemoved, this, &Application::startSaveTimer);
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksAdded, this, &Application::startSaveTimer);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksPatched, this, &Application::startSaveTimer);
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksChanged, this, &Application::startSaveTimer);
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksUpdated, this, &Application::startSaveTimer);
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksRemoved, this, &Application::startSaveTimer);
@@ -209,6 +210,7 @@ void Application::completeStartup()
 
 void Application::shutdown()
 {
+    m_playlistHandler->finishPendingUpdates();
     m_playbackQueueSaveTimer.stop();
     saveDatabaseSettings();
 
