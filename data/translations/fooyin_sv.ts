@@ -602,7 +602,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="370"/>
         <source>Finds the first substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Hittar den första substrängspositionen utan åtanke på stora och små bokstäver (1-baserad)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="373"/>
@@ -612,7 +612,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="376"/>
         <source>Finds the last substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Hittar den sista substrängspositionen utan åtanke på stora och små bokstäver (1-baserad)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="390"/>
@@ -1550,7 +1550,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="56"/>
         <source>&amp;Edit</source>
-        <translation>&amp;Ändra</translation>
+        <translation>R&amp;edigera</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="60"/>
@@ -10691,7 +10691,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="137"/>
         <source>Controls position</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrollposition</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="129"/>
