@@ -25,6 +25,13 @@ constexpr auto DarkIconTheme  = "dark";
 
 constexpr auto PlayingIcon = "%playingicon%";
 
+namespace Urls {
+constexpr auto QuickStart = "https://docs.fooyin.org/en/latest/quick-start/quick-start.html";
+constexpr auto Scripting  = "https://docs.fooyin.org/en/latest/scripting/basics.html";
+constexpr auto Searching  = "https://docs.fooyin.org/en/latest/library/searching-library.html";
+constexpr auto Faq        = "https://www.fooyin.org/faq";
+} // namespace Urls
+
 namespace Icons {
 constexpr auto Fooyin       = "fooyin";
 constexpr auto FooyinWindow = "org.fooyin.fooyin";

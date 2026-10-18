@@ -246,9 +246,8 @@ void SearchDialog::showOptionsMenu()
     menu->addAction(showAll);
 
     auto* searching = new QAction(tr("Help"), menu);
-    QObject::connect(searching, &QAction::triggered, this, []() {
-        QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/library/searching-library.html"_s);
-    });
+    QObject::connect(searching, &QAction::triggered, this,
+                     []() { QDesktopServices::openUrl(QString::fromLatin1(Constants::Urls::Searching)); });
     menu->addAction(searching);
 
     QStyleOptionFrame opt;
