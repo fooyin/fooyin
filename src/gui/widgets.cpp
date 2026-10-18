@@ -321,9 +321,10 @@ void Widgets::registerWidgets()
                              tr("Volume Controls"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     provider->setSubMenus(u"VolumeControls"_s, {tr("Controls")});
 
-    provider->registerWidget(u"SeekBar"_s,
-                             [this]() { return new SeekBar(m_core->playerController(), m_settings, m_window); },
-                             tr("Seekbar"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
+    provider->registerWidget(
+        u"SeekBar"_s,
+        [this]() { return new SeekBar(m_gui->actionManager(), m_core->playerController(), m_settings, m_window); },
+        tr("Seekbar"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     provider->setSubMenus(u"SeekBar"_s, {tr("Controls")});
 
     provider->registerWidget(u"OutputSelector"_s,

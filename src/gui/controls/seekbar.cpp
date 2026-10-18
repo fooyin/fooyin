@@ -23,6 +23,7 @@
 #include <core/track.h>
 #include <gui/guisettings.h>
 #include <gui/guiutils.h>
+#include <gui/widgets/abrepeatcontrols.h>
 #include <gui/widgets/seekcontainer.h>
 #include <gui/widgets/tooltip.h>
 #include <utils/settings/settingsmanager.h>
@@ -31,6 +32,7 @@
 #include <QApplication>
 #include <QBoxLayout>
 #include <QContextMenuEvent>
+#include <QCursor>
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QMenu>
@@ -53,7 +55,9 @@ class TrackSlider : public QSlider
     Q_OBJECT
 
 public:
-    explicit TrackSlider(QWidget* parent = nullptr);
+    TrackSlider(PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
+
+    [[nodiscard]] ABRepeatControls* repeatControls() const;
 
     uint64_t valueFromPosition(int pos);
 
@@ -82,9 +86,11 @@ protected:
     void paintEvent(QPaintEvent* event) override;
 
 private:
+    [[nodiscard]] QRectF repeatArea() const;
     void updateSeekPosition(const QPointF& pos);
     void updateToolTip();
 
+    ABRepeatControls* m_repeatControls;
     QPointer<ToolTip> m_toolTip;
     uint64_t m_max{0};
     uint64_t m_currentPos{0};
@@ -93,10 +99,36 @@ private:
     QPoint m_seekPos;
 };
 
-TrackSlider::TrackSlider(QWidget* parent)
+TrackSlider::TrackSlider(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : QSlider{Qt::Horizontal, parent}
+    , m_repeatControls{new ABRepeatControls(playerController, settings, this)}
 {
     setFocusPolicy(Qt::TabFocus);
+}
+
+ABRepeatControls* TrackSlider::repeatControls() const
+{
+    return m_repeatControls;
+}
+
+QRectF TrackSlider::repeatArea() const
+{
+    QStyleOptionSlider opt;
+    initStyleOption(&opt);
+
+    opt.sliderPosition = 0;
+    opt.sliderValue    = 0;
+
+    const QRect first  = style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, this);
+    opt.sliderPosition = maximum();
+    opt.sliderValue    = maximum();
+
+    const QRect last    = style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, this);
+    const QPointF start = QRectF{first}.center();
+    const QPointF end   = QRectF{last}.center();
+    return orientation() == Qt::Horizontal
+             ? QRectF{std::min(start.x(), end.x()), 0, std::abs(end.x() - start.x()), static_cast<double>(height())}
+             : QRectF{0, std::min(start.y(), end.y()), static_cast<double>(width()), std::abs(end.y() - start.y())};
 }
 
 void TrackSlider::setMouseFocusEnabled(bool enabled)
@@ -306,6 +338,13 @@ void TrackSlider::paintEvent(QPaintEvent* event)
 {
     QSlider::paintEvent(event);
 
+    QStyleOptionSlider repeatOpt;
+    initStyleOption(&repeatOpt);
+
+    QPainter repeatPainter{this};
+    m_repeatControls->paint(repeatPainter, repeatArea(), orientation(), repeatOpt.upsideDown);
+    repeatPainter.end();
+
     if(!m_playedMarker.has_value() || m_max == 0) {
         return;
     }
@@ -420,12 +459,14 @@ void TrackSlider::updateToolTip()
     m_toolTip->setSubtext(deltaText);
 }
 
-SeekBar::SeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
+SeekBar::SeekBar(ActionManager* actionManager, PlayerController* playerController, SettingsManager* settings,
+                 QWidget* parent)
     : FyWidget{parent}
+    , m_actionManager{actionManager}
     , m_playerController{playerController}
     , m_settings{settings}
     , m_container{new SeekContainer(playerController, this)}
-    , m_slider{new TrackSlider(this)}
+    , m_slider{new TrackSlider(playerController, settings, this)}
     , m_orientation{Qt::Horizontal}
     , m_autoOrientation{true}
     , m_showPlayedThresholdMarker{false}
@@ -505,6 +546,9 @@ void SeekBar::loadLayoutData(const QJsonObject& layout)
 
 void SeekBar::populateContextMenu(QMenu* menu)
 {
+    m_slider->repeatControls()->populateMenu(menu, m_actionManager, m_slider->mapFromGlobal(QCursor::pos()));
+    menu->addSeparator();
+
     auto* showLabels = new QAction(tr("Show labels"), menu);
     showLabels->setCheckable(true);
     showLabels->setChecked(m_container->labelsEnabled());
@@ -605,6 +649,7 @@ void SeekBar::updateSeekEnabled() const
 
 void SeekBar::trackChanged(const Track& track)
 {
+    m_slider->repeatControls()->setTrack(track);
     m_slider->stopSeeking();
 
     if(track.isValid()) {

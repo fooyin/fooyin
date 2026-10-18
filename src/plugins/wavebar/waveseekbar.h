@@ -32,13 +32,20 @@
 
 #include <optional>
 
-namespace Fooyin::WaveBar {
+namespace Fooyin {
+class ABRepeatControls;
+class PlayerController;
+class SettingsManager;
+
+namespace WaveBar {
 class WaveSeekBar : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit WaveSeekBar(QWidget* parent = nullptr);
+    WaveSeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
+
+    [[nodiscard]] ABRepeatControls* repeatControls() const;
 
     void processData(const WaveformData<float>& waveData);
 
@@ -106,6 +113,7 @@ private:
 
     void invalidate();
 
+    ABRepeatControls* m_repeatControls;
     Player::PlayState m_playState;
     bool m_seekable;
     WaveformData<float> m_data;
@@ -136,4 +144,5 @@ private:
     int m_waveformCacheRenderWidth;
     bool m_waveformCacheDirty;
 };
-} // namespace Fooyin::WaveBar
+} // namespace WaveBar
+} // namespace Fooyin

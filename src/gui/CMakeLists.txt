@@ -47,6 +47,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgetcontainer.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgetfilter.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgetprovider.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/abrepeatcontrols.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/actiondelegate.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/autoheaderview.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/backgroundconfig.h
@@ -606,6 +607,7 @@ set(SOURCES
     verification/verificationcontroller.h
     widgets.cpp
     widgets.h
+    widgets/abrepeatcontrols.cpp
     widgets/actiondelegate.cpp
     widgets/autoheaderview.cpp
     widgets/backgroundconfig.cpp

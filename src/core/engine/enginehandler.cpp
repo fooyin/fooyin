@@ -137,6 +137,10 @@ EngineHandler::EngineHandler(std::shared_ptr<AudioLoader> audioLoader, PlayerCon
                          clearPendingBoundaryAdvance();
                          clearEngineOwnedTransition();
                          dispatchCommand(&AudioEngine::setTrackEndAutoTransitionEnabled, enabled);
+                         if(enabled) {
+                             dispatchCommand(&AudioEngine::setUpcomingTrackCandidate,
+                                             makePlaybackItem(m_upcomingTrack.track.track, m_upcomingTrack.itemId));
+                         }
                      });
 
     m_engineThread.start();

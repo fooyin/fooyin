@@ -167,6 +167,59 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
 
     playbackMenu->addSeparator();
 
+    auto* repeatMenu = m_actionManager->createMenu(Constants::Menus::ABRepeat);
+    repeatMenu->menu()->setTitle(tr("A–B repeat"));
+    playbackMenu->addMenu(repeatMenu);
+
+    auto* repeatStart   = new QAction(tr("Set A"), this);
+    auto* repeatEnd     = new QAction(tr("Set B"), this);
+    auto* repeatEnabled = new QAction(tr("Enable A–B repeat"), this);
+    auto* repeatClear   = new QAction(tr("Clear A–B repeat"), this);
+    repeatEnabled->setCheckable(true);
+
+    const auto registerRepeatAction = [&](QAction* action, const char* id) {
+        auto* command = actionManager->registerAction(action, id);
+        command->setCategories({tr("Playback"), tr("A–B repeat")});
+        repeatMenu->addAction(command);
+    };
+
+    registerRepeatAction(repeatStart, Constants::Actions::ABRepeatSetStart);
+    registerRepeatAction(repeatEnd, Constants::Actions::ABRepeatSetEnd);
+    registerRepeatAction(repeatEnabled, Constants::Actions::ABRepeatEnable);
+    registerRepeatAction(repeatClear, Constants::Actions::ABRepeatClear);
+
+    QObject::connect(repeatStart, &QAction::triggered, this, [this]() {
+        m_playerController->setABRepeatStart(m_playerController->currentPosition(),
+                                             m_settings->value<Settings::Gui::ABRepeatSeekOnAChange>());
+    });
+    QObject::connect(repeatEnd, &QAction::triggered, this,
+                     [this]() { m_playerController->setABRepeatEnd(m_playerController->currentPosition()); });
+    QObject::connect(repeatEnabled, &QAction::triggered, playerController, &PlayerController::setABRepeatEnabled);
+    QObject::connect(repeatClear, &QAction::triggered, playerController, &PlayerController::clearABRepeat);
+
+    const auto updateRepeatActions = [this, repeatStart, repeatEnd, repeatEnabled, repeatClear]() {
+        const auto range        = m_playerController->abRepeatRange();
+        const bool canSet       = m_playerController->currentTrackSeekable()
+                               && m_playerController->playState() != Player::PlayState::Stopped
+                               && m_playerController->currentTrack().duration() >= 100;
+        const uint64_t position = m_playerController->currentPosition();
+
+        repeatStart->setEnabled(canSet && position < m_playerController->currentTrack().duration());
+        repeatEnd->setEnabled(canSet && range.start && position > *range.start
+                              && position <= m_playerController->currentTrack().duration());
+        repeatEnabled->setEnabled(canSet && range.start && range.end);
+        repeatEnabled->setChecked(range.enabled);
+        repeatClear->setEnabled(range.start.has_value() || range.end.has_value());
+    };
+
+    QObject::connect(playerController, &PlayerController::abRepeatRangeChanged, this, updateRepeatActions);
+    QObject::connect(playerController, &PlayerController::playStateChanged, this, updateRepeatActions);
+    QObject::connect(playerController, &PlayerController::currentTrackChanged, this, updateRepeatActions);
+    QObject::connect(playerController, &PlayerController::currentTrackSeekableChanged, this, updateRepeatActions);
+    QObject::connect(playerController, &PlayerController::positionChanged, this, updateRepeatActions);
+    QObject::connect(playerController, &PlayerController::positionMoved, this, updateRepeatActions);
+    updateRepeatActions();
+
     QStringList orderCategory{playbackCategory};
     orderCategory.append(tr("Order"));
 

@@ -113,6 +113,10 @@ enum GuiSettings : uint32_t
     ToolbarsLocked             = 56 | Type::Bool,
     DockWidgetPalette          = 57 | Type::Bool,
     SettingsSearchBarPosition  = 58 | Type::Int,
+    ABRepeatMarkerWidth        = 59 | Type::Double,
+    ABRepeatMarkerColourA      = 60 | Type::Variant,
+    ABRepeatMarkerColourB      = 61 | Type::Variant,
+    ABRepeatSeekOnAChange      = 62 | Type::Bool,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Settings::Gui

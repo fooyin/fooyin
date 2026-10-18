@@ -39,6 +39,7 @@ public:
 
 private:
     std::shared_ptr<AudioLoader> m_audioLoader;
+    ActionManager* m_actionManager;
     PlayerController* m_playerController;
     EngineController* m_engine;
     SettingsManager* m_settings;

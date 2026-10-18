@@ -28,6 +28,7 @@
 #include <core/player/playercontroller.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/abrepeatcontrols.h>
 #include <gui/widgets/seekcontainer.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/signalthrottler.h>
@@ -77,14 +78,15 @@ int normaliseSupersampleFactor(int factor)
 } // namespace
 
 WaveBarWidget::WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnectionPoolPtr dbPool,
-                             PlayerController* playerController, TrackSelectionController* trackSelection,
-                             SettingsManager* settings, QWidget* parent)
+                             ActionManager* actionManager, PlayerController* playerController,
+                             TrackSelectionController* trackSelection, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
+    , m_actionManager{actionManager}
     , m_playerController{playerController}
     , m_trackSelection{trackSelection}
     , m_settings{settings}
     , m_container{new SeekContainer(m_playerController, this)}
-    , m_seekbar{new WaveSeekBar(this)}
+    , m_seekbar{new WaveSeekBar(playerController, settings, this)}
     , m_builder{std::make_unique<WaveformBuilder>(std::move(audioLoader), std::move(dbPool), settings, this)}
 {
     setMinimumSize(100, 20);
@@ -409,6 +411,9 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    m_seekbar->repeatControls()->populateMenu(menu, m_actionManager, m_seekbar->mapFromGlobal(event->globalPos()));
+    menu->addSeparator();
 
     auto* showCursor = new QAction(tr("Show cursor"), menu);
     showCursor->setCheckable(true);
@@ -759,6 +764,7 @@ void WaveBarWidget::refreshTrack(bool update, bool force)
     }
 
     m_displayedTrack = track;
+    m_seekbar->repeatControls()->setTrack(track);
     syncPlaybackState();
     updatePlayedThresholdMarker();
 

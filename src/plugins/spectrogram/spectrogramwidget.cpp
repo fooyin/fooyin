@@ -24,6 +24,7 @@
 #include "spectrogramseekbar.h"
 
 #include <core/engine/visualisationservice.h>
+#include <gui/widgets/abrepeatcontrols.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QActionGroup>
@@ -141,11 +142,13 @@ PresentationMode normalisePresentationMode(PresentationMode mode)
 
 } // namespace
 
-SpectrogramWidget::SpectrogramWidget(std::shared_ptr<AudioLoader> audioLoader, PlayerController* playerController,
-                                     EngineController* engine, TrackSelectionController* trackSelection,
-                                     SettingsManager* settings, QWidget* parent)
+SpectrogramWidget::SpectrogramWidget(std::shared_ptr<AudioLoader> audioLoader, ActionManager* actionManager,
+                                     PlayerController* playerController, EngineController* engine,
+                                     TrackSelectionController* trackSelection, SettingsManager* settings,
+                                     QWidget* parent)
     : FyWidget{parent}
     , m_audioLoader{std::move(audioLoader)}
+    , m_actionManager{actionManager}
     , m_playerController{playerController}
     , m_engine{engine}
     , m_trackSelection{trackSelection}
@@ -374,6 +377,11 @@ void SpectrogramWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    if(auto* seekbar = qobject_cast<SpectrogramSeekBar*>(m_view)) {
+        seekbar->repeatControls()->populateMenu(menu, m_actionManager, seekbar->mapFromGlobal(event->globalPos()));
+        menu->addSeparator();
+    }
 
     const auto addToggle = [this](QMenu* target, const QString& text, bool SpectrogramConfig::* option) {
         auto* action = target->addAction(text);
