@@ -693,7 +693,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="209"/>
         <source>Name of the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome della playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
@@ -833,17 +833,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="270"/>
         <source>Returns 1 for the current queue viewer entry, including while paused</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce 1 per l&apos;elemento corrente della coda in riproduzione, anche in pausa</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
         <source>Returns 1 for a queue viewer entry ahead of the queue cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce 1 per un elemento della coda che si trova avanti rispetto al cursore</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
         <source>Returns 1 for a queue viewer entry in queue history</source>
-        <translation type="unfinished"></translation>
+        <translation>Restituisce 1 per un elemento della coda presente nella cronologia</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="275"/>
@@ -1602,7 +1602,7 @@
     <message>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="169"/>
         <source>Advanced</source>
-        <translation type="unfinished">Avanzate</translation>
+        <translation>Avanzate</translation>
     </message>
 </context>
 <context>
@@ -5208,7 +5208,13 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
 • Select a widget to see its parent containers in the breadcrumb bar. Select a parent to move an entire section.
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>• Trova i widget nella tavolozza a destra (passa il mouse vicino al bordo destro se è nascosta).
+
+• Trascina i widget dalla tavolozza per aggiungerli, o trascina quelli esistenti per spostarli. Tieni premuto Ctrl per sostituire il widget di destinazione.
+
+• Seleziona un widget per vederne i contenitori padre nella barra di navigazione. Seleziona un contenitore padre per spostare un&apos;intera sezione.
+
+• Fai clic con il tasto destro su un widget per dividerlo, sostituirlo o rimuoverlo tramite il menu contestuale.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="351"/>
@@ -5268,77 +5274,77 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="523"/>
         <source>Remove spli&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi spli&amp;t</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="537"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Incolla</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="540"/>
         <source>Rep&amp;lace</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sostituisci</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="596"/>
         <source>Left</source>
-        <translation type="unfinished">Sinistra</translation>
+        <translation>Sinistra</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="596"/>
         <source>Top</source>
-        <translation type="unfinished">In alto</translation>
+        <translation>In alto</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="596"/>
         <source>Right</source>
-        <translation type="unfinished">Destra</translation>
+        <translation>Destra</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="597"/>
         <source>Bottom</source>
-        <translation type="unfinished">In basso</translation>
+        <translation>In basso</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="607"/>
         <source>Restore defaults</source>
-        <translation type="unfinished">Ripristina di default</translation>
+        <translation>Ripristina impostazioni predefinite</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="643"/>
         <source>Margins</source>
-        <translation type="unfinished"></translation>
+        <translation>Margini</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="674"/>
         <source>Parent: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Elemento padre: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="698"/>
         <source>Lock width</source>
-        <translation type="unfinished"></translation>
+        <translation>Blocca larghezza</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="698"/>
         <source>Lock height</source>
-        <translation type="unfinished"></translation>
+        <translation>Blocca altezza</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="701"/>
         <source>Keep the width unchanged during automatic resizing; splitter handles can still resize it</source>
-        <translation type="unfinished"></translation>
+        <translation>Mantieni invariata la larghezza durante il ridimensionamento automatico; le maniglie del divisore possono comunque ridimensionarla</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="703"/>
         <source>Keep the height unchanged during automatic resizing; splitter handles can still resize it</source>
-        <translation type="unfinished"></translation>
+        <translation>Mantieni invariata l&apos;altezza durante il ridimensionamento automatico; le maniglie del divisore possono comunque ridimensionarla</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="722"/>
         <source>R&amp;eplace</source>
-        <translation type="unfinished"></translation>
+        <translation>S&amp;ostituisci</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="730"/>
@@ -5348,7 +5354,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="744"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Copia</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="767"/>
@@ -5358,7 +5364,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="777"/>
         <source>&amp;Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rimuovi</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="847"/>
@@ -5368,22 +5374,22 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="849"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Annulla</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="850"/>
         <source>Undo the previous layout edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Annulla la modifica precedente del layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="861"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ripeti</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="862"/>
         <source>Redo the previous layout edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Ripeti la modifica precedente del layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="438"/>
@@ -5396,17 +5402,17 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="36"/>
         <source>Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Scheda</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
         <source>Rename Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Rinomina scheda</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome:</translation>
     </message>
 </context>
 <context>
@@ -5414,18 +5420,18 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="173"/>
         <source>Time elapsed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo trascorso: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="180"/>
         <source>Calculating…</source>
-        <translation type="unfinished">Calcolo in corso…</translation>
+        <translation>Calcolo in corso…</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="180"/>
         <location filename="../../src/gui/widgets/elapsedprogressdialog.cpp" line="191"/>
         <source>Estimated: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Stima: %1</translation>
     </message>
 </context>
 <context>
@@ -5438,32 +5444,32 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="47"/>
         <source>Variable bitrate (VBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitrate variabile (VBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="49"/>
         <source>Constrained variable bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitrate variabile vincolato</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="51"/>
         <source>Constant quality (VBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Qualità costante (VBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="53"/>
         <source>Average bitrate (ABR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitrate medio (ABR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="55"/>
         <source>Constant bitrate (CBR)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitrate costante (CBR)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="57"/>
         <source>Lossless compression</source>
-        <translation type="unfinished"></translation>
+        <translation>Compressione lossless</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="68"/>
@@ -5478,7 +5484,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="73"/>
         <source>Mode</source>
-        <translation type="unfinished">Modalità</translation>
+        <translation>Modalità</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="74"/>
@@ -5594,7 +5600,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="270"/>
         <source>Enabled</source>
-        <translation type="unfinished">Abilitato</translation>
+        <translation>Abilitato</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="271"/>
@@ -5618,17 +5624,17 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="311"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="516"/>
         <source> dB</source>
-        <translation type="unfinished"> dB</translation>
+        <translation> dB</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="325"/>
         <source>Preamp</source>
-        <translation type="unfinished">Preamplificatore</translation>
+        <translation>Preamplificatore</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="442"/>
         <source>Show controls</source>
-        <translation type="unfinished">Mostra controlli</translation>
+        <translation>Mostra controlli</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="454"/>
@@ -5659,12 +5665,12 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="584"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">Il preset esiste già</translation>
+        <translation>Il preset esiste già</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="585"/>
         <source>Preset ‘%1’ already exists. Overwrite?</source>
-        <translation type="unfinished">Il preset &quot;%1&quot; esiste già. Sovrascrivere?</translation>
+        <translation>Il preset &quot;%1&quot; esiste già. Sovrascrivere?</translation>
     </message>
 </context>
 <context>
@@ -5696,7 +5702,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="616"/>
         <source>Delete</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="617"/>
@@ -5716,7 +5722,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="668"/>
         <source>Preamp</source>
-        <translation type="unfinished">Preamplificatore</translation>
+        <translation>Preamplificatore</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="723"/>
@@ -5741,7 +5747,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="738"/>
         <source> dB</source>
-        <translation type="unfinished"> dB</translation>
+        <translation> dB</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="907"/>
@@ -5756,12 +5762,12 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="924"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">Il preset esiste già</translation>
+        <translation>Il preset esiste già</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="925"/>
         <source>Preset ‘%1’ already exists. Overwrite?</source>
-        <translation type="unfinished">Il preset &quot;%1&quot; esiste già. Sovrascrivere?</translation>
+        <translation>Il preset &quot;%1&quot; esiste già. Sovrascrivere?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="961"/>
@@ -5935,12 +5941,12 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="182"/>
         <source>Move Up</source>
-        <translation type="unfinished">Sposta su</translation>
+        <translation>Sposta su</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="191"/>
         <source>Move Down</source>
-        <translation type="unfinished">Sposta giù</translation>
+        <translation>Sposta giù</translation>
     </message>
 </context>
 <context>
@@ -6253,7 +6259,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdeletedialog.cpp" line="62"/>
         <source>Delete</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Elimina</translation>
     </message>
 </context>
 <context>
@@ -6404,7 +6410,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="200"/>
         <source>Destination</source>
-        <translation type="unfinished">Destinazione</translation>
+        <translation>Destinazione</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="201"/>
@@ -6442,7 +6448,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="374"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">Il preset esiste già</translation>
+        <translation>Il preset esiste già</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="375"/>
@@ -6485,17 +6491,17 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="127"/>
         <source>Source</source>
-        <translation type="unfinished">Sorgente</translation>
+        <translation>Sorgente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="129"/>
         <source>Destination</source>
-        <translation type="unfinished">Destinazione</translation>
+        <translation>Destinazione</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="131"/>
         <source>Result</source>
-        <translation type="unfinished">Risultato</translation>
+        <translation>Risultato</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="172"/>
@@ -6531,7 +6537,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="259"/>
         <source>Delete</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="261"/>
@@ -6561,7 +6567,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="278"/>
         <source>Cancelled</source>
-        <translation type="unfinished">Annullato</translation>
+        <translation>Annullato</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="278"/>
@@ -6642,7 +6648,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="239"/>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="349"/>
         <source>Tracks</source>
-        <translation type="unfinished">Tracce</translation>
+        <translation>Tracce</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="237"/>
@@ -6713,7 +6719,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="346"/>
         <source>Other</source>
-        <translation type="unfinished">Altro</translation>
+        <translation>Altro</translation>
     </message>
 </context>
 <context>
@@ -6785,7 +6791,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/filters/filtercolumneditordialog.cpp" line="139"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished">Ripristina predefiniti</translation>
+        <translation>Ripristina predefiniti</translation>
     </message>
 </context>
 <context>
@@ -6834,12 +6840,12 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="46"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished">Avvia la riproduzione immediatamente</translation>
+        <translation>Avvia la riproduzione immediatamente</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="47"/>
         <source>Enabled</source>
-        <translation type="unfinished">Abilitato</translation>
+        <translation>Abilitato</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="48"/>
@@ -6854,7 +6860,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="63"/>
         <source>For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately.</source>
-        <translation type="unfinished">Per &quot;Sostituisci playlist corrente&quot; e &quot;Crea nuova playlist&quot;, avvia la riproduzione immediatamente.</translation>
+        <translation>Per &quot;Sostituisci playlist corrente&quot; e &quot;Crea nuova playlist&quot;, avvia la riproduzione immediatamente.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="73"/>
@@ -6869,7 +6875,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="78"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Clic centrale</translation>
+        <translation>Clic centrale</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="87"/>
@@ -6992,12 +6998,12 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="153"/>
         <source>Current playlist</source>
-        <translation type="unfinished">Playlist attuale</translation>
+        <translation>Playlist attuale</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="155"/>
         <source>Source</source>
-        <translation type="unfinished">Sorgente</translation>
+        <translation>Sorgente</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="159"/>
@@ -7008,7 +7014,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="190"/>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="194"/>
         <source>None</source>
-        <translation type="unfinished">Nessuno</translation>
+        <translation>Nessuno</translation>
     </message>
 </context>
 <context>
@@ -7066,7 +7072,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="463"/>
         <source>Back</source>
-        <translation type="unfinished">Retro</translation>
+        <translation>Retro</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="484"/>
@@ -7098,7 +7104,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="677"/>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="936"/>
         <source>Columns</source>
-        <translation type="unfinished">Colonne</translation>
+        <translation>Colonne</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="769"/>
@@ -7108,7 +7114,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="744"/>
         <source>Source</source>
-        <translation type="unfinished">Sorgente</translation>
+        <translation>Sorgente</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="755"/>
@@ -7118,7 +7124,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="756"/>
         <source>Current playlist</source>
-        <translation type="unfinished">Playlist attuale</translation>
+        <translation>Playlist attuale</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="937"/>
@@ -7158,17 +7164,17 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="940"/>
         <source>Front cover</source>
-        <translation type="unfinished">Copertina anteriore</translation>
+        <translation>Copertina anteriore</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="941"/>
         <source>Back cover</source>
-        <translation type="unfinished">Retro copertina</translation>
+        <translation>Retro copertina</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="1030"/>
         <source>Show header</source>
-        <translation type="unfinished">Mostra intestazione</translation>
+        <translation>Mostra intestazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="1035"/>
@@ -7214,7 +7220,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
         <location filename="../../src/gui/filters/filtercontroller.cpp" line="390"/>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="773"/>
         <source>Configure…</source>
-        <translation type="unfinished">Configura…</translation>
+        <translation>Configura…</translation>
     </message>
 </context>
 <context>
@@ -7260,7 +7266,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="89"/>
         <source>Enabled</source>
-        <translation type="unfinished">Abilitato</translation>
+        <translation>Abilitato</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryfiltermodel.cpp" line="91"/>
@@ -7310,7 +7316,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="51"/>
         <source>Filter</source>
-        <translation type="unfinished">Filtra</translation>
+        <translation>Filtra</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="53"/>
@@ -7325,7 +7331,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="122"/>
         <source>Show label</source>
-        <translation type="unfinished">Mostra etichetta</translation>
+        <translation>Mostra etichetta</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="127"/>
@@ -7383,12 +7389,12 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="528"/>
         <source>Top</source>
-        <translation type="unfinished">In alto</translation>
+        <translation>In alto</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="529"/>
         <source>Bottom</source>
-        <translation type="unfinished">In basso</translation>
+        <translation>In basso</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="531"/>
@@ -7413,7 +7419,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="48"/>
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="87"/>
         <source>Tracks</source>
-        <translation type="unfinished">Tracce</translation>
+        <translation>Tracce</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="66"/>
@@ -7455,7 +7461,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/fywidget.cpp" line="374"/>
         <source>Configure…</source>
-        <translation type="unfinished">Configura…</translation>
+        <translation>Configura…</translation>
     </message>
 </context>
 <context>
@@ -7677,7 +7683,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="53"/>
         <source>Length</source>
-        <translation type="unfinished">Durata</translation>
+        <translation>Durata</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="56"/>
@@ -7692,7 +7698,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="66"/>
         <source>Fade length</source>
-        <translation type="unfinished">Durata dissolvenza</translation>
+        <translation>Durata dissolvenza</translation>
     </message>
 </context>
 <context>
@@ -7720,7 +7726,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/widgets/gradienteditor.cpp" line="243"/>
         <source>Reverse</source>
-        <translation type="unfinished">Inverti</translation>
+        <translation>Inverti</translation>
     </message>
 </context>
 <context>
@@ -7831,7 +7837,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
         <location filename="../../src/gui/guiapplication.cpp" line="1122"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1195"/>
         <source>Playlist</source>
-        <translation type="unfinished">Playlist</translation>
+        <translation>Playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1118"/>
@@ -7851,7 +7857,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1144"/>
         <source>Playback</source>
-        <translation type="unfinished">Riproduzione</translation>
+        <translation>Riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1144"/>
@@ -7960,7 +7966,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1297"/>
         <source>Current file</source>
-        <translation type="unfinished">File corrente</translation>
+        <translation>File corrente</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1312"/>
@@ -7985,7 +7991,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1347"/>
         <source>View full size</source>
-        <translation type="unfinished">Visualizza a dimensione intera</translation>
+        <translation>Visualizza a dimensione intera</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1348"/>
@@ -8002,17 +8008,17 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
         <location filename="../../src/gui/guiapplication.cpp" line="1657"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1666"/>
         <source>Tracks</source>
-        <translation type="unfinished">Tracce</translation>
+        <translation>Tracce</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1351"/>
         <source>Artwork</source>
-        <translation type="unfinished">Copertina</translation>
+        <translation>Copertina</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1404"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Statistiche di riproduzione</translation>
+        <translation>Statistiche di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1419"/>
@@ -8067,7 +8073,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
         <location filename="../../src/gui/guiapplication.cpp" line="1612"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1623"/>
         <source>Convert</source>
-        <translation type="unfinished">Converti</translation>
+        <translation>Converti</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1591"/>
@@ -8184,12 +8190,12 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2276"/>
         <source>Add Files</source>
-        <translation type="unfinished">Aggiungi File</translation>
+        <translation>Aggiungi File</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2290"/>
         <source>Add Folders</source>
-        <translation type="unfinished">Aggiungi Cartelle</translation>
+        <translation>Aggiungi Cartelle</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="2302"/>
@@ -8509,7 +8515,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="134"/>
         <source>Browse…</source>
-        <translation type="unfinished">Sfoglia…</translation>
+        <translation>Sfoglia…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="135"/>
@@ -8604,7 +8610,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="193"/>
         <source>Layout</source>
-        <translation type="unfinished">Layout</translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="215"/>
@@ -8643,7 +8649,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="964"/>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="965"/>
         <source>Layout</source>
-        <translation type="unfinished">Layout</translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="965"/>
@@ -8696,7 +8702,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="268"/>
         <source>Top</source>
-        <translation type="unfinished">In alto</translation>
+        <translation>In alto</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="270"/>
@@ -8706,7 +8712,7 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="272"/>
         <source>Bottom</source>
-        <translation type="unfinished">In basso</translation>
+        <translation>In basso</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="241"/>
@@ -8786,12 +8792,12 @@ Gli effetti qui elaborano l&apos;output finale combinato.</translation>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="809"/>
         <source>Reset</source>
-        <translation type="unfinished">Reimposta</translation>
+        <translation>Reimposta</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="809"/>
         <source>Delete</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guilayoutpage.cpp" line="856"/>
@@ -9130,7 +9136,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="86"/>
         <source>Select</source>
-        <translation type="unfinished">Seleziona</translation>
+        <translation>Seleziona</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/iconpickerdialog.cpp" line="158"/>
@@ -9253,7 +9259,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="476"/>
         <source>Show header</source>
-        <translation type="unfinished">Mostra intestazione</translation>
+        <translation>Mostra intestazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="485"/>
@@ -9293,7 +9299,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="550"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Statistiche di riproduzione</translation>
+        <translation>Statistiche di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="559"/>
@@ -9303,37 +9309,37 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="568"/>
         <source>Other</source>
-        <translation type="unfinished">Altro</translation>
+        <translation>Altro</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="592"/>
         <source>Preferred track</source>
-        <translation type="unfinished">Brano preferito</translation>
+        <translation>Brano preferito</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="607"/>
         <source>Playing track</source>
-        <translation type="unfinished">Brano in riproduzione</translation>
+        <translation>Brano in riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="608"/>
         <source>Selected track</source>
-        <translation type="unfinished">Brano selezionato</translation>
+        <translation>Brano selezionato</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="609"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished">In riproduzione (o selezionato se in pausa)</translation>
+        <translation>In riproduzione (o selezionato se in pausa)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="611"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished">In riproduzione (vuoto all&apos;avvio)</translation>
+        <translation>In riproduzione (vuoto all&apos;avvio)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="612"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished">In riproduzione (vuoto quando fermo)</translation>
+        <translation>In riproduzione (vuoto quando fermo)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="625"/>
@@ -9361,7 +9367,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="165"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Statistiche di riproduzione</translation>
+        <translation>Statistiche di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="168"/>
@@ -9371,7 +9377,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="171"/>
         <source>Other</source>
-        <translation type="unfinished">Altro</translation>
+        <translation>Altro</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="210"/>
@@ -9441,7 +9447,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="261"/>
         <source>Tracks</source>
-        <translation type="unfinished">Tracce</translation>
+        <translation>Tracce</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="264"/>
@@ -9742,7 +9748,7 @@ If the default half-star does not render correctly with your system font, choose
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="65"/>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="170"/>
         <source>Layout</source>
-        <translation type="unfinished">Layout</translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="68"/>
@@ -10046,7 +10052,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="90"/>
         <source>S&amp;earch</source>
-        <translation type="unfinished">C&amp;erca</translation>
+        <translation>C&amp;erca</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="91"/>
@@ -10227,7 +10233,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="66"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished">Statistiche di riproduzione</translation>
+        <translation>Statistiche di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymetadatapage.cpp" line="69"/>
@@ -10249,7 +10255,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="268"/>
         <source>ID</source>
-        <translation type="unfinished">ID</translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="270"/>
@@ -10264,7 +10270,7 @@ and last played uses the later value.</source>
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="274"/>
         <source>Status</source>
-        <translation type="unfinished">Stato</translation>
+        <translation>Stato</translation>
     </message>
 </context>
 <context>
@@ -10523,12 +10529,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="46"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished">Avvia la riproduzione immediatamente</translation>
+        <translation>Avvia la riproduzione immediatamente</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="47"/>
         <source>Enabled</source>
-        <translation type="unfinished">Abilitato</translation>
+        <translation>Abilitato</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="48"/>
@@ -10558,7 +10564,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="59"/>
         <source>Show header</source>
-        <translation type="unfinished">Mostra intestazione</translation>
+        <translation>Mostra intestazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="60"/>
@@ -10578,7 +10584,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="78"/>
         <source>For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately.</source>
-        <translation type="unfinished">Per &quot;Sostituisci playlist corrente&quot; e &quot;Crea nuova playlist&quot;, avvia la riproduzione immediatamente.</translation>
+        <translation>Per &quot;Sostituisci playlist corrente&quot; e &quot;Crea nuova playlist&quot;, avvia la riproduzione immediatamente.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="109"/>
@@ -10603,7 +10609,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="86"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Clic centrale</translation>
+        <translation>Clic centrale</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="92"/>
@@ -10618,7 +10624,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="212"/>
         <source>Expand/collapse or play now</source>
-        <translation type="unfinished">Espandi/comprimi o riproduci ora</translation>
+        <translation>Espandi/comprimi o riproduci ora</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="74"/>
@@ -10634,7 +10640,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="53"/>
         <source>Show controls</source>
-        <translation type="unfinished">Mostra controlli</translation>
+        <translation>Mostra controlli</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="67"/>
@@ -10660,12 +10666,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="122"/>
         <source>Top</source>
-        <translation type="unfinished">In alto</translation>
+        <translation>In alto</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="123"/>
         <source>Bottom</source>
-        <translation type="unfinished">In basso</translation>
+        <translation>In basso</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="132"/>
@@ -10715,12 +10721,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="211"/>
         <source>Expand/collapse</source>
-        <translation type="unfinished">Espandi/comprimi</translation>
+        <translation>Espandi/comprimi</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="215"/>
         <source>None</source>
-        <translation type="unfinished">Nessuno</translation>
+        <translation>Nessuno</translation>
     </message>
 </context>
 <context>
@@ -10746,7 +10752,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="185"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished">Ripristina predefiniti</translation>
+        <translation>Ripristina predefiniti</translation>
     </message>
 </context>
 <context>
@@ -10864,7 +10870,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="230"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">&amp;Riproduci</translation>
+        <translation>&amp;Riproduci</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="261"/>
@@ -10889,7 +10895,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="934"/>
         <source>Show controls</source>
-        <translation type="unfinished">Mostra controlli</translation>
+        <translation>Mostra controlli</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="936"/>
@@ -10899,7 +10905,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="937"/>
         <source>Show header</source>
-        <translation type="unfinished">Mostra intestazione</translation>
+        <translation>Mostra intestazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="938"/>
@@ -11170,17 +11176,17 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="123"/>
         <source>Align to centre</source>
-        <translation type="unfinished">Allinea al centro</translation>
+        <translation>Allinea al centro</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="124"/>
         <source>Align to left</source>
-        <translation type="unfinished">Allinea a sinistra</translation>
+        <translation>Allinea a sinistra</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="125"/>
         <source>Align to right</source>
-        <translation type="unfinished">Allinea a destra</translation>
+        <translation>Allinea a destra</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="132"/>
@@ -11267,12 +11273,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="153"/>
         <source>Top</source>
-        <translation type="unfinished">In alto</translation>
+        <translation>In alto</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="155"/>
         <source>Bottom</source>
-        <translation type="unfinished">In basso</translation>
+        <translation>In basso</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="180"/>
@@ -11313,7 +11319,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="252"/>
         <source>Layout</source>
-        <translation type="unfinished">Layout</translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="253"/>
@@ -11657,7 +11663,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="93"/>
         <source>Source</source>
-        <translation type="unfinished">Sorgente</translation>
+        <translation>Sorgente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricssearchmodel.cpp" line="95"/>
@@ -11863,17 +11869,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="571"/>
         <source>Align to centre</source>
-        <translation type="unfinished">Allinea al centro</translation>
+        <translation>Allinea al centro</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="572"/>
         <source>Align to left</source>
-        <translation type="unfinished">Allinea a sinistra</translation>
+        <translation>Allinea a sinistra</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="573"/>
         <source>Align to right</source>
-        <translation type="unfinished">Allinea a destra</translation>
+        <translation>Allinea a destra</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricswidget.cpp" line="602"/>
@@ -12028,17 +12034,17 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="316"/>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="379"/>
         <source>Type</source>
-        <translation type="unfinished">Tipo</translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="318"/>
         <source>ID</source>
-        <translation type="unfinished">ID</translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="329"/>
         <source>Source</source>
-        <translation type="unfinished">Sorgente</translation>
+        <translation>Sorgente</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="331"/>
@@ -12093,7 +12099,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="380"/>
         <source>Status</source>
-        <translation type="unfinished">Stato</translation>
+        <translation>Stato</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="381"/>
@@ -12541,7 +12547,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="283"/>
         <source>Integrations</source>
-        <translation type="unfinished">Integrazioni</translation>
+        <translation>Integrazioni</translation>
     </message>
 </context>
 <context>
@@ -12701,7 +12707,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="95"/>
         <source>Enabled</source>
-        <translation type="unfinished">Abilitato</translation>
+        <translation>Abilitato</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="98"/>
@@ -12776,7 +12782,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="142"/>
         <source>Output</source>
-        <translation type="unfinished">Output</translation>
+        <translation>Output</translation>
     </message>
     <message>
         <location filename="../../src/gui/nowplayingoutput/nowplayingoutputpage.cpp" line="146"/>
@@ -12830,12 +12836,12 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="67"/>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="78"/>
         <source>Default</source>
-        <translation type="unfinished">Predefinito</translation>
+        <translation>Predefinito</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="68"/>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Spento</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="70"/>
@@ -12855,7 +12861,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="79"/>
         <source>None</source>
-        <translation type="unfinished">Nessuno</translation>
+        <translation>Nessuno</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="80"/>
@@ -12908,7 +12914,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="50"/>
         <source>General</source>
-        <translation type="unfinished">Generale</translation>
+        <translation>Generale</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="60"/>
@@ -13036,12 +13042,12 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="168"/>
         <source>%1%</source>
-        <translation type="unfinished">%1%</translation>
+        <translation>%1%</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="180"/>
         <source>Automatic</source>
-        <translation type="unfinished">Automatico</translation>
+        <translation>Automatico</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="181"/>
@@ -13065,13 +13071,13 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="55"/>
         <source>Device</source>
         <extracomment>Audio output device</extracomment>
-        <translation type="unfinished">Dispositivo</translation>
+        <translation>Dispositivo</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="58"/>
         <source>DSP</source>
         <extracomment>DSP chain set for an audio output device</extracomment>
-        <translation type="unfinished">DSP</translation>
+        <translation>DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="60"/>
@@ -13082,7 +13088,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="295"/>
         <source>&lt;not set&gt;</source>
         <extracomment>No DSP chain has been set for this output device</extracomment>
-        <translation type="unfinished">&lt;non impostato&gt;</translation>
+        <translation>&lt;non impostato&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="305"/>
@@ -13124,7 +13130,7 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="321"/>
         <location filename="../../src/gui/settings/playback/outputdevicesmodel.cpp" line="328"/>
         <source>Automatic</source>
-        <translation type="unfinished">Automatico</translation>
+        <translation>Automatico</translation>
     </message>
 </context>
 <context>
@@ -13132,17 +13138,17 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="378"/>
         <source>General</source>
-        <translation type="unfinished">Generale</translation>
+        <translation>Generale</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="379"/>
         <source>Playback</source>
-        <translation type="unfinished">Riproduzione</translation>
+        <translation>Riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="379"/>
         <source>Output</source>
-        <translation type="unfinished">Output</translation>
+        <translation>Output</translation>
     </message>
 </context>
 <context>
@@ -13155,18 +13161,18 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="133"/>
         <source>Output</source>
-        <translation type="unfinished">Output</translation>
+        <translation>Output</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="91"/>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="135"/>
         <source>Device</source>
-        <translation type="unfinished">Dispositivo</translation>
+        <translation>Dispositivo</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="93"/>
         <source>General</source>
-        <translation type="unfinished">Generale</translation>
+        <translation>Generale</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="95"/>
@@ -13176,7 +13182,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="99"/>
         <source>Try to play consecutive tracks with no silence or disruption at the point of file change</source>
-        <translation type="unfinished">Prova a riprodurre tracce consecutive senza silenzi o interruzioni al cambiamento dei file</translation>
+        <translation>Prova a riprodurre tracce consecutive senza silenzi o interruzioni al cambiamento dei file</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="118"/>
@@ -13191,7 +13197,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="123"/>
         <source>Automatic</source>
-        <translation type="unfinished">Automatico</translation>
+        <translation>Automatico</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="124"/>
@@ -13226,7 +13232,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="144"/>
         <source>Length</source>
-        <translation type="unfinished">Durata</translation>
+        <translation>Durata</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="146"/>
@@ -13257,7 +13263,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="140"/>
         <source>Bit depth</source>
-        <translation type="unfinished">Profondità di bit</translation>
+        <translation>Profondità di bit</translation>
     </message>
 </context>
 <context>
@@ -13265,7 +13271,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/controls/outputselector.cpp" line="43"/>
         <source>Output</source>
-        <translation type="unfinished">Output</translation>
+        <translation>Output</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/outputselector.cpp" line="87"/>
@@ -13275,7 +13281,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/controls/outputselector.cpp" line="107"/>
         <source>Show label</source>
-        <translation type="unfinished">Mostra etichetta</translation>
+        <translation>Mostra etichetta</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/outputselector.cpp" line="113"/>
@@ -13298,7 +13304,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="44"/>
         <source>Automatic</source>
-        <translation type="unfinished">Automatico</translation>
+        <translation>Automatico</translation>
     </message>
     <message>
         <location filename="../../src/plugins/pipewire/pipewiresettings.cpp" line="47"/>
@@ -13320,7 +13326,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="47"/>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="309"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">&amp;Riproduci</translation>
+        <translation>&amp;Riproduci</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
@@ -13390,7 +13396,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="74"/>
         <source>Playback</source>
-        <translation type="unfinished">Riproduzione</translation>
+        <translation>Riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="81"/>
@@ -13589,12 +13595,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="276"/>
         <source>General</source>
-        <translation type="unfinished">Generale</translation>
+        <translation>Generale</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="277"/>
         <source>Playback</source>
-        <translation type="unfinished">Riproduzione</translation>
+        <translation>Riproduzione</translation>
     </message>
 </context>
 <context>
@@ -13677,7 +13683,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="112"/>
         <source>General</source>
-        <translation type="unfinished">Generale</translation>
+        <translation>Generale</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="115"/>
@@ -13725,17 +13731,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="263"/>
         <source>General</source>
-        <translation type="unfinished">Generale</translation>
+        <translation>Generale</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="264"/>
         <source>Playback</source>
-        <translation type="unfinished">Riproduzione</translation>
+        <translation>Riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="264"/>
         <source>Queue</source>
-        <translation type="unfinished">Coda</translation>
+        <translation>Coda</translation>
     </message>
 </context>
 <context>
@@ -13946,7 +13952,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="192"/>
         <source>Automatic</source>
-        <translation type="unfinished">Automatico</translation>
+        <translation>Automatico</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="193"/>
@@ -14002,7 +14008,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="247"/>
         <source>Edit</source>
-        <translation type="unfinished">Modifica</translation>
+        <translation>Modifica</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="250"/>
@@ -14027,7 +14033,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="265"/>
         <source>Remove</source>
-        <translation type="unfinished">Rimuovi</translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="270"/>
@@ -14060,7 +14066,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="192"/>
         <source>Enabled</source>
-        <translation type="unfinished">Abilitato</translation>
+        <translation>Abilitato</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="194"/>
@@ -14070,7 +14076,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="196"/>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="198"/>
@@ -14106,12 +14112,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="134"/>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="135"/>
         <source>Columns</source>
-        <translation type="unfinished">Colonne</translation>
+        <translation>Colonne</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="135"/>
         <source>Playlist</source>
-        <translation type="unfinished">Playlist</translation>
+        <translation>Playlist</translation>
     </message>
 </context>
 <context>
@@ -14127,17 +14133,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="44"/>
         <source>Track</source>
-        <translation type="unfinished">Traccia</translation>
+        <translation>Traccia</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="45"/>
         <source>Title</source>
-        <translation type="unfinished">Titolo</translation>
+        <translation>Titolo</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="46"/>
         <source>Artist</source>
-        <translation type="unfinished">Artista</translation>
+        <translation>Artista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="47"/>
@@ -14147,12 +14153,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="48"/>
         <source>Album Artist</source>
-        <translation type="unfinished">Album Artista</translation>
+        <translation>Album Artista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="49"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="59"/>
@@ -14227,12 +14233,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="64"/>
         <source>Front Cover</source>
-        <translation type="unfinished">Copertina Frontale</translation>
+        <translation>Copertina anteriore</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="65"/>
         <source>Back Cover</source>
-        <translation type="unfinished">Copertina Posteriore</translation>
+        <translation>Copertina Posteriore</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="66"/>
@@ -14245,7 +14251,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="58"/>
         <source>Show header</source>
-        <translation type="unfinished">Mostra intestazione</translation>
+        <translation>Mostra intestazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="61"/>
@@ -14265,12 +14271,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="73"/>
         <source>Preferred track</source>
-        <translation type="unfinished">Brano preferito</translation>
+        <translation>Brano preferito</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="75"/>
         <source>File</source>
-        <translation type="unfinished">File</translation>
+        <translation>File</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="80"/>
@@ -14286,12 +14292,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="82"/>
         <source>Fade length</source>
-        <translation type="unfinished">Durata dissolvenza</translation>
+        <translation>Durata dissolvenza</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="85"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished">Avvia la riproduzione immediatamente</translation>
+        <translation>Avvia la riproduzione immediatamente</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="94"/>
@@ -14301,17 +14307,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="105"/>
         <source>Appearance</source>
-        <translation type="unfinished">Aspetto</translation>
+        <translation>Aspetto</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="115"/>
         <source>Artwork</source>
-        <translation type="unfinished">Copertina</translation>
+        <translation>Copertina</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="187"/>
         <source>Top</source>
-        <translation type="unfinished">In alto</translation>
+        <translation>In alto</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="120"/>
@@ -14381,7 +14387,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="133"/>
         <source>None</source>
-        <translation type="unfinished">Nessuno</translation>
+        <translation>Nessuno</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="134"/>
@@ -14396,12 +14402,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="144"/>
         <source>Double-click</source>
-        <translation type="unfinished">Doppio-clic</translation>
+        <translation>Doppio-clic</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="146"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Clic centrale</translation>
+        <translation>Clic centrale</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="153"/>
@@ -14436,7 +14442,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="161"/>
         <source>Front</source>
-        <translation type="unfinished">Fronte</translation>
+        <translation>Fronte</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="162"/>
@@ -14446,7 +14452,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="163"/>
         <source>Back</source>
-        <translation type="unfinished">Retro</translation>
+        <translation>Retro</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="164"/>
@@ -14456,7 +14462,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="165"/>
         <source>Artist</source>
-        <translation type="unfinished">Artista</translation>
+        <translation>Artista</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="166"/>
@@ -14466,27 +14472,27 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="167"/>
         <source>Playing track</source>
-        <translation type="unfinished">Brano in riproduzione</translation>
+        <translation>Brano in riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="169"/>
         <source>Selected track</source>
-        <translation type="unfinished">Brano selezionato</translation>
+        <translation>Brano selezionato</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="171"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished">In riproduzione (o selezionato se in pausa)</translation>
+        <translation>In riproduzione (o selezionato se in pausa)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="173"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished">In riproduzione (vuoto all&apos;avvio)</translation>
+        <translation>In riproduzione (vuoto all&apos;avvio)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="175"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished">In riproduzione (vuoto quando fermo)</translation>
+        <translation>In riproduzione (vuoto quando fermo)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="177"/>
@@ -14541,7 +14547,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="189"/>
         <source>Left</source>
-        <translation type="unfinished">Sinistra</translation>
+        <translation>Sinistra</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="190"/>
@@ -14551,7 +14557,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="191"/>
         <source>Right</source>
-        <translation type="unfinished">Destra</translation>
+        <translation>Destra</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="192"/>
@@ -14561,7 +14567,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="193"/>
         <source>Bottom</source>
-        <translation type="unfinished">In basso</translation>
+        <translation>In basso</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="194"/>
@@ -14572,7 +14578,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="198"/>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="206"/>
         <source>Disabled</source>
-        <translation type="unfinished">Disabilitato</translation>
+        <translation>Disabilitato</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="208"/>
@@ -14642,12 +14648,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="226"/>
         <source>Source</source>
-        <translation type="unfinished">Sorgente</translation>
+        <translation>Sorgente</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="234"/>
         <source>Layout</source>
-        <translation type="unfinished">Layout</translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="235"/>
@@ -14657,7 +14663,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="237"/>
         <source>Alignment</source>
-        <translation type="unfinished">Allineamento</translation>
+        <translation>Allineamento</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="239"/>
@@ -14695,7 +14701,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="112"/>
         <source>Automatic</source>
-        <translation type="unfinished">Automatico</translation>
+        <translation>Automatico</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="113"/>
@@ -14715,7 +14721,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="180"/>
         <source>Default</source>
-        <translation type="unfinished">Predefinito</translation>
+        <translation>Predefinito</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="181"/>
@@ -14786,7 +14792,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="445"/>
         <source>Remove</source>
-        <translation type="unfinished">Rimuovi</translation>
+        <translation>Rimuovi</translation>
     </message>
 </context>
 <context>
@@ -14794,12 +14800,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="221"/>
         <source>General</source>
-        <translation type="unfinished">Generale</translation>
+        <translation>Generale</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="222"/>
         <source>Playlist</source>
-        <translation type="unfinished">Playlist</translation>
+        <translation>Playlist</translation>
     </message>
 </context>
 <context>
@@ -14897,7 +14903,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="135"/>
         <source>Search</source>
-        <translation type="unfinished">Cerca</translation>
+        <translation>Cerca</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="138"/>
@@ -14941,7 +14947,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="124"/>
         <source>Current file</source>
-        <translation type="unfinished">File corrente</translation>
+        <translation>File corrente</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="349"/>
@@ -14959,12 +14965,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="203"/>
         <source>Tracks</source>
-        <translation type="unfinished">Tracce</translation>
+        <translation>Tracce</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="205"/>
         <source>Duration</source>
-        <translation type="unfinished">Durata</translation>
+        <translation>Durata</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagermodel.cpp" line="207"/>
@@ -15026,7 +15032,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="316"/>
         <source>Edit</source>
-        <translation type="unfinished">Modifica</translation>
+        <translation>Modifica</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="319"/>
@@ -15056,7 +15062,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="342"/>
         <source>Remove</source>
-        <translation type="unfinished">Rimuovi</translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="347"/>
@@ -15125,7 +15131,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="195"/>
         <source>Remove</source>
-        <translation type="unfinished">Rimuovi</translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="197"/>
@@ -15165,7 +15171,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="239"/>
         <source>Edit</source>
-        <translation type="unfinished">Modifica</translation>
+        <translation>Modifica</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="255"/>
@@ -15273,7 +15279,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="554"/>
         <source>Playlist</source>
-        <translation type="unfinished">Playlist</translation>
+        <translation>Playlist</translation>
     </message>
 </context>
 <context>
@@ -15291,7 +15297,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="249"/>
         <source>Delete</source>
-        <translation type="unfinished">Elimina</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="250"/>
@@ -15349,7 +15355,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="273"/>
         <source>Grouping script</source>
-        <translation type="unfinished">Script di raggruppamento</translation>
+        <translation>Script di raggruppamento</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="275"/>
@@ -15365,7 +15371,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="295"/>
         <source>Artwork</source>
-        <translation type="unfinished">Copertina</translation>
+        <translation>Copertina</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="298"/>
@@ -15391,7 +15397,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="351"/>
         <source>Tracks</source>
-        <translation type="unfinished">Tracce</translation>
+        <translation>Tracce</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="400"/>
@@ -15419,7 +15425,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="184"/>
         <source>Playlist</source>
-        <translation type="unfinished">Playlist</translation>
+        <translation>Playlist</translation>
     </message>
 </context>
 <context>
@@ -15467,7 +15473,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="104"/>
         <source>Format</source>
-        <translation type="unfinished">Formato</translation>
+        <translation>Formato</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="106"/>
@@ -15492,7 +15498,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="172"/>
         <source>Select Directory</source>
-        <translation type="unfinished">Seleziona Cartella</translation>
+        <translation>Seleziona Cartella</translation>
     </message>
 </context>
 <context>
@@ -15599,32 +15605,32 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="548"/>
         <source>Move right</source>
-        <translation type="unfinished"></translation>
+        <translation>Sposta a destra</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="603"/>
         <source>Tab position</source>
-        <translation type="unfinished"></translation>
+        <translation>Posizione scheda</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="620"/>
         <source>Top</source>
-        <translation type="unfinished">In alto</translation>
+        <translation>In alto</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="621"/>
         <source>Bottom</source>
-        <translation type="unfinished">In basso</translation>
+        <translation>In basso</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="807"/>
         <source>Add playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="815"/>
         <source>Clear playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Svuota playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="591"/>
@@ -15648,7 +15654,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="37"/>
         <source>Expand tabs to fill empty space</source>
-        <translation type="unfinished"></translation>
+        <translation>Espandi schede per riempire spazio vuoto</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="38"/>
@@ -15673,12 +15679,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="43"/>
         <source>Top</source>
-        <translation type="unfinished">In alto</translation>
+        <translation>In alto</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="44"/>
         <source>Bottom</source>
-        <translation type="unfinished">In basso</translation>
+        <translation>In basso</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="50"/>
@@ -15709,7 +15715,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1046"/>
         <source>&amp;Play</source>
-        <translation type="unfinished">&amp;Riproduci</translation>
+        <translation>&amp;Riproduci</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1180"/>
@@ -15757,7 +15763,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2156"/>
         <source>Edit</source>
-        <translation type="unfinished">Modifica</translation>
+        <translation>Modifica</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2160"/>
@@ -15807,7 +15813,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1397"/>
         <source>Columns</source>
-        <translation type="unfinished">Colonne</translation>
+        <translation>Colonne</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1385"/>
@@ -15818,7 +15824,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="351"/>
         <source>Playlist</source>
-        <translation type="unfinished">Playlist</translation>
+        <translation>Playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/detachedplaylistsession.cpp" line="47"/>
@@ -15828,7 +15834,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/detachedplaylistsession.cpp" line="52"/>
         <source>Searching…</source>
-        <translation type="unfinished">Ricerca in corso…</translation>
+        <translation>Ricerca in corso…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="130"/>
@@ -15898,7 +15904,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="239"/>
         <source>Add to playback &amp;queue</source>
-        <translation type="unfinished">Aggiungi alla &amp;coda di riproduzione</translation>
+        <translation>Aggiungi alla &amp;coda di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="243"/>
@@ -15913,12 +15919,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="251"/>
         <source>Randomise</source>
-        <translation type="unfinished">Randomizza</translation>
+        <translation>Randomizza</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="254"/>
         <source>Reverse</source>
-        <translation type="unfinished">Inverti</translation>
+        <translation>Inverti</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="342"/>
@@ -15968,12 +15974,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="426"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation type="unfinished">Aggiungi le tracce selezionate alla coda di riproduzione</translation>
+        <translation>Aggiungi le tracce selezionate alla coda di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="432"/>
         <source>Add the selected tracks to the front of the playback queue</source>
-        <translation type="unfinished">Aggiungi le tracce selezionate all&apos;inizio della coda di riproduzione</translation>
+        <translation>Aggiungi le tracce selezionate all&apos;inizio della coda di riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="438"/>
@@ -15996,7 +16002,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="39"/>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginaboutdialog.cpp" line="40"/>
@@ -16039,7 +16045,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="299"/>
         <source>General</source>
-        <translation type="unfinished">Generale</translation>
+        <translation>Generale</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="300"/>
@@ -16052,7 +16058,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="117"/>
         <source>Configure</source>
-        <translation type="unfinished">Configura</translation>
+        <translation>Configura</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="118"/>
@@ -16131,7 +16137,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="122"/>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="124"/>
@@ -16146,12 +16152,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="128"/>
         <source>Load</source>
-        <translation type="unfinished">Carica</translation>
+        <translation>Carica</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="130"/>
         <source>Status</source>
-        <translation type="unfinished">Stato</translation>
+        <translation>Stato</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="197"/>
@@ -16161,7 +16167,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="199"/>
         <source>Disabled</source>
-        <translation type="unfinished">Disabilitato</translation>
+        <translation>Disabilitato</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="201"/>
@@ -16191,7 +16197,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="269"/>
         <source>Output</source>
-        <translation type="unfinished">Output</translation>
+        <translation>Output</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="272"/>
@@ -16231,7 +16237,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="293"/>
         <source>Library</source>
-        <translation type="unfinished">Libreria</translation>
+        <translation>Libreria</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="296"/>
@@ -16241,7 +16247,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="299"/>
         <source>DSP</source>
-        <translation type="unfinished">DSP</translation>
+        <translation>DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="302"/>
@@ -16305,7 +16311,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="100"/>
         <source>Browse…</source>
-        <translation type="unfinished">Sfoglia…</translation>
+        <translation>Sfoglia…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/projectm/projectmconfigdialog.cpp" line="101"/>
@@ -16726,7 +16732,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1178"/>
         <source>Tracks</source>
-        <translation type="unfinished">Tracce</translation>
+        <translation>Tracce</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="1178"/>
@@ -16739,7 +16745,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="569"/>
         <source>Selection</source>
-        <translation type="unfinished">Selezione</translation>
+        <translation>Selezione</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="573"/>
@@ -16827,12 +16833,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="126"/>
         <source>Randomise</source>
-        <translation type="unfinished">Randomizza</translation>
+        <translation>Randomizza</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="127"/>
         <source>Reverse</source>
-        <translation type="unfinished">Inverti</translation>
+        <translation>Inverti</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="314"/>
@@ -16852,7 +16858,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="381"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">Aggiungi a playlist</translation>
+        <translation>Aggiungi a playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="440"/>
@@ -16935,7 +16941,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="41"/>
         <source>Show header</source>
-        <translation type="unfinished">Mostra intestazione</translation>
+        <translation>Mostra intestazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="42"/>
@@ -16955,7 +16961,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="45"/>
         <source>Icon</source>
-        <translation type="unfinished">Icona</translation>
+        <translation>Icona</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="61"/>
@@ -16965,7 +16971,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="66"/>
         <source>General</source>
-        <translation type="unfinished">Generale</translation>
+        <translation>Generale</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="73"/>
@@ -16980,7 +16986,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="79"/>
         <source>Appearance</source>
-        <translation type="unfinished">Aspetto</translation>
+        <translation>Aspetto</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="95"/>
@@ -17054,7 +17060,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="66"/>
         <source>Layout</source>
-        <translation type="unfinished">Layout</translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="70"/>
@@ -17069,12 +17075,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="126"/>
         <source>Disabled</source>
-        <translation type="unfinished">Disabilitato</translation>
+        <translation>Disabilitato</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="129"/>
         <source>Enabled</source>
-        <translation type="unfinished">Abilitato</translation>
+        <translation>Abilitato</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="135"/>
@@ -17127,7 +17133,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="170"/>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../../src/plugins/quicktagger/quicktaggermodel.cpp" line="172"/>
@@ -17231,7 +17237,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="46"/>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscanresultsmodel.cpp" line="48"/>
@@ -17264,7 +17270,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="145"/>
         <source>Playback</source>
-        <translation type="unfinished">Riproduzione</translation>
+        <translation>Riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerpage.cpp" line="145"/>
@@ -17326,7 +17332,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="96"/>
         <source>Current file</source>
-        <translation type="unfinished">File corrente</translation>
+        <translation>File corrente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="118"/>
@@ -17404,7 +17410,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="39"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished">Avvia la riproduzione immediatamente</translation>
+        <translation>Avvia la riproduzione immediatamente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="40"/>
@@ -17451,7 +17457,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="59"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="80"/>
         <source>None</source>
-        <translation type="unfinished">Nessuno</translation>
+        <translation>Nessuno</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="55"/>
@@ -17527,27 +17533,27 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="99"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Comportamento Clic</translation>
+        <translation>Comportamento Clic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="103"/>
         <source>Double-click</source>
-        <translation type="unfinished">Doppio-clic</translation>
+        <translation>Doppio-clic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="105"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Clic centrale</translation>
+        <translation>Clic centrale</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="110"/>
         <source>Search</source>
-        <translation type="unfinished">Cerca</translation>
+        <translation>Cerca</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="118"/>
         <source>Appearance</source>
-        <translation type="unfinished">Aspetto</translation>
+        <translation>Aspetto</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="130"/>
@@ -17650,7 +17656,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="58"/>
         <source>Radio Browser</source>
-        <translation type="unfinished">Esplora Radio</translation>
+        <translation>Esplora Radio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="76"/>
@@ -17660,7 +17666,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserdialog.cpp" line="77"/>
         <source>Search</source>
-        <translation type="unfinished">Cerca</translation>
+        <translation>Cerca</translation>
     </message>
 </context>
 <context>
@@ -17683,7 +17689,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="453"/>
         <source>Language</source>
-        <translation type="unfinished">Lingua</translation>
+        <translation>Lingua</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsermodel.cpp" line="455"/>
@@ -17732,7 +17738,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="118"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="136"/>
         <source>Radio Browser</source>
-        <translation type="unfinished">Esplora Radio</translation>
+        <translation>Esplora Radio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserplugin.cpp" line="119"/>
@@ -17819,12 +17825,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="199"/>
         <source>Add to My Stations</source>
-        <translation type="unfinished">Aggiungi a Le Mie Stazioni</translation>
+        <translation>Aggiungi a Le Mie Stazioni</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="200"/>
         <source>Remove from My Stations</source>
-        <translation type="unfinished">Rimuovi da Le Mie Stazioni</translation>
+        <translation>Rimuovi da Le Mie Stazioni</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="238"/>
@@ -17842,7 +17848,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="362"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="921"/>
         <source>Radio Browser</source>
-        <translation type="unfinished">Esplora Radio</translation>
+        <translation>Esplora Radio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="246"/>
@@ -17857,7 +17863,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="255"/>
         <source>Remove</source>
-        <translation type="unfinished">Rimuovi</translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="262"/>
@@ -17922,7 +17928,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1142"/>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1172"/>
@@ -17932,7 +17938,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1503"/>
         <source>Play</source>
-        <translation type="unfinished">Riproduci</translation>
+        <translation>Riproduci</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1505"/>
@@ -17942,7 +17948,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1536"/>
         <source>Add to playlist</source>
-        <translation type="unfinished">Aggiungi a playlist</translation>
+        <translation>Aggiungi a playlist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1540"/>
@@ -17982,7 +17988,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1601"/>
         <source>Copy stream URL</source>
-        <translation type="unfinished">Copia URL della stream</translation>
+        <translation>Copia URL della stream</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1602"/>
@@ -17992,7 +17998,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1621"/>
         <source>Open homepage</source>
-        <translation type="unfinished">Apri pagina iniziale</translation>
+        <translation>Apri pagina iniziale</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1622"/>
@@ -18002,7 +18008,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1635"/>
         <source>Open radio-browser.info page</source>
-        <translation type="unfinished">Apre pagina radio-browser.info</translation>
+        <translation>Apre pagina radio-browser.info</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1636"/>
@@ -18032,7 +18038,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1690"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished">Dimensioni automatiche</translation>
+        <translation>Dimensioni automatiche</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1691"/>
@@ -18048,7 +18054,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1716"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1762"/>
         <source>Columns</source>
-        <translation type="unfinished">Colonne</translation>
+        <translation>Colonne</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1759"/>
@@ -18083,7 +18089,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1832"/>
         <source>Show header</source>
-        <translation type="unfinished">Mostra intestazione</translation>
+        <translation>Mostra intestazione</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="1841"/>
@@ -18116,17 +18122,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="79"/>
         <source>Remove</source>
-        <translation type="unfinished">Rimuovi</translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="80"/>
         <source>Move Up</source>
-        <translation type="unfinished">Sposta su</translation>
+        <translation>Sposta su</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="81"/>
         <source>Move Down</source>
-        <translation type="unfinished">Sposta giù</translation>
+        <translation>Sposta giù</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="82"/>
@@ -18136,7 +18142,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="105"/>
         <source>General</source>
-        <translation type="unfinished">Generale</translation>
+        <translation>Generale</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="110"/>
@@ -18205,7 +18211,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigmodel.cpp" line="91"/>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigmodel.cpp" line="91"/>
@@ -18218,7 +18224,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="85"/>
         <source>Genres</source>
-        <translation type="unfinished">Generi</translation>
+        <translation>Generi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfig.cpp" line="86"/>
@@ -18522,7 +18528,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="177"/>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="205"/>
         <source>Library</source>
-        <translation type="unfinished">Libreria</translation>
+        <translation>Libreria</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidemodel.cpp" line="178"/>
@@ -18583,7 +18589,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="108"/>
         <source>Library</source>
-        <translation type="unfinished">Libreria</translation>
+        <translation>Libreria</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="233"/>
@@ -19432,7 +19438,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="113"/>
         <source>Duration</source>
-        <translation type="unfinished">Durata</translation>
+        <translation>Durata</translation>
     </message>
 </context>
 <context>
@@ -21337,7 +21343,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="56"/>
         <source>Playing</source>
-        <translation type="unfinished">Riproduzione</translation>
+        <translation>Riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="57"/>
@@ -22017,7 +22023,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="356"/>
         <source>Duration</source>
-        <translation type="unfinished">Durata</translation>
+        <translation>Durata</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="357"/>
@@ -23159,7 +23165,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="252"/>
         <source>Duration</source>
-        <translation type="unfinished">Durata</translation>
+        <translation>Durata</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="254"/>
@@ -23373,7 +23379,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="1028"/>
         <source>Playback</source>
-        <translation type="unfinished">Riproduzione</translation>
+        <translation>Riproduzione</translation>
     </message>
 </context>
 <context>
@@ -24425,7 +24431,7 @@ Supersampling is intended for 1 px bars with a 0 px gap; other bar sizes can pro
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="241"/>
         <source>Playing</source>
-        <translation type="unfinished">Riproduzione</translation>
+        <translation>Riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="242"/>
@@ -24972,7 +24978,7 @@ Hold Ctrl to replace a widget.</source>
         <location filename="../../src/gui/widgets.cpp" line="798"/>
         <location filename="../../src/gui/widgets.cpp" line="818"/>
         <source>Playback</source>
-        <translation type="unfinished">Riproduzione</translation>
+        <translation>Riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="650"/>
