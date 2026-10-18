@@ -23,6 +23,8 @@
 #include <core/internalcoresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/widgets/abrepeatcontrols.h>
+#include <gui/widgets/colourbutton.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <gui/widgets/slidereditor.h>
 #include <utils/settings/settingsmanager.h>
@@ -72,6 +74,11 @@ private:
     QSpinBox* m_seekStepLarge;
     QDoubleSpinBox* m_volumeStep;
 
+    QCheckBox* m_abRepeatSeekToStartOnChange;
+    QDoubleSpinBox* m_abRepeatMarkerWidth;
+    ColourButton* m_abRepeatMarkerColourA;
+    ColourButton* m_abRepeatMarkerColourB;
+
     SliderEditor* m_playedSlider;
     SliderEditor* m_playedTimeSlider;
     ScriptLineEdit* m_shuffleAlbumsGroup;
@@ -92,6 +99,10 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     , m_seekStep{new QSpinBox(this)}
     , m_seekStepLarge{new QSpinBox(this)}
     , m_volumeStep{new QDoubleSpinBox(this)}
+    , m_abRepeatSeekToStartOnChange{new QCheckBox(tr("Seek to A after adjusting the A marker"), this)}
+    , m_abRepeatMarkerWidth{new QDoubleSpinBox(this)}
+    , m_abRepeatMarkerColourA{new ColourButton(tr("A colour") + u":"_s, true, this)}
+    , m_abRepeatMarkerColourB{new ColourButton(tr("B colour") + u":"_s, true, this)}
     , m_playedSlider{new SliderEditor(tr("Played threshold (%)"), this)}
     , m_playedTimeSlider{new SliderEditor(tr("Played threshold (time)"), this)}
     , m_shuffleAlbumsGroup{new ScriptLineEdit(this)}
@@ -162,6 +173,28 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     controlsLayout->addWidget(m_volumeStep, row++, 1);
     controlsLayout->setColumnStretch(2, 1);
 
+    m_abRepeatMarkerWidth->setRange(0.5, 10.0);
+    m_abRepeatMarkerWidth->setDecimals(1);
+    m_abRepeatMarkerWidth->setSingleStep(0.5);
+    m_abRepeatMarkerWidth->setSuffix(u" px"_s);
+    m_abRepeatMarkerColourA->setToolTip(tr("Override the default colour for the A marker"));
+    m_abRepeatMarkerColourB->setToolTip(tr("Override the default colour for the B marker"));
+    ColourButton::alignLabels({m_abRepeatMarkerColourA, m_abRepeatMarkerColourB});
+
+    auto* repeatGroup  = new QGroupBox(tr("A–B repeat"), this);
+    auto* repeatLayout = new QGridLayout(repeatGroup);
+
+    repeatGroup->setToolTip(tr("A–B repeat settings for all seekbars"));
+    m_abRepeatSeekToStartOnChange->setToolTip(tr("Seek on release when dragging A while A–B repeat is enabled"));
+
+    row = 0;
+    repeatLayout->addWidget(m_abRepeatSeekToStartOnChange, row++, 0, 1, 3);
+    repeatLayout->addWidget(new QLabel(tr("Line width") + u":"_s, this), row, 0);
+    repeatLayout->addWidget(m_abRepeatMarkerWidth, row++, 1);
+    repeatLayout->addWidget(m_abRepeatMarkerColourA, row++, 0, 1, 2);
+    repeatLayout->addWidget(m_abRepeatMarkerColourB, row++, 0, 1, 2);
+    repeatLayout->setColumnStretch(2, 1);
+
     auto* shuffleGroup       = new QGroupBox(tr("Shuffle"), this);
     auto* shuffleGroupLayout = new QGridLayout(shuffleGroup);
 
@@ -173,7 +206,8 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
 
     row = 0;
     layout->addWidget(generalGroup, row++, 0, 1, 2);
-    layout->addWidget(controlsGroup, row++, 0, 1, 2);
+    layout->addWidget(controlsGroup, row, 0, Qt::AlignTop);
+    layout->addWidget(repeatGroup, row++, 1, Qt::AlignTop);
     layout->addWidget(shuffleGroup, row++, 0, 1, 2);
     layout->setColumnStretch(0, 1);
     layout->setColumnStretch(1, 1);
@@ -207,6 +241,17 @@ void PlaybackPageWidget::load()
     m_seekStepLarge->setValue(m_settings->value<Settings::Gui::SeekStepLarge>());
     m_volumeStep->setValue(m_settings->value<Settings::Gui::VolumeStep>());
 
+    m_abRepeatSeekToStartOnChange->setChecked(m_settings->value<Settings::Gui::ABRepeatSeekOnAChange>());
+    m_abRepeatMarkerWidth->setValue(m_settings->value<Settings::Gui::ABRepeatMarkerWidth>());
+    const QColor markerColourA = m_settings->value<Settings::Gui::ABRepeatMarkerColourA>().value<QColor>();
+    m_abRepeatMarkerColourA->setChecked(markerColourA.isValid());
+    m_abRepeatMarkerColourA->setColour(markerColourA.isValid() ? markerColourA
+                                                               : ABRepeatControls::defaultColourA(palette()));
+    const QColor markerColourB = m_settings->value<Settings::Gui::ABRepeatMarkerColourB>().value<QColor>();
+    m_abRepeatMarkerColourB->setChecked(markerColourB.isValid());
+    m_abRepeatMarkerColourB->setColour(markerColourB.isValid() ? markerColourB
+                                                               : ABRepeatControls::defaultColourB(palette()));
+
     const double playedThreshold = m_settings->value<Settings::Core::PlayedThreshold>();
     const auto playedPercent     = static_cast<int>(playedThreshold * 100);
     m_playedSlider->setValue(playedPercent);
@@ -234,6 +279,21 @@ void PlaybackPageWidget::apply()
     m_settings->set<Settings::Gui::SeekStepLarge>(m_seekStepLarge->value());
     m_settings->set<Settings::Gui::VolumeStep>(m_volumeStep->value());
 
+    m_settings->set<Settings::Gui::ABRepeatSeekOnAChange>(m_abRepeatSeekToStartOnChange->isChecked());
+    m_settings->set<Settings::Gui::ABRepeatMarkerWidth>(m_abRepeatMarkerWidth->value());
+    if(m_abRepeatMarkerColourA->isChecked()) {
+        m_settings->set<Settings::Gui::ABRepeatMarkerColourA>(m_abRepeatMarkerColourA->colour());
+    }
+    else {
+        m_settings->reset<Settings::Gui::ABRepeatMarkerColourA>();
+    }
+    if(m_abRepeatMarkerColourB->isChecked()) {
+        m_settings->set<Settings::Gui::ABRepeatMarkerColourB>(m_abRepeatMarkerColourB->colour());
+    }
+    else {
+        m_settings->reset<Settings::Gui::ABRepeatMarkerColourB>();
+    }
+
     const int playedPercent    = m_playedSlider->value();
     const auto playedThreshold = static_cast<double>(playedPercent) / 100;
     m_settings->set<Settings::Core::PlayedThreshold>(playedThreshold);
@@ -257,6 +317,10 @@ void PlaybackPageWidget::reset()
     m_settings->reset<Settings::Gui::SeekStepSmall>();
     m_settings->reset<Settings::Gui::SeekStepLarge>();
     m_settings->reset<Settings::Gui::VolumeStep>();
+    m_settings->reset<Settings::Gui::ABRepeatSeekOnAChange>();
+    m_settings->reset<Settings::Gui::ABRepeatMarkerWidth>();
+    m_settings->reset<Settings::Gui::ABRepeatMarkerColourA>();
+    m_settings->reset<Settings::Gui::ABRepeatMarkerColourB>();
     m_settings->reset<Settings::Core::PlayedThreshold>();
     m_settings->reset<Settings::Core::PlayedThresholdTime>();
     m_settings->reset<Settings::Core::ShuffleAlbumsGroupScript>();

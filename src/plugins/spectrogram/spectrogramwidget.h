@@ -31,6 +31,7 @@ class QJsonObject;
 class QVBoxLayout;
 
 namespace Fooyin {
+class ActionManager;
 class AudioLoader;
 class EngineController;
 class PlayerController;
@@ -43,9 +44,9 @@ class SpectrogramWidget : public FyWidget
 {
     Q_OBJECT
 public:
-    SpectrogramWidget(std::shared_ptr<AudioLoader> audioLoader, PlayerController* playerController,
-                      EngineController* engine, TrackSelectionController* trackSelection, SettingsManager* settings,
-                      QWidget* parent = nullptr);
+    SpectrogramWidget(std::shared_ptr<AudioLoader> audioLoader, ActionManager* actionManager,
+                      PlayerController* playerController, EngineController* engine,
+                      TrackSelectionController* trackSelection, SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -74,6 +75,7 @@ private:
     void saveConfigToLayout(const SpectrogramConfig& config, QJsonObject& layout) const;
 
     std::shared_ptr<AudioLoader> m_audioLoader;
+    ActionManager* m_actionManager;
     PlayerController* m_playerController;
     EngineController* m_engine;
     TrackSelectionController* m_trackSelection;

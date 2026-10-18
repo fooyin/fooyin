@@ -107,6 +107,15 @@ public:
     void reset();
 
     void setPlayMode(Playlist::PlayModes mode);
+
+    /** Returns the current track’s temporary A–B repeat range, in ms. */
+    [[nodiscard]] Player::ABRepeatRange abRepeatRange() const;
+    /** Optionally seek to the new start when an enabled repeat range is adjusted. */
+    void setABRepeatStart(uint64_t ms, bool seekToStart = false);
+    void setABRepeatEnd(uint64_t ms);
+    void setABRepeatEnabled(bool enabled);
+    void clearABRepeat();
+
     void seek(uint64_t ms);
     void seekForward(uint64_t delta);
     void seekBackward(uint64_t delta);
@@ -190,6 +199,7 @@ Q_SIGNALS:
     void bitrateChanged(int bitrate);
     void playbackOutputInfoChanged(const Fooyin::Engine::PlaybackOutputInfo& info);
     void positionMoved(uint64_t ms);
+    void abRepeatRangeChanged();
 
     /*! Emitted when the actual playback track changes. */
     void currentTrackChanged(const Fooyin::Track& track);

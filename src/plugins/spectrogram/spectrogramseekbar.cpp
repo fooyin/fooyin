@@ -24,6 +24,7 @@
 #include <core/player/playercontroller.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/abrepeatcontrols.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/signalthrottler.h>
 #include <utils/stringutils.h>
@@ -67,6 +68,7 @@ SpectrogramSeekBar::SpectrogramSeekBar(std::shared_ptr<AudioLoader> audioLoader,
                                        TrackSelectionController* trackSelection, SettingsManager* settings,
                                        QWidget* parent)
     : SpectrogramView{parent}
+    , m_repeatControls{new ABRepeatControls(playerController, settings, this)}
     , m_playerController{playerController}
     , m_settings{settings}
     , m_trackSelection{trackSelection}
@@ -79,6 +81,8 @@ SpectrogramSeekBar::SpectrogramSeekBar(std::shared_ptr<AudioLoader> audioLoader,
     , m_completedColumns{0}
 {
     setMouseTracking(true);
+
+    m_repeatControls->setTrack(m_track);
 
     const auto setMouseFocus = [this](bool enabled) {
         setFocusPolicy(enabled ? Qt::StrongFocus : Qt::TabFocus);
@@ -141,6 +145,11 @@ SpectrogramSeekBar::SpectrogramSeekBar(std::shared_ptr<AudioLoader> audioLoader,
         }
         update();
     });
+}
+
+ABRepeatControls* SpectrogramSeekBar::repeatControls() const
+{
+    return m_repeatControls;
 }
 
 SpectrogramSeekBar::~SpectrogramSeekBar()
@@ -275,6 +284,8 @@ void SpectrogramSeekBar::paintEvent(QPaintEvent* /*event*/)
 
         painter.restore();
     }
+
+    m_repeatControls->paint(painter, QRectF{plot}.adjusted(0, 0, -1, 0));
 }
 
 void SpectrogramSeekBar::resizeEvent(QResizeEvent* event)
@@ -411,7 +422,8 @@ bool SpectrogramSeekBar::setTrack(const Track& track)
                         && m_track.duration() == track.duration() && m_track.sampleRate() == track.sampleRate()
                         && m_track.channels() == track.channels();
 
-    m_track    = track;
+    m_track = track;
+    m_repeatControls->setTrack(m_track);
     m_position = displayingCurrentTrack() ? m_playerController->currentPosition() : 0;
 
     if(unchanged) {

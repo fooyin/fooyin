@@ -146,7 +146,8 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
 
 FyWidget* WaveBarPlugin::createWavebar()
 {
-    auto* wavebar = new WaveBarWidget(m_audioLoader, m_dbPool, m_playerController, m_trackSelection, m_settings);
+    auto* wavebar
+        = new WaveBarWidget(m_audioLoader, m_dbPool, m_actionManager, m_playerController, m_trackSelection, m_settings);
 
     registerWaveBar(wavebar);
 

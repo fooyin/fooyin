@@ -146,6 +146,10 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<RatingEmptyStarSymbol>(defaultRatingEmptyStarSymbol(),
                                                      u"Interface/RatingEmptyStarSymbol"_s);
     m_settings->createSetting<SeekBarMouseFocus>(false, u"Interface/SeekBarMouseFocus"_s);
+    m_settings->createSetting<ABRepeatMarkerWidth>(1.5, u"Interface/ABRepeatMarkerWidth"_s);
+    m_settings->createSetting<ABRepeatMarkerColourA>(QVariant{}, u"Interface/ABRepeatMarkerColourA"_s);
+    m_settings->createSetting<ABRepeatMarkerColourB>(QVariant{}, u"Interface/ABRepeatMarkerColourB"_s);
+    m_settings->createSetting<ABRepeatSeekOnAChange>(true, u"Playback/ABRepeatSeekOnAChange"_s);
     m_settings->createSetting<LoveHeartSize>(15, u"Interface/LoveHeartSize"_s);
     m_settings->createSetting<LoveHeartColour>(QVariant{}, u"Interface/LoveHeartColour"_s);
     m_settings->createSetting<RatingOneStarColour>(QVariant{}, u"Interface/RatingOneStarColour"_s);

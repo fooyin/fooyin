@@ -595,6 +595,11 @@ void AudioEngine::setTrackEndAutoTransitionEnabled(bool enabled)
     }
 
     if(!enabled) {
+        // A gapless handoff may have already adopted the next decoder before its audible boundary
+        if(hasStagedPreparedGaplessDecoder()
+           && !rebuildCurrentTrackStreamAt(m_audioClock.position(), 0, false, "disable-auto-transition")) {
+            qCWarning(ENGINE) << "Failed to restore current track when disabling automatic transitions";
+        }
         clearTrackEndAutoTransitions();
     }
 

@@ -32,6 +32,7 @@
 #include <optional>
 
 namespace Fooyin {
+class ABRepeatControls;
 class PlayerController;
 class SettingsManager;
 class TrackSelectionController;
@@ -49,6 +50,7 @@ public:
     void applyConfig(const SpectrogramConfig& config) override;
     bool cancelSeeking() override;
 
+    [[nodiscard]] ABRepeatControls* repeatControls() const;
     [[nodiscard]] bool isSeeking() const;
     void stopSeeking();
 
@@ -89,6 +91,7 @@ private:
     [[nodiscard]] uint64_t positionAt(int x) const;
     [[nodiscard]] bool canSeek() const;
 
+    ABRepeatControls* m_repeatControls;
     PlayerController* m_playerController;
     SettingsManager* m_settings;
     TrackSelectionController* m_trackSelection;

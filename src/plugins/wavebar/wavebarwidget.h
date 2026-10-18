@@ -31,6 +31,7 @@
 class QJsonObject;
 
 namespace Fooyin {
+class ActionManager;
 class AudioLoader;
 class PlayerController;
 class SeekContainer;
@@ -46,7 +47,7 @@ class WaveBarWidget : public FyWidget
     Q_OBJECT
 
 public:
-    WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnectionPoolPtr dbPool,
+    WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnectionPoolPtr dbPool, ActionManager* actionManager,
                   PlayerController* playerController, TrackSelectionController* trackSelection,
                   SettingsManager* settings, QWidget* parent = nullptr);
 
@@ -114,6 +115,7 @@ private:
     void syncPlaybackState();
     void updatePlayedThresholdMarker();
 
+    ActionManager* m_actionManager;
     PlayerController* m_playerController;
     TrackSelectionController* m_trackSelection;
     SettingsManager* m_settings;

@@ -19,6 +19,7 @@
 
 #include "waveseekbar.h"
 
+#include <gui/widgets/abrepeatcontrols.h>
 #include <utils/stringutils.h>
 
 #include <QApplication>
@@ -65,8 +66,9 @@ void setupPainter(QPainter& painter, bool isInProgress, bool isPlayed, int barWi
 } // namespace
 
 namespace Fooyin::WaveBar {
-WaveSeekBar::WaveSeekBar(QWidget* parent)
+WaveSeekBar::WaveSeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
+    , m_repeatControls{new ABRepeatControls(playerController, settings, this)}
     , m_playState{Player::PlayState::Stopped}
     , m_seekable{false}
     , m_scale{1.0}
@@ -86,6 +88,11 @@ WaveSeekBar::WaveSeekBar(QWidget* parent)
     , m_waveformCacheDirty{true}
 {
     setFocusPolicy(Qt::TabFocus);
+}
+
+ABRepeatControls* WaveSeekBar::repeatControls() const
+{
+    return m_repeatControls;
 }
 
 void WaveSeekBar::processData(const WaveformData<float>& waveData)
@@ -261,12 +268,13 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
     QPainter painter{this};
     if(m_data.empty() || m_supersampleFactor <= 1) {
         paintWaveform(painter, event->rect(), width());
-        drawCursors(painter);
-        return;
+    }
+    else {
+        drawCachedWaveform(painter, event->rect());
     }
 
-    drawCachedWaveform(painter, event->rect());
     drawCursors(painter);
+    m_repeatControls->paint(painter, rect());
 }
 
 void WaveSeekBar::mouseMoveEvent(QMouseEvent* event)

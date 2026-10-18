@@ -27,6 +27,8 @@
 #include <core/track.h>
 #include <utils/id.h>
 
+#include <optional>
+
 namespace Fooyin::Player {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 
@@ -51,6 +53,15 @@ enum class AdvanceReason : uint8_t
     PreparedCrossfadeCommit,
 };
 Q_ENUM_NS(AdvanceReason)
+
+struct FYCORE_EXPORT ABRepeatRange
+{
+    std::optional<uint64_t> start;
+    std::optional<uint64_t> end;
+    bool enabled{false};
+
+    bool operator==(const ABRepeatRange&) const = default;
+};
 
 struct FYCORE_EXPORT TrackChangeContext
 {
