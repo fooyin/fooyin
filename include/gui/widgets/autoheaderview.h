@@ -64,6 +64,7 @@ public:
     void addHeaderAlignmentMenu(QMenu* menu, const QPoint& pos = {});
 
     [[nodiscard]] QByteArray saveHeaderState() const;
+    [[nodiscard]] QByteArray saveHeaderState(bool saveSort) const;
     void restoreHeaderState(const QByteArray& data);
     void restoreHeaderState(const QByteArray& data, bool restoreSort);
 
@@ -72,6 +73,7 @@ Q_SIGNALS:
     void stateRestored();
     void leftClicked(int section, const QPoint& pos);
     void sectionVisiblityChanged(int section);
+    void layoutEdited();
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;

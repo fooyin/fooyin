@@ -21,8 +21,12 @@
 
 #include <utils/settings/settingspage.h>
 
+#include <functional>
+
 namespace Fooyin {
-class PresetRegistry;
+class EditableLayout;
+class PlaylistController;
+class PlaylistWidget;
 class SettingsManager;
 
 class PlaylistPresetsPage : public SettingsPage
@@ -30,6 +34,8 @@ class PlaylistPresetsPage : public SettingsPage
     Q_OBJECT
 
 public:
-    explicit PlaylistPresetsPage(PresetRegistry* presetRegistry, SettingsManager* settings, QObject* parent = nullptr);
+    explicit PlaylistPresetsPage(PlaylistController* controller, EditableLayout* editableLayout,
+                                 SettingsManager* settings, std::function<PlaylistWidget*(QWidget*)> createPreview,
+                                 QObject* parent = nullptr);
 };
 } // namespace Fooyin

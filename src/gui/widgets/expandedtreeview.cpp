@@ -22,6 +22,7 @@
 #include "expandedtreeview_p.h"
 
 #include <gui/contextmenuutils.h>
+#include <utils/scopeguard.h>
 #include <utils/treemodel.h>
 #include <utils/utils.h>
 
@@ -3907,19 +3908,18 @@ void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
     auto* selectModel            = selectionModel();
     const QModelIndex modelIndex = index.siblingAtColumn(0);
 
-    p->m_pressedPos = pos + p->offset();
+    p->m_pressedPos   = pos + p->offset();
+    p->m_canStartDrag = true;
 
     if(event->button() == Qt::MiddleButton) {
         QMetaObject::invokeMethod(this, [this, index]() { Q_EMIT middleClicked(index); }, Qt::QueuedConnection);
     }
 
     if(p->m_selectBeforeDrag && !model()->hasChildren(modelIndex)) {
-        setDragEnabled(p->isRowSelected(modelIndex)); // Prevent drag-and-drop when first selecting leafs
+        p->m_canStartDrag = p->isRowSelected(modelIndex);
         QAbstractItemView::mousePressEvent(event);
         return;
     }
-
-    setDragEnabled(true);
 
     const auto command = selectionCommand(index, event);
 
@@ -3934,6 +3934,19 @@ void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
         const QItemSelection selection = selectRecursively(p->m_model, {modelIndex, modelIndex});
         selectModel->select(selection, command);
     }
+}
+
+void ExpandedTreeView::mouseMoveEvent(QMouseEvent* event)
+{
+    if(p->m_canStartDrag) {
+        QAbstractItemView::mouseMoveEvent(event);
+        return;
+    }
+
+    const bool enabled     = dragEnabled();
+    const auto restoreDrag = scopeGuard([this, enabled]() { setDragEnabled(enabled); });
+    setDragEnabled(false);
+    QAbstractItemView::mouseMoveEvent(event);
 }
 
 void ExpandedTreeView::mouseDoubleClickEvent(QMouseEvent* event)
@@ -4118,6 +4131,10 @@ void ExpandedTreeView::rowsRemoved(const QModelIndex& /*parent*/, int /*first*/,
 
 void ExpandedTreeView::startDrag(Qt::DropActions supportedActions)
 {
+    if(!dragEnabled() || !p->m_canStartDrag) {
+        return;
+    }
+
     const QModelIndexList indexes = p->selectedDraggableIndexes(true);
     if(indexes.empty()) {
         return;

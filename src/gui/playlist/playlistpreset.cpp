@@ -19,8 +19,11 @@
 
 #include "playlistpreset.h"
 
+#include <QJsonArray>
+#include <QJsonDocument>
+
 constexpr auto PlaylistPresetVersionMarker = -1;
-constexpr auto PlaylistPresetVersion       = 5;
+constexpr auto PlaylistPresetVersion       = 6;
 
 using namespace Qt::StringLiterals;
 
@@ -41,6 +44,47 @@ QString combinedScript(const QString& left, const QString& right, bool addLine =
     return script;
 }
 } // namespace
+
+QJsonObject PlaylistColumnLayout::toJson() const
+{
+    QJsonObject object;
+    object["SingleMode"_L1] = singleMode;
+
+    QJsonArray columnArray;
+    for(const auto& column : columns) {
+        QJsonObject item;
+        item["Id"_L1]        = column.id;
+        item["Alignment"_L1] = static_cast<int>(column.alignment.toInt());
+        columnArray.append(item);
+    }
+    object["Columns"_L1] = columnArray;
+
+    if(!headerState.isEmpty()) {
+        object["HeaderState"_L1] = QString::fromUtf8(qCompress(headerState, 9).toBase64());
+    }
+
+    return object;
+}
+
+PlaylistColumnLayout PlaylistColumnLayout::fromJson(const QJsonObject& object)
+{
+    PlaylistColumnLayout layout;
+    layout.singleMode = object.value("SingleMode"_L1).toBool();
+
+    const auto columns = object.value("Columns"_L1).toArray();
+    for(const auto& value : columns) {
+        const auto item = value.toObject();
+        layout.columns.push_back({.id        = item.value("Id"_L1).toInt(-1),
+                                  .alignment = Qt::Alignment{item.value("Alignment"_L1).toInt(Qt::AlignLeft)}});
+    }
+
+    const auto encoded = object.value("HeaderState"_L1).toString().toUtf8();
+    if(!encoded.isEmpty()) {
+        layout.headerState = qUncompress(QByteArray::fromBase64(encoded));
+    }
+
+    return layout;
+}
 
 QDataStream& operator<<(QDataStream& stream, const HeaderRow& header)
 {
@@ -110,6 +154,11 @@ QDataStream& operator<<(QDataStream& stream, const PlaylistPreset& preset)
         subheaderGroupings.push_back(subheader.grouping);
     }
     stream << subheaderGroupings;
+
+    stream << preset.columnLayout.has_value();
+    if(preset.columnLayout) {
+        stream << QJsonDocument{preset.columnLayout->toJson()}.toJson(QJsonDocument::Compact);
+    }
 
     return stream;
 }
@@ -209,6 +258,17 @@ QDataStream& operator>>(QDataStream& stream, PlaylistPreset& preset)
         const auto count = std::min(preset.subHeaders.size(), subheaderGroupings.size());
         for(qsizetype i{0}; i < count; ++i) {
             preset.subHeaders[i].grouping = subheaderGroupings.at(i);
+        }
+    }
+
+    preset.columnLayout.reset();
+    if(version >= 6) {
+        bool hasColumnLayout{false};
+        stream >> hasColumnLayout;
+        if(hasColumnLayout) {
+            QByteArray data;
+            stream >> data;
+            preset.columnLayout = PlaylistColumnLayout::fromJson(QJsonDocument::fromJson(data).object());
         }
     }
 

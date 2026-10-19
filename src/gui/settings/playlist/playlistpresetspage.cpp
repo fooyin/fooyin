@@ -20,10 +20,15 @@
 #include "playlistpresetspage.h"
 
 #include "internalguisettings.h"
+#include "playlist/playlistcolumnregistry.h"
+#include "playlist/playlistcontroller.h"
 #include "playlist/playlistpreset.h"
+#include "playlist/playlistwidget.h"
 #include "playlist/presetregistry.h"
+#include "trackgenerator.h"
 
 #include <gui/guiconstants.h>
+#include <gui/layout/editablelayout.h>
 #include <gui/widgets/expandableinputbox.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
@@ -35,6 +40,7 @@
 #include <QInputDialog>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMenu>
 #include <QPushButton>
 #include <QSignalBlocker>
 #include <QSpinBox>
@@ -45,6 +51,7 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 namespace {
+
 class ExpandableGroupBox : public ExpandableInput
 {
     Q_OBJECT
@@ -179,7 +186,9 @@ class PlaylistPresetsPageWidget : public SettingsPageWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistPresetsPageWidget(PresetRegistry* presetRegistry, SettingsManager* settings);
+    explicit PlaylistPresetsPageWidget(PlaylistController* controller, EditableLayout* editableLayout,
+                                       SettingsManager* settings,
+                                       const std::function<PlaylistWidget*(QWidget*)>& createPreview);
 
     void load() override;
     void apply() override;
@@ -194,10 +203,20 @@ private:
 
     void selectionChanged();
     void setupPreset(const PlaylistPreset& preset);
+    void setupColumnLayout(const PlaylistColumnLayout& layout);
+    void populateColumnsMenu(QMenu* menu);
+
+    void captureCurrentLayout();
+    void updatePreview();
+
+    [[nodiscard]] PlaylistPreset editedPreset() const;
+    [[nodiscard]] PlaylistWidget* currentPlaylistWidget() const;
 
     void clearBlocks();
 
     PresetRegistry* m_presetRegistry;
+    PlaylistController* m_controller;
+    EditableLayout* m_editableLayout;
     SettingsManager* m_settings;
 
     QComboBox* m_presetBox;
@@ -220,6 +239,12 @@ private:
 
     QCheckBox* m_showCover;
 
+    QCheckBox* m_includeColumns;
+    QWidget* m_columnOptions;
+    QCheckBox* m_singleMode;
+    PlaylistWidget* m_preview;
+    QLabel* m_presetUsage;
+
     QPushButton* m_newPreset;
     QPushButton* m_renamePreset;
     QPushButton* m_deletePreset;
@@ -227,8 +252,12 @@ private:
     QPushButton* m_clonePreset;
 };
 
-PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegistry, SettingsManager* settings)
-    : m_presetRegistry{presetRegistry}
+PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PlaylistController* controller, EditableLayout* editableLayout,
+                                                     SettingsManager* settings,
+                                                     const std::function<PlaylistWidget*(QWidget*)>& createPreview)
+    : m_presetRegistry{controller->presetRegistry()}
+    , m_controller{controller}
+    , m_editableLayout{editableLayout}
     , m_settings{settings}
     , m_presetBox{new QComboBox(this)}
     , m_presetTabs{new QTabWidget(this)}
@@ -244,6 +273,11 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     , m_overrideTrackHeight{new QCheckBox(tr("Override height") + u":"_s, this)}
     , m_trackRowHeight{new QSpinBox(this)}
     , m_showCover{new QCheckBox(tr("Show cover"), this)}
+    , m_includeColumns{new QCheckBox(tr("Include column layout"), this)}
+    , m_columnOptions{new QWidget(this)}
+    , m_singleMode{new QCheckBox(tr("Single-column mode"), this)}
+    , m_preview{createPreview(this)}
+    , m_presetUsage{new QLabel(this)}
     , m_newPreset{new QPushButton(tr("New"), this)}
     , m_renamePreset{new QPushButton(tr("Rename"), this)}
     , m_deletePreset{new QPushButton(tr("Delete"), this)}
@@ -335,6 +369,8 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     m_trackRowHeight->setMinimum(20);
     m_trackRowHeight->setMaximum(150);
 
+    auto* trackHelp = new QLabel(u"🛈 "_s + tr("The display script only applies in single-column mode."), this);
+    trackHelp->setWordWrap(true);
     auto* alignmentHelp = new QLabel(u"🛈 "_s + tr("Use <code>&lt;right&gt;</code> for right-aligned text."), this);
     alignmentHelp->setWordWrap(true);
 
@@ -343,12 +379,67 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     trackLayout->addWidget(m_trackRowHeight, row++, 1);
     trackLayout->addWidget(new QLabel(tr("Display script") + u":"_s, this), row++, 0);
     trackLayout->addWidget(m_trackText, row++, 0, 1, 3);
+    trackLayout->addWidget(trackHelp, row++, 0, 1, 3);
     trackLayout->addWidget(alignmentHelp, row++, 0, 1, 3);
-
     trackLayout->setColumnStretch(2, 1);
     trackLayout->setRowStretch(2, 1);
 
     m_presetTabs->addTab(tracksWidget, tr("Tracks"));
+
+    auto* columnsHelp
+        = new QLabel(u"🛈 "_s + tr("When disabled, applying this preset keeps the existing column layout."), this);
+    columnsHelp->setWordWrap(true);
+
+    auto* previewHelp = new QLabel(u"🛈 "_s
+                                       + tr("Drag column headers to reorder or resize them. Right-click a header for "
+                                            "visibility and alignment options."),
+                                   this);
+    previewHelp->setWordWrap(true);
+
+    m_preview->setTracks(TrackGenerator::generateTracks({.albumCount = 1}));
+    m_preview->setMinimumHeight(180);
+
+    auto* optionsLayout = new QVBoxLayout(m_columnOptions);
+    optionsLayout->setContentsMargins({});
+    optionsLayout->addWidget(m_singleMode);
+    optionsLayout->addWidget(m_preview);
+    optionsLayout->addWidget(previewHelp);
+
+    auto* captureColumns = new QPushButton(tr("Use current playlist layout"), this);
+
+    auto* chooseColumns = new QPushButton(tr("Columns"), this);
+    auto* columnsMenu   = new QMenu(chooseColumns);
+    chooseColumns->setMenu(columnsMenu);
+
+    auto* columnButtons = new QHBoxLayout();
+    columnButtons->addWidget(chooseColumns);
+    columnButtons->addWidget(captureColumns);
+    columnButtons->addWidget(m_presetUsage);
+    columnButtons->addStretch();
+
+    auto* columnsWidget = new QWidget(this);
+    auto* columnsLayout = new QVBoxLayout(columnsWidget);
+    columnsLayout->addWidget(m_includeColumns);
+    columnsLayout->addWidget(columnsHelp);
+    columnsLayout->addWidget(m_columnOptions);
+    columnsLayout->addLayout(columnButtons);
+
+    m_presetTabs->addTab(columnsWidget, tr("Columns"));
+
+    QObject::connect(m_singleMode, &QCheckBox::toggled, m_preview, &PlaylistWidget::setSingleMode);
+    QObject::connect(m_preview, &PlaylistWidget::singleModeChanged, this, [this](bool enabled) {
+        const QSignalBlocker blocker{m_singleMode};
+        m_singleMode->setChecked(enabled);
+    });
+    QObject::connect(captureColumns, &QPushButton::clicked, this, &PlaylistPresetsPageWidget::captureCurrentLayout);
+    const int columnsTab = m_presetTabs->indexOf(columnsWidget);
+    QObject::connect(m_presetTabs, &QTabWidget::currentChanged, this, [this, columnsTab](int index) {
+        if(index == columnsTab) {
+            updatePreview();
+        }
+    });
+    QObject::connect(columnsMenu, &QMenu::aboutToShow, this,
+                     [this, columnsMenu]() { populateColumnsMenu(columnsMenu); });
 
     QObject::connect(m_presetBox, &QComboBox::currentIndexChanged, this, &PlaylistPresetsPageWidget::selectionChanged);
 
@@ -362,6 +453,8 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     QObject::connect(m_showCover, &QCheckBox::toggled, m_headerArtworkPaddingVertical, &QSpinBox::setEnabled);
     QObject::connect(m_overrideHeaderHeight, &QCheckBox::toggled, m_headerRowHeight, &QSpinBox::setEnabled);
     QObject::connect(m_overrideTrackHeight, &QCheckBox::toggled, m_trackRowHeight, &QSpinBox::setEnabled);
+
+    m_preview->finalise();
 }
 
 void PlaylistPresetsPageWidget::load()
@@ -375,7 +468,10 @@ void PlaylistPresetsPageWidget::load()
         m_presetBox->insertItem(preset.index, preset.name, preset.id);
     }
 
-    const int currentPresetId = m_settings->fileValue(Settings::Gui::Internal::PlaylistCurrentPreset).toInt();
+    const auto* playlist      = currentPlaylistWidget();
+    const int currentPresetId = playlist
+                                  ? playlist->layoutState().currentPreset.id
+                                  : m_settings->fileValue(Settings::Gui::Internal::PlaylistCurrentPreset).toInt();
     const int currentIndex    = m_presetBox->findData(currentPresetId);
     if(currentIndex >= 0) {
         m_presetBox->setCurrentIndex(currentIndex);
@@ -448,30 +544,10 @@ void PlaylistPresetsPageWidget::deletePreset()
 
 void PlaylistPresetsPageWidget::updatePreset()
 {
-    const int presetId   = m_presetBox->currentData().toInt();
-    const auto regPreset = m_presetRegistry->itemById(presetId);
-    if(!regPreset) {
-        return;
+    const auto preset = editedPreset();
+    if(preset.isValid()) {
+        m_presetRegistry->changeItem(preset);
     }
-
-    auto preset = regPreset.value();
-
-    preset.header.grouping    = m_headerGrouping->text();
-    preset.header.text.script = m_headerText->text();
-
-    preset.header.rowHeight              = m_overrideHeaderHeight->isChecked() ? m_headerRowHeight->value() : 0;
-    preset.header.showCover              = m_showCover->isChecked();
-    preset.header.artworkPadding         = m_headerArtworkPadding->value();
-    preset.header.artworkPaddingVertical = m_headerArtworkPaddingVertical->value();
-
-    updateGroupTextBlocks(m_subHeaders->blocks(), preset.subHeaders);
-    preset.insetSubheadersToImageColumns = m_alignSubheadersToImageColumns->isChecked();
-    preset.showCoverBelowEverySubheader  = m_showCoverBelowEverySubheader->isChecked();
-
-    preset.track.text.script = m_trackText->text();
-    preset.track.rowHeight   = m_overrideTrackHeight->isChecked() ? m_trackRowHeight->value() : 0;
-
-    m_presetRegistry->changeItem(preset);
 }
 
 void PlaylistPresetsPageWidget::clonePreset()
@@ -508,6 +584,18 @@ void PlaylistPresetsPageWidget::selectionChanged()
 void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
 {
     m_deletePreset->setDisabled(preset.isDefault);
+    m_presetUsage->setText(tr("Used by %Ln playlist(s)", nullptr, m_controller->presetPlaylistCount(preset.id)));
+    m_includeColumns->setChecked(preset.columnLayout.has_value());
+
+    if(preset.columnLayout) {
+        setupColumnLayout(preset.columnLayout.value());
+    }
+    else if(const auto* playlist = currentPlaylistWidget()) {
+        setupColumnLayout(playlist->captureColumnLayout());
+    }
+    else {
+        setupColumnLayout({});
+    }
 
     m_headerGrouping->setText(preset.header.grouping);
     m_headerText->setText(preset.header.text.script);
@@ -538,21 +626,99 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
     m_overrideTrackHeight->setChecked(preset.track.rowHeight > 0);
     m_trackRowHeight->setValue(preset.track.rowHeight);
     m_trackRowHeight->setEnabled(m_overrideTrackHeight->isChecked());
+
+    updatePreview();
+}
+
+void PlaylistPresetsPageWidget::setupColumnLayout(const PlaylistColumnLayout& layout)
+{
+    const QSignalBlocker blocker{m_singleMode};
+    m_singleMode->setChecked(layout.singleMode);
+    m_preview->setColumnLayout(layout);
+}
+
+void PlaylistPresetsPageWidget::populateColumnsMenu(QMenu* menu)
+{
+    menu->clear();
+    m_preview->populateColumnsMenu(menu);
+    menu->addSeparator();
+    menu->addAction(tr("Reset columns to default"), m_preview, &PlaylistWidget::resetColumnsToDefault);
+}
+
+void PlaylistPresetsPageWidget::captureCurrentLayout()
+{
+    if(const auto* playlist = currentPlaylistWidget()) {
+        setupColumnLayout(playlist->captureColumnLayout());
+        m_includeColumns->setChecked(true);
+    }
+}
+
+void PlaylistPresetsPageWidget::updatePreview()
+{
+    auto preset = editedPreset();
+    if(!preset.isValid()) {
+        return;
+    }
+    preset.columnLayout = m_preview->captureColumnLayout();
+    m_preview->changePreset(preset);
+}
+
+PlaylistPreset PlaylistPresetsPageWidget::editedPreset() const
+{
+    const int presetId   = m_presetBox->currentData().toInt();
+    const auto regPreset = m_presetRegistry->itemById(presetId);
+    if(!regPreset) {
+        return {};
+    }
+
+    auto preset = regPreset.value();
+
+    preset.header.grouping    = m_headerGrouping->text();
+    preset.header.text.script = m_headerText->text();
+
+    preset.header.rowHeight              = m_overrideHeaderHeight->isChecked() ? m_headerRowHeight->value() : 0;
+    preset.header.showCover              = m_showCover->isChecked();
+    preset.header.artworkPadding         = m_headerArtworkPadding->value();
+    preset.header.artworkPaddingVertical = m_headerArtworkPaddingVertical->value();
+
+    updateGroupTextBlocks(m_subHeaders->blocks(), preset.subHeaders);
+    preset.insetSubheadersToImageColumns = m_alignSubheadersToImageColumns->isChecked();
+    preset.showCoverBelowEverySubheader  = m_showCoverBelowEverySubheader->isChecked();
+
+    preset.track.text.script = m_trackText->text();
+    preset.track.rowHeight   = m_overrideTrackHeight->isChecked() ? m_trackRowHeight->value() : 0;
+    preset.columnLayout
+        = m_includeColumns->isChecked() ? std::optional{m_preview->captureColumnLayout()} : std::nullopt;
+
+    return preset;
+}
+
+PlaylistWidget* PlaylistPresetsPageWidget::currentPlaylistWidget() const
+{
+    const auto playlists = m_editableLayout->findWidgetsByType<PlaylistWidget>();
+    // Only one playlist widget is allowed for now
+    // TODO: Revisit this if we support multiple in the future
+    return playlists.empty() ? nullptr : playlists.front();
 }
 
 void PlaylistPresetsPageWidget::clearBlocks()
 {
     m_subHeaders->clearBlocks();
 }
+
 } // namespace
 
-PlaylistPresetsPage::PlaylistPresetsPage(PresetRegistry* presetRegistry, SettingsManager* settings, QObject* parent)
+PlaylistPresetsPage::PlaylistPresetsPage(PlaylistController* controller, EditableLayout* editableLayout,
+                                         SettingsManager* settings,
+                                         std::function<PlaylistWidget*(QWidget*)> createPreview, QObject* parent)
     : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::PlaylistPresets);
     setName(tr("Presets"));
     setCategory({tr("Playlist"), tr("Presets")});
-    setWidgetCreator([presetRegistry, settings] { return new PlaylistPresetsPageWidget(presetRegistry, settings); });
+    setWidgetCreator([controller, editableLayout, settings, createPreview = std::move(createPreview)] {
+        return new PlaylistPresetsPageWidget(controller, editableLayout, settings, createPreview);
+    });
 }
 } // namespace Fooyin
 

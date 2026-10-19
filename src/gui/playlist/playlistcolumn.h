@@ -22,7 +22,24 @@
 #include <QDataStream>
 #include <QString>
 
+#include <array>
+
 namespace Fooyin {
+struct DefaultPlaylistColumn
+{
+    int id;
+    Qt::Alignment alignment;
+    double width;
+};
+
+constexpr std::array DefaultPlaylistColumns{
+    DefaultPlaylistColumn{.id = 8, .alignment = Qt::AlignCenter, .width = 0.06},
+    DefaultPlaylistColumn{.id = 3, .alignment = Qt::AlignLeft, .width = 0.38},
+    DefaultPlaylistColumn{.id = 0, .alignment = Qt::AlignRight, .width = 0.08},
+    DefaultPlaylistColumn{.id = 1, .alignment = Qt::AlignLeft, .width = 0.38},
+    DefaultPlaylistColumn{.id = 7, .alignment = Qt::AlignRight, .width = 0.10},
+};
+
 struct PlaylistColumn
 {
     static constexpr qint32 Magic   = -0x50434F4C;

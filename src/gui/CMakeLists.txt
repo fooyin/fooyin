@@ -601,6 +601,8 @@ set(SOURCES
     theme/fytheme.cpp
     theme/fythemefile.cpp
     theme/themeregistry.cpp
+    trackgenerator.cpp
+    trackgenerator.h
     trackmimedata.cpp
     trackselectioncontroller.cpp
     toolbarmanager.cpp

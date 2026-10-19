@@ -21,6 +21,7 @@
 
 #include "dialog/autoplaylistdialog.h"
 #include "playlist/playlistcontroller.h"
+#include "playlist/presetregistry.h"
 #include "playlistorganiserconfigwidget.h"
 #include "playlistorganiserdelegate.h"
 #include "playlistorganisermodel.h"
@@ -54,6 +55,7 @@
 
 #include <algorithm>
 #include <ranges>
+#include <set>
 #include <stack>
 
 using namespace Qt::StringLiterals;
@@ -507,6 +509,35 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(m_sortGroupPlaylistsCmd->action());
     m_sortGroupPlaylists->setEnabled(groupCount == 1 && playlistCount == 0); // only enable if a group is selected
 
+    std::set<UId> presetPlaylists;
+    std::vector<QModelIndex> pendingIndexes{actionRows.begin(), actionRows.end()};
+    while(!pendingIndexes.empty()) {
+        const auto selected = pendingIndexes.back();
+        pendingIndexes.pop_back();
+
+        if(auto* playlist = selected.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>()) {
+            presetPlaylists.emplace(playlist->id());
+        }
+        else {
+            for(int row{0}; row < m_model->rowCount(selected); ++row) {
+                pendingIndexes.emplace_back(m_model->index(row, 0, selected));
+            }
+        }
+    }
+
+    if(!presetPlaylists.empty()) {
+        auto* presetsMenu
+            = menu->addMenu(groupCount > 0 ? tr("Apply preset to playlists in group") : tr("Apply preset"));
+        for(const auto& preset : m_playlistInteractor->playlistController()->presetRegistry()->items()) {
+            auto* action = presetsMenu->addAction(preset.name);
+            QObject::connect(
+                action, &QAction::triggered, this,
+                [this, presetId = preset.id, ids = std::vector<UId>{presetPlaylists.begin(), presetPlaylists.end()}]() {
+                    m_playlistInteractor->playlistController()->applyPresetToPlaylists(presetId, ids);
+                });
+        }
+    }
+
     menu->addSeparator();
     addConfigureAction(menu, false);
 
@@ -522,7 +553,7 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
 
     menu->addSeparator();
 
-    if(playlistCount == 1) {
+    if(playlistCount == 1 && groupCount == 0) {
         if(auto* playlist = actionIndex().data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>()) {
             if(playlist->isAutoPlaylist()) {
                 menu->addAction(m_editAutoPlaylistCmd->action());
@@ -563,7 +594,7 @@ QModelIndex PlaylistOrganiser::actionIndex() const
 
 QModelIndexList PlaylistOrganiser::actionIndexes() const
 {
-    if(m_contextMenuIndex.isValid()) {
+    if(m_contextMenuIndex.isValid() && !m_organiserTree->selectionModel()->isSelected(m_contextMenuIndex)) {
         return {m_contextMenuIndex};
     }
 

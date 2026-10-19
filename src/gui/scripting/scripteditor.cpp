@@ -23,6 +23,7 @@
 #include "scripteditortextedit.h"
 #include "scripthighlighter.h"
 #include "scriptreferenceentries.h"
+#include "trackgenerator.h"
 
 #include <core/coresettings.h>
 #include <core/library/librarymanager.h>
@@ -347,45 +348,18 @@ void ScriptEditorPrivate::setupConnections()
 void ScriptEditorPrivate::setupPlaceholder()
 {
     QString basePath = QDir::homePath() + "/Music"_L1;
+    int libraryId{-1};
     if(m_libraryManager && m_libraryManager->hasLibrary()) {
         const auto& libraries = m_libraryManager->allLibraries();
         if(!libraries.empty()) {
             const auto& library = libraries.cbegin()->second;
-            m_placeholderTrack.setLibraryId(library.id);
-            basePath = library.path;
+            libraryId           = library.id;
+            basePath            = library.path;
         }
     }
 
-    m_placeholderTrack.setFilePath(
-        QDir{basePath}.filePath(u"The Static Hour/City After Midnight/04 - Signal Fires.flac"_s));
-    m_placeholderTrack.setTitle(u"Signal Fires"_s);
-    m_placeholderTrack.setAlbum(u"City After Midnight"_s);
-    m_placeholderTrack.setAlbumArtists({u"The Static Hour"_s});
-    m_placeholderTrack.setArtists({u"The Static Hour"_s, u"Mina Vale"_s});
-    m_placeholderTrack.setDate(u"2023-10-06"_s);
-    m_placeholderTrack.setTrackNumber(u"4"_s);
-    m_placeholderTrack.setTrackTotal(u"11"_s);
-    m_placeholderTrack.setDiscNumber(u"1"_s);
-    m_placeholderTrack.setDiscTotal(u"1"_s);
-    m_placeholderTrack.setGenres({u"Synthpop"_s, u"Indie Pop"_s});
-    m_placeholderTrack.setBitDepth(24);
-    m_placeholderTrack.setSampleRate(44100);
-    m_placeholderTrack.setBitrate(1012);
-    m_placeholderTrack.setChannels(2);
-    m_placeholderTrack.setCodec(u"FLAC"_s);
-    m_placeholderTrack.setTagTypes({u"XiphComment"_s});
-    m_placeholderTrack.setEncoding(u"Lossless"_s);
-    m_placeholderTrack.setComment(u"Single mix"_s);
-    m_placeholderTrack.setComposers({u"Ada Mercer"_s, u"Jon Keene"_s});
-    m_placeholderTrack.setPerformers({u"Ada Mercer"_s, u"Jon Keene"_s, u"Mina Vale"_s});
-    m_placeholderTrack.setRatingStars(4);
-    m_placeholderTrack.setPlayCount(27);
-    m_placeholderTrack.addExtraTag(u"LABEL"_s, u"Northline Records"_s);
-    m_placeholderTrack.addExtraTag(u"CATALOGNUMBER"_s, u"NLR-042"_s);
-    m_placeholderTrack.setCreatedTime(1696618800000);
-    m_placeholderTrack.setAddedTime(1696963320000);
-    m_placeholderTrack.setDuration(222000);
-    m_placeholderTrack.setFileSize(28700000);
+    m_placeholderTrack = TrackGenerator::generateTrack(basePath);
+    m_placeholderTrack.setLibraryId(libraryId);
 }
 
 void ScriptEditorPrivate::setupReference()

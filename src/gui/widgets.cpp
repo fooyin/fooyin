@@ -540,7 +540,13 @@ void Widgets::registerPages()
     new PlaylistGeneralPage(m_settings, this);
     new PlaylistSavingPage(m_core->playlistLoader()->supportedSaveExtensions(), m_settings, this);
     new PlaylistColumnPage(m_playlistController->columnRegistry(), m_settings, this);
-    new PlaylistPresetsPage(m_playlistController->presetRegistry(), m_settings, this);
+    new PlaylistPresetsPage(
+        m_playlistController, m_gui->editableLayout(), m_settings,
+        [this](QWidget* parent) {
+            return PlaylistWidget::createPreview(m_gui->actionManager(), m_playlistInteractor, m_gui->trackSelection(),
+                                                 m_coverProvider, m_core, m_styleProvider, parent);
+        },
+        this);
     new PluginPage(m_core->pluginManager(), m_pluginSettingsRegistry.get(), m_settings, this);
     new ShellIntegrationPage(m_settings, this);
     new ShortcutsPage(m_gui->actionManager(), m_settings, this);

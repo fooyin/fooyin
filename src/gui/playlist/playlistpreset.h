@@ -22,15 +22,42 @@
 #include <core/scripting/scriptparser.h>
 #include <gui/scripting/scriptformatter.h>
 
+#include <QByteArray>
 #include <QColor>
 #include <QDataStream>
 #include <QFont>
+#include <QJsonObject>
 #include <QString>
 
 #include <QList>
 #include <QVariant>
 
+#include <optional>
+#include <vector>
+
 namespace Fooyin {
+constexpr QLatin1StringView PlaylistLayoutProperty{"gui/playlist-layout"};
+
+struct PlaylistLayoutColumn
+{
+    int id{-1};
+    Qt::Alignment alignment{Qt::AlignLeft};
+
+    bool operator==(const PlaylistLayoutColumn& other) const = default;
+};
+
+struct PlaylistColumnLayout
+{
+    bool singleMode{false};
+    std::vector<PlaylistLayoutColumn> columns;
+    QByteArray headerState;
+
+    bool operator==(const PlaylistColumnLayout& other) const = default;
+
+    [[nodiscard]] QJsonObject toJson() const;
+    static PlaylistColumnLayout fromJson(const QJsonObject& object);
+};
+
 struct HeaderRow
 {
     QString grouping;
@@ -101,13 +128,14 @@ struct PlaylistPreset
     TrackRow track;
     bool insetSubheadersToImageColumns{false};
     bool showCoverBelowEverySubheader{false};
+    std::optional<PlaylistColumnLayout> columnLayout;
 
     bool operator==(const PlaylistPreset& other) const
     {
         return std::tie(id, index, name, header, subHeaders, track, insetSubheadersToImageColumns,
-                        showCoverBelowEverySubheader)
+                        showCoverBelowEverySubheader, columnLayout)
             == std::tie(other.id, other.index, other.name, other.header, other.subHeaders, other.track,
-                        other.insetSubheadersToImageColumns, other.showCoverBelowEverySubheader);
+                        other.insetSubheadersToImageColumns, other.showCoverBelowEverySubheader, other.columnLayout);
     };
 
     [[nodiscard]] bool isValid() const

@@ -21,6 +21,7 @@
 
 #include "dialog/autoplaylistdialog.h"
 #include "playlist/playlistcontroller.h"
+#include "playlist/presetregistry.h"
 #include "playlistmanagerdelegate.h"
 #include "playlistmanagermodel.h"
 
@@ -519,6 +520,17 @@ void PlaylistManagerWidget::showPlaylistContextMenu(const QPoint& pos)
         }
 
         menu->addAction(m_removeCmd->action());
+
+        menu->addSeparator();
+
+        auto* presetsMenu  = menu->addMenu(tr("Apply preset"));
+        const auto presets = m_playlistController->presetRegistry()->items();
+        for(const auto& preset : presets) {
+            auto* action = presetsMenu->addAction(preset.name);
+            QObject::connect(action, &QAction::triggered, this, [this, presetId = preset.id, id = playlist->id()]() {
+                m_playlistController->applyPresetToPlaylists(presetId, {id});
+            });
+        }
 
         menu->addSeparator();
     }

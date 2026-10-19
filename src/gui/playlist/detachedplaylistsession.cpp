@@ -310,4 +310,20 @@ bool DetachedTrackListSession::replaceTracks(PlaylistWidgetSessionHost& host, co
     host.resetModelThrottled();
     return tracksChanged;
 }
+
+std::unique_ptr<PlaylistWidgetSession> PlaylistWidgetSession::createPreview(const TrackList& tracks)
+{
+    return std::make_unique<PlaylistPreviewSession>(tracks);
+}
+
+PlaylistWidget::ModeCapabilities PlaylistPreviewSession::capabilities() const
+{
+    return {.preview = true};
+}
+
+void PlaylistPreviewSession::selectionChanged(PlaylistWidgetSessionHost& /*host*/) { }
+
+void PlaylistPreviewSession::startPlayback(PlaylistWidgetSessionHost& /*host*/) const { }
+
+void PlaylistPreviewSession::setupConnections(PlaylistWidgetSessionHost& /*host*/) { }
 } // namespace Fooyin

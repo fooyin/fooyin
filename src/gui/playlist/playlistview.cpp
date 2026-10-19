@@ -70,6 +70,7 @@ PlaylistView::PlaylistView(QWidget* parent)
     , m_stickyArtwork{false}
     , m_snappingScroll{false}
     , m_stickyHeaderPressed{false}
+    , m_trackStatsEditable{true}
     , m_starDelegate{new StarDelegate(this)}
     , m_ratingColumn{-1}
     , m_heartDelegate{new HeartDelegate(this)}
@@ -205,6 +206,18 @@ void PlaylistView::setLoveEditorOnlyOnHover(bool enabled)
 {
     m_heartDelegate->setShowEmptyOnlyOnActiveRow(enabled);
     viewport()->update();
+}
+
+void PlaylistView::setTrackStatsEditable(bool editable)
+{
+    if(std::exchange(m_trackStatsEditable, editable) == editable) {
+        return;
+    }
+
+    if(!editable) {
+        ratingHoverOut();
+        loveHoverOut();
+    }
 }
 
 void PlaylistView::setBackgroundConfig(const BackgroundConfig& config)
@@ -384,19 +397,19 @@ void PlaylistView::mousePressEvent(QMouseEvent* event)
         }
     }
 
-    if(editTriggers() & NoEditTriggers || event->button() != Qt::LeftButton) {
+    if(event->button() != Qt::LeftButton) {
         ExpandedTreeView::mousePressEvent(event);
         return;
     }
 
     const int column = index.column();
 
-    if(index.isValid() && column != m_ratingColumn && column != m_lovedColumn
+    if(editTriggers() != NoEditTriggers && index.isValid() && column != m_ratingColumn && column != m_lovedColumn
        && (index.flags() & Qt::ItemIsEditable) != 0 && selectionModel() && selectionModel()->isSelected(index)) {
         m_pressedSelectedIndex = index;
     }
 
-    if(!index.isValid() || (column != m_ratingColumn && column != m_lovedColumn)) {
+    if(!m_trackStatsEditable || !index.isValid() || (column != m_ratingColumn && column != m_lovedColumn)) {
         ExpandedTreeView::mousePressEvent(event);
         return;
     }
@@ -1143,7 +1156,7 @@ void PlaylistView::reopenEditor(const QModelIndex& index)
 
 void PlaylistView::ratingHoverIn(const QModelIndex& index, const QPoint& pos)
 {
-    if(editTriggers() & NoEditTriggers) {
+    if(!m_trackStatsEditable) {
         return;
     }
 
@@ -1164,10 +1177,6 @@ void PlaylistView::ratingHoverIn(const QModelIndex& index, const QPoint& pos)
 
 void PlaylistView::ratingHoverOut()
 {
-    if(editTriggers() & NoEditTriggers) {
-        return;
-    }
-
     const QModelIndex prevIndex = m_starDelegate->hoveredIndex();
     m_starDelegate->setHoverIndex({});
     setCursor({});
@@ -1184,7 +1193,7 @@ void PlaylistView::ratingHoverOut()
 
 void PlaylistView::loveHoverIn(const QModelIndex& index)
 {
-    if(editTriggers() & NoEditTriggers) {
+    if(!m_trackStatsEditable) {
         return;
     }
 
@@ -1205,10 +1214,6 @@ void PlaylistView::loveHoverIn(const QModelIndex& index)
 
 void PlaylistView::loveHoverOut()
 {
-    if(editTriggers() & NoEditTriggers) {
-        return;
-    }
-
     const QModelIndex prevIndex = m_heartDelegate->hoveredIndex();
     m_heartDelegate->setHoverIndex({});
     setCursor({});

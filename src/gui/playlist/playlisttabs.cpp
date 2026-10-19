@@ -22,6 +22,7 @@
 #include "dialog/autoplaylistdialog.h"
 #include "playlistcontroller.h"
 #include "playlisttabsconfigdialog.h"
+#include "presetregistry.h"
 
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
@@ -517,6 +518,17 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
                              [this, id](bool locked) { m_playlistHandler->setPlaylistLocked(id, locked); });
             menu->addAction(lockAction);
         }
+        menu->addSeparator();
+
+        auto* presetsMenu  = menu->addMenu(tr("Apply preset"));
+        const auto presets = m_playlistController->presetRegistry()->items();
+        for(const auto& preset : presets) {
+            auto* action = presetsMenu->addAction(preset.name);
+            QObject::connect(action, &QAction::triggered, this, [this, presetId = preset.id, id]() {
+                m_playlistController->applyPresetToPlaylists(presetId, {id});
+            });
+        }
+
         menu->addSeparator();
     }
 

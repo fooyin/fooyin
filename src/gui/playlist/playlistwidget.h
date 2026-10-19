@@ -105,6 +105,7 @@ public:
     {
         bool editablePlaylist{false};
         bool playlistBackedSelection{false};
+        bool preview{false};
     };
 
     struct ContextMenuState
@@ -142,6 +143,9 @@ public:
                                                 CoverProvider* coverProvider, Application* core,
                                                 GuiStyleProvider* styleProvider, const TrackList& tracks,
                                                 QWidget* parent = nullptr);
+    static PlaylistWidget* createPreview(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
+                                         TrackSelectionController* selectionController, CoverProvider* coverProvider,
+                                         Application* core, GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
 
     ~PlaylistWidget() override;
 
@@ -192,7 +196,13 @@ public:
     void clearDelayedStateLoad() override;
     void setDelayedStateLoad(QMetaObject::Connection connection) override;
 
+    void setColumnLayout(const PlaylistColumnLayout& layout);
+    void setSingleMode(bool enabled);
+    void populateColumnsMenu(QMenu* menu);
+    void resetColumnsToDefault();
+
     [[nodiscard]] const PlaylistWidgetLayoutState& layoutState() const override;
+    [[nodiscard]] PlaylistColumnLayout captureColumnLayout() const;
     [[nodiscard]] ActionManager* actionManager() const override;
     [[nodiscard]] PresetRegistry* presetRegistry() const override;
     [[nodiscard]] PlaylistController* playlistController() const override;
@@ -216,6 +226,7 @@ public:
 Q_SIGNALS:
     void configChanged();
     void headerMenuAboutToShow(QMenu* menu);
+    void singleModeChanged(bool enabled);
 
 protected:
     void openConfigDialog() override;
@@ -235,20 +246,24 @@ private:
     void updateSortActionState();
     void addClipboardMenu(QMenu* parent, bool hasSelection) const;
     void addSingleModeAction(QMenu* parent);
-    void addCustomLayoutAction(QMenu* parent);
     void addPresetMenu(QMenu* parent);
     void addColumnsMenu(QMenu* parent);
     void addSettingsAction(QMenu* menu);
+
+    void savePreset();
+    [[nodiscard]] PlaylistColumnLayout columnLayoutForState(const PlaylistWidgetLayoutState& state) const;
+    void applyColumnLayout(PlaylistWidgetLayoutState& state, const PlaylistColumnLayout& layout) const;
+
     void applySessionTexts();
     void refreshViewStyle();
     void updateMetadataEditTriggers(bool readOnly);
+
     void handleColumnChanged(const PlaylistColumn& column);
     void handleColumnRemoved(int id);
-    void resetColumnsToDefault();
     void setColumnVisible(int columnId, bool visible);
-    void setSingleMode(bool enabled);
     void ensureDefaultColumns(PlaylistWidgetLayoutState& state) const;
     void applyDefaultHeaderConfiguration();
+
     [[nodiscard]] PlaylistWidgetLayoutState captureLayoutState() const;
     [[nodiscard]] QString serialiseLayoutState(const PlaylistWidgetLayoutState& state) const;
     [[nodiscard]] std::optional<PlaylistWidgetLayoutState> deserialiseLayoutState(const QString& encoded) const;

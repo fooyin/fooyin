@@ -57,6 +57,7 @@ public:
     void setLovedColumn(int column);
     void setRatingEditorOnlyOnHover(bool enabled);
     void setLoveEditorOnlyOnHover(bool enabled);
+    void setTrackStatsEditable(bool editable);
     void setBackgroundConfig(const BackgroundConfig& config);
     void setBackgroundPixmap(const QPixmap& pixmap);
 
@@ -151,6 +152,7 @@ private:
     bool m_stickyHeaderPressed;
     mutable QRegion m_stickyArtworkRegion;
 
+    bool m_trackStatsEditable;
     StarDelegate* m_starDelegate;
     int m_ratingColumn;
     HeartDelegate* m_heartDelegate;
