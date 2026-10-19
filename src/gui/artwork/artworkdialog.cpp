@@ -105,16 +105,33 @@ ArtworkDialog::ArtworkDialog(std::shared_ptr<NetworkAccessManager> networkManage
                          });
     }
 
-    static const std::map<Track::Cover, QString> artworkOptions = {
-        {Track::Cover::Front, u"Front"_s} /*, {Track::Cover::Front, u"Back"_s}*/, {Track::Cover::Artist, u"Artist"_s}};
+    const std::map<Track::Cover, QString> artworkOptions
+        = {{Track::Cover::Front, tr("Front")}, {Track::Cover::Back, tr("Back")}, {Track::Cover::Artist, tr("Artist")}};
+
+    CoverTypes supportedTypes;
+    const auto sources = m_artworkFinder->sources();
+    for(const auto* source : sources) {
+        if(source->enabled()) {
+            const auto types = source->supportedTypes();
+            supportedTypes.insert(types.begin(), types.end());
+        }
+    }
 
     for(const auto& [option, title] : artworkOptions) {
-        m_searchType->addItem(title, QVariant::fromValue(option));
+        if(supportedTypes.contains(option)) {
+            m_searchType->addItem(title, QVariant::fromValue(option));
+        }
     }
 
-    if(artworkOptions.contains(m_type)) {
-        m_searchType->setCurrentText(artworkOptions.at(m_type));
+    if(const int index = m_searchType->findData(QVariant::fromValue(m_type)); index >= 0) {
+        m_searchType->setCurrentIndex(index);
     }
+    if(m_searchType->count() > 0) {
+        m_type = m_searchType->currentData().value<Track::Cover>();
+    }
+
+    m_searchType->setEnabled(m_searchType->count() > 0);
+    m_startSearch->setEnabled(m_searchType->count() > 0);
 
     auto* paramsLayout = new QGridLayout();
 
@@ -202,6 +219,11 @@ void ArtworkDialog::keyPressEvent(QKeyEvent* event)
 
 void ArtworkDialog::searchArtwork()
 {
+    if(m_searchType->currentIndex() < 0) {
+        m_status->setText(tr("No artwork sources enabled"));
+        return;
+    }
+
     const Track& track = m_tracks.front();
 
     const QString artist = m_artist->text();
@@ -210,8 +232,8 @@ void ArtworkDialog::searchArtwork()
 
     m_model->clear();
 
-    m_artworkFinder->findArtwork(m_type, artist, album, title);
     m_status->setText(tr("Searching…"));
+    m_artworkFinder->findArtwork(m_type, artist, album, title);
 }
 
 void ArtworkDialog::searchFinished()
