@@ -37,6 +37,7 @@ public:
 private:
     void handleSearchReply();
 
+    Track::Cover m_type{Track::Cover::Front};
     QString m_queryType;
 };
 } // namespace Fooyin

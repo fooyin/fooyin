@@ -51,8 +51,10 @@ void DeezerArtwork::search(const SearchParams& params)
         return;
     }
 
+    m_type = params.type;
+
     QString searchQuery{params.artist};
-    if(params.type == Track::Cover::Artist) {
+    if(m_type == Track::Cover::Artist && params.album.isEmpty()) {
         m_queryType = u"artist"_s;
     }
     else {
@@ -114,9 +116,14 @@ void DeezerArtwork::handleSearchReply()
         QString album;
         QString imageUrl;
 
-        if(m_queryType == "artist"_L1) {
-            artist   = resultObj.value("name"_L1).toString();
-            imageUrl = resultObj.value("picture_xl"_L1).toString();
+        if(m_type == Track::Cover::Artist) {
+            const QJsonObject artistObj
+                = m_queryType == "artist"_L1 ? resultObj : resultObj.value("artist"_L1).toObject();
+            artist   = artistObj.value("name"_L1).toString();
+            imageUrl = artistObj.value("picture_xl"_L1).toString();
+            if(m_queryType == "album"_L1) {
+                album = resultObj.value("title"_L1).toString();
+            }
         }
         else {
             const QJsonObject albumObj = m_queryType == "track"_L1 ? resultObj.value("album"_L1).toObject() : resultObj;
