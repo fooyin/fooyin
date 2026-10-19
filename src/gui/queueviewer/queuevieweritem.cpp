@@ -54,16 +54,24 @@ PlaybackQueueItemId QueueViewerItem::queueItemId() const
     return m_queueItemId;
 }
 
-void QueueViewerItem::generateTitle(ScriptParser* parser, ScriptFormatter* formatter, const QString& displayScript,
+bool QueueViewerItem::generateTitle(ScriptParser* parser, ScriptFormatter* formatter, const QString& displayScript,
                                     const ScriptContext& context, const ScriptEvaluationOptions& options)
 {
     if(!parser || !formatter) {
-        return;
+        return false;
     }
 
-    const auto text  = formatter->evaluate(parser->evaluate(displayScript, m_track.track, context, options));
-    m_title          = text.joinedText();
-    m_richTitle      = trimRichText(richTextForAlignment(text, RichAlignment::Left));
-    m_rightRichTitle = trimRichText(richTextForAlignment(text, RichAlignment::Right));
+    const auto text     = formatter->evaluate(parser->evaluate(displayScript, m_track.track, context, options));
+    const auto title    = text.joinedText();
+    auto richTitle      = trimRichText(richTextForAlignment(text, RichAlignment::Left));
+    auto rightRichTitle = trimRichText(richTextForAlignment(text, RichAlignment::Right));
+    if(m_title == title && m_richTitle == richTitle && m_rightRichTitle == rightRichTitle) {
+        return false;
+    }
+
+    m_title          = title;
+    m_richTitle      = std::move(richTitle);
+    m_rightRichTitle = std::move(rightRichTitle);
+    return true;
 }
 } // namespace Fooyin

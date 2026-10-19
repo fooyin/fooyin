@@ -272,12 +272,6 @@ void DetachedTrackListSession::setupConnections(PlaylistWidgetSessionHost& host)
         player, &PlayerController::trackChangeRequested, model,
         [updatePlayingTrack](const Player::TrackChangeRequest& request) { updatePlayingTrack(request.track); });
     QObject::connect(player, &PlayerController::playStateChanged, model, &PlaylistModel::playStateChanged);
-    QObject::connect(player, &PlayerController::positionChangedSeconds, model,
-                     &PlaylistModel::refreshPlayingTrackPositionData);
-    QObject::connect(player, &PlayerController::positionMoved, model, &PlaylistModel::refreshPlayingTrackPositionData);
-    QObject::connect(player, &PlayerController::bitrateChanged, model, &PlaylistModel::refreshPlayingTrackBitrateData);
-    QObject::connect(player, &PlayerController::playbackOutputInfoChanged, model,
-                     &PlaylistModel::refreshPlayingTrackOutputData);
 }
 
 PlaylistTrack DetachedTrackListSession::playingTrackForView(const PlaylistTrack& track) const

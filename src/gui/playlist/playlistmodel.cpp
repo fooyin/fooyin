@@ -120,10 +120,6 @@ QList<int> playlistTrackChangedRoles()
 
 Data mergeUpdatedItemData(const Data& currentData, const Data& updatedData, const std::set<int>& columnsUpdated)
 {
-    if(columnsUpdated.empty()) {
-        return updatedData;
-    }
-
     const auto* currentTrack = std::get_if<PlaylistTrackItem>(&currentData);
     const auto* updatedTrack = std::get_if<PlaylistTrackItem>(&updatedData);
     if(!currentTrack || !updatedTrack) {
@@ -137,7 +133,7 @@ Data mergeUpdatedItemData(const Data& currentData, const Data& updatedData, cons
     mergedTrack.setRowHeight(updatedTrack->rowHeight());
     mergedTrack.setDepth(updatedTrack->depth());
 
-    if(!currentTrack->columns().empty() && !updatedTrack->columns().empty()) {
+    if(!columnsUpdated.empty() && !currentTrack->columns().empty() && !updatedTrack->columns().empty()) {
         auto mergedColumns = currentTrack->columns();
         for(const int column : columnsUpdated) {
             if(column >= 0 && std::cmp_less(column, mergedColumns.size())
@@ -148,10 +144,23 @@ Data mergeUpdatedItemData(const Data& currentData, const Data& updatedData, cons
         mergedTrack.setColumns(mergedColumns);
     }
     else {
+        mergedTrack.setColumns(updatedTrack->columns());
         mergedTrack.setLeftRight(updatedTrack->left(), updatedTrack->right());
     }
 
     return mergedTrack;
+}
+
+bool sameItemData(const Data& currentData, const Data& updatedData)
+{
+    if(const auto* currentTrack = std::get_if<PlaylistTrackItem>(&currentData)) {
+        const auto* updatedTrack = std::get_if<PlaylistTrackItem>(&updatedData);
+        return updatedTrack && currentTrack->sameDataAs(*updatedTrack);
+    }
+
+    const auto* currentHeader = std::get_if<PlaylistContainerItem>(&currentData);
+    const auto* updatedHeader = std::get_if<PlaylistContainerItem>(&updatedData);
+    return currentHeader && updatedHeader && currentHeader->sameDataAs(*updatedHeader);
 }
 
 bool isEditablePlaylistColumn(const PlaylistColumn& column)
@@ -605,78 +614,6 @@ TrackList collectHeaderTracks(PlaylistItem* header)
     return tracks;
 }
 
-PlaylistModel::PlaybackDependency dependencyForVariable(const QString& variable)
-{
-    using namespace Constants;
-    using Dependency = PlaylistModel::PlaybackDependency;
-
-    if(variable.compare(u"PLAYBACK_TIME"_s, Qt::CaseInsensitive) == 0
-       || variable.compare(u"PLAYBACK_TIME_S"_s, Qt::CaseInsensitive) == 0
-       || variable.compare(u"PLAYBACK_TIME_SECONDS"_s, Qt::CaseInsensitive) == 0
-       || variable.compare(u"PLAYBACK_TIME_REMAINING"_s, Qt::CaseInsensitive) == 0
-       || variable.compare(u"PLAYBACK_TIME_REMAINING_S"_s, Qt::CaseInsensitive) == 0
-       || variable.compare(u"PLAYBACK_TIME_REMAINING_SECONDS"_s, Qt::CaseInsensitive) == 0) {
-        return Dependency::Position;
-    }
-    if(variable.compare(QLatin1String{MetaData::Bitrate}, Qt::CaseInsensitive) == 0) {
-        return Dependency::Bitrate;
-    }
-    if(variable.compare(u"ISPLAYING"_s, Qt::CaseInsensitive) == 0
-       || variable.compare(u"ISPAUSED"_s, Qt::CaseInsensitive) == 0
-       || variable.compare(u"ISSTOPPED"_s, Qt::CaseInsensitive) == 0
-       || variable.compare(u"INPUT_DECODER"_s, Qt::CaseInsensitive) == 0
-       || variable.compare(u"PLAYINGICON"_s, Qt::CaseInsensitive) == 0
-       || variable.startsWith(u"OUTPUT_"_s, Qt::CaseInsensitive)) {
-        return Dependency::PlaybackState;
-    }
-
-    return Dependency::None;
-}
-
-PlaylistModel::PlaybackDependencies dependenciesForExpression(const Expression& expression)
-{
-    using namespace Fooyin;
-    using Dependencies = PlaylistModel::PlaybackDependencies;
-
-    Dependencies dependencies{PlaylistModel::None};
-
-    if((expression.type == Expr::Variable || expression.type == Expr::VariableList
-        || expression.type == Expr::VariableRaw)
-       && std::holds_alternative<QString>(expression.value)) {
-        dependencies |= dependencyForVariable(std::get<QString>(expression.value));
-    }
-
-    if(const auto* function = std::get_if<FuncValue>(&expression.value)) {
-        for(const auto& arg : function->args) {
-            dependencies |= dependenciesForExpression(arg);
-        }
-    }
-    else if(const auto* children = std::get_if<ExpressionList>(&expression.value)) {
-        for(const auto& child : *children) {
-            dependencies |= dependenciesForExpression(child);
-        }
-    }
-
-    return dependencies;
-}
-
-PlaylistModel::PlaybackDependencies dependenciesForScript(const ParsedScript& script)
-{
-    using Dependencies = PlaylistModel::PlaybackDependencies;
-
-    Dependencies dependencies{PlaylistModel::None};
-    for(const auto& expression : script.expressions) {
-        dependencies |= dependenciesForExpression(expression);
-    }
-
-    return dependencies;
-}
-
-void mergeColumnSets(std::set<int>& target, const std::set<int>& source)
-{
-    target.insert(source.cbegin(), source.cend());
-}
-
 QColor defaultPlayingRowColour()
 {
     QColor colour = QApplication::palette().color(QPalette::Inactive, QPalette::Highlight);
@@ -702,11 +639,12 @@ QColor disabledRowColor()
 
 PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader* audioLoader,
                              CoverProvider* coverProvider, SettingsManager* settings, GuiStyleProvider* styleProvider,
-                             QObject* parent)
+                             ScriptContextService* scriptContext, QObject* parent)
     : TreeModel{parent}
     , m_audioLoader{audioLoader}
     , m_library{playlistInteractor->library()}
     , m_playerController{playlistInteractor->playerController()}
+    , m_scriptContext{scriptContext}
     , m_settings{settings}
     , m_styleProvider{styleProvider}
     , m_coverProvider{coverProvider}
@@ -726,9 +664,7 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     , m_unratedStarColour{Gui::unratedStarColour(*settings)}
     , m_loveHeartColour{Gui::loveHeartColour(*settings)}
     , m_unlovedHeartColour{Gui::unlovedHeartColour(*settings)}
-    , m_singleColumnHasPositionDependency{false}
-    , m_singleColumnHasBitrateDependency{false}
-    , m_singleColumnHasPlaybackStateDependency{false}
+    , m_scriptSubscription{m_scriptContext->subscribe(this)}
     , m_currentPlaylist{nullptr}
     , m_matchPlayingTrackByIdentity{false}
     , m_currentPlayState{Player::PlayState::Stopped}
@@ -795,31 +731,106 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
 
         if(m_currentPlaylist && m_playingTrack.playlistId == m_currentPlaylist->id()
            && m_playingTrack.indexInPlaylist >= 0) {
-            refreshTracksForDependencies({m_playingTrack.indexInPlaylist}, All);
+            refreshPlaybackRows({m_playingTrack.indexInPlaylist});
         }
+
         if(loadingTextVisible) {
             Q_EMIT loadingStateChanged();
         }
         Q_EMIT playlistLoaded();
+
+        const auto changes = std::exchange(m_pendingScriptChanges, {});
+        if(!changes.empty()) {
+            refreshScriptData(changes);
+        }
     });
+
+    QObject::connect(m_scriptSubscription, &ScriptSubscription::changed, this, &PlaylistModel::refreshScriptData);
 
     QObject::connect(&m_populator, &PlaylistPopulator::populated, this,
                      [this](PendingDataPtr data) { populateModel(std::move(*data)); });
     QObject::connect(&m_populator, &PlaylistPopulator::populatedTrackGroup, this,
                      [this](PendingDataPtr data) { populateTrackGroup(std::move(*data)); });
-    QObject::connect(&m_populator, &PlaylistPopulator::headersUpdated, this,
-                     [this](uint64_t generation, const ItemKeyMap& data) {
-                         if(generation == m_populationGeneration) {
-                             updateModel(data);
-                         }
-                     });
+    QObject::connect(
+        &m_populator, &PlaylistPopulator::headersUpdated, this,
+        [this](uint64_t generation, const ScriptContextData& context, const ItemKeyMap& data) {
+            if(generation != m_populationGeneration) {
+                return;
+            }
 
-    QObject::connect(&m_populator, &PlaylistPopulator::tracksUpdated, this,
-                     [this](uint64_t generation, const ItemList& data, const std::set<int>& columnsUpdated) {
-                         if(generation == m_populationGeneration) {
-                             updateTracks(data, columnsUpdated);
-                         }
-                     });
+            ItemKeyMap current;
+            HeaderUpdateList stale;
+            for(const auto& [key, item] : data) {
+                if(!m_nodes.contains(key)) {
+                    continue;
+                }
+
+                const auto& header     = std::get<PlaylistContainerItem>(item.data());
+                const auto scriptIndex = item.type() == PlaylistItem::Header ? 0 : header.scriptIndex() + 1;
+                if(scriptIndex < 0 || std::cmp_greater_equal(scriptIndex, m_headerDependencies.size())) {
+                    continue;
+                }
+
+                if(m_scriptContext->isCurrent(context, m_headerDependencies[scriptIndex],
+                                              collectHeaderTracks(&m_nodes.at(key)))) {
+                    current.emplace(key, item);
+                }
+                else {
+                    auto& node = m_nodes.at(key);
+                    stale.push_back({node, collectHeaderTracks(&node)});
+                }
+            }
+
+            updateModel(current);
+            if(!stale.empty()) {
+                QMetaObject::invokeMethod(&m_populator, [populator = &m_populator, request = populationRequest(),
+                                                         stale] { populator->updateHeaders(request, stale); });
+            }
+        });
+
+    QObject::connect(
+        &m_populator, &PlaylistPopulator::tracksUpdated, this,
+        [this](uint64_t generation, const ScriptContextData& context, const ItemList& data,
+               const std::set<int>& columnsUpdated) {
+            if(generation != m_populationGeneration) {
+                return;
+            }
+
+            const auto columns = columnsUpdated.empty() ? std::set<int>{0} : columnsUpdated;
+            std::map<std::set<int>, ItemList> updates;
+            std::map<std::set<int>, std::vector<int>> retries;
+            for(const auto& item : data) {
+                const auto& track = std::get<PlaylistTrackItem>(item.data()).track();
+                std::set<int> current;
+                std::set<int> stale;
+                for(const int column : columns) {
+                    if(column < 0 || std::cmp_greater_equal(column, m_columnDependencies.size())) {
+                        continue;
+                    }
+
+                    if(m_scriptContext->isCurrent(context, m_columnDependencies[column], std::span{&track.track, 1})) {
+                        current.insert(column);
+                    }
+                    else {
+                        stale.insert(column);
+                    }
+                }
+
+                if(!current.empty()) {
+                    updates[current].push_back(item);
+                }
+                if(!stale.empty()) {
+                    retries[stale].push_back(track.indexInPlaylist);
+                }
+            }
+
+            for(const auto& [fields, items] : updates) {
+                updateTracks(items, m_columns.empty() ? std::set<int>{} : fields);
+            }
+            for(const auto& [fields, rows] : retries) {
+                refreshTracks(rows, m_columns.empty() ? std::set<int>{} : fields);
+            }
+        });
 
     QObject::connect(playlistInteractor->handler(), &PlaylistHandler::playlistRenamed, this,
                      [this](Playlist* playlist) {
@@ -1448,11 +1459,10 @@ void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList
         m_currentPreset = preset;
     }
 
-    m_columns       = columns;
-    m_pixmapColumns = pixmapColumns();
-    updateLivePlaybackDependencies();
-
+    m_columns         = columns;
+    m_pixmapColumns   = pixmapColumns();
     m_currentPlaylist = playlist;
+    updateScriptDependencies();
     updateHeader(playlist);
 
     reset(tracks);
@@ -1488,7 +1498,7 @@ void PlaylistModel::stopAfterTrack(const QModelIndex& index)
     const bool stopAfterCurrent = index.siblingAtColumn(0) == m_playingIndex;
     m_settings->set<Settings::Core::StopAfterCurrent>(stopAfterCurrent && m_stopAtIndex.isValid());
 
-    refreshTracksForDependency({previousStopIndex, index.data(PlaylistItem::Index).toInt()}, PlaybackState);
+    refreshPlaybackRows({previousStopIndex, index.data(PlaylistItem::Index).toInt()});
 }
 
 TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index) const
@@ -1641,7 +1651,7 @@ void PlaylistModel::refreshTracks(const std::vector<int>& indexes, const std::se
 
     for(const int index : indexes) {
         const auto& [modelIndex, end] = trackIndexAtPlaylistIndex(index);
-        if(!end) {
+        if(!end && modelIndex.isValid()) {
             auto displayTrack = m_currentPlaylist ? m_currentPlaylist->playlistTrack(index)
                                                   : std::optional{persistentTrackForIndex(modelIndex)};
             if(!displayTrack) {
@@ -1778,7 +1788,7 @@ bool PlaylistModel::removeColumn(int column)
         m_columnSizes.erase(m_columnSizes.cbegin() + column);
     }
     resetColumnAlignment(column);
-    updateLivePlaybackDependencies();
+    updateScriptDependencies();
 
     for(auto& node : m_nodes | std::views::values) {
         node.removeColumn(column);
@@ -1876,7 +1886,7 @@ void PlaylistModel::tracksChanged()
         indexesToRefresh.push_back(m_stopAtTrack.indexInPlaylist);
     }
 
-    refreshTracksForDependencies(indexesToRefresh, All);
+    refreshPlaybackRows(indexesToRefresh);
 }
 
 void PlaylistModel::invalidateData()
@@ -1923,25 +1933,10 @@ void PlaylistModel::playStateChanged(Player::PlayState state)
         }
     }
 
-    refreshPlayingTrackForDependency(PlaybackState);
+    refreshPlaybackRows({m_playingTrack.indexInPlaylist});
     if(state == Player::PlayState::Stopped) {
-        refreshTracksForDependency({previousStopIndex}, PlaybackState);
+        refreshPlaybackRows({previousStopIndex});
     }
-}
-
-void PlaylistModel::refreshPlayingTrackPositionData()
-{
-    refreshPlayingTrackForDependency(Position);
-}
-
-void PlaylistModel::refreshPlayingTrackBitrateData()
-{
-    refreshPlayingTrackForDependency(Bitrate);
-}
-
-void PlaylistModel::refreshPlayingTrackOutputData()
-{
-    refreshPlayingTrackForDependency(PlaybackState);
 }
 
 std::optional<PlaylistModel::EditableTrackContext> PlaylistModel::editableTrackContextForColumn(int column) const
@@ -2101,7 +2096,7 @@ PlaylistPopulationRequest PlaylistModel::populationRequest()
         request.queueIndexes = m_playerController->playbackQueue().indexesForPlaylist(request.playlistId);
     }
 
-    request.scriptData                         = makePlaybackScriptData(m_playerController);
+    request.scriptData                         = m_scriptContext->playbackContext();
     request.scriptData.playlistData.playlistId = request.playlistId;
     request.scriptData.playlistData.name       = m_currentPlaylist ? m_currentPlaylist->name() : QString{};
     request.scriptData.playlistData.trackCount = request.trackCount;
@@ -2110,6 +2105,7 @@ PlaylistPopulationRequest PlaylistModel::populationRequest()
                              .escapeRichText         = true,
                              .useVariousArtists      = m_settings->value<Settings::Core::UseVariousForCompilations>(),
                              .ratingSymbols          = Gui::ratingStarSymbols(*m_settings)};
+    request.scriptData.freeze();
     return request;
 }
 
@@ -2236,8 +2232,12 @@ void PlaylistModel::updateModel(ItemKeyMap data)
         }
 
         auto* node = &m_nodes.at(key);
-        node->setData(header.data());
         node->setState(PlaylistItem::State::None);
+        if(sameItemData(node->data(), header.data())) {
+            continue;
+        }
+
+        node->setData(header.data());
 
         const QModelIndex headerIndex = indexOfItem(node);
         Q_EMIT dataChanged(headerIndex, headerIndex, {});
@@ -2264,8 +2264,13 @@ void PlaylistModel::updateTracks(const ItemList& tracks, const std::set<int>& co
                 }
             }
 
-            node->setData(mergeUpdatedItemData(node->data(), item.data(), columnsUpdated));
+            const auto updatedData = mergeUpdatedItemData(node->data(), item.data(), columnsUpdated);
             node->setState(PlaylistItem::State::None);
+            if(sameItemData(node->data(), updatedData)) {
+                continue;
+            }
+
+            node->setData(updatedData);
 
             const QModelIndex trackIndex = indexOfItem(node);
             if(columnsUpdated.empty()) {
@@ -2437,8 +2442,13 @@ bool PlaylistModel::tryUpdateTrackGroupInPlace(const PendingData& data)
 
     for(const auto& [trackIndex, trackData] : trackUpdates) {
         if(auto* item = itemForIndex(trackIndex)) {
-            item->setData(trackData);
+            const auto updatedData = mergeUpdatedItemData(item->data(), trackData, {});
             item->setState(PlaylistItem::State::None);
+            if(sameItemData(item->data(), updatedData)) {
+                continue;
+            }
+
+            item->setData(updatedData);
 
             if(const auto bottomRight = rightIndex(trackIndex); bottomRight.isValid()) {
                 Q_EMIT dataChanged(trackIndex, bottomRight, playlistTrackChangedRoles());
@@ -3360,104 +3370,155 @@ std::set<int> PlaylistModel::columnsNeedUpdating() const
     return columns;
 }
 
-void PlaylistModel::updateLivePlaybackDependencies()
+void PlaylistModel::updateScriptDependencies()
 {
-    m_positionColumns.clear();
-    m_bitrateColumns.clear();
-    m_playbackStateColumns.clear();
-    m_singleColumnHasPositionDependency      = false;
-    m_singleColumnHasBitrateDependency       = false;
-    m_singleColumnHasPlaybackStateDependency = false;
+    m_columnDependencies.clear();
+    m_headerDependencies.clear();
 
+    ScriptDependencies dependencies{.unclassified = false};
     ScriptParser parser;
 
-    if(!m_columns.empty()) {
-        for(int i{0}; const auto& column : m_columns) {
-            const auto dependencies = dependenciesForScript(parser.parse(column.field));
-
-            if(dependencies.testFlag(Position)) {
-                m_positionColumns.emplace(i);
-            }
-            if(dependencies.testFlag(Bitrate)) {
-                m_bitrateColumns.emplace(i);
-            }
-            if(dependencies.testFlag(PlaybackState)) {
-                m_playbackStateColumns.emplace(i);
-            }
-            ++i;
-        }
-
-        return;
-    }
-
-    const auto dependencies = dependenciesForScript(parser.parse(m_currentPreset.track.text.script));
-
-    m_singleColumnHasPositionDependency      = dependencies.testFlag(Position);
-    m_singleColumnHasBitrateDependency       = dependencies.testFlag(Bitrate);
-    m_singleColumnHasPlaybackStateDependency = dependencies.testFlag(PlaybackState);
-}
-
-void PlaylistModel::refreshPlayingTrackForDependency(PlaybackDependency dependency)
-{
-    if(!m_playingIndex.isValid()) {
-        return;
-    }
-
-    refreshTracksForDependency({m_playingTrack.indexInPlaylist}, dependency);
-}
-
-void PlaylistModel::refreshTracksForDependency(const std::vector<int>& indexes, PlaybackDependency dependency)
-{
-    refreshTracksForDependencies(indexes, dependency);
-}
-
-void PlaylistModel::refreshTracksForDependencies(const std::vector<int>& indexes, PlaybackDependencies dependencies)
-{
-    if(indexes.empty()) {
-        return;
-    }
-
-    std::vector<int> indexesToRefresh;
-    indexesToRefresh.reserve(indexes.size());
-
-    for(const int index : indexes) {
-        if(index >= 0) {
-            indexesToRefresh.push_back(index);
-        }
-    }
-
-    if(indexesToRefresh.empty()) {
-        return;
-    }
-
-    std::ranges::sort(indexesToRefresh);
-    indexesToRefresh.erase(std::ranges::unique(indexesToRefresh).begin(), indexesToRefresh.end());
+    const auto addScript = [&parser, &dependencies](const QString& script) {
+        const auto result = parser.dependencies(parser.parse(script));
+        dependencies.merge(result);
+        return result;
+    };
 
     if(m_columns.empty()) {
-        const bool shouldRefresh = (dependencies.testFlag(Position) && m_singleColumnHasPositionDependency)
-                                || (dependencies.testFlag(Bitrate) && m_singleColumnHasBitrateDependency)
-                                || (dependencies.testFlag(PlaybackState) && m_singleColumnHasPlaybackStateDependency);
-
-        if(shouldRefresh) {
-            refreshTracks(indexesToRefresh, {});
+        m_columnDependencies.push_back(addScript(m_currentPreset.track.text.script));
+    }
+    else {
+        for(const auto& column : m_columns) {
+            m_columnDependencies.push_back(addScript(column.field));
         }
+    }
+
+    m_headerDependencies.push_back(addScript(m_currentPreset.header.text.script));
+    for(const auto& subheader : m_currentPreset.subHeaders) {
+        m_headerDependencies.push_back(addScript(subheader.text.script));
+    }
+    m_scriptSubscription->setScope({}, m_currentPlaylist ? m_currentPlaylist->id() : UId{});
+    m_scriptSubscription->setDependencies(std::move(dependencies));
+}
+
+std::set<int> PlaylistModel::scriptColumns(std::span<const ScriptDataSourceId> sources) const
+{
+    std::set<int> columns;
+
+    for(int i{0}; std::cmp_less(i, m_columnDependencies.size()); ++i) {
+        const auto& dependencies = m_columnDependencies[i];
+        if(dependencies.unclassified
+           || std::ranges::any_of(sources, [&dependencies](auto source) { return dependencies.contains(source); })) {
+            columns.insert(i);
+        }
+    }
+
+    return columns;
+}
+
+void PlaylistModel::refreshPlaybackRows(const std::vector<int>& indexes, std::span<const ScriptDataSourceId> sources)
+{
+    if(!m_playlistLoaded) {
         return;
     }
 
-    std::set<int> columnsToRefresh;
+    static constexpr std::array PlaybackSources{ScriptSources::PlaybackTime, ScriptSources::PlaybackOutput,
+                                                ScriptSources::PlaybackTrack};
 
-    if(dependencies.testFlag(Position)) {
-        mergeColumnSets(columnsToRefresh, m_positionColumns);
+    const auto columns = scriptColumns(sources.empty() ? std::span{PlaybackSources} : sources);
+
+    std::vector<int> rows;
+    std::ranges::copy_if(indexes, std::back_inserter(rows), [](int index) { return index >= 0; });
+    std::ranges::sort(rows);
+    rows.erase(std::ranges::unique(rows).begin(), rows.end());
+
+    if(!rows.empty() && !columns.empty()) {
+        refreshTracks(rows, m_columns.empty() ? std::set<int>{} : columns);
     }
-    if(dependencies.testFlag(Bitrate)) {
-        mergeColumnSets(columnsToRefresh, m_bitrateColumns);
-    }
-    if(dependencies.testFlag(PlaybackState)) {
-        mergeColumnSets(columnsToRefresh, m_playbackStateColumns);
+}
+
+void PlaylistModel::refreshScriptData(const ScriptChanges& changes)
+{
+    if(!m_playlistLoaded) {
+        m_pendingScriptChanges.insert(m_pendingScriptChanges.end(), changes.begin(), changes.end());
+        return;
     }
 
-    if(!columnsToRefresh.empty()) {
-        refreshTracks(indexesToRefresh, columnsToRefresh);
+    std::map<int, std::set<int>> rowColumns;
+    for(const auto& change : changes) {
+        if(change.playlistId.isValid() && m_currentPlaylist && change.playlistId != m_currentPlaylist->id()) {
+            continue;
+        }
+
+        const std::array sources{change.source};
+        const auto columns = scriptColumns(sources);
+        if(columns.empty()) {
+            continue;
+        }
+
+        const auto addRow = [&rowColumns, &columns](int row) {
+            rowColumns[row].insert(columns.begin(), columns.end());
+        };
+
+        if(change.track.isValid() && change.track.id() >= 0) {
+            for(const auto& index : indexesOfTrackId(change.track.id())) {
+                if(persistentTrackForIndex(index).track.sameIdentityAs(change.track)) {
+                    addRow(index.data(PlaylistItem::Index).toInt());
+                }
+            }
+        }
+        else {
+            for(const auto& [row, key] : m_trackIndexes) {
+                if(!change.track.isValid()
+                   || std::get<PlaylistTrackItem>(m_nodes.at(key).data()).track().track.sameIdentityAs(change.track)) {
+                    addRow(row);
+                }
+            }
+        }
+    }
+
+    std::map<std::set<int>, std::vector<int>> groups;
+    for(const auto& [row, columns] : rowColumns) {
+        groups[columns].push_back(row);
+    }
+    for(const auto& [columns, rows] : groups) {
+        refreshTracks(rows, m_columns.empty() ? std::set<int>{} : columns);
+    }
+
+    HeaderUpdateList headers;
+    for(const auto& [key, item] : m_nodes) {
+        if(item.type() != PlaylistItem::Header && item.type() != PlaylistItem::Subheader) {
+            continue;
+        }
+
+        const auto& header     = std::get<PlaylistContainerItem>(item.data());
+        const auto scriptIndex = item.type() == PlaylistItem::Header ? 0 : header.scriptIndex() + 1;
+        if(scriptIndex < 0 || std::cmp_greater_equal(scriptIndex, m_headerDependencies.size())) {
+            continue;
+        }
+
+        const auto& dependencies = m_headerDependencies[scriptIndex];
+        const auto matchesSource = [&dependencies](const ScriptChange& change) {
+            return dependencies.unclassified || dependencies.contains(change.source);
+        };
+
+        if(std::ranges::any_of(changes, matchesSource)) {
+            const auto tracks = collectHeaderTracks(&m_nodes.at(key));
+            if(std::ranges::any_of(changes, [&tracks, &matchesSource](const ScriptChange& change) {
+                   return matchesSource(change)
+                       && (!change.track.isValid() || std::ranges::any_of(tracks, [&change](const Track& track) {
+                              return track.sameIdentityAs(change.track);
+                          }));
+               })) {
+                headers.emplace_back(item, tracks);
+            }
+        }
+    }
+
+    if(!headers.empty()) {
+        QMetaObject::invokeMethod(&m_populator, [populator = &m_populator, request = populationRequest(), headers] {
+            populator->updateHeaders(request, headers);
+        });
     }
 }
 

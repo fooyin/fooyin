@@ -22,7 +22,9 @@
 #include "internalguisettings.h"
 #include "nowplayingoutput/nowplayingoutputservice.h"
 
+#include <core/application.h>
 #include <core/player/playercontroller.h>
+#include <core/scripting/scriptcontextservice.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scripttypes.h>
 #include <gui/guiconstants.h>
@@ -50,7 +52,7 @@ class NowPlayingOutputPageWidget : public SettingsPageWidget
     Q_OBJECT
 
 public:
-    NowPlayingOutputPageWidget(PlayerController* playerController, SettingsManager* settings);
+    explicit NowPlayingOutputPageWidget(Application* core);
 
     void load() override;
     void apply() override;
@@ -70,6 +72,7 @@ private:
 
     SettingsManager* m_settings;
     PlayerController* m_playerController;
+    ScriptContextService* m_scriptContext;
     ScriptParser m_scriptParser;
 
     QCheckBox* m_enabled;
@@ -89,9 +92,10 @@ private:
     QSpinBox* m_appendLineLimit;
 };
 
-NowPlayingOutputPageWidget::NowPlayingOutputPageWidget(PlayerController* playerController, SettingsManager* settings)
-    : m_settings{settings}
-    , m_playerController{playerController}
+NowPlayingOutputPageWidget::NowPlayingOutputPageWidget(Application* core)
+    : m_settings{core->settingsManager()}
+    , m_playerController{core->playerController()}
+    , m_scriptContext{core->scriptContextService()}
     , m_enabled{new QCheckBox(tr("Enabled"), this)}
     , m_script{new ScriptTextEdit(this)}
     , m_preview{new QPlainTextEdit(this)}
@@ -269,7 +273,7 @@ void NowPlayingOutputPageWidget::updatePreview()
         return;
     }
 
-    const auto playbackContext = makePlaybackScriptData(m_playerController);
+    const auto playbackContext = m_scriptContext->playbackContext();
     m_preview->setPlainText(m_scriptParser.evaluate(m_script->toPlainText(), track, playbackContext.context(),
                                                     {.trackListContextPolicy = TrackListContextPolicy::Placeholder}));
 }
@@ -350,15 +354,13 @@ void NowPlayingOutputPageWidget::browseOutputFile()
     }
 }
 
-NowPlayingOutputPage::NowPlayingOutputPage(PlayerController* playerController, SettingsManager* settings,
-                                           QObject* parent)
-    : SettingsPage{settings->settingsDialog(), parent}
+NowPlayingOutputPage::NowPlayingOutputPage(Application* core, QObject* parent)
+    : SettingsPage{core->settingsManager()->settingsDialog(), parent}
 {
     setId(Constants::Page::NowPlaying);
     setName(tr("Now Playing"));
     setCategory({tr("Playback"), tr("Now Playing")});
-    setWidgetCreator(
-        [playerController, settings] { return new NowPlayingOutputPageWidget(playerController, settings); });
+    setWidgetCreator([core] { return new NowPlayingOutputPageWidget(core); });
 }
 } // namespace Fooyin
 

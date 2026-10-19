@@ -123,6 +123,14 @@ const std::optional<Track>& PlaylistContainerItem::coverTrack() const
     return m_coverTrack;
 }
 
+bool PlaylistContainerItem::sameDataAs(const PlaylistContainerItem& other) const
+{
+    return m_title == other.m_title && m_subtitle == other.m_subtitle && m_layoutKind == other.m_layoutKind
+        && m_rowHeight == other.m_rowHeight && m_showCover == other.m_showCover && m_scriptIndex == other.m_scriptIndex
+        && m_coverTrack.has_value() == other.m_coverTrack.has_value()
+        && (!m_coverTrack || m_coverTrack->sameDataAs(*other.m_coverTrack));
+}
+
 void PlaylistContainerItem::setTitle(const RichText& title)
 {
     m_title = title;
@@ -272,16 +280,27 @@ QSize PlaylistTrackItem::size(int column) const
     return m_sizes.front();
 }
 
+bool PlaylistTrackItem::sameDataAs(const PlaylistTrackItem& other) const
+{
+    return m_columns == other.m_columns && m_left == other.m_left && m_right == other.m_right
+        && m_playingIcon == other.m_playingIcon && m_rowHeight == other.m_rowHeight && m_depth == other.m_depth
+        && m_track.playlistId == other.m_track.playlistId && m_track.entryId == other.m_track.entryId
+        && m_track.indexInPlaylist == other.m_track.indexInPlaylist && m_track.track.sameDataAs(other.m_track.track);
+}
+
 void PlaylistTrackItem::setColumns(const std::vector<RichText>& columns)
 {
-    m_columns = columns;
+    if(std::exchange(m_columns, columns) == columns) {
+        return;
+    }
     m_sizes.clear();
 }
 
 void PlaylistTrackItem::setLeftRight(const RichText& left, const RichText& right)
 {
-    m_left  = left;
-    m_right = right;
+    if(std::exchange(m_left, left) == left && std::exchange(m_right, right) == right) {
+        return;
+    }
     m_sizes.clear();
 }
 
@@ -302,7 +321,9 @@ void PlaylistTrackItem::setIndex(int index)
 
 void PlaylistTrackItem::setRowHeight(int height)
 {
-    m_rowHeight = height;
+    if(std::exchange(m_rowHeight, height) == height) {
+        return;
+    }
     m_sizes.clear();
 }
 

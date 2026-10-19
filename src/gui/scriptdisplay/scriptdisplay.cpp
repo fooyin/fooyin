@@ -22,8 +22,10 @@
 #include "scriptdisplayconfigdialog.h"
 #include "scripting/scriptcommandhandler.h"
 
+#include <core/application.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
+#include <core/scripting/scriptcontextservice.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scripttypes.h>
 #include <core/track.h>
@@ -121,19 +123,19 @@ public:
     using QTextBrowser::setViewportMargins;
 };
 
-ScriptDisplay::ScriptDisplay(PlayerController* playerController, PlaylistHandler* playlistHandler,
-                             TrackSelectionController* trackSelection, CoverProvider* coverProvider,
-                             ScriptCommandHandler* commandHandler, ActionManager* actionManager,
-                             SettingsManager* settings, QWidget* parent)
+ScriptDisplay::ScriptDisplay(Application* core, TrackSelectionController* trackSelection, CoverProvider* coverProvider,
+                             ScriptCommandHandler* commandHandler, ActionManager* actionManager, QWidget* parent)
     : FyWidget{parent}
-    , m_playerController{playerController}
-    , m_playlistHandler{playlistHandler}
+    , m_playerController{core->playerController()}
+    , m_scriptContext{core->scriptContextService()}
+    , m_playlistHandler{core->playlistHandler()}
     , m_trackSelection{trackSelection}
     , m_commandHandler{commandHandler}
     , m_actionManager{actionManager}
-    , m_settings{settings}
-    , m_backgroundSource{new BackgroundImageSource(coverProvider, playerController, trackSelection, this)}
+    , m_settings{core->settingsManager()}
+    , m_backgroundSource{new BackgroundImageSource(coverProvider, m_playerController, trackSelection, this)}
     , m_background{new WidgetBackground(this)}
+    , m_scriptSubscription{m_scriptContext->subscribe(this)}
     , m_layout{new QHBoxLayout(this)}
     , m_text{new TextBrowser(this)}
     , m_context{new WidgetContext(this, Context{Id{"Fooyin.Context.ScriptDisplay."}.append(id())}, this)}
@@ -167,17 +169,14 @@ ScriptDisplay::ScriptDisplay(PlayerController* playerController, PlaylistHandler
     QObject::connect(m_copyAction, &QAction::triggered, m_text, &QTextBrowser::copy);
     QObject::connect(m_text, &QTextBrowser::copyAvailable, this, &ScriptDisplay::updateActions);
 
-    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &ScriptDisplay::updateText);
-    QObject::connect(m_playerController, &PlayerController::playbackQueueModeChanged, this, &ScriptDisplay::updateText);
-    QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this, &ScriptDisplay::updateText);
-    QObject::connect(m_playerController, &PlayerController::bitrateChanged, this, &ScriptDisplay::updateText);
-    QObject::connect(m_playerController, &PlayerController::playbackOutputInfoChanged, this,
-                     &ScriptDisplay::updateText);
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &ScriptDisplay::updateText);
-    QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, &ScriptDisplay::updateText);
-    QObject::connect(m_playerController, &PlayerController::playlistTrackUpdated, this, &ScriptDisplay::updateText);
-    QObject::connect(m_trackSelection, &TrackSelectionController::displaySelectionChanged, this,
-                     &ScriptDisplay::updateText);
+    QObject::connect(m_scriptSubscription, &ScriptSubscription::changed, this, &ScriptDisplay::updateText);
+
+    const auto refresh = [this]() {
+        m_scriptSubscription->refresh();
+    };
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, refresh);
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, refresh);
+    QObject::connect(m_trackSelection, &TrackSelectionController::displaySelectionChanged, this, refresh);
 
     m_settings->subscribe<Settings::Gui::RatingFullStarSymbol>(this, &ScriptDisplay::updateText);
     m_settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(this, &ScriptDisplay::updateText);
@@ -267,6 +266,8 @@ void ScriptDisplay::applyConfig(const ConfigData& config)
 
     m_background->setConfig(m_config.background);
     m_backgroundSource->setConfig(m_config.background);
+
+    m_scriptSubscription->setScript(m_config.script);
 
     applyAppearance();
     updateText();
@@ -491,6 +492,9 @@ void ScriptDisplay::applyAppearance()
 
 void ScriptDisplay::updateText()
 {
+    const auto* playlist = currentPlaylist();
+    m_scriptSubscription->setScope(currentTrack(), playlist ? playlist->id() : UId{});
+
     ScriptFormatter formatter;
     formatter.setBaseFont(m_text->font());
     if(!m_config.fgColour.isEmpty()) {
@@ -622,7 +626,7 @@ Playlist* ScriptDisplay::currentPlaylist() const
 
 QString ScriptDisplay::evaluateScript()
 {
-    const auto scriptData = makePlaybackScriptData(m_playerController, currentPlaylist());
+    const auto scriptData = m_scriptContext->playbackContext(currentPlaylist());
     const ScriptEvaluationOptions options{.trackListContextPolicy = TrackListContextPolicy::Fallback,
                                           .escapeRichText         = true,
                                           .ratingSymbols          = Gui::ratingStarSymbols(*m_settings)};

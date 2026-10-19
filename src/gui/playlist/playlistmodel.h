@@ -26,6 +26,7 @@
 
 #include <core/player/playerdefs.h>
 #include <core/playlist/playlist.h>
+#include <core/scripting/scriptcontextservice.h>
 #include <utils/treemodel.h>
 
 #include <QColor>
@@ -89,19 +90,9 @@ class PlaylistModel : public TreeModel<PlaylistItem>
     Q_OBJECT
 
 public:
-    enum PlaybackDependency : uint8_t
-    {
-        None          = 0,
-        Position      = 1 << 0,
-        Bitrate       = 1 << 1,
-        PlaybackState = 1 << 2,
-        All           = Position | Bitrate | PlaybackState,
-    };
-    Q_DECLARE_FLAGS(PlaybackDependencies, PlaybackDependency)
-    Q_FLAG(PlaybackDependencies)
-
     PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader* audioLoader, CoverProvider* coverProvider,
-                  SettingsManager* settings, GuiStyleProvider* styleProvider, QObject* parent = nullptr);
+                  SettingsManager* settings, GuiStyleProvider* styleProvider, ScriptContextService* scriptContext,
+                  QObject* parent = nullptr);
     ~PlaylistModel() override;
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -205,9 +196,6 @@ public Q_SLOTS:
     void playingTrackChangeRequested(const Fooyin::PlaylistTrack& track);
     void playingTrackChanged(const Fooyin::PlaylistTrack& track);
     void playStateChanged(Fooyin::Player::PlayState state);
-    void refreshPlayingTrackPositionData();
-    void refreshPlayingTrackBitrateData();
-    void refreshPlayingTrackOutputData();
 
 private:
     struct PlayingTrackIndexResolution
@@ -283,10 +271,10 @@ private:
     [[nodiscard]] QModelIndex firstLeafIndex(const QModelIndex& index) const;
     std::vector<int> pixmapColumns() const;
     std::set<int> columnsNeedUpdating() const;
-    void updateLivePlaybackDependencies();
-    void refreshPlayingTrackForDependency(PlaybackDependency dependency);
-    void refreshTracksForDependency(const std::vector<int>& indexes, PlaybackDependency dependency);
-    void refreshTracksForDependencies(const std::vector<int>& indexes, PlaybackDependencies dependencies);
+    void updateScriptDependencies();
+    void refreshScriptData(const ScriptChanges& changes);
+    void refreshPlaybackRows(const std::vector<int>& indexes, std::span<const ScriptDataSourceId> sources = {});
+    [[nodiscard]] std::set<int> scriptColumns(std::span<const ScriptDataSourceId> sources) const;
     void coverUpdated(const Track& track);
     [[nodiscard]] PlaylistTrack persistentTrackForIndex(const QModelIndex& index) const;
     [[nodiscard]] bool playbackTrackMatchesPlaylistIndex(const PlaylistTrack& track, int index) const;
@@ -321,6 +309,7 @@ private:
     AudioLoader* m_audioLoader;
     MusicLibrary* m_library;
     PlayerController* m_playerController;
+    ScriptContextService* m_scriptContext;
     SettingsManager* m_settings;
     GuiStyleProvider* m_styleProvider;
     CoverProvider* m_coverProvider;
@@ -358,12 +347,10 @@ private:
     QColor m_loveHeartColour;
     QColor m_unlovedHeartColour;
 
-    std::set<int> m_positionColumns;
-    std::set<int> m_bitrateColumns;
-    std::set<int> m_playbackStateColumns;
-    bool m_singleColumnHasPositionDependency;
-    bool m_singleColumnHasBitrateDependency;
-    bool m_singleColumnHasPlaybackStateDependency;
+    ScriptSubscription* m_scriptSubscription;
+    std::vector<ScriptDependencies> m_columnDependencies;
+    std::vector<ScriptDependencies> m_headerDependencies;
+    ScriptChanges m_pendingScriptChanges;
 
     Playlist* m_currentPlaylist;
     bool m_matchPlayingTrackByIdentity;
@@ -376,5 +363,3 @@ private:
     QModelIndexList m_indexesPendingRemoval;
 };
 } // namespace Fooyin
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::PlaylistModel::PlaybackDependencies)

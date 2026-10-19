@@ -677,7 +677,7 @@ void PlaylistPopulator::updateTracks(const PlaylistPopulationRequest& request, c
     }
 
     if(p->mayRun()) {
-        Q_EMIT tracksUpdated(request.generation, updatedTracks, columnsToUpdate);
+        Q_EMIT tracksUpdated(request.generation, request.scriptData, updatedTracks, columnsToUpdate);
     }
 
     setState(Idle);
@@ -704,7 +704,7 @@ void PlaylistPopulator::updateHeaders(const PlaylistPopulationRequest& request, 
     }
 
     if(p->mayRun()) {
-        Q_EMIT headersUpdated(request.generation, updatedHeaders);
+        Q_EMIT headersUpdated(request.generation, request.scriptData, updatedHeaders);
     }
 
     setState(Idle);

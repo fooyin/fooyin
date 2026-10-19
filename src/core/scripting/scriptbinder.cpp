@@ -25,44 +25,54 @@
 
 using namespace Qt::StringLiterals;
 
+namespace Fooyin {
 namespace {
-Fooyin::BoundExpression bindExpression(const Fooyin::Expression& expr, const Fooyin::ScriptRegistry* registry)
+BoundExpression bindExpression(const Expression& expr, const ScriptRegistry* registry, ScriptDependencies& dependencies)
 {
-    Fooyin::BoundExpression bound;
+    BoundExpression bound;
     bound.type = expr.type;
 
     if(const auto* value = std::get_if<QString>(&expr.value)) {
         bound.value = *value;
 
-        if(expr.type == Fooyin::Expr::Variable || expr.type == Fooyin::Expr::VariableList) {
-            bound.variableKind = registry ? registry->resolveVariable(*value) : Fooyin::VariableKind::Generic;
+        if(expr.type == Expr::Variable || expr.type == Expr::VariableList) {
+            bound.variableKind     = registry ? registry->resolveVariable(*value) : VariableKind::Generic;
+            const auto* descriptor = registry ? registry->variableDescriptor(*value) : nullptr;
+            dependencies.merge(
+                descriptor ? descriptor->dependencies
+                           : ScriptDependencies{.sources = {ScriptSources::TrackMetadata}, .unclassified = false});
+        }
+        else if(expr.type == Expr::VariableRaw) {
+            dependencies.merge({.sources = {ScriptSources::TrackMetadata}, .unclassified = false});
         }
 
         return bound;
     }
 
-    if(const auto* func = std::get_if<Fooyin::FuncValue>(&expr.value)) {
-        Fooyin::BoundFunctionValue boundFunc;
-        boundFunc.name       = func->name;
-        boundFunc.functionId = registry ? registry->resolveFunctionId(func->name) : Fooyin::InvalidScriptFunctionId;
-        boundFunc.kind       = registry ? registry->functionKind(boundFunc.functionId) : Fooyin::FunctionKind::Generic;
+    if(const auto* func = std::get_if<FuncValue>(&expr.value)) {
+        BoundFunctionValue boundFunc;
+        boundFunc.name         = func->name;
+        boundFunc.functionId   = registry ? registry->resolveFunctionId(func->name) : InvalidScriptFunctionId;
+        boundFunc.kind         = registry ? registry->functionKind(boundFunc.functionId) : FunctionKind::Generic;
+        const auto* descriptor = registry ? registry->functionDescriptor(boundFunc.functionId) : nullptr;
+        dependencies.merge(descriptor ? descriptor->dependencies : ScriptDependencies{});
         boundFunc.args.reserve(func->args.size());
 
         for(const auto& arg : func->args) {
-            boundFunc.args.emplace_back(bindExpression(arg, registry));
+            boundFunc.args.emplace_back(bindExpression(arg, registry, dependencies));
         }
 
         bound.value = std::move(boundFunc);
         return bound;
     }
 
-    const auto& exprArgs = std::get<Fooyin::ExpressionList>(expr.value);
+    const auto& exprArgs = std::get<ExpressionList>(expr.value);
 
-    Fooyin::BoundExpressionList args;
+    BoundExpressionList args;
     args.reserve(exprArgs.size());
 
     for(const auto& arg : exprArgs) {
-        args.emplace_back(bindExpression(arg, registry));
+        args.emplace_back(bindExpression(arg, registry, dependencies));
     }
 
     bound.value = std::move(args);
@@ -70,7 +80,6 @@ Fooyin::BoundExpression bindExpression(const Fooyin::Expression& expr, const Foo
 }
 } // namespace
 
-namespace Fooyin {
 BoundScript bindScript(const ParsedScript& script, const ScriptRegistry* registry, bool combineLiterals)
 {
     BoundScript bound;
@@ -90,7 +99,7 @@ BoundScript bindScript(const ParsedScript& script, const ScriptRegistry* registr
                 continue;
             }
         }
-        bound.expressions.emplace_back(bindExpression(expr, registry));
+        bound.expressions.emplace_back(bindExpression(expr, registry, bound.dependencies));
     }
 
     return bound;

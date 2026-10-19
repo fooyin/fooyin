@@ -53,6 +53,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/plugins/plugin.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/expression.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptparser.h
+    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptdependencies.h
+    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptcontextservice.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptregistry.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptdefs.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scripttrackwriter.h
@@ -334,6 +336,7 @@ set(SOURCES
     scripting/scriptevaluator.h
     scripting/scriptevaluator.cpp
     scripting/scriptparser.cpp
+    scripting/scriptcontextservice.cpp
     scripting/scriptregistry.cpp
     scripting/scripttrackwriter.cpp
     scripting/scripttypes.cpp

@@ -38,6 +38,7 @@ class QShowEvent;
 
 namespace Fooyin {
 class ActionManager;
+class Application;
 class BackgroundImageSource;
 class Command;
 class AudioLoader;
@@ -63,9 +64,9 @@ public:
         UpcomingTracks,
     };
 
-    explicit QueueViewer(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
+    explicit QueueViewer(Application* core, ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
                          TrackSelectionController* selectionController, CoverRepository* coverRepository,
-                         SortingRegistry* sortingRegistry, SettingsManager* settings, QWidget* parent = nullptr);
+                         QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;

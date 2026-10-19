@@ -27,6 +27,8 @@
 #include <core/coresettings.h>
 #include <core/library/librarymanager.h>
 #include <core/player/playercontroller.h>
+#include <core/plugins/coreplugincontext.h>
+#include <core/scripting/scriptcontextservice.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scripttypes.h>
 #include <core/track.h>
@@ -127,7 +129,7 @@ class ScriptEditorPrivate : public QObject
 public:
     ScriptEditorPrivate(ScriptEditor* self, LibraryManager* libraryManager, const Track& track,
                         TrackSelectionController* selectionController = nullptr,
-                        PlayerController* playerController            = nullptr);
+                        PlayerController* playerController = nullptr, ScriptContextService* scriptContext = nullptr);
     ~ScriptEditorPrivate() override;
 
     void setupConnections();
@@ -156,6 +158,7 @@ public:
     LibraryManager* m_libraryManager;
     TrackSelectionController* m_selectionController;
     PlayerController* m_playerController;
+    ScriptContextService* m_scriptContext;
     FySettings m_settings;
     Track m_track;
     Track m_placeholderTrack;
@@ -199,6 +202,7 @@ public:
     QBasicTimer m_textChangeTimer;
 
     ScriptParser m_parser;
+    ScriptSubscription* m_subscription{nullptr};
     ScriptFormatter m_formatter;
 
     ParsedScript m_currentScript;
@@ -208,11 +212,12 @@ public:
 
 ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* libraryManager, const Track& track,
                                          TrackSelectionController* selectionController,
-                                         PlayerController* playerController)
+                                         PlayerController* playerController, ScriptContextService* scriptContext)
     : m_self{self}
     , m_libraryManager{libraryManager}
     , m_selectionController{selectionController}
     , m_playerController{playerController}
+    , m_scriptContext{scriptContext}
     , m_track{track}
     , m_mainSplitter{new QSplitter(Qt::Horizontal, m_self)}
     , m_documentSplitter{new QSplitter(Qt::Vertical, m_self)}
@@ -320,21 +325,22 @@ void ScriptEditorPrivate::setupConnections()
         QObject::connect(m_libraryManager, &LibraryManager::librariesChanged, this,
                          qOverload<>(&ScriptEditorPrivate::updateResults));
     }
+    if(m_scriptContext) {
+        m_subscription = m_scriptContext->subscribe(this);
+        QObject::connect(m_subscription, &ScriptSubscription::changed, this, [this](const ScriptChanges& changes) {
+            for(const auto& change : changes) {
+                if(change.source == ScriptSources::TrackMetadata && change.track.sameIdentityAs(m_track)) {
+                    m_track = change.track;
+                }
+            }
+            updateResults();
+        });
+    }
     if(m_playerController) {
-        QObject::connect(m_playerController, &PlayerController::playbackQueueModeChanged, this,
-                         &ScriptEditorPrivate::trackContextChanged);
         QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
                          &ScriptEditorPrivate::trackContextChanged);
         QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
                          &ScriptEditorPrivate::trackContextChanged);
-        QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this,
-                         &ScriptEditorPrivate::trackContextChanged);
-        QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,
-                         qOverload<>(&ScriptEditorPrivate::updateResults));
-        QObject::connect(m_playerController, &PlayerController::bitrateChanged, this,
-                         qOverload<>(&ScriptEditorPrivate::updateResults));
-        QObject::connect(m_playerController, &PlayerController::playbackOutputInfoChanged, this,
-                         qOverload<>(&ScriptEditorPrivate::updateResults));
     }
 }
 
@@ -650,10 +656,15 @@ void ScriptEditorPrivate::updateResults(const Expression& expression)
     ParsedScript script;
     script.expressions = {expression};
 
+    if(m_subscription) {
+        m_subscription->setDependencies(m_parser.dependencies(script));
+        m_subscription->setScope(m_track);
+    }
+
     m_formatter.setBaseFont(m_results->font());
 
-    const auto libraries         = m_libraryManager ? m_libraryManager->allLibraries() : LibraryInfoMap{};
-    auto data                    = makePlaybackScriptData(m_playerController);
+    const auto libraries = m_libraryManager ? m_libraryManager->allLibraries() : LibraryInfoMap{};
+    auto data = m_scriptContext ? m_scriptContext->playbackContext() : makePlaybackScriptData(m_playerController);
     data.playlistData.trackIndex = -1;
     auto context                 = data.context();
     context.libraries            = &libraries;
@@ -811,15 +822,15 @@ ScriptEditor::ScriptEditor(LibraryManager* libraryManager, const Track& track, Q
     setWindowTitle(tr("Script Editor"));
 }
 
-ScriptEditor::ScriptEditor(LibraryManager* libraryManager, TrackSelectionController* selectionController,
-                           PlayerController* playerController, QWidget* parent)
+ScriptEditor::ScriptEditor(const CorePluginContext& core, TrackSelectionController* selectionController,
+                           QWidget* parent)
     : QDialog{parent}
-    , p{std::make_unique<ScriptEditorPrivate>(this, libraryManager,
+    , p{std::make_unique<ScriptEditorPrivate>(this, core.libraryManager,
                                               selectionController && selectionController->displayTrack().isValid()
                                                   ? selectionController->displayTrack()
-                                              : playerController ? playerController->currentTrack()
-                                                                 : Track{},
-                                              selectionController, playerController)}
+                                              : core.playerController ? core.playerController->currentTrack()
+                                                                      : Track{},
+                                              selectionController, core.playerController, core.scriptContext)}
 {
     setWindowTitle(tr("Script Editor"));
 }

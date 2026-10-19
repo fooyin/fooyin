@@ -51,6 +51,8 @@ public:
     [[nodiscard]] int scriptIndex() const;
     [[nodiscard]] const std::optional<Track>& coverTrack() const;
 
+    [[nodiscard]] bool sameDataAs(const PlaylistContainerItem& other) const;
+
     void setTitle(const RichText& title);
     void setSubtitle(const RichText& subtitle);
     void setShowCover(bool showCover);
@@ -93,6 +95,8 @@ public:
     [[nodiscard]] int rowHeight() const;
     [[nodiscard]] int depth() const;
     [[nodiscard]] QSize size(int column = 0) const;
+
+    [[nodiscard]] bool sameDataAs(const PlaylistTrackItem& other) const;
 
     void setColumns(const std::vector<RichText>& columns);
     void setLeftRight(const RichText& left, const RichText& right);

@@ -26,6 +26,7 @@
 #include <core/player/playerdefs.h>
 #include <core/ratingsymbols.h>
 #include <core/scripting/expression.h>
+#include <core/scripting/scriptdependencies.h>
 #include <core/scripting/scriptvalue.h>
 #include <core/track.h>
 #include <utils/id.h>
@@ -107,17 +108,21 @@ struct ScriptPlaybackData
     Engine::PlaybackOutputInfo outputInfo{};
     Player::PlayState playState{Player::PlayState::Stopped};
     PlaybackQueueMode queueMode{PlaybackQueueMode::PlaylistWithOverrides};
+    Track track{};
+    uint64_t generation{0};
 };
 
 struct ScriptVariableValue
 {
     QString name{};
     ScriptResult result;
+    Track track{};
 };
 
 /*!
  * Evaluation data. All referenced data must outlive the invocation.
  * Named values supply contextual variables and built-ins without registered callbacks.
+ * Values with a track scope resolve only for that track; provider captures own the result strings.
  * Playback and playlist data are snapshots, safe to pass to scripting workers.
  */
 struct ScriptContext
@@ -138,14 +143,34 @@ struct ScriptContextData
     ScriptPlaybackData playback;
     const TrackList* tracks{nullptr};
     const Playlist* playlist{nullptr};
+    std::vector<ScriptVariableValue> values{};
+    std::vector<ScriptSourceRevision> revisions{};
+    std::shared_ptr<const TrackList> ownedTracks{};
 
     [[nodiscard]] ScriptContext context() const
     {
-        return {.tracks = tracks, .playlist = playlist, .playlistData = &playlistData, .playback = &playback};
+        return {.tracks       = ownedTracks ? ownedTracks.get() : tracks,
+                .playlist     = playlist,
+                .playlistData = &playlistData,
+                .playback     = &playback,
+                .values       = values};
+    }
+
+    /*! Detach borrowed model data before handing a context to a worker */
+    void freeze()
+    {
+        if(tracks && !ownedTracks) {
+            ownedTracks = std::make_shared<const TrackList>(*tracks);
+        }
+        tracks   = nullptr;
+        playlist = nullptr;
     }
 };
 
-/*! Call on the owning thread; the returned playback and row data are snapshots. */
+/*!
+ * Captures playback and row state on the main thread.
+ * Use ScriptContextService::playbackContext() to include registered provider values.
+ */
 [[nodiscard]] FYCORE_EXPORT ScriptContextData makePlaybackScriptData(PlayerController* playerController,
                                                                      Playlist* playlist = nullptr);
 
@@ -199,3 +224,5 @@ constexpr ScriptFunctionId InvalidScriptFunctionId{0};
 
 using ScriptFieldValue = std::variant<int, uint64_t, float, QString, QStringList>;
 } // namespace Fooyin
+
+Q_DECLARE_METATYPE(Fooyin::ScriptContextData)

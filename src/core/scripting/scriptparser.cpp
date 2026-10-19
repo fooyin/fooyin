@@ -121,6 +121,11 @@ bool ScriptParser::containsQueryExpression(const ParsedScript& input)
         && std::ranges::any_of(input.expressions, [](const Expression& expr) { return isQueryExpression(expr.type); });
 }
 
+ScriptDependencies ScriptParser::dependencies(const ParsedScript& input)
+{
+    return p->dependencies(input);
+}
+
 QString ScriptParser::evaluate(const QString& input)
 {
     return evaluate(input, Track{});

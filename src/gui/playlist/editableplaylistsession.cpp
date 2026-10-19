@@ -307,14 +307,7 @@ void EditablePlaylistSession::setupConnections(PlaylistWidgetSessionHost& sessio
                      });
     QObject::connect(widget->playlistController(), &PlaylistController::playStateChanged, widget->playlistModel(),
                      &PlaylistModel::playStateChanged);
-    QObject::connect(widget->playerController(), &PlayerController::positionChangedSeconds, widget->playlistModel(),
-                     [widget](uint64_t) { widget->playlistModel()->refreshPlayingTrackPositionData(); });
-    QObject::connect(widget->playerController(), &PlayerController::positionMoved, widget->playlistModel(),
-                     [widget](uint64_t) { widget->playlistModel()->refreshPlayingTrackPositionData(); });
-    QObject::connect(widget->playerController(), &PlayerController::bitrateChanged, widget->playlistModel(),
-                     [widget](int) { widget->playlistModel()->refreshPlayingTrackBitrateData(); });
-    QObject::connect(widget->playerController(), &PlayerController::playbackOutputInfoChanged, widget->playlistModel(),
-                     [widget]() { widget->playlistModel()->refreshPlayingTrackOutputData(); });
+
     QObject::connect(widget->playlistController(), &PlaylistController::currentPlaylistTracksRemoved, widget,
                      [widget, this](const std::vector<int>& indexes) {
                          handlePlaylistTracksRemoved(widgetSessionHost(widget), indexes);

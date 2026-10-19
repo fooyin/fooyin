@@ -70,6 +70,7 @@
 #include <core/playlist/playlistloader.h>
 #include <core/plugins/plugininfo.h>
 #include <core/plugins/pluginmanager.h>
+#include <core/scripting/scriptcontextservice.h>
 #include <core/scripting/scriptregistry.h>
 #include <core/scripting/scripttypes.h>
 #include <gui/coverprovider.h>
@@ -306,6 +307,7 @@ GuiApplication::GuiApplication(Application* core)
     , m_lookupArtistAlbumAction{nullptr}
     , m_lookupDiscTocAction{nullptr}
     , m_lookupIdAction{nullptr}
+    , m_titleSubscription{nullptr}
     , m_coverProvider{m_coverRepository}
     , m_themeUpdatePending{false}
     , m_refreshSystemBaseline{false}
@@ -756,19 +758,15 @@ void GuiApplication::setupConnections()
                      &TrackSelectionController::tracksRemoved);
     QObject::connect(m_library, &MusicLibrary::tracksDeleted, this, &GuiApplication::handleTracksDeleted);
 
-    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &GuiApplication::updateWindowTitle);
-    QObject::connect(m_playerController, &PlayerController::playbackQueueModeChanged, this,
-                     &GuiApplication::updateWindowTitle);
-    QObject::connect(m_playerController, &PlayerController::playlistTrackUpdated, this,
-                     &GuiApplication::updateWindowTitle);
-    QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,
-                     &GuiApplication::updateWindowTitle);
-    QObject::connect(m_playerController, &PlayerController::playbackOutputInfoChanged, this,
-                     &GuiApplication::updateWindowTitle);
-    QObject::connect(m_playerController, &PlayerController::trackQueueChanged, this,
-                     &GuiApplication::updateWindowTitle);
-    QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
-                     &GuiApplication::updateWindowTitle);
+    m_titleSubscription = m_core->scriptContextService()->subscribe(this);
+    QObject::connect(m_titleSubscription, &ScriptSubscription::changed, this, &GuiApplication::updateWindowTitle);
+
+    const auto refreshTitle = [this]() {
+        m_titleSubscription->refresh();
+    };
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, refreshTitle);
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, refreshTitle);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this, refreshTitle);
 
     const auto updateTitleForActivePlaylist = [this](Playlist* playlist) {
         if(playlist == m_playlistHandler->activePlaylist()) {
@@ -969,6 +967,11 @@ void GuiApplication::initialiseTray()
 
 void GuiApplication::updateWindowTitle()
 {
+    const QString script = m_settings->value<Settings::Gui::Internal::WindowTitleTrackScript>();
+    m_titleSubscription->setScript(script);
+    const auto* playlist = m_playlistHandler->activePlaylist();
+    m_titleSubscription->setScope(m_playerController->currentTrack(), playlist ? playlist->id() : UId{});
+
     if(m_playerController->playState() == Player::PlayState::Stopped) {
         m_mainWindow->resetTitle();
         return;
@@ -980,11 +983,10 @@ void GuiApplication::updateWindowTitle()
         return;
     }
 
-    const auto data = makePlaybackScriptData(m_playerController, m_playlistHandler->activePlaylist());
+    const auto data = m_core->scriptContextService()->playbackContext(m_playlistHandler->activePlaylist());
     const ScriptEvaluationOptions options{.trackListContextPolicy = TrackListContextPolicy::Fallback,
                                           .ratingSymbols          = Gui::ratingStarSymbols(*m_settings)};
-    const QString script = m_settings->value<Settings::Gui::Internal::WindowTitleTrackScript>();
-    const QString title  = m_scriptParser.evaluate(script, currentTrack, data.context(), options);
+    const QString title = m_scriptParser.evaluate(script, currentTrack, data.context(), options);
     m_mainWindow->setTitle(title);
 }
 
@@ -2000,8 +2002,7 @@ void GuiApplication::showNeedReloadMessage() const
 
 void GuiApplication::showScriptEditor()
 {
-    auto* scriptEditor = new ScriptEditor(m_core->libraryManager(), m_selectionController.get(), m_playerController,
-                                          m_mainWindow.get());
+    auto* scriptEditor = new ScriptEditor(m_core->corePluginContext(), m_selectionController.get(), m_mainWindow.get());
     scriptEditor->setAttribute(Qt::WA_DeleteOnClose);
     scriptEditor->show();
 }
@@ -2045,8 +2046,8 @@ void GuiApplication::showPlaybackQueue()
         return;
     }
 
-    m_playbackQueueWidget = new QueueViewer(m_actionManager, &m_playlistInteractor, m_selectionController.get(),
-                                            m_coverRepository, m_core->sortingRegistry(), m_settings);
+    m_playbackQueueWidget = new QueueViewer(m_core, m_actionManager, &m_playlistInteractor, m_selectionController.get(),
+                                            m_coverRepository);
     m_playbackQueueWidget->setAttribute(Qt::WA_DeleteOnClose);
     m_playbackQueueWidget->finalise();
 

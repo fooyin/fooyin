@@ -28,6 +28,7 @@
 #include "queueviewerview.h"
 #include "sortactionhandler.h"
 
+#include <core/application.h>
 #include <core/coresettings.h>
 #include <core/library/sortingregistry.h>
 #include <core/library/tracksort.h>
@@ -104,21 +105,21 @@ std::vector<PlaybackQueueItemId> queueItemIds(const PlaybackQueueItems& items)
 }
 } // namespace
 
-QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
+QueueViewer::QueueViewer(Application* core, ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
                          TrackSelectionController* selectionController, CoverRepository* coverRepository,
-                         SortingRegistry* sortingRegistry, SettingsManager* settings, QWidget* parent)
+                         QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_playlistInteractor{playlistInteractor}
     , m_playerController{m_playlistInteractor->playerController()}
     , m_selectionController{selectionController}
-    , m_sortingRegistry{sortingRegistry}
-    , m_settings{settings}
+    , m_sortingRegistry{core->sortingRegistry()}
+    , m_settings{core->settingsManager()}
     , m_backgroundSource{new BackgroundImageSource(new CoverProvider(coverRepository, this), m_playerController,
                                                    m_selectionController, this)}
     , m_view{new QueueViewerView(this)}
     , m_delegate{new QueueViewerDelegate(this)}
-    , m_model{new QueueViewerModel(coverRepository, m_playerController, settings, this)}
+    , m_model{new QueueViewerModel(coverRepository, m_playerController, m_settings, core->scriptContextService(), this)}
     , m_context{new WidgetContext(
           this, Context{IdList{Constants::Context::TrackSelection, Id{"Context.QueueViewer."}.append(id())}}, this)}
     , m_remove{new QAction(tr("&Remove"), this)}
@@ -560,6 +561,14 @@ void QueueViewer::setupConnections()
         }
     });
     QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, &QueueViewer::resetModel);
+    QObject::connect(m_playerController, &PlayerController::playbackQueuePositionChanged, this, [this]() {
+        if(!m_updatesPausedForTrackChange) {
+            if(!m_model->updatePlaybackPosition(m_playerController->playbackQueue())) {
+                resetModel();
+            }
+            scrollToCurrentTrack();
+        }
+    });
     QObject::connect(m_playerController, &PlayerController::playStateChanged, m_model,
                      &QueueViewerModel::playbackStateChanged);
     QObject::connect(m_model, &QAbstractItemModel::rowsInserted, this, &QueueViewer::handleRowsChanged);

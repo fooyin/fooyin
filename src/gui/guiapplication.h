@@ -71,6 +71,7 @@ class PropertiesDialog;
 class QueueViewer;
 class SearchController;
 class ScriptCommandHandler;
+class ScriptSubscription;
 class SystemTrayIcon;
 class ThemeRegistry;
 class VerificationController;
@@ -273,6 +274,7 @@ private:
     QPointer<MetadataLookupDialog> m_metadataLookupDialog;
 
     ScriptParser m_scriptParser;
+    ScriptSubscription* m_titleSubscription;
     CoverProvider m_coverProvider;
 
     QBasicTimer m_themeUpdateTimer;

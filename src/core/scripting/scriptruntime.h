@@ -45,6 +45,8 @@ public:
                        ScriptScanner::WhitespaceMode whitespaceMode = ScriptScanner::WhitespaceMode::IgnoreLayout);
     ParsedScript parseQuery(const QString& input);
 
+    ScriptDependencies dependencies(const ParsedScript& input);
+
     QString evaluate(const ParsedScript& input, const Track& track, const ScriptEvaluationOptions& options = {});
     QString evaluate(const ParsedScript& input, const TrackList& tracks, const ScriptEvaluationOptions& options = {});
     QString evaluate(const ParsedScript& input, const Playlist& playlist, const ScriptEvaluationOptions& options = {});

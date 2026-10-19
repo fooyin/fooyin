@@ -466,7 +466,22 @@ ScriptEvaluator::~ScriptEvaluator() = default;
 
 ScriptResult ScriptEvaluator::value(VariableKind kind, const QString& var, const ScriptSubject& subject) const
 {
-    const auto* playlist = subject.playlist ? subject.playlist : currentContext().playlist;
+    const auto* playlist   = subject.playlist ? subject.playlist : currentContext().playlist;
+    const auto* descriptor = m_registry->variableDescriptor(var);
+    if(descriptor && descriptor->contextual) {
+        for(const auto& value : currentContext().values) {
+            if(value.name.compare(descriptor->name, Qt::CaseInsensitive) == 0) {
+                if(value.track.isValid() && (!subject.track || !subject.track->sameIdentityAs(value.track))) {
+                    return {};
+                }
+                auto result{value.result};
+                applyVariableOutputPolicy(options, kind, result);
+                return result;
+            }
+        }
+        return {};
+    }
+
     if(const auto* invoker = m_registry->variableInvoker(var)) {
         const auto context = makeContext(currentContext(), subject.track, subject.tracks, playlist);
         auto result        = (*invoker)(context, var);
@@ -689,6 +704,11 @@ bool ScriptEvaluator::playbackValueAvailableForTrack(const Track& track) const
     const int currentTrackIndex        = playlistEnvironment->trackIndex;
     const int currentPlayingTrackIndex = playlistEnvironment->playingTrackIndex;
     const int currentPlayingTrackId    = playlistEnvironment->playingTrackId;
+
+    if(playlistEnvironment->queueItemState != ScriptQueueItemState::None) {
+        return playlistEnvironment->queueItemState == ScriptQueueItemState::Current
+            && (!track.isValid() || currentPlayingTrackId < 0 || track.id() == currentPlayingTrackId);
+    }
 
     if(currentTrackIndex < 0) {
         return !track.isValid() || currentPlayingTrackId < 0 || track.id() == currentPlayingTrackId;

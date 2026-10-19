@@ -142,8 +142,14 @@ QString trackInfo(const ScriptFunctionCallContext& call)
     return escapeRichText(call.options, call.subject.track->techInfo(call.args.front().value));
 }
 
-ScriptResult dateTimeVariable()
+ScriptResult dateTimeVariable(const ScriptContext& context)
 {
+    for(const auto& value : context.values) {
+        if(value.name == u"DATETIME") {
+            return value.result;
+        }
+    }
+
     const QString value = QDateTime::currentDateTime().toString(u"yyyy-MM-dd hh:mm:ss"_s);
     return {.value = value, .cond = !value.isEmpty()};
 }
@@ -275,6 +281,65 @@ QString queueItemState(const ScriptContext& context)
     const auto* row = playlistData(context);
     return row && row->queueItemState == State ? u"1"_s : QString{};
 }
+
+ScriptDependencies builtInVariableDependencies(VariableKind kind, const QString& name)
+{
+    using namespace ScriptSources;
+
+    if(kind >= VariableKind::InputDecoder && kind <= VariableKind::OutputBufferLength) {
+        return {.sources = {PlaybackOutput, PlaybackTrack}, .unclassified = false};
+    }
+
+    switch(kind) {
+        case VariableKind::Generic:
+            return name == u"DATETIME" ? ScriptDependencies{.sources = {Clock}, .unclassified = false}
+                                       : ScriptDependencies{.sources = {}, .unclassified = false};
+        case VariableKind::PlaybackTime:
+        case VariableKind::PlaybackTimeSeconds:
+        case VariableKind::PlaybackTimeRemaining:
+        case VariableKind::PlaybackTimeRemainingSeconds:
+            return {.sources = {PlaybackTime, PlaybackTrack, TrackMetadata}, .unclassified = false};
+        case VariableKind::IsPlaying:
+        case VariableKind::IsPaused:
+        case VariableKind::PlayingIcon:
+            return {.sources = {PlaybackTrack}, .unclassified = false};
+        case VariableKind::IsStopped:
+            return {.sources = {PlaybackStopped}, .unclassified = false};
+        case VariableKind::QueueIndex:
+        case VariableKind::QueueIndexes:
+        case VariableKind::QueueTotal:
+        case VariableKind::QueueMode:
+            return {.sources = {Queue}, .unclassified = false};
+        case VariableKind::IsQueueCurrent:
+        case VariableKind::IsQueueUpcoming:
+        case VariableKind::IsQueuePlayed:
+            return {.sources = {Queue, QueueCursor}, .unclassified = false};
+        case VariableKind::PlaylistElapsed:
+            return {.sources = {ScriptSources::Playlist, TrackMetadata, PlaylistPlayback}, .unclassified = false};
+        case VariableKind::TrackCount:
+        case VariableKind::Playtime:
+        case VariableKind::Genres:
+        case VariableKind::PlaylistName:
+        case VariableKind::PlaylistSize:
+        case VariableKind::PlaylistDuration:
+        case VariableKind::ListIndex:
+        case VariableKind::Depth:
+            return {.sources = {ScriptSources::Playlist, TrackMetadata}, .unclassified = false};
+        case VariableKind::LibraryName:
+        case VariableKind::LibraryPath:
+        case VariableKind::RelativePath:
+            return {.sources = {Libraries, TrackMetadata}, .unclassified = false};
+        case VariableKind::Bitrate:
+            return {.sources = {TrackMetadata, PlaybackOutput, PlaybackTrack}, .unclassified = false};
+        case VariableKind::FrontCover:
+        case VariableKind::BackCover:
+        case VariableKind::ArtistPicture:
+            return {.sources = {}, .unclassified = false};
+        default:
+            return {.sources = {TrackMetadata}, .unclassified = false};
+    }
+}
+
 } // namespace
 
 class ScriptRegistryPrivate
@@ -289,6 +354,12 @@ public:
 
     bool finalised{false};
     std::atomic_uint64_t operationState{0};
+    // Keep this order in sync with ScriptSources
+    // Each source ID is its index + 1
+    std::vector<QString> dataSources{u"track.metadata"_s, u"playback.track"_s,    u"playback.state"_s,
+                                     u"playback.time"_s,  u"playback.output"_s,   u"playback.stopped"_s,
+                                     u"playlist"_s,       u"playlist.playback"_s, u"queue"_s,
+                                     u"queue.cursor"_s,   u"libraries"_s,         u"clock"_s};
     std::vector<ScriptVariableDescriptor> variables;
     std::vector<ScriptFunctionDescriptor> functions;
     std::unordered_map<QString, size_t> variableIds;
@@ -301,12 +372,14 @@ void ScriptRegistryPrivate::addDefaultVariables()
 
     const auto addVariable = [this](VariableKind kind, QString name, const char* category, const char* description,
                                     ScriptVariableInvoker invoker = {}, std::vector<QString> aliases = {}) {
-        registerVariable({.kind        = kind,
-                          .name        = std::move(name),
-                          .invoker     = invoker,
-                          .category    = QString::fromUtf8(category),
-                          .description = QString::fromUtf8(description),
-                          .aliases     = std::move(aliases)});
+        const auto dependencies = builtInVariableDependencies(kind, name);
+        registerVariable({.kind         = kind,
+                          .name         = std::move(name),
+                          .invoker      = invoker,
+                          .category     = QString::fromUtf8(category),
+                          .description  = QString::fromUtf8(description),
+                          .aliases      = std::move(aliases),
+                          .dependencies = dependencies});
     };
 
     addVariable(VariableKind::Title, QString::fromLatin1(MetaData::Title), QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
@@ -552,13 +625,20 @@ void ScriptRegistryPrivate::addDefaultFunctions()
     const auto addFunction = [this](QString name, QString signature, const char* category, const char* description,
                                     ScriptFunctionInvoker invoker = {}, FunctionKind kind = FunctionKind::Generic,
                                     std::vector<QString> aliases = {}) {
-        registerFunction({.name        = std::move(name),
-                          .invoker     = invoker,
-                          .signature   = std::move(signature),
-                          .category    = QString::fromUtf8(category),
-                          .description = QString::fromUtf8(description),
-                          .kind        = kind,
-                          .aliases     = std::move(aliases)});
+        ScriptDependencies dependencies{.unclassified = false};
+        if(name == "meta"_L1 || name == "meta_sep"_L1 || name == "meta_test"_L1 || name == "meta_num"_L1
+           || name == "info"_L1) {
+            dependencies.sources.push_back(ScriptSources::TrackMetadata);
+        }
+
+        registerFunction({.name         = std::move(name),
+                          .invoker      = invoker,
+                          .signature    = std::move(signature),
+                          .category     = QString::fromUtf8(category),
+                          .description  = QString::fromUtf8(description),
+                          .kind         = kind,
+                          .aliases      = std::move(aliases),
+                          .dependencies = std::move(dependencies)});
     };
 
     addFunction(u"add"_s, u"$add(x,y,…)"_s, QT_TRANSLATE_NOOP("Fooyin", "Numeric"),
@@ -893,13 +973,29 @@ ScriptRegistry& ScriptRegistry::instance()
     return registry;
 }
 
+ScriptDataSourceId ScriptRegistry::registerDataSource(QString name)
+{
+    if(p->finalised || name.isEmpty() || std::ranges::find(p->dataSources, name) != p->dataSources.end()) {
+        qWarning() << "Cannot register script data source:" << name;
+        return InvalidScriptDataSource;
+    }
+
+    p->dataSources.push_back(std::move(name));
+    return static_cast<ScriptDataSourceId>(p->dataSources.size());
+}
+
+size_t ScriptRegistry::dataSourceCount() const
+{
+    return p->dataSources.size();
+}
+
 bool ScriptRegistry::registerVariable(ScriptVariableDescriptor variable)
 {
     const bool hasBuiltInPath = variable.kind != VariableKind::Generic
                              && std::ranges::any_of(p->variables, [&variable](const auto& existing) {
                                     return existing.kind == variable.kind && !existing.invoker;
                                 });
-    if(!variable.invoker && !hasBuiltInPath) {
+    if(!variable.invoker && !variable.contextual && !hasBuiltInPath) {
         qWarning() << "Cannot register script variable:" << variable.name << "invalid invoker";
         return false;
     }
@@ -992,9 +1088,20 @@ const ScriptVariableInvoker* ScriptRegistry::variableInvoker(const QString& name
     return nullptr;
 }
 
+const ScriptVariableDescriptor* ScriptRegistry::variableDescriptor(const QString& name) const
+{
+    const auto it = p->variableIds.find(name.toUpper());
+    return it != p->variableIds.end() ? &p->variables[it->second] : nullptr;
+}
+
 const ScriptFunctionInvoker* ScriptRegistry::functionInvoker(ScriptFunctionId id) const
 {
     return id != InvalidScriptFunctionId && id <= p->functions.size() ? &p->functions[id - 1].invoker : nullptr;
+}
+
+const ScriptFunctionDescriptor* ScriptRegistry::functionDescriptor(ScriptFunctionId id) const
+{
+    return id != InvalidScriptFunctionId && id <= p->functions.size() ? &p->functions[id - 1] : nullptr;
 }
 
 bool ScriptRegistry::beginOperation()

@@ -914,7 +914,7 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     , m_sortRegistry{core->sortingRegistry()}
     , m_layout{new QVBoxLayout(this)}
     , m_model{new PlaylistModel(m_playlistInteractor, core->audioLoader().get(), coverProvider, m_settings,
-                                styleProvider, this)}
+                                styleProvider, core->scriptContextService(), this)}
     , m_delgate{new PlaylistDelegate(this)}
     , m_playlistView{new PlaylistView(this)}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}

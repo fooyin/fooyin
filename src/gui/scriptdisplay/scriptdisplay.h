@@ -36,6 +36,8 @@ class QResizeEvent;
 class QTextBrowser;
 
 namespace Fooyin {
+class Application;
+class ScriptContextService;
 class ActionManager;
 class BackgroundImageSource;
 class Command;
@@ -45,6 +47,7 @@ class PlayerController;
 class PlaylistHandler;
 class PropertiesDialog;
 class ScriptCommandHandler;
+class ScriptSubscription;
 class SettingsManager;
 class TrackSelectionController;
 class WidgetBackground;
@@ -69,10 +72,8 @@ public:
         BackgroundConfig background{};
     };
 
-    ScriptDisplay(PlayerController* playerController, PlaylistHandler* playlistHandler,
-                  TrackSelectionController* trackSelection, CoverProvider* coverProvider,
-                  ScriptCommandHandler* commandHandler, ActionManager* actionManager, SettingsManager* settings,
-                  QWidget* parent = nullptr);
+    ScriptDisplay(Application* core, TrackSelectionController* trackSelection, CoverProvider* coverProvider,
+                  ScriptCommandHandler* commandHandler, ActionManager* actionManager, QWidget* parent = nullptr);
     ~ScriptDisplay() override;
 
     [[nodiscard]] QString name() const override;
@@ -114,6 +115,7 @@ private:
     void activateLink(const QString& link) const;
 
     PlayerController* m_playerController;
+    ScriptContextService* m_scriptContext;
     PlaylistHandler* m_playlistHandler;
     TrackSelectionController* m_trackSelection;
     ScriptCommandHandler* m_commandHandler;
@@ -123,6 +125,7 @@ private:
     BackgroundImageSource* m_backgroundSource;
     WidgetBackground* m_background;
     ScriptParser m_scriptParser;
+    ScriptSubscription* m_scriptSubscription;
 
     QHBoxLayout* m_layout;
     QTextBrowser* m_text;

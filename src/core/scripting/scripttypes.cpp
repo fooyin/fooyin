@@ -72,6 +72,7 @@ ScriptContextData makePlaybackScriptData(PlayerController* playerController, Pla
         .outputInfo = std::move(outputInfo),
         .playState  = playState,
         .queueMode  = queueMode,
+        .track      = playerController ? playerController->currentTrack() : Track{},
     };
 
     return context;

@@ -137,8 +137,10 @@ Q_SIGNALS:
     void populationFinished(uint64_t generation);
     void populated(Fooyin::PendingDataPtr data);
     void populatedTrackGroup(Fooyin::PendingDataPtr data);
-    void tracksUpdated(uint64_t generation, const Fooyin::ItemList& tracks, const std::set<int>& columnsUpdated);
-    void headersUpdated(uint64_t generation, const Fooyin::ItemKeyMap& headers);
+    void tracksUpdated(uint64_t generation, const Fooyin::ScriptContextData& context, const Fooyin::ItemList& tracks,
+                       const std::set<int>& columnsUpdated);
+    void headersUpdated(uint64_t generation, const Fooyin::ScriptContextData& context,
+                        const Fooyin::ItemKeyMap& headers);
 
 private:
     std::unique_ptr<PlaylistPopulatorPrivate> p;

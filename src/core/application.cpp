@@ -53,6 +53,7 @@
 #include <core/playlist/playlisthandler.h>
 #include <core/playlist/playlistloader.h>
 #include <core/plugins/coreplugin.h>
+#include <core/scripting/scriptcontextservice.h>
 #include <core/scripting/scriptregistry.h>
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
@@ -115,6 +116,7 @@ Application::Application(QObject* parent)
                                         m_remoteIo, m_settings, this)}
     , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_audioLoader, m_library, m_settings, this)}
     , m_playerController{new PlayerController(m_settings, m_playlistHandler, this)}
+    , m_scriptContext{new ScriptContextService(m_playerController, m_playlistHandler, this)}
     , m_playbackQueueStore{m_database->connectionPool(), m_library, m_playlistHandler}
     , m_engine{std::make_unique<EngineHandler>(m_audioLoader, m_playerController, m_settings, m_dspRegistry.get())}
     , m_sortingRegistry{new SortingRegistry(m_settings, this)}
@@ -129,7 +131,8 @@ Application::Application(QObject* parent)
                           m_playlistLoader,
                           m_sortingRegistry,
                           m_networkManager,
-                          m_database->connectionPool()}
+                          m_database->connectionPool(),
+                          m_scriptContext}
 {
     m_audioLoader->setRemoteSourceProvider(m_remoteIo);
     m_translations.initialiseTranslations(m_settings->value<Settings::Core::Language>());
@@ -177,6 +180,8 @@ Application::Application(QObject* parent)
                              m_library->flushPendingWrites();
                          }
                      });
+    QObject::connect(m_libraryManager, &LibraryManager::librariesChanged, this,
+                     [this]() { m_scriptContext->publish(ScriptSources::Libraries); });
     QObject::connect(m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, m_playlistHandler,
                      &PlaylistHandler::savePlaylists);
     QObject::connect(m_engine.get(), &EngineHandler::trackChanged, this, [this](const Track& track) {
@@ -221,6 +226,7 @@ void Application::shutdown()
     m_playbackQueueStore.save(m_playerController->playbackQueue());
 
     m_playlistHandler->savePlaylists();
+    m_scriptContext->shutdown();
     ScriptRegistry::instance().shutdown();
     m_pluginManager->unloadPlugins();
     m_audioLoader->saveState();
@@ -269,6 +275,11 @@ PluginManager* Application::pluginManager() const
 PlayerController* Application::playerController() const
 {
     return m_playerController;
+}
+
+ScriptContextService* Application::scriptContextService() const
+{
+    return m_scriptContext;
 }
 
 LibraryManager* Application::libraryManager() const
@@ -463,6 +474,10 @@ void Application::tracksWereUpdated(const TrackList& tracks) const
                      << "path=" << updatedTrack.uniqueFilepath() << "playCount=" << updatedTrack.playCount()
                      << "rating=" << updatedTrack.rating();
         m_playerController->updateCurrentTrack(updatedTrack);
+    }
+
+    for(const auto& track : tracks) {
+        m_scriptContext->publish(ScriptSources::TrackMetadata, track);
     }
 }
 

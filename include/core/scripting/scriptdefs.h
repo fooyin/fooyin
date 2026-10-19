@@ -56,6 +56,8 @@ struct ScriptVariableDescriptor
     QString category{};
     QString description{};
     std::vector<QString> aliases{};
+    ScriptDependencies dependencies{};
+    bool contextual{false};
 };
 
 /*!
@@ -99,6 +101,7 @@ struct ScriptFunctionDescriptor
     QString description{};
     FunctionKind kind{FunctionKind::Generic};
     std::vector<QString> aliases{};
+    ScriptDependencies dependencies{};
 };
 
 template <typename Callable, typename... Args>

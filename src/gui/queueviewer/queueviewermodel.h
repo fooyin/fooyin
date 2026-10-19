@@ -22,6 +22,7 @@
 #include "queuevieweritem.h"
 
 #include <core/player/playbackqueue.h>
+#include <core/scripting/scriptcontextservice.h>
 #include <core/scripting/scriptparser.h>
 #include <gui/coverprovider.h>
 #include <gui/scripting/scriptformatter.h>
@@ -42,7 +43,8 @@ class QueueViewerModel : public TreeModel<QueueViewerItem>
 
 public:
     explicit QueueViewerModel(CoverRepository* coverRepository, PlayerController* playerController,
-                              SettingsManager* settings, QObject* parent = nullptr);
+                              SettingsManager* settings, ScriptContextService* scriptContext,
+                              QObject* parent = nullptr);
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] bool hasChildren(const QModelIndex& parent) const override;
@@ -77,8 +79,8 @@ Q_SIGNALS:
     void playlistTracksDropped(int row, const QByteArray& data);
 
 private:
-    std::unique_ptr<QueueViewerItem> makeCurrentTrackItem(const QueueTracks& tracks);
-    void regenerateTitles();
+    std::unique_ptr<QueueViewerItem> makeCurrentTrackItem();
+    void regenerateTitles(const ScriptChanges& changes = {});
     void removeLeadingItems(int count);
     [[nodiscard]] bool shouldShowCurrentRow() const;
     void updateShowCurrent();
@@ -86,15 +88,18 @@ private:
     [[nodiscard]] bool showsUpcomingTracks() const;
 
     PlayerController* m_playerController;
+    ScriptContextService* m_scriptContext;
     SettingsManager* m_settings;
 
     CoverProvider m_coverProvider;
     ScriptParser m_scriptParser;
+    ScriptSubscription* m_scriptSubscription;
     ScriptFormatter m_scriptFormatter;
 
     std::vector<std::unique_ptr<QueueViewerItem>> m_trackItems;
     std::unordered_map<QString, std::vector<QueueViewerItem*>> m_trackParents;
     std::unordered_map<PlaybackQueueItemId, QueueViewerItem*> m_itemsById;
+    std::unordered_map<PlaylistTrack, std::vector<int>, PlaylistTrack::PlaylistTrackHash> m_queueIndexes;
 
     QString m_displayScript;
 

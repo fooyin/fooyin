@@ -34,6 +34,7 @@ class PlaylistLoader;
 class PlaylistHandler;
 class SettingsManager;
 class SortingRegistry;
+class ScriptContextService;
 
 /*!
  * Passed to core plugins in CorePlugin::initialise.
@@ -44,7 +45,7 @@ struct CorePluginContext
                       MusicLibrary* library_, PlaylistHandler* playlistHandler_, SettingsManager* settingsManager_,
                       std::shared_ptr<AudioLoader> audioLoader_, std::shared_ptr<PlaylistLoader> playlistLoader_,
                       SortingRegistry* sortingRegistry_, std::shared_ptr<NetworkAccessManager> networkAccess_,
-                      DbConnectionPoolPtr dbPool_ = {})
+                      DbConnectionPoolPtr dbPool_, ScriptContextService* scriptContext_)
         : playerController{playerController_}
         , libraryManager{libraryManager_}
         , library{library_}
@@ -56,6 +57,7 @@ struct CorePluginContext
         , sortingRegistry{sortingRegistry_}
         , networkAccess{std::move(networkAccess_)}
         , dbPool{std::move(dbPool_)}
+        , scriptContext{scriptContext_}
     { }
 
     PlayerController* playerController;
@@ -69,5 +71,6 @@ struct CorePluginContext
     SortingRegistry* sortingRegistry;
     std::shared_ptr<NetworkAccessManager> networkAccess;
     DbConnectionPoolPtr dbPool;
+    ScriptContextService* scriptContext;
 };
 } // namespace Fooyin

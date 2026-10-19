@@ -52,6 +52,7 @@ struct FYCORE_EXPORT BoundScript
     QString input;
     BoundExpressionList expressions;
     ErrorList errors;
+    ScriptDependencies dependencies{.unclassified = false};
 
     [[nodiscard]] bool isValid() const
     {

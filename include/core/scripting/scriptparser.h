@@ -76,6 +76,8 @@ public:
     [[nodiscard]] static bool canEvaluateAsQuery(const ParsedScript& input);
     [[nodiscard]] static bool containsQueryExpression(const ParsedScript& input);
 
+    ScriptDependencies dependencies(const ParsedScript& input);
+
     QString evaluate(const QString& input);
     QString evaluate(const ParsedScript& input);
     QString evaluate(const QString& input, const ScriptContext& context);

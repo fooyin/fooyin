@@ -170,7 +170,7 @@ Widgets::Widgets(Application* core, GuiApplication* gui, const GuiPluginContext&
     , m_dspPresetRegistry{new DspPresetRegistry(m_settings, this)}
     , m_outputProfileManager{new OutputProfileManager(m_core->engine(), m_core->dspChainStore(), m_dspPresetRegistry,
                                                       m_settings, this)}
-    , m_nowPlayingOutputService{new NowPlayingOutputService(m_core->playerController(), m_settings, this)}
+    , m_nowPlayingOutputService{new NowPlayingOutputService(m_core, this)}
     , m_dspSettingsRegistry{std::make_unique<DspSettingsRegistry>()}
     , m_dspSettingsController{std::make_unique<DspSettingsController>(m_core->dspChainStore(),
                                                                       m_dspSettingsRegistry.get(), this)}
@@ -249,8 +249,8 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"PlaybackQueue"_s,
         [this]() {
-            return new QueueViewer(m_gui->actionManager(), m_playlistInteractor, m_gui->trackSelection(),
-                                   m_coverRepository, m_core->sortingRegistry(), m_settings, m_window);
+            return new QueueViewer(m_core, m_gui->actionManager(), m_playlistInteractor, m_gui->trackSelection(),
+                                   m_coverRepository, m_window);
         },
         tr("Playback Queue"));
 
@@ -384,9 +384,7 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"StatusBar"_s,
         [this]() {
-            auto* statusWidget
-                = new StatusWidget(m_core->engine(), m_core->playerController(), m_core->playlistHandler(),
-                                   m_playlistController, m_gui->trackSelection(), m_settings, m_window);
+            auto* statusWidget = new StatusWidget(m_core, m_playlistController, m_gui->trackSelection(), m_window);
             m_window->installStatusWidget(statusWidget);
             return statusWidget;
         },
@@ -405,9 +403,8 @@ void Widgets::registerWidgets()
     provider->registerWidget(
         u"ScriptDisplay"_s,
         [this]() {
-            return new ScriptDisplay(m_core->playerController(), m_core->playlistHandler(), m_gui->trackSelection(),
-                                     m_coverProvider, m_scriptCommandHandler, m_gui->actionManager(), m_settings,
-                                     m_window);
+            return new ScriptDisplay(m_core, m_gui->trackSelection(), m_coverProvider, m_scriptCommandHandler,
+                                     m_gui->actionManager(), m_window);
         },
         tr("Script Display"));
 
@@ -537,7 +534,7 @@ void Widgets::registerPages()
     new Filters::LibraryFilterPage(m_libraryFilterRegistry, m_settings, this);
     new PlaybackPage(m_settings, this);
     new PlaybackQueuePage(m_settings, this);
-    new NowPlayingOutputPage(m_core->playerController(), m_settings, this);
+    new NowPlayingOutputPage(m_core, this);
     new DspManagerPage(m_core->dspChainStore(), m_dspPresetRegistry, m_dspSettingsRegistry.get(), m_settings, this);
     new FadingPage(m_settings, this);
     new PlaylistGeneralPage(m_settings, this);

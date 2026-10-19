@@ -21,9 +21,11 @@
 
 #include "internalguisettings.h"
 
+#include <core/application.h>
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
+#include <core/scripting/scriptcontextservice.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scripttypes.h>
 #include <core/track.h>
@@ -68,9 +70,8 @@ class StatusWidgetPrivate : public QObject
     Q_OBJECT
 
 public:
-    StatusWidgetPrivate(StatusWidget* self, EngineController* engine, PlayerController* playerController,
-                        PlaylistHandler* playlistHandler, PlaylistController* playlistController,
-                        TrackSelectionController* selectionController, SettingsManager* settings);
+    StatusWidgetPrivate(StatusWidget* self, Application* core, PlaylistController* playlistController,
+                        TrackSelectionController* selectionController);
 
     void setupConnections();
     [[nodiscard]] RatingStarSymbols ratingSymbols() const;
@@ -98,6 +99,7 @@ public:
     StatusWidget* m_self;
     EngineController* m_engine;
     PlayerController* m_playerController;
+    ScriptContextService* m_scriptContext;
     PlaylistHandler* m_playlistHandler;
     PlaylistController* m_playlistController;
     TrackSelectionController* m_selectionController;
@@ -105,6 +107,8 @@ public:
     SettingsManager* m_settings;
 
     ScriptParser m_scriptParser;
+    ScriptSubscription* m_playingSubscription{nullptr};
+    ScriptSubscription* m_selectionSubscription{nullptr};
     ScriptFormatter m_playingFormatter;
     ScriptFormatter m_selectionFormatter;
 
@@ -127,18 +131,17 @@ public:
     QBasicTimer m_clearTimer;
 };
 
-StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, EngineController* engine,
-                                         PlayerController* playerController, PlaylistHandler* playlistHandler,
-                                         PlaylistController* playlistController,
-                                         TrackSelectionController* selectionController, SettingsManager* settings)
+StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, Application* core, PlaylistController* playlistController,
+                                         TrackSelectionController* selectionController)
     : QObject{self}
     , m_self{self}
-    , m_engine{engine}
-    , m_playerController{playerController}
-    , m_playlistHandler{playlistHandler}
+    , m_engine{core->engine()}
+    , m_playerController{core->playerController()}
+    , m_scriptContext{core->scriptContextService()}
+    , m_playlistHandler{core->playlistHandler()}
     , m_playlistController{playlistController}
     , m_selectionController{selectionController}
-    , m_settings{settings}
+    , m_settings{core->settingsManager()}
     , m_iconLabel{new ClickableLabel(m_self)}
     , m_scanCancelButton{new QToolButton(m_self)}
     , m_scanText{new StatusLabel(m_self)}
@@ -183,14 +186,16 @@ StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, EngineController* e
 
 void StatusWidgetPrivate::setupConnections()
 {
+    m_playingSubscription   = m_scriptContext->subscribe(this);
+    m_selectionSubscription = m_scriptContext->subscribe(this);
+
+    QObject::connect(m_playingSubscription, &ScriptSubscription::changed, this,
+                     &StatusWidgetPrivate::updatePlayingText);
+    QObject::connect(m_selectionSubscription, &ScriptSubscription::changed, this,
+                     &StatusWidgetPrivate::updateSelectionText);
     QObject::connect(m_engine, &EngineController::trackStatusContextChanged, this,
                      &StatusWidgetPrivate::updateRemoteStreamStatus);
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &StatusWidgetPrivate::stateChanged);
-    QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,
-                     &StatusWidgetPrivate::updatePlayingText);
-    QObject::connect(m_playerController, &PlayerController::bitrateChanged, this, [this](int) { updatePlayingText(); });
-    QObject::connect(m_playerController, &PlayerController::playbackOutputInfoChanged, this,
-                     &StatusWidgetPrivate::updatePlayingText);
     QObject::connect(m_selectionController, &TrackSelectionController::displaySelectionChanged, this,
                      &StatusWidgetPrivate::updateSelectionText);
     QObject::connect(m_playlistController, &PlaylistController::playlistsLoaded, this,
@@ -412,7 +417,7 @@ ScriptEvaluationContext StatusWidgetPrivate::makeSelectionContext(const TrackSel
         playlistTrackIndex = currentPlaylist->currentTrackIndex();
     }
 
-    contextData.data        = makePlaybackScriptData(m_playerController, currentPlaylist);
+    contextData.data        = m_scriptContext->playbackContext(currentPlaylist);
     contextData.data.tracks = trackList;
     auto& row               = contextData.data.playlistData;
     row.trackIndex          = playlistTrackIndex;
@@ -449,6 +454,10 @@ void StatusWidgetPrivate::setRichLabelText(StatusLabel* label, const QString& te
 
 void StatusWidgetPrivate::updatePlayingText()
 {
+    m_playingSubscription->setScript(m_playingScript);
+    const auto* playlist = m_playlistHandler->activePlaylist();
+    m_playingSubscription->setScope(m_playerController->currentTrack(), playlist ? playlist->id() : UId{});
+
     if(m_remoteStreamBuffering) {
         m_playingText->setText(tr("Buffering stream…"));
         updateMessageVisibility();
@@ -460,7 +469,7 @@ void StatusWidgetPrivate::updatePlayingText()
         QString playingText;
 
         if(const Track currentTrack = m_playerController->currentTrack(); currentTrack.isValid()) {
-            const auto data = makePlaybackScriptData(m_playerController, m_playlistHandler->activePlaylist());
+            const auto data = m_scriptContext->playbackContext(m_playlistHandler->activePlaylist());
             const ScriptEvaluationOptions options{.trackListContextPolicy = TrackListContextPolicy::Fallback,
                                                   .escapeRichText         = true,
                                                   .ratingSymbols          = ratingSymbols()};
@@ -494,8 +503,15 @@ void StatusWidgetPrivate::updateRemoteStreamStatus(const Engine::TrackStatusCont
 
 void StatusWidgetPrivate::updateSelectionText()
 {
+    const auto* playlist = m_playlistController->currentPlaylist();
+    m_selectionSubscription->setScope({}, playlist ? playlist->id() : UId{});
+
     const bool showSelection = m_settings->value<Settings::Gui::Internal::StatusShowSelection>();
     const bool showPlaylist  = m_settings->value<Settings::Gui::Internal::StatusShowPlaylist>();
+
+    m_selectionSubscription->setScript((showSelection ? m_selectionScript : QString{}) + u'\n'
+                                       + (showPlaylist ? m_playlistScript : QString{}));
+
     if(!showSelection && !showPlaylist) {
         return;
     }
@@ -565,12 +581,10 @@ void StatusWidgetPrivate::performAction(StatusAction action)
     }
 }
 
-StatusWidget::StatusWidget(EngineController* engine, PlayerController* playerController,
-                           PlaylistHandler* playlistHandler, PlaylistController* playlistController,
-                           TrackSelectionController* selectionController, SettingsManager* settings, QWidget* parent)
+StatusWidget::StatusWidget(Application* core, PlaylistController* playlistController,
+                           TrackSelectionController* selectionController, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<StatusWidgetPrivate>(this, engine, playerController, playlistHandler, playlistController,
-                                              selectionController, settings)}
+    , p{std::make_unique<StatusWidgetPrivate>(this, core, playlistController, selectionController)}
 {
     setObjectName(StatusWidget::name());
 }

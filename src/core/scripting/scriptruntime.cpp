@@ -1656,6 +1656,19 @@ ParsedScript ScriptRuntime::parseQuery(const QString& input)
     return m_currentScript;
 }
 
+ScriptDependencies ScriptRuntime::dependencies(const ParsedScript& input)
+{
+    if(!m_registry->beginOperation()) {
+        return {};
+    }
+
+    const auto operation = scopeGuard([this]() { m_registry->endOperation(); });
+    if(!m_registry->isFinalised()) {
+        return {};
+    }
+    return bind(input).dependencies;
+}
+
 const BoundScript& ScriptRuntime::bind(const ParsedScript& input)
 {
     BoundScriptCache& cache = m_isQuery ? m_boundQueryCache : m_boundScriptCache;

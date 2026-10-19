@@ -43,6 +43,9 @@ public:
 
     static ScriptRegistry& instance();
 
+    ScriptDataSourceId registerDataSource(QString name);
+    [[nodiscard]] size_t dataSourceCount() const;
+
     bool registerVariable(ScriptVariableDescriptor variable);
     bool registerFunction(ScriptFunctionDescriptor function);
     void finalise();
@@ -57,7 +60,9 @@ public:
     [[nodiscard]] ScriptFunctionId resolveFunctionId(const QString& name) const;
     [[nodiscard]] FunctionKind functionKind(ScriptFunctionId id) const;
     [[nodiscard]] const ScriptVariableInvoker* variableInvoker(const QString& name) const;
+    [[nodiscard]] const ScriptVariableDescriptor* variableDescriptor(const QString& name) const;
     [[nodiscard]] const ScriptFunctionInvoker* functionInvoker(ScriptFunctionId id) const;
+    [[nodiscard]] const ScriptFunctionDescriptor* functionDescriptor(ScriptFunctionId id) const;
 
 private:
     friend class ScriptRuntime;

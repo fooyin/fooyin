@@ -52,6 +52,7 @@ class PlaylistHandler;
 class PlaylistLoader;
 class PluginManager;
 class RemoteIoService;
+class ScriptContextService;
 class SettingsManager;
 class SortingRegistry;
 class UnifiedMusicLibrary;
@@ -78,6 +79,7 @@ public:
     [[nodiscard]] DbConnectionPoolPtr databasePool() const;
     [[nodiscard]] PluginManager* pluginManager() const;
     [[nodiscard]] PlayerController* playerController() const;
+    [[nodiscard]] ScriptContextService* scriptContextService() const;
     [[nodiscard]] LibraryManager* libraryManager() const;
     [[nodiscard]] MusicLibrary* library() const;
     [[nodiscard]] PendingTrackCoverProvider* pendingTrackCoverProvider() const;
@@ -128,6 +130,7 @@ private:
     UnifiedMusicLibrary* m_library;
     PlaylistHandler* m_playlistHandler;
     PlayerController* m_playerController;
+    ScriptContextService* m_scriptContext;
     PlaybackQueueStore m_playbackQueueStore;
     std::unique_ptr<EngineHandler> m_engine;
     SortingRegistry* m_sortingRegistry;
