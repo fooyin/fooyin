@@ -51,6 +51,8 @@ public:
     explicit LyricsFinder(std::shared_ptr<NetworkAccessManager> networkManager, SettingsManager* settings,
                           QObject* parent = nullptr);
 
+    void cancel();
+
     void findLyrics(const LyricsSearchRequest& request);
     void findLyrics(const Track& track);
     void findLocalLyrics(const Track& track);

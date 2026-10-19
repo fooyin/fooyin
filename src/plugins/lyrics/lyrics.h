@@ -22,6 +22,7 @@
 #include <gui/guistyleprovider.h>
 
 #include <cstdint>
+#include <ranges>
 #include <tuple>
 #include <vector>
 
@@ -128,6 +129,32 @@ struct Lyrics
     [[nodiscard]] bool isSyncedWords() const
     {
         return type == Type::SyncedWords;
+    }
+
+    [[nodiscard]] std::pair<size_t, size_t> lineRange(uint64_t position) const
+    {
+        if(!isSynced()) {
+            return {};
+        }
+
+        const auto next = std::ranges::upper_bound(lines, position, {}, &ParsedLine::timestamp);
+        if(next == lines.cbegin()) {
+            return {};
+        }
+
+        const auto timestamp = std::prev(next)->timestamp;
+        const auto first     = std::ranges::lower_bound(lines.cbegin(), next, timestamp, {}, &ParsedLine::timestamp);
+        return {static_cast<size_t>(std::distance(lines.cbegin(), first)),
+                static_cast<size_t>(std::distance(lines.cbegin(), next))};
+    }
+
+    [[nodiscard]] QString lineText(uint64_t position) const
+    {
+        const auto [first, last] = lineRange(position);
+        if(first == last) {
+            return {};
+        }
+        return lines[first].joinedWords().trimmed();
     }
 
     static QFont defaultFont(const GuiStyleProvider& styleProvider)

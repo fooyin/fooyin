@@ -36,6 +36,8 @@ class QJsonObject;
 class QPropertyAnimation;
 
 namespace Fooyin {
+struct CorePluginContext;
+class ScriptContextService;
 class BackgroundImageSource;
 class CoverRepository;
 class EngineController;
@@ -53,20 +55,18 @@ class LyricsDelegate;
 class LyricsFinder;
 class LyricsModel;
 class LyricsSaver;
+class LyricsPlaybackService;
 
 class LyricsWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit LyricsWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
-                          LyricsFinder* lyricsFinder, LyricsSaver* lyricsSaver, SettingsManager* settings,
+    explicit LyricsWidget(const CorePluginContext& core, LyricsPlaybackService* lyricsService, LyricsSaver* lyricsSaver,
                           GuiStyleProvider* styleProvider, CoverRepository* coverRepository,
                           TrackSelectionController* trackSelection, QWidget* parent = nullptr);
 
     static QString defaultNoLyricsScript();
-
-    void updateLyrics(const Track& track, bool force = false);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -113,11 +113,7 @@ protected:
     void openConfigDialog() override;
 
 private:
-    void loadLyrics(const Lyrics& lyrics);
-    void handleLyricsSearchStarted(const Track& track);
-    void handleLyricsFound(const Track& track, const Lyrics& lyrics);
-    void handleLyricsSearchFinished(const Track& track, bool foundAny);
-    void handleSavedLyrics(const Track& track, const Lyrics& lyrics);
+    void syncLyrics();
     void changeLyrics(const Lyrics& lyrics, const Track* sourceTrack = nullptr);
     void openEditor(const Lyrics& lyrics);
     void openSearchDialog();
@@ -145,6 +141,7 @@ private:
     [[nodiscard]] bool shouldEnableEdgeFade() const;
 
     PlayerController* m_playerController;
+    ScriptContextService* m_scriptContext;
     PlaylistHandler* m_playlistHandler;
     SettingsManager* m_settings;
     GuiStyleProvider* m_styleProvider;
@@ -154,7 +151,7 @@ private:
     LyricsModel* m_model;
     LyricsDelegate* m_delegate;
 
-    LyricsFinder* m_lyricsFinder;
+    LyricsPlaybackService* m_lyricsService;
     LyricsSaver* m_lyricsSaver;
 
     Lyrics m_currentLyrics;
@@ -163,7 +160,6 @@ private:
     int m_currentLineEnd;
 
     Track m_currentTrack;
-    std::vector<Lyrics> m_lyrics;
     ScriptParser m_parser;
 
     ConfigData m_config;

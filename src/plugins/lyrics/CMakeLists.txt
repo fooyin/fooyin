@@ -4,6 +4,8 @@ create_fooyin_plugin_internal(
             ZLIB::ZLIB
     SOURCES lyrics.h
             lyricscolours.h
+            lyricsconfigwidget.cpp
+            lyricsconfigwidget.h
             lyricsconstants.h
             lyricsdelegate.cpp
             lyricsdelegate.h
@@ -17,22 +19,22 @@ create_fooyin_plugin_internal(
             lyricsmodel.h
             lyricsparser.cpp
             lyricsparser.h
+            lyricsplaybackservice.cpp
+            lyricsplaybackservice.h
             lyricsplugin.cpp
             lyricsplugin.h
             lyricspropertiestab.cpp
             lyricspropertiestab.h
+            lyricssaver.cpp
+            lyricssaver.h
             lyricssearchdialog.cpp
             lyricssearchdialog.h
             lyricssearchmodel.cpp
             lyricssearchmodel.h
-            lyricssaver.cpp
-            lyricssaver.h
             lyricsview.cpp
             lyricsview.h
             lyricswidget.cpp
             lyricswidget.h
-            lyricsconfigwidget.cpp
-            lyricsconfigwidget.h
             settings/lyricssavingpage.cpp
             settings/lyricssavingpage.h
             settings/lyricssearchingpage.cpp
@@ -45,6 +47,8 @@ create_fooyin_plugin_internal(
             settings/lyricssourcespage.h
             sources/darklyrics.cpp
             sources/darklyrics.h
+            sources/kugoulyrics.cpp
+            sources/kugoulyrics.h
             sources/locallyrics.cpp
             sources/locallyrics.h
             sources/lrcliblyrics.cpp
@@ -55,8 +59,6 @@ create_fooyin_plugin_internal(
             sources/neteaselyrics.h
             sources/qqlyrics.cpp
             sources/qqlyrics.h
-            sources/kugoulyrics.cpp
-            sources/kugoulyrics.h
             sources/taglyrics.cpp
             sources/taglyrics.h
 )
