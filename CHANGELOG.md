@@ -10,6 +10,7 @@
   - Add an Opus decoder plugin
   - Add a Vorbis decoder plugin
   - Add a JACK output plugin
+  - Add A–B repeat with controls in seek bars ([#1791](https://github.com/fooyin/fooyin/pull/1791))
 - **Interface**
   - Add drag-and-drop layout editing ([#1728](https://github.com/fooyin/fooyin/pull/1728))
   - Add Track Viewer and per-widget playlist settings ([#1699](https://github.com/fooyin/fooyin/pull/1699))
@@ -58,12 +59,15 @@
   - Use proper quotation marks and apostrophes ([#1771](https://github.com/fooyin/fooyin/pull/1771))
   - Add horizontal scrolling and optional word wrapping to the log ([#1777](https://github.com/fooyin/fooyin/issues/1777))
   - Show portal-assigned global shortcuts and track system changes ([#1731](https://github.com/fooyin/fooyin/issues/1731))
+  - Improve expanded tree view lookup performance
 - **Filters**
   - Add an option to remember the selected saved filter ([#1690](https://github.com/fooyin/fooyin/issues/1690))
   - Add an option to restore Library Filter state on startup ([#1699](https://github.com/fooyin/fooyin/pull/1699))
   - Improve metadata update performance
   - Scroll to the top for changed results and preserve position for unchanged results
-- **Library & Metadata:** Compress large extra tag values to reduce memory usage
+- **Library & Metadata** 
+  - Add Deezer as an online artwork source
+  - Compress large extra tag values to reduce memory usage
 - **Playback**
   - Add TTA playback support ([#764](https://github.com/fooyin/fooyin/issues/764))
   - Add an option to skip automatic crossfading within albums
@@ -76,6 +80,7 @@
   - Add scripted separators and unify preset display scripts ([#1732](https://github.com/fooyin/fooyin/pull/1732))
   - Enable queue indexes by default in playlist-led mode
   - Improve autoplaylist update performance ([#1787](https://github.com/fooyin/fooyin/issues/1787))
+  - Improve track lookup and Queue Viewer update performance
   - Make the inline editing delay configurable
   - Move background controls to a separate configuration tab
   - Sort playlists naturally in Playlist Manager
@@ -99,6 +104,7 @@
   - Improve binding and evaluation performance
   - Reorganise Script Editor settings and move font configuration to theme settings
   - Reduce the default minimum height of script text editors
+  - Add `%lyrics_line%` for the current line of synced lyrics
 - **Tag Editor**
   - Start editing values when navigating with Tab ([#1669](https://github.com/fooyin/fooyin/issues/1669))
   - Add an option for single-click value editing
@@ -125,6 +131,7 @@
   - Preserve artwork fades when the upcoming image is unchanged
   - Fix WaveBar seek cancellation and high-DPI rendering
   - Hide unreachable played threshold markers in seek bars and WaveBar
+  - Update documentation links ([#1792](https://github.com/fooyin/fooyin/pull/1792))
 - **Library & Metadata**
   - Fix Discogs artwork requests
   - Fix reading custom ReplayGain tags ([#1775](https://github.com/fooyin/fooyin/issues/1775))
@@ -135,6 +142,7 @@
   - Recognise spaced `ALBUM ARTIST` tags ([#1693](https://github.com/fooyin/fooyin/issues/1693))
   - Make track update and deletion batches and playlist saves atomic
   - Update raw ratings while file writes are deferred ([#1787](https://github.com/fooyin/fooyin/issues/1787))
+  - Keep immediate and deferred playback statistics updates in sync ([#1787](https://github.com/fooyin/fooyin/issues/1787))
 - **Lyrics**
   - Fix right-to-left word order ([#1675](https://github.com/fooyin/fooyin/issues/1675))
   - Ignore instrumental placeholders from NetEase and QQ
@@ -143,6 +151,7 @@
   - Preserve played threshold state when restoring playback
   - Restore queued playlist references when the original playlist returns
   - Snapshot scripting state before background playlist population
+  - Refresh queued track metadata when tracks change
 - **Playlists**
   - Avoid unnecessary history refreshes in queue-led mode
   - Fix dangling parent references during playlist population
@@ -180,6 +189,7 @@
 - **Audio Encoders:** Add the `EncoderPlugin` interface for registering encoder plugins
 - **Playlists:** Add `PlaylistInteractor` APIs to refresh whole playlists or individual entries
 - **Plugins:** Add API version checks and audio input priorities
+- **Scripting:** Add dependency-aware contexts, data sources, and live subscriptions
 
 
 ## [0.13.1](https://github.com/fooyin/fooyin/releases/tag/v0.13.1) (2026-09-24)
