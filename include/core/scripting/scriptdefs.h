@@ -57,7 +57,8 @@ struct ScriptVariableDescriptor
     QString description{};
     std::vector<QString> aliases{};
     ScriptDependencies dependencies{};
-    bool contextual{false};
+    bool contextual{false};     // Resolve from captured context values, respecting any track scope on the value
+    bool playbackScoped{false}; // Apply playback row and queue occurrence checks to contextual values
 };
 
 /*!

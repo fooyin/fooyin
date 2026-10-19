@@ -474,6 +474,9 @@ ScriptResult ScriptEvaluator::value(VariableKind kind, const QString& var, const
                 if(value.track.isValid() && (!subject.track || !subject.track->sameIdentityAs(value.track))) {
                     return {};
                 }
+                if(descriptor->playbackScoped && !playbackValueAvailableForTrack(value.track)) {
+                    return {};
+                }
                 auto result{value.result};
                 applyVariableOutputPolicy(options, kind, result);
                 return result;

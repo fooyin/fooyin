@@ -46,11 +46,12 @@ LyricsPlaybackService::LyricsPlaybackService(const CorePluginContext& core, Lyri
     , m_searching{false}
 {
     ScriptRegistry::instance().registerVariable(
-        {.name         = u"LYRICS_LINE"_s,
-         .category     = tr("Lyrics"),
-         .description  = tr("Current synchronised lyrics line for the playing track"),
-         .dependencies = {.sources = {m_source}, .unclassified = false},
-         .contextual   = true});
+        {.name           = u"LYRICS_LINE"_s,
+         .category       = tr("Lyrics"),
+         .description    = tr("Current synchronised lyrics line for the playing track"),
+         .dependencies   = {.sources = {m_source, ScriptSources::PlaybackTrack}, .unclassified = false},
+         .contextual     = true,
+         .playbackScoped = true});
 
     m_context->registerProvider(m_source, this, [this](ScriptContextData& data) { capture(data); });
 
