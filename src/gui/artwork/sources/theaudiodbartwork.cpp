@@ -28,17 +28,15 @@
 #include <QTimerEvent>
 #include <QUrlQuery>
 
+#include <chrono>
+
 using namespace Qt::StringLiterals;
 using namespace std::chrono_literals;
 
 constexpr auto SearchUrl = "https://www.theaudiodb.com/api/v1/json/123/%1.php";
 
 // The free API allows 30 requests per minute
-#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 constexpr auto RequestInterval = 2000ms;
-#else
-constexpr auto RequestInterval = 2000;
-#endif
 
 namespace Fooyin {
 QString TheAudioDbArtwork::name() const
@@ -63,10 +61,13 @@ void TheAudioDbArtwork::search(const SearchParams& params)
 
     m_params = params;
 
-    const auto elapsed
-        = m_lastRequest.isValid() ? static_cast<std::chrono::milliseconds>(m_lastRequest.elapsed()) : RequestInterval;
+    const auto elapsed = m_lastRequest.isValid() ? std::chrono::milliseconds{m_lastRequest.elapsed()} : RequestInterval;
     if(elapsed < RequestInterval) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
         m_searchTimer.start(RequestInterval - elapsed, Qt::PreciseTimer, this);
+#else
+        m_searchTimer.start(static_cast<int>((RequestInterval - elapsed).count()), Qt::PreciseTimer, this);
+#endif
         return;
     }
 
