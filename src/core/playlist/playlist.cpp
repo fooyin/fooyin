@@ -113,6 +113,7 @@ bool PlaylistTrack::hasEntryId() const
 PlaylistTrackList PlaylistTrack::fromTracks(const TrackList& tracks, const UId& playlistId)
 {
     PlaylistTrackList playlistTracks;
+    playlistTracks.reserve(tracks.size());
 
     for(int i{0}; const Track& track : tracks) {
         playlistTracks.emplace_back(track, playlistId, UId::create(), i++);
@@ -124,11 +125,8 @@ PlaylistTrackList PlaylistTrack::fromTracks(const TrackList& tracks, const UId& 
 TrackList PlaylistTrack::toTracks(const PlaylistTrackList& playlistTracks)
 {
     TrackList tracks;
-
-    for(const PlaylistTrack& track : playlistTracks) {
-        tracks.emplace_back(track.track);
-    }
-
+    tracks.reserve(playlistTracks.size());
+    std::ranges::transform(playlistTracks, std::back_inserter(tracks), &PlaylistTrack::track);
     return tracks;
 }
 
