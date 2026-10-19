@@ -263,6 +263,7 @@ private:
     void cleanupHeaders();
     void removeEmptyHeaders();
     void mergeHeaders();
+    [[nodiscard]] TrackList collectHeaderTracks(PlaylistItem* header) const;
     void updateHeaders();
     void updateTrackIndexes(bool updateItems = true);
     void deleteNodes(PlaylistItem* node);

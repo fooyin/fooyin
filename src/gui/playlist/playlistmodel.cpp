@@ -587,33 +587,6 @@ std::optional<QModelIndexList> restoreIndexes(QAbstractItemModel* model, QByteAr
     return result;
 }
 
-TrackList collectHeaderTracks(PlaylistItem* header)
-{
-    TrackList tracks;
-
-    if(!header) {
-        return tracks;
-    }
-
-    const auto type = header->type();
-    if(type != PlaylistItem::Header && type != PlaylistItem::Subheader) {
-        return tracks;
-    }
-
-    const auto& children = header->children();
-    for(PlaylistItem* child : children) {
-        if(child->type() == PlaylistItem::Track) {
-            tracks.emplace_back(std::get<0>(child->data()).track().track);
-        }
-        else {
-            const auto childTracks = collectHeaderTracks(child);
-            std::ranges::copy(childTracks, std::back_inserter(tracks));
-        }
-    }
-
-    return tracks;
-}
-
 QColor defaultPlayingRowColour()
 {
     QColor colour = QApplication::palette().color(QPalette::Inactive, QPalette::Highlight);
@@ -3235,6 +3208,34 @@ void PlaylistModel::mergeHeaders()
     }
 
     rootItem()->resetChildren();
+}
+
+TrackList PlaylistModel::collectHeaderTracks(PlaylistItem* header) const
+{
+    TrackList tracks;
+
+    if(!header) {
+        return tracks;
+    }
+
+    const auto type = header->type();
+    if(type != PlaylistItem::Header && type != PlaylistItem::Subheader) {
+        return tracks;
+    }
+
+    const auto& children = header->children();
+    for(PlaylistItem* child : children) {
+        if(child->type() == PlaylistItem::Track) {
+            // Header refreshes can run before async row updates reach the model
+            tracks.emplace_back(persistentTrackForIndex(indexOfItem(child)).track);
+        }
+        else {
+            const auto childTracks = collectHeaderTracks(child);
+            std::ranges::copy(childTracks, std::back_inserter(tracks));
+        }
+    }
+
+    return tracks;
 }
 
 void PlaylistModel::updateHeaders()
