@@ -523,8 +523,18 @@ void QueueViewer::setupConnections()
         }
     };
 
-    QObject::connect(m_playerController, &PlayerController::trackQueueChanged, this,
-                     [resetQueueModel]() { resetQueueModel(true); });
+    QObject::connect(m_playerController, &PlayerController::trackQueueChanged, this, [this, resetQueueModel]() {
+        if(m_updatesPausedForTrackChange) {
+            return;
+        }
+        if(m_model->updateTracks(m_playerController->playbackQueue())) {
+            updateSelectedTracks();
+            updateSortActionState();
+        }
+        else {
+            resetQueueModel(true);
+        }
+    });
     QObject::connect(m_playerController, &PlayerController::trackIndexesDequeued, this,
                      [resetQueueModel]() { resetQueueModel(false); });
     QObject::connect(m_playerController, &PlayerController::tracksQueued, this,

@@ -61,6 +61,7 @@ public:
                       const QModelIndex& parent) override;
 
     void reset(const PlaybackQueue& queue);
+    bool updateTracks(const PlaybackQueue& queue);
 
     bool updatePlaybackPosition(const PlaybackQueue& queue);
     void playbackStateChanged();

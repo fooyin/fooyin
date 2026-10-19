@@ -49,6 +49,7 @@ public:
     [[nodiscard]] PlaylistTrack track() const;
     [[nodiscard]] PlaybackQueueItemId queueItemId() const;
 
+    void setTrack(const PlaylistTrack& track);
     bool generateTitle(ScriptParser* parser, ScriptFormatter* formatter, const QString& displayScript,
                        const ScriptContext& context, const ScriptEvaluationOptions& options);
 

@@ -54,6 +54,11 @@ PlaybackQueueItemId QueueViewerItem::queueItemId() const
     return m_queueItemId;
 }
 
+void QueueViewerItem::setTrack(const PlaylistTrack& track)
+{
+    m_track = track;
+}
+
 bool QueueViewerItem::generateTitle(ScriptParser* parser, ScriptFormatter* formatter, const QString& displayScript,
                                     const ScriptContext& context, const ScriptEvaluationOptions& options)
 {
