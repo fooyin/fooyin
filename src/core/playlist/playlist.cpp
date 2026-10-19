@@ -229,6 +229,7 @@ public:
     int m_index{-1};
     TrackList m_tracks;
     std::vector<UId> m_trackEntryIds;
+    mutable std::optional<std::unordered_map<UId, int, UId::UIdHash>> m_trackEntryIndexes;
 
     SettingsManager* m_settings;
     int m_currentTrackIndex{-1};
@@ -766,18 +767,23 @@ int PlaylistPrivate::indexOfTrackEntry(const UId& entryId) const
         return -1;
     }
 
-    const auto it = std::ranges::find(m_trackEntryIds, entryId);
-    if(it == m_trackEntryIds.cend()) {
-        return -1;
+    if(!m_trackEntryIndexes) {
+        auto& indexes = m_trackEntryIndexes.emplace();
+        indexes.reserve(m_trackEntryIds.size());
+        for(int index{0}; const auto& id : m_trackEntryIds) {
+            indexes.try_emplace(id, index++);
+        }
     }
 
-    return static_cast<int>(std::distance(m_trackEntryIds.cbegin(), it));
+    const auto it = m_trackEntryIndexes->find(entryId);
+    return it != m_trackEntryIndexes->cend() ? it->second : -1;
 }
 
 void PlaylistPrivate::replacePlaylistTracks(const PlaylistTrackList& tracks)
 {
     m_tracks.clear();
     m_trackEntryIds.clear();
+    m_trackEntryIndexes.reset();
     m_tracks.reserve(tracks.size());
     m_trackEntryIds.reserve(tracks.size());
 
@@ -1579,6 +1585,7 @@ void Playlist::appendTracks(const TrackList& tracks)
     }
 
     const PlaylistTrackList playlistTracks = PlaylistTrack::fromTracks(tracks, p->m_id);
+    p->m_trackEntryIndexes.reset();
     p->m_tracks.reserve(p->m_tracks.size() + playlistTracks.size());
     p->m_trackEntryIds.reserve(p->m_trackEntryIds.size() + playlistTracks.size());
 
@@ -1669,6 +1676,7 @@ std::vector<int> Playlist::removeTracks(const std::vector<int>& indexes)
         p->m_tracks.erase(p->m_tracks.begin() + index);
         if(std::cmp_less(index, p->m_trackEntryIds.size())) {
             p->m_trackEntryIds.erase(p->m_trackEntryIds.begin() + index);
+            p->m_trackEntryIndexes.reset();
         }
         removedIndexes.emplace_back(index);
 
