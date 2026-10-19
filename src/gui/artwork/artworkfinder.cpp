@@ -24,6 +24,7 @@
 #include "sources/discogsartwork.h"
 #include "sources/lastfmartwork.h"
 #include "sources/musicbrainzartwork.h"
+#include "sources/theaudiodbartwork.h"
 
 #include <core/network/networkaccessmanager.h>
 #include <core/network/networkutils.h>
@@ -140,7 +141,8 @@ void ArtworkFinder::loadDefaults()
     m_sources = {new MusicBrainzArtwork(m_networkManager.get(), m_settings, 0, true, this),
                  new LastFmArtwork(m_networkManager.get(), m_settings, 1, true, this),
                  new DiscogsArtwork(m_networkManager.get(), m_settings, 2, true, this),
-                 new DeezerArtwork(m_networkManager.get(), m_settings, 3, true, this)};
+                 new DeezerArtwork(m_networkManager.get(), m_settings, 3, true, this),
+                 new TheAudioDbArtwork(m_networkManager.get(), m_settings, 4, true, this)};
 }
 
 void ArtworkFinder::finishOrStartNextSource(bool forceFinish)

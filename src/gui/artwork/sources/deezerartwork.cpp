@@ -45,12 +45,6 @@ CoverTypes DeezerArtwork::supportedTypes() const
 void DeezerArtwork::search(const SearchParams& params)
 {
     resetReply();
-
-    if(!supportedTypes().contains(params.type)) {
-        Q_EMIT searchResult({});
-        return;
-    }
-
     m_type = params.type;
 
     QString searchQuery{params.artist};
@@ -83,7 +77,6 @@ void DeezerArtwork::search(const SearchParams& params)
 
     auto request = makeNetworkRequest(url);
     request.setTransferTimeout(15000);
-    request.setRawHeader("Accept", "application/json");
 
     setReply(network()->get(request));
     QObject::connect(reply(), &QNetworkReply::finished, this, &DeezerArtwork::handleSearchReply);

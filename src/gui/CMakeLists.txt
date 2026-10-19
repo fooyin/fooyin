@@ -117,6 +117,8 @@ set(SOURCES
     artwork/sources/lastfmartwork.h
     artwork/sources/musicbrainzartwork.cpp
     artwork/sources/musicbrainzartwork.h
+    artwork/sources/theaudiodbartwork.cpp
+    artwork/sources/theaudiodbartwork.h
     contextmenuids.h
     controls/commandbutton.cpp
     controls/commandbutton.h
