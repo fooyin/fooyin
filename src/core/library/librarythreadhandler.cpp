@@ -153,13 +153,6 @@ public:
         uint64_t revision{0};
     };
 
-    struct TrackStatsBatch
-    {
-        TrackList tracks;
-        Track::Stats stats;
-        bool writeToFiles{false};
-    };
-
     struct WriteOperation
     {
         std::stop_source stopSource;
@@ -987,12 +980,13 @@ void LibraryThreadHandlerPrivate::flushTrackStatsUpdates()
 
     qCDebug(LIB_THREAD) << "Flushing pending track stats updates:" << m_pendingTrackStats.size();
 
-    std::vector<TrackStatsBatch> batches;
+    std::vector<TrackDatabaseManager::TrackStatsBatch> batches;
 
     const auto addToBatch = [&batches](const Track& track, Track::Stats stats, bool writeToFiles) {
-        const auto batch = std::ranges::find_if(batches, [stats, writeToFiles](const TrackStatsBatch& candidate) {
-            return candidate.stats == stats && candidate.writeToFiles == writeToFiles;
-        });
+        const auto batch = std::ranges::find_if(
+            batches, [stats, writeToFiles](const TrackDatabaseManager::TrackStatsBatch& candidate) {
+                return candidate.stats == stats && candidate.writeToFiles == writeToFiles;
+            });
         if(batch != batches.end()) {
             batch->tracks.push_back(track);
         }
@@ -1022,9 +1016,7 @@ void LibraryThreadHandlerPrivate::flushTrackStatsUpdates()
 
     QMetaObject::invokeMethod(&m_trackDatabaseManager, [this, batches = std::move(batches),
                                                         workerToken = m_trackDatabaseManager.prepareWork()]() {
-        for(const auto& batch : batches) {
-            m_trackDatabaseManager.updateTrackStats(batch.tracks, batch.stats, batch.writeToFiles, workerToken);
-        }
+        m_trackDatabaseManager.updateTrackStats(batches, workerToken);
     });
 }
 

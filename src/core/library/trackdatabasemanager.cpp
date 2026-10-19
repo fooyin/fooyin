@@ -33,6 +33,8 @@
 #include <QFileInfo>
 #include <QLoggingCategory>
 
+#include <ranges>
+
 Q_LOGGING_CATEGORY(TRK_DBMAN, "fy.trackdbmanager")
 
 using namespace Qt::StringLiterals;
@@ -219,11 +221,39 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
 void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, Track::Stats updatedStats, bool writeToFiles,
                                             std::stop_token workerToken)
 {
+    updateTrackStats({{.tracks = tracks, .stats = updatedStats, .writeToFiles = writeToFiles}}, workerToken);
+}
+
+void TrackDatabaseManager::updateTrackStats(const std::vector<TrackStatsBatch>& batches, std::stop_token workerToken)
+{
     if(!startWork(workerToken)) {
         return;
     }
 
-    TrackList tracksToUpdate{tracks};
+    TrackList tracksUpdated;
+    Track::Stats updatedStats;
+
+    for(const auto& batch : batches) {
+        if(!mayRun()) {
+            break;
+        }
+
+        auto updatedTracks = writeTrackStats(batch.tracks, batch.stats, batch.writeToFiles);
+        if(!updatedTracks.empty()) {
+            updatedStats |= batch.stats;
+            std::ranges::move(updatedTracks, std::back_inserter(tracksUpdated));
+        }
+    }
+
+    if(!tracksUpdated.empty()) {
+        Q_EMIT updatedTracksStats(tracksUpdated, updatedStats);
+    }
+
+    setState(Idle);
+}
+
+TrackList TrackDatabaseManager::writeTrackStats(const TrackList& tracks, Track::Stats updatedStats, bool writeToFiles)
+{
     TrackList tracksUpdated;
 
     AudioReader::WriteOptions options{AudioReader::None};
@@ -241,7 +271,7 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, Track::Stat
         writeOptions |= AudioReader::PreserveTimestamps;
     }
 
-    for(const Track& track : std::as_const(tracksToUpdate)) {
+    for(const Track& track : tracks) {
         if(!mayRun()) {
             break;
         }
@@ -293,11 +323,7 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, Track::Stat
         }
     }
 
-    if(!tracksUpdated.empty()) {
-        Q_EMIT updatedTracksStats(tracksUpdated, updatedStats);
-    }
-
-    setState(Idle);
+    return tracksUpdated;
 }
 
 void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks, std::stop_token workerToken)

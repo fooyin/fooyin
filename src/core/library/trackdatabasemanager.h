@@ -28,6 +28,7 @@
 
 #include <memory>
 #include <stop_token>
+#include <vector>
 
 namespace Fooyin {
 class Database;
@@ -40,11 +41,20 @@ class TrackDatabaseManager : public Worker
     Q_OBJECT
 
 public:
+    struct TrackStatsBatch
+    {
+        TrackList tracks;
+        Track::Stats stats;
+        bool writeToFiles{false};
+    };
+
     explicit TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
                                   SettingsManager* settings, std::shared_ptr<TrackMetadataStore> metadataStore = {},
                                   QObject* parent = nullptr);
 
     void initialiseThread() override;
+
+    void updateTrackStats(const std::vector<TrackStatsBatch>& batches, std::stop_token workerToken);
 
 Q_SIGNALS:
     void gotTracks(const Fooyin::TrackList& tracks);
@@ -78,6 +88,8 @@ public Q_SLOTS:
                                 std::stop_token workerToken);
 
 private:
+    TrackList writeTrackStats(const TrackList& tracks, Track::Stats updatedStats, bool writeToFiles);
+
     DbConnectionPoolPtr m_dbPool;
     std::shared_ptr<AudioLoader> m_audioLoader;
     SettingsManager* m_settings;
