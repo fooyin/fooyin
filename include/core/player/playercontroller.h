@@ -181,6 +181,7 @@ public:
     void insertQueueTracks(int index, const QueueTracks& tracks);
     void moveQueueItems(int index, const std::vector<PlaybackQueueItemId>& ids);
     void reorderQueueItems(const std::vector<PlaybackQueueItemId>& ids);
+    void updateQueuedTrackMetadata(const TrackList& tracks);
 
     void replaceTracks(const TrackList& tracks);
     void replaceTracks(const QueueTracks& tracks);

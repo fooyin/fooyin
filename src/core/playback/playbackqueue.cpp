@@ -392,7 +392,7 @@ bool PlaybackQueue::updateTracks(const QueueTracks& tracks)
     bool changed{false};
     for(size_t i{0}; i < tracks.size(); ++i) {
         auto& item = p->m_items[i];
-        if(item.track != tracks[i]) {
+        if(item.track != tracks[i] || !item.track.track.sameDataAs(tracks[i].track)) {
             if(tracks[i].isInPlaylist()) {
                 item.detachedPlaylistTrack.reset();
             }

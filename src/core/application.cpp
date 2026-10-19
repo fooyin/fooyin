@@ -461,12 +461,10 @@ void Application::markTrack(const Track& track) const
 
 void Application::tracksWereUpdated(const TrackList& tracks) const
 {
-    const Track currentTrack = m_playerController->currentTrack();
-    if(!currentTrack.isValid()) {
-        return;
-    }
+    m_playerController->updateQueuedTrackMetadata(tracks);
 
-    const auto trackIt = std::ranges::find_if(
+    const Track currentTrack = m_playerController->currentTrack();
+    const auto trackIt       = std::ranges::find_if(
         tracks, [&currentTrack](const Track& track) { return sameTrackIdentity(track, currentTrack); });
     if(trackIt != tracks.cend()) {
         const Track& updatedTrack{*trackIt};

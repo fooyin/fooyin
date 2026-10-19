@@ -28,6 +28,7 @@
 #include "playbackstatestore.h"
 
 #include <core/coresettings.h>
+#include <core/library/libraryutils.h>
 #include <core/player/playbackqueue.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
@@ -764,7 +765,7 @@ void PlayerControllerPrivate::syncPlaylistTrackState(const UId& playlistId)
         }
 
         if(const auto remappedTrack = remapPlaylistTrackReference(m_playlistHandler, sourceTrack)) {
-            if(track != *remappedTrack) {
+            if(track != *remappedTrack || !track.track.sameDataAs(remappedTrack->track)) {
                 track        = *remappedTrack;
                 queueChanged = true;
             }
@@ -2488,6 +2489,31 @@ void PlayerController::reorderQueueItems(const std::vector<PlaybackQueueItemId>&
     const QueueTracks tracks = p->m_queue.tracks();
     if(p->m_queue.reorderItems(ids)) {
         Q_EMIT trackQueueChanged(tracks, p->m_queue.tracks());
+        p->emitUpcomingTrackChangedIfNeeded();
+    }
+}
+
+void PlayerController::updateQueuedTrackMetadata(const TrackList& tracks)
+{
+    if(tracks.empty() || p->m_queue.empty()) {
+        return;
+    }
+
+    const auto oldTracks  = p->m_queue.tracks();
+    TrackList queueTracks = PlaylistTrack::toTracks(oldTracks);
+
+    const auto updatedIndexes = Utils::updateCommonTracks(queueTracks, tracks, Utils::CommonOperation::UpdateChanged);
+    if(updatedIndexes.empty()) {
+        return;
+    }
+
+    auto updatedTracks{oldTracks};
+    for(const int index : updatedIndexes) {
+        updatedTracks[index].track = queueTracks[index];
+    }
+
+    if(p->m_queue.updateTracks(updatedTracks)) {
+        Q_EMIT trackQueueChanged(oldTracks, updatedTracks);
         p->emitUpcomingTrackChangedIfNeeded();
     }
 }
