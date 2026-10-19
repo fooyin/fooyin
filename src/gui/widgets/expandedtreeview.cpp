@@ -49,14 +49,6 @@ constexpr auto OpaqueAltAlphaThreshold = 185;
 constexpr auto TransparentAltAlpha     = 80;
 
 namespace {
-struct ModelIndexHash
-{
-    size_t operator()(const QModelIndex& index) const noexcept
-    {
-        return qHash(index);
-    }
-};
-
 void makeBaseRowTransparent(QStyleOptionViewItem& option)
 {
     QColor base = option.palette.color(QPalette::Base);
@@ -308,6 +300,7 @@ void BaseView::layout(int i, bool afterIsUninitialised)
             item->hasMoreSiblings = true;
         }
 
+        m_p->m_viewIndexes.insert_or_assign(currentIndex, last);
         item                  = &viewItem(last);
         item->index           = currentIndex;
         item->parentItem      = i;
@@ -2668,44 +2661,15 @@ int ExpandedTreeViewPrivate::viewIndex(const QModelIndex& index) const
         return -1;
     }
 
-    const int totalCount         = itemCount();
     const QModelIndex firstIndex = index.sibling(index.row(), 0);
-    const int row                = firstIndex.row();
-    const auto internalId        = firstIndex.internalId();
+    const auto item              = m_viewIndexes.find(firstIndex);
+    return item != m_viewIndexes.cend() ? item->second : -1;
+}
 
-    const int localCount = std::min(m_lastViewedItem - 1, totalCount - m_lastViewedItem);
-    for(int i{0}; i < localCount; ++i) {
-        const QModelIndex& idx1 = m_viewItems.at(m_lastViewedItem + i).index;
-        if(idx1.row() == row && idx1.internalId() == internalId) {
-            m_lastViewedItem = m_lastViewedItem + i;
-            return m_lastViewedItem;
-        }
-        const QModelIndex& idx2 = m_viewItems.at(m_lastViewedItem - i - 1).index;
-        if(idx2.row() == row && idx2.internalId() == internalId) {
-            m_lastViewedItem = m_lastViewedItem - i - 1;
-            return m_lastViewedItem;
-        }
-    }
-
-    const int minItem = std::max(0, m_lastViewedItem + localCount);
-    for(int j{minItem}; j < totalCount; ++j) {
-        const QModelIndex& idx = m_viewItems.at(j).index;
-        if(idx.row() == row && idx.internalId() == internalId) {
-            m_lastViewedItem = j;
-            return j;
-        }
-    }
-
-    const int maxItem = std::min(totalCount, m_lastViewedItem - localCount) - 1;
-    for(int j{maxItem}; j >= 0; --j) {
-        const QModelIndex& idx = m_viewItems.at(j).index;
-        if(idx.row() == row && idx.internalId() == internalId) {
-            m_lastViewedItem = j;
-            return j;
-        }
-    }
-
-    return -1;
+void ExpandedTreeViewPrivate::clearViewItems()
+{
+    m_viewIndexes.clear();
+    m_viewItems.clear();
 }
 
 void ExpandedTreeViewPrivate::insertViewItems(int pos, int count, const ExpandedTreeViewItem& viewItem)
@@ -2714,6 +2678,7 @@ void ExpandedTreeViewPrivate::insertViewItems(int pos, int count, const Expanded
 
     const int itmCount = itemCount();
     for(int i{pos + count}; i < itmCount; i++) {
+        m_viewIndexes.insert_or_assign(m_viewItems.at(i).index, i);
         if(m_viewItems.at(i).parentItem >= pos) {
             m_viewItems.at(i).parentItem += count;
         }
@@ -3209,7 +3174,7 @@ void ExpandedTreeView::setModel(QAbstractItemModel* model)
         QObject::disconnect(p->m_model, nullptr, this, nullptr);
     }
 
-    p->m_viewItems.clear();
+    p->clearViewItems();
     p->m_updatingGeometry = true;
     p->m_header->setModel(model);
     p->m_updatingGeometry = false;
@@ -3222,7 +3187,7 @@ void ExpandedTreeView::setModel(QAbstractItemModel* model)
 
     QObject::connect(p->m_model, &QAbstractItemModel::modelAboutToBeReset, this, [this]() {
         p->interruptDelayedItemsLayout();
-        p->m_viewItems.clear();
+        p->clearViewItems();
     });
     QObject::connect(p->m_model, &QAbstractItemModel::rowsRemoved, this, &ExpandedTreeView::rowsRemoved);
 
@@ -3294,7 +3259,7 @@ ExpandedTreeView::ViewMode ExpandedTreeView::viewMode() const
 void ExpandedTreeView::setViewMode(ViewMode mode)
 {
     p->interruptDelayedItemsLayout();
-    p->m_viewItems.clear();
+    p->clearViewItems();
     p->m_viewMode = mode;
 
     p->m_view.reset();
@@ -3637,7 +3602,7 @@ void ExpandedTreeView::doItemsLayout()
     }
 
     p->m_layingOutItems = true;
-    p->m_viewItems.clear();
+    p->clearViewItems();
 
     if(p->m_model && p->m_model->hasChildren(rootIndex())) {
         p->m_view->doItemLayout();
@@ -3653,7 +3618,7 @@ void ExpandedTreeView::doItemsLayout()
 void ExpandedTreeView::reset()
 {
     p->interruptDelayedItemsLayout();
-    p->m_viewItems.clear();
+    p->clearViewItems();
     QAbstractItemView::reset();
     p->doDelayedItemsLayout();
 }
@@ -4138,13 +4103,13 @@ void ExpandedTreeView::rowsInserted(const QModelIndex& parent, int start, int en
 
 void ExpandedTreeView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int end)
 {
-    p->m_viewItems.clear();
+    p->clearViewItems();
     QAbstractItemView::rowsAboutToBeRemoved(parent, start, end);
 }
 
 void ExpandedTreeView::rowsRemoved(const QModelIndex& /*parent*/, int /*first*/, int /*last*/)
 {
-    p->m_viewItems.clear();
+    p->clearViewItems();
     p->doDelayedItemsLayout();
 
     setState(QAbstractItemView::NoState);
