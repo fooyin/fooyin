@@ -20,6 +20,7 @@
 #include "artworkfinder.h"
 
 #include "internalguisettings.h"
+#include "sources/deezerartwork.h"
 #include "sources/discogsartwork.h"
 #include "sources/lastfmartwork.h"
 #include "sources/musicbrainzartwork.h"
@@ -138,7 +139,8 @@ void ArtworkFinder::loadDefaults()
 {
     m_sources = {new MusicBrainzArtwork(m_networkManager.get(), m_settings, 0, true, this),
                  new LastFmArtwork(m_networkManager.get(), m_settings, 1, true, this),
-                 new DiscogsArtwork(m_networkManager.get(), m_settings, 2, true, this)};
+                 new DiscogsArtwork(m_networkManager.get(), m_settings, 2, true, this),
+                 new DeezerArtwork(m_networkManager.get(), m_settings, 3, true, this)};
 }
 
 void ArtworkFinder::finishOrStartNextSource(bool forceFinish)

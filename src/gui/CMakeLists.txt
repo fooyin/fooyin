@@ -109,6 +109,8 @@ set(SOURCES
     artwork/sources/artworksource.cpp
     artwork/sources/artworksource.cpp
     artwork/sources/artworksource.h
+    artwork/sources/deezerartwork.cpp
+    artwork/sources/deezerartwork.h
     artwork/sources/discogsartwork.cpp
     artwork/sources/discogsartwork.h
     artwork/sources/lastfmartwork.cpp
