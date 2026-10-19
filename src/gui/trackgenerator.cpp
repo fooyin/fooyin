@@ -124,9 +124,9 @@ constexpr std::array<uint64_t, 6> Durations{222000, 318000, 547000, 264000, 3910
 Track createTrack(const TrackGenerator::Options& options, int albumIndex, int disc, int number)
 {
     const QDir dir{options.basePath.isEmpty() ? u"/preview"_s : options.basePath};
-    const auto& albums               = sampleAlbums();
-    static constexpr auto albumCount = static_cast<int>(albums.size());
-    const auto& album                = albums[albumIndex % albumCount];
+    const auto& albums    = sampleAlbums();
+    const auto albumCount = static_cast<int>(albums.size());
+    const auto& album     = albums[albumIndex % albumCount];
 
     QString albumTitle{album.title};
     if(albumIndex >= albumCount) {

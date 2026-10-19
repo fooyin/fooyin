@@ -32,7 +32,7 @@ struct DefaultPlaylistColumn
     double width;
 };
 
-constexpr std::array DefaultPlaylistColumns{
+inline constexpr std::array DefaultPlaylistColumns{
     DefaultPlaylistColumn{.id = 8, .alignment = Qt::AlignCenter, .width = 0.06},
     DefaultPlaylistColumn{.id = 3, .alignment = Qt::AlignLeft, .width = 0.38},
     DefaultPlaylistColumn{.id = 0, .alignment = Qt::AlignRight, .width = 0.08},
