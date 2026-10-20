@@ -171,7 +171,6 @@ AutoPlaylistDialog::AutoPlaylistDialog(PlaylistHandler* playlisthandler, Playlis
     QObject::connect(m_modes, &QTabWidget::currentChanged, this, &AutoPlaylistDialog::changeMode);
 
     loadQueries();
-    m_presetBox->setCurrentIndex(-1);
 
     if(m_playlist && m_playlist->isAutoPlaylist()) {
         m_nameEdit->setText(m_playlist->name());
@@ -384,7 +383,6 @@ void AutoPlaylistDialog::resetQueries()
     loadDefaultQueries();
     m_queryChanged = false;
     populateQueries();
-    m_presetBox->setCurrentIndex(-1);
     updateButtonState();
 }
 
