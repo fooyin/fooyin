@@ -436,11 +436,18 @@ void AutoPlaylistDialog::populateQueries()
 void AutoPlaylistDialog::loadDefaultQueries()
 {
     m_queries = {
-        {.name = tr("Most Played"), .query = u"playcount>0 LIMIT 25"_s, .sortQuery = u"SORT- playcount"_s},
+        {.name = tr("Most Played"), .query = u"playcount > 0 LIMIT 50"_s, .sortQuery = u"SORT- playcount"_s},
         {.name = tr("Recently Added"), .query = u"addedtime DURING LAST 2 WEEKS"_s, .sortQuery = u"SORT- addedtime"_s},
-        {.name      = tr("Last Played 2 Weeks"),
+        {.name      = tr("Recently Played"),
          .query     = u"lastplayed DURING LAST 2 WEEKS"_s,
          .sortQuery = u"SORT- lastplayed"_s},
+        {.name = tr("Loved"), .query = uR"(loved IS 1)"_s, .sortQuery = u"SORT+ artist"_s},
+        {.name = tr("Highly Rated"), .query = u"rating >= 4"_s, .sortQuery = u"SORT- rating"_s},
+        {.name = tr("Unplayed"), .query = uR"(playcount IS 0)"_s, .sortQuery = {}},
+        {.name = tr("Forgotten Favourites"),
+         .query
+         = uR"((rating >= 4 OR loved IS "1") AND playcount > 0 AND lastplayed NOT DURING LAST 6 MONTHS LIMIT 50)"_s,
+         .sortQuery = u"SORT+ $rand()"_s},
         {.name = tr("Has Lyrics"), .query = u"lyrics PRESENT"_s, .sortQuery = {}}};
 }
 } // namespace Fooyin
