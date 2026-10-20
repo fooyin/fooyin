@@ -19,7 +19,7 @@
 
 #include "playlistorganiser.h"
 
-#include "dialog/autoplaylistdialog.h"
+#include "autoplaylist/autoplaylistdialog.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/presetregistry.h"
 #include "playlistorganiserconfigwidget.h"

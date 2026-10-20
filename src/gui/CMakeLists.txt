@@ -119,6 +119,18 @@ set(SOURCES
     artwork/sources/musicbrainzartwork.h
     artwork/sources/theaudiodbartwork.cpp
     artwork/sources/theaudiodbartwork.h
+    autoplaylist/autoplaylistdialog.cpp
+    autoplaylist/autoplaylistdialog.h
+    autoplaylist/autoplaylistfieldcombobox.cpp
+    autoplaylist/autoplaylistfieldcombobox.h
+    autoplaylist/autoplaylistquery.cpp
+    autoplaylist/autoplaylistquery.h
+    autoplaylist/autoplaylistrulegroupwidget.cpp
+    autoplaylist/autoplaylistrulegroupwidget.h
+    autoplaylist/autoplaylistrulerowwidget.cpp
+    autoplaylist/autoplaylistrulerowwidget.h
+    autoplaylist/autoplaylistruleswidget.cpp
+    autoplaylist/autoplaylistruleswidget.h
     contextmenuids.h
     controls/commandbutton.cpp
     controls/commandbutton.h
@@ -158,8 +170,6 @@ set(SOURCES
     coverrepository.cpp
     dialog/aboutdialog.cpp
     dialog/aboutdialog.h
-    dialog/autoplaylistdialog.cpp
-    dialog/autoplaylistdialog.h
     dialog/commandpickerdialog.cpp
     dialog/commandpickerdialog.h
     dialog/configdialog.cpp

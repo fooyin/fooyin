@@ -19,52 +19,22 @@
 
 #pragma once
 
+#include "autoplaylistquery.h"
+
 #include <QDialog>
 
+class QAction;
 class QCheckBox;
 class QComboBox;
 class QLineEdit;
+class QLabel;
+class QTabWidget;
 
 namespace Fooyin {
+class AutoPlaylistRulesWidget;
 class Playlist;
 class PlaylistHandler;
 class ScriptTextEdit;
-
-struct AutoPlaylistQuery
-{
-    QString name;
-    QString query;
-    QString sortQuery;
-    bool forceSorted{false};
-
-    friend QDataStream& operator<<(QDataStream& stream, const AutoPlaylistQuery& preset)
-    {
-        static constexpr int version{2};
-        stream << version;
-        stream << preset.name;
-        stream << preset.query;
-        stream << preset.sortQuery;
-        stream << preset.forceSorted;
-
-        return stream;
-    }
-
-    friend QDataStream& operator>>(QDataStream& stream, AutoPlaylistQuery& preset)
-    {
-        int version{0};
-        stream >> version;
-
-        stream >> preset.name;
-        stream >> preset.query;
-
-        if(version >= 2) {
-            stream >> preset.sortQuery;
-            stream >> preset.forceSorted;
-        }
-
-        return stream;
-    }
-};
 
 class AutoPlaylistDialog : public QDialog
 {
@@ -81,7 +51,10 @@ Q_SIGNALS:
     void playlistEdited(const QString& name, const QString& query, const QString& sortQuery, bool forceSorted);
 
 private:
-    void updateButtonState() const;
+    void updateButtonState();
+    void setQuery(const AutoPlaylistQuery& query);
+    void rulesChanged();
+    void changeMode(int index);
 
     [[nodiscard]] AutoPlaylistQuery currentQuery() const;
     std::vector<AutoPlaylistQuery>::iterator findQuery(const QString& name);
@@ -99,8 +72,16 @@ private:
     Playlist* m_playlist;
     std::vector<AutoPlaylistQuery> m_queries;
     bool m_queryChanged;
+    QString m_rulesQuery;
+    QString m_rulesSortQuery;
+    bool m_haveRules;
 
-    QComboBox* m_queryBox;
+    QLineEdit* m_nameEdit;
+    QComboBox* m_presetBox;
+    QTabWidget* m_modes;
+    AutoPlaylistRulesWidget* m_rules;
+    QLabel* m_errorLabel;
+    QLabel* m_modeLabel;
     ScriptTextEdit* m_queryEdit;
     QLineEdit* m_sortQueryEdit;
     QCheckBox* m_forceSorted;
@@ -108,6 +89,7 @@ private:
     QPushButton* m_saveButton;
     QPushButton* m_deleteButton;
     QPushButton* m_resetButton;
+    QAction* m_formatAction;
     QPushButton* m_okButton;
 };
 } // namespace Fooyin

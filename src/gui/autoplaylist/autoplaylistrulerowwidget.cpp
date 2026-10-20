@@ -1,0 +1,327 @@
+/*
+ * Fooyin
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
+ *
+ * Fooyin is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fooyin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "autoplaylistrulerowwidget.h"
+
+#include "autoplaylistfieldcombobox.h"
+#include "autoplaylistruleswidget.h"
+
+#include <gui/guiconstants.h>
+#include <gui/iconloader.h>
+#include <utils/stareditor.h>
+
+#include <QComboBox>
+#include <QDateEdit>
+#include <QHBoxLayout>
+#include <QKeyEvent>
+#include <QLineEdit>
+#include <QSignalBlocker>
+#include <QSpinBox>
+#include <QStackedWidget>
+#include <QToolButton>
+
+#include <limits>
+
+using namespace Qt::StringLiterals;
+
+constexpr auto Negated      = 1U << 8U;
+constexpr auto RelativeDate = 1U << 9U;
+
+namespace Fooyin {
+class RuleRatingEditor : public StarEditor
+{
+public:
+    explicit RuleRatingEditor(QWidget* parent)
+        : StarEditor{Qt::AlignLeft, parent}
+    {
+        setFocusPolicy(Qt::StrongFocus);
+        QObject::connect(this, &StarEditor::editingFinished, this, [this]() { setValue(rating().rating()); });
+    }
+
+    [[nodiscard]] float value() const
+    {
+        return m_value;
+    }
+
+    void setValue(float value)
+    {
+        m_value = value;
+        setRating(StarRating{value, 5});
+        update();
+    }
+
+protected:
+    void leaveEvent(QEvent* event) override
+    {
+        setValue(m_value);
+        StarEditor::leaveEvent(event);
+    }
+
+    void keyPressEvent(QKeyEvent* event) override
+    {
+        if(event->key() == Qt::Key_Left || event->key() == Qt::Key_Right) {
+            setValue(std::clamp(m_value + (event->key() == Qt::Key_Left ? -0.1F : 0.1F), 0.0F, 1.0F));
+            Q_EMIT editingFinished();
+            event->accept();
+            return;
+        }
+
+        if(event->key() == Qt::Key_Escape) {
+            setValue(m_value);
+        }
+
+        StarEditor::keyPressEvent(event);
+    }
+
+private:
+    float m_value{0};
+};
+
+AutoPlaylistRuleRowWidget::AutoPlaylistRuleRowWidget(const AutoPlaylistRule& rule, QWidget* parent)
+    : QWidget{parent}
+    , m_field{new AutoPlaylistFieldComboBox(this)}
+    , m_comparison{new QComboBox(this)}
+    , m_values{new QStackedWidget(this)}
+    , m_text{new QLineEdit(this)}
+    , m_number{new QSpinBox(this)}
+    , m_rating{new RuleRatingEditor(this)}
+    , m_minutes{new QSpinBox(this)}
+    , m_seconds{new QSpinBox(this)}
+    , m_date{new QDateEdit(QDate::currentDate(), this)}
+    , m_period{new QSpinBox(this)}
+    , m_unit{new QComboBox(this)}
+{
+    m_text->setClearButtonEnabled(true);
+
+    m_number->setRange(0, std::numeric_limits<int>::max());
+    m_period->setRange(1, std::numeric_limits<int>::max() - 1);
+    m_minutes->setRange(0, std::numeric_limits<int>::max() / 60);
+    m_seconds->setRange(0, 59);
+
+    m_minutes->setSuffix(u" min"_s);
+    m_seconds->setSuffix(u" s"_s);
+
+    m_date->setDateRange(QDate{1, 1, 1}, QDate{9999, 12, 31});
+    m_date->setCalendarPopup(true);
+
+    for(size_t i{0}; i < AutoPlaylistQueryBuilder::dateUnits().size(); ++i) {
+        m_unit->addItem(QString{});
+    }
+
+    auto* duration       = new QWidget(this);
+    auto* durationLayout = new QHBoxLayout(duration);
+    durationLayout->setContentsMargins({});
+    durationLayout->addWidget(m_minutes);
+    durationLayout->addWidget(m_seconds);
+
+    auto* period       = new QWidget(this);
+    auto* periodLayout = new QHBoxLayout(period);
+    periodLayout->setContentsMargins({});
+
+    periodLayout->addWidget(m_period);
+    periodLayout->addWidget(m_unit);
+
+    m_values->addWidget(m_text);
+    m_values->addWidget(m_number);
+    m_values->addWidget(m_rating);
+    m_values->addWidget(duration);
+    m_values->addWidget(m_date);
+    m_values->addWidget(period);
+    m_values->addWidget(new QWidget(this));
+    m_values->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    auto* remove = new QToolButton(this);
+    remove->setIcon(Gui::iconFromTheme(Constants::Icons::Remove));
+    remove->setToolTip(tr("Remove rule"));
+
+    auto* layout = new QHBoxLayout(this);
+    layout->setContentsMargins({});
+
+    layout->addWidget(m_field);
+    layout->addWidget(m_comparison);
+    layout->addWidget(m_values, 1);
+    layout->addWidget(remove);
+
+    m_field->setField(rule.field, rule.source);
+
+    updateComparisons();
+
+    m_comparison->setCurrentIndex(m_comparison->findData(rule.comparison | (rule.negated ? Negated : 0)
+                                                         | (rule.relativeDate ? RelativeDate : 0)));
+    m_text->setText(rule.value);
+    m_number->setValue(rule.value.toInt());
+    m_rating->setValue(rule.value.toFloat() / 5.0F);
+
+    const int durationSeconds = rule.value.toInt();
+    m_minutes->setValue(durationSeconds / 60);
+    m_seconds->setMaximum(m_minutes->value() == m_minutes->maximum() ? std::numeric_limits<int>::max() % 60 : 59);
+    m_seconds->setValue(durationSeconds % 60);
+
+    m_date->setDate(rule.date);
+    m_period->setValue(rule.period);
+    m_unit->setCurrentIndex(rule.unit);
+
+    updateDateUnits();
+    updateValue();
+
+    for(const auto* spin : {m_number, m_seconds}) {
+        QObject::connect(spin, &QSpinBox::valueChanged, this, &AutoPlaylistRuleRowWidget::changed);
+    }
+
+    QObject::connect(m_field, &AutoPlaylistFieldComboBox::fieldChanged, this, [this]() {
+        updateComparisons();
+        updateValue();
+        Q_EMIT changed();
+    });
+    QObject::connect(m_comparison, &QComboBox::currentIndexChanged, this, [this]() {
+        updateValue();
+        Q_EMIT changed();
+    });
+    QObject::connect(m_text, &QLineEdit::textChanged, this, &AutoPlaylistRuleRowWidget::changed);
+
+    QObject::connect(m_minutes, &QSpinBox::valueChanged, this, [this](int minutes) {
+        m_seconds->setMaximum(minutes == m_minutes->maximum() ? std::numeric_limits<int>::max() % 60 : 59);
+        Q_EMIT changed();
+    });
+    QObject::connect(m_period, &QSpinBox::valueChanged, this, [this]() {
+        updateDateUnits();
+        Q_EMIT changed();
+    });
+    QObject::connect(m_rating, &StarEditor::editingFinished, this, &AutoPlaylistRuleRowWidget::changed);
+    QObject::connect(m_date, &QDateEdit::dateChanged, this, &AutoPlaylistRuleRowWidget::changed);
+    QObject::connect(m_unit, &QComboBox::currentIndexChanged, this, &AutoPlaylistRuleRowWidget::changed);
+    QObject::connect(remove, &QToolButton::clicked, this, &AutoPlaylistRuleRowWidget::removeRequested);
+}
+
+AutoPlaylistRule AutoPlaylistRuleRowWidget::rule() const
+{
+    const auto comparison = m_comparison->currentData().toUInt();
+
+    AutoPlaylistRule rule;
+    rule.field        = m_field->field();
+    rule.source       = m_field->source();
+    rule.comparison   = static_cast<Expr::Type>(comparison & 255U);
+    rule.negated      = (comparison & Negated) != 0U;
+    rule.relativeDate = (comparison & RelativeDate) != 0U;
+    rule.date         = m_date->date();
+    rule.period       = m_period->value();
+    rule.unit         = m_unit->currentIndex();
+
+    switch(AutoPlaylistQueryBuilder::fieldType(rule.field, rule.source)) {
+        case AutoPlaylistFieldType::Text:
+        case AutoPlaylistFieldType::Metadata:
+            rule.value = m_text->text();
+            break;
+        case AutoPlaylistFieldType::Number:
+            rule.value = QString::number(m_number->value());
+            break;
+        case AutoPlaylistFieldType::Rating:
+            rule.value = QString::number(m_rating->value() * 5.0F);
+            break;
+        case AutoPlaylistFieldType::Duration:
+            rule.value = QString::number((m_minutes->value() * 60LL) + m_seconds->value());
+            break;
+        case AutoPlaylistFieldType::Date:
+            break;
+        case AutoPlaylistFieldType::Boolean:
+            rule.value = u"1"_s;
+            break;
+    }
+
+    return rule;
+}
+
+void AutoPlaylistRuleRowWidget::updateDateUnits()
+{
+    const QSignalBlocker blocker{m_unit};
+
+    const int count  = m_period->value();
+    const auto units = AutoPlaylistQueryBuilder::dateUnits();
+    for(int i{0}; std::cmp_less(i, units.size()); ++i) {
+        const char* source = count == 1 ? units[i].singular : units[i].plural;
+        m_unit->setItemText(i, AutoPlaylistRulesWidget::tr(source, nullptr, count));
+    }
+}
+
+void AutoPlaylistRuleRowWidget::updateComparisons()
+{
+    const QSignalBlocker blocker{m_comparison};
+
+    const int previous = m_comparison->currentData().toInt();
+    m_comparison->clear();
+
+    const auto type = AutoPlaylistQueryBuilder::fieldType(m_field->field(), m_field->source());
+
+    const auto add = [this, type](Expr::Type comparison, bool negated, bool relative = false) {
+        const QString label = type == AutoPlaylistFieldType::Boolean
+                                ? (negated ? tr("No") : tr("Yes"))
+                                : AutoPlaylistRulesWidget::comparisonText(comparison, negated, relative);
+        m_comparison->addItem(label, comparison | (negated ? Negated : 0) | (relative ? RelativeDate : 0));
+    };
+
+    for(const auto comparison : AutoPlaylistQueryBuilder::comparisons(type)) {
+        add(comparison, false);
+
+        if(comparison == Expr::Equals || comparison == Expr::Contains || comparison == Expr::StartsWith
+           || comparison == Expr::EndsWith
+           || (type == AutoPlaylistFieldType::Date && comparison != Expr::Missing && comparison != Expr::Present)) {
+            add(comparison, true);
+        }
+        if(comparison == Expr::During) {
+            add(comparison, false, true);
+            add(comparison, true, true);
+        }
+    }
+
+    const int index = m_comparison->findData(previous);
+    m_comparison->setCurrentIndex(index >= 0 ? index : 0);
+}
+
+void AutoPlaylistRuleRowWidget::updateValue()
+{
+    const auto comparison = m_comparison->currentData().toUInt();
+    const auto type       = static_cast<Expr::Type>(comparison & 255U);
+    if(type == Expr::Missing || type == Expr::Present) {
+        m_values->setCurrentIndex(6);
+        return;
+    }
+
+    switch(AutoPlaylistQueryBuilder::fieldType(m_field->field(), m_field->source())) {
+        case AutoPlaylistFieldType::Text:
+        case AutoPlaylistFieldType::Metadata:
+            m_values->setCurrentIndex(0);
+            break;
+        case AutoPlaylistFieldType::Number:
+            m_values->setCurrentIndex(1);
+            break;
+        case AutoPlaylistFieldType::Rating:
+            m_values->setCurrentIndex(2);
+            break;
+        case AutoPlaylistFieldType::Duration:
+            m_values->setCurrentIndex(3);
+            break;
+        case AutoPlaylistFieldType::Date:
+            m_values->setCurrentIndex(comparison & RelativeDate ? 5 : 4);
+            break;
+        case AutoPlaylistFieldType::Boolean:
+            m_values->setCurrentIndex(6);
+            break;
+    }
+}
+} // namespace Fooyin

@@ -59,7 +59,7 @@ enum Type : uint8_t
     StartsWith,
     EndsWith,
 };
-}
+} // namespace Expr
 
 enum class FunctionKind : uint8_t
 {
@@ -200,7 +200,14 @@ struct FuncValue
     ExpressionList args;
 };
 
-using ExpressionValue = std::variant<QString, FuncValue, ExpressionList>;
+struct DateValue
+{
+    // Date comparisons resolve their operands during parsing, so retain the original syntax
+    QString operand;
+    ExpressionList args;
+};
+
+using ExpressionValue = std::variant<QString, FuncValue, DateValue, ExpressionList>;
 
 struct Expression
 {

@@ -19,7 +19,7 @@
 
 #include "playlisttabs.h"
 
-#include "dialog/autoplaylistdialog.h"
+#include "autoplaylist/autoplaylistdialog.h"
 #include "playlistcontroller.h"
 #include "playlisttabsconfigdialog.h"
 #include "presetregistry.h"
