@@ -717,35 +717,38 @@ Expression ScriptRuntime::metadataKeyword(const Expression& key, Expr::Type type
 Expression ScriptRuntime::timeKeyword(const Expression& key, Expr::Type type)
 {
     Expression expr{type};
-    ExpressionList args;
+    DateValue dateExpr;
 
     advance();
 
-    args.emplace_back(normaliseQueryField(key));
+    dateExpr.args.emplace_back(normaliseQueryField(key));
 
+    const int operandStart{m_current.position};
     if(!currentToken(TokenType::TokEos)) {
         Expression argExpr   = expression();
         const QDateTime date = evalDate(argExpr);
         if(date.isValid()) {
             argExpr.type  = Expr::Date;
             argExpr.value = QString::number(date.toMSecsSinceEpoch());
-            args.emplace_back(argExpr);
+            dateExpr.args.emplace_back(argExpr);
         }
     }
 
-    expr.value = args;
+    dateExpr.operand = m_currentInput.mid(operandStart, m_previous.position + m_previous.value.size() - operandStart);
+    expr.value       = std::move(dateExpr);
     return expr;
 }
 
 Expression ScriptRuntime::duringKeyword(const Expression& key)
 {
     Expression expr{Expr::During};
-    ExpressionList args;
+    DateValue dateExpr;
 
     advance();
 
-    args.emplace_back(normaliseQueryField(key));
+    dateExpr.args.emplace_back(normaliseQueryField(key));
 
+    const int operandStart{m_current.position};
     if(currentToken(TokenType::TokLast)) {
         advance();
 
@@ -801,8 +804,8 @@ Expression ScriptRuntime::duringKeyword(const Expression& key)
         if(valid) {
             advance();
             if(validUserCount) {
-                args.emplace_back(Expr::Date, QString::number(date.toMSecsSinceEpoch()));
-                args.emplace_back(Expr::Date, QString::number(QDateTime::currentMSecsSinceEpoch()));
+                dateExpr.args.emplace_back(Expr::Date, QString::number(date.toMSecsSinceEpoch()));
+                dateExpr.args.emplace_back(Expr::Date, QString::number(QDateTime::currentMSecsSinceEpoch()));
             }
             else {
                 return {};
@@ -813,12 +816,13 @@ Expression ScriptRuntime::duringKeyword(const Expression& key)
         const Expression argExpr  = expression();
         const DateRange dateRange = calculateDateRange(argExpr);
         if(dateRange.start.isValid() && dateRange.endExclusive.isValid()) {
-            args.emplace_back(Expr::Date, QString::number(dateRange.start.toMSecsSinceEpoch()));
-            args.emplace_back(Expr::Date, QString::number(dateRange.endExclusive.toMSecsSinceEpoch()));
+            dateExpr.args.emplace_back(Expr::Date, QString::number(dateRange.start.toMSecsSinceEpoch()));
+            dateExpr.args.emplace_back(Expr::Date, QString::number(dateRange.endExclusive.toMSecsSinceEpoch()));
         }
     }
 
-    expr.value = args;
+    dateExpr.operand = m_currentInput.mid(operandStart, m_previous.position + m_previous.value.size() - operandStart);
+    expr.value       = std::move(dateExpr);
     return expr;
 }
 
@@ -846,7 +850,18 @@ Expression ScriptRuntime::sort()
         consume(TokenType::TokBy, QObject::tr("Expected %1 after %2").arg("'BY'"_L1, "'DESCENDING'"_L1));
     }
 
-    while(!currentToken(TokenType::TokLimit) && !currentToken(TokenType::TokEos)) {
+    bool insideQuote{false};
+    bool escapeNext{false};
+    while(!currentToken(TokenType::TokEos) && (insideQuote || !currentToken(TokenType::TokLimit))) {
+        if(escapeNext) {
+            escapeNext = false;
+        }
+        else if(insideQuote && currentToken(TokenType::TokEscape)) {
+            escapeNext = true;
+        }
+        else if(currentToken(TokenType::TokQuote)) {
+            insideQuote = !insideQuote;
+        }
         advance();
         val.append(m_previous.value);
     }

@@ -66,7 +66,8 @@ BoundExpression bindExpression(const Expression& expr, const ScriptRegistry* reg
         return bound;
     }
 
-    const auto& exprArgs = std::get<ExpressionList>(expr.value);
+    const auto* date     = std::get_if<DateValue>(&expr.value);
+    const auto& exprArgs = date ? date->args : std::get<ExpressionList>(expr.value);
 
     BoundExpressionList args;
     args.reserve(exprArgs.size());
