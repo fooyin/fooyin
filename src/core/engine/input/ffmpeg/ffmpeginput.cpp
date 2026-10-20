@@ -1373,10 +1373,21 @@ void FFmpegInputPrivate::updateNetworkMetadata() const
     Track track{m_baseTrack};
 
     if(!metadata->streamTitle.isEmpty()) {
-        const auto [artist, title] = splitIcyStreamTitle(metadata->streamTitle);
-        track.setTitle(title.isEmpty() ? metadata->streamTitle : title);
-        if(!artist.isEmpty()) {
-            track.setArtists({artist});
+        if(!metadata->title.isEmpty()) {
+            track.setTitle(metadata->title);
+            if(!metadata->artist.isEmpty() && track.artists().isEmpty()) {
+                track.setArtists({metadata->artist});
+            }
+            if(!metadata->album.isEmpty() && track.album().isEmpty()) {
+                track.setAlbum(metadata->album);
+            }
+        }
+        else {
+            const auto [artist, title] = splitIcyStreamTitle(metadata->streamTitle);
+            track.setTitle(title.isEmpty() ? metadata->streamTitle : title);
+            if(!artist.isEmpty()) {
+                track.setArtists({artist});
+            }
         }
         track.replaceExtraTag(u"STREAMTITLE"_s, metadata->streamTitle);
     }

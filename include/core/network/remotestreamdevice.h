@@ -34,6 +34,9 @@ struct NetworkStreamMetadata
     QString streamGenre;
     QString streamTitle;
     QString streamUrl;
+    QString title;
+    QString artist;
+    QString album;
     int bitrateKbps{0};
     quint64 revision{0};
 };

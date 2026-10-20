@@ -23,6 +23,8 @@
 
 #include <core/network/networkutils.h>
 
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QLoggingCategory>
 #include <QMetaObject>
 #include <QNetworkAccessManager>
@@ -176,12 +178,49 @@ QString icyFieldValue(const QString& metadata, const QString& key)
     return value.trimmed();
 }
 
+void parseIcyStreamTitle(NetworkStreamMetadata& metadata, const QString& value)
+{
+    metadata.streamTitle = value;
+    metadata.title.clear();
+    metadata.artist.clear();
+    metadata.album.clear();
+
+    if(!value.startsWith('{'_L1) && !value.startsWith('['_L1)) {
+        return;
+    }
+
+    const auto document = QJsonDocument::fromJson(value.toUtf8());
+    if(document.isNull()) {
+        return;
+    }
+
+    metadata.title = value;
+    if(!document.isObject()) {
+        return;
+    }
+
+    const auto object = document.object();
+    QString title     = object.value("title"_L1).toString().trimmed();
+    if(title.isEmpty()) {
+        title = object.value("name"_L1).toString().trimmed();
+    }
+    if(title.isEmpty()) {
+        return;
+    }
+
+    metadata.title       = title;
+    metadata.artist      = object.value("artist"_L1).toString().trimmed();
+    metadata.album       = object.value("album"_L1).toString().trimmed();
+    metadata.streamTitle = metadata.artist.isEmpty() ? title : metadata.artist + " - "_L1 + title;
+}
+
 bool updateMetadataRevision(NetworkStreamDeviceState& state, NetworkStreamMetadata metadata)
 {
     const bool changed
         = state.icy.metadata.streamName != metadata.streamName || state.icy.metadata.streamGenre != metadata.streamGenre
        || state.icy.metadata.streamTitle != metadata.streamTitle || state.icy.metadata.streamUrl != metadata.streamUrl
-       || state.icy.metadata.bitrateKbps != metadata.bitrateKbps;
+       || state.icy.metadata.title != metadata.title || state.icy.metadata.artist != metadata.artist
+       || state.icy.metadata.album != metadata.album || state.icy.metadata.bitrateKbps != metadata.bitrateKbps;
     if(!changed) {
         return false;
     }
@@ -232,7 +271,7 @@ void parseIcyMetadataBlock(NetworkStreamDeviceState& state)
     const QString url   = icyFieldValue(metadataText, u"StreamUrl"_s);
 
     if(!title.isEmpty()) {
-        metadata.streamTitle = title;
+        parseIcyStreamTitle(metadata, title);
     }
     if(!url.isEmpty()) {
         metadata.streamUrl = url;
