@@ -1545,7 +1545,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="52"/>
         <source>&amp;File</source>
-        <translation>&amp;Fil</translation>
+        <translation>Ar&amp;kiv</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="56"/>
