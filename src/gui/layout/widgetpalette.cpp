@@ -63,7 +63,7 @@ WidgetPalette::WidgetPalette(WidgetProvider* provider, SettingsManager* settings
     setAttribute(Qt::WA_NoMousePropagation);
     resize(280, 480);
 
-    m_search->setPlaceholderText(tr("Search widgets…"));
+    m_search->setPlaceholderText(tr("Filter…"));
     m_search->setClearButtonEnabled(true);
 
     auto* dockButton = new QToolButton(this);
