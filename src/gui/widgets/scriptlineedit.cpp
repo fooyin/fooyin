@@ -73,6 +73,7 @@ ScriptTextEdit::ScriptTextEdit(const QString& script, const Track& track, QWidge
     : QPlainTextEdit{script, parent}
     , m_openEditor{new QAction(tr("Open in script editor"), this)}
     , m_toolArea{new QWidget(this)}
+    , m_toolAreaLayout{new QHBoxLayout(m_toolArea)}
 {
     Gui::setThemeIcon(m_openEditor, Constants::Icons::ScriptEditor);
     QObject::connect(m_openEditor, &QAction::triggered, this, [this, track]() {
@@ -86,21 +87,12 @@ ScriptTextEdit::ScriptTextEdit(const QString& script, const Track& track, QWidge
             track, this);
     });
 
-    auto* editorButton = new QToolButton(m_toolArea);
-    editorButton->setText(tr("Script Editor"));
-    editorButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    editorButton->setDefaultAction(m_openEditor);
-    editorButton->setAutoRaise(true);
-
-    auto* layout = new QHBoxLayout(m_toolArea);
-    layout->setContentsMargins(4, 0, 4, 0);
-    layout->addWidget(editorButton);
-    layout->addStretch();
+    m_toolAreaLayout->setContentsMargins(4, 0, 4, 0);
+    m_toolAreaLayout->addStretch();
 
     m_toolArea->setAutoFillBackground(true);
     m_toolArea->setBackgroundRole(QPalette::AlternateBase);
-    m_toolArea->setFixedHeight(m_toolArea->sizeHint().height());
-    setViewportMargins(0, 0, 0, m_toolArea->height());
+    addToolAction(m_openEditor);
 }
 
 QString ScriptTextEdit::text() const
@@ -111,6 +103,18 @@ QString ScriptTextEdit::text() const
 void ScriptTextEdit::setText(const QString& text)
 {
     setPlainText(text);
+}
+
+void ScriptTextEdit::addToolAction(QAction* action)
+{
+    auto* button = new QToolButton(m_toolArea);
+    button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    button->setDefaultAction(action);
+    button->setAutoRaise(true);
+
+    m_toolAreaLayout->insertWidget(m_toolAreaLayout->count() - 1, button);
+    m_toolArea->setFixedHeight(m_toolArea->sizeHint().height());
+    setViewportMargins(0, 0, 0, m_toolArea->height());
 }
 
 QSize ScriptTextEdit::sizeHint() const

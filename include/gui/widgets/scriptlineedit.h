@@ -27,6 +27,8 @@
 #include <QLineEdit>
 #include <QPlainTextEdit>
 
+class QHBoxLayout;
+
 namespace Fooyin {
 class Track;
 
@@ -52,6 +54,8 @@ public:
     [[nodiscard]] QString text() const;
     void setText(const QString& text);
 
+    void addToolAction(QAction* action);
+
     [[nodiscard]] QSize sizeHint() const override;
     [[nodiscard]] QSize minimumSizeHint() const override;
 
@@ -63,6 +67,7 @@ protected:
 private:
     QAction* m_openEditor;
     QWidget* m_toolArea;
+    QHBoxLayout* m_toolAreaLayout;
 };
 
 class FYGUI_EXPORT ScriptComboBox : public QComboBox
