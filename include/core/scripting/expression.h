@@ -56,6 +56,8 @@ enum Type : uint8_t
     Since,
     During,
     Limit,
+    StartsWith,
+    EndsWith,
 };
 }
 

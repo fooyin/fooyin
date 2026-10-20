@@ -117,8 +117,7 @@ private:
     ScriptResult evalMissing(const BoundExpression& exp, const auto& tracks);
     ScriptResult evalPresent(const BoundExpression& exp, const auto& tracks);
     ScriptResult evalEquals(const BoundExpression& exp, const auto& tracks);
-    ScriptResult evalContains(const BoundExpression& exp, const auto& tracks);
-    ScriptResult evalContains(const BoundExpression& exp, const Track& track);
+    ScriptResult evalTextMatch(const BoundExpression& exp, const auto& tracks);
     ScriptResult evalLimit(const BoundExpression& exp);
     ScriptResult evalSort(const BoundExpression& exp);
 

@@ -21,6 +21,7 @@
 #include <core/ratingsymbols.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
+#include <core/scripting/scriptscanner.h>
 #include <core/scripting/scripttrackwriter.h>
 #include <core/scripting/trackqueryfilter.h>
 #include <core/track.h>
@@ -1137,6 +1138,74 @@ TEST_F(ScriptParserTest, QueryTest)
     EXPECT_EQ(2, m_filter.filter(query, tracks).size());
 }
 
+TEST(ScriptScannerTest, RecognisesTextBoundaryKeywords)
+{
+    const std::array cases{std::pair{u"STARTSWITH"_s, ScriptScanner::TokStartsWith},
+                           std::pair{u"ENDSWITH"_s, ScriptScanner::TokEndsWith},
+                           std::pair{u"EQUAL"_s, ScriptScanner::TokEquals}};
+
+    for(const auto& [input, expected] : cases) {
+        ScriptScanner scanner;
+        scanner.setup(input);
+
+        const auto token = scanner.next();
+        EXPECT_EQ(expected, token.type);
+        EXPECT_EQ(input, token.value);
+        EXPECT_EQ(ScriptScanner::TokEos, scanner.next().type);
+    }
+}
+
+TEST(ScriptScannerTest, KeywordsRequireExactLengths)
+{
+    for(const auto& keyword : {u"STARTSWITH"_s, u"ENDSWITH"_s, u"EQUAL"_s, u"AND"_s}) {
+        for(qsizetype length{1}; length < keyword.size(); ++length) {
+            const QString input = keyword.left(length);
+            ScriptScanner scanner;
+            scanner.setup(input);
+
+            const auto token = scanner.next();
+            EXPECT_EQ(ScriptScanner::TokLiteral, token.type);
+            EXPECT_EQ(input, token.value);
+        }
+    }
+
+    for(const auto& input : {u"STARTSWITHOUT"_s, u"ENDSWITHOUT"_s, u"EQUALS"_s, u"ANDROID"_s}) {
+        ScriptScanner scanner;
+        scanner.setup(input);
+
+        const auto token = scanner.next();
+        EXPECT_EQ(ScriptScanner::TokLiteral, token.type);
+        EXPECT_EQ(input, token.value);
+    }
+}
+
+TEST_F(ScriptParserTest, QueryTextBoundaryOperators)
+{
+    Track first{u"/music/first.flac"_s};
+    first.setTitle(u"Café Moonlight"_s);
+
+    Track second{u"/music/second.flac"_s};
+    second.setTitle(u"Moonlight Cafe\u0301"_s);
+
+    Track middle{u"/music/middle.flac"_s};
+    middle.setTitle(u"A café at dusk"_s);
+
+    const TrackList tracks{first, second, middle};
+
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(title STARTSWITH "CAFE")"_s, tracks));
+    EXPECT_EQ(TrackList{second}, m_filter.filter(uR"(title ENDSWITH "CAFE")"_s, tracks));
+    EXPECT_EQ(TrackList{second}, m_filter.filter(uR"(title STARTSWITH "moon")"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(title ENDSWITH "LIGHT")"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(title HAS "cafe")"_s, tracks));
+    EXPECT_EQ((TrackList{second, middle}), m_filter.filter(uR"(title NOT STARTSWITH "cafe")"_s, tracks));
+    EXPECT_EQ((TrackList{first, middle}), m_filter.filter(uR"(title NOT ENDSWITH "cafe")"_s, tracks));
+    EXPECT_EQ((TrackList{second, middle}), m_filter.filter(uR"(NOT (title STARTSWITH "cafe"))"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(title STARTSWITH "cafe" AND title ENDSWITH "light")"_s, tracks));
+    EXPECT_EQ((TrackList{first, second}),
+              m_filter.filter(uR"(title STARTSWITH "cafe" OR title ENDSWITH "cafe")"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"($lower(%title%) STARTSWITH "cafe")"_s, tracks));
+}
+
 TEST_F(ScriptParserTest, PathQueriesNormaliseSeparators)
 {
     const Track canonicalPathTrack{u"C:/Music/First Album/song.flac"_s};
@@ -1146,6 +1215,12 @@ TEST_F(ScriptParserTest, PathQueriesNormaliseSeparators)
     const QString nativeFolder = QDir::toNativeSeparators(u"C:/Music/First Album"_s);
     EXPECT_EQ(1, m_filter.filter(uR"(path HAS "%1")"_s.arg(nativeFolder), tracks).size());
     EXPECT_EQ(1, m_filter.filter(uR"(filepath IS "C:/Music/Second Album/song.flac")"_s, tracks).size());
+
+    QString escapedFolder{nativeFolder};
+    escapedFolder.replace(u'\\', uR"(\\)"_s);
+    EXPECT_EQ(TrackList{canonicalPathTrack},
+              m_filter.filter(uR"(filepath STARTSWITH "%1")"_s.arg(escapedFolder), tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(filepath ENDSWITH ".FLAC")"_s, tracks));
 }
 
 TEST_F(ScriptParserTest, QueryQuotedLiteralsPreserveWhitespace)
@@ -1294,6 +1369,13 @@ TEST_F(ScriptParserTest, QueryClassification)
     const ParsedScript fieldQuery = parser.parseQuery(u"artist:radiohead"_s);
     EXPECT_TRUE(ScriptParser::canEvaluateAsQuery(fieldQuery));
     EXPECT_TRUE(ScriptParser::containsQueryExpression(fieldQuery));
+
+    for(const auto& query : {uR"(title STARTSWITH "moon")"_s, uR"(title ENDSWITH "light")"_s}) {
+        const ParsedScript boundaryQuery = parser.parseQuery(query);
+        EXPECT_TRUE(boundaryQuery.isValid());
+        EXPECT_TRUE(ScriptParser::canEvaluateAsQuery(boundaryQuery));
+        EXPECT_TRUE(ScriptParser::containsQueryExpression(boundaryQuery));
+    }
 
     const ParsedScript invalidQuery = parser.parseQuery(u"$unknown(duration)=210000"_s);
     EXPECT_FALSE(ScriptParser::canEvaluateAsQuery(invalidQuery));

@@ -44,6 +44,8 @@ bool isQueryExpression(Expr::Type type)
         case Expr::Type::XOr:
         case Expr::Type::Equals:
         case Expr::Type::Contains:
+        case Expr::Type::StartsWith:
+        case Expr::Type::EndsWith:
         case Expr::Type::Greater:
         case Expr::Type::GreaterEqual:
         case Expr::Type::Less:

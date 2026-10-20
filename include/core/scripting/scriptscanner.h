@@ -81,6 +81,8 @@ public:
         TokPlus        = 41,
         TokMinus       = 42,
         TokComment     = 43,
+        TokStartsWith  = 44,
+        TokEndsWith    = 45,
     };
 
     struct Token

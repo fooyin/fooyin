@@ -326,7 +326,17 @@ ScriptScanner::Token ScriptScanner::keyword()
             }
             break;
         case u'E':
-            return checkKeyword(1, "QUAL"_L1, TokEquals);
+            if(currentLength() > 1) {
+                switch(m_start[1].unicode()) {
+                    case u'N':
+                        return checkKeyword(2, "DSWITH"_L1, TokEndsWith);
+                    case u'Q':
+                        return checkKeyword(2, "UAL"_L1, TokEquals);
+                    default:
+                        break;
+                }
+            }
+            break;
         case u'G':
             return checkKeyword(1, "REATER"_L1, TokRightAngle);
         case u'H':
@@ -394,6 +404,8 @@ ScriptScanner::Token ScriptScanner::keyword()
                         return checkKeyword(2, "NCE"_L1, TokSince);
                     case u'O':
                         return checkKeyword(2, "RT"_L1, TokSort);
+                    case u'T':
+                        return checkKeyword(2, "ARTSWITH"_L1, TokStartsWith);
                     default:
                         break;
                 }
@@ -414,6 +426,10 @@ ScriptScanner::Token ScriptScanner::keyword()
 
 ScriptScanner::Token ScriptScanner::checkKeyword(int start, QAnyStringView rest, TokenType type)
 {
+    if(currentLength() != start + rest.length()) {
+        return literal();
+    }
+
     const QAnyStringView keyword{m_start + start, rest.length()};
     if(keyword == rest) {
         return makeToken(type);

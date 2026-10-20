@@ -141,6 +141,8 @@ bool isQueryExpression(Expr::Type type)
         case Type::XOr:
         case Type::Equals:
         case Type::Contains:
+        case Type::StartsWith:
+        case Type::EndsWith:
         case Type::Greater:
         case Type::GreaterEqual:
         case Type::Less:
@@ -334,6 +336,8 @@ Expression ScriptRuntime::expression()
         case TokenType::TokPresent:
         case TokenType::TokColon:
         case TokenType::TokEquals:
+        case TokenType::TokStartsWith:
+        case TokenType::TokEndsWith:
         case TokenType::TokLeftAngle:
         case TokenType::TokRightAngle:
         case TokenType::TokRightParen:
@@ -898,7 +902,9 @@ ScriptResult ScriptRuntime::evalExpression(const BoundExpression& exp, const aut
         case Expr::Equals:
             return evalEquals(exp, tracks);
         case Expr::Contains:
-            return evalContains(exp, tracks);
+        case Expr::StartsWith:
+        case Expr::EndsWith:
+            return evalTextMatch(exp, tracks);
         case Expr::Greater:
             return compareValues(exp, tracks, std::greater<>());
         case Expr::GreaterEqual:
@@ -1476,7 +1482,7 @@ ScriptResult ScriptRuntime::evalEquals(const BoundExpression& exp, const auto& t
     return result;
 }
 
-ScriptResult ScriptRuntime::evalContains(const BoundExpression& exp, const auto& tracks)
+ScriptResult ScriptRuntime::evalTextMatch(const BoundExpression& exp, const auto& tracks)
 {
     const auto& args = std::get<BoundExpressionList>(exp.value);
     if(args.size() < 2) {
@@ -1494,44 +1500,29 @@ ScriptResult ScriptRuntime::evalContains(const BoundExpression& exp, const auto&
         return {};
     }
 
-    const QString firstValue  = normaliseQueryValue(first.value, field.variableKind);
-    const QString secondValue = normaliseQueryValue(second.value, field.variableKind);
-
     ScriptResult result;
-    result.cond = Utils::foldForSearch(firstValue).contains(Utils::foldForSearch(secondValue));
-
-    return result;
-}
-
-ScriptResult ScriptRuntime::evalContains(const BoundExpression& exp, const Track& track)
-{
-    const auto& args = std::get<BoundExpressionList>(exp.value);
-    if(args.size() < 2) {
-        return {};
+    if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, Track>) {
+        if(exp.type == Expr::Contains && field.type == Expr::All) {
+            result.cond = matchSearch(tracks, second.value, value.type == Expr::QuotedLiteral);
+            return result;
+        }
     }
 
-    const BoundExpression& field = args.at(0);
-    const BoundExpression& value = args.at(1);
+    const QString firstValue  = Utils::foldForSearch(normaliseQueryValue(first.value, field.variableKind));
+    const QString secondValue = Utils::foldForSearch(normaliseQueryValue(second.value, field.variableKind));
 
-    const ScriptResult first = evalExpression(field, track);
-    if(!first.cond) {
-        return {};
-    }
-
-    const ScriptResult second = evalExpression(value, track);
-    if(!second.cond) {
-        return {};
-    }
-
-    ScriptResult result;
-
-    if(field.type == Expr::All) {
-        result.cond = matchSearch(track, second.value, value.type == Expr::QuotedLiteral);
-    }
-    else {
-        const QString firstValue  = normaliseQueryValue(first.value, field.variableKind);
-        const QString secondValue = normaliseQueryValue(second.value, field.variableKind);
-        result.cond               = Utils::foldForSearch(firstValue).contains(Utils::foldForSearch(secondValue));
+    switch(exp.type) {
+        case Expr::Contains:
+            result.cond = firstValue.contains(secondValue);
+            break;
+        case Expr::StartsWith:
+            result.cond = firstValue.startsWith(secondValue);
+            break;
+        case Expr::EndsWith:
+            result.cond = firstValue.endsWith(secondValue);
+            break;
+        default:
+            break;
     }
 
     return result;
@@ -2041,6 +2032,10 @@ Expression ScriptRuntime::checkOperator(const Expression& expr)
     switch(m_current.type) {
         case TokenType::TokColon:
             return relationalOperator(expr, Expr::Contains);
+        case TokenType::TokStartsWith:
+            return relationalOperator(expr, Expr::StartsWith);
+        case TokenType::TokEndsWith:
+            return relationalOperator(expr, Expr::EndsWith);
         case TokenType::TokEquals:
             return relationalOperator(expr, Expr::Equals);
         case TokenType::TokNot:
