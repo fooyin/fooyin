@@ -1495,7 +1495,8 @@ ScriptResult ScriptRuntime::evalTextMatch(const BoundExpression& exp, const auto
         return {};
     }
 
-    const ScriptResult second = evalExpression(args.at(1), tracks);
+    const BoundExpression& value = args.at(1);
+    const ScriptResult second    = evalExpression(value, tracks);
     if(!second.cond) {
         return {};
     }
