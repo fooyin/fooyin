@@ -3734,6 +3734,30 @@ void AudioEngine::updatePosition()
     const uint64_t pipelineDelayMs  = m_pipeline.playbackDelayMs();
     const double delayToSourceScale = m_pipeline.playbackDelayToTrackScale();
     const auto pipelineStatus       = m_pipeline.currentStatus();
+
+    if(AUDIO_TIMING().isDebugEnabled() && m_visualisationBackend->hasActiveSessions()) {
+        if(!m_timingLogTimer.isValid()) {
+            m_timingLogTimer.start();
+        }
+        if(m_timingLogTimer.elapsed() >= 1000) {
+            const auto timing = m_pipeline.outputTimingSnapshot();
+            qCDebug(AUDIO_TIMING) << "Output presentation timing:"
+                                  << "elapsedMs=" << m_timingLogTimer.restart() << "streamId=" << stream->id()
+                                  << "sourcePositionMs=" << stream->positionMs() << "sampleRate=" << timing.sampleRate
+                                  << "backendQueuedFrames=" << timing.queuedFrames
+                                  << "backendFreeFrames=" << timing.freeFrames
+                                  << "pendingFrames=" << timing.pendingFrames
+                                  << "backendDelayMs=" << timing.delaySeconds * 1000.0
+                                  << "pipelineDelayMs=" << pipelineDelayMs
+                                  << "visualTimeMs=" << m_visualisationBackend->currentTimeMs()
+                                  << "state=" << static_cast<int>(pipelineStatus.state)
+                                  << "underrun=" << pipelineStatus.bufferUnderrun;
+        }
+    }
+    else {
+        m_timingLogTimer.invalidate();
+    }
+
     const bool preparedCrossfadeArmed
         = m_preparedCrossfadeTransition.active && m_preparedCrossfadeTransition.sourceGeneration == m_trackGeneration;
 

@@ -41,6 +41,7 @@ constexpr uint64_t DefaultBacklogDuration = 250;
 constexpr int MinimumSpectrumFrameCount   = 256;
 
 Q_LOGGING_CATEGORY(VISUALISATION_BACKEND, "fy.visualisation.backend")
+Q_LOGGING_CATEGORY(VISUALISATION_TIMING, "fy.trace.visualisation.timing", QtInfoMsg)
 
 namespace {
 int64_t steadyClockMs()
@@ -83,22 +84,6 @@ size_t VisualisationBackend::WindowCacheKeyHash::operator()(const WindowCacheKey
     return fftHash ^ (functionHash + 0x9e3779b9U + (fftHash << 6U) + (fftHash >> 2U));
 }
 
-VisualisationBackend::SessionToken VisualisationBackend::registerSession()
-{
-    const std::unique_lock lock{m_mutex};
-
-    SessionToken token = m_nextSessionToken++;
-    if(token == 0) {
-        token = m_nextSessionToken++;
-    }
-    if(m_nextSessionToken == 0) {
-        m_nextSessionToken = 1;
-    }
-
-    m_backlogRequests[token] = DefaultBacklogDuration;
-    return token;
-}
-
 VisualisationBackend::VisualisationBackend()
     : m_nextSessionToken{1}
     , m_format{SampleFormat::F32, 0, 0}
@@ -114,6 +99,22 @@ VisualisationBackend::VisualisationBackend()
     , m_currentTimePublished{false}
     , m_currentTimeHasPresentationClock{false}
 { }
+
+VisualisationBackend::SessionToken VisualisationBackend::registerSession()
+{
+    const std::unique_lock lock{m_mutex};
+
+    SessionToken token = m_nextSessionToken++;
+    if(token == 0) {
+        token = m_nextSessionToken++;
+    }
+    if(m_nextSessionToken == 0) {
+        m_nextSessionToken = 1;
+    }
+
+    m_backlogRequests[token] = DefaultBacklogDuration;
+    return token;
+}
 
 bool VisualisationBackend::unregisterSession(SessionToken token)
 {
@@ -187,50 +188,6 @@ uint64_t VisualisationBackend::currentTimeMs() const
     return currentTimeMs > earlyMs ? currentTimeMs - earlyMs : 0;
 }
 
-void VisualisationBackend::publishCurrentTime(uint64_t timeMs, int64_t referenceClockMs, bool published,
-                                              bool hasPresentationClock)
-{
-    uint64_t sequence = m_currentTimeSequence.load(std::memory_order_acquire);
-    while(true) {
-        if((sequence & 1U) != 0U) {
-            sequence = m_currentTimeSequence.load(std::memory_order_acquire);
-            continue;
-        }
-
-        if(m_currentTimeSequence.compare_exchange_weak(sequence, sequence + 1, std::memory_order_acq_rel,
-                                                       std::memory_order_acquire)) {
-            break;
-        }
-    }
-
-    m_currentTimeMs.store(timeMs, std::memory_order_relaxed);
-    m_currentTimeReferenceClockMs.store(referenceClockMs, std::memory_order_relaxed);
-    m_currentTimePublished.store(published, std::memory_order_relaxed);
-    m_currentTimeHasPresentationClock.store(hasPresentationClock, std::memory_order_relaxed);
-    m_currentTimeSequence.store(sequence + 2, std::memory_order_release);
-}
-
-VisualisationBackend::CurrentTimeSnapshot VisualisationBackend::currentTimeSnapshot() const
-{
-    while(true) {
-        const uint64_t sequenceBefore = m_currentTimeSequence.load(std::memory_order_acquire);
-        if((sequenceBefore & 1U) != 0U) {
-            continue;
-        }
-
-        CurrentTimeSnapshot snapshot;
-        snapshot.timeMs                   = m_currentTimeMs.load(std::memory_order_relaxed);
-        snapshot.referenceClockMs         = m_currentTimeReferenceClockMs.load(std::memory_order_relaxed);
-        snapshot.published                = m_currentTimePublished.load(std::memory_order_relaxed);
-        snapshot.hasPresentationClock     = m_currentTimeHasPresentationClock.load(std::memory_order_relaxed);
-        const uint64_t sequenceAfter      = m_currentTimeSequence.load(std::memory_order_acquire);
-        const bool consistentSnapshotRead = sequenceBefore == sequenceAfter && (sequenceAfter & 1U) == 0U;
-        if(consistentSnapshotRead) {
-            return snapshot;
-        }
-    }
-}
-
 void VisualisationBackend::setStopped()
 {
     publishCurrentTime(0, 0, false, false);
@@ -268,6 +225,12 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
                                                                  / static_cast<uint64_t>(sampleRate)};
     const auto reportedNextPresentationTime = frame.presentationTime + presentationDuration;
 
+    const bool timingEnabled = VISUALISATION_TIMING().isDebugEnabled();
+    const int64_t arrivalMs  = timingEnabled ? steadyClockMs() : 0;
+    if(timingEnabled && m_lastFrameArrivalMs > 0) {
+        m_maxFrameArrivalGapMs = std::max(m_maxFrameArrivalGapMs, arrivalMs - m_lastFrameArrivalMs);
+    }
+
     bool resetBacklog{false};
     if(frame.discontinuityBefore) {
         qCDebug(VISUALISATION_BACKEND) << "Resetting visualisation backlog after dropped analysis data:"
@@ -288,6 +251,16 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
         if(const auto it = m_sourceTimelines.find(sourceKey); it != m_sourceTimelines.end()) {
             bool timelineDiscontinuity{false};
             if(hasPresentationTime && it->second.nextPresentationTime != std::chrono::steady_clock::time_point{}) {
+                if(timingEnabled) {
+                    const auto correctionNs    = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                                                     frame.presentationTime - it->second.nextPresentationTime)
+                                                     .count();
+                    m_presentationCorrectionMs = correctionNs / static_cast<int64_t>(Time::NsPerMs);
+                    m_totalPresentationCorrectionNs += correctionNs;
+                    if(std::abs(correctionNs) > std::abs(m_maxPresentationCorrectionNs)) {
+                        m_maxPresentationCorrectionNs = correctionNs;
+                    }
+                }
                 const auto tolerance = std::chrono::milliseconds{ContinuityToleranceMs};
                 const bool presentationTimeReanchored
                     = frame.presentationTime + tolerance < it->second.nextPresentationTime
@@ -328,6 +301,8 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
         resetLocked();
         publishCurrentTime(0, 0, false, false);
     }
+
+    m_lastFrameArrivalMs = arrivalMs;
 
     if(!m_format.isValid()) {
         m_format = format;
@@ -381,6 +356,169 @@ void VisualisationBackend::reset()
     setStopped();
 }
 
+bool VisualisationBackend::getPcmWindow(VisualisationSession::PcmWindow& out, uint64_t centerTimeMs,
+                                        uint64_t durationMs, const ChannelSelection& selection) const
+{
+    const std::shared_lock lock{m_mutex};
+
+    WindowRange window;
+    const int requestedFrames = std::max(1, m_format.framesForDuration(std::max<uint64_t>(1, durationMs)));
+    if(!resolveWindow(window, centerTimeMs, requestedFrames, 1, WindowAnchor::Center)) {
+        return false;
+    }
+
+    return fillWindow(out, window.startFrame, window.frameCount, selection);
+}
+
+bool VisualisationBackend::getPcmWindowEndingAt(VisualisationSession::PcmWindow& out, uint64_t endTimeMs,
+                                                uint64_t durationMs, const ChannelSelection& selection) const
+{
+    const std::shared_lock lock{m_mutex};
+
+    WindowRange window;
+    const int requestedFrames = std::max(1, m_format.framesForDuration(std::max<uint64_t>(1, durationMs)));
+    if(!resolvePcmWindowEndingAt(window, endTimeMs, requestedFrames, 1)) {
+        return false;
+    }
+
+    return fillWindow(out, window.startFrame, window.frameCount, selection);
+}
+
+bool VisualisationBackend::getSpectrumWindow(VisualisationSession::SpectrumWindow& out, uint64_t centerTimeMs,
+                                             int fftSize, const ChannelSelection& selection,
+                                             SpectrumWindowFunction windowFunction) const
+{
+    VisualisationSession::PcmWindow window;
+
+    {
+        const std::shared_lock lock{m_mutex};
+
+        WindowRange range;
+        if(!resolveWindow(range, centerTimeMs, fftSize, 2, WindowAnchor::Center)) {
+            return false;
+        }
+
+        if(!fillWindow(window, range.startFrame, range.frameCount, selection)) {
+            return false;
+        }
+    }
+
+    return fillSpectrumWindow(out, window, selection, windowFunction);
+}
+
+bool VisualisationBackend::getSpectrumWindowEndingAt(VisualisationSession::SpectrumWindow& out, uint64_t endTimeMs,
+                                                     int fftSize, const ChannelSelection& selection,
+                                                     SpectrumWindowFunction windowFunction) const
+{
+    VisualisationSession::PcmWindow window;
+    const bool timingEnabled = VISUALISATION_TIMING().isDebugEnabled();
+    SpectrumTimingSample timing;
+    bool resolved{false};
+
+    {
+        const std::shared_lock lock{m_mutex};
+
+        WindowRange range;
+        resolved = resolveSpectrumWindowEndingAt(range, endTimeMs, fftSize, MinimumSpectrumFrameCount)
+                && fillWindow(window, range.startFrame, range.frameCount, selection);
+        if(timingEnabled) {
+            timing = spectrumTimingSample(endTimeMs, fftSize, range, resolved);
+        }
+    }
+
+    if(timingEnabled) {
+        recordSpectrumTiming(timing);
+    }
+
+    return resolved && fillSpectrumWindow(out, window, selection, windowFunction);
+}
+
+bool VisualisationBackend::getSpectrumWindowForDuration(VisualisationSession::SpectrumWindow& out,
+                                                        uint64_t centerTimeMs, uint64_t durationMs,
+                                                        const ChannelSelection& selection,
+                                                        SpectrumWindowFunction windowFunction) const
+{
+    VisualisationSession::PcmWindow window;
+
+    {
+        const std::shared_lock lock{m_mutex};
+
+        const int fftSize = spectrumFramesForDuration(durationMs);
+        if(fftSize <= 0) {
+            return false;
+        }
+
+        WindowRange range;
+        if(!resolveWindow(range, centerTimeMs, fftSize, 2, WindowAnchor::Center)) {
+            return false;
+        }
+
+        if(!fillWindow(window, range.startFrame, range.frameCount, selection)) {
+            return false;
+        }
+    }
+
+    return fillSpectrumWindow(out, window, selection, windowFunction);
+}
+
+bool VisualisationBackend::getSpectrumWindowEndingAtDuration(VisualisationSession::SpectrumWindow& out,
+                                                             uint64_t endTimeMs, uint64_t durationMs,
+                                                             const ChannelSelection& selection,
+                                                             SpectrumWindowFunction windowFunction) const
+{
+    VisualisationSession::PcmWindow window;
+    const bool timingEnabled = VISUALISATION_TIMING().isDebugEnabled();
+    SpectrumTimingSample timing;
+    bool resolved{false};
+
+    {
+        const std::shared_lock lock{m_mutex};
+
+        const int fftSize = spectrumFramesForDuration(durationMs);
+        WindowRange range;
+        resolved = fftSize > 0 && resolveSpectrumWindowEndingAt(range, endTimeMs, fftSize, MinimumSpectrumFrameCount)
+                && fillWindow(window, range.startFrame, range.frameCount, selection);
+        if(timingEnabled) {
+            timing = spectrumTimingSample(endTimeMs, fftSize, range, resolved);
+        }
+    }
+
+    if(timingEnabled) {
+        recordSpectrumTiming(timing);
+    }
+
+    return resolved && fillSpectrumWindow(out, window, selection, windowFunction);
+}
+
+uint64_t VisualisationBackend::msToFrames(uint64_t ms, int sampleRate)
+{
+    if(sampleRate <= 0) {
+        return 0;
+    }
+
+    return (ms * static_cast<uint64_t>(sampleRate)) / Time::MsPerSecond;
+}
+
+int VisualisationBackend::spectrumFramesForDuration(uint64_t durationMs) const
+{
+    if(durationMs == 0 || !m_format.isValid() || m_format.sampleRate() <= 0) {
+        return 0;
+    }
+
+    const auto sampleRate = static_cast<uint64_t>(m_format.sampleRate());
+    if(durationMs > std::numeric_limits<uint64_t>::max() / sampleRate) {
+        return 0;
+    }
+
+    const uint64_t requestedFrames
+        = std::max<uint64_t>(MinimumSpectrumFrameCount, (durationMs * sampleRate) / Time::MsPerSecond);
+    if(requestedFrames > static_cast<uint64_t>(std::numeric_limits<int>::max())) {
+        return 0;
+    }
+
+    return Dsp::RealFft::nearestValidSize(static_cast<int>(requestedFrames));
+}
+
 bool VisualisationBackend::resolveWindow(WindowRange& out, uint64_t timeMs, int requestedFrameCount,
                                          int minimumFrameCount, const WindowAnchor anchor) const
 {
@@ -413,6 +551,32 @@ bool VisualisationBackend::resolveWindow(WindowRange& out, uint64_t timeMs, int 
     }
 
     out.startFrame = startFrame;
+    out.frameCount = frameCount;
+    return true;
+}
+
+bool VisualisationBackend::resolvePcmWindowEndingAt(WindowRange& out, uint64_t endTimeMs, int requestedFrameCount,
+                                                    int minimumFrameCount) const
+{
+    if(std::cmp_less(m_frameCount, minimumFrameCount) || !m_format.isValid() || m_format.sampleRate() <= 0
+       || m_format.channelCount() <= 0 || requestedFrameCount < minimumFrameCount) {
+        return false;
+    }
+
+    const uint64_t timeFrame       = msToFrames(endTimeMs, m_format.sampleRate());
+    const uint64_t clampedEndFrame = std::min(timeFrame, m_nextStreamFrame);
+    if(clampedEndFrame <= m_startStreamFrame) {
+        return false;
+    }
+
+    const uint64_t availableFrames = clampedEndFrame - m_startStreamFrame;
+    const int frameCount
+        = static_cast<int>(std::min<uint64_t>(static_cast<uint64_t>(requestedFrameCount), availableFrames));
+    if(frameCount < minimumFrameCount) {
+        return false;
+    }
+
+    out.startFrame = clampedEndFrame - static_cast<uint64_t>(frameCount);
     out.frameCount = frameCount;
     return true;
 }
@@ -450,160 +614,6 @@ bool VisualisationBackend::resolveSpectrumWindowEndingAt(WindowRange& out, uint6
     out.startFrame          = clampedEndFrame - windowFrames;
     out.frameCount          = frameCount;
     return true;
-}
-
-bool VisualisationBackend::getPcmWindow(VisualisationSession::PcmWindow& out, uint64_t centerTimeMs,
-                                        uint64_t durationMs, const ChannelSelection& selection) const
-{
-    const std::shared_lock lock{m_mutex};
-
-    WindowRange window;
-    const int requestedFrames = std::max(1, m_format.framesForDuration(std::max<uint64_t>(1, durationMs)));
-    if(!resolveWindow(window, centerTimeMs, requestedFrames, 1, WindowAnchor::Center)) {
-        return false;
-    }
-
-    return fillWindow(out, window.startFrame, window.frameCount, selection);
-}
-
-bool VisualisationBackend::getPcmWindowEndingAt(VisualisationSession::PcmWindow& out, uint64_t endTimeMs,
-                                                uint64_t durationMs, const ChannelSelection& selection) const
-{
-    const std::shared_lock lock{m_mutex};
-
-    WindowRange window;
-    const int requestedFrames = std::max(1, m_format.framesForDuration(std::max<uint64_t>(1, durationMs)));
-    if(!resolvePcmWindowEndingAt(window, endTimeMs, requestedFrames, 1)) {
-        return false;
-    }
-
-    return fillWindow(out, window.startFrame, window.frameCount, selection);
-}
-
-bool VisualisationBackend::resolvePcmWindowEndingAt(WindowRange& out, uint64_t endTimeMs, int requestedFrameCount,
-                                                    int minimumFrameCount) const
-{
-    if(std::cmp_less(m_frameCount, minimumFrameCount) || !m_format.isValid() || m_format.sampleRate() <= 0
-       || m_format.channelCount() <= 0 || requestedFrameCount < minimumFrameCount) {
-        return false;
-    }
-
-    const uint64_t timeFrame       = msToFrames(endTimeMs, m_format.sampleRate());
-    const uint64_t clampedEndFrame = std::min(timeFrame, m_nextStreamFrame);
-    if(clampedEndFrame <= m_startStreamFrame) {
-        return false;
-    }
-
-    const uint64_t availableFrames = clampedEndFrame - m_startStreamFrame;
-    const int frameCount
-        = static_cast<int>(std::min<uint64_t>(static_cast<uint64_t>(requestedFrameCount), availableFrames));
-    if(frameCount < minimumFrameCount) {
-        return false;
-    }
-
-    out.startFrame = clampedEndFrame - static_cast<uint64_t>(frameCount);
-    out.frameCount = frameCount;
-    return true;
-}
-
-bool VisualisationBackend::getSpectrumWindow(VisualisationSession::SpectrumWindow& out, uint64_t centerTimeMs,
-                                             int fftSize, const ChannelSelection& selection,
-                                             SpectrumWindowFunction windowFunction) const
-{
-    VisualisationSession::PcmWindow window;
-
-    {
-        const std::shared_lock lock{m_mutex};
-
-        WindowRange range;
-        if(!resolveWindow(range, centerTimeMs, fftSize, 2, WindowAnchor::Center)) {
-            return false;
-        }
-
-        if(!fillWindow(window, range.startFrame, range.frameCount, selection)) {
-            return false;
-        }
-    }
-
-    return fillSpectrumWindow(out, window, selection, windowFunction);
-}
-
-bool VisualisationBackend::getSpectrumWindowEndingAt(VisualisationSession::SpectrumWindow& out, uint64_t endTimeMs,
-                                                     int fftSize, const ChannelSelection& selection,
-                                                     SpectrumWindowFunction windowFunction) const
-{
-    VisualisationSession::PcmWindow window;
-
-    {
-        const std::shared_lock lock{m_mutex};
-
-        WindowRange range;
-        if(!resolveSpectrumWindowEndingAt(range, endTimeMs, fftSize, MinimumSpectrumFrameCount)) {
-            return false;
-        }
-
-        if(!fillWindow(window, range.startFrame, range.frameCount, selection)) {
-            return false;
-        }
-    }
-
-    return fillSpectrumWindow(out, window, selection, windowFunction);
-}
-
-bool VisualisationBackend::getSpectrumWindowForDuration(VisualisationSession::SpectrumWindow& out,
-                                                        uint64_t centerTimeMs, uint64_t durationMs,
-                                                        const ChannelSelection& selection,
-                                                        SpectrumWindowFunction windowFunction) const
-{
-    VisualisationSession::PcmWindow window;
-
-    {
-        const std::shared_lock lock{m_mutex};
-
-        const int fftSize = spectrumFramesForDuration(durationMs);
-        if(fftSize <= 0) {
-            return false;
-        }
-
-        WindowRange range;
-        if(!resolveWindow(range, centerTimeMs, fftSize, 2, WindowAnchor::Center)) {
-            return false;
-        }
-
-        if(!fillWindow(window, range.startFrame, range.frameCount, selection)) {
-            return false;
-        }
-    }
-
-    return fillSpectrumWindow(out, window, selection, windowFunction);
-}
-
-bool VisualisationBackend::getSpectrumWindowEndingAtDuration(VisualisationSession::SpectrumWindow& out,
-                                                             uint64_t endTimeMs, uint64_t durationMs,
-                                                             const ChannelSelection& selection,
-                                                             SpectrumWindowFunction windowFunction) const
-{
-    VisualisationSession::PcmWindow window;
-
-    {
-        const std::shared_lock lock{m_mutex};
-
-        const int fftSize = spectrumFramesForDuration(durationMs);
-        if(fftSize <= 0) {
-            return false;
-        }
-
-        WindowRange range;
-        if(!resolveSpectrumWindowEndingAt(range, endTimeMs, fftSize, MinimumSpectrumFrameCount)) {
-            return false;
-        }
-
-        if(!fillWindow(window, range.startFrame, range.frameCount, selection)) {
-            return false;
-        }
-    }
-
-    return fillSpectrumWindow(out, window, selection, windowFunction);
 }
 
 uint64_t VisualisationBackend::mapSourceTimeToVisualTime(uint32_t streamId, uint64_t sourceTimeMs) const
@@ -790,44 +800,82 @@ bool VisualisationBackend::fillSpectrumWindow(VisualisationSession::SpectrumWind
     return true;
 }
 
-uint64_t VisualisationBackend::msToFrames(uint64_t ms, int sampleRate)
+VisualisationBackend::SpectrumTimingSample VisualisationBackend::spectrumTimingSample(uint64_t endTimeMs,
+                                                                                      int requestedFrames,
+                                                                                      const WindowRange& range,
+                                                                                      bool resolved) const
 {
-    if(sampleRate <= 0) {
-        return 0;
+    SpectrumTimingSample sample;
+    sample.requestedTimeMs               = endTimeMs;
+    sample.requestedFrames               = requestedFrames;
+    sample.windowStartFrame              = range.startFrame;
+    sample.windowFrames                  = range.frameCount;
+    sample.sampleRate                    = m_format.sampleRate();
+    sample.resolved                      = resolved;
+    sample.arrivalAgeMs                  = m_lastFrameArrivalMs > 0 ? steadyClockMs() - m_lastFrameArrivalMs : -1;
+    sample.maxArrivalGapMs               = m_maxFrameArrivalGapMs;
+    sample.presentationCorrectionMs      = m_presentationCorrectionMs;
+    sample.totalPresentationCorrectionMs = m_totalPresentationCorrectionNs / static_cast<int64_t>(Time::NsPerMs);
+    sample.maxPresentationCorrectionMs   = m_maxPresentationCorrectionNs / static_cast<int64_t>(Time::NsPerMs);
+    if(sample.sampleRate > 0) {
+        sample.availableStartMs = (m_startStreamFrame * Time::MsPerSecond) / sample.sampleRate;
+        sample.availableEndMs   = (m_nextStreamFrame * Time::MsPerSecond) / sample.sampleRate;
     }
-
-    return (ms * static_cast<uint64_t>(sampleRate)) / Time::MsPerSecond;
+    return sample;
 }
 
-int VisualisationBackend::spectrumFramesForDuration(uint64_t durationMs) const
+void VisualisationBackend::recordSpectrumTiming(const SpectrumTimingSample& sample) const
 {
-    if(durationMs == 0 || !m_format.isValid() || m_format.sampleRate() <= 0) {
-        return 0;
+    const int64_t nowMs = steadyClockMs();
+    SpectrumTimingSummary summary;
+    {
+        const std::scoped_lock lock{m_timingMutex};
+        if(m_spectrumTiming.startMs == 0) {
+            m_spectrumTiming.startMs = nowMs;
+        }
+        ++m_spectrumTiming.queries;
+        m_spectrumTiming.failures += !sample.resolved;
+        m_spectrumTiming.beforeHistory += sample.requestedTimeMs < sample.availableStartMs;
+        m_spectrumTiming.afterHistory += sample.requestedTimeMs > sample.availableEndMs;
+        m_spectrumTiming.shortWindows += sample.resolved && sample.windowFrames < sample.requestedFrames;
+        if(nowMs - m_spectrumTiming.startMs < 1000) {
+            return;
+        }
+        summary          = m_spectrumTiming;
+        m_spectrumTiming = {};
     }
 
-    const auto sampleRate = static_cast<uint64_t>(m_format.sampleRate());
-    if(durationMs > std::numeric_limits<uint64_t>::max() / sampleRate) {
-        return 0;
-    }
-
-    const uint64_t requestedFrames
-        = std::max<uint64_t>(MinimumSpectrumFrameCount, (durationMs * sampleRate) / Time::MsPerSecond);
-    if(requestedFrames > static_cast<uint64_t>(std::numeric_limits<int>::max())) {
-        return 0;
-    }
-
-    return Dsp::RealFft::nearestValidSize(static_cast<int>(requestedFrames));
+    qCDebug(VISUALISATION_TIMING) << "Spectrum history timing:" << "elapsedMs=" << nowMs - summary.startMs
+                                  << "queries=" << summary.queries << "failures=" << summary.failures
+                                  << "beforeHistory=" << summary.beforeHistory
+                                  << "afterHistory=" << summary.afterHistory << "shortWindows=" << summary.shortWindows
+                                  << "requestedMs=" << sample.requestedTimeMs
+                                  << "availableStartMs=" << sample.availableStartMs
+                                  << "availableEndMs=" << sample.availableEndMs
+                                  << "requestedFrames=" << sample.requestedFrames
+                                  << "windowStartFrame=" << sample.windowStartFrame
+                                  << "windowFrames=" << sample.windowFrames << "sampleRate=" << sample.sampleRate
+                                  << "analysisArrivalAgeMs=" << sample.arrivalAgeMs
+                                  << "maxArrivalGapSinceResetMs=" << sample.maxArrivalGapMs
+                                  << "lastPresentationCorrectionMs=" << sample.presentationCorrectionMs
+                                  << "totalPresentationCorrectionSinceResetMs=" << sample.totalPresentationCorrectionMs
+                                  << "maxPresentationCorrectionSinceResetMs=" << sample.maxPresentationCorrectionMs;
 }
 
 void VisualisationBackend::resetLocked()
 {
-    m_presentationLeadMs = 0;
-    m_headFrame          = 0;
-    m_frameCount         = 0;
-    m_startStreamFrame   = 0;
-    m_nextStreamFrame    = 0;
-    m_currentStreamId    = 0;
-    m_format             = AudioFormat{SampleFormat::F32, 0, 0};
+    m_lastFrameArrivalMs            = 0;
+    m_maxFrameArrivalGapMs          = 0;
+    m_presentationCorrectionMs      = 0;
+    m_totalPresentationCorrectionNs = 0;
+    m_maxPresentationCorrectionNs   = 0;
+    m_presentationLeadMs            = 0;
+    m_headFrame                     = 0;
+    m_frameCount                    = 0;
+    m_startStreamFrame              = 0;
+    m_nextStreamFrame               = 0;
+    m_currentStreamId               = 0;
+    m_format                        = AudioFormat{SampleFormat::F32, 0, 0};
     m_sourceTimelines.clear();
 }
 
@@ -906,6 +954,50 @@ void VisualisationBackend::appendFrames(std::span<const float> samples, size_t f
 
     if(m_frameCount == frameCount) {
         m_startStreamFrame = startFrame;
+    }
+}
+
+void VisualisationBackend::publishCurrentTime(uint64_t timeMs, int64_t referenceClockMs, bool published,
+                                              bool hasPresentationClock)
+{
+    uint64_t sequence = m_currentTimeSequence.load(std::memory_order_acquire);
+    while(true) {
+        if((sequence & 1U) != 0U) {
+            sequence = m_currentTimeSequence.load(std::memory_order_acquire);
+            continue;
+        }
+
+        if(m_currentTimeSequence.compare_exchange_weak(sequence, sequence + 1, std::memory_order_acq_rel,
+                                                       std::memory_order_acquire)) {
+            break;
+        }
+    }
+
+    m_currentTimeMs.store(timeMs, std::memory_order_relaxed);
+    m_currentTimeReferenceClockMs.store(referenceClockMs, std::memory_order_relaxed);
+    m_currentTimePublished.store(published, std::memory_order_relaxed);
+    m_currentTimeHasPresentationClock.store(hasPresentationClock, std::memory_order_relaxed);
+    m_currentTimeSequence.store(sequence + 2, std::memory_order_release);
+}
+
+VisualisationBackend::CurrentTimeSnapshot VisualisationBackend::currentTimeSnapshot() const
+{
+    while(true) {
+        const uint64_t sequenceBefore = m_currentTimeSequence.load(std::memory_order_acquire);
+        if((sequenceBefore & 1U) != 0U) {
+            continue;
+        }
+
+        CurrentTimeSnapshot snapshot;
+        snapshot.timeMs                   = m_currentTimeMs.load(std::memory_order_relaxed);
+        snapshot.referenceClockMs         = m_currentTimeReferenceClockMs.load(std::memory_order_relaxed);
+        snapshot.published                = m_currentTimePublished.load(std::memory_order_relaxed);
+        snapshot.hasPresentationClock     = m_currentTimeHasPresentationClock.load(std::memory_order_relaxed);
+        const uint64_t sequenceAfter      = m_currentTimeSequence.load(std::memory_order_acquire);
+        const bool consistentSnapshotRead = sequenceBefore == sequenceAfter && (sequenceAfter & 1U) == 0U;
+        if(consistentSnapshotRead) {
+            return snapshot;
+        }
     }
 }
 } // namespace Fooyin

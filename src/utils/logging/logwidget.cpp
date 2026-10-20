@@ -122,12 +122,13 @@ LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
     buttonBox->addButton(copyButton, QDialogButtonBox::ActionRole);
     buttonBox->addButton(saveButton, QDialogButtonBox::ApplyRole);
 
-    m_level->addItem(tr("Debug"), QtDebugMsg);
-    m_level->addItem(tr("Info"), QtInfoMsg);
-    m_level->addItem(tr("Warning"), QtWarningMsg);
-    m_level->addItem(tr("Critical"), QtCriticalMsg);
+    m_level->addItem(tr("Trace"), static_cast<int>(MessageHandler::Level::Trace));
+    m_level->addItem(tr("Debug"), static_cast<int>(MessageHandler::Level::Debug));
+    m_level->addItem(tr("Info"), static_cast<int>(MessageHandler::Level::Info));
+    m_level->addItem(tr("Warning"), static_cast<int>(MessageHandler::Level::Warning));
+    m_level->addItem(tr("Critical"), static_cast<int>(MessageHandler::Level::Critical));
 
-    m_level->setCurrentIndex(m_level->findData(MessageHandler::level()));
+    m_level->setCurrentIndex(m_level->findData(static_cast<int>(MessageHandler::level())));
 
     auto* layout = new QGridLayout(this);
     layout->addWidget(m_view, 0, 0, 1, 3);
@@ -154,8 +155,9 @@ LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
     QObject::connect(copyAction, &QAction::triggered, this, &LogWidget::copySelectedRows);
     m_view->addAction(copyAction);
 
-    QObject::connect(m_level, &QComboBox::currentIndexChanged, this,
-                     [this]() { MessageHandler::setLevel(m_level->currentData().value<QtMsgType>()); });
+    QObject::connect(m_level, &QComboBox::currentIndexChanged, this, [this]() {
+        MessageHandler::setLevel(static_cast<MessageHandler::Level>(m_level->currentData().toInt()));
+    });
     QObject::connect(m_view, &QWidget::customContextMenuRequested, this, &LogWidget::showContextMenu);
 
     m_scrollThrottler->setTimeout(ScrollInterval);
@@ -349,8 +351,9 @@ void LogWidget::saveLog()
 
     const auto entries = m_model->entries();
     for(const auto& entry : entries) {
-        out << u"%1 %2 %3: %4\n"_s.arg(entry.time.toString(Qt::ISODateWithMs), LogModel::typeToString(entry.type),
-                                       entry.category, entry.message);
+        out << u"%1 %2 %3: %4\n"_s.arg(entry.time.toString(Qt::ISODateWithMs),
+                                       LogModel::typeToString(entry.type, entry.category), entry.category,
+                                       entry.message);
     }
 
     logFile.close();

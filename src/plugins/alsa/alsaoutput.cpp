@@ -605,6 +605,17 @@ bool AlsaOutput::initAlsa()
         return false;
     }
 
+    if(ALSA().isDebugEnabled()) {
+        snd_pcm_uframes_t bufferFrames{0};
+        snd_pcm_uframes_t periodFrames{0};
+        if(snd_pcm_get_params(handle, &bufferFrames, &periodFrames) >= 0) {
+            qCDebug(ALSA) << "Negotiated ALSA output:" << "device=" << m_device
+                          << "pcmType=" << snd_pcm_type_name(snd_pcm_type(handle))
+                          << "sampleRate=" << m_format.sampleRate() << "channels=" << m_format.channelCount()
+                          << "bufferFrames=" << bufferFrames << "periodFrames=" << periodFrames;
+        }
+    }
+
     snd_pcm_sw_params_t* swParams;
     snd_pcm_sw_params_alloca(&swParams);
 

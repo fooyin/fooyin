@@ -236,11 +236,11 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager, DbConnectionPoolPtr
     if(!newLogFormat) {
         level = QtInfoMsg;
     }
-    MessageHandler::setLevel(static_cast<QtMsgType>(level));
+    MessageHandler::setLevel(static_cast<MessageHandler::Level>(level));
 }
 
 CoreSettings::~CoreSettings()
 {
-    m_settings->fileSet(LogLevel, MessageHandler::level());
+    m_settings->fileSet(LogLevel, static_cast<int>(MessageHandler::level()));
 }
 } // namespace Fooyin

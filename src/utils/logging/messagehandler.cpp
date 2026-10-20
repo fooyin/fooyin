@@ -25,21 +25,29 @@
 
 #include <iostream>
 
+namespace Fooyin {
 namespace {
-QString levelToFilterRule(QtMsgType level)
+QString levelToFilterRule(MessageHandler::Level level)
 {
     using namespace Qt::StringLiterals;
+    using Level = MessageHandler::Level;
 
     switch(level) {
-        case QtDebugMsg:
-            return u"fy.*.critical=true\nfy.*.warning=true\nfy.*.info=true\nfy.*.debug=true\n"_s;
-        case QtInfoMsg:
+        case Level::Trace:
+        case Level::Debug: {
+            auto rules = u"fy.*.critical=true\nfy.*.warning=true\nfy.*.info=true\nfy.*.debug=true\n"_s;
+            if(level == Level::Debug) {
+                rules += u"fy.trace.*.debug=false\n"_s;
+            }
+            return rules;
+        }
+        case Level::Info:
             return u"fy.*.critical=true\nfy.*.warning=true\nfy.*.info=true\nfy.*.debug=false\n"_s;
-        case QtWarningMsg:
+        case Level::Warning:
             return u"fy.*.critical=true\nfy.*.warning=true\nfy.*.info=false\nfy.*.debug=false\n"_s;
-        case QtCriticalMsg:
+        case Level::Critical:
             return u"fy.*.critical=true\nfy.*.warning=false\nfy.*.info=false\nfy.*.debug=false\n"_s;
-        case QtFatalMsg:
+        case Level::Fatal:
         default:
             return {};
     }
@@ -65,10 +73,9 @@ bool filterLogMessage(QtMsgType type, const QString& message)
 }
 } // namespace
 
-namespace Fooyin {
 MessageHandler::MessageHandler(QObject* parent)
     : QObject{parent}
-    , m_level{QtInfoMsg}
+    , m_level{Level::Info}
 {
     qRegisterMetaType<QtMsgType>();
 }
@@ -110,12 +117,12 @@ void MessageHandler::handler(QtMsgType type, const QMessageLogContext& context, 
         Qt::QueuedConnection);
 }
 
-QtMsgType MessageHandler::level()
+MessageHandler::Level MessageHandler::level()
 {
     return instance()->m_level.load(std::memory_order_acquire);
 }
 
-void MessageHandler::setLevel(QtMsgType level)
+void MessageHandler::setLevel(Level level)
 {
     QString filterRules;
     filterRules.append(levelToFilterRule(level));

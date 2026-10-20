@@ -136,18 +136,21 @@ int LogModel::getMaxEntries() const
     return m_maxEntries;
 }
 
-QString LogModel::typeToString(QtMsgType type)
+QString LogModel::typeToString(QtMsgType type, const QString& category)
 {
     switch(type) {
-        case(QtDebugMsg):
+        case QtDebugMsg:
+            if(category.startsWith("fy.trace."_L1)) {
+                return u"Trace"_s;
+            }
             return u"Debug"_s;
-        case(QtInfoMsg):
+        case QtInfoMsg:
             return u"Info"_s;
-        case(QtWarningMsg):
+        case QtWarningMsg:
             return u"Warning"_s;
-        case(QtCriticalMsg):
+        case QtCriticalMsg:
             return u"Critical"_s;
-        case(QtFatalMsg):
+        case QtFatalMsg:
             return u"Fatal"_s;
         default:
             return {};
@@ -195,29 +198,29 @@ QVariant LogModel::data(const QModelIndex& index, int role) const
     auto const& item = m_items.at(row);
 
     switch(role) {
-        case(Qt::DisplayRole): {
+        case Qt::DisplayRole: {
             switch(column) {
-                case(Level):
-                    return typeToString(item.type);
-                case(Time):
+                case Level:
+                    return typeToString(item.type, item.category);
+                case Time:
                     return item.time;
-                case(Message):
+                case Message:
                     return item.message;
                 default:
                     break;
             }
             break;
         }
-        case(Qt::DecorationRole): {
+        case Qt::DecorationRole: {
             if(column == Level) {
                 switch(item.type) {
-                    case(QtDebugMsg):
-                    case(QtInfoMsg):
+                    case QtDebugMsg:
+                    case QtInfoMsg:
                         return m_infoIcon;
-                    case(QtWarningMsg):
+                    case QtWarningMsg:
                         return m_warningIcon;
-                    case(QtCriticalMsg):
-                    case(QtFatalMsg):
+                    case QtCriticalMsg:
+                    case QtFatalMsg:
                         return m_criticalIcon;
                     default:
                         break;
