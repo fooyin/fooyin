@@ -45,6 +45,8 @@ struct ResolvedAppStyle
 namespace Settings::Gui {
 Q_NAMESPACE_EXPORT(FYGUI_EXPORT)
 
+constexpr auto PresetComboBoxModeKey = "Interface/PresetComboBoxMode";
+
 enum ToolButtonOption : uint8_t
 {
     None    = 0,

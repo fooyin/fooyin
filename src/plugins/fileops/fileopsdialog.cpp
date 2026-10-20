@@ -25,6 +25,7 @@
 #include <core/coresettings.h>
 #include <core/library/librarymanager.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <gui/iconloader.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
@@ -42,6 +43,7 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
+#include <QInputDialog>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
@@ -193,7 +195,10 @@ void FileOpsDialogPrivate::setup()
     m_renameOp->setEnabled(m_supportsFileOperations);
     m_extractOp->setEnabled(m_supportsExtract);
 
-    m_presetBox->setEditable(true);
+    const FySettings settings;
+    m_presetBox->setEditable(settings.value(Fooyin::Settings::Gui::PresetComboBoxModeKey, true).toBool());
+    m_presetBox->setInsertPolicy(QComboBox::NoInsert);
+    m_saveButton->setText(m_presetBox->isEditable() ? FileOpsDialog::tr("&Save") : FileOpsDialog::tr("&Save…"));
 
     auto* opLabel = new QLabel(tr("Operation") + u":"_s);
 
@@ -342,9 +347,11 @@ void FileOpsDialogPrivate::updateOptionState() const
 
 void FileOpsDialogPrivate::updateButtonState() const
 {
-    m_loadButton->setEnabled(m_presetBox->findText(m_presetBox->currentText()) >= 0);
-    m_saveButton->setEnabled(!m_presetBox->currentText().isEmpty());
-    m_deleteButton->setEnabled(m_presetBox->findText(m_presetBox->currentText()) >= 0);
+    const QString name   = m_presetBox->currentText();
+    const bool hasPreset = m_presetBox->findText(name) >= 0;
+    m_loadButton->setEnabled(hasPreset);
+    m_deleteButton->setEnabled(hasPreset);
+    m_saveButton->setEnabled(!m_presetBox->isEditable() || !name.trimmed().isEmpty());
 }
 
 FileOpPreset FileOpsDialogPrivate::currentPreset() const
@@ -364,7 +371,18 @@ FileOpPreset FileOpsDialogPrivate::currentPreset() const
 
 void FileOpsDialogPrivate::savePreset()
 {
-    const QString name = m_presetBox->currentText();
+    QString name = m_presetBox->currentText();
+    if(!m_presetBox->isEditable()) {
+        bool accepted{false};
+        name = QInputDialog::getText(m_self, tr("Save Preset"), tr("Preset name:"), QLineEdit::Normal, name, &accepted);
+        if(!accepted) {
+            return;
+        }
+    }
+    name = name.trimmed();
+    if(name.isEmpty()) {
+        return;
+    }
 
     FileOpPreset preset = currentPreset();
     preset.name         = name;
@@ -374,10 +392,11 @@ void FileOpsDialogPrivate::savePreset()
         QMessageBox msg{QMessageBox::Question, tr("Preset already exists"),
                         tr("A preset named ‘%1’ already exists. Overwrite it?").arg(name),
                         QMessageBox::Yes | QMessageBox::No};
-        if(msg.exec() == QMessageBox::Yes) {
-            *existingPreset = preset;
-            m_presetBox->setCurrentIndex(m_presetBox->findText(name));
+        if(msg.exec() != QMessageBox::Yes) {
+            return;
         }
+        *existingPreset = std::move(preset);
+        m_presetBox->setCurrentIndex(m_presetBox->findText(name));
     }
     else {
         m_presets.push_back(preset);

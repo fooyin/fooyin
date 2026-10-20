@@ -25,6 +25,7 @@
 #include <core/coresettings.h>
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlisthandler.h>
+#include <gui/guisettings.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/datastream.h>
 #include <utils/utils.h>
@@ -79,6 +80,11 @@ AutoPlaylistDialog::AutoPlaylistDialog(PlaylistHandler* playlisthandler, Playlis
 {
     setWindowTitle(m_playlist ? tr("Edit Autoplaylist") : tr("Create New Autoplaylist"));
     setModal(true);
+
+    const FySettings settings;
+    m_presetBox->setEditable(settings.value(Settings::Gui::PresetComboBoxModeKey, true).toBool());
+    m_presetBox->setInsertPolicy(QComboBox::NoInsert);
+    m_saveButton->setText(m_presetBox->isEditable() ? tr("&Save") : tr("&Save…"));
 
     auto* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     m_okButton      = buttonBox->button(QDialogButtonBox::Ok);
@@ -157,7 +163,7 @@ AutoPlaylistDialog::AutoPlaylistDialog(PlaylistHandler* playlisthandler, Playlis
         }
         m_queryEdit->setFocus();
     });
-    QObject::connect(m_presetBox, &QComboBox::currentIndexChanged, this, &AutoPlaylistDialog::updateButtonState);
+    QObject::connect(m_presetBox, &QComboBox::currentTextChanged, this, &AutoPlaylistDialog::updateButtonState);
     QObject::connect(m_nameEdit, &QLineEdit::textChanged, this, &AutoPlaylistDialog::updateButtonState);
     QObject::connect(m_queryEdit, &QPlainTextEdit::textChanged, this, [this]() {
         m_modeLabel->clear();
@@ -235,9 +241,10 @@ void AutoPlaylistDialog::updateButtonState()
     m_errorLabel->setVisible(!error.isEmpty());
     m_modeLabel->setVisible(error.isEmpty() && !m_modeLabel->text().isEmpty());
 
-    const bool hasPreset = m_presetBox->currentIndex() >= 0;
+    const bool hasPreset = findQuery(m_presetBox->currentText()) != m_queries.end();
     m_loadButton->setEnabled(hasPreset);
-    m_saveButton->setEnabled(error.isEmpty());
+    m_saveButton->setEnabled(error.isEmpty()
+                             && (!m_presetBox->isEditable() || !m_presetBox->currentText().trimmed().isEmpty()));
     m_deleteButton->setEnabled(hasPreset);
     m_resetButton->setEnabled(m_queryChanged);
     m_formatAction->setEnabled(AutoPlaylistQueryBuilder::queryError(m_queryEdit->text(), {}).isEmpty());
@@ -324,13 +331,17 @@ std::vector<AutoPlaylistQuery>::iterator AutoPlaylistDialog::findQuery(const QSt
 
 void AutoPlaylistDialog::saveQuery()
 {
-    bool accepted{false};
-    const QString name
-        = QInputDialog::getText(this, tr("Save Preset"), tr("Preset name:"), QLineEdit::Normal,
-                                m_presetBox->currentIndex() >= 0 ? m_presetBox->currentText() : m_nameEdit->text(),
-                                &accepted)
-              .trimmed();
-    if(!accepted || name.isEmpty()) {
+    QString name = m_presetBox->currentText();
+    if(!m_presetBox->isEditable()) {
+        bool accepted{false};
+        name = QInputDialog::getText(this, tr("Save Preset"), tr("Preset name:"), QLineEdit::Normal,
+                                     m_presetBox->currentIndex() >= 0 ? name : m_nameEdit->text(), &accepted);
+        if(!accepted) {
+            return;
+        }
+    }
+    name = name.trimmed();
+    if(name.isEmpty()) {
         return;
     }
 
@@ -366,10 +377,11 @@ void AutoPlaylistDialog::loadQuery()
 
 void AutoPlaylistDialog::deleteQuery()
 {
-    const auto query = findQuery(m_presetBox->currentText());
+    const QString name = m_presetBox->currentText();
+    const auto query   = findQuery(name);
     if(query != m_queries.end()) {
         m_queries.erase(query);
-        m_presetBox->removeItem(m_presetBox->currentIndex());
+        m_presetBox->removeItem(m_presetBox->findText(name));
         m_queryChanged = true;
         updateButtonState();
     }

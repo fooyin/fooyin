@@ -565,6 +565,29 @@ void Widgets::registerAdvancedSettings()
 {
     auto* advancedSettingsRegistry = m_gui->advancedSettingsRegistry();
 
+    advancedSettingsRegistry->add(
+        {.id           = QString::fromLatin1(Settings::Gui::PresetComboBoxModeKey),
+         .category     = {tr("Interface"), tr("Presets")},
+         .label        = tr("Preset combo box mode"),
+         .description  = tr("‘Editable’ allows preset names to be entered directly.\n‘Selection only’ opens a naming "
+                            "dialog when saving.\nApplies when preset controls are next opened."),
+         .defaultValue = true,
+         .editor       = AdvancedSettingRadioButtons{.options = {{.value = true, .label = tr("Editable")},
+                                                                 {.value = false, .label = tr("Selection only")}}},
+         .read =
+             [] {
+                 const FySettings settings;
+                 return settings.value(Settings::Gui::PresetComboBoxModeKey, true).toBool();
+             },
+         .write =
+             [](const QVariant& value) {
+                 FySettings settings;
+                 settings.setValue(Settings::Gui::PresetComboBoxModeKey, value.toBool());
+                 return true;
+             },
+         .normalise = {},
+         .validate  = {}});
+
     using SearchBarPosition = SettingsDialogController::SearchBarPosition;
     advancedSettingsRegistry->add<Settings::Gui::SettingsSearchBarPosition>(
         {.category    = {tr("Interface"), tr("Settings Dialog")},
