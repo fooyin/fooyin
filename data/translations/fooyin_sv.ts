@@ -12324,7 +12324,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="928"/>
         <source>Review unmatched or ambiguous tracks before applying metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrollera omatchade eller ambiguösa spår innan applicering av metadata.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="929"/>
@@ -13209,7 +13209,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="123"/>
         <source>Automatic</source>
-        <translation>Automatisk</translation>
+        <translation>Automatiskt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="124"/>
@@ -20311,7 +20311,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="331"/>
         <source>Import play counts and Loved status from this service when a track starts playing</source>
-        <translation>Importera antal spelningar och älskad-status från denna tjänster när ett spår börjar spelas</translation>
+        <translation>Importera antal spelningar och älskad-status från denna tjänst när ett spår börjar spelas</translation>
     </message>
 </context>
 <context>
@@ -20486,7 +20486,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="87"/>
         <source>Search</source>
-        <translation>Sök</translation>
+        <translation>Sökning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="91"/>
@@ -23940,7 +23940,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="56"/>
         <source>Right-align scale labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Högerjustera skalaetiketter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="57"/>
@@ -24138,7 +24138,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="903"/>
         <source>Right-align scale labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Högerjustera skalaetiketter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="906"/>
@@ -24916,7 +24916,7 @@ Håll i Ctrl för att ersätta en widget.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="565"/>
         <source>Settings Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Inställningsdialog</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="566"/>
@@ -24926,12 +24926,12 @@ Håll i Ctrl för att ersätta en widget.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="567"/>
         <source>Visibility and position of the search bar in the settings dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Synlighet och position på sökfältet i inställningsdialogen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="570"/>
         <source>Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Dold</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="571"/>
@@ -24981,12 +24981,12 @@ Håll i Ctrl för att ersätta en widget.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="640"/>
         <source>Inline editing delay</source>
-        <translation type="unfinished"></translation>
+        <translation>Inline-redigeringsfördröjning</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="641"/>
         <source>Delay before starting inline editing after clicking a selected editable cell</source>
-        <translation type="unfinished"></translation>
+        <translation>Fördröjning innan påbörjande av inline-redigering efter att ha klickat på en vald redigerbar cell</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="650"/>
@@ -25094,7 +25094,7 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
     <message>
         <location filename="../../src/gui/widgets.cpp" line="730"/>
         <source>Automatic resampling preference</source>
-        <translation>Automatisk omsamplings-preferens</translation>
+        <translation>Automatisk omsamplingspreferens</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="731"/>
@@ -25234,7 +25234,7 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
     <message>
         <location filename="../../src/gui/widgets.cpp" line="627"/>
         <source>Require a row to be selected before it can be dragged from item views</source>
-        <translation>Kräv att en rad blir vald innan den kan dras från föremålsvyer</translation>
+        <translation>Kräv att en rad är vald innan den kan dras från föremålsvyer</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="663"/>
@@ -25381,7 +25381,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="264"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="267"/>
