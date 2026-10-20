@@ -763,6 +763,17 @@ void Widgets::registerAdvancedSettings()
          .normalise   = {},
          .validate    = {}});
 
+    advancedSettingsRegistry->add(
+        Settings::Core::Internal::ExtraTagCompressionLevel, Settings::Core::Internal::DefaultExtraTagCompressionLevel,
+        {.category    = {tr("Library"), tr("Metadata Compression")},
+         .label       = tr("Compression level"),
+         .description = tr("Higher levels may reduce memory use at the cost of slower metadata loading and updates.\n"
+                           "Changes take effect after restarting fooyin."),
+         .editor
+         = AdvancedSettingSpinBox{.minimum = 1, .maximum = 9, .singleStep = 1, .suffix = {}, .specialValueText = {}},
+         .normalise = [](const QVariant& value) { return std::clamp(value.toInt(), 1, 9); },
+         .validate  = {}});
+
     const auto normaliseExtraTagNames = [](const QVariant& value) {
         QStringList fields;
         for(const auto& field : value.toStringList()) {

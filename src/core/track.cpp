@@ -335,6 +335,7 @@ bool readFlatStringMap(QDataStream& stream, FlatStringMap<Value>& out, KeyFn&& m
 struct ExtraTagCompressionSettings
 {
     qint64 minBytes;
+    int level;
     std::set<QString> alwaysCompress;
     std::set<QString> neverCompress;
 };
@@ -358,6 +359,8 @@ const ExtraTagCompressionSettings& extraTagCompressionSettings()
 
         return ExtraTagCompressionSettings{
             .minBytes = settings.value(ExtraTagCompressionMinSize, DefaultExtraTagCompressionMinSize).toLongLong(),
+            .level
+            = std::clamp(settings.value(ExtraTagCompressionLevel, DefaultExtraTagCompressionLevel).toInt(), 1, 9),
             .alwaysCompress = fields(ExtraTagCompressionAlways),
             .neverCompress  = fields(ExtraTagCompressionNever),
         };
@@ -393,7 +396,7 @@ public:
         stream.setVersion(QDataStream::Qt_6_0);
         stream << strings;
 
-        QByteArray compressed = qCompress(serialised, 1);
+        QByteArray compressed = qCompress(serialised, settings.level);
         if(!compressed.isEmpty() && compressed.size() < serialised.size()) {
             compressed.squeeze();
             m_data = std::move(compressed);

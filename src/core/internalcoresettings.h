@@ -77,9 +77,11 @@ constexpr auto Id3v2WriteVersion                 = "Tagging/Id3v2WriteVersion";
 constexpr auto Mp3TagWritingScheme               = "Tagging/Mp3TagWritingScheme";
 
 constexpr auto ExtraTagCompressionMinSize       = "Library/ExtraTagCompressionMinSizeBytes";
+constexpr auto ExtraTagCompressionLevel         = "Library/ExtraTagCompressionLevel";
 constexpr auto ExtraTagCompressionAlways        = "Library/ExtraTagCompressionAlways";
 constexpr auto ExtraTagCompressionNever         = "Library/ExtraTagCompressionNever";
 constexpr int DefaultExtraTagCompressionMinSize = 256;
+constexpr int DefaultExtraTagCompressionLevel   = 1;
 
 constexpr auto DefaultRemoteReadAheadKb   = 2048;
 constexpr auto DefaultRemotePrebufferMs   = 0;
