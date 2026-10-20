@@ -22,6 +22,8 @@
   - Add options to keep headers and artwork visible while scrolling ([#1739](https://github.com/fooyin/fooyin/issues/1739))
   - Add configurable artwork reflections
   - Add scriptable Playlist Tabs text with `%playlist_name%`
+  - Add optional column layouts to playlist presets ([#523](https://github.com/fooyin/fooyin/issues/523))
+  - Add a visual rule editor for autoplaylists ([#1798](https://github.com/fooyin/fooyin/pull/1798))
 
 ### Improvements
 
@@ -66,12 +68,14 @@
   - Improve metadata update performance
   - Scroll to the top for changed results and preserve position for unchanged results
 - **Library & Metadata** 
-  - Add Deezer as an online artwork source
+  - Add Deezer and TheAudioDB as online artwork sources
+  - Show all artwork types supported by enabled sources in the search dialog
   - Compress large extra tag values to reduce memory usage
 - **Playback**
   - Add TTA playback support ([#764](https://github.com/fooyin/fooyin/issues/764))
   - Add an option to skip automatic crossfading within albums
   - Reduce log noise from expected decoder probe failures
+  - Support JSON-formatted ICY stream metadata
 - **Plugins**
   - Add drag-and-drop plugin installation
   - Add installation of `.zip` and `.fyplugin` bundles with staged upgrades
@@ -91,6 +95,7 @@
   - Add an FFmpeg decoder settings dialog
   - Show supported URI schemes in decoder tooltips
   - Migrate account and network settings from the configuration file to the database
+  - Add a new Trace logging level
 - **Scripting**
   - Add playback output information fields
   - Add font weight formatting with `<weight>`
@@ -105,6 +110,7 @@
   - Reorganise Script Editor settings and move font configuration to theme settings
   - Reduce the default minimum height of script text editors
   - Add `%lyrics_line%` for the current line of synced lyrics
+  - Add `STARTSWITH` and `ENDSWITH` query operators
 - **Tag Editor**
   - Start editing values when navigating with Tab ([#1669](https://github.com/fooyin/fooyin/issues/1669))
   - Add an option for single-click value editing
