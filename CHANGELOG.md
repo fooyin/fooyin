@@ -32,6 +32,7 @@
   - Arrange metadata options across two columns
   - Remember the current configuration between uses ([#1756](https://github.com/fooyin/fooyin/issues/1756))
   - Show destination subdirectories in the preview ([#1705](https://github.com/fooyin/fooyin/issues/1705))
+- **Equaliser:** Add built-in presets and auto-select the preset matching the current settings
 - **File Operations**
   - Improve keyboard focus and preserve destination path case
   - Sort preview paths naturally
@@ -82,6 +83,7 @@
   - Standardise and translate plugin categories and statuses
 - **Playlists**
   - Add scripted separators and unify preset display scripts ([#1732](https://github.com/fooyin/fooyin/pull/1732))
+  - Expand the default autoplaylist presets
   - Enable queue indexes by default in playlist-led mode
   - Improve autoplaylist update performance ([#1787](https://github.com/fooyin/fooyin/issues/1787))
   - Improve track lookup and Queue Viewer update performance
@@ -91,6 +93,7 @@
 - **Settings**
   - Add search across settings categories, pages, and advanced options
   - Add buttons for opening cache and state directories
+  - Add an option to use selection-only preset comboboxes
   - Clarify rating and Love editor options ([#1684](https://github.com/fooyin/fooyin/issues/1684))
   - Add an FFmpeg decoder settings dialog
   - Show supported URI schemes in decoder tooltips
