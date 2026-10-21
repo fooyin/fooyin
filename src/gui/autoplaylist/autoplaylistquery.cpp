@@ -619,12 +619,12 @@ std::pair<QString, QString> AutoPlaylistQueryBuilder::query(const AutoPlaylistRu
 
     QString sortQuery;
     if(rules.randomSort) {
-        sortQuery = u"SORT%1 $rand()"_s.arg(rules.descending ? u'-' : u'+');
+        sortQuery = u"SORT%1 $rand()"_s.arg(QChar{rules.descending ? u'-' : u'+'});
     }
     else if(!rules.sortField.isEmpty()) {
         const int index     = fieldIndex(rules.sortField, rules.sortSource);
         const QString field = index >= 0 ? fields()[index].name : u"$meta(%1)"_s.arg(quoted(rules.sortField));
-        sortQuery           = u"SORT%1 %2"_s.arg(rules.descending ? u'-' : u'+').arg(field);
+        sortQuery           = u"SORT%1 %2"_s.arg(QChar{rules.descending ? u'-' : u'+'}).arg(field);
     }
 
     return {query, sortQuery};

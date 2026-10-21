@@ -145,6 +145,7 @@ TEST(AutoPlaylistTest, NestedListsPreserveFilteringAndSorting)
     AutoPlaylistRulesWidget widget;
     widget.setRules(*rules);
     const auto [generated, generatedSort] = AutoPlaylistQueryBuilder::query(widget.rules());
+    EXPECT_EQ(u"SORT- playcount"_s, generatedSort);
 
     TrackQueryFilter filter;
     EXPECT_EQ(TrackList{second}, filter.filter(query + u' ' + sort, tracks));
