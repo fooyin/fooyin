@@ -29,6 +29,7 @@
 
 class QComboBox;
 class QLineEdit;
+class QLabel;
 class QDateEdit;
 class QSpinBox;
 class QStackedWidget;
@@ -66,6 +67,8 @@ private:
     QSpinBox* m_minutes;
     QSpinBox* m_seconds;
     QDateEdit* m_date;
+    QLabel* m_dateSeparator;
+    QDateEdit* m_endDate;
     QSpinBox* m_period;
     QComboBox* m_unit;
     QLineEdit* m_listSummary;

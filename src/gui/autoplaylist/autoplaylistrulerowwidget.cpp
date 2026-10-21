@@ -111,7 +111,9 @@ AutoPlaylistRuleRowWidget::AutoPlaylistRuleRowWidget(const AutoPlaylistRule& rul
     , m_rating{new RuleRatingEditor(this)}
     , m_minutes{new QSpinBox(this)}
     , m_seconds{new QSpinBox(this)}
-    , m_date{new QDateEdit(QDate::currentDate(), this)}
+    , m_date{new QDateEdit(QDate::currentDate(), this)} //: Separates the two dates in a ‘between’ rule.
+    , m_dateSeparator{new QLabel(tr("and"), this)}
+    , m_endDate{new QDateEdit(QDate::currentDate(), this)}
     , m_period{new QSpinBox(this)}
     , m_unit{new QComboBox(this)}
     , m_listSummary{new QLineEdit(this)}
@@ -127,8 +129,10 @@ AutoPlaylistRuleRowWidget::AutoPlaylistRuleRowWidget(const AutoPlaylistRule& rul
     m_minutes->setSuffix(u" min"_s);
     m_seconds->setSuffix(u" s"_s);
 
-    m_date->setDateRange(QDate{1, 1, 1}, QDate{9999, 12, 31});
-    m_date->setCalendarPopup(true);
+    for(auto* date : {m_date, m_endDate}) {
+        date->setDateRange(QDate{1, 1, 1}, QDate{9999, 12, 31});
+        date->setCalendarPopup(true);
+    }
 
     for(size_t i{0}; i < AutoPlaylistQueryBuilder::dateUnits().size(); ++i) {
         m_unit->addItem(QString{});
@@ -139,6 +143,13 @@ AutoPlaylistRuleRowWidget::AutoPlaylistRuleRowWidget(const AutoPlaylistRule& rul
     durationLayout->setContentsMargins({});
     durationLayout->addWidget(m_minutes);
     durationLayout->addWidget(m_seconds);
+
+    auto* dates      = new QWidget(this);
+    auto* dateLayout = new QHBoxLayout(dates);
+    dateLayout->setContentsMargins({});
+    dateLayout->addWidget(m_date, 1);
+    dateLayout->addWidget(m_dateSeparator);
+    dateLayout->addWidget(m_endDate, 1);
 
     auto* period       = new QWidget(this);
     auto* periodLayout = new QHBoxLayout(period);
@@ -165,7 +176,7 @@ AutoPlaylistRuleRowWidget::AutoPlaylistRuleRowWidget(const AutoPlaylistRule& rul
     m_values->addWidget(m_number);
     m_values->addWidget(m_rating);
     m_values->addWidget(duration);
-    m_values->addWidget(m_date);
+    m_values->addWidget(dates);
     m_values->addWidget(period);
     m_values->addWidget(new QWidget(this));
     m_values->addWidget(list);
@@ -199,6 +210,7 @@ AutoPlaylistRuleRowWidget::AutoPlaylistRuleRowWidget(const AutoPlaylistRule& rul
     m_seconds->setValue(durationSeconds % 60);
 
     m_date->setDate(rule.date);
+    m_endDate->setDate(rule.endDate);
     m_period->setValue(rule.period);
     m_unit->setCurrentIndex(rule.unit);
 
@@ -231,6 +243,7 @@ AutoPlaylistRuleRowWidget::AutoPlaylistRuleRowWidget(const AutoPlaylistRule& rul
     });
     QObject::connect(m_rating, &StarEditor::editingFinished, this, &AutoPlaylistRuleRowWidget::changed);
     QObject::connect(m_date, &QDateEdit::dateChanged, this, &AutoPlaylistRuleRowWidget::changed);
+    QObject::connect(m_endDate, &QDateEdit::dateChanged, this, &AutoPlaylistRuleRowWidget::changed);
     QObject::connect(m_unit, &QComboBox::currentIndexChanged, this, &AutoPlaylistRuleRowWidget::changed);
     QObject::connect(remove, &QToolButton::clicked, this, &AutoPlaylistRuleRowWidget::removeRequested);
     QObject::connect(editList, &QPushButton::clicked, this, &AutoPlaylistRuleRowWidget::editList);
@@ -247,6 +260,7 @@ AutoPlaylistRule AutoPlaylistRuleRowWidget::rule() const
     rule.negated      = (comparison & Negated) != 0U;
     rule.relativeDate = (comparison & RelativeDate) != 0U;
     rule.date         = m_date->date();
+    rule.endDate      = m_endDate->date();
     rule.period       = m_period->value();
     rule.unit         = m_unit->currentIndex();
 
@@ -330,6 +344,10 @@ void AutoPlaylistRuleRowWidget::updateValue()
 {
     const auto comparison = m_comparison->currentData().toUInt();
     const auto type       = static_cast<Expr::Type>(comparison & 255U);
+
+    m_dateSeparator->setVisible(type == Expr::Between);
+    m_endDate->setVisible(type == Expr::Between);
+
     if(type == Expr::Missing || type == Expr::Present) {
         m_values->setCurrentIndex(6);
         return;

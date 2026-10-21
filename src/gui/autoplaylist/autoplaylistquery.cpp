@@ -87,6 +87,17 @@ std::optional<QString> customField(const Expression& expression, Expr::Type comp
     return {};
 }
 
+bool readAbsoluteDate(const QString& operand, QDate& date)
+{
+    QString dateText = operand.trimmed();
+    if(dateText.startsWith(u'"') && dateText.endsWith(u'"')) {
+        dateText = dateText.mid(1, dateText.size() - 2);
+    }
+    date = QDate::fromString(dateText, Qt::ISODate);
+
+    return date.isValid() && dateText == date.toString(Qt::ISODate);
+}
+
 bool readDate(const QString& operand, AutoPlaylistRule& rule)
 {
     ScriptScanner scanner;
@@ -118,13 +129,7 @@ bool readDate(const QString& operand, AutoPlaylistRule& rule)
         return false;
     }
 
-    QString dateText = operand.trimmed();
-    if(dateText.startsWith(u'"') && dateText.endsWith(u'"')) {
-        dateText = dateText.mid(1, dateText.size() - 2);
-    }
-    rule.date = QDate::fromString(dateText, Qt::ISODate);
-
-    return rule.date.isValid() && dateText == rule.date.toString(Qt::ISODate);
+    return readAbsoluteDate(operand, rule.date);
 }
 
 bool readRule(const Expression& expression, AutoPlaylistRule& rule)
@@ -176,6 +181,10 @@ bool readRule(const Expression& expression, AutoPlaylistRule& rule)
         return args->size() == 1;
     }
     if(type == AutoPlaylistFieldType::Date) {
+        if(rule.comparison == Expr::Between) {
+            return date && args->size() == 3 && readAbsoluteDate(date->operand, rule.date)
+                && readAbsoluteDate(date->endOperand, rule.endDate) && rule.date <= rule.endDate;
+        }
         return date && args->size() == (rule.comparison == Expr::During ? 3 : 2) && readDate(date->operand, rule)
             && (!rule.relativeDate || rule.comparison == Expr::During);
     }
@@ -343,6 +352,9 @@ QString ruleQuery(const AutoPlaylistRule& rule)
         case Expr::During:
             comparison = u"DURING"_s;
             break;
+        case Expr::Between:
+            comparison = u"BETWEEN"_s;
+            break;
         default:
             break;
     }
@@ -368,9 +380,12 @@ QString ruleQuery(const AutoPlaylistRule& rule)
             term += u" (%1)"_s.arg(values.join(u", "_s));
         }
         else if(AutoPlaylistQueryBuilder::fieldType(rule.field, rule.source) == AutoPlaylistFieldType::Date) {
-            term += rule.relativeDate
+            term += rule.relativeDate && rule.comparison != Expr::Between
                       ? u" LAST %1 %2"_s.arg(rule.period).arg(AutoPlaylistQueryBuilder::dateUnits()[rule.unit].keyword)
                       : u' ' + quoted(rule.date.toString(Qt::ISODate));
+            if(rule.comparison == Expr::Between) {
+                term += u" AND "_s + quoted(rule.endDate.toString(Qt::ISODate));
+            }
         }
         else {
             term += u' ' + quoted(rule.value);
@@ -449,6 +464,7 @@ bool validExpression(const Expression& expression)
             }
             break;
         case Expr::During:
+        case Expr::Between:
             if(!args || args->size() != 3) {
                 return false;
             }
@@ -488,6 +504,7 @@ std::span<const AutoPlaylistField> AutoPlaylistQueryBuilder::fields()
         AutoPlaylistField{.name = u"performer"_s, .label = tr("Performer"), .type = AutoPlaylistFieldType::Text},
         AutoPlaylistField{.name = u"comment"_s, .label = tr("Comment"), .type = AutoPlaylistFieldType::Text},
         AutoPlaylistField{.name = u"lyrics"_s, .label = tr("Lyrics"), .type = AutoPlaylistFieldType::Text},
+        AutoPlaylistField{.name = u"date"_s, .label = tr("Date"), .type = AutoPlaylistFieldType::Date},
         AutoPlaylistField{.name = u"year"_s, .label = tr("Year"), .type = AutoPlaylistFieldType::Number},
         AutoPlaylistField{.name = u"duration_s"_s, .label = tr("Duration"), .type = AutoPlaylistFieldType::Duration},
         AutoPlaylistField{.name = u"rating"_s, .label = tr("Rating"), .type = AutoPlaylistFieldType::Rating},
@@ -496,7 +513,6 @@ std::span<const AutoPlaylistField> AutoPlaylistQueryBuilder::fields()
         AutoPlaylistField{.name = u"addedtime"_s, .label = tr("Date added"), .type = AutoPlaylistFieldType::Date},
         AutoPlaylistField{.name = u"firstplayed"_s, .label = tr("First played"), .type = AutoPlaylistFieldType::Date},
         AutoPlaylistField{.name = u"lastplayed"_s, .label = tr("Last played"), .type = AutoPlaylistFieldType::Date},
-        AutoPlaylistField{.name = u"date"_s, .label = tr("Release date"), .type = AutoPlaylistFieldType::Date},
         AutoPlaylistField{.name = u"codec"_s, .label = tr("Codec"), .type = AutoPlaylistFieldType::Text},
         AutoPlaylistField{.name = u"path"_s, .label = tr("Folder path"), .type = AutoPlaylistFieldType::Text},
         AutoPlaylistField{.name = u"filepath"_s, .label = tr("File path"), .type = AutoPlaylistFieldType::Text},
@@ -593,7 +609,7 @@ std::vector<Expr::Type> AutoPlaylistQueryBuilder::comparisons(AutoPlaylistFieldT
                 Expr::Equals,   Expr::In,          Expr::Present,      Expr::Missing};
     }
     if(type == AutoPlaylistFieldType::Date) {
-        return {Expr::Before, Expr::After, Expr::Since, Expr::During, Expr::Present, Expr::Missing};
+        return {Expr::Before, Expr::After, Expr::Since, Expr::During, Expr::Between, Expr::Present, Expr::Missing};
     }
     return {Expr::Equals, Expr::In, Expr::Greater, Expr::GreaterEqual, Expr::Less, Expr::LessEqual};
 }
@@ -749,6 +765,7 @@ QString AutoPlaylistQueryBuilder::formatQuery(const QString& query)
     bool escapeNext{false};
     bool functionPending{false};
     bool insideSort{false};
+    bool betweenPending{false};
     int scriptDepth{0};
 
     for(auto token = scanner.next(); token.type != ScriptScanner::TokEos; token = scanner.next()) {
@@ -795,6 +812,15 @@ QString AutoPlaylistQueryBuilder::formatQuery(const QString& query)
         }
 
         switch(token.type) {
+            case ScriptScanner::TokBetween: {
+                int delta{1};
+                auto next = scanner.peekNext(delta);
+                while(next.type == ScriptScanner::TokComment) {
+                    next = scanner.peekNext(++delta);
+                }
+                betweenPending = next.type == ScriptScanner::TokLiteral || next.type == ScriptScanner::TokQuote;
+                break;
+            }
             case ScriptScanner::TokLeftParen:
                 groups.emplace_back(layout.size());
                 layout.emplace_back(token);
@@ -810,6 +836,11 @@ QString AutoPlaylistQueryBuilder::formatQuery(const QString& query)
                 }
                 break;
             case ScriptScanner::TokAnd:
+                if(betweenPending) {
+                    betweenPending = false;
+                    break;
+                }
+                [[fallthrough]];
             case ScriptScanner::TokOr:
             case ScriptScanner::TokXOr:
                 if(!groups.empty()) {

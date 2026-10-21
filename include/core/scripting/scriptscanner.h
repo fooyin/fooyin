@@ -87,6 +87,7 @@ public:
         TokWith        = 47,
         TokAny         = 48,
         TokWord        = 49,
+        TokBetween     = 50,
     };
 
     struct Token

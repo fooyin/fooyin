@@ -315,7 +315,17 @@ ScriptScanner::Token ScriptScanner::keyword()
             if(currentLength() > 1) {
                 switch(m_start[1].unicode()) {
                     case u'E':
-                        return checkKeyword(2, "FORE"_L1, TokBefore);
+                        if(currentLength() > 2) {
+                            switch(m_start[2].unicode()) {
+                                case u'F':
+                                    return checkKeyword(3, "ORE"_L1, TokBefore);
+                                case u'T':
+                                    return checkKeyword(3, "WEEN"_L1, TokBetween);
+                                default:
+                                    break;
+                            }
+                        }
+                        break;
                     default:
                         break;
                 }

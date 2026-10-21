@@ -223,6 +223,11 @@ QString AutoPlaylistRulesWidget::comparisonText(Expr::Type comparison, bool nega
             return negated ? tr("is not on")
                            //: Independent rule comparison label.
                            : tr("is on");
+        case Expr::Between:
+            //: Independent rule comparison label.
+            return negated ? tr("is not between")
+                           //: Independent rule comparison label.
+                           : tr("is between");
         default:
             return {};
     }

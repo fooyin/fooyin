@@ -198,6 +198,10 @@ QString AutoPlaylistRuleGroupWidget::error(const QString& path) const
         }
 
         const auto type = AutoPlaylistQueryBuilder::fieldType(rule.field, rule.source);
+        if(type == AutoPlaylistFieldType::Date && rule.comparison == Expr::Between && rule.date > rule.endDate) {
+            //: %1 is a rule number, including its parent groups, e.g. 2.1.
+            return tr("The start date must not be after the end date for rule %1.").arg(number);
+        }
         if(rule.comparison == Expr::In || rule.comparison == Expr::ContainsAny) {
             if(rule.values.empty() || !std::ranges::all_of(rule.values, [type](const QString& value) {
                    return AutoPlaylistQueryBuilder::isListValueValid(value, type);

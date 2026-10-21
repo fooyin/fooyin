@@ -98,6 +98,7 @@ private:
     Expression metadataKeyword(const Expression& key, Expr::Type type);
     Expression timeKeyword(const Expression& key, Expr::Type type);
     Expression duringKeyword(const Expression& key);
+    Expression betweenKeyword(const Expression& key);
     Expression sort();
     Expression limit();
 

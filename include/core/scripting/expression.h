@@ -61,6 +61,7 @@ enum Type : uint8_t
     In,
     ContainsAny,
     ContainsWord,
+    Between,
 };
 
 constexpr bool isQueryExpression(Type type)
@@ -91,6 +92,7 @@ constexpr bool isQueryExpression(Type type)
         case After:
         case Since:
         case During:
+        case Between:
         case Date:
         case Limit:
             return true;
@@ -253,6 +255,7 @@ struct DateValue
 {
     // Date comparisons resolve their operands during parsing, so retain the original syntax
     QString operand;
+    QString endOperand;
     ExpressionList args;
 };
 

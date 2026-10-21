@@ -307,6 +307,7 @@ Expression ScriptRuntime::expression()
         case TokenType::TokAfter:
         case TokenType::TokSince:
         case TokenType::TokDuring:
+        case TokenType::TokBetween:
         case TokenType::TokLast:
         case TokenType::TokSecond:
         case TokenType::TokMinute:
@@ -866,6 +867,48 @@ Expression ScriptRuntime::duringKeyword(const Expression& key)
     return expr;
 }
 
+Expression ScriptRuntime::betweenKeyword(const Expression& key)
+{
+    advance();
+
+    DateValue dateExpr;
+
+    const auto readEndpoint = [this](QString& operand) {
+        const auto token{m_current};
+        if(!currentToken(TokenType::TokLiteral) && !currentToken(TokenType::TokQuote)) {
+            errorAtCurrent(QObject::tr("Expected a date in ‘BETWEEN’ range"));
+            return DateRange{};
+        }
+
+        const DateRange dateRange = calculateDateRange(expression());
+        operand = m_currentInput.mid(token.position, m_previous.position + m_previous.value.size() - token.position);
+        if(!dateRange.start.isValid() || !dateRange.endExclusive.isValid()) {
+            errorAt(token, QObject::tr("Invalid date in ‘BETWEEN’ range"));
+        }
+        return dateRange;
+    };
+
+    const auto start = readEndpoint(dateExpr.operand);
+    if(!match(TokenType::TokAnd)) {
+        errorAtCurrent(QObject::tr("Expected ‘AND’ between dates in ‘BETWEEN’ range"));
+        return {};
+    }
+
+    const auto end = readEndpoint(dateExpr.endOperand);
+    if(!start.start.isValid() || !start.endExclusive.isValid() || !end.start.isValid() || !end.endExclusive.isValid()) {
+        return {};
+    }
+    if(start.start >= end.endExclusive) {
+        error(QObject::tr("The start date must not be after the end date in ‘BETWEEN’ range"));
+        return {};
+    }
+
+    dateExpr.args.emplace_back(normaliseQueryField(key));
+    dateExpr.args.emplace_back(Expr::Date, QString::number(start.start.toMSecsSinceEpoch()));
+    dateExpr.args.emplace_back(Expr::Date, QString::number(end.endExclusive.toMSecsSinceEpoch()));
+    return {Expr::Between, std::move(dateExpr)};
+}
+
 Expression ScriptRuntime::sort()
 {
     Expression expr;
@@ -978,6 +1021,7 @@ ScriptResult ScriptRuntime::evalExpression(const BoundExpression& exp, const aut
         case Expr::Since:
             return compareDates(exp, tracks, std::greater_equal<>());
         case Expr::During:
+        case Expr::Between:
             return compareDateRange(exp, tracks);
         case Expr::Limit:
             return evalLimit(exp);
@@ -2137,6 +2181,8 @@ Expression ScriptRuntime::checkOperator(const Expression& expr)
             return timeKeyword(expr, Expr::Since);
         case TokenType::TokDuring:
             return duringKeyword(expr);
+        case TokenType::TokBetween:
+            return betweenKeyword(expr);
         default:
             break;
     }

@@ -102,6 +102,7 @@ struct AutoPlaylistRule
     QString value;
     std::vector<QString> values;
     QDate date{QDate::currentDate()};
+    QDate endDate{QDate::currentDate()};
     int period{1};
     int unit{3};
     bool relativeDate{false};
