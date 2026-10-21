@@ -50,7 +50,7 @@ public:
         TokLeftSquare  = 10,
         TokRightSquare = 11,
         TokSlash       = 12,
-        TokColon       = 13,
+        TokContains    = 13,
         TokEquals      = 14,
         TokNot         = 15,
         TokEscape      = 16,
@@ -85,6 +85,7 @@ public:
         TokEnds        = 45,
         TokIn          = 46,
         TokWith        = 47,
+        TokAny         = 48,
     };
 
     struct Token

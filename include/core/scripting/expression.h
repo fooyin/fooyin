@@ -59,6 +59,7 @@ enum Type : uint8_t
     StartsWith,
     EndsWith,
     In,
+    ContainsAny,
 };
 } // namespace Expr
 

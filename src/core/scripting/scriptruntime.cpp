@@ -144,6 +144,7 @@ bool isQueryExpression(Expr::Type type)
         case Type::StartsWith:
         case Type::EndsWith:
         case Type::In:
+        case Type::ContainsAny:
         case Type::Greater:
         case Type::GreaterEqual:
         case Type::Less:
@@ -335,12 +336,13 @@ Expression ScriptRuntime::expression()
         case TokenType::TokXOr:
         case TokenType::TokMissing:
         case TokenType::TokPresent:
-        case TokenType::TokColon:
+        case TokenType::TokContains:
         case TokenType::TokEquals:
         case TokenType::TokStarts:
         case TokenType::TokEnds:
         case TokenType::TokWith:
         case TokenType::TokIn:
+        case TokenType::TokAny:
         case TokenType::TokLeftAngle:
         case TokenType::TokRightAngle:
         case TokenType::TokRightParen:
@@ -718,12 +720,39 @@ Expression ScriptRuntime::textBoundaryOperator(const Expression& key, Expr::Type
     return relationalOperator(key, type);
 }
 
-Expression ScriptRuntime::inKeyword(const Expression& key)
+Expression ScriptRuntime::containsOperator(const Expression& key)
 {
     advance();
 
+    ExpressionList args;
+    args.emplace_back(normaliseQueryField(key));
+
+    if(match(TokenType::TokAny)) {
+        if(currentToken(TokenType::TokLeftParen)) {
+            return listOperator(key, Expr::ContainsAny, u"HAS ANY"_s);
+        }
+        args.emplace_back(literal());
+    }
+    else if(!currentToken(TokenType::TokEos)) {
+        const Expression value = expression();
+        if(value.type != Expr::Null) {
+            args.emplace_back(value);
+        }
+    }
+
+    return {Expr::Contains, std::move(args)};
+}
+
+Expression ScriptRuntime::inKeyword(const Expression& key)
+{
+    advance();
+    return listOperator(key, Expr::In, u"IN"_s);
+}
+
+Expression ScriptRuntime::listOperator(const Expression& key, Expr::Type type, const QString& keyword)
+{
     if(!match(TokenType::TokLeftParen)) {
-        errorAtCurrent(QObject::tr("Expected ‘(’ after ‘IN’"));
+        errorAtCurrent(QObject::tr("Expected ‘(’ after ‘%1’").arg(keyword));
         return {};
     }
 
@@ -733,13 +762,13 @@ Expression ScriptRuntime::inKeyword(const Expression& key)
     while(true) {
         if(currentToken(TokenType::TokComma) || currentToken(TokenType::TokRightParen)
            || currentToken(TokenType::TokEos)) {
-            errorAtCurrent(QObject::tr("Expected a value in ‘IN’ list"));
+            errorAtCurrent(QObject::tr("Expected a value in ‘%1’ list").arg(keyword));
             break;
         }
 
         Expression value = expression();
         if(value.type == Expr::Null) {
-            error(QObject::tr("Expected a value in ‘IN’ list"));
+            error(QObject::tr("Expected a value in ‘%1’ list").arg(keyword));
             break;
         }
         args.emplace_back(std::move(value));
@@ -749,8 +778,8 @@ Expression ScriptRuntime::inKeyword(const Expression& key)
         }
     }
 
-    consume(TokenType::TokRightParen, QObject::tr("Expected ‘)’ at end of ‘IN’ list"));
-    return {Expr::In, std::move(args)};
+    consume(TokenType::TokRightParen, QObject::tr("Expected ‘)’ at end of ‘%1’ list").arg(keyword));
+    return {type, std::move(args)};
 }
 
 Expression ScriptRuntime::metadataKeyword(const Expression& key, Expr::Type type)
@@ -970,6 +999,7 @@ ScriptResult ScriptRuntime::evalExpression(const BoundExpression& exp, const aut
         case Expr::In:
             return evalEquals(exp, tracks);
         case Expr::Contains:
+        case Expr::ContainsAny:
         case Expr::StartsWith:
         case Expr::EndsWith:
             return evalTextMatch(exp, tracks);
@@ -1562,35 +1592,45 @@ ScriptResult ScriptRuntime::evalTextMatch(const BoundExpression& exp, const auto
         return {};
     }
 
-    const BoundExpression& value = args.at(1);
-    const ScriptResult second    = evalExpression(value, tracks);
-    if(!second.cond) {
-        return {};
-    }
+    const QString firstValue = Utils::foldForSearch(normaliseQueryValue(first.value, field.variableKind));
 
     ScriptResult result;
-    if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, Track>) {
-        if(exp.type == Expr::Contains && field.type == Expr::All) {
-            result.cond = matchSearch(tracks, second.value, value.type == Expr::QuotedLiteral);
+    for(size_t i{1}; i < args.size(); ++i) {
+        const BoundExpression& value = args.at(i);
+        const ScriptResult second    = evalExpression(value, tracks);
+        if(!second.cond) {
+            continue;
+        }
+
+        if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, Track>) {
+            if((exp.type == Expr::Contains || exp.type == Expr::ContainsAny) && field.type == Expr::All) {
+                result.cond = matchSearch(tracks, second.value, value.type == Expr::QuotedLiteral);
+                if(result.cond) {
+                    return result;
+                }
+                continue;
+            }
+        }
+
+        const QString secondValue = Utils::foldForSearch(normaliseQueryValue(second.value, field.variableKind));
+        switch(exp.type) {
+            case Expr::Contains:
+            case Expr::ContainsAny:
+                result.cond = firstValue.contains(secondValue);
+                break;
+            case Expr::StartsWith:
+                result.cond = firstValue.startsWith(secondValue);
+                break;
+            case Expr::EndsWith:
+                result.cond = firstValue.endsWith(secondValue);
+                break;
+            default:
+                break;
+        }
+
+        if(result.cond) {
             return result;
         }
-    }
-
-    const QString firstValue  = Utils::foldForSearch(normaliseQueryValue(first.value, field.variableKind));
-    const QString secondValue = Utils::foldForSearch(normaliseQueryValue(second.value, field.variableKind));
-
-    switch(exp.type) {
-        case Expr::Contains:
-            result.cond = firstValue.contains(secondValue);
-            break;
-        case Expr::StartsWith:
-            result.cond = firstValue.startsWith(secondValue);
-            break;
-        case Expr::EndsWith:
-            result.cond = firstValue.endsWith(secondValue);
-            break;
-        default:
-            break;
     }
 
     return result;
@@ -2098,8 +2138,8 @@ Expression ScriptRuntime::checkOperator(const Expression& expr)
     }
 
     switch(m_current.type) {
-        case TokenType::TokColon:
-            return relationalOperator(expr, Expr::Contains);
+        case TokenType::TokContains:
+            return containsOperator(expr);
         case TokenType::TokStarts:
             return textBoundaryOperator(expr, Expr::StartsWith);
         case TokenType::TokEnds:

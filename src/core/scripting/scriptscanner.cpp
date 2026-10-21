@@ -222,7 +222,7 @@ ScriptScanner::Token ScriptScanner::scanNext(bool insideQuote)
             return makeToken(TokSlash);
         }
         case u':':
-            return makeToken(TokColon);
+            return makeToken(TokContains);
         case u'=':
             return makeToken(TokEquals);
         case u'!':
@@ -290,7 +290,17 @@ ScriptScanner::Token ScriptScanner::keyword()
                     case u'F':
                         return checkKeyword(2, "TER"_L1, TokAfter);
                     case u'N':
-                        return checkKeyword(2, "D"_L1, TokAnd);
+                        if(currentLength() > 2) {
+                            switch(m_start[2].unicode()) {
+                                case u'D':
+                                    return checkKeyword(3, ""_L1, TokAnd);
+                                case u'Y':
+                                    return checkKeyword(3, ""_L1, TokAny);
+                                default:
+                                    break;
+                            }
+                        }
+                        break;
                     case u'L':
                         return checkKeyword(2, "L"_L1, TokAll);
                     case u'S':
@@ -343,7 +353,7 @@ ScriptScanner::Token ScriptScanner::keyword()
             if(currentLength() > 1) {
                 switch(m_start[1].unicode()) {
                     case u'A':
-                        return checkKeyword(2, "S"_L1, TokColon);
+                        return checkKeyword(2, "S"_L1, TokContains);
                     case u'O':
                         return checkKeyword(2, isPlural(4) ? "URS"_L1 : "UR"_L1, TokHour);
                     default:

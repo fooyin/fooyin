@@ -92,7 +92,9 @@ private:
     Expression logicalOperator(const Expression& key, Expr::Type type);
     Expression relationalOperator(const Expression& key, Expr::Type type, Expr::Type equalsType = Expr::Null);
     Expression textBoundaryOperator(const Expression& key, Expr::Type type);
+    Expression containsOperator(const Expression& key);
     Expression inKeyword(const Expression& key);
+    Expression listOperator(const Expression& key, Expr::Type type, const QString& keyword);
     Expression metadataKeyword(const Expression& key, Expr::Type type);
     Expression timeKeyword(const Expression& key, Expr::Type type);
     Expression duringKeyword(const Expression& key);

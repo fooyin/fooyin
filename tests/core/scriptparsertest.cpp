@@ -1140,9 +1140,10 @@ TEST_F(ScriptParserTest, QueryTest)
 
 TEST(ScriptScannerTest, RecognisesTextBoundaryKeywords)
 {
-    const std::array cases{std::pair{u"STARTS"_s, ScriptScanner::TokStarts},
-                           std::pair{u"ENDS"_s, ScriptScanner::TokEnds}, std::pair{u"WITH"_s, ScriptScanner::TokWith},
-                           std::pair{u"IN"_s, ScriptScanner::TokIn}, std::pair{u"EQUAL"_s, ScriptScanner::TokEquals}};
+    const std::array cases{
+        std::pair{u"STARTS"_s, ScriptScanner::TokStarts}, std::pair{u"ENDS"_s, ScriptScanner::TokEnds},
+        std::pair{u"WITH"_s, ScriptScanner::TokWith},     std::pair{u"IN"_s, ScriptScanner::TokIn},
+        std::pair{u"ANY"_s, ScriptScanner::TokAny},       std::pair{u"EQUAL"_s, ScriptScanner::TokEquals}};
 
     for(const auto& [input, expected] : cases) {
         ScriptScanner scanner;
@@ -1157,7 +1158,7 @@ TEST(ScriptScannerTest, RecognisesTextBoundaryKeywords)
 
 TEST(ScriptScannerTest, KeywordsRequireExactLengths)
 {
-    for(const auto& keyword : {u"STARTS"_s, u"ENDS"_s, u"WITH"_s, u"IN"_s, u"EQUAL"_s, u"AND"_s}) {
+    for(const auto& keyword : {u"STARTS"_s, u"ENDS"_s, u"WITH"_s, u"IN"_s, u"ANY"_s, u"EQUAL"_s, u"AND"_s}) {
         for(qsizetype length{1}; length < keyword.size(); ++length) {
             const QString input = keyword.left(length);
             ScriptScanner scanner;
@@ -1170,7 +1171,7 @@ TEST(ScriptScannerTest, KeywordsRequireExactLengths)
     }
 
     for(const auto& input : {u"STARTSWITH"_s, u"ENDSWITH"_s, u"STARTSWITHOUT"_s, u"ENDSWITHOUT"_s, u"WITHOUT"_s,
-                             u"INDEX"_s, u"EQUALS"_s, u"ANDROID"_s}) {
+                             u"INDEX"_s, u"EQUALS"_s, u"ANDROID"_s, u"ANYTHING"_s, u"HASANY"_s}) {
         ScriptScanner scanner;
         scanner.setup(input);
 
@@ -1317,6 +1318,106 @@ TEST_F(ScriptParserTest, QueryInRejectsMalformedLists)
     }
 }
 
+TEST_F(ScriptParserTest, QueryHasAnyOperator)
+{
+    Track first{u"/music/first.flac"_s};
+    first.setTitle(u"Café Moonlight (Live)"_s);
+    first.setPlayCount(1);
+    Track second{u"/music/second.flac"_s};
+    second.setTitle(u"De\u0301mo sessions"_s);
+    second.setPlayCount(2);
+    Track third{u"/music/third.flac"_s};
+    third.setTitle(u"Studio edit"_s);
+    third.setPlayCount(3);
+    const TrackList tracks{first, second, third};
+
+    EXPECT_EQ((TrackList{first, second}), m_filter.filter(uR"(title HAS ANY ("cafe", "DEMO"))"_s, tracks));
+    EXPECT_EQ((TrackList{first, second}), m_filter.filter(uR"(title : ANY ("cafe", "DEMO"))"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(title HAS ANY ("light"))"_s, tracks));
+    EXPECT_TRUE(m_filter.filter(uR"(title IN ("light"))"_s, tracks).empty());
+    EXPECT_TRUE(m_filter.filter(uR"(title HAS ANY ("acoustic", "remix"))"_s, tracks).empty());
+    EXPECT_EQ(TrackList{third}, m_filter.filter(uR"(title NOT HAS ANY ("cafe", "demo"))"_s, tracks));
+    EXPECT_EQ(TrackList{third}, m_filter.filter(uR"(title NOT : ANY ("cafe", "demo"))"_s, tracks));
+    EXPECT_EQ(TrackList{third}, m_filter.filter(uR"(NOT title HAS ANY ("cafe", "demo"))"_s, tracks));
+    EXPECT_EQ(TrackList{third}, m_filter.filter(uR"(NOT (title HAS ANY ("cafe", "demo")))"_s, tracks));
+    EXPECT_EQ(TrackList{second}, m_filter.filter(uR"(title HAS ANY ("cafe", "demo") AND playcount IS 2)"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(playcount IS 3 OR title HAS ANY ("cafe", "demo"))"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"((title HAS ANY (live, demo)) AND playcount IS 1)"_s, tracks));
+    EXPECT_EQ(TrackList{second},
+              m_filter.filter(uR"(title HAS ANY ("cafe", "demo") SORT DESCENDING BY playcount LIMIT 1)"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(u"title HAS\tANY\n(\"live\", \"remix\")"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(u"title HAS\n// Alternatives\nANY\n// Values\n(\"live\")"_s, tracks));
+}
+
+TEST_F(ScriptParserTest, QueryHasAnyExpressionsAndQuotedValues)
+{
+    Track track{u"/music/first.flac"_s};
+    track.setTitle(u"Rock, Jazz (Live)"_s);
+    track.setComment(uR"(say "hello")"_s);
+    const TrackList tracks{track};
+
+    EXPECT_EQ(tracks, m_filter.filter(uR"(%title% HAS ANY ("demo", $lower("LIVE")))"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"($lower(%title%) HAS ANY ("demo", "LIVE"))"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(title HAS ANY ($replace("demo", "demo", "live")))"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(title HAS ANY (%missing%, "live"))"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(title HAS ANY ("Rock, Jazz", "demo"))"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(comment HAS ANY ("say \"hello\"", "demo"))"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(title HAS ANY (""))"_s, tracks));
+    EXPECT_TRUE(m_filter.filter(uR"(missing HAS ANY ("", "live"))"_s, tracks).empty());
+    EXPECT_EQ(tracks, m_filter.filter(uR"(missing NOT HAS ANY ("", "live"))"_s, tracks));
+}
+
+TEST_F(ScriptParserTest, HasAnyPreservesLiteralAnySearches)
+{
+    Track first{u"/music/first.flac"_s};
+    first.setTitle(u"ANYTHING (Live)"_s);
+    Track second{u"/music/second.flac"_s};
+    second.setTitle(u"Many words"_s);
+    Track third{u"/music/third.flac"_s};
+    third.setTitle(u"Studio demo"_s);
+    const TrackList tracks{first, second, third};
+
+    for(const auto& query : {u"title HAS ANY"_s, u"title : ANY"_s, uR"(title HAS "ANY")"_s}) {
+        SCOPED_TRACE(query.toStdString());
+        EXPECT_EQ((TrackList{first, second}), m_filter.filter(query, tracks));
+        const auto parsed = m_parser.parseQuery(query);
+        ASSERT_TRUE(parsed.isValid());
+        ASSERT_EQ(1, parsed.expressions.size());
+        EXPECT_EQ(Expr::Contains, parsed.expressions.front().type);
+    }
+    EXPECT_EQ(TrackList{first}, m_filter.filter(u"title HAS ANYTHING"_s, tracks));
+    EXPECT_EQ(TrackList{second}, m_filter.filter(uR"(title HAS ANY AND title HAS "words")"_s, tracks));
+    EXPECT_EQ(u"HAS ANY", m_parser.evaluate(u"HAS ANY"_s, first));
+}
+
+TEST_F(ScriptParserTest, QueryHasAnyRejectsMalformedLists)
+{
+    for(const auto& query :
+        {u"title HAS ANY ()"_s, u"title HAS ANY (,live)"_s, u"title HAS ANY (live,)"_s, u"title HAS ANY (live,,demo)"_s,
+         u"title HAS ANY (live"_s, uR"(title HAS ANY ("live" "demo"))"_s, u"title NOT HAS ANY ()"_s}) {
+        SCOPED_TRACE(query.toStdString());
+        const auto parsed = m_parser.parseQuery(query);
+        EXPECT_FALSE(parsed.isValid());
+        ASSERT_FALSE(parsed.errors.empty());
+        EXPECT_TRUE(parsed.errors.front().message.contains(u"HAS ANY"_s));
+    }
+}
+
+TEST_F(ScriptParserTest, QueryHasAnySupportsAllFields)
+{
+    Track first{u"/music/first.flac"_s};
+    first.setTitle(u"Moonlight"_s);
+    first.setAlbum(u"Live at home"_s);
+    Track second{u"/music/second.flac"_s};
+    second.setTitle(u"Café"_s);
+    const TrackList tracks{first, second};
+
+    EXPECT_EQ(tracks, m_filter.filter(uR"(ALL HAS ANY ("cafe", "live"))"_s, tracks));
+    EXPECT_EQ(m_filter.filter(uR"(ALL HAS "cafe" OR ALL HAS "live")"_s, tracks),
+              m_filter.filter(uR"(ALL HAS ANY ("cafe", "live"))"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(ALL HAS ANY (moon live, "remix"))"_s, tracks));
+}
+
 TEST_F(ScriptParserTest, PathQueriesNormaliseSeparators)
 {
     const Track canonicalPathTrack{u"C:/Music/First Album/song.flac"_s};
@@ -1332,6 +1433,7 @@ TEST_F(ScriptParserTest, PathQueriesNormaliseSeparators)
     EXPECT_EQ(TrackList{canonicalPathTrack},
               m_filter.filter(uR"(filepath STARTS WITH "%1")"_s.arg(escapedFolder), tracks));
     EXPECT_EQ(tracks, m_filter.filter(uR"(filepath ENDS WITH ".FLAC")"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(filepath HAS ANY ("/Music/", ".FLAC"))"_s, tracks));
 }
 
 TEST_F(ScriptParserTest, QueryQuotedLiteralsPreserveWhitespace)
@@ -1482,7 +1584,8 @@ TEST_F(ScriptParserTest, QueryClassification)
     EXPECT_TRUE(ScriptParser::containsQueryExpression(fieldQuery));
 
     for(const auto& query : {uR"(title STARTS WITH "moon")"_s, uR"(title ENDS WITH "light")"_s,
-                             uR"(genre IN ("Rock", "Jazz"))"_s, uR"(genre NOT IN ("Rock", "Jazz"))"_s}) {
+                             uR"(genre IN ("Rock", "Jazz"))"_s, uR"(genre NOT IN ("Rock", "Jazz"))"_s,
+                             uR"(title HAS ANY ("live", "demo"))"_s, uR"(title NOT HAS ANY ("live", "demo"))"_s}) {
         const ParsedScript boundaryQuery = parser.parseQuery(query);
         EXPECT_TRUE(boundaryQuery.isValid());
         EXPECT_TRUE(ScriptParser::canEvaluateAsQuery(boundaryQuery));
