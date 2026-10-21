@@ -712,12 +712,12 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="882"/>
         <source>Looks up a raw tag field. Multiple values are joined with ‘, ’ or selected by the optional zero-based index.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí surovou hodnotu daného tagu. Vícenásobné hodnoty jsou odděleny čárkou, nebo lze vrátit jen konkrétní hodnotu určenou volitelným indexem (počítáno od 0).</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="886"/>
         <source>Looks up a raw tag field. Multiple values are joined with sep, using lastsep between the final two values when supplied.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí surovou hodnotu daného tagu. Vícenásobné hodnoty jsou odděleny oddělovačem, poslední dvě hodnoty je možné oddělit volitelným druhým oddělovačem.</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="586"/>
@@ -1564,38 +1564,38 @@
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="336"/>
         <source>A–B repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>A-B opakování</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="353"/>
         <source>%1Middle-click</source>
         <extracomment>%1 is a native modifier sequence, including its trailing separator e.g. Ctrl+Shift+</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1Prostřední tlačítko</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="361"/>
         <source>Set A here</source>
-        <translation type="unfinished"></translation>
+        <translation>Zde nastavit A</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="361"/>
         <source>Set A</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit A</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="361"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Prostřední tlačítko</translation>
+        <translation>Prostřední tlačítko</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="370"/>
         <source>Set B here</source>
-        <translation type="unfinished"></translation>
+        <translation>Zde nastavit B</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="370"/>
         <source>Set B</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit B</translation>
     </message>
 </context>
 <context>
@@ -1725,12 +1725,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="109"/>
         <source>Front</source>
-        <translation type="unfinished">Přední</translation>
+        <translation>Přední</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="109"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadní</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="142"/>
@@ -1740,7 +1740,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="223"/>
         <source>No artwork sources enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Nejsou povoleny žádné zdroje přebalů alb</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="235"/>
@@ -2319,13 +2319,13 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="74"/>
         <source>Keep playlist sorted</source>
-        <translation type="unfinished"></translation>
+        <translation>Zachovat řazení seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="76"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="87"/>
         <source>&amp;Save…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Uložit…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="78"/>
@@ -2335,7 +2335,7 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="79"/>
         <source>&amp;Format</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Formátovat</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="81"/>
@@ -2350,98 +2350,99 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="94"/>
         <source>Presets</source>
-        <translation type="unfinished">Předvolby</translation>
+        <translation>Předvolby</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="105"/>
         <source>When enabled, the autoplaylist is fully reordered by its sort pattern whenever it regenerates.
 When disabled, existing track order is preserved and only newly added matching tracks are sorted and then appended.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokud povoleno, dynamický seznam skladeb je při každé změně znovu seřazen podle svého vzoru řazení.
+Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pouze nově přidávané skladby.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="110"/>
         <source>Name:</source>
-        <translation type="unfinished">Název:</translation>
+        <translation>Název:</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="127"/>
         <source>Query:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dotaz:</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="128"/>
         <source>Sort:</source>
-        <translation type="unfinished"></translation>
+        <translation>Řazení:</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="130"/>
         <source>Format the query with line breaks and indentation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zformátuje dotaz pro zlepšení čitelnosti.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="133"/>
         <source>Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Pravidla</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="134"/>
         <source>Script</source>
-        <translation type="unfinished"></translation>
+        <translation>Skript</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="274"/>
         <source>This query uses expressions that are not supported by the rule editor.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tento dotaz používá výrazy, které nejsou editorem pravidel podporovány.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="311"/>
         <source>This query cannot be represented as rules. Continue editing it in Script mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tento dotaz nemůže být vyjádřen pomocí pravidel. Pokračuj editaci v režimu skriptu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="336"/>
         <source>Save Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit předvolbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="336"/>
         <source>Preset name:</source>
-        <translation type="unfinished">Název předvolby:</translation>
+        <translation>Název předvolby:</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="352"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">Předvolba již existuje</translation>
+        <translation>Předvolba již existuje</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="353"/>
         <source>A preset named ‘%1’ already exists. Overwrite it?</source>
-        <translation type="unfinished">Předvolba s názvem „%1“ již existuje. Přepsat?</translation>
+        <translation>Předvolba s názvem ‚%1‘ již existuje. Přepsat?</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="458"/>
         <source>Recently Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Nedávno přehrané</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="461"/>
         <source>Loved</source>
-        <translation type="unfinished">Oblíbená</translation>
+        <translation>Oblíbeno</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="462"/>
         <source>Highly Rated</source>
-        <translation type="unfinished"></translation>
+        <translation>Vysoce hodnocené</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="463"/>
         <source>Unplayed</source>
-        <translation type="unfinished">Nepřehráno</translation>
+        <translation>Nepřehráno</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="464"/>
         <source>Forgotten Favourites</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapomenuté oblíbené</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="456"/>
@@ -2464,29 +2465,29 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="42"/>
         <source>Metadata tag…</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag metadat…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="48"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="76"/>
         <source>Tag name</source>
-        <translation type="unfinished"></translation>
+        <translation>Název tagu</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="49"/>
         <source>Choose a field or enter a tag name. Use ‘Metadata tag…’ to read a tag directly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyber, nebo zadej název tagu. Použij ‚Tag metadat…‘ pro přímé čtení tagu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="76"/>
         <source>Metadata tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag metadat</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="131"/>
         <source>%1 (tag)</source>
         <extracomment>%1 is a metadata tag name.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (tag)</translation>
     </message>
 </context>
 <context>
@@ -2494,117 +2495,117 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="498"/>
         <source>Artist</source>
-        <translation type="unfinished">Umělec</translation>
+        <translation>Umělec</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="499"/>
         <source>Album artist</source>
-        <translation type="unfinished">Interpret alba</translation>
+        <translation>Interpret alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="500"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="501"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="502"/>
         <source>Genre</source>
-        <translation type="unfinished">Žánr</translation>
+        <translation>Žánr</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="503"/>
         <source>Composer</source>
-        <translation type="unfinished">Skladatel</translation>
+        <translation>Skladatel</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="504"/>
         <source>Performer</source>
-        <translation type="unfinished">Interpret</translation>
+        <translation>Interpret</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="505"/>
         <source>Comment</source>
-        <translation type="unfinished">Poznámka</translation>
+        <translation>Poznámka</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="506"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Texty písní</translation>
+        <translation>Texty písní</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="507"/>
         <source>Date</source>
-        <translation type="unfinished">Datum</translation>
+        <translation>Datum</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="508"/>
         <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation>Rok</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="509"/>
         <source>Duration</source>
-        <translation type="unfinished">Délka</translation>
+        <translation>Délka</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="510"/>
         <source>Rating</source>
-        <translation type="unfinished">Hodnocení</translation>
+        <translation>Hodnocení</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="511"/>
         <source>Loved</source>
-        <translation type="unfinished">Oblíbená</translation>
+        <translation>Oblíbeno</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="512"/>
         <source>Playcount</source>
-        <translation type="unfinished">Počet přehrání</translation>
+        <translation>Počet přehrání</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="513"/>
         <source>Date added</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidáno</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="514"/>
         <source>First played</source>
-        <translation type="unfinished"></translation>
+        <translation>Poprvé přehráno</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="515"/>
         <source>Last played</source>
-        <translation type="unfinished"></translation>
+        <translation>Naposledy přehráno</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="516"/>
         <source>Codec</source>
-        <translation type="unfinished">Kodek</translation>
+        <translation>Kodek</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="517"/>
         <source>Folder path</source>
-        <translation type="unfinished"></translation>
+        <translation>Cesta ke složce</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="518"/>
         <source>File path</source>
-        <translation type="unfinished"></translation>
+        <translation>Cesta k souboru</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="928"/>
         <source>Enter a query.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadej dotaz.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="938"/>
         <source>The query contains an incomplete or invalid expression.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dotaz obsahuje neúplný nebo neplatný výraz.</translation>
     </message>
 </context>
 <context>
@@ -2612,109 +2613,109 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="47"/>
         <source>Match all rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Splnit všechna pravidla</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="48"/>
         <source>Match any rule</source>
-        <translation type="unfinished"></translation>
+        <translation>Splnit libovolné pravidlo</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="49"/>
         <source>Match an odd number of rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Splnit lichý počet pravidel</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="51"/>
         <source>Uses AND: every rule or nested group must match.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použije AND: všechna pravidla, nebo vnořené skupiny musí odpovídat.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="53"/>
         <source>Uses OR: at least one rule or nested group must match.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použije OR: alespoň jedno pravidlo nebo vnořená skupina musí odpovídat.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="56"/>
         <source>Uses XOR: one, three, five, or another odd number of rules must match. Each nested group counts as one rule.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použije XOR: jedna, tři, pět, nebo jiný lichý počet pravidel musí odpovídat. Každá vnořená skupina je počítána jako jedno pravidlo.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="61"/>
         <source>Include all tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Zahrnout všechny skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="62"/>
         <source>Includes every track in the library without applying rules.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zahrne všechny skladby v knihovně bez použití pravidel.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="68"/>
         <source>Add rule</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat pravidlo</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="70"/>
         <source>Add group</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat skupinu</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="78"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="82"/>
         <source>Collapse group</source>
-        <translation type="unfinished"></translation>
+        <translation>Sbalit skupinu</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="82"/>
         <source>Expand group</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalit skupinu</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="95"/>
         <source>Remove group</source>
-        <translation type="unfinished"></translation>
+        <translation>Odebrat skupinu</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="179"/>
         <source>Add a rule or group, or choose ‘Include all tracks’.</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidej pravidlo, nebo skupinu, nebo vyber ‚Zahrnout všechny skladby‘.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="182"/>
         <source>Add a rule or group to group %1.</source>
         <extracomment>%1 is a group number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Přidej pravidlo do skupiny číslo %1.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="197"/>
         <source>Enter a tag name for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zadej název tagu pro pravidlo číslo %1.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="203"/>
         <source>The start date must not be after the end date for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Počáteční datum v pravidle %1 nesmí být novější než koncový datum.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="210"/>
         <source>Enter at least one valid value for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Pro pravidlo %1 zadej alespoň jednu platnou hodnotu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="217"/>
         <source>Enter a value for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zadej hodnotu pro pravidlo %1.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="226"/>
         <source>Enter a number for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zadej číslo pro pravidlo %1.</translation>
     </message>
 </context>
 <context>
@@ -2723,92 +2724,92 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="115"/>
         <source>and</source>
         <extracomment>Separates the two dates in a ‘between’ rule.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>a</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="162"/>
         <source>No values</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádné hodnoty</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="168"/>
         <source>Edit…</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="170"/>
         <source>Edit values</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit hodnoty</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="187"/>
         <source>Remove rule</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit pravidlo</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="319"/>
         <source>No</source>
-        <translation type="unfinished">Ne</translation>
+        <translation>Ne</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="319"/>
         <source>Yes</source>
-        <translation type="unfinished">Ano</translation>
+        <translation>Ano</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="386"/>
         <source>Edit Values</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit hodnoty</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="400"/>
         <source>Enter at least one value.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadej aspoň jednu hodnotu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="401"/>
         <source>Empty lines are ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Prázdné řádky jsou ignorovány.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="402"/>
         <source>Enter a valid value on each line.</source>
-        <translation type="unfinished"></translation>
+        <translation>Na každém řádku musí být zadána platná hodnota.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="405"/>
         <source>Values are durations in seconds. Empty lines are ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hodnoty jsou délky v sekundách. Prázdné řádky jsou ignorovány.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="406"/>
         <source>Enter whole numbers. Empty lines are ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadej celá čísla. Prázdné řádky jsou ignorovány.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="408"/>
         <source>Enter whole numbers of seconds, from 0 to %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadej celá čísla vyjadřující sekundy, od 0 do %1.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="409"/>
         <source>Enter whole numbers from 0 to %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadej celá čísla od 0 do %1.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="412"/>
         <source>Half-star ratings are supported. Empty lines are ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hodnocení polovičními hvězdami je podporováno. Prázdné řádky jsou ignorovány.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="413"/>
         <source>Enter ratings from 0 to 5 in half-star steps.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadej hodnocení od 0 do 5 v krocích po 0.5.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="430"/>
         <source>Values (one per line)</source>
-        <translation type="unfinished"></translation>
+        <translation>Hodnoty (jedna na řádek)</translation>
     </message>
 </context>
 <context>
@@ -2817,151 +2818,151 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="529"/>
         <source>second</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>sekunda</numerusform>
+            <numerusform>sekundy</numerusform>
+            <numerusform>sekund</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="531"/>
         <source>seconds</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>sekunda</numerusform>
+            <numerusform>sekundy</numerusform>
+            <numerusform>sekund</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="535"/>
         <source>minute</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>minuta</numerusform>
+            <numerusform>minuty</numerusform>
+            <numerusform>minut</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="537"/>
         <source>minutes</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>minuta</numerusform>
+            <numerusform>minuty</numerusform>
+            <numerusform>minut</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="541"/>
         <source>hour</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>hodina</numerusform>
+            <numerusform>hodiny</numerusform>
+            <numerusform>hodin</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="543"/>
         <source>hours</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>hodina</numerusform>
+            <numerusform>hodiny</numerusform>
+            <numerusform>hodin</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="547"/>
         <source>day</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>den</numerusform>
+            <numerusform>dny</numerusform>
+            <numerusform>dní</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="549"/>
         <source>days</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>den</numerusform>
+            <numerusform>dny</numerusform>
+            <numerusform>dní</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="553"/>
         <source>week</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>týden</numerusform>
+            <numerusform>týdny</numerusform>
+            <numerusform>týdnů</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="555"/>
         <source>weeks</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>týden</numerusform>
+            <numerusform>týdny</numerusform>
+            <numerusform>týdnů</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="559"/>
         <source>month</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>měsíc</numerusform>
+            <numerusform>měsíce</numerusform>
+            <numerusform>měsíců</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="561"/>
         <source>months</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>měsíc</numerusform>
+            <numerusform>měsíce</numerusform>
+            <numerusform>měsíců</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="565"/>
         <source>year</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>rok</numerusform>
+            <numerusform>roky</numerusform>
+            <numerusform>roků</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="567"/>
         <source>years</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>rok</numerusform>
+            <numerusform>roky</numerusform>
+            <numerusform>roků</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="44"/>
         <source>Randomise order</source>
-        <translation type="unfinished"></translation>
+        <translation>Náhodné pořadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="46"/>
         <source>Limit number of tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Omezit počet skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="49"/>
