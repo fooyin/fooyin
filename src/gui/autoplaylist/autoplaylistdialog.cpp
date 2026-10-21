@@ -266,7 +266,6 @@ void AutoPlaylistDialog::setQuery(const AutoPlaylistQuery& query)
         m_rulesQuery     = query.query;
         m_rulesSortQuery = query.sortQuery;
         m_haveRules      = true;
-        m_modes->setCurrentIndex(0);
         m_modeLabel->clear();
     }
     else {
