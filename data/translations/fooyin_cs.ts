@@ -693,7 +693,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="209"/>
         <source>Name of the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Název seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
@@ -833,17 +833,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="270"/>
         <source>Returns 1 for the current queue viewer entry, including while paused</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí 1 pro aktuální položku prohlížeče fronty i pokud je pozastavená</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
         <source>Returns 1 for a queue viewer entry ahead of the queue cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí 1 pro položku následující za kurzorem v prohlížeči fronty</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
         <source>Returns 1 for a queue viewer entry in queue history</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátí 1 pro položku v historii prohlížeče fronty</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="275"/>
@@ -1602,7 +1602,7 @@
     <message>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="169"/>
         <source>Advanced</source>
-        <translation type="unfinished">Pokročilé</translation>
+        <translation>Pokročilé</translation>
     </message>
 </context>
 <context>
@@ -7515,7 +7515,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
         <source>Wait for tracks to load before showing the window</source>
-        <translation type="unfinished"></translation>
+        <translation>Před zobrazením okna počkat na načtení skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="93"/>
@@ -7545,7 +7545,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="108"/>
         <source>System Tray</source>
-        <translation type="unfinished"></translation>
+        <translation>Oznamovací oblast</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="115"/>
@@ -10930,12 +10930,12 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="505"/>
         <source>Focus search</source>
-        <translation>Zaměřit hledání</translation>
+        <translation>Aktivovat hledání</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="506"/>
         <source>Focus the integrated search bar</source>
-        <translation>Zaměřit integrovaný panel hledání</translation>
+        <translation>Aktivovat integrovaný panel hledání</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="921"/>
@@ -12164,7 +12164,7 @@ Odstranit originál: po uložení smaže soubor, nebo tag obsahující předchoz
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="387"/>
         <source>Open release page</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít stránku s vydáními</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="396"/>
@@ -14393,62 +14393,62 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="59"/>
         <source>Keep group headers in view</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukotvit záhlaví</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="60"/>
         <source>Keep artwork in view</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukotvit přebal alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="66"/>
         <source>Show reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit odraz</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="97"/>
         <source>Reflection height as a percentage of the artwork height</source>
-        <translation type="unfinished"></translation>
+        <translation>Výška odrazu v procentech výšky přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="100"/>
         <source>Opacity at the top of the reflection, fading to transparent</source>
-        <translation type="unfinished"></translation>
+        <translation>Neprůhlednost v horní části odrazu, která postupně přejde do plné průhlednosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="103"/>
         <source>Space between the artwork and its reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozestup mezi přebalem a jeho odrazem</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="112"/>
         <source>Scrolling</source>
-        <translation type="unfinished"></translation>
+        <translation>Rolování</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="116"/>
         <source>Horizontal padding</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontální odsazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="118"/>
         <source>Top padding</source>
-        <translation type="unfinished"></translation>
+        <translation>Horní odsazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="122"/>
         <source>Artwork reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>Odraz přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="124"/>
         <source>Height</source>
-        <translation type="unfinished">Výška</translation>
+        <translation>Výška</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="128"/>
         <source>Gap below artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Mezera pod přebalem</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="133"/>
@@ -15757,12 +15757,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="50"/>
         <source>Available variables: &lt;code&gt;%playlist_name%&lt;/code&gt;, &lt;code&gt;%trackcount%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Dostupné proměnné: &lt;code&gt;%playlist_name%&lt;/code&gt;, &lt;code&gt;%trackcount%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="57"/>
         <source>Tab title</source>
-        <translation type="unfinished"></translation>
+        <translation>Název karty</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="60"/>
@@ -17039,7 +17039,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="61"/>
         <source>Use &lt;code&gt;%is_queue_current%&lt;/code&gt;, &lt;code&gt;%is_queue_upcoming%&lt;/code&gt;, and &lt;code&gt;%is_queue_played%&lt;/code&gt; to format entries by queue state.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pro formátování položek podle jejich stavu ve frontě použij &lt;code&gt;%is_queue_current%&lt;/code&gt;, &lt;code&gt;%is_queue_upcoming%&lt;/code&gt;, nebo &lt;code&gt;%is_queue_played%&lt;/code&gt;.</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="66"/>
@@ -19986,7 +19986,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="663"/>
         <source>Colours</source>
-        <translation type="unfinished">Barvy</translation>
+        <translation>Barvy</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="664"/>
@@ -20871,12 +20871,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="291"/>
         <source>Filter…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhledat…</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="301"/>
         <source>No matching settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádná odpovídající nastavení.</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="310"/>
@@ -21397,47 +21397,47 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="43"/>
         <source>Top labels</source>
-        <translation type="unfinished">Horní popisky</translation>
+        <translation>Horní popisky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="44"/>
         <source>Bottom labels</source>
-        <translation type="unfinished">Dolní popisky</translation>
+        <translation>Dolní popisky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="45"/>
         <source>Left labels</source>
-        <translation type="unfinished">Levé popisky</translation>
+        <translation>Levé popisky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="46"/>
         <source>Right labels</source>
-        <translation type="unfinished">Pravé popisky</translation>
+        <translation>Pravé popisky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="47"/>
         <source>Show progress cursor</source>
-        <translation type="unfinished">Zobrazit kurzor průběhu</translation>
+        <translation>Zobrazit kurzor průběhu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="56"/>
         <source>Playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehráváno</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="57"/>
         <source>Seeking</source>
-        <translation type="unfinished">Přetáčení</translation>
+        <translation>Přetáčení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="58"/>
         <source>Played</source>
-        <translation type="unfinished">Přehráno</translation>
+        <translation>Přehráno</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="59"/>
         <source>Unplayed</source>
-        <translation type="unfinished">Nepřehráno</translation>
+        <translation>Nepřehráno</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="61"/>
@@ -21478,37 +21478,37 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="75"/>
         <source>Full Track (Seekbar)</source>
-        <translation type="unfinished"></translation>
+        <translation>Celá skladba (časová lišta)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="77"/>
         <source>Track preference</source>
-        <translation type="unfinished"></translation>
+        <translation>Upřednostňovaná skladba</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="79"/>
         <source>Playing track</source>
-        <translation type="unfinished">Přehrávaná skladba</translation>
+        <translation>Přehrávaná skladba</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="80"/>
         <source>Selected track</source>
-        <translation type="unfinished">Vybraná skladba</translation>
+        <translation>Vybraná skladba</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="81"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished">Přehrávaná (po zastavení vybraná)</translation>
+        <translation>Přehrávaná (po zastavení vybraná)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="83"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished">Přehrávaná (po spuštění žádná)</translation>
+        <translation>Přehrávaná (po spuštění žádná)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="85"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished">Přehrávaná (po zastavení žádná)</translation>
+        <translation>Přehrávaná (po zastavení žádná)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="88"/>
@@ -21543,29 +21543,30 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="108"/>
         <source>Axes</source>
-        <translation type="unfinished">Osy</translation>
+        <translation>Osy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="121"/>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="189"/>
         <source>Cursors</source>
-        <translation type="unfinished"></translation>
+        <translation>Kurzory</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="126"/>
         <source>Cursor width</source>
-        <translation type="unfinished">Šířka kurzoru</translation>
+        <translation>Šířka kurzoru</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="134"/>
         <source>Number of time columns for Full Track analysis.
 Higher values increase detail and memory usage.</source>
-        <translation type="unfinished"></translation>
+        <translation>Počet časových sloupců pro analýzu celé skladby.
+Vyšší hodnoty zvyšují podrobnost a spotřebu paměti.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="136"/>
         <source>Time resolution</source>
-        <translation type="unfinished"></translation>
+        <translation>Časové rozlišení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="138"/>
@@ -21605,12 +21606,12 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="182"/>
         <source>Spectrogram</source>
-        <translation type="unfinished">Spektrogram</translation>
+        <translation>Spektrogram</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="196"/>
         <source>Playback overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>Překryv přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="214"/>
@@ -21653,7 +21654,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="163"/>
         <source>Spectrogram</source>
-        <translation type="unfinished">Spektrogram</translation>
+        <translation>Spektrogram</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="389"/>
@@ -21663,32 +21664,32 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="392"/>
         <source>Show cursor</source>
-        <translation type="unfinished">Zobrazit kurzor</translation>
+        <translation>Zobrazit kurzor</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="393"/>
         <source>Labels</source>
-        <translation type="unfinished">Popisky</translation>
+        <translation>Popisky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="394"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Horní</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="395"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Dolní</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="396"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Levé</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="397"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Pravé</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="400"/>
@@ -21738,7 +21739,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="440"/>
         <source>Full Track (Seekbar)</source>
-        <translation type="unfinished"></translation>
+        <translation>Celá skladba (časová lišta)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="442"/>
@@ -24985,32 +24986,32 @@ Přidrž Ctrl pro nahrazení widgetu.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="565"/>
         <source>Settings Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Dialog nastavení</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="566"/>
         <source>Search bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Panel hledání</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="567"/>
         <source>Visibility and position of the search bar in the settings dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Viditelnost a pozice panelu hledání v dialogu nastavení</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="570"/>
         <source>Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrytý</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="571"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahoře</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="573"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Dole</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="600"/>
@@ -25377,7 +25378,7 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="890"/>
         <source>Script Editor</source>
-        <translation type="unfinished">Editor skriptů</translation>
+        <translation>Editor skriptů</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="892"/>

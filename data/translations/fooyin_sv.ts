@@ -602,7 +602,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="370"/>
         <source>Finds the first substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Hittar den första substrängspositionen utan åtanke på stora och små bokstäver (1-baserad)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="373"/>
@@ -612,7 +612,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="376"/>
         <source>Finds the last substring position ignoring case (1-based)</source>
-        <translation type="unfinished"></translation>
+        <translation>Hittar den sista substrängspositionen utan åtanke på stora och små bokstäver (1-baserad)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="390"/>
@@ -693,7 +693,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="209"/>
         <source>Name of the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Spellistans namn</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
@@ -768,7 +768,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
         <source>Active output device</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiv utmatningsenhet</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
@@ -879,23 +879,23 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="282"/>
         <source>Draws a separator in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Ritar en separator i stödda vyer</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="283"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="285"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Positionering</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="284"/>
         <source>Aligns enclosed text to the left in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Vänsterjusterar innesluten text i stödda vyer</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="286"/>
         <source>Aligns enclosed text to the right in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Högerjusterar innesluten text i stödda vyer</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="287"/>
@@ -1545,12 +1545,12 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="52"/>
         <source>&amp;File</source>
-        <translation>&amp;Fil</translation>
+        <translation>Ar&amp;kiv</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="56"/>
         <source>&amp;Edit</source>
-        <translation>&amp;Ändra</translation>
+        <translation>R&amp;edigera</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="60"/>
@@ -1602,7 +1602,7 @@
     <message>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="169"/>
         <source>Advanced</source>
-        <translation type="unfinished">Avancerat</translation>
+        <translation>Avancerat</translation>
     </message>
 </context>
 <context>
@@ -3146,12 +3146,12 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="68"/>
         <source>Now playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="69"/>
         <source>Use the currently playing track for selection-based commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd det spelande spåret för selektionsbaserade kommandon</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="70"/>
@@ -3206,7 +3206,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="103"/>
         <source>Display</source>
-        <translation>Visa</translation>
+        <translation>Visning</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="105"/>
@@ -4200,17 +4200,17 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="85"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (eller valt när stoppad)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="87"/>
         <source>Playing (no track at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (inget spår vid uppstart)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="89"/>
         <source>Playing (no track when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (inget spår när stoppad)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="93"/>
@@ -4230,7 +4230,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="121"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Inget</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="122"/>
@@ -5210,7 +5210,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
         <translation>• Hitta widgetar i rutan till höger (hovra nära högra kanten om den är gömd).
 
-• Dra widgetar från rutan för att lägga till dem eller dra existerande för att flytta dem. Håll i &lt;b&gt;Ctrl&lt;/b&gt; för att ersätta målwidgeten.
+• Dra widgetar från rutan för att lägga till dem eller dra existerande för att flytta dem. Håll i Ctrl för att ersätta målwidgeten.
 
 • Välj en widget för att se dess föräldracontainrar i brödsmulsfältet. Välj en förälder för att flytta en hel sektion.
 
@@ -6468,7 +6468,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="526"/>
         <source>Source archive files will be moved to the trash after every file from each archive has been extracted. Continue?</source>
-        <translation>Källarkivfiler kommer flyttas till skräpet efter att varje fil från varje arkiv har extraherats. Fortsätt?</translation>
+        <translation>Källarkivsfiler kommer flyttas till papperskorgen efter att varje fil från varje arkiv har extraherats. Fortsätt?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="532"/>
@@ -7478,7 +7478,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
         <source>Wait for tracks to load before showing the window</source>
-        <translation type="unfinished"></translation>
+        <translation>Vänta på att spår läses in innan fönstret visas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="93"/>
@@ -7508,7 +7508,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="108"/>
         <source>System Tray</source>
-        <translation type="unfinished"></translation>
+        <translation>Systemfält</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="115"/>
@@ -7864,27 +7864,27 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1144"/>
         <source>Seek</source>
-        <translation type="unfinished">Leta</translation>
+        <translation>Leta</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1146"/>
         <source>Seek forward (small step)</source>
-        <translation type="unfinished">Leta framåt (litet steg)</translation>
+        <translation>Leta framåt (litet steg)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1153"/>
         <source>Seek forward (large step)</source>
-        <translation type="unfinished">Leta framåt (stort steg)</translation>
+        <translation>Leta framåt (stort steg)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1160"/>
         <source>Seek backward (small step)</source>
-        <translation type="unfinished">Leta bakåt (litet steg)</translation>
+        <translation>Leta bakåt (litet steg)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1168"/>
         <source>Seek backward (large step)</source>
-        <translation type="unfinished">Leta bakåt (stort steg)</translation>
+        <translation>Leta bakåt (stort steg)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1193"/>
@@ -9334,17 +9334,17 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="609"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (eller valt när stoppad)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="611"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (blank vid uppstart)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="612"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (blank när stoppad)</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="625"/>
@@ -10691,7 +10691,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="137"/>
         <source>Controls position</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrollposition</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="129"/>
@@ -10780,7 +10780,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="103"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; in a display level to show text right-aligned. Use &lt;code&gt;%trackcount%&lt;/code&gt; for tracks and &lt;code&gt;%childcount%&lt;/code&gt; for child nodes.</source>
-        <translation>Använd &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; för att visa text högerjusterat. Använd &lt;code&gt;%trackcount%&lt;/code&gt; för spår och &lt;code&gt;%childcount%&lt;/code&gt; för barnnoder.</translation>
+        <translation>Använd &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; för att högerjustera text. Använd &lt;code&gt;%trackcount%&lt;/code&gt; för spår och &lt;code&gt;%childcount%&lt;/code&gt; för barnnoder.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="95"/>
@@ -12121,7 +12121,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="387"/>
         <source>Open release page</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna utsläppssida</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="396"/>
@@ -12146,7 +12146,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="449"/>
         <source>Drag rows to align tracks</source>
-        <translation type="unfinished">Dra rader för att positionera spår</translation>
+        <translation>Dra rader för att positionera spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="452"/>
@@ -12324,7 +12324,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="928"/>
         <source>Review unmatched or ambiguous tracks before applying metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrollera omatchade eller ambiguösa spår innan applicering av metadata.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="929"/>
@@ -12659,7 +12659,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="158"/>
         <source>&lt;p&gt;The Flatpak notification portal does not support custom timeouts or album art. To use the desktop notification service directly, add &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt; to fooyin’s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Restart fooyin after changing its permissions.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Flatpak-notisportalen stödjer inte anpassade timeouts eller albumkonst. För att använda skrivbordsnotistjänsten direkt, lägg till &lt;code&gt;org.freedesktop.Notifications&lt;/code&gt; i fooyins sessionsbus ”talk”-behörigheter i Flatseal, eller kör:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Starta om fooyin efter att ha ändrat dess behörigheter.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="207"/>
@@ -13059,7 +13059,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="180"/>
         <source>Automatic</source>
-        <translation type="unfinished">Automatisk</translation>
+        <translation>Automatisk</translation>
     </message>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopewidget.cpp" line="181"/>
@@ -13209,7 +13209,7 @@ Ta bort ursprungliga: Raderar den förra filen eller taggen efter sparande.</tra
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="123"/>
         <source>Automatic</source>
-        <translation>Automatisk</translation>
+        <translation>Automatiskt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/outputpage.cpp" line="124"/>
@@ -13712,12 +13712,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="157"/>
         <source>Seek step (small)</source>
-        <translation>Letningssteg (litet)</translation>
+        <translation>Letsteg (litet)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="159"/>
         <source>Seek step (large)</source>
-        <translation>Letningssteg (stort)</translation>
+        <translation>Letsteg (stort)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="161"/>
@@ -13918,7 +13918,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="157"/>
         <source>Display and history</source>
-        <translation type="unfinished">Display och historik</translation>
+        <translation>Visning och historik</translation>
     </message>
 </context>
 <context>
@@ -13966,7 +13966,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="192"/>
         <source>Automatic</source>
-        <translation type="unfinished">Automatisk</translation>
+        <translation>Automatisk</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="193"/>
@@ -14341,67 +14341,67 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="59"/>
         <source>Keep group headers in view</source>
-        <translation type="unfinished"></translation>
+        <translation>Håll grupprubriker i vyn</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="60"/>
         <source>Keep artwork in view</source>
-        <translation type="unfinished"></translation>
+        <translation>Håll konstverk i vyn</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="66"/>
         <source>Show reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa reflektion</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="97"/>
         <source>Reflection height as a percentage of the artwork height</source>
-        <translation type="unfinished"></translation>
+        <translation>Reflektionshöjd som en procent av konstverkshöjden</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="100"/>
         <source>Opacity at the top of the reflection, fading to transparent</source>
-        <translation type="unfinished"></translation>
+        <translation>Opacitet vid toppen av reflektionen, med toning till genomskinlig</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="103"/>
         <source>Space between the artwork and its reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>Mellanrum mellan konstverket och dess reflektion</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="112"/>
         <source>Scrolling</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrollning</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="116"/>
         <source>Horizontal padding</source>
-        <translation type="unfinished"></translation>
+        <translation>Horisontell utfyllning</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="118"/>
         <source>Top padding</source>
-        <translation type="unfinished"></translation>
+        <translation>Topputfyllning</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="122"/>
         <source>Artwork reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>Konstverksreflektion</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="124"/>
         <source>Height</source>
-        <translation type="unfinished">Höjd</translation>
+        <translation>Höjd</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="128"/>
         <source>Gap below artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Mellanrum under konstverk</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="133"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Inget</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="134"/>
@@ -14466,7 +14466,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="163"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Bak</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="164"/>
@@ -14496,17 +14496,17 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="171"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (eller valt när stoppad)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="173"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (blank vid uppstart)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="175"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (blank när stoppad)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="177"/>
@@ -14677,7 +14677,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="237"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Positionering</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="239"/>
@@ -15457,7 +15457,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="76"/>
         <source>Move deleted or empty playlists to trash</source>
-        <translation>Flytta raderade eller tomma spellistor till skräp</translation>
+        <translation>Flytta raderade eller tomma spellistor till papperskorg</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistsavingpage.cpp" line="77"/>
@@ -15703,12 +15703,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="50"/>
         <source>Available variables: &lt;code&gt;%playlist_name%&lt;/code&gt;, &lt;code&gt;%trackcount%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Tillgängliga variabler: &lt;code&gt;%playlist_name%&lt;/code&gt;, &lt;code&gt;%trackcount%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="57"/>
         <source>Tab title</source>
-        <translation type="unfinished"></translation>
+        <translation>Fliktitel</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="60"/>
@@ -16191,12 +16191,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="203"/>
         <source>Load failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Inläsning misslyckades</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="205"/>
         <source>Loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Inläst</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="207"/>
@@ -16206,17 +16206,17 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="266"/>
         <source>Audio</source>
-        <translation type="unfinished"></translation>
+        <translation>Ljud</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="269"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Utmatning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="272"/>
         <source>System Integration</source>
-        <translation type="unfinished"></translation>
+        <translation>Systemintegrering</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="275"/>
@@ -16226,7 +16226,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="278"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Visning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="281"/>
@@ -16241,7 +16241,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="287"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>Inmatning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="290"/>
@@ -19533,7 +19533,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="135"/>
         <source>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin’s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to execute arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</source>
-        <translation type="unfinished">&lt;p&gt;Flatpak-sandlådan kan inte direkt öppna applikationer som är installerade på värden. För att låta fooyin öppna värdapplikationer, lägg till &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; i fooyins Session Bus ”talk”-behörigheter i Flatseal, eller kör:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Prefixa sedan varje tjänstkommando med &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. Till exempel:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;Denna behörighet låter fooyin köra abriträra kommandon utanför sandlådan. Sätt endast på det om du litar på dina konfigurerade tjänster.&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Flatpak-sandlådan kan inte direkt öppna applikationer som är installerade på värden. För att låta fooyin öppna värdapplikationer, lägg till &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; i fooyins sessionsbuss ”talk”-behörigheter i Flatseal, eller kör:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Prefixa sedan varje tjänstkommando med &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. Till exempel:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;Denna behörighet låter fooyin köra abriträra kommandon utanför sandlådan. Sätt endast på det om du litar på dina konfigurerade tjänster.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="151"/>
@@ -19772,32 +19772,32 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="119"/>
         <source>Playing track</source>
-        <translation type="unfinished">Spelande spår</translation>
+        <translation>Spelande spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="120"/>
         <source>Selected track</source>
-        <translation type="unfinished">Valt spår</translation>
+        <translation>Valt spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="121"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (eller valt när stoppad)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="123"/>
         <source>Playing (no track at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (inget spår vid uppstart)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="125"/>
         <source>Playing (no track when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (inget spår när stoppad)</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="132"/>
         <source>Preferred track</source>
-        <translation type="unfinished">Föredraget spår</translation>
+        <translation>Föredraget spår</translation>
     </message>
 </context>
 <context>
@@ -19867,7 +19867,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="539"/>
         <source>Function parameter hints</source>
-        <translation type="unfinished"></translation>
+        <translation>Funktionsparametertips</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="540"/>
@@ -19912,7 +19912,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="629"/>
         <source>Formatting tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Formateringstaggar</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="640"/>
@@ -19922,7 +19922,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="663"/>
         <source>Colours</source>
-        <translation type="unfinished">Färger</translation>
+        <translation>Färger</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="664"/>
@@ -19957,7 +19957,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="716"/>
         <source>Track</source>
-        <translation type="unfinished">Spår</translation>
+        <translation>Spår</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="718"/>
@@ -19968,7 +19968,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="721"/>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="735"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Inget</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="727"/>
@@ -20311,7 +20311,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/scrobbler/settings/scrobblerservicespage.cpp" line="331"/>
         <source>Import play counts and Loved status from this service when a track starts playing</source>
-        <translation>Importera antal spelningar och älskad-status från denna tjänster när ett spår börjar spelas</translation>
+        <translation>Importera antal spelningar och älskad-status från denna tjänst när ett spår börjar spelas</translation>
     </message>
 </context>
 <context>
@@ -20486,7 +20486,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="87"/>
         <source>Search</source>
-        <translation>Sök</translation>
+        <translation>Sökning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="91"/>
@@ -20664,7 +20664,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="462"/>
         <source>Seekbar</source>
-        <translation>Letningsruta</translation>
+        <translation>Letruta</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="508"/>
@@ -20806,12 +20806,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="291"/>
         <source>Filter…</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrera…</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="301"/>
         <source>No matching settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inga matchande inställningar.</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="310"/>
@@ -21332,47 +21332,47 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="43"/>
         <source>Top labels</source>
-        <translation type="unfinished">Toppetiketter</translation>
+        <translation>Toppetiketter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="44"/>
         <source>Bottom labels</source>
-        <translation type="unfinished">Bottenetiketter</translation>
+        <translation>Bottenetiketter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="45"/>
         <source>Left labels</source>
-        <translation type="unfinished">Vänsteretiketter</translation>
+        <translation>Vänsteretiketter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="46"/>
         <source>Right labels</source>
-        <translation type="unfinished">Högeretiketter</translation>
+        <translation>Högeretiketter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="47"/>
         <source>Show progress cursor</source>
-        <translation type="unfinished">Visa progressionsmarkör</translation>
+        <translation>Visa progressionsmarkör</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="56"/>
         <source>Playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="57"/>
         <source>Seeking</source>
-        <translation type="unfinished">Letande</translation>
+        <translation>Letande</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="58"/>
         <source>Played</source>
-        <translation type="unfinished">Spelad</translation>
+        <translation>Spelad</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="59"/>
         <source>Unplayed</source>
-        <translation type="unfinished">Ospelad</translation>
+        <translation>Ospelad</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="61"/>
@@ -21413,37 +21413,37 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="75"/>
         <source>Full Track (Seekbar)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fullt spår (letruta)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="77"/>
         <source>Track preference</source>
-        <translation type="unfinished"></translation>
+        <translation>Spårpreferens</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="79"/>
         <source>Playing track</source>
-        <translation type="unfinished">Spelande spår</translation>
+        <translation>Spelande spår</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="80"/>
         <source>Selected track</source>
-        <translation type="unfinished">Valt spår</translation>
+        <translation>Valt spår</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="81"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (eller valt när stoppad)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="83"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (blank vid uppstart)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="85"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (blank när stoppad)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="88"/>
@@ -21478,7 +21478,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="108"/>
         <source>Axes</source>
-        <translation type="unfinished">Axlar</translation>
+        <translation>Axlar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="121"/>
@@ -21489,7 +21489,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="126"/>
         <source>Cursor width</source>
-        <translation type="unfinished">Markörbredd</translation>
+        <translation>Markörbredd</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="134"/>
@@ -21500,7 +21500,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="136"/>
         <source>Time resolution</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidsupplösning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="138"/>
@@ -21540,7 +21540,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="182"/>
         <source>Spectrogram</source>
-        <translation type="unfinished">Spektrogram</translation>
+        <translation>Spektrogram</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="196"/>
@@ -21588,7 +21588,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="163"/>
         <source>Spectrogram</source>
-        <translation type="unfinished">Spektrogram</translation>
+        <translation>Spektrogram</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="389"/>
@@ -21598,32 +21598,32 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="392"/>
         <source>Show cursor</source>
-        <translation type="unfinished">Visa markör</translation>
+        <translation>Visa markör</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="393"/>
         <source>Labels</source>
-        <translation type="unfinished">Etiketter</translation>
+        <translation>Etiketter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="394"/>
         <source>Top</source>
-        <translation type="unfinished">Topp</translation>
+        <translation>Topp</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="395"/>
         <source>Bottom</source>
-        <translation type="unfinished">Botten</translation>
+        <translation>Botten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="396"/>
         <source>Left</source>
-        <translation type="unfinished">Vänster</translation>
+        <translation>Vänster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="397"/>
         <source>Right</source>
-        <translation type="unfinished">Höger</translation>
+        <translation>Höger</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="400"/>
@@ -21673,7 +21673,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="440"/>
         <source>Full Track (Seekbar)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fullt spår (letruta)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="442"/>
@@ -23940,7 +23940,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="56"/>
         <source>Right-align scale labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Högerjustera skalaetiketter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="57"/>
@@ -24138,7 +24138,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="903"/>
         <source>Right-align scale labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Högerjustera skalaetiketter</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterwidget.cpp" line="906"/>
@@ -24320,27 +24320,27 @@ Supersampling är tänkt för 1&#xa0;px-stolpar med 0&#xa0;px-mellanrum; andra s
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="97"/>
         <source>Playing track</source>
-        <translation type="unfinished">Spelande spår</translation>
+        <translation>Spelande spår</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="98"/>
         <source>Selected track</source>
-        <translation type="unfinished">Valt spår</translation>
+        <translation>Valt spår</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="99"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (eller valt när stoppad)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="101"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (blank vid uppstart)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="103"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelande (blank när stoppad)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="106"/>
@@ -24350,7 +24350,7 @@ Supersampling är tänkt för 1&#xa0;px-stolpar med 0&#xa0;px-mellanrum; andra s
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="110"/>
         <source>Preferred track</source>
-        <translation type="unfinished">Föredraget spår</translation>
+        <translation>Föredraget spår</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarconfigwidget.cpp" line="160"/>
@@ -24488,7 +24488,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="103"/>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="115"/>
         <source>Waveform Seekbar</source>
-        <translation>Vågform-letningsruta</translation>
+        <translation>Vågforms-letruta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="104"/>
@@ -24499,12 +24499,12 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="108"/>
         <source>&amp;Waveform Seekbar</source>
-        <translation>V&amp;ågforms-letningsruta</translation>
+        <translation>V&amp;ågforms-letruta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="109"/>
         <source>Open a waveform seekbar in a separate window</source>
-        <translation>Öppna en vågform-letningsruta i ett separat fönster</translation>
+        <translation>Öppna en vågforms-letruta i ett separat fönster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="111"/>
@@ -24677,7 +24677,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
         <source>Drag to add %1.
 Hold Ctrl to replace a widget.</source>
         <translation>Dra för att lägga till %1.
-Håll i &lt;b&gt;Ctrl&gt; för att ersätta en widget.</translation>
+Håll i Ctrl för att ersätta en widget.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="131"/>
@@ -24784,7 +24784,7 @@ Håll i &lt;b&gt;Ctrl&gt; för att ersätta en widget.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="326"/>
         <source>Seekbar</source>
-        <translation>Letningsruta</translation>
+        <translation>Letruta</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="331"/>
@@ -24817,7 +24817,7 @@ Håll i &lt;b&gt;Ctrl&gt; för att ersätta en widget.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="279"/>
         <source>Main Menu Button</source>
-        <translation type="unfinished">Huvudmenyknapp</translation>
+        <translation>Huvudmenyknapp</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="304"/>
@@ -24916,7 +24916,7 @@ Håll i &lt;b&gt;Ctrl&gt; för att ersätta en widget.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="565"/>
         <source>Settings Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Inställningsdialog</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="566"/>
@@ -24926,22 +24926,22 @@ Håll i &lt;b&gt;Ctrl&gt; för att ersätta en widget.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="567"/>
         <source>Visibility and position of the search bar in the settings dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Synlighet och position på sökfältet i inställningsdialogen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="570"/>
         <source>Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Dold</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="571"/>
         <source>Top</source>
-        <translation type="unfinished">Topp</translation>
+        <translation>Topp</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="573"/>
         <source>Bottom</source>
-        <translation type="unfinished">Botten</translation>
+        <translation>Botten</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="600"/>
@@ -24971,7 +24971,7 @@ Håll i &lt;b&gt;Ctrl&gt; för att ersätta en widget.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="619"/>
         <source>Focus seekbars when clicked</source>
-        <translation>Fokusera på letningsrutor när klickad</translation>
+        <translation>Fokusera på letrutor när klickad</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="633"/>
@@ -24981,12 +24981,12 @@ Håll i &lt;b&gt;Ctrl&gt; för att ersätta en widget.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="640"/>
         <source>Inline editing delay</source>
-        <translation type="unfinished"></translation>
+        <translation>Inline-redigeringsfördröjning</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="641"/>
         <source>Delay before starting inline editing after clicking a selected editable cell</source>
-        <translation type="unfinished"></translation>
+        <translation>Fördröjning innan påbörjande av inline-redigering efter att ha klickat på en vald redigerbar cell</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="650"/>
@@ -25094,7 +25094,7 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
     <message>
         <location filename="../../src/gui/widgets.cpp" line="730"/>
         <source>Automatic resampling preference</source>
-        <translation>Automatisk omsamplings-preferens</translation>
+        <translation>Automatisk omsamplingspreferens</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="731"/>
@@ -25219,7 +25219,7 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
     <message>
         <location filename="../../src/gui/widgets.cpp" line="620"/>
         <source>Give seekbars keyboard focus after clicking them</source>
-        <translation>Ge letningsrutor tangentbordsfokus efter att ha klickat på dem</translation>
+        <translation>Ge letrutor tangentbordsfokus efter att ha klickat på dem</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="625"/>
@@ -25234,7 +25234,7 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
     <message>
         <location filename="../../src/gui/widgets.cpp" line="627"/>
         <source>Require a row to be selected before it can be dragged from item views</source>
-        <translation>Kräv att en rad blir vald innan den kan dras från föremålsvyer</translation>
+        <translation>Kräv att en rad är vald innan den kan dras från föremålsvyer</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="663"/>
@@ -25308,7 +25308,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="890"/>
         <source>Script Editor</source>
-        <translation type="unfinished">Skriptredigerare</translation>
+        <translation>Skriptredigerare</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="892"/>
@@ -25381,7 +25381,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="264"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="267"/>
@@ -25562,12 +25562,12 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="254"/>
         <source>Seek forward (e.g. 5000, 10s, or 1:30)</source>
-        <translation type="unfinished"></translation>
+        <translation>Leta framåt (e.g. 5000, 10s, or 1:30)</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="255"/>
         <source>Seek backward (e.g. 5000, 10s, or 1:30)</source>
-        <translation type="unfinished"></translation>
+        <translation>Leta bakåt (e.g. 5000, 10s, or 1:30)</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="255"/>
@@ -25947,7 +25947,7 @@ Mellanliggande betyg avrundas till en, två, tre, fyra eller fem stjärnor.</tra
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="170"/>
         <source>View mode</source>
-        <translation type="unfinished">Visningsläge</translation>
+        <translation>Visningsläge</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="174"/>

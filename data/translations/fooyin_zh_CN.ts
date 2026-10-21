@@ -693,7 +693,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="209"/>
         <source>Name of the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
@@ -748,37 +748,37 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="235"/>
         <source>Sample rate entering the active output</source>
-        <translation type="unfinished"></translation>
+        <translation>进入活动输出的采样率</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="237"/>
         <source>Number of channels entering the active output</source>
-        <translation type="unfinished"></translation>
+        <translation>进入有效输出的通道数量</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="239"/>
         <source>Channel layout entering the active output</source>
-        <translation type="unfinished"></translation>
+        <translation>进入有效输出的声道布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="241"/>
         <source>Bit depth used by the active output</source>
-        <translation type="unfinished"></translation>
+        <translation>当前输出所使用的位深</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="243"/>
         <source>Active output device</source>
-        <translation type="unfinished"></translation>
+        <translation>活动输出设备</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="245"/>
         <source>Enabled DSPs in processing order</source>
-        <translation type="unfinished"></translation>
+        <translation>按处理顺序启用的 DSP</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="247"/>
         <source>Explicitly selected DSP chain preset</source>
-        <translation type="unfinished"></translation>
+        <translation>明确选定的 DSP 链预设</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="249"/>
@@ -788,32 +788,32 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="251"/>
         <source>Active ReplayGain source mode</source>
-        <translation type="unfinished"></translation>
+        <translation>启用回放增益源模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="253"/>
         <source>Active ReplayGain processing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>启用回放增益处理模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="255"/>
         <source>Effective ReplayGain adjustment in dB</source>
-        <translation type="unfinished"></translation>
+        <translation>有效回放增益调整（单位：dB）</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="257"/>
         <source>Effective ReplayGain peak</source>
-        <translation type="unfinished"></translation>
+        <translation>有效的回放增益峰值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="259"/>
         <source>Effective ReplayGain peak in dBFS</source>
-        <translation type="unfinished"></translation>
+        <translation>以 dBFS 为单位的有效回放增益峰值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="261"/>
         <source>Active output buffer length in milliseconds</source>
-        <translation type="unfinished"></translation>
+        <translation>以毫秒为单位的活动输出缓冲区长度</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="263"/>
@@ -833,17 +833,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="270"/>
         <source>Returns 1 for the current queue viewer entry, including while paused</source>
-        <translation type="unfinished"></translation>
+        <translation>返回 1 表示当前队列查看器条目，包括暂停期间的条目</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
         <source>Returns 1 for a queue viewer entry ahead of the queue cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>返回 1 表示队列光标之前的队列查看器条目</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
         <source>Returns 1 for a queue viewer entry in queue history</source>
-        <translation type="unfinished"></translation>
+        <translation>返回 1 表示队列历史记录中的队列查看器条目</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="275"/>
@@ -874,28 +874,28 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="281"/>
         <source>Layout</source>
-        <translation type="unfinished">布局</translation>
+        <translation>布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="282"/>
         <source>Draws a separator in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>在支持的视图中绘制分隔符</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="283"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="285"/>
         <source>Alignment</source>
-        <translation type="unfinished">对齐</translation>
+        <translation>对齐</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="284"/>
         <source>Aligns enclosed text to the left in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>在支持的视图中将所包含的文本左对齐</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="286"/>
         <source>Aligns enclosed text to the right in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>在支持的视图中将所包含的文本向右对齐</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="287"/>
@@ -922,12 +922,12 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="292"/>
         <source>Underlines the enclosed text</source>
-        <translation type="unfinished"></translation>
+        <translation>为所包含的文本添加下划线</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="294"/>
         <source>Strikes through the enclosed text</source>
-        <translation type="unfinished"></translation>
+        <translation>在括起来的文本上加删除线</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="296"/>
@@ -937,7 +937,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="298"/>
         <source>Sets the font weight from 1 to 1000</source>
-        <translation type="unfinished"></translation>
+        <translation>将字重设置为 1 到 1000 之间的值</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="300"/>
@@ -1156,7 +1156,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="379"/>
         <source>Splits text into multiple values, or returns one split segment when given a 1-based index</source>
-        <translation type="unfinished"></translation>
+        <translation>将文本拆分为多个值，或者在给定从 1 开始的索引时返回一个拆分后的片段</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="383"/>
@@ -1602,7 +1602,7 @@
     <message>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="169"/>
         <source>Advanced</source>
-        <translation type="unfinished">高级</translation>
+        <translation>高级</translation>
     </message>
 </context>
 <context>
@@ -4190,12 +4190,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="87"/>
         <source>Playing (no track at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>正在播放（启动时无曲目）</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="89"/>
         <source>Playing (no track when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>正在播放（停止时无曲目）</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidgetconfigwidget.cpp" line="93"/>
@@ -4259,7 +4259,7 @@ Paranoid: performs the most thorough available checking and additional retries (
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="1227"/>
         <source>Add %1</source>
         <extracomment>%1 is the name of a widget e.g. Add Playlist</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>添加 %1</translation>
     </message>
 </context>
 <context>
@@ -4293,7 +4293,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/settings/playback/decodermodel.cpp" line="151"/>
         <source>Supported URI schemes</source>
-        <translation type="unfinished"></translation>
+        <translation>支持的 URI 方案</translation>
     </message>
 </context>
 <context>
@@ -5183,7 +5183,13 @@ Effects here process the final combined output.</source>
 • Select a widget to see its parent containers in the breadcrumb bar. Select a parent to move an entire section.
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>• 在右侧面板中查找组件（如果面板处于隐藏状态，可将鼠标悬停在右侧边缘附近将其调出）。
+
+• 从面板中拖入组件以进行添加，或拖动现有组件以改变其位置。按住 Ctrl 键可替换目标组件。
+
+• 选中某个组件后，可在面包屑导航栏中查看其父级容器。选中父级容器即可移动整个区域。
+
+• 右键点击任意组件，通过上下文菜单即可对其进行拆分、替换或移除。</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="558"/>
@@ -5203,17 +5209,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="340"/>
         <source>Layout Editing</source>
-        <translation type="unfinished">布局编辑</translation>
+        <translation>布局编辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="341"/>
         <source>Add and arrange widgets to customise your layout.</source>
-        <translation type="unfinished"></translation>
+        <translation>添加并排列小组件以自定义您的布局。</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="351"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished"></translation>
+        <translation>不再显示</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="447"/>
@@ -5283,32 +5289,32 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="596"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>左侧</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="596"/>
         <source>Top</source>
-        <translation type="unfinished">顶部</translation>
+        <translation>顶部</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="596"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>右侧</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="597"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="607"/>
         <source>Restore defaults</source>
-        <translation type="unfinished">恢复默认</translation>
+        <translation>恢复默认</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="643"/>
         <source>Margins</source>
-        <translation type="unfinished">边距</translation>
+        <translation>边距</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="674"/>
@@ -5453,7 +5459,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="68"/>
         <source>Backend</source>
-        <translation type="unfinished"></translation>
+        <translation>后端</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/encoderprofiledialog.cpp" line="71"/>
@@ -5821,17 +5827,17 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="70"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text and &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; to draw a separator.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; 实现文本右对齐，使用 &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; 绘制分隔线。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="75"/>
         <source>Leave empty to group by the display script</source>
-        <translation type="unfinished"></translation>
+        <translation>留空则按显示脚本进行分组</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="86"/>
         <source>Display script</source>
-        <translation type="unfinished"></translation>
+        <translation>显示脚本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="84"/>
@@ -5930,12 +5936,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/ffmpegsettings.cpp" line="39"/>
         <source>Enable all supported formats</source>
-        <translation type="unfinished"></translation>
+        <translation>启用所有支持的格式</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/ffmpegsettings.cpp" line="41"/>
         <source>FFmpeg Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg 设置</translation>
     </message>
 </context>
 <context>
@@ -6006,12 +6012,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="113"/>
         <source>Don’t crossfade within the same album</source>
-        <translation type="unfinished"></translation>
+        <translation>不要在同一张专辑内进行交叉淡入淡出</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="114"/>
         <source>Album matching pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>专辑匹配模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="150"/>
@@ -6056,7 +6062,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="267"/>
         <source>Tracks with the same non-empty result are treated as part of the same album</source>
-        <translation type="unfinished"></translation>
+        <translation>若曲目对应的非空结果相同，则这些曲目被视为同一专辑的一部分</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/fadingpage.cpp" line="195"/>
@@ -6885,7 +6891,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="51"/>
         <source>Restore state on startup</source>
-        <translation type="unfinished">启动时恢复之前状态</translation>
+        <translation>启动时恢复之前状态</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="60"/>
@@ -7026,7 +7032,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="233"/>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="366"/>
         <source>Viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>查看器</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="428"/>
@@ -7073,7 +7079,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="769"/>
         <source>Manage filter groups…</source>
-        <translation type="unfinished"></translation>
+        <translation>管理筛选器组…</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="744"/>
@@ -7280,7 +7286,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="51"/>
         <source>Filter</source>
-        <translation type="unfinished">筛选器</translation>
+        <translation>筛选器</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="53"/>
@@ -7295,7 +7301,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="122"/>
         <source>Show label</source>
-        <translation type="unfinished">显示标签</translation>
+        <translation>显示标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="127"/>
@@ -7315,7 +7321,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="139"/>
         <source>Remember last filter</source>
-        <translation type="unfinished"></translation>
+        <translation>记住上一次的筛选条件</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfilterswitcher.cpp" line="146"/>
@@ -7363,7 +7369,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="531"/>
         <source>Remember last filter</source>
-        <translation type="unfinished"></translation>
+        <translation>记住上一次的筛选条件</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/libraryfiltertabs.cpp" line="538"/>
@@ -7377,37 +7383,37 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="47"/>
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="157"/>
         <source>Track Viewer Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>音轨查看器设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="48"/>
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="87"/>
         <source>Tracks</source>
-        <translation type="unfinished">音轨</translation>
+        <translation>音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="66"/>
         <source>Manage filter groups…</source>
-        <translation type="unfinished"></translation>
+        <translation>管理筛选器组…</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="102"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 音轨</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="103"/>
         <source>%1 of %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1 的 %Ln 音轨</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="109"/>
         <source>Track Viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>音轨查看器</translation>
     </message>
 </context>
 <context>
@@ -7440,7 +7446,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
         <source>Wait for tracks to load before showing the window</source>
-        <translation type="unfinished"></translation>
+        <translation>请等待曲目加载完毕后再显示窗口</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="93"/>
@@ -7470,7 +7476,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="108"/>
         <source>System Tray</source>
-        <translation type="unfinished"></translation>
+        <translation>系统托盘</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="115"/>
@@ -7490,12 +7496,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="120"/>
         <source>Open Cache Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>打开缓存文件夹</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="128"/>
         <source>Open State Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>打开状态文件夹</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="137"/>
@@ -7764,7 +7770,7 @@ Effects here process the final combined output.</source>
         <location filename="../../src/gui/guiapplication.cpp" line="1050"/>
         <location filename="../../src/gui/guiapplication.cpp" line="1054"/>
         <source>Show Main Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>显示主菜单</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1065"/>
@@ -7960,7 +7966,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1348"/>
         <source>View the artwork for the selected track at full size</source>
-        <translation type="unfinished"></translation>
+        <translation>以完整尺寸查看所选曲目的艺术作品</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1351"/>
@@ -8489,7 +8495,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="136"/>
         <source>Place menu bar in a toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>将菜单栏置于工具栏中</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="140"/>
@@ -9553,55 +9559,55 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="160"/>
         <source>Close</source>
-        <translation type="unfinished">关闭</translation>
+        <translation>关闭</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="517"/>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1150"/>
         <source>Move tabs and content</source>
-        <translation type="unfinished"></translation>
+        <translation>移动标签页和内容</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="518"/>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1150"/>
         <source>Move tab stack</source>
-        <translation type="unfinished"></translation>
+        <translation>移动标签页组</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="518"/>
         <source>Drag to move this panel</source>
-        <translation type="unfinished"></translation>
+        <translation>拖动以移动此面板</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="531"/>
         <source>Drop a widget here</source>
-        <translation type="unfinished"></translation>
+        <translation>在此放置组件</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="601"/>
         <source>Moving %1</source>
         <extracomment>%1 is the name of a widget e.g. Moving Playlist</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>正在移动 %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1027"/>
         <source>Horizontal split</source>
-        <translation type="unfinished"></translation>
+        <translation>水平拆分</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1027"/>
         <source>Vertical split</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直拆分</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1031"/>
         <source>Select %1</source>
-        <translation type="unfinished"></translation>
+        <translation>选择 %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragcontroller.cpp" line="1054"/>
         <source>Move %1</source>
-        <translation type="unfinished"></translation>
+        <translation>移动 %1</translation>
     </message>
 </context>
 <context>
@@ -9611,17 +9617,17 @@ If the default half-star does not render correctly with your system font, choose
         <location filename="../../src/gui/layout/layoutdragsurface.cpp" line="126"/>
         <source>Replace %1 with %2</source>
         <extracomment>%1 and %2 are widget names. e.g. Replace Playlist with Lyrics</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>将 %1 替换为 %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragsurface.cpp" line="160"/>
         <source>Drop into the layout</source>
-        <translation type="unfinished"></translation>
+        <translation>拖放到布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoutdragsurface.cpp" line="167"/>
         <source>This widget is no longer available</source>
-        <translation type="unfinished"></translation>
+        <translation>此小部件已不可用</translation>
     </message>
 </context>
 <context>
@@ -9629,84 +9635,84 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="94"/>
         <source>Drop beside a panel or on a tab bar</source>
-        <translation type="unfinished"></translation>
+        <translation>放置在面板旁边或标签栏上</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="120"/>
         <source>Cannot move this panel here</source>
-        <translation type="unfinished"></translation>
+        <translation>无法将此面板移至此处</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="135"/>
         <source>Choose a widget to replace</source>
-        <translation type="unfinished"></translation>
+        <translation>选择要替换的小组件</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="144"/>
         <source>Cannot replace this widget</source>
-        <translation type="unfinished"></translation>
+        <translation>无法替换此组件</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="152"/>
         <source>Replace %1</source>
-        <translation type="unfinished"></translation>
+        <translation>替换 %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="194"/>
         <source>Insert tab</source>
-        <translation type="unfinished"></translation>
+        <translation>插入选项卡</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="219"/>
         <source>Fill empty area</source>
-        <translation type="unfinished"></translation>
+        <translation>填充空白区域</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="237"/>
         <location filename="../../src/gui/layout/layoututils.cpp" line="299"/>
         <location filename="../../src/gui/layout/layoututils.cpp" line="307"/>
         <source>Move into empty area</source>
-        <translation type="unfinished"></translation>
+        <translation>移入空旷区域</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="267"/>
         <source>Split %1: place below</source>
-        <translation type="unfinished"></translation>
+        <translation>拆分 %1：置于下方</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="267"/>
         <source>Split %1: place above</source>
-        <translation type="unfinished"></translation>
+        <translation>拆分 %1：置于上方</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="268"/>
         <source>Split %1: place right</source>
-        <translation type="unfinished"></translation>
+        <translation>拆分 %1：置于右侧</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="268"/>
         <source>Split %1: place left</source>
-        <translation type="unfinished"></translation>
+        <translation>拆分 %1：置于左侧</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="292"/>
         <source>Place below %1</source>
-        <translation type="unfinished"></translation>
+        <translation>置于 %1 下方</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="292"/>
         <source>Place above %1</source>
-        <translation type="unfinished"></translation>
+        <translation>置于 %1 上方</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="293"/>
         <source>Place after %1</source>
-        <translation type="unfinished"></translation>
+        <translation>置于 %1 之后</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="293"/>
         <source>Place before %1</source>
-        <translation type="unfinished"></translation>
+        <translation>置于 %1 之前</translation>
     </message>
 </context>
 <context>
@@ -10609,7 +10615,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="53"/>
         <source>Show controls</source>
-        <translation type="unfinished">显示控件</translation>
+        <translation>显示控件</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="67"/>
@@ -10635,12 +10641,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="122"/>
         <source>Top</source>
-        <translation type="unfinished">顶部</translation>
+        <translation>顶部</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="123"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="132"/>
@@ -10650,7 +10656,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="137"/>
         <source>Controls position</source>
-        <translation type="unfinished"></translation>
+        <translation>控件位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="129"/>
@@ -10849,42 +10855,42 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="505"/>
         <source>Focus search</source>
-        <translation type="unfinished"></translation>
+        <translation>聚焦搜索</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="506"/>
         <source>Focus the integrated search bar</source>
-        <translation type="unfinished"></translation>
+        <translation>聚焦集成搜索栏</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="921"/>
         <source>Display</source>
-        <translation type="unfinished">显示</translation>
+        <translation>显示</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="934"/>
         <source>Show controls</source>
-        <translation type="unfinished">显示控件</translation>
+        <translation>显示控件</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="936"/>
         <source>Show summary node</source>
-        <translation type="unfinished">显示摘要节点</translation>
+        <translation>显示摘要节点</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="937"/>
         <source>Show header</source>
-        <translation type="unfinished">显示标题</translation>
+        <translation>显示标题</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="938"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">显示滚动条</translation>
+        <translation>显示滚动条</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="939"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">交替行颜色</translation>
+        <translation>交替行颜色</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="1009"/>
@@ -11867,7 +11873,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/controls/mainmenubutton.cpp" line="52"/>
         <source>Main Menu Button</source>
-        <translation type="unfinished"></translation>
+        <translation>主菜单按钮</translation>
     </message>
 </context>
 <context>
@@ -12077,7 +12083,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="387"/>
         <source>Open release page</source>
-        <translation type="unfinished"></translation>
+        <translation>打开发布页面</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="396"/>
@@ -14212,439 +14218,439 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="58"/>
         <source>Show header</source>
-        <translation type="unfinished">显示标题</translation>
+        <translation>显示标题</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="61"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">显示滚动条</translation>
+        <translation>显示滚动条</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="62"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">交替行颜色</translation>
+        <translation>交替行颜色</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="71"/>
         <source>Artwork type</source>
-        <translation type="unfinished">艺术作品类型</translation>
+        <translation>艺术作品类型</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="73"/>
         <source>Preferred track</source>
-        <translation type="unfinished">首选曲目</translation>
+        <translation>首选曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="75"/>
         <source>File</source>
-        <translation type="unfinished">文件</translation>
+        <translation>文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="80"/>
         <source>Blur</source>
-        <translation type="unfinished">模糊</translation>
+        <translation>模糊</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="81"/>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="126"/>
         <source>Opacity</source>
-        <translation type="unfinished">不透明度</translation>
+        <translation>不透明度</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="82"/>
         <source>Fade length</source>
-        <translation type="unfinished">渐近渐出长度</translation>
+        <translation>淡入淡出长度</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="85"/>
         <source>Start playback immediately</source>
-        <translation type="unfinished">立即开始播放</translation>
+        <translation>立即开始播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="94"/>
         <source>Square</source>
-        <translation type="unfinished">正方形</translation>
+        <translation>正方形</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="105"/>
         <source>Appearance</source>
-        <translation type="unfinished">外观</translation>
+        <translation>外观</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="115"/>
         <source>Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>艺术品</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="187"/>
         <source>Top</source>
-        <translation type="unfinished">顶部</translation>
+        <translation>顶部</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="120"/>
         <source>Corner radius</source>
-        <translation type="unfinished">圆角半径</translation>
+        <translation>圆角半径</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="59"/>
         <source>Keep group headers in view</source>
-        <translation type="unfinished"></translation>
+        <translation>保持组标题可见</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="60"/>
         <source>Keep artwork in view</source>
-        <translation type="unfinished"></translation>
+        <translation>保持艺术品可见</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="66"/>
         <source>Show reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>显示反射</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="97"/>
         <source>Reflection height as a percentage of the artwork height</source>
-        <translation type="unfinished"></translation>
+        <translation>倒影高度占艺术品高度的百分比</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="100"/>
         <source>Opacity at the top of the reflection, fading to transparent</source>
-        <translation type="unfinished"></translation>
+        <translation>反射顶部具有不透明度，并渐变为透明</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="103"/>
         <source>Space between the artwork and its reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>艺术品与其倒影之间的空间</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="112"/>
         <source>Scrolling</source>
-        <translation type="unfinished">正在滚动</translation>
+        <translation>正在滚动</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="116"/>
         <source>Horizontal padding</source>
-        <translation type="unfinished"></translation>
+        <translation>水平边距</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="118"/>
         <source>Top padding</source>
-        <translation type="unfinished"></translation>
+        <translation>顶部边距</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="122"/>
         <source>Artwork reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>艺术品反射</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="124"/>
         <source>Height</source>
-        <translation type="unfinished">高度</translation>
+        <translation>高度</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="128"/>
         <source>Gap below artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>艺术品下方的间隙</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="133"/>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="134"/>
         <source>Play now</source>
-        <translation type="unfinished">立即播放</translation>
+        <translation>立即播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="140"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">点击行为</translation>
+        <translation>点击行为</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="144"/>
         <source>Double-click</source>
-        <translation type="unfinished">双击</translation>
+        <translation>双击</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="146"/>
         <source>Middle-click</source>
-        <translation type="unfinished"></translation>
+        <translation>中键点击</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="153"/>
         <source>Choose a custom background image file</source>
-        <translation type="unfinished">选择自定义背景图像文件</translation>
+        <translation>选择自定义背景图像文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="156"/>
         <source>No background image</source>
-        <translation type="unfinished">无背景图像</translation>
+        <translation>无背景图像</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="157"/>
         <source>Current track artwork</source>
-        <translation type="unfinished">当前曲目封面</translation>
+        <translation>当前曲目封面</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="158"/>
         <source>Use the currently playing track’s artwork as the playlist background</source>
-        <translation type="unfinished">将当前播放曲目的封面用作播放列表背景</translation>
+        <translation>将当前播放曲目的封面用作播放列表背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="159"/>
         <source>Custom image</source>
-        <translation type="unfinished">自定义图像</translation>
+        <translation>自定义图像</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="160"/>
         <source>Use the selected image file as the playlist background</source>
-        <translation type="unfinished">使用所选的图像文件作为播放列表背景</translation>
+        <translation>使用所选的图像文件作为播放列表背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="161"/>
         <source>Front</source>
-        <translation type="unfinished">正面</translation>
+        <translation>正面</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="162"/>
         <source>Use the front cover for current track artwork</source>
-        <translation type="unfinished">使用封面查看当前曲目的封面图</translation>
+        <translation>使用封面查看当前曲目的封面图</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="163"/>
         <source>Back</source>
-        <translation type="unfinished">返回</translation>
+        <translation>返回</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="164"/>
         <source>Use the back cover for current track artwork</source>
-        <translation type="unfinished">请使用封底查看当前曲目的封面图</translation>
+        <translation>请使用封底查看当前曲目的封面图</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="165"/>
         <source>Artist</source>
-        <translation type="unfinished">艺术家</translation>
+        <translation>艺术家</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="166"/>
         <source>Use the artist picture for current track artwork</source>
-        <translation type="unfinished">使用艺术家图片作为当前曲目的封面图</translation>
+        <translation>使用艺术家图片作为当前曲目的封面图</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="167"/>
         <source>Playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>正在播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="169"/>
         <source>Selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>所选曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="171"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished">正在播放（或在停止状态下被选中）</translation>
+        <translation>正在播放（或在停止状态下被选中）</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="173"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished">正在播放（启动时为空白）</translation>
+        <translation>正在播放（启动时为空白）</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="175"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished">正在播放（停止时为空白）</translation>
+        <translation>正在播放（停止时为空白）</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="177"/>
         <source>Scaled and cropped</source>
-        <translation type="unfinished">缩放和裁剪</translation>
+        <translation>缩放和裁剪</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="178"/>
         <source>Fill the playlist area while preserving proportions; edges may be cropped</source>
-        <translation type="unfinished">在保持比例的前提下填充播放列表区域；边缘可能会被裁剪</translation>
+        <translation>在保持比例的前提下填充播放列表区域；边缘可能会被裁剪</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="179"/>
         <source>Scaled</source>
-        <translation type="unfinished">缩放</translation>
+        <translation>缩放</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="180"/>
         <source>Stretch the image to fill the playlist area; proportions may change</source>
-        <translation type="unfinished">拉伸图像以填充播放列表区域；比例可能会改变</translation>
+        <translation>拉伸图像以填充播放列表区域；比例可能会改变</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="181"/>
         <source>Scaled, keep proportions</source>
-        <translation type="unfinished">按比例缩放，保持比例</translation>
+        <translation>按比例缩放，保持比例</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="183"/>
         <source>Fit the whole image inside the playlist area without cropping</source>
-        <translation type="unfinished">将整张图片完整地放入播放列表区域内，无需裁剪</translation>
+        <translation>将整张图片完整地放入播放列表区域内，无需裁剪</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="184"/>
         <source>Original size</source>
-        <translation type="unfinished">原始尺寸</translation>
+        <translation>原始尺寸</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="185"/>
         <source>Draw the image at its original size, optionally limited by maximum size</source>
-        <translation type="unfinished">以原始尺寸绘制图像，可选择性地限制最大尺寸</translation>
+        <translation>以原始尺寸绘制图像，可选择性地限制最大尺寸</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="186"/>
         <source>Top left</source>
-        <translation type="unfinished">左上角</translation>
+        <translation>左上角</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="188"/>
         <source>Top right</source>
-        <translation type="unfinished">右上角</translation>
+        <translation>右上角</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="189"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>左侧</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="190"/>
         <source>Middle</source>
-        <translation type="unfinished">中间</translation>
+        <translation>中间</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="191"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>右侧</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="192"/>
         <source>Bottom left</source>
-        <translation type="unfinished">左下角</translation>
+        <translation>左下角</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="193"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="194"/>
         <source>Bottom right</source>
-        <translation type="unfinished">右下角</translation>
+        <translation>右下角</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="198"/>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="206"/>
         <source>Disabled</source>
-        <translation type="unfinished">已禁用</translation>
+        <translation>已禁用</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="208"/>
         <source>Path to the custom background image</source>
-        <translation type="unfinished">自定义背景图像的路径</translation>
+        <translation>自定义背景图像的路径</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="209"/>
         <source>Select which image source to use for the playlist background</source>
-        <translation type="unfinished">选择播放列表背景使用的图片来源</translation>
+        <translation>选择播放列表背景使用的图片来源</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="210"/>
         <source>Select which artwork type to use for current track artwork</source>
-        <translation type="unfinished">选择当前曲目封面图的类型</translation>
+        <translation>选择当前曲目封面图的类型</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="211"/>
         <source>Select which track supplies the background artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>选择由哪个曲目提供背景插图</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="212"/>
         <source>Controls how the background image is scaled to the playlist area</source>
-        <translation type="unfinished">控制背景图像如何缩放以适应播放列表区域</translation>
+        <translation>控制背景图像如何缩放以适应播放列表区域</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="213"/>
         <source>Alignment for original-size background images</source>
-        <translation type="unfinished">原始尺寸背景图像的对齐方式</translation>
+        <translation>原始尺寸背景图像的对齐方式</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="214"/>
         <source>Maximum width or height for original-size background images</source>
-        <translation type="unfinished">原始尺寸背景图像的最大宽度或高度</translation>
+        <translation>原始尺寸背景图像的最大宽度或高度</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="215"/>
         <source>Applies blur to the background image</source>
-        <translation type="unfinished">对背景图像施加模糊效果</translation>
+        <translation>对背景图像施加模糊效果</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="216"/>
         <source>Controls how strongly the background image is shown</source>
-        <translation type="unfinished">控制背景图像的显示强度</translation>
+        <translation>控制背景图像的显示强度</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="217"/>
         <source>Duration for fading between background images; set to 0 to disable</source>
-        <translation type="unfinished">背景图像淡入淡出的持续时间；设置为 0 可禁用</translation>
+        <translation>背景图像淡入淡出的持续时间；设置为 0 可禁用</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="219"/>
         <source>After adding tracks to the front of or replacing the playback queue, start playback immediately</source>
-        <translation type="unfinished">添加轨道到前面或替换播放队列后，立即开始播放</translation>
+        <translation>在播放队列前方添加曲目或替换播放队列后，立即开始播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="221"/>
         <source>Background Image</source>
-        <translation type="unfinished">背景图像</translation>
+        <translation>背景图像</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="225"/>
         <source>Image source</source>
-        <translation type="unfinished">图像来源</translation>
+        <translation>图像来源</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="226"/>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>来源</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="234"/>
         <source>Layout</source>
-        <translation type="unfinished">布局</translation>
+        <translation>布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="235"/>
         <source>Scale mode</source>
-        <translation type="unfinished">缩放模式</translation>
+        <translation>缩放模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="237"/>
         <source>Alignment</source>
-        <translation type="unfinished">对齐</translation>
+        <translation>对齐</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="239"/>
         <source>Maximum size</source>
-        <translation type="unfinished">最大尺寸</translation>
+        <translation>最大尺寸</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="241"/>
         <source>Effects</source>
-        <translation type="unfinished">效果</translation>
+        <translation>效果</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="357"/>
         <source>Choose Background Image</source>
-        <translation type="unfinished"></translation>
+        <translation>选择背景图像</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="358"/>
         <source>Images (*.png *.jpg *.jpeg *.webp *.bmp);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>图像 (*.png *.jpg *.jpeg *.webp *.bmp);;所有文件 (*)</translation>
     </message>
 </context>
 <context>
@@ -14818,27 +14824,27 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="84"/>
         <source>Background colour</source>
-        <translation type="unfinished">背景色</translation>
+        <translation>背景色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="85"/>
         <source>Font</source>
-        <translation type="unfinished">字体</translation>
+        <translation>字体</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="114"/>
         <source>Use a custom background colour for the currently playing row; transparency is supported</source>
-        <translation type="unfinished">为当前播放的行使用自定义背景色；支持透明度</translation>
+        <translation>为当前播放的行使用自定义背景色；支持透明度</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="115"/>
         <source>Use a custom font for the currently playing row</source>
-        <translation type="unfinished">为当前播放的行使用自定义字体</translation>
+        <translation>为当前播放的行使用自定义字体</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="117"/>
         <source>Playing row</source>
-        <translation type="unfinished">正在播放的行</translation>
+        <translation>正在播放的行</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
@@ -15209,12 +15215,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="61"/>
         <source>Display script</source>
-        <translation type="unfinished"></translation>
+        <translation>显示脚本</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="72"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; 来实现文本右对齐。</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiserconfigwidget.cpp" line="65"/>
@@ -15271,7 +15277,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="267"/>
         <source>Leave empty to group by the display script</source>
-        <translation type="unfinished"></translation>
+        <translation>留空则按显示脚本进行分组</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="403"/>
@@ -15320,27 +15326,27 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="275"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="344"/>
         <source>Display script</source>
-        <translation type="unfinished"></translation>
+        <translation>显示脚本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="278"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text and &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; to draw a separator.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; 实现文本右对齐，使用 &lt;code&gt;&amp;lt;hr/&amp;gt;&lt;/code&gt; 绘制分隔线。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="295"/>
         <source>Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>艺术品</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="298"/>
         <source>Left/Right</source>
-        <translation type="unfinished">左/右</translation>
+        <translation>左/右</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="300"/>
         <source>Top/Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>顶部/底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="318"/>
@@ -15351,7 +15357,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="338"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; 来实现文本右对齐。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="351"/>
@@ -15648,12 +15654,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="50"/>
         <source>Available variables: &lt;code&gt;%playlist_name%&lt;/code&gt;, &lt;code&gt;%trackcount%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>可用变量：&lt;code&gt;%playlist_name%&lt;/code&gt;、&lt;code&gt;%trackcount%&lt;/code&gt;、&lt;code&gt;%playlist_duration%&lt;/code&gt;、&lt;code&gt;%playlist_size%&lt;/code&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="57"/>
         <source>Tab title</source>
-        <translation type="unfinished"></translation>
+        <translation>标签页标题</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="60"/>
@@ -15751,7 +15757,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="967"/>
         <source>Playlist Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1281"/>
@@ -16036,12 +16042,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="251"/>
         <source>fooyin Plugins (*.fyplugin *.zip *.dll)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin 插件 (*.fyplugin *.zip *.dll)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="253"/>
         <source>fooyin Plugins (*.fyplugin *.zip *.so)</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin 插件 (*.fyplugin *.zip *.so)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="255"/>
@@ -16920,7 +16926,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="61"/>
         <source>Use &lt;code&gt;%is_queue_current%&lt;/code&gt;, &lt;code&gt;%is_queue_upcoming%&lt;/code&gt;, and &lt;code&gt;%is_queue_played%&lt;/code&gt; to format entries by queue state.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 &lt;code&gt;%is_queue_current%&lt;/code&gt;、&lt;code&gt;%is_queue_upcoming%&lt;/code&gt; 和 &lt;code&gt;%is_queue_played%&lt;/code&gt;，根据队列状态对条目进行格式化。</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="66"/>
@@ -16930,12 +16936,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="73"/>
         <source>Display script</source>
-        <translation type="unfinished"></translation>
+        <translation>显示脚本</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="58"/>
         <source>Use &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; 来实现文本右对齐。</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="79"/>
@@ -19050,22 +19056,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="294"/>
         <source>Automatic</source>
-        <translation type="unfinished">自动</translation>
+        <translation>自动</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="295"/>
         <source>Horizontal</source>
-        <translation type="unfinished">水平</translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="296"/>
         <source>Vertical</source>
-        <translation type="unfinished">垂直</translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/ratingcontrol.cpp" line="298"/>
         <source>Orientation</source>
-        <translation type="unfinished">方向</translation>
+        <translation>方向</translation>
     </message>
 </context>
 <context>
@@ -19707,32 +19713,32 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="119"/>
         <source>Playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>正在播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="120"/>
         <source>Selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>所选曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="121"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished">正在播放（或在停止状态下被选中）</translation>
+        <translation>正在播放（或在停止状态下被选中）</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="123"/>
         <source>Playing (no track at startup)</source>
-        <translation type="unfinished"></translation>
+        <translation>正在播放（启动时无曲目）</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="125"/>
         <source>Playing (no track when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>正在播放（停止时无曲目）</translation>
     </message>
     <message>
         <location filename="../../src/gui/scriptdisplay/scriptdisplayconfigdialog.cpp" line="132"/>
         <source>Preferred track</source>
-        <translation type="unfinished">首选曲目</translation>
+        <translation>首选曲目</translation>
     </message>
 </context>
 <context>
@@ -19802,7 +19808,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="539"/>
         <source>Function parameter hints</source>
-        <translation type="unfinished"></translation>
+        <translation>函数参数提示</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="540"/>
@@ -19847,7 +19853,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="629"/>
         <source>Formatting tags</source>
-        <translation type="unfinished"></translation>
+        <translation>格式化标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="640"/>
@@ -19857,7 +19863,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="663"/>
         <source>Colours</source>
-        <translation type="unfinished">颜色</translation>
+        <translation>颜色</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="664"/>
@@ -19892,33 +19898,33 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="716"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="718"/>
         <source>Album</source>
-        <translation type="unfinished">专辑</translation>
+        <translation>专辑</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="721"/>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="735"/>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="727"/>
         <source>Gain and clip prevention</source>
-        <translation type="unfinished"></translation>
+        <translation>增益与削波预防</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="730"/>
         <source>Gain</source>
-        <translation type="unfinished">增益</translation>
+        <translation>增益</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="733"/>
         <source>Clip prevention</source>
-        <translation type="unfinished"></translation>
+        <translation>削波预防</translation>
     </message>
 </context>
 <context>
@@ -20732,7 +20738,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="142"/>
         <source>Change widget margins</source>
-        <translation type="unfinished"></translation>
+        <translation>更改组件边距</translation>
     </message>
 </context>
 <context>
@@ -20740,12 +20746,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="291"/>
         <source>Filter…</source>
-        <translation type="unfinished"></translation>
+        <translation>筛选…</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="301"/>
         <source>No matching settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有匹配的设置。</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="310"/>
@@ -21266,47 +21272,47 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="43"/>
         <source>Top labels</source>
-        <translation type="unfinished">顶部标签</translation>
+        <translation>顶部标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="44"/>
         <source>Bottom labels</source>
-        <translation type="unfinished">底部标签</translation>
+        <translation>底部标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="45"/>
         <source>Left labels</source>
-        <translation type="unfinished">左侧标签</translation>
+        <translation>左侧标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="46"/>
         <source>Right labels</source>
-        <translation type="unfinished">右侧标签</translation>
+        <translation>右侧标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="47"/>
         <source>Show progress cursor</source>
-        <translation type="unfinished">显示播放进度光标</translation>
+        <translation>显示播放进度光标</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="56"/>
         <source>Playing</source>
-        <translation type="unfinished">播放中</translation>
+        <translation>播放中</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="57"/>
         <source>Seeking</source>
-        <translation type="unfinished">定位中</translation>
+        <translation>定位中</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="58"/>
         <source>Played</source>
-        <translation type="unfinished">已播放</translation>
+        <translation>已播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="59"/>
         <source>Unplayed</source>
-        <translation type="unfinished">未播放</translation>
+        <translation>未播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="61"/>
@@ -21347,37 +21353,37 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="75"/>
         <source>Full Track (Seekbar)</source>
-        <translation type="unfinished"></translation>
+        <translation>完整曲目（进度条）</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="77"/>
         <source>Track preference</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目偏好</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="79"/>
         <source>Playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>正在播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="80"/>
         <source>Selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>所选曲目</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="81"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished">正在播放（或在停止状态下被选中）</translation>
+        <translation>正在播放（或在停止状态下被选中）</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="83"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished">正在播放（启动时为空白）</translation>
+        <translation>正在播放（启动时为空白）</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="85"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished">正在播放（停止时为空白）</translation>
+        <translation>正在播放（停止时为空白）</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="88"/>
@@ -21412,29 +21418,30 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="108"/>
         <source>Axes</source>
-        <translation type="unfinished">轴线</translation>
+        <translation>轴线</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="121"/>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="189"/>
         <source>Cursors</source>
-        <translation type="unfinished"></translation>
+        <translation>光标</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="126"/>
         <source>Cursor width</source>
-        <translation type="unfinished">光标宽度</translation>
+        <translation>光标宽度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="134"/>
         <source>Number of time columns for Full Track analysis.
 Higher values increase detail and memory usage.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于完整曲目分析的时间列数量。
+数值越高，细节越丰富，内存占用也随之增加。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="136"/>
         <source>Time resolution</source>
-        <translation type="unfinished"></translation>
+        <translation>时间精度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="138"/>
@@ -21474,12 +21481,12 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="182"/>
         <source>Spectrogram</source>
-        <translation type="unfinished">频谱图</translation>
+        <translation>频谱图</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="196"/>
         <source>Playback overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>播放叠加层</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="214"/>
@@ -21522,7 +21529,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="163"/>
         <source>Spectrogram</source>
-        <translation type="unfinished">频谱图</translation>
+        <translation>频谱图</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="389"/>
@@ -21532,32 +21539,32 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="392"/>
         <source>Show cursor</source>
-        <translation type="unfinished">显示光标</translation>
+        <translation>显示光标</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="393"/>
         <source>Labels</source>
-        <translation type="unfinished">标签</translation>
+        <translation>标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="394"/>
         <source>Top</source>
-        <translation type="unfinished">顶部</translation>
+        <translation>顶部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="395"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="396"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>左侧</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="397"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>右侧</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="400"/>
@@ -21607,7 +21614,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="440"/>
         <source>Full Track (Seekbar)</source>
-        <translation type="unfinished"></translation>
+        <translation>完整曲目（进度条）</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="442"/>
@@ -22227,7 +22234,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="1071"/>
         <source>Split and move widget</source>
-        <translation type="unfinished"></translation>
+        <translation>拆分并移动组件</translation>
     </message>
 </context>
 <context>
@@ -22929,95 +22936,95 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="58"/>
         <source>Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>菜单</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="60"/>
         <source>&amp;Place menu bar in a toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>将菜单栏置于工具栏中(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="61"/>
         <source>&amp;Lock toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定工具栏(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="65"/>
         <location filename="../../src/gui/toolbarmanager.cpp" line="512"/>
         <source>Toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>工具栏</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="83"/>
         <location filename="../../src/gui/toolbarmanager.cpp" line="84"/>
         <source>Layout</source>
-        <translation type="unfinished">布局</translation>
+        <translation>布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="88"/>
         <source>Allow the menu bar to share rows and positions with other toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>允许菜单栏与其他工具栏共用行和位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="96"/>
         <source>Prevent toolbars from being moved</source>
-        <translation type="unfinished"></translation>
+        <translation>防止工具栏被移动</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="193"/>
         <location filename="../../src/gui/toolbarmanager.cpp" line="510"/>
         <source>Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>工具栏</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="432"/>
         <source>Missing Widget: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>缺失的小部件：%1</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="522"/>
         <source>Remove toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>移除工具栏</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="583"/>
         <source>Add widget</source>
-        <translation type="unfinished"></translation>
+        <translation>添加小组件</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="586"/>
         <source>Add separator</source>
-        <translation type="unfinished">添加分隔符</translation>
+        <translation>添加分隔符</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="595"/>
         <source>Insert widget before</source>
-        <translation type="unfinished"></translation>
+        <translation>在插入小部件之前</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="598"/>
         <source>Insert widget after</source>
-        <translation type="unfinished"></translation>
+        <translation>在插入小部件后</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="601"/>
         <source>Insert separator before</source>
-        <translation type="unfinished">在前面插入分隔符</translation>
+        <translation>在前面插入分隔符</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="605"/>
         <source>Insert separator after</source>
-        <translation type="unfinished">插入分隔符后</translation>
+        <translation>插入分隔符后</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="609"/>
         <source>Remove separator</source>
-        <translation type="unfinished">移除分隔符</translation>
+        <translation>移除分隔符</translation>
     </message>
     <message>
         <location filename="../../src/gui/toolbarmanager.cpp" line="609"/>
         <source>Remove widget</source>
-        <translation type="unfinished"></translation>
+        <translation>移除小组件</translation>
     </message>
 </context>
 <context>
@@ -23336,7 +23343,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="645"/>
         <source>Move widget</source>
-        <translation type="unfinished"></translation>
+        <translation>移动小部件</translation>
     </message>
 </context>
 <context>
@@ -23743,12 +23750,12 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="83"/>
         <source>&amp;Library Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>媒体库树(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="84"/>
         <source>Open the library tree window</source>
-        <translation type="unfinished"></translation>
+        <translation>打开媒体库树窗口</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="90"/>
@@ -24590,28 +24597,29 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="66"/>
         <source>Search widgets…</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索小部件…</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="71"/>
         <source>Dock widget palette</source>
-        <translation type="unfinished"></translation>
+        <translation>停靠窗口面板</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="107"/>
         <source>Widgets</source>
-        <translation type="unfinished">小部件</translation>
+        <translation>小部件</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="130"/>
         <source>Drag to add %1.
 Hold Ctrl to replace a widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>拖动以添加 %1。
+按住 Ctrl 键可替换组件。</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="131"/>
         <source>Instance limit reached</source>
-        <translation type="unfinished"></translation>
+        <translation>已达到实例上限</translation>
     </message>
 </context>
 <context>
@@ -24746,7 +24754,7 @@ Hold Ctrl to replace a widget.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="279"/>
         <source>Main Menu Button</source>
-        <translation type="unfinished"></translation>
+        <translation>主菜单按钮</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="304"/>
@@ -24811,7 +24819,7 @@ Hold Ctrl to replace a widget.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="424"/>
         <source>Track Viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目查看器</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="432"/>
@@ -24845,32 +24853,32 @@ Hold Ctrl to replace a widget.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="565"/>
         <source>Settings Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>设置对话框</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="566"/>
         <source>Search bar</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索栏</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="567"/>
         <source>Visibility and position of the search bar in the settings dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>设置对话框中搜索栏的可见性与位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="570"/>
         <source>Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>隐藏</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="571"/>
         <source>Top</source>
-        <translation type="unfinished">顶部</translation>
+        <translation>顶部</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="573"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="600"/>
@@ -24910,12 +24918,12 @@ Hold Ctrl to replace a widget.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="640"/>
         <source>Inline editing delay</source>
-        <translation type="unfinished"></translation>
+        <translation>行内编辑延迟</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="641"/>
         <source>Delay before starting inline editing after clicking a selected editable cell</source>
-        <translation type="unfinished"></translation>
+        <translation>单击选定的可编辑单元格后，延迟一段时间再开始行内编辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="650"/>
@@ -25237,7 +25245,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="890"/>
         <source>Script Editor</source>
-        <translation type="unfinished">脚本编辑器</translation>
+        <translation>脚本编辑器</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="892"/>
@@ -25310,7 +25318,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="264"/>
         <source>Display</source>
-        <translation type="unfinished">显示</translation>
+        <translation>显示</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="267"/>

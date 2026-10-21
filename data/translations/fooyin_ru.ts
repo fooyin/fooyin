@@ -693,7 +693,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="209"/>
         <source>Name of the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
@@ -833,17 +833,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="270"/>
         <source>Returns 1 for the current queue viewer entry, including while paused</source>
-        <translation type="unfinished"></translation>
+        <translation>Возвращает 1 для текущей записи просмотра очереди, в том числе на паузе</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
         <source>Returns 1 for a queue viewer entry ahead of the queue cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Возвращает 1 для записи просмотра очереди перед курсором очереди</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
         <source>Returns 1 for a queue viewer entry in queue history</source>
-        <translation type="unfinished"></translation>
+        <translation>Возвращает 1 для записи просмотра очереди в истории очереди</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="275"/>
@@ -1602,7 +1602,7 @@
     <message>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="169"/>
         <source>Advanced</source>
-        <translation type="unfinished">Дополнительно</translation>
+        <translation>Дополнительно</translation>
     </message>
 </context>
 <context>
@@ -7510,7 +7510,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
         <source>Wait for tracks to load before showing the window</source>
-        <translation type="unfinished"></translation>
+        <translation>Ждать загрузки треков перед показом окна</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="93"/>
@@ -7540,7 +7540,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="108"/>
         <source>System Tray</source>
-        <translation type="unfinished"></translation>
+        <translation>Системный лоток</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="115"/>
@@ -12159,7 +12159,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="387"/>
         <source>Open release page</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть страницу релиза</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="396"/>
@@ -14388,62 +14388,62 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="59"/>
         <source>Keep group headers in view</source>
-        <translation type="unfinished"></translation>
+        <translation>Удерживать заголовки групп в поле зрения</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="60"/>
         <source>Keep artwork in view</source>
-        <translation type="unfinished"></translation>
+        <translation>Удерживать обложку в поле зрения</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="66"/>
         <source>Show reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать отражение</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="97"/>
         <source>Reflection height as a percentage of the artwork height</source>
-        <translation type="unfinished"></translation>
+        <translation>Высота отражения в процентах от высоты обложки</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="100"/>
         <source>Opacity at the top of the reflection, fading to transparent</source>
-        <translation type="unfinished"></translation>
+        <translation>Непрозрачность в верхней части отражения с переходом в прозрачность</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="103"/>
         <source>Space between the artwork and its reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>Промежуток между обложкой и её отражением</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="112"/>
         <source>Scrolling</source>
-        <translation type="unfinished">Прокрутка</translation>
+        <translation>Прокрутка</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="116"/>
         <source>Horizontal padding</source>
-        <translation type="unfinished"></translation>
+        <translation>Горизонтальные отступы</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="118"/>
         <source>Top padding</source>
-        <translation type="unfinished"></translation>
+        <translation>Верхний отступ</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="122"/>
         <source>Artwork reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>Отражение обложки</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="124"/>
         <source>Height</source>
-        <translation type="unfinished">Высота</translation>
+        <translation>Высота</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="128"/>
         <source>Gap below artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Промежуток под обложкой</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="133"/>
@@ -15752,12 +15752,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="50"/>
         <source>Available variables: &lt;code&gt;%playlist_name%&lt;/code&gt;, &lt;code&gt;%trackcount%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Доступные переменные: &lt;code&gt;%playlist_name%&lt;/code&gt;, &lt;code&gt;%trackcount%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="57"/>
         <source>Tab title</source>
-        <translation type="unfinished"></translation>
+        <translation>Заголовок вкладки</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="60"/>
@@ -17034,7 +17034,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="61"/>
         <source>Use &lt;code&gt;%is_queue_current%&lt;/code&gt;, &lt;code&gt;%is_queue_upcoming%&lt;/code&gt;, and &lt;code&gt;%is_queue_played%&lt;/code&gt; to format entries by queue state.</source>
-        <translation type="unfinished"></translation>
+        <translation>Используйте &lt;code&gt;%is_queue_current%&lt;/code&gt;, &lt;code&gt;%is_queue_upcoming%&lt;/code&gt; и &lt;code&gt;%is_queue_played%&lt;/code&gt; для форматирования записей по состоянию очереди.</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="66"/>
@@ -19981,7 +19981,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="663"/>
         <source>Colours</source>
-        <translation type="unfinished">Цвета</translation>
+        <translation>Цвета</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="664"/>
@@ -20866,12 +20866,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="291"/>
         <source>Filter…</source>
-        <translation type="unfinished"></translation>
+        <translation>Фильтр…</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="301"/>
         <source>No matching settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Подходящих настроек нет.</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="310"/>
@@ -21392,47 +21392,47 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="43"/>
         <source>Top labels</source>
-        <translation type="unfinished">Верхние подписи</translation>
+        <translation>Верхние подписи</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="44"/>
         <source>Bottom labels</source>
-        <translation type="unfinished">Нижние подписи</translation>
+        <translation>Нижние подписи</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="45"/>
         <source>Left labels</source>
-        <translation type="unfinished">Левые подписи</translation>
+        <translation>Левые подписи</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="46"/>
         <source>Right labels</source>
-        <translation type="unfinished">Правые подписи</translation>
+        <translation>Правые подписи</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="47"/>
         <source>Show progress cursor</source>
-        <translation type="unfinished">Показывать курсор прогресса</translation>
+        <translation>Показывать курсор прогресса</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="56"/>
         <source>Playing</source>
-        <translation type="unfinished">Играет</translation>
+        <translation>Играет</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="57"/>
         <source>Seeking</source>
-        <translation type="unfinished">Перемотка</translation>
+        <translation>Перемотка</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="58"/>
         <source>Played</source>
-        <translation type="unfinished">Проигранное</translation>
+        <translation>Проигранное</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="59"/>
         <source>Unplayed</source>
-        <translation type="unfinished">Непроигранное</translation>
+        <translation>Непроигранное</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="61"/>
@@ -21473,37 +21473,37 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="75"/>
         <source>Full Track (Seekbar)</source>
-        <translation type="unfinished"></translation>
+        <translation>Весь трек (полоса перемотки)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="77"/>
         <source>Track preference</source>
-        <translation type="unfinished"></translation>
+        <translation>Предпочтение трека</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="79"/>
         <source>Playing track</source>
-        <translation type="unfinished">Проигрываемый трек</translation>
+        <translation>Проигрываемый трек</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="80"/>
         <source>Selected track</source>
-        <translation type="unfinished">Выбранная дорожка</translation>
+        <translation>Выбранная дорожка</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="81"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished">Воспроизводимая (или выбранная при остановке)</translation>
+        <translation>Воспроизводимая (или выбранная при остановке)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="83"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished">Воспроизводимая (пусто при запуске)</translation>
+        <translation>Воспроизводимая (пусто при запуске)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="85"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished">Воспроизводимая (пусто при остановке)</translation>
+        <translation>Воспроизводимая (пусто при остановке)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="88"/>
@@ -21538,29 +21538,30 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="108"/>
         <source>Axes</source>
-        <translation type="unfinished">Оси</translation>
+        <translation>Оси</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="121"/>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="189"/>
         <source>Cursors</source>
-        <translation type="unfinished"></translation>
+        <translation>Курсоры</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="126"/>
         <source>Cursor width</source>
-        <translation type="unfinished">Ширина курсора</translation>
+        <translation>Ширина курсора</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="134"/>
         <source>Number of time columns for Full Track analysis.
 Higher values increase detail and memory usage.</source>
-        <translation type="unfinished"></translation>
+        <translation>Число временных столбцов для анализа всего трека.
+Большие значения повышают детализацию и потребление памяти.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="136"/>
         <source>Time resolution</source>
-        <translation type="unfinished"></translation>
+        <translation>Временное разрешение</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="138"/>
@@ -21600,12 +21601,12 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="182"/>
         <source>Spectrogram</source>
-        <translation type="unfinished">Спектрограмма</translation>
+        <translation>Спектрограмма</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="196"/>
         <source>Playback overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>Наложение при воспроизведении</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="214"/>
@@ -21648,7 +21649,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="163"/>
         <source>Spectrogram</source>
-        <translation type="unfinished">Спектрограмма</translation>
+        <translation>Спектрограмма</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="389"/>
@@ -21658,32 +21659,32 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="392"/>
         <source>Show cursor</source>
-        <translation type="unfinished">Показывать курсор</translation>
+        <translation>Показывать курсор</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="393"/>
         <source>Labels</source>
-        <translation type="unfinished">Подписи</translation>
+        <translation>Подписи</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="394"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Сверху</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="395"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Снизу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="396"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Слева</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="397"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Справа</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="400"/>
@@ -21733,7 +21734,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="440"/>
         <source>Full Track (Seekbar)</source>
-        <translation type="unfinished"></translation>
+        <translation>Весь трек (полоса перемотки)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="442"/>
@@ -24980,32 +24981,32 @@ Hold Ctrl to replace a widget.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="565"/>
         <source>Settings Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Диалог настроек</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="566"/>
         <source>Search bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Строка поиска</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="567"/>
         <source>Visibility and position of the search bar in the settings dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Видимость и положение строки поиска в диалоге настроек</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="570"/>
         <source>Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Скрыта</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="571"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Сверху</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="573"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Снизу</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="600"/>
@@ -25372,7 +25373,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="890"/>
         <source>Script Editor</source>
-        <translation type="unfinished">Редактор скриптов</translation>
+        <translation>Редактор скриптов</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="892"/>

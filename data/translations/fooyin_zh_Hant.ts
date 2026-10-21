@@ -693,7 +693,7 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="209"/>
         <source>Name of the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>播放清單的名稱</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="211"/>
@@ -833,17 +833,17 @@
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="270"/>
         <source>Returns 1 for the current queue viewer entry, including while paused</source>
-        <translation type="unfinished"></translation>
+        <translation>回傳 1 ，用於目前佇列檢視器輸入項，包含當已暫停時</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="272"/>
         <source>Returns 1 for a queue viewer entry ahead of the queue cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>回傳 1 ，用於佇列檢視器輸入項，佇列游標之前的</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="274"/>
         <source>Returns 1 for a queue viewer entry in queue history</source>
-        <translation type="unfinished"></translation>
+        <translation>回傳 1 ，用於佇列檢視器輸入項，於佇列歷史記錄中</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="275"/>
@@ -1602,7 +1602,7 @@
     <message>
         <location filename="../../src/gui/settings/advanced/advancedpage.cpp" line="169"/>
         <source>Advanced</source>
-        <translation type="unfinished">進階</translation>
+        <translation>進階</translation>
     </message>
 </context>
 <context>
@@ -7446,7 +7446,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
         <source>Wait for tracks to load before showing the window</source>
-        <translation type="unfinished"></translation>
+        <translation>等待曲目載入，在顯現視窗之前</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="93"/>
@@ -7476,7 +7476,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="108"/>
         <source>System Tray</source>
-        <translation type="unfinished"></translation>
+        <translation>系統匣</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="115"/>
@@ -12083,7 +12083,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="387"/>
         <source>Open release page</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟發行頁面</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="396"/>
@@ -14294,62 +14294,62 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="59"/>
         <source>Keep group headers in view</source>
-        <translation type="unfinished"></translation>
+        <translation>保持群組標頭於檢視中</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="60"/>
         <source>Keep artwork in view</source>
-        <translation type="unfinished"></translation>
+        <translation>保持圖面於檢視中</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="66"/>
         <source>Show reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>顯現倒影</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="97"/>
         <source>Reflection height as a percentage of the artwork height</source>
-        <translation type="unfinished"></translation>
+        <translation>倒影高度作為圖面高度的百分比</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="100"/>
         <source>Opacity at the top of the reflection, fading to transparent</source>
-        <translation type="unfinished"></translation>
+        <translation>倒影頂端的不透明度，淡出至透明的</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="103"/>
         <source>Space between the artwork and its reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>圖面與其倒影之間的空間</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="112"/>
         <source>Scrolling</source>
-        <translation type="unfinished">滾動</translation>
+        <translation>捲動</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="116"/>
         <source>Horizontal padding</source>
-        <translation type="unfinished"></translation>
+        <translation>水平填充</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="118"/>
         <source>Top padding</source>
-        <translation type="unfinished"></translation>
+        <translation>頂端填充</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="122"/>
         <source>Artwork reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>圖面倒影</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="124"/>
         <source>Height</source>
-        <translation type="unfinished">高度</translation>
+        <translation>高度</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="128"/>
         <source>Gap below artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>圖面下方的間隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="133"/>
@@ -15654,12 +15654,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="50"/>
         <source>Available variables: &lt;code&gt;%playlist_name%&lt;/code&gt;, &lt;code&gt;%trackcount%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>可用的變數： &lt;code&gt;%playlist_name%&lt;/code&gt;, &lt;code&gt;%trackcount%&lt;/code&gt;, &lt;code&gt;%playlist_duration%&lt;/code&gt;, &lt;code&gt;%playlist_size%&lt;/code&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="57"/>
         <source>Tab title</source>
-        <translation type="unfinished"></translation>
+        <translation>分頁標題</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabsconfigdialog.cpp" line="60"/>
@@ -16926,7 +16926,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="61"/>
         <source>Use &lt;code&gt;%is_queue_current%&lt;/code&gt;, &lt;code&gt;%is_queue_upcoming%&lt;/code&gt;, and &lt;code&gt;%is_queue_played%&lt;/code&gt; to format entries by queue state.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 &lt;code&gt;%is_queue_current%&lt;/code&gt;, &lt;code&gt;%is_queue_upcoming%&lt;/code&gt;, &lt;code&gt;%is_queue_played%&lt;/code&gt; 依照佇列狀態來格式化輸入項目。</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="66"/>
@@ -19863,7 +19863,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="663"/>
         <source>Colours</source>
-        <translation type="unfinished">顏色</translation>
+        <translation>顏色</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="664"/>
@@ -20746,12 +20746,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="291"/>
         <source>Filter…</source>
-        <translation type="unfinished"></translation>
+        <translation>篩選…</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="301"/>
         <source>No matching settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>無符合的設定。</translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="310"/>
@@ -21272,47 +21272,47 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="43"/>
         <source>Top labels</source>
-        <translation type="unfinished">頂部標籤</translation>
+        <translation>頂部標籤</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="44"/>
         <source>Bottom labels</source>
-        <translation type="unfinished">底部標籤</translation>
+        <translation>底部標籤</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="45"/>
         <source>Left labels</source>
-        <translation type="unfinished">左側標籤</translation>
+        <translation>左側標籤</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="46"/>
         <source>Right labels</source>
-        <translation type="unfinished">右側標籤</translation>
+        <translation>右側標籤</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="47"/>
         <source>Show progress cursor</source>
-        <translation type="unfinished">顯示進度游標</translation>
+        <translation>顯示進度游標</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="56"/>
         <source>Playing</source>
-        <translation type="unfinished">進行播放</translation>
+        <translation>進行播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="57"/>
         <source>Seeking</source>
-        <translation type="unfinished">查尋中</translation>
+        <translation>進行尋找</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="58"/>
         <source>Played</source>
-        <translation type="unfinished">已經播放</translation>
+        <translation>已經播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="59"/>
         <source>Unplayed</source>
-        <translation type="unfinished">尚未播放</translation>
+        <translation>尚未播放</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="61"/>
@@ -21353,37 +21353,37 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="75"/>
         <source>Full Track (Seekbar)</source>
-        <translation type="unfinished"></translation>
+        <translation>完整曲目 (進度列)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="77"/>
         <source>Track preference</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目偏好</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="79"/>
         <source>Playing track</source>
-        <translation type="unfinished">進行播放曲目</translation>
+        <translation>進行播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="80"/>
         <source>Selected track</source>
-        <translation type="unfinished">所選曲目</translation>
+        <translation>所選曲目</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="81"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>進行播放 (或所選當已停止時)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="83"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished">進行播放 (空白於啟動時)</translation>
+        <translation>進行播放 (空白於啟動時)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="85"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished">進行播放 (空白當已停止時)</translation>
+        <translation>進行播放 (空白當已停止時)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="88"/>
@@ -21418,29 +21418,30 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="108"/>
         <source>Axes</source>
-        <translation type="unfinished">軸</translation>
+        <translation>軸</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="121"/>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="189"/>
         <source>Cursors</source>
-        <translation type="unfinished"></translation>
+        <translation>游標</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="126"/>
         <source>Cursor width</source>
-        <translation type="unfinished">游標寬度</translation>
+        <translation>游標寬度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="134"/>
         <source>Number of time columns for Full Track analysis.
 Higher values increase detail and memory usage.</source>
-        <translation type="unfinished"></translation>
+        <translation>完整曲目分析的時間欄位的數目。
+數值越高將會提昇細節及記憶體用量。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="136"/>
         <source>Time resolution</source>
-        <translation type="unfinished"></translation>
+        <translation>時間解析度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="138"/>
@@ -21480,12 +21481,12 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="182"/>
         <source>Spectrogram</source>
-        <translation type="unfinished">頻譜圖</translation>
+        <translation>頻譜圖</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="196"/>
         <source>Playback overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>播放疊層</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="214"/>
@@ -21528,7 +21529,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="163"/>
         <source>Spectrogram</source>
-        <translation type="unfinished">頻譜圖</translation>
+        <translation>頻譜圖</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="389"/>
@@ -21538,32 +21539,32 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="392"/>
         <source>Show cursor</source>
-        <translation type="unfinished">顯示游標</translation>
+        <translation>顯示游標</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="393"/>
         <source>Labels</source>
-        <translation type="unfinished">標籤</translation>
+        <translation>標籤</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="394"/>
         <source>Top</source>
-        <translation type="unfinished">頂部</translation>
+        <translation>頂部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="395"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="396"/>
         <source>Left</source>
-        <translation type="unfinished">左</translation>
+        <translation>左</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="397"/>
         <source>Right</source>
-        <translation type="unfinished">右</translation>
+        <translation>右</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="400"/>
@@ -21613,7 +21614,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="440"/>
         <source>Full Track (Seekbar)</source>
-        <translation type="unfinished"></translation>
+        <translation>完整曲目 (進度列)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramwidget.cpp" line="442"/>
@@ -24852,32 +24853,32 @@ Hold Ctrl to replace a widget.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="565"/>
         <source>Settings Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>設定對話框</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="566"/>
         <source>Search bar</source>
-        <translation type="unfinished"></translation>
+        <translation>搜尋列</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="567"/>
         <source>Visibility and position of the search bar in the settings dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>設定對話方塊中搜尋列的可見性和位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="570"/>
         <source>Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>隱藏</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="571"/>
         <source>Top</source>
-        <translation type="unfinished">頂部</translation>
+        <translation>頂部</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="573"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="600"/>
@@ -25244,7 +25245,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="890"/>
         <source>Script Editor</source>
-        <translation type="unfinished">指令腳本編輯器</translation>
+        <translation>指令腳本編輯器</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="892"/>
