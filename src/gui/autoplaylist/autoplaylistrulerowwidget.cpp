@@ -40,6 +40,8 @@
 #include <QSignalBlocker>
 #include <QSpinBox>
 #include <QStackedWidget>
+#include <QStyle>
+#include <QStyleOptionComboBox>
 #include <QToolButton>
 #include <QVBoxLayout>
 
@@ -52,6 +54,50 @@ constexpr auto Negated      = 1U << 8U;
 constexpr auto RelativeDate = 1U << 9U;
 
 namespace Fooyin {
+class RuleComparisonComboBox : public QComboBox
+{
+public:
+    explicit RuleComparisonComboBox(QWidget* parent)
+        : QComboBox{parent}
+    {
+        setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    }
+
+    [[nodiscard]] QSize sizeHint() const override
+    {
+        const QFontMetrics fm{fontMetrics()};
+        int width = std::max(fm.boundingRect(AutoPlaylistRuleRowWidget::tr("Yes")).width(),
+                             fm.boundingRect(AutoPlaylistRuleRowWidget::tr("No")).width());
+
+        // Metadata and date rules cover every non-boolean operator
+        for(const auto type : {AutoPlaylistFieldType::Metadata, AutoPlaylistFieldType::Date}) {
+            const auto comparisons = AutoPlaylistQueryBuilder::comparisons(type);
+            for(const auto comparison : comparisons) {
+                for(const bool negated : {false, true}) {
+                    const auto label = AutoPlaylistRulesWidget::comparisonText(comparison, negated, false);
+                    width            = std::max(width, fm.boundingRect(label).width());
+                    if(comparison == Expr::During) {
+                        const auto relativeLabel = AutoPlaylistRulesWidget::comparisonText(comparison, negated, true);
+                        width                    = std::max(width, fm.boundingRect(relativeLabel).width());
+                    }
+                }
+            }
+        }
+
+        QStyleOptionComboBox option;
+        initStyleOption(&option);
+
+        auto size = QComboBox::sizeHint();
+        size.setWidth(style()->sizeFromContents(QStyle::CT_ComboBox, &option, {width, 0}, this).width());
+        return size;
+    }
+
+    [[nodiscard]] QSize minimumSizeHint() const override
+    {
+        return sizeHint();
+    }
+};
+
 class RuleRatingEditor : public StarEditor
 {
 public:
@@ -104,7 +150,7 @@ private:
 AutoPlaylistRuleRowWidget::AutoPlaylistRuleRowWidget(const AutoPlaylistRule& rule, QWidget* parent)
     : QWidget{parent}
     , m_field{new AutoPlaylistFieldComboBox(this)}
-    , m_comparison{new QComboBox(this)}
+    , m_comparison{new RuleComparisonComboBox(this)}
     , m_values{new QStackedWidget(this)}
     , m_text{new QLineEdit(this)}
     , m_number{new QSpinBox(this)}
