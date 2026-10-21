@@ -47,6 +47,7 @@ FYUTILS_EXPORT QByteArray detectEncoding(const QByteArray& content, const Detect
 FYUTILS_EXPORT std::optional<QString> decodeText(const QByteArray& content, const QByteArray& encoding);
 FYUTILS_EXPORT QString decodeTextWithDetection(const QByteArray& content, const DetectEncodingOptions& options = {});
 FYUTILS_EXPORT QString foldForSearch(QStringView text);
+FYUTILS_EXPORT bool containsWord(QStringView text, QStringView word);
 
 FYUTILS_EXPORT QString msToString(std::chrono::milliseconds ms, bool includeMs);
 FYUTILS_EXPORT QString msToString(uint64_t ms);

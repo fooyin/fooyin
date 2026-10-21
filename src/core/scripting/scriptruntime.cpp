@@ -116,14 +116,14 @@ QStringList evalStringList(const ScriptResult& evalExpr, const QStringList& resu
     return listResult;
 }
 
-bool matchSearch(const Track& track, const QString& search, bool phraseMatch)
+bool matchSearch(const Track& track, const QString& search, bool phraseMatch, bool wholeWord = false)
 {
     if(search.isEmpty()) {
-        return true;
+        return !wholeWord;
     }
 
-    if(phraseMatch) {
-        return track.hasMatch(search);
+    if(phraseMatch || wholeWord) {
+        return track.hasMatch(search, wholeWord);
     }
 
     const QStringList terms = search.split(u' ', Qt::SkipEmptyParts);
@@ -145,6 +145,7 @@ bool isQueryExpression(Expr::Type type)
         case Type::EndsWith:
         case Type::In:
         case Type::ContainsAny:
+        case Type::ContainsWord:
         case Type::Greater:
         case Type::GreaterEqual:
         case Type::Less:
@@ -343,6 +344,7 @@ Expression ScriptRuntime::expression()
         case TokenType::TokWith:
         case TokenType::TokIn:
         case TokenType::TokAny:
+        case TokenType::TokWord:
         case TokenType::TokLeftAngle:
         case TokenType::TokRightAngle:
         case TokenType::TokRightParen:
@@ -724,6 +726,10 @@ Expression ScriptRuntime::containsOperator(const Expression& key)
 {
     advance();
 
+    if(currentToken(TokenType::TokWord)) {
+        return relationalOperator(key, Expr::ContainsWord);
+    }
+
     ExpressionList args;
     args.emplace_back(normaliseQueryField(key));
 
@@ -1000,6 +1006,7 @@ ScriptResult ScriptRuntime::evalExpression(const BoundExpression& exp, const aut
             return evalEquals(exp, tracks);
         case Expr::Contains:
         case Expr::ContainsAny:
+        case Expr::ContainsWord:
         case Expr::StartsWith:
         case Expr::EndsWith:
             return evalTextMatch(exp, tracks);
@@ -1603,8 +1610,10 @@ ScriptResult ScriptRuntime::evalTextMatch(const BoundExpression& exp, const auto
         }
 
         if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, Track>) {
-            if((exp.type == Expr::Contains || exp.type == Expr::ContainsAny) && field.type == Expr::All) {
-                result.cond = matchSearch(tracks, second.value, value.type == Expr::QuotedLiteral);
+            if((exp.type == Expr::Contains || exp.type == Expr::ContainsAny || exp.type == Expr::ContainsWord)
+               && field.type == Expr::All) {
+                result.cond = matchSearch(tracks, second.value, value.type == Expr::QuotedLiteral,
+                                          exp.type == Expr::ContainsWord);
                 if(result.cond) {
                     return result;
                 }
@@ -1617,6 +1626,9 @@ ScriptResult ScriptRuntime::evalTextMatch(const BoundExpression& exp, const auto
             case Expr::Contains:
             case Expr::ContainsAny:
                 result.cond = firstValue.contains(secondValue);
+                break;
+            case Expr::ContainsWord:
+                result.cond = Utils::containsWord(firstValue, secondValue);
                 break;
             case Expr::StartsWith:
                 result.cond = firstValue.startsWith(secondValue);

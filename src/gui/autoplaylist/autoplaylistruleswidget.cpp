@@ -154,6 +154,11 @@ QString AutoPlaylistRulesWidget::comparisonText(Expr::Type comparison, bool nega
             return negated ? tr("does not contain any of")
                            //: Independent rule comparison label.
                            : tr("contains any of");
+        case Expr::ContainsWord:
+            //: Independent rule comparison label.
+            return negated ? tr("does not contain word")
+                           //: Independent rule comparison label.
+                           : tr("contains word");
         case Expr::StartsWith:
             //: Independent rule comparison label.
             return negated ? tr("does not start with")

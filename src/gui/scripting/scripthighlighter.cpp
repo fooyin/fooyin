@@ -108,6 +108,7 @@ void ScriptHighlighter::expression()
         case ScriptScanner::TokWith:
         case ScriptScanner::TokIn:
         case ScriptScanner::TokAny:
+        case ScriptScanner::TokWord:
         case ScriptScanner::TokEos:
         case ScriptScanner::TokError:
         case ScriptScanner::TokNot:

@@ -60,6 +60,7 @@ enum Type : uint8_t
     EndsWith,
     In,
     ContainsAny,
+    ContainsWord,
 };
 } // namespace Expr
 

@@ -438,6 +438,8 @@ ScriptScanner::Token ScriptScanner::keyword()
                         return checkKeyword(2, isPlural(4) ? "EKS"_L1 : "EK"_L1, TokWeek);
                     case u'I':
                         return checkKeyword(2, "TH"_L1, TokWith);
+                    case u'O':
+                        return checkKeyword(2, "RD"_L1, TokWord);
                     default:
                         break;
                 }

@@ -1700,12 +1700,13 @@ uint64_t Track::lastPlayed() const
     return p->lastPlayed;
 }
 
-bool Track::hasMatch(const QString& term) const
+bool Track::hasMatch(const QString& term, bool wholeWord) const
 {
     const QString foldedTerm = Utils::foldForSearch(term);
 
-    const auto contains = [&foldedTerm](const QString& text) {
-        return Utils::foldForSearch(text).contains(foldedTerm);
+    const auto contains = [&foldedTerm, wholeWord](const QString& text) {
+        const QString foldedText = Utils::foldForSearch(text);
+        return wholeWord ? Utils::containsWord(foldedText, foldedTerm) : foldedText.contains(foldedTerm);
     };
 
     // clang-format off

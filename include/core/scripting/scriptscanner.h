@@ -86,6 +86,7 @@ public:
         TokIn          = 46,
         TokWith        = 47,
         TokAny         = 48,
+        TokWord        = 49,
     };
 
     struct Token

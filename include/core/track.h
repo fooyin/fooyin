@@ -317,7 +317,7 @@ public:
     [[nodiscard]] uint64_t lastPlayed() const;
 
     //! Case-insensitive search across common display metadata and filepath.
-    [[nodiscard]] bool hasMatch(const QString& term) const;
+    [[nodiscard]] bool hasMatch(const QString& term, bool wholeWord = false) const;
     [[nodiscard]] std::shared_ptr<TrackMetadataStore> metadataStore() const;
 
     void setLibraryId(int id);

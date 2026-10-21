@@ -1318,6 +1318,25 @@ TEST_F(ScriptParserTest, QueryInRejectsMalformedLists)
     }
 }
 
+TEST_F(ScriptParserTest, QueryHasWordOperator)
+{
+    Track first{u"/music/first.flac"_s};
+    first.setTitle(u"Café (Live)"_s);
+    Track second{u"/music/second.flac"_s};
+    second.setTitle(u"Alive"_s);
+    Track third{u"/music/third.flac"_s};
+    third.setTitle(u"Lively"_s);
+    const TrackList tracks{first, second, third};
+
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(title HAS WORD "live")"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(title : WORD "live")"_s, tracks));
+    EXPECT_EQ((TrackList{second, third}), m_filter.filter(uR"(title NOT HAS WORD "live")"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(title HAS WORD "cafe")"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(ALL HAS WORD "live")"_s, tracks));
+    EXPECT_TRUE(m_filter.filter(uR"(ALL HAS WORD "")"_s, tracks).empty());
+    EXPECT_EQ(tracks, m_filter.filter(uR"(title HAS "live")"_s, tracks));
+}
+
 TEST_F(ScriptParserTest, QueryHasAnyOperator)
 {
     Track first{u"/music/first.flac"_s};

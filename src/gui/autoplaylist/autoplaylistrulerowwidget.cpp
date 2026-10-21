@@ -312,6 +312,7 @@ void AutoPlaylistRuleRowWidget::updateComparisons()
 
         if(comparison == Expr::Equals || comparison == Expr::Contains || comparison == Expr::StartsWith
            || comparison == Expr::EndsWith || comparison == Expr::In || comparison == Expr::ContainsAny
+           || comparison == Expr::ContainsWord
            || (type == AutoPlaylistFieldType::Date && comparison != Expr::Missing && comparison != Expr::Present)) {
             add(comparison, true);
         }

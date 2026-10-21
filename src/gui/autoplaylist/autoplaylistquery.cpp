@@ -278,7 +278,7 @@ bool collectRules(const Expression& expression, AutoPlaylistRuleGroup& group)
     }
     if(rule.negated && rule.comparison != Expr::Contains && rule.comparison != Expr::StartsWith
        && rule.comparison != Expr::EndsWith && rule.comparison != Expr::Equals && rule.comparison != Expr::In
-       && rule.comparison != Expr::ContainsAny
+       && rule.comparison != Expr::ContainsAny && rule.comparison != Expr::ContainsWord
        && AutoPlaylistQueryBuilder::fieldType(rule.field, rule.source) != AutoPlaylistFieldType::Date) {
         return false;
     }
@@ -297,6 +297,9 @@ QString ruleQuery(const AutoPlaylistRule& rule)
             break;
         case Expr::ContainsAny:
             comparison = u"HAS ANY"_s;
+            break;
+        case Expr::ContainsWord:
+            comparison = u"HAS WORD"_s;
             break;
         case Expr::StartsWith:
             comparison = u"STARTS WITH"_s;
@@ -425,6 +428,7 @@ bool validExpression(const Expression& expression)
         case Expr::XOr:
         case Expr::Equals:
         case Expr::Contains:
+        case Expr::ContainsWord:
         case Expr::StartsWith:
         case Expr::EndsWith:
         case Expr::Greater:
@@ -577,15 +581,16 @@ AutoPlaylistFieldType AutoPlaylistQueryBuilder::fieldType(const QString& name, A
 std::vector<Expr::Type> AutoPlaylistQueryBuilder::comparisons(AutoPlaylistFieldType type)
 {
     if(type == AutoPlaylistFieldType::Metadata) {
-        return {Expr::Contains, Expr::ContainsAny,  Expr::StartsWith, Expr::EndsWith,  Expr::Equals,  Expr::In,
-                Expr::Greater,  Expr::GreaterEqual, Expr::Less,       Expr::LessEqual, Expr::Present, Expr::Missing};
+        return {Expr::Contains,  Expr::ContainsAny, Expr::ContainsWord, Expr::StartsWith,   Expr::EndsWith,
+                Expr::Equals,    Expr::In,          Expr::Greater,      Expr::GreaterEqual, Expr::Less,
+                Expr::LessEqual, Expr::Present,     Expr::Missing};
     }
     if(type == AutoPlaylistFieldType::Boolean) {
         return {Expr::Equals};
     }
     if(type == AutoPlaylistFieldType::Text) {
-        return {Expr::Contains, Expr::ContainsAny, Expr::StartsWith, Expr::EndsWith,
-                Expr::Equals,   Expr::In,          Expr::Present,    Expr::Missing};
+        return {Expr::Contains, Expr::ContainsAny, Expr::ContainsWord, Expr::StartsWith, Expr::EndsWith,
+                Expr::Equals,   Expr::In,          Expr::Present,      Expr::Missing};
     }
     if(type == AutoPlaylistFieldType::Date) {
         return {Expr::Before, Expr::After, Expr::Since, Expr::During, Expr::Present, Expr::Missing};

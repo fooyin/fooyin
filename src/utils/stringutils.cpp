@@ -261,6 +261,34 @@ QString foldForSearch(QStringView text)
     return folded.toCaseFolded();
 }
 
+bool containsWord(QStringView text, QStringView word)
+{
+    if(word.isEmpty()) {
+        return false;
+    }
+
+    const auto isWordCharacter = [text](qsizetype index) {
+        const QChar character = text.at(index);
+        char32_t codePoint    = character.unicode();
+        // The boundary may touch either half of a UTF-16 pair, so classify the full code point
+        if(character.isHighSurrogate() && index + 1 < text.size() && text.at(index + 1).isLowSurrogate()) {
+            codePoint = QChar::surrogateToUcs4(character, text.at(index + 1));
+        }
+        else if(character.isLowSurrogate() && index > 0 && text.at(index - 1).isHighSurrogate()) {
+            codePoint = QChar::surrogateToUcs4(text.at(index - 1), character);
+        }
+        return QChar::isLetterOrNumber(codePoint);
+    };
+
+    for(qsizetype position = text.indexOf(word); position >= 0; position = text.indexOf(word, position + 1)) {
+        const qsizetype end = position + word.size();
+        if((position == 0 || !isWordCharacter(position - 1)) && (end == text.size() || !isWordCharacter(end))) {
+            return true;
+        }
+    }
+    return false;
+}
+
 QString msToString(std::chrono::milliseconds ms, bool includeMs)
 {
     const auto weeks = duration_cast<std::chrono::weeks>(ms);
