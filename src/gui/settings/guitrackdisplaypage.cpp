@@ -210,8 +210,8 @@ void GuiTrackDisplayPageWidget::updateRatingPreview()
 
 void GuiTrackDisplayPageWidget::load()
 {
-    m_titleScript->setText(m_settings->value<WindowTitleTrackScript>());
-    m_propertiesSidebarTrackScript->setText(m_settings->value<PropertiesSidebarTrackScript>());
+    m_titleScript->setScript(m_settings->value<WindowTitleTrackScript>());
+    m_propertiesSidebarTrackScript->setScript(m_settings->value<PropertiesSidebarTrackScript>());
 
     m_starRatingSize->setValue(m_settings->value<StarRatingSize>());
     m_ratingEditorOnlyOnHover->setChecked(m_settings->value<RatingEditorOnlyOnHover>());

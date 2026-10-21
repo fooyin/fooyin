@@ -384,7 +384,7 @@ void FadingPageWidget::load()
         = m_crossfadeAutoSwitchPolicy->findData(static_cast<int>(policy), Qt::UserRole, Qt::MatchExactly);
     m_crossfadeAutoSwitchPolicy->setCurrentIndex(policyIndex >= 0 ? policyIndex : 0);
     m_skipAutoCrossfadeSameAlbum->setChecked(m_settings->value<Settings::Core::Internal::SkipSameAlbumCrossfade>());
-    m_autoCrossfadeAlbumGroupingScript->setText(
+    m_autoCrossfadeAlbumGroupingScript->setScript(
         m_settings->value<Settings::Core::Internal::AutoCrossfadeAlbumScript>());
 
     if(m_crossfadeAutoEnabled->isChecked() && m_fadingBoundaryEnabled->isChecked()) {

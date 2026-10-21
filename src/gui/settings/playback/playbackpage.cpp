@@ -257,8 +257,8 @@ void PlaybackPageWidget::load()
     m_playedSlider->setValue(playedPercent);
     m_playedTimeSlider->setValue(m_settings->value<Settings::Core::PlayedThresholdTime>() / 1000);
 
-    m_shuffleAlbumsGroup->setText(m_settings->value<Settings::Core::ShuffleAlbumsGroupScript>());
-    m_shuffleAlbumsSort->setText(m_settings->value<Settings::Core::ShuffleAlbumsSortScript>());
+    m_shuffleAlbumsGroup->setScript(m_settings->value<Settings::Core::ShuffleAlbumsGroupScript>());
+    m_shuffleAlbumsSort->setScript(m_settings->value<Settings::Core::ShuffleAlbumsSortScript>());
 
     updateWidgetState();
 }

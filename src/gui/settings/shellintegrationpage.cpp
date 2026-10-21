@@ -117,7 +117,7 @@ void ShellIntegrationPageWidget::load()
     m_alwaysSend->setChecked(m_settings->value<Settings::Core::OpenFilesSendTo>());
     m_openFileAddDirectory->setChecked(m_settings->value<Settings::Core::OpenFileAddDirectory>());
     m_externalPlaylist->setText(m_settings->value<Settings::Core::OpenFilesPlaylist>());
-    m_externalSortScript->setText(m_settings->value<Settings::Core::ExternalSortScript>());
+    m_externalSortScript->setScript(m_settings->value<Settings::Core::ExternalSortScript>());
 }
 
 void ShellIntegrationPageWidget::apply()

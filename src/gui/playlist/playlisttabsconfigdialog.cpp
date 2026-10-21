@@ -86,7 +86,7 @@ PlaylistTabs::ConfigData PlaylistTabsConfigDialog::config() const
 
 void PlaylistTabsConfigDialog::setConfig(const PlaylistTabs::ConfigData& config)
 {
-    m_titleScript->setText(config.titleScript);
+    m_titleScript->setScript(config.titleScript);
     m_position->setCurrentIndex(m_position->findData(static_cast<int>(config.position)));
     m_expand->setChecked(config.expand);
     m_showAddButton->setChecked(config.showAddButton);

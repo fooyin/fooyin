@@ -113,8 +113,8 @@ void LibrarySortingPageWidget::load()
 {
     m_model->populate();
     updateButtonState();
-    m_sortScript->setText(m_settings->value<Settings::Core::LibrarySortScript>());
-    m_libraryViewPlaylistSortScript->setText(m_settings->value<Settings::Core::LibraryViewPlaylistSortScript>());
+    m_sortScript->setScript(m_settings->value<Settings::Core::LibrarySortScript>());
+    m_libraryViewPlaylistSortScript->setScript(m_settings->value<Settings::Core::LibraryViewPlaylistSortScript>());
 }
 
 void LibrarySortingPageWidget::apply()

@@ -462,7 +462,7 @@ void FileOpsDialogPrivate::loadCurrentPreset()
 
         m_destination->setCurrentIndex(-1);
         m_destination->setCurrentText(preset.dest);
-        m_filename->setText(preset.filename);
+        m_filename->setScript(preset.filename);
         m_entireSource->setChecked(preset.wholeDir);
         m_removeEmpty->setChecked(preset.removeEmpty);
         m_removeArchive->setChecked(preset.removeSourceArchive);
@@ -716,7 +716,7 @@ void FileOpsDialog::loadPreset(const QString& name)
 
         p->m_destination->setCurrentIndex(-1);
         p->m_destination->setCurrentText(preset->dest);
-        p->m_filename->setText(preset->filename);
+        p->m_filename->setScript(preset->filename);
         p->m_entireSource->setChecked(preset->wholeDir);
         p->m_removeEmpty->setChecked(preset->removeEmpty);
         p->m_removeArchive->setChecked(preset->removeSourceArchive);

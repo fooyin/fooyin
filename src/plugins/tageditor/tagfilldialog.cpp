@@ -285,6 +285,7 @@ void FillValuesDialog::loadHistory()
     }
 
     m_sourceScript->setCurrentText(savedSourceScript);
+    m_sourceScript->lineEdit()->setCursorPosition(0);
     m_pattern->setCurrentText(savedPattern);
 }
 

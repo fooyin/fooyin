@@ -180,7 +180,7 @@ RunServicesPageWidget::RunServicesPageWidget(SettingsManager* settings)
     QObject::connect(m_browse, &QPushButton::clicked, this, [this] {
         const QString filepath = QFileDialog::getOpenFileName(this, tr("Select application"));
         if(!filepath.isEmpty()) {
-            m_path->setText(quotedScriptPath(filepath));
+            m_path->setScript(quotedScriptPath(filepath));
         }
     });
 
@@ -262,8 +262,8 @@ void RunServicesPageWidget::setCurrentService(int row)
     }
 
     const RunService& service = m_services.at(row);
-    m_name->setText(service.name);
-    m_path->setText(service.path);
+    m_name->setScript(service.name);
+    m_path->setScript(service.path);
     m_simultaneousRuns->setValue(service.simultaneousRuns);
 }
 

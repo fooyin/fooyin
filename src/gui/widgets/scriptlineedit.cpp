@@ -44,8 +44,10 @@ ScriptLineEdit::ScriptLineEdit(const QString& script, QWidget* parent)
 { }
 
 ScriptLineEdit::ScriptLineEdit(const QString& script, const Track& track, QWidget* parent)
-    : QLineEdit{script, parent}
+    : QLineEdit{parent}
 {
+    setScript(script);
+
     auto* openEditor = new QAction(tr("Open in script editor"), this);
     Gui::setThemeIcon(openEditor, Constants::Icons::ScriptEditor);
     QObject::connect(openEditor, &QAction::triggered, this, [this, track]() {
@@ -59,6 +61,15 @@ ScriptLineEdit::ScriptLineEdit(const QString& script, const Track& track, QWidge
             track, this);
     });
     addAction(openEditor, TrailingPosition);
+}
+
+void ScriptLineEdit::setScript(const QString& script)
+{
+    if(text() == script) {
+        return;
+    }
+    setText(script);
+    setCursorPosition(0);
 }
 
 ScriptTextEdit::ScriptTextEdit(QWidget* parent)

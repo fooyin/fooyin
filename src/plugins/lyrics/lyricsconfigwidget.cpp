@@ -320,7 +320,7 @@ void LyricsConfigDialog::setConfig(const LyricsWidget::ConfigData& config)
 {
     m_background->setConfig(config.background);
     m_seekOnClick->setChecked(config.seekOnClick);
-    m_noLyricsScript->setText(config.noLyricsScript);
+    m_noLyricsScript->setScript(config.noLyricsScript);
     m_scrollDuration->setValue(config.scrollDuration);
 
     int fadeModeIdx = m_edgeFadeMode->findData(config.edgeFadeMode);

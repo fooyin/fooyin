@@ -258,7 +258,7 @@ void AutoPlaylistDialog::setQuery(const AutoPlaylistQuery& query)
     const QSignalBlocker sortBlocker{m_sortQueryEdit};
 
     m_queryEdit->setText(query.query);
-    m_sortQueryEdit->setText(query.sortQuery);
+    m_sortQueryEdit->setScript(query.sortQuery);
     m_forceSorted->setChecked(query.forceSorted);
 
     if(const auto rules = AutoPlaylistQueryBuilder::rules(query.query, query.sortQuery)) {
@@ -285,7 +285,7 @@ void AutoPlaylistDialog::rulesChanged()
 
     const auto [query, sortQuery] = AutoPlaylistQueryBuilder::query(m_rules->rules());
     m_queryEdit->setText(query);
-    m_sortQueryEdit->setText(sortQuery);
+    m_sortQueryEdit->setScript(sortQuery);
     m_rulesQuery     = query;
     m_rulesSortQuery = sortQuery;
     m_haveRules      = true;

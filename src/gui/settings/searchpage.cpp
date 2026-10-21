@@ -142,7 +142,7 @@ void SearchPageWidget::load()
     m_autosearchDelay->setValue(m_settings->value<Settings::Gui::SearchAutoDelay>());
     m_searchMode->setCurrentIndex(m_searchMode->findData(
         m_settings->fileValue(Settings::Core::SearchModeKey, TrackQueryFilter::DefaultSearchMode).toInt()));
-    m_searchScript->setText(
+    m_searchScript->setScript(
         m_settings
             ->fileValue(Settings::Core::SearchScriptKey, QString::fromLatin1(TrackQueryFilter::DefaultSearchScript))
             .toString());

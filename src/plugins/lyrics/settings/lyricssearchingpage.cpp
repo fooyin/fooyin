@@ -116,15 +116,14 @@ void LyricsSearchingPageWidget::load()
 {
     m_autoSearch->setChecked(m_settings->fileValue(Settings::AutoSearch, false).toBool());
     m_skipLabel->setEnabled(m_autoSearch->isChecked());
-    m_autoSearchSkipScript->setText(
+    m_autoSearchSkipScript->setScript(
         m_settings->fileValue(Settings::AutoSearchSkip, Defaults::autoSearchSkipScript()).toString());
     m_autoSearchSkipScript->setEnabled(m_autoSearch->isChecked());
-    m_autoSearchSkipScript->setCursorPosition(0);
     m_skipRemaining->setChecked(m_settings->fileValue(Settings::SkipRemaining, true).toBool());
     m_skipExternal->setChecked(m_settings->fileValue(Settings::SkipExternal, true).toBool());
-    m_titleParam->setText(m_settings->fileValue(Settings::TitleField, u"%title%"_s).toString());
-    m_artistParam->setText(m_settings->fileValue(Settings::ArtistField, u"%artist%"_s).toString());
-    m_albumParam->setText(m_settings->fileValue(Settings::AlbumField, u"%album%"_s).toString());
+    m_titleParam->setScript(m_settings->fileValue(Settings::TitleField, u"%title%"_s).toString());
+    m_artistParam->setScript(m_settings->fileValue(Settings::ArtistField, u"%artist%"_s).toString());
+    m_albumParam->setScript(m_settings->fileValue(Settings::AlbumField, u"%album%"_s).toString());
     m_matchThreshold->setValue(m_settings->fileValue(Settings::MatchThreshold, 75).toInt());
 }
 

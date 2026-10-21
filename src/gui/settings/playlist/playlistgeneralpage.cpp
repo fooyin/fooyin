@@ -174,7 +174,7 @@ void PlaylistGeneralPageWidget::load()
     m_preventDuplicates->setChecked(m_settings->value<Settings::Core::PlaylistPreventDuplicates>());
     m_integratedSearch->setChecked(m_settings->value<Settings::Gui::PlaylistIntegratedSearch>());
     m_searchMode->setCurrentIndex(m_searchMode->findData(m_settings->value<Settings::Gui::PlaylistSearchMode>()));
-    m_searchScript->setText(m_settings->value<Settings::Gui::PlaylistSearchScript>());
+    m_searchScript->setScript(m_settings->value<Settings::Gui::PlaylistSearchScript>());
 }
 
 void PlaylistGeneralPageWidget::apply()

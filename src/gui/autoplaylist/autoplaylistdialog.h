@@ -34,6 +34,7 @@ namespace Fooyin {
 class AutoPlaylistRulesWidget;
 class Playlist;
 class PlaylistHandler;
+class ScriptLineEdit;
 class ScriptTextEdit;
 
 class AutoPlaylistDialog : public QDialog
@@ -83,7 +84,7 @@ private:
     QLabel* m_errorLabel;
     QLabel* m_modeLabel;
     ScriptTextEdit* m_queryEdit;
-    QLineEdit* m_sortQueryEdit;
+    ScriptLineEdit* m_sortQueryEdit;
     QCheckBox* m_forceSorted;
     QPushButton* m_loadButton;
     QPushButton* m_saveButton;

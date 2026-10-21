@@ -195,7 +195,7 @@ void ArtworkDownloadPageWidget::load()
         controls.embedded->setChecked(coverMethod.method == ArtworkSaveMethod::Embedded);
         controls.directory->setChecked(coverMethod.method == ArtworkSaveMethod::Directory);
         controls.path->setText(coverMethod.dir);
-        controls.filename->setText(coverMethod.filename);
+        controls.filename->setScript(coverMethod.filename);
 
         if(const int index = controls.format->findData(coverMethod.format); index >= 0) {
             controls.format->setCurrentIndex(index);

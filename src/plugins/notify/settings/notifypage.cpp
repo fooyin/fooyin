@@ -242,8 +242,8 @@ void NotifyPageWidget::load()
 {
     m_enable->setChecked(m_settings->value<Settings::Notify::Enabled>());
     m_notifyOnRepeat->setChecked(m_settings->value<Settings::Notify::NotifyOnRepeat>());
-    m_titleField->setText(m_settings->value<Settings::Notify::TitleField>());
-    m_bodyField->setText(m_settings->value<Settings::Notify::BodyField>());
+    m_titleField->setScript(m_settings->value<Settings::Notify::TitleField>());
+    m_bodyField->setScript(m_settings->value<Settings::Notify::BodyField>());
     m_showAlbumArt->setChecked(m_settings->value<Settings::Notify::ShowAlbumArt>());
     m_maxAlbumArtSize->setValue(m_settings->value<Settings::Notify::MaxAlbumArtSize>());
     setPlaybackControls(PlaybackControls::fromInt(m_settings->value<Settings::Notify::Controls>()));

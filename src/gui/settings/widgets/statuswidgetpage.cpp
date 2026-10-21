@@ -137,9 +137,9 @@ void StatusWidgetPageWidget::load()
     m_showIcon->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
     m_showSelection->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowSelection>());
     m_showPlaylist->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowPlaylist>());
-    m_playingScript->setText(m_settings->value<Settings::Gui::Internal::StatusPlayingScript>());
-    m_selectionScript->setText(m_settings->value<Settings::Gui::Internal::StatusSelectionScript>());
-    m_playlistScript->setText(m_settings->value<Settings::Gui::Internal::StatusPlaylistScript>());
+    m_playingScript->setScript(m_settings->value<Settings::Gui::Internal::StatusPlayingScript>());
+    m_selectionScript->setScript(m_settings->value<Settings::Gui::Internal::StatusSelectionScript>());
+    m_playlistScript->setScript(m_settings->value<Settings::Gui::Internal::StatusPlaylistScript>());
     m_showStatusTips->setChecked(m_settings->value<Settings::Gui::ShowStatusTips>());
     m_doubleClick->setCurrentIndex(
         m_doubleClick->findData(m_settings->value<Settings::Gui::Internal::StatusDoubleClick>()));
