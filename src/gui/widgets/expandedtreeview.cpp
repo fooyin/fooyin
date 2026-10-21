@@ -1739,6 +1739,7 @@ private:
     [[nodiscard]] std::vector<ExpandedTreeViewItem> itemsOnRow(int y, int x) const;
     [[nodiscard]] QSize indexSizeHint(const QModelIndex& index) const;
     [[nodiscard]] int itemWidth(int item) const;
+    [[nodiscard]] int rowHeight(int rowStart) const;
     [[nodiscard]] int spacing() const;
     [[nodiscard]] QSize iconSize() const;
     [[nodiscard]] bool haveSideCaptions() const;
@@ -1779,7 +1780,7 @@ void IconView::drawView(QPainter* painter, const QRegion& region) const
     const int x{area.left()};
 
     for(; i < count; i += m_segmentSize) {
-        const int height = itemHeight(i) + spacing();
+        const int height = rowHeight(i) + spacing();
         if(y + height > area.top()) {
             break;
         }
@@ -1793,7 +1794,7 @@ void IconView::drawView(QPainter* painter, const QRegion& region) const
             const QModelIndex& index = rowItem.index;
             drawItem(painter, opt, index);
         }
-        y += itemHeight(i) + spacing();
+        y += rowHeight(i) + spacing();
     }
 }
 
@@ -2098,6 +2099,17 @@ int IconView::itemWidth(int item) const
     return std::max(width, 0);
 }
 
+int IconView::rowHeight(int rowStart) const
+{
+    int height{0};
+    const int rowEnd = std::min(rowStart + m_segmentSize, itemCount());
+    for(int item{rowStart}; item < rowEnd; ++item) {
+        height = std::max(height, itemHeight(item));
+    }
+
+    return height;
+}
+
 int IconView::spacing() const
 {
     return m_rowSpacing;
@@ -2272,14 +2284,11 @@ int IconView::firstVisibleItem(int* offset) const
     const int value = verticalScrollBar()->value();
     const int count = itemCount();
 
-    int y{0};
-
     for(int i{0}; i < count; i += m_segmentSize) {
-        const int height = itemHeight(i) + spacing();
-        y += height;
-        if(y > value) {
+        const int y = viewItem(i).y;
+        if(y + rowHeight(i) + spacing() > value) {
             if(offset) {
-                *offset = y - value - height;
+                *offset = y - value;
             }
             return i;
         }
