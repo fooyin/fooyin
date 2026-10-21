@@ -130,53 +130,6 @@ bool matchSearch(const Track& track, const QString& search, bool phraseMatch, bo
     return std::ranges::all_of(terms, [&track](const QString& term) { return track.hasMatch(term); });
 }
 
-bool isQueryExpression(Expr::Type type)
-{
-    using Type = Expr::Type;
-    switch(type) {
-        case Type::Not:
-        case Type::Group:
-        case Type::And:
-        case Type::Or:
-        case Type::XOr:
-        case Type::Equals:
-        case Type::Contains:
-        case Type::StartsWith:
-        case Type::EndsWith:
-        case Type::In:
-        case Type::ContainsAny:
-        case Type::ContainsWord:
-        case Type::Greater:
-        case Type::GreaterEqual:
-        case Type::Less:
-        case Type::LessEqual:
-        case Type::SortAscending:
-        case Type::SortDescending:
-        case Type::All:
-        case Type::Missing:
-        case Type::Present:
-        case Type::Before:
-        case Type::After:
-        case Type::Since:
-        case Type::During:
-        case Type::Date:
-        case Type::Limit:
-            return true;
-        case Type::Null:
-        case Type::Literal:
-        case Type::Variable:
-        case Type::VariableList:
-        case Type::VariableRaw:
-        case Type::Function:
-        case Type::FunctionArg:
-        case Type::Conditional:
-        case Type::QuotedLiteral:
-            break;
-    }
-
-    return false;
-}
-
 ParsedScript makeLiteralQuery(const QString& input)
 {
     ParsedScript script;
@@ -1962,7 +1915,7 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
                 return literalMatches(track, search, firstExpr.type == Expr::QuotedLiteral);
             });
         }
-        else if(!isQueryExpression(firstExpr.type)) {
+        else if(!Expr::isQueryExpression(firstExpr.type)) {
             return {};
         }
     }

@@ -34,51 +34,6 @@ ScriptScanner::WhitespaceMode whitespaceMode(ScriptWhitespaceMode mode)
     return ScriptScanner::WhitespaceMode::IgnoreLayout;
 }
 
-bool isQueryExpression(Expr::Type type)
-{
-    switch(type) {
-        case Expr::Type::Not:
-        case Expr::Type::Group:
-        case Expr::Type::And:
-        case Expr::Type::Or:
-        case Expr::Type::XOr:
-        case Expr::Type::Equals:
-        case Expr::Type::Contains:
-        case Expr::Type::StartsWith:
-        case Expr::Type::EndsWith:
-        case Expr::Type::In:
-        case Expr::Type::ContainsAny:
-        case Expr::Type::ContainsWord:
-        case Expr::Type::Greater:
-        case Expr::Type::GreaterEqual:
-        case Expr::Type::Less:
-        case Expr::Type::LessEqual:
-        case Expr::Type::SortAscending:
-        case Expr::Type::SortDescending:
-        case Expr::Type::All:
-        case Expr::Type::Missing:
-        case Expr::Type::Present:
-        case Expr::Type::Before:
-        case Expr::Type::After:
-        case Expr::Type::Since:
-        case Expr::Type::During:
-        case Expr::Type::Date:
-        case Expr::Type::Limit:
-            return true;
-        case Expr::Type::Null:
-        case Expr::Type::Literal:
-        case Expr::Type::Variable:
-        case Expr::Type::VariableList:
-        case Expr::Type::VariableRaw:
-        case Expr::Type::Function:
-        case Expr::Type::FunctionArg:
-        case Expr::Type::Conditional:
-        case Expr::Type::QuotedLiteral:
-            break;
-    }
-
-    return false;
-}
 } // namespace
 
 ScriptParser::ScriptParser()
@@ -116,14 +71,15 @@ bool ScriptParser::canEvaluateAsQuery(const ParsedScript& input)
     }
 
     return std::ranges::all_of(input.expressions, [](const Expression& expr) {
-        return expr.type == Expr::Literal || expr.type == Expr::QuotedLiteral || isQueryExpression(expr.type);
+        return expr.type == Expr::Literal || expr.type == Expr::QuotedLiteral || Expr::isQueryExpression(expr.type);
     });
 }
 
 bool ScriptParser::containsQueryExpression(const ParsedScript& input)
 {
-    return input.isValid()
-        && std::ranges::any_of(input.expressions, [](const Expression& expr) { return isQueryExpression(expr.type); });
+    return input.isValid() && std::ranges::any_of(input.expressions, [](const Expression& expr) {
+               return Expr::isQueryExpression(expr.type);
+           });
 }
 
 ScriptDependencies ScriptParser::dependencies(const ParsedScript& input)

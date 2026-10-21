@@ -93,50 +93,7 @@ void ScriptHighlighter::expression()
         case ScriptScanner::TokLeftAngle:
             formattingTag();
             break;
-        case ScriptScanner::TokEscape:
-        case ScriptScanner::TokRightAngle:
-        case ScriptScanner::TokComma:
-        case ScriptScanner::TokLeftParen:
-        case ScriptScanner::TokRightParen:
-        case ScriptScanner::TokRightSquare:
-        case ScriptScanner::TokLiteral:
-        case ScriptScanner::TokSlash:
-        case ScriptScanner::TokContains:
-        case ScriptScanner::TokEquals:
-        case ScriptScanner::TokStarts:
-        case ScriptScanner::TokEnds:
-        case ScriptScanner::TokWith:
-        case ScriptScanner::TokIn:
-        case ScriptScanner::TokAny:
-        case ScriptScanner::TokWord:
-        case ScriptScanner::TokEos:
-        case ScriptScanner::TokError:
-        case ScriptScanner::TokNot:
-        case ScriptScanner::TokAscending:
-        case ScriptScanner::TokDescending:
-        case ScriptScanner::TokAnd:
-        case ScriptScanner::TokOr:
-        case ScriptScanner::TokXOr:
-        case ScriptScanner::TokMissing:
-        case ScriptScanner::TokPresent:
-        case ScriptScanner::TokAll:
-        case ScriptScanner::TokSort:
-        case ScriptScanner::TokBy:
-        case ScriptScanner::TokBefore:
-        case ScriptScanner::TokAfter:
-        case ScriptScanner::TokSince:
-        case ScriptScanner::TokDuring:
-        case ScriptScanner::TokLast:
-        case ScriptScanner::TokSecond:
-        case ScriptScanner::TokMinute:
-        case ScriptScanner::TokHour:
-        case ScriptScanner::TokDay:
-        case ScriptScanner::TokWeek:
-        case ScriptScanner::TokMonth:
-        case ScriptScanner::TokYear:
-        case ScriptScanner::TokLimit:
-        case ScriptScanner::TokPlus:
-        case ScriptScanner::TokMinus:
+        default:
             break;
     }
 }

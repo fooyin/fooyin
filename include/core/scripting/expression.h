@@ -62,6 +62,52 @@ enum Type : uint8_t
     ContainsAny,
     ContainsWord,
 };
+
+constexpr bool isQueryExpression(Type type)
+{
+    switch(type) {
+        case Not:
+        case Group:
+        case And:
+        case Or:
+        case XOr:
+        case Equals:
+        case Contains:
+        case StartsWith:
+        case EndsWith:
+        case In:
+        case ContainsAny:
+        case ContainsWord:
+        case Greater:
+        case GreaterEqual:
+        case Less:
+        case LessEqual:
+        case SortAscending:
+        case SortDescending:
+        case All:
+        case Missing:
+        case Present:
+        case Before:
+        case After:
+        case Since:
+        case During:
+        case Date:
+        case Limit:
+            return true;
+        case Null:
+        case Literal:
+        case Variable:
+        case VariableList:
+        case VariableRaw:
+        case Function:
+        case FunctionArg:
+        case Conditional:
+        case QuotedLiteral:
+            break;
+    }
+
+    return false;
+}
 } // namespace Expr
 
 enum class FunctionKind : uint8_t
