@@ -38,6 +38,7 @@
 #include <QInputDialog>
 #include <QJsonObject>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMenu>
 #include <QMessageBox>
 #include <QPainter>
@@ -66,6 +67,62 @@ constexpr std::array<const char*, 18> BandLabels = {
     "55",   "77",   "110",  "156",  "220", "311", "440", "622", "880",
     "1.2K", "1.8K", "2.5K", "3.5K", "5K",  "7K",  "10K", "14K", "20K",
 };
+
+void selectMatchingPreset(QComboBox* presetBox, const QByteArray& settings)
+{
+    int matchingIndex{-1};
+    for(int i{0}; i < presetBox->count(); ++i) {
+        if(presetBox->itemData(i).toByteArray() == settings) {
+            matchingIndex = i;
+            break;
+        }
+    }
+
+    const QSignalBlocker blocker{presetBox};
+
+    const QString currentText = presetBox->currentText();
+    presetBox->setCurrentIndex(matchingIndex);
+    if(matchingIndex < 0 && presetBox->isEditable()) {
+        presetBox->setEditText(currentText);
+    }
+}
+
+void addRestorePresetsAction(QMenu* menu, EqualiserPresetStore& presetStore, QWidget* parent)
+{
+    auto* action = menu->addAction(EqualiserPresetStore::tr("Restore Built-in Presets"));
+    QObject::connect(action, &QAction::triggered, menu, [parent, &presetStore]() {
+        const auto answer = QMessageBox::question(
+            parent, EqualiserPresetStore::tr("Restore Built-in Presets"),
+            EqualiserPresetStore::tr("Restore the original built-in presets? This will replace any changes to them "
+                                     "and restore deleted built-in presets. User-created presets will be kept."),
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+        if(answer == QMessageBox::Yes) {
+            presetStore.restoreBuiltInPresets();
+        }
+    });
+}
+
+void setupPresetContextMenu(QComboBox* presetBox, EqualiserPresetStore& presetStore)
+{
+    for(auto* target : {qobject_cast<QWidget*>(presetBox), qobject_cast<QWidget*>(presetBox->lineEdit())}) {
+        if(!target) {
+            continue;
+        }
+
+        target->setContextMenuPolicy(Qt::CustomContextMenu);
+        QObject::connect(target, &QWidget::customContextMenuRequested, presetBox,
+                         [target, presetBox, &presetStore](const QPoint& position) {
+                             auto* menu = presetBox->isEditable() ? presetBox->lineEdit()->createStandardContextMenu()
+                                                                  : new QMenu(presetBox);
+                             menu->setAttribute(Qt::WA_DeleteOnClose);
+                             if(!menu->isEmpty()) {
+                                 menu->addSeparator();
+                             }
+                             addRestorePresetsAction(menu, presetStore, presetBox);
+                             menu->popup(target->mapToGlobal(position));
+                         });
+    }
+}
 
 QSlider* makeGainSlider(QWidget* parent)
 {
@@ -342,6 +399,7 @@ EqualiserLayoutEditor::EqualiserLayoutEditor(EqualiserPresetStore& presetStore, 
     const FySettings settings;
     m_presetBox->setEditable(settings.value(Settings::Gui::PresetComboBoxModeKey, true).toBool());
     m_presetBox->setInsertPolicy(QComboBox::NoInsert);
+    setupPresetContextMenu(m_presetBox, m_presetStore);
     m_savePresetButton->setText(m_presetBox->isEditable() ? tr("Save preset") : tr("Save preset…"));
 
     m_enabledToggle->setCheckable(true);
@@ -464,8 +522,7 @@ void EqualiserLayoutEditor::populateContextMenu(QMenu* menu)
         && (!m_showControls || !m_presetBox->isEditable() || !m_presetBox->currentText().trimmed().isEmpty()));
     QObject::connect(savePresetAction, &QAction::triggered, this, &EqualiserLayoutEditor::savePreset);
 
-    auto* presetMenu = menu->addMenu(tr("Presets"));
-    presetMenu->setEnabled(m_enabledToggle->isChecked());
+    auto* presetMenu    = menu->addMenu(tr("Presets"));
     const auto& presets = m_presetStore.presets();
     if(presets.empty()) {
         auto* noPresets = presetMenu->addAction(tr("No presets"));
@@ -474,12 +531,16 @@ void EqualiserLayoutEditor::populateContextMenu(QMenu* menu)
     else {
         for(const auto& preset : presets) {
             auto* action = presetMenu->addAction(preset.name);
+            action->setEnabled(m_enabledToggle->isChecked());
             QObject::connect(action, &QAction::triggered, this, [this, settings = preset.settings]() {
                 loadSettings(settings);
                 m_previewTimer.start(PreviewDebounceMs, this);
             });
         }
     }
+
+    presetMenu->addSeparator();
+    addRestorePresetsAction(presetMenu, m_presetStore, this);
 }
 
 void EqualiserLayoutEditor::saveLayoutData(QJsonObject& layout)
@@ -536,24 +597,7 @@ void EqualiserLayoutEditor::updatePresetButtons()
 
 void EqualiserLayoutEditor::updatePresetSelection()
 {
-    int matchingIndex{-1};
-    if(m_presetBox->count() > 0) {
-        const QByteArray currentSettings = saveSettings();
-        for(int i{0}; i < m_presetBox->count(); ++i) {
-            if(m_presetBox->itemData(i).toByteArray() == currentSettings) {
-                matchingIndex = i;
-                break;
-            }
-        }
-    }
-
-    const QSignalBlocker blocker{m_presetBox};
-
-    const QString currentText = m_presetBox->currentText();
-    m_presetBox->setCurrentIndex(matchingIndex);
-    if(matchingIndex < 0 && m_presetBox->isEditable()) {
-        m_presetBox->setEditText(currentText);
-    }
+    selectMatchingPreset(m_presetBox, saveSettings());
     updatePresetButtons();
 }
 
@@ -768,6 +812,7 @@ EqualiserSettingsWidget::EqualiserSettingsWidget(EqualiserPresetStore& presetSto
     const FySettings settings;
     m_presetBox->setEditable(settings.value(Settings::Gui::PresetComboBoxModeKey, true).toBool());
     m_presetBox->setInsertPolicy(QComboBox::NoInsert);
+    setupPresetContextMenu(m_presetBox, m_presetStore);
     m_savePresetButton->setText(m_presetBox->isEditable() ? tr("Save") : tr("Save…"));
 
     m_presetBox->setMinimumContentsLength(18);
@@ -861,6 +906,7 @@ void EqualiserSettingsWidget::applySliderState(const EqualiserSliderState& state
     refreshTooltips();
     refreshValueLabels();
     refreshSelectedBandEditor();
+    updatePresetSelection();
 }
 
 void EqualiserSettingsWidget::connectSliderSignals(QSlider* slider, const bool refreshBandEditor)
@@ -875,6 +921,7 @@ void EqualiserSettingsWidget::connectSliderSignals(QSlider* slider, const bool r
         if(refreshBandEditor) {
             refreshSelectedBandEditor();
         }
+        updatePresetSelection();
         m_previewTimer.start(PreviewDebounceMs, this);
         if(slider->isSliderDown()) {
             showSliderToolTip(this, m_sliderToolTip, slider);
@@ -895,25 +942,26 @@ void EqualiserSettingsWidget::restoreDefaults()
 
 void EqualiserSettingsWidget::refreshPresets()
 {
+    const QSignalBlocker blocker{m_presetBox};
     const QString currentText = m_presetBox->currentText().trimmed();
 
     m_presetBox->clear();
 
-    const auto presets = m_presetStore.presets();
+    const auto& presets = m_presetStore.presets();
     for(const auto& preset : presets) {
-        m_presetBox->addItem(preset.name);
+        m_presetBox->addItem(preset.name, preset.settings);
     }
 
-    if(!currentText.isEmpty()) {
-        const int index = m_presetBox->findText(currentText);
-        if(index >= 0 || !m_presetBox->isEditable()) {
-            m_presetBox->setCurrentIndex(index);
-        }
-        else {
-            m_presetBox->setEditText(currentText);
-        }
+    if(m_presetBox->isEditable()) {
+        m_presetBox->setEditText(currentText);
     }
 
+    updatePresetSelection();
+}
+
+void EqualiserSettingsWidget::updatePresetSelection()
+{
+    selectMatchingPreset(m_presetBox, saveSettings());
     updatePresetButtons();
 }
 

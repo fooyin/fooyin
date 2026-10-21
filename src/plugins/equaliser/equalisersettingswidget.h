@@ -118,6 +118,7 @@ private:
     void applySliderState(const EqualiserSliderState& state);
     void refreshPresets();
     void updatePresetButtons();
+    void updatePresetSelection();
     void loadPreset();
     void savePreset();
     void deletePreset();
