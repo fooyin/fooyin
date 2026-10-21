@@ -26,7 +26,6 @@
 
 #include <QContextMenuEvent>
 #include <QFont>
-#include <QLoggingCategory>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
@@ -41,8 +40,6 @@
 using namespace Qt::StringLiterals;
 
 constexpr auto A4NoteIndex = 57;
-
-Q_LOGGING_CATEGORY(SPECTRUM_TIMING, "fy.trace.spectrum.timing", QtInfoMsg)
 
 namespace Fooyin::Spectrum {
 namespace {
@@ -281,7 +278,6 @@ void SpectrumView::engineStateChanged(Engine::PlaybackState state)
 
 void SpectrumView::startUpdateTimer()
 {
-    m_timing = {};
     m_elapsedTimer.restart();
     m_updateTimer.start(m_config.updateFps, this);
 }
@@ -329,13 +325,6 @@ void SpectrumView::tick()
 {
     const double elapsedMs = static_cast<double>(m_elapsedTimer.nsecsElapsed()) / static_cast<double>(Time::NsPerMs);
     m_elapsedTimer.restart();
-    const bool timingEnabled = SPECTRUM_TIMING().isDebugEnabled();
-    if(!timingEnabled) {
-        m_timing = {};
-    }
-    else {
-        m_timing.lastTickMs = elapsedMs;
-    }
     const float dbRange = static_cast<float>(std::max(1, m_config.amplitudeMaxDb - m_config.amplitudeMinDb));
     const float barFalloffPerMs
         = static_cast<float>(std::max(0, m_config.amplitudeGravity)) / dbRange / static_cast<float>(Time::MsPerSecond);
@@ -378,54 +367,14 @@ void SpectrumView::tick()
         }
     }
 
-    QElapsedTimer analysisTimer;
-    if(timingEnabled) {
-        analysisTimer.start();
-    }
     if(!m_paused) {
         changed |= renderLatestSpectrum();
-    }
-    if(timingEnabled) {
-        m_timing.maxAnalysisMs = std::max(m_timing.maxAnalysisMs, analysisTimer.nsecsElapsed() / 1000000.0);
-        analysisTimer.restart();
     }
 
     if(changed) {
         updateDirtyRegion(dirtyRegion);
         repaintDirtyRegion(dirtyRegion);
         refreshToolTip();
-    }
-
-    if(timingEnabled && !m_paused) {
-        ++m_timing.ticks;
-        m_timing.elapsedMs += elapsedMs;
-        m_timing.maxTickMs    = std::max(m_timing.maxTickMs, elapsedMs);
-        m_timing.maxRepaintMs = std::max(m_timing.maxRepaintMs, analysisTimer.nsecsElapsed() / 1000000.0);
-        if(m_timing.elapsedMs >= 1000.0) {
-            const double windowDurationMs
-                = m_timing.sampleRate > 0 ? (1000.0 * m_timing.fftSize) / m_timing.sampleRate : 0.0;
-            const double windowEndAgeMs = m_timing.sampleRate > 0
-                                            ? static_cast<double>(m_timing.requestedTimeMs)
-                                                  - static_cast<double>(m_timing.windowStartMs) - windowDurationMs
-                                            : -1.0;
-            qCDebug(SPECTRUM_TIMING) << "Spectrum presentation timing:" << "view=" << this
-                                     << "elapsedMs=" << m_timing.elapsedMs << "ticks=" << m_timing.ticks
-                                     << "targetFps=" << m_config.updateFps << "maxTickMs=" << m_timing.maxTickMs
-                                     << "maxAnalysisMs=" << m_timing.maxAnalysisMs
-                                     << "maxRepaintMs=" << m_timing.maxRepaintMs
-                                     << "maxClockStepMs=" << m_timing.maxClockStepMs << "failures=" << m_timing.failures
-                                     << "repeatedWindows=" << m_timing.repeatedWindows
-                                     << "requestedMs=" << m_timing.requestedTimeMs
-                                     << "sampleRate=" << m_timing.sampleRate << "fftSize=" << m_timing.fftSize
-                                     << "fftSizingMode=" << static_cast<int>(m_config.fftSizingMode)
-                                     << "configuredFftSize=" << m_config.fftSize
-                                     << "configuredFftDurationMs=" << m_config.fftDurationMs
-                                     << "windowFunction=" << static_cast<int>(m_config.windowFunction)
-                                     << "windowEndAgeMs=" << windowEndAgeMs
-                                     << "windowCentreAgeMs=" << windowEndAgeMs + (windowDurationMs / 2.0)
-                                     << "visible=" << isVisible() << "size=" << size() << "dpr=" << devicePixelRatioF();
-            m_timing = {};
-        }
     }
 
     if(m_paused) {
@@ -453,30 +402,6 @@ bool SpectrumView::renderLatestSpectrum()
                         ? m_session->getSpectrumWindowEndingAtDuration(spectrum, endTimeMs, m_config.fftDurationMs,
                                                                        windowFunction)
                         : m_session->getSpectrumWindowEndingAt(spectrum, endTimeMs, m_config.fftSize, windowFunction);
-    }
-
-    if(SPECTRUM_TIMING().isDebugEnabled()) {
-        if(m_timing.requestedTimeMs > 0) {
-            const double clockStepMs
-                = static_cast<double>(endTimeMs) - static_cast<double>(m_timing.requestedTimeMs) - m_timing.lastTickMs;
-            if(std::abs(clockStepMs) > std::abs(m_timing.maxClockStepMs)) {
-                m_timing.maxClockStepMs = clockStepMs;
-            }
-        }
-        m_timing.requestedTimeMs = endTimeMs;
-        m_timing.failures += !gotSpectrum;
-        if(gotSpectrum) {
-            m_timing.repeatedWindows += spectrum.startTimeMs == m_timing.windowStartMs
-                                     && spectrum.fftSize == m_timing.fftSize
-                                     && spectrum.sampleRate == m_timing.sampleRate;
-            m_timing.windowStartMs = spectrum.startTimeMs;
-            m_timing.fftSize       = spectrum.fftSize;
-            m_timing.sampleRate    = spectrum.sampleRate;
-        }
-        else {
-            m_timing.fftSize    = 0;
-            m_timing.sampleRate = 0;
-        }
     }
 
     if(!gotSpectrum) {

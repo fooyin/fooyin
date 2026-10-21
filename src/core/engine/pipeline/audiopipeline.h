@@ -40,7 +40,6 @@
 #include <utils/lockfreeringbuffer.h>
 
 #include <QDebug>
-#include <QLoggingCategory>
 #include <QStringList>
 
 #include <atomic>
@@ -59,8 +58,6 @@
 
 class QString;
 class QObject;
-
-Q_DECLARE_LOGGING_CATEGORY(AUDIO_TIMING)
 
 namespace Fooyin {
 class DspRegistry;
@@ -160,15 +157,6 @@ public:
         OutputState state;
         int bufferFrames{0};
         bool valid{false};
-    };
-
-    struct OutputTimingSnapshot
-    {
-        int queuedFrames{0};
-        int freeFrames{0};
-        int pendingFrames{0};
-        int sampleRate{0};
-        double delaySeconds{0.0};
     };
 
     AudioPipeline();
@@ -320,7 +308,6 @@ public:
 
     [[nodiscard]] PipelineStatus currentStatus() const;
     [[nodiscard]] OutputQueueSnapshot outputQueueSnapshot() const;
-    [[nodiscard]] OutputTimingSnapshot outputTimingSnapshot() const;
 
     //! Reported pipeline playback delay in milliseconds (output + DSP latency).
     [[nodiscard]] uint64_t playbackDelayMs() const;
@@ -660,11 +647,6 @@ private:
     PipelineRenderer m_renderer;
     PipelineOutput m_outputUnit;
     PipelineTimeline m_timelineUnit;
-    std::atomic<int> m_timingQueuedFrames;
-    std::atomic<int> m_timingFreeFrames;
-    std::atomic<int> m_timingPendingFrames;
-    std::atomic<int> m_timingSampleRate;
-    std::atomic<double> m_timingDelaySeconds;
 
     double m_masterVolume;
     std::atomic<DspRegistry*> m_dspRegistry;

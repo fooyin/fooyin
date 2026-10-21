@@ -42,7 +42,6 @@
 #include <vector>
 
 Q_LOGGING_CATEGORY(PIPELINE, "fy.pipeline")
-Q_LOGGING_CATEGORY(AUDIO_TIMING, "fy.trace.audio.timing", QtInfoMsg)
 
 using namespace Qt::StringLiterals;
 
@@ -189,14 +188,7 @@ AudioPipeline::AudioPipeline()
     , m_pendingWriteStallLogActive{false}
     , m_outputUnderrunLogActive{false}
     , m_transitionUnderrunLogActive{false}
-    , m_timingQueuedFrames{0}
-    , m_timingFreeFrames{0}
-    , m_timingPendingFrames{0}
-    , m_timingSampleRate{0}
-    , m_timingDelaySeconds{0}
-{
-    AUDIO_TIMING(); // Initialise the category before it's used on the render thread
-}
+{ }
 
 AudioPipeline::~AudioPipeline()
 {
@@ -1393,15 +1385,6 @@ uint64_t AudioPipeline::playbackDelayMs() const
     return m_timelineUnit.playbackDelayMs();
 }
 
-AudioPipeline::OutputTimingSnapshot AudioPipeline::outputTimingSnapshot() const
-{
-    return {.queuedFrames  = m_timingQueuedFrames.load(std::memory_order_relaxed),
-            .freeFrames    = m_timingFreeFrames.load(std::memory_order_relaxed),
-            .pendingFrames = m_timingPendingFrames.load(std::memory_order_relaxed),
-            .sampleRate    = m_timingSampleRate.load(std::memory_order_relaxed),
-            .delaySeconds  = m_timingDelaySeconds.load(std::memory_order_relaxed)};
-}
-
 uint64_t AudioPipeline::transitionPlaybackDelayMs() const
 {
     return m_timelineUnit.transitionPlaybackDelayMs();
@@ -1814,14 +1797,6 @@ int AudioPipeline::backendQueuedFramesForState(const OutputState& state) const
 
 void AudioPipeline::updatePlaybackDelay(const OutputState& outputState, const PositionBasis basis)
 {
-    if(AUDIO_TIMING().isDebugEnabled()) {
-        m_timingQueuedFrames.store(outputState.queuedFrames, std::memory_order_relaxed);
-        m_timingFreeFrames.store(outputState.freeFrames, std::memory_order_relaxed);
-        m_timingPendingFrames.store(pendingOutputFrames(), std::memory_order_relaxed);
-        m_timingSampleRate.store(m_renderer.outputFormat().sampleRate(), std::memory_order_relaxed);
-        m_timingDelaySeconds.store(outputState.delay, std::memory_order_relaxed);
-    }
-
     uint64_t outputDelayMs{0};
     uint64_t transitionDspDelayMs{0};
     uint64_t dspDelayMs{0};

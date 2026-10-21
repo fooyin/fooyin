@@ -41,7 +41,6 @@ constexpr uint64_t DefaultBacklogDuration = 250;
 constexpr int MinimumSpectrumFrameCount   = 256;
 
 Q_LOGGING_CATEGORY(VISUALISATION_BACKEND, "fy.visualisation.backend")
-Q_LOGGING_CATEGORY(VISUALISATION_TIMING, "fy.trace.visualisation.timing", QtInfoMsg)
 
 namespace {
 int64_t steadyClockMs()
@@ -225,12 +224,6 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
                                                                  / static_cast<uint64_t>(sampleRate)};
     const auto reportedNextPresentationTime = frame.presentationTime + presentationDuration;
 
-    const bool timingEnabled = VISUALISATION_TIMING().isDebugEnabled();
-    const int64_t arrivalMs  = timingEnabled ? steadyClockMs() : 0;
-    if(timingEnabled && m_lastFrameArrivalMs > 0) {
-        m_maxFrameArrivalGapMs = std::max(m_maxFrameArrivalGapMs, arrivalMs - m_lastFrameArrivalMs);
-    }
-
     bool resetBacklog{false};
     if(frame.discontinuityBefore) {
         qCDebug(VISUALISATION_BACKEND) << "Resetting visualisation backlog after dropped analysis data:"
@@ -251,16 +244,6 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
         if(const auto it = m_sourceTimelines.find(sourceKey); it != m_sourceTimelines.end()) {
             bool timelineDiscontinuity{false};
             if(hasPresentationTime && it->second.nextPresentationTime != std::chrono::steady_clock::time_point{}) {
-                if(timingEnabled) {
-                    const auto correctionNs    = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                                                     frame.presentationTime - it->second.nextPresentationTime)
-                                                     .count();
-                    m_presentationCorrectionMs = correctionNs / static_cast<int64_t>(Time::NsPerMs);
-                    m_totalPresentationCorrectionNs += correctionNs;
-                    if(std::abs(correctionNs) > std::abs(m_maxPresentationCorrectionNs)) {
-                        m_maxPresentationCorrectionNs = correctionNs;
-                    }
-                }
                 const auto tolerance = std::chrono::milliseconds{ContinuityToleranceMs};
                 const bool presentationTimeReanchored
                     = frame.presentationTime + tolerance < it->second.nextPresentationTime
@@ -301,8 +284,6 @@ void VisualisationBackend::appendFrame(const PcmFrame& frame)
         resetLocked();
         publishCurrentTime(0, 0, false, false);
     }
-
-    m_lastFrameArrivalMs = arrivalMs;
 
     if(!m_format.isValid()) {
         m_format = format;
@@ -411,26 +392,21 @@ bool VisualisationBackend::getSpectrumWindowEndingAt(VisualisationSession::Spect
                                                      SpectrumWindowFunction windowFunction) const
 {
     VisualisationSession::PcmWindow window;
-    const bool timingEnabled = VISUALISATION_TIMING().isDebugEnabled();
-    SpectrumTimingSample timing;
-    bool resolved{false};
 
     {
         const std::shared_lock lock{m_mutex};
 
         WindowRange range;
-        resolved = resolveSpectrumWindowEndingAt(range, endTimeMs, fftSize, MinimumSpectrumFrameCount)
-                && fillWindow(window, range.startFrame, range.frameCount, selection);
-        if(timingEnabled) {
-            timing = spectrumTimingSample(endTimeMs, fftSize, range, resolved);
+        if(!resolveSpectrumWindowEndingAt(range, endTimeMs, fftSize, MinimumSpectrumFrameCount)) {
+            return false;
+        }
+
+        if(!fillWindow(window, range.startFrame, range.frameCount, selection)) {
+            return false;
         }
     }
 
-    if(timingEnabled) {
-        recordSpectrumTiming(timing);
-    }
-
-    return resolved && fillSpectrumWindow(out, window, selection, windowFunction);
+    return fillSpectrumWindow(out, window, selection, windowFunction);
 }
 
 bool VisualisationBackend::getSpectrumWindowForDuration(VisualisationSession::SpectrumWindow& out,
@@ -467,27 +443,26 @@ bool VisualisationBackend::getSpectrumWindowEndingAtDuration(VisualisationSessio
                                                              SpectrumWindowFunction windowFunction) const
 {
     VisualisationSession::PcmWindow window;
-    const bool timingEnabled = VISUALISATION_TIMING().isDebugEnabled();
-    SpectrumTimingSample timing;
-    bool resolved{false};
 
     {
         const std::shared_lock lock{m_mutex};
 
         const int fftSize = spectrumFramesForDuration(durationMs);
+        if(fftSize <= 0) {
+            return false;
+        }
+
         WindowRange range;
-        resolved = fftSize > 0 && resolveSpectrumWindowEndingAt(range, endTimeMs, fftSize, MinimumSpectrumFrameCount)
-                && fillWindow(window, range.startFrame, range.frameCount, selection);
-        if(timingEnabled) {
-            timing = spectrumTimingSample(endTimeMs, fftSize, range, resolved);
+        if(!resolveSpectrumWindowEndingAt(range, endTimeMs, fftSize, MinimumSpectrumFrameCount)) {
+            return false;
+        }
+
+        if(!fillWindow(window, range.startFrame, range.frameCount, selection)) {
+            return false;
         }
     }
 
-    if(timingEnabled) {
-        recordSpectrumTiming(timing);
-    }
-
-    return resolved && fillSpectrumWindow(out, window, selection, windowFunction);
+    return fillSpectrumWindow(out, window, selection, windowFunction);
 }
 
 uint64_t VisualisationBackend::msToFrames(uint64_t ms, int sampleRate)
@@ -800,82 +775,15 @@ bool VisualisationBackend::fillSpectrumWindow(VisualisationSession::SpectrumWind
     return true;
 }
 
-VisualisationBackend::SpectrumTimingSample VisualisationBackend::spectrumTimingSample(uint64_t endTimeMs,
-                                                                                      int requestedFrames,
-                                                                                      const WindowRange& range,
-                                                                                      bool resolved) const
-{
-    SpectrumTimingSample sample;
-    sample.requestedTimeMs               = endTimeMs;
-    sample.requestedFrames               = requestedFrames;
-    sample.windowStartFrame              = range.startFrame;
-    sample.windowFrames                  = range.frameCount;
-    sample.sampleRate                    = m_format.sampleRate();
-    sample.resolved                      = resolved;
-    sample.arrivalAgeMs                  = m_lastFrameArrivalMs > 0 ? steadyClockMs() - m_lastFrameArrivalMs : -1;
-    sample.maxArrivalGapMs               = m_maxFrameArrivalGapMs;
-    sample.presentationCorrectionMs      = m_presentationCorrectionMs;
-    sample.totalPresentationCorrectionMs = m_totalPresentationCorrectionNs / static_cast<int64_t>(Time::NsPerMs);
-    sample.maxPresentationCorrectionMs   = m_maxPresentationCorrectionNs / static_cast<int64_t>(Time::NsPerMs);
-    if(sample.sampleRate > 0) {
-        sample.availableStartMs = (m_startStreamFrame * Time::MsPerSecond) / sample.sampleRate;
-        sample.availableEndMs   = (m_nextStreamFrame * Time::MsPerSecond) / sample.sampleRate;
-    }
-    return sample;
-}
-
-void VisualisationBackend::recordSpectrumTiming(const SpectrumTimingSample& sample) const
-{
-    const int64_t nowMs = steadyClockMs();
-    SpectrumTimingSummary summary;
-    {
-        const std::scoped_lock lock{m_timingMutex};
-        if(m_spectrumTiming.startMs == 0) {
-            m_spectrumTiming.startMs = nowMs;
-        }
-        ++m_spectrumTiming.queries;
-        m_spectrumTiming.failures += !sample.resolved;
-        m_spectrumTiming.beforeHistory += sample.requestedTimeMs < sample.availableStartMs;
-        m_spectrumTiming.afterHistory += sample.requestedTimeMs > sample.availableEndMs;
-        m_spectrumTiming.shortWindows += sample.resolved && sample.windowFrames < sample.requestedFrames;
-        if(nowMs - m_spectrumTiming.startMs < 1000) {
-            return;
-        }
-        summary          = m_spectrumTiming;
-        m_spectrumTiming = {};
-    }
-
-    qCDebug(VISUALISATION_TIMING) << "Spectrum history timing:" << "elapsedMs=" << nowMs - summary.startMs
-                                  << "queries=" << summary.queries << "failures=" << summary.failures
-                                  << "beforeHistory=" << summary.beforeHistory
-                                  << "afterHistory=" << summary.afterHistory << "shortWindows=" << summary.shortWindows
-                                  << "requestedMs=" << sample.requestedTimeMs
-                                  << "availableStartMs=" << sample.availableStartMs
-                                  << "availableEndMs=" << sample.availableEndMs
-                                  << "requestedFrames=" << sample.requestedFrames
-                                  << "windowStartFrame=" << sample.windowStartFrame
-                                  << "windowFrames=" << sample.windowFrames << "sampleRate=" << sample.sampleRate
-                                  << "analysisArrivalAgeMs=" << sample.arrivalAgeMs
-                                  << "maxArrivalGapSinceResetMs=" << sample.maxArrivalGapMs
-                                  << "lastPresentationCorrectionMs=" << sample.presentationCorrectionMs
-                                  << "totalPresentationCorrectionSinceResetMs=" << sample.totalPresentationCorrectionMs
-                                  << "maxPresentationCorrectionSinceResetMs=" << sample.maxPresentationCorrectionMs;
-}
-
 void VisualisationBackend::resetLocked()
 {
-    m_lastFrameArrivalMs            = 0;
-    m_maxFrameArrivalGapMs          = 0;
-    m_presentationCorrectionMs      = 0;
-    m_totalPresentationCorrectionNs = 0;
-    m_maxPresentationCorrectionNs   = 0;
-    m_presentationLeadMs            = 0;
-    m_headFrame                     = 0;
-    m_frameCount                    = 0;
-    m_startStreamFrame              = 0;
-    m_nextStreamFrame               = 0;
-    m_currentStreamId               = 0;
-    m_format                        = AudioFormat{SampleFormat::F32, 0, 0};
+    m_presentationLeadMs = 0;
+    m_headFrame          = 0;
+    m_frameCount         = 0;
+    m_startStreamFrame   = 0;
+    m_nextStreamFrame    = 0;
+    m_currentStreamId    = 0;
+    m_format             = AudioFormat{SampleFormat::F32, 0, 0};
     m_sourceTimelines.clear();
 }
 

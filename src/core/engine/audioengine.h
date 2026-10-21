@@ -42,7 +42,6 @@
 #include "output/postprocessor/replaygainprocessor.h"
 #include "pipeline/audiopipeline.h"
 
-#include <QElapsedTimer>
 #include <QEvent>
 
 #include <atomic>
@@ -453,7 +452,6 @@ private:
     LockFreeRingBuffer<PcmFrame> m_pcmFrameMailbox;
     std::deque<LevelFrame> m_pendingLevelFrames;
     std::shared_ptr<VisualisationBackend> m_visualisationBackend;
-    QElapsedTimer m_timingLogTimer;
     std::atomic<bool> m_levelFrameDispatchQueued;
     std::atomic<bool> m_pcmFrameDispatchQueued;
     std::atomic<bool> m_pipelineWakeTaskQueued;

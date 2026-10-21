@@ -69,23 +69,6 @@ private:
         bool available{false};
     };
 
-    struct TimingSummary
-    {
-        double elapsedMs{0.0};
-        double lastTickMs{0.0};
-        double maxTickMs{0.0};
-        double maxAnalysisMs{0.0};
-        double maxRepaintMs{0.0};
-        double maxClockStepMs{0.0};
-        uint64_t ticks{0};
-        uint64_t failures{0};
-        uint64_t repeatedWindows{0};
-        uint64_t requestedTimeMs{0};
-        uint64_t windowStartMs{0};
-        int fftSize{0};
-        int sampleRate{0};
-    };
-
     void engineStateChanged(Engine::PlaybackState state);
 
     void startUpdateTimer();
@@ -159,7 +142,6 @@ private:
     bool m_stopped;
     Gui::FrameTimer m_updateTimer;
     QElapsedTimer m_elapsedTimer;
-    TimingSummary m_timing;
     QPointer<ToolTip> m_toolTip;
     int m_toolTipBand;
     mutable QPixmap m_staticLayer;

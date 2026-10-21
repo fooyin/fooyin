@@ -90,33 +90,6 @@ private:
         int frameCount{0};
     };
 
-    struct SpectrumTimingSample
-    {
-        uint64_t requestedTimeMs{0};
-        uint64_t availableStartMs{0};
-        uint64_t availableEndMs{0};
-        uint64_t windowStartFrame{0};
-        int requestedFrames{0};
-        int windowFrames{0};
-        int sampleRate{0};
-        int64_t arrivalAgeMs{0};
-        int64_t maxArrivalGapMs{0};
-        int64_t presentationCorrectionMs{0};
-        int64_t totalPresentationCorrectionMs{0};
-        int64_t maxPresentationCorrectionMs{0};
-        bool resolved{false};
-    };
-
-    struct SpectrumTimingSummary
-    {
-        int64_t startMs{0};
-        uint64_t queries{0};
-        uint64_t failures{0};
-        uint64_t beforeHistory{0};
-        uint64_t afterHistory{0};
-        uint64_t shortWindows{0};
-    };
-
     struct WindowCacheKey
     {
         int fftSize{0};
@@ -146,10 +119,6 @@ private:
                                           const ChannelSelection& selection,
                                           SpectrumWindowFunction windowFunction) const;
 
-    [[nodiscard]] SpectrumTimingSample spectrumTimingSample(uint64_t endTimeMs, int requestedFrames,
-                                                            const WindowRange& range, bool resolved) const;
-    void recordSpectrumTiming(const SpectrumTimingSample& sample) const;
-
     void resetLocked();
     void ensureCapacity(size_t requiredFrames);
     [[nodiscard]] size_t requestedBacklogFrames(int sampleRate) const;
@@ -168,11 +137,6 @@ private:
     uint64_t m_startStreamFrame;
     uint64_t m_nextStreamFrame;
     uint32_t m_currentStreamId;
-    int64_t m_lastFrameArrivalMs{0};
-    int64_t m_maxFrameArrivalGapMs{0};
-    int64_t m_presentationCorrectionMs{0};
-    int64_t m_totalPresentationCorrectionNs{0};
-    int64_t m_maxPresentationCorrectionNs{0};
 
     struct SourceTimeline
     {
@@ -204,7 +168,5 @@ private:
     mutable std::unordered_map<WindowCacheKey, std::vector<float>, WindowCacheKeyHash> m_windowCache;
     mutable std::vector<float> m_fftInputScratch;
     mutable std::vector<float> m_magnitudeScratch;
-    mutable std::mutex m_timingMutex;
-    mutable SpectrumTimingSummary m_spectrumTiming;
 };
 } // namespace Fooyin
