@@ -22,7 +22,6 @@
   - Add options to keep headers and artwork visible while scrolling ([#1739](https://github.com/fooyin/fooyin/issues/1739))
   - Add configurable artwork reflections
   - Add scriptable Playlist Tabs text with `%playlist_name%`
-  - Add optional column layouts to playlist presets ([#523](https://github.com/fooyin/fooyin/issues/523))
   - Add a visual rule editor for autoplaylists ([#1798](https://github.com/fooyin/fooyin/pull/1798))
 
 ### Improvements
@@ -63,6 +62,8 @@
   - Add horizontal scrolling and optional word wrapping to the log ([#1777](https://github.com/fooyin/fooyin/issues/1777))
   - Show portal-assigned global shortcuts and track system changes ([#1731](https://github.com/fooyin/fooyin/issues/1731))
   - Improve expanded tree view lookup performance
+  - Add configurable volume curves to Volume Control ([#1797](https://github.com/fooyin/fooyin/issues/1797))
+  - Replace text hint symbols with themed icons
 - **Filters**
   - Add an option to remember the selected saved filter ([#1690](https://github.com/fooyin/fooyin/issues/1690))
   - Add an option to restore Library Filter state on startup ([#1699](https://github.com/fooyin/fooyin/pull/1699))
@@ -83,7 +84,9 @@
   - Standardise and translate plugin categories and statuses
 - **Playlists**
   - Add scripted separators and unify preset display scripts ([#1732](https://github.com/fooyin/fooyin/pull/1732))
+  - Add optional column layouts to playlist presets ([#523](https://github.com/fooyin/fooyin/issues/523))
   - Expand the default autoplaylist presets
+  - Use the selected preset name for unnamed autoplaylists
   - Enable queue indexes by default in playlist-led mode
   - Improve autoplaylist update performance ([#1787](https://github.com/fooyin/fooyin/issues/1787))
   - Improve track lookup and Queue Viewer update performance
@@ -113,7 +116,11 @@
   - Reorganise Script Editor settings and move font configuration to theme settings
   - Reduce the default minimum height of script text editors
   - Add `%lyrics_line%` for the current line of synced lyrics
-  - Add `STARTSWITH` and `ENDSWITH` query operators
+  - Add `STARTS WITH` and `ENDS WITH` query operators
+  - Add `IN` and `NOT IN` queries for matching any value in a list, e.g. `genre IN (Rock, Jazz)`
+  - Add `HAS ANY` queries for matching any substring in a list, e.g. `title HAS ANY (live, demo)`
+  - Add `HAS WORD` and `NOT HAS WORD` queries for whole-word matching
+  - Add `BETWEEN` queries for date ranges
 - **Tag Editor**
   - Start editing values when navigating with Tab ([#1669](https://github.com/fooyin/fooyin/issues/1669))
   - Add an option for single-click value editing
@@ -141,6 +148,7 @@
   - Fix WaveBar seek cancellation and high-DPI rendering
   - Hide unreachable played threshold markers in seek bars and WaveBar
   - Update documentation links ([#1792](https://github.com/fooyin/fooyin/pull/1792))
+  - Show scripts in line edits from the beginning when first shown
 - **Library & Metadata**
   - Fix Discogs artwork requests
   - Fix reading custom ReplayGain tags ([#1775](https://github.com/fooyin/fooyin/issues/1775))
@@ -189,7 +197,7 @@
   - Include the version in bundle filenames
   - Allow access to `/mnt` and `/media`
 - **Packaging:** Update desktop entry text and translations ([#1785](https://github.com/fooyin/fooyin/pull/1785), [#1789](https://github.com/fooyin/fooyin/pull/1789))
-- **Translations:** Update translations and translation sources ([#1687](https://github.com/fooyin/fooyin/pull/1687), [#1688](https://github.com/fooyin/fooyin/pull/1688), [#1701](https://github.com/fooyin/fooyin/pull/1701), [#1713](https://github.com/fooyin/fooyin/pull/1713), [#1714](https://github.com/fooyin/fooyin/pull/1714), [#1748](https://github.com/fooyin/fooyin/pull/1748), [#1749](https://github.com/fooyin/fooyin/pull/1749), [#1762](https://github.com/fooyin/fooyin/pull/1762), [#1763](https://github.com/fooyin/fooyin/pull/1763), [#1772](https://github.com/fooyin/fooyin/pull/1772), [#1773](https://github.com/fooyin/fooyin/pull/1773))
+- **Translations:** Update translations and translation sources ([#1687](https://github.com/fooyin/fooyin/pull/1687), [#1688](https://github.com/fooyin/fooyin/pull/1688), [#1701](https://github.com/fooyin/fooyin/pull/1701), [#1713](https://github.com/fooyin/fooyin/pull/1713), [#1714](https://github.com/fooyin/fooyin/pull/1714), [#1748](https://github.com/fooyin/fooyin/pull/1748), [#1749](https://github.com/fooyin/fooyin/pull/1749), [#1762](https://github.com/fooyin/fooyin/pull/1762), [#1763](https://github.com/fooyin/fooyin/pull/1763), [#1772](https://github.com/fooyin/fooyin/pull/1772), [#1773](https://github.com/fooyin/fooyin/pull/1773), [#1799](https://github.com/fooyin/fooyin/pull/1799), [#1800](https://github.com/fooyin/fooyin/pull/1800))
 - **Windows:** Sign release artifacts with SignPath
 
 ### Dev/API
