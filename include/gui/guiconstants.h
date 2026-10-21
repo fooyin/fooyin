@@ -74,6 +74,9 @@ constexpr auto Love         = "love";
 constexpr auto Unlove       = "unlove";
 constexpr auto Rss          = "rss-symbolic";
 
+constexpr auto Information = "dialog-information";
+constexpr auto Warning     = "dialog-warning";
+
 constexpr auto ScriptExpression = "script-expression";
 constexpr auto ScriptVariable   = "script-variable";
 constexpr auto ScriptFunction   = "script-function";

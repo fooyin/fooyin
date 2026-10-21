@@ -28,6 +28,7 @@
 #include <gui/theme/themeregistry.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/fontbutton.h>
+#include <gui/widgets/hintlabel.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -170,10 +171,9 @@ GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, Setting
     , m_importButton{new QPushButton(tr("&Import…"), this)}
     , m_exportButton{new QPushButton(tr("E&xport…"), this)}
     , m_themeDetails{new QTabWidget(this)}
-    , m_colourHint{new QLabel(u"🛈 "_s
-                                  + tr("Theme colours are disabled when using a Windows style. Select Fusion as the "
-                                       "interface style to customise colours."),
-                              this)}
+    , m_colourHint{new HintLabel(tr("Theme colours are disabled when using a Windows style. Select Fusion as the "
+                                    "interface style to customise colours."),
+                                 this)}
     , m_defaultTheme{tr("System default")}
 {
     QObject::connect(m_themesList, &QListWidget::currentItemChanged, this, &GuiColoursPageWidget::loadTheme);

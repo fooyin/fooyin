@@ -30,6 +30,7 @@
 #include <gui/guiconstants.h>
 #include <gui/layout/editablelayout.h>
 #include <gui/widgets/expandableinputbox.h>
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -73,10 +74,9 @@ public:
         m_rowHeight->setValue(rowHeight);
         m_rowHeight->setEnabled(m_overrideHeight->isChecked());
 
-        auto* alignmentHelp = new QLabel(u"🛈 "_s
-                                             + tr("Use <code>&lt;right&gt;</code> for right-aligned text and "
-                                                  "<code>&lt;hr/&gt;</code> to draw a separator."),
-                                         this);
+        auto* alignmentHelp = new HintLabel(tr("Use <code>&lt;right&gt;</code> for right-aligned text and "
+                                               "<code>&lt;hr/&gt;</code> to draw a separator."),
+                                            this);
         alignmentHelp->setWordWrap(true);
 
         m_grouping->setPlaceholderText(tr("Leave empty to group by the display script"));
@@ -308,10 +308,9 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PlaylistController* control
     scriptLayout->addWidget(m_headerGrouping, row++, 0, 1, 2);
     scriptLayout->addWidget(new QLabel(tr("Display script") + u":"_s, this), row++, 0, 1, 2);
     scriptLayout->addWidget(m_headerText, row++, 0, 1, 2);
-    auto* headerHelp = new QLabel(u"🛈 "_s
-                                      + tr("Use <code>&lt;right&gt;</code> for right-aligned text and "
-                                           "<code>&lt;hr/&gt;</code> to draw a separator."),
-                                  this);
+    auto* headerHelp = new HintLabel(tr("Use <code>&lt;right&gt;</code> for right-aligned text and "
+                                        "<code>&lt;hr/&gt;</code> to draw a separator."),
+                                     this);
     headerHelp->setWordWrap(true);
     scriptLayout->addWidget(headerHelp, row++, 0, 1, 2);
     scriptLayout->setRowStretch(3, 1);
@@ -369,9 +368,9 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PlaylistController* control
     m_trackRowHeight->setMinimum(20);
     m_trackRowHeight->setMaximum(150);
 
-    auto* trackHelp = new QLabel(u"🛈 "_s + tr("The display script only applies in single-column mode."), this);
+    auto* trackHelp = new HintLabel(tr("The display script only applies in single-column mode."), this);
     trackHelp->setWordWrap(true);
-    auto* alignmentHelp = new QLabel(u"🛈 "_s + tr("Use <code>&lt;right&gt;</code> for right-aligned text."), this);
+    auto* alignmentHelp = new HintLabel(tr("Use <code>&lt;right&gt;</code> for right-aligned text."), this);
     alignmentHelp->setWordWrap(true);
 
     row = 0;
@@ -387,13 +386,12 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PlaylistController* control
     m_presetTabs->addTab(tracksWidget, tr("Tracks"));
 
     auto* columnsHelp
-        = new QLabel(u"🛈 "_s + tr("When disabled, applying this preset keeps the existing column layout."), this);
+        = new HintLabel(tr("When disabled, applying this preset keeps the existing column layout."), this);
     columnsHelp->setWordWrap(true);
 
-    auto* previewHelp = new QLabel(u"🛈 "_s
-                                       + tr("Drag column headers to reorder or resize them. Right-click a header for "
-                                            "visibility and alignment options."),
-                                   this);
+    auto* previewHelp = new HintLabel(tr("Drag column headers to reorder or resize them. Right-click a header for "
+                                         "visibility and alignment options."),
+                                      this);
     previewHelp->setWordWrap(true);
 
     m_preview->setTracks(TrackGenerator::generateTracks({.albumCount = 1}));

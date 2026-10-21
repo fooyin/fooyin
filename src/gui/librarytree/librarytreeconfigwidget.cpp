@@ -23,6 +23,7 @@
 #include "librarytreescriptcontext.h"
 
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/hintlabel.h>
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -157,7 +158,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     m_artworkCornerRadius->setSuffix(u" %"_s);
     m_artworkCornerRadius->setSpecialValueText(tr("Square"));
 
-    auto* iconSizeHint = new QLabel(u"🛈 "_s + tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this);
+    auto* iconSizeHint = new HintLabel(tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this);
     iconSizeHint->setTextFormat(Qt::RichText);
 
     row = 0;

@@ -24,6 +24,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/colourbutton.h>
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <gui/widgets/slidereditor.h>
 #include <utils/settings/settingsmanager.h>
@@ -102,15 +103,14 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     matchingGroupLayout->addWidget(new QLabel(tr("Search script") + ":"_L1, this), row, 0);
     matchingGroupLayout->addWidget(m_searchScript, row++, 1, 1, 2);
     matchingGroupLayout->addWidget(
-        new QLabel(u"🛈 "_s + tr("These settings are used for plain text searches, not query expressions."), this),
-        row++, 0, 1, 3);
+        new HintLabel(tr("These settings are used for plain text searches, not query expressions."), this), row++, 0, 1,
+        3);
     matchingGroupLayout->setColumnStretch(2, 1);
 
     row = 0;
     searchGroupLayout->addWidget(m_clearOnSuccess, row++, 0, 1, 2);
     searchGroupLayout->addWidget(m_closeOnSuccess, row++, 0, 1, 2);
-    searchGroupLayout->addWidget(new QLabel(u"🛈 "_s + tr("Only applies when autosearch is disabled."), this), row++, 0,
-                                 1, 2);
+    searchGroupLayout->addWidget(new HintLabel(tr("Only applies when autosearch is disabled."), this), row++, 0, 1, 2);
     searchGroupLayout->addWidget(m_autosearchDelay, row++, 0, 1, 2);
     ColourButton::alignLabels({m_failBgColour, m_failFgColour});
     searchGroupLayout->addWidget(m_failBgColour, row++, 0, 1, 2);

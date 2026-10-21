@@ -21,6 +21,7 @@
 
 #include <gui/guiutils.h>
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/hintlabel.h>
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -143,8 +144,8 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     iconLayout->addWidget(m_iconItemBorder, row++, 1);
     iconLayout->addWidget(new QLabel(tr("Icon size") + u":"_s, this), row, 0);
     iconLayout->addWidget(m_iconSize, row++, 1);
-    iconLayout->addWidget(new QLabel(u"🛈 "_s + tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this),
-                          row++, 0, 1, 3);
+    iconLayout->addWidget(new HintLabel(tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this), row++, 0, 1,
+                          3);
     iconLayout->addWidget(Gui::createSectionHeader(tr("Gap"), this), row++, 0);
     iconLayout->addLayout(gapLayout, row++, 0, 1, 3);
     iconLayout->addWidget(m_useIconGapsForSideCaptions, row++, 0, 1, 3);

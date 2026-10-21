@@ -68,6 +68,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/extendabletableview.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/fontbutton.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/gradienteditor.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/hintlabel.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/lineediteditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/messagebanner.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/metadatacompleter.h
@@ -651,6 +652,7 @@ set(SOURCES
     widgets/extendabletableview.cpp
     widgets/fontbutton.cpp
     widgets/gradienteditor.cpp
+    widgets/hintlabel.cpp
     widgets/hovermenu.cpp
     widgets/hovermenu.h
     widgets/lineediteditor.cpp

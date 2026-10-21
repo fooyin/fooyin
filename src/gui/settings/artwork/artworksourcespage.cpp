@@ -25,6 +25,7 @@
 
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
+#include <gui/widgets/hintlabel.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
@@ -148,7 +149,7 @@ ArtworkSourcesPageWidget::ArtworkSourcesPageWidget(ArtworkFinder* finder, Settin
     layout->addWidget(placeholderGroup, row++, 0);
     layout->addWidget(new QLabel(tr("Download sources") + ":"_L1, this), row++, 0);
     layout->addWidget(m_sourceList, row++, 0);
-    layout->addWidget(new QLabel(u"🛈 "_s + tr("Artwork will be searched for in the above order."), this), row++, 0);
+    layout->addWidget(new HintLabel(tr("Artwork will be searched for in the above order."), this), row++, 0);
 
     QObject::connect(m_coverPaths, &QTabWidget::currentChanged, this,
                      &ArtworkSourcesPageWidget::updatePlaceholderInput);

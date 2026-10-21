@@ -20,6 +20,7 @@
 #include "playlistorganiserconfigwidget.h"
 
 #include <gui/widgets/colourbutton.h>
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/scriptlineedit.h>
 
 #include <QCheckBox>
@@ -60,16 +61,15 @@ PlaylistOrganiserConfigDialog::PlaylistOrganiserConfigDialog(PlaylistOrganiser* 
 {
     auto* scriptGroup       = new QGroupBox(tr("Display script"), this);
     auto* scriptGroupLayout = new QGridLayout(scriptGroup);
-    auto* scriptHint        = new QLabel(
-        u"🛈 "_s
-            + tr("Available variables: <code>%node_name%</code>, <code>%is_group%</code>, <code>%count%</code>, "
-                 "<code>%playlist_size%</code>, <code>%playlist_duration%</code>"),
+    auto* scriptHint        = new HintLabel(
+        tr("Available variables: <code>%node_name%</code>, <code>%is_group%</code>, <code>%count%</code>, "
+           "<code>%playlist_size%</code>, <code>%playlist_duration%</code>"),
         this);
     scriptHint->setTextFormat(Qt::RichText);
     scriptHint->setWordWrap(true);
 
     scriptGroupLayout->addWidget(m_displayScript, 0, 0, 1, 2);
-    auto* alignmentHint = new QLabel(u"🛈 "_s + tr("Use <code>&lt;right&gt;</code> for right-aligned text."), this);
+    auto* alignmentHint = new HintLabel(tr("Use <code>&lt;right&gt;</code> for right-aligned text."), this);
     alignmentHint->setWordWrap(true);
     scriptGroupLayout->addWidget(alignmentHint, 1, 0, 1, 2);
     scriptGroupLayout->addWidget(scriptHint, 2, 0, 1, 2);

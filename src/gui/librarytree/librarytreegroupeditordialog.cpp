@@ -25,6 +25,7 @@
 #include <gui/scripting/scripteditor.h>
 #include <gui/widgets/checkboxdelegate.h>
 #include <gui/widgets/extendabletableview.h>
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/multilinedelegate.h>
 
 #include <QDialogButtonBox>
@@ -83,28 +84,25 @@ LibraryTreeGroupEditorWidget::LibraryTreeGroupEditorWidget(LibraryTreeGroupRegis
     m_openEditor->setText(tr("Script Editor"));
     m_groupList->addCustomTool(m_openEditor);
 
-    auto* hint = new QLabel(
-        u"🛈 "_s
-            + tr("Use <code>||</code> to split tree levels. <b>Sort Grouping</b> must use the same <code>||</code> "
-                 "level structure as <b>Display Grouping</b>; each sort level applies to the matching display level, "
-                 "and a sort level may be empty (for example <code>||%year%||</code>)."),
+    auto* hint = new HintLabel(
+        tr("Use <code>||</code> to split tree levels. <b>Sort Grouping</b> must use the same <code>||</code> "
+           "level structure as <b>Display Grouping</b>; each sort level applies to the matching display level, "
+           "and a sort level may be empty (for example <code>||%year%||</code>)."),
         this);
     hint->setWordWrap(true);
     hint->setTextFormat(Qt::RichText);
 
-    auto* artworkHint = new QLabel(
-        u"🛈 "_s
-            + tr("Add artwork to the tree by placing a cover variable such as <code>%frontcover%</code> at the "
-                 "start or end of a level."),
+    auto* artworkHint = new HintLabel(
+        tr("Add artwork to the tree by placing a cover variable such as <code>%frontcover%</code> at the "
+           "start or end of a level."),
         this);
     artworkHint->setWordWrap(true);
     artworkHint->setTextFormat(Qt::RichText);
 
-    auto* rightTextHint = new QLabel(
-        u"🛈 "_s
-            + tr("Use <code>&lt;right&gt;</code> in a display level to show text right-aligned. "
-                 "Use <code>%trackcount%</code> for tracks and <code>%childcount%</code> for child nodes."),
-        this);
+    auto* rightTextHint
+        = new HintLabel(tr("Use <code>&lt;right&gt;</code> in a display level to show text right-aligned. "
+                           "Use <code>%trackcount%</code> for tracks and <code>%childcount%</code> for child nodes."),
+                        this);
     rightTextHint->setWordWrap(true);
     rightTextHint->setTextFormat(Qt::RichText);
 

@@ -22,6 +22,7 @@
 #include "filtercolumneditordialog.h"
 
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/hintlabel.h>
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -79,7 +80,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     clickBehaviourLayout->addWidget(m_middleClick, 1, 1);
     clickBehaviourLayout->addWidget(m_playbackOnSend, 2, 0, 1, 2);
     auto* playlistClickHint
-        = new QLabel(u"🛈 "_s + tr("Set to <b>Play</b> to start playback at the first matching track."), this);
+        = new HintLabel(tr("Set to <b>Play</b> to start playback at the first matching track."), this);
     playlistClickHint->setWordWrap(true);
     clickBehaviourLayout->addWidget(playlistClickHint, 3, 0, 1, 3);
     clickBehaviourLayout->setColumnStretch(2, 1);
@@ -130,7 +131,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     m_artworkCornerRadius->setSuffix(u" %"_s);
     m_artworkCornerRadius->setSpecialValueText(tr("Square"));
 
-    auto* iconSizeHint = new QLabel(u"🛈 "_s + tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this);
+    auto* iconSizeHint = new HintLabel(tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this);
 
     int row{0};
     artworkLayout->addWidget(new QLabel(tr("Width") + u":"_s, this), row, 0);
@@ -154,11 +155,10 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
 
     generalGroupLayout->addWidget(new QLabel(tr("Source") + u":"_s, this), 0, 0);
     generalGroupLayout->addWidget(m_source, 0, 1);
-    auto* playlistSourceHint = new QLabel(
-        u"🛈 "_s
-            + tr("Current playlist mode uses the displayed playlist as its source and selects the matching "
-                 "tracks in that playlist."),
-        this);
+    auto* playlistSourceHint
+        = new HintLabel(tr("Current playlist mode uses the displayed playlist as its source and selects the matching "
+                           "tracks in that playlist."),
+                        this);
     playlistSourceHint->setWordWrap(true);
     generalGroupLayout->addWidget(playlistSourceHint, 1, 0, 1, 3);
     generalGroupLayout->addWidget(m_restoreState, 2, 0, 1, 3);

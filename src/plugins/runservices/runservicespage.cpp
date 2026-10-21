@@ -22,6 +22,7 @@
 #include "runservices.h"
 #include "runservicesconstants.h"
 
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/fypaths.h>
 #include <utils/helpers.h>
@@ -162,7 +163,7 @@ RunServicesPageWidget::RunServicesPageWidget(SettingsManager* settings)
     row = 0;
     layout->addWidget(m_serviceList, row, 0);
     layout->addLayout(buttons, row++, 1);
-    layout->addWidget(new QLabel(u"🛈 "_s + tr("Checked services are shown in the Run menu.")), row++, 0, 1, 2);
+    layout->addWidget(new HintLabel(tr("Checked services are shown in the Run menu.")), row++, 0, 1, 2);
     layout->addWidget(m_properties, row++, 0, 1, 2);
 
     QObject::connect(m_serviceList, &QListWidget::currentRowChanged, this, &RunServicesPageWidget::setCurrentService);

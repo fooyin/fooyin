@@ -25,6 +25,7 @@
 #include <gui/guiconstants.h>
 #include <gui/widgets/checkboxdelegate.h>
 #include <gui/widgets/extendabletableview.h>
+#include <gui/widgets/hintlabel.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QGridLayout>
@@ -71,10 +72,9 @@ SelectionInfoSettingsPageWidget::SelectionInfoSettingsPageWidget(SelectionInfoFi
     m_fieldList->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
     m_fieldList->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
 
-    auto* hint = new QLabel(
-        u"🛈 "_s
-            + tr("Enabled fields use the configured name and order. Other tags are shown as <TAG> when extended "
-                 "metadata is enabled."),
+    auto* hint = new HintLabel(
+        tr("Enabled fields use the configured name and order. Other tags are shown as <TAG> when extended "
+           "metadata is enabled."),
         this);
     hint->setWordWrap(true);
 

@@ -19,6 +19,7 @@
 
 #include "playlisttabsconfigdialog.h"
 
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/scriptlineedit.h>
 
 #include <QCheckBox>
@@ -45,11 +46,9 @@ PlaylistTabsConfigDialog::PlaylistTabsConfigDialog(PlaylistTabs* playlistTabs, Q
 
     auto* layout{contentLayout()};
 
-    auto* scriptHint
-        = new QLabel(u"🛈 "_s
-                         + tr("Available variables: <code>%playlist_name%</code>, <code>%trackcount%</code>, "
-                              "<code>%playlist_duration%</code>, <code>%playlist_size%</code>"),
-                     this);
+    auto* scriptHint = new HintLabel(tr("Available variables: <code>%playlist_name%</code>, <code>%trackcount%</code>, "
+                                        "<code>%playlist_duration%</code>, <code>%playlist_size%</code>"),
+                                     this);
     scriptHint->setTextFormat(Qt::RichText);
     scriptHint->setWordWrap(true);
 

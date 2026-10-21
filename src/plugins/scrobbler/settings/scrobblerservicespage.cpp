@@ -24,6 +24,8 @@
 #include "scrobblerconstants.h"
 #include "scrobblersettings.h"
 
+#include <gui/widgets/hintlabel.h>
+
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -310,9 +312,9 @@ void ScrobblerServicesPageWidget::addService(ScrobblerService* service)
 
         const QUrl tokenUrl = service->tokenUrl();
         if(!isCustom && tokenUrl.isValid()) {
-            auto* tokenHintLabel = new QLabel(u"🛈 "_s + tr("You can find your token here") + ": "_L1
-                                                  + u"<a href=\"%1\">%1</a>"_s.arg(tokenUrl.toString()),
-                                              this);
+            auto* tokenHintLabel = new HintLabel(tr("You can find your token here") + ": "_L1
+                                                     + u"<a href=\"%1\">%1</a>"_s.arg(tokenUrl.toString()),
+                                                 this);
             tokenHintLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
             tokenHintLabel->setOpenExternalLinks(true);
             tokenHintLabel->setTextFormat(Qt::RichText);

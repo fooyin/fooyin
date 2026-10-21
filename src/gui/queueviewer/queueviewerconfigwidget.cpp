@@ -20,6 +20,7 @@
 #include "queueviewerconfigwidget.h"
 
 #include <gui/widgets/backgroundconfigwidget.h>
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/scriptlineedit.h>
 
 #include <QButtonGroup>
@@ -58,12 +59,11 @@ QueueViewerConfigDialog::QueueViewerConfigDialog(QueueViewer* queueViewer, bool 
     m_playingTracksMode->setVisible(showDisplayMode);
     m_upcomingTracksMode->setVisible(showDisplayMode);
 
-    auto* rightHint = new QLabel(u"🛈 "_s + tr("Use <code>&lt;right&gt;</code> for right-aligned text."), this);
+    auto* rightHint = new HintLabel(tr("Use <code>&lt;right&gt;</code> for right-aligned text."), this);
     rightHint->setWordWrap(true);
-    auto* scriptHint = new QLabel(u"🛈 "_s
-                                      + tr("Use <code>%is_queue_current%</code>, <code>%is_queue_upcoming%</code>, and "
-                                           "<code>%is_queue_played%</code> to format entries by queue state."),
-                                  this);
+    auto* scriptHint = new HintLabel(tr("Use <code>%is_queue_current%</code>, <code>%is_queue_upcoming%</code>, and "
+                                        "<code>%is_queue_played%</code> to format entries by queue state."),
+                                     this);
     scriptHint->setWordWrap(true);
 
     auto* generalPage   = new QWidget(this);
@@ -98,7 +98,7 @@ QueueViewerConfigDialog::QueueViewerConfigDialog(QueueViewer* queueViewer, bool 
     m_artworkCornerRadius->setSuffix(u" %"_s);
     m_artworkCornerRadius->setSpecialValueText(tr("Square"));
 
-    auto* iconSizeHint = new QLabel(u"🛈 "_s + tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this);
+    auto* iconSizeHint = new HintLabel(tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this);
     iconSizeHint->setTextFormat(Qt::RichText);
 
     row = 0;

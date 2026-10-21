@@ -24,6 +24,7 @@
 
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
+#include <gui/widgets/hintlabel.h>
 #include <utils/stareditor.h>
 
 #include <QComboBox>
@@ -42,6 +43,7 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 
+#include <array>
 #include <limits>
 
 using namespace Qt::StringLiterals;
@@ -376,33 +378,30 @@ void AutoPlaylistRuleRowWidget::editList()
 
     const auto type = AutoPlaylistQueryBuilder::fieldType(m_field->field(), m_field->source());
 
-    const QString hint = u"🛈 "_s + tr("Enter at least one value.");
-    QString help       = u"🛈 "_s + tr("Empty lines are ignored.");
-    QString error      = u"⚠ "_s + tr("Enter a valid value on each line.");
+    const QString hint = tr("Enter at least one value.");
+    QString help       = tr("Empty lines are ignored.");
+    QString error      = tr("Enter a valid value on each line.");
 
     if(type == AutoPlaylistFieldType::Number || type == AutoPlaylistFieldType::Duration) {
-        help
-            = u"🛈 "_s
-            + (type == AutoPlaylistFieldType::Duration ? tr("Values are durations in seconds. Empty lines are ignored.")
-                                                       : tr("Enter whole numbers. Empty lines are ignored."));
-        error = u"⚠ "_s
-              + (type == AutoPlaylistFieldType::Duration
-                     ? tr("Enter whole numbers of seconds, from 0 to %1.").arg(std::numeric_limits<int>::max())
-                     : tr("Enter whole numbers from 0 to %1.").arg(std::numeric_limits<int>::max()));
+        help = type == AutoPlaylistFieldType::Duration ? tr("Values are durations in seconds. Empty lines are ignored.")
+                                                       : tr("Enter whole numbers. Empty lines are ignored.");
+        error = type == AutoPlaylistFieldType::Duration
+                  ? tr("Enter whole numbers of seconds, from 0 to %1.").arg(std::numeric_limits<int>::max())
+                  : tr("Enter whole numbers from 0 to %1.").arg(std::numeric_limits<int>::max());
     }
     else if(type == AutoPlaylistFieldType::Rating) {
-        help  = u"🛈 "_s + tr("Half-star ratings are supported. Empty lines are ignored.");
-        error = u"⚠ "_s + tr("Enter ratings from 0 to 5 in half-star steps.");
+        help  = tr("Half-star ratings are supported. Empty lines are ignored.");
+        error = tr("Enter ratings from 0 to 5 in half-star steps.");
     }
 
     auto* messages = new QStackedWidget(&dialog);
     messages->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
-    for(const auto& text : {help, hint, error}) {
-        auto* label = new QLabel(text, messages);
+    for(const auto& [text, messageType] :
+        std::array{std::pair{help, HintLabel::Type::Information}, std::pair{hint, HintLabel::Type::Information},
+                   std::pair{error, HintLabel::Type::Warning}}) {
+        auto* label = new HintLabel(text, messageType, messages);
         label->setTextFormat(Qt::PlainText);
-        label->setWordWrap(true);
-        label->setAlignment(Qt::AlignLeading | Qt::AlignTop);
         messages->addWidget(label);
     }
 

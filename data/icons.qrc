@@ -26,6 +26,8 @@
         <file>icons/dark/scalable/actions/audio-volume-medium.svg</file>
         <file>icons/dark/scalable/actions/audio-volume-muted.svg</file>
         <file>icons/dark/scalable/actions/command.svg</file>
+        <file>icons/dark/scalable/actions/dialog-information.svg</file>
+        <file>icons/dark/scalable/actions/dialog-warning.svg</file>
         <file>icons/dark/scalable/actions/edit-clear.svg</file>
         <file>icons/dark/scalable/actions/edit-find.svg</file>
         <file>icons/dark/scalable/actions/emblem-readonly.svg</file>
@@ -86,6 +88,8 @@
         <file>icons/light/scalable/actions/audio-volume-medium.svg</file>
         <file>icons/light/scalable/actions/audio-volume-muted.svg</file>
         <file>icons/light/scalable/actions/command.svg</file>
+        <file>icons/light/scalable/actions/dialog-information.svg</file>
+        <file>icons/light/scalable/actions/dialog-warning.svg</file>
         <file>icons/light/scalable/actions/edit-clear.svg</file>
         <file>icons/light/scalable/actions/edit-find.svg</file>
         <file>icons/light/scalable/actions/emblem-readonly.svg</file>
