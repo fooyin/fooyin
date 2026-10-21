@@ -27,6 +27,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: Set ccache generation
+        id: ccache-generation
+        run: echo "period=$(( $(date -u +%s) / 172800 ))" >> "$GITHUB_OUTPUT"
+
       - name: Set Flatpak cache key
         id: flatpak-cache
         shell: bash
@@ -55,7 +59,7 @@ jobs:
         with:
           bundle: ${{ steps.flatpak-bundle.outputs.name }}
           manifest-path: dist/linux/flatpak/org.fooyin.fooyin.yaml
-          cache-key: flatpak-builder-${{ matrix.arch }}-${{ steps.flatpak-cache.outputs.key }}
+          cache-key: flatpak-builder-${{ matrix.arch }}-${{ steps.flatpak-cache.outputs.key }}-${{ steps.ccache-generation.outputs.period }}
           arch: ${{ matrix.arch }}
           upload-artifact: false
 

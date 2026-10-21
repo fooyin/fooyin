@@ -49,14 +49,14 @@ jobs:
 
       - name: Set ccache generation
         id: ccache-generation
-        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+        run: echo "period=$(( $(date -u +%s) / 172800 ))" >> "$GITHUB_OUTPUT"
 
       - name: Restore ccache
         id: ccache-restore
         uses: actions/cache/restore@v6
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: linux-fedora-${{ matrix.fedora_version }}-${{ matrix.runner.arch }}-ccache-${{ steps.ccache-generation.outputs.week }}
+          key: linux-fedora-${{ matrix.fedora_version }}-${{ matrix.runner.arch }}-ccache-${{ steps.ccache-generation.outputs.period }}
           restore-keys: |
             linux-fedora-${{ matrix.fedora_version }}-${{ matrix.runner.arch }}-ccache-
 
@@ -121,14 +121,14 @@ jobs:
 
       - name: Set ccache generation
         id: ccache-generation
-        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+        run: echo "period=$(( $(date -u +%s) / 172800 ))" >> "$GITHUB_OUTPUT"
 
       - name: Restore ccache
         id: ccache-restore
         uses: actions/cache/restore@v6
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: linux-debian-${{ matrix.debian_version }}-${{ matrix.runner.arch }}-ccache-${{ steps.ccache-generation.outputs.week }}
+          key: linux-debian-${{ matrix.debian_version }}-${{ matrix.runner.arch }}-ccache-${{ steps.ccache-generation.outputs.period }}
           restore-keys: |
             linux-debian-${{ matrix.debian_version }}-${{ matrix.runner.arch }}-ccache-
 
@@ -193,14 +193,14 @@ jobs:
 
       - name: Set ccache generation
         id: ccache-generation
-        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+        run: echo "period=$(( $(date -u +%s) / 172800 ))" >> "$GITHUB_OUTPUT"
 
       - name: Restore ccache
         id: ccache-restore
         uses: actions/cache/restore@v6
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: linux-ubuntu-${{ matrix.ubuntu_version }}-${{ matrix.runner.arch }}-ccache-${{ steps.ccache-generation.outputs.week }}
+          key: linux-ubuntu-${{ matrix.ubuntu_version }}-${{ matrix.runner.arch }}-ccache-${{ steps.ccache-generation.outputs.period }}
           restore-keys: |
             linux-ubuntu-${{ matrix.ubuntu_version }}-${{ matrix.runner.arch }}-ccache-
 

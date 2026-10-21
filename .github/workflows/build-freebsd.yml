@@ -33,14 +33,14 @@ jobs:
 
       - name: Set ccache generation
         id: ccache-generation
-        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+        run: echo "period=$(( $(date -u +%s) / 172800 ))" >> "$GITHUB_OUTPUT"
 
       - name: Restore ccache
         id: ccache-restore
         uses: actions/cache/restore@v6
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: freebsd-${{ env.FREEBSD_VERSION }}-ccache-${{ steps.ccache-generation.outputs.week }}
+          key: freebsd-${{ env.FREEBSD_VERSION }}-ccache-${{ steps.ccache-generation.outputs.period }}
           restore-keys: |
             freebsd-${{ env.FREEBSD_VERSION }}-ccache-
 

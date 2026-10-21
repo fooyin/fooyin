@@ -137,17 +137,15 @@ jobs:
         id: ccache-generation
         shell: pwsh
         run: |
-          $now = [DateTime]::UtcNow
-          $weekYear = [System.Globalization.ISOWeek]::GetYear($now)
-          $week = [System.Globalization.ISOWeek]::GetWeekOfYear($now)
-          echo "week=$weekYear-$($week.ToString('D2'))" >> $env:GITHUB_OUTPUT
+          $period = [Math]::Floor([DateTimeOffset]::UtcNow.ToUnixTimeSeconds() / 172800)
+          echo "period=$period" >> $env:GITHUB_OUTPUT
 
       - name: Restore ccache
         id: ccache-restore
         uses: actions/cache/restore@v6
         with:
           path: ${{ github.workspace }}/.ccache
-          key: ${{ runner.os }}-ccache-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ env.CCACHE_VERSION }}-${{ steps.ccache-generation.outputs.week }}
+          key: ${{ runner.os }}-ccache-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ env.CCACHE_VERSION }}-${{ steps.ccache-generation.outputs.period }}
           restore-keys: |
             ${{ runner.os }}-ccache-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ env.CCACHE_VERSION }}-
 
