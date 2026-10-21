@@ -19,12 +19,14 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include "autoplaylistquery.h"
 
 #include <QComboBox>
 
 namespace Fooyin {
-class AutoPlaylistFieldComboBox : public QComboBox
+class FYGUI_EXPORT AutoPlaylistFieldComboBox : public QComboBox
 {
     Q_OBJECT
 

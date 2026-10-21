@@ -50,14 +50,23 @@ AutoPlaylistFieldComboBox::AutoPlaylistFieldComboBox(QWidget* parent)
 
     m_previousField = field();
 
-    QObject::connect(this, &QComboBox::editTextChanged, this, [this]() {
+    const auto updateField = [this]() {
         if(currentText() == itemText(findData(true, MetadataActionRole))) {
             return;
         }
-        m_previousField  = field();
-        m_previousSource = source();
+
+        const QString name     = field();
+        const auto fieldSource = source();
+        if(name == m_previousField && fieldSource == m_previousSource) {
+            return;
+        }
+
+        m_previousField  = name;
+        m_previousSource = fieldSource;
         Q_EMIT fieldChanged();
-    });
+    };
+    QObject::connect(this, &QComboBox::editTextChanged, this, updateField);
+    QObject::connect(this, &QComboBox::currentIndexChanged, this, updateField);
     QObject::connect(this, &QComboBox::activated, this, [this](int index) {
         if(!itemData(index, MetadataActionRole).toBool()) {
             return;

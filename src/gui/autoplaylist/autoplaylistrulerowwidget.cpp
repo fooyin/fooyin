@@ -28,13 +28,19 @@
 
 #include <QComboBox>
 #include <QDateEdit>
+#include <QDialog>
+#include <QDialogButtonBox>
 #include <QHBoxLayout>
 #include <QKeyEvent>
+#include <QLabel>
 #include <QLineEdit>
+#include <QPlainTextEdit>
+#include <QPushButton>
 #include <QSignalBlocker>
 #include <QSpinBox>
 #include <QStackedWidget>
 #include <QToolButton>
+#include <QVBoxLayout>
 
 #include <limits>
 
@@ -106,6 +112,8 @@ AutoPlaylistRuleRowWidget::AutoPlaylistRuleRowWidget(const AutoPlaylistRule& rul
     , m_date{new QDateEdit(QDate::currentDate(), this)}
     , m_period{new QSpinBox(this)}
     , m_unit{new QComboBox(this)}
+    , m_listSummary{new QLineEdit(this)}
+    , m_listValues{rule.values}
 {
     m_text->setClearButtonEnabled(true);
 
@@ -137,6 +145,20 @@ AutoPlaylistRuleRowWidget::AutoPlaylistRuleRowWidget(const AutoPlaylistRule& rul
     periodLayout->addWidget(m_period);
     periodLayout->addWidget(m_unit);
 
+    m_listSummary->setReadOnly(true);
+    m_listSummary->setPlaceholderText(tr("No values"));
+
+    auto* list       = new QWidget(this);
+    auto* listLayout = new QHBoxLayout(list);
+    listLayout->setContentsMargins({});
+
+    auto* editList = new QPushButton(tr("Edit…"), list);
+    editList->setAutoDefault(false);
+    editList->setToolTip(tr("Edit values"));
+
+    listLayout->addWidget(m_listSummary, 1);
+    listLayout->addWidget(editList);
+
     m_values->addWidget(m_text);
     m_values->addWidget(m_number);
     m_values->addWidget(m_rating);
@@ -144,6 +166,7 @@ AutoPlaylistRuleRowWidget::AutoPlaylistRuleRowWidget(const AutoPlaylistRule& rul
     m_values->addWidget(m_date);
     m_values->addWidget(period);
     m_values->addWidget(new QWidget(this));
+    m_values->addWidget(list);
     m_values->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     auto* remove = new QToolButton(this);
@@ -178,6 +201,7 @@ AutoPlaylistRuleRowWidget::AutoPlaylistRuleRowWidget(const AutoPlaylistRule& rul
     m_unit->setCurrentIndex(rule.unit);
 
     updateDateUnits();
+    updateListSummary();
     updateValue();
 
     for(const auto* spin : {m_number, m_seconds}) {
@@ -207,6 +231,7 @@ AutoPlaylistRuleRowWidget::AutoPlaylistRuleRowWidget(const AutoPlaylistRule& rul
     QObject::connect(m_date, &QDateEdit::dateChanged, this, &AutoPlaylistRuleRowWidget::changed);
     QObject::connect(m_unit, &QComboBox::currentIndexChanged, this, &AutoPlaylistRuleRowWidget::changed);
     QObject::connect(remove, &QToolButton::clicked, this, &AutoPlaylistRuleRowWidget::removeRequested);
+    QObject::connect(editList, &QPushButton::clicked, this, &AutoPlaylistRuleRowWidget::editList);
 }
 
 AutoPlaylistRule AutoPlaylistRuleRowWidget::rule() const
@@ -222,6 +247,11 @@ AutoPlaylistRule AutoPlaylistRuleRowWidget::rule() const
     rule.date         = m_date->date();
     rule.period       = m_period->value();
     rule.unit         = m_unit->currentIndex();
+
+    if(rule.comparison == Expr::In || rule.comparison == Expr::ContainsAny) {
+        rule.values = m_listValues;
+        return rule;
+    }
 
     switch(AutoPlaylistQueryBuilder::fieldType(rule.field, rule.source)) {
         case AutoPlaylistFieldType::Text:
@@ -279,7 +309,7 @@ void AutoPlaylistRuleRowWidget::updateComparisons()
         add(comparison, false);
 
         if(comparison == Expr::Equals || comparison == Expr::Contains || comparison == Expr::StartsWith
-           || comparison == Expr::EndsWith
+           || comparison == Expr::EndsWith || comparison == Expr::In || comparison == Expr::ContainsAny
            || (type == AutoPlaylistFieldType::Date && comparison != Expr::Missing && comparison != Expr::Present)) {
             add(comparison, true);
         }
@@ -299,6 +329,10 @@ void AutoPlaylistRuleRowWidget::updateValue()
     const auto type       = static_cast<Expr::Type>(comparison & 255U);
     if(type == Expr::Missing || type == Expr::Present) {
         m_values->setCurrentIndex(6);
+        return;
+    }
+    if(type == Expr::In || type == Expr::ContainsAny) {
+        m_values->setCurrentIndex(7);
         return;
     }
 
@@ -323,5 +357,100 @@ void AutoPlaylistRuleRowWidget::updateValue()
             m_values->setCurrentIndex(6);
             break;
     }
+}
+
+void AutoPlaylistRuleRowWidget::editList()
+{
+    QDialog dialog{this};
+    dialog.setWindowTitle(tr("Edit Values"));
+
+    auto* editor = new QPlainTextEdit(&dialog);
+    editor->setLineWrapMode(QPlainTextEdit::NoWrap);
+    editor->setTabChangesFocus(true);
+
+    QStringList lines;
+    for(const auto& value : m_listValues) {
+        lines.push_back(value);
+    }
+    editor->setPlainText(lines.join(u'\n'));
+
+    const auto type = AutoPlaylistQueryBuilder::fieldType(m_field->field(), m_field->source());
+
+    const QString hint = u"🛈 "_s + tr("Enter at least one value.");
+    QString help       = u"🛈 "_s + tr("Empty lines are ignored.");
+    QString error      = u"⚠ "_s + tr("Enter a valid value on each line.");
+
+    if(type == AutoPlaylistFieldType::Number || type == AutoPlaylistFieldType::Duration) {
+        help
+            = u"🛈 "_s
+            + (type == AutoPlaylistFieldType::Duration ? tr("Values are durations in seconds. Empty lines are ignored.")
+                                                       : tr("Enter whole numbers. Empty lines are ignored."));
+        error = u"⚠ "_s
+              + (type == AutoPlaylistFieldType::Duration
+                     ? tr("Enter whole numbers of seconds, from 0 to %1.").arg(std::numeric_limits<int>::max())
+                     : tr("Enter whole numbers from 0 to %1.").arg(std::numeric_limits<int>::max()));
+    }
+    else if(type == AutoPlaylistFieldType::Rating) {
+        help  = u"🛈 "_s + tr("Half-star ratings are supported. Empty lines are ignored.");
+        error = u"⚠ "_s + tr("Enter ratings from 0 to 5 in half-star steps.");
+    }
+
+    auto* messages = new QStackedWidget(&dialog);
+    messages->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
+    for(const auto& text : {help, hint, error}) {
+        auto* label = new QLabel(text, messages);
+        label->setTextFormat(Qt::PlainText);
+        label->setWordWrap(true);
+        label->setAlignment(Qt::AlignLeading | Qt::AlignTop);
+        messages->addWidget(label);
+    }
+
+    auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+
+    auto* layout = new QVBoxLayout(&dialog);
+    layout->addWidget(new QLabel(tr("Values (one per line)") + u":"_s, &dialog));
+    layout->addWidget(editor, 1);
+    layout->addWidget(messages);
+    layout->addWidget(buttons);
+
+    const auto values = [editor]() -> std::vector<QString> {
+        const QStringList entries = editor->toPlainText().split(u'\n', Qt::SkipEmptyParts);
+        return {entries.begin(), entries.end()};
+    };
+
+    const auto validate = [values, type, messages, buttons](bool showEmptyError) {
+        const auto entries = values();
+        const bool valid   = !entries.empty() && std::ranges::all_of(entries, [type](const QString& value) {
+            return AutoPlaylistQueryBuilder::isListValueValid(value, type);
+        });
+        messages->setCurrentIndex(entries.empty() ? (showEmptyError ? 1 : 0) : (valid ? 0 : 2));
+        buttons->button(QDialogButtonBox::Ok)->setEnabled(valid);
+    };
+
+    QObject::connect(editor, &QPlainTextEdit::textChanged, &dialog, [validate]() { validate(true); });
+    QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+    validate(false);
+    dialog.resize(420, 320);
+    editor->setFocus();
+
+    if(dialog.exec() == QDialog::Accepted) {
+        m_listValues = values();
+        updateListSummary();
+        Q_EMIT changed();
+    }
+}
+
+void AutoPlaylistRuleRowWidget::updateListSummary()
+{
+    QStringList values;
+    for(const auto& value : m_listValues) {
+        values.push_back(value);
+    }
+    m_listSummary->setText(values.join(u", "_s));
+    m_listSummary->setCursorPosition(0);
+    m_listSummary->setToolTip(values.join(u'\n'));
 }
 } // namespace Fooyin

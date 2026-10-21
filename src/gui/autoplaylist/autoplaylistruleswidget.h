@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include "autoplaylistquery.h"
 
 #include <QWidget>
@@ -31,7 +33,7 @@ namespace Fooyin {
 class AutoPlaylistFieldComboBox;
 class AutoPlaylistRuleGroupWidget;
 
-class AutoPlaylistRulesWidget : public QWidget
+class FYGUI_EXPORT AutoPlaylistRulesWidget : public QWidget
 {
     Q_OBJECT
 

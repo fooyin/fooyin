@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <core/scripting/expression.h>
 
 #include <QCoreApplication>
@@ -98,6 +100,7 @@ struct AutoPlaylistRule
     Expr::Type comparison{Expr::Contains};
     bool negated{false};
     QString value;
+    std::vector<QString> values;
     QDate date{QDate::currentDate()};
     int period{1};
     int unit{3};
@@ -136,7 +139,7 @@ struct AutoPlaylistDateUnit
     const char* plural;
 };
 
-class AutoPlaylistQueryBuilder
+class FYGUI_EXPORT AutoPlaylistQueryBuilder
 {
     Q_DECLARE_TR_FUNCTIONS(Fooyin::AutoPlaylistQuery)
 
@@ -149,6 +152,7 @@ public:
                                            AutoPlaylistFieldSource source = AutoPlaylistFieldSource::BuiltIn);
 
     static std::vector<Expr::Type> comparisons(AutoPlaylistFieldType type);
+    static bool isListValueValid(const QString& value, AutoPlaylistFieldType type);
     static std::pair<QString, QString> query(const AutoPlaylistRules& rules);
     static std::optional<AutoPlaylistRules> rules(const QString& query, const QString& sortQuery);
     static QString formatQuery(const QString& query);

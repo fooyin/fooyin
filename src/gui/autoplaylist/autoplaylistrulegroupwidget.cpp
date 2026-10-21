@@ -196,7 +196,17 @@ QString AutoPlaylistRuleGroupWidget::error(const QString& path) const
             //: %1 is a rule number, including its parent groups, e.g. 2.1.
             return tr("Enter a tag name for rule %1.").arg(number);
         }
+
         const auto type = AutoPlaylistQueryBuilder::fieldType(rule.field, rule.source);
+        if(rule.comparison == Expr::In || rule.comparison == Expr::ContainsAny) {
+            if(rule.values.empty() || !std::ranges::all_of(rule.values, [type](const QString& value) {
+                   return AutoPlaylistQueryBuilder::isListValueValid(value, type);
+               })) {
+                //: %1 is a rule number, including its parent groups, e.g. 2.1.
+                return tr("Enter at least one valid value for rule %1.").arg(number);
+            }
+            continue;
+        }
         if((type == AutoPlaylistFieldType::Text || type == AutoPlaylistFieldType::Metadata) && rule.value.isEmpty()
            && rule.comparison != Expr::Present && rule.comparison != Expr::Missing) {
             //: %1 is a rule number, including its parent groups, e.g. 2.1.

@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include "autoplaylistquery.h"
 
 #include <QFrame>
@@ -30,7 +32,7 @@ class QVBoxLayout;
 namespace Fooyin {
 class AutoPlaylistRuleRowWidget;
 
-class AutoPlaylistRuleGroupWidget : public QFrame
+class FYGUI_EXPORT AutoPlaylistRuleGroupWidget : public QFrame
 {
     Q_OBJECT
 

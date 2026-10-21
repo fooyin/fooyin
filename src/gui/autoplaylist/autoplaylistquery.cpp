@@ -27,6 +27,7 @@
 #include <cmath>
 #include <cstddef>
 #include <limits>
+#include <ranges>
 #include <type_traits>
 
 using namespace Qt::StringLiterals;
@@ -38,6 +39,20 @@ QString quoted(QString value)
     value.replace(uR"(\)"_s, uR"(\\)"_s);
     value.replace(uR"(")"_s, uR"(\")"_s);
     return uR"("%1")"_s.arg(value);
+}
+
+bool validNumericValue(const QString& value, AutoPlaylistFieldType type, bool canonical)
+{
+    bool valid{false};
+    if(type == AutoPlaylistFieldType::Rating) {
+        const double rating = value.toDouble(&valid);
+        return valid && std::isfinite(rating) && rating >= 0 && rating <= 5 && std::floor(rating * 2) == rating * 2
+            && (!canonical || value == QString::number(rating));
+    }
+
+    const auto number = value.toLongLong(&valid);
+    return valid && number >= 0 && number <= std::numeric_limits<int>::max()
+        && (!canonical || value == QString::number(number));
 }
 
 int varFieldIndex(const Expression& expression)
@@ -164,6 +179,19 @@ bool readRule(const Expression& expression, AutoPlaylistRule& rule)
         return date && args->size() == (rule.comparison == Expr::During ? 3 : 2) && readDate(date->operand, rule)
             && (!rule.relativeDate || rule.comparison == Expr::During);
     }
+    if(rule.comparison == Expr::In || rule.comparison == Expr::ContainsAny) {
+        for(const auto& value : *args | std::views::drop(1)) {
+            if(value.type != Expr::Literal && value.type != Expr::QuotedLiteral) {
+                return false;
+            }
+            const auto& text = std::get<QString>(value.value);
+            if(!AutoPlaylistQueryBuilder::isListValueValid(text, type)) {
+                return false;
+            }
+            rule.values.push_back(text);
+        }
+        return !rule.values.empty();
+    }
     if(args->size() != 2 || (args->at(1).type != Expr::Literal && args->at(1).type != Expr::QuotedLiteral)) {
         return false;
     }
@@ -177,16 +205,7 @@ bool readRule(const Expression& expression, AutoPlaylistRule& rule)
         return rule.value == "1"_L1;
     }
 
-    bool valid{false};
-    if(type == AutoPlaylistFieldType::Rating) {
-        const double rating = rule.value.toDouble(&valid);
-        return valid && std::isfinite(rating) && rating >= 0 && rating <= 5 && std::floor(rating * 2) == rating * 2
-            && (rule.comparison != Expr::Equals || rule.value == QString::number(rating));
-    }
-
-    const auto number = rule.value.toLongLong(&valid);
-    return valid && number >= 0 && number <= std::numeric_limits<int>::max()
-        && (rule.comparison != Expr::Equals || rule.value == QString::number(number));
+    return validNumericValue(rule.value, type, rule.comparison == Expr::Equals);
 }
 
 std::optional<AutoPlaylistRuleGroup::Match> groupMatch(Expr::Type type)
@@ -258,7 +277,8 @@ bool collectRules(const Expression& expression, AutoPlaylistRuleGroup& group)
         rule.negated    = false;
     }
     if(rule.negated && rule.comparison != Expr::Contains && rule.comparison != Expr::StartsWith
-       && rule.comparison != Expr::EndsWith && rule.comparison != Expr::Equals
+       && rule.comparison != Expr::EndsWith && rule.comparison != Expr::Equals && rule.comparison != Expr::In
+       && rule.comparison != Expr::ContainsAny
        && AutoPlaylistQueryBuilder::fieldType(rule.field, rule.source) != AutoPlaylistFieldType::Date) {
         return false;
     }
@@ -275,6 +295,9 @@ QString ruleQuery(const AutoPlaylistRule& rule)
         case Expr::Contains:
             comparison = u"HAS"_s;
             break;
+        case Expr::ContainsAny:
+            comparison = u"HAS ANY"_s;
+            break;
         case Expr::StartsWith:
             comparison = u"STARTS WITH"_s;
             break;
@@ -283,6 +306,9 @@ QString ruleQuery(const AutoPlaylistRule& rule)
             break;
         case Expr::Equals:
             comparison = u"IS"_s;
+            break;
+        case Expr::In:
+            comparison = u"IN"_s;
             break;
         case Expr::Greater:
             comparison = u">"_s;
@@ -331,7 +357,14 @@ QString ruleQuery(const AutoPlaylistRule& rule)
     term += comparison;
 
     if(rule.comparison != Expr::Present && rule.comparison != Expr::Missing) {
-        if(AutoPlaylistQueryBuilder::fieldType(rule.field, rule.source) == AutoPlaylistFieldType::Date) {
+        if(rule.comparison == Expr::In || rule.comparison == Expr::ContainsAny) {
+            QStringList values;
+            for(const auto& value : rule.values) {
+                values.push_back(quoted(value));
+            }
+            term += u" (%1)"_s.arg(values.join(u", "_s));
+        }
+        else if(AutoPlaylistQueryBuilder::fieldType(rule.field, rule.source) == AutoPlaylistFieldType::Date) {
             term += rule.relativeDate
                       ? u" LAST %1 %2"_s.arg(rule.period).arg(AutoPlaylistQueryBuilder::dateUnits()[rule.unit].keyword)
                       : u' ' + quoted(rule.date.toString(Qt::ISODate));
@@ -402,6 +435,12 @@ bool validExpression(const Expression& expression)
         case Expr::After:
         case Expr::Since:
             if(!args || args->size() != 2) {
+                return false;
+            }
+            break;
+        case Expr::In:
+        case Expr::ContainsAny:
+            if(!args || args->size() < 2) {
                 return false;
             }
             break;
@@ -538,19 +577,37 @@ AutoPlaylistFieldType AutoPlaylistQueryBuilder::fieldType(const QString& name, A
 std::vector<Expr::Type> AutoPlaylistQueryBuilder::comparisons(AutoPlaylistFieldType type)
 {
     if(type == AutoPlaylistFieldType::Metadata) {
-        return {Expr::Contains,     Expr::StartsWith, Expr::EndsWith,  Expr::Equals,  Expr::Greater,
-                Expr::GreaterEqual, Expr::Less,       Expr::LessEqual, Expr::Present, Expr::Missing};
+        return {Expr::Contains, Expr::ContainsAny,  Expr::StartsWith, Expr::EndsWith,  Expr::Equals,  Expr::In,
+                Expr::Greater,  Expr::GreaterEqual, Expr::Less,       Expr::LessEqual, Expr::Present, Expr::Missing};
     }
     if(type == AutoPlaylistFieldType::Boolean) {
         return {Expr::Equals};
     }
     if(type == AutoPlaylistFieldType::Text) {
-        return {Expr::Contains, Expr::StartsWith, Expr::EndsWith, Expr::Equals, Expr::Present, Expr::Missing};
+        return {Expr::Contains, Expr::ContainsAny, Expr::StartsWith, Expr::EndsWith,
+                Expr::Equals,   Expr::In,          Expr::Present,    Expr::Missing};
     }
     if(type == AutoPlaylistFieldType::Date) {
         return {Expr::Before, Expr::After, Expr::Since, Expr::During, Expr::Present, Expr::Missing};
     }
-    return {Expr::Equals, Expr::Greater, Expr::GreaterEqual, Expr::Less, Expr::LessEqual};
+    return {Expr::Equals, Expr::In, Expr::Greater, Expr::GreaterEqual, Expr::Less, Expr::LessEqual};
+}
+
+bool AutoPlaylistQueryBuilder::isListValueValid(const QString& value, AutoPlaylistFieldType type)
+{
+    if(value.isEmpty() || value.contains(u'\n') || value.contains(u'\r') || value.contains(QChar::LineSeparator)
+       || value.contains(QChar::ParagraphSeparator)) {
+        return false;
+    }
+    if(type == AutoPlaylistFieldType::Text || type == AutoPlaylistFieldType::Metadata) {
+        return true;
+    }
+
+    if(type == AutoPlaylistFieldType::Rating || type == AutoPlaylistFieldType::Number
+       || type == AutoPlaylistFieldType::Duration) {
+        return validNumericValue(value, type, false);
+    }
+    return false;
 }
 
 std::pair<QString, QString> AutoPlaylistQueryBuilder::query(const AutoPlaylistRules& rules)

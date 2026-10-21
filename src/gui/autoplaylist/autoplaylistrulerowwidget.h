@@ -19,9 +19,13 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include "autoplaylistquery.h"
 
 #include <QWidget>
+
+#include <vector>
 
 class QComboBox;
 class QLineEdit;
@@ -33,7 +37,7 @@ namespace Fooyin {
 class AutoPlaylistFieldComboBox;
 class RuleRatingEditor;
 
-class AutoPlaylistRuleRowWidget : public QWidget
+class FYGUI_EXPORT AutoPlaylistRuleRowWidget : public QWidget
 {
     Q_OBJECT
 
@@ -50,6 +54,8 @@ private:
     void updateDateUnits();
     void updateComparisons();
     void updateValue();
+    void editList();
+    void updateListSummary();
 
     AutoPlaylistFieldComboBox* m_field;
     QComboBox* m_comparison;
@@ -62,5 +68,7 @@ private:
     QDateEdit* m_date;
     QSpinBox* m_period;
     QComboBox* m_unit;
+    QLineEdit* m_listSummary;
+    std::vector<QString> m_listValues;
 };
 } // namespace Fooyin
