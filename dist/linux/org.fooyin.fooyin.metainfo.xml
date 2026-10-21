@@ -62,6 +62,18 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="0.14.0" date="2026-10-21">
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.14.0</url>
+            <description>
+                <p>Adds native FLAC, MPEG, Opus, and Vorbis decoders, DTS-FLAC and TTA playback,
+                    JACK output, A–B repeat, and a visual autoplaylist rule editor.</p>
+                <p>Drag-and-drop layout editing, customisable toolbars, sticky playlist headers
+                    and artwork, searchable settings, and richer scripting and query
+                    tools provide more control over the player.</p>
+                <p>This release also improves artwork search, Equaliser presets, audio conversion, autoplaylists,
+                    visualisations, metadata handling, playlists, and interface consistency.</p>
+            </description>
+        </release>
         <release version="0.13.1" date="2026-09-24">
             <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.13.1</url>
             <description>

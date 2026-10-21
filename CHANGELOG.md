@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [0.14.0](https://github.com/fooyin/fooyin/releases/tag/v0.14.0) (2026-10-21)
 
 ### New Features
 
@@ -104,6 +104,7 @@
   - Add a new Trace logging level
 - **Scripting**
   - Add playback output information fields
+  - Add `%avgbitrate%` for the average bitrate of track lists ([#527](https://github.com/fooyin/fooyin/issues/527))
   - Add font weight formatting with `<weight>`
   - Add underline and strikethrough formatting tags with `<u>` and `<s>`
   - Add alignment tag support to rich-text HTML rendering ([#1733](https://github.com/fooyin/fooyin/issues/1733))
