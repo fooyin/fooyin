@@ -72,6 +72,7 @@ private:
     PlaylistHandler* m_playlistHandler;
     Playlist* m_playlist;
     std::vector<AutoPlaylistQuery> m_queries;
+    QString m_lastPresetName;
     bool m_queryChanged;
     QString m_rulesQuery;
     QString m_rulesSortQuery;

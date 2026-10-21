@@ -370,6 +370,12 @@ void AutoPlaylistDialog::loadQuery()
 {
     const auto query = findQuery(m_presetBox->currentText());
     if(query != m_queries.end()) {
+        const QString name = m_nameEdit->text();
+        if(name.trimmed().isEmpty() || name == m_lastPresetName) {
+            m_lastPresetName = query->name;
+            m_nameEdit->setText(m_lastPresetName);
+            m_nameEdit->setCursorPosition(0);
+        }
         setQuery(*query);
     }
 }

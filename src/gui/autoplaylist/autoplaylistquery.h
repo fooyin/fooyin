@@ -97,7 +97,7 @@ struct AutoPlaylistRule
 {
     QString field{QStringLiteral("artist")};
     AutoPlaylistFieldSource source{AutoPlaylistFieldSource::BuiltIn};
-    Expr::Type comparison{Expr::Contains};
+    Expr::Type comparison{Expr::Equals};
     bool negated{false};
     QString value;
     std::vector<QString> values;
