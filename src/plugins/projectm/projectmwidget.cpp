@@ -27,7 +27,9 @@
 #include <core/engine/enginecontroller.h>
 #include <core/engine/visualisationservice.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <gui/iconloader.h>
+#include <gui/splitters/fysplitter.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
@@ -49,8 +51,6 @@
 #include <QOpenGLWindow>
 #include <QPixmap>
 #include <QSizePolicy>
-#include <QSplitter>
-#include <QSplitterHandle>
 #include <QWidget>
 #include <QtGlobal>
 
@@ -149,7 +149,7 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
     , m_view{new ProjectMView()}
     , m_viewContainer{createWindowContainer(m_view, this)}
     , m_statusLabel{new QLabel(this)}
-    , m_resizeSnapshot{new QLabel(this)}
+    , m_snapshot{new QLabel(this)}
     , m_context{new WidgetContext(m_viewContainer, Context{Id{"Fooyin.Context.ProjectM."}.append(id())}, this)}
     , m_fullScreenAction{new QAction(tr("&Full Screen"), this)}
     , m_selectPresetAction{new QAction(tr("&Select Preset…"), this)}
@@ -175,6 +175,7 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
     , m_cycleFavouritesOnly{false}
     , m_detachedWindowFullScreen{false}
     , m_splitterResizeActive{false}
+    , m_snapshotActive{false}
 {
     m_actionManager->addContextObject(m_context);
 
@@ -191,9 +192,9 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
     m_viewContainer->installEventFilter(this);
     m_view->installEventFilter(this);
 
-    m_resizeSnapshot->setAttribute(Qt::WA_TransparentForMouseEvents);
-    m_resizeSnapshot->setScaledContents(true);
-    m_resizeSnapshot->setVisible(false);
+    m_snapshot->setAttribute(Qt::WA_TransparentForMouseEvents);
+    m_snapshot->setScaledContents(true);
+    m_snapshot->setVisible(false);
 
     layout->addWidget(m_viewContainer);
     layout->addWidget(m_statusLabel);
@@ -219,6 +220,7 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
         m_statusLabel->setText(statusText);
 
         updateActionState();
+        QMetaObject::invokeMethod(this, &ProjectMWidget::updateSnapshot, Qt::QueuedConnection);
     });
     QObject::connect(m_view, &ProjectMView::activated, m_viewContainer, [this]() { m_viewContainer->setFocus(); });
     QObject::connect(m_view, &ProjectMView::doubleClicked, this, &ProjectMWidget::toggleFullScreen);
@@ -240,9 +242,12 @@ ProjectMWidget::ProjectMWidget(ActionManager* actionManager, EngineController* e
     const auto updateIdleState = [this](Engine::PlaybackState state) {
         m_view->setPlaybackIdle(state == Engine::PlaybackState::Stopped || state == Engine::PlaybackState::Error);
     };
-    QObject::connect(engine, &EngineController::engineStateChanged, this, updateIdleState);
     updateIdleState(engine->engineState());
+    QObject::connect(engine, &EngineController::engineStateChanged, this, updateIdleState);
+
     m_view->setVisualisationSession(engine->visualisationService()->createSession());
+
+    m_settings->subscribe<Settings::Gui::LayoutEditing>(this, &ProjectMWidget::updateSnapshot);
 }
 
 ProjectMWidget::~ProjectMWidget()
@@ -462,7 +467,10 @@ bool ProjectMWidget::eventFilter(QObject* watched, QEvent* event)
 {
     if(watched == m_viewContainer
        && (event->type() == QEvent::Move || event->type() == QEvent::Resize || event->type() == QEvent::Show)) {
-        updateResizeSnapshotGeometry();
+        updateSnapshotGeometry();
+        if(event->type() == QEvent::Show) {
+            QMetaObject::invokeMethod(this, &ProjectMWidget::updateSnapshot, Qt::QueuedConnection);
+        }
     }
 
     if(m_splitterResizeActive && event->type() == QEvent::MouseButtonRelease) {
@@ -521,6 +529,7 @@ void ProjectMWidget::showEvent(QShowEvent* event)
 {
     FyWidget::showEvent(event);
     installSplitterEventFilters();
+    QMetaObject::invokeMethod(this, &ProjectMWidget::updateSnapshot, Qt::QueuedConnection);
 }
 
 void ProjectMWidget::openConfigDialog()
@@ -945,7 +954,7 @@ void ProjectMWidget::installSplitterEventFilters()
     };
 
     for(QWidget* widget = parentWidget(); widget; widget = widget->parentWidget()) {
-        auto* splitter = qobject_cast<QSplitter*>(widget);
+        auto* splitter = qobject_cast<FySplitter*>(widget);
         if(!splitter) {
             continue;
         }
@@ -964,16 +973,7 @@ void ProjectMWidget::beginSplitterResize()
 
     m_splitterResizeActive = true;
     qApp->installEventFilter(this);
-
-    const QImage snapshot = m_view->grabFramebuffer();
-    if(!snapshot.isNull()) {
-        m_resizeSnapshot->setPixmap(QPixmap::fromImage(snapshot));
-        updateResizeSnapshotGeometry();
-        m_resizeSnapshot->show();
-        m_resizeSnapshot->raise();
-    }
-
-    m_view->hide();
+    updateSnapshot();
 }
 
 void ProjectMWidget::endSplitterResize()
@@ -984,19 +984,43 @@ void ProjectMWidget::endSplitterResize()
 
     m_splitterResizeActive = false;
     qApp->removeEventFilter(this);
-    m_resizeSnapshot->hide();
-    m_resizeSnapshot->clear();
+    updateSnapshot();
+}
 
-    if(m_viewContainer->isVisible() && !m_fullScreenWindow) {
-        m_view->show();
-        m_view->requestUpdate();
+void ProjectMWidget::updateSnapshot()
+{
+    // Native child windows cover QWidget overlays, so use a still frame while arranging the layout or resizing
+
+    const bool editing     = m_settings->value<Settings::Gui::LayoutEditing>() && findParent();
+    const bool useSnapshot = (editing || m_splitterResizeActive) && !m_fullScreenWindow && m_viewContainer->isVisible()
+                          && m_view->isReady();
+
+    if(useSnapshot) {
+        if(!m_snapshotActive) {
+            const QImage snapshot = m_view->grabFramebuffer();
+            m_snapshot->setPixmap(QPixmap::fromImage(snapshot));
+            m_snapshotActive = true;
+        }
+        updateSnapshotGeometry();
+        m_snapshot->show();
+        m_snapshot->raise();
+        m_view->hide();
+    }
+    else if(m_snapshotActive) {
+        m_snapshotActive = false;
+        m_snapshot->hide();
+        m_snapshot->clear();
+        if(m_viewContainer->isVisible()) {
+            m_view->show();
+            m_view->requestUpdate();
+        }
     }
 }
 
-void ProjectMWidget::updateResizeSnapshotGeometry()
+void ProjectMWidget::updateSnapshotGeometry()
 {
-    if(m_splitterResizeActive || m_resizeSnapshot->isVisible()) {
-        m_resizeSnapshot->setGeometry(m_viewContainer->geometry());
+    if(m_snapshotActive) {
+        m_snapshot->setGeometry(m_viewContainer->geometry());
     }
 }
 

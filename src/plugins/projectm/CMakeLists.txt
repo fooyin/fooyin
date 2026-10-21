@@ -36,6 +36,7 @@ create_fooyin_plugin_internal(
     projectm
     DEPENDS Fooyin::Core
             Fooyin::Gui
+            Fooyin::GuiPrivate
             Qt6::OpenGL
             ${PROJECTM_TARGET}
             ${PROJECTM_OPENGL_LOADER_TARGET}
