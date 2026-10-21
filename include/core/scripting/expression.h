@@ -58,6 +58,7 @@ enum Type : uint8_t
     Limit,
     StartsWith,
     EndsWith,
+    In,
 };
 } // namespace Expr
 

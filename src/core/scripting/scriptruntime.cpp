@@ -143,6 +143,7 @@ bool isQueryExpression(Expr::Type type)
         case Type::Contains:
         case Type::StartsWith:
         case Type::EndsWith:
+        case Type::In:
         case Type::Greater:
         case Type::GreaterEqual:
         case Type::Less:
@@ -336,8 +337,10 @@ Expression ScriptRuntime::expression()
         case TokenType::TokPresent:
         case TokenType::TokColon:
         case TokenType::TokEquals:
-        case TokenType::TokStartsWith:
-        case TokenType::TokEndsWith:
+        case TokenType::TokStarts:
+        case TokenType::TokEnds:
+        case TokenType::TokWith:
+        case TokenType::TokIn:
         case TokenType::TokLeftAngle:
         case TokenType::TokRightAngle:
         case TokenType::TokRightParen:
@@ -701,6 +704,55 @@ Expression ScriptRuntime::relationalOperator(const Expression& key, Expr::Type t
     return expr;
 }
 
+Expression ScriptRuntime::textBoundaryOperator(const Expression& key, Expr::Type type)
+{
+    const QString keyword = m_current.value.toString();
+
+    advance();
+
+    if(!currentToken(TokenType::TokWith)) {
+        errorAtCurrent(QObject::tr("Expected ‘WITH’ after ‘%1’").arg(keyword));
+        return {};
+    }
+
+    return relationalOperator(key, type);
+}
+
+Expression ScriptRuntime::inKeyword(const Expression& key)
+{
+    advance();
+
+    if(!match(TokenType::TokLeftParen)) {
+        errorAtCurrent(QObject::tr("Expected ‘(’ after ‘IN’"));
+        return {};
+    }
+
+    ExpressionList args;
+    args.emplace_back(normaliseQueryField(key));
+
+    while(true) {
+        if(currentToken(TokenType::TokComma) || currentToken(TokenType::TokRightParen)
+           || currentToken(TokenType::TokEos)) {
+            errorAtCurrent(QObject::tr("Expected a value in ‘IN’ list"));
+            break;
+        }
+
+        Expression value = expression();
+        if(value.type == Expr::Null) {
+            error(QObject::tr("Expected a value in ‘IN’ list"));
+            break;
+        }
+        args.emplace_back(std::move(value));
+
+        if(!match(TokenType::TokComma)) {
+            break;
+        }
+    }
+
+    consume(TokenType::TokRightParen, QObject::tr("Expected ‘)’ at end of ‘IN’ list"));
+    return {Expr::In, std::move(args)};
+}
+
 Expression ScriptRuntime::metadataKeyword(const Expression& key, Expr::Type type)
 {
     Expression expr{type};
@@ -915,6 +967,7 @@ ScriptResult ScriptRuntime::evalExpression(const BoundExpression& exp, const aut
         case Expr::Present:
             return evalPresent(exp, tracks);
         case Expr::Equals:
+        case Expr::In:
             return evalEquals(exp, tracks);
         case Expr::Contains:
         case Expr::StartsWith:
@@ -1481,17 +1534,16 @@ ScriptResult ScriptRuntime::evalEquals(const BoundExpression& exp, const auto& t
         return {};
     }
 
-    const ScriptResult second = evalExpression(args.at(1), tracks);
-    if(!second.cond) {
-        return {};
-    }
-
-    const QString firstValue  = normaliseQueryValue(first.value, field.variableKind);
-    const QString secondValue = normaliseQueryValue(second.value, field.variableKind);
+    const QString firstValue = normaliseQueryValue(first.value, field.variableKind);
 
     ScriptResult result;
-    if(firstValue.compare(secondValue, Qt::CaseInsensitive) == 0) {
-        result.cond = true;
+    for(size_t i{1}; i < args.size(); ++i) {
+        const ScriptResult second = evalExpression(args.at(i), tracks);
+        if(second.cond
+           && firstValue.compare(normaliseQueryValue(second.value, field.variableKind), Qt::CaseInsensitive) == 0) {
+            result.cond = true;
+            break;
+        }
     }
 
     return result;
@@ -2048,12 +2100,14 @@ Expression ScriptRuntime::checkOperator(const Expression& expr)
     switch(m_current.type) {
         case TokenType::TokColon:
             return relationalOperator(expr, Expr::Contains);
-        case TokenType::TokStartsWith:
-            return relationalOperator(expr, Expr::StartsWith);
-        case TokenType::TokEndsWith:
-            return relationalOperator(expr, Expr::EndsWith);
+        case TokenType::TokStarts:
+            return textBoundaryOperator(expr, Expr::StartsWith);
+        case TokenType::TokEnds:
+            return textBoundaryOperator(expr, Expr::EndsWith);
         case TokenType::TokEquals:
             return relationalOperator(expr, Expr::Equals);
+        case TokenType::TokIn:
+            return inKeyword(expr);
         case TokenType::TokNot:
             return notKeyword(expr);
         case TokenType::TokAnd:

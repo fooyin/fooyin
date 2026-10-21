@@ -1140,9 +1140,9 @@ TEST_F(ScriptParserTest, QueryTest)
 
 TEST(ScriptScannerTest, RecognisesTextBoundaryKeywords)
 {
-    const std::array cases{std::pair{u"STARTSWITH"_s, ScriptScanner::TokStartsWith},
-                           std::pair{u"ENDSWITH"_s, ScriptScanner::TokEndsWith},
-                           std::pair{u"EQUAL"_s, ScriptScanner::TokEquals}};
+    const std::array cases{std::pair{u"STARTS"_s, ScriptScanner::TokStarts},
+                           std::pair{u"ENDS"_s, ScriptScanner::TokEnds}, std::pair{u"WITH"_s, ScriptScanner::TokWith},
+                           std::pair{u"IN"_s, ScriptScanner::TokIn}, std::pair{u"EQUAL"_s, ScriptScanner::TokEquals}};
 
     for(const auto& [input, expected] : cases) {
         ScriptScanner scanner;
@@ -1157,7 +1157,7 @@ TEST(ScriptScannerTest, RecognisesTextBoundaryKeywords)
 
 TEST(ScriptScannerTest, KeywordsRequireExactLengths)
 {
-    for(const auto& keyword : {u"STARTSWITH"_s, u"ENDSWITH"_s, u"EQUAL"_s, u"AND"_s}) {
+    for(const auto& keyword : {u"STARTS"_s, u"ENDS"_s, u"WITH"_s, u"IN"_s, u"EQUAL"_s, u"AND"_s}) {
         for(qsizetype length{1}; length < keyword.size(); ++length) {
             const QString input = keyword.left(length);
             ScriptScanner scanner;
@@ -1169,7 +1169,8 @@ TEST(ScriptScannerTest, KeywordsRequireExactLengths)
         }
     }
 
-    for(const auto& input : {u"STARTSWITHOUT"_s, u"ENDSWITHOUT"_s, u"EQUALS"_s, u"ANDROID"_s}) {
+    for(const auto& input : {u"STARTSWITH"_s, u"ENDSWITH"_s, u"STARTSWITHOUT"_s, u"ENDSWITHOUT"_s, u"WITHOUT"_s,
+                             u"INDEX"_s, u"EQUALS"_s, u"ANDROID"_s}) {
         ScriptScanner scanner;
         scanner.setup(input);
 
@@ -1192,18 +1193,128 @@ TEST_F(ScriptParserTest, QueryTextBoundaryOperators)
 
     const TrackList tracks{first, second, middle};
 
-    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(title STARTSWITH "CAFE")"_s, tracks));
-    EXPECT_EQ(TrackList{second}, m_filter.filter(uR"(title ENDSWITH "CAFE")"_s, tracks));
-    EXPECT_EQ(TrackList{second}, m_filter.filter(uR"(title STARTSWITH "moon")"_s, tracks));
-    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(title ENDSWITH "LIGHT")"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(title STARTS WITH "CAFE")"_s, tracks));
+    EXPECT_EQ(TrackList{second}, m_filter.filter(uR"(title ENDS WITH "CAFE")"_s, tracks));
+    EXPECT_EQ(TrackList{second}, m_filter.filter(uR"(title STARTS WITH "moon")"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(title ENDS WITH "LIGHT")"_s, tracks));
     EXPECT_EQ(tracks, m_filter.filter(uR"(title HAS "cafe")"_s, tracks));
-    EXPECT_EQ((TrackList{second, middle}), m_filter.filter(uR"(title NOT STARTSWITH "cafe")"_s, tracks));
-    EXPECT_EQ((TrackList{first, middle}), m_filter.filter(uR"(title NOT ENDSWITH "cafe")"_s, tracks));
-    EXPECT_EQ((TrackList{second, middle}), m_filter.filter(uR"(NOT (title STARTSWITH "cafe"))"_s, tracks));
-    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(title STARTSWITH "cafe" AND title ENDSWITH "light")"_s, tracks));
+    EXPECT_EQ((TrackList{second, middle}), m_filter.filter(uR"(title NOT STARTS WITH "cafe")"_s, tracks));
+    EXPECT_EQ((TrackList{first, middle}), m_filter.filter(uR"(title NOT ENDS WITH "cafe")"_s, tracks));
+    EXPECT_EQ((TrackList{second, middle}), m_filter.filter(uR"(NOT (title STARTS WITH "cafe"))"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(title STARTS WITH "cafe" AND title ENDS WITH "light")"_s, tracks));
     EXPECT_EQ((TrackList{first, second}),
-              m_filter.filter(uR"(title STARTSWITH "cafe" OR title ENDSWITH "cafe")"_s, tracks));
-    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"($lower(%title%) STARTSWITH "cafe")"_s, tracks));
+              m_filter.filter(uR"(title STARTS WITH "cafe" OR title ENDS WITH "cafe")"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"($lower(%title%) STARTS WITH "cafe")"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(u"title STARTS\tWITH \"cafe\""_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(u"title ENDS\n  WITH \"light\""_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(u"title STARTS\n// Prefix match\nWITH \"cafe\""_s, tracks));
+}
+
+TEST_F(ScriptParserTest, QueryTextBoundaryOperatorsRequireWith)
+{
+    for(const auto& query :
+        {u"title STARTS"_s, u"title ENDS"_s, uR"(title STARTS "moon")"_s, uR"(title ENDS "light")"_s,
+         uR"(title STARTS WITHOUT "moon")"_s, uR"(title ENDS WI "light")"_s}) {
+        SCOPED_TRACE(query.toStdString());
+        const auto parsed = m_parser.parseQuery(query);
+        EXPECT_FALSE(parsed.isValid());
+        ASSERT_FALSE(parsed.errors.empty());
+        EXPECT_TRUE(parsed.errors.front().message.contains(u"WITH"_s));
+    }
+}
+
+TEST_F(ScriptParserTest, TextBoundaryKeywordsRemainLiteralInValuesAndScripts)
+{
+    Track track{u"/music/first.flac"_s};
+    track.setTitle(u"STARTS WITH me and ENDS WITH you"_s);
+    const TrackList tracks{track};
+
+    EXPECT_EQ(tracks, m_filter.filter(uR"(title STARTS WITH "STARTS WITH")"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(title ENDS WITH "ENDS WITH you")"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(title HAS "STARTS WITH")"_s, tracks));
+    EXPECT_EQ(u"STARTS WITH / ENDS WITH", m_parser.evaluate(u"STARTS WITH / ENDS WITH"_s, track));
+}
+
+TEST_F(ScriptParserTest, QueryInOperator)
+{
+    Track first{u"/music/first.flac"_s};
+    first.setGenres({u"Rock"_s});
+    first.setPlayCount(1);
+
+    Track second{u"/music/second.flac"_s};
+    second.setGenres({u"Jazz"_s});
+    second.setPlayCount(2);
+
+    Track third{u"/music/third.flac"_s};
+    third.setGenres({u"Blues"_s});
+    third.setPlayCount(3);
+
+    const TrackList tracks{first, second, third};
+
+    EXPECT_EQ((TrackList{first, second}), m_filter.filter(uR"(genre IN ("ROCK", "jazz"))"_s, tracks));
+    EXPECT_EQ(TrackList{second}, m_filter.filter(u"genre IN (Jazz)"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(u"genre IN (Rock, Jazz, Blues)"_s, tracks));
+    EXPECT_TRUE(m_filter.filter(uR"(genre IN ("Ro", "Classical"))"_s, tracks).empty());
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(genre IN ("Rock", "Rock"))"_s, tracks));
+    EXPECT_EQ((TrackList{first, third}), m_filter.filter(u"playcount IN (1, 3)"_s, tracks));
+    EXPECT_EQ(TrackList{third}, m_filter.filter(uR"(genre NOT IN ("Rock", "Jazz"))"_s, tracks));
+    EXPECT_EQ(TrackList{third}, m_filter.filter(uR"(NOT genre IN ("Rock", "Jazz"))"_s, tracks));
+    EXPECT_EQ(TrackList{third}, m_filter.filter(uR"(NOT (genre IN ("Rock", "Jazz")))"_s, tracks));
+    EXPECT_EQ(TrackList{second}, m_filter.filter(uR"(genre IN ("Rock", "Jazz") AND playcount > 1)"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(genre IN ("Rock", "Jazz") OR playcount IS 3)"_s, tracks));
+    EXPECT_EQ(TrackList{first}, m_filter.filter(uR"(playcount IS 1 AND genre IN ("Rock", "Jazz"))"_s, tracks));
+    EXPECT_EQ(TrackList{second}, m_filter.filter(uR"((genre IN ("Rock", "Jazz")) AND playcount IS 2)"_s, tracks));
+    EXPECT_EQ(TrackList{second},
+              m_filter.filter(uR"(genre IN ("Rock", "Jazz") SORT DESCENDING BY playcount LIMIT 1)"_s, tracks));
+}
+
+TEST_F(ScriptParserTest, QueryInExpressionsAndQuotedValues)
+{
+    Track track{u"/music/first.flac"_s};
+    track.setGenres({u"Jazz"_s});
+    track.setTitle(u" Rock, Jazz (Live) "_s);
+    track.setComment(uR"(say "hello")"_s);
+    const TrackList tracks{track};
+
+    EXPECT_EQ(tracks, m_filter.filter(uR"(%genre% IN ($lower("JAZZ"), "Rock"))"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"($lower(%genre%) IN ("Rock", "JAZZ"))"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(genre IN (%title%, %genre%))"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(genre IN ($replace("Blues", "Blues", "Jazz")))"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(genre IN (%missing%, "Jazz"))"_s, tracks));
+    EXPECT_TRUE(m_filter.filter(uR"(missing IN ("", "Jazz"))"_s, tracks).empty());
+    EXPECT_EQ(tracks, m_filter.filter(uR"(missing NOT IN ("", "Jazz"))"_s, tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(title IN ("other", " Rock, Jazz (Live) "))"_s, tracks));
+    EXPECT_TRUE(m_filter.filter(uR"QUERY(title IN ("Rock, Jazz (Live)"))QUERY"_s, tracks).empty());
+    EXPECT_EQ(tracks, m_filter.filter(uR"(comment IN ("say \"hello\""))"_s, tracks));
+
+    track.setTitle(u""_s);
+    EXPECT_TRUE(m_parser.parseQuery(uR"(title IN (""))"_s).isValid());
+    EXPECT_TRUE(m_filter.filter(uR"(title IN (""))"_s, TrackList{track}).empty());
+}
+
+TEST_F(ScriptParserTest, QueryInUsesEqualitySemantics)
+{
+    Track track{u"/music/first.flac"_s};
+    track.setTitle(u"Café"_s);
+    track.setGenres({u"Rock"_s, u"Jazz"_s});
+    const TrackList tracks{track};
+
+    for(const auto& [field, value] : {std::pair{u"title"_s, u"CAFÉ"_s}, std::pair{u"title"_s, u"Cafe"_s},
+                                      std::pair{u"genre"_s, u"Rock"_s}, std::pair{u"genre"_s, u"Rock, Jazz"_s}}) {
+        SCOPED_TRACE(value.toStdString());
+        EXPECT_EQ(m_filter.filter(uR"(%1 IS "%2")"_s.arg(field, value), tracks),
+                  m_filter.filter(uR"(%1 IN ("%2"))"_s.arg(field, value), tracks));
+    }
+}
+
+TEST_F(ScriptParserTest, QueryInRejectsMalformedLists)
+{
+    for(const auto& query : {u"genre IN"_s, u"genre IN Rock"_s, u"genre IN ()"_s, u"genre IN (,Rock)"_s,
+                             u"genre IN (Rock,)"_s, u"genre IN (Rock,,Jazz)"_s, u"genre IN (Rock"_s,
+                             uR"(genre IN ("Rock" "Jazz"))"_s, uR"(genre IN ("Rock))"_s, u"genre NOT IN ()"_s}) {
+        SCOPED_TRACE(query.toStdString());
+        EXPECT_FALSE(m_parser.parseQuery(query).isValid());
+    }
 }
 
 TEST_F(ScriptParserTest, PathQueriesNormaliseSeparators)
@@ -1219,8 +1330,8 @@ TEST_F(ScriptParserTest, PathQueriesNormaliseSeparators)
     QString escapedFolder{nativeFolder};
     escapedFolder.replace(u'\\', uR"(\\)"_s);
     EXPECT_EQ(TrackList{canonicalPathTrack},
-              m_filter.filter(uR"(filepath STARTSWITH "%1")"_s.arg(escapedFolder), tracks));
-    EXPECT_EQ(tracks, m_filter.filter(uR"(filepath ENDSWITH ".FLAC")"_s, tracks));
+              m_filter.filter(uR"(filepath STARTS WITH "%1")"_s.arg(escapedFolder), tracks));
+    EXPECT_EQ(tracks, m_filter.filter(uR"(filepath ENDS WITH ".FLAC")"_s, tracks));
 }
 
 TEST_F(ScriptParserTest, QueryQuotedLiteralsPreserveWhitespace)
@@ -1370,7 +1481,8 @@ TEST_F(ScriptParserTest, QueryClassification)
     EXPECT_TRUE(ScriptParser::canEvaluateAsQuery(fieldQuery));
     EXPECT_TRUE(ScriptParser::containsQueryExpression(fieldQuery));
 
-    for(const auto& query : {uR"(title STARTSWITH "moon")"_s, uR"(title ENDSWITH "light")"_s}) {
+    for(const auto& query : {uR"(title STARTS WITH "moon")"_s, uR"(title ENDS WITH "light")"_s,
+                             uR"(genre IN ("Rock", "Jazz"))"_s, uR"(genre NOT IN ("Rock", "Jazz"))"_s}) {
         const ParsedScript boundaryQuery = parser.parseQuery(query);
         EXPECT_TRUE(boundaryQuery.isValid());
         EXPECT_TRUE(ScriptParser::canEvaluateAsQuery(boundaryQuery));

@@ -329,7 +329,7 @@ ScriptScanner::Token ScriptScanner::keyword()
             if(currentLength() > 1) {
                 switch(m_start[1].unicode()) {
                     case u'N':
-                        return checkKeyword(2, "DSWITH"_L1, TokEndsWith);
+                        return checkKeyword(2, "DS"_L1, TokEnds);
                     case u'Q':
                         return checkKeyword(2, "UAL"_L1, TokEquals);
                     default:
@@ -352,7 +352,17 @@ ScriptScanner::Token ScriptScanner::keyword()
             }
             break;
         case u'I':
-            return checkKeyword(1, "S"_L1, TokEquals);
+            if(currentLength() > 1) {
+                switch(m_start[1].unicode()) {
+                    case u'N':
+                        return checkKeyword(2, ""_L1, TokIn);
+                    case u'S':
+                        return checkKeyword(2, ""_L1, TokEquals);
+                    default:
+                        break;
+                }
+            }
+            break;
         case u'L':
             if(currentLength() > 1) {
                 switch(m_start[1].unicode()) {
@@ -405,14 +415,24 @@ ScriptScanner::Token ScriptScanner::keyword()
                     case u'O':
                         return checkKeyword(2, "RT"_L1, TokSort);
                     case u'T':
-                        return checkKeyword(2, "ARTSWITH"_L1, TokStartsWith);
+                        return checkKeyword(2, "ARTS"_L1, TokStarts);
                     default:
                         break;
                 }
             }
             break;
         case u'W':
-            return checkKeyword(1, isPlural(4) ? "EEKS"_L1 : "EEK"_L1, TokWeek);
+            if(currentLength() > 1) {
+                switch(m_start[1].unicode()) {
+                    case u'E':
+                        return checkKeyword(2, isPlural(4) ? "EKS"_L1 : "EK"_L1, TokWeek);
+                    case u'I':
+                        return checkKeyword(2, "TH"_L1, TokWith);
+                    default:
+                        break;
+                }
+            }
+            break;
         case u'X':
             return checkKeyword(1, "OR"_L1, TokXOr);
         case u'Y':

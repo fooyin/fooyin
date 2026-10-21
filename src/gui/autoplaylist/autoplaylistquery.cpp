@@ -276,10 +276,10 @@ QString ruleQuery(const AutoPlaylistRule& rule)
             comparison = u"HAS"_s;
             break;
         case Expr::StartsWith:
-            comparison = u"STARTSWITH"_s;
+            comparison = u"STARTS WITH"_s;
             break;
         case Expr::EndsWith:
-            comparison = u"ENDSWITH"_s;
+            comparison = u"ENDS WITH"_s;
             break;
         case Expr::Equals:
             comparison = u"IS"_s;

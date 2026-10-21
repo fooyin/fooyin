@@ -91,6 +91,8 @@ private:
     Expression notKeyword(const Expression& key);
     Expression logicalOperator(const Expression& key, Expr::Type type);
     Expression relationalOperator(const Expression& key, Expr::Type type, Expr::Type equalsType = Expr::Null);
+    Expression textBoundaryOperator(const Expression& key, Expr::Type type);
+    Expression inKeyword(const Expression& key);
     Expression metadataKeyword(const Expression& key, Expr::Type type);
     Expression timeKeyword(const Expression& key, Expr::Type type);
     Expression duringKeyword(const Expression& key);
