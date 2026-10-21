@@ -173,6 +173,7 @@ const ScriptPlaybackData* playbackData(const ScriptContext& context)
 bool isTrackListVariableKind(const VariableKind kind)
 {
     switch(kind) {
+        case VariableKind::AverageBitrate:
         case VariableKind::Genres:
         case VariableKind::TrackCount:
         case VariableKind::Playtime:
@@ -339,6 +340,8 @@ std::optional<ScriptEvaluator::FuncRet> trackListValue(const VariableKind kind, 
     const auto& cache = registry.cachedTrackListValues(tracks);
 
     switch(kind) {
+        case VariableKind::AverageBitrate:
+            return cache.averageBitrate;
         case VariableKind::TrackCount:
             return cache.trackCount;
         case VariableKind::Playtime:
@@ -635,6 +638,7 @@ ScriptResult ScriptEvaluator::valueForPlaylist(VariableKind kind, const QString&
 
     if(isTrackListVariableKind(kind)) {
         switch(kind) {
+            case VariableKind::AverageBitrate:
             case VariableKind::TrackCount:
             case VariableKind::Playtime:
             case VariableKind::PlaylistSize:
@@ -970,6 +974,7 @@ const ScriptEvaluator::TrackListAggregateCache& ScriptEvaluator::cachedTrackList
         m_trackListCache.currentPosition = currentPosition;
         m_trackListCache.playlistIndex   = playlistIndex;
         m_trackListCache.playtime        = Scripting::playtime(tracks);
+        m_trackListCache.averageBitrate  = Scripting::averageBitrate(tracks);
         m_trackListCache.playlistSize    = Scripting::playlistSize(tracks);
         m_trackListCache.genres          = Scripting::genres(tracks);
         m_trackListCache.playlistElapsed = playlistDuration(tracks);

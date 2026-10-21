@@ -2561,6 +2561,25 @@ QString Track::discTocForTracks(const TrackList& tracks)
              : QString{};
 }
 
+int Track::averageBitrateForTracks(const TrackList& tracks)
+{
+    double weightedBitrate{0.0};
+    double totalDuration{0.0};
+
+    for(const auto& track : tracks) {
+        const int bitrate = track.bitrate();
+        if(bitrate <= 0 || track.duration() == 0) {
+            continue;
+        }
+
+        const auto duration = static_cast<double>(track.duration());
+        weightedBitrate += bitrate * duration;
+        totalDuration += duration;
+    }
+
+    return totalDuration > 0.0 ? static_cast<int>(std::llround(weightedBitrate / totalDuration)) : 0;
+}
+
 QStringList Track::supportedMimeTypes()
 {
     static const QStringList supportedTypes

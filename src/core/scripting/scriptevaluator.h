@@ -72,6 +72,7 @@ public:
         int currentPosition{-1};
         int playlistIndex{-1};
         QString playtime;
+        QString averageBitrate;
         QString playlistSize;
         QString genres;
         QString playlistElapsed;

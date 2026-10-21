@@ -240,6 +240,7 @@ enum class VariableKind : uint8_t
     IsQueueUpcoming,
     IsQueuePlayed,
     QueueMode,
+    AverageBitrate,
 };
 
 struct Expression;

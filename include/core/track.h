@@ -441,6 +441,8 @@ public:
     static QString findCommonField(const TrackList& tracks);
     static TrackIds trackIdsForTracks(const TrackList& tracks);
     static QString discTocForTracks(const TrackList& tracks);
+    //! Duration-weighted bitrate in kbps, or 0 when no tracks have a usable bitrate and duration.
+    static int averageBitrateForTracks(const TrackList& tracks);
 
     static QStringList supportedMimeTypes();
 

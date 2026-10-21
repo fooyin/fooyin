@@ -28,6 +28,7 @@
 
 #include <QDir>
 
+#include <algorithm>
 #include <set>
 #include <tuple>
 
@@ -270,12 +271,6 @@ void InfoPopulatorPrivate::addTrackGeneral(int total, const Track& track)
                       InfoItem::Percentage);
     checkAddEntryNode(u"BitDepth"_s, InfoPopulator::tr("Bit Depth"), ItemParent::General, track.bitDepth(),
                       InfoItem::Percentage);
-    if(track.bitrate() > 0) {
-        checkAddEntryNode(
-            u"Bitrate"_s, total > 1 ? InfoPopulator::tr("Avg. Bitrate") : InfoPopulator::tr("Bitrate"),
-            ItemParent::General, track.bitrate(), InfoItem::Average,
-            InfoItem::FormatUIntFunc{[](uint64_t bitrate) -> QString { return u"%1 kbps"_s.arg(bitrate); }});
-    }
     if(track.sampleRate() > 0) {
         checkAddEntryNode(u"SampleRate"_s, InfoPopulator::tr("Sample Rate"), ItemParent::General,
                           u"%1 Hz"_s.arg(track.sampleRate()), InfoItem::Percentage);
@@ -419,6 +414,20 @@ void InfoPopulatorPrivate::addTrackNodes(InfoItem::Options options, const TrackL
         }
         if(options & InfoItem::Other) {
             addTrackOther(track);
+        }
+    }
+
+    if((options & InfoItem::General) && !tracks.empty()) {
+        const int bitrate = total == 1 ? tracks.front().bitrate() : Track::averageBitrateForTracks(tracks);
+        if(bitrate > 0) {
+            checkAddEntryNode(u"Bitrate"_s,
+                              total > 1 ? InfoPopulator::tr("Avg. Bitrate") : InfoPopulator::tr("Bitrate"),
+                              ItemParent::General, u"%1 kbps"_s.arg(bitrate));
+
+            auto& generalRows = m_data.parents[parentKey(ItemParent::General)];
+            // A little ugly, but less so than extending InfoItem for a single exception
+            const auto bitDepth = std::ranges::find(generalRows, u"BitDepth"_s);
+            std::rotate(bitDepth + 1, generalRows.end() - 1, generalRows.end());
         }
     }
 

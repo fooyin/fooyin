@@ -317,6 +317,7 @@ ScriptDependencies builtInVariableDependencies(VariableKind kind, const QString&
         case VariableKind::PlaylistElapsed:
             return {.sources = {ScriptSources::Playlist, TrackMetadata, PlaylistPlayback}, .unclassified = false};
         case VariableKind::TrackCount:
+        case VariableKind::AverageBitrate:
         case VariableKind::Playtime:
         case VariableKind::Genres:
         case VariableKind::PlaylistName:
@@ -513,6 +514,8 @@ void ScriptRegistryPrivate::addDefaultVariables()
                 QT_TRANSLATE_NOOP("Fooyin", "Number of tracks in the list"));
     addVariable(VariableKind::Playtime, u"PLAYTIME"_s, QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
                 QT_TRANSLATE_NOOP("Fooyin", "Combined duration of the track list"));
+    addVariable(VariableKind::AverageBitrate, u"AVGBITRATE"_s, QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
+                QT_TRANSLATE_NOOP("Fooyin", "Duration-weighted average bitrate of the track list in kbps"));
     addVariable(VariableKind::PlaylistName, u"PLAYLIST_NAME"_s, QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
                 QT_TRANSLATE_NOOP("Fooyin", "Name of the playlist"));
     addVariable(VariableKind::PlaylistSize, u"PLAYLIST_SIZE"_s, QT_TRANSLATE_NOOP("Fooyin", "Playlist"),
