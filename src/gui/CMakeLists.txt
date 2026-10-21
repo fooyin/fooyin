@@ -656,8 +656,6 @@ set(SOURCES
     widgets/hovermenu.cpp
     widgets/hovermenu.h
     widgets/lineediteditor.cpp
-    widgets/logslider.cpp
-    widgets/logslider.h
     widgets/menuheader.cpp
     widgets/menuheader.h
     widgets/messagebanner.cpp
