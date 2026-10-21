@@ -597,16 +597,16 @@ AutoPlaylistFieldType AutoPlaylistQueryBuilder::fieldType(const QString& name, A
 std::vector<Expr::Type> AutoPlaylistQueryBuilder::comparisons(AutoPlaylistFieldType type)
 {
     if(type == AutoPlaylistFieldType::Metadata) {
-        return {Expr::Contains,  Expr::ContainsAny, Expr::ContainsWord, Expr::StartsWith,   Expr::EndsWith,
-                Expr::Equals,    Expr::In,          Expr::Greater,      Expr::GreaterEqual, Expr::Less,
-                Expr::LessEqual, Expr::Present,     Expr::Missing};
+        return {Expr::Equals,     Expr::In,       Expr::Contains, Expr::ContainsAny,  Expr::ContainsWord,
+                Expr::StartsWith, Expr::EndsWith, Expr::Greater,  Expr::GreaterEqual, Expr::Less,
+                Expr::LessEqual,  Expr::Present,  Expr::Missing};
     }
     if(type == AutoPlaylistFieldType::Boolean) {
         return {Expr::Equals};
     }
     if(type == AutoPlaylistFieldType::Text) {
-        return {Expr::Contains, Expr::ContainsAny, Expr::ContainsWord, Expr::StartsWith, Expr::EndsWith,
-                Expr::Equals,   Expr::In,          Expr::Present,      Expr::Missing};
+        return {Expr::Equals,     Expr::In,       Expr::Contains, Expr::ContainsAny, Expr::ContainsWord,
+                Expr::StartsWith, Expr::EndsWith, Expr::Present,  Expr::Missing};
     }
     if(type == AutoPlaylistFieldType::Date) {
         return {Expr::Before, Expr::After, Expr::Since, Expr::During, Expr::Between, Expr::Present, Expr::Missing};
