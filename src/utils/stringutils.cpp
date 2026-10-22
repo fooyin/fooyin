@@ -102,7 +102,7 @@ QString elideTextWithBreaks(const QString& text, const QFontMetrics& fontMetrics
 
 QString capitalise(const QString& str)
 {
-    QString capitalised{str};
+    QString capitalised{str.toLower()};
     bool capitaliseNext{true};
 
     for(auto& character : capitalised) {
@@ -111,7 +111,7 @@ QString capitalise(const QString& str)
             capitaliseNext = false;
             continue;
         }
-        capitaliseNext = character.isSpace();
+        capitaliseNext = character.isSpace() || character.isPunct();
     }
 
     return capitalised;
