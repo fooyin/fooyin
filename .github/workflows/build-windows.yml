@@ -25,7 +25,7 @@ permissions:
 
 env:
   FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
-  QT_VERSION: '6.8.3'
+  QT_VERSION: '6.12.0'
   VCPKG_DISABLE_METRICS: true
   VCPKG_ROOT_DIR: 'C:/vcpkg'
   VCPKG_INSTALLED_DIR: 'C:/v'
