@@ -15197,7 +15197,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="192"/>
         <source>Line width</source>
-        <translation>Šířka řádku</translation>
+        <translation>Šířka značky</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="198"/>
