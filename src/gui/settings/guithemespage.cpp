@@ -34,6 +34,7 @@
 
 #include <QApplication>
 #include <QCheckBox>
+#include <QEvent>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QGridLayout>
@@ -118,6 +119,9 @@ public:
     void apply() override;
     void reset() override;
 
+protected:
+    void changeEvent(QEvent* event) override;
+
 private:
     void addColourOption(QGridLayout* layout, const QString& title, QPalette::ColorRole role,
                          QPalette::ColorGroup group = QPalette::All);
@@ -125,6 +129,7 @@ private:
 
     void updateButtonState() const;
     void updateColourOptionState() const;
+    void updateFontOptions() const;
     [[nodiscard]] std::optional<FyTheme> selectedTheme() const;
     [[nodiscard]] FyTheme currentTheme() const;
     void loadDefaults();
@@ -246,8 +251,13 @@ GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, Setting
     const auto fontEntries = m_themeRegistry->fontEntries();
 
     std::map<QString, QString> sortedEntries;
-    for(const auto& [className, title] : fontEntries) {
-        sortedEntries.emplace(title, className);
+    for(const auto& [className, entry] : fontEntries) {
+        if(className.isEmpty()) {
+            addFontOption(fontsLayout, entry.title, className);
+        }
+        else {
+            sortedEntries.emplace(entry.title, className);
+        }
     }
     for(const auto& [title, className] : sortedEntries) {
         addFontOption(fontsLayout, title, className);
@@ -255,7 +265,7 @@ GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, Setting
     FontButton::alignLabels(m_fontMapping | std::views::values);
 
     fontsLayout->setColumnStretch(1, 1);
-    fontsLayout->setRowStretch(baseLayout->rowCount(), 1);
+    fontsLayout->setRowStretch(fontsLayout->rowCount(), 1);
 
     m_themeDetails->addTab(baseColours, tr("Basic Colours"));
     m_themeDetails->addTab(advancedColours, tr("Advanced Colours"));
@@ -332,6 +342,16 @@ void GuiColoursPageWidget::reset()
     displayTheme(m_themeBaseline);
 }
 
+void GuiColoursPageWidget::changeEvent(QEvent* event)
+{
+    SettingsPageWidget::changeEvent(event);
+
+    if(event->type() == QEvent::FontChange) {
+        ColourButton::alignLabels(m_colourMapping | std::views::values);
+        FontButton::alignLabels(m_fontMapping | std::views::values);
+    }
+}
+
 void GuiColoursPageWidget::addColourOption(QGridLayout* layout, const QString& title, QPalette::ColorRole role,
                                            QPalette::ColorGroup group)
 {
@@ -351,6 +371,13 @@ void GuiColoursPageWidget::addFontOption(QGridLayout* layout, const QString& tit
     layout->addWidget(font, row, 0, 1, 2);
 
     m_fontMapping[className] = font;
+
+    QObject::connect(font, &FontButton::toggled, this, &GuiColoursPageWidget::updateFontOptions);
+    QObject::connect(font, &FontButton::fontUpdated, this, [this, font]() {
+        if(font->isChecked()) {
+            updateFontOptions();
+        }
+    });
 }
 
 void GuiColoursPageWidget::updateButtonState() const
@@ -378,6 +405,17 @@ void GuiColoursPageWidget::updateColourOptionState() const
         m_themeDetails->setTabToolTip(index, tooltip);
     }
     m_colourHint->setVisible(!enabled);
+}
+
+void GuiColoursPageWidget::updateFontOptions() const
+{
+    const auto theme      = currentTheme();
+    const auto systemFont = m_settings->value<Settings::Gui::Internal::SystemFont>().value<QFont>();
+
+    for(const auto& [className, button] : m_fontMapping) {
+        const QSignalBlocker blocker{button};
+        button->setButtonFont(m_themeRegistry->resolveFont(className, theme, systemFont));
+    }
 }
 
 std::optional<FyTheme> GuiColoursPageWidget::selectedTheme() const
@@ -436,7 +474,7 @@ void GuiColoursPageWidget::loadDefaults()
 
     const auto systemFont = m_settings->value<Settings::Gui::Internal::SystemFont>().value<QFont>();
     for(const auto& [className, button] : m_fontMapping) {
-        button->setButtonFont(ThemeRegistry::defaultFont(className, systemFont));
+        button->setButtonFont(m_themeRegistry->resolveFont(className, {}, systemFont));
         button->setChecked(false);
     }
 }

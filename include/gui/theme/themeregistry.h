@@ -32,17 +32,24 @@ class FYGUI_EXPORT ThemeRegistry : public ItemRegistry<FyTheme>
     Q_OBJECT
 
 public:
+    struct FontEntry
+    {
+        QString title;
+        QString parentClassName;
+    };
+
     explicit ThemeRegistry(SettingsManager* settings, QObject* parent = nullptr);
 
-    [[nodiscard]] std::map<QString, QString> fontEntries() const;
-    void registerFontEntry(const QString& title, const QString& className);
+    [[nodiscard]] std::map<QString, FontEntry> fontEntries() const;
+    void registerFontEntry(const QString& title, const QString& className, const QString& parentClassName = {});
 
     static QFont defaultFont(const QString& className, const QFont& systemFont);
+    [[nodiscard]] QFont resolveFont(const QString& className, const FyTheme& theme, const QFont& systemFont) const;
 
 protected:
     void loadDefaults() override;
 
 private:
-    std::map<QString, QString> m_fontEntries;
+    std::map<QString, FontEntry> m_fontEntries;
 };
 } // namespace Fooyin

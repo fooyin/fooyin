@@ -92,16 +92,14 @@ ThemeRegistry::ThemeRegistry(SettingsManager* settings, QObject* parent)
     loadItems();
 }
 
-std::map<QString, QString> ThemeRegistry::fontEntries() const
+std::map<QString, ThemeRegistry::FontEntry> ThemeRegistry::fontEntries() const
 {
     return m_fontEntries;
 }
 
-void ThemeRegistry::registerFontEntry(const QString& title, const QString& className)
+void ThemeRegistry::registerFontEntry(const QString& title, const QString& className, const QString& parentClassName)
 {
-    if(!m_fontEntries.contains(className)) {
-        m_fontEntries.emplace(className, title);
-    }
+    m_fontEntries.try_emplace(className, FontEntry{.title = title, .parentClassName = parentClassName});
 }
 
 QFont ThemeRegistry::defaultFont(const QString& className, const QFont& systemFont)
@@ -116,6 +114,30 @@ QFont ThemeRegistry::defaultFont(const QString& className, const QFont& systemFo
     }
 
     return systemFont;
+}
+
+QFont ThemeRegistry::resolveFont(const QString& className, const FyTheme& theme, const QFont& systemFont) const
+{
+    const auto defaultFont = theme.fonts.value(QString{}, systemFont);
+    auto font{defaultFont};
+    auto currentClass{className};
+
+    for(size_t depth{0}; depth <= m_fontEntries.size(); ++depth) {
+        const auto override = theme.fonts.constFind(currentClass);
+        if(override != theme.fonts.cend()) {
+            font = override.value();
+            break;
+        }
+
+        const auto entry = m_fontEntries.find(currentClass);
+        if(entry == m_fontEntries.end() || entry->second.parentClassName.isEmpty()) {
+            font = ThemeRegistry::defaultFont(currentClass, defaultFont);
+            break;
+        }
+        currentClass = entry->second.parentClassName;
+    }
+
+    return font;
 }
 
 void ThemeRegistry::loadDefaults()

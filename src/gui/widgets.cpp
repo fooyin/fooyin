@@ -969,8 +969,10 @@ void Widgets::registerFontEntries() const
 
     themeReg->registerFontEntry(tr("Default"), {});
     themeReg->registerFontEntry(tr("Lists"), u"QAbstractItemView"_s);
+    themeReg->registerFontEntry(tr("Column headers"), u"QHeaderView"_s, u"QAbstractItemView"_s);
     themeReg->registerFontEntry(tr("Library Tree"), u"Fooyin::LibraryTreeView"_s);
     themeReg->registerFontEntry(tr("Playlist"), u"Fooyin::PlaylistView"_s);
+    themeReg->registerFontEntry(tr("Playlist column headers"), u"Fooyin::PlaylistHeaderView"_s, u"QHeaderView"_s);
     themeReg->registerFontEntry(tr("Script Display"), u"Fooyin::ScriptDisplay"_s);
     themeReg->registerFontEntry(tr("Script Editor"), u"Fooyin::ScriptEditorTextEdit"_s);
     themeReg->registerFontEntry(tr("Status bar"), u"Fooyin::StatusLabel"_s);

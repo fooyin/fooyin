@@ -1564,7 +1564,7 @@ void PlaylistWidget::refreshViewStyle()
     const QFont playlistFont = resolvedStyle.font(u"Fooyin::PlaylistView"_s);
 
     m_playlistView->setFont(playlistFont);
-    m_header->setFont(playlistFont);
+    m_header->setFont(resolvedStyle.font(u"Fooyin::PlaylistHeaderView"_s));
 
     Gui::updateItemViewStyle(m_playlistView, resolvedStyle.palette);
     updateVisibleCoverPins();
