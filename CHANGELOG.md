@@ -1,5 +1,35 @@
 # Changelog
 
+## Unreleased
+
+### Improvements
+
+- **Interface**
+  - Add configurable column header fonts, including a separate playlist header font ([#1788](https://github.com/fooyin/fooyin/issues/1788))
+  - Add configurable Volume Control slider step sizes ([#1802](https://github.com/fooyin/fooyin/issues/1802))
+- **Playlists**
+  - Add the Configure action to the full track context menus ([#1804](https://github.com/fooyin/fooyin/issues/1804))
+- **Plugins**
+  - Add support for removing and reinstalling plugins in user plugin directories ([#1805](https://github.com/fooyin/fooyin/issues/1805))
+  - Support upgrades from loose plugin files and show pending installations
+  - Report specific plugin installation failures
+
+### Fixes
+
+- **Interface**
+  - Fix action button text colours across styles and focus states
+  - Fix selection rendering in decoder and DSP settings lists on Windows
+  - Fix hover repainting with variable icon item heights
+  - Fix missing selection backgrounds in icon-mode drag previews
+  - Refresh autoplaylist rule button icons when the theme changes
+- **Scripting:** Fix capitalisation in `$caps` and the Tag Editor ([#1801](https://github.com/fooyin/fooyin/issues/1801))
+- **Visualisations:** Fix projectM overlays and snapshots during layout editing and resizing
+
+### Build/System
+
+- **CI:** Update Qt to 6.12 for Windows
+
+
 ## [0.14.0](https://github.com/fooyin/fooyin/releases/tag/v0.14.0) (2026-10-21)
 
 ### New Features
