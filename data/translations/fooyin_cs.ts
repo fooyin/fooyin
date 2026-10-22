@@ -627,17 +627,17 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="613"/>
         <source>Front cover marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Zástupný řetězec předního přebalu alba použitelný v podporovaných zobrazeních</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="616"/>
         <source>Back cover marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Zástupný řetězec zadního přebalu alba použitelný v podporovaných zobrazeních</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="619"/>
         <source>Artist picture marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Zástupný řetězec obrázku umělce použitelný v podporovaných zobrazeních</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="666"/>
@@ -15187,17 +15187,17 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="187"/>
         <source>A–B repeat settings for all seekbars</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení A-B opakování pro všechny časové lišty</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="188"/>
         <source>Seek on release when dragging A while A–B repeat is enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokud je povoleno A-B opakování, přetočit po přesunutí značky A na její novou pozici</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="192"/>
         <source>Line width</source>
-        <translation type="unfinished"></translation>
+        <translation>Šířka řádku</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="198"/>
@@ -15552,7 +15552,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="360"/>
         <source>Apply preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít předvolbu</translation>
     </message>
 </context>
 <context>
@@ -15795,7 +15795,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="41"/>
         <source>Keep subheaders in view</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukotvit podhlavičky</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="42"/>
@@ -15880,7 +15880,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="141"/>
         <source>General</source>
-        <translation type="unfinished">Obecné</translation>
+        <translation>Obecné</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="142"/>
@@ -16305,7 +16305,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="526"/>
         <source>Apply preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít předvolbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="543"/>
@@ -16425,12 +16425,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="530"/>
         <source>Apply preset to playlists in group</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít předvolbu pro seznamy skladeb ve skupině</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="530"/>
         <source>Apply preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít předvolbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="563"/>
@@ -16579,12 +16579,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="276"/>
         <source>Include column layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Zahrnout pořadí sloupců</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="278"/>
         <source>Single-column mode</source>
-        <translation type="unfinished">Režim jediného sloupce</translation>
+        <translation>Režim jediného sloupce</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="307"/>
