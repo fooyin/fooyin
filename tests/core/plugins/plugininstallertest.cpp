@@ -19,6 +19,8 @@
 
 #include "core/plugins/plugininstaller.h"
 
+#include <core/plugins/plugin.h>
+
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -90,7 +92,28 @@ bool createBundle(const QString& bundlePath, const QString& pluginPath, const QS
 TEST(PluginInstallerTest, InstallsStandalonePluginIntoManagedDirectory)
 {
     const QTemporaryDir plugins;
+    const QTemporaryDir incompatibleSource;
     ASSERT_TRUE(plugins.isValid());
+    ASSERT_TRUE(incompatibleSource.isValid());
+
+    QFile originalPlugin{QStringLiteral(TEST_PLUGIN_PATH)};
+    ASSERT_TRUE(originalPlugin.open(QIODevice::ReadOnly));
+    QByteArray pluginData = originalPlugin.readAll();
+    const QByteArray api{FOOYIN_PLUGIN_IID};
+    ASSERT_TRUE(pluginData.contains(api));
+    QByteArray incompatibleApi{api};
+    incompatibleApi.back() = incompatibleApi.back() == '0' ? '1' : '0';
+    pluginData.replace(api, incompatibleApi);
+
+    const QString incompatiblePath = incompatibleSource.filePath(QFileInfo{originalPlugin}.fileName());
+    QFile incompatiblePlugin{incompatiblePath};
+    ASSERT_TRUE(incompatiblePlugin.open(QIODevice::WriteOnly));
+    ASSERT_EQ(incompatiblePlugin.write(pluginData), pluginData.size());
+    incompatiblePlugin.close();
+
+    EXPECT_EQ(std::unexpected{PluginInstaller::InstallError::IncompatibleApi},
+              PluginInstaller::install(incompatiblePath, plugins.path(), false));
+    EXPECT_FALSE(QFileInfo{QDir{plugins.path()}.filePath(u"fooyin.bundletest"_s)}.exists());
 
     const auto installedPlugin = PluginInstaller::install(QStringLiteral(TEST_PLUGIN_PATH), plugins.path(), false);
     ASSERT_TRUE(installedPlugin.has_value());
@@ -167,7 +190,7 @@ TEST(PluginInstallerTest, RejectsTraversalEntry)
     ASSERT_TRUE(createBundle(bundlePath, QStringLiteral(TEST_PLUGIN_PATH),
                              targetDirectory() + u"/../"_s + QFileInfo{QStringLiteral(TEST_PLUGIN_PATH)}.fileName()));
 
-    EXPECT_EQ(std::unexpected{PluginInstaller::InstallError::Failed},
+    EXPECT_EQ(std::unexpected{PluginInstaller::InstallError::InvalidBundle},
               PluginInstaller::install(bundlePath, plugins.path(), false));
     EXPECT_FALSE(QFileInfo{QDir{plugins.path()}.filePath(u"fooyin.bundletest"_s)}.exists());
 }
@@ -184,7 +207,7 @@ TEST(PluginInstallerTest, RejectsBundleWithoutCurrentTarget)
     ASSERT_TRUE(createBundle(bundlePath, QStringLiteral(TEST_PLUGIN_PATH),
                              otherTarget + u'/' + QFileInfo{QStringLiteral(TEST_PLUGIN_PATH)}.fileName()));
 
-    EXPECT_EQ(std::unexpected{PluginInstaller::InstallError::Failed},
+    EXPECT_EQ(std::unexpected{PluginInstaller::InstallError::MissingPlatform},
               PluginInstaller::install(bundlePath, plugins.path(), false));
 }
 } // namespace Fooyin::Testing

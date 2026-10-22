@@ -31,7 +31,16 @@ namespace Fooyin::PluginInstaller {
 enum class InstallError : uint8_t
 {
     AlreadyInstalled = 0,
-    Failed,
+    InvalidSource,
+    UnsupportedPlatform,
+    BundleReadFailed,
+    InvalidBundle,
+    MissingPlatform,
+    InvalidPlugin,
+    IncompatibleApi,
+    InvalidMetadata,
+    MultiplePlugins,
+    WriteFailed,
 };
 
 FYCORE_EXPORT std::expected<std::unique_ptr<PluginInfo>, InstallError>

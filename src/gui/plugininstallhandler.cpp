@@ -34,6 +34,52 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::PluginInstall {
+namespace {
+QString installErrorText(PluginInstaller::InstallError error)
+{
+    using PluginInstaller::InstallError;
+
+    switch(error) {
+        case InstallError::AlreadyInstalled:
+            return QCoreApplication::translate("Fooyin::PluginPageWidget", "This plugin is already installed.");
+        case InstallError::InvalidSource:
+            return QCoreApplication::translate("Fooyin::PluginPageWidget",
+                                               "The selected plugin file does not exist or is not a regular file.");
+        case InstallError::UnsupportedPlatform:
+            return QCoreApplication::translate(
+                "Fooyin::PluginPageWidget",
+                "Plugin bundles are not supported on this operating system or processor architecture.");
+        case InstallError::BundleReadFailed:
+            return QCoreApplication::translate(
+                "Fooyin::PluginPageWidget", "The plugin bundle could not be read. It may be damaged or inaccessible.");
+        case InstallError::InvalidBundle:
+            return QCoreApplication::translate("Fooyin::PluginPageWidget",
+                                               "The plugin bundle contains invalid or unsupported files.");
+        case InstallError::MissingPlatform:
+            return QCoreApplication::translate(
+                "Fooyin::PluginPageWidget",
+                "The plugin bundle does not contain files for this operating system and processor architecture.");
+        case InstallError::InvalidPlugin:
+            return QCoreApplication::translate("Fooyin::PluginPageWidget",
+                                               "No recognised fooyin plugin was found in the installation files.");
+        case InstallError::IncompatibleApi:
+            return QCoreApplication::translate("Fooyin::PluginPageWidget",
+                                               "This plugin uses an incompatible version of the fooyin plugin API.");
+        case InstallError::InvalidMetadata:
+            return QCoreApplication::translate("Fooyin::PluginPageWidget",
+                                               "The plugin has an invalid identifier or is missing its version.");
+        case InstallError::MultiplePlugins:
+            return QCoreApplication::translate("Fooyin::PluginPageWidget",
+                                               "The bundle contains more than one fooyin plugin.");
+        case InstallError::WriteFailed:
+            return QCoreApplication::translate("Fooyin::PluginPageWidget",
+                                               "The plugin files could not be written to the installation directory. "
+                                               "Check that it is writable and that there is enough free disk space.");
+    }
+    return {};
+}
+} // namespace
+
 QString fileFromMimeData(const QMimeData* mimeData, DropTarget target)
 {
     if(!mimeData || !mimeData->hasUrls()) {
@@ -92,9 +138,9 @@ std::unique_ptr<PluginInfo> install(const QString& filepath, QWidget* parent, bo
     }
 
     if(!installResult) {
-        QMessageBox::critical(
-            parent, QCoreApplication::translate("Fooyin::PluginPageWidget", "Plugin Installation Failed"),
-            QCoreApplication::translate("Fooyin::PluginPageWidget", "The plugin could not be installed."));
+        QMessageBox::critical(parent,
+                              QCoreApplication::translate("Fooyin::PluginPageWidget", "Plugin Installation Failed"),
+                              installErrorText(installResult.error()));
         return {};
     }
 

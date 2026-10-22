@@ -154,12 +154,12 @@ std::optional<QString> outputPath(const QString& entryPath, bool isDirectory, co
     return {};
 }
 
-bool extractBundle(const QString& filepath, const QString& destination)
+std::expected<void, InstallError> extractBundle(const QString& filepath, const QString& destination)
 {
     const QString target = targetDirectory();
     if(target.isEmpty()) {
         qCWarning(PLUGIN_INSTALLER) << "Unsupported plugin bundle target" << QSysInfo::buildCpuArchitecture();
-        return false;
+        return std::unexpected{InstallError::UnsupportedPlatform};
     }
 
     const ArchivePtr reader{archive_read_new()};
@@ -168,7 +168,7 @@ bool extractBundle(const QString& filepath, const QString& destination)
 
     if(archive_read_open_filename(reader.get(), QFile::encodeName(filepath).constData(), 10240) != ARCHIVE_OK) {
         qCWarning(PLUGIN_INSTALLER) << "Could not open plugin bundle:" << archive_error_string(reader.get());
-        return false;
+        return std::unexpected{InstallError::BundleReadFailed};
     }
 
     std::unordered_set<QString> extractedPaths;
@@ -180,25 +180,25 @@ bool extractBundle(const QString& filepath, const QString& destination)
     int archiveResult{ARCHIVE_OK};
     while((archiveResult = archive_read_next_header(reader.get(), &entry)) == ARCHIVE_OK) {
         if(++entryCount > MaxEntryCount || archive_entry_is_encrypted(entry) == 1) {
-            return false;
+            return std::unexpected{InstallError::InvalidBundle};
         }
 
         const auto fileType = archive_entry_filetype(entry);
         const bool isDir    = fileType == AE_IFDIR;
         if(!isDir && fileType != AE_IFREG) {
-            return false;
+            return std::unexpected{InstallError::InvalidBundle};
         }
 
         const char* utf8Path = archive_entry_pathname_utf8(entry);
         const char* rawPath  = utf8Path ? utf8Path : archive_entry_pathname(entry);
         if(!rawPath) {
-            return false;
+            return std::unexpected{InstallError::InvalidBundle};
         }
 
         const QString entryPath = utf8Path ? QString::fromUtf8(rawPath) : QFile::decodeName(rawPath);
         const auto relativePath = outputPath(entryPath, isDir, target);
         if(!relativePath) {
-            return false;
+            return std::unexpected{InstallError::InvalidBundle};
         }
 
         if(relativePath->isEmpty()) {
@@ -209,26 +209,28 @@ bool extractBundle(const QString& filepath, const QString& destination)
         foundTarget |= QDir::fromNativeSeparators(entryPath).startsWith(target + u'/');
         const QString pathKey = relativePath->toCaseFolded();
         if(!extractedPaths.emplace(pathKey).second) {
-            return false;
+            return std::unexpected{InstallError::InvalidBundle};
         }
 
         const QString output = QDir{destination}.filePath(*relativePath);
         if(isDir) {
             if(!QDir{}.mkpath(output)) {
-                return false;
+                return std::unexpected{InstallError::WriteFailed};
             }
             continue;
         }
 
         const la_int64_t declaredSize = archive_entry_size_is_set(entry) ? archive_entry_size(entry) : 0;
-        if(declaredSize < 0 || declaredSize > MaxEntrySize || extractedSize + declaredSize > MaxExtractedSize
-           || !QDir{}.mkpath(QFileInfo{output}.absolutePath())) {
-            return false;
+        if(declaredSize < 0 || declaredSize > MaxEntrySize || extractedSize + declaredSize > MaxExtractedSize) {
+            return std::unexpected{InstallError::InvalidBundle};
+        }
+        if(!QDir{}.mkpath(QFileInfo{output}.absolutePath())) {
+            return std::unexpected{InstallError::WriteFailed};
         }
 
         QFile outputFile{output};
         if(!outputFile.open(QIODevice::WriteOnly | QIODevice::NewOnly)) {
-            return false;
+            return std::unexpected{InstallError::WriteFailed};
         }
 
         std::array<char, 64UL * 1024> buffer{};
@@ -237,20 +239,28 @@ bool extractBundle(const QString& filepath, const QString& destination)
         while((bytesRead = archive_read_data(reader.get(), buffer.data(), buffer.size())) > 0) {
             entrySize += bytesRead;
             extractedSize += bytesRead;
-            if(entrySize > MaxEntrySize || extractedSize > MaxExtractedSize
-               || outputFile.write(buffer.data(), bytesRead) != bytesRead) {
-                return false;
+            if(entrySize > MaxEntrySize || extractedSize > MaxExtractedSize) {
+                return std::unexpected{InstallError::InvalidBundle};
+            }
+            if(outputFile.write(buffer.data(), bytesRead) != bytesRead) {
+                return std::unexpected{InstallError::WriteFailed};
             }
         }
         if(bytesRead < 0) {
-            return false;
+            return std::unexpected{InstallError::BundleReadFailed};
         }
     }
 
-    return archiveResult == ARCHIVE_EOF && foundTarget;
+    if(archiveResult != ARCHIVE_EOF) {
+        return std::unexpected{InstallError::BundleReadFailed};
+    }
+    if(!foundTarget) {
+        return std::unexpected{InstallError::MissingPlatform};
+    }
+    return {};
 }
 
-std::optional<InstalledPlugin> inspectPlugin(const QString& directory)
+std::expected<InstalledPlugin, InstallError> inspectPlugin(const QString& directory)
 {
     std::optional<InstalledPlugin> installedPlugin;
 
@@ -262,25 +272,35 @@ std::optional<InstalledPlugin> inspectPlugin(const QString& directory)
 
         const QPluginLoader loader{filepath};
         const QJsonObject metadata = loader.metaData();
-        if(metadata.value("IID"_L1).toString() != QLatin1StringView{FOOYIN_PLUGIN_IID}
-           || !metadata.contains("MetaData"_L1)) {
+        const QString iid          = metadata.value("IID"_L1).toString();
+        const bool isFooyinPlugin
+            = iid == "org.fooyin.fooyin.plugin"_L1 || iid.startsWith("org.fooyin.fooyin.plugin/"_L1);
+        if(!isFooyinPlugin || !metadata.contains("MetaData"_L1)) {
             continue;
+        }
+        if(iid != QLatin1StringView{FOOYIN_PLUGIN_IID}) {
+            return std::unexpected{InstallError::IncompatibleApi};
         }
 
         static const QRegularExpression identifierRegex{u"^[a-z0-9][a-z0-9._-]*$"_s};
 
         const PluginInfo plugin{filepath, metadata};
         const QString identifier = plugin.identifier();
-        if(installedPlugin || identifier.isEmpty() || plugin.version().isEmpty()
-           || !identifierRegex.match(identifier).hasMatch()) {
-            return {};
+        if(installedPlugin) {
+            return std::unexpected{InstallError::MultiplePlugins};
+        }
+        if(identifier.isEmpty() || plugin.version().isEmpty() || !identifierRegex.match(identifier).hasMatch()) {
+            return std::unexpected{InstallError::InvalidMetadata};
         }
 
         installedPlugin = InstalledPlugin{
             .identifier = identifier, .relativePath = QDir{directory}.relativeFilePath(filepath), .metadata = metadata};
     }
 
-    return installedPlugin;
+    if(!installedPlugin) {
+        return std::unexpected{InstallError::InvalidPlugin};
+    }
+    return *installedPlugin;
 }
 
 bool moveStagingDirectory(const QString& stagingPath, const QString& destination, QTemporaryDir& stagingDir)
@@ -316,31 +336,36 @@ std::expected<std::unique_ptr<PluginInfo>, InstallError> install(const QString& 
                                                                  bool overwrite)
 {
     const QFileInfo source{filepath};
-    if(!source.isFile() || !QDir{}.mkpath(pluginsPath)) {
-        return std::unexpected{InstallError::Failed};
+    if(!source.isFile()) {
+        return std::unexpected{InstallError::InvalidSource};
+    }
+    if(!QDir{}.mkpath(pluginsPath)) {
+        return std::unexpected{InstallError::WriteFailed};
     }
 
     QTemporaryDir stagingDirectory{QDir{pluginsPath}.filePath(u".staging-XXXXXX"_s)};
     if(!stagingDirectory.isValid()) {
-        return std::unexpected{InstallError::Failed};
+        return std::unexpected{InstallError::WriteFailed};
     }
 
     const QString suffix = source.suffix().toLower();
     if(suffix == "fyplugin"_L1 || suffix == "zip"_L1) {
-        if(!extractBundle(filepath, stagingDirectory.path())) {
-            return std::unexpected{InstallError::Failed};
+        if(const auto result = extractBundle(filepath, stagingDirectory.path()); !result) {
+            return std::unexpected{result.error()};
         }
     }
     else {
-        if(!QLibrary::isLibrary(filepath)
-           || !QFile::copy(filepath, QDir{stagingDirectory.path()}.filePath(source.fileName()))) {
-            return std::unexpected{InstallError::Failed};
+        if(!QLibrary::isLibrary(filepath)) {
+            return std::unexpected{InstallError::InvalidPlugin};
+        }
+        if(!QFile::copy(filepath, QDir{stagingDirectory.path()}.filePath(source.fileName()))) {
+            return std::unexpected{InstallError::WriteFailed};
         }
     }
 
     const auto plugin = inspectPlugin(stagingDirectory.path());
     if(!plugin) {
-        return std::unexpected{InstallError::Failed};
+        return std::unexpected{plugin.error()};
     }
 
     const QString pluginPath = QDir{pluginsPath}.filePath(plugin->identifier);
@@ -350,7 +375,7 @@ std::expected<std::unique_ptr<PluginInfo>, InstallError> install(const QString& 
 
     const auto installTo = [&](const QString& destination) -> std::expected<std::unique_ptr<PluginInfo>, InstallError> {
         if(!moveStagingDirectory(stagingDirectory.path(), destination, stagingDirectory)) {
-            return std::unexpected{InstallError::Failed};
+            return std::unexpected{InstallError::WriteFailed};
         }
         return std::make_unique<PluginInfo>(QDir{destination}.filePath(plugin->relativePath), plugin->metadata);
     };
@@ -362,10 +387,10 @@ std::expected<std::unique_ptr<PluginInfo>, InstallError> install(const QString& 
     const QString updatesPath = QDir{pluginsPath}.filePath(u".updates"_s);
     const QString updatePath  = QDir{updatesPath}.filePath(plugin->identifier);
     if(!QDir{}.mkpath(updatesPath)) {
-        return std::unexpected{InstallError::Failed};
+        return std::unexpected{InstallError::WriteFailed};
     }
     if(QFileInfo::exists(updatePath) && !QDir{updatePath}.removeRecursively()) {
-        return std::unexpected{InstallError::Failed};
+        return std::unexpected{InstallError::WriteFailed};
     }
 
     return installTo(updatePath);
