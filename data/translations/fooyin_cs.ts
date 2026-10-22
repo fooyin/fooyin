@@ -445,7 +445,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="476"/>
         <source>Channel layout</source>
-        <translation>Rozvržení kanálů</translation>
+        <translation>Uspořádání kanálů</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="480"/>
@@ -16579,7 +16579,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="276"/>
         <source>Include column layout</source>
-        <translation>Zahrnout pořadí sloupců</translation>
+        <translation>Zahrnout uspořádání sloupců</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="278"/>
@@ -16626,7 +16626,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="371"/>
         <source>The display script only applies in single-column mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skript pro zobrazení platí pouze pro režim jediného sloupce.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="373"/>
@@ -16641,23 +16641,23 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="389"/>
         <source>When disabled, applying this preset keeps the existing column layout.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokud zakázáno, použití této předvolby zachová aktuální uspořádání sloupců.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="392"/>
         <source>Drag column headers to reorder or resize them. Right-click a header for visibility and alignment options.</source>
-        <translation type="unfinished"></translation>
+        <translation>Velikost a pořadí sloupců lze změnit přetažením jejich záhlaví. Pro nastavení zobrazení a zarovnání klikněte na záhlaví pravým tlačítkem.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="406"/>
         <source>Use current playlist layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít uspořádání aktuálního seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="408"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="425"/>
         <source>Columns</source>
-        <translation type="unfinished">Sloupce</translation>
+        <translation>Sloupce</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="494"/>
@@ -16677,16 +16677,16 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message numerus="yes">
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="585"/>
         <source>Used by %Ln playlist(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Použito %Ln seznamem skladeb</numerusform>
+            <numerusform>Použito %Ln seznamy skladeb</numerusform>
+            <numerusform>Použito %Ln seznamy skladeb</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="643"/>
         <source>Reset columns to default</source>
-        <translation type="unfinished">Obnovit výchozí sloupce</translation>
+        <translation>Obnovit výchozí sloupce</translation>
     </message>
 </context>
 <context>
@@ -16849,7 +16849,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="523"/>
         <source>Apply preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít předvolbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="540"/>
@@ -17085,91 +17085,91 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1373"/>
         <source>%1 (modified)</source>
         <extracomment>%1 is the name of a playlist preset</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (změněno)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1376"/>
         <source>Apply this preset and its saved column layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít tuto předvolbu a v ní uložené uspořádání sloupců</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1377"/>
         <source>Apply this preset and keep the current columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít tuto předvolbu, ale zachovat aktuální uspořádání sloupců</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1390"/>
         <source>Save as new preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit jako novou předvolbu…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1391"/>
         <source>Create a new preset from the current view, with an optional column layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit novou předvolbu z aktuálního zobrazení s volitelným uspořádáním sloupců</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1393"/>
         <source>Update ‘%1’</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualizovat ‚%1‘</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1393"/>
         <source>Update preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualizovat předvolbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1396"/>
         <source>Save the current columns in this preset and update playlists following its column layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit do této předvolby aktuální uspořádání sloupců a aktualizovat seznamy skladeb podle tohoto uspořádání</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1400"/>
         <source>Update ‘%1’ (%Ln playlist(s))</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Aktualizovat ‚%1‘ (%Ln seznam skladeb)</numerusform>
+            <numerusform>Aktualizovat ‚%1‘ (%Ln seznamy skladeb)</numerusform>
+            <numerusform>Aktualizovat ‚%1‘ (%Ln seznamů skladeb)</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1409"/>
         <source>Revert to saved preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Obnovit uloženou předvolbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1411"/>
         <source>Discard local column changes and restore the assigned preset’s saved layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Zahodit lokální změny sloupců a obnovit uložené uspořádání přiřazené předvolby</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1419"/>
         <source>Use current layout as default</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít aktuální uspořádání jako výchozí</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1421"/>
         <source>Use the current preset and columns for playlists without their own layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít aktuální předvolbu a sloupce pro seznamy skladeb bez jejich vlastního uspořádání</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1429"/>
         <source>Use default playlist layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít výchozí uspořádání seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1431"/>
         <source>Clear this playlist’s preset assignment and local columns, then use the shared default</source>
-        <translation type="unfinished"></translation>
+        <translation>Vymazat přiřazení předvolby a lokální změny sloupců tohoto seznamu skladeb a použít sdílené výchozí nastavení</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1445"/>
         <source>Manage presets…</source>
-        <translation type="unfinished"></translation>
+        <translation>Spravovat předvolby…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1446"/>
         <source>Open playlist preset settings to create, edit or remove presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít nastavení předvoleb seznamů skladeb pro vytvoření, úpravu, nebo odstranění předvoleb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1458"/>
@@ -17179,17 +17179,17 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1471"/>
         <source>Save Playlist Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit předvolbu seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1475"/>
         <source>Include column layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Zahrnout uspořádání sloupců</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1481"/>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="868"/>
@@ -18429,7 +18429,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="57"/>
         <source>Playlist Layout</source>
-        <translation>Rozvržení seznamu skladeb</translation>
+        <translation>Uspořádání seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="58"/>
@@ -22307,12 +22307,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="52"/>
         <source>System: %1</source>
         <extracomment>%1 is the key combination of a shortcut</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Systém: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="53"/>
         <source>None assigned</source>
-        <translation type="unfinished"></translation>
+        <translation>Bez přiřazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="72"/>
@@ -22385,7 +22385,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="178"/>
         <source>Enable system shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Povolit systémové zkratky</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="179"/>
@@ -22405,7 +22405,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="218"/>
         <source>Key combinations are managed in your system settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kombinace kláves jsou spravovány v nastavení vašeho systému.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="346"/>
@@ -22519,7 +22519,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="163"/>
         <source>Enabled</source>
-        <translation type="unfinished">Povoleno</translation>
+        <translation>Povoleno</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="165"/>
@@ -25302,32 +25302,32 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="538"/>
         <source>Curve</source>
-        <translation type="unfinished">Křivka</translation>
+        <translation>Křivka</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="549"/>
         <source>Logarithmic dB</source>
-        <translation type="unfinished"></translation>
+        <translation>Logaritmické dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="550"/>
         <source>Linear dB</source>
-        <translation type="unfinished"></translation>
+        <translation>Lineární dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="551"/>
         <source>Linear amplitude</source>
-        <translation type="unfinished"></translation>
+        <translation>Lineární amplituda</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="552"/>
         <source>Quadratic</source>
-        <translation type="unfinished"></translation>
+        <translation>Kvadratická</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="553"/>
         <source>Cubic</source>
-        <translation type="unfinished">Kubická</translation>
+        <translation>Kubická</translation>
     </message>
 </context>
 <context>
@@ -26091,7 +26091,7 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="66"/>
         <source>Filter…</source>
-        <translation type="unfinished">Vyhledat…</translation>
+        <translation>Vyhledat…</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="71"/>
@@ -26348,29 +26348,31 @@ Přidrž Ctrl pro nahrazení widgetu.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="570"/>
         <source>Presets</source>
-        <translation type="unfinished">Předvolby</translation>
+        <translation>Předvolby</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="571"/>
         <source>Preset combo box mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Režim rozbalovacího pole předvoleb</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="572"/>
         <source>‘Editable’ allows preset names to be entered directly.
 ‘Selection only’ opens a naming dialog when saving.
 Applies when preset controls are next opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>‚Upravitelný‘ umožňuje přímé zadání názvu předvolby.
+‚Pouze výběr‘ otevře při uložení dialog pro zadání názvu.
+Změna platí od příštího otevření ovládacích prvků.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="575"/>
         <source>Editable</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravitelný</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="576"/>
         <source>Selection only</source>
-        <translation type="unfinished"></translation>
+        <translation>Pouze výběr</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="593"/>
@@ -26576,7 +26578,7 @@ Nastav na 0 pro automatický výběr podle délky vyrovnávací paměti.</transl
         <location filename="../../src/gui/widgets.cpp" line="813"/>
         <location filename="../../src/gui/widgets.cpp" line="823"/>
         <source>Library</source>
-        <translation type="unfinished">Knihovna</translation>
+        <translation>Knihovna</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="777"/>
@@ -26584,58 +26586,64 @@ Nastav na 0 pro automatický výběr podle délky vyrovnávací paměti.</transl
         <location filename="../../src/gui/widgets.cpp" line="813"/>
         <location filename="../../src/gui/widgets.cpp" line="823"/>
         <source>Metadata Compression</source>
-        <translation type="unfinished"></translation>
+        <translation>Komprese metadat</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="778"/>
         <source>Minimum extra tag size</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimální velikost dodatečného tagu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="779"/>
         <source>Compress extra tags whose combined UTF-16 value size reaches this threshold.
 Set to 0 to disable compression. Changes take effect after restarting fooyin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Komprimuje dodatečné tagy jejichž kombinovaná velikost UTF-16 hodnot dosáhne tohoto prahu.
+Nastav na 0 pro zakázání komprese. Změny se projeví po restartování aplikace.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="784"/>
         <source> bytes</source>
-        <translation type="unfinished"></translation>
+        <translation> B</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="792"/>
         <source>Compression level</source>
-        <translation type="unfinished">Úroveň komprese</translation>
+        <translation>Úroveň komprese</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="793"/>
         <source>Higher levels may reduce memory use at the cost of slower metadata loading and updates.
 Changes take effect after restarting fooyin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyšší úrovně mohou snížit spotřebu paměti za cenu pomalejšího načítání a aktualizací metadat.
+Změny se projeví po restartování aplikace.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="814"/>
         <source>Extra tags to compress below the threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Vždy komprimovat tagy</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="815"/>
         <source>Semicolon-separated extra tag names that bypass the size threshold when compression is enabled.
 Values are compressed only when this saves space.
 Changes take effect after restarting fooyin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Středníky oddělený seznam tagů, které budou při povolené komprimaci vždy komprimovány bez ohledu na velikost.
+Hodnoty jsou komprimovány pouze pokud to ušetří místo.
+Změny se projeví po restartování aplikace.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="824"/>
         <source>Extra tags to keep uncompressed</source>
-        <translation type="unfinished"></translation>
+        <translation>Nikdy nekomprimovat tagy</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="825"/>
         <source>Semicolon-separated extra tag names to keep uncompressed.
 This takes precedence over the size threshold and other field overrides.
 Changes take effect after restarting fooyin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Středníky oddělený seznam tagů, které nemají být nikdy komprimovány.
+Tato volba má přednost před ostatními nastaveními.
+Změny se projeví po restartování aplikace.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="833"/>
@@ -27242,43 +27250,43 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="672"/>
         <source>Expected ‘WITH’ after ‘%1’</source>
-        <translation type="unfinished"></translation>
+        <translation>Po ‚%1‘ očekáváno &apos;WITH&apos;</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="715"/>
         <source>Expected ‘(’ after ‘%1’</source>
-        <translation type="unfinished"></translation>
+        <translation>Po ‚%1‘ očekáváno &apos;(&apos;</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="725"/>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="731"/>
         <source>Expected a value in ‘%1’ list</source>
-        <translation type="unfinished"></translation>
+        <translation>Očekávána hodnota v seznamu ‚%1‘</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="741"/>
         <source>Expected ‘)’ at end of ‘%1’ list</source>
-        <translation type="unfinished"></translation>
+        <translation>Očekávána &apos;)&apos; na konci seznamu ‚%1‘</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="879"/>
         <source>Expected a date in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>V rozsahu &apos;BETWEEN&apos; očekáván datum</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="886"/>
         <source>Invalid date in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatný datum v rozsahu &apos;BETWEEN&apos;</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="893"/>
         <source>Expected ‘AND’ between dates in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>Mezi daty v rozsahu &apos;BETWEEN&apos; očekáváno &apos;AND&apos;</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="902"/>
         <source>The start date must not be after the end date in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>Počáteční datum v rozsahu &apos;BETWEEN&apos; nesmí být starší než koncový datum</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="928"/>
