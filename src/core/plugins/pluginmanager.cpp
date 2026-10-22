@@ -95,8 +95,33 @@ PluginInfo* PluginManager::pluginInfo(const QString& identifier) const
     return nullptr;
 }
 
+QString PluginManager::removalError(const QString& identifier) const
+{
+    if(const auto error = m_removalErrors.find(identifier); error != m_removalErrors.end()) {
+        return error->second;
+    }
+    return {};
+}
+
 void PluginManager::findPlugins(const QStringList& pluginDirs)
 {
+    const QString userPluginsPath = Core::userPluginsPath();
+    const auto pendingRemovals    = PluginInstaller::pendingRemovals();
+
+    m_removalErrors.clear();
+
+    QStringList failedRemovals;
+    for(const QString& identifier : pendingRemovals) {
+        if(const auto result = PluginInstaller::remove(identifier, userPluginsPath); !result) {
+            qCWarning(PLUGIN_MANAGER) << result.error();
+            m_removalErrors.emplace(identifier, result.error());
+            failedRemovals.append(identifier);
+        }
+    }
+    if(failedRemovals != pendingRemovals) {
+        PluginInstaller::setPendingRemovals(failedRemovals);
+    }
+
     for(const QString& pluginDir : pluginDirs) {
         const QDir dir{pluginDir};
         if(!dir.exists()) {
@@ -104,8 +129,9 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
         }
 
         QStringList files;
-        if(Utils::File::cleanPath(pluginDir) == Utils::File::cleanPath(Core::userPluginsPath())) {
-            PluginInstaller::applyPendingUpdates(Core::userPluginsPath());
+        const bool isUserDirectory = Utils::File::cleanPath(pluginDir) == Utils::File::cleanPath(userPluginsPath);
+        if(isUserDirectory) {
+            PluginInstaller::applyPendingUpdates(userPluginsPath, failedRemovals);
             files.append(pluginFiles(dir, true));
         }
         else {
@@ -148,7 +174,7 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
             registerPluginDirectory(plugin->filepath());
 #endif
 
-            if(disabledPlugins.contains(pluginId)) {
+            if(disabledPlugins.contains(pluginId) || (isUserDirectory && m_removalErrors.contains(pluginId))) {
                 plugin->setDisabled(true);
             }
 

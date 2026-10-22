@@ -41,6 +41,7 @@ public:
 
     const PluginInfoMap& allPluginInfo() const;
     PluginInfo* pluginInfo(const QString& name) const;
+    [[nodiscard]] QString removalError(const QString& identifier) const;
 
     void findPlugins(const QStringList& pluginDirs);
     void loadPlugins();
@@ -65,6 +66,7 @@ private:
 
     SettingsManager* m_settings;
     PluginInfoMap m_plugins;
+    std::unordered_map<QString, QString> m_removalErrors;
 #ifdef Q_OS_WIN
     std::unordered_set<QString> m_registeredPluginDirectories;
 #endif

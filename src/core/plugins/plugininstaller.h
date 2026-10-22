@@ -31,6 +31,7 @@ namespace Fooyin::PluginInstaller {
 enum class InstallError : uint8_t
 {
     AlreadyInstalled = 0,
+    SameVersionInstalled,
     InvalidSource,
     UnsupportedPlatform,
     BundleReadFailed,
@@ -45,5 +46,11 @@ enum class InstallError : uint8_t
 
 FYCORE_EXPORT std::expected<std::unique_ptr<PluginInfo>, InstallError>
 install(const QString& filepath, const QString& pluginsPath, bool overwrite);
-FYCORE_EXPORT bool applyPendingUpdates(const QString& pluginsPath);
+
+FYCORE_EXPORT bool canRemove(const PluginInfo& plugin, const QString& pluginsPath);
+FYCORE_EXPORT std::expected<void, QString> remove(const QString& identifier, const QString& pluginsPath);
+FYCORE_EXPORT QStringList pendingRemovals();
+FYCORE_EXPORT void setPendingRemovals(const QStringList& identifiers);
+
+FYCORE_EXPORT bool applyPendingUpdates(const QString& pluginsPath, const QStringList& pendingRemovals = {});
 } // namespace Fooyin::PluginInstaller

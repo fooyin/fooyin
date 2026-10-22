@@ -19,7 +19,9 @@
 
 #include "pluginsmodel.h"
 
+#include <core/corepaths.h>
 #include <core/plugins/plugin.h>
+#include <core/plugins/plugininstaller.h>
 #include <core/plugins/pluginmanager.h>
 
 #include <ranges>
@@ -56,12 +58,16 @@ PluginsModel::PluginsModel(PluginManager* pluginManager, QObject* parent)
 
 PluginsModel::~PluginsModel() = default;
 
-void PluginsModel::reset(const QStringList& disabledPlugins)
+void PluginsModel::reset(const QStringList& disabledPlugins, const QStringList& removedPlugins)
 {
     beginResetModel();
 
     m_enabledPlugins.clear();
     m_disabledPlugins.clear();
+
+    m_removedPlugins  = {removedPlugins.cbegin(), removedPlugins.cend()};
+    m_appliedRemovals = m_removedPlugins;
+
     for(const auto& [identifier, plugin] : m_pendingPlugins) {
         plugin->setDisabled(disabledPlugins.contains(identifier));
     }
@@ -73,7 +79,7 @@ void PluginsModel::reset(const QStringList& disabledPlugins)
 void PluginsModel::apply(const QStringList& disabledPlugins)
 {
     m_pluginsInstalled = false;
-    reset(disabledPlugins);
+    reset(disabledPlugins, removedPlugins());
 }
 
 void PluginsModel::addInstalledPlugin(std::unique_ptr<PluginInfo> plugin)
@@ -81,6 +87,8 @@ void PluginsModel::addInstalledPlugin(std::unique_ptr<PluginInfo> plugin)
     beginResetModel();
 
     const QString identifier = plugin->identifier();
+    m_removedPlugins.erase(identifier);
+    m_appliedRemovals.erase(identifier);
     m_pendingPlugins.insert_or_assign(identifier, std::move(plugin));
     m_pluginsInstalled = true;
     rebuild();
@@ -88,45 +96,95 @@ void PluginsModel::addInstalledPlugin(std::unique_ptr<PluginInfo> plugin)
     endResetModel();
 }
 
-bool PluginsModel::hasChanges() const
+void PluginsModel::toggleRemoval(const QString& identifier)
 {
-    return m_pluginsInstalled || !m_enabledPlugins.empty() || !m_disabledPlugins.empty();
+    const auto node = m_nodes.find(identifier);
+    if(node == m_nodes.end() || !canRemove(node->second.info())) {
+        return;
+    }
+
+    if(!m_removedPlugins.erase(identifier)) {
+        m_removedPlugins.emplace(identifier);
+    }
+
+    const QModelIndex index = indexOfItem(&node->second);
+    Q_EMIT dataChanged(index, index.siblingAtColumn(4), {Qt::DisplayRole, Qt::CheckStateRole, Qt::ToolTipRole});
 }
 
-void PluginsModel::rebuild()
+bool PluginsModel::hasChanges() const
 {
-    resetRoot();
-    m_nodes.clear();
+    return m_pluginsInstalled || !m_enabledPlugins.empty() || !m_disabledPlugins.empty()
+        || m_removedPlugins != m_appliedRemovals;
+}
 
-    const auto appendPlugin = [this](PluginInfo* info) {
-        PluginItem* parent = rootItem();
+bool PluginsModel::canRemove(const PluginInfo* plugin) const
+{
+    return plugin
+        && (isPendingRemoval(plugin->identifier()) || PluginInstaller::canRemove(*plugin, Core::userPluginsPath()));
+}
 
-        const auto categories = info->category();
+bool PluginsModel::isPendingRemoval(const QString& identifier) const
+{
+    return m_removedPlugins.contains(identifier);
+}
 
-        for(const QString& category : categories) {
-            if(!m_nodes.contains(category)) {
-                m_nodes.emplace(category, PluginItem{category, parent});
-                parent->appendChild(&m_nodes.at(category));
-            }
-            parent = &m_nodes.at(category);
-        }
+QStringList PluginsModel::removedPlugins() const
+{
+    return QStringList{m_removedPlugins.cbegin(), m_removedPlugins.cend()};
+}
 
-        const QString identifier = info->identifier();
-        if(!m_nodes.contains(identifier)) {
-            m_nodes.emplace(identifier, PluginItem{info, parent});
-        }
-        PluginItem* child = &m_nodes.at(identifier);
-        parent->appendChild(child);
-    };
-
-    for(const auto& [identifier, info] : m_pluginManager->allPluginInfo()) {
-        if(!m_pendingPlugins.contains(identifier)) {
-            appendPlugin(info.get());
-        }
+QString PluginsModel::statusText(Status status)
+{
+    switch(status) {
+        case Status::Discovered:
+            return tr("Discovered");
+        case Status::Disabled:
+            return tr("Disabled");
+        case Status::Incompatible:
+            return tr("Incompatible");
+        case Status::LoadFailed:
+            return tr("Load failed");
+        case Status::Loaded:
+            return tr("Loaded");
+        case Status::Initialised:
+            return tr("Initialised");
+        case Status::RestartRequired:
+            return tr("Restart required");
+        case Status::PendingRemoval:
+            return tr("Pending removal");
+        case Status::RemovalFailed:
+            return tr("Removal failed");
+        case Status::Count:
+            break;
     }
-    for(const auto& info : m_pendingPlugins | std::views::values) {
-        appendPlugin(info.get());
+    return {};
+}
+
+PluginsModel::Status PluginsModel::status(const PluginInfo& plugin) const
+{
+    const QString identifier = plugin.identifier();
+    if(isPendingRemoval(identifier)) {
+        return m_pluginManager->removalError(identifier).isEmpty() ? Status::PendingRemoval : Status::RemovalFailed;
     }
+    if(m_pendingPlugins.contains(identifier)) {
+        return Status::RestartRequired;
+    }
+
+    switch(plugin.status()) {
+        case PluginInfo::Status::Discovered:
+            return Status::Discovered;
+        case PluginInfo::Status::Disabled:
+            return Status::Disabled;
+        case PluginInfo::Status::Incompatible:
+            return Status::Incompatible;
+        case PluginInfo::Status::LoadFailed:
+            return Status::LoadFailed;
+        case PluginInfo::Status::Loaded:
+            return Status::Loaded;
+        case PluginInfo::Status::Initialised:
+            return Status::Initialised;
+    }
+    return Status::Discovered;
 }
 
 Qt::ItemFlags PluginsModel::flags(const QModelIndex& index) const
@@ -139,7 +197,7 @@ Qt::ItemFlags PluginsModel::flags(const QModelIndex& index) const
 
     const auto* item = itemForIndex(index);
 
-    if(index.column() == 3 && item->info()) {
+    if(index.column() == 3 && item->info() && !isPendingRemoval(item->info()->identifier())) {
         flags |= Qt::ItemIsUserCheckable;
         flags |= Qt::ItemIsEditable;
     }
@@ -218,7 +276,8 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
     }
 
     if(role == Qt::CheckStateRole && column == 3) {
-        if((info->isDisabled() && !m_enabledPlugins.contains(info->identifier()))
+        if(isPendingRemoval(info->identifier())
+           || (info->isDisabled() && !m_enabledPlugins.contains(info->identifier()))
            || m_disabledPlugins.contains(info->identifier())) {
             return Qt::Unchecked;
         }
@@ -226,6 +285,10 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
     }
 
     if(role == Qt::ToolTipRole) {
+        if(isPendingRemoval(info->identifier())) {
+            const QString error = m_pluginManager->removalError(info->identifier());
+            return error.isEmpty() ? tr("This plugin is marked for removal at the next restart.") : error;
+        }
         return info->isLoaded() || m_pendingPlugins.contains(info->identifier()) ? info->description() : info->error();
     }
 
@@ -241,26 +304,8 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
                 return info->version();
             case 2:
                 return info->author();
-            case 4: {
-                if(m_pendingPlugins.contains(info->identifier())) {
-                    return tr("Restart required");
-                }
-                switch(info->status()) {
-                    case PluginInfo::Status::Discovered:
-                        return tr("Discovered");
-                    case PluginInfo::Status::Disabled:
-                        return tr("Disabled");
-                    case PluginInfo::Status::Incompatible:
-                        return tr("Incompatible");
-                    case PluginInfo::Status::LoadFailed:
-                        return tr("Load failed");
-                    case PluginInfo::Status::Loaded:
-                        return tr("Loaded");
-                    case PluginInfo::Status::Initialised:
-                        return tr("Initialised");
-                }
-                break;
-            }
+            case 4:
+                return statusText(status(*info));
             default:
                 break;
         }
@@ -275,7 +320,11 @@ bool PluginsModel::setData(const QModelIndex& index, const QVariant& value, int 
         return false;
     }
 
-    const auto* item   = static_cast<PluginItem*>(index.internalPointer());
+    const auto* item = static_cast<PluginItem*>(index.internalPointer());
+    if(isPendingRemoval(item->info()->identifier())) {
+        return false;
+    }
+
     const bool checked = value.value<Qt::CheckState>() == Qt::Checked;
 
     if(item->info()->isDisabled()) {
@@ -356,5 +405,41 @@ QString PluginsModel::categoryName(const QString& category)
     }
 
     return category;
+}
+
+void PluginsModel::rebuild()
+{
+    resetRoot();
+    m_nodes.clear();
+
+    const auto appendPlugin = [this](PluginInfo* info) {
+        PluginItem* parent = rootItem();
+
+        const auto categories = info->category();
+
+        for(const QString& category : categories) {
+            if(!m_nodes.contains(category)) {
+                m_nodes.emplace(category, PluginItem{category, parent});
+                parent->appendChild(&m_nodes.at(category));
+            }
+            parent = &m_nodes.at(category);
+        }
+
+        const QString identifier = info->identifier();
+        if(!m_nodes.contains(identifier)) {
+            m_nodes.emplace(identifier, PluginItem{info, parent});
+        }
+        PluginItem* child = &m_nodes.at(identifier);
+        parent->appendChild(child);
+    };
+
+    for(const auto& [identifier, info] : m_pluginManager->allPluginInfo()) {
+        if(!m_pendingPlugins.contains(identifier)) {
+            appendPlugin(info.get());
+        }
+    }
+    for(const auto& info : m_pendingPlugins | std::views::values) {
+        appendPlugin(info.get());
+    }
 }
 } // namespace Fooyin

@@ -22,6 +22,7 @@
 #include <utils/treeitem.h>
 #include <utils/treemodel.h>
 
+#include <set>
 #include <unordered_map>
 
 namespace Fooyin {
@@ -53,13 +54,35 @@ class PluginsModel : public TreeModel<PluginItem>
     Q_OBJECT
 
 public:
+    enum class Status : uint8_t
+    {
+        Discovered = 0,
+        Disabled,
+        Incompatible,
+        LoadFailed,
+        Loaded,
+        Initialised,
+        RestartRequired,
+        PendingRemoval,
+        RemovalFailed,
+        Count,
+    };
+
     explicit PluginsModel(PluginManager* pluginManager, QObject* parent = nullptr);
     ~PluginsModel() override;
 
-    void reset(const QStringList& disabledPlugins);
+    void reset(const QStringList& disabledPlugins, const QStringList& removedPlugins);
     void apply(const QStringList& disabledPlugins);
     void addInstalledPlugin(std::unique_ptr<PluginInfo> plugin);
+    void toggleRemoval(const QString& identifier);
+
     [[nodiscard]] bool hasChanges() const;
+    [[nodiscard]] bool canRemove(const PluginInfo* plugin) const;
+    [[nodiscard]] bool isPendingRemoval(const QString& identifier) const;
+    [[nodiscard]] QStringList removedPlugins() const;
+
+    static QString statusText(Status status);
+    [[nodiscard]] Status status(const PluginInfo& plugin) const;
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
@@ -83,6 +106,8 @@ private:
     std::unordered_map<QString, std::unique_ptr<PluginInfo>> m_pendingPlugins;
     QStringList m_enabledPlugins;
     QStringList m_disabledPlugins;
+    std::set<QString> m_removedPlugins;
+    std::set<QString> m_appliedRemovals;
     bool m_pluginsInstalled;
 };
 } // namespace Fooyin

@@ -42,6 +42,9 @@ QString installErrorText(PluginInstaller::InstallError error)
     switch(error) {
         case InstallError::AlreadyInstalled:
             return QCoreApplication::translate("Fooyin::PluginPageWidget", "This plugin is already installed.");
+        case InstallError::SameVersionInstalled:
+            return QCoreApplication::translate("Fooyin::PluginPageWidget",
+                                               "This version of the plugin is already installed.");
         case InstallError::InvalidSource:
             return QCoreApplication::translate("Fooyin::PluginPageWidget",
                                                "The selected plugin file does not exist or is not a regular file.");
@@ -122,18 +125,27 @@ void promptForRestart(QWidget* parent, const QString& title)
 std::unique_ptr<PluginInfo> install(const QString& filepath, QWidget* parent, bool promptRestart)
 {
     bool updating{false};
+    bool reinstalling{false};
     const QString pluginsPath = Core::userPluginsPath();
     auto installResult        = PluginInstaller::install(filepath, pluginsPath, false);
-    if(!installResult && installResult.error() == PluginInstaller::InstallError::AlreadyInstalled) {
+    if(!installResult
+       && (installResult.error() == PluginInstaller::InstallError::AlreadyInstalled
+           || installResult.error() == PluginInstaller::InstallError::SameVersionInstalled)) {
+        reinstalling = installResult.error() == PluginInstaller::InstallError::SameVersionInstalled;
         QMessageBox message{
             QMessageBox::Question, QCoreApplication::translate("Fooyin::PluginPageWidget", "Plugin Already Installed"),
-            QCoreApplication::translate("Fooyin::PluginPageWidget", "This plugin is already installed. Update it?"),
+            reinstalling ? QCoreApplication::translate("Fooyin::PluginPageWidget",
+                                                       "This version of the plugin is already installed. Reinstall it?")
+                         : QCoreApplication::translate("Fooyin::PluginPageWidget",
+                                                       "This plugin is already installed. Update it?"),
             QMessageBox::Yes | QMessageBox::No, parent};
-        message.button(QMessageBox::Yes)->setText(QCoreApplication::translate("Fooyin::PluginPageWidget", "Update"));
+        message.button(QMessageBox::Yes)
+            ->setText(reinstalling ? QCoreApplication::translate("Fooyin::PluginPageWidget", "Reinstall")
+                                   : QCoreApplication::translate("Fooyin::PluginPageWidget", "Update"));
         if(message.exec() != QMessageBox::Yes) {
             return {};
         }
-        updating      = true;
+        updating      = !reinstalling;
         installResult = PluginInstaller::install(filepath, pluginsPath, true);
     }
 
@@ -145,8 +157,13 @@ std::unique_ptr<PluginInfo> install(const QString& filepath, QWidget* parent, bo
     }
 
     if(promptRestart) {
-        const QString title = updating ? QCoreApplication::translate("Fooyin::PluginPageWidget", "Plugin Updated")
-                                       : QCoreApplication::translate("Fooyin::PluginPageWidget", "Plugin Installed");
+        QString title = QCoreApplication::translate("Fooyin::PluginPageWidget", "Plugin Installed");
+        if(reinstalling) {
+            title = QCoreApplication::translate("Fooyin::PluginPageWidget", "Plugin Reinstalled");
+        }
+        else if(updating) {
+            title = QCoreApplication::translate("Fooyin::PluginPageWidget", "Plugin Updated");
+        }
         promptForRestart(parent, title);
     }
 

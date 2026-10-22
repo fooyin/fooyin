@@ -21,9 +21,12 @@
 
 #include "plugininfo.h"
 
+#include <core/coresettings.h>
 #include <core/plugins/plugin.h>
 #include <utils/fileutils.h>
+#include <utils/fypaths.h>
 
+#include <QCoreApplication>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -40,6 +43,7 @@
 #include <array>
 #include <optional>
 #include <unordered_set>
+#include <vector>
 
 using namespace Qt::StringLiterals;
 
@@ -48,6 +52,7 @@ Q_LOGGING_CATEGORY(PLUGIN_INSTALLER, "fy.plugininstaller")
 constexpr qint64 MaxEntrySize     = 256LL * 1024 * 1024;
 constexpr qint64 MaxExtractedSize = 512LL * 1024 * 1024;
 constexpr auto MaxEntryCount      = 4096;
+constexpr auto PendingRemovalKey  = "Plugins/PendingRemoval"_L1;
 
 namespace Fooyin::PluginInstaller {
 namespace {
@@ -115,6 +120,19 @@ bool isValidPathPart(const QString& part)
                                           "COM9"_L1, "LPT1"_L1, "LPT2"_L1, "LPT3"_L1, "LPT4"_L1, "LPT5"_L1,
                                           "LPT6"_L1, "LPT7"_L1, "LPT8"_L1, "LPT9"_L1};
     return std::ranges::find(reservedNames, baseName) == reservedNames.cend();
+}
+
+bool isValidIdentifier(const QString& identifier)
+{
+    static const QRegularExpression identifierRegex{u"^[a-z0-9][a-z0-9._-]*$"_s};
+    return identifierRegex.match(identifier).hasMatch() && isValidPathPart(identifier);
+}
+
+bool hasFooyinMetadata(const QJsonObject& metadata)
+{
+    const QString iid = metadata.value("IID"_L1).toString();
+    return metadata.contains("MetaData"_L1)
+        && (iid == "org.fooyin.fooyin.plugin"_L1 || iid.startsWith("org.fooyin.fooyin.plugin/"_L1));
 }
 
 std::optional<QString> outputPath(const QString& entryPath, bool isDirectory, const QString& target)
@@ -272,24 +290,19 @@ std::expected<InstalledPlugin, InstallError> inspectPlugin(const QString& direct
 
         const QPluginLoader loader{filepath};
         const QJsonObject metadata = loader.metaData();
-        const QString iid          = metadata.value("IID"_L1).toString();
-        const bool isFooyinPlugin
-            = iid == "org.fooyin.fooyin.plugin"_L1 || iid.startsWith("org.fooyin.fooyin.plugin/"_L1);
-        if(!isFooyinPlugin || !metadata.contains("MetaData"_L1)) {
+        if(!hasFooyinMetadata(metadata)) {
             continue;
         }
-        if(iid != QLatin1StringView{FOOYIN_PLUGIN_IID}) {
+        if(metadata.value("IID"_L1).toString() != QLatin1StringView{FOOYIN_PLUGIN_IID}) {
             return std::unexpected{InstallError::IncompatibleApi};
         }
-
-        static const QRegularExpression identifierRegex{u"^[a-z0-9][a-z0-9._-]*$"_s};
 
         const PluginInfo plugin{filepath, metadata};
         const QString identifier = plugin.identifier();
         if(installedPlugin) {
             return std::unexpected{InstallError::MultiplePlugins};
         }
-        if(identifier.isEmpty() || plugin.version().isEmpty() || !identifierRegex.match(identifier).hasMatch()) {
+        if(plugin.version().isEmpty() || !isValidIdentifier(identifier)) {
             return std::unexpected{InstallError::InvalidMetadata};
         }
 
@@ -312,23 +325,52 @@ bool moveStagingDirectory(const QString& stagingPath, const QString& destination
     return true;
 }
 
-bool hasLoosePlugin(const QString& pluginsPath, const QString& identifier)
+std::vector<QString> loosePluginFiles(const QString& pluginsPath, const QString& identifier)
 {
+    std::vector<QString> paths;
     const QFileInfoList files = QDir{pluginsPath}.entryInfoList(QDir::Files);
-    return std::ranges::any_of(files, [&identifier](const QFileInfo& file) {
+    for(const QFileInfo& file : files) {
         const QString filepath = file.absoluteFilePath();
         if(!QLibrary::isLibrary(filepath)) {
-            return false;
+            continue;
         }
 
         const QPluginLoader loader{filepath};
         const QJsonObject metadata = loader.metaData();
-        if(!metadata.contains("MetaData"_L1)) {
-            return false;
+        if(!hasFooyinMetadata(metadata)) {
+            continue;
         }
 
-        return PluginInfo{filepath, metadata}.identifier() == identifier;
-    });
+        if(PluginInfo{filepath, metadata}.identifier() == identifier) {
+            paths.emplace_back(filepath);
+        }
+    }
+    return paths;
+}
+
+std::expected<void, QString> removePath(const QString& path)
+{
+    const QFileInfo info{path};
+    if(!info.exists() && !info.isSymLink()) {
+        return {};
+    }
+    if(info.isDir() && !info.isSymLink()) {
+        if(!QDir{path}.removeRecursively()) {
+            return std::unexpected{
+                QCoreApplication::translate("Fooyin::PluginInstaller",
+                                            "Could not remove plugin directory ‘%1’. "
+                                            "Check that it is writable and its files are not in use.")
+                    .arg(path)};
+        }
+    }
+    else {
+        QFile file{path};
+        if(!file.remove()) {
+            return std::unexpected{QCoreApplication::translate("Fooyin::PluginInstaller", "Could not remove ‘%1’: %2")
+                                       .arg(path, file.errorString())};
+        }
+    }
+    return {};
 }
 } // namespace
 
@@ -368,9 +410,30 @@ std::expected<std::unique_ptr<PluginInfo>, InstallError> install(const QString& 
         return std::unexpected{plugin.error()};
     }
 
-    const QString pluginPath = QDir{pluginsPath}.filePath(plugin->identifier);
-    if(!overwrite && (QFileInfo::exists(pluginPath) || hasLoosePlugin(pluginsPath, plugin->identifier))) {
-        return std::unexpected{InstallError::AlreadyInstalled};
+    const QString pluginPath  = QDir{pluginsPath}.filePath(plugin->identifier);
+    const QString updatesPath = QDir{pluginsPath}.filePath(u".updates"_s);
+    const QString updatePath  = QDir{updatesPath}.filePath(plugin->identifier);
+    if(!overwrite) {
+        auto existingPlugin = inspectPlugin(updatePath);
+        if(!existingPlugin) {
+            existingPlugin = inspectPlugin(pluginPath);
+        }
+
+        QString existingVersion;
+        const auto loosePlugins = loosePluginFiles(pluginsPath, plugin->identifier);
+        if(existingPlugin) {
+            existingVersion = PluginInfo{QString{}, existingPlugin->metadata}.version();
+        }
+        else if(!loosePlugins.empty()) {
+            const QString& loosePath = loosePlugins.front();
+            existingVersion          = PluginInfo{loosePath, QPluginLoader{loosePath}.metaData()}.version();
+        }
+
+        if(QFileInfo::exists(pluginPath) || QFileInfo::exists(updatePath) || !loosePlugins.empty()) {
+            const QString version = PluginInfo{QString{}, plugin->metadata}.version();
+            return std::unexpected{version == existingVersion ? InstallError::SameVersionInstalled
+                                                              : InstallError::AlreadyInstalled};
+        }
     }
 
     const auto installTo = [&](const QString& destination) -> std::expected<std::unique_ptr<PluginInfo>, InstallError> {
@@ -384,8 +447,6 @@ std::expected<std::unique_ptr<PluginInfo>, InstallError> install(const QString& 
         return installTo(pluginPath);
     }
 
-    const QString updatesPath = QDir{pluginsPath}.filePath(u".updates"_s);
-    const QString updatePath  = QDir{updatesPath}.filePath(plugin->identifier);
     if(!QDir{}.mkpath(updatesPath)) {
         return std::unexpected{InstallError::WriteFailed};
     }
@@ -396,7 +457,77 @@ std::expected<std::unique_ptr<PluginInfo>, InstallError> install(const QString& 
     return installTo(updatePath);
 }
 
-bool applyPendingUpdates(const QString& pluginsPath)
+bool canRemove(const PluginInfo& plugin, const QString& pluginsPath)
+{
+    if(!isValidIdentifier(plugin.identifier())) {
+        return false;
+    }
+
+    const QString rootPath = QFileInfo{pluginsPath}.canonicalFilePath();
+    const QString filepath = QFileInfo{plugin.filepath()}.canonicalFilePath();
+    if(rootPath.isEmpty() || filepath.isEmpty()) {
+        return false;
+    }
+
+    const QString relativePath = QDir{rootPath}.relativeFilePath(filepath);
+    return relativePath.startsWith(plugin.identifier() + u'/')
+        || relativePath.startsWith(u".updates/"_s + plugin.identifier() + u'/');
+}
+
+std::expected<void, QString> remove(const QString& identifier, const QString& pluginsPath)
+{
+    if(!isValidIdentifier(identifier)) {
+        return std::unexpected{
+            QCoreApplication::translate("Fooyin::PluginInstaller", "Invalid plugin identifier ‘%1’.").arg(identifier)};
+    }
+
+    const QDir directory{pluginsPath};
+    const QString updatesPath = directory.filePath(u".updates"_s);
+    if(QFileInfo{updatesPath}.isSymLink()) {
+        return std::unexpected{QCoreApplication::translate("Fooyin::PluginInstaller",
+                                                           "The plugin update directory ‘%1’ is a symbolic link.")
+                                   .arg(updatesPath)};
+    }
+
+    std::vector<QString> paths;
+#ifdef Q_OS_WIN
+    // Portable installs share this root with bundled loose plugins
+    if(!Utils::isPortable()) {
+        paths = loosePluginFiles(pluginsPath, identifier);
+    }
+#else
+    paths = loosePluginFiles(pluginsPath, identifier);
+#endif
+    paths.emplace_back(QDir{updatesPath}.filePath(identifier));
+    paths.emplace_back(directory.filePath(identifier));
+
+    for(const QString& path : paths) {
+        if(const auto result = removePath(path); !result) {
+            return result;
+        }
+    }
+    QDir{pluginsPath}.rmdir(u".updates"_s);
+    return {};
+}
+
+QStringList pendingRemovals()
+{
+    const FyStateSettings settings;
+    return settings.value(PendingRemovalKey).toStringList();
+}
+
+void setPendingRemovals(const QStringList& identifiers)
+{
+    FyStateSettings settings;
+    if(identifiers.isEmpty()) {
+        settings.remove(PendingRemovalKey);
+    }
+    else {
+        settings.setValue(PendingRemovalKey, identifiers);
+    }
+}
+
+bool applyPendingUpdates(const QString& pluginsPath, const QStringList& pendingRemovals)
 {
     const QDir updates{QDir{pluginsPath}.filePath(u".updates"_s)};
     if(!updates.exists()) {
@@ -406,6 +537,9 @@ bool applyPendingUpdates(const QString& pluginsPath)
     bool success{true};
     const QFileInfoList pendingUpdates = updates.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
     for(const QFileInfo& pendingUpdate : pendingUpdates) {
+        if(pendingRemovals.contains(pendingUpdate.fileName())) {
+            continue;
+        }
         const QString targetPath = QDir{pluginsPath}.filePath(pendingUpdate.fileName());
         if((QFileInfo::exists(targetPath) && !QDir{targetPath}.removeRecursively())
            || !QDir{}.rename(pendingUpdate.absoluteFilePath(), targetPath)) {
