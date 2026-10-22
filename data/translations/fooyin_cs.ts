@@ -172,7 +172,7 @@
     <message>
         <location filename="../../src/gui/filters/filtercontextmenu.h" line="71"/>
         <source>Remove from playback queue</source>
-        <translation>Odebrat z fronty</translation>
+        <translation>Odstranit z fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtercontextmenu.h" line="75"/>
@@ -4544,7 +4544,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/settings/context/configurablecontextmenupage.cpp" line="94"/>
         <source>Remove separator</source>
-        <translation>Odebrat oddělovač</translation>
+        <translation>Odstranit oddělovač</translation>
     </message>
 </context>
 <context>
@@ -7243,7 +7243,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="139"/>
         <source>Remove</source>
-        <translation>Odebrat</translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="182"/>
@@ -8377,7 +8377,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="175"/>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="234"/>
         <source>Remove</source>
-        <translation>Odebrat</translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="194"/>
@@ -11675,7 +11675,7 @@ a naposledy přehráno použije nejnovější hodnotu.</translation>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="195"/>
         <source>Value range used when saving rated values as text metadata. Unrated tracks remove the rating tag instead of writing zero.</source>
-        <translation>Rozsah hodnot použitý při ukládání textového hodnocení. U skladeb bez hodnocení nebude použita 0, ale bude zcela odebrán příslušný tag.</translation>
+        <translation>Rozsah hodnot použitý při ukládání textového hodnocení. U skladeb bez hodnocení nebude použita 0, ale bude zcela odstraněn příslušný tag.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/libraryratingspage.cpp" line="169"/>
@@ -12732,12 +12732,12 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="127"/>
         <source>Remove</source>
-        <translation>Odebrat</translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="128"/>
         <source>Remove All</source>
-        <translation>Odebrat vše</translation>
+        <translation>Odstranit vše</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricseditor.cpp" line="118"/>
@@ -13820,7 +13820,7 @@ Lokální texty budou stále načítány.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1036"/>
         <source>Existing metadata and custom tags will be removed before applying the selected release. Ratings, ReplayGain, technical information, playback statistics, and artwork will be preserved.</source>
-        <translation>Existující metadata a uživatelské tagy budou před použitím vybraného vydání smazána. Hodnocení, ReplayGain, technické informace, statistika přehrávání a přebaly alb budou zachovány.</translation>
+        <translation>Existující metadata a uživatelské tagy budou před použitím vybraného vydání odstraněny. Hodnocení, ReplayGain, technické informace, statistika přehrávání a přebaly alb budou zachovány.</translation>
     </message>
 </context>
 <context>
@@ -15373,7 +15373,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="145"/>
         <source>Automatically remove played tracks beyond the retained history</source>
-        <translation>Automaticky odebrat přehrané skladby po dosažení limitu skladeb v historii</translation>
+        <translation>Automaticky odstranit přehrané skladby po dosažení limitu skladeb v historii</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackqueuepage.cpp" line="146"/>
@@ -15522,7 +15522,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="266"/>
         <source>Remove</source>
-        <translation>Odebrat</translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="271"/>
@@ -15981,7 +15981,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="479"/>
         <source>Remove playlist ‘%1’?</source>
-        <translation>Odstranit seznam skladeb „%1“?</translation>
+        <translation>Odstranit seznam skladeb ‚%1‘?</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="482"/>
@@ -16345,7 +16345,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="197"/>
         <source>Remove</source>
-        <translation>Odebrat</translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="199"/>
@@ -17264,17 +17264,17 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="229"/>
         <source>&amp;Remove</source>
-        <translation>Odeb&amp;rat</translation>
+        <translation>Odst&amp;ranit</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="233"/>
         <source>Remove duplicates</source>
-        <translation>Odebrat duplikáty</translation>
+        <translation>Odstranit duplikáty</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="236"/>
         <source>Remove dead tracks</source>
-        <translation>Odebrat nedostupné skladby</translation>
+        <translation>Odstranit nedostupné skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="239"/>
@@ -17304,7 +17304,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="339"/>
         <source>Remove all tracks from the playlist except for the selected tracks</source>
-        <translation>Odebrat ze seznamu skladeb všechny skladby kromě vybraných</translation>
+        <translation>Odstranit ze seznamu skladeb všechny skladby kromě vybraných</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="343"/>
@@ -17339,7 +17339,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="401"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation>Odstranit všechny skladby vybraného seznamu skladeb</translation>
+        <translation>Odstranit všechny skladby z vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="409"/>
@@ -17364,12 +17364,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="443"/>
         <source>Remove duplicate tracks from the playlist</source>
-        <translation>Odebrat ze seznamu skladeb duplicitní skladby</translation>
+        <translation>Odstranit ze seznamu skladeb duplicitní skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="448"/>
         <source>Remove dead (non-existent) tracks from the playlist</source>
-        <translation>Odebrat ze seznamu skladeb nedostupné (neexistující) skladby</translation>
+        <translation>Odstranit ze seznamu skladeb nedostupné (neexistující) skladby</translation>
     </message>
 </context>
 <context>
@@ -18187,7 +18187,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="125"/>
         <source>&amp;Remove</source>
-        <translation>Odeb&amp;rat</translation>
+        <translation>Odst&amp;ranit</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="127"/>
@@ -19215,7 +19215,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="200"/>
         <source>Remove from My Stations</source>
-        <translation>Odebrat z Mé stanice</translation>
+        <translation>Odstranit z Mé stanice</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="238"/>
@@ -19243,7 +19243,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="252"/>
         <source>Remove the selected stations from My Stations</source>
-        <translation>Odebrat vybrané stanice z Mé stanice</translation>
+        <translation>Odstranit vybrané stanice z Mé stanice</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserwidget.cpp" line="255"/>
@@ -20004,7 +20004,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="585"/>
         <source>Remove saved search</source>
-        <translation>Odstranit vybrané hledání</translation>
+        <translation>Odstranit uložené hledání</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguidewidget.cpp" line="586"/>
@@ -23940,7 +23940,7 @@ Vyšší hodnoty zvyšují podrobnost a spotřebu paměti.</translation>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="368"/>
         <source>Re&amp;move</source>
-        <translation>&amp;Odebrat</translation>
+        <translation>&amp;Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="371"/>
@@ -24620,7 +24620,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="286"/>
         <source>Remove from playback queue</source>
-        <translation>Odebrat z fronty</translation>
+        <translation>Odstranit z fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="287"/>
@@ -24680,7 +24680,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="295"/>
         <source>Remove all artwork</source>
-        <translation>Odebrat všechny přebaly alb</translation>
+        <translation>Odstranit všechny přebaly alb</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="296"/>
@@ -25970,12 +25970,12 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="139"/>
         <source>Remove waveform data</source>
-        <translation>Odstranit křivku průběhu signálu</translation>
+        <translation>Odstranit data křivky průběhu signálu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="140"/>
         <source>Remove any existing waveform data for the selected tracks</source>
-        <translation>Odstranit pro vybrané skladby existující křivky průběhu signálu</translation>
+        <translation>Odstranit pro vybrané skladby existující data křivky průběhu signálu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="219"/>
@@ -26906,7 +26906,7 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="257"/>
         <source>Remove from playback queue</source>
-        <translation>Odebrat z fronty</translation>
+        <translation>Odstranit z fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="261"/>
@@ -26959,7 +26959,7 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="113"/>
         <source>Remove</source>
-        <translation>Odebrat</translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="116"/>
@@ -26999,7 +26999,7 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="142"/>
         <source>Remove from playback queue</source>
-        <translation>Odebrat z fronty</translation>
+        <translation>Odstranit z fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="146"/>
@@ -27545,7 +27545,7 @@ hodnocení je zaokrouhleno na jednu, dvě, tři, čtyři, nebo pět hvězd.</tra
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="184"/>
         <source>Remove</source>
-        <translation>Odebrat</translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="187"/>
@@ -27636,7 +27636,7 @@ hodnocení je zaokrouhleno na jednu, dvě, tři, čtyři, nebo pět hvězd.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="96"/>
         <source>Remove from playback queue</source>
-        <translation>Odebrat z fronty</translation>
+        <translation>Odstranit z fronty přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="101"/>
@@ -27646,7 +27646,7 @@ hodnocení je zaokrouhleno na jednu, dvě, tři, čtyři, nebo pět hvězd.</tra
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="105"/>
         <source>Remove from My Stations</source>
-        <translation>Odebrat z Mé stanice</translation>
+        <translation>Odstranit z Mé stanice</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowsercontextmenu.h" line="108"/>
