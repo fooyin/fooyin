@@ -101,6 +101,8 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: ${{ env.QT_VERSION }}
+          # Support the Windows x64 repository layout used by Qt 6.11 and later
+          aqtsource: git+https://github.com/miurahr/aqtinstall.git@8c3695d4a4e1ceabf6a74dc6c79681656dc6b74b
           archives: qtbase qtsvg qttools
           cache: true
           arch: ${{ matrix.qt-arch }}
