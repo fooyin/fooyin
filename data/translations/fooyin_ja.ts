@@ -595,49 +595,49 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="577"/>
         <source>fooyin version</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin のバージョン</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="589"/>
         <source>Playback queue mode: playlist or queue</source>
-        <translation type="unfinished"></translation>
+        <translation>再生キューモード: プレイリストまたはキュー</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="604"/>
         <source>One-based index of the evaluated playlist row</source>
-        <translation type="unfinished"></translation>
+        <translation>評価対象のプレイリスト行の1始まりのインデックス</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="607"/>
         <source>Grouping depth of the evaluated playlist row</source>
-        <translation type="unfinished"></translation>
+        <translation>評価対象のプレイリスト行のグループ化の深さ</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="610"/>
         <source>Playback icon marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>対応ビューでの再生アイコンマーカー</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="612"/>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="615"/>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="618"/>
         <source>Artwork</source>
-        <translation type="unfinished">アートワーク</translation>
+        <translation>アートワーク</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="613"/>
         <source>Front cover marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>対応ビューでのフロントカバーマーカー</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="616"/>
         <source>Back cover marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>対応ビューでのバックカバーマーカー</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="619"/>
         <source>Artist picture marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>対応ビューでのアーティスト画像マーカー</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="666"/>
@@ -712,12 +712,12 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="882"/>
         <source>Looks up a raw tag field. Multiple values are joined with ‘, ’ or selected by the optional zero-based index.</source>
-        <translation type="unfinished"></translation>
+        <translation>生のタグフィールドを参照します。複数の値は「, 」で結合されるか、省略可能な0始まりのインデックスで選択されます。</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="886"/>
         <source>Looks up a raw tag field. Multiple values are joined with sep, using lastsep between the final two values when supplied.</source>
-        <translation type="unfinished"></translation>
+        <translation>生のタグフィールドを参照します。複数の値は sep で結合され、lastsep が指定された場合は最後の2つの値の間に lastsep が使われます。</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="586"/>
@@ -1564,38 +1564,38 @@
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="336"/>
         <source>A–B repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>A–B リピート</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="353"/>
         <source>%1Middle-click</source>
         <extracomment>%1 is a native modifier sequence, including its trailing separator e.g. Ctrl+Shift+</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1中クリック</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="361"/>
         <source>Set A here</source>
-        <translation type="unfinished"></translation>
+        <translation>ここで A を設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="361"/>
         <source>Set A</source>
-        <translation type="unfinished"></translation>
+        <translation>A を設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="361"/>
         <source>Middle-click</source>
-        <translation type="unfinished">中クリック</translation>
+        <translation>中クリック</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="370"/>
         <source>Set B here</source>
-        <translation type="unfinished"></translation>
+        <translation>ここで B を設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="370"/>
         <source>Set B</source>
-        <translation type="unfinished"></translation>
+        <translation>B を設定</translation>
     </message>
 </context>
 <context>
@@ -1725,12 +1725,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="109"/>
         <source>Front</source>
-        <translation type="unfinished">フロント</translation>
+        <translation>フロント</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="109"/>
         <source>Back</source>
-        <translation type="unfinished">戻る</translation>
+        <translation>戻る</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="142"/>
@@ -1740,7 +1740,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="223"/>
         <source>No artwork sources enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>有効なアートワークソースがありません</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="235"/>
@@ -2311,13 +2311,13 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="74"/>
         <source>Keep playlist sorted</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストをソート済みに保つ</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="76"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="87"/>
         <source>&amp;Save…</source>
-        <translation type="unfinished"></translation>
+        <translation>保存(&amp;S)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="78"/>
@@ -2327,7 +2327,7 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="79"/>
         <source>&amp;Format</source>
-        <translation type="unfinished"></translation>
+        <translation>整形(&amp;F)</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="81"/>
@@ -2342,98 +2342,99 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="94"/>
         <source>Presets</source>
-        <translation type="unfinished">プリセット</translation>
+        <translation>プリセット</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="105"/>
         <source>When enabled, the autoplaylist is fully reordered by its sort pattern whenever it regenerates.
 When disabled, existing track order is preserved and only newly added matching tracks are sorted and then appended.</source>
-        <translation type="unfinished"></translation>
+        <translation>有効にすると、自動プレイリストが再生成されるたびに、そのソートパターンに従って全体が並べ替えられます。
+無効にすると、既存のトラック順序が保持され、新たに追加された一致するトラックのみがソートされてから末尾に追加されます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="110"/>
         <source>Name:</source>
-        <translation type="unfinished">名前 :</translation>
+        <translation>名前 :</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="127"/>
         <source>Query:</source>
-        <translation type="unfinished"></translation>
+        <translation>クエリ :</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="128"/>
         <source>Sort:</source>
-        <translation type="unfinished"></translation>
+        <translation>ソート :</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="130"/>
         <source>Format the query with line breaks and indentation.</source>
-        <translation type="unfinished"></translation>
+        <translation>クエリを改行とインデントで整形します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="133"/>
         <source>Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>ルール</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="134"/>
         <source>Script</source>
-        <translation type="unfinished"></translation>
+        <translation>スクリプト</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="274"/>
         <source>This query uses expressions that are not supported by the rule editor.</source>
-        <translation type="unfinished"></translation>
+        <translation>このクエリには、ルールエディターでサポートされていない式が含まれています。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="311"/>
         <source>This query cannot be represented as rules. Continue editing it in Script mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>このクエリはルールとして表現できません。スクリプトモードで編集を続けてください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="336"/>
         <source>Save Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットを保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="336"/>
         <source>Preset name:</source>
-        <translation type="unfinished">プリセット名 :</translation>
+        <translation>プリセット名 :</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="352"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">既存のプリセットです</translation>
+        <translation>既存のプリセットです</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="353"/>
         <source>A preset named ‘%1’ already exists. Overwrite it?</source>
-        <translation type="unfinished">「%1」という名前のプリセットは既に存在します。上書きしますか?</translation>
+        <translation>「%1」という名前のプリセットは既に存在します。上書きしますか?</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="458"/>
         <source>Recently Played</source>
-        <translation type="unfinished"></translation>
+        <translation>最近再生した曲</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="461"/>
         <source>Loved</source>
-        <translation type="unfinished">「いいね」</translation>
+        <translation>「いいね」</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="462"/>
         <source>Highly Rated</source>
-        <translation type="unfinished"></translation>
+        <translation>高評価</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="463"/>
         <source>Unplayed</source>
-        <translation type="unfinished">未再生</translation>
+        <translation>未再生</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="464"/>
         <source>Forgotten Favourites</source>
-        <translation type="unfinished"></translation>
+        <translation>忘れられたお気に入り</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="456"/>
@@ -2456,29 +2457,29 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="42"/>
         <source>Metadata tag…</source>
-        <translation type="unfinished"></translation>
+        <translation>メタデータタグ…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="48"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="76"/>
         <source>Tag name</source>
-        <translation type="unfinished"></translation>
+        <translation>タグ名</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="49"/>
         <source>Choose a field or enter a tag name. Use ‘Metadata tag…’ to read a tag directly.</source>
-        <translation type="unfinished"></translation>
+        <translation>フィールドを選択するかタグ名を入力します。タグを直接読み取るには「メタデータタグ…」を使用します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="76"/>
         <source>Metadata tag</source>
-        <translation type="unfinished"></translation>
+        <translation>メタデータタグ</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="131"/>
         <source>%1 (tag)</source>
         <extracomment>%1 is a metadata tag name.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (タグ)</translation>
     </message>
 </context>
 <context>
@@ -2486,117 +2487,117 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="498"/>
         <source>Artist</source>
-        <translation type="unfinished">アーティスト</translation>
+        <translation>アーティスト</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="499"/>
         <source>Album artist</source>
-        <translation type="unfinished">アルバムアーティスト</translation>
+        <translation>アルバムアーティスト</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="500"/>
         <source>Album</source>
-        <translation type="unfinished">アルバム</translation>
+        <translation>アルバム</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="501"/>
         <source>Title</source>
-        <translation type="unfinished">タイトル</translation>
+        <translation>タイトル</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="502"/>
         <source>Genre</source>
-        <translation type="unfinished">ジャンル</translation>
+        <translation>ジャンル</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="503"/>
         <source>Composer</source>
-        <translation type="unfinished">作曲者</translation>
+        <translation>作曲者</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="504"/>
         <source>Performer</source>
-        <translation type="unfinished">パフォーマー</translation>
+        <translation>パフォーマー</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="505"/>
         <source>Comment</source>
-        <translation type="unfinished">コメント</translation>
+        <translation>コメント</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="506"/>
         <source>Lyrics</source>
-        <translation type="unfinished">歌詞</translation>
+        <translation>歌詞</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="507"/>
         <source>Date</source>
-        <translation type="unfinished">日付</translation>
+        <translation>日付</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="508"/>
         <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation>年</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="509"/>
         <source>Duration</source>
-        <translation type="unfinished">長さ</translation>
+        <translation>長さ</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="510"/>
         <source>Rating</source>
-        <translation type="unfinished">評価</translation>
+        <translation>評価</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="511"/>
         <source>Loved</source>
-        <translation type="unfinished">「いいね」</translation>
+        <translation>「いいね」</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="512"/>
         <source>Playcount</source>
-        <translation type="unfinished">再生回数</translation>
+        <translation>再生回数</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="513"/>
         <source>Date added</source>
-        <translation type="unfinished"></translation>
+        <translation>追加日</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="514"/>
         <source>First played</source>
-        <translation type="unfinished"></translation>
+        <translation>初回再生日</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="515"/>
         <source>Last played</source>
-        <translation type="unfinished"></translation>
+        <translation>最終再生日</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="516"/>
         <source>Codec</source>
-        <translation type="unfinished">コーデック</translation>
+        <translation>コーデック</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="517"/>
         <source>Folder path</source>
-        <translation type="unfinished"></translation>
+        <translation>フォルダーパス</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="518"/>
         <source>File path</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルパス</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="928"/>
         <source>Enter a query.</source>
-        <translation type="unfinished"></translation>
+        <translation>クエリを入力してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="938"/>
         <source>The query contains an incomplete or invalid expression.</source>
-        <translation type="unfinished"></translation>
+        <translation>クエリに不完全または無効な式が含まれています。</translation>
     </message>
 </context>
 <context>
@@ -2604,109 +2605,109 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="47"/>
         <source>Match all rules</source>
-        <translation type="unfinished"></translation>
+        <translation>すべてのルールに一致</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="48"/>
         <source>Match any rule</source>
-        <translation type="unfinished"></translation>
+        <translation>いずれかのルールに一致</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="49"/>
         <source>Match an odd number of rules</source>
-        <translation type="unfinished"></translation>
+        <translation>奇数個のルールに一致</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="51"/>
         <source>Uses AND: every rule or nested group must match.</source>
-        <translation type="unfinished"></translation>
+        <translation>AND を使用: すべてのルールまたはネストされたグループが一致する必要があります。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="53"/>
         <source>Uses OR: at least one rule or nested group must match.</source>
-        <translation type="unfinished"></translation>
+        <translation>OR を使用: 少なくとも1つのルールまたはネストされたグループが一致する必要があります。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="56"/>
         <source>Uses XOR: one, three, five, or another odd number of rules must match. Each nested group counts as one rule.</source>
-        <translation type="unfinished"></translation>
+        <translation>XOR を使用: 1、3、5、またはその他の奇数個のルールが一致する必要があります。ネストされた各グループは1つのルールとして数えられます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="61"/>
         <source>Include all tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>すべてのトラックを含める</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="62"/>
         <source>Includes every track in the library without applying rules.</source>
-        <translation type="unfinished"></translation>
+        <translation>ルールを適用せずに、ライブラリ内のすべてのトラックを含めます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="68"/>
         <source>Add rule</source>
-        <translation type="unfinished"></translation>
+        <translation>ルールを追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="70"/>
         <source>Add group</source>
-        <translation type="unfinished"></translation>
+        <translation>グループを追加</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="78"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="82"/>
         <source>Collapse group</source>
-        <translation type="unfinished"></translation>
+        <translation>グループを折りたたむ</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="82"/>
         <source>Expand group</source>
-        <translation type="unfinished"></translation>
+        <translation>グループを展開</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="95"/>
         <source>Remove group</source>
-        <translation type="unfinished"></translation>
+        <translation>グループを削除</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="179"/>
         <source>Add a rule or group, or choose ‘Include all tracks’.</source>
-        <translation type="unfinished"></translation>
+        <translation>ルールまたはグループを追加するか、「すべてのトラックを含める」を選択してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="182"/>
         <source>Add a rule or group to group %1.</source>
         <extracomment>%1 is a group number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>グループ %1 にルールまたはグループを追加してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="197"/>
         <source>Enter a tag name for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ルール %1 のタグ名を入力してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="203"/>
         <source>The start date must not be after the end date for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ルール %1 の開始日は終了日より後にできません。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="210"/>
         <source>Enter at least one valid value for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ルール %1 に少なくとも1つの有効な値を入力してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="217"/>
         <source>Enter a value for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ルール %1 の値を入力してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="226"/>
         <source>Enter a number for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ルール %1 の数値を入力してください。</translation>
     </message>
 </context>
 <context>
@@ -2715,92 +2716,92 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="115"/>
         <source>and</source>
         <extracomment>Separates the two dates in a ‘between’ rule.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>および</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="162"/>
         <source>No values</source>
-        <translation type="unfinished"></translation>
+        <translation>値なし</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="168"/>
         <source>Edit…</source>
-        <translation type="unfinished"></translation>
+        <translation>編集…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="170"/>
         <source>Edit values</source>
-        <translation type="unfinished"></translation>
+        <translation>値を編集</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="187"/>
         <source>Remove rule</source>
-        <translation type="unfinished"></translation>
+        <translation>ルールを削除</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="319"/>
         <source>No</source>
-        <translation type="unfinished">いいえ</translation>
+        <translation>いいえ</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="319"/>
         <source>Yes</source>
-        <translation type="unfinished">はい</translation>
+        <translation>はい</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="386"/>
         <source>Edit Values</source>
-        <translation type="unfinished"></translation>
+        <translation>値を編集</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="400"/>
         <source>Enter at least one value.</source>
-        <translation type="unfinished"></translation>
+        <translation>少なくとも1つの値を入力してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="401"/>
         <source>Empty lines are ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>空行は無視されます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="402"/>
         <source>Enter a valid value on each line.</source>
-        <translation type="unfinished"></translation>
+        <translation>各行に有効な値を入力してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="405"/>
         <source>Values are durations in seconds. Empty lines are ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>値は秒単位の長さです。空行は無視されます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="406"/>
         <source>Enter whole numbers. Empty lines are ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>整数を入力してください。空行は無視されます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="408"/>
         <source>Enter whole numbers of seconds, from 0 to %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>0 から %1 までの整数の秒数を入力してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="409"/>
         <source>Enter whole numbers from 0 to %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>0 から %1 までの整数を入力してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="412"/>
         <source>Half-star ratings are supported. Empty lines are ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>半星の評価がサポートされています。空行は無視されます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="413"/>
         <source>Enter ratings from 0 to 5 in half-star steps.</source>
-        <translation type="unfinished"></translation>
+        <translation>0 から 5 までの評価を半星刻みで入力してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="430"/>
         <source>Values (one per line)</source>
-        <translation type="unfinished"></translation>
+        <translation>値 (1行に1つ)</translation>
     </message>
 </context>
 <context>
@@ -2809,347 +2810,348 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="529"/>
         <source>second</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>秒</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="531"/>
         <source>seconds</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>秒</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="535"/>
         <source>minute</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>分</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="537"/>
         <source>minutes</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>分</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="541"/>
         <source>hour</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>時間</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="543"/>
         <source>hours</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>時間</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="547"/>
         <source>day</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>日</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="549"/>
         <source>days</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>日</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="553"/>
         <source>week</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>週間</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="555"/>
         <source>weeks</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>週間</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="559"/>
         <source>month</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>か月</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="561"/>
         <source>months</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>か月</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="565"/>
         <source>year</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>年</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="567"/>
         <source>years</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>年</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="44"/>
         <source>Randomise order</source>
-        <translation type="unfinished"></translation>
+        <translation>順序をランダム化</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="46"/>
         <source>Limit number of tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>トラック数を制限</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="49"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="51"/>
         <source>None</source>
-        <translation type="unfinished">なし</translation>
+        <translation>なし</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="53"/>
         <source>Choose a field or enter a tag name. Use ‘Metadata tag…’ to read a tag directly.
 Clear to disable sorting.</source>
-        <translation type="unfinished"></translation>
+        <translation>フィールドを選択するかタグ名を入力します。タグを直接読み取るには「メタデータタグ…」を使用します。
+クリアするとソートが無効になります。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="56"/>
         <source>Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>昇順</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="57"/>
         <source>Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>降順</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="60"/>
         <source>Randomise matching tracks before applying the track limit.</source>
-        <translation type="unfinished"></translation>
+        <translation>トラック制限を適用する前に、一致するトラックをランダム化します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="77"/>
         <source>Sort by:</source>
-        <translation type="unfinished"></translation>
+        <translation>ソート基準 :</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="149"/>
         <source>does not contain</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>を含まない</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="151"/>
         <source>contains</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>を含む</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="154"/>
         <source>does not contain any of</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>のいずれも含まない</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="156"/>
         <source>contains any of</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>のいずれかを含む</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="159"/>
         <source>does not contain word</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>という語を含まない</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="161"/>
         <source>contains word</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>という語を含む</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="164"/>
         <source>does not start with</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>で始まらない</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="166"/>
         <source>starts with</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>で始まる</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="169"/>
         <source>does not end with</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>で終わらない</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="171"/>
         <source>ends with</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>で終わる</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="174"/>
         <source>is not</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ではない</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="176"/>
         <source>is</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>である</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="179"/>
         <source>is not one of</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>のいずれでもない</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="181"/>
         <source>is one of</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>のいずれかである</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="184"/>
         <source>is greater than</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>より大きい</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="187"/>
         <source>is at least</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>以上</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="190"/>
         <source>is less than</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>より小さい</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="193"/>
         <source>is at most</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>以下</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="196"/>
         <source>is present</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>が存在する</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="199"/>
         <source>is missing</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>が存在しない</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="202"/>
         <source>is not before</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>より前ではない</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="204"/>
         <source>is before</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>より前</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="207"/>
         <source>is not after</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>より後ではない</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="209"/>
         <source>is after</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>より後</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="212"/>
         <source>is not on or after</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>以降ではない</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="214"/>
         <source>is on or after</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>以降</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="218"/>
         <source>is not in the last</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>最近の期間内ではない</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="220"/>
         <source>is in the last</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>最近の期間内</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="223"/>
         <source>is not on</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>当日ではない</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="225"/>
         <source>is on</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>当日</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="228"/>
         <source>is not between</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>の範囲外</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="230"/>
         <source>is between</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>の範囲内</translation>
     </message>
 </context>
 <context>
@@ -3157,303 +3159,303 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="58"/>
         <source>Artwork type</source>
-        <translation type="unfinished">アートワークの種類</translation>
+        <translation>アートワークの種類</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="60"/>
         <source>Preferred track</source>
-        <translation type="unfinished">優先トラック</translation>
+        <translation>優先トラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="62"/>
         <source>File</source>
-        <translation type="unfinished">ファイル</translation>
+        <translation>ファイル</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="67"/>
         <source>Blur</source>
-        <translation type="unfinished">ぼかし</translation>
+        <translation>ぼかし</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="68"/>
         <source>Opacity</source>
-        <translation type="unfinished">不透明度</translation>
+        <translation>不透明度</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="69"/>
         <source>Fade length</source>
-        <translation type="unfinished">フェードの長さ</translation>
+        <translation>フェードの長さ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="76"/>
         <source>Choose Background Image</source>
-        <translation type="unfinished">背景画像の選択</translation>
+        <translation>背景画像の選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="77"/>
         <source>Images (*.png *.jpg *.jpeg *.webp *.bmp);;All files (*)</source>
-        <translation type="unfinished">画像 (*.png *.jpg *.jpeg *.webp *.bmp);;すべてのファイル (*)</translation>
+        <translation>画像 (*.png *.jpg *.jpeg *.webp *.bmp);;すべてのファイル (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="129"/>
         <source>Choose a custom background image file</source>
-        <translation type="unfinished">カスタム背景画像ファイルを選択</translation>
+        <translation>カスタム背景画像ファイルを選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="132"/>
         <source>No background image</source>
-        <translation type="unfinished">背景画像なし</translation>
+        <translation>背景画像なし</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="133"/>
         <source>Track artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックのアートワーク</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="134"/>
         <source>Use artwork from the preferred track as the background</source>
-        <translation type="unfinished"></translation>
+        <translation>優先トラックのアートワークを背景として使用します</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="135"/>
         <source>Custom image</source>
-        <translation type="unfinished">カスタム画像</translation>
+        <translation>カスタム画像</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="136"/>
         <source>Use the selected image file as the background</source>
-        <translation type="unfinished"></translation>
+        <translation>選択した画像ファイルを背景として使用します</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="138"/>
         <source>Front</source>
-        <translation type="unfinished">フロント</translation>
+        <translation>フロント</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="139"/>
         <source>Use the front cover for current track artwork</source>
-        <translation type="unfinished">現在のトラックのアートワークとしてフロントカバーを使用</translation>
+        <translation>現在のトラックのアートワークとしてフロントカバーを使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="140"/>
         <source>Back</source>
-        <translation type="unfinished">戻る</translation>
+        <translation>戻る</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="141"/>
         <source>Use the back cover for current track artwork</source>
-        <translation type="unfinished">現在のトラックのアートワークとしてバックカバーを使用</translation>
+        <translation>現在のトラックのアートワークとしてバックカバーを使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="142"/>
         <source>Artist</source>
-        <translation type="unfinished">アーティスト</translation>
+        <translation>アーティスト</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="143"/>
         <source>Use the artist picture for current track artwork</source>
-        <translation type="unfinished">現在のトラックのアートワークとしてアーティスト画像を使用</translation>
+        <translation>現在のトラックのアートワークとしてアーティスト画像を使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="145"/>
         <source>Playing track</source>
-        <translation type="unfinished">再生中のトラック</translation>
+        <translation>再生中のトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="147"/>
         <source>Selected track</source>
-        <translation type="unfinished">選択済みトラック</translation>
+        <translation>選択済みトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="149"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished">再生中 (停止時は選択中のトラック)</translation>
+        <translation>再生中 (停止時は選択中のトラック)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="151"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished">再生中 (起動時は空欄)</translation>
+        <translation>再生中 (起動時は空欄)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="153"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished">再生中 (停止時は空欄)</translation>
+        <translation>再生中 (停止時は空欄)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="156"/>
         <source>Scaled and cropped</source>
-        <translation type="unfinished">拡大縮小してトリミング</translation>
+        <translation>拡大縮小してトリミング</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="158"/>
         <source>Fill the panel area while preserving proportions; edges may be cropped</source>
-        <translation type="unfinished"></translation>
+        <translation>縦横比を保ちながらパネル領域を埋めます。端がトリミングされる場合があります</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="159"/>
         <source>Scaled</source>
-        <translation type="unfinished">拡大縮小</translation>
+        <translation>拡大縮小</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="160"/>
         <source>Stretch the image to fill the panel area; proportions may change</source>
-        <translation type="unfinished"></translation>
+        <translation>画像を引き伸ばしてパネル領域を埋めます。縦横比が変わる場合があります</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="161"/>
         <source>Scaled, keep proportions</source>
-        <translation type="unfinished">縦横比を保って拡大縮小</translation>
+        <translation>縦横比を保って拡大縮小</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="163"/>
         <source>Fit the whole image inside the panel area without cropping</source>
-        <translation type="unfinished"></translation>
+        <translation>画像全体をトリミングせずにパネル領域内に収めます</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="164"/>
         <source>Original size</source>
-        <translation type="unfinished">元のサイズ</translation>
+        <translation>元のサイズ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="165"/>
         <source>Draw the image at its original size, optionally limited by maximum size</source>
-        <translation type="unfinished">画像を元のサイズで描画。必要に応じて最大サイズで制限できます</translation>
+        <translation>画像を元のサイズで描画。必要に応じて最大サイズで制限できます</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="167"/>
         <source>Top left</source>
-        <translation type="unfinished">左上</translation>
+        <translation>左上</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="168"/>
         <source>Top</source>
-        <translation type="unfinished">上</translation>
+        <translation>上</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="169"/>
         <source>Top right</source>
-        <translation type="unfinished">右上</translation>
+        <translation>右上</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="170"/>
         <source>Left</source>
-        <translation type="unfinished">左</translation>
+        <translation>左</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="171"/>
         <source>Middle</source>
-        <translation type="unfinished">中央</translation>
+        <translation>中央</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="172"/>
         <source>Right</source>
-        <translation type="unfinished">右</translation>
+        <translation>右</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="173"/>
         <source>Bottom left</source>
-        <translation type="unfinished">左下</translation>
+        <translation>左下</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="174"/>
         <source>Bottom</source>
-        <translation type="unfinished">下</translation>
+        <translation>下</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="175"/>
         <source>Bottom right</source>
-        <translation type="unfinished">右下</translation>
+        <translation>右下</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="179"/>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="187"/>
         <source>Disabled</source>
-        <translation type="unfinished">無効</translation>
+        <translation>無効</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="189"/>
         <source>Path to the custom background image</source>
-        <translation type="unfinished">カスタム背景画像のパス</translation>
+        <translation>カスタム背景画像のパス</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="190"/>
         <source>Select which image source to use for the background</source>
-        <translation type="unfinished"></translation>
+        <translation>背景に使用する画像ソースを選択します</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="191"/>
         <source>Select which artwork type to use for current track artwork</source>
-        <translation type="unfinished">現在のトラックのアートワークに使用するアートワークの種類を選択</translation>
+        <translation>現在のトラックのアートワークに使用するアートワークの種類を選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="192"/>
         <source>Select which track supplies the background artwork</source>
-        <translation type="unfinished">背景カバーに使用するトラックを選択</translation>
+        <translation>背景カバーに使用するトラックを選択</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="193"/>
         <source>Controls how the background image is scaled to the panel area</source>
-        <translation type="unfinished"></translation>
+        <translation>背景画像をパネル領域にどのように拡大縮小するかを制御します</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="194"/>
         <source>Alignment for original-size background images</source>
-        <translation type="unfinished">元のサイズの背景画像の配置</translation>
+        <translation>元のサイズの背景画像の配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="195"/>
         <source>Maximum width or height for original-size background images</source>
-        <translation type="unfinished">元のサイズの背景画像の最大幅または最大高さ</translation>
+        <translation>元のサイズの背景画像の最大幅または最大高さ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="196"/>
         <source>Applies blur to the background image</source>
-        <translation type="unfinished">背景画像にぼかしを適用</translation>
+        <translation>背景画像にぼかしを適用</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="197"/>
         <source>Controls how strongly the background image is shown</source>
-        <translation type="unfinished">背景画像の表示の強さを制御</translation>
+        <translation>背景画像の表示の強さを制御</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="198"/>
         <source>Duration for fading between background images; set to 0 to disable</source>
-        <translation type="unfinished">背景画像間のフェードにかかる時間です。無効にするには 0を設定してください</translation>
+        <translation>背景画像間のフェードにかかる時間です。無効にするには 0を設定してください</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="203"/>
         <source>Image source</source>
-        <translation type="unfinished">画像ソース</translation>
+        <translation>画像ソース</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="204"/>
         <source>Source</source>
-        <translation type="unfinished">ソース</translation>
+        <translation>ソース</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="212"/>
         <source>Layout</source>
-        <translation type="unfinished">レイアウト</translation>
+        <translation>レイアウト</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="213"/>
         <source>Scale mode</source>
-        <translation type="unfinished">拡大縮小モード</translation>
+        <translation>拡大縮小モード</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="215"/>
         <source>Alignment</source>
-        <translation type="unfinished">配置</translation>
+        <translation>配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="217"/>
         <source>Maximum size</source>
-        <translation type="unfinished">最大サイズ</translation>
+        <translation>最大サイズ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="219"/>
         <source>Effects</source>
-        <translation type="unfinished">エフェクト</translation>
+        <translation>エフェクト</translation>
     </message>
 </context>
 <context>
@@ -6124,7 +6126,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="466"/>
         <source>Save…</source>
-        <translation type="unfinished"></translation>
+        <translation>保存…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="719"/>
@@ -6185,12 +6187,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1240"/>
         <source>Save Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットを保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1240"/>
         <source>Preset name:</source>
-        <translation type="unfinished">プリセット名 :</translation>
+        <translation>プリセット名 :</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1258"/>
@@ -6847,53 +6849,53 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="125"/>
         <source>Bass boost</source>
-        <translation type="unfinished"></translation>
+        <translation>低音ブースト</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="127"/>
         <source>Bass reduction</source>
-        <translation type="unfinished"></translation>
+        <translation>低音カット</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="129"/>
         <source>Dance</source>
-        <translation type="unfinished">ダンス</translation>
+        <translation>ダンス</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="131"/>
         <source>Pop</source>
-        <translation type="unfinished">ポップ</translation>
+        <translation>ポップ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="133"/>
         <source>Rock</source>
-        <translation type="unfinished">ロック</translation>
+        <translation>ロック</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="135"/>
         <source>Treble boost</source>
-        <translation type="unfinished"></translation>
+        <translation>高音ブースト</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="137"/>
         <source>Treble reduction</source>
-        <translation type="unfinished"></translation>
+        <translation>高音カット</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="139"/>
         <source>Vocal presence</source>
-        <translation type="unfinished"></translation>
+        <translation>ボーカルの強調</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="92"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="95"/>
         <source>Restore Built-in Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>組み込みプリセットを復元</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="96"/>
         <source>Restore the original built-in presets? This will replace any changes to them and restore deleted built-in presets. User-created presets will be kept.</source>
-        <translation type="unfinished"></translation>
+        <translation>元の組み込みプリセットを復元しますか? 組み込みプリセットへの変更は元に戻り、削除された組み込みプリセットも復元されます。ユーザーが作成したプリセットは保持されます。</translation>
     </message>
 </context>
 <context>
@@ -6976,7 +6978,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="816"/>
         <source>Save…</source>
-        <translation type="unfinished"></translation>
+        <translation>保存…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="987"/>
@@ -6991,12 +6993,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1000"/>
         <source>Save Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットを保存</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1000"/>
         <source>Preset name:</source>
-        <translation type="unfinished">プリセット名 :</translation>
+        <translation>プリセット名 :</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1012"/>
@@ -7547,7 +7549,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="201"/>
         <source>&amp;Save…</source>
-        <translation type="unfinished"></translation>
+        <translation>保存(&amp;S)…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="524"/>
@@ -7680,12 +7682,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="377"/>
         <source>Save Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットを保存</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="377"/>
         <source>Preset name:</source>
-        <translation type="unfinished">プリセット名 :</translation>
+        <translation>プリセット名 :</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="392"/>
@@ -8468,7 +8470,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="165"/>
         <source>Enabled</source>
-        <translation type="unfinished">有効化</translation>
+        <translation>有効化</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="167"/>
@@ -12033,7 +12035,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="167"/>
         <source>Enabled</source>
-        <translation type="unfinished">有効化</translation>
+        <translation>有効化</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="169"/>
@@ -12203,7 +12205,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="107"/>
         <source>Word wrap</source>
-        <translation type="unfinished">折り返し</translation>
+        <translation>折り返し</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="111"/>
@@ -12228,7 +12230,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="125"/>
         <source>Trace</source>
-        <translation type="unfinished"></translation>
+        <translation>トレース</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="126"/>
@@ -12513,7 +12515,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="256"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="141"/>
@@ -12678,12 +12680,12 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplaybackservice.cpp" line="50"/>
         <source>Lyrics</source>
-        <translation type="unfinished">歌詞</translation>
+        <translation>歌詞</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplaybackservice.cpp" line="51"/>
         <source>Current synchronised lyrics line for the playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>再生中のトラックの現在の同期歌詞行</translation>
     </message>
 </context>
 <context>
@@ -13003,7 +13005,7 @@ Remove original: deletes the previous file or tag after saving.</source>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="69"/>
         <source>Skip automatic searches if</source>
-        <translation type="unfinished"></translation>
+        <translation>次の場合に自動検索をスキップ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="74"/>
@@ -13014,7 +13016,8 @@ Remove original: deletes the previous file or tag after saving.</source>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="76"/>
         <source>Return any text to skip automatic searches, or nothing to allow them.
 Local lyrics will still be loaded.</source>
-        <translation type="unfinished"></translation>
+        <translation>何らかのテキストを返すと自動検索をスキップし、何も返さないと許可します。
+ローカル歌詞は引き続き読み込まれます。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/settings/lyricssearchingpage.cpp" line="79"/>
@@ -14779,27 +14782,27 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="171"/>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="182"/>
         <source>A–B repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>A–B リピート</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="174"/>
         <source>Set A</source>
-        <translation type="unfinished"></translation>
+        <translation>A を設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="175"/>
         <source>Set B</source>
-        <translation type="unfinished"></translation>
+        <translation>B を設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="176"/>
         <source>Enable A–B repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>A–B リピートを有効化</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="177"/>
         <source>Clear A–B repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>A–B リピートをクリア</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="224"/>
@@ -14966,17 +14969,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="102"/>
         <source>Seek to A after adjusting the A marker</source>
-        <translation type="unfinished"></translation>
+        <translation>A マーカー調整後に A へシーク</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="104"/>
         <source>A colour</source>
-        <translation type="unfinished"></translation>
+        <translation>A の色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="105"/>
         <source>B colour</source>
-        <translation type="unfinished"></translation>
+        <translation>B の色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="106"/>
@@ -15041,32 +15044,32 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="180"/>
         <source>Override the default colour for the A marker</source>
-        <translation type="unfinished"></translation>
+        <translation>A マーカーの既定の色を上書きします</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="181"/>
         <source>Override the default colour for the B marker</source>
-        <translation type="unfinished"></translation>
+        <translation>B マーカーの既定の色を上書きします</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="184"/>
         <source>A–B repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>A–B リピート</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="187"/>
         <source>A–B repeat settings for all seekbars</source>
-        <translation type="unfinished"></translation>
+        <translation>すべてのシークバーに対する A–B リピート設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="188"/>
         <source>Seek on release when dragging A while A–B repeat is enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>A–B リピート有効時に A をドラッグした際、離したときにシークします</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="192"/>
         <source>Line width</source>
-        <translation type="unfinished"></translation>
+        <translation>線の幅</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="198"/>
@@ -15421,7 +15424,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="360"/>
         <source>Apply preset</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットを適用</translation>
     </message>
 </context>
 <context>
@@ -15664,7 +15667,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="41"/>
         <source>Keep subheaders in view</source>
-        <translation type="unfinished"></translation>
+        <translation>サブヘッダーを表示したままにする</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="42"/>
@@ -15749,12 +15752,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="141"/>
         <source>General</source>
-        <translation type="unfinished">全般</translation>
+        <translation>全般</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="142"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="130"/>
@@ -16172,7 +16175,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="526"/>
         <source>Apply preset</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットを適用</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/manager/playlistmanagerwidget.cpp" line="543"/>
@@ -16290,12 +16293,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="530"/>
         <source>Apply preset to playlists in group</source>
-        <translation type="unfinished"></translation>
+        <translation>グループ内のプレイリストにプリセットを適用</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="530"/>
         <source>Apply preset</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットを適用</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="563"/>
@@ -16444,12 +16447,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="276"/>
         <source>Include column layout</source>
-        <translation type="unfinished"></translation>
+        <translation>列レイアウトを含める</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="278"/>
         <source>Single-column mode</source>
-        <translation type="unfinished">単一列モード</translation>
+        <translation>単一列モード</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="307"/>
@@ -16491,7 +16494,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="371"/>
         <source>The display script only applies in single-column mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>表示スクリプトは単一列モードでのみ適用されます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="373"/>
@@ -16506,23 +16509,23 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="389"/>
         <source>When disabled, applying this preset keeps the existing column layout.</source>
-        <translation type="unfinished"></translation>
+        <translation>無効にすると、このプリセットを適用しても既存の列レイアウトが保持されます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="392"/>
         <source>Drag column headers to reorder or resize them. Right-click a header for visibility and alignment options.</source>
-        <translation type="unfinished"></translation>
+        <translation>列ヘッダーをドラッグして並べ替えやサイズ変更を行います。ヘッダーを右クリックすると、表示と配置のオプションが開きます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="406"/>
         <source>Use current playlist layout</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のプレイリストレイアウトを使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="408"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="425"/>
         <source>Columns</source>
-        <translation type="unfinished">列</translation>
+        <translation>列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="494"/>
@@ -16542,14 +16545,14 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message numerus="yes">
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="585"/>
         <source>Used by %Ln playlist(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 個のプレイリストで使用中</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="643"/>
         <source>Reset columns to default</source>
-        <translation type="unfinished">列を既定にリセット</translation>
+        <translation>列を既定にリセット</translation>
     </message>
 </context>
 <context>
@@ -16712,7 +16715,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="523"/>
         <source>Apply preset</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットを適用</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="540"/>
@@ -16946,89 +16949,89 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1373"/>
         <source>%1 (modified)</source>
         <extracomment>%1 is the name of a playlist preset</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (変更済み)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1376"/>
         <source>Apply this preset and its saved column layout</source>
-        <translation type="unfinished"></translation>
+        <translation>このプリセットと保存された列レイアウトを適用します</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1377"/>
         <source>Apply this preset and keep the current columns</source>
-        <translation type="unfinished"></translation>
+        <translation>このプリセットを適用し、現在の列を保持します</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1390"/>
         <source>Save as new preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいプリセットとして保存…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1391"/>
         <source>Create a new preset from the current view, with an optional column layout</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のビューから新しいプリセットを作成します (列レイアウトは任意)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1393"/>
         <source>Update ‘%1’</source>
-        <translation type="unfinished"></translation>
+        <translation>「%1」を更新</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1393"/>
         <source>Update preset</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットを更新</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1396"/>
         <source>Save the current columns in this preset and update playlists following its column layout</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の列をこのプリセットに保存し、その列レイアウトに従っているプレイリストを更新します</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1400"/>
         <source>Update ‘%1’ (%Ln playlist(s))</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>「%1」を更新 (%Ln 個のプレイリスト)</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1409"/>
         <source>Revert to saved preset</source>
-        <translation type="unfinished"></translation>
+        <translation>保存済みプリセットに戻す</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1411"/>
         <source>Discard local column changes and restore the assigned preset’s saved layout</source>
-        <translation type="unfinished"></translation>
+        <translation>ローカルの列変更を破棄し、割り当てられたプリセットの保存済みレイアウトを復元します</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1419"/>
         <source>Use current layout as default</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のレイアウトを既定として使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1421"/>
         <source>Use the current preset and columns for playlists without their own layout</source>
-        <translation type="unfinished"></translation>
+        <translation>独自のレイアウトを持たないプレイリストに、現在のプリセットと列を使用します</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1429"/>
         <source>Use default playlist layout</source>
-        <translation type="unfinished"></translation>
+        <translation>既定のプレイリストレイアウトを使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1431"/>
         <source>Clear this playlist’s preset assignment and local columns, then use the shared default</source>
-        <translation type="unfinished"></translation>
+        <translation>このプレイリストのプリセット割り当てとローカルの列をクリアし、共有の既定を使用します</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1445"/>
         <source>Manage presets…</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットを管理…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1446"/>
         <source>Open playlist preset settings to create, edit or remove presets</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストプリセット設定を開き、プリセットの作成・編集・削除を行います</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1458"/>
@@ -17038,17 +17041,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1471"/>
         <source>Save Playlist Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストプリセットを保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1475"/>
         <source>Include column layout</source>
-        <translation type="unfinished"></translation>
+        <translation>列レイアウトを含める</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1481"/>
         <source>Name</source>
-        <translation type="unfinished">名前</translation>
+        <translation>名前</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="868"/>
@@ -18206,7 +18209,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="125"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="76"/>
@@ -22146,12 +22149,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="52"/>
         <source>System: %1</source>
         <extracomment>%1 is the key combination of a shortcut</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>システム: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="53"/>
         <source>None assigned</source>
-        <translation type="unfinished"></translation>
+        <translation>未割り当て</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="72"/>
@@ -22224,7 +22227,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="178"/>
         <source>Enable system shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>システムショートカットを有効化</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="179"/>
@@ -22244,7 +22247,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="218"/>
         <source>Key combinations are managed in your system settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>キーの組み合わせはシステム設定で管理されます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="346"/>
@@ -22358,7 +22361,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="163"/>
         <source>Enabled</source>
-        <translation type="unfinished">有効化</translation>
+        <translation>有効化</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="165"/>
@@ -25133,32 +25136,32 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="538"/>
         <source>Curve</source>
-        <translation type="unfinished">カーブ</translation>
+        <translation>カーブ</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="549"/>
         <source>Logarithmic dB</source>
-        <translation type="unfinished"></translation>
+        <translation>対数 dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="550"/>
         <source>Linear dB</source>
-        <translation type="unfinished"></translation>
+        <translation>リニア dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="551"/>
         <source>Linear amplitude</source>
-        <translation type="unfinished"></translation>
+        <translation>リニア振幅</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="552"/>
         <source>Quadratic</source>
-        <translation type="unfinished"></translation>
+        <translation>2次</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="553"/>
         <source>Cubic</source>
-        <translation type="unfinished">3次</translation>
+        <translation>3次</translation>
     </message>
 </context>
 <context>
@@ -25922,7 +25925,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="66"/>
         <source>Filter…</source>
-        <translation type="unfinished">フィルター…</translation>
+        <translation>フィルター…</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="71"/>
@@ -26179,29 +26182,31 @@ Ctrl キーを押しながらでウィジェットを置き換えます。</tran
     <message>
         <location filename="../../src/gui/widgets.cpp" line="570"/>
         <source>Presets</source>
-        <translation type="unfinished">プリセット</translation>
+        <translation>プリセット</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="571"/>
         <source>Preset combo box mode</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットコンボボックスのモード</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="572"/>
         <source>‘Editable’ allows preset names to be entered directly.
 ‘Selection only’ opens a naming dialog when saving.
 Applies when preset controls are next opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>「編集可能」ではプリセット名を直接入力できます。
+「選択のみ」では保存時に名前入力ダイアログが開きます。
+プリセットコントロールを次に開いたときに適用されます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="575"/>
         <source>Editable</source>
-        <translation type="unfinished"></translation>
+        <translation>編集可能</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="576"/>
         <source>Selection only</source>
-        <translation type="unfinished"></translation>
+        <translation>選択のみ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="593"/>
@@ -26407,7 +26412,7 @@ Set to 0 to choose automatically from the remote buffer length.</source>
         <location filename="../../src/gui/widgets.cpp" line="813"/>
         <location filename="../../src/gui/widgets.cpp" line="823"/>
         <source>Library</source>
-        <translation type="unfinished">ライブラリ</translation>
+        <translation>ライブラリ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="777"/>
@@ -26415,58 +26420,64 @@ Set to 0 to choose automatically from the remote buffer length.</source>
         <location filename="../../src/gui/widgets.cpp" line="813"/>
         <location filename="../../src/gui/widgets.cpp" line="823"/>
         <source>Metadata Compression</source>
-        <translation type="unfinished"></translation>
+        <translation>メタデータの圧縮</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="778"/>
         <source>Minimum extra tag size</source>
-        <translation type="unfinished"></translation>
+        <translation>追加タグの最小サイズ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="779"/>
         <source>Compress extra tags whose combined UTF-16 value size reaches this threshold.
 Set to 0 to disable compression. Changes take effect after restarting fooyin.</source>
-        <translation type="unfinished"></translation>
+        <translation>UTF-16 値の合計サイズがこのしきい値に達した追加タグを圧縮します。
+0 に設定すると圧縮が無効になります。変更は fooyin の再起動後に反映されます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="784"/>
         <source> bytes</source>
-        <translation type="unfinished"></translation>
+        <translation> バイト</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="792"/>
         <source>Compression level</source>
-        <translation type="unfinished">圧縮レベル</translation>
+        <translation>圧縮レベル</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="793"/>
         <source>Higher levels may reduce memory use at the cost of slower metadata loading and updates.
 Changes take effect after restarting fooyin.</source>
-        <translation type="unfinished"></translation>
+        <translation>レベルを上げるとメモリ使用量を削減できますが、メタデータの読み込みと更新が遅くなります。
+変更は fooyin の再起動後に反映されます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="814"/>
         <source>Extra tags to compress below the threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>しきい値未満でも圧縮する追加タグ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="815"/>
         <source>Semicolon-separated extra tag names that bypass the size threshold when compression is enabled.
 Values are compressed only when this saves space.
 Changes take effect after restarting fooyin.</source>
-        <translation type="unfinished"></translation>
+        <translation>圧縮が有効な場合にサイズしきい値をバイパスする追加タグ名をセミコロン区切りで指定します。
+値は容量を削減できる場合にのみ圧縮されます。
+変更は fooyin の再起動後に反映されます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="824"/>
         <source>Extra tags to keep uncompressed</source>
-        <translation type="unfinished"></translation>
+        <translation>非圧縮のまま保持する追加タグ</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="825"/>
         <source>Semicolon-separated extra tag names to keep uncompressed.
 This takes precedence over the size threshold and other field overrides.
 Changes take effect after restarting fooyin.</source>
-        <translation type="unfinished"></translation>
+        <translation>非圧縮のまま保持する追加タグ名をセミコロン区切りで指定します。
+これはサイズしきい値や他のフィールド上書きよりも優先されます。
+変更は fooyin の再起動後に反映されます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="833"/>
@@ -27073,43 +27084,43 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="672"/>
         <source>Expected ‘WITH’ after ‘%1’</source>
-        <translation type="unfinished"></translation>
+        <translation>「%1」の後に「WITH」が必要です</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="715"/>
         <source>Expected ‘(’ after ‘%1’</source>
-        <translation type="unfinished"></translation>
+        <translation>「%1」の後に「(」が必要です</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="725"/>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="731"/>
         <source>Expected a value in ‘%1’ list</source>
-        <translation type="unfinished"></translation>
+        <translation>「%1」リストに値が必要です</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="741"/>
         <source>Expected ‘)’ at end of ‘%1’ list</source>
-        <translation type="unfinished"></translation>
+        <translation>「%1」リストの末尾に「)」が必要です</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="879"/>
         <source>Expected a date in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>「BETWEEN」範囲に日付が必要です</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="886"/>
         <source>Invalid date in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>「BETWEEN」範囲の日付が無効です</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="893"/>
         <source>Expected ‘AND’ between dates in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>「BETWEEN」範囲の日付の間に「AND」が必要です</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="902"/>
         <source>The start date must not be after the end date in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>「BETWEEN」範囲では開始日を終了日より後にできません</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="928"/>
