@@ -1263,7 +1263,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="761"/>
         <source>Removes leading articles</source>
-        <translation>Odstraní úvodní člen</translation>
+        <translation>Odstraní z řetězce úvodní členy</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="764"/>
@@ -5740,12 +5740,12 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="211"/>
         <source>Replace playback q&amp;ueue</source>
-        <translation>Nahradit front&amp;u</translation>
+        <translation>Nahradit front&amp;u přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="280"/>
         <source>Start playback of the selected files</source>
-        <translation>Spustit přehrávání vybraných skladeb</translation>
+        <translation>Spustit přehrávání vybraných souborů</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="251"/>
