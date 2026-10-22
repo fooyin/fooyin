@@ -3145,49 +3145,49 @@ Vymaž pro zakázání řazení.</translation>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="212"/>
         <source>is not on or after</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>není dne nebo později</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="214"/>
         <source>is on or after</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>je dne nebo později</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="218"/>
         <source>is not in the last</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>není v posledních</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="220"/>
         <source>is in the last</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>je v posledních</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="223"/>
         <source>is not on</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>není dne</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="225"/>
         <source>is on</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>je dne</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="228"/>
         <source>is not between</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>není mezi</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="230"/>
         <source>is between</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>je mezi</translation>
     </message>
 </context>
 <context>
@@ -3195,172 +3195,172 @@ Vymaž pro zakázání řazení.</translation>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="58"/>
         <source>Artwork type</source>
-        <translation type="unfinished">Typ přebalu alba</translation>
+        <translation>Typ přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="60"/>
         <source>Preferred track</source>
-        <translation type="unfinished">Upřednostňovaná skladba</translation>
+        <translation>Upřednostňovaná skladba</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="62"/>
         <source>File</source>
-        <translation type="unfinished">Soubor</translation>
+        <translation>Soubor</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="67"/>
         <source>Blur</source>
-        <translation type="unfinished">Rozostření</translation>
+        <translation>Rozostření</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="68"/>
         <source>Opacity</source>
-        <translation type="unfinished">Průhlednost</translation>
+        <translation>Průhlednost</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="69"/>
         <source>Fade length</source>
-        <translation type="unfinished"></translation>
+        <translation>Délka prolínání</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="76"/>
         <source>Choose Background Image</source>
-        <translation type="unfinished">Vyber obrázek na pozadí</translation>
+        <translation>Vyber obrázek na pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="77"/>
         <source>Images (*.png *.jpg *.jpeg *.webp *.bmp);;All files (*)</source>
-        <translation type="unfinished">Obrázky (*.png *.jpg *.jpeg *.webp *.bmp);;Všechny soubory (*)</translation>
+        <translation>Obrázky (*.png *.jpg *.jpeg *.webp *.bmp);;Všechny soubory (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="129"/>
         <source>Choose a custom background image file</source>
-        <translation type="unfinished">Vyber vlastní obrázek pozadí</translation>
+        <translation>Vyber vlastní obrázek na pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="132"/>
         <source>No background image</source>
-        <translation type="unfinished">Bez obrázku pozadí</translation>
+        <translation>Bez obrázku na pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="133"/>
         <source>Track artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Přebal alba skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="134"/>
         <source>Use artwork from the preferred track as the background</source>
-        <translation type="unfinished"></translation>
+        <translation>Jako pozadí použít přebal alba z upřednostňované skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="135"/>
         <source>Custom image</source>
-        <translation type="unfinished">Vlastní obrázek</translation>
+        <translation>Vlastní obrázek</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="136"/>
         <source>Use the selected image file as the background</source>
-        <translation type="unfinished"></translation>
+        <translation>Jako pozadí použít vybraný obrázek</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="138"/>
         <source>Front</source>
-        <translation type="unfinished">Přední</translation>
+        <translation>Přední</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="139"/>
         <source>Use the front cover for current track artwork</source>
-        <translation type="unfinished">Použít přední přebal alba</translation>
+        <translation>Použít přední přebal alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="140"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadní</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="141"/>
         <source>Use the back cover for current track artwork</source>
-        <translation type="unfinished">Použít zadní přebal alba</translation>
+        <translation>Použít zadní přebal alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="142"/>
         <source>Artist</source>
-        <translation type="unfinished">Umělec</translation>
+        <translation>Umělec</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="143"/>
         <source>Use the artist picture for current track artwork</source>
-        <translation type="unfinished">Použít obrázek umělce</translation>
+        <translation>Použít obrázek umělce</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="145"/>
         <source>Playing track</source>
-        <translation type="unfinished">Přehrávaná skladba</translation>
+        <translation>Přehrávaná skladba</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="147"/>
         <source>Selected track</source>
-        <translation type="unfinished">Vybraná skladba</translation>
+        <translation>Vybraná skladba</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="149"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished">Přehrávaná (po zastavení vybraná)</translation>
+        <translation>Přehrávaná (po zastavení vybraná)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="151"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished">Přehrávaná (po spuštění žádná)</translation>
+        <translation>Přehrávaná (po spuštění žádná)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="153"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished">Přehrávaná (po zastavení žádná)</translation>
+        <translation>Přehrávaná (po zastavení žádná)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="156"/>
         <source>Scaled and cropped</source>
-        <translation type="unfinished">Přizpůsobit a oříznout</translation>
+        <translation>Přizpůsobit a oříznout</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="158"/>
         <source>Fill the panel area while preserving proportions; edges may be cropped</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyplnit oblast panelu při zachování poměru stran; okraje mohou být ořezány</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="159"/>
         <source>Scaled</source>
-        <translation type="unfinished">Přizpůsobit</translation>
+        <translation>Přizpůsobit</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="160"/>
         <source>Stretch the image to fill the panel area; proportions may change</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyplnit oblast panelu; poměr stran může být změněn</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="161"/>
         <source>Scaled, keep proportions</source>
-        <translation type="unfinished">Přizpůsobit, zachovat poměr</translation>
+        <translation>Přizpůsobit, zachovat poměr</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="163"/>
         <source>Fit the whole image inside the panel area without cropping</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyplnit oblast panelu při zachování poměru stran; bez ořezání</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="164"/>
         <source>Original size</source>
-        <translation type="unfinished">Původní velikost</translation>
+        <translation>Původní velikost</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="165"/>
         <source>Draw the image at its original size, optionally limited by maximum size</source>
-        <translation type="unfinished">Zobrazit obrázek v jeho původní velikosti, volitelně omezené maximální velikostí</translation>
+        <translation>Zobrazit obrázek v jeho původní velikosti, volitelně omezené maximální velikostí</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="167"/>
         <source>Top left</source>
-        <translation type="unfinished">Nahoře vlevo</translation>
+        <translation>Nahoře vlevo</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="168"/>
@@ -3411,7 +3411,7 @@ Vymaž pro zakázání řazení.</translation>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="189"/>
         <source>Path to the custom background image</source>
-        <translation type="unfinished">Cesta k vlastnímu obrázku na pozadí</translation>
+        <translation>Cesta k vlastnímu obrázku na pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="190"/>
@@ -3426,7 +3426,7 @@ Vymaž pro zakázání řazení.</translation>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="192"/>
         <source>Select which track supplies the background artwork</source>
-        <translation type="unfinished">Vyber která skladba poskytne obrázek na pozadí seznamu skladeb</translation>
+        <translation>Vyber která skladba poskytne obrázek na pozadí seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="193"/>
@@ -3436,27 +3436,27 @@ Vymaž pro zakázání řazení.</translation>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="194"/>
         <source>Alignment for original-size background images</source>
-        <translation type="unfinished">Zarovnání obrázku na pozadí zobrazeného v původní velikosti</translation>
+        <translation>Zarovnání obrázku na pozadí zobrazeného v původní velikosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="195"/>
         <source>Maximum width or height for original-size background images</source>
-        <translation type="unfinished">Maximální velikost obrázku na pozadí zobrazeného v původní velikosti</translation>
+        <translation>Maximální velikost obrázku na pozadí zobrazeného v původní velikosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="196"/>
         <source>Applies blur to the background image</source>
-        <translation type="unfinished">Míra rozostření obrázku na pozadí</translation>
+        <translation>Míra rozostření obrázku na pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="197"/>
         <source>Controls how strongly the background image is shown</source>
-        <translation type="unfinished">Úroveň průhlednosti obrázku na pozadí</translation>
+        <translation>Úroveň průhlednosti obrázku na pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="198"/>
         <source>Duration for fading between background images; set to 0 to disable</source>
-        <translation type="unfinished">Délka prolínání při změně zobrazeného obrázku na pozadí; pro zakázání prolínání nastavte 0</translation>
+        <translation>Délka prolínání při změně zobrazeného obrázku na pozadí; pro zakázání prolínání nastavte 0</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="203"/>
@@ -9707,7 +9707,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="230"/>
         <source>ToolTip (Foreground)</source>
-        <translation>Popis (pozadí)</translation>
+        <translation>Popis (popředí)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="231"/>
@@ -12618,7 +12618,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="256"/>
         <source>Background</source>
-        <translation type="unfinished">Pozadí</translation>
+        <translation>Pozadí</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="141"/>
@@ -15883,7 +15883,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="142"/>
         <source>Background</source>
-        <translation type="unfinished">Pozadí</translation>
+        <translation>Pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="130"/>
@@ -18353,7 +18353,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="125"/>
         <source>Background</source>
-        <translation type="unfinished">Pozadí</translation>
+        <translation>Pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="76"/>
