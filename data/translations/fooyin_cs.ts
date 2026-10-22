@@ -1992,7 +1992,7 @@
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="54"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="318"/>
         <source>Remove</source>
-        <translation>Odebrat</translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="75"/>
@@ -2674,7 +2674,7 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="95"/>
         <source>Remove group</source>
-        <translation>Odebrat skupinu</translation>
+        <translation>Odstranit skupinu</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="179"/>
@@ -5297,7 +5297,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="570"/>
         <source>Remove artwork</source>
-        <translation>Odstranit přebaly alb</translation>
+        <translation>Odstranit přebal alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="575"/>
@@ -6087,7 +6087,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="43"/>
         <source>Remove</source>
-        <translation>Odebrat</translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspdelegate.cpp" line="46"/>
@@ -6230,7 +6230,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1065"/>
         <source>Remove</source>
-        <translation>Odebrat</translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1083"/>
@@ -6505,7 +6505,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="523"/>
         <source>Remove spli&amp;t</source>
-        <translation>&amp;Odebrat rozdělení</translation>
+        <translation>&amp;Odstranit rozdělení</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="537"/>
@@ -6595,7 +6595,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="777"/>
         <source>&amp;Remove</source>
-        <translation>Odeb&amp;rat</translation>
+        <translation>Odst&amp;ranit</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="847"/>
@@ -7865,7 +7865,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="257"/>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="263"/>
         <source>Remove</source>
-        <translation>Odebrat</translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="259"/>
@@ -9174,7 +9174,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1104"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation>Odstranit všechny skladby vybraného seznamu skladeb</translation>
+        <translation>Odstranit všechny skladby z vybraného seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1107"/>
@@ -11354,7 +11354,7 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="62"/>
         <source>Remove non-library tracks not in any playlists and expired playback statistics</source>
-        <translation>Odebrat skladby, které nejsou v knihovnách ani v seznamech skladeb a zastaralou statistiku přehrávání</translation>
+        <translation>Odstranit skladby, které nejsou v knihovnách, ani v seznamech skladeb a zastaralou statistiku přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="66"/>
@@ -11369,12 +11369,12 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="71"/>
         <source>Remove &amp;unavailable tracks</source>
-        <translation>Odebrat nedost&amp;upné skladby</translation>
+        <translation>Odstranit nedost&amp;upné skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="72"/>
         <source>Remove unavailable tracks from the database and libraries</source>
-        <translation>Odebrat nedostupné skladby z databáze a knihoven</translation>
+        <translation>Odstranit nedostupné skladby z databáze a knihoven</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="76"/>
