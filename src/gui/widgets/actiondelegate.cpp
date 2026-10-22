@@ -24,12 +24,12 @@
 #include <QHelpEvent>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QStyleOptionToolButton>
 #include <QToolTip>
 
 constexpr auto ButtonSize    = 20;
 constexpr auto ButtonSpacing = 4;
 constexpr auto ButtonMargin  = 4;
-constexpr auto ButtonRadius  = 3;
 
 namespace {
 QRect buttonRect(const QStyleOptionViewItem& option, int position)
@@ -87,24 +87,32 @@ void ActionDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
 
     const bool isHoveredRow = (m_hoveredIndex.isValid() && m_hoveredIndex == index);
 
-    painter->setRenderHint(QPainter::Antialiasing);
-
-    const bool itemEnabled = (opt.state & QStyle::State_Enabled);
-    const QPalette::ColorRole itemRole
-        = (opt.state & QStyle::State_Selected) ? QPalette::HighlightedText : QPalette::Text;
-
     for(int i{0}; i < btnCount; ++i) {
-        const QRect rect     = buttonRect(opt, i);
         const bool isHovered = isHoveredRow && m_hoveredButton == i;
 
+        QStyleOptionToolButton buttonOpt;
+        buttonOpt.rect            = buttonRect(opt, i);
+        buttonOpt.direction       = opt.direction;
+        buttonOpt.palette         = opt.palette;
+        buttonOpt.font            = opt.font;
+        buttonOpt.fontMetrics     = opt.fontMetrics;
+        buttonOpt.text            = btns[i].text;
+        buttonOpt.toolButtonStyle = Qt::ToolButtonTextOnly;
+        buttonOpt.subControls     = QStyle::SC_ToolButton;
+        buttonOpt.state = (opt.state & (QStyle::State_Enabled | QStyle::State_Active)) | QStyle::State_AutoRaise;
         if(isHovered) {
-            painter->setPen(opt.palette.color(QPalette::ButtonText));
-            painter->setBrush(opt.palette.color(QPalette::Button));
-            painter->drawRoundedRect(rect, ButtonRadius, ButtonRadius);
+            buttonOpt.state |= QStyle::State_MouseOver | QStyle::State_Raised;
+            buttonOpt.activeSubControls = QStyle::SC_ToolButton;
+        }
+        if(opt.state & QStyle::State_Selected) {
+            // Flat tool buttons can use WindowText even when hovered
+            buttonOpt.palette.setBrush(QPalette::WindowText, opt.palette.brush(QPalette::HighlightedText));
+            if(!isHovered) {
+                buttonOpt.palette.setBrush(QPalette::ButtonText, opt.palette.brush(QPalette::HighlightedText));
+            }
         }
 
-        const auto textRole = isHovered ? QPalette::ButtonText : itemRole;
-        style->drawItemText(painter, rect, Qt::AlignCenter, opt.palette, itemEnabled, btns[i].text, textRole);
+        style->drawComplexControl(QStyle::CC_ToolButton, &buttonOpt, painter, opt.widget);
     }
 
     painter->restore();
