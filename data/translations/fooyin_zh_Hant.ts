@@ -595,49 +595,49 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="577"/>
         <source>fooyin version</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin 版本</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="589"/>
         <source>Playback queue mode: playlist or queue</source>
-        <translation type="unfinished"></translation>
+        <translation>播放佇列模式：播放清單或佇列</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="604"/>
         <source>One-based index of the evaluated playlist row</source>
-        <translation type="unfinished"></translation>
+        <translation>已經評定的播放清單欄列的單一索引</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="607"/>
         <source>Grouping depth of the evaluated playlist row</source>
-        <translation type="unfinished"></translation>
+        <translation>已經評定的播放清單欄列的深度群組</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="610"/>
         <source>Playback icon marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>播放圖示標記於所支援的檢視中</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="612"/>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="615"/>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="618"/>
         <source>Artwork</source>
-        <translation type="unfinished">圖面</translation>
+        <translation>圖面</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="613"/>
         <source>Front cover marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>正面封面標記於所支援的檢視中</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="616"/>
         <source>Back cover marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>背面封面標記於所支援的檢視中</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="619"/>
         <source>Artist picture marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>藝人圖像標記於所支援的檢視中</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="666"/>
@@ -712,12 +712,12 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="882"/>
         <source>Looks up a raw tag field. Multiple values are joined with ‘, ’ or selected by the optional zero-based index.</source>
-        <translation type="unfinished"></translation>
+        <translation>查尋原始標籤欄位。多重值會用 &apos;,&apos; 加以結合，或依照選用的零基索引來作選取。</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="886"/>
         <source>Looks up a raw tag field. Multiple values are joined with sep, using lastsep between the final two values when supplied.</source>
-        <translation type="unfinished"></translation>
+        <translation>查尋原始標籤欄位。多重值會用 &apos;sep&apos; 加以結合，在有提供的最後兩個值之間使用 lastsep。</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="586"/>
@@ -1564,38 +1564,38 @@
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="336"/>
         <source>A–B repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>A–B 重複</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="353"/>
         <source>%1Middle-click</source>
         <extracomment>%1 is a native modifier sequence, including its trailing separator e.g. Ctrl+Shift+</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1點按中鍵</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="361"/>
         <source>Set A here</source>
-        <translation type="unfinished"></translation>
+        <translation>設置 A 於此</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="361"/>
         <source>Set A</source>
-        <translation type="unfinished"></translation>
+        <translation>設置 A</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="361"/>
         <source>Middle-click</source>
-        <translation type="unfinished">點按中鍵</translation>
+        <translation>點按中鍵</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="370"/>
         <source>Set B here</source>
-        <translation type="unfinished"></translation>
+        <translation>設置 B 於此</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="370"/>
         <source>Set B</source>
-        <translation type="unfinished"></translation>
+        <translation>設置 B</translation>
     </message>
 </context>
 <context>
@@ -1725,12 +1725,12 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="109"/>
         <source>Front</source>
-        <translation type="unfinished">正面</translation>
+        <translation>正面</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="109"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>背面</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="142"/>
@@ -1740,7 +1740,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="223"/>
         <source>No artwork sources enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>無啟用圖面來源</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="235"/>
@@ -2311,13 +2311,13 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="74"/>
         <source>Keep playlist sorted</source>
-        <translation type="unfinished"></translation>
+        <translation>保持播放清單排序</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="76"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="87"/>
         <source>&amp;Save…</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存(&amp;S)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="78"/>
@@ -2327,7 +2327,7 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="79"/>
         <source>&amp;Format</source>
-        <translation type="unfinished"></translation>
+        <translation>格式(&amp;F)</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="81"/>
@@ -2342,98 +2342,99 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="94"/>
         <source>Presets</source>
-        <translation type="unfinished">預設集</translation>
+        <translation>預設集</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="105"/>
         <source>When enabled, the autoplaylist is fully reordered by its sort pattern whenever it regenerates.
 When disabled, existing track order is preserved and only newly added matching tracks are sorted and then appended.</source>
-        <translation type="unfinished"></translation>
+        <translation>在啟用時，自動播放清單會依照其排序模式在重新生成時完全重新排序。
+在停用時，會保留現有曲目順序，且僅對最近新增符合的曲目進行排序，然後附加上去。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="110"/>
         <source>Name:</source>
-        <translation type="unfinished">名稱：</translation>
+        <translation>名稱：</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="127"/>
         <source>Query:</source>
-        <translation type="unfinished"></translation>
+        <translation>查詢：</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="128"/>
         <source>Sort:</source>
-        <translation type="unfinished"></translation>
+        <translation>排序：</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="130"/>
         <source>Format the query with line breaks and indentation.</source>
-        <translation type="unfinished"></translation>
+        <translation>用行列中斷和縮排格式進行格式化查詢。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="133"/>
         <source>Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>規則</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="134"/>
         <source>Script</source>
-        <translation type="unfinished"></translation>
+        <translation>腳本</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="274"/>
         <source>This query uses expressions that are not supported by the rule editor.</source>
-        <translation type="unfinished"></translation>
+        <translation>此查詢使用運算式不是規則編輯器所支援的。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="311"/>
         <source>This query cannot be represented as rules. Continue editing it in Script mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>此查詢不可以規則形式表示。繼續進行編輯於腳本模式。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="336"/>
         <source>Save Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存預設集</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="336"/>
         <source>Preset name:</source>
-        <translation type="unfinished">預設集名稱：</translation>
+        <translation>預設集名稱：</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="352"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">預設集已經存在</translation>
+        <translation>預設集已經存在</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="353"/>
         <source>A preset named ‘%1’ already exists. Overwrite it?</source>
-        <translation type="unfinished">預設集名稱 &quot;%1&quot; 已經存在。覆蓋它嗎？</translation>
+        <translation>預設集名稱 &quot;%1&quot; 已經存在。覆蓋它嗎？</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="458"/>
         <source>Recently Played</source>
-        <translation type="unfinished"></translation>
+        <translation>最近已經播放的</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="461"/>
         <source>Loved</source>
-        <translation type="unfinished">喜愛的</translation>
+        <translation>喜愛的</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="462"/>
         <source>Highly Rated</source>
-        <translation type="unfinished"></translation>
+        <translation>高度評價</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="463"/>
         <source>Unplayed</source>
-        <translation type="unfinished">尚未播放</translation>
+        <translation>尚未播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="464"/>
         <source>Forgotten Favourites</source>
-        <translation type="unfinished"></translation>
+        <translation>被遺忘的最愛</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="456"/>
@@ -2456,29 +2457,29 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="42"/>
         <source>Metadata tag…</source>
-        <translation type="unfinished"></translation>
+        <translation>詮釋資料標籤…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="48"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="76"/>
         <source>Tag name</source>
-        <translation type="unfinished"></translation>
+        <translation>標籤名稱</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="49"/>
         <source>Choose a field or enter a tag name. Use ‘Metadata tag…’ to read a tag directly.</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇一個欄位或輸入標籤名稱。使用 &apos;詮釋資料標籤…&apos; 以直接讀取標籤。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="76"/>
         <source>Metadata tag</source>
-        <translation type="unfinished"></translation>
+        <translation>詮釋資料標籤</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="131"/>
         <source>%1 (tag)</source>
         <extracomment>%1 is a metadata tag name.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (標籤)</translation>
     </message>
 </context>
 <context>
@@ -2486,112 +2487,112 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="498"/>
         <source>Artist</source>
-        <translation type="unfinished">藝人</translation>
+        <translation>藝人</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="499"/>
         <source>Album artist</source>
-        <translation type="unfinished">專輯藝人</translation>
+        <translation>專輯藝人</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="500"/>
         <source>Album</source>
-        <translation type="unfinished">專輯</translation>
+        <translation>專輯</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="501"/>
         <source>Title</source>
-        <translation type="unfinished">標題</translation>
+        <translation>標題</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="502"/>
         <source>Genre</source>
-        <translation type="unfinished">曲風</translation>
+        <translation>曲風</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="503"/>
         <source>Composer</source>
-        <translation type="unfinished">作曲家</translation>
+        <translation>作曲家</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="504"/>
         <source>Performer</source>
-        <translation type="unfinished"></translation>
+        <translation>演出者</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="505"/>
         <source>Comment</source>
-        <translation type="unfinished">備註</translation>
+        <translation>備註</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="506"/>
         <source>Lyrics</source>
-        <translation type="unfinished">歌詞</translation>
+        <translation>歌詞</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="507"/>
         <source>Date</source>
-        <translation type="unfinished">日期</translation>
+        <translation>日期</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="508"/>
         <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation>年份</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="509"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>長度</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="510"/>
         <source>Rating</source>
-        <translation type="unfinished">評分</translation>
+        <translation>評分</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="511"/>
         <source>Loved</source>
-        <translation type="unfinished">喜愛的</translation>
+        <translation>喜愛的</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="512"/>
         <source>Playcount</source>
-        <translation type="unfinished">播放次數</translation>
+        <translation>播放次數</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="513"/>
         <source>Date added</source>
-        <translation type="unfinished"></translation>
+        <translation>日期已經新增</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="514"/>
         <source>First played</source>
-        <translation type="unfinished"></translation>
+        <translation>首先播放的</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="515"/>
         <source>Last played</source>
-        <translation type="unfinished"></translation>
+        <translation>上次播放的</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="516"/>
         <source>Codec</source>
-        <translation type="unfinished">編解碼器</translation>
+        <translation>編解碼器</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="517"/>
         <source>Folder path</source>
-        <translation type="unfinished"></translation>
+        <translation>資料夾路徑</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="518"/>
         <source>File path</source>
-        <translation type="unfinished"></translation>
+        <translation>檔案路徑</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="928"/>
         <source>Enter a query.</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入查詢。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="938"/>
@@ -13856,7 +13857,7 @@ Local lyrics will still be loaded.</source>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="82"/>
         <source>Notify when repeating a track</source>
-        <translation>當重覆曲目時進行通知</translation>
+        <translation>當重複曲目時進行通知</translation>
     </message>
     <message>
         <location filename="../../src/plugins/notify/settings/notifypage.cpp" line="83"/>
@@ -14779,7 +14780,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="171"/>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="182"/>
         <source>A–B repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>A–B 重複</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="174"/>
@@ -14794,12 +14795,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="176"/>
         <source>Enable A–B repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>啟用 A-B 重複</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="177"/>
         <source>Clear A–B repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>清除 A–B 重複</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="224"/>
@@ -14819,7 +14820,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="244"/>
         <source>Set playback order to repeat the current track</source>
-        <translation>設定播放順序去重複目前曲目</translation>
+        <translation>設定播放順序以重複目前曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="268"/>
@@ -14829,12 +14830,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="250"/>
         <source>Set playback order to repeat the current album</source>
-        <translation>設成重複播放目前專輯</translation>
+        <translation>設定播放順序以重複目前專輯</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="256"/>
         <source>Set playback order to repeat the current playlist</source>
-        <translation>設成重複播放目前播放清單</translation>
+        <translation>設定播放順序以重複目前播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="262"/>
@@ -15051,17 +15052,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="184"/>
         <source>A–B repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>A–B 重複</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="187"/>
         <source>A–B repeat settings for all seekbars</source>
-        <translation type="unfinished"></translation>
+        <translation>A–B 重複設定用於全部尋找列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="188"/>
         <source>Seek on release when dragging A while A–B repeat is enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>在 A-B 重複已經啟用時，當拖放 A 時於釋放上找尋</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="192"/>
@@ -26960,7 +26961,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="258"/>
         <source>Set repeat: off, playlist, album, or track</source>
-        <translation>設定重複：關閉、播放清單、專輯或曲目</translation>
+        <translation>設定重複：關閉、播放清單、專輯、曲目</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="259"/>
@@ -26997,7 +26998,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="363"/>
         <source>The repeat option can only be specified once.</source>
-        <translation>重複選項只能被指定一次。</translation>
+        <translation>重複選項僅能被指定一次。</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="369"/>
