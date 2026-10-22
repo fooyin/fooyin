@@ -1000,10 +1000,12 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
         menu->addSeparator();
     }
 
-    populateTrackContextMenu(menu, {.selectedCount = selectedRowCount(m_playlistView)});
+    populateTrackContextMenu(menu,
+                             {.selectedCount = selectedRowCount(m_playlistView), .showWidgetActions = !invalidIndex});
 
     if(invalidIndex) {
         menu->addSeparator();
+        addPresetMenu(menu);
         addSettingsAction(menu);
     }
 
@@ -1192,8 +1194,14 @@ void PlaylistWidget::populateTrackContextMenu(QMenu* menu, const ContextMenuRequ
                 return;
             }
             if(id == QLatin1StringView{ContextMenuIds::Playlist::Presets}) {
-                if(sectionEnabled(ContextMenuIds::Playlist::Presets)) {
+                if(request.showWidgetActions && sectionEnabled(ContextMenuIds::Playlist::Presets)) {
                     addPresetMenu(targetMenu);
+                }
+                return;
+            }
+            if(id == QLatin1StringView{ContextMenuIds::Playlist::Configure}) {
+                if(request.showWidgetActions && sectionEnabled(ContextMenuIds::Playlist::Configure)) {
+                    addSettingsAction(targetMenu);
                 }
                 return;
             }
@@ -1292,7 +1300,6 @@ void PlaylistWidget::showHeaderMenu(const QPoint& pos)
 
     menu->addSeparator();
     addPresetMenu(menu);
-    menu->addSeparator();
     Q_EMIT headerMenuAboutToShow(menu);
     addSettingsAction(menu);
 

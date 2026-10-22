@@ -122,6 +122,7 @@ public:
     struct ContextMenuRequest
     {
         qsizetype selectedCount{0};
+        bool showWidgetActions{true};
     };
 
     static PlaylistWidget* createMainPlaylist(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
