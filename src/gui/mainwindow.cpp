@@ -271,7 +271,7 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event)
     dropEvent->setDropAction(Qt::CopyAction);
     dropEvent->accept();
     if(event->type() == QEvent::Drop) {
-        PluginInstall::install(filepath, this);
+        Q_EMIT pluginInstallRequested(filepath);
     }
 
     return true;

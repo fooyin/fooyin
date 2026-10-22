@@ -79,6 +79,9 @@ public:
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
+Q_SIGNALS:
+    void pluginInstallRequested(const QString& filepath);
+
 protected:
     bool event(QEvent* event) override;
     void showEvent(QShowEvent* event) override;

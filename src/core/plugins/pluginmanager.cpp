@@ -31,6 +31,8 @@
 #include <QLoggingCategory>
 
 #include <queue>
+#include <ranges>
+#include <vector>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -110,7 +112,7 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
             files = pluginFiles(dir);
         }
 
-        const QStringList disabledPlugins = m_settings->value<Settings::Core::Internal::DisabledPlugins>();
+        std::vector<std::unique_ptr<PluginInfo>> plugins;
         for(const auto& filepath : files) {
             if(!QLibrary::isLibrary(filepath)) {
                 continue;
@@ -122,20 +124,35 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
                 continue;
             }
 
-#ifdef Q_OS_WIN
-            registerPluginDirectory(filepath);
-#endif
+            plugins.emplace_back(std::make_unique<PluginInfo>(filepath, metaData));
+        }
 
-            auto plugin         = std::make_unique<PluginInfo>(filepath, metaData);
+        // Prefer managed installations within this root
+        std::ranges::stable_partition(plugins, [&dir](const auto& plugin) {
+            return dir.relativeFilePath(plugin->filepath()).startsWith(plugin->identifier() + u'/');
+        });
+
+        const QStringList disabledPlugins = m_settings->value<Settings::Core::Internal::DisabledPlugins>();
+        for(auto& plugin : plugins) {
             const auto pluginId = plugin->identifier();
             if(isDepreciatedPlugin(pluginId)) {
                 continue;
             }
-            if(disabledPlugins.contains(plugin->identifier())) {
+            if(const auto existing = m_plugins.find(pluginId); existing != m_plugins.end()) {
+                qCInfo(PLUGIN_MANAGER) << "Ignoring duplicate plugin" << plugin->filepath() << "in favour of"
+                                       << existing->second->filepath();
+                continue;
+            }
+
+#ifdef Q_OS_WIN
+            registerPluginDirectory(plugin->filepath());
+#endif
+
+            if(disabledPlugins.contains(pluginId)) {
                 plugin->setDisabled(true);
             }
 
-            m_plugins.emplace(plugin->identifier(), std::move(plugin));
+            m_plugins.emplace(pluginId, std::move(plugin));
         }
     }
 }
@@ -164,19 +181,6 @@ void PluginManager::loadPlugins()
             plugin->load();
         }
     }
-}
-
-PluginManager::InstallResult PluginManager::installPlugin(const QString& filepath, bool overwrite)
-{
-    switch(PluginInstaller::install(filepath, Core::userPluginsPath(), overwrite)) {
-        case PluginInstaller::Result::Installed:
-            return InstallResult::Installed;
-        case PluginInstaller::Result::AlreadyInstalled:
-            return InstallResult::AlreadyInstalled;
-        case PluginInstaller::Result::Failed:
-            return InstallResult::Failed;
-    }
-    return InstallResult::Failed;
 }
 
 void PluginManager::unloadPlugins()

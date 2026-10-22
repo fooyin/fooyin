@@ -22,6 +22,8 @@
 #include <utils/treeitem.h>
 #include <utils/treemodel.h>
 
+#include <unordered_map>
+
 namespace Fooyin {
 class PluginInfo;
 class PluginManager;
@@ -52,8 +54,12 @@ class PluginsModel : public TreeModel<PluginItem>
 
 public:
     explicit PluginsModel(PluginManager* pluginManager, QObject* parent = nullptr);
+    ~PluginsModel() override;
 
-    void reset();
+    void reset(const QStringList& disabledPlugins);
+    void apply(const QStringList& disabledPlugins);
+    void addInstalledPlugin(std::unique_ptr<PluginInfo> plugin);
+    [[nodiscard]] bool hasChanges() const;
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
@@ -69,11 +75,14 @@ private:
     using PluginNameMap = std::unordered_map<QString, PluginItem>;
 
     static QString categoryName(const QString& category);
+    void rebuild();
 
     PluginManager* m_pluginManager;
 
     PluginNameMap m_nodes;
+    std::unordered_map<QString, std::unique_ptr<PluginInfo>> m_pendingPlugins;
     QStringList m_enabledPlugins;
     QStringList m_disabledPlugins;
+    bool m_pluginsInstalled;
 };
 } // namespace Fooyin

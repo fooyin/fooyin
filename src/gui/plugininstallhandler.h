@@ -26,7 +26,10 @@
 class QMimeData;
 class QWidget;
 
-namespace Fooyin::PluginInstall {
+namespace Fooyin {
+class PluginInfo;
+
+namespace PluginInstall {
 enum class DropTarget : uint8_t
 {
     MainWindow = 0,
@@ -34,5 +37,7 @@ enum class DropTarget : uint8_t
 };
 
 [[nodiscard]] QString fileFromMimeData(const QMimeData* mimeData, DropTarget target);
-void install(const QString& filepath, QWidget* parent);
-} // namespace Fooyin::PluginInstall
+void promptForRestart(QWidget* parent, const QString& title);
+std::unique_ptr<PluginInfo> install(const QString& filepath, QWidget* parent, bool promptRestart = true);
+} // namespace PluginInstall
+} // namespace Fooyin

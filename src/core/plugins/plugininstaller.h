@@ -21,16 +21,20 @@
 
 #include "fycore_export.h"
 
+#include "plugininfo.h"
+
 #include <QString>
 
+#include <expected>
+
 namespace Fooyin::PluginInstaller {
-enum class Result : uint8_t
+enum class InstallError : uint8_t
 {
-    Installed = 0,
-    AlreadyInstalled,
+    AlreadyInstalled = 0,
     Failed,
 };
 
-FYCORE_EXPORT Result install(const QString& filepath, const QString& pluginsPath, bool overwrite);
+FYCORE_EXPORT std::expected<std::unique_ptr<PluginInfo>, InstallError>
+install(const QString& filepath, const QString& pluginsPath, bool overwrite);
 FYCORE_EXPORT bool applyPendingUpdates(const QString& pluginsPath);
 } // namespace Fooyin::PluginInstaller

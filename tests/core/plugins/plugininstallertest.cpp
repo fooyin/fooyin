@@ -92,13 +92,16 @@ TEST(PluginInstallerTest, InstallsStandalonePluginIntoManagedDirectory)
     const QTemporaryDir plugins;
     ASSERT_TRUE(plugins.isValid());
 
-    EXPECT_EQ(PluginInstaller::Result::Installed,
-              PluginInstaller::install(QStringLiteral(TEST_PLUGIN_PATH), plugins.path(), false));
-    EXPECT_EQ(PluginInstaller::Result::AlreadyInstalled,
+    const auto installedPlugin = PluginInstaller::install(QStringLiteral(TEST_PLUGIN_PATH), plugins.path(), false);
+    ASSERT_TRUE(installedPlugin.has_value());
+    ASSERT_NE(installedPlugin->get(), nullptr);
+    EXPECT_EQ((*installedPlugin)->identifier(), u"fooyin.bundletest"_s);
+    EXPECT_EQ(std::unexpected{PluginInstaller::InstallError::AlreadyInstalled},
               PluginInstaller::install(QStringLiteral(TEST_PLUGIN_PATH), plugins.path(), false));
 
     const QString installedPath = QDir{plugins.path()}.filePath(
         u"fooyin.bundletest/"_s + QFileInfo{QStringLiteral(TEST_PLUGIN_PATH)}.fileName());
+    EXPECT_EQ((*installedPlugin)->filepath(), installedPath);
     EXPECT_TRUE(QFileInfo{installedPath}.isFile());
 }
 
@@ -113,7 +116,7 @@ TEST(PluginInstallerTest, InstallsPayloadForCurrentTarget)
     const QString pluginName = QFileInfo{QStringLiteral(TEST_PLUGIN_PATH)}.fileName();
     ASSERT_TRUE(createBundle(bundlePath, QStringLiteral(TEST_PLUGIN_PATH), targetDirectory() + u'/' + pluginName));
 
-    EXPECT_EQ(PluginInstaller::Result::Installed, PluginInstaller::install(bundlePath, plugins.path(), false));
+    EXPECT_TRUE(PluginInstaller::install(bundlePath, plugins.path(), false).has_value());
     EXPECT_TRUE(QFileInfo{QDir{plugins.path()}.filePath(u"fooyin.bundletest/"_s + pluginName)}.isFile());
 }
 
@@ -132,14 +135,17 @@ TEST(PluginInstallerTest, AppliesPendingUpdateWithoutKeepingOldVersion)
     ASSERT_EQ(updatedFile.write("updated"), 7);
     updatedFile.close();
 
-    EXPECT_EQ(PluginInstaller::Result::Installed, PluginInstaller::install(originalPlugin, plugins.path(), false));
-    EXPECT_EQ(PluginInstaller::Result::AlreadyInstalled,
+    EXPECT_TRUE(PluginInstaller::install(originalPlugin, plugins.path(), false).has_value());
+    EXPECT_EQ(std::unexpected{PluginInstaller::InstallError::AlreadyInstalled},
               PluginInstaller::install(updatedPlugin, plugins.path(), false));
-    EXPECT_EQ(PluginInstaller::Result::Installed, PluginInstaller::install(updatedPlugin, plugins.path(), true));
+    const auto pendingPlugin = PluginInstaller::install(updatedPlugin, plugins.path(), true);
+    ASSERT_TRUE(pendingPlugin.has_value());
+    ASSERT_NE(pendingPlugin->get(), nullptr);
 
     const QString pluginName    = QFileInfo{originalPlugin}.fileName();
     const QString installedPath = QDir{plugins.path()}.filePath(u"fooyin.bundletest/"_s + pluginName);
     const QString updatePath    = QDir{plugins.path()}.filePath(u".updates/fooyin.bundletest/"_s + pluginName);
+    EXPECT_EQ((*pendingPlugin)->filepath(), updatePath);
     EXPECT_EQ(QFileInfo{installedPath}.size(), QFileInfo{originalPlugin}.size());
     EXPECT_EQ(QFileInfo{updatePath}.size(), QFileInfo{updatedPlugin}.size());
 
@@ -161,7 +167,8 @@ TEST(PluginInstallerTest, RejectsTraversalEntry)
     ASSERT_TRUE(createBundle(bundlePath, QStringLiteral(TEST_PLUGIN_PATH),
                              targetDirectory() + u"/../"_s + QFileInfo{QStringLiteral(TEST_PLUGIN_PATH)}.fileName()));
 
-    EXPECT_EQ(PluginInstaller::Result::Failed, PluginInstaller::install(bundlePath, plugins.path(), false));
+    EXPECT_EQ(std::unexpected{PluginInstaller::InstallError::Failed},
+              PluginInstaller::install(bundlePath, plugins.path(), false));
     EXPECT_FALSE(QFileInfo{QDir{plugins.path()}.filePath(u"fooyin.bundletest"_s)}.exists());
 }
 
@@ -177,6 +184,7 @@ TEST(PluginInstallerTest, RejectsBundleWithoutCurrentTarget)
     ASSERT_TRUE(createBundle(bundlePath, QStringLiteral(TEST_PLUGIN_PATH),
                              otherTarget + u'/' + QFileInfo{QStringLiteral(TEST_PLUGIN_PATH)}.fileName()));
 
-    EXPECT_EQ(PluginInstaller::Result::Failed, PluginInstaller::install(bundlePath, plugins.path(), false));
+    EXPECT_EQ(std::unexpected{PluginInstaller::InstallError::Failed},
+              PluginInstaller::install(bundlePath, plugins.path(), false));
 }
 } // namespace Fooyin::Testing

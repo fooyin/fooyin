@@ -24,7 +24,6 @@
 #include "pluginsmodel.h"
 #include "settings/plugins/pluginaboutdialog.h"
 
-#include <core/application.h>
 #include <core/internalcoresettings.h>
 #include <core/plugins/plugin.h>
 #include <core/plugins/plugininfo.h>
@@ -40,7 +39,6 @@
 #include <QFileDialog>
 #include <QGridLayout>
 #include <QHeaderView>
-#include <QMessageBox>
 #include <QProcess>
 #include <QPushButton>
 #include <QSortFilterProxyModel>
@@ -74,11 +72,14 @@ class PluginPageWidget : public SettingsPageWidget
 
 public:
     explicit PluginPageWidget(PluginManager* pluginManager, PluginSettingsRegistry* pluginSettingsRegistry,
-                              SettingsManager* settings);
+                              SettingsManager* settings, PluginsModel* model);
 
     void load() override;
     void apply() override;
     void reset() override;
+
+Q_SIGNALS:
+    void pluginInstallRequested(const QString& filepath);
 
 protected:
     void dragEnterEvent(QDragEnterEvent* event) override;
@@ -108,12 +109,12 @@ private:
 };
 
 PluginPageWidget::PluginPageWidget(PluginManager* pluginManager, PluginSettingsRegistry* pluginSettingsRegistry,
-                                   SettingsManager* settings)
+                                   SettingsManager* settings, PluginsModel* model)
     : m_pluginManager{pluginManager}
     , m_pluginSettingsRegistry{pluginSettingsRegistry}
     , m_settings{settings}
     , m_pluginList{new QTreeView(this)}
-    , m_model{new PluginsModel(m_pluginManager)}
+    , m_model{model}
     , m_configurePlugin{new QPushButton(tr("Configure"), this)}
     , m_aboutPlugin{new QPushButton(tr("About"), this)}
     , m_installPlugin{new QPushButton(tr("Install…"), this)}
@@ -157,7 +158,7 @@ PluginPageWidget::PluginPageWidget(PluginManager* pluginManager, PluginSettingsR
 
 void PluginPageWidget::load()
 {
-    m_model->reset();
+    m_model->reset(m_settings->value<Settings::Core::Internal::DisabledPlugins>());
 }
 
 void PluginPageWidget::apply()
@@ -165,31 +166,27 @@ void PluginPageWidget::apply()
     const auto disabledPlugins = m_model->disabledPlugins();
     const auto enabledPlugins  = m_model->enabledPlugins();
 
-    if(disabledPlugins.empty() && enabledPlugins.empty()) {
+    if(!m_model->hasChanges()) {
         return;
     }
 
-    for(const auto& pluginIdentifier : enabledPlugins) {
-        if(auto* plugin = m_pluginManager->pluginInfo(pluginIdentifier)) {
-            plugin->setDisabled(false);
-        }
+    QStringList disabledIdentifiers = m_settings->value<Settings::Core::Internal::DisabledPlugins>();
+    for(const QString& identifier : enabledPlugins) {
+        disabledIdentifiers.removeAll(identifier);
     }
-
-    QStringList disabledIdentifiers;
-    const auto& plugins = m_pluginManager->allPluginInfo();
-    for(const auto& [identifier, plugin] : plugins) {
-        if(plugin->isDisabled() || disabledPlugins.contains(identifier)) {
+    for(const QString& identifier : disabledPlugins) {
+        if(!disabledIdentifiers.contains(identifier)) {
             disabledIdentifiers.emplace_back(identifier);
         }
     }
 
     m_settings->set<Settings::Core::Internal::DisabledPlugins>(disabledIdentifiers);
-
-    QMessageBox msg{QMessageBox::Question, tr("Plugins Changed"),
-                    tr("Restart for changes to take effect. Restart now?"), QMessageBox::Yes | QMessageBox::No};
-    if(msg.exec() == QMessageBox::Yes) {
-        Application::restart();
+    for(const auto& [identifier, plugin] : m_pluginManager->allPluginInfo()) {
+        plugin->setDisabled(disabledIdentifiers.contains(identifier));
     }
+    m_model->apply(disabledIdentifiers);
+
+    PluginInstall::promptForRestart(this, tr("Plugins Changed"));
 }
 
 void PluginPageWidget::reset() { }
@@ -207,11 +204,9 @@ PluginInfo* PluginPageWidget::currentPlugin() const
 void PluginPageWidget::selectionChanged()
 {
     if(const auto* plugin = currentPlugin()) {
-        if(plugin->plugin()) {
-            m_configurePlugin->setEnabled(hasConfigProvider(plugin));
-            m_aboutPlugin->setEnabled(true);
-            return;
-        }
+        m_configurePlugin->setEnabled(plugin->plugin() && hasConfigProvider(plugin));
+        m_aboutPlugin->setEnabled(true);
+        return;
     }
 
     m_configurePlugin->setDisabled(true);
@@ -259,7 +254,7 @@ void PluginPageWidget::installPlugin()
         return;
     }
 
-    PluginInstall::install(filepath, this);
+    Q_EMIT pluginInstallRequested(filepath);
 }
 
 void PluginPageWidget::dragEnterEvent(QDragEnterEvent* event)
@@ -288,19 +283,35 @@ void PluginPageWidget::dropEvent(QDropEvent* event)
 
     event->setDropAction(Qt::CopyAction);
     event->accept();
-    PluginInstall::install(filepath, this);
+    Q_EMIT pluginInstallRequested(filepath);
 }
 
 PluginPage::PluginPage(PluginManager* pluginManager, PluginSettingsRegistry* pluginSettingsRegistry,
                        SettingsManager* settings, QObject* parent)
     : SettingsPage{settings->settingsDialog(), parent}
+    , m_settings{settings}
+    , m_model{new PluginsModel(pluginManager, this)}
 {
     setId(Constants::Page::Plugins);
     setName(tr("General"));
     setCategory({tr("Plugins")});
-    setWidgetCreator([pluginManager, pluginSettingsRegistry, settings] {
-        return new PluginPageWidget(pluginManager, pluginSettingsRegistry, settings);
+    setWidgetCreator([this, pluginManager, pluginSettingsRegistry, settings] {
+        auto* widget = new PluginPageWidget(pluginManager, pluginSettingsRegistry, settings, m_model);
+        QObject::connect(widget, &PluginPageWidget::pluginInstallRequested, this,
+                         [this, widget](const QString& filepath) { installPlugin(filepath, widget, false); });
+        return widget;
     });
+}
+
+void PluginPage::installPlugin(const QString& filepath, QWidget* parent, bool promptRestart)
+{
+    auto plugin = PluginInstall::install(filepath, parent, promptRestart);
+    if(!plugin) {
+        return;
+    }
+
+    plugin->setDisabled(m_settings->value<Settings::Core::Internal::DisabledPlugins>().contains(plugin->identifier()));
+    m_model->addInstalledPlugin(std::move(plugin));
 }
 } // namespace Fooyin
 

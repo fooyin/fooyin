@@ -56,14 +56,6 @@ public:
         }
     }
 
-    enum class InstallResult : uint8_t
-    {
-        Installed = 0,
-        AlreadyInstalled,
-        Failed,
-    };
-    static InstallResult installPlugin(const QString& filepath, bool overwrite = false);
-
     void unloadPlugins();
 
 private:

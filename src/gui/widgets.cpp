@@ -547,7 +547,9 @@ void Widgets::registerPages()
                                                  m_coverProvider, m_core, m_styleProvider, parent);
         },
         this);
-    new PluginPage(m_core->pluginManager(), m_pluginSettingsRegistry.get(), m_settings, this);
+    auto* pluginPage = new PluginPage(m_core->pluginManager(), m_pluginSettingsRegistry.get(), m_settings, this);
+    QObject::connect(m_window, &MainWindow::pluginInstallRequested, pluginPage,
+                     [this, pluginPage](const QString& filepath) { pluginPage->installPlugin(filepath, m_window); });
     new ShellIntegrationPage(m_settings, this);
     new ShortcutsPage(m_gui->actionManager(), m_settings, this);
     new OutputPage(m_core->engine(), m_settings, this);

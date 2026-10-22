@@ -22,6 +22,8 @@
 #include <core/plugins/plugin.h>
 #include <core/plugins/pluginmanager.h>
 
+#include <ranges>
+
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
@@ -49,16 +51,54 @@ PluginInfo* PluginItem::info() const
 PluginsModel::PluginsModel(PluginManager* pluginManager, QObject* parent)
     : TreeModel{parent}
     , m_pluginManager{pluginManager}
+    , m_pluginsInstalled{false}
 { }
 
-void PluginsModel::reset()
+PluginsModel::~PluginsModel() = default;
+
+void PluginsModel::reset(const QStringList& disabledPlugins)
 {
     beginResetModel();
+
+    m_enabledPlugins.clear();
+    m_disabledPlugins.clear();
+    for(const auto& [identifier, plugin] : m_pendingPlugins) {
+        plugin->setDisabled(disabledPlugins.contains(identifier));
+    }
+
+    rebuild();
+    endResetModel();
+}
+
+void PluginsModel::apply(const QStringList& disabledPlugins)
+{
+    m_pluginsInstalled = false;
+    reset(disabledPlugins);
+}
+
+void PluginsModel::addInstalledPlugin(std::unique_ptr<PluginInfo> plugin)
+{
+    beginResetModel();
+
+    const QString identifier = plugin->identifier();
+    m_pendingPlugins.insert_or_assign(identifier, std::move(plugin));
+    m_pluginsInstalled = true;
+    rebuild();
+
+    endResetModel();
+}
+
+bool PluginsModel::hasChanges() const
+{
+    return m_pluginsInstalled || !m_enabledPlugins.empty() || !m_disabledPlugins.empty();
+}
+
+void PluginsModel::rebuild()
+{
     resetRoot();
+    m_nodes.clear();
 
-    const auto& plugins = m_pluginManager->allPluginInfo();
-
-    for(const auto& [name, info] : plugins) {
+    const auto appendPlugin = [this](PluginInfo* info) {
         PluginItem* parent = rootItem();
 
         const auto categories = info->category();
@@ -71,14 +111,22 @@ void PluginsModel::reset()
             parent = &m_nodes.at(category);
         }
 
-        if(!m_nodes.contains(name)) {
-            m_nodes.emplace(name, PluginItem{info.get(), parent});
+        const QString identifier = info->identifier();
+        if(!m_nodes.contains(identifier)) {
+            m_nodes.emplace(identifier, PluginItem{info, parent});
         }
-        PluginItem* child = &m_nodes.at(name);
+        PluginItem* child = &m_nodes.at(identifier);
         parent->appendChild(child);
-    }
+    };
 
-    endResetModel();
+    for(const auto& [identifier, info] : m_pluginManager->allPluginInfo()) {
+        if(!m_pendingPlugins.contains(identifier)) {
+            appendPlugin(info.get());
+        }
+    }
+    for(const auto& info : m_pendingPlugins | std::views::values) {
+        appendPlugin(info.get());
+    }
 }
 
 Qt::ItemFlags PluginsModel::flags(const QModelIndex& index) const
@@ -89,7 +137,9 @@ Qt::ItemFlags PluginsModel::flags(const QModelIndex& index) const
         return flags;
     }
 
-    if(index.column() == 3) {
+    const auto* item = itemForIndex(index);
+
+    if(index.column() == 3 && item->info()) {
         flags |= Qt::ItemIsUserCheckable;
         flags |= Qt::ItemIsEditable;
     }
@@ -176,7 +226,7 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
     }
 
     if(role == Qt::ToolTipRole) {
-        return info->isLoaded() ? info->description() : info->error();
+        return info->isLoaded() || m_pendingPlugins.contains(info->identifier()) ? info->description() : info->error();
     }
 
     if(role == PluginItem::Plugin) {
@@ -192,6 +242,9 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
             case 2:
                 return info->author();
             case 4: {
+                if(m_pendingPlugins.contains(info->identifier())) {
+                    return tr("Restart required");
+                }
                 switch(info->status()) {
                     case PluginInfo::Status::Discovered:
                         return tr("Discovered");
@@ -218,7 +271,7 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
 
 bool PluginsModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    if(!index.isValid() || role != Qt::CheckStateRole) {
+    if(!index.isValid() || index.column() != 3 || role != Qt::CheckStateRole || !itemForIndex(index)->info()) {
         return false;
     }
 

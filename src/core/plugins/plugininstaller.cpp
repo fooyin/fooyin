@@ -65,6 +65,8 @@ using ArchivePtr = std::unique_ptr<archive, ArchiveDeleter>;
 struct InstalledPlugin
 {
     QString identifier;
+    QString relativePath;
+    QJsonObject metadata;
 };
 
 QString targetDirectory()
@@ -274,7 +276,8 @@ std::optional<InstalledPlugin> inspectPlugin(const QString& directory)
             return {};
         }
 
-        installedPlugin = InstalledPlugin{.identifier = identifier};
+        installedPlugin = InstalledPlugin{
+            .identifier = identifier, .relativePath = QDir{directory}.relativeFilePath(filepath), .metadata = metadata};
     }
 
     return installedPlugin;
@@ -288,59 +291,84 @@ bool moveStagingDirectory(const QString& stagingPath, const QString& destination
     stagingDir.setAutoRemove(false);
     return true;
 }
+
+bool hasLoosePlugin(const QString& pluginsPath, const QString& identifier)
+{
+    const QFileInfoList files = QDir{pluginsPath}.entryInfoList(QDir::Files);
+    return std::ranges::any_of(files, [&identifier](const QFileInfo& file) {
+        const QString filepath = file.absoluteFilePath();
+        if(!QLibrary::isLibrary(filepath)) {
+            return false;
+        }
+
+        const QPluginLoader loader{filepath};
+        const QJsonObject metadata = loader.metaData();
+        if(!metadata.contains("MetaData"_L1)) {
+            return false;
+        }
+
+        return PluginInfo{filepath, metadata}.identifier() == identifier;
+    });
+}
 } // namespace
 
-Result install(const QString& filepath, const QString& pluginsPath, bool overwrite)
+std::expected<std::unique_ptr<PluginInfo>, InstallError> install(const QString& filepath, const QString& pluginsPath,
+                                                                 bool overwrite)
 {
     const QFileInfo source{filepath};
     if(!source.isFile() || !QDir{}.mkpath(pluginsPath)) {
-        return Result::Failed;
+        return std::unexpected{InstallError::Failed};
     }
 
     QTemporaryDir stagingDirectory{QDir{pluginsPath}.filePath(u".staging-XXXXXX"_s)};
     if(!stagingDirectory.isValid()) {
-        return Result::Failed;
+        return std::unexpected{InstallError::Failed};
     }
 
     const QString suffix = source.suffix().toLower();
     if(suffix == "fyplugin"_L1 || suffix == "zip"_L1) {
         if(!extractBundle(filepath, stagingDirectory.path())) {
-            return Result::Failed;
+            return std::unexpected{InstallError::Failed};
         }
     }
     else {
         if(!QLibrary::isLibrary(filepath)
            || !QFile::copy(filepath, QDir{stagingDirectory.path()}.filePath(source.fileName()))) {
-            return Result::Failed;
+            return std::unexpected{InstallError::Failed};
         }
     }
 
     const auto plugin = inspectPlugin(stagingDirectory.path());
     if(!plugin) {
-        return Result::Failed;
+        return std::unexpected{InstallError::Failed};
     }
 
     const QString pluginPath = QDir{pluginsPath}.filePath(plugin->identifier);
-    if(QFileInfo::exists(pluginPath) && !overwrite) {
-        return Result::AlreadyInstalled;
+    if(!overwrite && (QFileInfo::exists(pluginPath) || hasLoosePlugin(pluginsPath, plugin->identifier))) {
+        return std::unexpected{InstallError::AlreadyInstalled};
     }
 
+    const auto installTo = [&](const QString& destination) -> std::expected<std::unique_ptr<PluginInfo>, InstallError> {
+        if(!moveStagingDirectory(stagingDirectory.path(), destination, stagingDirectory)) {
+            return std::unexpected{InstallError::Failed};
+        }
+        return std::make_unique<PluginInfo>(QDir{destination}.filePath(plugin->relativePath), plugin->metadata);
+    };
+
     if(!QFileInfo::exists(pluginPath)) {
-        return moveStagingDirectory(stagingDirectory.path(), pluginPath, stagingDirectory) ? Result::Installed
-                                                                                           : Result::Failed;
+        return installTo(pluginPath);
     }
 
     const QString updatesPath = QDir{pluginsPath}.filePath(u".updates"_s);
     const QString updatePath  = QDir{updatesPath}.filePath(plugin->identifier);
     if(!QDir{}.mkpath(updatesPath)) {
-        return Result::Failed;
+        return std::unexpected{InstallError::Failed};
     }
     if(QFileInfo::exists(updatePath) && !QDir{updatePath}.removeRecursively()) {
-        return Result::Failed;
+        return std::unexpected{InstallError::Failed};
     }
 
-    return moveStagingDirectory(stagingDirectory.path(), updatePath, stagingDirectory) ? Result::Installed
-                                                                                       : Result::Failed;
+    return installTo(updatePath);
 }
 
 bool applyPendingUpdates(const QString& pluginsPath)

@@ -20,7 +20,8 @@
 #include "plugininstallhandler.h"
 
 #include <core/application.h>
-#include <core/plugins/pluginmanager.h>
+#include <core/corepaths.h>
+#include <core/plugins/plugininstaller.h>
 
 #include <QCoreApplication>
 #include <QFileInfo>
@@ -61,38 +62,48 @@ QString fileFromMimeData(const QMimeData* mimeData, DropTarget target)
     return {};
 }
 
-void install(const QString& filepath, QWidget* parent)
+void promptForRestart(QWidget* parent, const QString& title)
+{
+    QMessageBox message{
+        QMessageBox::Question, title,
+        QCoreApplication::translate("Fooyin::PluginPageWidget", "Restart for changes to take effect. Restart now?"),
+        QMessageBox::Yes | QMessageBox::No, parent};
+    if(message.exec() == QMessageBox::Yes) {
+        Application::restart();
+    }
+}
+
+std::unique_ptr<PluginInfo> install(const QString& filepath, QWidget* parent, bool promptRestart)
 {
     bool updating{false};
-    auto installResult = PluginManager::installPlugin(filepath);
-    if(installResult == PluginManager::InstallResult::AlreadyInstalled) {
+    const QString pluginsPath = Core::userPluginsPath();
+    auto installResult        = PluginInstaller::install(filepath, pluginsPath, false);
+    if(!installResult && installResult.error() == PluginInstaller::InstallError::AlreadyInstalled) {
         QMessageBox message{
             QMessageBox::Question, QCoreApplication::translate("Fooyin::PluginPageWidget", "Plugin Already Installed"),
             QCoreApplication::translate("Fooyin::PluginPageWidget", "This plugin is already installed. Update it?"),
             QMessageBox::Yes | QMessageBox::No, parent};
         message.button(QMessageBox::Yes)->setText(QCoreApplication::translate("Fooyin::PluginPageWidget", "Update"));
         if(message.exec() != QMessageBox::Yes) {
-            return;
+            return {};
         }
         updating      = true;
-        installResult = PluginManager::installPlugin(filepath, true);
+        installResult = PluginInstaller::install(filepath, pluginsPath, true);
     }
 
-    if(installResult == PluginManager::InstallResult::Installed) {
-        const QString title = updating ? QCoreApplication::translate("Fooyin::PluginPageWidget", "Plugin Updated")
-                                       : QCoreApplication::translate("Fooyin::PluginPageWidget", "Plugin Installed");
-        QMessageBox message{
-            QMessageBox::Question, title,
-            QCoreApplication::translate("Fooyin::PluginPageWidget", "Restart for changes to take effect. Restart now?"),
-            QMessageBox::Yes | QMessageBox::No, parent};
-        if(message.exec() == QMessageBox::Yes) {
-            Application::restart();
-        }
-    }
-    else {
+    if(!installResult) {
         QMessageBox::critical(
             parent, QCoreApplication::translate("Fooyin::PluginPageWidget", "Plugin Installation Failed"),
             QCoreApplication::translate("Fooyin::PluginPageWidget", "The plugin could not be installed."));
+        return {};
     }
+
+    if(promptRestart) {
+        const QString title = updating ? QCoreApplication::translate("Fooyin::PluginPageWidget", "Plugin Updated")
+                                       : QCoreApplication::translate("Fooyin::PluginPageWidget", "Plugin Installed");
+        promptForRestart(parent, title);
+    }
+
+    return std::move(*installResult);
 }
 } // namespace Fooyin::PluginInstall
