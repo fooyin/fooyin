@@ -74,6 +74,7 @@ public:
     void changeDisplay(VolumeControl::Options options, bool init = false);
     void setCurve(VolumeCurve curve);
     void updateSlider(double volume) const;
+    void updateSteps() const;
 
     [[nodiscard]] double volumeAtPosition(int value) const;
 
@@ -113,6 +114,8 @@ VolumeControlPrivate::VolumeControlPrivate(VolumeControl* self, ActionManager* a
                      [this](int value) { m_settings->set<Settings::Core::OutputVolume>(volumeAtPosition(value)); });
     m_settings->subscribe<Settings::Core::OutputVolume>(m_volumeSlider,
                                                         [this](double volume) { updateSlider(volume); });
+    m_settings->subscribe<Settings::Gui::VolumeControlStepSmall>(m_volumeSlider, [this]() { updateSteps(); });
+    m_settings->subscribe<Settings::Gui::VolumeControlStepLarge>(m_volumeSlider, [this]() { updateSteps(); });
 
     changeDisplay(m_options, true);
 }
@@ -190,6 +193,7 @@ void VolumeControlPrivate::setCurve(VolumeCurve curve)
         m_volumeSlider->setRange(0, VolumeSteps);
     }
 
+    updateSteps();
     updateSlider(m_settings->value<Settings::Core::OutputVolume>());
 }
 
@@ -219,6 +223,16 @@ void VolumeControlPrivate::updateSlider(double volume) const
     }
 
     m_volumeSlider->setValue(static_cast<int>(std::round(value)));
+}
+
+void VolumeControlPrivate::updateSteps() const
+{
+    const int range        = m_volumeSlider->maximum() - m_volumeSlider->minimum();
+    const double smallStep = m_settings->value<Settings::Gui::VolumeControlStepSmall>();
+    const double largeStep = m_settings->value<Settings::Gui::VolumeControlStepLarge>();
+
+    m_volumeSlider->setSingleStep(std::max(1, static_cast<int>(std::round(range * smallStep / 100.0))));
+    m_volumeSlider->setPageStep(std::max(1, static_cast<int>(std::round(range * largeStep / 100.0))));
 }
 
 double VolumeControlPrivate::volumeAtPosition(int value) const

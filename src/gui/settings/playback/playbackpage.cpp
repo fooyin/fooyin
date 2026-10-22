@@ -73,6 +73,8 @@ private:
     QSpinBox* m_seekStep;
     QSpinBox* m_seekStepLarge;
     QDoubleSpinBox* m_volumeStep;
+    QDoubleSpinBox* m_volumeControlStepSmall;
+    QDoubleSpinBox* m_volumeControlStepLarge;
 
     QCheckBox* m_abRepeatSeekToStartOnChange;
     QDoubleSpinBox* m_abRepeatMarkerWidth;
@@ -99,6 +101,8 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     , m_seekStep{new QSpinBox(this)}
     , m_seekStepLarge{new QSpinBox(this)}
     , m_volumeStep{new QDoubleSpinBox(this)}
+    , m_volumeControlStepSmall{new QDoubleSpinBox(this)}
+    , m_volumeControlStepLarge{new QDoubleSpinBox(this)}
     , m_abRepeatSeekToStartOnChange{new QCheckBox(tr("Seek to A after adjusting the A marker"), this)}
     , m_abRepeatMarkerWidth{new QDoubleSpinBox(this)}
     , m_abRepeatMarkerColourA{new ColourButton(tr("A colour") + u":"_s, true, this)}
@@ -164,13 +168,25 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     m_volumeStep->setRange(1, 5);
     m_volumeStep->setSuffix(u" dB"_s);
 
+    m_volumeControlStepSmall->setRange(0.1, 100);
+    m_volumeControlStepSmall->setSingleStep(0.5);
+    m_volumeControlStepSmall->setSuffix(u" %"_s);
+
+    m_volumeControlStepLarge->setRange(0.1, 100);
+    m_volumeControlStepLarge->setSingleStep(0.5);
+    m_volumeControlStepLarge->setSuffix(u" %"_s);
+
     row = 0;
     controlsLayout->addWidget(new QLabel(tr("Seek step (small)") + ":"_L1, this), row, 0);
     controlsLayout->addWidget(m_seekStep, row++, 1);
     controlsLayout->addWidget(new QLabel(tr("Seek step (large)") + ":"_L1, this), row, 0);
     controlsLayout->addWidget(m_seekStepLarge, row++, 1);
-    controlsLayout->addWidget(new QLabel(tr("Volume step") + ":"_L1, this), row, 0);
+    controlsLayout->addWidget(new QLabel(tr("Volume shortcut step") + ":"_L1, this), row, 0);
     controlsLayout->addWidget(m_volumeStep, row++, 1);
+    controlsLayout->addWidget(new QLabel(tr("Volume control step (small)") + ":"_L1, this), row, 0);
+    controlsLayout->addWidget(m_volumeControlStepSmall, row++, 1);
+    controlsLayout->addWidget(new QLabel(tr("Volume control step (large)") + ":"_L1, this), row, 0);
+    controlsLayout->addWidget(m_volumeControlStepLarge, row++, 1);
     controlsLayout->setColumnStretch(2, 1);
 
     m_abRepeatMarkerWidth->setRange(0.5, 10.0);
@@ -240,6 +256,8 @@ void PlaybackPageWidget::load()
     m_seekStep->setValue(m_settings->value<Settings::Gui::SeekStepSmall>());
     m_seekStepLarge->setValue(m_settings->value<Settings::Gui::SeekStepLarge>());
     m_volumeStep->setValue(m_settings->value<Settings::Gui::VolumeStep>());
+    m_volumeControlStepSmall->setValue(m_settings->value<Settings::Gui::VolumeControlStepSmall>());
+    m_volumeControlStepLarge->setValue(m_settings->value<Settings::Gui::VolumeControlStepLarge>());
 
     m_abRepeatSeekToStartOnChange->setChecked(m_settings->value<Settings::Gui::ABRepeatSeekOnAChange>());
     m_abRepeatMarkerWidth->setValue(m_settings->value<Settings::Gui::ABRepeatMarkerWidth>());
@@ -278,6 +296,8 @@ void PlaybackPageWidget::apply()
     m_settings->set<Settings::Gui::SeekStepSmall>(m_seekStep->value());
     m_settings->set<Settings::Gui::SeekStepLarge>(m_seekStepLarge->value());
     m_settings->set<Settings::Gui::VolumeStep>(m_volumeStep->value());
+    m_settings->set<Settings::Gui::VolumeControlStepSmall>(m_volumeControlStepSmall->value());
+    m_settings->set<Settings::Gui::VolumeControlStepLarge>(m_volumeControlStepLarge->value());
 
     m_settings->set<Settings::Gui::ABRepeatSeekOnAChange>(m_abRepeatSeekToStartOnChange->isChecked());
     m_settings->set<Settings::Gui::ABRepeatMarkerWidth>(m_abRepeatMarkerWidth->value());
@@ -317,6 +337,8 @@ void PlaybackPageWidget::reset()
     m_settings->reset<Settings::Gui::SeekStepSmall>();
     m_settings->reset<Settings::Gui::SeekStepLarge>();
     m_settings->reset<Settings::Gui::VolumeStep>();
+    m_settings->reset<Settings::Gui::VolumeControlStepSmall>();
+    m_settings->reset<Settings::Gui::VolumeControlStepLarge>();
     m_settings->reset<Settings::Gui::ABRepeatSeekOnAChange>();
     m_settings->reset<Settings::Gui::ABRepeatMarkerWidth>();
     m_settings->reset<Settings::Gui::ABRepeatMarkerColourA>();

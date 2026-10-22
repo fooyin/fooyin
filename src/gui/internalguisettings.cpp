@@ -124,7 +124,9 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<LockSplitterHandles>(false, u"Interface/LockSplitterHandles"_s);
     m_settings->createSetting<SplitterHandleSize>(-1, u"Interface/SplitterHandleSize"_s);
     m_settings->createSetting<ResizeLockedAdjacentOnly>(true, u"Interface/ResizeLockedAdjacentOnly"_s);
-    m_settings->createSetting<VolumeStep>(0.05, u"Controls/VolumeStep"_s);
+    m_settings->createSetting<VolumeStep>(1.0, u"Controls/VolumeStep"_s);
+    m_settings->createSetting<VolumeControlStepSmall>(1.0, u"Controls/VolumeControlStepSmall"_s);
+    m_settings->createSetting<VolumeControlStepLarge>(5.0, u"Controls/VolumeControlStepLarge"_s);
     m_settings->createSetting<SearchSuccessClear>(true, u"Searching/ClearOnSuccess"_s);
     m_settings->createSetting<SearchAutoDelay>(1, u"Searching/AutoDelay"_s);
     m_settings->createSetting<SearchPlaylistName>(SearchWidget::defaultPlaylistName(), u"Searching/PlaylistName"_s);

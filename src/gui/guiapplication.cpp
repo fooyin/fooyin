@@ -1709,9 +1709,16 @@ void GuiApplication::close()
 
 void GuiApplication::changeVolume(double delta) const
 {
-    const double currentVolume = std::max(m_settings->value<Settings::Core::OutputVolume>(), 0.01);
-    const double currentDb     = Audio::volumeToDb(currentVolume);
-    const double newVolume     = Audio::dbToVolume(currentDb + delta);
+    static constexpr double MinVolumeDb = -60.0;
+
+    const double volume = m_settings->value<Settings::Core::OutputVolume>();
+    if(delta == 0.0 || (volume <= 0.0 && delta < 0.0)) {
+        return;
+    }
+
+    const double currentDb = volume > 0.0 ? Audio::volumeToDb(volume) : MinVolumeDb;
+    const double newDb     = currentDb + delta;
+    const double newVolume = delta < 0.0 && newDb <= MinVolumeDb ? 0.0 : Audio::dbToVolume(newDb);
 
     m_settings->set<Settings::Core::OutputVolume>(newVolume);
 }
