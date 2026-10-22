@@ -2968,177 +2968,178 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="49"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="51"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Nic</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="53"/>
         <source>Choose a field or enter a tag name. Use ‘Metadata tag…’ to read a tag directly.
 Clear to disable sorting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyber, nebo zadej název tagu. Použij ‚Tag metadat…‘ pro přímé čtení tagu.
+Vymaž pro zakázání řazení.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="56"/>
         <source>Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzestupně</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="57"/>
         <source>Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Sestupně</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="60"/>
         <source>Randomise matching tracks before applying the track limit.</source>
-        <translation type="unfinished"></translation>
+        <translation>Promíchat odpovídající stopy před použitím omezení počtu skladeb.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="77"/>
         <source>Sort by:</source>
-        <translation type="unfinished"></translation>
+        <translation>Seřadit podle:</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="149"/>
         <source>does not contain</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>neobsahuje</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="151"/>
         <source>contains</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>obsahuje</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="154"/>
         <source>does not contain any of</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>neobsahuje žádný z</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="156"/>
         <source>contains any of</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>obsahuje některý z</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="159"/>
         <source>does not contain word</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>neobsahuje slovo</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="161"/>
         <source>contains word</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>obsahuje slovo</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="164"/>
         <source>does not start with</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>nezačíná na</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="166"/>
         <source>starts with</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>začíná na</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="169"/>
         <source>does not end with</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>nekončí na</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="171"/>
         <source>ends with</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>končí na</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="174"/>
         <source>is not</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>není</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="176"/>
         <source>is</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>je</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="179"/>
         <source>is not one of</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>není jedno z</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="181"/>
         <source>is one of</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>je jedno z</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="184"/>
         <source>is greater than</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>je větší než</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="187"/>
         <source>is at least</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>je alespoň</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="190"/>
         <source>is less than</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>je méně než</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="193"/>
         <source>is at most</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>je maximálně</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="196"/>
         <source>is present</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>existuje</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="199"/>
         <source>is missing</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>chybí</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="202"/>
         <source>is not before</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>není před</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="204"/>
         <source>is before</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>je před</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="207"/>
         <source>is not after</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>není po</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="209"/>
         <source>is after</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>je po</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="212"/>
@@ -7775,7 +7776,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="377"/>
         <source>Preset name:</source>
-        <translation type="unfinished">Název předvolby:</translation>
+        <translation>Název předvolby:</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="392"/>
@@ -12137,7 +12138,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="167"/>
         <source>Enabled</source>
-        <translation type="unfinished">Povoleno</translation>
+        <translation>Povoleno</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="169"/>
@@ -12307,7 +12308,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="107"/>
         <source>Word wrap</source>
-        <translation type="unfinished">Zalamování slov</translation>
+        <translation>Zalamování slov</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="111"/>
@@ -12332,7 +12333,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="125"/>
         <source>Trace</source>
-        <translation type="unfinished"></translation>
+        <translation>Trasování</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="126"/>
@@ -12352,7 +12353,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="129"/>
         <source>Critical</source>
-        <translation>Kritický</translation>
+        <translation>Kritické</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="152"/>
