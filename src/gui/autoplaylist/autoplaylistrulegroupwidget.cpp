@@ -66,9 +66,9 @@ AutoPlaylistRuleGroupWidget::AutoPlaylistRuleGroupWidget(bool root, QWidget* par
     m_match->setToolTip(m_match->currentData(Qt::ToolTipRole).toString());
 
     auto* addRule = new QPushButton(tr("Add rule"), this);
-    addRule->setIcon(Gui::iconFromTheme(Constants::Icons::Add));
+    Gui::setThemeIcon(addRule, Constants::Icons::Add);
     auto* addGroup = new QPushButton(tr("Add group"), this);
-    addGroup->setIcon(Gui::iconFromTheme(Constants::Icons::Add));
+    Gui::setThemeIcon(addGroup, Constants::Icons::Add);
 
     auto* header = new QHBoxLayout();
     if(m_expand) {
@@ -91,7 +91,7 @@ AutoPlaylistRuleGroupWidget::AutoPlaylistRuleGroupWidget(bool root, QWidget* par
         setFrameShape(QFrame::StyledPanel);
 
         auto* remove = new QToolButton(this);
-        remove->setIcon(Gui::iconFromTheme(Constants::Icons::Remove));
+        Gui::setThemeIcon(remove, Constants::Icons::Remove);
         remove->setToolTip(tr("Remove group"));
         QObject::connect(remove, &QToolButton::clicked, this, &AutoPlaylistRuleGroupWidget::removeRequested);
         header->addWidget(remove);

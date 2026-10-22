@@ -229,7 +229,7 @@ AutoPlaylistRuleRowWidget::AutoPlaylistRuleRowWidget(const AutoPlaylistRule& rul
     m_values->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     auto* remove = new QToolButton(this);
-    remove->setIcon(Gui::iconFromTheme(Constants::Icons::Remove));
+    Gui::setThemeIcon(remove, Constants::Icons::Remove);
     remove->setToolTip(tr("Remove rule"));
 
     auto* layout = new QHBoxLayout(this);

@@ -27,6 +27,7 @@
 class QIcon;
 class QPixmap;
 class QAction;
+class QAbstractButton;
 class QObject;
 class QPainter;
 class QRect;
@@ -66,11 +67,15 @@ FYGUI_EXPORT QStringList availableThemeIcons();
 FYGUI_EXPORT void setThemeIcon(QAction* action, const QString& icon);
 /*! Convenience overload for Latin-1 icon names. */
 FYGUI_EXPORT void setThemeIcon(QAction* action, const char* icon);
+/*! Sets a button icon from the current theme and stores the icon name for future refreshes. */
+FYGUI_EXPORT void setThemeIcon(QAbstractButton* button, const QString& icon);
+/*! Convenience overload for Latin-1 icon names. */
+FYGUI_EXPORT void setThemeIcon(QAbstractButton* button, const char* icon);
 /*! Returns the stored theme icon name for an action, if any. */
 FYGUI_EXPORT QString themeIconName(const QAction* action);
 /*! Reapplies a stored themed icon to an action. Returns false if no theme icon name is stored. */
 FYGUI_EXPORT bool refreshThemeIcon(QAction* action);
-/*! Reapplies stored themed icons for all descendant actions of the given object. */
+/*! Reapplies stored themed icons for the given object and its descendant actions and buttons. */
 FYGUI_EXPORT void refreshThemeIcons(QObject* object);
 
 /*! Returns a cached pixmap using the default icon size. */
