@@ -712,7 +712,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="882"/>
         <source>Looks up a raw tag field. Multiple values are joined with ‘, ’ or selected by the optional zero-based index.</source>
-        <translation type="unfinished"></translation>
+        <translation>Looks up a raw tag field. Multiple values are joined with “,” or selected by the optional zero-based index.</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="886"/>
@@ -2412,7 +2412,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="353"/>
         <source>A preset named ‘%1’ already exists. Overwrite it?</source>
-        <translation type="unfinished">A preset named “%1” already exists. Overwrite it?</translation>
+        <translation>A preset named “%1” already exists. Overwrite it?</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="458"/>
@@ -2437,7 +2437,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="464"/>
         <source>Forgotten Favourites</source>
-        <translation type="unfinished"></translation>
+        <translation>Forgotten Favorites</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="456"/>
@@ -2471,7 +2471,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="49"/>
         <source>Choose a field or enter a tag name. Use ‘Metadata tag…’ to read a tag directly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Choose a field or enter a tag name. Use “Metadata tag…” to read a tag directly.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="76"/>
@@ -2560,7 +2560,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="512"/>
         <source>Playcount</source>
-        <translation type="unfinished">Playcount</translation>
+        <translation>Playcount</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="513"/>
@@ -2674,7 +2674,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="179"/>
         <source>Add a rule or group, or choose ‘Include all tracks’.</source>
-        <translation type="unfinished"></translation>
+        <translation>Add a rule or group, or choose “Include all tracks”.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="182"/>
@@ -2938,7 +2938,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="44"/>
         <source>Randomise order</source>
-        <translation type="unfinished"></translation>
+        <translation>Randomize order</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="46"/>
@@ -2955,7 +2955,8 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="53"/>
         <source>Choose a field or enter a tag name. Use ‘Metadata tag…’ to read a tag directly.
 Clear to disable sorting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Choose a field or enter a tag name. Use “Metadata tag…” to read a tag directly.
+Clear to disable sorting.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="56"/>
@@ -2970,7 +2971,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="60"/>
         <source>Randomise matching tracks before applying the track limit.</source>
-        <translation type="unfinished"></translation>
+        <translation>Randomize matching tracks before applying the track limit.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="77"/>
@@ -6876,53 +6877,53 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="125"/>
         <source>Bass boost</source>
-        <translation type="unfinished"></translation>
+        <translation>Bass boost</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="127"/>
         <source>Bass reduction</source>
-        <translation type="unfinished"></translation>
+        <translation>Bass reduction</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="129"/>
         <source>Dance</source>
-        <translation type="unfinished">Dance</translation>
+        <translation>Dance</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="131"/>
         <source>Pop</source>
-        <translation type="unfinished">Pop</translation>
+        <translation>Pop</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="133"/>
         <source>Rock</source>
-        <translation type="unfinished">Rock</translation>
+        <translation>Rock</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="135"/>
         <source>Treble boost</source>
-        <translation type="unfinished"></translation>
+        <translation>Treble boost</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="137"/>
         <source>Treble reduction</source>
-        <translation type="unfinished"></translation>
+        <translation>Treble reduction</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="139"/>
         <source>Vocal presence</source>
-        <translation type="unfinished"></translation>
+        <translation>Vocal presence</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="92"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="95"/>
         <source>Restore Built-in Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Restore Built-in Presets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="96"/>
         <source>Restore the original built-in presets? This will replace any changes to them and restore deleted built-in presets. User-created presets will be kept.</source>
-        <translation type="unfinished"></translation>
+        <translation>Restore the original built-in presets? This will replace any changes to them and restore deleted built-in presets. User-created presets will be kept.</translation>
     </message>
 </context>
 <context>
@@ -7005,7 +7006,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="816"/>
         <source>Save…</source>
-        <translation type="unfinished"></translation>
+        <translation>Save…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="987"/>
@@ -7020,12 +7021,12 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1000"/>
         <source>Save Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Save Preset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1000"/>
         <source>Preset name:</source>
-        <translation type="unfinished">Preset name:</translation>
+        <translation>Preset name:</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1012"/>
@@ -12730,7 +12731,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplaybackservice.cpp" line="51"/>
         <source>Current synchronised lyrics line for the playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Current synchronized lyrics line for the playing track</translation>
     </message>
 </context>
 <context>
@@ -15030,12 +15031,12 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="104"/>
         <source>A colour</source>
-        <translation type="unfinished"></translation>
+        <translation>A color</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="105"/>
         <source>B colour</source>
-        <translation type="unfinished"></translation>
+        <translation>B color</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="106"/>
@@ -15100,12 +15101,12 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="180"/>
         <source>Override the default colour for the A marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Override the default color for the A marker</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="181"/>
         <source>Override the default colour for the B marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Override the default color for the B marker</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="184"/>
@@ -16351,12 +16352,12 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="530"/>
         <source>Apply preset to playlists in group</source>
-        <translation type="unfinished"></translation>
+        <translation>Apply preset to playlists in group</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="530"/>
         <source>Apply preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Apply preset</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="563"/>
@@ -17034,7 +17035,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1393"/>
         <source>Update ‘%1’</source>
-        <translation type="unfinished"></translation>
+        <translation>Update “%1”</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1393"/>
@@ -17049,9 +17050,9 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1400"/>
         <source>Update ‘%1’ (%Ln playlist(s))</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Update “%1” (%Ln playlist)</numerusform>
+            <numerusform>Update “%1” (%Ln playlists)</numerusform>
         </translation>
     </message>
     <message>
@@ -17062,7 +17063,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1411"/>
         <source>Discard local column changes and restore the assigned preset’s saved layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Discard local column changes and restore the assigned preset’s saved layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1419"/>
@@ -17082,7 +17083,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1431"/>
         <source>Clear this playlist’s preset assignment and local columns, then use the shared default</source>
-        <translation type="unfinished"></translation>
+        <translation>Clear this playlist’s preset assignment and local columns, then use the shared default</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1445"/>
@@ -26266,7 +26267,9 @@ Hold Ctrl to replace a widget.</source>
         <source>‘Editable’ allows preset names to be entered directly.
 ‘Selection only’ opens a naming dialog when saving.
 Applies when preset controls are next opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>“Editable” allows preset names to be entered directly.
+“Selection only” opens a naming dialog when saving.
+Applies when preset controls are next opened.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="575"/>
@@ -27148,43 +27151,43 @@ Changes apply to newly opened streams.</translation>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="672"/>
         <source>Expected ‘WITH’ after ‘%1’</source>
-        <translation type="unfinished"></translation>
+        <translation>Expected “WITH” after “%1”</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="715"/>
         <source>Expected ‘(’ after ‘%1’</source>
-        <translation type="unfinished"></translation>
+        <translation>Expected “(” after “%1”</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="725"/>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="731"/>
         <source>Expected a value in ‘%1’ list</source>
-        <translation type="unfinished"></translation>
+        <translation>Expected a value in “%1” list</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="741"/>
         <source>Expected ‘)’ at end of ‘%1’ list</source>
-        <translation type="unfinished"></translation>
+        <translation>Expected “)” at end of “%1” list</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="879"/>
         <source>Expected a date in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>Expected a date in “BETWEEN” range</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="886"/>
         <source>Invalid date in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>Invalid date in “BETWEEN” range</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="893"/>
         <source>Expected ‘AND’ between dates in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>Expected “AND” between dates in “BETWEEN” range</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="902"/>
         <source>The start date must not be after the end date in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>The start date must not be after the end date in “BETWEEN” range</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="928"/>
