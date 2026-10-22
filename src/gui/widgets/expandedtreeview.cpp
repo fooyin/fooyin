@@ -2424,6 +2424,8 @@ void IconView::renderToPixmap(QPainter* painter, const ItemViewPaintPairs& paint
 
         paintOpt.rect = paintRect.translated(-rect.topLeft());
 
+        m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &paintOpt, painter, m_view);
+        m_view->style()->drawControl(QStyle::CE_ItemViewItem, &paintOpt, painter, m_view);
         delegate(iconIndex)->paint(painter, paintOpt, iconIndex);
     }
 }
