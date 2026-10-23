@@ -28,6 +28,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QTemporaryDir>
+#include <QtEndian>
 
 extern "C"
 {
@@ -604,6 +605,8 @@ TEST(FFmpegInputTest, PreservesFramesWhenReadSizeIsNotFrameAligned)
         decoded.append(reinterpret_cast<const char*>(data.data()), static_cast<qsizetype>(data.size()));
     }
 
+    // WAV stores little endian samples, while the decoder returns native endian PCM
+    qFromLittleEndian<int16_t>(pcm.constData(), pcm.size() / sizeof(int16_t), pcm.data());
     EXPECT_EQ(decoded, pcm);
 }
 
