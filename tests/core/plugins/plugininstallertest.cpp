@@ -47,17 +47,27 @@ struct ArchiveWriteDeleter
 
 QString targetDirectory()
 {
+    QString os;
 #ifdef Q_OS_WIN
-    const QString os = u"windows"_s;
+    os = "windows"_L1;
+#elifdef Q_OS_LINUX
+    os = "linux"_L1;
 #elifdef Q_OS_MACOS
-    const QString os = u"macos"_s;
+    os = "macos"_L1;
 #elifdef Q_OS_FREEBSD
-    const QString os = u"freebsd"_s;
+    os = "freebsd"_L1;
 #else
-    const QString os = u"linux"_s;
+    return {};
 #endif
     const QString arch = QSysInfo::buildCpuArchitecture();
-    return os + (arch == "arm64"_L1 || arch == "aarch64"_L1 ? u"-arm64"_s : u"-x64"_s);
+    if(arch == "x86_64"_L1 || arch == "amd64"_L1) {
+        return os + "-x64"_L1;
+    }
+    if(arch == "arm64"_L1 || arch == "aarch64"_L1) {
+        return os + "-arm64"_L1;
+    }
+
+    return {};
 }
 
 bool createBundle(const QString& bundlePath, const QString& pluginPath, const QString& archivePluginPath)
@@ -130,6 +140,11 @@ TEST(PluginInstallerTest, InstallsStandalonePluginIntoManagedDirectory)
 
 TEST(PluginInstallerTest, InstallsPayloadForCurrentTarget)
 {
+    const QString target = targetDirectory();
+    if(target.isEmpty()) {
+        GTEST_SKIP() << "Plugin bundles are unsupported on this platform";
+    }
+
     const QTemporaryDir temporaryDirectory;
     const QTemporaryDir plugins;
     ASSERT_TRUE(temporaryDirectory.isValid());
@@ -137,7 +152,7 @@ TEST(PluginInstallerTest, InstallsPayloadForCurrentTarget)
 
     const QString bundlePath = temporaryDirectory.filePath(u"test.fyplugin"_s);
     const QString pluginName = QFileInfo{QStringLiteral(TEST_PLUGIN_PATH)}.fileName();
-    ASSERT_TRUE(createBundle(bundlePath, QStringLiteral(TEST_PLUGIN_PATH), targetDirectory() + u'/' + pluginName));
+    ASSERT_TRUE(createBundle(bundlePath, QStringLiteral(TEST_PLUGIN_PATH), target + u'/' + pluginName));
 
     ASSERT_TRUE(QFile::copy(QStringLiteral(TEST_PLUGIN_PATH), plugins.filePath(pluginName)));
     EXPECT_EQ(std::unexpected{PluginInstaller::InstallError::SameVersionInstalled},
@@ -252,6 +267,11 @@ TEST(PluginInstallerTest, RemovesManagedPluginAndPendingUpdate)
 
 TEST(PluginInstallerTest, RejectsTraversalEntry)
 {
+    const QString target = targetDirectory();
+    if(target.isEmpty()) {
+        GTEST_SKIP() << "Plugin bundles are unsupported on this platform";
+    }
+
     const QTemporaryDir temporaryDirectory;
     const QTemporaryDir plugins;
     ASSERT_TRUE(temporaryDirectory.isValid());
@@ -259,7 +279,7 @@ TEST(PluginInstallerTest, RejectsTraversalEntry)
 
     const QString bundlePath = temporaryDirectory.filePath(u"traversal.fyplugin"_s);
     ASSERT_TRUE(createBundle(bundlePath, QStringLiteral(TEST_PLUGIN_PATH),
-                             targetDirectory() + u"/../"_s + QFileInfo{QStringLiteral(TEST_PLUGIN_PATH)}.fileName()));
+                             target + u"/../"_s + QFileInfo{QStringLiteral(TEST_PLUGIN_PATH)}.fileName()));
 
     EXPECT_EQ(std::unexpected{PluginInstaller::InstallError::InvalidBundle},
               PluginInstaller::install(bundlePath, plugins.path(), false));
@@ -268,12 +288,17 @@ TEST(PluginInstallerTest, RejectsTraversalEntry)
 
 TEST(PluginInstallerTest, RejectsBundleWithoutCurrentTarget)
 {
+    const QString target = targetDirectory();
+    if(target.isEmpty()) {
+        GTEST_SKIP() << "Plugin bundles are unsupported on this platform";
+    }
+
     const QTemporaryDir temporaryDirectory;
     const QTemporaryDir plugins;
     ASSERT_TRUE(temporaryDirectory.isValid());
     ASSERT_TRUE(plugins.isValid());
 
-    const QString otherTarget = targetDirectory().startsWith("windows"_L1) ? u"linux-x64"_s : u"windows-x64"_s;
+    const QString otherTarget = target.startsWith("windows"_L1) ? u"linux-x64"_s : u"windows-x64"_s;
     const QString bundlePath  = temporaryDirectory.filePath(u"wrong-target.fyplugin"_s);
     ASSERT_TRUE(createBundle(bundlePath, QStringLiteral(TEST_PLUGIN_PATH),
                              otherTarget + u'/' + QFileInfo{QStringLiteral(TEST_PLUGIN_PATH)}.fileName()));
