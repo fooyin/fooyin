@@ -27,6 +27,7 @@
 
 #include <QApplication>
 #include <QComboBox>
+#include <QDateTime>
 #include <QPushButton>
 
 #include <gtest/gtest.h>
@@ -162,15 +163,15 @@ TEST(AutoPlaylistTest, FileAndAudioRulesFilterTracks)
     first.setSampleRate(44100);
     first.setBitDepth(24);
     first.setChannels(2);
-    first.setCreatedTime(1704067200000);
-    first.setModifiedTime(1735689600000);
+    first.setCreatedTime(QDateTime{QDate{2024, 1, 1}, QTime{0, 0}}.toMSecsSinceEpoch());
+    first.setModifiedTime(QDateTime{QDate{2025, 1, 1}, QTime{0, 0}}.toMSecsSinceEpoch());
     Track second{u"/music/second.opus"_s};
     second.setBitrate(128);
     second.setSampleRate(96000);
     second.setBitDepth(16);
     second.setChannels(6);
-    second.setCreatedTime(1672531200000);
-    second.setModifiedTime(1767225600000);
+    second.setCreatedTime(QDateTime{QDate{2023, 1, 1}, QTime{0, 0}}.toMSecsSinceEpoch());
+    second.setModifiedTime(QDateTime{QDate{2026, 1, 1}, QTime{0, 0}}.toMSecsSinceEpoch());
     const TrackList tracks{first, second};
     TrackQueryFilter filter;
 
