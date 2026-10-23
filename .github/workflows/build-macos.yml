@@ -11,7 +11,13 @@ on:
 env:
   FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
   BUILD_TESTS: ON
-  BUILD_CCACHE: OFF
+  BUILD_CCACHE: ON
+  BUILD_PCH: OFF
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
+  CCACHE_DIR: ${{ github.workspace }}/.ccache
+  CCACHE_BASEDIR: ${{ github.workspace }}
+  CCACHE_MAXSIZE: 500M
+  CCACHE_COMPILERCHECK: content
 
 jobs:
   macOS:
@@ -35,6 +41,19 @@ jobs:
         run: |
           ./ci/macos-depends.sh
 
+      - name: Set ccache generation
+        id: ccache-generation
+        run: echo "period=$(( $(date -u +%s) / 172800 ))" >> "$GITHUB_OUTPUT"
+
+      - name: Restore ccache
+        id: ccache-restore
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: macos-${{ matrix.runs-on }}-${{ matrix.arch }}-ccache-${{ steps.ccache-generation.outputs.period }}
+          restore-keys: |
+            macos-${{ matrix.runs-on }}-${{ matrix.arch }}-ccache-
+
       - name: Build
         run: |
           ./ci/macos-build.sh
@@ -44,3 +63,10 @@ jobs:
         with:
           name: macos-${{ matrix.arch }}
           path: dmg
+
+      - name: Save ccache
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
