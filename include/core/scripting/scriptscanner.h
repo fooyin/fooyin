@@ -24,6 +24,8 @@
 #include <QString>
 #include <QStringView>
 
+#include <vector>
+
 namespace Fooyin {
 class FYCORE_EXPORT ScriptScanner
 {

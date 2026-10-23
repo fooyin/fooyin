@@ -28,6 +28,7 @@
 #include <QTime>
 
 #include <optional>
+#include <vector>
 
 class QAction;
 class QColor;

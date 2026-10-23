@@ -21,6 +21,9 @@
 
 #include <QString>
 
+#include <variant>
+#include <vector>
+
 namespace Fooyin {
 namespace Expr {
 enum Type : uint8_t

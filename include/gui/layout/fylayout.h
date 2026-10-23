@@ -23,6 +23,8 @@
 
 #include <QJsonObject>
 
+#include <vector>
+
 namespace Fooyin {
 struct FyTheme;
 

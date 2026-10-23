@@ -24,6 +24,7 @@
 #include <QVariant>
 
 #include <cstdint>
+#include <vector>
 
 namespace Fooyin {
 enum class RichAlignment : uint8_t

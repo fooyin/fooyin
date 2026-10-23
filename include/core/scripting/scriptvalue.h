@@ -21,6 +21,8 @@
 
 #include <QString>
 
+#include <vector>
+
 namespace Fooyin {
 struct ScriptResult
 {
