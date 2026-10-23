@@ -4373,8 +4373,12 @@ void ExpandedTreeView::setSelection(const QRect& rect, QItemSelectionModel::Sele
 
     p->layoutItems();
 
-    const QPoint tl{std::min(rect.left(), rect.right()), std::min(rect.top(), rect.bottom())};
-    const QPoint br{std::max(rect.left(), rect.right()), std::max(rect.top(), rect.bottom())};
+    // Icon ranges can wrap onto another row, so keep the original points
+    const bool iconMode = (p->m_viewMode == ViewMode::Icon);
+    const QPoint tl
+        = iconMode ? rect.topLeft() : QPoint{std::min(rect.left(), rect.right()), std::min(rect.top(), rect.bottom())};
+    const QPoint br = iconMode ? rect.bottomRight()
+                               : QPoint{std::max(rect.left(), rect.right()), std::max(rect.top(), rect.bottom())};
 
     QModelIndex topLeft     = findIndexAt(tl, false);
     QModelIndex bottomRight = findIndexAt(br, false);
@@ -4396,6 +4400,10 @@ void ExpandedTreeView::setSelection(const QRect& rect, QItemSelectionModel::Sele
 
     if(!p->isIndexEnabled(topLeft) || !p->isIndexEnabled(bottomRight)) {
         return;
+    }
+
+    if(iconMode && p->viewIndex(topLeft) > p->viewIndex(bottomRight)) {
+        std::swap(topLeft, bottomRight);
     }
 
     p->select(topLeft, bottomRight, command);
