@@ -124,7 +124,9 @@ function(create_fooyin_library name)
                 DESTINATION "${INCLUDE_INSTALL_DIR}"
                 COMPONENT fooyin_development
             )
-            install(TARGETS ${name} LIBRARY DESTINATION ${LIB_INSTALL_DIR} COMPONENT fooyin_development)
+            if(BUILD_SHARED_LIBS AND NOT WIN32)
+                install(TARGETS ${name} LIBRARY DESTINATION ${LIB_INSTALL_DIR} COMPONENT fooyin_development)
+            endif()
         endif()
     endif()
 endfunction()

@@ -106,6 +106,20 @@ set(CPACK_RPM_PACKAGE_REQUIRES_POST "qt6-qtimageformats")
 
 set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_SOURCE_DIR}/cmake/FooyinPackageConfig.cmake")
 
+get_cmake_property(fooyin_package_components COMPONENTS)
+list(REMOVE_ITEM fooyin_package_components fooyin_development)
+set(CPACK_INSTALL_CMAKE_PROJECTS "")
+foreach(component IN LISTS fooyin_package_components)
+    list(
+        APPEND
+        CPACK_INSTALL_CMAKE_PROJECTS
+        "${PROJECT_BINARY_DIR}"
+        "${PROJECT_NAME}"
+        "${component}"
+        "/"
+    )
+endforeach()
+
 include(CPack)
 
 # The dev component includes the libraries, headers, and CMake exports needed by plugins

@@ -169,22 +169,23 @@ function(create_fooyin_plugin_bundle plugin_target)
 
     list(APPEND bundle_files ${BUNDLE_RUNTIME_FILES})
 
-    foreach(target IN LISTS bundle_targets)
-        if(APPLE)
-            set_property(
-                TARGET ${target}
-                APPEND
-                PROPERTY BUILD_RPATH "@loader_path"
+    if(APPLE)
+        set(bundle_rpath "@loader_path")
+    elseif(UNIX)
+        set(bundle_rpath "$ORIGIN")
+    endif()
+
+    if(UNIX)
+        # Bundles copy build tree binaries directly
+        foreach(target IN LISTS bundle_targets)
+            set_target_properties(
+                ${target}
+                PROPERTIES BUILD_WITH_INSTALL_RPATH ON
+                           INSTALL_RPATH "${bundle_rpath}"
+                           INSTALL_RPATH_USE_LINK_PATH OFF
             )
-        elseif(UNIX)
-            set_property(
-                TARGET ${target}
-                APPEND
-                PROPERTY BUILD_RPATH "$ORIGIN"
-            )
-            set_target_properties(${target} PROPERTIES BUILD_RPATH_USE_ORIGIN ON)
-        endif()
-    endforeach()
+        endforeach()
+    endif()
 
     set(bundle_directory "${CMAKE_CURRENT_BINARY_DIR}/bundle")
     set(bundle_output "${CMAKE_CURRENT_BINARY_DIR}/${BUNDLE_NAME}-${bundle_platform}.fyplugin")
