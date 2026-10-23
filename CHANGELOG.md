@@ -7,6 +7,8 @@
 - **Interface**
   - Add configurable column header fonts, including a separate playlist header font ([#1788](https://github.com/fooyin/fooyin/issues/1788))
   - Add configurable Volume Control slider step sizes ([#1802](https://github.com/fooyin/fooyin/issues/1802))
+  - Improve standalone Library Tree window appearance
+  - Improve Library Tree control bar padding
 - **Playlists**
   - Add the Configure action to the full track context menus ([#1804](https://github.com/fooyin/fooyin/issues/1804))
 - **Plugins**

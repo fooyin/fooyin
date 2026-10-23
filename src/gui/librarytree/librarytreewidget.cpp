@@ -525,6 +525,7 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::factoryConfig() const
 {
     ConfigData config;
     config.showControls = m_controlsVisibleByDefault;
+    config.showHeader   = !isWindow();
     return config;
 }
 
@@ -892,6 +893,14 @@ void LibraryTreeWidget::setControlsPosition(ControlsPosition position)
     if(!m_controlsLayout) {
         return;
     }
+
+    QMargins margins;
+    if(m_config.showControls) {
+        const bool window = isWindow();
+        const bool atTop  = position == ControlsPosition::Top;
+        margins           = {window ? 6 : 0, atTop ? 6 : 0, window ? 6 : 0, atTop ? 0 : 6};
+    }
+    m_controlsLayout->setContentsMargins(margins);
 
     m_layout->removeItem(m_controlsLayout);
     m_layout->insertLayout(position == ControlsPosition::Top ? 0 : 1, m_controlsLayout);

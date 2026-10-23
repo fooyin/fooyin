@@ -1005,7 +1005,7 @@ OutputProfileManager* Widgets::outputProfileManager() const
 void Widgets::showLibraryTree()
 {
     auto* libraryTree = createLibraryTree(nullptr, true);
-    libraryTree->showStandaloneWindow(tr("Library Tree"), u"LibraryTree/WindowState"_s, true);
+    libraryTree->showStandaloneWindow(tr("Library Tree"), u"LibraryTree/WindowState"_s);
 }
 
 void Widgets::showArtworkDialog(const TrackList& tracks, Track::Cover type, bool quick)
