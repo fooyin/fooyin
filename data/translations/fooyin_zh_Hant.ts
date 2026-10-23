@@ -2597,7 +2597,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="938"/>
         <source>The query contains an incomplete or invalid expression.</source>
-        <translation type="unfinished"></translation>
+        <translation>查詢包含不完整或無效的運算式。</translation>
     </message>
 </context>
 <context>
@@ -2605,109 +2605,109 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="47"/>
         <source>Match all rules</source>
-        <translation type="unfinished"></translation>
+        <translation>符合全部規則</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="48"/>
         <source>Match any rule</source>
-        <translation type="unfinished"></translation>
+        <translation>符合任何規則</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="49"/>
         <source>Match an odd number of rules</source>
-        <translation type="unfinished"></translation>
+        <translation>符合奇數條目規則</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="51"/>
         <source>Uses AND: every rule or nested group must match.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 AND：每個規則或巢狀群組都必須符合。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="53"/>
         <source>Uses OR: at least one rule or nested group must match.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 OR：至少一個規則或巢狀群組必須符合。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="56"/>
         <source>Uses XOR: one, three, five, or another odd number of rules must match. Each nested group counts as one rule.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 XOR：一、三、五或另一個奇數的規則條目必須符合。每個巢狀群組都視作一條規則。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="61"/>
         <source>Include all tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>包含全部曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="62"/>
         <source>Includes every track in the library without applying rules.</source>
-        <translation type="unfinished"></translation>
+        <translation>包含音樂庫中每個曲目，無套用規則。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="68"/>
         <source>Add rule</source>
-        <translation type="unfinished"></translation>
+        <translation>新增規則</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="70"/>
         <source>Add group</source>
-        <translation type="unfinished"></translation>
+        <translation>新增群組</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="78"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="82"/>
         <source>Collapse group</source>
-        <translation type="unfinished"></translation>
+        <translation>縮合群組</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="82"/>
         <source>Expand group</source>
-        <translation type="unfinished"></translation>
+        <translation>展開群組</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="95"/>
         <source>Remove group</source>
-        <translation type="unfinished"></translation>
+        <translation>移除群組</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="179"/>
         <source>Add a rule or group, or choose ‘Include all tracks’.</source>
-        <translation type="unfinished"></translation>
+        <translation>新增規則或群組，或選擇 &apos;包含全部曲目&apos;。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="182"/>
         <source>Add a rule or group to group %1.</source>
         <extracomment>%1 is a group number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>新增規則或群組至群組 %1。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="197"/>
         <source>Enter a tag name for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>輸入標籤名稱，用於規則%1。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="203"/>
         <source>The start date must not be after the end date for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>開始日期不可在 規則 %1 的結束日期之後。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="210"/>
         <source>Enter at least one valid value for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>輸入至少一個值，用於規則 %1。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="217"/>
         <source>Enter a value for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>輸入一個值，用於規則 %1。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="226"/>
         <source>Enter a number for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>輸入一個數值，用於規則 %1。</translation>
     </message>
 </context>
 <context>
@@ -2716,92 +2716,92 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="115"/>
         <source>and</source>
         <extracomment>Separates the two dates in a ‘between’ rule.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>與</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="162"/>
         <source>No values</source>
-        <translation type="unfinished"></translation>
+        <translation>無數值</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="168"/>
         <source>Edit…</source>
-        <translation type="unfinished"></translation>
+        <translation>編輯…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="170"/>
         <source>Edit values</source>
-        <translation type="unfinished"></translation>
+        <translation>編輯數值</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="187"/>
         <source>Remove rule</source>
-        <translation type="unfinished"></translation>
+        <translation>移除規則</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="319"/>
         <source>No</source>
-        <translation type="unfinished">否</translation>
+        <translation>否</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="319"/>
         <source>Yes</source>
-        <translation type="unfinished">是</translation>
+        <translation>是</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="386"/>
         <source>Edit Values</source>
-        <translation type="unfinished"></translation>
+        <translation>編輯數值</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="400"/>
         <source>Enter at least one value.</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入至少一個數值。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="401"/>
         <source>Empty lines are ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>空白行列會被忽略。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="402"/>
         <source>Enter a valid value on each line.</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入有效的數值在每一行上。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="405"/>
         <source>Values are durations in seconds. Empty lines are ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>數值是持續時間秒數。空白行會被忽略。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="406"/>
         <source>Enter whole numbers. Empty lines are ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入完整數字。空白行會被忽略。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="408"/>
         <source>Enter whole numbers of seconds, from 0 to %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入完整秒數數字，由 0 至 %1。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="409"/>
         <source>Enter whole numbers from 0 to %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入完整數字，由 0 至 %1。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="412"/>
         <source>Half-star ratings are supported. Empty lines are ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>支援半星評分。空白行會被忽略。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="413"/>
         <source>Enter ratings from 0 to 5 in half-star steps.</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入評分，由 0 至 5，於半星階級。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="430"/>
         <source>Values (one per line)</source>
-        <translation type="unfinished"></translation>
+        <translation>數值 (每行一個)</translation>
     </message>
 </context>
 <context>
@@ -2810,347 +2810,348 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="529"/>
         <source>second</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>秒</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="531"/>
         <source>seconds</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>秒</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="535"/>
         <source>minute</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>分</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="537"/>
         <source>minutes</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>分</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="541"/>
         <source>hour</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>時</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="543"/>
         <source>hours</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>時</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="547"/>
         <source>day</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>日</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="549"/>
         <source>days</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>日</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="553"/>
         <source>week</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>週</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="555"/>
         <source>weeks</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>週</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="559"/>
         <source>month</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>月</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="561"/>
         <source>months</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>月</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="565"/>
         <source>year</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>年</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="567"/>
         <source>years</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>年</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="44"/>
         <source>Randomise order</source>
-        <translation type="unfinished"></translation>
+        <translation>隨機順序</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="46"/>
         <source>Limit number of tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>限制曲目數量</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="49"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="51"/>
         <source>None</source>
-        <translation type="unfinished">無</translation>
+        <translation>無</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="53"/>
         <source>Choose a field or enter a tag name. Use ‘Metadata tag…’ to read a tag directly.
 Clear to disable sorting.</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇一個欄位或輸入標籤名稱。使用 &apos;詮釋資料標籤&apos; 以直接讀取標籤。
+清除以停用排序。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="56"/>
         <source>Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>升序</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="57"/>
         <source>Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>降序</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="60"/>
         <source>Randomise matching tracks before applying the track limit.</source>
-        <translation type="unfinished"></translation>
+        <translation>隨機取用符合的曲目，在套用曲目限制之前。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="77"/>
         <source>Sort by:</source>
-        <translation type="unfinished"></translation>
+        <translation>排序依照：</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="149"/>
         <source>does not contain</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>不包含</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="151"/>
         <source>contains</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>包含</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="154"/>
         <source>does not contain any of</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>不包含其中的任何一項</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="156"/>
         <source>contains any of</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>包含任何一项</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="159"/>
         <source>does not contain word</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>不包含字詞</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="161"/>
         <source>contains word</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>包含字詞</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="164"/>
         <source>does not start with</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>開頭不用</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="166"/>
         <source>starts with</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>開頭使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="169"/>
         <source>does not end with</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>結尾不用</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="171"/>
         <source>ends with</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>結尾使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="174"/>
         <source>is not</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>不是</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="176"/>
         <source>is</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>是</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="179"/>
         <source>is not one of</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>不是其一</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="181"/>
         <source>is one of</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>是為其一</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="184"/>
         <source>is greater than</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>是大於</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="187"/>
         <source>is at least</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>至少是</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="190"/>
         <source>is less than</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>是小於</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="193"/>
         <source>is at most</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>最多是</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="196"/>
         <source>is present</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>是現存</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="199"/>
         <source>is missing</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>是遺失</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="202"/>
         <source>is not before</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>不是先於</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="204"/>
         <source>is before</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>是先於</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="207"/>
         <source>is not after</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>不是後於</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="209"/>
         <source>is after</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>是後於</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="212"/>
         <source>is not on or after</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>不是當在或後於</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="214"/>
         <source>is on or after</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>是當在或後於</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="218"/>
         <source>is not in the last</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>不是在上次最後</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="220"/>
         <source>is in the last</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>是在上次最後</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="223"/>
         <source>is not on</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>不是在</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="225"/>
         <source>is on</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>是在</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="228"/>
         <source>is not between</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>不是在其間</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="230"/>
         <source>is between</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>是在其間</translation>
     </message>
 </context>
 <context>
@@ -3158,303 +3159,303 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="58"/>
         <source>Artwork type</source>
-        <translation type="unfinished">圖面類型</translation>
+        <translation>圖面類型</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="60"/>
         <source>Preferred track</source>
-        <translation type="unfinished">偏好曲目</translation>
+        <translation>偏好曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="62"/>
         <source>File</source>
-        <translation type="unfinished">檔案</translation>
+        <translation>檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="67"/>
         <source>Blur</source>
-        <translation type="unfinished">模糊</translation>
+        <translation>模糊</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="68"/>
         <source>Opacity</source>
-        <translation type="unfinished">不透明度</translation>
+        <translation>不透明度</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="69"/>
         <source>Fade length</source>
-        <translation type="unfinished"></translation>
+        <translation>淡入淡出長度</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="76"/>
         <source>Choose Background Image</source>
-        <translation type="unfinished">選擇背景圖片</translation>
+        <translation>選擇背景圖片</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="77"/>
         <source>Images (*.png *.jpg *.jpeg *.webp *.bmp);;All files (*)</source>
-        <translation type="unfinished">圖片 (*.png *.jpg *.jpeg *.webp *.bmp);;全部檔案 (*)</translation>
+        <translation>圖片 (*.png *.jpg *.jpeg *.webp *.bmp);;全部檔案 (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="129"/>
         <source>Choose a custom background image file</source>
-        <translation type="unfinished">選擇自訂背景圖片檔案</translation>
+        <translation>選擇自訂背景圖片檔案</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="132"/>
         <source>No background image</source>
-        <translation type="unfinished">無背景圖片</translation>
+        <translation>無背景圖片</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="133"/>
         <source>Track artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="134"/>
         <source>Use artwork from the preferred track as the background</source>
-        <translation type="unfinished"></translation>
+        <translation>使用圖面，來自所偏好的曲目，作為背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="135"/>
         <source>Custom image</source>
-        <translation type="unfinished">自訂圖片</translation>
+        <translation>自訂圖片</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="136"/>
         <source>Use the selected image file as the background</source>
-        <translation type="unfinished"></translation>
+        <translation>使用所選的圖片檔案作為背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="138"/>
         <source>Front</source>
-        <translation type="unfinished">正面</translation>
+        <translation>正面</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="139"/>
         <source>Use the front cover for current track artwork</source>
-        <translation type="unfinished">使用正面封面用於目前曲目圖面</translation>
+        <translation>使用正面封面用於目前曲目圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="140"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>背面</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="141"/>
         <source>Use the back cover for current track artwork</source>
-        <translation type="unfinished">使用背面封面用於目前曲目圖面</translation>
+        <translation>使用背面封面用於目前曲目圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="142"/>
         <source>Artist</source>
-        <translation type="unfinished">藝人</translation>
+        <translation>藝人</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="143"/>
         <source>Use the artist picture for current track artwork</source>
-        <translation type="unfinished">使用藝人圖像用於目前曲目圖面</translation>
+        <translation>使用藝人圖像用於目前曲目圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="145"/>
         <source>Playing track</source>
-        <translation type="unfinished">進行播放曲目</translation>
+        <translation>進行播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="147"/>
         <source>Selected track</source>
-        <translation type="unfinished">所選曲目</translation>
+        <translation>所選曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="149"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished"></translation>
+        <translation>進行播放 (或所選當已停止)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="151"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished">進行播放 (空白於啟動時)</translation>
+        <translation>進行播放 (空白於啟動時)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="153"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished">進行播放 (空白當已停止時)</translation>
+        <translation>進行播放 (空白當已停止時)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="156"/>
         <source>Scaled and cropped</source>
-        <translation type="unfinished">縮放與裁剪</translation>
+        <translation>縮放與裁剪</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="158"/>
         <source>Fill the panel area while preserving proportions; edges may be cropped</source>
-        <translation type="unfinished"></translation>
+        <translation>填滿面板區域，在保持比例之時；邊緣可能會被裁剪</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="159"/>
         <source>Scaled</source>
-        <translation type="unfinished">已經縮放</translation>
+        <translation>已經縮放</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="160"/>
         <source>Stretch the image to fill the panel area; proportions may change</source>
-        <translation type="unfinished"></translation>
+        <translation>延伸圖片以填滿面板區域；比例可能會有改變</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="161"/>
         <source>Scaled, keep proportions</source>
-        <translation type="unfinished">已經縮放，保持比例</translation>
+        <translation>已經縮放，保持比例</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="163"/>
         <source>Fit the whole image inside the panel area without cropping</source>
-        <translation type="unfinished"></translation>
+        <translation>適合整個圖片用於面板區域內，無需裁切</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="164"/>
         <source>Original size</source>
-        <translation type="unfinished">原始大小</translation>
+        <translation>原始大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="165"/>
         <source>Draw the image at its original size, optionally limited by maximum size</source>
-        <translation type="unfinished">以其原始大小繪製圖片，可選用限制依照最大尺寸</translation>
+        <translation>以其原始大小繪製圖片，可選用限制依照最大尺寸</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="167"/>
         <source>Top left</source>
-        <translation type="unfinished">左上</translation>
+        <translation>左上</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="168"/>
         <source>Top</source>
-        <translation type="unfinished">頂部</translation>
+        <translation>頂部</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="169"/>
         <source>Top right</source>
-        <translation type="unfinished">右上</translation>
+        <translation>右上</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="170"/>
         <source>Left</source>
-        <translation type="unfinished">左</translation>
+        <translation>左</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="171"/>
         <source>Middle</source>
-        <translation type="unfinished">中間</translation>
+        <translation>中間</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="172"/>
         <source>Right</source>
-        <translation type="unfinished">右</translation>
+        <translation>右</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="173"/>
         <source>Bottom left</source>
-        <translation type="unfinished">左下</translation>
+        <translation>左下</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="174"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="175"/>
         <source>Bottom right</source>
-        <translation type="unfinished">右下</translation>
+        <translation>右下</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="179"/>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="187"/>
         <source>Disabled</source>
-        <translation type="unfinished">已經停用</translation>
+        <translation>已經停用</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="189"/>
         <source>Path to the custom background image</source>
-        <translation type="unfinished">自訂背景圖片的路徑</translation>
+        <translation>自訂背景圖片的路徑</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="190"/>
         <source>Select which image source to use for the background</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇圖片來源來使用於背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="191"/>
         <source>Select which artwork type to use for current track artwork</source>
-        <translation type="unfinished">選擇所要使用的圖面類型 用於目前曲目圖面</translation>
+        <translation>選擇所要使用的圖面類型，用於目前曲目圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="192"/>
         <source>Select which track supplies the background artwork</source>
-        <translation type="unfinished">選擇某個曲目提供的背景圖面</translation>
+        <translation>選擇某個曲目提供的背景圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="193"/>
         <source>Controls how the background image is scaled to the panel area</source>
-        <translation type="unfinished"></translation>
+        <translation>控制如何縮放背景圖像至面板區域</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="194"/>
         <source>Alignment for original-size background images</source>
-        <translation type="unfinished">進行對齊 用於原始大小背景圖片</translation>
+        <translation>進行對齊，用於原始大小背景圖片</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="195"/>
         <source>Maximum width or height for original-size background images</source>
-        <translation type="unfinished">最大化寬度或高度 用於原始大小背景圖片</translation>
+        <translation>最大化寬度或高度，用於原始大小背景圖片</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="196"/>
         <source>Applies blur to the background image</source>
-        <translation type="unfinished">套用模糊效果至背景圖片</translation>
+        <translation>套用模糊效果至背景圖片</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="197"/>
         <source>Controls how strongly the background image is shown</source>
-        <translation type="unfinished">控制背景圖片的顯示強度</translation>
+        <translation>控制背景圖片的顯示何等強度</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="198"/>
         <source>Duration for fading between background images; set to 0 to disable</source>
-        <translation type="unfinished">背景圖片之間淡入淡出的持續時間；設定 0 則停用</translation>
+        <translation>背景圖片之間淡入淡出的持續時間；設定 0 則停用</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="203"/>
         <source>Image source</source>
-        <translation type="unfinished">圖片來源</translation>
+        <translation>圖片來源</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="204"/>
         <source>Source</source>
-        <translation type="unfinished">來源</translation>
+        <translation>來源</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="212"/>
         <source>Layout</source>
-        <translation type="unfinished">配置</translation>
+        <translation>配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="213"/>
         <source>Scale mode</source>
-        <translation type="unfinished">縮放模式</translation>
+        <translation>縮放模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="215"/>
         <source>Alignment</source>
-        <translation type="unfinished">對齊</translation>
+        <translation>對齊</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="217"/>
         <source>Maximum size</source>
-        <translation type="unfinished">最大尺寸</translation>
+        <translation>最大尺寸</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="219"/>
         <source>Effects</source>
-        <translation type="unfinished">效果</translation>
+        <translation>效果</translation>
     </message>
 </context>
 <context>
@@ -6125,7 +6126,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="466"/>
         <source>Save…</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="719"/>
@@ -6186,12 +6187,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1240"/>
         <source>Save Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存預設集</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1240"/>
         <source>Preset name:</source>
-        <translation type="unfinished">預設集名稱：</translation>
+        <translation>預設集名稱：</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1258"/>
@@ -6848,32 +6849,32 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="125"/>
         <source>Bass boost</source>
-        <translation type="unfinished"></translation>
+        <translation>低音增強</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="127"/>
         <source>Bass reduction</source>
-        <translation type="unfinished"></translation>
+        <translation>低音減弱</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="129"/>
         <source>Dance</source>
-        <translation type="unfinished">舞曲</translation>
+        <translation>舞曲</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="131"/>
         <source>Pop</source>
-        <translation type="unfinished">流行</translation>
+        <translation>流行</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="133"/>
         <source>Rock</source>
-        <translation type="unfinished">搖滾</translation>
+        <translation>搖滾</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="135"/>
         <source>Treble boost</source>
-        <translation type="unfinished"></translation>
+        <translation>高音增強</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="137"/>
