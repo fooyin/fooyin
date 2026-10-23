@@ -28,6 +28,7 @@
 
 #include <expected>
 #include <memory>
+#include <vector>
 
 namespace Fooyin::Cdda {
 enum class CdRippingSecurity : uint8_t

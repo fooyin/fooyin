@@ -37,6 +37,7 @@
 #include <deque>
 #include <mutex>
 #include <unordered_set>
+#include <vector>
 
 using namespace Qt::StringLiterals;
 

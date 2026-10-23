@@ -26,6 +26,8 @@
 #include <QListWidgetItem>
 #include <QRect>
 
+#include <vector>
+
 class QToolButton;
 
 namespace Fooyin::ProjectM {

@@ -22,6 +22,7 @@
 #include "fileopsdefs.h"
 
 #include <map>
+#include <vector>
 
 namespace Fooyin::FileOps {
 namespace Settings {

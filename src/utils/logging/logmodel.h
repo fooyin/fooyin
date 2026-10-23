@@ -24,6 +24,7 @@
 #include <QIcon>
 
 #include <deque>
+#include <vector>
 
 namespace Fooyin {
 struct ConsoleEntry

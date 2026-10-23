@@ -22,6 +22,8 @@
 #include <QDataStream>
 #include <QString>
 
+#include <vector>
+
 namespace Fooyin::Filters {
 struct FilterColumn
 {

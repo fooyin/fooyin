@@ -23,6 +23,8 @@
 #include <QString>
 
 #include <array>
+#include <tuple>
+#include <vector>
 
 namespace Fooyin {
 struct DefaultPlaylistColumn

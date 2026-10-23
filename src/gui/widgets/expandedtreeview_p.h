@@ -24,6 +24,7 @@
 #include <QBasicTimer>
 
 #include <unordered_map>
+#include <vector>
 
 class QHeaderView;
 
