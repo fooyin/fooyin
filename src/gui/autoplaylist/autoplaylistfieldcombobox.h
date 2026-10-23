@@ -24,14 +24,18 @@
 #include "autoplaylistquery.h"
 
 #include <QComboBox>
+#include <QPointer>
 
 namespace Fooyin {
+class ScriptLineEdit;
+
 class FYGUI_EXPORT AutoPlaylistFieldComboBox : public QComboBox
 {
     Q_OBJECT
 
 public:
     explicit AutoPlaylistFieldComboBox(QWidget* parent);
+    AutoPlaylistFieldComboBox(bool allowScripts, QWidget* parent);
 
     [[nodiscard]] QString field() const;
     [[nodiscard]] AutoPlaylistFieldSource source() const;
@@ -42,6 +46,11 @@ Q_SIGNALS:
     void fieldChanged();
 
 private:
+    void setScript(const QString& script, bool matchPreset);
+
+    bool m_allowScripts;
+    QPointer<ScriptLineEdit> m_scriptEdit;
+    bool m_showingPresetName;
     QString m_previousField;
     AutoPlaylistFieldSource m_previousSource;
 };

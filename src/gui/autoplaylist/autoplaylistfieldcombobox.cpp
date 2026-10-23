@@ -19,6 +19,10 @@
 
 #include "autoplaylistfieldcombobox.h"
 
+#include <gui/scripting/scripteditor.h>
+#include <gui/widgets/scriptlineedit.h>
+
+#include <QAction>
 #include <QCompleter>
 #include <QInputDialog>
 #include <QLineEdit>
@@ -31,27 +35,69 @@ constexpr auto MetadataActionRole = Qt::UserRole + 2;
 
 namespace Fooyin {
 AutoPlaylistFieldComboBox::AutoPlaylistFieldComboBox(QWidget* parent)
+    : AutoPlaylistFieldComboBox{false, parent}
+{ }
+
+AutoPlaylistFieldComboBox::AutoPlaylistFieldComboBox(bool allowScripts, QWidget* parent)
     : QComboBox{parent}
+    , m_allowScripts{allowScripts}
+    , m_showingPresetName{false}
     , m_previousSource{AutoPlaylistFieldSource::BuiltIn}
 {
+    setEditable(true);
+    setInsertPolicy(NoInsert);
+
     for(const auto& field : AutoPlaylistQueryBuilder::fields()) {
-        addItem(field.label, field.name);
+        addItem(field.label, m_allowScripts
+                                 ? AutoPlaylistQueryBuilder::fieldScript(field.name, AutoPlaylistFieldSource::BuiltIn)
+                                 : field.name);
     }
 
     insertSeparator(count());
     addItem(tr("Metadata tag…"));
     setItemData(count() - 1, true, MetadataActionRole);
 
-    setEditable(true);
-    setInsertPolicy(NoInsert);
-    completer()->setCompletionMode(QCompleter::PopupCompletion);
-    lineEdit()->setPlaceholderText(tr("Tag name"));
-    setToolTip(tr("Choose a field or enter a tag name. Use ‘Metadata tag…’ to read a tag directly."));
+    if(m_allowScripts) {
+        m_scriptEdit = new ScriptLineEdit(this);
+        m_scriptEdit->setClearButtonEnabled(true);
+        m_scriptEdit->setPlaceholderText(tr("None"));
+
+        setLineEdit(m_scriptEdit);
+        setCompleter(nullptr);
+
+        QObject::disconnect(m_scriptEdit, &QLineEdit::editingFinished, this, nullptr);
+
+        const auto actions = m_scriptEdit->actions();
+        for(const auto* action : actions) {
+            QObject::disconnect(action, &QAction::triggered, m_scriptEdit, nullptr);
+            QObject::connect(action, &QAction::triggered, this, [this]() {
+                const QString original{field()};
+                ScriptEditor::openEditor(
+                    original,
+                    [this, original](const QString& script) {
+                        if(script != original) {
+                            setScript(script, false);
+                            Q_EMIT fieldChanged();
+                        }
+                    },
+                    {}, this);
+            });
+        }
+
+        setToolTip(tr("Choose a preset or enter a sorting script. Use ‘Metadata tag…’ to read a tag directly.\n"
+                      "Clear to disable sorting."));
+        m_showingPresetName = true;
+    }
+    else {
+        completer()->setCompletionMode(QCompleter::PopupCompletion);
+        lineEdit()->setPlaceholderText(tr("Tag name"));
+        setToolTip(tr("Choose a field or enter a tag name. Use ‘Metadata tag…’ to read a tag directly."));
+    }
 
     m_previousField = field();
 
     const auto updateField = [this]() {
-        if(currentText() == itemText(findData(true, MetadataActionRole))) {
+        if(currentData(MetadataActionRole).toBool() && currentText() == itemText(currentIndex())) {
             return;
         }
 
@@ -65,29 +111,53 @@ AutoPlaylistFieldComboBox::AutoPlaylistFieldComboBox(QWidget* parent)
         m_previousSource = fieldSource;
         Q_EMIT fieldChanged();
     };
-    QObject::connect(this, &QComboBox::editTextChanged, this, updateField);
-    QObject::connect(this, &QComboBox::currentIndexChanged, this, updateField);
+    QObject::connect(this, &QComboBox::editTextChanged, this, [this, updateField]() {
+        if(m_allowScripts && !currentData(MetadataActionRole).toBool()) {
+            m_showingPresetName = false;
+        }
+        updateField();
+    });
+    QObject::connect(this, &QComboBox::currentIndexChanged, this, [this, updateField]() {
+        if(m_allowScripts && !currentData(MetadataActionRole).toBool()) {
+            m_showingPresetName = true;
+        }
+        updateField();
+    });
     QObject::connect(this, &QComboBox::activated, this, [this](int index) {
         if(!itemData(index, MetadataActionRole).toBool()) {
+            if(m_allowScripts) {
+                setScript(itemData(index).toString(), true);
+                Q_EMIT fieldChanged();
+            }
             return;
         }
 
         bool accepted{false};
+        const bool previousPreset{m_showingPresetName};
+        const QString previousTag = m_previousSource == AutoPlaylistFieldSource::Script ? QString{} : m_previousField;
         const QString name = QInputDialog::getText(this, tr("Metadata tag"), tr("Tag name") + u":"_s, QLineEdit::Normal,
-                                                   m_previousField, &accepted)
+                                                   previousTag, &accepted)
                                  .trimmed();
         if(accepted && !name.isEmpty()) {
             setField(name, AutoPlaylistFieldSource::Metadata);
             Q_EMIT fieldChanged();
         }
         else {
-            setField(m_previousField, m_previousSource);
+            if(m_allowScripts) {
+                setScript(m_previousField, previousPreset);
+            }
+            else {
+                setField(m_previousField, m_previousSource);
+            }
         }
     });
 }
 
 QString AutoPlaylistFieldComboBox::field() const
 {
+    if(m_allowScripts) {
+        return m_showingPresetName ? currentData().toString() : currentText();
+    }
     const QString text = currentText().trimmed();
     if(currentIndex() >= 0 && text == itemText(currentIndex())) {
         return currentData().toString();
@@ -98,6 +168,9 @@ QString AutoPlaylistFieldComboBox::field() const
 
 AutoPlaylistFieldSource AutoPlaylistFieldComboBox::source() const
 {
+    if(m_allowScripts) {
+        return AutoPlaylistFieldSource::Script;
+    }
     if(currentIndex() >= 0 && currentText() == itemText(currentIndex())) {
         return static_cast<AutoPlaylistFieldSource>(currentData(SourceRole).toInt());
     }
@@ -108,6 +181,16 @@ AutoPlaylistFieldSource AutoPlaylistFieldComboBox::source() const
 void AutoPlaylistFieldComboBox::setField(const QString& name, AutoPlaylistFieldSource source)
 {
     const QSignalBlocker blocker{this};
+
+    if(m_allowScripts) {
+        const QString script = AutoPlaylistQueryBuilder::fieldScript(name, source);
+        if(source == AutoPlaylistFieldSource::Metadata && findData(script) < 0) {
+            //: %1 is a metadata tag name.
+            insertItem(findData(true, MetadataActionRole), tr("%1 (tag)").arg(name), script);
+        }
+        setScript(script, true);
+        return;
+    }
 
     const int fieldIndex = AutoPlaylistQueryBuilder::fieldIndex(name, source);
     if(fieldIndex >= 0 || name.isEmpty()) {
@@ -136,5 +219,20 @@ void AutoPlaylistFieldComboBox::setField(const QString& name, AutoPlaylistFieldS
 
     m_previousField  = field();
     m_previousSource = this->source();
+}
+
+void AutoPlaylistFieldComboBox::setScript(const QString& script, bool matchPreset)
+{
+    const QSignalBlocker blocker{this};
+
+    const int index     = matchPreset ? findData(script) : -1;
+    m_showingPresetName = index >= 0;
+    setCurrentIndex(index);
+
+    if(!m_showingPresetName && m_scriptEdit) {
+        m_scriptEdit->setScript(script);
+    }
+    m_previousField  = script;
+    m_previousSource = AutoPlaylistFieldSource::Script;
 }
 } // namespace Fooyin

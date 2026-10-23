@@ -84,6 +84,7 @@ enum class AutoPlaylistFieldSource : uint8_t
 {
     BuiltIn = 0,
     Metadata,
+    Script,
 };
 
 struct AutoPlaylistField
@@ -128,6 +129,7 @@ struct AutoPlaylistRules
     bool allTracks{false};
     QString sortField;
     AutoPlaylistFieldSource sortSource{AutoPlaylistFieldSource::BuiltIn};
+    std::optional<QString> sortScript;
     bool descending{false};
     bool randomSort{false};
     int limit{0};
@@ -151,6 +153,7 @@ public:
     static int fieldIndex(const QString& name, AutoPlaylistFieldSource source = AutoPlaylistFieldSource::BuiltIn);
     static AutoPlaylistFieldType fieldType(const QString& name,
                                            AutoPlaylistFieldSource source = AutoPlaylistFieldSource::BuiltIn);
+    static QString fieldScript(const QString& name, AutoPlaylistFieldSource source);
 
     static std::vector<Expr::Type> comparisons(AutoPlaylistFieldType type);
     static bool isListValueValid(const QString& value, AutoPlaylistFieldType type);

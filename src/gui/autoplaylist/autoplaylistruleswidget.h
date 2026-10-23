@@ -53,6 +53,8 @@ Q_SIGNALS:
     void changed();
 
 private:
+    void updateSortControls();
+
     AutoPlaylistRuleGroupWidget* m_group;
     AutoPlaylistFieldComboBox* m_sortField;
     QComboBox* m_sortDirection;

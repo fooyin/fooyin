@@ -55,8 +55,20 @@ bool validNumericValue(const QString& value, AutoPlaylistFieldType type, bool ca
         && (!canonical || value == QString::number(number));
 }
 
-int varFieldIndex(const Expression& expression)
+int expressionFieldIndex(const Expression& expression)
 {
+    if(expression.type == Expr::Function) {
+        const auto* function = std::get_if<FuncValue>(&expression.value);
+        if(function && function->name == "info"_L1 && function->args.size() == 1
+           && function->args.front().type == Expr::FunctionArg) {
+            const auto* args = std::get_if<ExpressionList>(&function->args.front().value);
+            if(args && args->size() == 1
+               && (args->front().type == Expr::Literal || args->front().type == Expr::QuotedLiteral)) {
+                return AutoPlaylistQueryBuilder::fieldIndex(u"$info(%1)"_s.arg(std::get<QString>(args->front().value)));
+            }
+        }
+        return -1;
+    }
     if(expression.type != Expr::Variable || !std::holds_alternative<QString>(expression.value)) {
         return -1;
     }
@@ -153,11 +165,12 @@ bool readRule(const Expression& expression, AutoPlaylistRule& rule)
         return false;
     }
 
-    const int field = varFieldIndex(args->front());
+    const int field = expressionFieldIndex(args->front());
     if(field >= 0) {
         rule.field = AutoPlaylistQueryBuilder::fields()[field].name;
         if((expression.type == Expr::Present || expression.type == Expr::Missing)
-           && std::get<QString>(args->front().value).compare(rule.field, Qt::CaseInsensitive) != 0) {
+           && (args->front().type != Expr::Variable
+               || std::get<QString>(args->front().value).compare(rule.field, Qt::CaseInsensitive) != 0)) {
             return false;
         }
     }
@@ -514,6 +527,15 @@ std::span<const AutoPlaylistField> AutoPlaylistQueryBuilder::fields()
         AutoPlaylistField{.name = u"firstplayed"_s, .label = tr("First played"), .type = AutoPlaylistFieldType::Date},
         AutoPlaylistField{.name = u"lastplayed"_s, .label = tr("Last played"), .type = AutoPlaylistFieldType::Date},
         AutoPlaylistField{.name = u"codec"_s, .label = tr("Codec"), .type = AutoPlaylistFieldType::Text},
+        AutoPlaylistField{.name = u"bitrate"_s, .label = tr("Bitrate (kbps)"), .type = AutoPlaylistFieldType::Number},
+        AutoPlaylistField{
+            .name = u"samplerate"_s, .label = tr("Sample rate (Hz)"), .type = AutoPlaylistFieldType::Number},
+        AutoPlaylistField{.name = u"bitdepth"_s, .label = tr("Bit depth"), .type = AutoPlaylistFieldType::Number},
+        AutoPlaylistField{
+            .name = u"$info(channels)"_s, .label = tr("Number of channels"), .type = AutoPlaylistFieldType::Number},
+        AutoPlaylistField{.name = u"createdtime"_s, .label = tr("File created"), .type = AutoPlaylistFieldType::Date},
+        AutoPlaylistField{.name = u"lastmodified"_s, .label = tr("Last modified"), .type = AutoPlaylistFieldType::Date},
+        AutoPlaylistField{.name = u"extension"_s, .label = tr("File extension"), .type = AutoPlaylistFieldType::Text},
         AutoPlaylistField{.name = u"path"_s, .label = tr("Folder path"), .type = AutoPlaylistFieldType::Text},
         AutoPlaylistField{.name = u"filepath"_s, .label = tr("File path"), .type = AutoPlaylistFieldType::Text},
     };
@@ -571,7 +593,7 @@ std::span<const AutoPlaylistDateUnit> AutoPlaylistQueryBuilder::dateUnits()
 
 int AutoPlaylistQueryBuilder::fieldIndex(const QString& name, AutoPlaylistFieldSource source)
 {
-    if(source == AutoPlaylistFieldSource::Metadata) {
+    if(source != AutoPlaylistFieldSource::BuiltIn) {
         return -1;
     }
 
@@ -592,6 +614,21 @@ AutoPlaylistFieldType AutoPlaylistQueryBuilder::fieldType(const QString& name, A
 {
     const int index = fieldIndex(name, source);
     return index >= 0 ? fields()[index].type : AutoPlaylistFieldType::Metadata;
+}
+
+QString AutoPlaylistQueryBuilder::fieldScript(const QString& name, AutoPlaylistFieldSource source)
+{
+    if(name.isEmpty() || source == AutoPlaylistFieldSource::Script) {
+        return name;
+    }
+
+    const int index = fieldIndex(name, source);
+    if(index < 0) {
+        return u"$meta(%1)"_s.arg(quoted(name));
+    }
+
+    const QString field = fields()[index].name;
+    return field.startsWith(u'$') ? field : u'%' + field + u'%';
 }
 
 std::vector<Expr::Type> AutoPlaylistQueryBuilder::comparisons(AutoPlaylistFieldType type)
@@ -642,9 +679,12 @@ std::pair<QString, QString> AutoPlaylistQueryBuilder::query(const AutoPlaylistRu
     if(rules.randomSort) {
         sortQuery = u"SORT%1 $rand()"_s.arg(QChar{rules.descending ? u'-' : u'+'});
     }
+    else if(rules.sortScript) {
+        sortQuery = u"SORT%1 %2"_s.arg(QChar{rules.descending ? u'-' : u'+'}).arg(*rules.sortScript);
+    }
     else if(!rules.sortField.isEmpty()) {
         const int index     = fieldIndex(rules.sortField, rules.sortSource);
-        const QString field = index >= 0 ? fields()[index].name : u"$meta(%1)"_s.arg(quoted(rules.sortField));
+        const QString field = index >= 0 ? fields()[index].name : fieldScript(rules.sortField, rules.sortSource);
         sortQuery           = u"SORT%1 %2"_s.arg(QChar{rules.descending ? u'-' : u'+'}).arg(field);
     }
 
@@ -664,13 +704,19 @@ std::optional<AutoPlaylistRules> AutoPlaylistQueryBuilder::rules(const QString& 
     std::vector<const Expression*> conditions;
     for(bool hasLimit{false}; const auto& expression : parsed.expressions) {
         if(expression.type == Expr::SortAscending || expression.type == Expr::SortDescending) {
-            if(rules.randomSort || !rules.sortField.isEmpty()) {
+            if(rules.randomSort || !rules.sortField.isEmpty() || rules.sortScript) {
                 return {};
             }
 
             const auto sort = parser.parse(std::get<QString>(expression.value));
-            if(!sort.isValid() || sort.expressions.size() != 1) {
+            if(!sort.isValid()) {
                 return {};
+            }
+
+            rules.descending = expression.type == Expr::SortDescending;
+            if(sort.expressions.size() != 1) {
+                rules.sortScript = std::get<QString>(expression.value);
+                continue;
             }
 
             auto field = sort.expressions.front();
@@ -678,7 +724,7 @@ std::optional<AutoPlaylistRules> AutoPlaylistQueryBuilder::rules(const QString& 
                 field.type = Expr::Variable;
             }
 
-            const int index      = varFieldIndex(field);
+            const int index      = expressionFieldIndex(field);
             const auto* function = std::get_if<FuncValue>(&field.value);
             if(field.type == Expr::Function && function && function->name == "rand"_L1 && function->args.empty()) {
                 rules.randomSort = true;
@@ -692,10 +738,8 @@ std::optional<AutoPlaylistRules> AutoPlaylistQueryBuilder::rules(const QString& 
                 rules.sortSource = AutoPlaylistFieldSource::Metadata;
             }
             else {
-                return {};
+                rules.sortScript = std::get<QString>(expression.value);
             }
-
-            rules.descending = expression.type == Expr::SortDescending;
         }
         else if(expression.type == Expr::Limit) {
             bool valid{false};

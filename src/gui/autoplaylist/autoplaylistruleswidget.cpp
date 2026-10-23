@@ -39,7 +39,7 @@ namespace Fooyin {
 AutoPlaylistRulesWidget::AutoPlaylistRulesWidget(QWidget* parent)
     : QWidget{parent}
     , m_group{new AutoPlaylistRuleGroupWidget(true, this)}
-    , m_sortField{new AutoPlaylistFieldComboBox(this)}
+    , m_sortField{new AutoPlaylistFieldComboBox(true, this)}
     , m_sortDirection{new QComboBox(this)}
     , m_randomOrder{new QCheckBox(tr("Randomise order"), this)}
     , m_limitWidget{new QWidget(this)}
@@ -49,9 +49,6 @@ AutoPlaylistRulesWidget::AutoPlaylistRulesWidget(QWidget* parent)
     m_sortField->insertItem(0, tr("None"), QString{});
     m_sortField->setCurrentIndex(0);
     m_sortField->lineEdit()->setPlaceholderText(tr("None"));
-    m_sortField->lineEdit()->setClearButtonEnabled(true);
-    m_sortField->setToolTip(tr("Choose a field or enter a tag name. Use ‘Metadata tag…’ to read a tag directly.\n"
-                               "Clear to disable sorting."));
 
     m_sortDirection->addItem(tr("Ascending"));
     m_sortDirection->addItem(tr("Descending"));
@@ -82,13 +79,12 @@ AutoPlaylistRulesWidget::AutoPlaylistRulesWidget(QWidget* parent)
 
     QObject::connect(m_group, &AutoPlaylistRuleGroupWidget::changed, this, &AutoPlaylistRulesWidget::changed);
     QObject::connect(m_sortField, &AutoPlaylistFieldComboBox::fieldChanged, this, [this]() {
-        m_sortDirection->setEnabled(!m_randomOrder->isChecked() && !m_sortField->field().isEmpty());
+        updateSortControls();
         Q_EMIT changed();
     });
     QObject::connect(m_sortDirection, &QComboBox::currentIndexChanged, this, &AutoPlaylistRulesWidget::changed);
-    QObject::connect(m_randomOrder, &QCheckBox::toggled, this, [this](bool enabled) {
-        m_sortField->setEnabled(!enabled);
-        m_sortDirection->setEnabled(!enabled && !m_sortField->field().isEmpty());
+    QObject::connect(m_randomOrder, &QCheckBox::toggled, this, [this]() {
+        updateSortControls();
         Q_EMIT changed();
     });
     QObject::connect(m_limitEnabled, &QCheckBox::toggled, this, [this](bool enabled) {
@@ -102,10 +98,12 @@ AutoPlaylistRules AutoPlaylistRulesWidget::rules() const
 {
     AutoPlaylistRules rules;
 
-    rules.group      = m_group->group();
-    rules.allTracks  = m_group->allTracks();
-    rules.sortField  = m_sortField->field();
-    rules.sortSource = m_sortField->source();
+    rules.group          = m_group->group();
+    rules.allTracks      = m_group->allTracks();
+    const QString script = m_sortField->field();
+    if(!script.trimmed().isEmpty()) {
+        rules.sortScript = script;
+    }
     rules.descending = m_sortDirection->currentIndex() == 1;
     rules.randomSort = m_randomOrder->isChecked();
     rules.limit      = m_limitEnabled->isChecked() ? m_limit->value() : 0;
@@ -133,12 +131,21 @@ void AutoPlaylistRulesWidget::setRules(const AutoPlaylistRules& rules)
     const QSignalBlocker blocker{this};
 
     m_group->setGroup(rules.group, rules.allTracks);
-    m_sortField->setField(rules.sortField, rules.sortSource);
-    m_sortDirection->setEnabled(!rules.randomSort && !rules.sortField.isEmpty());
+    const QString script = rules.sortScript ? *rules.sortScript
+                                            : AutoPlaylistQueryBuilder::fieldScript(rules.sortField, rules.sortSource);
+    if(script != m_sortField->field()) {
+        if(rules.sortScript) {
+            m_sortField->setField(*rules.sortScript, AutoPlaylistFieldSource::Script);
+        }
+        else {
+            m_sortField->setField(rules.sortField, rules.sortSource);
+        }
+    }
     m_sortDirection->setCurrentIndex(rules.descending ? 1 : 0);
     m_randomOrder->setChecked(rules.randomSort);
     m_limitEnabled->setChecked(rules.limit > 0);
     m_limit->setValue(rules.limit > 0 ? rules.limit : 25);
+    updateSortControls();
 }
 
 QString AutoPlaylistRulesWidget::comparisonText(Expr::Type comparison, bool negated, bool relative)
@@ -233,6 +240,13 @@ QString AutoPlaylistRulesWidget::comparisonText(Expr::Type comparison, bool nega
     }
 }
 
+void AutoPlaylistRulesWidget::updateSortControls()
+{
+    const bool random = m_randomOrder->isChecked();
+
+    m_sortField->setEnabled(!random);
+    m_sortDirection->setEnabled(!random && !m_sortField->field().trimmed().isEmpty());
+}
 } // namespace Fooyin
 
 #include "moc_autoplaylistruleswidget.cpp"
