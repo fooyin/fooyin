@@ -62,6 +62,16 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="0.14.1" date="2026-10-23">
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.14.1</url>
+            <description>
+                <p>Adds configurable column header fonts and Volume Control step sizes.</p>
+                <p>Plugin installation now supports loose-file upgrades, shows pending installations,
+                    and reports specific failures.</p>
+                <p>This release also fixes projectM during layout editing and resizing, item view rendering,
+                    capitalisation in the Tag Editor and <code>$caps</code>, and Windows settings lists.</p>
+            </description>
+        </release>
         <release version="0.14.0" date="2026-10-21">
             <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.14.0</url>
             <description>
