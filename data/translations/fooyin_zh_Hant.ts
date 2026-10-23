@@ -6879,23 +6879,23 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="137"/>
         <source>Treble reduction</source>
-        <translation type="unfinished"></translation>
+        <translation>高音減弱</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="139"/>
         <source>Vocal presence</source>
-        <translation type="unfinished"></translation>
+        <translation>人聲呈現</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="92"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="95"/>
         <source>Restore Built-in Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>還原內建預設集</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="96"/>
         <source>Restore the original built-in presets? This will replace any changes to them and restore deleted built-in presets. User-created presets will be kept.</source>
-        <translation type="unfinished"></translation>
+        <translation>還原原始內建的預設集？這將取代其任何變更，並還原已經刪除的內建預設集。使用者所建立的預設集將會保留。</translation>
     </message>
 </context>
 <context>
@@ -6978,7 +6978,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="816"/>
         <source>Save…</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="987"/>
@@ -6993,12 +6993,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1000"/>
         <source>Save Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存預設集</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1000"/>
         <source>Preset name:</source>
-        <translation type="unfinished">預設集名稱：</translation>
+        <translation>預設集名稱：</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1012"/>
@@ -7549,7 +7549,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="201"/>
         <source>&amp;Save…</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存(&amp;S)…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="524"/>
@@ -7682,12 +7682,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="377"/>
         <source>Save Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>儲存預設集</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="377"/>
         <source>Preset name:</source>
-        <translation type="unfinished">預設集名稱：</translation>
+        <translation>預設集名稱：</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="392"/>
@@ -8470,7 +8470,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="165"/>
         <source>Enabled</source>
-        <translation type="unfinished">已經啟用</translation>
+        <translation>已經啟用</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="167"/>
@@ -12035,7 +12035,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="167"/>
         <source>Enabled</source>
-        <translation type="unfinished">已經啟用</translation>
+        <translation>已經啟用</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="169"/>
@@ -12205,7 +12205,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="107"/>
         <source>Word wrap</source>
-        <translation type="unfinished">文字換行</translation>
+        <translation>文字換行</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="111"/>
