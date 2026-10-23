@@ -147,9 +147,9 @@ jobs:
         uses: actions/cache/restore@v6
         with:
           path: ${{ github.workspace }}/.ccache
-          key: ${{ runner.os }}-ccache-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ env.CCACHE_VERSION }}-${{ steps.ccache-generation.outputs.period }}
+          key: ${{ runner.os }}-ccache-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ env.QT_VERSION }}-${{ env.CCACHE_VERSION }}-${{ steps.ccache-generation.outputs.period }}
           restore-keys: |
-            ${{ runner.os }}-ccache-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ env.CCACHE_VERSION }}-
+            ${{ runner.os }}-ccache-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ env.QT_VERSION }}-${{ env.CCACHE_VERSION }}-
 
       - name: Set CMAKE_PRESET
         shell: pwsh

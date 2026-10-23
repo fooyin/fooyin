@@ -24,6 +24,10 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
+if ($BUILD_CCACHE -eq "ON" -and (Get-Command ccache -ErrorAction SilentlyContinue)) {
+    & ccache --zero-stats
+}
+
 Write-Host "Building project in $BUILD_DIR..."
 & cmake --build $BUILD_DIR --config Release
 if ($LASTEXITCODE -ne 0) {
