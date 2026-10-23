@@ -561,7 +561,7 @@ void FileOpsDialogPrivate::toggleRun()
             }
         }
 
-        m_runButton->setText(tr("&Abort"));
+        m_runButton->setText(tr("&Stop"));
         m_runButton->setDefault(false);
         if(m_runButton->hasFocus()) {
             m_resultsTable->setFocus(Qt::OtherFocusReason);
@@ -619,7 +619,7 @@ void FileOpsDialogPrivate::runFinished()
     }
 
     if(pendingCount > 0) {
-        m_status->setText(FileOpsDialog::tr("Aborted: %Ln operation(s) not run", nullptr, pendingCount));
+        m_status->setText(FileOpsDialog::tr("Stopped: %Ln operation(s) not run", nullptr, pendingCount));
         m_runButton->setEnabled(true);
         return;
     }

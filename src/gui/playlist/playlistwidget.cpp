@@ -1996,7 +1996,7 @@ void PlaylistWidget::handleBulkWriteRequested(const TrackList& tracks)
         return;
     }
 
-    auto* dialog = new ElapsedProgressDialog(tr("Writing metadata…"), tr("Abort"), 0, 1, this);
+    auto* dialog = new ElapsedProgressDialog(tr("Writing metadata…"), tr("Stop"), 0, 1, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setModal(true);
     dialog->setMinimumDuration(2000ms);
