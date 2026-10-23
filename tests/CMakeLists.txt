@@ -1,12 +1,20 @@
 include(GoogleTest)
 
+set(test_working_directory "${CMAKE_CURRENT_BINARY_DIR}")
+
 if(WIN32)
+    # Keep test DLLs out of packaging
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/run/$<CONFIG>")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+    set(test_working_directory "$<TARGET_FILE_DIR:fooyin>")
+
     add_custom_target(
         fooyin_test_runtime
         COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
         COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:Qt6::Test>" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
         COMMENT "Deploying the Qt Test runtime"
     )
+    add_dependencies(fooyin_test_runtime fooyin)
 endif()
 
 function(fooyin_add_test name)
@@ -31,7 +39,7 @@ function(fooyin_add_test name)
                 ${FFMPEG_LIBRARIES}
                 GTest::gtest_main
     )
-    gtest_discover_tests(${name})
+    gtest_discover_tests(${name} WORKING_DIRECTORY "${test_working_directory}")
 endfunction()
 
 fooyin_add_test(test_commandline app/commandlinetest.cpp ${CMAKE_SOURCE_DIR}/src/app/commandline.cpp)
