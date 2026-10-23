@@ -119,7 +119,6 @@ if(INSTALL_HEADERS)
     configure_package_config_file(
         "${CMAKE_CURRENT_LIST_DIR}/FooyinConfig.cmake.in" "${PROJECT_BINARY_DIR}/FooyinConfig.cmake"
         INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR}
-        PATH_VARS FOOYIN_PLUGIN_INSTALL_DIR
     )
 
     install(
@@ -135,7 +134,7 @@ if(INSTALL_HEADERS)
     )
 
     install(
-        FILES "${CMAKE_CURRENT_LIST_DIR}/FooyinMacros.cmake"
+        FILES "${CMAKE_CURRENT_LIST_DIR}/FooyinMacros.cmake" "${CMAKE_CURRENT_LIST_DIR}/FooyinPluginBundle.cmake.in"
         DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
         COMPONENT fooyin_development
     )

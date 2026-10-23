@@ -98,6 +98,13 @@ jobs:
           path: ./artifacts
           merge-multiple: true
 
+      - name: Download SDK artifacts
+        uses: actions/download-artifact@v8
+        with:
+          pattern: sdk-*
+          path: ./artifacts
+          merge-multiple: true
+
       - name: Download Debian artifacts
         uses: actions/download-artifact@v8
         with:

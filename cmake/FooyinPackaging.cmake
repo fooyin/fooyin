@@ -38,7 +38,9 @@ endif()
 
 if(WIN32)
     set(CPACK_GENERATOR "NSIS" "ZIP")
-    set(CPACK_FOOYIN_WINDOWS_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-windows-${FOOYIN_PACKAGE_ARCH}")
+    set(CPACK_FOOYIN_WINDOWS_PACKAGE_FILE_NAME
+        "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-windows-${FOOYIN_PACKAGE_ARCH}"
+    )
     set(CPACK_PACKAGE_FILE_NAME "${CPACK_FOOYIN_WINDOWS_PACKAGE_FILE_NAME}")
     set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/data/icons\\\\fooyin.ico")
     set(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}/data/icons\\\\fooyin.ico")
@@ -105,3 +107,51 @@ set(CPACK_RPM_PACKAGE_REQUIRES_POST "qt6-qtimageformats")
 set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_SOURCE_DIR}/cmake/FooyinPackageConfig.cmake")
 
 include(CPack)
+
+# The dev component includes the libraries, headers, and CMake exports needed by plugins
+if(INSTALL_HEADERS
+   AND BUILD_SHARED_LIBS
+   AND (WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
+   AND NOT CMAKE_SKIP_INSTALL_RULES
+)
+    find_package(Git QUIET)
+    set(FOOYIN_SDK_COMMIT "unknown")
+    if(GIT_FOUND)
+        execute_process(
+            COMMAND "${GIT_EXECUTABLE}" rev-parse HEAD
+            WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+            OUTPUT_VARIABLE sdk_commit
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            RESULT_VARIABLE sdk_commit_result
+            ERROR_QUIET
+        )
+        if(sdk_commit_result EQUAL 0)
+            set(FOOYIN_SDK_COMMIT "${sdk_commit}")
+        endif()
+    endif()
+
+    include(FetchContent)
+    FetchContent_GetProperties(qcoro SOURCE_DIR FOOYIN_SDK_QCORO_SOURCE_DIR)
+
+    set(sdk_platform "linux-${FOOYIN_PACKAGE_ARCH}")
+    set(sdk_runtime_files "")
+    if(WIN32)
+        string(TOLOWER "${CMAKE_CXX_COMPILER_ID}" sdk_compiler)
+        set(sdk_platform "windows-${FOOYIN_PACKAGE_ARCH}-${sdk_compiler}")
+        set(sdk_runtime_files "$<TARGET_FILE:fooyin_core>;$<TARGET_FILE:fooyin_gui>;$<TARGET_FILE:fooyin_utils>")
+    endif()
+    set(FOOYIN_SDK_NAME
+        "fooyin-sdk-${FOOYIN_VERSION}-${sdk_platform}-qt${Qt6Core_VERSION_MAJOR}.${Qt6Core_VERSION_MINOR}"
+    )
+    configure_file(
+        "${CMAKE_CURRENT_LIST_DIR}/FooyinSdkPackage.cmake.in" "${PROJECT_BINARY_DIR}/FooyinSdkPackage.cmake" @ONLY
+    )
+    add_custom_target(
+        package_sdk
+        COMMAND "${CMAKE_COMMAND}" -DSDK_CONFIG=$<CONFIG> "-DSDK_RUNTIME_FILES=${sdk_runtime_files}" -P
+                "${PROJECT_BINARY_DIR}/FooyinSdkPackage.cmake"
+        DEPENDS fooyin_core fooyin_gui fooyin_utils
+        COMMENT "Packaging the fooyin SDK"
+        VERBATIM
+    )
+endif()

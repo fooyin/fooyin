@@ -230,6 +230,7 @@ endif()
 
 fooyin_convert_to_relative_path(BIN_INSTALL_DIR)
 fooyin_convert_to_relative_path(LIB_INSTALL_DIR)
+set(FOOYIN_LIBRARY_INSTALL_DIR "${LIB_INSTALL_DIR}")
 
 set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/fooyin")
 set(CMAKECONFIG_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/fooyin")

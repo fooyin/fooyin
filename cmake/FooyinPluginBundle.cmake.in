@@ -1,0 +1,57 @@
+set(bundle_directory "@bundle_directory@")
+set(bundle_platform "@bundle_platform@")
+set(bundle_files "@bundle_files@")
+set(bundle_output "@bundle_output@")
+set(documentation_files "@BUNDLE_FILES@")
+set(license_files "@BUNDLE_LICENSE_FILES@")
+set(license_directories "@BUNDLE_LICENSE_DIRECTORIES@")
+
+function(copy_bundle_files destination)
+    foreach(source IN LISTS ARGN)
+        get_filename_component(name "${source}" NAME)
+        configure_file("${source}" "${destination}/${name}" COPYONLY)
+    endforeach()
+endfunction()
+
+file(REMOVE_RECURSE "${bundle_directory}")
+file(MAKE_DIRECTORY "${bundle_directory}/${bundle_platform}")
+list(REMOVE_DUPLICATES bundle_files)
+
+copy_bundle_files("${bundle_directory}/${bundle_platform}" ${bundle_files})
+copy_bundle_files("${bundle_directory}" ${documentation_files})
+
+if(license_files OR license_directories)
+    file(MAKE_DIRECTORY "${bundle_directory}/licenses")
+endif()
+copy_bundle_files("${bundle_directory}/licenses" ${license_files})
+
+foreach(directory IN LISTS license_directories)
+    if(NOT IS_DIRECTORY "${directory}")
+        message(FATAL_ERROR "Licence directory does not exist: ${directory}")
+    endif()
+    file(
+        GLOB_RECURSE files
+        LIST_DIRECTORIES false
+        RELATIVE "${directory}"
+        "${directory}/*"
+    )
+    foreach(file IN LISTS files)
+        configure_file("${directory}/${file}" "${bundle_directory}/licenses/${file}" COPYONLY)
+    endforeach()
+endforeach()
+
+set(bundle_entries "${bundle_platform}")
+foreach(file IN LISTS documentation_files)
+    get_filename_component(name "${file}" NAME)
+    list(APPEND bundle_entries "${name}")
+endforeach()
+if(license_files OR license_directories)
+    list(APPEND bundle_entries licenses)
+endif()
+
+execute_process(
+    COMMAND "${CMAKE_COMMAND}" -E tar cf "${bundle_output}" --format=zip ${bundle_entries}
+    WORKING_DIRECTORY "${bundle_directory}" COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(STATUS "Created ${bundle_output}")

@@ -132,7 +132,7 @@ jobs:
           extensions = {".deb", ".rpm", ".pkg", ".exe", ".zip", ".flatpak", ".AppImage"}
           packages = sorted(
               path for path in Path("artifacts").rglob("*")
-              if path.is_file() and path.suffix in extensions
+              if path.is_file() and (path.suffix in extensions or path.name.endswith(".tar.xz"))
           )
           if not packages:
               raise SystemExit("No nightly packages are available to publish")

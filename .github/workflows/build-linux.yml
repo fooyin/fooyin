@@ -207,6 +207,7 @@ jobs:
       - name: Build
         env:
           BUILD_PCH: ${{ matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64' && 'OFF' || env.BUILD_PCH }}
+          INSTALL_HEADERS: ${{ matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64' && 'ON' || 'OFF' }}
         run: |
           ./ci/ubuntu-build.sh
 
@@ -214,6 +215,24 @@ jobs:
         if: env.BUILD_TESTS == 'ON'
         run: |
           ./ci/tests.sh
+
+      - name: Package SDK
+        if: matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64'
+        run: |
+          cmake --build build --target package_sdk
+
+      - name: Verify relocated SDK
+        if: matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64'
+        shell: bash
+        run: ./ci/linux-sdk-verify.sh
+
+      - name: Upload SDK
+        if: matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64'
+        uses: actions/upload-artifact@v7
+        with:
+          name: sdk-linux-x64-qt6.4
+          path: build/sdk/*.tar.xz
+          if-no-files-found: error
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7

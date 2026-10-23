@@ -203,6 +203,31 @@ jobs:
           Set-Location S:/
           .\ci\windows-package.ps1
 
+      - name: Package SDK
+        if: matrix.arch == 'amd64'
+        shell: pwsh
+        run: |
+          Set-Location S:/
+          cmake --build "build-$env:CMAKE_PRESET" --target package_sdk --config Release
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+      - name: Verify relocated SDK
+        if: matrix.arch == 'amd64'
+        shell: pwsh
+        run: |
+          Set-Location S:/
+          .\ci\windows-sdk-verify.ps1
+
+      - name: Upload SDK artifact
+        if: matrix.arch == 'amd64'
+        uses: actions/upload-artifact@v7
+        with:
+          name: sdk-windows-${{ matrix.arch }}
+          path: build-${{ matrix.cmake-preset }}/sdk/*.zip
+          if-no-files-found: error
+
       - name: Upload unsigned installer for SignPath
         if: inputs.signing_policy_slug != '' && github.repository == 'fooyin/fooyin'
         id: upload-unsigned-installer
