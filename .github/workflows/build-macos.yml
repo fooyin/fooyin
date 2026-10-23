@@ -43,7 +43,7 @@ jobs:
 
       - name: Set ccache generation
         id: ccache-generation
-        run: echo "period=$(( $(date -u +%s) / 172800 ))" >> "$GITHUB_OUTPUT"
+        run: echo "period=$(( $(date -u +%s) / 86400 ))" >> "$GITHUB_OUTPUT"
 
       - name: Restore ccache
         id: ccache-restore

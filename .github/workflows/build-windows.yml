@@ -139,7 +139,7 @@ jobs:
         id: ccache-generation
         shell: pwsh
         run: |
-          $period = [Math]::Floor([DateTimeOffset]::UtcNow.ToUnixTimeSeconds() / 172800)
+          $period = [Math]::Floor([DateTimeOffset]::UtcNow.ToUnixTimeSeconds() / 86400)
           echo "period=$period" >> $env:GITHUB_OUTPUT
 
       - name: Restore ccache
