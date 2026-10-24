@@ -1278,7 +1278,7 @@ void GuiApplication::registerActions()
 
 void GuiApplication::rescanTracks(const TrackList& tracks, bool onlyModified) const
 {
-    auto* scanDialog = new ElapsedProgressDialog(tr("Reading tracks…"), tr("Abort"), 0, 100, Utils::getMainWindow());
+    auto* scanDialog = new ElapsedProgressDialog(tr("Reading tracks…"), tr("Stop"), 0, 100, Utils::getMainWindow());
     scanDialog->setAttribute(Qt::WA_DeleteOnClose);
     scanDialog->setModal(true);
     scanDialog->setMinimumDuration(500ms);

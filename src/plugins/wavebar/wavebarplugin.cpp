@@ -216,7 +216,7 @@ void WaveBarPlugin::regenerateSelection(bool onlyMissing)
 
     const auto total = static_cast<int>(selectedTracks.size());
     auto* dialog
-        = new ElapsedProgressDialog(tr("Generating waveform data…"), tr("Abort"), 0, total, Utils::getMainWindow());
+        = new ElapsedProgressDialog(tr("Generating waveform data…"), tr("Stop"), 0, total, Utils::getMainWindow());
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setMinimumDuration(500ms);
 

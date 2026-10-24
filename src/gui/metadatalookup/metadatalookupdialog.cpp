@@ -472,7 +472,7 @@ void MetadataLookupDialog::buildUi()
     m_policy = new QComboBox(this);
     m_policy->addItem(tr("Fill missing metadata"), static_cast<int>(ExistingMetadataPolicy::FillMissing));
     m_policy->addItem(tr("Replace lookup fields"), static_cast<int>(ExistingMetadataPolicy::ReplaceLookupFields));
-    m_policy->addItem(tr("Wipe writable tags, then apply"), static_cast<int>(ExistingMetadataPolicy::WipeWritableTags));
+    m_policy->addItem(tr("Clear writable tags, then apply"), static_cast<int>(ExistingMetadataPolicy::WipeWritableTags));
     m_policy->setToolTip(tr("Choose how retrieved metadata is combined with the track’s existing tags."));
 
     m_allowUnresolved = new QCheckBox(m_purpose == Purpose::ReturnTracks ? tr("Allow applying unresolved tracks")
@@ -974,7 +974,7 @@ void MetadataLookupDialog::writeMetadata()
     m_writeInProgress = true;
     m_cancelWrite     = request.cancel;
 
-    m_progressDialog = new ElapsedProgressDialog(tr("Writing metadata…"), tr("Abort"), 0, 1, this);
+    m_progressDialog = new ElapsedProgressDialog(tr("Writing metadata…"), tr("Stop"), 0, 1, this);
     m_progressDialog->setAttribute(Qt::WA_DeleteOnClose);
     m_progressDialog->setModal(true);
     m_progressDialog->setMinimumDuration(500ms);
@@ -1032,7 +1032,7 @@ bool MetadataLookupDialog::confirmMetadataWipe()
     }
 
     QMessageBox confirmation{
-        QMessageBox::Warning, tr("Wipe existing tags?"),
+        QMessageBox::Warning, tr("Clear existing tags?"),
         tr("Existing metadata and custom tags will be removed before applying the selected release. Ratings, "
            "ReplayGain, technical information, playback statistics, and artwork will be preserved."),
         QMessageBox::Yes | QMessageBox::No, this};
