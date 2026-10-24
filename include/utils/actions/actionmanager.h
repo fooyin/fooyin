@@ -62,12 +62,16 @@ public:
     [[nodiscard]] WidgetContext* currentContextObject() const;
     [[nodiscard]] QWidget* currentContextWidget() const;
     [[nodiscard]] WidgetContext* contextObject(QWidget* widget) const;
+
     void addContextObject(WidgetContext* context);
     void overrideContext(WidgetContext* context, bool override);
     void removeContextObject(WidgetContext* context);
 
     ActionContainer* createMenu(const Id& id);
     ActionContainer* createMenuBar(const Id& id);
+
+    /** Declares a command without an action, retaining it when its action bindings are removed. */
+    Command* registerCommand(const Id& id);
     Command* registerAction(QAction* action, const Id& id,
                             const Context& context = Context{Constants::Context::Global});
     bool unregisterAction(QAction* action, const Id& id, const Context& context = Context{Constants::Context::Global});

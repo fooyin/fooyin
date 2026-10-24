@@ -77,6 +77,7 @@ public:
     QMainWindow* m_mainWindow{nullptr};
 
     std::unordered_map<Id, std::unique_ptr<Command>, Id::IdHash> m_idCmdMap;
+    std::set<Id> m_declaredCommands;
     std::unordered_map<Id, std::unique_ptr<ActionContainer>, Id::IdHash> m_idContainerMap;
     std::unordered_map<QWidget*, WidgetContext*> m_contextWidgets;
     std::set<ActionContainer*> m_scheduledContainerUpdates;
@@ -247,6 +248,7 @@ void ActionManagerPrivate::clear()
 
     m_idContainerMap.clear();
     m_idCmdMap.clear();
+    m_declaredCommands.clear();
 }
 
 ActionManager::ActionManager(SettingsManager* settingsManager, QObject* parent)
@@ -446,6 +448,15 @@ ActionContainer* ActionManager::createMenuBar(const Id& id)
     return menuBar;
 }
 
+Command* ActionManager::registerCommand(const Id& id)
+{
+    Command* command = p->overridableAction(id);
+    if(p->m_declaredCommands.emplace(id).second) {
+        Q_EMIT commandsChanged();
+    }
+    return command;
+}
+
 Command* ActionManager::registerAction(QAction* action, const Id& id, const Context& context)
 {
     Command* command = p->overridableAction(id);
@@ -468,7 +479,7 @@ bool ActionManager::unregisterAction(QAction* action, const Id& id, const Contex
         return false;
     }
 
-    if(!command->hasOverrideActions()) {
+    if(!command->hasOverrideActions() && !p->m_declaredCommands.contains(id)) {
         if(QAction* commandAction = command->action()) {
             p->m_mainWindow->removeAction(commandAction);
         }
