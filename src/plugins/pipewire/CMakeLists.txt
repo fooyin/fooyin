@@ -8,23 +8,25 @@ endif()
 create_fooyin_plugin_internal(
     pipewire
     NO_PCH
-    DEPENDS Fooyin::Core
-            Fooyin::Gui
-            PipeWire::PipeWire
-    SOURCES pipewirecontext.cpp
-            pipewirecontext.h
-            pipewirecore.cpp
-            pipewirecore.h
-            pipewireoutput.cpp
-            pipewireoutput.h
-            pipewireplugin.cpp
-            pipewireplugin.h
-            pipewireregistry.cpp
-            pipewireregistry.h
-            pipewirestream.cpp
-            pipewirestream.h
-            pipewirethreadloop.cpp
-            pipewirethreadloop.h
-            pipewiresettings.cpp
-            pipewiresettings.h
+    DEPENDS #
+        Fooyin::Core
+        Fooyin::Gui
+        PipeWire::PipeWire
+    SOURCES
+        pipewirecontext.cpp
+        pipewirecontext.h
+        pipewirecore.cpp
+        pipewirecore.h
+        pipewireoutput.cpp
+        pipewireoutput.h
+        pipewireplugin.cpp
+        pipewireplugin.h
+        pipewireregistry.cpp
+        pipewireregistry.h
+        pipewiresettings.cpp
+        pipewiresettings.h
+        pipewirestream.cpp
+        pipewirestream.h
+        pipewirethreadloop.cpp
+        pipewirethreadloop.h
 )

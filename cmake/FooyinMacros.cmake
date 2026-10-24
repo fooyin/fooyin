@@ -13,13 +13,8 @@ function(fooyin_set_rpath target prefix)
 endfunction()
 
 function(create_fooyin_plugin plugin_name)
-    cmake_parse_arguments(
-        LIB
-        "NO_INSTALL"
-        "JSON_IN"
-        "DEPENDS;SOURCES"
-        ${ARGN}
-    )
+    # gersemi: hints { SOURCES: sort }
+    cmake_parse_arguments(LIB "NO_INSTALL" "JSON_IN" "DEPENDS;SOURCES" ${ARGN})
 
     set(CMAKE_AUTOMOC ON)
 
@@ -50,12 +45,13 @@ function(create_fooyin_plugin plugin_name)
 
     set_target_properties(
         ${plugin_name}
-        PROPERTIES VERSION ${LIB_VERSION}
-                   CXX_VISIBILITY_PRESET hidden
-                   VISIBILITY_INLINES_HIDDEN YES
-                   PREFIX ""
-                   EXPORT_NAME ${name}
-                   OUTPUT_NAME ${output_name}
+        PROPERTIES
+            VERSION ${LIB_VERSION}
+            CXX_VISIBILITY_PRESET hidden
+            VISIBILITY_INLINES_HIDDEN YES
+            PREFIX ""
+            EXPORT_NAME ${name}
+            OUTPUT_NAME ${output_name}
     )
 
     fooyin_set_rpath(${plugin_name} ${FOOYIN_PLUGIN_INSTALL_DIR})
@@ -73,8 +69,7 @@ endfunction()
 
 function(create_fooyin_plugin_bundle plugin_target)
     cmake_parse_arguments(
-        PARSE_ARGV
-        1
+        PARSE_ARGV 1
         BUNDLE
         ""
         "NAME"
@@ -152,7 +147,8 @@ function(create_fooyin_plugin_bundle plugin_target)
 
         if(NOT target_type STREQUAL "SHARED_LIBRARY" OR imported)
             message(
-                FATAL_ERROR "RUNTIME_TARGETS requires built shared libraries; use RUNTIME_FILES for prebuilt libraries"
+                FATAL_ERROR
+                "RUNTIME_TARGETS requires built shared libraries; use RUNTIME_FILES for prebuilt libraries"
             )
         endif()
 
@@ -180,9 +176,7 @@ function(create_fooyin_plugin_bundle plugin_target)
         foreach(target IN LISTS bundle_targets)
             set_target_properties(
                 ${target}
-                PROPERTIES BUILD_WITH_INSTALL_RPATH ON
-                           INSTALL_RPATH "${bundle_rpath}"
-                           INSTALL_RPATH_USE_LINK_PATH OFF
+                PROPERTIES BUILD_WITH_INSTALL_RPATH ON INSTALL_RPATH "${bundle_rpath}" INSTALL_RPATH_USE_LINK_PATH OFF
             )
         endforeach()
     endif()
@@ -192,11 +186,11 @@ function(create_fooyin_plugin_bundle plugin_target)
 
     configure_file(
         "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/FooyinPluginBundle.cmake.in"
-        "${CMAKE_CURRENT_BINARY_DIR}/FooyinPluginBundle.cmake.in" @ONLY
+        "${CMAKE_CURRENT_BINARY_DIR}/FooyinPluginBundle.cmake.in"
+        @ONLY
     )
     file(
-        GENERATE
-        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/FooyinPluginBundle-$<CONFIG>.cmake"
+        GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/FooyinPluginBundle-$<CONFIG>.cmake"
         INPUT "${CMAKE_CURRENT_BINARY_DIR}/FooyinPluginBundle.cmake.in"
     )
     add_custom_target(

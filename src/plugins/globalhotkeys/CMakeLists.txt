@@ -1,4 +1,5 @@
 set(SOURCES
+    #[[gersemi: sort]] #
     globalhotkeysplugin.cpp
     globalhotkeysplugin.h
     globalshortcutbackend.h
@@ -18,8 +19,7 @@ if(UNIX AND NOT APPLE)
 
     if(TARGET Qt6::DBus)
         list(
-            APPEND
-            SOURCES
+            APPEND SOURCES
             globalshortcutportalbackend.cpp
             globalshortcutportalbackend.h
             globalshortcutportaltypes.cpp
@@ -41,11 +41,7 @@ elseif(APPLE)
     list(APPEND DEPENDS ${CARBON_FRAMEWORK})
 endif()
 
-create_fooyin_plugin_internal(
-    globalhotkeys
-    DEPENDS ${DEPENDS}
-    SOURCES ${SOURCES}
-)
+create_fooyin_plugin_internal(globalhotkeys DEPENDS ${DEPENDS} SOURCES ${SOURCES})
 
 if(UNIX AND NOT APPLE)
     if(TARGET Qt6::DBus)

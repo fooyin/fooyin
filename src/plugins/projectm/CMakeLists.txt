@@ -1,8 +1,4 @@
-find_package(
-    Qt6
-    COMPONENTS OpenGL
-    QUIET
-)
+find_package(Qt6 COMPONENTS OpenGL QUIET)
 
 if(NOT Qt6OpenGL_FOUND)
     message(STATUS "Qt6::OpenGL not found; skipping projectm plugin.")
@@ -34,28 +30,30 @@ endif()
 
 create_fooyin_plugin_internal(
     projectm
-    DEPENDS Fooyin::Core
-            Fooyin::Gui
-            Fooyin::GuiPrivate
-            Qt6::OpenGL
-            ${PROJECTM_TARGET}
-            ${PROJECTM_OPENGL_LOADER_TARGET}
-    SOURCES projectminstance.cpp
-            projectminstance.h
-            projectmfavouritestore.cpp
-            projectmfavouritestore.h
-            projectmconfigdialog.cpp
-            projectmconfigdialog.h
-            projectmplugin.cpp
-            projectmplugin.h
-            projectmwidget.cpp
-            projectmwidget.h
-            projectmsettings.h
-            projectmpreset.h
-            projectmpresetlibrary.cpp
-            projectmpresetlibrary.h
-            projectmpresetdialog.cpp
-            projectmpresetdialog.h
-            projectmview.cpp
-            projectmview.h
+    DEPENDS #
+        Fooyin::Core
+        Fooyin::Gui
+        Fooyin::GuiPrivate
+        Qt6::OpenGL
+        ${PROJECTM_TARGET}
+        ${PROJECTM_OPENGL_LOADER_TARGET}
+    SOURCES
+        projectmconfigdialog.cpp
+        projectmconfigdialog.h
+        projectmfavouritestore.cpp
+        projectmfavouritestore.h
+        projectminstance.cpp
+        projectminstance.h
+        projectmplugin.cpp
+        projectmplugin.h
+        projectmpreset.h
+        projectmpresetdialog.cpp
+        projectmpresetdialog.h
+        projectmpresetlibrary.cpp
+        projectmpresetlibrary.h
+        projectmsettings.h
+        projectmview.cpp
+        projectmview.h
+        projectmwidget.cpp
+        projectmwidget.h
 )

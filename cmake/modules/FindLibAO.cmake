@@ -39,16 +39,8 @@ The following cache variables may also be set:
   the absolute path of the libao library
 #]=======================================================================]
 
-find_path(
-    LIBAO_INCLUDE_DIR
-    NAMES ao/ao.h
-    DOC "The libao include directory"
-)
-find_library(
-    LIBAO_LIBRARY
-    NAMES ao
-    DOC "The libao library"
-)
+find_path(LIBAO_INCLUDE_DIR NAMES ao/ao.h DOC "The libao include directory")
+find_library(LIBAO_LIBRARY NAMES ao DOC "The libao library")
 
 mark_as_advanced(LIBAO_INCLUDE_DIR LIBAO_LIBRARY)
 

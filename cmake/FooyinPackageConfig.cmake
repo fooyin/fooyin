@@ -34,7 +34,7 @@ if(CPACK_GENERATOR STREQUAL "DEB")
 
     set(CPACK_DEBIAN_FILE_NAME "fooyin_${CPACK_PACKAGE_VERSION}-${DIST_RELEASE}_${CPACK_SYSTEM_NAME}.deb")
 
-    # cmake-format: off
+    # gersemi: off
 
     # Distro specific runtime dependencies
     set(DISTRO_ICU_PACKAGE_MAP
@@ -91,22 +91,16 @@ if(CPACK_GENERATOR STREQUAL "DEB")
         stonking "1~ubuntu.26.10~stonking"
     )
 
-    # cmake-format: on
+    # gersemi: on
 
     function(get_distro_package map_name distro out_var)
         list(FIND ${map_name} "${distro}" idx)
         if(idx GREATER_EQUAL 0)
             math(EXPR pkg_idx "${idx} + 1")
             list(GET ${map_name} ${pkg_idx} pkg)
-            set(${out_var}
-                "${pkg}"
-                PARENT_SCOPE
-            )
+            set(${out_var} "${pkg}" PARENT_SCOPE)
         else()
-            set(${out_var}
-                ""
-                PARENT_SCOPE
-            )
+            set(${out_var} "" PARENT_SCOPE)
         endif()
     endfunction()
 
@@ -124,12 +118,14 @@ if(CPACK_GENERATOR STREQUAL "DEB")
     set(CPACK_DEBIAN_PACKAGE_RELEASE "${DEB_REVISION}")
 
     foreach(
-        pkg IN
-        ITEMS "${ICU_PKG}"
-              "${TAGLIB_PKG}"
-              "${FLAC_PKG}"
-              "${MPG123_PKG}"
-              "${QT_PKGS}"
+        pkg
+        IN
+        ITEMS #
+            "${ICU_PKG}"
+            "${TAGLIB_PKG}"
+            "${FLAC_PKG}"
+            "${MPG123_PKG}"
+            "${QT_PKGS}"
     )
         if(pkg)
             string(APPEND CPACK_DEBIAN_PACKAGE_DEPENDS ", ${pkg}")
@@ -161,13 +157,14 @@ if(CPACK_GENERATOR STREQUAL "DEB")
                 execute_process(
                     COMMAND "${APT_CACHE}" show "${dependency}"
                     RESULT_VARIABLE dependency_result
-                    OUTPUT_QUIET ERROR_QUIET
+                    OUTPUT_QUIET
+                    ERROR_QUIET
                 )
 
                 if(NOT dependency_result EQUAL 0)
                     message(
                         FATAL_ERROR
-                            "DEB runtime dependency '${dependency}' not found for ${DIST_RELEASE}/${CPACK_SYSTEM_NAME}"
+                        "DEB runtime dependency '${dependency}' not found for ${DIST_RELEASE}/${CPACK_SYSTEM_NAME}"
                     )
                 endif()
             endif()
@@ -214,8 +211,9 @@ if(CPACK_GENERATOR STREQUAL "RPM")
     )
 
     execute_process(
-        COMMAND /bin/sh "-c"
-                "${LSB_RELEASE} -ds | tr '[:upper:]' '[:lower:]' | sed 's/\"//g' | sed 's/\\.//g' | cut -d' ' -f3"
+        COMMAND
+            /bin/sh "-c"
+            "${LSB_RELEASE} -ds | tr '[:upper:]' '[:lower:]' | sed 's/\"//g' | sed 's/\\.//g' | cut -d' ' -f3"
         OUTPUT_VARIABLE DIST_VERSION
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )

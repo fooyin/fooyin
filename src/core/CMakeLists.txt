@@ -1,4 +1,5 @@
 set(SOURCES
+    #[[gersemi: sort]] #
     ${CMAKE_SOURCE_DIR}/include/core/accountstore.h
     ${CMAKE_SOURCE_DIR}/include/core/constants.h
     ${CMAKE_SOURCE_DIR}/include/core/coresettings.h
@@ -13,21 +14,21 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/engine/conversion/conversiondefs.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/conversion/conversionpathresolver.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/conversion/conversionrunner.h
-    ${CMAKE_SOURCE_DIR}/include/core/engine/verification/accuraterip.h
-    ${CMAKE_SOURCE_DIR}/include/core/engine/verification/audioverifier.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/dsp/dspnode.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/dsp/dspplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/dsp/processingbuffer.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/dsp/processingbufferlist.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/dsp/realfft.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/encoderplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/enginecontroller.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/enginedefs.h
-    ${CMAKE_SOURCE_DIR}/include/core/engine/encoderplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/fadingdefs.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/inputplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/levelframe.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/outputplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/pcmframe.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/verification/accuraterip.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/verification/audioverifier.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/visualisationservice.h
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryfilter.h
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryinfo.h
@@ -37,9 +38,9 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/library/tracksort.h
     ${CMAKE_SOURCE_DIR}/include/core/network/networkaccessmanager.h
     ${CMAKE_SOURCE_DIR}/include/core/network/networkutils.h
-    ${CMAKE_SOURCE_DIR}/include/core/network/remotestreamdevice.h
-    ${CMAKE_SOURCE_DIR}/include/core/network/remotesourceprovider.h
     ${CMAKE_SOURCE_DIR}/include/core/network/remoteioservice.h
+    ${CMAKE_SOURCE_DIR}/include/core/network/remotesourceprovider.h
+    ${CMAKE_SOURCE_DIR}/include/core/network/remotestreamdevice.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playbackqueue.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playercontroller.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playerdefs.h
@@ -51,18 +52,18 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/plugins/coreplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/plugins/coreplugincontext.h
     ${CMAKE_SOURCE_DIR}/include/core/plugins/plugin.h
+    ${CMAKE_SOURCE_DIR}/include/core/ratingsymbols.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/expression.h
-    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptparser.h
-    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptdependencies.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptcontextservice.h
-    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptregistry.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptdefs.h
+    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptdependencies.h
+    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptparser.h
+    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptregistry.h
+    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptscanner.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scripttrackwriter.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scripttypes.h
-    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptscanner.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptvalue.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/trackqueryfilter.h
-    ${CMAKE_SOURCE_DIR}/include/core/ratingsymbols.h
     ${CMAKE_SOURCE_DIR}/include/core/stringpool.h
     ${CMAKE_SOURCE_DIR}/include/core/track.h
     ${CMAKE_SOURCE_DIR}/include/core/trackmetadatastore.h
@@ -75,6 +76,8 @@ set(SOURCES
     database/accountdatabase.h
     database/database.cpp
     database/database.h
+    database/databasehelpers.cpp
+    database/databasehelpers.h
     database/dbschema.cpp
     database/dbschema.h
     database/generaldatabase.cpp
@@ -88,12 +91,12 @@ set(SOURCES
     database/settingsdatabase.cpp
     database/settingsdatabase.h
     database/trackdatabase.cpp
-    database/databasehelpers.h
-    database/databasehelpers.cpp
     database/trackdatabase.h
     engine/audioanalysisbus.cpp
     engine/audioanalysisbus.h
     engine/audiobuffer.cpp
+    engine/audioclock.cpp
+    engine/audioclock.h
     engine/audioconverter.cpp
     engine/audioencoderregistry.cpp
     engine/audioengine.cpp
@@ -103,25 +106,23 @@ set(SOURCES
     engine/audioloader.cpp
     engine/audioutils.cpp
     engine/audioutils.h
-    engine/conversion/conversionpathresolver.cpp
-    engine/conversion/conversionrunner.cpp
-    engine/conversion/outputtransaction.cpp
-    engine/conversion/outputtransaction.h
-    engine/verification/accuraterip.cpp
-    engine/verification/audioverifier.cpp
     engine/control/enginetaskqueue.cpp
     engine/control/enginetaskqueue.h
     engine/control/playbackintentreducer.cpp
     engine/control/playbackintentreducer.h
     engine/control/playbackphase.h
-    engine/control/positioncoordinator.cpp
-    engine/control/positioncoordinator.h
     engine/control/playbacktransitioncoordinator.cpp
     engine/control/playbacktransitioncoordinator.h
+    engine/control/positioncoordinator.cpp
+    engine/control/positioncoordinator.h
     engine/control/seekplanner.cpp
     engine/control/seekplanner.h
     engine/control/trackloadplanner.cpp
     engine/control/trackloadplanner.h
+    engine/conversion/conversionpathresolver.cpp
+    engine/conversion/conversionrunner.cpp
+    engine/conversion/outputtransaction.cpp
+    engine/conversion/outputtransaction.h
     engine/decode/decodercontext.cpp
     engine/decode/decodercontext.h
     engine/decode/decodingcontroller.cpp
@@ -137,13 +138,13 @@ set(SOURCES
     engine/dsp/dspchainstore.cpp
     engine/dsp/dspchainstore.h
     engine/dsp/dspnode.cpp
-    engine/dsp/realfft.cpp
     engine/dsp/dspregistry.cpp
     engine/dsp/dspregistry.h
     engine/dsp/monotostereodsp.cpp
     engine/dsp/monotostereodsp.h
     engine/dsp/processingbuffer.cpp
     engine/dsp/processingbufferlist.cpp
+    engine/dsp/realfft.cpp
     engine/dsp/resamplerdsp.cpp
     engine/dsp/resamplerdsp.h
     engine/dsp/resamplersettings.h
@@ -156,9 +157,6 @@ set(SOURCES
     engine/enginehandler.h
     engine/enginehelpers.cpp
     engine/enginehelpers.h
-    engine/visualisationbackend.cpp
-    engine/visualisationbackend.h
-    engine/visualisationservice.cpp
     engine/fadingdefs.cpp
     engine/input/archiveinput.cpp
     engine/input/archiveinput.h
@@ -182,10 +180,10 @@ set(SOURCES
     engine/input/playcounttagpolicy.h
     engine/input/ratingtagpolicy.cpp
     engine/input/ratingtagpolicy.h
-    engine/input/tagpolicy.cpp
-    engine/input/tagpolicy.h
     engine/input/taglibparser.cpp
     engine/input/taglibparser.h
+    engine/input/tagpolicy.cpp
+    engine/input/tagpolicy.h
     engine/output/fadecontroller.cpp
     engine/output/fadecontroller.h
     engine/output/outputcontroller.cpp
@@ -195,56 +193,58 @@ set(SOURCES
     engine/output/postprocessor/replaygainprocessor.cpp
     engine/output/postprocessor/replaygainprocessor.h
     engine/output/postprocessor/trackprocessor.h
-    engine/pipeline/mixer/audiomixer.cpp
-    engine/pipeline/mixer/audiomixer.h
     engine/pipeline/audiopipeline.cpp
     engine/pipeline/audiopipeline.h
     engine/pipeline/audiopipelinefader.h
+    engine/pipeline/audiostream.cpp
+    engine/pipeline/audiostream.h
     engine/pipeline/buffereddspstage.cpp
     engine/pipeline/buffereddspstage.h
     engine/pipeline/chunktimelineassembler.cpp
     engine/pipeline/chunktimelineassembler.h
-    engine/pipeline/pipelineoutput.cpp
-    engine/pipeline/pipelineoutput.h
-    engine/pipeline/pipelinerenderer.cpp
-    engine/pipeline/pipelinerenderer.h
-    engine/pipeline/pipelinethreadhost.cpp
-    engine/pipeline/pipelinethreadhost.h
-    engine/pipeline/pipelinetimeline.cpp
-    engine/pipeline/pipelinetimeline.h
-    engine/pipeline/audiostream.cpp
-    engine/pipeline/audiostream.h
-    engine/pipeline/orphanstreamtracker.cpp
-    engine/pipeline/orphanstreamtracker.h
-    engine/pipeline/outputpump.cpp
-    engine/pipeline/outputpump.h
+    engine/pipeline/mixer/audiomixer.cpp
+    engine/pipeline/mixer/audiomixer.h
     engine/pipeline/mixer/mixeroutput.cpp
     engine/pipeline/mixer/mixeroutput.h
     engine/pipeline/mixer/mixertimeline.cpp
     engine/pipeline/mixer/mixertimeline.h
+    engine/pipeline/orphanstreamtracker.cpp
+    engine/pipeline/orphanstreamtracker.h
+    engine/pipeline/outputpump.cpp
+    engine/pipeline/outputpump.h
+    engine/pipeline/pipelineoutput.cpp
+    engine/pipeline/pipelineoutput.h
+    engine/pipeline/pipelinerenderer.cpp
+    engine/pipeline/pipelinerenderer.h
     engine/pipeline/pipelinesignalmailbox.cpp
     engine/pipeline/pipelinesignalmailbox.h
+    engine/pipeline/pipelinethreadhost.cpp
+    engine/pipeline/pipelinethreadhost.h
+    engine/pipeline/pipelinetimeline.cpp
+    engine/pipeline/pipelinetimeline.h
     engine/pipeline/sampleringbuffer.cpp
     engine/pipeline/sampleringbuffer.h
     engine/pipeline/timedaudiofifo.cpp
     engine/pipeline/timedaudiofifo.h
     engine/tagdefs.h
-    engine/audioclock.cpp
-    engine/audioclock.h
+    engine/verification/accuraterip.cpp
+    engine/verification/audioverifier.cpp
+    engine/visualisationbackend.cpp
+    engine/visualisationbackend.h
+    engine/visualisationservice.cpp
     internalcoresettings.cpp
     internalcoresettings.h
-    library/librarymanager.cpp
-    library/librarymanager.h
-    library/musiclibrary.cpp
+    library/librarycuetrackreloader.cpp
+    library/librarycuetrackreloader.h
     library/libraryfileenumerator.cpp
     library/libraryfileenumerator.h
     library/libraryfilter.cpp
     library/libraryfilterregistry.cpp
     library/libraryfilterregistry.h
+    library/librarymanager.cpp
+    library/librarymanager.h
     library/librarymonitor.cpp
     library/librarymonitor.h
-    library/librarycuetrackreloader.cpp
-    library/librarycuetrackreloader.h
     library/libraryscanner.cpp
     library/libraryscanner.h
     library/libraryscansession.cpp
@@ -264,6 +264,7 @@ set(SOURCES
     library/libraryutils.cpp
     library/librarywatcher.cpp
     library/librarywatcher.h
+    library/musiclibrary.cpp
     library/sortingregistry.cpp
     library/sortingregistry.h
     library/trackdatabasemanager.cpp
@@ -277,25 +278,25 @@ set(SOURCES
     network/networkstreamdevice.cpp
     network/networkstreamdevice.h
     network/networkutils.cpp
+    network/remoteioservice.cpp
+    network/remotestreamdevice.cpp
     network/streamdeviceutils.cpp
     network/streamdeviceutils.h
-    network/remotestreamdevice.cpp
-    network/remoteioservice.cpp
     playback/playbackcursor.cpp
     playback/playbackcursor.h
     playback/playbackorder.cpp
     playback/playbackorder.h
+    playback/playbackordernavigator.cpp
+    playback/playbackordernavigator.h
+    playback/playbackprogresstracker.cpp
+    playback/playbackprogresstracker.h
     playback/playbackqueue.cpp
     playback/playbackqueuestore.cpp
     playback/playbackqueuestore.h
-    playback/playbackordernavigator.cpp
-    playback/playbackordernavigator.h
-    playback/playbackstatestore.cpp
-    playback/playbackstatestore.h
-    playback/playbackprogresstracker.cpp
-    playback/playbackprogresstracker.h
     playback/playbacksession.cpp
     playback/playbacksession.h
+    playback/playbackstatestore.cpp
+    playback/playbackstatestore.h
     playback/playercontroller.cpp
     playback/playlistnavigator.cpp
     playback/playlistnavigator.h
@@ -329,20 +330,20 @@ set(SOURCES
     scripting/functions/timefuncs.h
     scripting/functions/tracklistfuncs.cpp
     scripting/functions/tracklistfuncs.h
-    scripting/scriptcache.cpp
     scripting/scriptbinder.cpp
-    scripting/scriptcache.h
     scripting/scriptbinder.h
-    scripting/scriptevaluator.h
-    scripting/scriptevaluator.cpp
-    scripting/scriptparser.cpp
+    scripting/scriptcache.cpp
+    scripting/scriptcache.h
     scripting/scriptcontextservice.cpp
+    scripting/scriptevaluator.cpp
+    scripting/scriptevaluator.h
+    scripting/scriptparser.cpp
     scripting/scriptregistry.cpp
-    scripting/scripttrackwriter.cpp
-    scripting/scripttypes.cpp
     scripting/scriptruntime.cpp
     scripting/scriptruntime.h
     scripting/scriptscanner.cpp
+    scripting/scripttrackwriter.cpp
+    scripting/scripttypes.cpp
     scripting/trackqueryfilter.cpp
     stringpool.cpp
     track.cpp
@@ -351,7 +352,7 @@ set(SOURCES
 )
 
 create_fooyin_library(
-    fooyin_core
+    fooyin_core #
     ADD_PRIVATE_TARGET
     EXPORT_NAME Core
     SOURCES ${SOURCES}
@@ -359,27 +360,30 @@ create_fooyin_library(
 
 target_link_libraries(
     fooyin_core
-    PRIVATE fooyin_version
-            fooyin_config
-            Taglib::Taglib
-            QCoro6::Core
-            ${FFMPEG_LIBRARIES}
-            LibArchive::LibArchive
-            PFFFT::PFFFT
-            ZLIB::ZLIB
-    PUBLIC Fooyin::Utils
-           Qt6::Core
-           Qt6::Sql
-           Qt6::Concurrent
-           Qt6::Network
+    PRIVATE
+        fooyin_version
+        fooyin_config
+        Taglib::Taglib
+        QCoro6::Core
+        ${FFMPEG_LIBRARIES}
+        LibArchive::LibArchive
+        PFFFT::PFFFT
+        ZLIB::ZLIB
+    PUBLIC #
+        Fooyin::Utils
+        Qt6::Core
+        Qt6::Sql
+        Qt6::Concurrent
+        Qt6::Network
 )
 
 target_include_directories(
     fooyin_core
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..
-            ${CMAKE_CURRENT_SOURCE_DIR}/engine
-            ${CMAKE_CURRENT_SOURCE_DIR}/engine/control
-            ${CMAKE_CURRENT_SOURCE_DIR}/engine/pipeline
-            ${CMAKE_CURRENT_SOURCE_DIR}/engine/decode
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/control
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/pipeline
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/decode
 )
 target_include_directories(fooyin_core SYSTEM PRIVATE ${FFMPEG_INCLUDE_DIRS})

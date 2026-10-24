@@ -108,16 +108,17 @@ if(INSTALL_HEADERS)
         RUNTIME COMPONENT fooyin
         LIBRARY COMPONENT fooyin NAMELINK_COMPONENT fooyin_development
         ARCHIVE COMPONENT fooyin_development
-        INCLUDES
-        DESTINATION "${INCLUDE_INSTALL_DIR}"
+        INCLUDES DESTINATION "${INCLUDE_INSTALL_DIR}"
     )
 
     write_basic_package_version_file(
-        "${CMAKE_CURRENT_BINARY_DIR}/FooyinConfigVersion.cmake" COMPATIBILITY SameMajorVersion
+        "${CMAKE_CURRENT_BINARY_DIR}/FooyinConfigVersion.cmake"
+        COMPATIBILITY SameMajorVersion
     )
 
     configure_package_config_file(
-        "${CMAKE_CURRENT_LIST_DIR}/FooyinConfig.cmake.in" "${PROJECT_BINARY_DIR}/FooyinConfig.cmake"
+        "${CMAKE_CURRENT_LIST_DIR}/FooyinConfig.cmake.in"
+        "${PROJECT_BINARY_DIR}/FooyinConfig.cmake"
         INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR}
     )
 

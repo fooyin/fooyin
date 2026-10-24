@@ -7,10 +7,12 @@ endif()
 create_fooyin_plugin_internal(
     jack
     NO_PCH
-    DEPENDS Fooyin::Core
-            Jack::Jack
-    SOURCES jackplugin.cpp
-            jackoutput.cpp
-            jackplugin.h
-            jackoutput.h
+    DEPENDS #
+        Fooyin::Core
+        Jack::Jack
+    SOURCES #
+        jackoutput.cpp
+        jackoutput.h
+        jackplugin.cpp
+        jackplugin.h
 )

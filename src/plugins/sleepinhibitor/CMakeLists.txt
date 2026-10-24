@@ -1,11 +1,7 @@
 set(DEPENDS Fooyin::Core Fooyin::Gui)
 
 if(UNIX AND NOT APPLE)
-    find_package(
-        Qt6
-        COMPONENTS DBus
-        QUIET
-    )
+    find_package(Qt6 COMPONENTS DBus QUIET)
     if(NOT Qt6DBus_FOUND)
         message(STATUS "Qt6::DBus not found; skipping sleepinhibitor plugin.")
         return()
@@ -15,6 +11,7 @@ if(UNIX AND NOT APPLE)
 endif()
 
 set(SOURCES
+    #[[gersemi: sort]] #
     inhibitor.cpp
     inhibitor.h
     sleepinhibitorplugin.cpp
@@ -38,8 +35,4 @@ if(WIN32)
     list(APPEND SOURCES platforms/inhibitorwin32.cpp platforms/inhibitorwin32.h)
 endif()
 
-create_fooyin_plugin_internal(
-    sleepinhibitor
-    DEPENDS ${DEPENDS}
-    SOURCES ${SOURCES}
-)
+create_fooyin_plugin_internal(sleepinhibitor DEPENDS ${DEPENDS} SOURCES ${SOURCES})

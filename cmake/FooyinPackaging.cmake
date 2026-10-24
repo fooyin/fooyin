@@ -11,10 +11,7 @@ set(CPACK_PACKAGE_VERSION_MAJOR "${FOOYIN_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${FOOYIN_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${FOOYIN_VERSION_PATCH}")
 set(CPACK_PACKAGE_VERSION "${FOOYIN_VERSION}")
-set(CPACK_PACKAGE_RELOCATABLE
-    ON
-    CACHE BOOL "Build relocatable package"
-)
+set(CPACK_PACKAGE_RELOCATABLE ON CACHE BOOL "Build relocatable package")
 set(CPACK_PACKAGE_RELEASE 1)
 
 set(FOOYIN_PACKAGE_ARCH "${CMAKE_SYSTEM_PROCESSOR}")
@@ -110,23 +107,17 @@ get_cmake_property(fooyin_package_components COMPONENTS)
 list(REMOVE_ITEM fooyin_package_components fooyin_development)
 set(CPACK_INSTALL_CMAKE_PROJECTS "")
 foreach(component IN LISTS fooyin_package_components)
-    list(
-        APPEND
-        CPACK_INSTALL_CMAKE_PROJECTS
-        "${PROJECT_BINARY_DIR}"
-        "${PROJECT_NAME}"
-        "${component}"
-        "/"
-    )
+    list(APPEND CPACK_INSTALL_CMAKE_PROJECTS "${PROJECT_BINARY_DIR}" "${PROJECT_NAME}" "${component}" "/")
 endforeach()
 
 include(CPack)
 
 # The dev component includes the libraries, headers, and CMake exports needed by plugins
-if(INSTALL_HEADERS
-   AND BUILD_SHARED_LIBS
-   AND (WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
-   AND NOT CMAKE_SKIP_INSTALL_RULES
+if(
+    INSTALL_HEADERS
+    AND BUILD_SHARED_LIBS
+    AND (WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    AND NOT CMAKE_SKIP_INSTALL_RULES
 )
     find_package(Git QUIET)
     set(FOOYIN_SDK_COMMIT "unknown")
@@ -158,12 +149,15 @@ if(INSTALL_HEADERS
         "fooyin-sdk-${FOOYIN_VERSION}-${sdk_platform}-qt${Qt6Core_VERSION_MAJOR}.${Qt6Core_VERSION_MINOR}"
     )
     configure_file(
-        "${CMAKE_CURRENT_LIST_DIR}/FooyinSdkPackage.cmake.in" "${PROJECT_BINARY_DIR}/FooyinSdkPackage.cmake" @ONLY
+        "${CMAKE_CURRENT_LIST_DIR}/FooyinSdkPackage.cmake.in"
+        "${PROJECT_BINARY_DIR}/FooyinSdkPackage.cmake"
+        @ONLY
     )
     add_custom_target(
         package_sdk
-        COMMAND "${CMAKE_COMMAND}" -DSDK_CONFIG=$<CONFIG> "-DSDK_RUNTIME_FILES=${sdk_runtime_files}" -P
-                "${PROJECT_BINARY_DIR}/FooyinSdkPackage.cmake"
+        COMMAND
+            "${CMAKE_COMMAND}" -DSDK_CONFIG=$<CONFIG> "-DSDK_RUNTIME_FILES=${sdk_runtime_files}" -P
+            "${PROJECT_BINARY_DIR}/FooyinSdkPackage.cmake"
         DEPENDS fooyin_core fooyin_gui fooyin_utils
         COMMENT "Packaging the fooyin SDK"
         VERBATIM

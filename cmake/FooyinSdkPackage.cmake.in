@@ -4,8 +4,10 @@ set(sdk_prefix "${sdk_output}/${sdk_name}")
 
 file(REMOVE_RECURSE "${sdk_prefix}")
 execute_process(
-    COMMAND "@CMAKE_COMMAND@" --install "@PROJECT_BINARY_DIR@" --prefix "${sdk_prefix}" --component fooyin_development
-            --config "${SDK_CONFIG}" COMMAND_ERROR_IS_FATAL ANY
+    COMMAND
+        "@CMAKE_COMMAND@" --install "@PROJECT_BINARY_DIR@" --prefix "${sdk_prefix}" --component fooyin_development
+        --config "${SDK_CONFIG}"
+    COMMAND_ERROR_IS_FATAL ANY
 )
 
 if(SDK_RUNTIME_FILES)
@@ -44,7 +46,7 @@ string(
     "build_type": "${SDK_CONFIG}"
 }
 ]=]
-        sdk_manifest
+    sdk_manifest
 )
 
 if("@CMAKE_SYSTEM_NAME@" STREQUAL "Windows")
@@ -62,6 +64,7 @@ file(WRITE "${sdk_prefix}/sdk-manifest.json" "${sdk_manifest}")
 
 execute_process(
     COMMAND "@CMAKE_COMMAND@" -E tar ${sdk_tar_options} "${sdk_name}"
-    WORKING_DIRECTORY "${sdk_output}" COMMAND_ERROR_IS_FATAL ANY
+    WORKING_DIRECTORY "${sdk_output}"
+    COMMAND_ERROR_IS_FATAL ANY
 )
 message(STATUS "Created ${sdk_archive}")

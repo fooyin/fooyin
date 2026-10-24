@@ -49,7 +49,8 @@ function(windeployqt target)
     )
 
     install(
-        CODE "
+        CODE
+            "
         execute_process(
             COMMAND \"${WINDEPLOYQT_RELEASE}\"
                     --release
@@ -65,10 +66,5 @@ function(windeployqt target)
         COMPONENT fooyin
     )
 
-    install(
-        DIRECTORY "$<TARGET_FILE_DIR:fooyin>/"
-        DESTINATION ${BIN_INSTALL_DIR}
-        FILES_MATCHING
-        PATTERN "*.dll"
-    )
+    install(DIRECTORY "$<TARGET_FILE_DIR:fooyin>/" DESTINATION ${BIN_INSTALL_DIR} FILES_MATCHING PATTERN "*.dll")
 endfunction()

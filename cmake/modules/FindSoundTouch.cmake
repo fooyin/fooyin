@@ -46,9 +46,10 @@ if(SoundTouch_FOUND)
         add_library(SoundTouch::SoundTouch UNKNOWN IMPORTED)
         set_target_properties(
             SoundTouch::SoundTouch
-            PROPERTIES IMPORTED_LOCATION "${SoundTouch_LIBRARY}"
-                       INTERFACE_COMPILE_OPTIONS "${PC_SoundTouch_CFLAGS_OTHER}"
-                       INTERFACE_INCLUDE_DIRECTORIES "${SoundTouch_INCLUDE_DIR}"
+            PROPERTIES
+                IMPORTED_LOCATION "${SoundTouch_LIBRARY}"
+                INTERFACE_COMPILE_OPTIONS "${PC_SoundTouch_CFLAGS_OTHER}"
+                INTERFACE_INCLUDE_DIRECTORIES "${SoundTouch_INCLUDE_DIR}"
         )
     endif()
 endif()

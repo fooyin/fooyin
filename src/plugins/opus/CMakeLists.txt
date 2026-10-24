@@ -7,10 +7,12 @@ endif()
 
 create_fooyin_plugin_internal(
     opus
-    DEPENDS Fooyin::Core
-            OpusFile::OpusFile
-    SOURCES opusdecoder.cpp
-            opusdecoder.h
-            opusplugin.cpp
-            opusplugin.h
+    DEPENDS #
+        Fooyin::Core
+        OpusFile::OpusFile
+    SOURCES #
+        opusdecoder.cpp
+        opusdecoder.h
+        opusplugin.cpp
+        opusplugin.h
 )

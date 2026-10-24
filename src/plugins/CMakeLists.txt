@@ -84,8 +84,7 @@ endif()
 
 if(UNIX AND NOT APPLE)
     list(
-        APPEND
-        FOOYIN_DEFAULT_PLUGINS
+        APPEND FOOYIN_DEFAULT_PLUGINS
         cdda
         jack
         mpris
@@ -95,13 +94,7 @@ if(UNIX AND NOT APPLE)
 endif()
 
 if(WIN32)
-    list(
-        APPEND
-        FOOYIN_DEFAULT_PLUGINS
-        wasapi
-        mediacontrol
-        thumbnailtoolbar
-    )
+    list(APPEND FOOYIN_DEFAULT_PLUGINS wasapi mediacontrol thumbnailtoolbar)
 endif()
 
 if(APPLE)
@@ -109,14 +102,10 @@ if(APPLE)
 endif()
 
 fooyin_resolve_plugin_selection(
-    OUT_VAR
-    FOOYIN_RESOLVED_PLUGINS
-    SELECTION
-    "${PLUGIN_SELECTION}"
-    KNOWN
-    ${FOOYIN_KNOWN_PLUGINS}
-    DEFAULT
-    ${FOOYIN_DEFAULT_PLUGINS}
+    OUT_VAR FOOYIN_RESOLVED_PLUGINS
+    SELECTION "${PLUGIN_SELECTION}"
+    KNOWN ${FOOYIN_KNOWN_PLUGINS}
+    DEFAULT ${FOOYIN_DEFAULT_PLUGINS}
 )
 
 if(BUILD_ALSA)

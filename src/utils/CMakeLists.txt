@@ -1,4 +1,5 @@
 set(SOURCES
+    #[[gersemi: sort]] #
     ${CMAKE_SOURCE_DIR}/include/utils/actions/actioncontainer.h
     ${CMAKE_SOURCE_DIR}/include/utils/actions/actionmanager.h
     ${CMAKE_SOURCE_DIR}/include/utils/actions/command.h
@@ -44,8 +45,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/stringcollator.h
     ${CMAKE_SOURCE_DIR}/include/utils/stringutils.h
     ${CMAKE_SOURCE_DIR}/include/utils/tablemodel.h
-    ${CMAKE_SOURCE_DIR}/include/utils/timeconstants.h
     ${CMAKE_SOURCE_DIR}/include/utils/threadqueue.h
+    ${CMAKE_SOURCE_DIR}/include/utils/timeconstants.h
     ${CMAKE_SOURCE_DIR}/include/utils/timer.h
     ${CMAKE_SOURCE_DIR}/include/utils/tooltipfilter.h
     ${CMAKE_SOURCE_DIR}/include/utils/treeitem.h
@@ -105,20 +106,18 @@ set(SOURCES
     worker.cpp
 )
 
-create_fooyin_library(
-    fooyin_utils
-    EXPORT_NAME Utils
-    SOURCES ${SOURCES}
-)
+create_fooyin_library(fooyin_utils EXPORT_NAME Utils SOURCES ${SOURCES})
 
 target_link_libraries(
     fooyin_utils
-    PRIVATE ICU::uc
-            ICU::i18n
-    PUBLIC Qt6::Core
-           Qt6::Widgets
-           Qt6::Sql
-           Qt6::Concurrent
+    PRIVATE #
+        ICU::uc
+        ICU::i18n
+    PUBLIC #
+        Qt6::Core
+        Qt6::Widgets
+        Qt6::Sql
+        Qt6::Concurrent
 )
 
 if(UNIX AND NOT APPLE)

@@ -29,15 +29,16 @@ function(fooyin_add_test name)
     target_compile_definitions(${name} PRIVATE FOOYIN_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
     target_link_libraries(
         ${name}
-        PRIVATE Fooyin::Core
-                Fooyin::CorePrivate
-                Fooyin::Gui
-                Fooyin::GuiPrivate
-                Fooyin::Utils
-                Qt6::Test
-                Taglib::Taglib
-                ${FFMPEG_LIBRARIES}
-                GTest::gtest_main
+        PRIVATE
+            Fooyin::Core
+            Fooyin::CorePrivate
+            Fooyin::Gui
+            Fooyin::GuiPrivate
+            Fooyin::Utils
+            Qt6::Test
+            Taglib::Taglib
+            ${FFMPEG_LIBRARIES}
+            GTest::gtest_main
     )
     gtest_discover_tests(${name} WORKING_DIRECTORY "${test_working_directory}")
 endfunction()
@@ -138,14 +139,17 @@ endif()
 if(TARGET tageditor)
     fooyin_add_test(
         test_tagfillpattern
-        plugins/tageditor/tagfillpatterntest.cpp ${CMAKE_SOURCE_DIR}/src/plugins/tageditor/tagfillpattern.cpp
+        plugins/tageditor/tagfillpatterntest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/tageditor/tagfillpattern.cpp
         ${CMAKE_SOURCE_DIR}/src/plugins/tageditor/tageditorsettings.cpp
     )
 endif()
 
 if(TARGET lyrics)
     fooyin_add_test(
-        test_lyricsparser plugins/lyrics/lyricsparsertest.cpp ${CMAKE_SOURCE_DIR}/src/plugins/lyrics/lyricsparser.cpp
+        test_lyricsparser
+        plugins/lyrics/lyricsparsertest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/lyrics/lyricsparser.cpp
     )
     target_include_directories(test_lyricsparser PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/lyrics)
 endif()
@@ -155,20 +159,25 @@ fooyin_add_test(test_metadataapply gui/metadatalookup/metadataapplytest.cpp)
 
 if(TARGET cdda)
     fooyin_add_test(
-        test_cddadomain plugins/cdda/cddadomaintest.cpp ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddatoc.cpp
-                        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddaurl.cpp
+        test_cddadomain
+        plugins/cdda/cddadomaintest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddatoc.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddaurl.cpp
     )
     target_include_directories(test_cddadomain PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
 
     fooyin_add_test(
-        test_accuraterip plugins/cdda/accurateriptest.cpp ${CMAKE_SOURCE_DIR}/src/plugins/cdda/accuraterip.cpp
-                         ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddatoc.cpp
+        test_accuraterip
+        plugins/cdda/accurateriptest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/accuraterip.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddatoc.cpp
     )
     target_include_directories(test_accuraterip PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
 
     fooyin_add_test(
-        test_cddrivebackend plugins/cdda/cddrivebackendtest.cpp
-                            ${CMAKE_SOURCE_DIR}/src/plugins/cdda/drive/cddrivebackend.cpp
+        test_cddrivebackend
+        plugins/cdda/cddrivebackendtest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/drive/cddrivebackend.cpp
     )
     target_include_directories(test_cddrivebackend PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
 

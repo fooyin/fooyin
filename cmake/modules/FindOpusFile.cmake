@@ -61,11 +61,12 @@ set(OpusFile_VERSION ${PC_OpusFile_VERSION})
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
     OpusFile
-    REQUIRED_VARS OpusFile_LIBRARY
-                  OpusFile_OGG_LIBRARY
-                  OpusFile_OPUS_LIBRARY
-                  OpusFile_ROOT_INCLUDE_DIR
-                  OpusFile_OPUS_INCLUDE_DIR
+    REQUIRED_VARS
+        OpusFile_LIBRARY
+        OpusFile_OGG_LIBRARY
+        OpusFile_OPUS_LIBRARY
+        OpusFile_ROOT_INCLUDE_DIR
+        OpusFile_OPUS_INCLUDE_DIR
     VERSION_VAR OpusFile_VERSION
 )
 
@@ -81,8 +82,9 @@ if(OpusFile_FOUND AND NOT TARGET OpusFile::OpusFile)
     add_library(OpusFile::OpusFile UNKNOWN IMPORTED GLOBAL)
     set_target_properties(
         OpusFile::OpusFile
-        PROPERTIES IMPORTED_LOCATION "${OpusFile_LIBRARY}"
-                   INTERFACE_INCLUDE_DIRECTORIES "${OpusFile_ROOT_INCLUDE_DIR};${OpusFile_OPUS_INCLUDE_DIR}"
-                   INTERFACE_LINK_LIBRARIES "${OpusFile_OGG_LIBRARY};${OpusFile_OPUS_LIBRARY}"
+        PROPERTIES
+            IMPORTED_LOCATION "${OpusFile_LIBRARY}"
+            INTERFACE_INCLUDE_DIRECTORIES "${OpusFile_ROOT_INCLUDE_DIR};${OpusFile_OPUS_INCLUDE_DIR}"
+            INTERFACE_LINK_LIBRARIES "${OpusFile_OGG_LIBRARY};${OpusFile_OPUS_LIBRARY}"
     )
 endif()

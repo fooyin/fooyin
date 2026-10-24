@@ -16,21 +16,12 @@ find_path(
     DOC "libFLAC include directory"
 )
 
-find_library(
-    FLAC_LIBRARY
-    NAMES FLAC FLAC_static
-    HINTS ${PC_FLAC_LIBDIR} ${PC_FLAC_LIBRARY_DIRS}
-    DOC "libFLAC library"
-)
+find_library(FLAC_LIBRARY NAMES FLAC FLAC_static HINTS ${PC_FLAC_LIBDIR} ${PC_FLAC_LIBRARY_DIRS} DOC "libFLAC library")
 
 set(FLAC_VERSION ${PC_FLAC_VERSION})
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(
-    FLAC
-    REQUIRED_VARS FLAC_LIBRARY FLAC_INCLUDE_DIR
-    VERSION_VAR FLAC_VERSION
-)
+find_package_handle_standard_args(FLAC REQUIRED_VARS FLAC_LIBRARY FLAC_INCLUDE_DIR VERSION_VAR FLAC_VERSION)
 
 mark_as_advanced(FLAC_INCLUDE_DIR FLAC_LIBRARY)
 
@@ -38,7 +29,6 @@ if(FLAC_FOUND AND NOT TARGET FLAC::FLAC)
     add_library(FLAC::FLAC UNKNOWN IMPORTED GLOBAL)
     set_target_properties(
         FLAC::FLAC
-        PROPERTIES IMPORTED_LOCATION "${FLAC_LIBRARY}"
-                   INTERFACE_INCLUDE_DIRECTORIES "${FLAC_INCLUDE_DIR}"
+        PROPERTIES IMPORTED_LOCATION "${FLAC_LIBRARY}" INTERFACE_INCLUDE_DIRECTORIES "${FLAC_INCLUDE_DIR}"
     )
 endif()

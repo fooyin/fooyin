@@ -19,13 +19,8 @@ function(fooyin_append_mimes)
 endfunction()
 
 function(create_fooyin_library name)
-    cmake_parse_arguments(
-        LIB
-        "ADD_PRIVATE_TARGET"
-        "EXPORT_NAME"
-        "SOURCES"
-        ${ARGN}
-    )
+    # gersemi: hints { SOURCES: sort }
+    cmake_parse_arguments(LIB "ADD_PRIVATE_TARGET" "EXPORT_NAME" "SOURCES" ${ARGN})
 
     add_library(${name} ${FOOYIN_LIBRARY_TYPE} ${LIB_SOURCES})
     add_library(Fooyin::${LIB_EXPORT_NAME} ALIAS ${name})
@@ -36,10 +31,8 @@ function(create_fooyin_library name)
     include(GenerateExportHeader)
     generate_export_header(
         ${name}
-        BASE_NAME
-        fy${base_name}
-        EXPORT_FILE_NAME
-        ${CMAKE_CURRENT_BINARY_DIR}/fy${base_name}_export.h
+        BASE_NAME fy${base_name}
+        EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/fy${base_name}_export.h
     )
 
     if(NOT BUILD_SHARED_LIBS)
@@ -56,20 +49,23 @@ function(create_fooyin_library name)
     target_include_directories(
         ${name}
         PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include> $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-               $<INSTALL_INTERFACE:${${base_name}_paths}>
+        PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+            $<INSTALL_INTERFACE:${${base_name}_paths}>
     )
 
     target_include_directories(${name} SYSTEM PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
 
     set_target_properties(
         ${name}
-        PROPERTIES VERSION ${FOOYIN_SOVERSION}
-                   SOVERSION ${FOOYIN_SOVERSION}
-                   CXX_VISIBILITY_PRESET hidden
-                   VISIBILITY_INLINES_HIDDEN YES
-                   EXPORT_NAME ${LIB_EXPORT_NAME}
-                   OUTPUT_NAME ${name}
+        PROPERTIES
+            VERSION ${FOOYIN_SOVERSION}
+            SOVERSION ${FOOYIN_SOVERSION}
+            CXX_VISIBILITY_PRESET hidden
+            VISIBILITY_INLINES_HIDDEN YES
+            EXPORT_NAME ${LIB_EXPORT_NAME}
+            OUTPUT_NAME ${name}
     )
 
     fooyin_set_rpath(${name} ${LIB_INSTALL_DIR})
@@ -89,9 +85,7 @@ function(create_fooyin_library name)
 
         set_target_properties(
             ${private_name}
-            PROPERTIES CXX_VISIBILITY_PRESET hidden
-                       VISIBILITY_INLINES_HIDDEN YES
-                       POSITION_INDEPENDENT_CODE ON
+            PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN YES POSITION_INDEPENDENT_CODE ON
         )
         target_compile_features(${private_name} INTERFACE ${FOOYIN_REQUIRED_CXX_FEATURES})
         target_compile_definitions(${private_name} INTERFACE ${FOOYIN_COMPILE_DEFINITIONS})
@@ -112,9 +106,7 @@ function(create_fooyin_library name)
             TARGETS ${name}
             EXPORT FooyinTargets
             RUNTIME DESTINATION ${BIN_INSTALL_DIR} COMPONENT fooyin
-            LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-                    COMPONENT fooyin
-                    NAMELINK_SKIP
+            LIBRARY DESTINATION ${LIB_INSTALL_DIR} COMPONENT fooyin NAMELINK_SKIP
             ARCHIVE DESTINATION ${LIB_INSTALL_DIR} COMPONENT fooyin_development
         )
 
@@ -132,21 +124,18 @@ function(create_fooyin_library name)
 endfunction()
 
 function(create_fooyin_plugin_internal plugin_name)
+    # gersemi: ignore
     set(plugin_args ${ARGN})
-    cmake_parse_arguments(
-        INTERNAL
-        "NO_PCH"
-        ""
-        ""
-        ${plugin_args}
-    )
+    cmake_parse_arguments(INTERNAL "NO_PCH" "" "" ${plugin_args})
     list(REMOVE_ITEM plugin_args NO_PCH)
 
     create_fooyin_plugin(${plugin_name} ${plugin_args} NO_INSTALL)
 
     set_target_properties(
-        ${plugin_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${FOOYIN_PLUGIN_OUTPUT_DIRECTORY}"
-                                  LIBRARY_OUTPUT_DIRECTORY "${FOOYIN_PLUGIN_OUTPUT_DIRECTORY}"
+        ${plugin_name}
+        PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY "${FOOYIN_PLUGIN_OUTPUT_DIRECTORY}"
+            LIBRARY_OUTPUT_DIRECTORY "${FOOYIN_PLUGIN_OUTPUT_DIRECTORY}"
     )
 
     target_compile_features(${plugin_name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})

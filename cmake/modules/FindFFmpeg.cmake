@@ -35,17 +35,10 @@ include(FindPackageHandleStandardArgs)
 function(_combine_targets_property VAR PROP)
     set(values) # Resulted list
     foreach(t ${ARGN})
-        get_property(
-            v
-            TARGET ${t}
-            PROPERTY ${PROP}
-        )
+        get_property(v TARGET ${t} PROPERTY ${PROP})
         list(APPEND values ${v})
     endforeach()
-    set(${VAR}
-        ${values}
-        PARENT_SCOPE
-    )
+    set(${VAR} ${values} PARENT_SCOPE)
 endfunction()
 
 # imported_link_libraries(t_dest target1 target2 ...)
@@ -76,14 +69,7 @@ endmacro()
 # Checks for the given component by invoking pkgconfig and then looking up the libraries and
 # include directories.
 #
-macro(
-    find_component
-    _component
-    _pkgconfig
-    _library
-    _header
-)
-
+macro(find_component _component _pkgconfig _library _header)
     if(NOT WIN32)
         # use pkg-config to get the directories and then use these values
         # in the FIND_PATH() and FIND_LIBRARY() calls
@@ -94,7 +80,8 @@ macro(
     endif()
 
     find_path(
-        ${_component}_INCLUDE_DIRS ${_header}
+        ${_component}_INCLUDE_DIRS
+        ${_header}
         HINTS ${PC_${_component}_INCLUDEDIR} ${PC_${_component}_INCLUDE_DIRS} "${OSSIA_SDK}/ffmpeg/include"
         PATH_SUFFIXES ffmpeg
     )
@@ -105,14 +92,8 @@ macro(
         HINTS ${PC_${_component}_LIBDIR} ${PC_${_component}_LIBRARY_DIRS} "${OSSIA_SDK}/ffmpeg/lib"
     )
 
-    set(${_component}_DEFINITIONS
-        ${PC_${_component}_CFLAGS_OTHER}
-        CACHE STRING "The ${_component} CFLAGS."
-    )
-    set(${_component}_VERSION
-        ${PC_${_component}_VERSION}
-        CACHE STRING "The ${_component} version number."
-    )
+    set(${_component}_DEFINITIONS ${PC_${_component}_CFLAGS_OTHER} CACHE STRING "The ${_component} CFLAGS.")
+    set(${_component}_VERSION ${PC_${_component}_VERSION} CACHE STRING "The ${_component} version number.")
 
     set_component_found(${_component})
 
@@ -124,14 +105,14 @@ macro(
         endif()
         set_target_properties(
             ${_library}
-            PROPERTIES IMPORTED_LOCATION "${${_component}_LIBRARIES}"
-                       INTERFACE_INCLUDE_DIRECTORIES "${${_component}_INCLUDE_DIRS}"
-                       INTERFACE_COMPILE_DEFINITIONS "${${_component}_DEFINITIONS}"
+            PROPERTIES
+                IMPORTED_LOCATION "${${_component}_LIBRARIES}"
+                INTERFACE_INCLUDE_DIRECTORIES "${${_component}_INCLUDE_DIRS}"
+                INTERFACE_COMPILE_DEFINITIONS "${${_component}_DEFINITIONS}"
         )
     endif()
 
     mark_as_advanced(${_component}_INCLUDE_DIRS ${_component}_LIBRARIES ${_component}_DEFINITIONS ${_component}_VERSION)
-
 endmacro()
 
 unset(FFMPEG_LIBRARIES CACHE)
@@ -193,10 +174,7 @@ if(TARGET swresample)
 endif()
 
 if(TARGET avutil)
-    if(UNIX
-       OR MSYS
-       OR MINGW
-    )
+    if(UNIX OR MSYS OR MINGW)
         if(NOT APPLE)
             find_package(ZLIB)
             if(TARGET ZLIB::ZLIB)
@@ -215,8 +193,8 @@ if(TARGET avutil)
 
             if(BCRYPT_LIBRARY)
                 set_target_properties(
-                    winbcrypt PROPERTIES IMPORTED_LOCATION "${BCRYPT_LIBRARY}" INTERFACE_LINK_LIBRARIES
-                                                                               "${BCRYPT_LIBRARY}"
+                    winbcrypt
+                    PROPERTIES IMPORTED_LOCATION "${BCRYPT_LIBRARY}" INTERFACE_LINK_LIBRARIES "${BCRYPT_LIBRARY}"
                 )
             endif()
         endif()
@@ -229,22 +207,10 @@ if(FFMPEG_INCLUDE_DIRS)
 endif()
 
 # cache the vars.
-set(FFMPEG_INCLUDE_DIRS
-    ${FFMPEG_INCLUDE_DIRS}
-    CACHE STRING "The FFmpeg include directories." FORCE
-)
-set(FFMPEG_LIBRARIES
-    ${FFMPEG_LIBRARIES}
-    CACHE STRING "The FFmpeg libraries." FORCE
-)
-set(FFMPEG_DEFINITIONS
-    ${FFMPEG_DEFINITIONS}
-    CACHE STRING "The FFmpeg cflags." FORCE
-)
-set(FFMPEG_TARGETS
-    ${FFMPEG_TARGETS}
-    CACHE STRING "The FFmpeg targets." FORCE
-)
+set(FFMPEG_INCLUDE_DIRS ${FFMPEG_INCLUDE_DIRS} CACHE STRING "The FFmpeg include directories." FORCE)
+set(FFMPEG_LIBRARIES ${FFMPEG_LIBRARIES} CACHE STRING "The FFmpeg libraries." FORCE)
+set(FFMPEG_DEFINITIONS ${FFMPEG_DEFINITIONS} CACHE STRING "The FFmpeg cflags." FORCE)
+set(FFMPEG_TARGETS ${FFMPEG_TARGETS} CACHE STRING "The FFmpeg targets." FORCE)
 
 mark_as_advanced(FFMPEG_INCLUDE_DIRS FFMPEG_LIBRARIES FFMPEG_DEFINITIONS FFMPEG_TARGETS)
 

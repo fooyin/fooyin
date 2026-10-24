@@ -8,8 +8,9 @@ qt_standard_project_setup()
 create_fooyin_plugin(
     testbundleplugin
     JSON_IN testplugin.json.in
-    DEPENDS Fooyin::Core
-            Fooyin::Gui
-            Fooyin::Utils
+    DEPENDS #
+        Fooyin::Core
+        Fooyin::Gui
+        Fooyin::Utils
     SOURCES testplugin.cpp
 )

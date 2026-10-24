@@ -29,12 +29,7 @@ foreach(directory IN LISTS license_directories)
     if(NOT IS_DIRECTORY "${directory}")
         message(FATAL_ERROR "Licence directory does not exist: ${directory}")
     endif()
-    file(
-        GLOB_RECURSE files
-        LIST_DIRECTORIES false
-        RELATIVE "${directory}"
-        "${directory}/*"
-    )
+    file(GLOB_RECURSE files LIST_DIRECTORIES false RELATIVE "${directory}" "${directory}/*")
     foreach(file IN LISTS files)
         configure_file("${directory}/${file}" "${bundle_directory}/licenses/${file}" COPYONLY)
     endforeach()
@@ -51,7 +46,8 @@ endif()
 
 execute_process(
     COMMAND "${CMAKE_COMMAND}" -E tar cf "${bundle_output}" --format=zip ${bundle_entries}
-    WORKING_DIRECTORY "${bundle_directory}" COMMAND_ERROR_IS_FATAL ANY
+    WORKING_DIRECTORY "${bundle_directory}"
+    COMMAND_ERROR_IS_FATAL ANY
 )
 
 message(STATUS "Created ${bundle_output}")
