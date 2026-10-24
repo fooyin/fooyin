@@ -29,11 +29,11 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
+#include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 #include <QAction>
-#include <QApplication>
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QGridLayout>
@@ -43,6 +43,7 @@
 #include <QMainWindow>
 #include <QMenu>
 #include <QMessageBox>
+#include <QPointer>
 #include <QPushButton>
 #include <QSignalBlocker>
 #include <QTabWidget>
@@ -189,38 +190,66 @@ private:
     bool m_finishing{false};
 };
 
+class PropertiesDialogSessionPrivate
+{
+public:
+    TrackList m_originalTracks;
+    TrackList m_workingTracks;
+    std::set<int> m_activeTrackIndexes;
+    std::vector<int> m_pendingRevisions;
+    qsizetype m_pendingCount{0};
+};
+
+PropertiesDialogSession::PropertiesDialogSession()
+    : p{std::make_unique<PropertiesDialogSessionPrivate>()}
+{ }
+
+PropertiesDialogSession::~PropertiesDialogSession() = default;
+
+PropertiesDialogSession::PropertiesDialogSession(const PropertiesDialogSession& other)
+    : p{std::make_unique<PropertiesDialogSessionPrivate>(*other.p)}
+{ }
+
+PropertiesDialogSession& PropertiesDialogSession::operator=(const PropertiesDialogSession& other)
+{
+    if(this != &other) {
+        *p = *other.p;
+    }
+    return *this;
+}
+
 void PropertiesDialogSession::reset(const TrackList& tracks)
 {
     const auto workingTracks = filterDuplicateTracks(tracks);
-    m_originalTracks         = workingTracks;
-    m_workingTracks          = workingTracks;
-    m_activeTrackIndexes.clear();
-    m_pendingRevisions.assign(static_cast<qsizetype>(workingTracks.size()), 0);
-    m_pendingCount = 0;
+    p->m_originalTracks      = workingTracks;
+    p->m_workingTracks       = workingTracks;
+    p->m_activeTrackIndexes.clear();
+    p->m_pendingRevisions.assign(static_cast<qsizetype>(workingTracks.size()), 0);
+    p->m_pendingCount = 0;
 }
 
 const TrackList& PropertiesDialogSession::originalTracks() const
 {
-    return m_originalTracks;
+    return p->m_originalTracks;
 }
 
 const TrackList& PropertiesDialogSession::workingTracks() const
 {
-    return m_workingTracks;
+    return p->m_workingTracks;
 }
 
 TrackList PropertiesDialogSession::activeTracks() const
 {
-    if(m_activeTrackIndexes.empty()) {
-        return m_workingTracks;
+    if(p->m_activeTrackIndexes.empty()) {
+        return p->m_workingTracks;
     }
 
     TrackList tracks;
-    tracks.reserve(static_cast<TrackList::size_type>(m_activeTrackIndexes.size()));
+    tracks.reserve(static_cast<TrackList::size_type>(p->m_activeTrackIndexes.size()));
 
-    for(const int index : m_activeTrackIndexes) {
-        if(index >= 0 && std::cmp_less(index, m_workingTracks.size())) {
-            tracks.emplace_back(m_workingTracks.at(static_cast<TrackList::size_type>(index)));
+    for(const int index : p->m_activeTrackIndexes) {
+        if(index >= 0 && std::cmp_less(index, p->m_workingTracks.size())) {
+            tracks.emplace_back(p->m_workingTracks.at(static_cast<TrackList::size_type>(index)));
         }
     }
 
@@ -229,29 +258,29 @@ TrackList PropertiesDialogSession::activeTracks() const
 
 const std::set<int>& PropertiesDialogSession::activeTrackIndexes() const
 {
-    return m_activeTrackIndexes;
+    return p->m_activeTrackIndexes;
 }
 
 bool PropertiesDialogSession::isAllTracksScope() const
 {
-    return m_activeTrackIndexes.empty();
+    return p->m_activeTrackIndexes.empty();
 }
 
 bool PropertiesDialogSession::setActiveTrackIndexes(std::set<int> trackIndexes)
 {
     std::erase_if(trackIndexes, [this](int trackIndex) {
-        return trackIndex < 0 || std::cmp_greater_equal(trackIndex, m_workingTracks.size());
+        return trackIndex < 0 || std::cmp_greater_equal(trackIndex, p->m_workingTracks.size());
     });
 
-    if(trackIndexes.size() == m_workingTracks.size()) {
+    if(trackIndexes.size() == p->m_workingTracks.size()) {
         trackIndexes.clear();
     }
 
-    if(trackIndexes == m_activeTrackIndexes) {
+    if(trackIndexes == p->m_activeTrackIndexes) {
         return false;
     }
 
-    m_activeTrackIndexes = std::move(trackIndexes);
+    p->m_activeTrackIndexes = std::move(trackIndexes);
     return true;
 }
 
@@ -259,20 +288,20 @@ void PropertiesDialogSession::updateTracks(const TrackList& tracks)
 {
     for(const auto& updatedTrack : tracks) {
         const auto workingIt = std::ranges::find_if(
-            m_workingTracks, [&updatedTrack](const Track& track) { return track.sameIdentityAs(updatedTrack); });
-        if(workingIt == m_workingTracks.cend()) {
+            p->m_workingTracks, [&updatedTrack](const Track& track) { return track.sameIdentityAs(updatedTrack); });
+        if(workingIt == p->m_workingTracks.cend()) {
             continue;
         }
-        const auto index = std::distance(m_workingTracks.begin(), workingIt);
-        if(!editorEqual(m_originalTracks[index], updatedTrack)) {
-            if(m_pendingRevisions[index] == 0) {
-                m_pendingCount++;
+        const auto index = std::distance(p->m_workingTracks.begin(), workingIt);
+        if(!editorEqual(p->m_originalTracks[index], updatedTrack)) {
+            if(p->m_pendingRevisions[index] == 0) {
+                p->m_pendingCount++;
             }
-            m_pendingRevisions[index]++;
+            p->m_pendingRevisions[index]++;
         }
-        else if(m_pendingRevisions[index] > 0) {
-            m_pendingRevisions[index] = 0;
-            m_pendingCount            = std::max(qsizetype{0}, m_pendingCount - 1);
+        else if(p->m_pendingRevisions[index] > 0) {
+            p->m_pendingRevisions[index] = 0;
+            p->m_pendingCount            = std::max(qsizetype{0}, p->m_pendingCount - 1);
         }
         *workingIt = updatedTrack;
     }
@@ -280,23 +309,23 @@ void PropertiesDialogSession::updateTracks(const TrackList& tracks)
 
 void PropertiesDialogSession::acceptChanges()
 {
-    m_originalTracks = m_workingTracks;
-    m_pendingRevisions.assign(m_originalTracks.size(), false);
-    m_pendingCount = 0;
+    p->m_originalTracks = p->m_workingTracks;
+    p->m_pendingRevisions.assign(p->m_originalTracks.size(), false);
+    p->m_pendingCount = 0;
 }
 
 bool PropertiesDialogSession::hasChanges() const
 {
-    return m_pendingCount > 0 || m_originalTracks.size() != m_workingTracks.size();
+    return p->m_pendingCount > 0 || p->m_originalTracks.size() != p->m_workingTracks.size();
 }
 
 bool PropertiesDialogSession::hasOnlyStatChanges() const
 {
     bool hasStatChanges{false};
 
-    for(size_t i{0}; i < m_originalTracks.size(); ++i) {
-        const auto& originalTrack = m_originalTracks.at(i);
-        const auto& workingTrack  = m_workingTracks.at(i);
+    for(size_t i{0}; i < p->m_originalTracks.size(); ++i) {
+        const auto& originalTrack = p->m_originalTracks.at(i);
+        const auto& workingTrack  = p->m_workingTracks.at(i);
 
         if(metadataEqual(originalTrack, workingTrack)) {
             if(!statEqual(originalTrack, workingTrack)) {
@@ -313,13 +342,13 @@ bool PropertiesDialogSession::hasOnlyStatChanges() const
 
 int PropertiesDialogSession::trackRevision(int index) const
 {
-    if(index < 0 || std::cmp_greater_equal(index, m_originalTracks.size())
-       || std::cmp_greater_equal(index, m_workingTracks.size())
-       || std::cmp_greater_equal(index, m_pendingRevisions.size())) {
+    if(index < 0 || std::cmp_greater_equal(index, p->m_originalTracks.size())
+       || std::cmp_greater_equal(index, p->m_workingTracks.size())
+       || std::cmp_greater_equal(index, p->m_pendingRevisions.size())) {
         return 0;
     }
 
-    return m_pendingRevisions[index];
+    return p->m_pendingRevisions[index];
 }
 
 bool PropertiesTabWidget::canApply() const
@@ -357,77 +386,103 @@ bool PropertiesTabWidget::commitPendingChanges()
 
 void PropertiesTabWidget::updateTracks(const TrackList& /*tracks*/) { }
 
+class PropertiesTabPrivate
+{
+public:
+    PropertiesTabPrivate(QString title, WidgetBuilder widgetBuilder, int index)
+        : m_index{index}
+        , m_title{std::move(title)}
+        , m_widgetBuilder{std::move(widgetBuilder)}
+    { }
+
+    int m_index;
+    QString m_title;
+    WidgetBuilder m_widgetBuilder;
+    QPointer<PropertiesTabWidget> m_widget;
+    bool m_loaded{false};
+    bool m_visited{false};
+};
+
 PropertiesTab::PropertiesTab(QString title, WidgetBuilder widgetBuilder, int index)
-    : m_index{index}
-    , m_title{std::move(title)}
-    , m_widgetBuilder{std::move(widgetBuilder)}
-    , m_widget{nullptr}
-    , m_loaded{false}
-    , m_visited{false}
+    : p{std::make_unique<PropertiesTabPrivate>(std::move(title), std::move(widgetBuilder), index)}
 { }
+
+PropertiesTab::~PropertiesTab() = default;
+
+PropertiesTab::PropertiesTab(const PropertiesTab& other)
+    : p{std::make_unique<PropertiesTabPrivate>(*other.p)}
+{ }
+
+PropertiesTab& PropertiesTab::operator=(const PropertiesTab& other)
+{
+    if(this != &other) {
+        *p = *other.p;
+    }
+    return *this;
+}
 
 int PropertiesTab::index() const
 {
-    return m_index;
+    return p->m_index;
 }
 
 QString PropertiesTab::title() const
 {
-    return m_title;
+    return p->m_title;
 }
 
 PropertiesTabWidget* PropertiesTab::widget(const TrackList& tracks) const
 {
-    if(!m_widget) {
-        if(m_widgetBuilder) {
-            m_widget = m_widgetBuilder(tracks);
+    if(!p->m_widget) {
+        if(p->m_widgetBuilder) {
+            p->m_widget = p->m_widgetBuilder(tracks);
         }
     }
-    return m_widget;
+    return p->m_widget;
 }
 
 bool PropertiesTab::hasVisited() const
 {
-    return m_visited;
+    return p->m_visited;
 }
 
 void PropertiesTab::load(const TrackList& tracks)
 {
-    if(m_loaded) {
+    if(p->m_loaded) {
         return;
     }
 
     if(auto* propertiesWidget = widget(tracks)) {
         propertiesWidget->load();
-        m_loaded = true;
+        p->m_loaded = true;
     }
 }
 
 void PropertiesTab::updateIndex(int index)
 {
-    m_index = index;
+    p->m_index = index;
 }
 
 void PropertiesTab::setVisited(bool visited)
 {
-    m_visited = visited;
+    p->m_visited = visited;
 }
 
 void PropertiesTab::apply()
 {
-    if(m_widget) {
-        m_widget->apply();
+    if(p->m_widget) {
+        p->m_widget->apply();
     }
 }
 
 void PropertiesTab::finish()
 {
-    m_loaded = false;
+    p->m_loaded = false;
     setVisited(false);
 
-    if(m_widget) {
-        auto* widget = m_widget.data();
-        m_widget     = nullptr;
+    if(p->m_widget) {
+        auto* widget = p->m_widget.data();
+        p->m_widget  = nullptr;
         widget->finish();
         widget->deleteLater();
     }
@@ -476,10 +531,6 @@ public:
     void accept() override;
     void reject() override;
 
-    [[nodiscard]] bool scopePanelVisible() const
-    {
-        return m_scopePanelVisible;
-    }
     void moveScope(int offset);
     void setScopePanelVisible(bool visible, bool updatePreference = true);
 
@@ -516,7 +567,11 @@ private:
     ActionManager* m_actionManager{nullptr};
     SettingsManager* m_settings{nullptr};
     mutable ScriptParser m_scriptParser;
+    Id m_actionContext;
     WidgetContext* m_context;
+    QAction* m_toggleScopeAction;
+    QAction* m_previousTrackAction;
+    QAction* m_nextTrackAction;
     QPushButton* m_applyButton{nullptr};
     QTabWidget* m_tabWidget{nullptr};
     ToolButton* m_scopeButton;
@@ -538,26 +593,16 @@ private:
     QPointer<PropertiesWriteProgress> m_writeProgress;
 };
 
-namespace {
-PropertiesDialogWidget* activePropertiesDialogWidget()
-{
-    QWidget* widget = QApplication::focusWidget();
-    while(widget) {
-        if(auto* dialog = qobject_cast<PropertiesDialogWidget*>(widget)) {
-            return dialog;
-        }
-        widget = widget->parentWidget();
-    }
-    return nullptr;
-}
-} // namespace
-
 PropertiesDialogWidget::PropertiesDialogWidget(ActionManager* actionManager, SettingsManager* settings,
                                                const TrackList& tracks, PropertiesDialog::TabList tabs)
     : QDialog{Utils::getMainWindow()}
     , m_actionManager{actionManager}
     , m_settings{settings}
-    , m_context{new WidgetContext(this, Context{PropertiesDialogContext}, this)}
+    , m_actionContext{Id{PropertiesDialogContext}.append(Utils::generateUniqueHash())}
+    , m_context{new WidgetContext(this, Context{IdList{m_actionContext, Id{PropertiesDialogContext}}}, this)}
+    , m_toggleScopeAction{new QAction(PropertiesDialog::tr("Toggle Sidebar"), this)}
+    , m_previousTrackAction{new QAction(PropertiesDialog::tr("Previous Track"), this)}
+    , m_nextTrackAction{new QAction(PropertiesDialog::tr("Next Track"), this)}
     , m_tabWidget(new QTabWidget(this))
     , m_scopeButton{new ToolButton(this)}
     , m_previousTrackButton{new ToolButton(this)}
@@ -601,15 +646,26 @@ PropertiesDialogWidget::PropertiesDialogWidget(ActionManager* actionManager, Set
     m_scopeList->setTextElideMode(Qt::ElideRight);
     m_scopeList->setWordWrap(false);
 
-    if(auto* toggleCmd = m_actionManager->command(Constants::Actions::TogglePropertiesTrackList)) {
-        m_scopeButton->setDefaultAction(toggleCmd->action());
-    }
-    if(auto* previousCmd = m_actionManager->command(Constants::Actions::PropertiesPreviousTrack)) {
-        m_previousTrackButton->setDefaultAction(previousCmd->action());
-    }
-    if(auto* nextCmd = m_actionManager->command(Constants::Actions::PropertiesNextTrack)) {
-        m_nextTrackButton->setDefaultAction(nextCmd->action());
-    }
+    m_toggleScopeAction->setCheckable(true);
+    Gui::setThemeIcon(m_toggleScopeAction, Constants::Icons::SidebarRight);
+    Gui::setThemeIcon(m_previousTrackAction, Constants::Icons::GoPrevious);
+    Gui::setThemeIcon(m_nextTrackAction, Constants::Icons::GoNext);
+
+    QObject::connect(m_toggleScopeAction, &QAction::triggered, this,
+                     [this](bool visible) { setScopePanelVisible(visible); });
+    QObject::connect(m_previousTrackAction, &QAction::triggered, this, [this]() { moveScope(-1); });
+    QObject::connect(m_nextTrackAction, &QAction::triggered, this, [this]() { moveScope(1); });
+
+    const Context actionContext{m_actionContext};
+    auto* toggleCmd = m_actionManager->registerAction(m_toggleScopeAction,
+                                                      Constants::Actions::TogglePropertiesTrackList, actionContext);
+    m_scopeButton->setDefaultAction(toggleCmd->action());
+    auto* previousCmd = m_actionManager->registerAction(m_previousTrackAction,
+                                                        Constants::Actions::PropertiesPreviousTrack, actionContext);
+    m_previousTrackButton->setDefaultAction(previousCmd->action());
+    auto* nextCmd
+        = m_actionManager->registerAction(m_nextTrackAction, Constants::Actions::PropertiesNextTrack, actionContext);
+    m_nextTrackButton->setDefaultAction(nextCmd->action());
 
     QObject::connect(m_scopeList, &QListWidget::itemSelectionChanged, this, &PropertiesDialogWidget::switchScope);
     QObject::connect(m_scopeList, &QListWidget::currentRowChanged, this, [this](int) { refreshScopeNavigation(); });
@@ -970,23 +1026,10 @@ void PropertiesDialogWidget::refreshScopeNavigation()
     const bool canMovePrevious   = hasMultipleTracks && currentRow > 0;
     const bool canMoveNext       = hasMultipleTracks && currentRow >= 0 && currentRow < count - 1;
 
-    if(auto* command = m_actionManager->command(Constants::Actions::TogglePropertiesTrackList)) {
-        if(auto* action = command->actionForContext(PropertiesDialogContext)) {
-            action->setEnabled(hasMultipleTracks);
-            const QSignalBlocker blocker{action};
-            action->setChecked(m_scopePanelVisible);
-        }
-    }
-    if(auto* command = m_actionManager->command(Constants::Actions::PropertiesPreviousTrack)) {
-        if(auto* action = command->actionForContext(PropertiesDialogContext)) {
-            action->setEnabled(canMovePrevious);
-        }
-    }
-    if(auto* command = m_actionManager->command(Constants::Actions::PropertiesNextTrack)) {
-        if(auto* action = command->actionForContext(PropertiesDialogContext)) {
-            action->setEnabled(canMoveNext);
-        }
-    }
+    m_toggleScopeAction->setEnabled(hasMultipleTracks);
+    m_toggleScopeAction->setChecked(m_scopePanelVisible);
+    m_previousTrackAction->setEnabled(canMovePrevious);
+    m_nextTrackAction->setEnabled(canMoveNext);
 }
 
 void PropertiesDialogWidget::switchScope()
@@ -1074,10 +1117,7 @@ void PropertiesDialogWidget::applyScopePanelState(bool visible, int reservedWidt
     m_scopeHost->setVisible(reservedWidth > 0);
     m_scopePanel->setVisible(visible);
 
-    if(m_scopeButton->isChecked() != visible) {
-        const QSignalBlocker blocker{m_scopeButton};
-        m_scopeButton->setChecked(visible);
-    }
+    m_toggleScopeAction->setChecked(visible);
 }
 
 PropertiesTab* PropertiesDialogWidget::tabForIndex(int index)
@@ -1167,86 +1207,68 @@ int PropertiesDialogWidget::sidebarPanelWidth() const
     return std::max(m_scopePanel->sizeHint().width(), m_scopePanel->minimumWidth());
 }
 
+class PropertiesDialogPrivate
+{
+public:
+    PropertiesDialogPrivate(ActionManager* actionManager, SettingsManager* settings)
+        : m_actionManager{actionManager}
+        , m_settings{settings}
+    { }
+
+    ActionManager* m_actionManager;
+    SettingsManager* m_settings;
+    PropertiesDialog::TabList m_tabs;
+};
+
 PropertiesDialog::PropertiesDialog(ActionManager* actionManager, SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , m_actionManager{actionManager}
-    , m_settings{settings}
-    , m_toggleScopeAction{new QAction(tr("Toggle Sidebar"), this)}
-    , m_previousTrackAction{new QAction(tr("Previous Track"), this)}
-    , m_nextTrackAction{new QAction(tr("Next Track"), this)}
+    , p{std::make_unique<PropertiesDialogPrivate>(actionManager, settings)}
 {
     const QStringList category{tr("Tracks"), tr("Properties")};
 
-    m_toggleScopeAction->setCheckable(true);
-    Gui::setThemeIcon(m_toggleScopeAction, Constants::Icons::SidebarRight);
-    Gui::setThemeIcon(m_previousTrackAction, Constants::Icons::GoPrevious);
-    Gui::setThemeIcon(m_nextTrackAction, Constants::Icons::GoNext);
-    QObject::connect(m_toggleScopeAction, &QAction::triggered, this, [this]() {
-        if(auto* dialog = activePropertiesDialogWidget()) {
-            const bool visible = !dialog->scopePanelVisible();
-            dialog->setScopePanelVisible(visible);
-            m_toggleScopeAction->setChecked(visible);
-        }
-    });
-    auto* toggleCmd = m_actionManager->registerAction(
-        m_toggleScopeAction, Constants::Actions::TogglePropertiesTrackList, Context{PropertiesDialogContext});
+    auto* toggleCmd = p->m_actionManager->registerCommand(Constants::Actions::TogglePropertiesTrackList);
     toggleCmd->setCategories(category);
     toggleCmd->setDescription(tr("Toggle Sidebar"));
     toggleCmd->setDefaultShortcut(QKeySequence{Qt::CTRL | Qt::Key_B});
 
-    QObject::connect(m_previousTrackAction, &QAction::triggered, this, []() {
-        if(auto* dialog = activePropertiesDialogWidget()) {
-            dialog->moveScope(-1);
-        }
-    });
-    auto* previousCmd = m_actionManager->registerAction(
-        m_previousTrackAction, Constants::Actions::PropertiesPreviousTrack, Context{PropertiesDialogContext});
+    auto* previousCmd = p->m_actionManager->registerCommand(Constants::Actions::PropertiesPreviousTrack);
     previousCmd->setCategories(category);
     previousCmd->setDescription(tr("Previous Track"));
 
-    QObject::connect(m_nextTrackAction, &QAction::triggered, this, []() {
-        if(auto* dialog = activePropertiesDialogWidget()) {
-            dialog->moveScope(1);
-        }
-    });
-    auto* nextCmd = m_actionManager->registerAction(m_nextTrackAction, Constants::Actions::PropertiesNextTrack,
-                                                    Context{PropertiesDialogContext});
+    auto* nextCmd = p->m_actionManager->registerCommand(Constants::Actions::PropertiesNextTrack);
     nextCmd->setCategories(category);
     nextCmd->setDescription(tr("Next Track"));
 }
 
-PropertiesDialog::~PropertiesDialog()
-{
-    m_tabs.clear();
-}
+PropertiesDialog::~PropertiesDialog() = default;
 
 void PropertiesDialog::addTab(const QString& title, const WidgetBuilder& widgetBuilder)
 {
-    const int index = static_cast<int>(m_tabs.size());
-    m_tabs.emplace_back(title, widgetBuilder, index);
+    const int index = static_cast<int>(p->m_tabs.size());
+    p->m_tabs.emplace_back(title, widgetBuilder, index);
 }
 
 void PropertiesDialog::addTab(const PropertiesTab& tab)
 {
-    const int index = static_cast<int>(m_tabs.size());
+    const int index = static_cast<int>(p->m_tabs.size());
     PropertiesTab newTab{tab};
     newTab.updateIndex(index);
-    m_tabs.emplace_back(std::move(newTab));
+    p->m_tabs.emplace_back(std::move(newTab));
 }
 
 void PropertiesDialog::insertTab(int index, const QString& title, const WidgetBuilder& widgetBuilder)
 {
-    m_tabs.insert(m_tabs.begin() + index, {title, widgetBuilder, index});
+    p->m_tabs.insert(p->m_tabs.begin() + index, {title, widgetBuilder, index});
 
-    const int count = static_cast<int>(m_tabs.size());
+    const int count = static_cast<int>(p->m_tabs.size());
     for(int i{0}; i < count; ++i) {
-        m_tabs[i].updateIndex(i);
+        p->m_tabs[i].updateIndex(i);
     }
 }
 
 void PropertiesDialog::show(const TrackList& tracks)
 {
-    auto* dialog = new PropertiesDialogWidget(m_actionManager, m_settings, tracks, m_tabs);
+    auto* dialog = new PropertiesDialogWidget(p->m_actionManager, p->m_settings, tracks, p->m_tabs);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
 
     QObject::connect(dialog, &QDialog::finished, dialog, &PropertiesDialogWidget::saveState);
