@@ -1229,15 +1229,18 @@ PropertiesDialog::PropertiesDialog(ActionManager* actionManager, SettingsManager
     auto* toggleCmd = p->m_actionManager->registerCommand(Constants::Actions::TogglePropertiesTrackList);
     toggleCmd->setCategories(category);
     toggleCmd->setDescription(tr("Toggle Sidebar"));
+    toggleCmd->setShortcutConflictScope(PropertiesDialogContext);
     toggleCmd->setDefaultShortcut(QKeySequence{Qt::CTRL | Qt::Key_B});
 
     auto* previousCmd = p->m_actionManager->registerCommand(Constants::Actions::PropertiesPreviousTrack);
     previousCmd->setCategories(category);
     previousCmd->setDescription(tr("Previous Track"));
+    previousCmd->setShortcutConflictScope(PropertiesDialogContext);
 
     auto* nextCmd = p->m_actionManager->registerCommand(Constants::Actions::PropertiesNextTrack);
     nextCmd->setCategories(category);
     nextCmd->setDescription(tr("Next Track"));
+    nextCmd->setShortcutConflictScope(PropertiesDialogContext);
 }
 
 PropertiesDialog::~PropertiesDialog() = default;

@@ -63,6 +63,7 @@ public:
     QString m_defaultText;
     QString m_globalShortcutDescription;
     QStringList m_categories;
+    Id m_shortcutConflictScope{};
 
     bool m_active{false};
     bool m_shortcutIsInitialised{false};
@@ -276,6 +277,16 @@ void Command::setCategories(const QStringList& text)
 QStringList Command::categories() const
 {
     return p->m_categories;
+}
+
+Id Command::shortcutConflictScope() const
+{
+    return p->m_shortcutConflictScope;
+}
+
+void Command::setShortcutConflictScope(const Id& scope)
+{
+    p->m_shortcutConflictScope = scope;
 }
 
 void Command::setCurrentContext(const Context& context)

@@ -78,6 +78,18 @@ public:
     void setCategories(const QStringList& text);
     [[nodiscard]] QStringList categories() const;
 
+    /*!
+     * Returns the exclusive scope used for application shortcut conflict checking.
+     * The default invalid scope overlaps all scopes. Global shortcut conflicts are unaffected.
+     */
+    [[nodiscard]] Id shortcutConflictScope() const;
+    /*!
+     * Sets an exclusive scope for application shortcut conflict checking.
+     * Commands in different valid scopes may share application shortcuts. An invalid scope overlaps all scopes.
+     * This metadata does not change action routing or global shortcut conflicts.
+     */
+    void setShortcutConflictScope(const Id& scope);
+
     void setCurrentContext(const Context& newContext);
     void addOverrideAction(QAction* actionToAdd, const Context& context, bool changeContext = true);
     bool removeOverrideAction(QAction* action, const Context& context);

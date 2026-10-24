@@ -62,6 +62,19 @@ QString shortcutKey(const QKeySequence& shortcut)
     return shortcut.toString(QKeySequence::PortableText);
 }
 
+bool bindingConflicts(const ShortcutBinding& binding, const Command* command, const ShortcutItem& other)
+{
+    const Id scope           = command->shortcutConflictScope();
+    const Id otherScope      = other.command()->shortcutConflictScope();
+    const bool scopesOverlap = !scope.isValid() || !otherScope.isValid() || scope == otherScope;
+
+    const auto otherBindings = other.bindings();
+    return std::ranges::any_of(otherBindings, [&binding, scopesOverlap](const ShortcutBinding& otherBinding) {
+        return binding.shortcut == otherBinding.shortcut
+            && (scopesOverlap || binding.scope == ShortcutScope::Global || otherBinding.scope == ShortcutScope::Global);
+    });
+}
+
 QString conflictText(const Fooyin::ShortcutConflictList& conflicts)
 {
     QStringList descriptions;
@@ -352,6 +365,7 @@ void ShortcutsModel::reassignConflicts(Command* command)
     IdSet changedIds{command->id()};
     const auto previousConflicts{m_conflicts};
     const auto conflictsForCommand = m_conflicts.at(command->id());
+    const auto& commandItem        = m_nodes.at(command->id());
 
     for(const auto& conflict : conflictsForCommand) {
         auto* item = itemForCommand(m_nodes.at(conflict.otherCommandId).command());
@@ -360,7 +374,9 @@ void ShortcutsModel::reassignConflicts(Command* command)
         }
 
         ShortcutBindingList bindings = item->bindings();
-        std::erase_if(bindings, [&conflict](const auto& binding) { return binding.shortcut == conflict.shortcut; });
+        std::erase_if(bindings, [&conflict, item, &commandItem](const auto& binding) {
+            return binding.shortcut == conflict.shortcut && bindingConflicts(binding, item->command(), commandItem);
+        });
         item->updateBindings(bindings);
         item->setStatus(ShortcutItem::Changed);
         changedIds.emplace(conflict.otherCommandId);
@@ -639,7 +655,8 @@ void ShortcutsModel::rebuildConflicts()
         }
 
         for(const Id& commandId : commands) {
-            auto& commandConflicts = conflicts[commandId];
+            const auto& item    = m_nodes.at(commandId);
+            const auto bindings = item.bindings();
             for(const Id& otherCommandId : commands) {
                 if(otherCommandId == commandId) {
                     continue;
@@ -650,9 +667,17 @@ void ShortcutsModel::rebuildConflicts()
                     continue;
                 }
 
-                commandConflicts.push_back({.shortcut                = shortcutsByKey.at(key),
-                                            .otherCommandId          = otherCommandId,
-                                            .otherCommandDescription = otherIt->second.command()->description()});
+                const auto& shortcut = shortcutsByKey.at(key);
+                if(!std::ranges::any_of(bindings, [&item, &otherIt, &shortcut](const auto& binding) {
+                       return binding.shortcut == shortcut
+                           && bindingConflicts(binding, item.command(), otherIt->second);
+                   })) {
+                    continue;
+                }
+
+                conflicts[commandId].push_back({.shortcut                = shortcut,
+                                                .otherCommandId          = otherCommandId,
+                                                .otherCommandDescription = otherIt->second.command()->description()});
             }
         }
     }
