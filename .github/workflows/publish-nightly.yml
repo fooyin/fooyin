@@ -34,6 +34,9 @@ jobs:
 
   build:
     name: Build nightly artifacts
+    permissions:
+      actions: write
+      contents: write
     needs: prepare
     uses: ./.github/workflows/build.yml
     with:

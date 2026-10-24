@@ -28,7 +28,7 @@ on:
     types: [published]
 
 permissions:
-  actions: read
+  actions: write # needed to remove superseded ccache caches
   contents: write # needed for vcpkg cache and release upload
 
 jobs:

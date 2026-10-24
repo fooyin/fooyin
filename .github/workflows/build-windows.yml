@@ -20,7 +20,7 @@ on:
         default: ''
 
 permissions:
-  actions: read
+  actions: write
   contents: read
 
 env:
@@ -272,7 +272,7 @@ jobs:
 
       - name: Save ccache
         if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v6
+        uses: ./.github/actions/save-ccache
         with:
           path: ${{ github.workspace }}/.ccache
           key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
