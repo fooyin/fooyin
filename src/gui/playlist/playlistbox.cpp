@@ -64,9 +64,11 @@ QIcon playlistIcon(const Playlist* playlist, const Playlist* activePlaylist, Pla
 }
 } // namespace
 
-PlaylistBox::PlaylistBox(ActionManager* actionManager, PlaylistController* playlistController, QWidget* parent)
+PlaylistBox::PlaylistBox(ActionManager* actionManager, PlaylistController* playlistController, MusicLibrary* library,
+                         QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
+    , m_library{library}
     , m_playlistController{playlistController}
     , m_playlistHandler{m_playlistController->playlistHandler()}
     , m_playlistBox{new QComboBox(this)}
@@ -283,7 +285,7 @@ void PlaylistBox::setupActions()
     QObject::connect(m_newAutoPlaylistAction, &QAction::triggered, this, [this]() {
         closeRenameEditor();
 
-        auto* autoDialog = new AutoPlaylistDialog(Utils::getMainWindow());
+        auto* autoDialog = new AutoPlaylistDialog(m_library, Utils::getMainWindow());
         autoDialog->setAttribute(Qt::WA_DeleteOnClose);
         QObject::connect(autoDialog, &AutoPlaylistDialog::playlistEdited, autoDialog,
                          [this](const QString& name, const QString& query, const QString& sortQuery, bool forceSorted) {
@@ -388,7 +390,7 @@ void PlaylistBox::editCurrentAutoPlaylist()
 
     closeRenameEditor();
 
-    auto* autoDialog = new AutoPlaylistDialog(m_playlistHandler, playlist, Utils::getMainWindow());
+    auto* autoDialog = new AutoPlaylistDialog(m_library, m_playlistHandler, playlist, Utils::getMainWindow());
     autoDialog->setAttribute(Qt::WA_DeleteOnClose);
     autoDialog->show();
 }

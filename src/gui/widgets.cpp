@@ -205,7 +205,7 @@ void Widgets::registerWidgets()
 
     provider->registerWidget(
         u"PlaylistSwitcher"_s,
-        [this]() { return new PlaylistBox(m_gui->actionManager(), m_playlistController, m_window); },
+        [this]() { return new PlaylistBox(m_gui->actionManager(), m_playlistController, m_core->library(), m_window); },
         tr("Playlist Switcher"));
     provider->setSubMenus(u"PlaylistSwitcher"_s, {tr("Playlist")});
 
@@ -213,7 +213,7 @@ void Widgets::registerWidgets()
         u"PlaylistTabs"_s,
         [this]() {
             auto* playlistTabs = new PlaylistTabs(m_gui->actionManager(), m_gui->widgetProvider(), m_playlistController,
-                                                  m_gui->trackSelection(), m_settings, m_window);
+                                                  m_core->library(), m_gui->trackSelection(), m_settings, m_window);
             QObject::connect(playlistTabs, &PlaylistTabs::filesDropped, m_playlistInteractor,
                              &PlaylistInteractor::filesToPlaylist);
             QObject::connect(playlistTabs, &PlaylistTabs::tracksDropped, m_playlistInteractor,

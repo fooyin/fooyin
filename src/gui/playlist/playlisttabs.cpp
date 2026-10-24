@@ -73,10 +73,11 @@ constexpr auto PlaylistTabsMiddleCloseKey = u"PlaylistTabs/CloseOnMiddleClick";
 
 namespace Fooyin {
 PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetProvider,
-                           PlaylistController* playlistController, TrackSelectionController* selectionController,
-                           SettingsManager* settings, QWidget* parent)
+                           PlaylistController* playlistController, MusicLibrary* library,
+                           TrackSelectionController* selectionController, SettingsManager* settings, QWidget* parent)
     : WidgetContainer{widgetProvider, settings, parent}
     , m_actionManager{actionManager}
+    , m_library{library}
     , m_playlistController{playlistController}
     , m_playlistHandler{m_playlistController->playlistHandler()}
     , m_selectionController{selectionController}
@@ -470,7 +471,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
 
     auto* createAutoPlaylist = new QAction(tr("Add new autoplaylist"), menu);
     QObject::connect(createAutoPlaylist, &QAction::triggered, this, [this]() {
-        auto* autoDialog = new AutoPlaylistDialog(Utils::getMainWindow());
+        auto* autoDialog = new AutoPlaylistDialog(m_library, Utils::getMainWindow());
         autoDialog->setAttribute(Qt::WA_DeleteOnClose);
         QObject::connect(autoDialog, &AutoPlaylistDialog::playlistEdited, autoDialog,
                          [this](const QString& name, const QString& query, const QString& sortQuery, bool forceSorted) {
@@ -497,7 +498,8 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
         if(playlist->isAutoPlaylist()) {
             auto* editAutoPlaylist = new QAction(tr("Edit autoplaylist"), menu);
             QObject::connect(editAutoPlaylist, &QAction::triggered, this, [this, playlist]() {
-                auto* autoDialog = new AutoPlaylistDialog(m_playlistHandler, playlist, Utils::getMainWindow());
+                auto* autoDialog
+                    = new AutoPlaylistDialog(m_library, m_playlistHandler, playlist, Utils::getMainWindow());
                 autoDialog->setAttribute(Qt::WA_DeleteOnClose);
                 autoDialog->show();
             });

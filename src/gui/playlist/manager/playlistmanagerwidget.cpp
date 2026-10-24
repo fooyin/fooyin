@@ -120,6 +120,7 @@ PlaylistManagerWidget::PlaylistManagerWidget(ActionManager* actionManager, Playl
                                              QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
+    , m_library{playlistInteractor->library()}
     , m_playlistController{playlistController}
     , m_selectionController{selectionController}
     , m_settings{settings}
@@ -363,7 +364,7 @@ void PlaylistManagerWidget::setupActions()
 
     m_newAutoPlaylistAction->setStatusTip(tr("Create a new autoplaylist"));
     QObject::connect(m_newAutoPlaylistAction, &QAction::triggered, this, [this]() {
-        auto* autoDialog = new AutoPlaylistDialog(Utils::getMainWindow());
+        auto* autoDialog = new AutoPlaylistDialog(m_library, Utils::getMainWindow());
         autoDialog->setAttribute(Qt::WA_DeleteOnClose);
         QObject::connect(autoDialog, &AutoPlaylistDialog::playlistEdited, autoDialog,
                          [this](const QString& name, const QString& query, const QString& sortQuery, bool forceSorted) {
@@ -454,7 +455,7 @@ void PlaylistManagerWidget::editAutoPlaylist(Playlist* playlist) const
     }
 
     auto* autoDialog
-        = new AutoPlaylistDialog(m_playlistController->playlistHandler(), playlist, Utils::getMainWindow());
+        = new AutoPlaylistDialog(m_library, m_playlistController->playlistHandler(), playlist, Utils::getMainWindow());
     autoDialog->setAttribute(Qt::WA_DeleteOnClose);
     autoDialog->show();
 }

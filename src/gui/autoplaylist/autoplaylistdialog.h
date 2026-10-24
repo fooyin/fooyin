@@ -21,6 +21,7 @@
 
 #include "autoplaylistquery.h"
 
+#include <QBasicTimer>
 #include <QDialog>
 
 class QAction;
@@ -32,6 +33,7 @@ class QTabWidget;
 
 namespace Fooyin {
 class AutoPlaylistRulesWidget;
+class MusicLibrary;
 class Playlist;
 class PlaylistHandler;
 class ScriptLineEdit;
@@ -42,8 +44,9 @@ class AutoPlaylistDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AutoPlaylistDialog(QWidget* parent = nullptr);
-    AutoPlaylistDialog(PlaylistHandler* playlisthandler, Playlist* playlist, QWidget* parent = nullptr);
+    explicit AutoPlaylistDialog(MusicLibrary* library, QWidget* parent = nullptr);
+    AutoPlaylistDialog(MusicLibrary* library, PlaylistHandler* playlisthandler, Playlist* playlist,
+                       QWidget* parent = nullptr);
 
     void done(int value) override;
     void accept() override;
@@ -51,8 +54,13 @@ public:
 Q_SIGNALS:
     void playlistEdited(const QString& name, const QString& query, const QString& sortQuery, bool forceSorted);
 
+protected:
+    void timerEvent(QTimerEvent* event) override;
+
 private:
     void updateButtonState();
+    void scheduleTrackCount();
+    void startTrackCount();
     void setQuery(const AutoPlaylistQuery& query);
     void rulesChanged();
     void changeMode(int index);
@@ -69,6 +77,7 @@ private:
     void populateQueries();
     void loadDefaultQueries();
 
+    MusicLibrary* m_library;
     PlaylistHandler* m_playlistHandler;
     Playlist* m_playlist;
     std::vector<AutoPlaylistQuery> m_queries;
@@ -78,11 +87,18 @@ private:
     QString m_rulesSortQuery;
     bool m_haveRules;
 
+    QBasicTimer m_countTimer;
+    QString m_countQuery;
+    uint64_t m_countGeneration;
+    bool m_countValid;
+    bool m_countRunning;
+    bool m_countPending;
+
     QLineEdit* m_nameEdit;
     QComboBox* m_presetBox;
     QTabWidget* m_modes;
     AutoPlaylistRulesWidget* m_rules;
-    QLabel* m_errorLabel;
+    QLabel* m_statusLabel;
     QLabel* m_modeLabel;
     ScriptTextEdit* m_queryEdit;
     ScriptLineEdit* m_sortQueryEdit;

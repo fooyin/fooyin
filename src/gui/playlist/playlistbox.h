@@ -30,6 +30,7 @@ class QPoint;
 namespace Fooyin {
 class ActionManager;
 class Command;
+class MusicLibrary;
 class Playlist;
 class PlaylistController;
 class PlaylistHandler;
@@ -41,7 +42,7 @@ class PlaylistBox : public FyWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistBox(ActionManager* actionManager, PlaylistController* playlistController,
+    explicit PlaylistBox(ActionManager* actionManager, PlaylistController* playlistController, MusicLibrary* library,
                          QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
@@ -71,6 +72,7 @@ private:
     void removeCurrentPlaylist();
 
     ActionManager* m_actionManager;
+    MusicLibrary* m_library;
     PlaylistController* m_playlistController;
     PlaylistHandler* m_playlistHandler;
 

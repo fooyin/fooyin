@@ -660,7 +660,7 @@ void PlaylistOrganiser::createPlaylist(const QModelIndex& index, bool autoPlayli
     };
 
     if(autoPlaylist) {
-        auto* autoDialog = new AutoPlaylistDialog(Utils::getMainWindow());
+        auto* autoDialog = new AutoPlaylistDialog(m_playlistInteractor->library(), Utils::getMainWindow());
         autoDialog->setAttribute(Qt::WA_DeleteOnClose);
         QObject::connect(autoDialog, &QDialog::finished, this, [this]() { m_creatingPlaylist = false; });
         QObject::connect(
@@ -691,8 +691,8 @@ void PlaylistOrganiser::editAutoPlaylist(const QModelIndex& index)
 
     if(auto* playlist = index.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>()) {
         if(playlist->isAutoPlaylist()) {
-            auto* autoDialog
-                = new AutoPlaylistDialog(m_playlistInteractor->handler(), playlist, Utils::getMainWindow());
+            auto* autoDialog = new AutoPlaylistDialog(m_playlistInteractor->library(), m_playlistInteractor->handler(),
+                                                      playlist, Utils::getMainWindow());
             autoDialog->setAttribute(Qt::WA_DeleteOnClose);
             autoDialog->show();
         }

@@ -36,6 +36,7 @@ class QVBoxLayout;
 namespace Fooyin {
 class ActionManager;
 class Command;
+class MusicLibrary;
 class Playlist;
 class PlaylistController;
 class PlaylistHandler;
@@ -67,8 +68,9 @@ public:
     };
 
     explicit PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetProvider,
-                          PlaylistController* playlistController, TrackSelectionController* selectionController,
-                          SettingsManager* settings, QWidget* parent = nullptr);
+                          PlaylistController* playlistController, MusicLibrary* library,
+                          TrackSelectionController* selectionController, SettingsManager* settings,
+                          QWidget* parent = nullptr);
 
     [[nodiscard]] ConfigData factoryConfig() const;
     [[nodiscard]] ConfigData defaultConfig() const;
@@ -151,6 +153,7 @@ private:
     [[nodiscard]] QString playlistTitle(const Playlist* playlist, const QString& script);
 
     ActionManager* m_actionManager;
+    MusicLibrary* m_library;
     PlaylistController* m_playlistController;
     PlaylistHandler* m_playlistHandler;
     TrackSelectionController* m_selectionController;

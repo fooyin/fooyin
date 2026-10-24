@@ -23,10 +23,13 @@
 #include "autoplaylistruleswidget.h"
 
 #include <core/coresettings.h>
+#include <core/library/musiclibrary.h>
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlisthandler.h>
+#include <core/scripting/trackqueryfilter.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/scriptlineedit.h>
+#include <utils/async.h>
 #include <utils/datastream.h>
 #include <utils/utils.h>
 
@@ -46,6 +49,7 @@
 #include <QSignalBlocker>
 #include <QTabWidget>
 #include <QTextCursor>
+#include <QTimerEvent>
 
 using namespace Qt::StringLiterals;
 
@@ -53,21 +57,27 @@ constexpr auto SavedQueries     = "Playlist/AutoPlaylistQueries"_L1;
 constexpr auto DialogStateGroup = "AutoPlaylistDialog"_L1;
 
 namespace Fooyin {
-AutoPlaylistDialog::AutoPlaylistDialog(QWidget* parent)
-    : AutoPlaylistDialog{nullptr, nullptr, parent}
+AutoPlaylistDialog::AutoPlaylistDialog(MusicLibrary* library, QWidget* parent)
+    : AutoPlaylistDialog{library, nullptr, nullptr, parent}
 { }
 
-AutoPlaylistDialog::AutoPlaylistDialog(PlaylistHandler* playlisthandler, Playlist* playlist, QWidget* parent)
+AutoPlaylistDialog::AutoPlaylistDialog(MusicLibrary* library, PlaylistHandler* playlisthandler, Playlist* playlist,
+                                       QWidget* parent)
     : QDialog{parent}
+    , m_library{library}
     , m_playlistHandler{playlisthandler}
     , m_playlist{playlist}
     , m_queryChanged{false}
     , m_haveRules{true}
+    , m_countGeneration{0}
+    , m_countValid{false}
+    , m_countRunning{false}
+    , m_countPending{false}
     , m_nameEdit{new QLineEdit(this)}
     , m_presetBox{new QComboBox(this)}
     , m_modes{new QTabWidget(this)}
     , m_rules{new AutoPlaylistRulesWidget(this)}
-    , m_errorLabel{new QLabel(this)}
+    , m_statusLabel{new QLabel(this)}
     , m_modeLabel{new QLabel(this)}
     , m_queryEdit{new ScriptTextEdit(this)}
     , m_sortQueryEdit{new ScriptLineEdit(this)}
@@ -133,18 +143,17 @@ AutoPlaylistDialog::AutoPlaylistDialog(PlaylistHandler* playlisthandler, Playlis
     m_modes->addTab(m_rules, tr("Rules"));
     m_modes->addTab(scriptPage, tr("Script"));
 
-    m_errorLabel->setWordWrap(true);
-    m_errorLabel->setTextFormat(Qt::PlainText);
-    m_errorLabel->hide();
+    m_statusLabel->setWordWrap(true);
+    m_statusLabel->setTextFormat(Qt::PlainText);
 
     auto* footerLayout = new QHBoxLayout();
-    footerLayout->addWidget(m_modeLabel, 1);
-    footerLayout->addWidget(m_errorLabel, 1);
+    footerLayout->addWidget(m_statusLabel, 1);
     footerLayout->addWidget(buttonBox);
 
     auto* layout = new QVBoxLayout(this);
     layout->addLayout(headerLayout);
     layout->addWidget(m_modes, 1);
+    layout->addWidget(m_modeLabel);
     layout->addLayout(footerLayout);
 
     QObject::connect(m_loadButton, &QAbstractButton::clicked, this, &AutoPlaylistDialog::loadQuery);
@@ -176,6 +185,14 @@ AutoPlaylistDialog::AutoPlaylistDialog(PlaylistHandler* playlisthandler, Playlis
     QObject::connect(m_rules, &AutoPlaylistRulesWidget::changed, this, &AutoPlaylistDialog::rulesChanged);
     QObject::connect(m_modes, &QTabWidget::currentChanged, this, &AutoPlaylistDialog::changeMode);
 
+    QObject::connect(m_library, &MusicLibrary::tracksLoaded, this, &AutoPlaylistDialog::scheduleTrackCount);
+    QObject::connect(m_library, &MusicLibrary::tracksAdded, this, &AutoPlaylistDialog::scheduleTrackCount);
+    QObject::connect(m_library, &MusicLibrary::tracksMetadataChanged, this, &AutoPlaylistDialog::scheduleTrackCount);
+    QObject::connect(m_library, &MusicLibrary::tracksUpdated, this, &AutoPlaylistDialog::scheduleTrackCount);
+    QObject::connect(m_library, &MusicLibrary::tracksStatsChanged, this, &AutoPlaylistDialog::scheduleTrackCount);
+    QObject::connect(m_library, &MusicLibrary::tracksDeleted, this, &AutoPlaylistDialog::scheduleTrackCount);
+    QObject::connect(m_library, &MusicLibrary::tracksSorted, this, &AutoPlaylistDialog::scheduleTrackCount);
+
     loadQueries();
 
     if(m_playlist && m_playlist->isAutoPlaylist()) {
@@ -198,6 +215,10 @@ AutoPlaylistDialog::AutoPlaylistDialog(PlaylistHandler* playlisthandler, Playlis
 
 void AutoPlaylistDialog::done(int value)
 {
+    ++m_countGeneration;
+    m_countTimer.stop();
+    m_countPending = false;
+
     FyStateSettings stateSettings;
     Utils::saveState(this, stateSettings, DialogStateGroup);
 
@@ -225,6 +246,16 @@ void AutoPlaylistDialog::accept()
     QDialog::accept();
 }
 
+void AutoPlaylistDialog::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_countTimer.timerId()) {
+        m_countTimer.stop();
+        startTrackCount();
+        return;
+    }
+    QDialog::timerEvent(event);
+}
+
 void AutoPlaylistDialog::updateButtonState()
 {
     m_rules->limitWidget()->setVisible(m_modes->currentIndex() == 0);
@@ -237,9 +268,20 @@ void AutoPlaylistDialog::updateButtonState()
     if(error.isEmpty()) {
         error = AutoPlaylistQueryBuilder::queryError(m_queryEdit->text(), m_sortQueryEdit->text());
     }
-    m_errorLabel->setText(error);
-    m_errorLabel->setVisible(!error.isEmpty());
-    m_modeLabel->setVisible(error.isEmpty() && !m_modeLabel->text().isEmpty());
+
+    m_modeLabel->setVisible(!m_modeLabel->text().isEmpty());
+
+    const QString query = m_sortQueryEdit->text().isEmpty() ? m_queryEdit->text()
+                                                            : m_queryEdit->text() + u' ' + m_sortQueryEdit->text();
+    const bool valid    = error.isEmpty();
+    if(query != m_countQuery || valid != m_countValid) {
+        m_countQuery = query;
+        m_countValid = valid;
+        scheduleTrackCount();
+    }
+    if(!valid) {
+        m_statusLabel->setText(error);
+    }
 
     const bool hasPreset = findQuery(m_presetBox->currentText()) != m_queries.end();
     m_loadButton->setEnabled(hasPreset);
@@ -249,6 +291,43 @@ void AutoPlaylistDialog::updateButtonState()
     m_resetButton->setEnabled(m_queryChanged);
     m_formatAction->setEnabled(AutoPlaylistQueryBuilder::queryError(m_queryEdit->text(), {}).isEmpty());
     m_okButton->setEnabled(!m_nameEdit->text().trimmed().isEmpty() && error.isEmpty());
+}
+
+void AutoPlaylistDialog::scheduleTrackCount()
+{
+    ++m_countGeneration;
+    m_countTimer.stop();
+    m_countPending = m_countValid;
+
+    if(m_countPending) {
+        m_statusLabel->setText(tr("Updating…"));
+        m_countTimer.start(300, this);
+    }
+}
+
+// TODO: Show a preview list somewhere?
+void AutoPlaylistDialog::startTrackCount()
+{
+    if(!m_countPending || m_countRunning || m_countTimer.isActive()) {
+        return;
+    }
+
+    m_countPending = false;
+    m_countRunning = true;
+
+    const auto generation{m_countGeneration};
+    const auto options = TrackQueryFilter::defaultSearchOptions();
+
+    Utils::asyncExec([query = m_countQuery, tracks = m_library->libraryTracks(), options]() {
+        TrackQueryFilter filter{options};
+        return static_cast<int>(filter.filter(query, tracks).size());
+    }).then(this, [this, generation](int count) {
+        m_countRunning = false;
+        if(generation == m_countGeneration) {
+            m_statusLabel->setText(count == 0 ? tr("No matching tracks") : tr("%Ln matching track(s)", nullptr, count));
+        }
+        startTrackCount();
+    });
 }
 
 void AutoPlaylistDialog::setQuery(const AutoPlaylistQuery& query)

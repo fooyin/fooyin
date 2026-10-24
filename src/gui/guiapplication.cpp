@@ -2260,7 +2260,7 @@ void GuiApplication::createNewPlaylist() const
 
 void GuiApplication::createNewAutoPlaylist()
 {
-    auto* autoDialog = new AutoPlaylistDialog(m_mainWindow.get());
+    auto* autoDialog = new AutoPlaylistDialog(m_library, m_mainWindow.get());
     autoDialog->setAttribute(Qt::WA_DeleteOnClose);
     QObject::connect(autoDialog, &AutoPlaylistDialog::playlistEdited, autoDialog,
                      [this](const QString& name, const QString& query, const QString& sortQuery, bool forceSorted) {

@@ -35,6 +35,7 @@ namespace Fooyin {
 class ActionManager;
 class Command;
 class ExpandedTreeView;
+class MusicLibrary;
 class Playlist;
 class PlaylistController;
 class PlaylistInteractor;
@@ -99,6 +100,7 @@ private:
     [[nodiscard]] bool isWindowWidget() const;
 
     ActionManager* m_actionManager;
+    MusicLibrary* m_library;
     PlaylistController* m_playlistController;
     TrackSelectionController* m_selectionController;
     SettingsManager* m_settings;
