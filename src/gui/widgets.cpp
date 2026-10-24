@@ -205,7 +205,14 @@ void Widgets::registerWidgets()
 
     provider->registerWidget(
         u"PlaylistSwitcher"_s,
-        [this]() { return new PlaylistBox(m_gui->actionManager(), m_playlistController, m_core->library(), m_window); },
+        [this]() {
+            auto* playlistBox = new PlaylistBox(m_gui->actionManager(), m_playlistController, m_window);
+            QObject::connect(playlistBox, &PlaylistBox::newAutoPlaylistRequested, m_gui,
+                             &GuiApplication::createNewAutoPlaylist);
+            QObject::connect(playlistBox, &PlaylistBox::editAutoPlaylistRequested, m_gui,
+                             &GuiApplication::editAutoPlaylist);
+            return playlistBox;
+        },
         tr("Playlist Switcher"));
     provider->setSubMenus(u"PlaylistSwitcher"_s, {tr("Playlist")});
 
@@ -213,7 +220,7 @@ void Widgets::registerWidgets()
         u"PlaylistTabs"_s,
         [this]() {
             auto* playlistTabs = new PlaylistTabs(m_gui->actionManager(), m_gui->widgetProvider(), m_playlistController,
-                                                  m_core->library(), m_gui->trackSelection(), m_settings, m_window);
+                                                  m_gui->trackSelection(), m_settings, m_window);
             QObject::connect(playlistTabs, &PlaylistTabs::filesDropped, m_playlistInteractor,
                              &PlaylistInteractor::filesToPlaylist);
             QObject::connect(playlistTabs, &PlaylistTabs::tracksDropped, m_playlistInteractor,
@@ -221,6 +228,10 @@ void Widgets::registerWidgets()
             QObject::connect(playlistTabs, &PlaylistTabs::trackListDropped, m_playlistInteractor,
                              &PlaylistInteractor::tracksToPlaylist);
             QObject::connect(playlistTabs, &PlaylistTabs::savePlaylistRequested, m_gui, &GuiApplication::savePlaylist);
+            QObject::connect(playlistTabs, &PlaylistTabs::newAutoPlaylistRequested, m_gui,
+                             &GuiApplication::createNewAutoPlaylist);
+            QObject::connect(playlistTabs, &PlaylistTabs::editAutoPlaylistRequested, m_gui,
+                             &GuiApplication::editAutoPlaylist);
             return playlistTabs;
         },
         tr("Playlist Tabs"));
@@ -229,7 +240,14 @@ void Widgets::registerWidgets()
 
     provider->registerWidget(
         u"PlaylistOrganiser"_s,
-        [this]() { return new PlaylistOrganiser(m_gui->actionManager(), m_playlistInteractor, m_settings, m_window); },
+        [this]() {
+            auto* organiser = new PlaylistOrganiser(m_gui->actionManager(), m_playlistInteractor, m_settings, m_window);
+            QObject::connect(organiser, &PlaylistOrganiser::newAutoPlaylistRequested, m_gui,
+                             &GuiApplication::createNewAutoPlaylist);
+            QObject::connect(organiser, &PlaylistOrganiser::editAutoPlaylistRequested, m_gui,
+                             &GuiApplication::editAutoPlaylist);
+            return organiser;
+        },
         tr("Playlist Organiser"));
     provider->setSubMenus(u"PlaylistOrganiser"_s, {tr("Playlist")});
 
@@ -241,6 +259,10 @@ void Widgets::registerWidgets()
                                             m_gui->trackSelection(), m_settings, m_window);
             QObject::connect(playlistManager, &PlaylistManagerWidget::savePlaylistRequested, m_gui,
                              &GuiApplication::savePlaylist);
+            QObject::connect(playlistManager, &PlaylistManagerWidget::newAutoPlaylistRequested, m_gui,
+                             &GuiApplication::createNewAutoPlaylist);
+            QObject::connect(playlistManager, &PlaylistManagerWidget::editAutoPlaylistRequested, m_gui,
+                             &GuiApplication::editAutoPlaylist);
             return playlistManager;
         },
         tr("Playlist Manager"));

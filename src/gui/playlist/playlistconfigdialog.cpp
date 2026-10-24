@@ -34,7 +34,8 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
-PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QString& title, QWidget* parent)
+PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QString& title, bool previewMode,
+                                           QWidget* parent)
     : WidgetConfigDialog{playlist, title, parent}
     , m_header{new QCheckBox(tr("Show header"), this)}
     , m_stickyHeaders{new QCheckBox(tr("Keep group headers in view"), this)}
@@ -128,6 +129,8 @@ PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QStri
 
     m_startPlaybackOnSend->setToolTip(
         tr("After adding tracks to the front of or replacing the playback queue, start playback immediately"));
+
+    clicks->setVisible(!previewMode);
 
     auto* generalLayout = new QGridLayout(generalPage);
     generalLayout->addWidget(appearance, 0, 0);

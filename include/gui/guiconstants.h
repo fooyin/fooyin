@@ -156,11 +156,12 @@ constexpr auto PlaylistAddTo = "Fooyin.Group.Playlist.AddTo";
 } // namespace Groups
 
 namespace Context {
-constexpr auto TrackSelection   = "Fooyin.Context.TrackSelection";
-constexpr auto Playlist         = "Fooyin.Context.Playlist";
-constexpr auto PlaylistSwitcher = "Fooyin.Context.PlaylistSwitcher";
-constexpr auto DirBrowser       = "Fooyin.Context.DirBrowser";
-constexpr auto Search           = "Fooyin.Context.Search";
+constexpr auto TrackSelection     = "Fooyin.Context.TrackSelection";
+constexpr auto Playlist           = "Fooyin.Context.Playlist";
+constexpr auto PlaylistSwitcher   = "Fooyin.Context.PlaylistSwitcher";
+constexpr auto DirBrowser         = "Fooyin.Context.DirBrowser";
+constexpr auto Search             = "Fooyin.Context.Search";
+constexpr auto AutoPlaylistDialog = "Fooyin.Context.AutoPlaylistDialog";
 } // namespace Context
 
 namespace Actions {
@@ -176,6 +177,7 @@ constexpr auto SavePlaylist              = "File.SavePlaylist";
 constexpr auto SaveAllPlaylists          = "File.SaveAllPlaylists";
 constexpr auto ClearPlaylist             = "Playlist.Clear";
 constexpr auto LockPlaylist              = "Playlist.Lock";
+constexpr auto ToggleAutoPlaylistSidebar = "Playlist.AutoPlaylist.ToggleSidebar";
 constexpr auto New                       = "File.New";
 constexpr auto Exit                      = "File.Exit";
 constexpr auto Settings                  = "Edit.Settings";

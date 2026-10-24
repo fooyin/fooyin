@@ -99,6 +99,7 @@
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
+#include <utils/actions/widgetcontext.h>
 #include <utils/audioutils.h>
 #include <utils/fileutils.h>
 #include <utils/logging/logwidget.h>
@@ -420,6 +421,34 @@ void GuiApplication::createNewLayout()
         name = m_layoutProvider->uniqueLayoutName(name);
         m_layoutProvider->createLayout(name, FyLayout{name, layout});
         m_editableLayout->changeLayout(m_layoutProvider->layoutByName(name));
+    }
+}
+
+void GuiApplication::createNewAutoPlaylist(std::function<void(Playlist*)> onFinished)
+{
+    if(!onFinished) {
+        onFinished = [this](Playlist* playlist) {
+            if(playlist) {
+                m_playlistController->changeCurrentPlaylist(playlist);
+            }
+        };
+    }
+
+    auto* dialog      = showAutoPlaylistDialog();
+    auto completion   = std::make_shared<std::function<void(Playlist*)>>(std::move(onFinished));
+    const auto finish = [completion](Playlist* playlist) {
+        if(auto callback = std::exchange(*completion, {})) {
+            callback(playlist);
+        }
+    };
+    QObject::connect(dialog, &AutoPlaylistDialog::playlistCreated, dialog, finish);
+    QObject::connect(dialog, &QDialog::finished, dialog, [finish]() { finish(nullptr); });
+}
+
+void GuiApplication::editAutoPlaylist(const UId& playlistId)
+{
+    if(auto* playlist = m_playlistHandler->playlistById(playlistId); playlist && playlist->isAutoPlaylist()) {
+        showAutoPlaylistDialog(playlist);
     }
 }
 
@@ -797,7 +826,7 @@ void GuiApplication::setupConnections()
     QObject::connect(m_selectionController.get(), &TrackSelectionController::requestArtworkRemoval, this,
                      &GuiApplication::removeAllArtwork);
     QObject::connect(m_fileMenu, &FileMenu::requestNewPlaylist, this, &GuiApplication::createNewPlaylist);
-    QObject::connect(m_fileMenu, &FileMenu::requestNewAutoPlaylist, this, &GuiApplication::createNewAutoPlaylist);
+    QObject::connect(m_fileMenu, &FileMenu::requestNewAutoPlaylist, this, [this]() { createNewAutoPlaylist(); });
     QObject::connect(m_fileMenu, &FileMenu::requestExit, this, &GuiApplication::close);
     QObject::connect(m_fileMenu, &FileMenu::requestAddFiles, this, &GuiApplication::addFiles);
     QObject::connect(m_fileMenu, &FileMenu::requestAddFolders, this, &GuiApplication::addFolders);
@@ -920,6 +949,16 @@ void GuiApplication::initialisePlugins()
     });
 }
 
+void GuiApplication::showQuickSetup()
+{
+    auto* quickSetup
+        = new QuickSetupDialog(m_layoutProvider.get(), m_themeRegistry, m_playlistController->presetRegistry(),
+                               m_editableLayout.get(), m_settings, m_mainWindow.get());
+    quickSetup->setAttribute(Qt::WA_DeleteOnClose);
+
+    quickSetup->show();
+}
+
 void GuiApplication::showPluginsNotFoundMessage()
 {
     QMessageBox message;
@@ -938,16 +977,6 @@ void GuiApplication::showPluginsNotFoundMessage()
     if(message.clickedButton() == quitButton) {
         Application::quit();
     }
-}
-
-void GuiApplication::updateColourScheme() const
-{
-#ifdef Q_OS_WIN
-    const auto* style = QApplication::style();
-    const bool useDarkMode
-        = style && Gui::styleSupportsDarkMode(style->name()) && m_settings->value<Settings::Gui::DarkMode>();
-    QGuiApplication::styleHints()->setColorScheme(useDarkMode ? Qt::ColorScheme::Dark : Qt::ColorScheme::Unknown);
-#endif
 }
 
 void GuiApplication::initialiseTray()
@@ -1059,6 +1088,12 @@ void GuiApplication::removeExpiredCovers(const TrackList& tracks)
 
 void GuiApplication::registerActions()
 {
+    auto* autoPlaylistSidebar = m_actionManager->registerCommand(Constants::Actions::ToggleAutoPlaylistSidebar);
+    autoPlaylistSidebar->setCategories({tr("Playlist"), tr("Autoplaylist")});
+    autoPlaylistSidebar->setDescription(tr("Toggle Sidebar"));
+    autoPlaylistSidebar->setShortcutConflictScope(Constants::Context::AutoPlaylistDialog);
+    autoPlaylistSidebar->setDefaultShortcut(QKeySequence{Qt::CTRL | Qt::Key_B});
+
     auto* showMainMenu = new QAction(tr("Show Main Menu"), m_mainWindow.get());
     Gui::setThemeIcon(showMainMenu, Constants::Icons::MainMenu);
     auto* showMainMenuCmd = m_actionManager->registerAction(showMainMenu, Constants::Actions::ShowMainMenu);
@@ -1440,104 +1475,63 @@ void GuiApplication::setupPlaybackStatisticsMenu()
         ContextMenuIds::TrackSelection::FileActionsSeparator, Constants::Actions::OpenFolder);
 }
 
-void GuiApplication::startConversionPreset(const StoredConversionPreset& stored, const TrackList& tracks)
+void GuiApplication::setupConvertMenu()
 {
-    if(tracks.empty()) {
-        return;
-    }
-
-    QString askFolder;
-    if(stored.preset.destination.mode == DestinationMode::Ask) {
-        askFolder = QFileDialog::getExistingDirectory(m_mainWindow.get(), tr("Choose destination"), QDir::homePath());
-        if(askFolder.isEmpty()) {
-            return;
+    auto* convertAction  = new QAction(tr("Converter setup…"), m_mainWindow.get());
+    auto* convertCommand = m_actionManager->registerAction(convertAction, Constants::Actions::Convert);
+    convertCommand->setCategories({tr("Tracks"), tr("Convert")});
+    QObject::connect(convertAction, &QAction::triggered, m_mainWindow.get(), [this]() {
+        if(m_selectionController->hasTracks()) {
+            m_conversionController->showSetup(m_selectionController->selectedTracks());
         }
-    }
-
-    StoredConversionPreset lastUsed{stored};
-    lastUsed.name        = u"[last used]"_s;
-    lastUsed.preset.name = lastUsed.name;
-    ConverterSettings::setLastUsedConversionPreset(lastUsed);
-    if(m_lastUsedConversionAction) {
-        m_lastUsedConversionAction->setEnabled(true);
-    }
-
-    ConversionJob job{.tracks = tracks, .preset = stored.preset};
-    m_conversionController->start(std::move(job), std::move(askFolder), stored.showReport, stored.showOutputFiles);
-}
-
-void GuiApplication::showConvertedFiles(const TrackList& tracks)
-{
-    if(tracks.empty()) {
-        return;
-    }
-
-    auto* dialog = new QDialog(m_mainWindow.get());
-    dialog->setAttribute(Qt::WA_DeleteOnClose);
-    dialog->setWindowTitle(tr("Converter Output"));
-    dialog->resize(800, 480);
-
-    auto* view
-        = PlaylistWidget::createDetachedTracks(m_actionManager, &m_playlistInteractor, m_selectionController.get(),
-                                               &m_coverProvider, m_core, m_styleProvider, tracks, dialog);
-
-    auto* layout = new QVBoxLayout(dialog);
-    layout->setContentsMargins({});
-    layout->addWidget(view);
-
-    const FyStateSettings savedSettings;
-    const QJsonObject savedState = savedSettings.value(ConverterOutputState).toJsonObject();
-    if(!savedState.isEmpty()) {
-        view->loadLayoutData(savedState);
-        if(const QByteArray geometry = QByteArray::fromBase64(savedState.value("Geometry"_L1).toString().toUtf8());
-           !geometry.isEmpty()) {
-            dialog->restoreGeometry(geometry);
-        }
-    }
-
-    QObject::connect(dialog, &QDialog::finished, dialog, [dialog, view]() {
-        QJsonObject outputState;
-        view->saveLayoutData(outputState);
-        outputState["Geometry"_L1] = QString::fromUtf8(dialog->saveGeometry().toBase64());
-
-        FyStateSettings outputSettings;
-        outputSettings.setValue(ConverterOutputState, outputState);
     });
 
-    view->finalise();
-    dialog->show();
-}
+    m_defaultConversionAction = new QAction(tr("Using default settings"), m_mainWindow.get());
+    m_defaultConversionCommand
+        = m_actionManager->registerAction(m_defaultConversionAction, Constants::Actions::ConvertDefault);
+    m_defaultConversionCommand->setCategories({tr("Tracks"), tr("Convert")});
+    m_defaultConversionCommand->setDescription(tr("Convert using default settings"));
+    m_defaultConversionCommand->action()->setShortcutVisibleInContextMenu(true);
+    QObject::connect(m_defaultConversionAction, &QAction::triggered, this,
+                     [this]() { startDefaultConversion(m_selectionController->selectedTracks()); });
 
-void GuiApplication::startDefaultConversion(const TrackList& tracks)
-{
-    const auto encoders = m_core->audioEncoderRegistry()->availableEncoders();
-    const auto encoder  = ConverterSettings::findDefaultEncoderProfile(encoders, &AudioEncoderInfo::id);
-    if(encoder == encoders.cend()) {
-        return;
-    }
+    m_lastUsedConversionAction = new QAction(tr("Repeat last conversion"), m_mainWindow.get());
+    m_lastUsedConversionCommand
+        = m_actionManager->registerAction(m_lastUsedConversionAction, Constants::Actions::ConvertLastUsed);
+    m_lastUsedConversionCommand->setCategories({tr("Tracks"), tr("Convert")});
+    m_lastUsedConversionCommand->action()->setShortcutVisibleInContextMenu(true);
+    QObject::connect(m_lastUsedConversionAction, &QAction::triggered, this,
+                     [this]() { startLastUsedConversion(m_selectionController->selectedTracks()); });
 
-    StoredConversionPreset preset;
-    preset.name                   = u"[default]"_s;
-    preset.preset.name            = preset.name;
-    preset.preset.encoder.profile = encoder->profile;
+    refreshConversionPresetActions();
+    QObject::connect(m_conversionController, &ConversionController::conversionPresetsChanged, this,
+                     &GuiApplication::refreshConversionPresetActions);
 
-    const auto storedProfiles  = ConverterSettings::encoderProfiles();
-    const auto profileOverride = std::ranges::find_if(storedProfiles, [&encoder](const StoredEncoderProfile& stored) {
-        return stored.overridesBuiltIn && stored.baseEncoderId == encoder->id;
-    });
-    if(profileOverride != storedProfiles.cend()) {
-        preset.preset.encoder.profile
-            = ConverterSettings::applyStoredEncoderProfile(std::move(preset.preset.encoder.profile), *profileOverride);
-    }
+    m_selectionController->registerTrackContextDynamicSubmenu(
+        this, TrackContextMenuArea::Track, Constants::Menus::Context::TrackSelection,
+        Constants::Menus::Context::Convert, tr("Convert"),
+        [this](QMenu* menu, const TrackSelection& selection) {
+            const TrackList tracks = selection.tracks;
+            refreshConversionPresetActions();
 
-    startConversionPreset(preset, tracks);
-}
+            menu->addAction(m_defaultConversionCommand->action());
+            menu->addAction(m_lastUsedConversionCommand->action());
 
-void GuiApplication::startLastUsedConversion(const TrackList& tracks)
-{
-    if(const auto preset = ConverterSettings::lastUsedConversionPreset()) {
-        startConversionPreset(*preset, tracks);
-    }
+            if(!m_conversionPresetActions.empty()) {
+                menu->addSeparator();
+            }
+
+            for(const ConversionPresetAction& presetAction : m_conversionPresetActions) {
+                menu->addAction(presetAction.command->action());
+            }
+
+            menu->addSeparator();
+            QAction* setupAction = menu->addAction(tr("Custom conversion…"));
+            setupAction->setEnabled(!tracks.empty());
+            QObject::connect(setupAction, &QAction::triggered, this,
+                             [this, tracks] { m_conversionController->showSetup(tracks); });
+        },
+        Constants::Menus::Context::TrackFinalSeparator);
 }
 
 void GuiApplication::refreshConversionPresetActions()
@@ -1598,65 +1592,6 @@ void GuiApplication::refreshConversionPresetActions()
     }
 }
 
-void GuiApplication::setupConvertMenu()
-{
-    auto* convertAction  = new QAction(tr("Converter setup…"), m_mainWindow.get());
-    auto* convertCommand = m_actionManager->registerAction(convertAction, Constants::Actions::Convert);
-    convertCommand->setCategories({tr("Tracks"), tr("Convert")});
-    QObject::connect(convertAction, &QAction::triggered, m_mainWindow.get(), [this]() {
-        if(m_selectionController->hasTracks()) {
-            m_conversionController->showSetup(m_selectionController->selectedTracks());
-        }
-    });
-
-    m_defaultConversionAction = new QAction(tr("Using default settings"), m_mainWindow.get());
-    m_defaultConversionCommand
-        = m_actionManager->registerAction(m_defaultConversionAction, Constants::Actions::ConvertDefault);
-    m_defaultConversionCommand->setCategories({tr("Tracks"), tr("Convert")});
-    m_defaultConversionCommand->setDescription(tr("Convert using default settings"));
-    m_defaultConversionCommand->action()->setShortcutVisibleInContextMenu(true);
-    QObject::connect(m_defaultConversionAction, &QAction::triggered, this,
-                     [this]() { startDefaultConversion(m_selectionController->selectedTracks()); });
-
-    m_lastUsedConversionAction = new QAction(tr("Repeat last conversion"), m_mainWindow.get());
-    m_lastUsedConversionCommand
-        = m_actionManager->registerAction(m_lastUsedConversionAction, Constants::Actions::ConvertLastUsed);
-    m_lastUsedConversionCommand->setCategories({tr("Tracks"), tr("Convert")});
-    m_lastUsedConversionCommand->action()->setShortcutVisibleInContextMenu(true);
-    QObject::connect(m_lastUsedConversionAction, &QAction::triggered, this,
-                     [this]() { startLastUsedConversion(m_selectionController->selectedTracks()); });
-
-    refreshConversionPresetActions();
-    QObject::connect(m_conversionController, &ConversionController::conversionPresetsChanged, this,
-                     &GuiApplication::refreshConversionPresetActions);
-
-    m_selectionController->registerTrackContextDynamicSubmenu(
-        this, TrackContextMenuArea::Track, Constants::Menus::Context::TrackSelection,
-        Constants::Menus::Context::Convert, tr("Convert"),
-        [this](QMenu* menu, const TrackSelection& selection) {
-            const TrackList tracks = selection.tracks;
-            refreshConversionPresetActions();
-
-            menu->addAction(m_defaultConversionCommand->action());
-            menu->addAction(m_lastUsedConversionCommand->action());
-
-            if(!m_conversionPresetActions.empty()) {
-                menu->addSeparator();
-            }
-
-            for(const ConversionPresetAction& presetAction : m_conversionPresetActions) {
-                menu->addAction(presetAction.command->action());
-            }
-
-            menu->addSeparator();
-            QAction* setupAction = menu->addAction(tr("Custom conversion…"));
-            setupAction->setEnabled(!tracks.empty());
-            QObject::connect(setupAction, &QAction::triggered, this,
-                             [this, tracks] { m_conversionController->showSetup(tracks); });
-        },
-        Constants::Menus::Context::TrackFinalSeparator);
-}
-
 void GuiApplication::setupUtilitiesMenu()
 {
     m_selectionController->registerTrackContextSubmenu(
@@ -1695,6 +1630,106 @@ void GuiApplication::setupUtilitiesMenu()
     m_selectionController->registerTrackContextSeparator(this, TrackContextMenuArea::Track,
                                                          Constants::Menus::Context::Utilities,
                                                          Constants::Menus::Context::UtilitiesVerifySeparator);
+}
+
+void GuiApplication::startConversionPreset(const StoredConversionPreset& stored, const TrackList& tracks)
+{
+    if(tracks.empty()) {
+        return;
+    }
+
+    QString askFolder;
+    if(stored.preset.destination.mode == DestinationMode::Ask) {
+        askFolder = QFileDialog::getExistingDirectory(m_mainWindow.get(), tr("Choose destination"), QDir::homePath());
+        if(askFolder.isEmpty()) {
+            return;
+        }
+    }
+
+    StoredConversionPreset lastUsed{stored};
+    lastUsed.name        = u"[last used]"_s;
+    lastUsed.preset.name = lastUsed.name;
+    ConverterSettings::setLastUsedConversionPreset(lastUsed);
+    if(m_lastUsedConversionAction) {
+        m_lastUsedConversionAction->setEnabled(true);
+    }
+
+    ConversionJob job{.tracks = tracks, .preset = stored.preset};
+    m_conversionController->start(std::move(job), std::move(askFolder), stored.showReport, stored.showOutputFiles);
+}
+
+void GuiApplication::startDefaultConversion(const TrackList& tracks)
+{
+    const auto encoders = m_core->audioEncoderRegistry()->availableEncoders();
+    const auto encoder  = ConverterSettings::findDefaultEncoderProfile(encoders, &AudioEncoderInfo::id);
+    if(encoder == encoders.cend()) {
+        return;
+    }
+
+    StoredConversionPreset preset;
+    preset.name                   = u"[default]"_s;
+    preset.preset.name            = preset.name;
+    preset.preset.encoder.profile = encoder->profile;
+
+    const auto storedProfiles  = ConverterSettings::encoderProfiles();
+    const auto profileOverride = std::ranges::find_if(storedProfiles, [&encoder](const StoredEncoderProfile& stored) {
+        return stored.overridesBuiltIn && stored.baseEncoderId == encoder->id;
+    });
+    if(profileOverride != storedProfiles.cend()) {
+        preset.preset.encoder.profile
+            = ConverterSettings::applyStoredEncoderProfile(std::move(preset.preset.encoder.profile), *profileOverride);
+    }
+
+    startConversionPreset(preset, tracks);
+}
+
+void GuiApplication::startLastUsedConversion(const TrackList& tracks)
+{
+    if(const auto preset = ConverterSettings::lastUsedConversionPreset()) {
+        startConversionPreset(*preset, tracks);
+    }
+}
+
+void GuiApplication::showConvertedFiles(const TrackList& tracks)
+{
+    if(tracks.empty()) {
+        return;
+    }
+
+    auto* dialog = new QDialog(m_mainWindow.get());
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->setWindowTitle(tr("Converter Output"));
+    dialog->resize(800, 480);
+
+    auto* view
+        = PlaylistWidget::createDetachedTracks(m_actionManager, &m_playlistInteractor, m_selectionController.get(),
+                                               &m_coverProvider, m_core, m_styleProvider, tracks, dialog);
+
+    auto* layout = new QVBoxLayout(dialog);
+    layout->setContentsMargins({});
+    layout->addWidget(view);
+
+    const FyStateSettings savedSettings;
+    const QJsonObject savedState = savedSettings.value(ConverterOutputState).toJsonObject();
+    if(!savedState.isEmpty()) {
+        view->loadLayoutData(savedState);
+        if(const QByteArray geometry = QByteArray::fromBase64(savedState.value("Geometry"_L1).toString().toUtf8());
+           !geometry.isEmpty()) {
+            dialog->restoreGeometry(geometry);
+        }
+    }
+
+    QObject::connect(dialog, &QDialog::finished, dialog, [dialog, view]() {
+        QJsonObject outputState;
+        view->saveLayoutData(outputState);
+        outputState["Geometry"_L1] = QString::fromUtf8(dialog->saveGeometry().toBase64());
+
+        FyStateSettings outputSettings;
+        outputSettings.setValue(ConverterOutputState, outputState);
+    });
+
+    view->finalise();
+    dialog->show();
 }
 
 void GuiApplication::close()
@@ -1744,6 +1779,16 @@ void GuiApplication::setStyle() const
     else if(auto* systemStyle = QStyleFactory::create(m_settings->value<Settings::Gui::Internal::SystemStyle>())) {
         QApplication::setStyle(systemStyle);
     }
+}
+
+void GuiApplication::updateColourScheme() const
+{
+#ifdef Q_OS_WIN
+    const auto* style = QApplication::style();
+    const bool useDarkMode
+        = style && Gui::styleSupportsDarkMode(style->name()) && m_settings->value<Settings::Gui::DarkMode>();
+    QGuiApplication::styleHints()->setColorScheme(useDarkMode ? Qt::ColorScheme::Dark : Qt::ColorScheme::Unknown);
+#endif
 }
 
 void GuiApplication::scheduleThemeUpdate(bool refreshSystemBaseline)
@@ -1843,6 +1888,12 @@ void GuiApplication::handleSystemThemeChanged()
     scheduleThemeUpdate(true);
 }
 
+bool GuiApplication::setIconTheme() const
+{
+    const auto [primaryTheme, fallbackTheme] = resolveIconThemes(m_settings);
+    return Gui::setThemeIconOverrides(primaryTheme, fallbackTheme);
+}
+
 void GuiApplication::updateApplicationIcon()
 {
     Gui::setApplicationIconOption(
@@ -1859,12 +1910,6 @@ void GuiApplication::updateApplicationIcon()
     if(m_trayIcon) {
         m_trayIcon->setIcon(icon);
     }
-}
-
-bool GuiApplication::setIconTheme() const
-{
-    const auto [primaryTheme, fallbackTheme] = resolveIconThemes(m_settings);
-    return Gui::setThemeIconOverrides(primaryTheme, fallbackTheme);
 }
 
 void GuiApplication::refreshThemeIcons()
@@ -2078,20 +2123,14 @@ void GuiApplication::showPlaylistManager()
 
     QObject::connect(m_playlistManagerWidget, &PlaylistManagerWidget::savePlaylistRequested, this,
                      &GuiApplication::savePlaylist);
+    QObject::connect(m_playlistManagerWidget, &PlaylistManagerWidget::newAutoPlaylistRequested, this,
+                     &GuiApplication::createNewAutoPlaylist);
+    QObject::connect(m_playlistManagerWidget, &PlaylistManagerWidget::editAutoPlaylistRequested, this,
+                     &GuiApplication::editAutoPlaylist);
 
     m_playlistManagerWidget->show();
     m_playlistManagerWidget->raise();
     m_playlistManagerWidget->activateWindow();
-}
-
-void GuiApplication::showQuickSetup()
-{
-    auto* quickSetup
-        = new QuickSetupDialog(m_layoutProvider.get(), m_themeRegistry, m_playlistController->presetRegistry(),
-                               m_editableLayout.get(), m_settings, m_mainWindow.get());
-    quickSetup->setAttribute(Qt::WA_DeleteOnClose);
-
-    quickSetup->show();
 }
 
 bool GuiApplication::focusIntegratedPlaylistSearch() const
@@ -2258,18 +2297,19 @@ void GuiApplication::createNewPlaylist() const
     }
 }
 
-void GuiApplication::createNewAutoPlaylist()
+AutoPlaylistDialog* GuiApplication::showAutoPlaylistDialog(Playlist* playlist)
 {
-    auto* autoDialog = new AutoPlaylistDialog(m_library, m_mainWindow.get());
-    autoDialog->setAttribute(Qt::WA_DeleteOnClose);
-    QObject::connect(autoDialog, &AutoPlaylistDialog::playlistEdited, autoDialog,
-                     [this](const QString& name, const QString& query, const QString& sortQuery, bool forceSorted) {
-                         if(auto* playlist
-                            = m_playlistHandler->createNewAutoPlaylist(name, query, sortQuery, forceSorted)) {
-                             m_playlistController->changeCurrentPlaylist(playlist);
-                         }
-                     });
-    autoDialog->show();
+    auto* dialog = new AutoPlaylistDialog(
+        m_actionManager, m_library, m_playlistHandler, playlist,
+        [this](QWidget* parent) {
+            return PlaylistWidget::createConfigurablePreview(m_actionManager, &m_playlistInteractor,
+                                                             m_selectionController.get(), &m_coverProvider, m_core,
+                                                             m_styleProvider, parent);
+        },
+        m_mainWindow.get());
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->show();
+    return dialog;
 }
 
 void GuiApplication::addFiles()

@@ -23,6 +23,8 @@
 
 #include <QPersistentModelIndex>
 
+#include <functional>
+
 class QCloseEvent;
 class QPoint;
 class QAbstractItemModel;
@@ -35,7 +37,6 @@ namespace Fooyin {
 class ActionManager;
 class Command;
 class ExpandedTreeView;
-class MusicLibrary;
 class Playlist;
 class PlaylistController;
 class PlaylistInteractor;
@@ -65,6 +66,8 @@ public:
 
 Q_SIGNALS:
     void savePlaylistRequested(const Fooyin::UId& playlistId);
+    void newAutoPlaylistRequested(std::function<void(Fooyin::Playlist*)> onFinished = {});
+    void editAutoPlaylistRequested(const Fooyin::UId& playlistId);
 
 protected:
     void showEvent(QShowEvent* event) override;
@@ -81,7 +84,7 @@ private:
     [[nodiscard]] Playlist* actionPlaylist() const;
 
     void activatePlaylist(const QModelIndex& proxyIndex) const;
-    void editAutoPlaylist(Playlist* playlist) const;
+    void editAutoPlaylist(Playlist* playlist);
     void removePlaylist(const Playlist* playlist);
     void activateCurrentPlaylist() const;
     void editCurrentAutoPlaylist();
@@ -100,7 +103,6 @@ private:
     [[nodiscard]] bool isWindowWidget() const;
 
     ActionManager* m_actionManager;
-    MusicLibrary* m_library;
     PlaylistController* m_playlistController;
     TrackSelectionController* m_selectionController;
     SettingsManager* m_settings;

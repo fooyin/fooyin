@@ -21,8 +21,13 @@
 
 #include "autoplaylistquery.h"
 
+#include <core/track.h>
+
 #include <QBasicTimer>
 #include <QDialog>
+#include <QPointer>
+
+#include <functional>
 
 class QAction;
 class QCheckBox;
@@ -30,12 +35,15 @@ class QComboBox;
 class QLineEdit;
 class QLabel;
 class QTabWidget;
+class QSplitter;
 
 namespace Fooyin {
+class ActionManager;
 class AutoPlaylistRulesWidget;
 class MusicLibrary;
 class Playlist;
 class PlaylistHandler;
+class PlaylistWidget;
 class ScriptLineEdit;
 class ScriptTextEdit;
 
@@ -44,23 +52,26 @@ class AutoPlaylistDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AutoPlaylistDialog(MusicLibrary* library, QWidget* parent = nullptr);
-    AutoPlaylistDialog(MusicLibrary* library, PlaylistHandler* playlisthandler, Playlist* playlist,
+    AutoPlaylistDialog(ActionManager* actionManager, MusicLibrary* library, PlaylistHandler* playlisthandler,
+                       Playlist* playlist, std::function<PlaylistWidget*(QWidget*)> createPreview,
                        QWidget* parent = nullptr);
 
     void done(int value) override;
     void accept() override;
 
 Q_SIGNALS:
-    void playlistEdited(const QString& name, const QString& query, const QString& sortQuery, bool forceSorted);
+    void playlistCreated(Fooyin::Playlist* playlist);
 
 protected:
+    bool eventFilter(QObject* watched, QEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
 
 private:
     void updateButtonState();
     void scheduleTrackCount();
     void startTrackCount();
+    void setPreviewVisible(bool visible, bool resizeDialog = true);
+    void updatePreview();
     void setQuery(const AutoPlaylistQuery& query);
     void rulesChanged();
     void changeMode(int index);
@@ -93,6 +104,14 @@ private:
     bool m_countValid;
     bool m_countRunning;
     bool m_countPending;
+
+    std::function<PlaylistWidget*(QWidget*)> m_createPreview;
+    TrackList m_previewTracks;
+    QPointer<PlaylistWidget> m_preview;
+    QSplitter* m_splitter;
+    QWidget* m_previewPanel;
+    QAction* m_previewAction;
+    int m_previewWidth;
 
     QLineEdit* m_nameEdit;
     QComboBox* m_presetBox;

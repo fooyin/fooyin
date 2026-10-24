@@ -36,7 +36,7 @@ class PlaylistConfigDialog final : public WidgetConfigDialog<PlaylistWidget, Pla
     Q_OBJECT
 
 public:
-    PlaylistConfigDialog(PlaylistWidget* playlist, const QString& title, QWidget* parent = nullptr);
+    PlaylistConfigDialog(PlaylistWidget* playlist, const QString& title, bool previewMode, QWidget* parent = nullptr);
 
 protected:
     void setConfig(const PlaylistWidget::ConfigData& config) override;

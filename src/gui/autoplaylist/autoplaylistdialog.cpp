@@ -21,14 +21,22 @@
 
 #include "autoplaylistquery.h"
 #include "autoplaylistruleswidget.h"
+#include "playlist/playlistview.h"
+#include "playlist/playlistwidget.h"
 
 #include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/scripting/trackqueryfilter.h>
+#include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/iconloader.h>
 #include <gui/widgets/scriptlineedit.h>
+#include <gui/widgets/toolbutton.h>
+#include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
+#include <utils/actions/widgetcontext.h>
 #include <utils/async.h>
 #include <utils/datastream.h>
 #include <utils/utils.h>
@@ -42,11 +50,15 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QInputDialog>
+#include <QJsonObject>
+#include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QScreen>
 #include <QSignalBlocker>
+#include <QSplitter>
 #include <QTabWidget>
 #include <QTextCursor>
 #include <QTimerEvent>
@@ -55,14 +67,14 @@ using namespace Qt::StringLiterals;
 
 constexpr auto SavedQueries     = "Playlist/AutoPlaylistQueries"_L1;
 constexpr auto DialogStateGroup = "AutoPlaylistDialog"_L1;
+constexpr auto PreviewVisible   = "AutoPlaylistDialog/PreviewVisible"_L1;
+constexpr auto PreviewWidth     = "AutoPlaylistDialog/PreviewWidth"_L1;
+constexpr auto PreviewState     = "AutoPlaylistDialog/PreviewState"_L1;
 
 namespace Fooyin {
-AutoPlaylistDialog::AutoPlaylistDialog(MusicLibrary* library, QWidget* parent)
-    : AutoPlaylistDialog{library, nullptr, nullptr, parent}
-{ }
-
-AutoPlaylistDialog::AutoPlaylistDialog(MusicLibrary* library, PlaylistHandler* playlisthandler, Playlist* playlist,
-                                       QWidget* parent)
+AutoPlaylistDialog::AutoPlaylistDialog(ActionManager* actionManager, MusicLibrary* library,
+                                       PlaylistHandler* playlisthandler, Playlist* playlist,
+                                       std::function<PlaylistWidget*(QWidget*)> createPreview, QWidget* parent)
     : QDialog{parent}
     , m_library{library}
     , m_playlistHandler{playlisthandler}
@@ -73,6 +85,11 @@ AutoPlaylistDialog::AutoPlaylistDialog(MusicLibrary* library, PlaylistHandler* p
     , m_countValid{false}
     , m_countRunning{false}
     , m_countPending{false}
+    , m_createPreview{std::move(createPreview)}
+    , m_splitter{new QSplitter(Qt::Horizontal, this)}
+    , m_previewPanel{new QWidget(m_splitter)}
+    , m_previewAction{new QAction(tr("Show preview"), this)}
+    , m_previewWidth{420}
     , m_nameEdit{new QLineEdit(this)}
     , m_presetBox{new QComboBox(this)}
     , m_modes{new QTabWidget(this)}
@@ -90,6 +107,9 @@ AutoPlaylistDialog::AutoPlaylistDialog(MusicLibrary* library, PlaylistHandler* p
 {
     setWindowTitle(m_playlist ? tr("Edit Autoplaylist") : tr("Create New Autoplaylist"));
     setModal(true);
+
+    auto* context = new WidgetContext(this, Context{Constants::Context::AutoPlaylistDialog}, this);
+    actionManager->addContextObject(context);
 
     const FySettings settings;
     m_presetBox->setEditable(settings.value(Settings::Gui::PresetComboBoxModeKey, true).toBool());
@@ -146,14 +166,41 @@ AutoPlaylistDialog::AutoPlaylistDialog(MusicLibrary* library, PlaylistHandler* p
     m_statusLabel->setWordWrap(true);
     m_statusLabel->setTextFormat(Qt::PlainText);
 
+    m_previewAction->setCheckable(true);
+    m_previewAction->setToolTip(tr("Show matching tracks"));
+    Gui::setThemeIcon(m_previewAction, Constants::Icons::SidebarRight);
+    auto* previewCmd    = actionManager->registerAction(m_previewAction, Constants::Actions::ToggleAutoPlaylistSidebar,
+                                                        context->context());
+    auto* previewButton = new ToolButton(this);
+    previewButton->setDefaultAction(previewCmd->action());
+    QObject::connect(m_previewAction, &QAction::triggered, this, [this](bool visible) { setPreviewVisible(visible); });
+
     auto* footerLayout = new QHBoxLayout();
+    footerLayout->addWidget(previewButton);
     footerLayout->addWidget(m_statusLabel, 1);
     footerLayout->addWidget(buttonBox);
 
+    auto* editor = new QWidget(m_splitter);
+    editor->setMinimumWidth(480);
+
+    auto* editorLayout = new QVBoxLayout(editor);
+    editorLayout->setContentsMargins({});
+    editorLayout->addLayout(headerLayout);
+    editorLayout->addWidget(m_modes, 1);
+    editorLayout->addWidget(m_modeLabel);
+
+    m_previewPanel->setMinimumWidth(280);
+    auto* previewLayout = new QVBoxLayout(m_previewPanel);
+    previewLayout->setContentsMargins({});
+    m_splitter->insertWidget(0, editor);
+    m_splitter->addWidget(m_previewPanel);
+    m_splitter->setChildrenCollapsible(false);
+    m_splitter->setStretchFactor(0, 1);
+    m_splitter->setStretchFactor(1, 0);
+    m_previewPanel->hide();
+
     auto* layout = new QVBoxLayout(this);
-    layout->addLayout(headerLayout);
-    layout->addWidget(m_modes, 1);
-    layout->addWidget(m_modeLabel);
+    layout->addWidget(m_splitter, 1);
     layout->addLayout(footerLayout);
 
     QObject::connect(m_loadButton, &QAbstractButton::clicked, this, &AutoPlaylistDialog::loadQuery);
@@ -210,6 +257,13 @@ AutoPlaylistDialog::AutoPlaylistDialog(MusicLibrary* library, PlaylistHandler* p
     const FyStateSettings stateSettings;
     Utils::restoreState(this, stateSettings, DialogStateGroup);
 
+    m_previewWidth            = std::max(280, stateSettings.value(PreviewWidth, m_previewWidth).toInt());
+    const bool previewVisible = stateSettings.value(PreviewVisible, false).toBool();
+    m_previewAction->setChecked(previewVisible);
+    if(previewVisible) {
+        setPreviewVisible(true, false);
+    }
+
     m_nameEdit->setFocus();
 }
 
@@ -220,6 +274,13 @@ void AutoPlaylistDialog::done(int value)
     m_countPending = false;
 
     FyStateSettings stateSettings;
+    stateSettings.setValue(PreviewVisible, m_previewAction->isChecked());
+    stateSettings.setValue(PreviewWidth, m_previewAction->isChecked() ? m_splitter->sizes().at(1) : m_previewWidth);
+    if(m_preview) {
+        QJsonObject previewState;
+        m_preview->saveLayoutData(previewState);
+        stateSettings.setValue(PreviewState, previewState);
+    }
     Utils::saveState(this, stateSettings, DialogStateGroup);
 
     saveQueries();
@@ -235,15 +296,29 @@ void AutoPlaylistDialog::accept()
     }
 
     const auto query = currentQuery();
-    if(m_playlistHandler && m_playlist) {
+    if(m_playlist) {
         m_playlistHandler->createAutoPlaylist(m_playlist->name(), query.query, query.sortQuery, query.forceSorted);
         if(query.name != m_playlist->name()) {
             m_playlistHandler->renamePlaylist(m_playlist->id(), query.name);
         }
     }
+    else if(auto* playlist
+            = m_playlistHandler->createNewAutoPlaylist(query.name, query.query, query.sortQuery, query.forceSorted)) {
+        Q_EMIT playlistCreated(playlist);
+    }
 
-    Q_EMIT playlistEdited(query.name, query.query, query.sortQuery, query.forceSorted);
     QDialog::accept();
+}
+
+bool AutoPlaylistDialog::eventFilter(QObject* watched, QEvent* event)
+{
+    if(m_preview && watched == m_preview->view() && event->type() == QEvent::KeyPress) {
+        const auto* keyEvent = static_cast<QKeyEvent*>(event);
+        if(keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter) {
+            return true;
+        }
+    }
+    return QDialog::eventFilter(watched, event);
 }
 
 void AutoPlaylistDialog::timerEvent(QTimerEvent* event)
@@ -303,9 +378,9 @@ void AutoPlaylistDialog::scheduleTrackCount()
         m_statusLabel->setText(tr("Updating…"));
         m_countTimer.start(300, this);
     }
+    updatePreview();
 }
 
-// TODO: Show a preview list somewhere?
 void AutoPlaylistDialog::startTrackCount()
 {
     if(!m_countPending || m_countRunning || m_countTimer.isActive()) {
@@ -320,14 +395,81 @@ void AutoPlaylistDialog::startTrackCount()
 
     Utils::asyncExec([query = m_countQuery, tracks = m_library->libraryTracks(), options]() {
         TrackQueryFilter filter{options};
-        return static_cast<int>(filter.filter(query, tracks).size());
-    }).then(this, [this, generation](int count) {
+        return filter.filter(query, tracks);
+    }).then(this, [this, generation](const TrackList& tracks) {
         m_countRunning = false;
         if(generation == m_countGeneration) {
+            m_previewTracks  = tracks;
+            const auto count = static_cast<int>(tracks.size());
             m_statusLabel->setText(count == 0 ? tr("No matching tracks") : tr("%Ln matching track(s)", nullptr, count));
+            if(m_preview && m_previewAction->isChecked()) {
+                m_preview->setTracks(m_previewTracks);
+            }
+            updatePreview();
         }
         startTrackCount();
     });
+}
+
+void AutoPlaylistDialog::setPreviewVisible(bool visible, bool resizeDialog)
+{
+    const int editorWidth = m_splitter->sizes().front();
+
+    if(visible && !m_preview) {
+        m_preview = m_createPreview(m_previewPanel);
+
+        const FyStateSettings stateSettings;
+        const QJsonObject previewState = stateSettings.value(PreviewState).toJsonObject();
+        if(!previewState.isEmpty()) {
+            m_preview->loadLayoutData(previewState);
+        }
+        m_preview->finalise();
+
+        m_preview->view()->setLoadingText(tr("Updating…"));
+        m_preview->view()->installEventFilter(this);
+        m_previewPanel->layout()->addWidget(m_preview);
+    }
+
+    if(!visible) {
+        m_previewWidth = m_splitter->sizes().at(1);
+    }
+    m_previewPanel->setVisible(visible);
+
+    if(resizeDialog && !isMaximized()) {
+        const auto available     = screen()->availableGeometry();
+        const int extraWidth     = m_previewWidth + m_splitter->handleWidth();
+        const int targetWidth    = visible ? width() + extraWidth : width() - extraWidth;
+        const int availableWidth = std::max(minimumWidth(), available.width());
+        resize(std::clamp(targetWidth, minimumWidth(), availableWidth), height());
+        if(visible) {
+            move(std::max(available.left(), std::min(x(), available.right() - frameGeometry().width() + 1)), y());
+        }
+    }
+
+    layout()->activate();
+
+    if(visible) {
+        m_splitter->setSizes({resizeDialog ? editorWidth : m_splitter->width() - m_previewWidth, m_previewWidth});
+        m_preview->setTracks(m_previewTracks);
+    }
+
+    updatePreview();
+}
+
+void AutoPlaylistDialog::updatePreview()
+{
+    if(!m_countValid) {
+        m_previewTracks.clear();
+        if(m_preview) {
+            m_preview->view()->setEmptyText({});
+            m_preview->setTracks({});
+        }
+    }
+    else {
+        if(m_preview) {
+            m_preview->view()->setEmptyText(tr("No matching tracks"));
+        }
+    }
 }
 
 void AutoPlaylistDialog::setQuery(const AutoPlaylistQuery& query)

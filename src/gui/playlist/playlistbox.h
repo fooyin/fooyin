@@ -23,6 +23,8 @@
 
 #include <QPointer>
 
+#include <functional>
+
 class QAction;
 class QComboBox;
 class QPoint;
@@ -30,7 +32,6 @@ class QPoint;
 namespace Fooyin {
 class ActionManager;
 class Command;
-class MusicLibrary;
 class Playlist;
 class PlaylistController;
 class PlaylistHandler;
@@ -42,7 +43,7 @@ class PlaylistBox : public FyWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistBox(ActionManager* actionManager, PlaylistController* playlistController, MusicLibrary* library,
+    explicit PlaylistBox(ActionManager* actionManager, PlaylistController* playlistController,
                          QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
@@ -64,6 +65,10 @@ public:
 
     [[nodiscard]] Playlist* currentPlaylist() const;
 
+Q_SIGNALS:
+    void newAutoPlaylistRequested(std::function<void(Fooyin::Playlist*)> onFinished = {});
+    void editAutoPlaylistRequested(const Fooyin::UId& playlistId);
+
 private:
     void refreshPlaylistIcons() const;
     void setupActions();
@@ -72,7 +77,6 @@ private:
     void removeCurrentPlaylist();
 
     ActionManager* m_actionManager;
-    MusicLibrary* m_library;
     PlaylistController* m_playlistController;
     PlaylistHandler* m_playlistHandler;
 

@@ -19,7 +19,6 @@
 
 #include "playlistmanagerwidget.h"
 
-#include "autoplaylist/autoplaylistdialog.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/presetregistry.h"
 #include "playlistmanagerdelegate.h"
@@ -120,7 +119,6 @@ PlaylistManagerWidget::PlaylistManagerWidget(ActionManager* actionManager, Playl
                                              QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
-    , m_library{playlistInteractor->library()}
     , m_playlistController{playlistController}
     , m_selectionController{selectionController}
     , m_settings{settings}
@@ -363,18 +361,8 @@ void PlaylistManagerWidget::setupActions()
     });
 
     m_newAutoPlaylistAction->setStatusTip(tr("Create a new autoplaylist"));
-    QObject::connect(m_newAutoPlaylistAction, &QAction::triggered, this, [this]() {
-        auto* autoDialog = new AutoPlaylistDialog(m_library, Utils::getMainWindow());
-        autoDialog->setAttribute(Qt::WA_DeleteOnClose);
-        QObject::connect(autoDialog, &AutoPlaylistDialog::playlistEdited, autoDialog,
-                         [this](const QString& name, const QString& query, const QString& sortQuery, bool forceSorted) {
-                             if(auto* newPlaylist = m_playlistController->playlistHandler()->createNewAutoPlaylist(
-                                    name, query, sortQuery, forceSorted)) {
-                                 m_playlistController->changeCurrentPlaylist(newPlaylist);
-                             }
-                         });
-        autoDialog->show();
-    });
+    QObject::connect(m_newAutoPlaylistAction, &QAction::triggered, this,
+                     [this]() { Q_EMIT newAutoPlaylistRequested(); });
 }
 
 void PlaylistManagerWidget::updateActionState() const
@@ -448,16 +436,13 @@ void PlaylistManagerWidget::activateCurrentPlaylist() const
     activatePlaylist(actionProxyIndex());
 }
 
-void PlaylistManagerWidget::editAutoPlaylist(Playlist* playlist) const
+void PlaylistManagerWidget::editAutoPlaylist(Playlist* playlist)
 {
     if(!playlist || !playlist->isAutoPlaylist()) {
         return;
     }
 
-    auto* autoDialog
-        = new AutoPlaylistDialog(m_library, m_playlistController->playlistHandler(), playlist, Utils::getMainWindow());
-    autoDialog->setAttribute(Qt::WA_DeleteOnClose);
-    autoDialog->show();
+    Q_EMIT editAutoPlaylistRequested(playlist->id());
 }
 
 void PlaylistManagerWidget::removePlaylist(const Playlist* playlist)

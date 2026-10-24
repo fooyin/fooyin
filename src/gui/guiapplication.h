@@ -38,6 +38,7 @@
 #include <QObject>
 #include <QPointer>
 
+#include <functional>
 #include <memory>
 #include <set>
 #include <vector>
@@ -64,6 +65,7 @@ class MainWindow;
 class MetadataLookupDialog;
 enum class LookupMode : uint8_t;
 class Playlist;
+class AutoPlaylistDialog;
 class PlaylistController;
 class PlaylistManagerWidget;
 class PlaybackMenu;
@@ -106,6 +108,9 @@ public:
     void toggleMute() const;
 
     void createNewLayout();
+
+    void createNewAutoPlaylist(std::function<void(Playlist*)> onFinished = {});
+    void editAutoPlaylist(const UId& playlistId);
 
     void searchForArtwork(const TrackList& tracks, Track::Cover type, bool quick);
     void attachArtwork(const TrackList& tracks, Track::Cover type, const QString& filepath);
@@ -198,7 +203,7 @@ private:
     void showMetadataLookupById();
 
     void createNewPlaylist() const;
-    void createNewAutoPlaylist();
+    AutoPlaylistDialog* showAutoPlaylistDialog(Playlist* playlist = nullptr);
 
     void addFiles();
     void addFolders();

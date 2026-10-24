@@ -19,7 +19,6 @@
 
 #include "playlisttabs.h"
 
-#include "autoplaylist/autoplaylistdialog.h"
 #include "playlistcontroller.h"
 #include "playlisttabsconfigdialog.h"
 #include "presetregistry.h"
@@ -73,11 +72,10 @@ constexpr auto PlaylistTabsMiddleCloseKey = u"PlaylistTabs/CloseOnMiddleClick";
 
 namespace Fooyin {
 PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetProvider,
-                           PlaylistController* playlistController, MusicLibrary* library,
-                           TrackSelectionController* selectionController, SettingsManager* settings, QWidget* parent)
+                           PlaylistController* playlistController, TrackSelectionController* selectionController,
+                           SettingsManager* settings, QWidget* parent)
     : WidgetContainer{widgetProvider, settings, parent}
     , m_actionManager{actionManager}
-    , m_library{library}
     , m_playlistController{playlistController}
     , m_playlistHandler{m_playlistController->playlistHandler()}
     , m_selectionController{selectionController}
@@ -470,18 +468,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     });
 
     auto* createAutoPlaylist = new QAction(tr("Add new autoplaylist"), menu);
-    QObject::connect(createAutoPlaylist, &QAction::triggered, this, [this]() {
-        auto* autoDialog = new AutoPlaylistDialog(m_library, Utils::getMainWindow());
-        autoDialog->setAttribute(Qt::WA_DeleteOnClose);
-        QObject::connect(autoDialog, &AutoPlaylistDialog::playlistEdited, autoDialog,
-                         [this](const QString& name, const QString& query, const QString& sortQuery, bool forceSorted) {
-                             if(auto* playlist
-                                = m_playlistHandler->createNewAutoPlaylist(name, query, sortQuery, forceSorted)) {
-                                 m_playlistController->changeCurrentPlaylist(playlist);
-                             }
-                         });
-        autoDialog->show();
-    });
+    QObject::connect(createAutoPlaylist, &QAction::triggered, this, [this]() { Q_EMIT newAutoPlaylistRequested(); });
 
     const auto id         = tabBar->tabData(index).value<UId>();
     auto* playlist        = m_playlistHandler->playlistById(id);
@@ -497,12 +484,8 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     if(playlist) {
         if(playlist->isAutoPlaylist()) {
             auto* editAutoPlaylist = new QAction(tr("Edit autoplaylist"), menu);
-            QObject::connect(editAutoPlaylist, &QAction::triggered, this, [this, playlist]() {
-                auto* autoDialog
-                    = new AutoPlaylistDialog(m_library, m_playlistHandler, playlist, Utils::getMainWindow());
-                autoDialog->setAttribute(Qt::WA_DeleteOnClose);
-                autoDialog->show();
-            });
+            QObject::connect(editAutoPlaylist, &QAction::triggered, this,
+                             [this, playlistId = playlist->id()]() { Q_EMIT editAutoPlaylistRequested(playlistId); });
             menu->addAction(editAutoPlaylist);
         }
 

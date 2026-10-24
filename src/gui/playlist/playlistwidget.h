@@ -147,6 +147,11 @@ public:
     static PlaylistWidget* createPreview(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
                                          TrackSelectionController* selectionController, CoverProvider* coverProvider,
                                          Application* core, GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
+    static PlaylistWidget* createConfigurablePreview(ActionManager* actionManager,
+                                                     PlaylistInteractor* playlistInteractor,
+                                                     TrackSelectionController* selectionController,
+                                                     CoverProvider* coverProvider, Application* core,
+                                                     GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
 
     ~PlaylistWidget() override;
 
@@ -311,6 +316,7 @@ private:
     PlaylistView* m_playlistView;
     AutoHeaderView* m_header;
     bool m_pendingHeaderRestore;
+    bool m_configurablePreview;
     PlaylistWidgetLayoutState m_layoutState;
     PlaylistWidgetLayoutState m_defaultLayoutState;
     ConfigData m_config;

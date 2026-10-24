@@ -19,7 +19,6 @@
 
 #include "playlistorganiser.h"
 
-#include "autoplaylist/autoplaylistdialog.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/presetregistry.h"
 #include "playlistorganiserconfigwidget.h"
@@ -49,6 +48,7 @@
 #include <QMainWindow>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QPointer>
 #include <QSignalBlocker>
 #include <QTreeView>
 #include <QVBoxLayout>
@@ -651,32 +651,26 @@ void PlaylistOrganiser::createPlaylist(const QModelIndex& index, bool autoPlayli
 {
     m_creatingPlaylist = true;
 
-    const auto addToModel = [this, index](Playlist* playlist) {
-        QModelIndex parent{index};
-        if(parent.data(PlaylistOrganiserItem::ItemType).toInt() == PlaylistOrganiserItem::PlaylistItem) {
-            parent = parent.parent();
-        }
-        return m_model->createPlaylist(playlist, parent);
-    };
+    QModelIndex parent{index};
+    if(parent.data(PlaylistOrganiserItem::ItemType).toInt() == PlaylistOrganiserItem::PlaylistItem) {
+        parent = parent.parent();
+    }
 
     if(autoPlaylist) {
-        auto* autoDialog = new AutoPlaylistDialog(m_playlistInteractor->library(), Utils::getMainWindow());
-        autoDialog->setAttribute(Qt::WA_DeleteOnClose);
-        QObject::connect(autoDialog, &QDialog::finished, this, [this]() { m_creatingPlaylist = false; });
-        QObject::connect(
-            autoDialog, &AutoPlaylistDialog::playlistEdited, this,
-            [this, addToModel](const QString& name, const QString& query, const QString& sortQuery, bool forceSorted) {
-                if(auto* playlist
-                   = m_playlistInteractor->handler()->createNewAutoPlaylist(name, query, sortQuery, forceSorted)) {
-                    addToModel(playlist);
+        Q_EMIT newAutoPlaylistRequested(
+            [self = QPointer{this}, parent = QPersistentModelIndex{parent}](Playlist* playlist) {
+                if(self) {
+                    if(playlist) {
+                        self->m_model->createPlaylist(playlist, parent);
+                    }
+                    self->m_creatingPlaylist = false;
                 }
             });
-        autoDialog->show();
         return;
     }
 
     if(auto* playlist = m_playlistInteractor->handler()->createEmptyPlaylist()) {
-        const QModelIndex playlistIndex = addToModel(playlist);
+        const QModelIndex playlistIndex = m_model->createPlaylist(playlist, parent);
         m_organiserTree->edit(playlistIndex);
     }
 
@@ -691,10 +685,7 @@ void PlaylistOrganiser::editAutoPlaylist(const QModelIndex& index)
 
     if(auto* playlist = index.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>()) {
         if(playlist->isAutoPlaylist()) {
-            auto* autoDialog = new AutoPlaylistDialog(m_playlistInteractor->library(), m_playlistInteractor->handler(),
-                                                      playlist, Utils::getMainWindow());
-            autoDialog->setAttribute(Qt::WA_DeleteOnClose);
-            autoDialog->show();
+            Q_EMIT editAutoPlaylistRequested(playlist->id());
         }
     }
 }

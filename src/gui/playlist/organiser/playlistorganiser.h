@@ -23,6 +23,8 @@
 
 #include <QPersistentModelIndex>
 
+#include <functional>
+
 class QJsonObject;
 class QTreeView;
 
@@ -30,6 +32,7 @@ namespace Fooyin {
 class ActionManager;
 class Command;
 class PlayerController;
+class Playlist;
 class PlaylistHandler;
 class PlaylistInteractor;
 class PlaylistOrganiserModel;
@@ -63,6 +66,10 @@ public:
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
+
+Q_SIGNALS:
+    void newAutoPlaylistRequested(std::function<void(Fooyin::Playlist*)> onFinished = {});
+    void editAutoPlaylistRequested(const Fooyin::UId& playlistId);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

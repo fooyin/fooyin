@@ -28,6 +28,8 @@
 #include <QIcon>
 #include <QPointer>
 
+#include <functional>
+
 class QHBoxLayout;
 class QAction;
 class QEvent;
@@ -36,7 +38,6 @@ class QVBoxLayout;
 namespace Fooyin {
 class ActionManager;
 class Command;
-class MusicLibrary;
 class Playlist;
 class PlaylistController;
 class PlaylistHandler;
@@ -68,9 +69,8 @@ public:
     };
 
     explicit PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetProvider,
-                          PlaylistController* playlistController, MusicLibrary* library,
-                          TrackSelectionController* selectionController, SettingsManager* settings,
-                          QWidget* parent = nullptr);
+                          PlaylistController* playlistController, TrackSelectionController* selectionController,
+                          SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] ConfigData factoryConfig() const;
     [[nodiscard]] ConfigData defaultConfig() const;
@@ -116,6 +116,8 @@ Q_SIGNALS:
     void tracksDropped(const QByteArray& data, const Fooyin::UId& playlistId);
     void trackListDropped(const Fooyin::TrackList& tracks, const Fooyin::UId& playlistId);
     void savePlaylistRequested(const Fooyin::UId& playlistId);
+    void newAutoPlaylistRequested(std::function<void(Fooyin::Playlist*)> onFinished = {});
+    void editAutoPlaylistRequested(const Fooyin::UId& playlistId);
 
 protected:
     void changeEvent(QEvent* event) override;
@@ -153,7 +155,6 @@ private:
     [[nodiscard]] QString playlistTitle(const Playlist* playlist, const QString& script);
 
     ActionManager* m_actionManager;
-    MusicLibrary* m_library;
     PlaylistController* m_playlistController;
     PlaylistHandler* m_playlistHandler;
     TrackSelectionController* m_selectionController;

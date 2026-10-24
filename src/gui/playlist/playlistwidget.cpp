@@ -198,6 +198,19 @@ PlaylistWidget* PlaylistWidget::createPreview(ActionManager* actionManager, Play
     return widget;
 }
 
+PlaylistWidget* PlaylistWidget::createConfigurablePreview(ActionManager* actionManager,
+                                                          PlaylistInteractor* playlistInteractor,
+                                                          TrackSelectionController* selectionController,
+                                                          CoverProvider* coverProvider, Application* core,
+                                                          GuiStyleProvider* styleProvider, QWidget* parent)
+{
+    auto* widget = createPreview(actionManager, playlistInteractor, selectionController, coverProvider, core,
+                                 styleProvider, parent);
+    widget->m_configurablePreview = true;
+    widget->m_playlistView->setFocusPolicy(Qt::StrongFocus);
+    return widget;
+}
+
 PlaylistWidget::~PlaylistWidget()
 {
     QObject::disconnect(m_selectionController, &TrackSelectionController::displaySelectionChanged, this, nullptr);
@@ -400,7 +413,7 @@ void PlaylistWidget::setConfigDialogTitle(QString title)
 
 void PlaylistWidget::openConfigDialog(const QString& title)
 {
-    showConfigDialog(new PlaylistConfigDialog(this, title, this), Qt::NonModal);
+    showConfigDialog(new PlaylistConfigDialog(this, title, m_session->capabilities().preview, this), Qt::NonModal);
 }
 
 PlaylistWidget::ConfigData PlaylistWidget::factoryConfig() const
@@ -587,6 +600,9 @@ void PlaylistWidget::resetModel()
                 currentPlaylist && !locked && (!currentPlaylist->isAutoPlaylist() || !currentPlaylist->forceSorted()));
 
     if(m_session->canResetWithoutPlaylist() || currentPlaylist) {
+        if(layoutState().singleMode && m_session->capabilities().preview) {
+            m_model->setHeaderText(tr("%Ln track(s)", nullptr, trackCount()));
+        }
         m_model->reset(layoutState().currentPreset,
                        layoutState().singleMode ? PlaylistColumnList{} : layoutState().columns,
                        m_session->modelPlaylist(currentPlaylist), m_session->modelTracks(currentPlaylist));
@@ -986,8 +1002,17 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    if(m_session->capabilities().preview) {
+    if(m_session->capabilities().preview && !m_configurablePreview) {
         addSingleModeAction(menu);
+        menu->popup(event->globalPos());
+        return;
+    }
+
+    if(m_configurablePreview) {
+        addSingleModeAction(menu);
+        menu->addSeparator();
+        addPresetMenu(menu);
+        addSettingsAction(menu);
         menu->popup(event->globalPos());
         return;
     }
@@ -1059,6 +1084,7 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     , m_playlistView{new PlaylistView(this)}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
     , m_pendingHeaderRestore{false}
+    , m_configurablePreview{false}
     , m_playlistContext{new WidgetContext(
           this, Context{IdList{Constants::Context::TrackSelection, Id{Constants::Context::Playlist}.append(id())}},
           this)}
@@ -1290,7 +1316,7 @@ void PlaylistWidget::showHeaderMenu(const QPoint& pos)
 
     addSingleModeAction(menu);
 
-    if(m_session->capabilities().preview) {
+    if(m_session->capabilities().preview && !m_configurablePreview) {
         if(layoutState().singleMode) {
             menu->addAction(tr("Reset columns to default"), this, &PlaylistWidget::resetColumnsToDefault);
         }
@@ -1394,23 +1420,25 @@ void PlaylistWidget::addPresetMenu(QMenu* parent)
     }
 
     presetsMenu->addSeparator();
-    auto* save = presetsMenu->addAction(tr("Save as new preset…"), this, &PlaylistWidget::savePreset);
-    save->setStatusTip(tr("Create a new preset from the current view, with an optional column layout"));
+    if(m_session->capabilities().editablePlaylist) {
+        auto* save = presetsMenu->addAction(tr("Save as new preset…"), this, &PlaylistWidget::savePreset);
+        save->setStatusTip(tr("Create a new preset from the current view, with an optional column layout"));
 
-    auto* update = presetsMenu->addAction(current ? tr("Update ‘%1’").arg(current->name) : tr("Update preset"));
-    update->setEnabled(modified);
-    update->setStatusTip(
-        tr("Save the current columns in this preset and update playlists following its column layout"));
+        auto* update = presetsMenu->addAction(current ? tr("Update ‘%1’").arg(current->name) : tr("Update preset"));
+        update->setEnabled(modified);
+        update->setStatusTip(
+            tr("Save the current columns in this preset and update playlists following its column layout"));
 
-    if(current) {
-        const int count = m_playlistController->presetPlaylistCount(current->id);
-        update->setText(tr("Update ‘%1’ (%Ln playlist(s))", nullptr, count).arg(current->name));
-        QObject::connect(update, &QAction::triggered, this, [this]() {
-            if(auto preset = m_presetRegistry->itemById(layoutState().currentPreset.id)) {
-                preset->columnLayout = captureColumnLayout();
-                m_presetRegistry->changeItem(preset.value());
-            }
-        });
+        if(current) {
+            const int count = m_playlistController->presetPlaylistCount(current->id);
+            update->setText(tr("Update ‘%1’ (%Ln playlist(s))", nullptr, count).arg(current->name));
+            QObject::connect(update, &QAction::triggered, this, [this]() {
+                if(auto preset = m_presetRegistry->itemById(layoutState().currentPreset.id)) {
+                    preset->columnLayout = captureColumnLayout();
+                    m_presetRegistry->changeItem(preset.value());
+                }
+            });
+        }
     }
 
     auto* revert = presetsMenu->addAction(tr("Revert to saved preset"));
@@ -1449,13 +1477,15 @@ void PlaylistWidget::addPresetMenu(QMenu* parent)
         });
     }
 
-    auto* moreSettings = new QAction(tr("Manage presets…"), presetsMenu);
-    moreSettings->setStatusTip(tr("Open playlist preset settings to create, edit or remove presets"));
-    QObject::connect(moreSettings, &QAction::triggered, this,
-                     [this]() { m_settingsDialog->openAtPage(Constants::Page::PlaylistPresets); });
+    if(!m_configurablePreview) {
+        auto* moreSettings = new QAction(tr("Manage presets…"), presetsMenu);
+        moreSettings->setStatusTip(tr("Open playlist preset settings to create, edit or remove presets"));
+        QObject::connect(moreSettings, &QAction::triggered, this,
+                         [this]() { m_settingsDialog->openAtPage(Constants::Page::PlaylistPresets); });
 
-    presetsMenu->addSeparator();
-    presetsMenu->addAction(moreSettings);
+        presetsMenu->addSeparator();
+        presetsMenu->addAction(moreSettings);
+    }
 
     parent->addMenu(presetsMenu);
 }
@@ -1674,7 +1704,7 @@ void PlaylistWidget::applyDefaultHeaderConfiguration()
 
     std::map<int, double> widths;
     const auto capabilities      = m_session->capabilities();
-    const bool showPlayingColumn = capabilities.editablePlaylist || capabilities.preview;
+    const bool showPlayingColumn = !m_configurablePreview && (capabilities.editablePlaylist || capabilities.preview);
     const double totalWidth      = showPlayingColumn ? 1.0 : 1.0 - DefaultPlaylistColumns.front().width;
 
     int columnIndex{0};
@@ -1811,7 +1841,8 @@ void PlaylistWidget::restoreLayoutHeader()
 bool PlaylistWidget::columnAvailable(const PlaylistColumn& column) const
 {
     const auto capabilities = m_session->capabilities();
-    return capabilities.editablePlaylist || capabilities.preview || column.id != PlayingColumnId;
+    return column.id != PlayingColumnId
+        || (!m_configurablePreview && (capabilities.editablePlaylist || capabilities.preview));
 }
 
 void PlaylistWidget::saveRememberedLayout(Playlist* playlist)
