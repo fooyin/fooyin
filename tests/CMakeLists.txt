@@ -126,6 +126,7 @@ fooyin_add_test(test_scriptformatter gui/scriptformattertest.cpp)
 fooyin_add_test(test_autoplaylist gui/autoplaylisttest.cpp)
 fooyin_add_test(test_filtercontroller gui/filters/filtercontrollertest.cpp)
 fooyin_add_test(test_filterpipeline gui/filters/filterpipelinetest.cpp)
+fooyin_add_test(test_expandedtreeview gui/widgets/expandedtreeviewtest.cpp)
 
 fooyin_add_test(test_helpers utils/helperstest.cpp)
 
