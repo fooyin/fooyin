@@ -22,7 +22,7 @@
           "type": "FILEPATH",
           "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
         },
-        "X_VCPKG_APPLOCAL_DEPS_INSTALL": "ON",
+        "X_VCPKG_APPLOCAL_DEPS_INSTALL": "OFF",
         "VCPKG_INSTALL_OPTIONS": "--x-abi-tools-use-exact-versions",
         "QT_DIR": "$env{QT_ROOT_DIR}/lib/cmake/Qt6",
         "Qt6_DIR": "$env{QT_ROOT_DIR}/lib/cmake/Qt6",
