@@ -34,7 +34,8 @@ jobs:
       - name: Set Flatpak cache key
         id: flatpak-cache
         shell: bash
-        run: echo "key=${{ hashFiles('dist/linux/flatpak/**') }}" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "key=flatpak-builder-${{ matrix.arch }}-${{ hashFiles('dist/linux/flatpak/**') }}-${{ steps.ccache-generation.outputs.period }}" >> "$GITHUB_OUTPUT"
 
       - name: Set bundle name
         id: flatpak-bundle
@@ -59,9 +60,63 @@ jobs:
         with:
           bundle: ${{ steps.flatpak-bundle.outputs.name }}
           manifest-path: dist/linux/flatpak/org.fooyin.fooyin.yaml
-          cache-key: flatpak-builder-${{ matrix.arch }}-${{ steps.flatpak-cache.outputs.key }}-${{ steps.ccache-generation.outputs.period }}
+          cache-key: ${{ steps.flatpak-cache.outputs.key }}
           arch: ${{ matrix.arch }}
           upload-artifact: false
+
+      - name: Remove older Flatpak caches
+        if: github.event_name != 'pull_request'
+        continue-on-error: true
+        uses: actions/github-script@v8
+        env:
+          FLATPAK_ARCH: ${{ matrix.arch }}
+          FLATPAK_CACHE_KEY: ${{ steps.flatpak-cache.outputs.key }}-${{ matrix.arch }}
+        with:
+          script: |
+            const arch = process.env.FLATPAK_ARCH;
+            const key = process.env.FLATPAK_CACHE_KEY;
+            const prefix = `flatpak-builder-${arch}-`;
+            const pattern = new RegExp(`^${prefix}[a-f0-9]{64}-(\\d+)-${arch}$`);
+            const match = key.match(pattern);
+            if (!match) {
+              throw new Error(`Unexpected Flatpak cache key: ${key}`);
+            }
+
+            const generation = Number(match[1]);
+            const caches = await github.paginate(github.rest.actions.getActionsCacheList, {
+              ...context.repo,
+              ref: context.ref,
+              key: prefix,
+              sort: 'created_at',
+              direction: 'desc',
+              per_page: 100
+            });
+            const replacement = caches.find(cache => cache.key === key && cache.ref === context.ref);
+            if (!replacement) {
+              core.warning(`Replacement cache ${key} was not found; keeping older Flatpak caches`);
+              return;
+            }
+
+            for (const cache of caches) {
+              const cachedMatch = cache.key.match(pattern);
+              if (!cachedMatch || cache.ref !== context.ref || cache.version !== replacement.version
+                  || Number(cachedMatch[1]) > generation || cache.created_at >= replacement.created_at) {
+                continue;
+              }
+
+              core.info(`Deleting superseded Flatpak cache: ${cache.key}`);
+              try {
+                await github.rest.actions.deleteActionsCacheById({
+                  ...context.repo,
+                  cache_id: cache.id
+                });
+              } catch (error) {
+                // Another run may have already removed the same cache
+                if (error.status !== 404) {
+                  throw error;
+                }
+              }
+            }
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
