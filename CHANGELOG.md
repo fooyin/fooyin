@@ -1,5 +1,29 @@
 # Changelog
 
+## [Unreleased]
+
+### Improvements
+
+- **Interface** 
+  - Add configurable animations when switching layouts
+  - Allow dialog actions in separate scopes to share shortcuts
+- **Playlists**
+  - Add a live track preview and matching track count to the autoplaylist editor
+  - Support custom sorting scripts in autoplaylist rules ([#1806](https://github.com/fooyin/fooyin/issues/1806))
+- **Radio Browser:** Load and prepare tag filters without blocking the interface
+
+### Fixes
+
+- **Global Shortcuts:** Fix keypad shortcuts and native key translation across platforms ([#1813](https://github.com/fooyin/fooyin/issues/1813))
+- **Interface:** Fix Shift selection across wrapped rows ([#1808](https://github.com/fooyin/fooyin/issues/1808))
+
+### Build/System
+
+- **Packaging:** Fix plugin bundle RPATHs and runtime contents, and avoid duplicate Windows DLLs
+- **Windows:** Fix MSVC builds and test discovery during DLL deployment
+- **X11:** Require the XCB components used by Global Shortcuts
+
+
 ## [0.14.1](https://github.com/fooyin/fooyin/releases/tag/v0.14.1) (2026-10-23)
 
 ### Improvements
