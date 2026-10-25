@@ -175,7 +175,7 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
 void LibraryMenu::removeUnavailbleTracks()
 {
     auto* progress
-        = new ElapsedProgressDialog(tr("Removing unavailable tracks…"), tr("Abort"), 0, 1, Utils::getMainWindow());
+        = new ElapsedProgressDialog(tr("Removing unavailable tracks…"), tr("Stop"), 0, 1, Utils::getMainWindow());
     progress->setAttribute(Qt::WA_DeleteOnClose);
     progress->setValue(0);
     progress->setShowRemaining(false);

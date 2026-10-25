@@ -139,7 +139,7 @@ RunServicesPageWidget::RunServicesPageWidget(SettingsManager* settings)
                    "<pre>flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin</pre>"
                    "<p>Then prefix each service command with <code>flatpak-spawn --host</code>. For example:</p>"
                    "<pre>flatpak-spawn --host spek \\\"%filepath%\\\"</pre>"
-                   "<p>This permission allows fooyin to execute arbitrary commands outside the sandbox. Only enable "
+                   "<p>This permission allows fooyin to run arbitrary commands outside the sandbox. Only enable "
                    "it if you trust your configured services.</p>"));
             messageBox.exec();
         });

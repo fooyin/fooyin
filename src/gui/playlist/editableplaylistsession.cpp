@@ -233,7 +233,7 @@ void EditablePlaylistSession::ensureActions(QWidget* parent)
         m_removeDuplicatesAction = new QAction(PlaylistWidget::tr("Remove duplicates"), parent);
     }
     if(!m_removeDeadTracksAction) {
-        m_removeDeadTracksAction = new QAction(PlaylistWidget::tr("Remove dead tracks"), parent);
+        m_removeDeadTracksAction = new QAction(PlaylistWidget::tr("Remove unavailable tracks"), parent);
     }
     if(!m_addToQueueAction) {
         m_addToQueueAction = new QAction(PlaylistWidget::tr("Add to playback &queue"), parent);
@@ -445,7 +445,7 @@ void EditablePlaylistSession::setupActions(PlaylistWidgetSessionHost& sessionHos
     QObject::connect(m_removeDuplicatesAction, &QAction::triggered, widget,
                      [widget, this]() { removeDuplicates(widgetSessionHost(widget)); });
 
-    m_removeDeadTracksAction->setStatusTip(PlaylistWidget::tr("Remove dead (non-existent) tracks from the playlist"));
+    m_removeDeadTracksAction->setStatusTip(PlaylistWidget::tr("Remove unavailable tracks from the playlist"));
     editMenu->addAction(m_removeDeadTracksAction);
     QObject::connect(m_removeDeadTracksAction, &QAction::triggered, widget,
                      [widget, this]() { removeDeadTracks(widgetSessionHost(widget)); });

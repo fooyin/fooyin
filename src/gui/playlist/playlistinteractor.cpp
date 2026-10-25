@@ -74,8 +74,7 @@ public:
         : QObject{parent}
         , m_request{std::move(request)}
         , m_callback{std::move(callback)}
-        , m_dialog{
-              new ElapsedProgressDialog(labelText, PlaylistInteractor::tr("Abort"), 0, 100, Utils::getMainWindow())}
+        , m_dialog{new ElapsedProgressDialog(labelText, PlaylistInteractor::tr("Stop"), 0, 100, Utils::getMainWindow())}
     {
         m_dialog->setAttribute(Qt::WA_DeleteOnClose);
         m_dialog->setModal(true);

@@ -108,7 +108,7 @@ class PropertiesWriteProgress : public QObject
 public:
     explicit PropertiesWriteProgress(int trackCount, QWidget* parent)
         : QObject{parent}
-        , m_dialog{new ElapsedProgressDialog(tr("Writing changes…"), tr("Abort"), 0, 1, parent)}
+        , m_dialog{new ElapsedProgressDialog(tr("Writing changes…"), tr("Stop"), 0, 1, parent)}
     {
         m_dialog->setAttribute(Qt::WA_DeleteOnClose);
         m_dialog->setModal(true);
