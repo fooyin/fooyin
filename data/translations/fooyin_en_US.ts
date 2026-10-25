@@ -595,49 +595,49 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="577"/>
         <source>fooyin version</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin version</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="589"/>
         <source>Playback queue mode: playlist or queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Playback queue mode: playlist or queue</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="604"/>
         <source>One-based index of the evaluated playlist row</source>
-        <translation type="unfinished"></translation>
+        <translation>One-based index of the evaluated playlist row</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="607"/>
         <source>Grouping depth of the evaluated playlist row</source>
-        <translation type="unfinished"></translation>
+        <translation>Grouping depth of the evaluated playlist row</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="610"/>
         <source>Playback icon marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Playback icon marker in supported views</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="612"/>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="615"/>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="618"/>
         <source>Artwork</source>
-        <translation type="unfinished">Artwork</translation>
+        <translation>Artwork</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="613"/>
         <source>Front cover marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Front cover marker in supported views</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="616"/>
         <source>Back cover marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Back cover marker in supported views</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="619"/>
         <source>Artist picture marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Artist picture marker in supported views</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="666"/>
@@ -717,7 +717,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="886"/>
         <source>Looks up a raw tag field. Multiple values are joined with sep, using lastsep between the final two values when supplied.</source>
-        <translation type="unfinished"></translation>
+        <translation>Looks up a raw tag field. Multiple values are joined with sep, using lastsep between the final two values when supplied.</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="586"/>
@@ -2540,7 +2540,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="508"/>
         <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation>Year</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="509"/>
@@ -2784,7 +2784,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="408"/>
         <source>Enter whole numbers of seconds, from 0 to %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Enter whole numbers of seconds, from 0 to %1.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="409"/>
@@ -2813,126 +2813,126 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="529"/>
         <source>second</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>second</numerusform>
+            <numerusform>seconds</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="531"/>
         <source>seconds</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>second</numerusform>
+            <numerusform>seconds</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="535"/>
         <source>minute</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>minute</numerusform>
+            <numerusform>minutes</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="537"/>
         <source>minutes</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>minute</numerusform>
+            <numerusform>minutes</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="541"/>
         <source>hour</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>hour</numerusform>
+            <numerusform>hours</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="543"/>
         <source>hours</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>hour</numerusform>
+            <numerusform>hours</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="547"/>
         <source>day</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>day</numerusform>
+            <numerusform>days</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="549"/>
         <source>days</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>day</numerusform>
+            <numerusform>days</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="553"/>
         <source>week</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>week</numerusform>
+            <numerusform>weeks</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="555"/>
         <source>weeks</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>week</numerusform>
+            <numerusform>weeks</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="559"/>
         <source>month</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>month</numerusform>
+            <numerusform>months</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="561"/>
         <source>months</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>month</numerusform>
+            <numerusform>months</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="565"/>
         <source>year</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>year</numerusform>
+            <numerusform>years</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="567"/>
         <source>years</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>year</numerusform>
+            <numerusform>years</numerusform>
         </translation>
     </message>
     <message>
@@ -16604,9 +16604,9 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message numerus="yes">
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="585"/>
         <source>Used by %Ln playlist(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Used by %Ln playlist</numerusform>
+            <numerusform>Used by %Ln playlists</numerusform>
         </translation>
     </message>
     <message>
@@ -18005,7 +18005,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/plugins/projectm/projectmwidget.cpp" line="655"/>
         <source>%1 seconds</source>
-        <translation>%1&#xa0;seconds</translation>
+        <translation>%1 seconds</translation>
     </message>
 </context>
 <context>
@@ -24450,7 +24450,7 @@ This does not support full scripting.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="191"/>
         <source>The local and retrieved durations differ by more than 10 seconds.</source>
-        <translation type="unfinished"></translation>
+        <translation>The local and retrieved durations differ by more than 10 seconds.</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/trackmatchmodel.cpp" line="195"/>
