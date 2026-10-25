@@ -39,10 +39,16 @@ public:
     void applyBindings(const GlobalShortcutDescriptorList& bindings) override;
     void clearBindings() override;
 
-private:
     bool nativeEventFilter(const QByteArray& eventType, void* message, qintptr* result) override;
 
+private:
+    void registerBindings(bool reportFailures);
+    void clearRegistrations();
+    void scheduleRefresh();
+
     std::unordered_map<int, GlobalShortcutDescriptor> m_bindings;
+    GlobalShortcutDescriptorList m_requestedBindings;
     int m_nextNativeId;
+    bool m_refreshScheduled;
 };
 } // namespace Fooyin::GlobalHotkeys

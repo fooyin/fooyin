@@ -17,21 +17,32 @@
  *
  */
 
+#define NOMINMAX
+
 #include "globalshortcutwindowsbackend.h"
 
 #include <QCoreApplication>
+#include <QLoggingCategory>
 
 #include <windows.h>
 
+#include <array>
+#include <set>
+#include <vector>
+
+Q_LOGGING_CATEGORY(WINDOWS_SHORTCUTS, "fy.globalshortcuts.windows")
+
 namespace Fooyin::GlobalHotkeys {
 namespace {
+using NativeShortcutSet = std::set<std::pair<UINT, UINT>>;
+
 struct NativeKey
 {
     UINT key{0};
     UINT modifiers{0};
 };
 
-NativeKey nativeKey(Qt::Key key)
+NativeKey nativeKey(Qt::Key key, HKL layout)
 {
     if(key >= Qt::Key_0 && key <= Qt::Key_9) {
         return {.key = static_cast<UINT>('0' + (key - Qt::Key_0))};
@@ -43,7 +54,7 @@ NativeKey nativeKey(Qt::Key key)
         return {.key = VK_F1 + static_cast<UINT>(key - Qt::Key_F1)};
     }
     if(key >= Qt::Key_Space && key <= Qt::Key_AsciiTilde) {
-        const SHORT keyAndModifiers = VkKeyScanW(static_cast<WCHAR>(key));
+        const SHORT keyAndModifiers = VkKeyScanExW(static_cast<WCHAR>(key), layout);
         if(keyAndModifiers == -1) {
             return {};
         }
@@ -65,9 +76,12 @@ NativeKey nativeKey(Qt::Key key)
     switch(key) {
         case Qt::Key_Backspace:
             return {.key = VK_BACK};
+        case Qt::Key_Clear:
+            return {.key = VK_CLEAR};
         case Qt::Key_Tab:
-        case Qt::Key_Backtab:
             return {.key = VK_TAB};
+        case Qt::Key_Backtab:
+            return {.key = VK_TAB, .modifiers = MOD_SHIFT};
         case Qt::Key_Return:
         case Qt::Key_Enter:
             return {.key = VK_RETURN};
@@ -135,11 +149,44 @@ UINT nativeModifiers(Qt::KeyboardModifiers modifiers)
     }
     return native;
 }
+
+NativeShortcutSet nativeShortcuts(QKeyCombination combination, HKL layout)
+{
+    NativeShortcutSet shortcuts;
+    const UINT modifiers = nativeModifiers(combination.keyboardModifiers());
+    if(!combination.keyboardModifiers().testFlag(Qt::KeypadModifier)) {
+        const NativeKey key = nativeKey(combination.key(), layout);
+        if(key.key != 0) {
+            shortcuts.emplace(key.key, modifiers | key.modifiers);
+        }
+    }
+
+    std::array<BYTE, 256> state{};
+    state[VK_NUMLOCK] = 1;
+
+    // Translate keypad characters separately: ordinary punctuation may require Shift
+    for(UINT key{VK_NUMPAD0}; key <= VK_DIVIDE; ++key) {
+        std::array<WCHAR, 4> characters{};
+        const UINT scanCode = MapVirtualKeyExW(key, MAPVK_VK_TO_VSC, layout);
+        const int length    = ToUnicodeEx(key, scanCode, state.data(), characters.data(),
+                                          static_cast<int>(characters.size()), 4, layout);
+        if(length == 1 && characters.front() == static_cast<int>(combination.key())) {
+            shortcuts.emplace(key, modifiers);
+        }
+    }
+
+    if(combination.key() == Qt::Key_Enter) {
+        shortcuts.emplace(VK_RETURN, modifiers);
+    }
+
+    return shortcuts;
+}
 } // namespace
 
 GlobalShortcutWindowsBackend::GlobalShortcutWindowsBackend(QObject* parent)
     : GlobalShortcutBackend{parent}
     , m_nextNativeId{1}
+    , m_refreshScheduled{false}
 {
     QCoreApplication::instance()->installNativeEventFilter(this);
 }
@@ -157,43 +204,11 @@ GlobalShortcutAvailability GlobalShortcutWindowsBackend::availability() const
 
 void GlobalShortcutWindowsBackend::applyBindings(const GlobalShortcutDescriptorList& bindings)
 {
-    clearBindings();
-
-    for(const auto& binding : bindings) {
-        if(binding.shortcut.count() != 1) {
-            Q_EMIT registrationFailed(binding.commandId, binding.shortcut,
-                                      tr("Windows global shortcuts must contain one key combination"));
-            continue;
-        }
-
-        const QKeyCombination combination = binding.shortcut[0];
-        const NativeKey key               = nativeKey(combination.key());
-        if(key.key == 0) {
-            Q_EMIT registrationFailed(binding.commandId, binding.shortcut,
-                                      tr("The shortcut cannot be represented on Windows"));
-            continue;
-        }
-
-        if(m_nextNativeId > 0xBFFF) {
-            Q_EMIT registrationFailed(binding.commandId, binding.shortcut,
-                                      tr("Windows cannot register any more global shortcuts"));
-            continue;
-        }
-
-        const int nativeId   = m_nextNativeId++;
-        const UINT modifiers = nativeModifiers(combination.keyboardModifiers()) | key.modifiers;
-        if(!RegisterHotKey(nullptr, nativeId, modifiers, key.key)) {
-            Q_EMIT registrationFailed(
-                binding.commandId, binding.shortcut,
-                tr("Windows rejected this shortcut (error %1)").arg(static_cast<qulonglong>(GetLastError())));
-            continue;
-        }
-
-        m_bindings.emplace(nativeId, binding);
-    }
+    m_requestedBindings = bindings;
+    registerBindings(true);
 }
 
-void GlobalShortcutWindowsBackend::clearBindings()
+void GlobalShortcutWindowsBackend::clearRegistrations()
 {
     for(const auto& binding : m_bindings) {
         UnregisterHotKey(nullptr, binding.first);
@@ -205,7 +220,10 @@ bool GlobalShortcutWindowsBackend::nativeEventFilter(const QByteArray& /*eventTy
                                                      qintptr* /*result*/)
 {
     const auto* nativeMessage = static_cast<MSG*>(message);
-    if(nativeMessage->message == WM_HOTKEY) {
+    if(nativeMessage->message == WM_INPUTLANGCHANGE) {
+        scheduleRefresh();
+    }
+    else if(nativeMessage->message == WM_HOTKEY) {
         const int nativeId = static_cast<int>(nativeMessage->wParam);
 
         if(const auto binding = m_bindings.find(nativeId); binding != m_bindings.cend()) {
@@ -215,4 +233,93 @@ bool GlobalShortcutWindowsBackend::nativeEventFilter(const QByteArray& /*eventTy
 
     return false;
 }
+
+void GlobalShortcutWindowsBackend::registerBindings(bool reportFailures)
+{
+    clearRegistrations();
+
+    const auto fail = [this, reportFailures](const GlobalShortcutDescriptor& binding, const QString& error) {
+        if(reportFailures) {
+            Q_EMIT registrationFailed(binding.commandId, binding.shortcut, error);
+        }
+        else {
+            qCWarning(WINDOWS_SHORTCUTS) << "Failed to refresh" << binding.shortcut.toString() << ':' << error;
+        }
+    };
+
+    const HKL layout = GetKeyboardLayout(0);
+    NativeShortcutSet registeredShortcuts;
+    for(const auto& binding : m_requestedBindings) {
+        if(binding.shortcut.count() != 1) {
+            fail(binding, tr("Windows global shortcuts must contain one key combination"));
+            continue;
+        }
+
+        const auto shortcuts = nativeShortcuts(binding.shortcut[0], layout);
+        if(shortcuts.empty()) {
+            fail(binding, tr("The shortcut cannot be represented on Windows"));
+            continue;
+        }
+
+        if(std::ranges::any_of(shortcuts, [&registeredShortcuts](const auto& shortcut) {
+               return registeredShortcuts.contains(shortcut);
+           })) {
+            fail(binding, tr("The shortcut is already registered"));
+            continue;
+        }
+
+        if(m_nextNativeId + static_cast<int>(shortcuts.size()) - 1 > 0xBFFF) {
+            fail(binding, tr("Windows cannot register any more global shortcuts"));
+            continue;
+        }
+
+        std::vector<int> nativeIds;
+        nativeIds.reserve(shortcuts.size());
+
+        DWORD error{ERROR_SUCCESS};
+        for(const auto& [key, modifiers] : shortcuts) {
+            const int nativeId = m_nextNativeId++;
+            if(!RegisterHotKey(nullptr, nativeId, modifiers, key)) {
+                error = GetLastError();
+                break;
+            }
+            nativeIds.push_back(nativeId);
+        }
+
+        if(nativeIds.size() != shortcuts.size()) {
+            for(const int nativeId : nativeIds) {
+                UnregisterHotKey(nullptr, nativeId);
+            }
+            fail(binding, tr("Windows rejected this shortcut (error %1)").arg(static_cast<qulonglong>(error)));
+            continue;
+        }
+
+        registeredShortcuts.insert(shortcuts.begin(), shortcuts.end());
+        for(const int nativeId : nativeIds) {
+            m_bindings.emplace(nativeId, binding);
+        }
+    }
+}
+
+void GlobalShortcutWindowsBackend::clearBindings()
+{
+    m_requestedBindings.clear();
+    clearRegistrations();
+}
+
+void GlobalShortcutWindowsBackend::scheduleRefresh()
+{
+    if(std::exchange(m_refreshScheduled, true)) {
+        return;
+    }
+
+    QMetaObject::invokeMethod(
+        this,
+        [this] {
+            m_refreshScheduled = false;
+            registerBindings(false);
+        },
+        Qt::QueuedConnection);
+}
+
 } // namespace Fooyin::GlobalHotkeys

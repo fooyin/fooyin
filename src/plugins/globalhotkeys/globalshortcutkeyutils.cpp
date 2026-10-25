@@ -139,21 +139,76 @@ QString xkbKeyName(Qt::Key key)
     return punctuationKey != punctuation.cend() ? punctuationKey->second : QString{};
 }
 
+QString xkbKeypadName(Qt::Key key)
+{
+    if(key >= Qt::Key_0 && key <= Qt::Key_9) {
+        return u"KP_"_s + QChar{static_cast<char16_t>(u'0' + (key - Qt::Key_0))};
+    }
+
+    switch(key) {
+        case Qt::Key_Space:
+            return u"KP_Space"_s;
+        case Qt::Key_Tab:
+            return u"KP_Tab"_s;
+        case Qt::Key_Enter:
+            return u"KP_Enter"_s;
+        case Qt::Key_Home:
+            return u"KP_Home"_s;
+        case Qt::Key_Left:
+            return u"KP_Left"_s;
+        case Qt::Key_Up:
+            return u"KP_Up"_s;
+        case Qt::Key_Right:
+            return u"KP_Right"_s;
+        case Qt::Key_Down:
+            return u"KP_Down"_s;
+        case Qt::Key_PageUp:
+            return u"KP_Prior"_s;
+        case Qt::Key_PageDown:
+            return u"KP_Next"_s;
+        case Qt::Key_End:
+            return u"KP_End"_s;
+        case Qt::Key_Clear:
+            return u"KP_Begin"_s;
+        case Qt::Key_Insert:
+            return u"KP_Insert"_s;
+        case Qt::Key_Delete:
+            return u"KP_Delete"_s;
+        case Qt::Key_Equal:
+            return u"KP_Equal"_s;
+        case Qt::Key_Asterisk:
+            return u"KP_Multiply"_s;
+        case Qt::Key_Plus:
+            return u"KP_Add"_s;
+        case Qt::Key_Comma:
+            return u"KP_Separator"_s;
+        case Qt::Key_Minus:
+            return u"KP_Subtract"_s;
+        case Qt::Key_Period:
+            return u"KP_Decimal"_s;
+        case Qt::Key_Slash:
+            return u"KP_Divide"_s;
+        default:
+            return {};
+    }
+}
+
 QString xdgShortcutTrigger(const QKeySequence& shortcut)
 {
     if(shortcut.count() != 1) {
         return {};
     }
 
-    const QKeyCombination combination = shortcut[0];
-    const QString keyName             = xkbKeyName(combination.key());
+    const QKeyCombination combination{shortcut[0]};
+    const Qt::KeyboardModifiers modifiers = combination.keyboardModifiers();
+    const QString keyName
+        = modifiers.testFlag(Qt::KeypadModifier) ? xkbKeypadName(combination.key()) : xkbKeyName(combination.key());
     if(keyName.isEmpty()) {
         return {};
     }
 
     QStringList parts;
 
-    const Qt::KeyboardModifiers modifiers = combination.keyboardModifiers();
     if(modifiers.testFlag(Qt::ControlModifier)) {
         parts.append(u"CTRL"_s);
     }
@@ -165,9 +220,6 @@ QString xdgShortcutTrigger(const QKeySequence& shortcut)
     }
     if(modifiers.testFlag(Qt::MetaModifier)) {
         parts.append(u"LOGO"_s);
-    }
-    if(modifiers.testFlag(Qt::KeypadModifier)) {
-        parts.append(u"NUM"_s);
     }
 
     parts.append(keyName);
