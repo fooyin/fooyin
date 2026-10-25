@@ -595,7 +595,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="577"/>
         <source>fooyin version</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin-version</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="589"/>
@@ -622,22 +622,22 @@
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="615"/>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="618"/>
         <source>Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Konstverk</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="613"/>
         <source>Front cover marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Framsidsomslagsmarkör i stödda vyer</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="616"/>
         <source>Back cover marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Baksidsomslagsmarkör i stödda vyer</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="619"/>
         <source>Artist picture marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Artistbildsmarkör i stödda vyer</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="666"/>
@@ -1564,38 +1564,38 @@
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="336"/>
         <source>A–B repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>A–B-uppepning</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="353"/>
         <source>%1Middle-click</source>
         <extracomment>%1 is a native modifier sequence, including its trailing separator e.g. Ctrl+Shift+</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1Mellanklick</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="361"/>
         <source>Set A here</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätt A här</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="361"/>
         <source>Set A</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätt A</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="361"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Mellanklick</translation>
+        <translation>Mellanklick</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="370"/>
         <source>Set B here</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätt B här</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/abrepeatcontrols.cpp" line="370"/>
         <source>Set B</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätt B</translation>
     </message>
 </context>
 <context>
@@ -1725,7 +1725,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="109"/>
         <source>Front</source>
-        <translation type="unfinished">Fram</translation>
+        <translation>Fram</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="109"/>
@@ -2315,13 +2315,13 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="74"/>
         <source>Keep playlist sorted</source>
-        <translation type="unfinished"></translation>
+        <translation>Håll spellistor sorterade</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="76"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="87"/>
         <source>&amp;Save…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Spara…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="78"/>
@@ -2346,7 +2346,7 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="94"/>
         <source>Presets</source>
-        <translation type="unfinished">Förinställningar</translation>
+        <translation>Förinställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="105"/>
@@ -2357,12 +2357,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="110"/>
         <source>Name:</source>
-        <translation type="unfinished">Namn:</translation>
+        <translation>Namn:</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="127"/>
         <source>Query:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fråga:</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="128"/>
@@ -2377,12 +2377,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="133"/>
         <source>Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Regler</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="134"/>
         <source>Script</source>
-        <translation type="unfinished"></translation>
+        <translation>Skript</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="274"/>
@@ -2397,22 +2397,22 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="336"/>
         <source>Save Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara förinställning</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="336"/>
         <source>Preset name:</source>
-        <translation type="unfinished">Förinställningsnamn:</translation>
+        <translation>Förinställningsnamn:</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="352"/>
         <source>Preset already exists</source>
-        <translation type="unfinished">Förinställning existerar redan</translation>
+        <translation>Förinställning existerar redan</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="353"/>
         <source>A preset named ‘%1’ already exists. Overwrite it?</source>
-        <translation type="unfinished">En förinställning med namnet ”%1” existerar redan. Överskriv den?</translation>
+        <translation>En förinställning med namnet ”%1” existerar redan. Överskriv den?</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="458"/>
@@ -2422,7 +2422,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="461"/>
         <source>Loved</source>
-        <translation type="unfinished">Älskad</translation>
+        <translation>Älskad</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="462"/>
@@ -2432,12 +2432,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="463"/>
         <source>Unplayed</source>
-        <translation type="unfinished">Ospelad</translation>
+        <translation>Ospelad</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="464"/>
         <source>Forgotten Favourites</source>
-        <translation type="unfinished"></translation>
+        <translation>Glömda favoriter</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="456"/>
@@ -2460,13 +2460,13 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="42"/>
         <source>Metadata tag…</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadata-tagg…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="48"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="76"/>
         <source>Tag name</source>
-        <translation type="unfinished"></translation>
+        <translation>Taggnamn</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="49"/>
@@ -2476,13 +2476,13 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="76"/>
         <source>Metadata tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadata-tagg</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="131"/>
         <source>%1 (tag)</source>
         <extracomment>%1 is a metadata tag name.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (tagg)</translation>
     </message>
 </context>
 <context>
@@ -2490,77 +2490,77 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="498"/>
         <source>Artist</source>
-        <translation type="unfinished">Artist</translation>
+        <translation>Artist</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="499"/>
         <source>Album artist</source>
-        <translation type="unfinished">Albumartist</translation>
+        <translation>Albumartist</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="500"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="501"/>
         <source>Title</source>
-        <translation type="unfinished">Titel</translation>
+        <translation>Titel</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="502"/>
         <source>Genre</source>
-        <translation type="unfinished">Genre</translation>
+        <translation>Genre</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="503"/>
         <source>Composer</source>
-        <translation type="unfinished">Kompositör</translation>
+        <translation>Kompositör</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="504"/>
         <source>Performer</source>
-        <translation type="unfinished">Uppträdande</translation>
+        <translation>Uppträdande</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="505"/>
         <source>Comment</source>
-        <translation type="unfinished">Kommentar</translation>
+        <translation>Kommentar</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="506"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Låttext</translation>
+        <translation>Låttext</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="507"/>
         <source>Date</source>
-        <translation type="unfinished">Datum</translation>
+        <translation>Datum</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="508"/>
         <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation>År</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="509"/>
         <source>Duration</source>
-        <translation type="unfinished">Längd</translation>
+        <translation>Längd</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="510"/>
         <source>Rating</source>
-        <translation type="unfinished">Betyg</translation>
+        <translation>Betyg</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="511"/>
         <source>Loved</source>
-        <translation type="unfinished">Älskad</translation>
+        <translation>Älskad</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="512"/>
         <source>Playcount</source>
-        <translation type="unfinished">Antal spelningar</translation>
+        <translation>Antal spelningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="513"/>
@@ -2580,7 +2580,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="516"/>
         <source>Codec</source>
-        <translation type="unfinished">Kodek</translation>
+        <translation>Kodek</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="517"/>
@@ -2608,7 +2608,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="47"/>
         <source>Match all rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Matcha alla regler</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="48"/>
@@ -2744,12 +2744,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="319"/>
         <source>No</source>
-        <translation type="unfinished">Nej</translation>
+        <translation>Nej</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="319"/>
         <source>Yes</source>
-        <translation type="unfinished">Ja</translation>
+        <translation>Ja</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="386"/>
@@ -2789,7 +2789,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="409"/>
         <source>Enter whole numbers from 0 to %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in hela tal från 0 till %1.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="412"/>
@@ -2813,137 +2813,137 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="529"/>
         <source>second</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>sekund</numerusform>
+            <numerusform>sekund</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="531"/>
         <source>seconds</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>sekunder</numerusform>
+            <numerusform>sekunder</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="535"/>
         <source>minute</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>minut</numerusform>
+            <numerusform>minut</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="537"/>
         <source>minutes</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>minuter</numerusform>
+            <numerusform>minuter</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="541"/>
         <source>hour</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>timme</numerusform>
+            <numerusform>timme</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="543"/>
         <source>hours</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>timmar</numerusform>
+            <numerusform>timmar</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="547"/>
         <source>day</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>dag</numerusform>
+            <numerusform>dag</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="549"/>
         <source>days</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>dagar</numerusform>
+            <numerusform>dagar</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="553"/>
         <source>week</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>vecka</numerusform>
+            <numerusform>vecka</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="555"/>
         <source>weeks</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>veckor</numerusform>
+            <numerusform>veckor</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="559"/>
         <source>month</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>månad</numerusform>
+            <numerusform>månad</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="561"/>
         <source>months</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>månader</numerusform>
+            <numerusform>månader</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="565"/>
         <source>year</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>år</numerusform>
+            <numerusform>år</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="567"/>
         <source>years</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>år</numerusform>
+            <numerusform>år</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="44"/>
         <source>Randomise order</source>
-        <translation type="unfinished"></translation>
+        <translation>Slumpa ordning</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="46"/>
         <source>Limit number of tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Begränsa antal spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="49"/>
@@ -2960,12 +2960,12 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="56"/>
         <source>Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Stigande</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="57"/>
         <source>Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Fallande</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="60"/>
@@ -2975,199 +2975,199 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="77"/>
         <source>Sort by:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortera efter:</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="149"/>
         <source>does not contain</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>innehåller inte</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="151"/>
         <source>contains</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>innehåller</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="154"/>
         <source>does not contain any of</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>innehåller inget av</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="156"/>
         <source>contains any of</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>innehåller något av</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="159"/>
         <source>does not contain word</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>innehåller inte ord</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="161"/>
         <source>contains word</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>innehåller ord</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="164"/>
         <source>does not start with</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>börjar inte med</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="166"/>
         <source>starts with</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>börjar med</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="169"/>
         <source>does not end with</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>slutar inte med</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="171"/>
         <source>ends with</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>slutar med</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="174"/>
         <source>is not</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är inte</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="176"/>
         <source>is</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="179"/>
         <source>is not one of</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är inte något av</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="181"/>
         <source>is one of</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är något av</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="184"/>
         <source>is greater than</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är större än</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="187"/>
         <source>is at least</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>än som minst</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="190"/>
         <source>is less than</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är mindre än</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="193"/>
         <source>is at most</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är som mest</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="196"/>
         <source>is present</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är närvarande</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="199"/>
         <source>is missing</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>saknas</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="202"/>
         <source>is not before</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är inte före</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="204"/>
         <source>is before</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är före</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="207"/>
         <source>is not after</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är inte efter</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="209"/>
         <source>is after</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är efter</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="212"/>
         <source>is not on or after</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är inte på eller efter</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="214"/>
         <source>is on or after</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är på eller efter</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="218"/>
         <source>is not in the last</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är inte i sista</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="220"/>
         <source>is in the last</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är i sista</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="223"/>
         <source>is not on</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är inte på</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="225"/>
         <source>is on</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är på</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="228"/>
         <source>is not between</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är inte mellan</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="230"/>
         <source>is between</source>
         <extracomment>Independent rule comparison label.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>är mellan</translation>
     </message>
 </context>
 <context>
@@ -3175,52 +3175,52 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="58"/>
         <source>Artwork type</source>
-        <translation type="unfinished">Konstverkstyp</translation>
+        <translation>Konstverkstyp</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="60"/>
         <source>Preferred track</source>
-        <translation type="unfinished">Föredraget spår</translation>
+        <translation>Föredraget spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="62"/>
         <source>File</source>
-        <translation type="unfinished">Fil</translation>
+        <translation>Fil</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="67"/>
         <source>Blur</source>
-        <translation type="unfinished">Suddighet</translation>
+        <translation>Suddighet</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="68"/>
         <source>Opacity</source>
-        <translation type="unfinished">Opacitet</translation>
+        <translation>Opacitet</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="69"/>
         <source>Fade length</source>
-        <translation type="unfinished">Toningslängd</translation>
+        <translation>Toningslängd</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="76"/>
         <source>Choose Background Image</source>
-        <translation type="unfinished">Välj bakgrundsbild</translation>
+        <translation>Välj bakgrundsbild</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="77"/>
         <source>Images (*.png *.jpg *.jpeg *.webp *.bmp);;All files (*)</source>
-        <translation type="unfinished">Bilder (*.png *.jpg *.jpeg *.webp *.bmp);;Alla filer (*)</translation>
+        <translation>Bilder (*.png *.jpg *.jpeg *.webp *.bmp);;Alla filer (*)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="129"/>
         <source>Choose a custom background image file</source>
-        <translation type="unfinished">Välj en egen bakgrundsbildfil</translation>
+        <translation>Välj en egen bakgrundsbildfil</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="132"/>
         <source>No background image</source>
-        <translation type="unfinished">Ingen bakgrundsbild</translation>
+        <translation>Ingen bakgrundsbild</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="133"/>
@@ -3235,7 +3235,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="135"/>
         <source>Custom image</source>
-        <translation type="unfinished">Egen bild</translation>
+        <translation>Egen bild</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="136"/>
@@ -3245,12 +3245,12 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="138"/>
         <source>Front</source>
-        <translation type="unfinished">Fram</translation>
+        <translation>Fram</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="139"/>
         <source>Use the front cover for current track artwork</source>
-        <translation type="unfinished">Används framsidsomslaget för det aktuella spårets konstverk</translation>
+        <translation>Används framsidsomslaget för det aktuella spårets konstverk</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="140"/>
@@ -3260,17 +3260,17 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="141"/>
         <source>Use the back cover for current track artwork</source>
-        <translation type="unfinished">Används baksidsomslaget för det aktuella spårets konstverk</translation>
+        <translation>Används baksidsomslaget för det aktuella spårets konstverk</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="142"/>
         <source>Artist</source>
-        <translation type="unfinished">Artist</translation>
+        <translation>Artist</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="143"/>
         <source>Use the artist picture for current track artwork</source>
-        <translation type="unfinished">Använd artistbilden för det aktuella spårets konstverk</translation>
+        <translation>Använd artistbilden för det aktuella spårets konstverk</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="145"/>
@@ -3280,27 +3280,27 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="147"/>
         <source>Selected track</source>
-        <translation type="unfinished">Valt spår</translation>
+        <translation>Valt spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="149"/>
         <source>Playing (or selected when stopped)</source>
-        <translation type="unfinished">Spelande (eller valt när stoppad)</translation>
+        <translation>Spelande (eller valt när stoppad)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="151"/>
         <source>Playing (blank at startup)</source>
-        <translation type="unfinished">Spelande (blank vid uppstart)</translation>
+        <translation>Spelande (blank vid uppstart)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="153"/>
         <source>Playing (blank when stopped)</source>
-        <translation type="unfinished">Spelande (blank när stoppad)</translation>
+        <translation>Spelande (blank när stoppad)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="156"/>
         <source>Scaled and cropped</source>
-        <translation type="unfinished">Skalad och skärd</translation>
+        <translation>Skalad och skärd</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="158"/>
@@ -3310,7 +3310,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="159"/>
         <source>Scaled</source>
-        <translation type="unfinished">Skalad</translation>
+        <translation>Skalad</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="160"/>
@@ -3320,7 +3320,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="161"/>
         <source>Scaled, keep proportions</source>
-        <translation type="unfinished">Skalad, behåll proportioner</translation>
+        <translation>Skalad, behåll proportioner</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="163"/>
@@ -3330,7 +3330,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="164"/>
         <source>Original size</source>
-        <translation type="unfinished">Originell storlek</translation>
+        <translation>Originell storlek</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="165"/>
@@ -3340,58 +3340,58 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="167"/>
         <source>Top left</source>
-        <translation type="unfinished">Vänster topp</translation>
+        <translation>Vänster topp</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="168"/>
         <source>Top</source>
-        <translation type="unfinished">Topp</translation>
+        <translation>Topp</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="169"/>
         <source>Top right</source>
-        <translation type="unfinished">Höger topp</translation>
+        <translation>Höger topp</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="170"/>
         <source>Left</source>
-        <translation type="unfinished">Vänster</translation>
+        <translation>Vänster</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="171"/>
         <source>Middle</source>
-        <translation type="unfinished">Mitten</translation>
+        <translation>Mitten</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="172"/>
         <source>Right</source>
-        <translation type="unfinished">Höger</translation>
+        <translation>Höger</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="173"/>
         <source>Bottom left</source>
-        <translation type="unfinished">Vänster botten</translation>
+        <translation>Vänster botten</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="174"/>
         <source>Bottom</source>
-        <translation type="unfinished">Botten</translation>
+        <translation>Botten</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="175"/>
         <source>Bottom right</source>
-        <translation type="unfinished">Höger botten</translation>
+        <translation>Höger botten</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="179"/>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="187"/>
         <source>Disabled</source>
-        <translation type="unfinished">Av</translation>
+        <translation>Av</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="189"/>
         <source>Path to the custom background image</source>
-        <translation type="unfinished">Sökväg till den egna bakgrundsbilden</translation>
+        <translation>Sökväg till den egna bakgrundsbilden</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="190"/>
@@ -3401,12 +3401,12 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="191"/>
         <source>Select which artwork type to use for current track artwork</source>
-        <translation type="unfinished">Välj vilken konstverkstyp att använda för aktuellt spårkonstverk</translation>
+        <translation>Välj vilken konstverkstyp att använda för aktuellt spårkonstverk</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="192"/>
         <source>Select which track supplies the background artwork</source>
-        <translation type="unfinished">Välj vilka spår som tillför bakgrundskonstverket</translation>
+        <translation>Välj vilka spår som tillför bakgrundskonstverket</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="193"/>
@@ -3416,47 +3416,47 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="194"/>
         <source>Alignment for original-size background images</source>
-        <translation type="unfinished">Positionering av original-storleks-bakgrunds-bilder</translation>
+        <translation>Positionering av original-storleks-bakgrunds-bilder</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="195"/>
         <source>Maximum width or height for original-size background images</source>
-        <translation type="unfinished">Maximal bredd eller höjd för original-storleks-bakgrunds-bilder</translation>
+        <translation>Maximal bredd eller höjd för original-storleks-bakgrunds-bilder</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="196"/>
         <source>Applies blur to the background image</source>
-        <translation type="unfinished">Applicerar suddighet på bakgrundsbilden</translation>
+        <translation>Applicerar suddighet på bakgrundsbilden</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="197"/>
         <source>Controls how strongly the background image is shown</source>
-        <translation type="unfinished">Kontrollerar hur starkt bakgrundsbilden visas</translation>
+        <translation>Kontrollerar hur starkt bakgrundsbilden visas</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="198"/>
         <source>Duration for fading between background images; set to 0 to disable</source>
-        <translation type="unfinished">Tidslängd för toning mellan bakgrundsbilder; sätt till 0 för att stänga av</translation>
+        <translation>Tidslängd för toning mellan bakgrundsbilder; sätt till 0 för att stänga av</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="203"/>
         <source>Image source</source>
-        <translation type="unfinished">Bildkälla</translation>
+        <translation>Bildkälla</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="204"/>
         <source>Source</source>
-        <translation type="unfinished">Källa</translation>
+        <translation>Källa</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="212"/>
         <source>Layout</source>
-        <translation type="unfinished">Layout</translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="213"/>
         <source>Scale mode</source>
-        <translation type="unfinished">Skalningsläge</translation>
+        <translation>Skalningsläge</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="215"/>
@@ -3466,12 +3466,12 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="217"/>
         <source>Maximum size</source>
-        <translation type="unfinished">Maximal storlek</translation>
+        <translation>Maximal storlek</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="219"/>
         <source>Effects</source>
-        <translation type="unfinished">Effekter</translation>
+        <translation>Effekter</translation>
     </message>
 </context>
 <context>
@@ -6153,7 +6153,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="466"/>
         <source>Save…</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="719"/>
@@ -6214,12 +6214,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1240"/>
         <source>Save Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara förinställning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1240"/>
         <source>Preset name:</source>
-        <translation type="unfinished">Förinställningsnamn:</translation>
+        <translation>Förinställningsnamn:</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/dspmanagerpage.cpp" line="1258"/>
@@ -6876,53 +6876,53 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="125"/>
         <source>Bass boost</source>
-        <translation type="unfinished"></translation>
+        <translation>Basboost</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="127"/>
         <source>Bass reduction</source>
-        <translation type="unfinished"></translation>
+        <translation>Basreduktion</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="129"/>
         <source>Dance</source>
-        <translation type="unfinished">Dans</translation>
+        <translation>Dans</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="131"/>
         <source>Pop</source>
-        <translation type="unfinished">Pop</translation>
+        <translation>Pop</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="133"/>
         <source>Rock</source>
-        <translation type="unfinished">Rock</translation>
+        <translation>Rock</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="135"/>
         <source>Treble boost</source>
-        <translation type="unfinished"></translation>
+        <translation>Diskantboost</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="137"/>
         <source>Treble reduction</source>
-        <translation type="unfinished"></translation>
+        <translation>Diskantreduktion</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equaliserpresetstore.cpp" line="139"/>
         <source>Vocal presence</source>
-        <translation type="unfinished"></translation>
+        <translation>Vokalnärvaro</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="92"/>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="95"/>
         <source>Restore Built-in Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Återhämta inbyggda förinställningar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="96"/>
         <source>Restore the original built-in presets? This will replace any changes to them and restore deleted built-in presets. User-created presets will be kept.</source>
-        <translation type="unfinished"></translation>
+        <translation>Återhämta de originella inbyggda förinställningarna? Detta kommer ersätta alla ändringar på dem och återhämta raderade inbyggda förinställningar. Användarskapade förinställningar behålls.</translation>
     </message>
 </context>
 <context>
@@ -7005,7 +7005,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="816"/>
         <source>Save…</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="987"/>
@@ -7020,12 +7020,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1000"/>
         <source>Save Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara förinställning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1000"/>
         <source>Preset name:</source>
-        <translation type="unfinished">Förinställningsnamn:</translation>
+        <translation>Förinställningsnamn:</translation>
     </message>
     <message>
         <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1012"/>
@@ -7581,7 +7581,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="201"/>
         <source>&amp;Save…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Spara…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="524"/>
@@ -7722,12 +7722,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="377"/>
         <source>Save Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara förinställning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="377"/>
         <source>Preset name:</source>
-        <translation type="unfinished">Förinställningsnamn:</translation>
+        <translation>Förinställningsnamn:</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="392"/>
@@ -8512,7 +8512,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="165"/>
         <source>Enabled</source>
-        <translation type="unfinished">På</translation>
+        <translation>På</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="167"/>
@@ -12082,7 +12082,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="167"/>
         <source>Enabled</source>
-        <translation type="unfinished">På</translation>
+        <translation>På</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="169"/>
@@ -12252,7 +12252,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="107"/>
         <source>Word wrap</source>
-        <translation type="unfinished">Radbrytning</translation>
+        <translation>Radbrytning</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="111"/>
@@ -12277,7 +12277,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="125"/>
         <source>Trace</source>
-        <translation type="unfinished"></translation>
+        <translation>Spåra</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="126"/>
@@ -12562,7 +12562,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="256"/>
         <source>Background</source>
-        <translation type="unfinished">Bakgrund</translation>
+        <translation>Bakgrund</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsconfigwidget.cpp" line="141"/>
@@ -12727,7 +12727,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplaybackservice.cpp" line="50"/>
         <source>Lyrics</source>
-        <translation type="unfinished">Låttext</translation>
+        <translation>Låttext</translation>
     </message>
     <message>
         <location filename="../../src/plugins/lyrics/lyricsplaybackservice.cpp" line="51"/>
@@ -14840,27 +14840,27 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="171"/>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="182"/>
         <source>A–B repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>A–B-upprepning</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="174"/>
         <source>Set A</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätt A</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="175"/>
         <source>Set B</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätt B</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="176"/>
         <source>Enable A–B repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätt på A–B-upprepning</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="177"/>
         <source>Clear A–B repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>Rensa A–B-upprepning</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="224"/>
@@ -15032,12 +15032,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="104"/>
         <source>A colour</source>
-        <translation type="unfinished"></translation>
+        <translation>A-färg</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="105"/>
         <source>B colour</source>
-        <translation type="unfinished"></translation>
+        <translation>B-färg</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="106"/>
@@ -15112,7 +15112,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="184"/>
         <source>A–B repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>A–B-upprepning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="187"/>
@@ -15810,12 +15810,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="141"/>
         <source>General</source>
-        <translation type="unfinished">Generellt</translation>
+        <translation>Generellt</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="142"/>
         <source>Background</source>
-        <translation type="unfinished">Bakgrund</translation>
+        <translation>Bakgrund</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="130"/>
@@ -16512,7 +16512,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="278"/>
         <source>Single-column mode</source>
-        <translation type="unfinished">Enkolumnsläge</translation>
+        <translation>Enkolumnsläge</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="307"/>
@@ -16585,7 +16585,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="408"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="425"/>
         <source>Columns</source>
-        <translation type="unfinished">Kolumner</translation>
+        <translation>Kolumner</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="494"/>
@@ -16613,7 +16613,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="643"/>
         <source>Reset columns to default</source>
-        <translation type="unfinished">Återställ kolumner till default</translation>
+        <translation>Återställ kolumner till default</translation>
     </message>
 </context>
 <context>
@@ -17036,12 +17036,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1393"/>
         <source>Update ‘%1’</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppdatera ”%1”</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1393"/>
         <source>Update preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppdatera förinställning</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1396"/>
@@ -17051,9 +17051,9 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1400"/>
         <source>Update ‘%1’ (%Ln playlist(s))</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Uppdatera ”%1” (%Ln spellista)</numerusform>
+            <numerusform>Uppdatera ”%1” (%Ln spellistor)</numerusform>
         </translation>
     </message>
     <message>
@@ -17114,7 +17114,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1481"/>
         <source>Name</source>
-        <translation type="unfinished">Namn</translation>
+        <translation>Namn</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="868"/>
@@ -18276,7 +18276,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="125"/>
         <source>Background</source>
-        <translation type="unfinished">Bakgrund</translation>
+        <translation>Bakgrund</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerconfigwidget.cpp" line="76"/>
@@ -22434,7 +22434,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="163"/>
         <source>Enabled</source>
-        <translation type="unfinished">På</translation>
+        <translation>På</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="165"/>
@@ -25212,32 +25212,32 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="538"/>
         <source>Curve</source>
-        <translation type="unfinished">Kurva</translation>
+        <translation>Kurva</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="549"/>
         <source>Logarithmic dB</source>
-        <translation type="unfinished"></translation>
+        <translation>Logaritmisk dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="550"/>
         <source>Linear dB</source>
-        <translation type="unfinished"></translation>
+        <translation>Linjär dB</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="551"/>
         <source>Linear amplitude</source>
-        <translation type="unfinished"></translation>
+        <translation>Linjär amplitud</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="552"/>
         <source>Quadratic</source>
-        <translation type="unfinished"></translation>
+        <translation>Kvadratisk</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="553"/>
         <source>Cubic</source>
-        <translation type="unfinished">Kubisk</translation>
+        <translation>Kubisk</translation>
     </message>
 </context>
 <context>
@@ -26001,7 +26001,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="66"/>
         <source>Filter…</source>
-        <translation type="unfinished">Filtrera…</translation>
+        <translation>Filtrera…</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="71"/>
@@ -26258,7 +26258,7 @@ Håll i Ctrl för att ersätta en widget.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="570"/>
         <source>Presets</source>
-        <translation type="unfinished">Förinställningar</translation>
+        <translation>Förinställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="571"/>
@@ -26486,7 +26486,7 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
         <location filename="../../src/gui/widgets.cpp" line="813"/>
         <location filename="../../src/gui/widgets.cpp" line="823"/>
         <source>Library</source>
-        <translation type="unfinished">Bibliotek</translation>
+        <translation>Bibliotek</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="777"/>
@@ -26515,7 +26515,7 @@ Set to 0 to disable compression. Changes take effect after restarting fooyin.</s
     <message>
         <location filename="../../src/gui/widgets.cpp" line="792"/>
         <source>Compression level</source>
-        <translation type="unfinished">Komprimeringsnivå</translation>
+        <translation>Komprimeringsnivå</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="793"/>
