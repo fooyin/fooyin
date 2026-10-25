@@ -472,7 +472,8 @@ void MetadataLookupDialog::buildUi()
     m_policy = new QComboBox(this);
     m_policy->addItem(tr("Fill missing metadata"), static_cast<int>(ExistingMetadataPolicy::FillMissing));
     m_policy->addItem(tr("Replace lookup fields"), static_cast<int>(ExistingMetadataPolicy::ReplaceLookupFields));
-    m_policy->addItem(tr("Clear writable tags, then apply"), static_cast<int>(ExistingMetadataPolicy::WipeWritableTags));
+    m_policy->addItem(tr("Clear writable tags, then apply"),
+                      static_cast<int>(ExistingMetadataPolicy::WipeWritableTags));
     m_policy->setToolTip(tr("Choose how retrieved metadata is combined with the track’s existing tags."));
 
     m_allowUnresolved = new QCheckBox(m_purpose == Purpose::ReturnTracks ? tr("Allow applying unresolved tracks")
