@@ -40,9 +40,20 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::AutoPlaylistDialog</name>
+    <message numerus="yes">
+        <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="404"/>
+        <source>%Ln matching track(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::AutoPlaylistRulesWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="529"/>
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="551"/>
         <source>second</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
         <translation>
@@ -51,7 +62,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="531"/>
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="553"/>
         <source>seconds</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
         <translation>
@@ -60,7 +71,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="535"/>
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="557"/>
         <source>minute</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
         <translation>
@@ -69,7 +80,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="537"/>
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="559"/>
         <source>minutes</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
         <translation>
@@ -78,7 +89,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="541"/>
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="563"/>
         <source>hour</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
         <translation>
@@ -87,7 +98,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="543"/>
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="565"/>
         <source>hours</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
         <translation>
@@ -96,7 +107,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="547"/>
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="569"/>
         <source>day</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
         <translation>
@@ -105,7 +116,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="549"/>
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="571"/>
         <source>days</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
         <translation>
@@ -114,7 +125,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="553"/>
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="575"/>
         <source>week</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
         <translation>
@@ -123,7 +134,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="555"/>
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="577"/>
         <source>weeks</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
         <translation>
@@ -132,7 +143,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="559"/>
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="581"/>
         <source>month</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
         <translation>
@@ -141,7 +152,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="561"/>
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="583"/>
         <source>months</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
         <translation>
@@ -150,7 +161,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="565"/>
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="587"/>
         <source>year</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
         <translation>
@@ -159,7 +170,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="567"/>
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="589"/>
         <source>years</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
         <translation type="unfinished">
@@ -331,10 +342,10 @@
     </message>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="622"/>
-        <source>Aborted: %Ln operation(s) not run</source>
-        <translation>
-            <numerusform>Aborted: %Ln operation not run</numerusform>
-            <numerusform>Aborted: %Ln operations not run</numerusform>
+        <source>Stopped: %Ln operation(s) not run</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -484,7 +495,7 @@
 <context>
     <name>Fooyin::MetadataLookupDialog</name>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="542"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="543"/>
         <source>Found %Ln release(s).</source>
         <translation>
             <numerusform>Found %Ln release.</numerusform>
@@ -492,7 +503,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="935"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="936"/>
         <source>Metadata will be applied to %Ln track(s).</source>
         <translation>
             <numerusform>Metadata will be applied to %Ln track.</numerusform>
@@ -500,7 +511,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="937"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="938"/>
         <source>%Ln track(s) will be updated.</source>
         <translation>
             <numerusform>%Ln track will be updated.</numerusform>
@@ -508,7 +519,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="985"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="986"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
@@ -516,8 +527,8 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1006"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1011"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1007"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1012"/>
         <source>%Ln succeeded</source>
         <translation>
             <numerusform>%Ln succeeded</numerusform>
@@ -525,8 +536,8 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1007"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1012"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1008"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1013"/>
         <source>%Ln failed</source>
         <translation>
             <numerusform>%Ln failed</numerusform>
@@ -534,7 +545,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1017"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1018"/>
         <source>Metadata was updated in %Ln track(s).</source>
         <translation>
             <numerusform>Metadata was updated in %Ln track.</numerusform>
@@ -597,7 +608,15 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1400"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="604"/>
+        <source>%Ln track(s)</source>
+        <translation type="unfinished">
+            <numerusform>%Ln track</numerusform>
+            <numerusform>%Ln tracks</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1434"/>
         <source>Update ‘%1’ (%Ln playlist(s))</source>
         <translation>
             <numerusform>Update ‘%1’ (%Ln playlist)</numerusform>
@@ -605,7 +624,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1999"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2037"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
@@ -638,7 +657,7 @@
 <context>
     <name>Fooyin::PropertiesDialogWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="775"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="831"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
@@ -649,7 +668,7 @@
 <context>
     <name>Fooyin::PropertiesWriteProgress</name>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="119"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="120"/>
         <source>Writing changes to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing changes to %Ln track…</numerusform>
@@ -672,7 +691,7 @@
 <context>
     <name>Fooyin::RadioBrowser::RadioSearch</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="825"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="861"/>
         <source>%Ln active filter(s)</source>
         <translation>
             <numerusform>%Ln active filter</numerusform>
