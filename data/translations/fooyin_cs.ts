@@ -554,7 +554,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="518"/>
         <source>Duration-weighted average bitrate of the track list in kbps</source>
-        <translation type="unfinished"></translation>
+        <translation>Průměrný datový tok seznamu skladeb v kb/s vážený podle délky skladeb</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="524"/>
@@ -2325,7 +2325,7 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="91"/>
         <source>Show preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit náhled</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="101"/>
@@ -2403,27 +2403,27 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="170"/>
         <source>Show matching tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit odpovídající skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="378"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="428"/>
         <source>Updating…</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualizace…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="404"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="470"/>
         <source>No matching tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádné odpovídající skladby</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="404"/>
         <source>%Ln matching track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln odpovídající skladba</numerusform>
+            <numerusform>%Ln odpovídající skladby</numerusform>
+            <numerusform>%Ln odpovídajících skladeb</numerusform>
         </translation>
     </message>
     <message>
@@ -2507,13 +2507,14 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="63"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Nic</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="87"/>
         <source>Choose a preset or enter a sorting script. Use ‘Metadata tag…’ to read a tag directly.
 Clear to disable sorting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyber předvolbu, nebo zadej skript pro řazení. Použij ‚Tag metadat…‘ pro přímé čtení tagu.
+Vymaž pro vypnutí řazení.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="93"/>
@@ -2639,37 +2640,37 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="530"/>
         <source>Bitrate (kbps)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitrate (kb/s)</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="532"/>
         <source>Sample rate (Hz)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzorkovací frekvence (Hz)</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="533"/>
         <source>Bit depth</source>
-        <translation type="unfinished">Bitová hloubka</translation>
+        <translation>Bitová hloubka</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="535"/>
         <source>Number of channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Počet kanálů</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="536"/>
         <source>File created</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubor vytvořen</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="537"/>
         <source>Last modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Změněno</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="538"/>
         <source>File extension</source>
-        <translation type="unfinished">Přípona souboru</translation>
+        <translation>Přípona souboru</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="539"/>
@@ -7721,10 +7722,10 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="622"/>
         <source>Stopped: %Ln operation(s) not run</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Zastaveno: %Ln operace neprovedena</numerusform>
+            <numerusform>Zastaveno: %Ln operace neprovedeny</numerusform>
+            <numerusform>Zastaveno: %Ln operací neprovedeno</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -7880,7 +7881,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="564"/>
         <source>&amp;Stop</source>
-        <translation type="unfinished">&amp;Zastavit</translation>
+        <translation>&amp;Zastavit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="545"/>
@@ -9007,7 +9008,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="361"/>
         <source>The shortcut is already registered</source>
-        <translation type="unfinished">Zkratka je již zaregistrována</translation>
+        <translation>Zkratka je již zaregistrována</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="384"/>
@@ -9063,7 +9064,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="267"/>
         <source>The shortcut is already registered</source>
-        <translation type="unfinished">Zkratka je již zaregistrována</translation>
+        <translation>Zkratka je již zaregistrována</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="272"/>
@@ -9276,12 +9277,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1092"/>
         <source>Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Dynamický seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1093"/>
         <source>Toggle Sidebar</source>
-        <translation type="unfinished">Přepnout panel</translation>
+        <translation>Přepnout panel</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1165"/>
