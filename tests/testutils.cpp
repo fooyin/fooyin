@@ -118,7 +118,7 @@ TempResource::~TempResource()
     close();
 }
 
-QString TempResource::fileName()
+QString TempResource::closeAndGetFileName()
 {
     // TagLib opens paths independently, which requires releasing our handle on Windows
     flush();

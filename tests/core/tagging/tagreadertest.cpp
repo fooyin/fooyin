@@ -204,7 +204,7 @@ TEST_F(TagReaderTest, AiffRead)
     TempResource file{filepath};
     file.checkValid();
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -238,7 +238,7 @@ TEST_F(TagReaderTest, FlacRead)
     TempResource file{filepath};
     file.checkValid();
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -273,7 +273,7 @@ TEST_F(TagReaderTest, FlacReadPrefersFmpsRatingOverRating)
     file.checkValid();
 
     {
-        const QByteArray localPath = file.fileName().toLocal8Bit();
+        const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
         TagLib::FLAC::File flacFile{localPath.constData()};
         ASSERT_TRUE(flacFile.isValid());
         ASSERT_NE(flacFile.xiphComment(true), nullptr);
@@ -282,7 +282,7 @@ TEST_F(TagReaderTest, FlacReadPrefersFmpsRatingOverRating)
         ASSERT_TRUE(flacFile.save());
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -299,7 +299,7 @@ TEST_F(TagReaderTest, M4aRead)
     TempResource file{filepath};
     file.checkValid();
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -332,7 +332,7 @@ TEST_F(TagReaderTest, M4aReadDeduplicatesNormalisedExtraTags)
     file.checkValid();
 
     {
-        const QByteArray localPath = file.fileName().toLocal8Bit();
+        const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
         TagLib::MP4::File mp4File(localPath.constData());
         ASSERT_TRUE(mp4File.isValid());
         ASSERT_NE(mp4File.tag(), nullptr);
@@ -342,7 +342,7 @@ TEST_F(TagReaderTest, M4aReadDeduplicatesNormalisedExtraTags)
         ASSERT_TRUE(mp4File.save());
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -358,7 +358,7 @@ TEST_F(TagReaderTest, M4aReadPreservesDistinctNormalisedExtraTags)
     file.checkValid();
 
     {
-        const QByteArray localPath = file.fileName().toLocal8Bit();
+        const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
         TagLib::MP4::File mp4File(localPath.constData());
         ASSERT_TRUE(mp4File.isValid());
         ASSERT_NE(mp4File.tag(), nullptr);
@@ -368,7 +368,7 @@ TEST_F(TagReaderTest, M4aReadPreservesDistinctNormalisedExtraTags)
         ASSERT_TRUE(mp4File.save());
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -386,7 +386,7 @@ TEST_F(TagReaderTest, M4aReadCustomAutomaticRatingScale)
     file.checkValid();
 
     {
-        const QByteArray localPath = file.fileName().toLocal8Bit();
+        const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
         TagLib::MP4::File mp4File(localPath.constData());
         ASSERT_TRUE(mp4File.isValid());
         ASSERT_NE(mp4File.tag(), nullptr);
@@ -397,7 +397,7 @@ TEST_F(TagReaderTest, M4aReadCustomAutomaticRatingScale)
 
     setRatingReadPolicy(u"MY_RATING"_s, u"Automatic"_s);
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -415,7 +415,7 @@ TEST_F(TagReaderTest, M4aReadLowercaseReplayGain)
     TempResource file{filepath};
     file.checkValid();
 
-    const QByteArray localPath = file.fileName().toLocal8Bit();
+    const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
     {
         TagLib::MP4::File mp4File(localPath.constData());
         ASSERT_TRUE(mp4File.isValid());
@@ -429,7 +429,7 @@ TEST_F(TagReaderTest, M4aReadLowercaseReplayGain)
         ASSERT_TRUE(mp4File.save());
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -456,7 +456,7 @@ TEST_F(TagReaderTest, M4aReadUppercaseReplayGain)
     TempResource file{filepath};
     file.checkValid();
 
-    const QByteArray localPath = file.fileName().toLocal8Bit();
+    const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
     {
         TagLib::MP4::File mp4File(localPath.constData());
         ASSERT_TRUE(mp4File.isValid());
@@ -470,7 +470,7 @@ TEST_F(TagReaderTest, M4aReadUppercaseReplayGain)
         ASSERT_TRUE(mp4File.save());
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -497,7 +497,7 @@ TEST_F(TagReaderTest, Mp3Read)
     TempResource file{filepath};
     file.checkValid();
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -531,7 +531,7 @@ TEST_F(TagReaderTest, Mp3ReadDeduplicatesNormalisedExtraTags)
     file.checkValid();
 
     {
-        const QByteArray localPath = file.fileName().toLocal8Bit();
+        const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
         TagLib::MPEG::File mp3File(localPath.constData());
         ASSERT_TRUE(mp3File.isValid());
         auto* tag = mp3File.ID3v2Tag(true);
@@ -542,7 +542,7 @@ TEST_F(TagReaderTest, Mp3ReadDeduplicatesNormalisedExtraTags)
         ASSERT_TRUE(mp3File.save());
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -558,7 +558,7 @@ TEST_F(TagReaderTest, Mp3ReadPreservesDistinctNormalisedExtraTags)
     file.checkValid();
 
     {
-        const QByteArray localPath = file.fileName().toLocal8Bit();
+        const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
         TagLib::MPEG::File mp3File(localPath.constData());
         ASSERT_TRUE(mp3File.isValid());
         auto* tag = mp3File.ID3v2Tag(true);
@@ -569,7 +569,7 @@ TEST_F(TagReaderTest, Mp3ReadPreservesDistinctNormalisedExtraTags)
         ASSERT_TRUE(mp3File.save());
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -588,7 +588,7 @@ TEST_F(TagReaderTest, Mp3ReadDeduplicatesMixedCaseTxxxDescriptions)
     file.checkValid();
 
     {
-        const QByteArray localPath = file.fileName().toLocal8Bit();
+        const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
         TagLib::MPEG::File mp3File(localPath.constData());
         ASSERT_TRUE(mp3File.isValid());
         auto* tag = mp3File.ID3v2Tag(true);
@@ -600,7 +600,7 @@ TEST_F(TagReaderTest, Mp3ReadDeduplicatesMixedCaseTxxxDescriptions)
         ASSERT_TRUE(mp3File.save());
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -615,7 +615,7 @@ TEST_F(TagReaderTest, Mp3ReadRepairsLegacyTextInLatin1Id3Frames)
     TempResource file{filepath};
     file.checkValid();
 
-    const QByteArray localPath = file.fileName().toLocal8Bit();
+    const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
     {
         TagLib::MPEG::File mp3File(localPath.constData());
         ASSERT_TRUE(mp3File.isValid());
@@ -643,7 +643,7 @@ TEST_F(TagReaderTest, Mp3ReadRepairsLegacyTextInLatin1Id3Frames)
     settings.setValue(Utils::PreferredFallbackEncodingSetting, u"windows-1251"_s);
     settings.sync();
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -667,7 +667,7 @@ TEST_F(TagReaderTest, Mp3ReadPreservesValidLatin1Id3Frames)
     TempResource file{filepath};
     file.checkValid();
 
-    const QByteArray localPath = file.fileName().toLocal8Bit();
+    const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
     {
         TagLib::MPEG::File mp3File(localPath.constData());
         ASSERT_TRUE(mp3File.isValid());
@@ -681,7 +681,7 @@ TEST_F(TagReaderTest, Mp3ReadPreservesValidLatin1Id3Frames)
         ASSERT_TRUE(mp3File.save(TagLib::MPEG::File::ID3v2, TagLib::MPEG::File::StripOthers, TagLib::ID3v2::v3));
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{filepath, &file, nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -698,7 +698,7 @@ TEST_F(TagReaderTest, Mp3ReadRepairsLegacyTextInId3v1Tag)
     TempResource file{filepath};
     file.checkValid();
 
-    const QByteArray localPath = file.fileName().toLocal8Bit();
+    const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
     {
         TagLib::MPEG::File mp3File(localPath.constData());
         ASSERT_TRUE(mp3File.isValid());
@@ -720,7 +720,7 @@ TEST_F(TagReaderTest, Mp3ReadRepairsLegacyTextInId3v1Tag)
     settings.setValue(Utils::PreferredFallbackEncodingSetting, u"windows-1251"_s);
     settings.sync();
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -744,7 +744,7 @@ TEST_F(TagReaderTest, Mp3ReadHonoursPopmSettings)
     TempResource file{filepath};
     file.checkValid();
 
-    const QByteArray localPath = file.fileName().toLocal8Bit();
+    const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
     {
         TagLib::MPEG::File mp3File(localPath.constData());
         ASSERT_TRUE(mp3File.isValid());
@@ -767,7 +767,7 @@ TEST_F(TagReaderTest, Mp3ReadHonoursPopmSettings)
         settings.setValue(RatingSettings::PopmMapping, u"CommonFiveStar"_s);
         settings.sync();
 
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         const AudioSource source{filepath, &file, nullptr};
         ASSERT_TRUE(file.seek(0));
         ASSERT_TRUE(m_parser.init(source));
@@ -783,7 +783,7 @@ TEST_F(TagReaderTest, Mp3ReadHonoursPopmSettings)
         settings.setValue(RatingSettings::ReadId3Popm, false);
         settings.sync();
 
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         const AudioSource source{filepath, &file, nullptr};
         ASSERT_TRUE(file.seek(0));
         ASSERT_TRUE(m_parser.init(source));
@@ -799,7 +799,7 @@ TEST_F(TagReaderTest, Mp3ReadHonoursPopmSettings)
         settings.setValue(PlaycountSettings::ReadId3Popm, true);
         settings.sync();
 
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
         ASSERT_TRUE(file.seek(0));
         ASSERT_TRUE(m_parser.init(source));
@@ -816,7 +816,7 @@ TEST_F(TagReaderTest, Mp3ReadHonoursPopmSettings)
         settings.setValue(PlaycountSettings::ReadId3Popm, false);
         settings.sync();
 
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
         ASSERT_TRUE(file.seek(0));
         ASSERT_TRUE(m_parser.init(source));
@@ -833,7 +833,7 @@ TEST_F(TagReaderTest, Mp3ReadHonoursPopmSettings)
         settings.setValue(PlaycountSettings::ReadId3Popm, true);
         settings.sync();
 
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
         ASSERT_TRUE(file.seek(0));
         ASSERT_TRUE(m_parser.init(source));
@@ -853,7 +853,7 @@ TEST_F(TagReaderTest, OggRead)
     TempResource file{filepath};
     file.checkValid();
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -887,7 +887,7 @@ TEST_F(TagReaderTest, OggReadSpacedAlbumArtist)
     file.checkValid();
 
     {
-        const QByteArray localPath = file.fileName().toLocal8Bit();
+        const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
         TagLib::Ogg::Vorbis::File oggFile{localPath.constData()};
         ASSERT_TRUE(oggFile.isValid());
         ASSERT_NE(oggFile.tag(), nullptr);
@@ -897,7 +897,7 @@ TEST_F(TagReaderTest, OggReadSpacedAlbumArtist)
         ASSERT_TRUE(oggFile.save());
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -913,7 +913,7 @@ TEST_F(TagReaderTest, OggReadPrefersFmpsRatingOverRating)
     file.checkValid();
 
     {
-        const QByteArray localPath = file.fileName().toLocal8Bit();
+        const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
         TagLib::Ogg::Vorbis::File oggFile{localPath.constData()};
         ASSERT_TRUE(oggFile.isValid());
         ASSERT_NE(oggFile.tag(), nullptr);
@@ -922,7 +922,7 @@ TEST_F(TagReaderTest, OggReadPrefersFmpsRatingOverRating)
         ASSERT_TRUE(oggFile.save());
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -942,14 +942,14 @@ TEST_F(TagReaderTest, OggAutomaticPlaycountReadPrefersFmpsPlaycount)
     file.checkValid();
 
     {
-        TagLib::Ogg::Vorbis::File oggFile{file.fileName().toLocal8Bit().constData()};
+        TagLib::Ogg::Vorbis::File oggFile{file.closeAndGetFileName().toLocal8Bit().constData()};
         ASSERT_TRUE(oggFile.isValid());
         setXiphPlaycountFields(oggFile.tag(), u"17"_s, u"42"_s);
         ASSERT_TRUE(oggFile.save());
     }
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
         ASSERT_TRUE(file.seek(0));
         ASSERT_TRUE(m_parser.init(source));
@@ -958,14 +958,14 @@ TEST_F(TagReaderTest, OggAutomaticPlaycountReadPrefersFmpsPlaycount)
     }
 
     {
-        TagLib::Ogg::Vorbis::File oggFile{file.fileName().toLocal8Bit().constData()};
+        TagLib::Ogg::Vorbis::File oggFile{file.closeAndGetFileName().toLocal8Bit().constData()};
         ASSERT_TRUE(oggFile.isValid());
         setXiphPlaycountFields(oggFile.tag(), u"17"_s, u"invalid"_s);
         ASSERT_TRUE(oggFile.save());
     }
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
         ASSERT_TRUE(file.seek(0));
         ASSERT_TRUE(m_parser.init(source));
@@ -979,13 +979,13 @@ TEST_F(TagReaderTest, OggAutomaticPlaycountReadPrefersFmpsPlaycount)
         settings.sync();
 
         {
-            TagLib::Ogg::Vorbis::File oggFile{file.fileName().toLocal8Bit().constData()};
+            TagLib::Ogg::Vorbis::File oggFile{file.closeAndGetFileName().toLocal8Bit().constData()};
             ASSERT_TRUE(oggFile.isValid());
             setXiphPlaycountFields(oggFile.tag(), u"17"_s, u"42"_s);
             ASSERT_TRUE(oggFile.save());
         }
 
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
         ASSERT_TRUE(file.seek(0));
         ASSERT_TRUE(m_parser.init(source));
@@ -1005,7 +1005,7 @@ TEST_F(TagReaderTest, OggAutomaticRatingReadDetectsTenPointRating)
     file.checkValid();
 
     {
-        const QByteArray localPath = file.fileName().toLocal8Bit();
+        const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
         TagLib::Ogg::Vorbis::File oggFile{localPath.constData()};
         ASSERT_TRUE(oggFile.isValid());
         ASSERT_NE(oggFile.tag(), nullptr);
@@ -1014,7 +1014,7 @@ TEST_F(TagReaderTest, OggAutomaticRatingReadDetectsTenPointRating)
         ASSERT_TRUE(oggFile.save());
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -1035,7 +1035,7 @@ TEST_F(TagReaderTest, OggReadCustomAutomaticRatingScale)
     file.checkValid();
 
     {
-        const QByteArray localPath = file.fileName().toLocal8Bit();
+        const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
         TagLib::Ogg::Vorbis::File oggFile{localPath.constData()};
         ASSERT_TRUE(oggFile.isValid());
         ASSERT_NE(oggFile.tag(), nullptr);
@@ -1046,7 +1046,7 @@ TEST_F(TagReaderTest, OggReadCustomAutomaticRatingScale)
 
     setRatingReadPolicy(u"MY_RATING"_s, u"Automatic"_s);
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -1081,7 +1081,7 @@ TEST_F(TagReaderTest, OggReadConfiguredRatingScales)
         file.checkValid();
 
         {
-            const QByteArray localPath = file.fileName().toLocal8Bit();
+            const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
             TagLib::Ogg::Vorbis::File oggFile{localPath.constData()};
             ASSERT_TRUE(oggFile.isValid());
             ASSERT_NE(oggFile.tag(), nullptr);
@@ -1092,7 +1092,7 @@ TEST_F(TagReaderTest, OggReadConfiguredRatingScales)
 
         setRatingReadPolicy(u"RATING"_s, testCase.scale);
 
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
         ASSERT_TRUE(file.seek(0));
         ASSERT_TRUE(m_parser.init(source));
@@ -1112,7 +1112,7 @@ TEST_F(TagReaderTest, OpusRead)
     TempResource file{filepath};
     file.checkValid();
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -1145,7 +1145,7 @@ TEST_F(TagReaderTest, WavRead)
     TempResource file{filepath};
     file.checkValid();
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     const AudioSource source{.filepath = filepath, .device = &file, .remoteStreamDevice = nullptr};
     ASSERT_TRUE(file.seek(0));
     ASSERT_TRUE(m_parser.init(source));
@@ -1209,7 +1209,7 @@ TEST_F(FFmpegTagReaderTest, TakReadApeCoverArt)
     const QString filepath = u":/audio/audiotest.tak"_s;
     TempResource file{filepath};
     file.checkValid();
-    appendApeCoverItems(file.fileName());
+    appendApeCoverItems(file.closeAndGetFileName());
     ASSERT_TRUE(file.seek(0));
 
     const QString localFilepath = file.QFile::fileName();

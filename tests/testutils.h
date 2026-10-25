@@ -42,7 +42,7 @@ public:
     explicit TempResource(const QString& filename, QObject* parent = nullptr);
     ~TempResource() override;
 
-    [[nodiscard]] QString fileName();
+    QString closeAndGetFileName();
     bool seek(qint64 position) override;
     void checkValid() const;
 
