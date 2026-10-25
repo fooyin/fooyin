@@ -39,6 +39,7 @@ The following libraries are optional:
 * [SoundTouch](https://www.surina.net/soundtouch/) - for the SoundTouch DSP plugin
 * [SoXR (libsoxr)](https://sourceforge.net/projects/soxr/) - for the SoX resampler DSP plugin
 * [projectM](https://github.com/projectM-visualizer/projectm) (4.x) - for the projectM visualisation plugin
+* libX11, libX11-xcb and libxcb - for X11 global shortcut support
 
 Platform-specific requirements are listed below.
 
@@ -48,11 +49,11 @@ Platform-specific requirements are listed below.
 sudo apt update
 sudo apt install \
     g++ git cmake pkg-config ninja-build libglu1-mesa-dev libxkbcommon-dev zlib1g-dev \
-    libasound2-dev libtag1-dev libicu-dev libpipewire-0.3-dev libpulse-dev \
+    libx11-dev libx11-xcb-dev libxcb1-dev libasound2-dev libtag1-dev libicu-dev libpipewire-0.3-dev libpulse-dev \
     qt6-base-dev libqt6sql6-sqlite libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
     libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev libswresample-dev \
-    libflac-dev libmpg123-dev libopusfile-dev libvorbis-dev libsndfile1-dev libopenmpt-dev libgme-dev libarchive-dev libebur128-dev libcdio-dev \
-    libcdio-paranoia-dev libsoundtouch-dev libsoxr-dev
+    libflac-dev libmpg123-dev libopusfile-dev libvorbis-dev libsndfile1-dev libopenmpt-dev libgme-dev libarchive-dev 
+    libebur128-dev libcdio-dev libcdio-paranoia-dev libsoundtouch-dev libsoxr-dev
 ```
 
 ### Arch Linux

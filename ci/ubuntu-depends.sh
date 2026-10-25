@@ -20,6 +20,9 @@ $SUDO apt-get install -y \
         libicu-dev \
         libglm-dev \
         libglu1-mesa-dev \
+        libx11-dev \
+        libx11-xcb-dev \
+        libxcb1-dev \
         libxkbcommon-dev \
         dpkg-dev \
         dh-make \

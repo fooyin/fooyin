@@ -15,7 +15,7 @@ set(DEPENDS Fooyin::Gui)
 
 if(UNIX AND NOT APPLE)
     find_package(Qt6 ${FOOYIN_QT_MIN_VERSION} QUIET COMPONENTS DBus)
-    find_package(X11 QUIET)
+    find_package(X11 QUIET COMPONENTS X11_xcb xcb)
 
     if(TARGET Qt6::DBus)
         list(
@@ -30,7 +30,7 @@ if(UNIX AND NOT APPLE)
 
     if(X11_FOUND)
         list(APPEND SOURCES globalshortcutx11backend.cpp globalshortcutx11backend.h)
-        list(APPEND DEPENDS X11::X11)
+        list(APPEND DEPENDS X11::X11 X11::X11_xcb X11::xcb)
     endif()
 elseif(WIN32)
     list(APPEND SOURCES globalshortcutwindowsbackend.cpp globalshortcutwindowsbackend.h)
