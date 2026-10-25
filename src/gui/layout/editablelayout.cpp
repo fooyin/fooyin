@@ -56,12 +56,14 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QMouseEvent>
+#include <QPainter>
 #include <QPushButton>
 #include <QScopedValueRollback>
 #include <QSignalBlocker>
 #include <QSpinBox>
 #include <QStyle>
 #include <QUndoStack>
+#include <QVariantAnimation>
 #include <QWidgetAction>
 
 #include <array>
@@ -132,6 +134,177 @@ void preserveWidgetIds(QJsonObject& widgetObject, FyWidget* widget)
     widgetObject[widgetName] = widgetData;
 }
 } // namespace
+
+class LayoutTransitionOverlay : public QWidget
+{
+public:
+    struct Options
+    {
+        LayoutTransitionType method{Settings::Gui::Internal::DefaultLayoutTransitionMethod};
+        LayoutSlideDirection slideDirection{Settings::Gui::Internal::DefaultLayoutTransitionSlideDirection};
+        LayoutScaleDirection scaleDirection{Settings::Gui::Internal::DefaultLayoutTransitionScaleDirection};
+        int scaleAmount{Settings::Gui::Internal::DefaultLayoutTransitionScaleAmount};
+    };
+
+    LayoutTransitionOverlay(QPixmap snapshot, int duration, Options options, QWidget* parent)
+        : QWidget{parent}
+        , m_snapshot{std::move(snapshot)}
+        , m_options{options}
+    {
+        if(m_options.method < LayoutTransitionType::CrossFade
+           || m_options.method > LayoutTransitionType::SlideAndFade) {
+            m_options.method = Settings::Gui::Internal::DefaultLayoutTransitionMethod;
+        }
+        m_options.scaleAmount = std::clamp(m_options.scaleAmount, 1, 100);
+
+        setAttribute(Qt::WA_TransparentForMouseEvents);
+        setAttribute(Qt::WA_NoSystemBackground);
+        setGeometry(parent->rect());
+        parent->installEventFilter(this);
+
+        m_animation.setStartValue(1.0);
+        m_animation.setEndValue(0.0);
+        m_animation.setDuration(std::clamp(duration, 1, 3000));
+        m_animation.setEasingCurve(m_options.method == LayoutTransitionType::FadeThroughBackground
+                                       ? QEasingCurve::InOutCubic
+                                       : QEasingCurve::OutCubic);
+
+        QObject::connect(&m_animation, &QVariantAnimation::valueChanged, this, [this]() {
+            if(!m_nextSnapshot.isNull() && isVisible()) {
+                updateNextSnapshot();
+            }
+            update();
+        });
+        QObject::connect(&m_animation, &QVariantAnimation::finished, this, [this]() {
+            hide();
+            deleteLater();
+        });
+
+        show();
+        raise();
+    }
+
+    void startTransition()
+    {
+        QMetaObject::invokeMethod(
+            this,
+            [this]() {
+                if(!isVisible()) {
+                    return;
+                }
+
+                if((m_options.method == LayoutTransitionType::ScaleAndFade
+                    && m_options.scaleDirection != LayoutScaleDirection::Shrink)
+                   || m_options.method == LayoutTransitionType::SlideAndFade) {
+                    updateNextSnapshot();
+                    if(m_nextSnapshot.isNull()) {
+                        m_options.method = LayoutTransitionType::CrossFade;
+                    }
+                }
+                m_animation.start();
+            },
+            Qt::QueuedConnection);
+    }
+
+    bool eventFilter(QObject* watched, QEvent* event) override
+    {
+        if(watched == parentWidget()) {
+            if(event->type() == QEvent::Resize) {
+                setGeometry(parentWidget()->rect());
+            }
+            else if(event->type() == QEvent::Hide) {
+                hide();
+                deleteLater();
+            }
+        }
+        return QWidget::eventFilter(watched, event);
+    }
+
+protected:
+    void paintEvent(QPaintEvent* /*event*/) override
+    {
+        QPainter painter{this};
+        const qreal opacity   = m_animation.currentValue().toReal();
+        const qreal progress  = 1.0 - opacity;
+        const auto background = palette().brush(QPalette::Window);
+
+        switch(m_options.method) {
+            case LayoutTransitionType::CrossFade:
+                painter.setOpacity(opacity);
+                painter.drawPixmap(rect(), m_snapshot);
+                break;
+            case LayoutTransitionType::ScaleAndFade: {
+                const bool shrink = m_options.scaleDirection == LayoutScaleDirection::Shrink;
+                if(!shrink) {
+                    painter.fillRect(rect(), background);
+                    painter.drawPixmap(rect(), m_snapshot);
+                }
+                painter.setRenderHint(QPainter::SmoothPixmapTransform);
+                painter.setOpacity(shrink ? opacity : progress);
+                const qreal scale = 1.0 - ((m_options.scaleAmount / 100.0) * (shrink ? progress : opacity));
+                painter.translate(width() / 2.0, height() / 2.0);
+                painter.scale(scale, scale);
+                painter.translate(-width() / 2.0, -height() / 2.0);
+                painter.drawPixmap(rect(), shrink ? m_snapshot : m_nextSnapshot);
+                break;
+            }
+            case LayoutTransitionType::SlideAndFade: {
+                painter.fillRect(rect(), background);
+                painter.setRenderHint(QPainter::SmoothPixmapTransform);
+                const QPointF offset = slideOffset();
+                const QRectF target{rect()};
+                painter.setOpacity(opacity);
+                painter.drawPixmap(target.translated(-progress * offset), m_snapshot, QRectF{m_snapshot.rect()});
+                painter.setOpacity(progress);
+                painter.drawPixmap(target.translated(opacity * offset), m_nextSnapshot, QRectF{m_nextSnapshot.rect()});
+                break;
+            }
+            case LayoutTransitionType::FadeThroughBackground:
+            default:
+                if(opacity > 0.5) {
+                    painter.fillRect(rect(), background);
+                    painter.setOpacity((2.0 * opacity) - 1.0);
+                    painter.drawPixmap(rect(), m_snapshot);
+                }
+                else {
+                    painter.setOpacity(2.0 * opacity);
+                    painter.fillRect(rect(), background);
+                }
+                break;
+        }
+    }
+
+private:
+    [[nodiscard]] QPointF slideOffset() const
+    {
+        switch(m_options.slideDirection) {
+            case LayoutSlideDirection::Left:
+                return {-static_cast<qreal>(width()), 0.0};
+            case LayoutSlideDirection::Right:
+                return {static_cast<qreal>(width()), 0.0};
+            case LayoutSlideDirection::Top:
+                return {0.0, -static_cast<qreal>(height())};
+            case LayoutSlideDirection::Bottom:
+                return {0.0, static_cast<qreal>(height())};
+            case LayoutSlideDirection::Automatic:
+            default:
+                return {isRightToLeft() ? -static_cast<qreal>(width()) : static_cast<qreal>(width()), 0.0};
+        }
+    }
+
+    void updateNextSnapshot()
+    {
+        hide();
+        m_nextSnapshot = parentWidget()->grab();
+        show();
+        raise();
+    }
+
+    QPixmap m_snapshot;
+    QPixmap m_nextSnapshot;
+    Options m_options;
+    QVariantAnimation m_animation;
+};
 
 RootContainer::RootContainer(WidgetProvider* provider, SettingsManager* settings, QWidget* parent)
     : WidgetContainer{provider, settings, parent}
@@ -376,7 +549,40 @@ void EditableLayoutPrivate::changeEditingState(bool editing)
 
 void EditableLayoutPrivate::changeLayout(const FyLayout& layout)
 {
+    using namespace Settings::Gui::Internal;
+
     const QScopedValueRollback changingLayout{m_changingLayout, true};
+
+    const int duration = m_settings->fileValue(LayoutTransitionDuration, DefaultLayoutTransitionDuration).toInt();
+    const bool enabled = m_settings->fileValue(LayoutTransitionEnabled, DefaultLayoutTransitionEnabled).toBool();
+
+    QPixmap snapshot;
+    if(enabled && m_self->isVisible() && m_self->updatesEnabled() && !m_self->size().isEmpty()) {
+        snapshot = m_self->grab();
+    }
+
+    delete m_transitionOverlay;
+    if(!snapshot.isNull()) {
+        const LayoutTransitionOverlay::Options options{
+            .method = static_cast<LayoutTransitionType>(
+                m_settings->fileValue(LayoutTransitionMethod, static_cast<int>(DefaultLayoutTransitionMethod)).toInt()),
+            .slideDirection = static_cast<LayoutSlideDirection>(
+                m_settings
+                    ->fileValue(LayoutTransitionSlideDirection, static_cast<int>(DefaultLayoutTransitionSlideDirection))
+                    .toInt()),
+            .scaleDirection = static_cast<LayoutScaleDirection>(
+                m_settings
+                    ->fileValue(LayoutTransitionScaleDirection, static_cast<int>(DefaultLayoutTransitionScaleDirection))
+                    .toInt()),
+            .scaleAmount
+            = m_settings->fileValue(LayoutTransitionScaleAmount, DefaultLayoutTransitionScaleAmount).toInt(),
+        };
+        m_transitionOverlay = new LayoutTransitionOverlay(snapshot, duration, options, m_self);
+    }
+
+    auto* window{m_self->window()};
+    const bool updatesEnabled = window->updatesEnabled();
+    window->setUpdatesEnabled(false);
 
     if(m_toolbarManager) {
         m_toolbarManager->clear();
@@ -398,6 +604,13 @@ void EditableLayoutPrivate::changeLayout(const FyLayout& layout)
     }
 
     Q_EMIT m_self->layoutChanged();
+
+    window->setUpdatesEnabled(updatesEnabled);
+
+    if(m_transitionOverlay) {
+        m_transitionOverlay->raise();
+        m_transitionOverlay->startTransition();
+    }
 }
 
 void EditableLayoutPrivate::showOverlay(FyWidget* widget) const

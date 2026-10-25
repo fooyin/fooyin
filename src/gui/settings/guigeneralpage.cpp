@@ -72,6 +72,7 @@ private:
     void showQuickSetup();
     void importLayout();
     void exportLayout();
+    void updateTransitionOptions();
 
 #ifdef Q_OS_WIN
     void updateDarkModeState();
@@ -99,6 +100,15 @@ private:
 
     QCheckBox* m_showMenuBar;
     QCheckBox* m_menuBarMovable;
+    QGroupBox* m_layoutAnimation;
+    QSpinBox* m_layoutTransitionDuration;
+    QComboBox* m_layoutTransitionMethod;
+    QLabel* m_slideDirectionLabel;
+    QComboBox* m_slideDirection;
+    QLabel* m_scaleDirectionLabel;
+    QComboBox* m_scaleDirection;
+    QLabel* m_scaleAmountLabel;
+    QSpinBox* m_scaleAmount;
 
     QCheckBox* m_overrideMargin;
     QSpinBox* m_editableLayoutMargin;
@@ -134,6 +144,15 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_browseApplicationIcon{new QPushButton(tr("Browse…"), this)}
     , m_showMenuBar{new QCheckBox(tr("Show menu bar"), this)}
     , m_menuBarMovable{new QCheckBox(tr("Place menu bar in a toolbar"), this)}
+    , m_layoutAnimation{new QGroupBox(tr("Layout animation"), this)}
+    , m_layoutTransitionDuration{new QSpinBox(this)}
+    , m_layoutTransitionMethod{new QComboBox(this)}
+    , m_slideDirectionLabel{new QLabel(tr("Enter from") + u":"_s, this)}
+    , m_slideDirection{new QComboBox(this)}
+    , m_scaleDirectionLabel{new QLabel(tr("Scale direction") + u":"_s, this)}
+    , m_scaleDirection{new QComboBox(this)}
+    , m_scaleAmountLabel{new QLabel(tr("Scale amount") + u":"_s, this)}
+    , m_scaleAmount{new QSpinBox(this)}
     , m_overrideMargin{new QCheckBox(tr("Override root margin") + u":"_s, this)}
     , m_editableLayoutMargin{new QSpinBox(this)}
     , m_splitterHandles{new QCheckBox(tr("Show splitter handles"), this)}
@@ -187,23 +206,67 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 #ifdef Q_OS_WIN
     appearanceGroupLayout->addWidget(m_darkMode, row++, 0, 1, 2);
 #endif
+    appearanceGroupLayout->addWidget(m_showMenuBar, row++, 0, 1, 2);
+    appearanceGroupLayout->addWidget(m_menuBarMovable, row++, 0, 1, 2);
     appearanceGroupLayout->addWidget(iconThemeBox, row++, 0, 1, 2);
     appearanceGroupLayout->setColumnStretch(1, 1);
 
-    auto* layoutGroup       = new QGroupBox(tr("Layout"), this);
-    auto* layoutGroupLayout = new QGridLayout(layoutGroup);
+    m_layoutTransitionDuration->setRange(50, 3000);
+    m_layoutTransitionDuration->setSingleStep(50);
+    m_layoutTransitionDuration->setSuffix(u" ms"_s);
+
+    m_layoutTransitionMethod->addItem(tr("Crossfade"), static_cast<int>(LayoutTransitionType::CrossFade));
+    m_layoutTransitionMethod->addItem(tr("Fade through background"),
+                                      static_cast<int>(LayoutTransitionType::FadeThroughBackground));
+    m_layoutTransitionMethod->addItem(tr("Scale & fade"), static_cast<int>(LayoutTransitionType::ScaleAndFade));
+    m_layoutTransitionMethod->addItem(tr("Slide & fade"), static_cast<int>(LayoutTransitionType::SlideAndFade));
+
+    m_slideDirection->addItem(tr("Automatic"), static_cast<int>(LayoutSlideDirection::Automatic));
+    m_slideDirection->addItem(tr("Left"), static_cast<int>(LayoutSlideDirection::Left));
+    m_slideDirection->addItem(tr("Right"), static_cast<int>(LayoutSlideDirection::Right));
+    m_slideDirection->addItem(tr("Top"), static_cast<int>(LayoutSlideDirection::Top));
+    m_slideDirection->addItem(tr("Bottom"), static_cast<int>(LayoutSlideDirection::Bottom));
+    m_slideDirection->setToolTip(tr("Automatic follows the interface’s reading direction."));
+
+    m_scaleDirection->addItem(tr("Grow"), static_cast<int>(LayoutScaleDirection::Grow));
+    m_scaleDirection->addItem(tr("Shrink"), static_cast<int>(LayoutScaleDirection::Shrink));
+    m_scaleAmount->setRange(1, 100);
+    m_scaleAmount->setSuffix(u" %"_s);
+    m_scaleAmountLabel->setBuddy(m_scaleAmount);
+
+    m_layoutAnimation->setCheckable(true);
+    auto* animationLayout = new QGridLayout(m_layoutAnimation);
 
     row = 0;
-    layoutGroupLayout->addWidget(m_showMenuBar, row++, 0, 1, 3);
-    layoutGroupLayout->addWidget(m_menuBarMovable, row++, 0, 1, 3);
-    layoutGroupLayout->addWidget(m_splitterHandles, row++, 0, 1, 3);
-    layoutGroupLayout->addWidget(m_lockSplitters, row++, 0, 1, 3);
-    layoutGroupLayout->addWidget(m_lockedWidgetsResizeAdjacentOnly, row++, 0, 1, 3);
-    layoutGroupLayout->addWidget(m_overrideSplitterHandle, row, 0);
-    layoutGroupLayout->addWidget(m_splitterHandleGap, row++, 1);
-    layoutGroupLayout->addWidget(m_overrideMargin, row, 0);
-    layoutGroupLayout->addWidget(m_editableLayoutMargin, row++, 1);
-    layoutGroupLayout->setColumnStretch(2, 1);
+    animationLayout->addWidget(new QLabel(tr("Effect") + u":"_s, m_layoutAnimation), row, 0);
+    animationLayout->addWidget(m_layoutTransitionMethod, row++, 1);
+    animationLayout->addWidget(new QLabel(tr("Duration") + u":"_s, m_layoutAnimation), row, 0);
+    animationLayout->addWidget(m_layoutTransitionDuration, row++, 1);
+    animationLayout->addWidget(m_slideDirectionLabel, row, 0);
+    animationLayout->addWidget(m_slideDirection, row++, 1);
+    animationLayout->addWidget(m_scaleDirectionLabel, row, 0);
+    animationLayout->addWidget(m_scaleDirection, row++, 1);
+    animationLayout->addWidget(m_scaleAmountLabel, row, 0);
+    animationLayout->addWidget(m_scaleAmount, row++, 1);
+    animationLayout->setColumnStretch(2, 1);
+
+    QObject::connect(m_layoutTransitionMethod, &QComboBox::currentIndexChanged, this,
+                     &GuiGeneralPageWidget::updateTransitionOptions);
+    updateTransitionOptions();
+
+    auto* layoutGroup    = new QGroupBox(tr("Layout"), this);
+    auto* splitterLayout = new QGridLayout(layoutGroup);
+
+    row = 0;
+    splitterLayout->addWidget(m_splitterHandles, row++, 0, 1, 3);
+    splitterLayout->addWidget(m_lockSplitters, row++, 0, 1, 3);
+    splitterLayout->addWidget(m_lockedWidgetsResizeAdjacentOnly, row++, 0, 1, 3);
+    splitterLayout->addWidget(m_overrideSplitterHandle, row, 0);
+    splitterLayout->addWidget(m_splitterHandleGap, row++, 1);
+    splitterLayout->addWidget(m_overrideMargin, row, 0);
+    splitterLayout->addWidget(m_editableLayoutMargin, row++, 1);
+    splitterLayout->setRowStretch(row, 1);
+    splitterLayout->setColumnStretch(2, 1);
 
     m_editableLayoutMargin->setRange(0, 20);
     m_editableLayoutMargin->setSuffix(u" px"_s);
@@ -224,9 +287,11 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 
     row = 0;
     mainLayout->addWidget(setupBox, row++, 0, 1, 2);
-    mainLayout->addWidget(appearanceGroup, row++, 0, 1, 2);
-    mainLayout->addWidget(layoutGroup, row++, 0, 1, 2);
+    mainLayout->addWidget(appearanceGroup, row, 0);
+    mainLayout->addWidget(layoutGroup, row++, 1);
+    mainLayout->addWidget(m_layoutAnimation, row++, 0, 1, 2);
     mainLayout->addWidget(toolButtonGroup, row++, 0, 1, 2);
+    mainLayout->setColumnStretch(0, 1);
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
@@ -250,6 +315,9 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
             m_customApplicationIcon->setText(path);
         }
     });
+
+    QObject::connect(m_layoutTransitionMethod, &QComboBox::currentIndexChanged, this,
+                     &GuiGeneralPageWidget::updateTransitionOptions);
 
     QObject::connect(m_overrideSplitterHandle, &QCheckBox::toggled, m_splitterHandleGap, &QWidget::setEnabled);
 #ifdef Q_OS_WIN
@@ -298,6 +366,27 @@ void GuiGeneralPageWidget::load()
     m_showMenuBar->setChecked(m_settings->value<ShowMenuBar>());
     m_menuBarMovable->setChecked(m_settings->value<MenuBarMovable>());
 
+    m_layoutAnimation->setChecked(
+        m_settings->fileValue(LayoutTransitionEnabled, DefaultLayoutTransitionEnabled).toBool());
+    m_layoutTransitionDuration->setValue(
+        m_settings->fileValue(LayoutTransitionDuration, DefaultLayoutTransitionDuration).toInt());
+    const int defaultMethod    = static_cast<int>(DefaultLayoutTransitionMethod);
+    const int transitionMethod = m_settings->fileValue(LayoutTransitionMethod, defaultMethod).toInt();
+    const int methodIndex      = m_layoutTransitionMethod->findData(transitionMethod);
+    m_layoutTransitionMethod->setCurrentIndex(methodIndex >= 0 ? methodIndex
+                                                               : m_layoutTransitionMethod->findData(defaultMethod));
+    const int defaultSlide = static_cast<int>(DefaultLayoutTransitionSlideDirection);
+    const int slideIndex
+        = m_slideDirection->findData(m_settings->fileValue(LayoutTransitionSlideDirection, defaultSlide).toInt());
+    m_slideDirection->setCurrentIndex(slideIndex >= 0 ? slideIndex : m_slideDirection->findData(defaultSlide));
+    const int defaultScale = static_cast<int>(DefaultLayoutTransitionScaleDirection);
+    const int scaleIndex
+        = m_scaleDirection->findData(m_settings->fileValue(LayoutTransitionScaleDirection, defaultScale).toInt());
+    m_scaleDirection->setCurrentIndex(scaleIndex >= 0 ? scaleIndex : m_scaleDirection->findData(defaultScale));
+    m_scaleAmount->setValue(
+        m_settings->fileValue(LayoutTransitionScaleAmount, DefaultLayoutTransitionScaleAmount).toInt());
+    updateTransitionOptions();
+
     m_splitterHandles->setChecked(m_settings->value<ShowSplitterHandles>());
     m_lockSplitters->setChecked(m_settings->value<LockSplitterHandles>());
     m_lockedWidgetsResizeAdjacentOnly->setChecked(m_settings->value<ResizeLockedAdjacentOnly>());
@@ -342,6 +431,13 @@ void GuiGeneralPageWidget::apply()
     m_settings->set<ShowMenuBar>(m_showMenuBar->isChecked());
     m_settings->set<MenuBarMovable>(m_menuBarMovable->isChecked());
 
+    m_settings->fileSet(LayoutTransitionEnabled, m_layoutAnimation->isChecked());
+    m_settings->fileSet(LayoutTransitionDuration, m_layoutTransitionDuration->value());
+    m_settings->fileSet(LayoutTransitionMethod, m_layoutTransitionMethod->currentData().toInt());
+    m_settings->fileSet(LayoutTransitionSlideDirection, m_slideDirection->currentData().toInt());
+    m_settings->fileSet(LayoutTransitionScaleDirection, m_scaleDirection->currentData().toInt());
+    m_settings->fileSet(LayoutTransitionScaleAmount, m_scaleAmount->value());
+
     m_settings->set<ShowSplitterHandles>(m_splitterHandles->isChecked());
     m_settings->set<LockSplitterHandles>(m_lockSplitters->isChecked());
     m_settings->set<ResizeLockedAdjacentOnly>(m_lockedWidgetsResizeAdjacentOnly->isChecked());
@@ -378,6 +474,12 @@ void GuiGeneralPageWidget::reset()
     m_settings->reset<CustomApplicationIcon>();
     m_settings->reset<ShowMenuBar>();
     m_settings->reset<MenuBarMovable>();
+    m_settings->fileRemove(LayoutTransitionEnabled);
+    m_settings->fileRemove(LayoutTransitionDuration);
+    m_settings->fileRemove(LayoutTransitionMethod);
+    m_settings->fileRemove(LayoutTransitionSlideDirection);
+    m_settings->fileRemove(LayoutTransitionScaleDirection);
+    m_settings->fileRemove(LayoutTransitionScaleAmount);
     m_settings->reset<ShowSplitterHandles>();
     m_settings->reset<LockSplitterHandles>();
     m_settings->reset<ResizeLockedAdjacentOnly>();
@@ -413,6 +515,20 @@ void GuiGeneralPageWidget::importLayout()
 void GuiGeneralPageWidget::exportLayout()
 {
     m_editableLayout->exportLayout(this);
+}
+
+void GuiGeneralPageWidget::updateTransitionOptions()
+{
+    const auto method = static_cast<LayoutTransitionType>(m_layoutTransitionMethod->currentData().toInt());
+    const bool slide  = method == LayoutTransitionType::SlideAndFade;
+    const bool scale  = method == LayoutTransitionType::ScaleAndFade;
+
+    m_slideDirectionLabel->setVisible(slide);
+    m_slideDirection->setVisible(slide);
+    m_scaleDirectionLabel->setVisible(scale);
+    m_scaleDirection->setVisible(scale);
+    m_scaleAmountLabel->setVisible(scale);
+    m_scaleAmount->setVisible(scale);
 }
 
 GuiGeneralPage::GuiGeneralPage(LayoutProvider* layoutProvider, EditableLayout* editableLayout,

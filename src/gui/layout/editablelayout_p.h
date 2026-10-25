@@ -40,6 +40,7 @@ class EditableLayout;
 class FyLayout;
 class LayoutProvider;
 class LayoutDragController;
+class LayoutTransitionOverlay;
 class SettingsManager;
 class ToolbarManager;
 class WidgetContext;
@@ -162,6 +163,7 @@ public:
     QPointer<QMenu> m_editingMenu;
     QHBoxLayout* m_box;
     QPointer<OverlayWidget> m_overlay;
+    QPointer<LayoutTransitionOverlay> m_transitionOverlay;
     RootContainer* m_root;
     bool m_layoutEditing;
     bool m_changingLayout;

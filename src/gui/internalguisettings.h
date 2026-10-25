@@ -28,6 +28,29 @@
 namespace Fooyin {
 class SettingsManager;
 
+enum class LayoutTransitionType : uint8_t
+{
+    CrossFade = 0,
+    FadeThroughBackground,
+    ScaleAndFade,
+    SlideAndFade,
+};
+
+enum class LayoutSlideDirection : uint8_t
+{
+    Automatic = 0,
+    Left,
+    Right,
+    Top,
+    Bottom,
+};
+
+enum class LayoutScaleDirection : uint8_t
+{
+    Grow = 0,
+    Shrink,
+};
+
 enum class IconThemeOption : uint8_t
 {
     AutoDetect = 0,
@@ -150,6 +173,20 @@ constexpr auto LastFilePath          = "Interface/LastFilePath";
 constexpr auto LastPlaylistPath      = "Playlist/LastPlaylistPath";
 constexpr auto ConfirmMetadataWipe   = "MetadataLookup/ConfirmWipeWritableTags";
 constexpr auto ShowLayoutEditingHint = "Interface/ShowLayoutEditingHint";
+
+constexpr auto LayoutTransitionEnabled        = "Interface/LayoutTransitionEnabled";
+constexpr auto LayoutTransitionDuration       = "Interface/LayoutTransitionDuration";
+constexpr auto LayoutTransitionMethod         = "Interface/LayoutTransitionMethod";
+constexpr auto LayoutTransitionSlideDirection = "Interface/LayoutTransitionSlideDirection";
+constexpr auto LayoutTransitionScaleDirection = "Interface/LayoutTransitionScaleDirection";
+constexpr auto LayoutTransitionScaleAmount    = "Interface/LayoutTransitionScaleAmount";
+
+constexpr auto DefaultLayoutTransitionEnabled        = false;
+constexpr auto DefaultLayoutTransitionDuration       = 400;
+constexpr auto DefaultLayoutTransitionMethod         = LayoutTransitionType::CrossFade;
+constexpr auto DefaultLayoutTransitionSlideDirection = LayoutSlideDirection::Automatic;
+constexpr auto DefaultLayoutTransitionScaleDirection = LayoutScaleDirection::Grow;
+constexpr auto DefaultLayoutTransitionScaleAmount    = 2;
 
 enum GuiInternalSettings : uint32_t
 {
