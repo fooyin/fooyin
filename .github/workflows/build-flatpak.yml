@@ -67,7 +67,7 @@ jobs:
       - name: Remove older Flatpak caches
         if: github.event_name != 'pull_request'
         continue-on-error: true
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         env:
           FLATPAK_ARCH: ${{ matrix.arch }}
           FLATPAK_CACHE_KEY: ${{ steps.flatpak-cache.outputs.key }}-${{ matrix.arch }}
