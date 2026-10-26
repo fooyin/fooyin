@@ -393,15 +393,16 @@ void SpectrumView::tick()
 bool SpectrumView::renderLatestSpectrum()
 {
     VisualisationSession::SpectrumWindow spectrum;
-    const uint64_t endTimeMs = m_session->currentTimeMs();
+    const uint64_t currentTimeMs = m_session->currentTimeMs();
 
     bool gotSpectrum{false};
-    if(endTimeMs > 0) {
+    if(currentTimeMs > 0) {
         const auto windowFunction = toBackendWindowFunction(m_config.windowFunction);
+        // Centre the analysis on audible playback using audio already buffered for output
         gotSpectrum = m_config.fftSizingMode == FftSizingMode::Duration
-                        ? m_session->getSpectrumWindowEndingAtDuration(spectrum, endTimeMs, m_config.fftDurationMs,
-                                                                       windowFunction)
-                        : m_session->getSpectrumWindowEndingAt(spectrum, endTimeMs, m_config.fftSize, windowFunction);
+                        ? m_session->getSpectrumWindowForDuration(spectrum, currentTimeMs, m_config.fftDurationMs,
+                                                                  windowFunction)
+                        : m_session->getSpectrumWindow(spectrum, currentTimeMs, m_config.fftSize, windowFunction);
     }
 
     if(!gotSpectrum) {
