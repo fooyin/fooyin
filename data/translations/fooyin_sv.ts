@@ -2633,12 +2633,12 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="530"/>
         <source>Bitrate (kbps)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bittakt (kb/s)</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="532"/>
         <source>Sample rate (Hz)</source>
-        <translation type="unfinished"></translation>
+        <translation>Samplingsfrekvens (Hz)</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="533"/>
@@ -2648,17 +2648,17 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="535"/>
         <source>Number of channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Antal kanaler</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="536"/>
         <source>File created</source>
-        <translation type="unfinished"></translation>
+        <translation>Fil skapad</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="537"/>
         <source>Last modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Senast modifierad</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="538"/>
@@ -2673,7 +2673,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="540"/>
         <source>File path</source>
-        <translation type="unfinished"></translation>
+        <translation>Filsökväg</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="972"/>
@@ -2683,7 +2683,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="982"/>
         <source>The query contains an incomplete or invalid expression.</source>
-        <translation type="unfinished"></translation>
+        <translation>Frågan innehåller ett inkomplett eller ogiltigt uttryck.</translation>
     </message>
 </context>
 <context>
@@ -2701,7 +2701,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="49"/>
         <source>Match an odd number of rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Matcha ett udda antal regler</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="51"/>
@@ -2721,7 +2721,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="61"/>
         <source>Include all tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Inkludera alla spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="62"/>
@@ -2731,7 +2731,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="68"/>
         <source>Add rule</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till regel</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="70"/>
@@ -2757,13 +2757,13 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="179"/>
         <source>Add a rule or group, or choose ‘Include all tracks’.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till regel eller grupp, eller välj ”Inkludera alla spår”.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="182"/>
         <source>Add a rule or group to group %1.</source>
         <extracomment>%1 is a group number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till regel eller grupp till grupp %1.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="197"/>
@@ -17559,7 +17559,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="481"/>
         <source>Invalid plugin identifier ‘%1’.</source>
-        <translation>Ogiltig tillägsidentifierare ”%1”.</translation>
+        <translation>Ogiltig tilläggsidentifierare ”%1”.</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="487"/>
@@ -21155,7 +21155,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="136"/>
         <source>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin’s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to run arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Flatpak-sandlådan kan inte öppna applikationer direkt som är installerade på värden. För att låta fooyin öppna värdapplikationer, lägg till &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; till fooyins sessionsbuss ”talk”-behörighet i Flatseal, eller kör:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Prefixa sedan varje tjänstkommando med &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. Till exempel:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;Den här behörigheten låter fooyin köra arbiträra kommandon utanför sandlådan. Sätt endast på den om du litar på dina konfigurerade tjänster.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="152"/>
