@@ -21,6 +21,7 @@
 #include <core/library/libraryutils.h>
 #include <core/scripting/scriptparser.h>
 #include <gui/guiconstants.h>
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/internalguisettings.h>
 #include <gui/propertiesdialog.h>
@@ -37,7 +38,6 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QGridLayout>
-#include <QHBoxLayout>
 #include <QLabel>
 #include <QListWidget>
 #include <QMainWindow>
@@ -46,8 +46,10 @@
 #include <QPointer>
 #include <QPushButton>
 #include <QSignalBlocker>
+#include <QSplitter>
 #include <QTabWidget>
 #include <QTimer>
+#include <QVBoxLayout>
 
 #include <algorithm>
 #include <chrono>
@@ -60,6 +62,7 @@ using namespace std::chrono_literals;
 
 constexpr auto PropertiesDialogGroup   = "PropertiesDialog";
 constexpr auto SidebarVisibleKey       = "PropertiesDialog/SidebarVisible";
+constexpr auto SidebarWidthKey         = "PropertiesDialog/SidebarWidth";
 constexpr auto BaseWidthKey            = "PropertiesDialog/BaseWidth";
 constexpr auto PropertiesDialogContext = "Fooyin.Context.PropertiesDialog";
 
@@ -505,8 +508,9 @@ public:
     {
         FyStateSettings stateSettings;
         Utils::saveState(this, stateSettings, QLatin1String{PropertiesDialogGroup});
-        stateSettings.setValue(QLatin1String{SidebarVisibleKey}, m_scopePanelPreferredVisible);
-        stateSettings.setValue(QLatin1String{BaseWidthKey}, std::max(0, width() - m_scopePanelReservedWidth));
+        stateSettings.setValue(SidebarVisibleKey, m_scopePanelPreferredVisible);
+        stateSettings.setValue(SidebarWidthKey, sidebarPanelWidth());
+        stateSettings.setValue(BaseWidthKey, std::max(0, width() - scopeHostWidth()));
     }
 
     void restoreState()
@@ -514,15 +518,15 @@ public:
         const FyStateSettings stateSettings;
         Utils::restoreState(this, stateSettings, QLatin1String{PropertiesDialogGroup});
 
-        const bool scopePanelVisible          = stateSettings.value(QLatin1String{SidebarVisibleKey}, false).toBool();
+        m_scopePanelWidth = std::max(0, stateSettings.value(SidebarWidthKey, 0).toInt());
+
+        const bool scopePanelVisible          = stateSettings.value(SidebarVisibleKey, false).toBool();
         const bool effectiveScopePanelVisible = scopePanelVisible && canShowScopePanel();
-        const int reservedWidth               = scopeHostWidth(effectiveScopePanelVisible);
         const int fallbackBaseWidth           = std::max(0, width() - (scopePanelVisible ? sidebarPanelWidth() : 0));
-        const int baseWidth = stateSettings.value(QLatin1String{BaseWidthKey}, fallbackBaseWidth).toInt();
+        const int baseWidth                   = stateSettings.value(BaseWidthKey, fallbackBaseWidth).toInt();
 
         m_scopePanelPreferredVisible = scopePanelVisible;
-        applyScopePanelState(effectiveScopePanelVisible, reservedWidth);
-        resize(std::max(minimumWidth(), baseWidth + reservedWidth), height());
+        applyScopePanelState(effectiveScopePanelVisible, baseWidth);
 
         refreshScopeNavigation();
     }
@@ -546,7 +550,7 @@ private:
     void refreshScopeNavigation();
     void switchScope();
     void applyTrackScope(PropertiesTabWidget* widget) const;
-    void applyScopePanelState(bool visible, int reservedWidth);
+    void applyScopePanelState(bool visible, int baseWidth);
     void updateTabAvailability();
 
     [[nodiscard]] PropertiesTab* tabForIndex(int index);
@@ -558,7 +562,7 @@ private:
     [[nodiscard]] bool canShowScopePanel() const;
     [[nodiscard]] QString scopeLabel(int trackIndex) const;
     [[nodiscard]] int sidebarPanelWidth() const;
-    [[nodiscard]] int scopeHostWidth(bool scopePanelVisible) const;
+    [[nodiscard]] int scopeHostWidth() const;
 
     void currentTabChanged(int index);
 
@@ -577,7 +581,7 @@ private:
     ToolButton* m_scopeButton;
     ToolButton* m_previousTrackButton;
     ToolButton* m_nextTrackButton;
-    QHBoxLayout* m_contentLayout{nullptr};
+    QSplitter* m_splitter;
     QGridLayout* m_bottomLayout{nullptr};
     QWidget* m_scopeHost;
     QWidget* m_scopePanel;
@@ -588,7 +592,7 @@ private:
     int m_currentTabIndex{-1};
     bool m_scopePanelPreferredVisible{false};
     bool m_scopePanelVisible{false};
-    int m_scopePanelReservedWidth{0};
+    int m_scopePanelWidth{0};
     std::vector<int> m_itemRevisions;
     QPointer<PropertiesWriteProgress> m_writeProgress;
 };
@@ -607,7 +611,7 @@ PropertiesDialogWidget::PropertiesDialogWidget(ActionManager* actionManager, Set
     , m_scopeButton{new ToolButton(this)}
     , m_previousTrackButton{new ToolButton(this)}
     , m_nextTrackButton{new ToolButton(this)}
-    , m_contentLayout(new QHBoxLayout())
+    , m_splitter{new QSplitter(Qt::Horizontal, this)}
     , m_bottomLayout(new QGridLayout())
     , m_scopeHost{new QWidget(this)}
     , m_scopePanel{new QWidget(m_scopeHost)}
@@ -645,6 +649,7 @@ PropertiesDialogWidget::PropertiesDialogWidget(ActionManager* actionManager, Set
     m_scopeList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_scopeList->setTextElideMode(Qt::ElideRight);
     m_scopeList->setWordWrap(false);
+    m_scopeList->setMinimumWidth(m_scopeList->fontMetrics().averageCharWidth() * 16);
 
     m_toggleScopeAction->setCheckable(true);
     Gui::setThemeIcon(m_toggleScopeAction, Constants::Icons::SidebarRight);
@@ -675,7 +680,7 @@ PropertiesDialogWidget::PropertiesDialogWidget(ActionManager* actionManager, Set
 
     auto* scopeHostLayout = new QVBoxLayout(m_scopeHost);
     scopeHostLayout->addWidget(m_scopePanel);
-    m_scopeHost->setFixedWidth(0);
+    m_scopeHost->hide();
 
     QTimer::singleShot(0, this, [this]() {
         const QSize buttonSize = m_scopeButton->sizeHint();
@@ -701,10 +706,18 @@ PropertiesDialogWidget::PropertiesDialogWidget(ActionManager* actionManager, Set
     mainLayout->addWidget(m_tabWidget, 1);
     mainLayout->addLayout(m_bottomLayout);
 
-    m_contentLayout->setContentsMargins({});
-    m_contentLayout->addWidget(mainWidget, 1);
-    m_contentLayout->addWidget(m_scopeHost);
-    layout->addLayout(m_contentLayout, 1);
+    m_splitter->addWidget(mainWidget);
+    m_splitter->addWidget(m_scopeHost);
+    m_splitter->setChildrenCollapsible(false);
+    m_splitter->setStretchFactor(0, 1);
+    m_splitter->setStretchFactor(1, 0);
+    layout->addWidget(m_splitter, 1);
+
+    QObject::connect(m_splitter, &QSplitter::splitterMoved, this, [this]() {
+        if(m_scopePanelVisible) {
+            m_scopePanelWidth = m_scopeHost->width();
+        }
+    });
 
     for(const auto& tab : m_tabs) {
         if(auto* tabPage = tab.widget(m_session.workingTracks())) {
@@ -1004,18 +1017,12 @@ void PropertiesDialogWidget::setScopePanelVisible(bool visible, bool updatePrefe
         m_scopePanelPreferredVisible = visible;
     }
 
-    const bool canShow    = visible && canShowScopePanel();
-    const int targetWidth = scopeHostWidth(canShow);
-    const int widthDelta  = targetWidth - m_scopePanelReservedWidth;
-
-    if(widthDelta != 0) {
-        m_scopeHost->setFixedWidth(targetWidth);
-        m_scopeHost->updateGeometry();
-        layout()->activate();
-        resize(std::max(minimumWidth(), width() + widthDelta), height());
+    const bool canShow = visible && canShowScopePanel();
+    if(canShow == m_scopePanelVisible) {
+        return;
     }
 
-    applyScopePanelState(canShow, targetWidth);
+    applyScopePanelState(canShow, std::max(0, width() - scopeHostWidth()));
 }
 
 void PropertiesDialogWidget::refreshScopeNavigation()
@@ -1108,14 +1115,20 @@ void PropertiesDialogWidget::applyTrackScope(PropertiesTabWidget* widget) const
     }
 }
 
-void PropertiesDialogWidget::applyScopePanelState(bool visible, int reservedWidth)
+void PropertiesDialogWidget::applyScopePanelState(bool visible, int baseWidth)
 {
-    m_scopePanelVisible       = visible;
-    m_scopePanelReservedWidth = reservedWidth;
-
-    m_scopeHost->setFixedWidth(reservedWidth);
-    m_scopeHost->setVisible(reservedWidth > 0);
+    m_scopePanelVisible = visible;
+    m_scopeHost->setVisible(visible);
     m_scopePanel->setVisible(visible);
+
+    const int margin = visible ? m_scopeHost->layout()->contentsMargins().left() : 0;
+    Gui::setContentsMargins(m_splitter->widget(0)->layout(), Qt::RightEdge, margin);
+    layout()->activate();
+
+    const int sidebarWidth  = visible ? sidebarPanelWidth() : 0;
+    const int reservedWidth = visible ? sidebarWidth + m_splitter->handleWidth() : 0;
+    resize(std::max(minimumWidth(), baseWidth + reservedWidth), height());
+    m_splitter->setSizes({std::max(0, width() - reservedWidth), sidebarWidth});
 
     m_toggleScopeAction->setChecked(visible);
 }
@@ -1193,18 +1206,15 @@ QString PropertiesDialogWidget::scopeLabel(int trackIndex) const
     return trackScopeLabel;
 }
 
-int PropertiesDialogWidget::scopeHostWidth(bool scopePanelVisible) const
+int PropertiesDialogWidget::scopeHostWidth() const
 {
-    if(m_session.workingTracks().size() <= 1 || !scopePanelVisible) {
-        return 0;
-    }
-
-    return sidebarPanelWidth();
+    return m_scopePanelVisible ? m_scopeHost->width() + m_splitter->handleWidth() : 0;
 }
 
 int PropertiesDialogWidget::sidebarPanelWidth() const
 {
-    return std::max(m_scopePanel->sizeHint().width(), m_scopePanel->minimumWidth());
+    const int preferredWidth = m_scopePanelWidth > 0 ? m_scopePanelWidth : m_scopePanel->sizeHint().width();
+    return std::max(preferredWidth, m_scopeHost->minimumSizeHint().width());
 }
 
 class PropertiesDialogPrivate
