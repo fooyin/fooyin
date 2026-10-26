@@ -127,8 +127,10 @@ void WidgetPalette::refresh()
         item->setIcon(0, Gui::iconFromTheme(Constants::Icons::Add));
         item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsDragEnabled
                        | (widget.available ? Qt::ItemIsEnabled : Qt::NoItemFlags));
-        item->setToolTip(0, widget.available ? tr("Drag to add %1.\nHold Ctrl to replace a widget.").arg(widget.name)
-                                             : tr("Instance limit reached"));
+        item->setToolTip(
+            0, widget.available
+                   ? tr("Drag to add %1.\nHold Shift to split a widget, or Ctrl to replace it.").arg(widget.name)
+                   : tr("Instance limit reached"));
     }
 }
 

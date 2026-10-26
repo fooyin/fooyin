@@ -88,7 +88,7 @@ WidgetList LayoutUtils::layoutWidgets(WidgetContainer* root)
 }
 
 LayoutDropTarget LayoutUtils::resolveDropTarget(FyWidget* source, WidgetContainer* root, const QPoint& position,
-                                                bool replace)
+                                                Qt::KeyboardModifiers modifiers)
 {
     LayoutDropTarget target;
     target.description = tr("Drop beside a panel or on a tab bar");
@@ -131,7 +131,7 @@ LayoutDropTarget LayoutUtils::resolveDropTarget(FyWidget* source, WidgetContaine
         }
     }
 
-    if(replace) {
+    if(modifiers.testFlag(Qt::ControlModifier)) {
         target.description = tr("Choose a widget to replace");
         if(!hovered || qobject_cast<WidgetContainer*>(hovered)) {
             return target;
@@ -239,6 +239,11 @@ LayoutDropTarget LayoutUtils::resolveDropTarget(FyWidget* source, WidgetContaine
         }
 
         if(hovered == root || !SplitTransferWidgetCommand::canSplit(source, hovered)) {
+            return target;
+        }
+
+        if(!modifiers.testFlag(Qt::ShiftModifier)) {
+            target.description = tr("Shift to split • Ctrl to replace");
             return target;
         }
 

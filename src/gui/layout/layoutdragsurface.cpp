@@ -168,9 +168,8 @@ LayoutDropTarget LayoutDragSurface::dropTarget(const QPointF& position, Qt::Keyb
         return target;
     }
 
-    auto* root         = qobject_cast<WidgetContainer*>(m_controller->m_layout->root());
-    const bool replace = modifiers.testFlag(Qt::ControlModifier);
+    auto* root = qobject_cast<WidgetContainer*>(m_controller->m_layout->root());
     return LayoutUtils::resolveDropTarget(m_controller->m_drag->source, root,
-                                          root->mapFrom(m_controller->m_layout, position).toPoint(), replace);
+                                          root->mapFrom(m_controller->m_layout, position).toPoint(), modifiers);
 }
 } // namespace Fooyin

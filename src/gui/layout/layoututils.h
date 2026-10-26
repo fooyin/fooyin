@@ -61,6 +61,6 @@ public:
     static QRect relativeGeometry(const QWidget* widget, const QWidget* root);
     static WidgetList layoutWidgets(WidgetContainer* root);
     static LayoutDropTarget resolveDropTarget(FyWidget* source, WidgetContainer* root, const QPoint& position,
-                                              bool replace = false);
+                                              Qt::KeyboardModifiers modifiers = Qt::NoModifier);
 };
 } // namespace Fooyin

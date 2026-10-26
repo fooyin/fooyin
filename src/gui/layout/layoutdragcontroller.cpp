@@ -397,7 +397,8 @@ void LayoutDragController::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == m_palettePollTimer.timerId()) {
         if(hasActiveDrag()) {
-            const auto modifiers = QGuiApplication::queryKeyboardModifiers() & Qt::ControlModifier;
+            const auto modifiers
+                = QGuiApplication::queryKeyboardModifiers() & (Qt::ControlModifier | Qt::ShiftModifier);
             if(std::exchange(m_drag->polledModifiers, modifiers) != modifiers) {
                 m_surface->updateTarget(m_drag->position, modifiers);
             }
@@ -668,7 +669,7 @@ void LayoutDragController::startDrag(FyWidget* widget, const QString& creationKe
     updatePanels();
 
     if(hasActiveDrag()) {
-        m_drag->polledModifiers = QGuiApplication::queryKeyboardModifiers() & Qt::ControlModifier;
+        m_drag->polledModifiers = QGuiApplication::queryKeyboardModifiers() & (Qt::ControlModifier | Qt::ShiftModifier);
         m_surface->updateTarget(m_layout->mapFromGlobal(QCursor::pos()), QGuiApplication::keyboardModifiers());
 
         auto* drag = new QDrag(m_layout);

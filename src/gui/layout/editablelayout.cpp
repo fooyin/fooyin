@@ -517,7 +517,7 @@ void EditableLayoutPrivate::changeEditingState(bool editing)
                     hint.setInformativeText(EditableLayout::tr(
                         "• Find widgets in the palette on the right (hover near the right edge if it's hidden).\n\n"
                         "• Drag widgets from the palette to add them, or drag existing ones to move them. "
-                        "Hold Ctrl to replace the target widget.\n\n"
+                        "Hold Shift to split the target widget, or Ctrl to replace it.\n\n"
                         "• Select a widget to see its parent containers in the breadcrumb bar. "
                         "Select a parent to move an entire section.\n\n"
                         "• Right-click any widget to split, replace, or remove it using the context menu."));
