@@ -44,9 +44,9 @@
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="404"/>
         <source>%Ln matching track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln matching track</numerusform>
+            <numerusform>%Ln matching tracks</numerusform>
         </translation>
     </message>
 </context>
@@ -173,7 +173,7 @@
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="589"/>
         <source>years</source>
         <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
-        <translation type="unfinished">
+        <translation>
             <numerusform>year</numerusform>
             <numerusform>years</numerusform>
         </translation>
@@ -343,9 +343,9 @@
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="622"/>
         <source>Stopped: %Ln operation(s) not run</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Stopped: %Ln operation not run</numerusform>
+            <numerusform>Stopped: %Ln operations not run</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -610,7 +610,7 @@
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="604"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln track</numerusform>
             <numerusform>%Ln tracks</numerusform>
         </translation>
