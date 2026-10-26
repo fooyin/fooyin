@@ -282,7 +282,7 @@ bool LibraryTreeGroupModel::setData(const QModelIndex& index, const QVariant& va
         switch(index.column()) {
             case 2: {
                 if(value.toString() == u"<enter name here>"_s || group.name == value.toString()) {
-                    if(item->status() == LibraryTreeGroupItem::Added) {
+                    if(item->status() == LibraryTreeGroupItem::Added && group.name.isEmpty()) {
                         Q_EMIT pendingRowCancelled();
                     }
                     return false;
@@ -382,10 +382,11 @@ bool LibraryTreeGroupModel::removeRows(int row, int count, const QModelIndex& /*
 
 void LibraryTreeGroupModel::addPendingRow()
 {
-    const int index = static_cast<int>(m_nodes.size());
+    const int index = m_nodes.empty() ? 0 : m_nodes.rbegin()->first + 1;
 
     LibraryTreeGrouping group;
     group.index = index;
+    group.name  = tr("New grouping");
 
     LibraryTreeGroupItem* item = &m_nodes.emplace(index, LibraryTreeGroupItem{group, &m_root}).first->second;
 
@@ -400,8 +401,8 @@ void LibraryTreeGroupModel::addPendingRow()
 void LibraryTreeGroupModel::removePendingRow()
 {
     const int row = rowCount({}) - 1;
-    beginRemoveRows({}, row, row);
-    m_root.removeChild(row);
-    endRemoveRows();
+    if(row >= 0) {
+        removeRow(row);
+    }
 }
 } // namespace Fooyin

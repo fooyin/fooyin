@@ -27,7 +27,6 @@
 #include <utils/utils.h>
 
 #include <QHBoxLayout>
-#include <QHeaderView>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
@@ -67,12 +66,12 @@ public:
 
     [[nodiscard]] QSize minimumSizeHint() const override
     {
-        return {0, ButtonAreaHeight};
+        return {0, std::max(ButtonAreaHeight, QWidget::sizeHint().height())};
     }
 
     [[nodiscard]] QSize sizeHint() const override
     {
-        return {0, ButtonAreaHeight};
+        return {0, std::max(ButtonAreaHeight, QWidget::sizeHint().height())};
     }
 
 protected:
@@ -114,6 +113,7 @@ public:
 
     ExtendableTableModel* m_model{nullptr};
     int m_column{0};
+    bool m_editOnAdd{true};
     ExtendableTableView::Tools m_tools;
     Context m_context;
     ExtendableToolArea* m_toolArea;
@@ -164,15 +164,16 @@ ExtendableTableViewPrivate::ExtendableTableViewPrivate(ExtendableTableView* self
 
 void ExtendableTableViewPrivate::updateToolArea() const
 {
-    const QRect rect        = m_self->contentsRect();
-    const int vHeaderWidth  = m_self->verticalHeader()->isVisible() ? m_self->verticalHeader()->width() : 0;
-    const int hHeaderHeight = m_self->horizontalHeader()->isVisible() ? m_self->horizontalHeader()->height() : 0;
-    const int hScrollbarHeight
+    const QRect rect         = m_self->contentsRect();
+    const int toolAreaHeight = m_toolArea->sizeHint().height();
+    const int scrollbarHeight
         = m_self->horizontalScrollBar()->isVisible() ? m_self->horizontalScrollBar()->height() : 0;
+    m_toolArea->setGeometry(rect.x(), rect.bottom() + 1 - toolAreaHeight - scrollbarHeight, rect.width(),
+                            toolAreaHeight);
 
-    m_toolArea->setGeometry(rect.x(), rect.bottom() - ButtonAreaHeight - hScrollbarHeight, rect.width(),
-                            ButtonAreaHeight);
-    m_self->setViewportMargins(vHeaderWidth, hHeaderHeight, 0, ButtonAreaHeight);
+    auto margins = m_self->viewportMargins();
+    margins.setBottom(toolAreaHeight);
+    m_self->setViewportMargins(margins);
 }
 
 void ExtendableTableViewPrivate::updateTools()
@@ -226,7 +227,9 @@ void ExtendableTableViewPrivate::handleNewRow()
             if(index.isValid()) {
                 m_self->scrollTo(index, QAbstractItemView::EnsureVisible);
                 m_self->setCurrentIndex(index);
-                m_self->edit(index);
+                if(m_editOnAdd) {
+                    m_self->edit(index);
+                }
             }
         },
         Qt::SingleShotConnection);
@@ -357,6 +360,11 @@ void ExtendableTableView::setExtendableColumn(int column)
     p->m_column = column;
 }
 
+void ExtendableTableView::setEditOnAdd(bool enabled)
+{
+    p->m_editOnAdd = enabled;
+}
+
 QAction* ExtendableTableView::addRowAction() const
 {
     return p->m_add;
@@ -385,14 +393,14 @@ Context ExtendableTableView::context() const
 QSize ExtendableTableView::sizeHint() const
 {
     QSize hint = QTableView::sizeHint();
-    hint.rheight() += ButtonAreaHeight;
+    hint.rheight() += p->m_toolArea->sizeHint().height();
     return hint;
 }
 
 QSize ExtendableTableView::minimumSizeHint() const
 {
     QSize hint = QTableView::minimumSizeHint();
-    hint.rheight() += ButtonAreaHeight;
+    hint.rheight() += p->m_toolArea->sizeHint().height();
     return hint;
 }
 

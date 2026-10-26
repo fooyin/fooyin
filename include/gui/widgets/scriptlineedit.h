@@ -58,6 +58,7 @@ public:
     void setText(const QString& text);
 
     void addToolAction(QAction* action);
+    void addHint(const QString& hint);
 
     [[nodiscard]] QSize sizeHint() const override;
     [[nodiscard]] QSize minimumSizeHint() const override;

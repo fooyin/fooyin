@@ -22,21 +22,20 @@
 #include "librarytree/librarytreegroupregistry.h"
 #include "settings/librarytree/librarytreegroupmodel.h"
 
-#include <gui/scripting/scripteditor.h>
 #include <gui/widgets/checkboxdelegate.h>
 #include <gui/widgets/extendabletableview.h>
-#include <gui/widgets/hintlabel.h>
-#include <gui/widgets/multilinedelegate.h>
+#include <gui/widgets/scriptlineedit.h>
 
+#include <QAction>
 #include <QDialogButtonBox>
-#include <QFrame>
+#include <QFormLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPushButton>
-#include <QToolButton>
+#include <QSignalBlocker>
 #include <QVBoxLayout>
-#include <algorithm>
 
 using namespace Qt::StringLiterals;
 
@@ -52,13 +51,19 @@ public:
     void reset();
 
 private:
+    void populate(const LibraryTreeGrouping& selected = {}, int row = 0);
+    void loadCurrentGroup();
+    void setField(int column, const QString& text);
     void updateButtonState();
 
     LibraryTreeGroupRegistry* m_groupsRegistry;
     ExtendableTableView* m_groupList;
     LibraryTreeGroupModel* m_model;
-    QToolButton* m_openEditor;
-    QFrame* m_hintFrame;
+    QWidget* m_details;
+    QLineEdit* m_name;
+    ScriptTextEdit* m_grouping;
+    ScriptTextEdit* m_display;
+    ScriptTextEdit* m_sort;
 };
 
 LibraryTreeGroupEditorWidget::LibraryTreeGroupEditorWidget(LibraryTreeGroupRegistry* groupsRegistry, QWidget* parent)
@@ -66,107 +71,180 @@ LibraryTreeGroupEditorWidget::LibraryTreeGroupEditorWidget(LibraryTreeGroupRegis
     , m_groupsRegistry{groupsRegistry}
     , m_groupList{new ExtendableTableView(this)}
     , m_model{new LibraryTreeGroupModel(m_groupsRegistry, this)}
-    , m_openEditor{new QToolButton(this)}
-    , m_hintFrame{new QFrame(this)}
+    , m_details{new QWidget(this)}
+    , m_name{new QLineEdit(m_details)}
+    , m_grouping{new ScriptTextEdit(m_details)}
+    , m_display{new ScriptTextEdit(m_details)}
+    , m_sort{new ScriptTextEdit(m_details)}
 {
     m_groupList->setExtendableModel(m_model);
-    m_groupList->setItemDelegateForColumn(0, new CheckBoxDelegate(this));
-    m_groupList->setItemDelegateForColumn(3, new MultiLineEditDelegate(this));
-    m_groupList->setItemDelegateForColumn(4, new MultiLineEditDelegate(this));
-    m_groupList->setItemDelegateForColumn(5, new MultiLineEditDelegate(this));
-    m_groupList->hideColumn(1);
     m_groupList->setExtendableColumn(2);
+    m_groupList->setEditOnAdd(false);
+    m_groupList->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_groupList->setItemDelegateForColumn(0, new CheckBoxDelegate(this));
+
+    for(const int column : {1, 3, 4, 5}) {
+        m_groupList->hideColumn(column);
+    }
+
+    m_groupList->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_groupList->setSelectionMode(QAbstractItemView::SingleSelection);
     m_groupList->verticalHeader()->hide();
-    m_groupList->horizontalHeader()->setStretchLastSection(true);
-    m_groupList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    m_groupList->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
-    m_groupList->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
-    m_groupList->horizontalHeader()->setSectionResizeMode(5, QHeaderView::Stretch);
+    m_groupList->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    m_groupList->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
 
-    m_openEditor->setText(tr("Script Editor"));
-    m_groupList->addCustomTool(m_openEditor);
+    m_grouping->setPlaceholderText(tr("Use the display script"));
+    m_display->setPlaceholderText(tr("Enter a display script"));
+    m_sort->setPlaceholderText(tr("Use the grouping script"));
 
-    auto* hint = new HintLabel(
-        tr("Use <code>||</code> to split tree levels. <b>Grouping</b> defines which tracks share a node; "
-           "leave it empty to use <b>Display</b>. "
-           "Display and sort scripts must use the same levels and "
-           "matching multi-value expansions as the grouping script. A sort level may be empty "
-           "(for example <code>||%year%||</code>)."),
-        this);
-    hint->setWordWrap(true);
-    hint->setTextFormat(Qt::RichText);
+    auto* nameLayout = new QFormLayout();
+    nameLayout->addRow(tr("Name") + u":"_s, m_name);
 
-    auto* artworkHint = new HintLabel(
-        tr("Add artwork to the tree by placing a cover variable such as <code>%frontcover%</code> at the "
-           "start or end of a level."),
-        this);
-    artworkHint->setWordWrap(true);
-    artworkHint->setTextFormat(Qt::RichText);
+    auto* detailsLayout = new QVBoxLayout(m_details);
+    detailsLayout->setContentsMargins({});
+    detailsLayout->addLayout(nameLayout);
 
-    auto* rightTextHint
-        = new HintLabel(tr("Use <code>&lt;right&gt;</code> in a display level to show text right-aligned. "
-                           "Use <code>%trackcount%</code> for tracks and <code>%childcount%</code> for child nodes."),
-                        this);
-    rightTextHint->setWordWrap(true);
-    rightTextHint->setTextFormat(Qt::RichText);
+    const auto levelsHelp = tr("Use <code>||</code> between tree levels. All scripts must produce matching levels and "
+                               "multi-value expansions.");
 
-    m_hintFrame->setFrameShape(QFrame::StyledPanel);
-    m_hintFrame->setFrameShadow(QFrame::Plain);
+    const auto addScript = [&](const QString& title, const QString& help, ScriptTextEdit* editor) {
+        auto* section = new QWidget(m_details);
+        auto* label   = new QLabel(title, section);
+        editor->addHint(u"<p>%1</p><p>%2</p>"_s.arg(help, levelsHelp));
 
-    auto* hintLayout = new QVBoxLayout(m_hintFrame);
-    hintLayout->setContentsMargins(10, 8, 10, 8);
-    hintLayout->addWidget(hint);
-    hintLayout->addWidget(artworkHint);
-    hintLayout->addWidget(rightTextHint);
+        auto* layout = new QVBoxLayout(section);
+        layout->setContentsMargins({});
+        layout->addWidget(label);
+        layout->addWidget(editor, 1);
+        detailsLayout->addWidget(section, 1);
+    };
 
-    auto* mainLayout = new QVBoxLayout(this);
+    addScript(tr("Grouping script"),
+              tr("Tracks with matching results share tree nodes. Leave empty to use the display script."), m_grouping);
+    addScript(tr("Display script"),
+              tr("Use <code>%trackcount%</code> and <code>%childcount%</code> for counts, "
+                 "<code>&lt;right&gt;</code> for right-aligned text, or <code>%frontcover%</code> "
+                 "at the start or end of a level for artwork."),
+              m_display);
+    addScript(tr("Sort script"),
+              tr("Sets the order within each level. Leave a level empty to use its grouping script."), m_sort);
+
+    auto* mainLayout = new QHBoxLayout(this);
+    mainLayout->setContentsMargins({});
     mainLayout->addWidget(m_groupList);
-    mainLayout->addWidget(m_hintFrame);
+    mainLayout->addWidget(m_details, 1);
 
+    QWidget::setTabOrder(m_groupList, m_name);
+    QWidget::setTabOrder(m_name, m_grouping);
+    QWidget::setTabOrder(m_grouping, m_display);
+    QWidget::setTabOrder(m_display, m_sort);
+
+    QObject::connect(m_groupList->selectionModel(), &QItemSelectionModel::currentRowChanged, this,
+                     &LibraryTreeGroupEditorWidget::loadCurrentGroup);
     QObject::connect(m_groupList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &LibraryTreeGroupEditorWidget::updateButtonState);
+    QObject::connect(m_model, &QAbstractItemModel::dataChanged, this, &LibraryTreeGroupEditorWidget::updateButtonState);
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() {
+        if(m_model->rowCount({}) > 0) {
+            m_groupList->setCurrentIndex(m_model->index(0, 2, {}));
+        }
+        loadCurrentGroup();
+    });
+    QObject::connect(m_name, &QLineEdit::textEdited, this, [this](const QString& text) { setField(2, text); });
+    QObject::connect(m_grouping, &QPlainTextEdit::textChanged, this, [this]() { setField(3, m_grouping->text()); });
+    QObject::connect(m_display, &QPlainTextEdit::textChanged, this, [this]() { setField(4, m_display->text()); });
+    QObject::connect(m_sort, &QPlainTextEdit::textChanged, this, [this]() { setField(5, m_sort->text()); });
 
-    QObject::connect(m_openEditor, &QToolButton::clicked, this, [this]() {
-        const auto selection    = m_groupList->selectionModel()->selectedIndexes();
-        const QModelIndex index = selection.front();
-        ScriptEditor::openEditor(
-            index.data(Qt::EditRole).toString(),
-            [this, index](const QString& script) { m_model->setData(index, script, Qt::EditRole); }, {}, this);
+    QObject::connect(m_groupList->addRowAction(), &QAction::triggered, this, [this]() {
+        m_name->setFocus();
+        m_name->selectAll();
     });
 
-    m_model->populate();
-    updateButtonState();
+    populate();
 }
 
 void LibraryTreeGroupEditorWidget::apply()
 {
+    const auto index   = m_groupList->currentIndex();
+    auto selected      = index.data(Qt::UserRole).value<LibraryTreeGrouping>();
+    auto* item         = index.isValid() ? static_cast<LibraryTreeGroupItem*>(index.internalPointer()) : nullptr;
+    const bool removed = item && item->status() == LibraryTreeGroupItem::Removed;
+    const int row      = index.row();
+
     m_model->processQueue();
-    m_model->populate();
-    updateButtonState();
+
+    if(item && !removed) {
+        selected = item->group();
+    }
+    populate(selected, row);
 }
 
 void LibraryTreeGroupEditorWidget::reset()
 {
     m_groupsRegistry->reset();
+    populate();
+}
+
+void LibraryTreeGroupEditorWidget::populate(const LibraryTreeGrouping& selected, int row)
+{
     m_model->populate();
+
+    const int count = m_model->rowCount({});
+    if(count == 0) {
+        return;
+    }
+
+    row = std::clamp(row, 0, count - 1);
+    for(int i{0}; i < count; ++i) {
+        const auto group = m_model->index(i, 2, {}).data(Qt::UserRole).value<LibraryTreeGrouping>();
+        if((selected.id >= 0 && group.id == selected.id)
+           || (selected.id < 0 && !selected.name.isEmpty() && group.name == selected.name)) {
+            row = i;
+            break;
+        }
+    }
+
+    m_groupList->setCurrentIndex(m_model->index(row, 2, {}));
+}
+
+void LibraryTreeGroupEditorWidget::loadCurrentGroup()
+{
+    const QSignalBlocker nameBlocker{m_name};
+    const QSignalBlocker groupingBlocker{m_grouping};
+    const QSignalBlocker displayBlocker{m_display};
+    const QSignalBlocker sortBlocker{m_sort};
+
+    const auto index = m_groupList->currentIndex();
+    const auto group = index.data(Qt::UserRole).value<LibraryTreeGrouping>();
+
+    m_name->setText(group.name);
+    m_grouping->setText(group.groupingScript);
+    m_display->setText(group.script);
+    m_sort->setText(group.sortScript);
+
     updateButtonState();
+}
+
+void LibraryTreeGroupEditorWidget::setField(int column, const QString& text)
+{
+    const auto index = m_groupList->currentIndex();
+    if(index.isValid()) {
+        m_model->setData(index.siblingAtColumn(column), text, Qt::EditRole);
+    }
 }
 
 void LibraryTreeGroupEditorWidget::updateButtonState()
 {
-    const auto selection = m_groupList->selectionModel()->selectedIndexes();
-    if(selection.empty()) {
-        m_openEditor->setDisabled(true);
-        m_groupList->removeRowAction()->setDisabled(true);
-        return;
+    const auto index   = m_groupList->currentIndex();
+    const auto group   = index.data(Qt::UserRole).value<LibraryTreeGrouping>();
+    const bool removed = index.data(Qt::FontRole).value<QFont>().strikeOut();
+    m_details->setEnabled(index.isValid() && !removed);
+    m_groupList->removeRowAction()->setEnabled(index.isValid() && m_groupList->selectionModel()->hasSelection()
+                                               && !group.isDefault && !removed);
+    if(m_name->text() != group.name) {
+        const QSignalBlocker blocker{m_name};
+        m_name->setText(group.name);
     }
-
-    const bool hasCustom = std::ranges::any_of(selection, [](const QModelIndex& index) {
-        return !index.data(Qt::UserRole).value<LibraryTreeGrouping>().isDefault;
-    });
-
-    m_groupList->removeRowAction()->setEnabled(hasCustom);
-    m_openEditor->setEnabled(selection.size() == 1 && selection.front().column() >= 3);
 }
 
 LibraryTreeGroupEditorDialog::LibraryTreeGroupEditorDialog(LibraryTreeGroupRegistry* groupsRegistry, QWidget* parent)
@@ -174,11 +252,9 @@ LibraryTreeGroupEditorDialog::LibraryTreeGroupEditorDialog(LibraryTreeGroupRegis
 {
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle(tr("Manage Library Tree Groupings"));
-    resize(950, 500);
+    resize(1000, 760);
 
     auto* editor = new LibraryTreeGroupEditorWidget(groupsRegistry, this);
-    auto* info   = new QLabel(tr("Grouping presets are shared across all widgets."), this);
-    info->setWordWrap(true);
 
     auto* buttons
         = new QDialogButtonBox(QDialogButtonBox::StandardButton::Ok | QDialogButtonBox::StandardButton::Apply
@@ -189,8 +265,7 @@ LibraryTreeGroupEditorDialog::LibraryTreeGroupEditorDialog(LibraryTreeGroupRegis
     }
 
     auto* layout = new QVBoxLayout(this);
-    layout->addWidget(info);
-    layout->addWidget(editor);
+    layout->addWidget(editor, 1);
     layout->addWidget(buttons);
 
     QObject::connect(buttons->button(QDialogButtonBox::StandardButton::Apply), &QPushButton::clicked, editor,

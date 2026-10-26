@@ -33,6 +33,7 @@
 #include <QResizeEvent>
 #include <QScrollBar>
 #include <QToolButton>
+#include <QToolTip>
 
 namespace Fooyin {
 ScriptLineEdit::ScriptLineEdit(QWidget* parent)
@@ -123,7 +124,28 @@ void ScriptTextEdit::addToolAction(QAction* action)
     button->setDefaultAction(action);
     button->setAutoRaise(true);
 
-    m_toolAreaLayout->insertWidget(m_toolAreaLayout->count() - 1, button);
+    int index{0};
+    while(index < m_toolAreaLayout->count() && !m_toolAreaLayout->itemAt(index)->spacerItem()) {
+        ++index;
+    }
+    m_toolAreaLayout->insertWidget(index, button);
+    m_toolArea->setFixedHeight(m_toolArea->sizeHint().height());
+    setViewportMargins(0, 0, 0, m_toolArea->height());
+}
+
+void ScriptTextEdit::addHint(const QString& hint)
+{
+    auto* button = new QToolButton(m_toolArea);
+    button->setText(tr("Script help"));
+    button->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    button->setAutoRaise(true);
+    button->setToolTip(hint);
+    Gui::setThemeIcon(button, Constants::Icons::Information);
+    QObject::connect(button, &QToolButton::clicked, button, [button]() {
+        QToolTip::showText(button->mapToGlobal(QPoint{0, button->height()}), button->toolTip(), button);
+    });
+
+    m_toolAreaLayout->addWidget(button);
     m_toolArea->setFixedHeight(m_toolArea->sizeHint().height());
     setViewportMargins(0, 0, 0, m_toolArea->height());
 }
@@ -172,7 +194,7 @@ void ScriptTextEdit::resizeEvent(QResizeEvent* event)
 
     const QRect rect          = contentsRect();
     const int scrollbarHeight = horizontalScrollBar()->isVisible() ? horizontalScrollBar()->height() : 0;
-    m_toolArea->setGeometry(rect.x(), rect.bottom() - m_toolArea->height() - scrollbarHeight, rect.width(),
+    m_toolArea->setGeometry(rect.x(), rect.bottom() + 1 - m_toolArea->height() - scrollbarHeight, rect.width(),
                             m_toolArea->height());
 }
 
