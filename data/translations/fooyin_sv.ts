@@ -9917,7 +9917,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="147"/>
         <source>Layout animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Layoutanimering</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="150"/>
@@ -17671,17 +17671,17 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="66"/>
         <source>No recognised fooyin plugin was found in the installation files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inget känt fooyin-tillägg hittades i installationsfilerna.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="69"/>
         <source>This plugin uses an incompatible version of the fooyin plugin API.</source>
-        <translation type="unfinished"></translation>
+        <translation>Det här tillägget använder en inkompatibel version av fooyin-tilläggs-API:n.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="72"/>
         <source>The plugin has an invalid identifier or is missing its version.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tillägget har en ogiltig identifierare eller saknar sin version.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="75"/>
@@ -17691,7 +17691,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="78"/>
         <source>The plugin files could not be written to the installation directory. Check that it is writable and that there is enough free disk space.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tilläggsfilerna kunde inte skrivas till installationsmappen. Kontrollera att den är skrivbar och att det finns tillräckligt diskutrymme.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="136"/>
@@ -17701,17 +17701,17 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="137"/>
         <source>This version of the plugin is already installed. Reinstall it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Den här versionen av tillägget är redan installerad. Ominstallera den?</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="139"/>
         <source>This plugin is already installed. Update it?</source>
-        <translation>Detta tillägg är redan installerat. Uppdatera den?</translation>
+        <translation>Det här tillägget är redan installerat. Uppdatera den?</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="143"/>
         <source>Reinstall</source>
-        <translation type="unfinished"></translation>
+        <translation>Ominstallera</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="144"/>
@@ -17721,7 +17721,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="162"/>
         <source>Plugin Reinstalled</source>
-        <translation type="unfinished"></translation>
+        <translation>Tillägg ominstallerat</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="165"/>
