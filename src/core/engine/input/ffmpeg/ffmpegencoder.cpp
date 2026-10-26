@@ -283,6 +283,44 @@ SelectedSampleFormat selectSampleFormat(const AVCodec* codec, SampleFormat reque
     return {.format = formats.front(), .sampleFormat = Utils::sampleFormat(formats.front(), 0)};
 }
 
+std::vector<SampleFormat> outputSampleFormats(const EncoderProfile& profile)
+{
+    static constexpr std::array Formats{SampleFormat::U8, SampleFormat::S16, SampleFormat::S24In32, SampleFormat::S32,
+                                        SampleFormat::F32};
+    std::vector<SampleFormat> formats;
+
+    if(profile.id == u"ffmpeg-wav"_s) {
+        AudioEncoderSettings settings;
+        settings.profile = profile;
+        for(const SampleFormat format : Formats) {
+            settings.outputSampleFormat = format;
+            if(findEncoder(codecNamesForSettings(settings, {}))) {
+                formats.push_back(format);
+            }
+        }
+        return formats;
+    }
+
+    const AVCodec* codec                = findEncoder({profile.codecName});
+    const AVCodecDescriptor* descriptor = codec ? avcodec_descriptor_get(codec->id) : nullptr;
+    if(!descriptor || !(descriptor->props & AV_CODEC_PROP_LOSSLESS)) {
+        return {};
+    }
+
+    const auto supported = supportedSampleFormats(codec);
+    for(const SampleFormat format : Formats) {
+        // FFmpeg's ALAC encoder only produces 16 or 24-bit output
+        // S24In32 exposes its 24-bit mode using AV_SAMPLE_FMT_S32P
+        if(codec->id == AV_CODEC_ID_ALAC && format == SampleFormat::S32) {
+            continue;
+        }
+        if(supportedSampleFormat(supported, format).format != AV_SAMPLE_FMT_NONE) {
+            formats.push_back(format);
+        }
+    }
+    return formats;
+}
+
 int selectSampleRate(const AVCodec* codec, int requestedRate)
 {
     const int safeRate = std::max(1, requestedRate);
@@ -361,6 +399,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
                     .bitrateKbps      = {},
                     .quality          = {},
                     .compressionLevel = {},
+                    .sampleFormats    = {},
             },
             .settingsSummary  = u"PCM 16-bit"_s,
             .estimateBitrateKbps = {},
@@ -380,6 +419,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
                     .bitrateKbps      = {},
                     .quality          = {},
                     .compressionLevel = {.minimum = 0, .maximum = 12, .step = 1},
+                    .sampleFormats    = {},
             },
             .settingsSummary  = u"level 5"_s,
             .estimateBitrateKbps = {},
@@ -398,6 +438,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
                     .bitrateKbps      = {},
                     .quality          = {},
                     .compressionLevel = {},
+                    .sampleFormats    = {},
             },
             .settingsSummary  = u"Lossless"_s,
             .estimateBitrateKbps = {},
@@ -417,6 +458,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
                     .bitrateKbps      = {},
                     .quality          = {},
                     .compressionLevel = {.minimum = 0, .maximum = 8, .step = 1},
+                    .sampleFormats    = {},
             },
             .settingsSummary  = u"level 2"_s,
             .estimateBitrateKbps = {},
@@ -439,6 +481,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
                     .bitrateKbps      = {.minimum = 32, .maximum = 320, .step = 16},
                     .quality          = {.minimum = 0, .maximum = 9, .step = 1},
                     .compressionLevel = {.minimum = 0, .maximum = 9, .step = 1},
+                    .sampleFormats    = {},
             },
             .settingsSummary  = u"VBR quality 2"_s,
             .estimateBitrateKbps = estimateMp3BitrateKbps,
@@ -459,6 +502,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
                   .bitrateKbps      = {.minimum = 32, .maximum = 512, .step = 16},
                   .quality          = {.minimum = 0.1, .maximum = 5.0, .step = 0.1},
                   .compressionLevel = {},
+                  .sampleFormats    = {},
             },
             .settingsSummary  = u"CBR 256 kbps"_s,
             .estimateBitrateKbps = {},
@@ -478,6 +522,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
                   .bitrateKbps      = {},
                   .quality          = {.minimum = 0, .maximum = 10, .step = 1},
                   .compressionLevel = {},
+                  .sampleFormats    = {},
             },
             .settingsSummary      = u"quality 5"_s,
             .estimateBitrateKbps = estimateVorbisBitrateKbps,
@@ -499,6 +544,7 @@ std::vector<FFmpegProfileDescriptor> builtInProfiles()
                     .bitrateKbps      = {.minimum = 6, .maximum = 510, .step = 8},
                     .quality          = {},
                     .compressionLevel = {.minimum = 0, .maximum = 10, .step = 1},
+                    .sampleFormats    = {},
             },
             .settingsSummary  = u"VBR 128 kbps"_s,
             .estimateBitrateKbps = {},
@@ -983,13 +1029,14 @@ std::vector<AudioEncoderInfo> FFmpegEncoder::availableEncoders() const
         }
 
         AudioEncoderInfo info;
-        info.id                  = descriptor.id;
-        info.backendId           = u"ffmpeg"_s;
-        info.name                = descriptor.name;
-        info.description         = description(descriptor);
-        info.profile             = makeProfile(descriptor, codecName);
-        info.capabilities        = descriptor.capabilities;
-        info.estimateBitrateKbps = descriptor.estimateBitrateKbps;
+        info.id                         = descriptor.id;
+        info.backendId                  = u"ffmpeg"_s;
+        info.name                       = descriptor.name;
+        info.description                = description(descriptor);
+        info.profile                    = makeProfile(descriptor, codecName);
+        info.capabilities               = descriptor.capabilities;
+        info.capabilities.sampleFormats = outputSampleFormats(info.profile);
+        info.estimateBitrateKbps        = descriptor.estimateBitrateKbps;
 
         if(!encoderSupportsOption(codec, "vbr")
            && std::ranges::find(info.capabilities.modes, EncoderMode::ConstrainedVariableBitrate)

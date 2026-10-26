@@ -387,6 +387,24 @@ TEST(FFmpegEncoderTest, ProfileIdsAreUniqueAndComplete)
     }
 }
 
+TEST(FFmpegEncoderTest, AdvertisesSampleFormatsOnlyForLosslessOutput)
+{
+    const auto profiles = FFmpegEncoder{}.availableEncoders();
+
+    for(const AudioEncoderInfo& info : profiles) {
+        SCOPED_TRACE(info.id.toStdString());
+        const auto& formats = info.capabilities.sampleFormats;
+        const bool lossless = info.profile.formatId == u"wav"_s || info.profile.formatId == u"flac"_s
+                           || info.profile.formatId == u"alac"_s || info.profile.formatId == u"wavpack"_s;
+        EXPECT_EQ(formats.empty(), !lossless);
+        EXPECT_EQ(std::ranges::find(formats, SampleFormat::Unknown), formats.cend());
+        if(info.profile.formatId == u"flac"_s || info.profile.formatId == u"alac"_s) {
+            EXPECT_EQ(std::ranges::find(formats, SampleFormat::F32), formats.cend());
+            EXPECT_EQ(std::ranges::find(formats, SampleFormat::F64), formats.cend());
+        }
+    }
+}
+
 TEST(FFmpegEncoderTest, Mp3AdvertisesGenericRateControlCapabilities)
 {
     const auto profile = profileById(FFmpegEncoder{}.availableEncoders(), u"ffmpeg-mp3"_s);
@@ -453,6 +471,7 @@ TEST(FFmpegEncoderTest, EncodesRequestedWavSampleFormats)
         FormatCase{u"pcm_u8"_s, AV_CODEC_ID_PCM_U8, SampleFormat::U8, 8},
         FormatCase{u"pcm_s32le"_s, AV_CODEC_ID_PCM_S32LE, SampleFormat::S32, 32},
         FormatCase{u"pcm_f32le"_s, AV_CODEC_ID_PCM_F32LE, SampleFormat::F32, 32},
+        FormatCase{u"pcm_f64le"_s, AV_CODEC_ID_PCM_F64LE, SampleFormat::F64, 64},
     };
 
     for(const auto& testCase : cases) {
@@ -469,6 +488,12 @@ TEST(FFmpegEncoderTest, Encodes24BitFlac)
     encodeSmokeTest(u"ffmpeg-flac"_s, AV_CODEC_ID_FLAC, 0, 5, 44100, SampleFormat::S24In32, 24);
 }
 
+TEST(FFmpegEncoderTest, Encodes24BitAlac)
+{
+    encodeSmokeTest(u"ffmpeg-alac"_s, AV_CODEC_ID_ALAC, 0, -1, 44100, SampleFormat::S24In32, 24, EncoderMode::Default,
+                    2.0, SampleFormat::S24In32);
+}
+
 TEST(FFmpegEncoderTest, AutomaticSampleFormatPreserves24BitWav)
 {
     if(!hasEncoder({u"pcm_s24le"_s})) {
@@ -481,6 +506,12 @@ TEST(FFmpegEncoderTest, AutomaticSampleFormatPreserves24BitWav)
 TEST(FFmpegEncoderTest, AutomaticSampleFormatPreserves24BitFlac)
 {
     encodeSmokeTest(u"ffmpeg-flac"_s, AV_CODEC_ID_FLAC, 0, 5, 44100, SampleFormat::Unknown, 24, EncoderMode::Default,
+                    2.0, SampleFormat::S24In32);
+}
+
+TEST(FFmpegEncoderTest, AutomaticSampleFormatPreserves24BitAlac)
+{
+    encodeSmokeTest(u"ffmpeg-alac"_s, AV_CODEC_ID_ALAC, 0, -1, 44100, SampleFormat::Unknown, 24, EncoderMode::Default,
                     2.0, SampleFormat::S24In32);
 }
 

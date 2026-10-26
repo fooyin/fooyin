@@ -149,8 +149,12 @@ std::vector<AudioEncoderInfo> FlacEncoder::availableEncoders() const
     info.profile                       = std::move(profile);
     info.capabilities.modes            = {EncoderMode::LosslessCompression};
     info.capabilities.compressionLevel = {.minimum = 0, .maximum = 8, .step = 1};
-    info.supportsMetadata              = true;
-    info.supportsPictures              = true;
+    info.capabilities.sampleFormats    = {SampleFormat::U8, SampleFormat::S16, SampleFormat::S24In32};
+    if(FLAC__MAX_BITS_PER_SAMPLE >= 32) {
+        info.capabilities.sampleFormats.push_back(SampleFormat::S32);
+    }
+    info.supportsMetadata = true;
+    info.supportsPictures = true;
 
     return {std::move(info)};
 }

@@ -56,6 +56,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSaveFile>
+#include <QSignalBlocker>
 #include <QSpinBox>
 #include <QTabBar>
 #include <QTabWidget>
@@ -88,7 +89,9 @@ ConverterSetupDialog::ConverterSetupDialog(AudioEncoderRegistry* registry, DspCh
     , m_profileTable{new ExtendableTableView(this)}
     , m_profileModel{new EncoderProfileTableModel(&m_profiles, &m_runtimeEncoders, this)}
     , m_editProfile{new QPushButton(tr("Edit"), this)}
+    , m_sampleFormatLabel{new QLabel(tr("Output sample format") + ":"_L1, this)}
     , m_sampleFormat{new QComboBox(this)}
+    , m_ditherLabel{new QLabel(tr("Dither") + ":"_L1, this)}
     , m_dither{new QComboBox(this)}
     , m_destinationMode{new QComboBox(this)}
     , m_folder{new QLineEdit(this)}
@@ -177,8 +180,11 @@ ConversionJob ConverterSetupDialog::job() const
         result.preset.encoder.profile = encoder->profile;
     }
 
-    result.preset.encoder.outputSampleFormat  = static_cast<SampleFormat>(m_sampleFormat->currentData().toInt());
-    result.preset.encoder.ditherMode          = static_cast<DitherMode>(m_dither->currentData().toInt());
+    result.preset.encoder.outputSampleFormat = m_sampleFormat->isEnabled()
+                                                 ? static_cast<SampleFormat>(m_sampleFormat->currentData().toInt())
+                                                 : SampleFormat::Unknown;
+    result.preset.encoder.ditherMode
+        = m_dither->isEnabled() ? static_cast<DitherMode>(m_dither->currentData().toInt()) : DitherMode::Never;
     result.preset.destination.mode            = destinationMode();
     result.preset.destination.fixedFolder     = m_folder->text().trimmed();
     result.preset.destination.filenamePattern = m_filenamePattern->text().trimmed();
@@ -318,12 +324,7 @@ QWidget* ConverterSetupDialog::createOutputPage()
 
     m_profileTable->addCustomTool(m_editProfile);
 
-    m_sampleFormat->addItem(tr("Automatic (preserve source)"), static_cast<int>(SampleFormat::Unknown));
-    m_sampleFormat->addItem(tr("8-bit integer"), static_cast<int>(SampleFormat::U8));
-    m_sampleFormat->addItem(tr("16-bit integer"), static_cast<int>(SampleFormat::S16));
-    m_sampleFormat->addItem(tr("24-bit integer"), static_cast<int>(SampleFormat::S24In32));
-    m_sampleFormat->addItem(tr("32-bit integer"), static_cast<int>(SampleFormat::S32));
-    m_sampleFormat->addItem(tr("32-bit floating point"), static_cast<int>(SampleFormat::F32));
+    m_sampleFormat->setToolTip(tr("Automatic preserves source precision where the selected encoder supports it."));
 
     m_dither->addItem(tr("Automatic (when reducing bit depth)"), static_cast<int>(DitherMode::Automatic));
     m_dither->addItem(tr("Never"), static_cast<int>(DitherMode::Never));
@@ -334,9 +335,9 @@ QWidget* ConverterSetupDialog::createOutputPage()
     auto* options = new QGridLayout();
 
     int row{0};
-    options->addWidget(new QLabel(tr("Output sample format") + ":"_L1, page), row, 0);
+    options->addWidget(m_sampleFormatLabel, row, 0);
     options->addWidget(m_sampleFormat, row++, 1);
-    options->addWidget(new QLabel(tr("Dither") + ":"_L1, page), row, 0);
+    options->addWidget(m_ditherLabel, row, 0);
     options->addWidget(m_dither, row++, 1);
     options->setColumnStretch(1, 1);
 
@@ -354,8 +355,14 @@ QWidget* ConverterSetupDialog::createOutputPage()
     QObject::connect(m_profileModel, &EncoderProfileTableModel::profilesChanged, this,
                      &ConverterSetupDialog::updateState);
     QObject::connect(m_editProfile, &QAbstractButton::clicked, this, &ConverterSetupDialog::editProfile);
-    QObject::connect(m_sampleFormat, &QComboBox::currentIndexChanged, this, &ConverterSetupDialog::updateState);
-    QObject::connect(m_dither, &QComboBox::currentIndexChanged, this, &ConverterSetupDialog::updateOverview);
+    QObject::connect(m_sampleFormat, &QComboBox::currentIndexChanged, this, [this] {
+        m_requestedSampleFormat = static_cast<SampleFormat>(m_sampleFormat->currentData().toInt());
+        updateState();
+    });
+    QObject::connect(m_dither, &QComboBox::currentIndexChanged, this, [this] {
+        m_requestedDitherMode = static_cast<DitherMode>(m_dither->currentData().toInt());
+        updateOverview();
+    });
 
     return page;
 }
@@ -1026,8 +1033,8 @@ void ConverterSetupDialog::applyPreset(const StoredConversionPreset& stored)
         }
     };
 
-    setComboValue(m_sampleFormat, static_cast<int>(stored.preset.encoder.outputSampleFormat));
-    setComboValue(m_dither, static_cast<int>(stored.preset.encoder.ditherMode));
+    m_requestedSampleFormat = stored.preset.encoder.outputSampleFormat;
+    m_requestedDitherMode   = stored.preset.encoder.ditherMode;
     setComboValue(m_destinationMode, static_cast<int>(stored.preset.destination.mode));
     setComboValue(m_existingFileMode, static_cast<int>(stored.preset.destination.existingFileMode));
     setComboValue(m_outputStyle, static_cast<int>(stored.preset.destination.outputStyle));
@@ -1067,8 +1074,8 @@ void ConverterSetupDialog::applyDefaultPreset()
         m_profileTable->setCurrentIndex({});
     }
 
-    m_sampleFormat->setCurrentIndex(m_sampleFormat->findData(static_cast<int>(SampleFormat::Unknown)));
-    m_dither->setCurrentIndex(m_dither->findData(static_cast<int>(DitherMode::Automatic)));
+    m_requestedSampleFormat = SampleFormat::Unknown;
+    m_requestedDitherMode   = DitherMode::Automatic;
     m_destinationMode->setCurrentIndex(m_destinationMode->findData(static_cast<int>(DestinationMode::Ask)));
     m_existingFileMode->setCurrentIndex(m_existingFileMode->findData(static_cast<int>(ExistingFileMode::Ask)));
     m_outputStyle->setCurrentIndex(m_outputStyle->findData(static_cast<int>(OutputStyle::IndividualFiles)));
@@ -1108,8 +1115,48 @@ void ConverterSetupDialog::browseForFolder()
     }
 }
 
+void ConverterSetupDialog::updateSampleFormats()
+{
+    const QSignalBlocker formatBlocker{m_sampleFormat};
+    const QSignalBlocker ditherBlocker{m_dither};
+
+    const AudioEncoderInfo* encoder = selectedEncoder();
+    const bool configurable         = encoder && !encoder->capabilities.sampleFormats.empty();
+
+    m_sampleFormat->clear();
+    m_sampleFormat->addItem(tr("Automatic"), static_cast<int>(SampleFormat::Unknown));
+
+    const auto addFormat = [&](SampleFormat format, const QString& name) {
+        if(configurable
+           && std::ranges::find(encoder->capabilities.sampleFormats, format)
+                  != encoder->capabilities.sampleFormats.cend()) {
+            m_sampleFormat->addItem(name, static_cast<int>(format));
+        }
+    };
+
+    addFormat(SampleFormat::U8, tr("8-bit integer"));
+    addFormat(SampleFormat::S16, tr("16-bit integer"));
+    addFormat(SampleFormat::S24In32, tr("24-bit integer"));
+    addFormat(SampleFormat::S32, tr("32-bit integer"));
+    addFormat(SampleFormat::F32, tr("32-bit floating point"));
+    addFormat(SampleFormat::F64, tr("64-bit floating point"));
+
+    m_sampleFormat->setCurrentIndex(std::max(0, m_sampleFormat->findData(static_cast<int>(m_requestedSampleFormat))));
+    m_sampleFormatLabel->setEnabled(configurable);
+    m_sampleFormat->setEnabled(configurable);
+
+    const auto format    = static_cast<SampleFormat>(m_sampleFormat->currentData().toInt());
+    const bool canDither = configurable && format != SampleFormat::F32 && format != SampleFormat::F64;
+    m_ditherLabel->setEnabled(canDither);
+    m_dither->setEnabled(canDither);
+    m_dither->setCurrentIndex(
+        m_dither->findData(static_cast<int>(canDither ? m_requestedDitherMode : DitherMode::Automatic)));
+}
+
 void ConverterSetupDialog::updateState()
 {
+    updateSampleFormats();
+
     const bool fixedFolder = destinationMode() == DestinationMode::FixedFolder;
     m_folder->setEnabled(fixedFolder);
     m_browse->setEnabled(fixedFolder);

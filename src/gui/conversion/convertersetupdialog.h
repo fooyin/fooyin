@@ -95,6 +95,7 @@ private:
     void applyDefaultPreset();
     void savePresets() const;
     void browseForFolder();
+    void updateSampleFormats();
     void updateState();
     void updatePreview();
     void updateOverview();
@@ -108,6 +109,8 @@ private:
     SettingsManager* m_settings;
     TrackList m_tracks;
     std::vector<AudioEncoderInfo> m_runtimeEncoders;
+    SampleFormat m_requestedSampleFormat{SampleFormat::Unknown};
+    DitherMode m_requestedDitherMode{DitherMode::Automatic};
 
     QList<EncoderProfileEntry> m_profiles;
     Engine::DspChain m_availableDsps;
@@ -125,7 +128,9 @@ private:
     ExtendableTableView* m_profileTable;
     EncoderProfileTableModel* m_profileModel;
     QPushButton* m_editProfile;
+    QLabel* m_sampleFormatLabel;
     QComboBox* m_sampleFormat;
+    QLabel* m_ditherLabel;
     QComboBox* m_dither;
     QComboBox* m_destinationMode;
     QLineEdit* m_folder;
