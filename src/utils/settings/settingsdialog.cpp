@@ -277,7 +277,7 @@ SettingsDialog::SettingsDialog(PageList pages, QWidget* parent)
 {
     setWindowTitle(tr("Settings"));
 
-    m_stackedLayout->setContentsMargins(0, 0, 0, 0);
+    m_stackedLayout->setContentsMargins({});
 
     m_model->setPages(m_pages);
     m_filterModel->setSourceModel(m_model);
@@ -454,7 +454,7 @@ void SettingsDialog::reject()
 
 QSize SettingsDialog::sizeHint() const
 {
-    return Utils::proportionateSize(this, 0.3, 0.5);
+    return Utils::proportionateSize(this, 0.4, 0.55);
 }
 
 bool SettingsDialog::apply()
