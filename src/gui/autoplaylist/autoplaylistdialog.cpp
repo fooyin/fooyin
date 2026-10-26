@@ -31,6 +31,7 @@
 #include <core/scripting/trackqueryfilter.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <gui/widgets/toolbutton.h>
@@ -87,6 +88,7 @@ AutoPlaylistDialog::AutoPlaylistDialog(ActionManager* actionManager, MusicLibrar
     , m_countPending{false}
     , m_createPreview{std::move(createPreview)}
     , m_splitter{new QSplitter(Qt::Horizontal, this)}
+    , m_editor{new QWidget(m_splitter)}
     , m_previewPanel{new QWidget(m_splitter)}
     , m_previewAction{new QAction(tr("Show preview"), this)}
     , m_previewWidth{420}
@@ -180,19 +182,21 @@ AutoPlaylistDialog::AutoPlaylistDialog(ActionManager* actionManager, MusicLibrar
     footerLayout->addWidget(m_statusLabel, 1);
     footerLayout->addWidget(buttonBox);
 
-    auto* editor = new QWidget(m_splitter);
-    editor->setMinimumWidth(480);
+    m_editor->setMinimumWidth(480);
 
-    auto* editorLayout = new QVBoxLayout(editor);
+    auto* editorLayout = new QVBoxLayout(m_editor);
     editorLayout->setContentsMargins({});
+
     editorLayout->addLayout(headerLayout);
     editorLayout->addWidget(m_modes, 1);
     editorLayout->addWidget(m_modeLabel);
 
     m_previewPanel->setMinimumWidth(280);
-    auto* previewLayout = new QVBoxLayout(m_previewPanel);
-    previewLayout->setContentsMargins({});
-    m_splitter->insertWidget(0, editor);
+
+    auto* previewLayout = new QHBoxLayout(m_previewPanel);
+    Gui::setContentsMargins(previewLayout, Qt::TopEdge | Qt::RightEdge | Qt::BottomEdge, 0);
+
+    m_splitter->insertWidget(0, m_editor);
     m_splitter->addWidget(m_previewPanel);
     m_splitter->setChildrenCollapsible(false);
     m_splitter->setStretchFactor(0, 1);
@@ -434,6 +438,9 @@ void AutoPlaylistDialog::setPreviewVisible(bool visible, bool resizeDialog)
         m_previewWidth = m_splitter->sizes().at(1);
     }
     m_previewPanel->setVisible(visible);
+
+    const int margin = visible ? m_previewPanel->layout()->contentsMargins().left() : 0;
+    Gui::setContentsMargins(m_editor->layout(), Qt::RightEdge, margin);
 
     if(resizeDialog && !isMaximized()) {
         const auto available     = screen()->availableGeometry();

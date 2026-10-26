@@ -109,6 +109,7 @@ private:
     TrackList m_previewTracks;
     QPointer<PlaylistWidget> m_preview;
     QSplitter* m_splitter;
+    QWidget* m_editor;
     QWidget* m_previewPanel;
     QAction* m_previewAction;
     int m_previewWidth;
