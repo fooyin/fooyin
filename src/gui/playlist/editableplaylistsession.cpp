@@ -852,12 +852,11 @@ void EditablePlaylistSession::applyReadOnlyState(PlaylistWidgetSessionHost& sess
         host.playlistView()->setDragDropMode(QAbstractItemView::InternalMove);
     }
     else {
-        host.playlistView()->setDragDropMode(QAbstractItemView::NoDragDrop);
+        host.playlistView()->setDragDropMode(QAbstractItemView::DragOnly);
     }
 
     host.playlistView()->viewport()->setAcceptDrops(canReorder);
-    host.playlistView()->setDragEnabled(canReorder);
-    host.playlistView()->setDefaultDropAction(canReorder ? Qt::MoveAction : Qt::IgnoreAction);
+    host.playlistView()->setDefaultDropAction(canReorder ? Qt::MoveAction : Qt::CopyAction);
 
     refreshActionState(sessionHost.sessionWidget());
 }
