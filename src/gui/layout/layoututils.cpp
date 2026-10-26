@@ -26,6 +26,7 @@
 
 #include <gui/widgetcontainer.h>
 
+#include <QKeySequence>
 #include <QTabBar>
 
 namespace Fooyin {
@@ -56,6 +57,15 @@ QRect LayoutDropTarget::previewGeometry(QWidget* root, QWidget* surface) const
 {
     const auto* window = root->window();
     return preview.translated(root->mapTo(window, QPoint{}) - surface->mapTo(window, QPoint{}));
+}
+
+QString LayoutUtils::modifierName(Qt::KeyboardModifier modifier)
+{
+    auto name = QKeySequence(modifier).toString(QKeySequence::NativeText);
+    if(name.endsWith(QLatin1Char{'+'})) {
+        name.chop(1);
+    }
+    return name;
 }
 
 QRect LayoutUtils::relativeGeometry(const QWidget* widget, const QWidget* root)
@@ -243,7 +253,9 @@ LayoutDropTarget LayoutUtils::resolveDropTarget(FyWidget* source, WidgetContaine
         }
 
         if(!modifiers.testFlag(Qt::ShiftModifier)) {
-            target.description = tr("Shift to split • Ctrl to replace");
+            //: %1 and %2 are native names or symbols for the split and replace modifier keys.
+            target.description = tr("%1 to split • %2 to replace")
+                                     .arg(modifierName(Qt::ShiftModifier), modifierName(Qt::ControlModifier));
             return target;
         }
 

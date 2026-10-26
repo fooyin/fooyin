@@ -18,6 +18,9 @@
  */
 
 #include "widgetpalette.h"
+
+#include "layoututils.h"
+
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/iconloader.h>
@@ -98,7 +101,9 @@ void WidgetPalette::refresh()
     m_entries->clear();
 
     std::map<QString, QTreeWidgetItem*> categories;
-    const auto query = m_search->text().trimmed();
+    const auto query           = m_search->text().trimmed();
+    const auto splitModifier   = LayoutUtils::modifierName(Qt::ShiftModifier);
+    const auto replaceModifier = LayoutUtils::modifierName(Qt::ControlModifier);
 
     const auto widgets = m_provider->widgetCatalogue();
     for(const auto& widget : widgets) {
@@ -127,10 +132,10 @@ void WidgetPalette::refresh()
         item->setIcon(0, Gui::iconFromTheme(Constants::Icons::Add));
         item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsDragEnabled
                        | (widget.available ? Qt::ItemIsEnabled : Qt::NoItemFlags));
-        item->setToolTip(
-            0, widget.available
-                   ? tr("Drag to add %1.\nHold Shift to split a widget, or Ctrl to replace it.").arg(widget.name)
-                   : tr("Instance limit reached"));
+        //: %1 is a widget name; %2 and %3 are native modifier key names or symbols.
+        item->setToolTip(0, widget.available ? tr("Drag to add %1.\nHold %2 to split a widget, or %3 to replace it.")
+                                                   .arg(widget.name, splitModifier, replaceModifier)
+                                             : tr("Instance limit reached"));
     }
 }
 

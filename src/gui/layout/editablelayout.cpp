@@ -24,6 +24,7 @@
 #include "internalguisettings.h"
 #include "layoutcommands.h"
 #include "layoutdragcontroller.h"
+#include "layoututils.h"
 #include "splitters/splitterwidget.h"
 #include "toolbarmanager.h"
 #include "utils/actions/command.h"
@@ -514,13 +515,17 @@ void EditableLayoutPrivate::changeEditingState(bool editing)
                                      EditableLayout::tr("Add and arrange widgets to customise your layout."),
                                      QMessageBox::Ok, m_self};
                     hint.setTextFormat(Qt::PlainText);
-                    hint.setInformativeText(EditableLayout::tr(
-                        "• Find widgets in the palette on the right (hover near the right edge if it's hidden).\n\n"
-                        "• Drag widgets from the palette to add them, or drag existing ones to move them. "
-                        "Hold Shift to split the target widget, or Ctrl to replace it.\n\n"
-                        "• Select a widget to see its parent containers in the breadcrumb bar. "
-                        "Select a parent to move an entire section.\n\n"
-                        "• Right-click any widget to split, replace, or remove it using the context menu."));
+                    //: %1 and %2 are native names or symbols for the split and replace modifier keys.
+                    hint.setInformativeText(
+                        EditableLayout::tr(
+                            "• Find widgets in the palette on the right (hover near the right edge if it's hidden).\n\n"
+                            "• Drag widgets from the palette to add them, or drag existing ones to move them. "
+                            "Hold %1 to split the target widget, or %2 to replace it.\n\n"
+                            "• Select a widget to see its parent containers in the breadcrumb bar. "
+                            "Select a parent to move an entire section.\n\n"
+                            "• Right-click any widget to split, replace, or remove it using the context menu.")
+                            .arg(LayoutUtils::modifierName(Qt::ShiftModifier),
+                                 LayoutUtils::modifierName(Qt::ControlModifier)));
                     auto* dontShowAgain = new QCheckBox(EditableLayout::tr("Don't show this again"), &hint);
                     hint.setCheckBox(dontShowAgain);
                     hint.exec();

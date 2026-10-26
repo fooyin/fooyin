@@ -58,6 +58,7 @@ class LayoutUtils
     Q_DECLARE_TR_FUNCTIONS(Fooyin::LayoutDropTarget)
 
 public:
+    static QString modifierName(Qt::KeyboardModifier modifier);
     static QRect relativeGeometry(const QWidget* widget, const QWidget* root);
     static WidgetList layoutWidgets(WidgetContainer* root);
     static LayoutDropTarget resolveDropTarget(FyWidget* source, WidgetContainer* root, const QPoint& position,
