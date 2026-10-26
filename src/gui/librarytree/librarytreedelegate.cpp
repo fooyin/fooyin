@@ -54,10 +54,10 @@ struct PaintBlock
     int height{0};
 };
 
-RichText fallbackRichText(const QStyleOptionViewItem& option, const QModelIndex& index)
+RichText fallbackRichText(const QStyleOptionViewItem& option, const QModelIndex& index, const RichText& rightText)
 {
     auto richText = index.data(LibraryTreeItem::RichTitle).value<RichText>();
-    if(!richText.empty()) {
+    if(!richText.empty() || !rightText.empty()) {
         return richText;
     }
 
@@ -190,9 +190,9 @@ void paintMeasuredBlock(QPainter* painter, const QStyleOptionViewItem& option, Q
 
 QSize richTextSize(const QStyleOptionViewItem& option, const QModelIndex& index, int textGap)
 {
-    const auto richText  = fallbackRichText(option, index);
     const auto rightText = rightRichText(index);
-    if(richText.empty()) {
+    const auto richText  = fallbackRichText(option, index, rightText);
+    if(richText.empty() && rightText.empty()) {
         const QFontMetrics metrics{option.font};
         return metrics.size(Qt::TextSingleLine, index.data(Qt::DisplayRole).toString());
     }
@@ -202,7 +202,8 @@ QSize richTextSize(const QStyleOptionViewItem& option, const QModelIndex& index,
     const auto leftBlock  = measureRichTextBlock(lines, option.font, option.fontMetrics.height());
     const auto rightBlock = measureRichTextBlock(rightLines, option.font, option.fontMetrics.height());
 
-    const int width = leftBlock.width + (rightBlock.width > 0 ? textGap + RightContentPadding + rightBlock.width : 0);
+    const int gap   = leftBlock.width > 0 && rightBlock.width > 0 ? textGap + RightContentPadding : 0;
+    const int width = leftBlock.width + gap + rightBlock.width;
     const QSize result{width, std::max(leftBlock.height, rightBlock.height)};
     return result;
 }
@@ -221,8 +222,8 @@ void LibraryTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     }
 
     const QStyle* style   = option.widget ? option.widget->style() : QApplication::style();
-    const auto richText   = fallbackRichText(opt, index);
     const auto rightText  = rightRichText(index);
+    const auto richText   = fallbackRichText(opt, index, rightText);
     const bool hasArtwork = !isPlaying && !opt.icon.isNull();
     const QIcon itemIcon  = (isPlaying || hasArtwork) ? opt.icon : QIcon{};
     const QRect iconRect
@@ -252,7 +253,7 @@ void LibraryTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
                                m_artworkCornerRadius);
     }
 
-    if(!richText.empty()) {
+    if(!richText.empty() || !rightText.empty()) {
         QRect textRect       = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, option.widget);
         const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, option.widget) * 2;
         textRect.adjust(textMargin, 0, -textMargin, 0);

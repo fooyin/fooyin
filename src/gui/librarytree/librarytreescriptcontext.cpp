@@ -24,12 +24,6 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
-LibraryTreeScriptValues deferredLibraryTreeScriptValues()
-{
-    return {{{.name = u"TRACKCOUNT"_s, .result = {.value = u"\uE000LIBTREE_NODE_TRACKCOUNT\uE001"_s, .cond = true}},
-             {.name = u"CHILDCOUNT"_s, .result = {.value = u"\uE000LIBTREE_NODE_CHILDCOUNT\uE001"_s, .cond = true}}}};
-}
-
 LibraryTreeScriptValues libraryTreeScriptValues(int trackCount, int childCount)
 {
     return {{{.name = u"TRACKCOUNT"_s, .result = {.value = QString::number(trackCount), .cond = true}},
@@ -42,24 +36,14 @@ QString defaultLibraryTreeSummaryTitle()
     return QCoreApplication::translate("Fooyin::LibraryTree", "All Music (%trackcount%)");
 }
 
-QString resolveLibraryTreeNodeVariables(QString title, int trackCount, int childCount)
-{
-    title.replace(u"\uE000LIBTREE_NODE_TRACKCOUNT\uE001"_s, QString::number(trackCount));
-    title.replace(u"\uE000LIBTREE_NODE_CHILDCOUNT\uE001"_s, QString::number(childCount));
-    return title;
-}
-
 bool usesLibraryTreeNodeVariables(QStringView text)
 {
     return text.contains("%trackcount%"_L1, Qt::CaseInsensitive)
-        || text.contains("%childcount%"_L1, Qt::CaseInsensitive)
-        || text.contains(u"\uE000LIBTREE_NODE_TRACKCOUNT\uE001"_s)
-        || text.contains(u"\uE000LIBTREE_NODE_CHILDCOUNT\uE001"_s);
+        || text.contains("%childcount%"_L1, Qt::CaseInsensitive);
 }
 
 bool usesLibraryTreeChildCount(QStringView text)
 {
-    return text.contains("%childcount%"_L1, Qt::CaseInsensitive)
-        || text.contains(u"\uE000LIBTREE_NODE_CHILDCOUNT\uE001"_s);
+    return text.contains("%childcount%"_L1, Qt::CaseInsensitive);
 }
 } // namespace Fooyin

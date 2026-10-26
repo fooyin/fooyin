@@ -29,12 +29,9 @@
 namespace Fooyin {
 using LibraryTreeScriptValues = std::array<ScriptVariableValue, 2>;
 
-FYGUI_EXPORT LibraryTreeScriptValues deferredLibraryTreeScriptValues();
 FYGUI_EXPORT LibraryTreeScriptValues libraryTreeScriptValues(int trackCount, int childCount);
 
 QString defaultLibraryTreeSummaryTitle();
-
-FYGUI_EXPORT QString resolveLibraryTreeNodeVariables(QString title, int trackCount, int childCount);
 
 bool usesLibraryTreeNodeVariables(QStringView text);
 bool usesLibraryTreeChildCount(QStringView text);

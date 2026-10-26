@@ -292,6 +292,8 @@ public:
     SettingsManager* m_settings;
     GuiStyleProvider* m_styleProvider;
 
+    bool m_workerBusy{false};
+
     CoverProvider m_coverProvider;
     LibraryTreeGrouping m_grouping;
     bool m_loaded{false};
@@ -421,7 +423,7 @@ void LibraryTreeModelPrivate::queueRichTitleUpdate(ItemKeyMap items)
         }
     }
 
-    if(m_populatorThread.isRunning() && m_populator.state() == Worker::Running) {
+    if(m_workerBusy) {
         for(auto& [key, item] : items) {
             m_pendingRichTitleUpdates.insert_or_assign(key, std::move(item));
         }
@@ -450,6 +452,7 @@ QFont LibraryTreeModelPrivate::libraryTreeFont() const
 
 LibraryTreePopulationContext LibraryTreeModelPrivate::populationContext()
 {
+    m_workerBusy = true;
     return {.libraries     = m_libraryManager->allLibraries(),
             .font          = libraryTreeFont(),
             .ratingSymbols = Gui::ratingStarSymbols(*m_settings),
@@ -741,6 +744,11 @@ void LibraryTreeModelPrivate::applyUpdatedItems(const ItemKeyMap& items)
 
         auto& node = nodeIt->second;
         node.setScriptChildCount(item.scriptChildCount());
+        if(!node.tracks().empty() && !item.tracks().empty()
+           && node.tracks().front().sameDataAs(item.tracks().front())) {
+            node.setScriptSource(item.scriptSource());
+            node.setTitleSource(item.titleSource());
+        }
         if(node.richTitle() == item.richTitle() && node.rightRichTitle() == item.rightRichTitle()) {
             continue;
         }
@@ -763,14 +771,15 @@ void LibraryTreeModelPrivate::populateModel(PendingTreeData& data)
     QModelIndexList changedIndexes;
     ItemKeyMap itemsToUpdate;
     std::vector<Md5Hash> childCountItemsToUpdate;
+    const bool itemUsesChildCount = usesLibraryTreeChildCount(m_grouping.script);
 
     for(auto& [key, item] : data.items) {
-        const bool itemUsesChildCount = usesLibraryTreeChildCount(item.titleSource());
-
         if(m_nodes.contains(key)) {
             auto& node = m_nodes.at(key);
 
-            node.setTitleSource(item.titleSource());
+            if(node.scriptSource().scriptIndex < 0 && item.scriptSource().scriptIndex < 0) {
+                node.setTitleSource(item.titleSource());
+            }
 
             if(node.sortTitle() != item.sortTitle()) {
                 node.setSortTitle(item.sortTitle());
@@ -883,6 +892,7 @@ LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, const std::sh
                          if(generation != p->m_populationGeneration || requestId != p->m_populationRequestId) {
                              return;
                          }
+                         p->m_workerBusy = false;
                          p->updateSummary();
 
                          if(!p->m_pendingRichTitleUpdates.empty()) {
@@ -893,7 +903,6 @@ LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, const std::sh
                          }
 
                          p->m_populator.stopThread();
-                         p->m_populatorThread.quit();
                          if(!p->m_loaded) {
                              p->m_loaded = true;
                              Q_EMIT modelLoaded();
@@ -1044,7 +1053,13 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
 
     switch(role) {
         case Qt::DisplayRole: {
-            const QString& name = item->title();
+            QString name = item->richTitle().joinedText();
+            if(name.isEmpty()) {
+                name = item->rightRichTitle().joinedText();
+            }
+            if(name.isEmpty()) {
+                name = item->title();
+            }
             return !name.isEmpty() ? name : u"?"_s;
         }
         case Qt::ToolTipRole:
@@ -1355,7 +1370,8 @@ void LibraryTreeModel::reset(const TrackList& tracks)
     }
 
     if(tracks.empty()) {
-        p->m_resetting = false;
+        p->m_workerBusy = false;
+        p->m_resetting  = false;
         p->m_tracksPendingRemoval.clear();
         beginResetModel();
         p->beginReset();

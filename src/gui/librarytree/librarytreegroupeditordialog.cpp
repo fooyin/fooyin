@@ -73,6 +73,7 @@ LibraryTreeGroupEditorWidget::LibraryTreeGroupEditorWidget(LibraryTreeGroupRegis
     m_groupList->setItemDelegateForColumn(0, new CheckBoxDelegate(this));
     m_groupList->setItemDelegateForColumn(3, new MultiLineEditDelegate(this));
     m_groupList->setItemDelegateForColumn(4, new MultiLineEditDelegate(this));
+    m_groupList->setItemDelegateForColumn(5, new MultiLineEditDelegate(this));
     m_groupList->hideColumn(1);
     m_groupList->setExtendableColumn(2);
     m_groupList->verticalHeader()->hide();
@@ -80,14 +81,17 @@ LibraryTreeGroupEditorWidget::LibraryTreeGroupEditorWidget(LibraryTreeGroupRegis
     m_groupList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_groupList->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
     m_groupList->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
+    m_groupList->horizontalHeader()->setSectionResizeMode(5, QHeaderView::Stretch);
 
     m_openEditor->setText(tr("Script Editor"));
     m_groupList->addCustomTool(m_openEditor);
 
     auto* hint = new HintLabel(
-        tr("Use <code>||</code> to split tree levels. <b>Sort Grouping</b> must use the same <code>||</code> "
-           "level structure as <b>Display Grouping</b>; each sort level applies to the matching display level, "
-           "and a sort level may be empty (for example <code>||%year%||</code>)."),
+        tr("Use <code>||</code> to split tree levels. <b>Grouping</b> defines which tracks share a node; "
+           "leave it empty to use <b>Display</b>. "
+           "Display and sort scripts must use the same levels and "
+           "matching multi-value expansions as the grouping script. A sort level may be empty "
+           "(for example <code>||%year%||</code>)."),
         this);
     hint->setWordWrap(true);
     hint->setTextFormat(Qt::RichText);
@@ -162,8 +166,7 @@ void LibraryTreeGroupEditorWidget::updateButtonState()
     });
 
     m_groupList->removeRowAction()->setEnabled(hasCustom);
-    m_openEditor->setEnabled(selection.size() == 1
-                             && (selection.front().column() == 3 || selection.front().column() == 4));
+    m_openEditor->setEnabled(selection.size() == 1 && selection.front().column() >= 3);
 }
 
 LibraryTreeGroupEditorDialog::LibraryTreeGroupEditorDialog(LibraryTreeGroupRegistry* groupsRegistry, QWidget* parent)
@@ -171,7 +174,7 @@ LibraryTreeGroupEditorDialog::LibraryTreeGroupEditorDialog(LibraryTreeGroupRegis
 {
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle(tr("Manage Library Tree Groupings"));
-    resize(750, 500);
+    resize(950, 500);
 
     auto* editor = new LibraryTreeGroupEditorWidget(groupsRegistry, this);
     auto* info   = new QLabel(tr("Grouping presets are shared across all widgets."), this);

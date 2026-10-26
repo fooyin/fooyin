@@ -26,7 +26,7 @@ namespace Fooyin {
 struct LibraryTreeGrouping
 {
     static constexpr qint32 Magic   = -0x4C544752;
-    static constexpr qint32 Version = 1;
+    static constexpr qint32 Version = 2;
 
     int id{-1};
     int index{-1};
@@ -35,6 +35,7 @@ struct LibraryTreeGrouping
     QString script;
     QString sortScript;
     bool isEnabled{true};
+    QString groupingScript{};
 
     bool operator==(const LibraryTreeGrouping& other) const = default;
 
@@ -53,6 +54,7 @@ struct LibraryTreeGrouping
         stream << group.script;
         stream << group.sortScript;
         stream << group.isEnabled;
+        stream << group.groupingScript;
         return stream;
     }
 
@@ -74,10 +76,14 @@ struct LibraryTreeGrouping
         stream >> group.name;
         stream >> group.script;
         group.isEnabled = true;
+        group.groupingScript.clear();
 
         if(version >= 1) {
             stream >> group.sortScript;
             stream >> group.isEnabled;
+            if(version >= 2) {
+                stream >> group.groupingScript;
+            }
             return stream;
         }
 

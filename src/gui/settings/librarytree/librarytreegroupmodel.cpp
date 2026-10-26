@@ -170,9 +170,11 @@ QVariant LibraryTreeGroupModel::headerData(int section, Qt::Orientation orientat
         case 2:
             return tr("Name");
         case 3:
-            return tr("Display Grouping");
+            return tr("Grouping");
         case 4:
-            return tr("Sort Grouping");
+            return tr("Display");
+        case 5:
+            return tr("Sort");
         default:
             break;
     }
@@ -206,7 +208,9 @@ QVariant LibraryTreeGroupModel::data(const QModelIndex& index, int role) const
 
     const LibraryTreeGrouping& group = item->group();
 
-    if(role == Qt::ForegroundRole && index.column() == 4 && group.sortScript.isEmpty()) {
+    if(role == Qt::ForegroundRole
+       && ((index.column() == 3 && group.groupingScript.isEmpty())
+           || (index.column() == 5 && group.sortScript.isEmpty()))) {
         return QApplication::palette().color(QPalette::PlaceholderText);
     }
 
@@ -217,8 +221,10 @@ QVariant LibraryTreeGroupModel::data(const QModelIndex& index, int role) const
             case 2:
                 return group.name;
             case 3:
-                return group.script;
+                return group.groupingScript;
             case 4:
+                return group.script;
+            case 5:
                 return group.sortScript;
             default:
                 break;
@@ -234,12 +240,15 @@ QVariant LibraryTreeGroupModel::data(const QModelIndex& index, int role) const
                 return !name.isEmpty() ? name : u"<enter name here>"_s;
             }
             case 3: {
-                const QString& field = group.script;
-                return !field.isEmpty() ? field : u"<enter grouping here>"_s;
+                return group.groupingScript.isEmpty() ? tr("Use display script") : group.groupingScript;
             }
             case 4: {
+                const QString& field = group.script;
+                return !field.isEmpty() ? field : tr("Enter display script");
+            }
+            case 5: {
                 const QString& field = group.sortScript;
-                return !field.isEmpty() ? field : tr("Use display grouping");
+                return !field.isEmpty() ? field : tr("Use grouping script");
             }
             default:
                 break;
@@ -282,13 +291,20 @@ bool LibraryTreeGroupModel::setData(const QModelIndex& index, const QVariant& va
                 break;
             }
             case 3: {
+                if(group.groupingScript == value.toString()) {
+                    return false;
+                }
+                group.groupingScript = value.toString();
+                break;
+            }
+            case 4: {
                 if(group.script == value.toString()) {
                     return false;
                 }
                 group.script = value.toString();
                 break;
             }
-            case 4: {
+            case 5: {
                 const QString sortScript = value.toString();
                 if(group.sortScript == sortScript) {
                     return false;
@@ -333,7 +349,7 @@ int LibraryTreeGroupModel::rowCount(const QModelIndex& /*parent*/) const
 
 int LibraryTreeGroupModel::columnCount(const QModelIndex& /*parent*/) const
 {
-    return 5;
+    return 6;
 }
 
 bool LibraryTreeGroupModel::removeRows(int row, int count, const QModelIndex& /*parent*/)

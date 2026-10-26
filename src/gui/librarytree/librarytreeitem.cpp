@@ -130,6 +130,11 @@ const QString& LibraryTreeItem::titleSource() const
     return m_titleSource;
 }
 
+const LibraryTreeItem::ScriptSource& LibraryTreeItem::scriptSource() const
+{
+    return m_scriptSource;
+}
+
 const RichText& LibraryTreeItem::richTitle() const
 {
     return m_richTitle;
@@ -193,6 +198,11 @@ void LibraryTreeItem::setTitleSource(const QString& title)
     m_titleSource = title;
 }
 
+void LibraryTreeItem::setScriptSource(const ScriptSource& source)
+{
+    m_scriptSource = source;
+}
+
 void LibraryTreeItem::setRichTitle(const RichText& title)
 {
     setRichTitles(richTextForAlignment(title, RichAlignment::Left), richTextForAlignment(title, RichAlignment::Right));
@@ -243,6 +253,11 @@ void LibraryTreeItem::removeTrack(const Track& track)
     if(m_tracks.empty()) {
         return;
     }
+
+    if(m_tracks.front().id() == track.id()) {
+        m_scriptSource.valueIndex = -1;
+    }
+
     std::erase_if(m_tracks, [track](const Track& child) { return child.id() == track.id(); });
 }
 
@@ -251,6 +266,11 @@ void LibraryTreeItem::replaceTrack(const Track& track)
     if(m_tracks.empty()) {
         return;
     }
+
+    if(m_tracks.front().id() == track.id()) {
+        m_scriptSource.valueIndex = -1;
+    }
+
     std::ranges::replace_if(m_tracks, [track](const Track& child) { return child.id() == track.id(); }, track);
 }
 
@@ -260,6 +280,7 @@ void LibraryTreeItem::sortTracks(TrackSorter& sorter, const QString& script)
         return;
     }
 
-    m_tracks = sorter.calcSortTracks(script, m_tracks);
+    m_tracks                  = sorter.calcSortTracks(script, m_tracks);
+    m_scriptSource.valueIndex = -1;
 }
 } // namespace Fooyin

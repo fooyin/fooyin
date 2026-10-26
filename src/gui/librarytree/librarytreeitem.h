@@ -33,6 +33,13 @@ class TrackSorter;
 class LibraryTreeItem : public TreeItem<LibraryTreeItem>
 {
 public:
+    struct ScriptSource
+    {
+        int scriptIndex{-1};
+        int valueIndex{-1};
+        int level{0};
+    };
+
     enum Role
     {
         Title = Qt::UserRole,
@@ -54,6 +61,7 @@ public:
     [[nodiscard]] const QString& title() const;
     [[nodiscard]] const QString& sortTitle() const;
     [[nodiscard]] const QString& titleSource() const;
+    [[nodiscard]] const ScriptSource& scriptSource() const;
     [[nodiscard]] const RichText& richTitle() const;
     [[nodiscard]] const RichText& rightRichTitle() const;
     [[nodiscard]] const TrackList& tracks() const;
@@ -67,6 +75,7 @@ public:
     void setTitle(const QString& title);
     void setSortTitle(const QString& title);
     void setTitleSource(const QString& title);
+    void setScriptSource(const ScriptSource& source);
     void setRichTitle(const RichText& title);
     void setRichTitles(const RichText& leftTitle, const RichText& rightTitle);
     void setScriptChildCount(int count);
@@ -85,6 +94,7 @@ private:
     QString m_title;
     QString m_sortTitle;
     QString m_titleSource;
+    ScriptSource m_scriptSource;
     RichText m_richTitle;
     RichText m_rightRichTitle;
     std::optional<Track::Cover> m_coverType;
