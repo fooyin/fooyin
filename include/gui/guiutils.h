@@ -38,6 +38,7 @@ class QMenu;
 class QObject;
 class QMimeData;
 class QLabel;
+class QLayout;
 class QAbstractItemView;
 class QPalette;
 class QPainter;
@@ -49,6 +50,10 @@ class MusicLibrary;
 class SettingsManager;
 
 namespace Gui {
+//! Sets the selected content margins, preserving the other edges.
+FYGUI_EXPORT void setContentsMargins(QLayout* layout, Qt::Edges edges, int margin);
+FYGUI_EXPORT void setContentsMargins(QWidget* widget, Qt::Edges edges, int margin);
+
 struct OrientationMenuLabels
 {
     QString title;

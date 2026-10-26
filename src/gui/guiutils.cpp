@@ -36,6 +36,7 @@
 #include <QHeaderView>
 #include <QIODevice>
 #include <QLabel>
+#include <QLayout>
 #include <QMenu>
 #include <QMimeData>
 #include <QPainter>
@@ -49,6 +50,24 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin::Gui {
 namespace {
+void updateContentsMargins(auto* target, Qt::Edges edges, int margin)
+{
+    auto margins = target->contentsMargins();
+    if(edges.testFlag(Qt::LeftEdge)) {
+        margins.setLeft(margin);
+    }
+    if(edges.testFlag(Qt::TopEdge)) {
+        margins.setTop(margin);
+    }
+    if(edges.testFlag(Qt::RightEdge)) {
+        margins.setRight(margin);
+    }
+    if(edges.testFlag(Qt::BottomEdge)) {
+        margins.setBottom(margin);
+    }
+    target->setContentsMargins(margins);
+}
+
 QHeaderView* itemViewHeader(QAbstractItemView* view)
 {
     if(auto* expandedView = qobject_cast<ExpandedTreeView*>(view)) {
@@ -60,6 +79,16 @@ QHeaderView* itemViewHeader(QAbstractItemView* view)
     return nullptr;
 }
 } // namespace
+
+void setContentsMargins(QLayout* layout, Qt::Edges edges, int margin)
+{
+    updateContentsMargins(layout, edges, margin);
+}
+
+void setContentsMargins(QWidget* widget, Qt::Edges edges, int margin)
+{
+    updateContentsMargins(widget, edges, margin);
+}
 
 void addOrientationMenu(QMenu* menu, QObject* context, const OrientationMenuLabels& labels, bool automatic,
                         Qt::Orientation orientation,
