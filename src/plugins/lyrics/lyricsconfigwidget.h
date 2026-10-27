@@ -54,6 +54,7 @@ protected:
 private:
     [[nodiscard]] ScrollMode scrollMode() const;
     void setScrollMode(ScrollMode mode);
+    void updateInheritedFonts();
 
     GuiStyleProvider* m_styleProvider;
 

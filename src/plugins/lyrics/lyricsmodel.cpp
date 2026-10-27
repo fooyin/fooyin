@@ -19,6 +19,8 @@
 
 #include "lyricsmodel.h"
 
+#include "lyricsfonts.h"
+
 #include <QSize>
 
 #include <algorithm>
@@ -40,9 +42,9 @@ LyricsModel::LyricsModel(GuiStyleProvider* styleProvider, QObject* parent)
     , m_currentWord{-1}
     , m_styleProvider{styleProvider}
     , m_baseFont{Lyrics::defaultFont(*m_styleProvider)}
-    , m_lineFont{Lyrics::defaultLineFont(*m_styleProvider)}
-    , m_wordLineFont{Lyrics::defaultWordLineFont(*m_styleProvider)}
-    , m_wordFont{Lyrics::defaultWordFont(*m_styleProvider)}
+    , m_lineFont{Lyrics::defaultFont(*m_styleProvider)}
+    , m_wordLineFont{Lyrics::defaultFont(*m_styleProvider)}
+    , m_wordFont{Lyrics::defaultFont(*m_styleProvider)}
     , m_progressMode{ProgressMode::Off}
 {
     setColours(Colours{});
@@ -169,21 +171,12 @@ QColor LyricsModel::backgroundColour(const QPalette& palette) const
 void LyricsModel::setFonts(const QString& baseFont, const QString& lineFont, const QString& wordLineFont,
                            const QString& wordFont)
 {
-    if(baseFont.isEmpty() || !m_baseFont.fromString(baseFont)) {
-        m_baseFont = Lyrics::defaultFont(*m_styleProvider);
-    }
-
-    if(lineFont.isEmpty() || !m_lineFont.fromString(lineFont)) {
-        m_lineFont = Lyrics::defaultLineFont(*m_styleProvider);
-    }
-
-    if(wordLineFont.isEmpty() || !m_wordLineFont.fromString(wordLineFont)) {
-        m_wordLineFont = Lyrics::defaultWordLineFont(*m_styleProvider);
-    }
-
-    if(wordFont.isEmpty() || !m_wordFont.fromString(wordFont)) {
-        m_wordFont = Lyrics::defaultWordFont(*m_styleProvider);
-    }
+    const auto fonts
+        = resolveLyricsFonts(Lyrics::defaultFont(*m_styleProvider), baseFont, lineFont, wordLineFont, wordFont);
+    m_baseFont     = fonts.base;
+    m_lineFont     = fonts.line;
+    m_wordLineFont = fonts.wordLine;
+    m_wordFont     = fonts.word;
 
     beginResetModel();
 
