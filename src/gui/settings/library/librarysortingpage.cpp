@@ -99,9 +99,14 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(SortingRegistry* sortingRegis
 
     QObject::connect(m_sortList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &LibrarySortingPageWidget::updateButtonState);
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, &LibrarySortingPageWidget::updateButtonState);
 
     QObject::connect(m_openEditor, &QToolButton::clicked, this, [this]() {
-        const auto selection    = m_sortList->selectionModel()->selectedIndexes();
+        const auto selection = m_sortList->selectionModel()->selectedIndexes();
+        if(selection.size() != 1 || selection.front().column() != 3) {
+            return;
+        }
+
         const QModelIndex index = selection.front();
         ScriptEditor::openEditor(
             index.data().toString(),

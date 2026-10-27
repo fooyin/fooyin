@@ -96,6 +96,7 @@ TagEditorFieldsPageWidget::TagEditorFieldsPageWidget(TagEditorFieldRegistry* reg
 
     QObject::connect(m_fieldList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &TagEditorFieldsPageWidget::updateButtonState);
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, &TagEditorFieldsPageWidget::updateButtonState);
     QObject::connect(m_model, &QAbstractItemModel::rowsMoved, this, &TagEditorFieldsPageWidget::updateButtonState);
 }
 

@@ -84,6 +84,8 @@ SelectionInfoSettingsPageWidget::SelectionInfoSettingsPageWidget(SelectionInfoFi
 
     QObject::connect(m_fieldList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &SelectionInfoSettingsPageWidget::updateButtonState);
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, this,
+                     &SelectionInfoSettingsPageWidget::updateButtonState);
     QObject::connect(m_model, &QAbstractItemModel::rowsMoved, this,
                      &SelectionInfoSettingsPageWidget::updateButtonState);
 }
