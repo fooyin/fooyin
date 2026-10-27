@@ -1380,7 +1380,7 @@ ScriptResult ScriptRuntime::evalFunctionArg(const BoundExpression& exp, const au
             }
         }
     }
-    
+
     if(!expandedValues.empty()) {
         result.value = expandedValues.join(QLatin1String{Constants::UnitSeparator});
     }
