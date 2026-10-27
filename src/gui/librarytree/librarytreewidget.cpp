@@ -1329,11 +1329,11 @@ void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, const QMo
         }
         else if(index.parent() != parent) {
             if(m_playlistGroups.empty()) {
-                m_playlistGroups[0] = parent.data(Qt::DisplayRole).toString();
+                m_playlistGroups[0] = parent.data(LibraryTreeItem::Title).toString();
             }
             parent = index.parent();
 
-            m_playlistGroups[static_cast<int>(tracks.size())] = parent.data(Qt::DisplayRole).toString();
+            m_playlistGroups[static_cast<int>(tracks.size())] = parent.data(LibraryTreeItem::Title).toString();
         }
         const auto indexTracks = index.data(LibraryTreeItem::Tracks).value<TrackList>();
         if(index == selectedTrackIndex) {
@@ -1370,7 +1370,7 @@ void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, const QMo
     syncSelectionPlaylist(tracks);
 
     if(parent.isValid() && m_playlistGroups.empty()) {
-        m_playlistGroups[0] = parent.data(Qt::DisplayRole).toString();
+        m_playlistGroups[0] = parent.data(LibraryTreeItem::Title).toString();
     }
 
     m_playlist = m_playlistHandler->createTempPlaylist(QString::fromLatin1(LibTreePlaylist), tracks);
