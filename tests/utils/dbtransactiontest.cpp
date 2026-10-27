@@ -33,18 +33,6 @@
 using namespace Qt::StringLiterals;
 
 namespace {
-void ensureCoreApplication()
-{
-    if(QCoreApplication::instance()) {
-        return;
-    }
-
-    static int argc{1};
-    static char name[]  = "fooyin-dbtransaction-test";
-    static char* argv[] = {name, nullptr};
-    static QCoreApplication application{argc, argv};
-}
-
 void closeDatabase(QSqlDatabase& database)
 {
     if(!database.isValid()) {
@@ -64,8 +52,6 @@ class DbTransactionTest : public ::testing::Test
 protected:
     void SetUp() override
     {
-        ensureCoreApplication();
-
         static std::atomic_int nextConnection{0};
         m_connectionName = u"fooyin-dbtransaction-test-%1"_s.arg(nextConnection.fetch_add(1));
         m_database       = QSqlDatabase::addDatabase(u"QSQLITE"_s, m_connectionName);
@@ -444,3 +430,10 @@ TEST_F(DbTransactionTest, InactiveScopeCannotFinishAnotherTransaction)
     EXPECT_EQ(values(m_database), (std::vector{1}));
 }
 } // namespace Fooyin::Testing
+
+int main(int argc, char* argv[])
+{
+    const QCoreApplication application{argc, argv};
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
