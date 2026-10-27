@@ -8040,8 +8040,8 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="293"/>
         <source>Could not move %Ln file(s) to the trash. Delete them permanently?</source>
         <translation>
-            <numerusform>Kunde inte flytta ”%Ln” fil till papperskorgen. Radera den permanent?</numerusform>
-            <numerusform>Kunde inte flytta ”%Ln” filer till papperskorgen. Radera dem permanent?</numerusform>
+            <numerusform>Kunde inte flytta %Ln fil till papperskorgen. Radera den permanent?</numerusform>
+            <numerusform>Kunde inte flytta %Ln filer till papperskorgen. Radera dem permanent?</numerusform>
         </translation>
     </message>
     <message>
