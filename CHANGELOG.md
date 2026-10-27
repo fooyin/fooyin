@@ -7,6 +7,11 @@
 - **Interface** 
   - Add configurable animations when switching layouts
   - Allow dialog actions in separate scopes to share shortcuts
+  - Increase the default Settings dialog size
+  - Require Shift to split widgets during layout editing and show native modifier key names in hints
+  - Make the Properties selection sidebar resizable
+  - Improve wording in line with the KDE HIG ([#1810](https://github.com/fooyin/fooyin/pull/1810))
+  - Separate Library Tree grouping from display scripts and redesign the grouping preset editor
 - **Playlists**
   - Add a live track preview and matching track count to the autoplaylist editor
   - Support custom sorting scripts in autoplaylist rules ([#1806](https://github.com/fooyin/fooyin/issues/1806))
@@ -14,12 +19,25 @@
 
 ### Fixes
 
+- **Audio Conversion:** Limit sample format options to those supported by the selected encoder ([#1824](https://github.com/fooyin/fooyin/issues/1824))
 - **Global Shortcuts:** Fix keypad shortcuts and native key translation across platforms ([#1813](https://github.com/fooyin/fooyin/issues/1813))
-- **Interface:** Fix Shift selection across wrapped rows ([#1808](https://github.com/fooyin/fooyin/issues/1808))
+- **Interface**
+  - Fix Shift selection across wrapped rows ([#1808](https://github.com/fooyin/fooyin/issues/1808))
+  - Refresh table actions after settings models reset, preventing crashes from stale actions ([#1827](https://github.com/fooyin/fooyin/issues/1827))
+- **Library & Metadata**
+  - Fix numeric Library Tree count expressions ([#1774](https://github.com/fooyin/fooyin/issues/1774), [#1816](https://github.com/fooyin/fooyin/issues/1816))
+  - Preserve Filter group order across rebuilds and incremental updates ([#1829](https://github.com/fooyin/fooyin/issues/1829))
+- **Playlists:** Fix dragging selected tracks from sorted autoplaylists ([#1821](https://github.com/fooyin/fooyin/issues/1821))
+- **Scripting**
+  - Fix tag expansion with tree levels inside function arguments ([#1828](https://github.com/fooyin/fooyin/issues/1828))
+  - Fix a `$swapprefix` crash with standalone articles
+- **Verification:** Fix CUE sample rate handling and chapter boundary rounding
+- **Visualisations:** Centre Spectrum FFT windows on playback time ([#1795](https://github.com/fooyin/fooyin/issues/1795))
 
 ### Build/System
 
 - **Packaging:** Fix plugin bundle RPATHs and runtime contents, and avoid duplicate Windows DLLs
+- **Translations:** Update translations and translation sources ([#1818](https://github.com/fooyin/fooyin/pull/1818), [#1819](https://github.com/fooyin/fooyin/pull/1819))
 - **Windows:** Fix MSVC builds and test discovery during DLL deployment
 - **X11:** Require the XCB components used by Global Shortcuts
 
