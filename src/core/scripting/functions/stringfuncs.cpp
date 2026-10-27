@@ -583,7 +583,7 @@ QString swapPrefix(const QStringList& vec)
         }
 
         const QString firstWord = words.first();
-        if(prefixes.contains(firstWord, Qt::CaseInsensitive)) {
+        if(words.size() > 1 && prefixes.contains(firstWord, Qt::CaseInsensitive)) {
             words.removeFirst();
             words.last().append(","_L1);
             words.append(firstWord);
