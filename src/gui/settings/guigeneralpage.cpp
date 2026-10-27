@@ -95,6 +95,7 @@ private:
     QRadioButton* m_darkTheme;
     QRadioButton* m_systemTheme;
     QComboBox* m_applicationIcon;
+    QCheckBox* m_useCustomApplicationIcon;
     QLineEdit* m_customApplicationIcon;
     QPushButton* m_browseApplicationIcon;
 
@@ -140,6 +141,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_darkTheme{new QRadioButton(tr("Dark"), this)}
     , m_systemTheme{new QRadioButton(tr("Use system icons"), this)}
     , m_applicationIcon{new QComboBox(this)}
+    , m_useCustomApplicationIcon{new QCheckBox(tr("Custom icon") + u":"_s, this)}
     , m_customApplicationIcon{new QLineEdit(this)}
     , m_browseApplicationIcon{new QPushButton(tr("Browse…"), this)}
     , m_showMenuBar{new QCheckBox(tr("Show menu bar"), this)}
@@ -184,21 +186,22 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     iconThemeBoxLayout->addWidget(m_lightTheme, row, 0);
     iconThemeBoxLayout->addWidget(m_darkTheme, row++, 1);
     iconThemeBoxLayout->addWidget(m_systemTheme, row++, 0, 1, 2);
+    iconThemeBoxLayout->setColumnStretch(2, 1);
 
     m_applicationIcon->addItem(QIcon{u":/icons/32-fooyin.png"_s}, tr("Dragon"),
                                static_cast<int>(Gui::ApplicationIconOption::Dragon));
     m_applicationIcon->addItem(QIcon{u":/icons/32-fooyin-typographic.png"_s}, tr("Typographic"),
                                static_cast<int>(Gui::ApplicationIconOption::Typographic));
-    m_applicationIcon->addItem(tr("Custom"), static_cast<int>(Gui::ApplicationIconOption::Custom));
 
-    iconThemeBoxLayout->addWidget(new QLabel(tr("Application icon") + u":"_s, iconThemeBox), row, 0);
-    iconThemeBoxLayout->addWidget(m_applicationIcon, row++, 1);
-    iconThemeBoxLayout->addWidget(m_customApplicationIcon, row, 0, 1, 2);
-    iconThemeBoxLayout->addWidget(m_browseApplicationIcon, row++, 2);
-    iconThemeBoxLayout->setColumnStretch(1, 1);
+    iconThemeBoxLayout->addWidget(new QLabel(tr("Application icon") + u":"_s, iconThemeBox), 0, 3);
+    iconThemeBoxLayout->addWidget(m_applicationIcon, 0, 4, 1, 2);
+    iconThemeBoxLayout->addWidget(m_useCustomApplicationIcon, 1, 3);
+    iconThemeBoxLayout->addWidget(m_customApplicationIcon, 1, 4);
+    iconThemeBoxLayout->addWidget(m_browseApplicationIcon, 1, 5);
+    iconThemeBoxLayout->setColumnStretch(4, 1);
 
-    m_customApplicationIcon->hide();
-    m_browseApplicationIcon->hide();
+    m_customApplicationIcon->setEnabled(false);
+    m_browseApplicationIcon->setEnabled(false);
 
     row = 0;
     appearanceGroupLayout->addWidget(new QLabel(tr("Style") + u":"_s, appearanceGroup), row, 0);
@@ -208,7 +211,6 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 #endif
     appearanceGroupLayout->addWidget(m_showMenuBar, row++, 0, 1, 2);
     appearanceGroupLayout->addWidget(m_menuBarMovable, row++, 0, 1, 2);
-    appearanceGroupLayout->addWidget(iconThemeBox, row++, 0, 1, 2);
     appearanceGroupLayout->setColumnStretch(1, 1);
 
     m_layoutTransitionDuration->setRange(50, 3000);
@@ -254,19 +256,19 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
                      &GuiGeneralPageWidget::updateTransitionOptions);
     updateTransitionOptions();
 
-    auto* layoutGroup    = new QGroupBox(tr("Layout"), this);
-    auto* splitterLayout = new QGridLayout(layoutGroup);
+    auto* layoutGroup  = new QGroupBox(tr("Layout"), this);
+    auto* layoutLayout = new QGridLayout(layoutGroup);
 
     row = 0;
-    splitterLayout->addWidget(m_splitterHandles, row++, 0, 1, 3);
-    splitterLayout->addWidget(m_lockSplitters, row++, 0, 1, 3);
-    splitterLayout->addWidget(m_lockedWidgetsResizeAdjacentOnly, row++, 0, 1, 3);
-    splitterLayout->addWidget(m_overrideSplitterHandle, row, 0);
-    splitterLayout->addWidget(m_splitterHandleGap, row++, 1);
-    splitterLayout->addWidget(m_overrideMargin, row, 0);
-    splitterLayout->addWidget(m_editableLayoutMargin, row++, 1);
-    splitterLayout->setRowStretch(row, 1);
-    splitterLayout->setColumnStretch(2, 1);
+    layoutLayout->addWidget(m_splitterHandles, row++, 0, 1, 3);
+    layoutLayout->addWidget(m_lockSplitters, row++, 0, 1, 3);
+    layoutLayout->addWidget(m_lockedWidgetsResizeAdjacentOnly, row++, 0, 1, 3);
+    layoutLayout->addWidget(m_overrideSplitterHandle, row, 0);
+    layoutLayout->addWidget(m_splitterHandleGap, row++, 1);
+    layoutLayout->addWidget(m_overrideMargin, row, 0);
+    layoutLayout->addWidget(m_editableLayoutMargin, row++, 1);
+    layoutLayout->setRowStretch(row, 1);
+    layoutLayout->setColumnStretch(2, 1);
 
     m_editableLayoutMargin->setRange(0, 20);
     m_editableLayoutMargin->setSuffix(u" px"_s);
@@ -289,8 +291,9 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     mainLayout->addWidget(setupBox, row++, 0, 1, 2);
     mainLayout->addWidget(appearanceGroup, row, 0);
     mainLayout->addWidget(layoutGroup, row++, 1);
-    mainLayout->addWidget(m_layoutAnimation, row++, 0, 1, 2);
-    mainLayout->addWidget(toolButtonGroup, row++, 0, 1, 2);
+    mainLayout->addWidget(iconThemeBox, row++, 0, 1, 2);
+    mainLayout->addWidget(m_layoutAnimation, row, 0);
+    mainLayout->addWidget(toolButtonGroup, row++, 1);
     mainLayout->setColumnStretch(0, 1);
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
@@ -301,11 +304,10 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 
     QObject::connect(m_overrideMargin, &QCheckBox::toggled, m_editableLayoutMargin, &QWidget::setEnabled);
 
-    QObject::connect(m_applicationIcon, &QComboBox::currentIndexChanged, this, [this]() {
-        const bool custom
-            = m_applicationIcon->currentData().toInt() == static_cast<int>(Gui::ApplicationIconOption::Custom);
-        m_customApplicationIcon->setVisible(custom);
-        m_browseApplicationIcon->setVisible(custom);
+    QObject::connect(m_useCustomApplicationIcon, &QCheckBox::toggled, this, [this](bool custom) {
+        m_applicationIcon->setEnabled(!custom);
+        m_customApplicationIcon->setEnabled(custom);
+        m_browseApplicationIcon->setEnabled(custom);
     });
     QObject::connect(m_browseApplicationIcon, &QPushButton::clicked, this, [this]() {
         const QString path
@@ -361,6 +363,8 @@ void GuiGeneralPageWidget::load()
 
     const int applicationIconIndex = m_applicationIcon->findData(m_settings->value<ApplicationIcon>());
     m_applicationIcon->setCurrentIndex(applicationIconIndex >= 0 ? applicationIconIndex : 0);
+    m_useCustomApplicationIcon->setChecked(m_settings->value<ApplicationIcon>()
+                                           == static_cast<int>(Gui::ApplicationIconOption::Custom));
     m_customApplicationIcon->setText(m_settings->value<CustomApplicationIcon>());
 
     m_showMenuBar->setChecked(m_settings->value<ShowMenuBar>());
@@ -426,7 +430,9 @@ void GuiGeneralPageWidget::apply()
     }
     m_settings->set<IconTheme>(static_cast<int>(iconThemeOption));
     m_settings->set<CustomApplicationIcon>(m_customApplicationIcon->text());
-    m_settings->set<ApplicationIcon>(m_applicationIcon->currentData().toInt());
+    m_settings->set<ApplicationIcon>(m_useCustomApplicationIcon->isChecked()
+                                         ? static_cast<int>(Gui::ApplicationIconOption::Custom)
+                                         : m_applicationIcon->currentData().toInt());
 
     m_settings->set<ShowMenuBar>(m_showMenuBar->isChecked());
     m_settings->set<MenuBarMovable>(m_menuBarMovable->isChecked());
