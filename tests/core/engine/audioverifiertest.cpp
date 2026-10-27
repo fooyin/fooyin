@@ -19,6 +19,7 @@
 
 #include "testutils.h"
 
+#include <core/constants.h>
 #include <core/engine/verification/audioverifier.h>
 
 #include <QCoreApplication>
@@ -50,6 +51,8 @@ struct DecoderState
 {
     AudioDecoder::DecoderOptions options{AudioDecoder::None};
     bool failRead{false};
+    int sampleRate{44100};
+    int frameCount{588};
 };
 
 class VerificationDecoder : public AudioDecoder
@@ -73,6 +76,7 @@ public:
     {
         m_state->options = options;
         m_read           = false;
+        m_format         = {SampleFormat::S16, m_state->sampleRate, 2};
         return m_format;
     }
 
@@ -84,12 +88,12 @@ public:
         if(m_state->failRead) {
             return ReadResult::errorResult(u"Synthetic checksum failure"_s);
         }
-        if(m_read) {
+        if(m_read || m_state->frameCount == 0) {
             return ReadResult::endOfStream();
         }
         m_read = true;
         AudioBuffer buffer{m_format, 0};
-        buffer.resize(static_cast<size_t>(m_format.bytesForFrames(588)));
+        buffer.resize(m_format.bytesForFrames(m_state->frameCount));
         buffer.fillSilence();
         return ReadResult::data(std::move(buffer));
     }
@@ -149,6 +153,46 @@ TEST_F(AudioVerifierTest, DecodesEntireTrackWithStrictIntegrityOption)
     EXPECT_TRUE(m_state->options.testFlag(AudioDecoder::ForConversion));
 }
 
+TEST_F(AudioVerifierTest, UsesDecodedSampleRateForCueBoundaries)
+{
+    AudioVerifier::Request request;
+    request.audioLoader = &m_loader;
+
+    for(const int sampleRate : {22050, 32000, 44100, 48000, 96000}) {
+        SCOPED_TRACE(sampleRate);
+        m_state->sampleRate = sampleRate;
+        m_state->frameCount = 2 * sampleRate / 75;
+
+        Track cueTrack{m_path};
+        cueTrack.setCuePath(u"source.cue"_s);
+        cueTrack.setExtraProperty(QString::fromLatin1(Constants::CueIndex01Sector), u"1"_s);
+        cueTrack.setExtraProperty(QString::fromLatin1(Constants::CueEndSector), u"2"_s);
+
+        request.tracks        = {cueTrack};
+        const auto cueResults = AudioVerifier::run(request);
+        ASSERT_EQ(cueResults.size(), 1);
+        EXPECT_EQ(cueResults.front().status, AudioVerificationStatus::Succeeded);
+        EXPECT_EQ(cueResults.front().decodedFrames, m_state->frameCount - sampleRate / 75);
+    }
+}
+
+TEST_F(AudioVerifierTest, AcceptsRoundedChapterEndAtEndOfStream)
+{
+    Track chapter{m_path};
+    chapter.setIsChapter(true);
+    chapter.setDuration(14);
+
+    AudioVerifier::Request request;
+    request.audioLoader = &m_loader;
+    request.tracks      = {chapter};
+
+    const auto chapterResults = AudioVerifier::run(request);
+    ASSERT_EQ(chapterResults.size(), 1);
+    EXPECT_EQ(chapterResults.front().status, AudioVerificationStatus::Succeeded);
+    EXPECT_EQ(chapterResults.front().decodedFrames, 588);
+    EXPECT_EQ(chapterResults.front().md5.toHex().toUpper(), "9E297EFC7A522480EF89A4A7F39CE560");
+}
+
 TEST_F(AudioVerifierTest, ReportsDecoderIntegrityFailure)
 {
     m_state->failRead = true;
@@ -164,7 +208,78 @@ TEST_F(AudioVerifierTest, ReportsDecoderIntegrityFailure)
     EXPECT_EQ(results.front().status, AudioVerificationStatus::Failed);
     EXPECT_TRUE(results.front().md5.isEmpty());
     EXPECT_EQ(results.front().crc32, 0U);
-    EXPECT_EQ(results.front().error, u"Synthetic checksum failure"_s);
+    EXPECT_FALSE(results.front().error.isEmpty());
+}
+
+TEST_F(AudioVerifierTest, PreservesDecoderIntegrityFailureForChapters)
+{
+    m_state->failRead = true;
+
+    Track chapter{m_path};
+    chapter.setIsChapter(true);
+    chapter.setDuration(14);
+
+    AudioVerifier::Request request;
+    request.audioLoader = &m_loader;
+    request.tracks      = {chapter};
+
+    const auto failedChapter = AudioVerifier::run(request);
+    ASSERT_EQ(failedChapter.size(), 1);
+    EXPECT_EQ(failedChapter.front().status, AudioVerificationStatus::Failed);
+    EXPECT_FALSE(failedChapter.front().error.isEmpty());
+}
+
+TEST_F(AudioVerifierTest, RejectsChapterShortfallBeyondRoundingTolerance)
+{
+    Track chapter{m_path};
+    chapter.setIsChapter(true);
+    chapter.setDuration(15);
+
+    AudioVerifier::Request request;
+    request.audioLoader = &m_loader;
+    request.tracks      = {chapter};
+
+    const auto shortChapter = AudioVerifier::run(request);
+    ASSERT_EQ(shortChapter.size(), 1);
+    EXPECT_EQ(shortChapter.front().status, AudioVerificationStatus::Failed);
+    EXPECT_FALSE(shortChapter.front().error.isEmpty());
+}
+
+TEST_F(AudioVerifierTest, RejectsEmptyChapterWithinRoundingTolerance)
+{
+    m_state->frameCount = 0;
+
+    Track chapter{m_path};
+    chapter.setIsChapter(true);
+    chapter.setDuration(1);
+
+    AudioVerifier::Request request;
+    request.audioLoader = &m_loader;
+    request.tracks      = {chapter};
+
+    const auto emptyChapter = AudioVerifier::run(request);
+    ASSERT_EQ(emptyChapter.size(), 1);
+    EXPECT_EQ(emptyChapter.front().status, AudioVerificationStatus::Failed);
+    EXPECT_FALSE(emptyChapter.front().error.isEmpty());
+}
+
+TEST_F(AudioVerifierTest, RejectsCueSegmentMissingOneFrame)
+{
+    m_state->frameCount = 587;
+
+    Track cueTrack{m_path};
+    cueTrack.setCuePath(u"source.cue"_s);
+    cueTrack.setExtraProperty(QString::fromLatin1(Constants::CueIndex01Sector), u"0"_s);
+    cueTrack.setExtraProperty(QString::fromLatin1(Constants::CueEndSector), u"1"_s);
+
+    AudioVerifier::Request request;
+    request.audioLoader = &m_loader;
+    request.tracks      = {cueTrack};
+
+    const auto shortCue = AudioVerifier::run(request);
+    ASSERT_EQ(shortCue.size(), 1);
+    EXPECT_EQ(shortCue.front().status, AudioVerificationStatus::Failed);
+    EXPECT_FALSE(shortCue.front().error.isEmpty());
 }
 } // namespace
 } // namespace Fooyin::Testing

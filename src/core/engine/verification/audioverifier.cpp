@@ -39,18 +39,18 @@ bool shouldCancel(const Request& request)
     return request.cancelCallback && request.cancelCallback();
 }
 
-uint64_t framesForDuration(uint64_t durationMs, int sampleRate)
+uint64_t framesForTime(uint64_t time, int sampleRate, uint64_t unitsPerSecond)
 {
     if(sampleRate <= 0) {
         return 0;
     }
 
     const auto rate = static_cast<uint64_t>(sampleRate);
-    if(durationMs > std::numeric_limits<uint64_t>::max() / rate) {
+    if(time > std::numeric_limits<uint64_t>::max() / rate) {
         return std::numeric_limits<uint64_t>::max();
     }
 
-    return durationMs * rate / 1000;
+    return time * rate / unitsPerSecond;
 }
 
 AudioBuffer trimBuffer(const AudioBuffer& buffer, uint64_t frames)
@@ -59,7 +59,7 @@ AudioBuffer trimBuffer(const AudioBuffer& buffer, uint64_t frames)
         return buffer;
     }
 
-    const auto bytes = static_cast<size_t>(buffer.format().bytesForFrames(static_cast<int>(frames)));
+    const auto bytes = buffer.format().bytesForFrames(static_cast<int>(frames));
     return {buffer.constData().first(bytes), buffer.format(), buffer.startTime()};
 }
 
@@ -73,7 +73,7 @@ std::optional<uint64_t> cueSectorProperty(const Track& track, const char* name)
 
     bool ok{false};
     const uint64_t sector = value->toULongLong(&ok);
-    return ok ? std::optional<uint64_t>{sector} : std::optional<uint64_t>{};
+    return ok ? std::optional{sector} : std::optional<uint64_t>{};
 }
 
 AudioBuffer removeLeadingFrames(const AudioBuffer& buffer, uint64_t frames)
@@ -86,7 +86,7 @@ AudioBuffer removeLeadingFrames(const AudioBuffer& buffer, uint64_t frames)
         return {};
     }
 
-    const size_t offset = static_cast<size_t>(buffer.format().bytesForFrames(static_cast<int>(frames)));
+    const size_t offset = buffer.format().bytesForFrames(static_cast<int>(frames));
     return {buffer.constData().subspan(offset), buffer.format(), buffer.startTime()};
 }
 
@@ -128,8 +128,10 @@ AudioVerificationResult verifyTrack(const Request& request, const Track& track, 
         loaded.decoder->seek(track.offset());
     }
 
-    uint64_t framesToSkip = cueStartSector.value_or(0) * AccurateRip::FramesPerSector;
+    const int sampleRate  = loaded.format->sampleRate();
+    uint64_t framesToSkip = framesForTime(cueStartSector.value_or(0), sampleRate, AccurateRip::SectorsPerSecond);
     std::optional<uint64_t> framesRemaining;
+    uint64_t endTolerance{0};
 
     if(const auto cueEndSector = cueSectorProperty(track, Constants::CueEndSector); cueStartSector && cueEndSector) {
         if(*cueEndSector <= *cueStartSector) {
@@ -140,10 +142,12 @@ AudioVerificationResult verifyTrack(const Request& request, const Track& track, 
                     .error    = u"Invalid CUE track boundaries"_s,
                     .warnings = {}};
         }
-        framesRemaining = (*cueEndSector - *cueStartSector) * AccurateRip::FramesPerSector;
+        framesRemaining = framesForTime(*cueEndSector, sampleRate, AccurateRip::SectorsPerSecond) - framesToSkip;
     }
     else if(track.isBoundedSegment() && track.duration() > 0 && !cueStartSector) {
-        framesRemaining = framesForDuration(track.duration(), loaded.format->sampleRate());
+        framesRemaining = framesForTime(track.duration(), sampleRate, 1000);
+        // Segment boundaries can round up by less than one ms
+        endTolerance = (static_cast<uint64_t>(sampleRate) + 999) / 1000;
     }
 
     bool failed{false};
@@ -188,7 +192,9 @@ AudioVerificationResult verifyTrack(const Request& request, const Track& track, 
         }
 
         if(read.status == AudioDecoder::ReadStatus::EndOfStream) {
-            complete = framesToSkip == 0 && (!framesRemaining || *framesRemaining == 0);
+            complete = framesToSkip == 0
+                    && (!framesRemaining || *framesRemaining == 0
+                        || (decodedFrames > 0 && *framesRemaining <= endTolerance));
             if(!complete) {
                 failed = true;
                 error  = u"Decoder ended before the track segment was complete"_s;
