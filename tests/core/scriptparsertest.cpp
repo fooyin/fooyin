@@ -399,6 +399,75 @@ TEST_F(ScriptParserTest, ConditionalTest)
     EXPECT_EQ(u"\\<rgb=255,0,0>", m_parser.evaluate(u"$if(1,\\<rgb=255,0,0>,X)"_s));
 }
 
+TEST_F(ScriptParserTest, FunctionArgumentExpandsNestedValues)
+{
+    Track track;
+    track.setAlbum(u"DOOM Eternal Soundtrack"_s);
+    track.setAlbumArtists({u"Mick Gordon"_s, u"Chad Mossholder"_s});
+
+    const QString expected = u"Mick Gordon||DOOM Eternal Soundtrack\037Chad Mossholder||DOOM Eternal Soundtrack"_s;
+    EXPECT_EQ(expected, m_parser.evaluate(u"%<albumartist>%||%album%"_s, track));
+    EXPECT_EQ(expected, m_parser.evaluate(u"$if(%album%,[%<albumartist>%||%album%])"_s, track));
+    EXPECT_EQ(expected, m_parser.evaluate(u"$if(%album%,%<albumartist>%||%album%)"_s, track));
+}
+
+TEST_F(ScriptParserTest, FunctionArgumentPreservesPrefixesAndSuffixes)
+{
+    Track track;
+    track.setArtists({u"Me"_s});
+    EXPECT_EQ(u"prefix-Me-suffix", m_parser.evaluate(u"$if2(prefix-%<artist>%-suffix,fallback)"_s, track));
+
+    track.setArtists({u"Me"_s, u"You"_s});
+    EXPECT_EQ(u"prefix-Me-suffix\037prefix-You-suffix",
+              m_parser.evaluate(u"$if2(prefix-%<artist>%-suffix,fallback)"_s, track));
+}
+
+TEST_F(ScriptParserTest, FunctionArgumentExpandsAllCombinations)
+{
+    Track track;
+    track.setGenres({u"Pop"_s, u"Rock"_s});
+    track.setArtists({u"Me"_s, u"You"_s});
+
+    const QString expected = u"Pop - Me\037Rock - Me\037Pop - You\037Rock - You"_s;
+    EXPECT_EQ(expected, m_parser.evaluate(u"%<genre>% - %<artist>%"_s, track));
+    EXPECT_EQ(expected, m_parser.evaluate(u"$if(1,[%<genre>% - %<artist>%])"_s, track));
+    EXPECT_EQ(expected, m_parser.evaluate(u"$if(1,%<genre>% - %<artist>%)"_s, track));
+}
+
+TEST_F(ScriptParserTest, FunctionArgumentHandlesMissingValues)
+{
+    Track track;
+    track.setArtists({u"Me"_s, u"You"_s});
+
+    EXPECT_TRUE(m_parser.evaluate(u"$if(%album%,%<artist>%||%album%)"_s, track).isNull());
+    EXPECT_TRUE(m_parser.evaluate(u"$if(1,%album%%disc%)"_s, track).isNull());
+    EXPECT_TRUE(m_parser.evaluate(u"$if(1,\"\")"_s, track).isNull());
+
+    const ScriptEvaluationOptions options{.missingVariableText = u""_s};
+    EXPECT_FALSE(m_parser.evaluate(u"$if(1,%album%%disc%)"_s, track, ScriptContext{}, options).isNull());
+    EXPECT_EQ(u"yes", m_parser.evaluate(u"$if(literal,yes,no)"_s, track));
+    EXPECT_EQ(u"no", m_parser.evaluate(u"$if(\"a\"\"b\",yes,no)"_s, track));
+    EXPECT_EQ(u"no", m_parser.evaluate(u"$if(%album%literal,yes,no)"_s, track));
+    EXPECT_EQ(u"fallback", m_parser.evaluate(u"$if2(%album%literal,fallback)"_s, track));
+    EXPECT_EQ(u"literal", m_parser.evaluate(u"$if(1,%album%literal)"_s, track));
+    EXPECT_EQ(u"yes", m_parser.evaluate(u"$if(%album%%<artist>%literal,yes,no)"_s, track));
+    EXPECT_EQ(u"Me\037You", m_parser.evaluate(u"$if2(%<artist>%,fallback)"_s, track));
+    EXPECT_EQ(u"6", m_parser.evaluate(u"$len(%<artist>%)"_s, track));
+}
+
+TEST_F(ScriptParserTest, FunctionArgumentPreservesEvaluationOrder)
+{
+    Track track;
+    track.setArtists({u"Me"_s, u"You"_s});
+
+    EXPECT_EQ(u"Me1\037You1", m_parser.evaluate(u"$puts(count,0)$if(1,$puts(count,$add($get(count),1))%<artist>%,"
+                                                u"$puts(count,99))$get(count)"_s,
+                                                track));
+    EXPECT_EQ(u"Me1\037You1", m_parser.evaluate(u"$puts(count,0)$if(1,%<artist>%$puts(count,$add($get(count),1)),"
+                                                u"$puts(count,99))$get(count)"_s,
+                                                track));
+}
+
 TEST_F(ScriptParserTest, MetadataTest)
 {
     Track track;

@@ -1357,6 +1357,7 @@ ScriptResult ScriptRuntime::evalFunctionArg(const BoundExpression& exp, const au
     }
 
     ScriptResult result;
+    QStringList expandedValues;
     bool conditionPassed{false};
 
     for(const BoundExpression& subArg : arg) {
@@ -1364,16 +1365,24 @@ ScriptResult ScriptRuntime::evalFunctionArg(const BoundExpression& exp, const au
         if(subArg.type != Expr::Literal && subArg.type != Expr::QuotedLiteral) {
             conditionPassed |= subExpr.cond;
         }
-        if(subExpr.value.contains(QLatin1String{Constants::UnitSeparator})) {
-            QStringList newResult;
-            const auto values = subExpr.value.split(QLatin1String{Constants::UnitSeparator});
-            std::ranges::transform(values, std::back_inserter(newResult),
-                                   [&](const auto& value) { return result.value + value; });
-            result.value = newResult.join(QLatin1String{Constants::UnitSeparator});
+        if(subExpr.value.contains(QLatin1StringView{Constants::UnitSeparator})) {
+            if(expandedValues.empty()) {
+                expandedValues.push_back(result.value);
+            }
+            expandedValues = evalStringList(subExpr, expandedValues);
         }
-        else {
+        else if(expandedValues.empty()) {
             result.value = result.value + subExpr.value;
         }
+        else {
+            for(auto& value : expandedValues) {
+                value.append(subExpr.value);
+            }
+        }
+    }
+    
+    if(!expandedValues.empty()) {
+        result.value = expandedValues.join(QLatin1String{Constants::UnitSeparator});
     }
     result.cond = conditionPassed;
     return result;
