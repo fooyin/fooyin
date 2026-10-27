@@ -554,7 +554,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="518"/>
         <source>Duration-weighted average bitrate of the track list in kbps</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目持續長度權重平均的位元率 kbps</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="524"/>
@@ -2317,7 +2317,7 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="91"/>
         <source>Show preview</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示預覽</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="101"/>
@@ -2395,25 +2395,25 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="170"/>
         <source>Show matching tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示符合曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="378"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="428"/>
         <source>Updating…</source>
-        <translation type="unfinished"></translation>
+        <translation>進行更新…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="404"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="470"/>
         <source>No matching tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>無符合曲目</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="404"/>
         <source>%Ln matching track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln 符合曲目</numerusform>
         </translation>
     </message>
     <message>
@@ -2497,13 +2497,14 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="63"/>
         <source>None</source>
-        <translation type="unfinished">無</translation>
+        <translation>無</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="87"/>
         <source>Choose a preset or enter a sorting script. Use ‘Metadata tag…’ to read a tag directly.
 Clear to disable sorting.</source>
-        <translation type="unfinished"></translation>
+        <translation>選擇預設集或輸入排序指令腳本。使用 &apos;詮釋資料標籤...&apos; 直接讀取標籤。 
+清除以停用排序。</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="93"/>
@@ -2629,37 +2630,37 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="530"/>
         <source>Bitrate (kbps)</source>
-        <translation type="unfinished"></translation>
+        <translation>位元率 (kbps)</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="532"/>
         <source>Sample rate (Hz)</source>
-        <translation type="unfinished"></translation>
+        <translation>採樣率 (Hz)</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="533"/>
         <source>Bit depth</source>
-        <translation type="unfinished">位元深度</translation>
+        <translation>位元深度</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="535"/>
         <source>Number of channels</source>
-        <translation type="unfinished"></translation>
+        <translation>通道數量</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="536"/>
         <source>File created</source>
-        <translation type="unfinished"></translation>
+        <translation>檔案已經建立</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="537"/>
         <source>Last modified</source>
-        <translation type="unfinished"></translation>
+        <translation>最後修改</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="538"/>
         <source>File extension</source>
-        <translation type="unfinished">檔案副檔名</translation>
+        <translation>檔案副檔名</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="539"/>
@@ -7646,8 +7647,8 @@ Effects here process the final combined output.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="622"/>
         <source>Stopped: %Ln operation(s) not run</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已經停止： %Ln 操作不執行</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -7789,7 +7790,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="564"/>
         <source>&amp;Stop</source>
-        <translation type="unfinished">停止(&amp;S)</translation>
+        <translation>停止(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="545"/>
@@ -8908,7 +8909,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="361"/>
         <source>The shortcut is already registered</source>
-        <translation type="unfinished">此快速鍵已為登錄</translation>
+        <translation>此快速鍵已經註錄</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="384"/>
@@ -8964,7 +8965,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="267"/>
         <source>The shortcut is already registered</source>
-        <translation type="unfinished">此快速鍵已為登錄</translation>
+        <translation>此快速鍵已經註錄</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="272"/>
@@ -9177,12 +9178,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1092"/>
         <source>Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>自動播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1093"/>
         <source>Toggle Sidebar</source>
-        <translation type="unfinished">切換側邊列</translation>
+        <translation>切換側邊列</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1165"/>
@@ -9871,22 +9872,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="147"/>
         <source>Layout animation</source>
-        <translation type="unfinished"></translation>
+        <translation>配置動畫</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="150"/>
         <source>Enter from</source>
-        <translation type="unfinished"></translation>
+        <translation>輸入來自</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="152"/>
         <source>Scale direction</source>
-        <translation type="unfinished"></translation>
+        <translation>度量方向</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="154"/>
         <source>Scale amount</source>
-        <translation type="unfinished"></translation>
+        <translation>度量計數</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="159"/>
@@ -9971,72 +9972,72 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="218"/>
         <source>Crossfade</source>
-        <translation type="unfinished"></translation>
+        <translation>交叉淡入淡出</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="219"/>
         <source>Fade through background</source>
-        <translation type="unfinished"></translation>
+        <translation>淡入淡出經由背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="221"/>
         <source>Scale &amp; fade</source>
-        <translation type="unfinished"></translation>
+        <translation>度量 &amp; 淡入淡出</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="222"/>
         <source>Slide &amp; fade</source>
-        <translation type="unfinished"></translation>
+        <translation>滑動 &amp; 淡入淡出</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="224"/>
         <source>Automatic</source>
-        <translation type="unfinished">自動</translation>
+        <translation>自動</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="225"/>
         <source>Left</source>
-        <translation type="unfinished">左</translation>
+        <translation>左</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="226"/>
         <source>Right</source>
-        <translation type="unfinished">右</translation>
+        <translation>右</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="227"/>
         <source>Top</source>
-        <translation type="unfinished">頂部</translation>
+        <translation>頂部</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="228"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="229"/>
         <source>Automatic follows the interface’s reading direction.</source>
-        <translation type="unfinished"></translation>
+        <translation>自動遵循介面的讀取方向。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="231"/>
         <source>Grow</source>
-        <translation type="unfinished"></translation>
+        <translation>生長</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="232"/>
         <source>Shrink</source>
-        <translation type="unfinished"></translation>
+        <translation>緊縮</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="241"/>
         <source>Effect</source>
-        <translation type="unfinished"></translation>
+        <translation>特效</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="243"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>持續</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="257"/>
@@ -11583,7 +11584,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="178"/>
         <source>Stop</source>
-        <translation type="unfinished">停止</translation>
+        <translation>停止</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="182"/>
@@ -13741,12 +13742,12 @@ Local lyrics will still be loaded.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="978"/>
         <source>Stop</source>
-        <translation type="unfinished">停止</translation>
+        <translation>停止</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1036"/>
         <source>Clear existing tags?</source>
-        <translation type="unfinished"></translation>
+        <translation>清除現有標籤？</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1041"/>
@@ -13761,7 +13762,7 @@ Local lyrics will still be loaded.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="475"/>
         <source>Clear writable tags, then apply</source>
-        <translation type="unfinished"></translation>
+        <translation>清除可以寫入的標籤，然後套用</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="616"/>
@@ -15223,17 +15224,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="184"/>
         <source>Volume shortcut step</source>
-        <translation type="unfinished"></translation>
+        <translation>音量快速鍵梯級</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="186"/>
         <source>Volume control step (small)</source>
-        <translation type="unfinished"></translation>
+        <translation>音量控制梯級 (小)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="188"/>
         <source>Volume control step (large)</source>
-        <translation type="unfinished"></translation>
+        <translation>音量控制梯級 (大)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="196"/>
@@ -16214,7 +16215,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="77"/>
         <source>Stop</source>
-        <translation type="unfinished">停止</translation>
+        <translation>停止</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="123"/>
@@ -17117,7 +17118,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="604"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln 曲目</numerusform>
         </translation>
     </message>
@@ -17252,7 +17253,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2030"/>
         <source>Stop</source>
-        <translation type="unfinished">停止</translation>
+        <translation>停止</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="884"/>
@@ -17337,7 +17338,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="236"/>
         <source>Remove unavailable tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>移除無可供用的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="239"/>
@@ -17422,17 +17423,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="435"/>
         <source>Remove the selected tracks from the playback queue</source>
-        <translation>移除所選曲目 從播放佇列</translation>
+        <translation>移除所選曲目，從播放佇列</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="443"/>
         <source>Remove duplicate tracks from the playlist</source>
-        <translation>移除重複的曲目 從播放清單</translation>
+        <translation>移除重複的曲目，從播放清單</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="448"/>
         <source>Remove unavailable tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>移除無可供用的曲目，從播放清單</translation>
     </message>
 </context>
 <context>
@@ -17483,22 +17484,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="360"/>
         <source>Could not remove plugin directory ‘%1’. Check that it is writable and its files are not in use.</source>
-        <translation type="unfinished"></translation>
+        <translation>不可移除外掛程式目錄 &apos;%1&apos;。檢查其是否可以寫入且檔案無使用。</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="369"/>
         <source>Could not remove ‘%1’: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>不可移除 ‘%1’: %2</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="481"/>
         <source>Invalid plugin identifier ‘%1’.</source>
-        <translation type="unfinished"></translation>
+        <translation>無效的外掛程式識別 &apos;%1&apos;。</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="487"/>
         <source>The plugin update directory ‘%1’ is a symbolic link.</source>
-        <translation type="unfinished"></translation>
+        <translation>外掛程式更新目錄 &apos;%1&apos; 是一個符號連結。</translation>
     </message>
 </context>
 <context>
@@ -17535,7 +17536,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="135"/>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="280"/>
         <source>Remove</source>
-        <translation type="unfinished">移除</translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="218"/>
@@ -17545,12 +17546,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="280"/>
         <source>Undo removal</source>
-        <translation type="unfinished"></translation>
+        <translation>取消移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="283"/>
         <source>This plugin cannot be removed here. Use its installer or package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation>此外掛程式無法在此處移除。使用其安裝程式或套件管理器。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="335"/>
@@ -17570,62 +17571,62 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="44"/>
         <source>This plugin is already installed.</source>
-        <translation type="unfinished"></translation>
+        <translation>此外掛程式已經安裝。</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="46"/>
         <source>This version of the plugin is already installed.</source>
-        <translation type="unfinished"></translation>
+        <translation>此外掛程式版本已經安裝。</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="49"/>
         <source>The selected plugin file does not exist or is not a regular file.</source>
-        <translation type="unfinished"></translation>
+        <translation>所選取的外掛程式檔案不存在，或不是正常檔案。</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="52"/>
         <source>Plugin bundles are not supported on this operating system or processor architecture.</source>
-        <translation type="unfinished"></translation>
+        <translation>外掛程式附帶套件在此作業系統或處理器架構下不支援。</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="56"/>
         <source>The plugin bundle could not be read. It may be damaged or inaccessible.</source>
-        <translation type="unfinished"></translation>
+        <translation>外掛程式附帶套件無法讀取。其可能已經損毀或無法存取。</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="59"/>
         <source>The plugin bundle contains invalid or unsupported files.</source>
-        <translation type="unfinished"></translation>
+        <translation>外掛程式附帶套件包含無效或不支援的檔案。</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="62"/>
         <source>The plugin bundle does not contain files for this operating system and processor architecture.</source>
-        <translation type="unfinished"></translation>
+        <translation>外掛程式附帶套件不包含檔案用於此作業系統與處理器架構。</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="66"/>
         <source>No recognised fooyin plugin was found in the installation files.</source>
-        <translation type="unfinished"></translation>
+        <translation>在安裝檔案中未發現任何已經識別的 fooyin 外掛程式。</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="69"/>
         <source>This plugin uses an incompatible version of the fooyin plugin API.</source>
-        <translation type="unfinished"></translation>
+        <translation>此外掛程式使用 fooyin 外掛程式 API 的不相容版本。</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="72"/>
         <source>The plugin has an invalid identifier or is missing its version.</source>
-        <translation type="unfinished"></translation>
+        <translation>該外掛程式具有無效的識別，或遺失其版本。</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="75"/>
         <source>The bundle contains more than one fooyin plugin.</source>
-        <translation type="unfinished"></translation>
+        <translation>該附帶套件包含多個 fooyin 外掛程式。</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="78"/>
         <source>The plugin files could not be written to the installation directory. Check that it is writable and that there is enough free disk space.</source>
-        <translation type="unfinished"></translation>
+        <translation>外掛程式檔案無法寫入安裝目錄。檢查是否可以寫入，且有足夠可用的磁碟空間。</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="136"/>
@@ -17635,7 +17636,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="137"/>
         <source>This version of the plugin is already installed. Reinstall it?</source>
-        <translation type="unfinished"></translation>
+        <translation>此外掛程式版本已經安裝。要重新安裝嗎?</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="139"/>
@@ -17645,7 +17646,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="143"/>
         <source>Reinstall</source>
-        <translation type="unfinished"></translation>
+        <translation>重新安裝</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="144"/>
@@ -17655,7 +17656,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="162"/>
         <source>Plugin Reinstalled</source>
-        <translation type="unfinished"></translation>
+        <translation>外掛程式重新安裝</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="165"/>
@@ -17738,22 +17739,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="152"/>
         <source>Restart required</source>
-        <translation type="unfinished"></translation>
+        <translation>需要重新啟動</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="154"/>
         <source>Pending removal</source>
-        <translation type="unfinished"></translation>
+        <translation>侯置移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="156"/>
         <source>Removal failed</source>
-        <translation type="unfinished"></translation>
+        <translation>移除失敗</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="290"/>
         <source>This plugin is marked for removal at the next restart.</source>
-        <translation type="unfinished"></translation>
+        <translation>此外掛程式已經標記在下次重新啟動時作為移除。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="368"/>
@@ -18350,7 +18351,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="111"/>
         <source>Stop</source>
-        <translation type="unfinished">停止</translation>
+        <translation>停止</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="119"/>
@@ -18888,7 +18889,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="71"/>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="230"/>
         <source>Stop</source>
-        <translation type="unfinished">停止</translation>
+        <translation>停止</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="74"/>
@@ -21080,7 +21081,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="136"/>
         <source>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin’s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to run arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Flatpak 沙盒無法直接啟動主機上安裝的應用程式。若要允許 fooyin 啟動主機應用程式，請將 &lt;code&gt;org&gt;freedesktop.Flatpak&lt;/code&gt; 加入 foyin 的 Session Bus &apos;talk&apos; 權限，,或執行：&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;然後，將每個服務指令以 &lt;code&gt;flatpak-spawn --host&lt;/code&gt; 作為前綴。例如：&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;此權限允許 fooyin 在沙箱外執行任意命令。僅限在您信任已設定的服務時啟用。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="152"/>
@@ -26147,7 +26148,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="219"/>
         <source>Stop</source>
-        <translation type="unfinished">停止</translation>
+        <translation>停止</translation>
     </message>
 </context>
 <context>
@@ -27005,12 +27006,12 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="996"/>
         <source>Column headers</source>
-        <translation type="unfinished"></translation>
+        <translation>欄位標頭</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="999"/>
         <source>Playlist column headers</source>
-        <translation type="unfinished"></translation>
+        <translation>播放清單欄位標頭</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="1001"/>
@@ -27156,7 +27157,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="131"/>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>調整設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="136"/>
