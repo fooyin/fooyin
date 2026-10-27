@@ -27,9 +27,9 @@ namespace Fooyin {
 class FYUTILS_EXPORT DbQuery
 {
 public:
-    enum class Status
+    enum class Status : uint8_t
     {
-        None,
+        None = 0,
         Prepared,
         Success,
         Ignored,

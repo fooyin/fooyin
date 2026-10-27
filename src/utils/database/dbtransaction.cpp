@@ -19,88 +19,103 @@
 
 #include <utils/database/dbtransaction.h>
 
-#include <QDebug>
+#include <utils/database/dbquery.h>
+
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(DB_TR, "fy.db")
+#include <atomic>
+#include <cstdint>
 
+Q_LOGGING_CATEGORY(DB_TRANSACTION, "fy.db")
+
+using namespace Qt::StringLiterals;
+
+namespace Fooyin {
 namespace {
-bool beginTransaction(QSqlDatabase& database)
+QString nextSavepointName()
 {
-    if(!database.isOpen()) {
-        qCWarning(DB_TR) << "Failed to begin transaction on" << database.connectionName() << ": No open connection";
-        return false;
-    }
-
-    if(!database.transaction()) {
-        qCWarning(DB_TR) << "Failed to begin transaction on" << database.connectionName();
-        return false;
-    }
-
-    return true;
+    static std::atomic_uint64_t nextId{0};
+    return u"fooyin_transaction_%1"_s.arg(static_cast<qulonglong>(nextId.fetch_add(1, std::memory_order_relaxed)));
 }
 } // namespace
 
-namespace Fooyin {
 DbTransaction::DbTransaction(const QSqlDatabase& database)
-    : m_database(database)
-    , m_isActive(beginTransaction(m_database))
+    : m_database{database}
+    , m_savepoint{nextSavepointName()}
+    , m_isActive{execute(u"SAVEPOINT %1"_s.arg(m_savepoint))}
 { }
 
 DbTransaction::~DbTransaction()
 {
-    if(m_database.isOpen() && m_isActive) {
+    if(m_isActive) {
         rollback();
     }
 }
 
 DbTransaction::DbTransaction(DbTransaction&& other) noexcept
-    : m_database(other.m_database)
-    , m_isActive(other.m_isActive)
-{
-    other.release();
-}
+    : m_database{other.m_database}
+    , m_savepoint{std::move(other.m_savepoint)}
+    , m_lastError{std::move(other.m_lastError)}
+    , m_isActive{std::exchange(other.m_isActive, false)}
+{ }
 
 DbTransaction::operator bool() const
 {
     return m_isActive;
 }
 
+QSqlError DbTransaction::lastError() const
+{
+    return m_lastError;
+}
+
 bool DbTransaction::commit()
 {
-    if(!m_database.isOpen()) {
-        qCWarning(DB_TR) << "Failed to commit transaction on" << m_database.connectionName() << ": No open connection";
+    if(!checkActive() || !execute(u"RELEASE SAVEPOINT %1"_s.arg(m_savepoint))) {
         return false;
     }
 
-    if(!m_database.commit()) {
-        qCWarning(DB_TR) << "Failed to commit transaction on" << m_database.connectionName();
-        return false;
-    }
-
-    release();
+    m_isActive = false;
     return true;
 }
 
 bool DbTransaction::rollback()
 {
-    if(!m_database.isOpen()) {
-        qCWarning(DB_TR) << "Failed to rollback transaction on" << m_database.connectionName()
-                         << ": No open connection";
+    if(!checkActive() || !execute(u"ROLLBACK TO SAVEPOINT %1"_s.arg(m_savepoint))
+       || !execute(u"RELEASE SAVEPOINT %1"_s.arg(m_savepoint))) {
         return false;
     }
 
-    if(!m_database.rollback()) {
-        qCWarning(DB_TR) << "Failed to rollback transaction on" << m_database.connectionName();
-        return false;
-    }
-
-    release();
-    return false;
+    m_isActive = false;
+    return true;
 }
 
-void DbTransaction::release()
+bool DbTransaction::execute(const QString& statement)
 {
-    m_isActive = false;
+    if(!m_database.isOpen()) {
+        m_lastError = QSqlError{u"No open database connection"_s, {}, QSqlError::ConnectionError};
+        qCWarning(DB_TRANSACTION) << "Failed to execute" << statement << "on" << m_database.connectionName()
+                                  << m_lastError;
+        return false;
+    }
+
+    DbQuery query{m_database, statement};
+    if(query.status() != DbQuery::Status::Prepared || !query.exec()) {
+        m_lastError = query.lastError();
+        return false;
+    }
+
+    m_lastError = {};
+    return true;
+}
+
+bool DbTransaction::checkActive()
+{
+    if(!m_isActive) {
+        m_lastError = QSqlError{u"Transaction is not active"_s, {}, QSqlError::TransactionError};
+        return false;
+    }
+
+    return true;
 }
 } // namespace Fooyin

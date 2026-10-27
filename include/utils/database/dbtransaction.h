@@ -22,8 +22,10 @@
 #include "fyutils_export.h"
 
 #include <QSqlDatabase>
+#include <QSqlError>
 
 namespace Fooyin {
+//! SQL transaction scope. Nested scopes must finish in reverse construction order.
 class FYUTILS_EXPORT DbTransaction
 {
 public:
@@ -37,13 +39,18 @@ public:
     DbTransaction& operator=(DbTransaction&& other)      = delete;
 
     explicit operator bool() const;
+    [[nodiscard]] QSqlError lastError() const;
 
     bool commit();
     bool rollback();
-    void release();
 
 private:
+    bool execute(const QString& statement);
+    bool checkActive();
+
     QSqlDatabase m_database;
+    QString m_savepoint;
+    QSqlError m_lastError;
     bool m_isActive;
 };
 } // namespace Fooyin
