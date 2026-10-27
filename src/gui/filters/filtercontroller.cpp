@@ -51,6 +51,7 @@
 
 #include <QAction>
 #include <QFuture>
+#include <QLoggingCategory>
 #include <QMenu>
 #include <QPointer>
 #include <QScopedValueRollback>
@@ -60,6 +61,8 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+
+Q_LOGGING_CATEGORY(FILTER_CONTROLLER_TRACE, "fy.trace.filters.controller", QtInfoMsg)
 
 using namespace Qt::StringLiterals;
 
@@ -640,6 +643,12 @@ void FilterControllerPrivate::handleSelectionChanged(FilterWidget* filter, const
     stage->selectionRestorePending = false;
     updateWidgetSelection(*stage);
 
+    qCDebug(FILTER_CONTROLLER_TRACE) << "Filter selection changed:" << "group=" << group->id.name()
+                                     << "filter=" << stage->widgetId.name() << "stage=" << location->stageIndex
+                                     << "revisionBefore=" << group->revision
+                                     << "selectedKeys=" << stage->selectedKeys.size()
+                                     << "selectedTracks=" << stage->selectedTracks.size();
+
     if(filter->source() == FilterSource::Library && filter->playlistEnabled() && m_trackSelection) {
         PlaylistAction::ActionOptions options{PlaylistAction::None};
 
@@ -1113,6 +1122,11 @@ void FilterControllerPrivate::recomputeStage(const Id& groupId, int stageIndex, 
     const FilterColumnList columns = stage.widget ? stage.widget->columns() : FilterColumnList{};
     const auto context             = rowBuildContext();
 
+    qCDebug(FILTER_CONTROLLER_TRACE) << "Building filter rows:" << "group=" << groupId.name()
+                                     << "filter=" << stage.widgetId.name() << "stage=" << stageIndex
+                                     << "revision=" << revision << "tracks=" << stage.inputTracks.size()
+                                     << "constrained=" << constrained;
+
     Utils::asyncExec([libraries = m_libraryManager ? m_libraryManager->allLibraries() : LibraryInfoMap{}, columns,
                       tracks    = stage.inputTracks,
                       context]() { return buildFilterRows(libraries, columns, tracks, context); })
@@ -1124,11 +1138,17 @@ void FilterControllerPrivate::recomputeStage(const Id& groupId, int stageIndex, 
 
             auto& currentGroup = m_groups.at(groupId);
             if(currentGroup.revision != revision || std::cmp_greater_equal(stageIndex, currentGroup.stages.size())) {
+                qCDebug(FILTER_CONTROLLER_TRACE)
+                    << "Discarding stale filter rows:" << "group=" << groupId.name() << "stage=" << stageIndex
+                    << "revision=" << revision << "currentRevision=" << currentGroup.revision;
                 return;
             }
 
             auto& currentStage = currentGroup.stages.at(stageIndex);
             if(currentStage.revision != revision) {
+                qCDebug(FILTER_CONTROLLER_TRACE)
+                    << "Discarding stale stage rows:" << "group=" << groupId.name() << "stage=" << stageIndex
+                    << "revision=" << revision << "currentRevision=" << currentStage.revision;
                 return;
             }
 
@@ -1259,6 +1279,11 @@ void FilterControllerPrivate::publishStage(const Id& groupId, int stageIndex)
     viewState.searchText              = stage.searchText;
     viewState.selectionRestorePending = stage.selectionRestorePending;
     viewState.scrollPolicy            = std::exchange(stage.scrollPolicy, FilterScrollPolicy::Preserve);
+
+    qCDebug(FILTER_CONTROLLER_TRACE) << "Publishing filter rows:" << "group=" << groupId.name()
+                                     << "filter=" << stage.widgetId.name() << "stage=" << stageIndex
+                                     << "revision=" << stage.revision << "rows=" << viewState.rows.size()
+                                     << "searchRevision=" << stage.searchRevision;
 
     stage.widget->setViewState(viewState);
     updateWidgetSelection(stage);

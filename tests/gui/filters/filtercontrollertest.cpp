@@ -44,6 +44,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QMainWindow>
+#include <QPersistentModelIndex>
 #include <QSignalSpy>
 #include <QTemporaryDir>
 
@@ -347,24 +348,40 @@ TEST_F(FilterControllerTest, FilterModelSetRowsInsertsWithoutModelResetWhenColum
     Filters::FilterModel model(&m_library, &coverProvider, m_settings.get());
 
     const auto columns = simpleColumns();
-    model.setRows(columns, {makeDisplayRow(keyFor(u"A"_s), {u"Alpha"_s}, {1})});
+    model.setRows(
+        columns, {makeDisplayRow(keyFor(u"A"_s), {u"Alpha"_s}, {1}), makeDisplayRow(keyFor(u"B"_s), {u"Beta"_s}, {2})});
     model.setShowSummary(false);
 
+    const QPersistentModelIndex firstIndex{model.index(0, 0, {})};
     const QSignalSpy resetSpy{&model, &QAbstractItemModel::modelReset};
     const QSignalSpy rowsInsertedSpy{&model, &QAbstractItemModel::rowsInserted};
     const QSignalSpy rowsRemovedSpy{&model, &QAbstractItemModel::rowsRemoved};
+    const QSignalSpy rowsMovedSpy{&model, &QAbstractItemModel::rowsMoved};
 
-    model.setRows(
-        columns, {makeDisplayRow(keyFor(u"A"_s), {u"Alpha"_s}, {1}), makeDisplayRow(keyFor(u"B"_s), {u"Beta"_s}, {2})});
+    EXPECT_TRUE(model.setRows(columns, {makeDisplayRow(keyFor(u"B"_s), {u"Beta"_s}, {2}),
+                                        makeDisplayRow(keyFor(u"A"_s), {u"Alpha"_s}, {1}),
+                                        makeDisplayRow(keyFor(u"C"_s), {u"Gamma"_s}, {3})}));
 
     EXPECT_EQ(0, resetSpy.count());
     ASSERT_EQ(1, rowsInsertedSpy.count());
-    EXPECT_EQ(1, rowsInsertedSpy.at(0).at(1).toInt());
-    EXPECT_EQ(1, rowsInsertedSpy.at(0).at(2).toInt());
+    EXPECT_EQ(2, rowsInsertedSpy.at(0).at(1).toInt());
+    EXPECT_EQ(2, rowsInsertedSpy.at(0).at(2).toInt());
     EXPECT_EQ(0, rowsRemovedSpy.count());
-    EXPECT_EQ(2, model.rowCount({}));
-    EXPECT_EQ(keyFor(u"A"_s), model.index(0, 0, {}).data(Filters::FilterItem::Key).toByteArray());
-    EXPECT_EQ(keyFor(u"B"_s), model.index(1, 0, {}).data(Filters::FilterItem::Key).toByteArray());
+    EXPECT_EQ(1, rowsMovedSpy.count());
+    EXPECT_EQ(3, model.rowCount({}));
+    EXPECT_EQ(keyFor(u"B"_s), model.index(0, 0, {}).data(Filters::FilterItem::Key).toByteArray());
+    EXPECT_EQ(keyFor(u"A"_s), model.index(1, 0, {}).data(Filters::FilterItem::Key).toByteArray());
+    EXPECT_EQ(keyFor(u"C"_s), model.index(2, 0, {}).data(Filters::FilterItem::Key).toByteArray());
+    EXPECT_EQ(1, firstIndex.row());
+    EXPECT_EQ(keyFor(u"A"_s), firstIndex.data(Filters::FilterItem::Key).toByteArray());
+
+    EXPECT_TRUE(model.setRows(columns, {makeDisplayRow(keyFor(u"A"_s), {u"Alpha"_s}, {1}),
+                                        makeDisplayRow(keyFor(u"B"_s), {u"Beta"_s}, {2}),
+                                        makeDisplayRow(keyFor(u"C"_s), {u"Gamma"_s}, {3})}));
+    EXPECT_EQ(0, resetSpy.count());
+    EXPECT_EQ(2, rowsMovedSpy.count());
+    EXPECT_EQ(0, firstIndex.row());
+    EXPECT_EQ(keyFor(u"A"_s), firstIndex.data(Filters::FilterItem::Key).toByteArray());
 }
 
 TEST_F(FilterControllerTest, FilterModelSetRowsRemovesWithoutModelResetWhenColumnsUnchanged)

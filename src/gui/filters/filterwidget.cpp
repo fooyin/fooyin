@@ -45,6 +45,7 @@
 #include <QHeaderView>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QLoggingCategory>
 #include <QMenu>
 #include <QScrollBar>
 #include <QSignalBlocker>
@@ -53,6 +54,8 @@
 #include <algorithm>
 #include <set>
 #include <utility>
+
+Q_LOGGING_CATEGORY(FILTER_WIDGET_TRACE, "fy.trace.filters.widget", QtInfoMsg)
 
 using namespace Qt::StringLiterals;
 
@@ -124,7 +127,7 @@ FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* c
     , m_alternatingColours{false}
 {
     setObjectName(FilterWidget::name());
-    setFeature(FyWidget::Search);
+    setFeature(Search);
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins({});
@@ -294,12 +297,15 @@ void FilterWidget::setIndex(int index)
 
 void FilterWidget::setViewState(const FilterViewState& state)
 {
+    traceSortState("Before applying rows");
+
     m_applyingViewState       = true;
     m_searchStr               = state.searchText;
     m_restoredSelectedKeys    = state.selectedKeys;
     m_selectionRestorePending = state.selectionRestorePending;
 
     const bool rowsChanged = m_model->setRows(m_columns, state.rows);
+    traceSortState("Rows applied", true);
 
     if(state.scrollPolicy == FilterScrollPolicy::ResetIfChanged && rowsChanged && m_pendingScrollPosition < 0) {
         m_view->scrollToTop();
@@ -361,6 +367,8 @@ QString FilterWidget::layoutName() const
 
 void FilterWidget::saveLayoutData(QJsonObject& layout)
 {
+    traceSortState("Saving layout");
+
     saveConfigToLayout(m_config, layout);
 
     QStringList columns;
@@ -408,6 +416,10 @@ void FilterWidget::saveLayoutData(QJsonObject& layout)
     layout["Group"_L1] = m_group.name();
     layout["Index"_L1] = m_index;
     layout["State"_L1] = QString::fromUtf8(state.toBase64());
+
+    qCDebug(FILTER_WIDGET_TRACE) << "Saved header state:" << "filter=" << id().name()
+                                 << "columns=" << layout.value("Columns"_L1).toString()
+                                 << "state=" << layout.value("State"_L1).toString();
 }
 
 void FilterWidget::saveCopyLayoutData(QJsonObject& layout, LayoutCopyContext& context, bool isRoot)
@@ -513,6 +525,11 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
             m_headerState    = qUncompress(state);
         }
     }
+
+    qCDebug(FILTER_WIDGET_TRACE) << "Loaded header state:" << "filter=" << id().name() << "group=" << m_group.name()
+                                 << "index=" << m_index << "columns=" << layout.value("Columns"_L1).toString()
+                                 << "state=" << layout.value("State"_L1).toString()
+                                 << "pendingHeaderBytes=" << m_headerState.size();
 }
 
 void FilterWidget::finalise()
@@ -524,9 +541,13 @@ void FilterWidget::finalise()
             m_header->setSortIndicator(0, Qt::AscendingOrder);
         }
         else {
+            traceSortState("Restoring header state");
             QObject::connect(
                 m_header, &AutoHeaderView::stateRestored, this,
-                [this]() { m_sortProxy->sort(m_header->sortIndicatorSection(), m_header->sortIndicatorOrder()); },
+                [this]() {
+                    m_sortProxy->sort(m_header->sortIndicatorSection(), m_header->sortIndicatorOrder());
+                    traceSortState("Header state restored", true);
+                },
                 Qt::SingleShotConnection);
 
             m_header->restoreHeaderState(m_headerState);
@@ -719,6 +740,7 @@ void FilterWidget::addFilterHeaderMenu(QMenu* menu, const QPoint& pos, bool incl
             }
         }
 
+        traceSortState("Filter columns changed");
         Q_EMIT filterUpdated();
     });
 
@@ -813,6 +835,7 @@ void FilterWidget::setupConnections()
         if(m_view->viewMode() == ExpandedTreeView::ViewMode::Icon) {
             m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
         }
+        traceSortState("Header columns changed");
     };
 
     QObject::connect(m_columnRegistry, &FilterColumnRegistry::columnChanged, this, &FilterWidget::columnChanged);
@@ -822,6 +845,13 @@ void FilterWidget::setupConnections()
     QObject::connect(m_header, &AutoHeaderView::sectionVisiblityChanged, this, syncIconColumnOrder);
     QObject::connect(m_header, &QHeaderView::sectionMoved, this, syncIconColumnOrder);
     QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, m_sortProxy, &QSortFilterProxyModel::sort);
+    QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, this,
+                     [this]() { traceSortState("Sort indicator changed", true); });
+    QObject::connect(m_header, &QHeaderView::sectionClicked, this, [this](int column) {
+        qCDebug(FILTER_WIDGET_TRACE) << "Header clicked:" << "filter=" << id().name() << "logicalColumn=" << column
+                                     << "visualColumn=" << m_header->visualIndex(column) << "label="
+                                     << m_model->headerData(column, Qt::Horizontal, Qt::DisplayRole).toString();
+    });
     QObject::connect(m_header, &QWidget::customContextMenuRequested, this, &FilterWidget::filterHeaderMenu);
     QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &FilterWidget::handleSelectionChanged);
@@ -852,6 +882,53 @@ void FilterWidget::setupConnections()
         const auto resolvedStyle = var.value<ResolvedAppStyle>();
         Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
     });
+}
+
+void FilterWidget::traceSortState(const char* event, bool includeRows) const
+{
+    if(!FILTER_WIDGET_TRACE().isDebugEnabled()) {
+        return;
+    }
+
+    const QString filterId = id().name();
+    const int headerColumn = m_header->sortIndicatorSection();
+    const int sortColumn   = m_sortProxy->sortColumn();
+
+    qCDebug(FILTER_WIDGET_TRACE) << event << "filter=" << filterId << "group=" << m_group.name() << "index=" << m_index
+                                 << "sourceRows=" << m_model->rowCount({}) << "proxyRows=" << m_sortProxy->rowCount()
+                                 << "headerColumn=" << headerColumn
+                                 << "headerVisualColumn=" << m_header->visualIndex(headerColumn) << "headerLabel="
+                                 << m_model->headerData(headerColumn, Qt::Horizontal, Qt::DisplayRole).toString()
+                                 << "headerOrder=" << m_header->sortIndicatorOrder() << "proxyColumn=" << sortColumn
+                                 << "proxyLabel="
+                                 << m_sortProxy->headerData(sortColumn, Qt::Horizontal, Qt::DisplayRole).toString()
+                                 << "proxyOrder=" << m_sortProxy->sortOrder() << "viewMode=" << m_view->viewMode()
+                                 << "visibleColumns=" << Utils::logicalIndexOrder(m_header);
+
+    if(!includeRows) {
+        return;
+    }
+
+    for(int logical{0}; const auto& column : m_columns) {
+        qCDebug(FILTER_WIDGET_TRACE) << "Column:" << "filter=" << filterId << "logical=" << logical
+                                     << "visual=" << m_header->visualIndex(logical)
+                                     << "hidden=" << m_header->isSectionHidden(logical) << "id=" << column.id
+                                     << "name=" << column.name << "displayScript=" << column.field
+                                     << "sortScript=" << column.sortField;
+        ++logical;
+    }
+
+    for(int row{0}; row < std::min(8, m_sortProxy->rowCount()); ++row) {
+        const QModelIndex sourceIndex = m_sortProxy->mapToSource(m_sortProxy->index(row, 0));
+        if(!sourceIndex.isValid()) {
+            continue;
+        }
+
+        const auto* item = m_model->itemForIndex(sourceIndex);
+        qCDebug(FILTER_WIDGET_TRACE) << "Sorted row:" << "filter=" << filterId << "row=" << row
+                                     << "sourceRow=" << sourceIndex.row() << "key=" << item->key().toHex()
+                                     << "columns=" << item->columns() << "sortValue=" << item->sortColumn(sortColumn);
+    }
 }
 
 void FilterWidget::handleSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)

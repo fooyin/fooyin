@@ -231,7 +231,7 @@ TEST(FilterPipelineTest, SplitFunctionCreatesRowsFromSingleTagValue)
     Track track{u"/music/one.flac"_s};
     track.setId(1);
     track.setLibraryId(1);
-    track.addExtraTag(u"TEST"_s, u"A; B"_s);
+    track.addExtraTag(u"TEST"_s, u"B; A"_s);
 
     const Filters::FilterColumnList columns{
         {.id = 0, .name = u"Test"_s, .field = u"$split(%test%,; )"_s, .sortField = {}},
@@ -245,10 +245,8 @@ TEST(FilterPipelineTest, SplitFunctionCreatesRowsFromSingleTagValue)
     const Filters::FilterRowList rows = Filters::buildFilterRows(nullptr, columns, {track}, context);
 
     ASSERT_EQ(2, rows.size());
-    EXPECT_TRUE(
-        std::ranges::any_of(rows, [](const Filters::FilterRow& row) { return row.columns == QStringList{u"A"_s}; }));
-    EXPECT_TRUE(
-        std::ranges::any_of(rows, [](const Filters::FilterRow& row) { return row.columns == QStringList{u"B"_s}; }));
+    EXPECT_EQ(QStringList{u"B"_s}, rows.at(0).columns);
+    EXPECT_EQ(QStringList{u"A"_s}, rows.at(1).columns);
 }
 
 TEST(FilterPipelineTest, PatchFilterRowsMovesUpdatedTrackBetweenBucketsAndPrunesEmptyRows)
@@ -330,14 +328,14 @@ TEST(FilterPipelineTest, PatchFilterRowsAddsNewTrackIntoExistingBucketInCurrentO
         Track track{u"/music/one.flac"_s};
         track.setId(1);
         track.setLibraryId(1);
-        track.setGenres({u"Rock"_s});
+        track.setGenres({u"Rock"_s, u"Jazz"_s});
         return track;
     }();
     const Track newRock = [] {
         Track track{u"/music/two.flac"_s};
         track.setId(2);
         track.setLibraryId(1);
-        track.setGenres({u"Rock"_s});
+        track.setGenres({u"Jazz"_s, u"Rock"_s});
         return track;
     }();
 
@@ -354,11 +352,14 @@ TEST(FilterPipelineTest, PatchFilterRowsAddsNewTrackIntoExistingBucketInCurrentO
     const Filters::FilterRowList patchedRows
         = Filters::patchFilterRows(nullptr, columns, previousRows, {oldRock}, {newRock, oldRock}, {2}, context);
 
-    ASSERT_EQ(1, patchedRows.size());
-    EXPECT_EQ(QStringList{u"Rock"_s}, patchedRows.at(0).columns);
-    ASSERT_EQ(2, patchedRows.at(0).tracks.size());
-    EXPECT_EQ(2, patchedRows.at(0).tracks.at(0).id());
-    EXPECT_EQ(1, patchedRows.at(0).tracks.at(1).id());
+    ASSERT_EQ(2, patchedRows.size());
+    EXPECT_EQ(QStringList{u"Jazz"_s}, patchedRows.at(0).columns);
+    EXPECT_EQ(QStringList{u"Rock"_s}, patchedRows.at(1).columns);
+    for(const auto& row : patchedRows) {
+        ASSERT_EQ(2, row.tracks.size());
+        EXPECT_EQ(2, row.tracks.at(0).id());
+        EXPECT_EQ(1, row.tracks.at(1).id());
+    }
 }
 
 TEST(FilterPipelineTest, RunFilterPipelinePropagatesUpstreamSelectionToDownstreamInputs)

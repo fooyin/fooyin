@@ -647,12 +647,17 @@ bool FilterModel::removeColumn(int column)
 
 bool FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& rows)
 {
-    const bool rowsChanged = p->m_columns != columns || p->m_nodes.size() != rows.size()
-                          || std::ranges::any_of(rows, [this](const FilterRow& row) {
-                                 const auto item = p->m_nodes.find(row.key);
-                                 return item == p->m_nodes.cend() || row.tracks.size() != item->second.trackIds().size()
-                                     || !std::ranges::equal(row.tracks, item->second.trackIds(), {}, &Track::id);
-                             });
+    bool rowsChanged = p->m_columns != columns || p->m_nodes.size() != rows.size();
+    if(!rowsChanged) {
+        for(int rowIndex{p->rowOffset()}; const FilterRow& row : rows) {
+            const auto* item = rootItem()->child(rowIndex++);
+            if(!item || row.key != item->key() || row.tracks.size() != item->trackIds().size()
+               || !std::ranges::equal(row.tracks, item->trackIds(), {}, &Track::id)) {
+                rowsChanged = true;
+                break;
+            }
+        }
+    }
 
     const auto resetRows = [this, &columns, &rows]() {
         beginResetModel();
@@ -716,6 +721,14 @@ bool FilterModel::setRows(const FilterColumnList& columns, const FilterRowList& 
         auto* item           = parent->child(rowOffset + rowIndex);
 
         if(item && !item->isSummary() && item->key() == row.key) {
+            continue;
+        }
+
+        if(const auto existing = p->m_nodes.find(row.key); existing != p->m_nodes.cend()) {
+            const int sourceRow = existing->second.row();
+            beginMoveRows({}, sourceRow, sourceRow, {}, rowOffset + rowIndex);
+            parent->moveChild(sourceRow, rowOffset + rowIndex);
+            endMoveRows();
             continue;
         }
 

@@ -29,7 +29,6 @@
 #include <utils/crypto.h>
 
 #include <algorithm>
-#include <map>
 #include <ranges>
 #include <unordered_map>
 #include <unordered_set>
@@ -132,7 +131,7 @@ FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColum
     const ParsedScript script = parser.parse(fields.join(QLatin1StringView{Constants::RecordSeparator}));
     const ScriptContext scriptContext{.libraries = &libraries};
 
-    std::map<RowKey, FilterRow> items;
+    std::unordered_map<RowKey, size_t> rowIndexes;
     std::unordered_map<QString, CachedColumnData> columnDataCache;
 
     const ParsedScript sortScript = hasCustomSortField
@@ -160,7 +159,7 @@ FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColum
             sortValues = splitColumnValues(parser.evaluate(sortScript, track, scriptContext, sortOptions));
         }
 
-        auto addColumns = [&columns, &hasCustomSortField, &items, &formatter, &columnDataCache,
+        auto addColumns = [&columns, &hasCustomSortField, &rows, &rowIndexes, &formatter, &columnDataCache,
                            &track](const QStringList& rowColumnValues, const QStringList& sortColumnValues) {
             const QString cacheKey             = rowColumnValues.join(QLatin1StringView{Constants::RecordSeparator});
             auto [columnDataIt, cacheInserted] = columnDataCache.try_emplace(cacheKey);
@@ -176,8 +175,11 @@ FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColum
             }
             const RowKey& key = columnDataIt->second.key;
 
-            auto [it, inserted] = items.try_emplace(key);
-            FilterRow& row      = it->second;
+            auto [it, inserted] = rowIndexes.try_emplace(key, rows.size());
+            if(inserted) {
+                rows.emplace_back();
+            }
+            FilterRow& row = rows.at(it->second);
 
             if(inserted) {
                 row.key         = key;
@@ -210,11 +212,6 @@ FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColum
             }
             addColumns(columnValues.at(index), rowSortValues);
         }
-    }
-
-    rows.reserve(items.size());
-    for(auto& row : items | std::views::values) {
-        rows.push_back(std::move(row));
     }
 
     return rows;
@@ -295,11 +292,12 @@ FilterRowList patchFilterRows(const LibraryInfoMap& libraries, const FilterColum
         }
     }
 
-    if(removedTrackIds.empty() && changedTracks.empty()) {
+    if(removedTrackIds.empty() && changedTracks.empty() && previousTracks == tracks) {
         return previousRows;
     }
 
-    std::map<RowKey, FilterRow> patchedRows;
+    std::unordered_map<RowKey, FilterRow> patchedRows;
+    patchedRows.reserve(previousRows.size());
 
     for(const FilterRow& previousRow : previousRows) {
         FilterRow row = previousRow;
@@ -312,7 +310,7 @@ FilterRowList patchFilterRows(const LibraryInfoMap& libraries, const FilterColum
     }
 
     for(FilterRow row : buildFilterRows(libraries, columns, changedTracks, context)) {
-        auto [it, inserted] = patchedRows.try_emplace(row.key, row);
+        auto [it, inserted] = patchedRows.try_emplace(row.key, std::move(row));
         if(!inserted) {
             it->second.columns     = row.columns;
             it->second.sortColumns = row.sortColumns;
@@ -327,14 +325,41 @@ FilterRowList patchFilterRows(const LibraryInfoMap& libraries, const FilterColum
         trackPositions.emplace(tracks.at(index).id(), index);
     }
 
-    FilterRowList rows;
-    rows.reserve(patchedRows.size());
-
-    for(auto& row : patchedRows | std::views::values) {
+    std::unordered_map<int, std::vector<RowKey>> rowsByFirstTrack;
+    for(auto& [key, row] : patchedRows) {
         std::ranges::stable_sort(row.tracks, [&trackPositions](const Track& left, const Track& right) {
             return trackPositions.at(left.id()) < trackPositions.at(right.id());
         });
-        rows.push_back(std::move(row));
+        rowsByFirstTrack[row.tracks.front().id()].push_back(key);
+    }
+
+    FilterRowList rows;
+    rows.reserve(patchedRows.size());
+
+    for(const Track& track : tracks) {
+        auto firstTrackRows = rowsByFirstTrack.extract(track.id());
+        if(firstTrackRows.empty()) {
+            continue;
+        }
+
+        if(firstTrackRows.mapped().size() == 1) {
+            auto row = patchedRows.extract(firstTrackRows.mapped().front());
+            rows.push_back(std::move(row.mapped()));
+            continue;
+        }
+
+        const auto filterRows = buildFilterRows(libraries, columns, {track}, context);
+        for(const FilterRow& trackRow : filterRows) {
+            const auto row = patchedRows.find(trackRow.key);
+            if(row != patchedRows.cend() && row->second.tracks.front().id() == track.id()) {
+                rows.push_back(std::move(row->second));
+                patchedRows.erase(row);
+            }
+        }
+    }
+
+    if(!patchedRows.empty()) {
+        return buildFilterRows(libraries, columns, tracks, context);
     }
 
     return rows;

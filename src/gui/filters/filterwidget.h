@@ -163,6 +163,7 @@ protected:
 
 private:
     void setupConnections();
+    void traceSortState(const char* event, bool includeRows = false) const;
 
     void handleSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
     void updateViewMode(ExpandedTreeView::ViewMode mode);
