@@ -243,8 +243,9 @@ public:
                                      CoverRepository* coverRepository, SettingsManager* settings,
                                      GuiStyleProvider* styleProvider);
 
-    void handleAction(FilterWidget* filter, const TrackAction& action) const;
-    void filterContextMenu(FilterWidget* widget, const QPoint& pos) const;
+    void handleAction(FilterWidget* filter, const TrackAction& action,
+                      PlaylistAction::ActionOptions options = {}) const;
+    void filterContextMenu(FilterWidget* widget, const QPoint& pos, WidgetContext* context, bool hasSelection) const;
 
     [[nodiscard]] FilterRowBuildContext rowBuildContext() const;
     [[nodiscard]] std::optional<WidgetLocation> widgetLocation(FilterWidget* widget) const;
@@ -296,6 +297,8 @@ public:
     FilterController* m_self;
 
     ActionManager* m_actionManager;
+    CorePluginContext m_coreContext;
+    PlayerController* m_player;
     MusicLibrary* m_library;
     LibraryManager* m_libraryManager;
     PlaylistHandler* m_playlistHandler;
@@ -330,6 +333,8 @@ FilterControllerPrivate::FilterControllerPrivate(FilterController* self, ActionM
                                                  SettingsManager* settings, GuiStyleProvider* styleProvider)
     : m_self{self}
     , m_actionManager{actionManager}
+    , m_coreContext{core}
+    , m_player{core.playerController}
     , m_library{core.library}
     , m_libraryManager{core.libraryManager}
     , m_playlistHandler{core.playlistHandler}
@@ -352,13 +357,12 @@ FilterControllerPrivate::FilterControllerPrivate(FilterController* self, ActionM
     }
 }
 
-void FilterControllerPrivate::handleAction(FilterWidget* filter, const TrackAction& action) const
+void FilterControllerPrivate::handleAction(FilterWidget* filter, const TrackAction& action,
+                                           PlaylistAction::ActionOptions options) const
 {
     if(!filter || action == TrackAction::None || !m_trackSelection) {
         return;
     }
-
-    PlaylistAction::ActionOptions options;
 
     if(filter->autoSwitch()) {
         options |= PlaylistAction::Switch;
@@ -373,12 +377,15 @@ void FilterControllerPrivate::handleAction(FilterWidget* filter, const TrackActi
     m_trackSelection->executeAction(action, options);
 }
 
-void FilterControllerPrivate::filterContextMenu(FilterWidget* widget, const QPoint& pos) const
+void FilterControllerPrivate::filterContextMenu(FilterWidget* widget, const QPoint& pos, WidgetContext* context,
+                                                bool hasSelection) const
 {
     auto* menu = new QMenu(widget);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    const bool hasSelection = widget->hasSelection();
+    if(m_trackSelection) {
+        m_trackSelection->changePlaybackOnSend(context, widget->sendPlayback());
+    }
 
     ContextMenuUtils::renderStaticContextMenu(
         menu, FilterContextMenu::DefaultItems,
@@ -429,7 +436,7 @@ void FilterControllerPrivate::filterContextMenu(FilterWidget* widget, const QPoi
             if(id == QLatin1StringView{Constants::Actions::AddToPlaylist}) {
                 if(hasSelection && m_trackSelection && sectionEnabled(Constants::Actions::AddToPlaylist)) {
                     auto* playlistMenu = new QMenu(FilterWidget::tr("Add to playlist"), targetMenu);
-                    m_trackSelection->addTrackAddToPlaylistContextMenu(playlistMenu, widget->widgetContext());
+                    m_trackSelection->addTrackAddToPlaylistContextMenu(playlistMenu, context);
                     targetMenu->addMenu(playlistMenu);
                 }
                 return;
@@ -483,7 +490,7 @@ void FilterControllerPrivate::filterContextMenu(FilterWidget* widget, const QPoi
             }
             if(id == QLatin1StringView{FilterContextMenu::TrackActions}) {
                 if(hasSelection && m_trackSelection && sectionEnabled(FilterContextMenu::TrackActions)) {
-                    m_trackSelection->addTrackContextMenu(targetMenu, widget->widgetContext());
+                    m_trackSelection->addTrackContextMenu(targetMenu, context);
                 }
             }
         });
@@ -1621,8 +1628,8 @@ QString FilterController::defaultPlaylistName()
 
 FilterWidget* FilterController::createFilter()
 {
-    auto* widget
-        = new FilterWidget(p->m_actionManager, p->m_columnRegistry, p->m_library, p->m_coverRepository, p->m_settings);
+    auto* widget = new FilterWidget(p->m_actionManager, p->m_columnRegistry, p->m_coreContext, p->m_coverRepository,
+                                    p->m_trackSelection);
     widget->setGroup(p->m_defaultId);
     p->attachWidget(widget, p->m_defaultId);
 
@@ -1630,13 +1637,19 @@ FilterWidget* FilterController::createFilter()
                      [this, widget]() { p->handleAction(widget, widget->doubleClickAction()); });
     QObject::connect(widget, &FilterWidget::middleClicked, this,
                      [this, widget]() { p->handleAction(widget, widget->middleClickAction()); });
+    QObject::connect(widget, &FilterWidget::actionRequested, this, [this, widget](TrackAction action) {
+        // The expansion is a detached track view regardless of the filter's source
+        p->handleAction(widget, action, PlaylistAction::TempPlaylist);
+    });
     QObject::connect(widget, &FilterWidget::searchTextChanged, this,
                      [this, widget](const QString& search) { p->handleSearchChanged(widget, search); });
     QObject::connect(
         widget, &FilterWidget::requestHeaderMenu, this,
         [widget](AutoHeaderView* header, const QPoint& pos) { filterHeaderContextMenu(widget, header, pos); });
     QObject::connect(widget, &FilterWidget::requestContextMenu, this,
-                     [this, widget](const QPoint& pos) { p->filterContextMenu(widget, pos); });
+                     [this, widget](const QPoint& pos, WidgetContext* context, bool hasSelection) {
+                         p->filterContextMenu(widget, pos, context, hasSelection);
+                     });
     QObject::connect(widget, &FilterWidget::selectionKeysChanged, this,
                      [this, widget](const std::vector<RowKey>& keys) { p->handleSelectionChanged(widget, keys); });
     QObject::connect(widget, &FilterWidget::filterUpdated, this, [this, widget]() { p->handleFilterUpdated(widget); });

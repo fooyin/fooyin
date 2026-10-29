@@ -25,8 +25,10 @@
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
 #include <core/internalcoresettings.h>
+#include <core/player/playercontroller.h>
 #include <core/plugins/coreplugincontext.h>
 #include <core/ratingsymbols.h>
+#include <core/scripting/scriptcontextservice.h>
 #include <gui/coverprovider.h>
 #include <gui/coverrepository.h>
 #include <gui/guisettings.h>
@@ -163,6 +165,9 @@ protected:
         m_coreSettings = std::make_unique<CoreSettings>(m_settings.get());
         registerMinimalGuiSettings(*m_settings);
 
+        m_player        = std::make_unique<PlayerController>(m_settings.get(), nullptr);
+        m_scriptContext = std::make_unique<ScriptContextService>(m_player.get(), nullptr);
+
         m_mainWindow    = std::make_unique<QMainWindow>();
         m_actionManager = std::make_unique<ActionManager>(m_settings.get());
         m_actionManager->setMainWindow(m_mainWindow.get());
@@ -176,8 +181,8 @@ protected:
         m_coverRepository = std::make_unique<CoverRepository>(m_audioLoader, m_settings.get());
 
         const CorePluginContext coreContext{
-            nullptr,       nullptr, nullptr, &m_library, nullptr, m_settings.get(),
-            m_audioLoader, nullptr, nullptr, nullptr,    nullptr, nullptr,
+            nullptr,       m_player.get(), nullptr, &m_library, nullptr, m_settings.get(),
+            m_audioLoader, nullptr,        nullptr, nullptr,    nullptr, m_scriptContext.get(),
         };
 
         m_controller = std::make_unique<Filters::FilterController>(
@@ -214,6 +219,8 @@ protected:
 
     std::unique_ptr<SettingsManager> m_settings;
     std::unique_ptr<CoreSettings> m_coreSettings;
+    std::unique_ptr<PlayerController> m_player;
+    std::unique_ptr<ScriptContextService> m_scriptContext;
     std::unique_ptr<QMainWindow> m_mainWindow;
     std::unique_ptr<ActionManager> m_actionManager;
     std::unique_ptr<EditableLayout> m_editableLayout;

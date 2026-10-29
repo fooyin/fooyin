@@ -227,8 +227,12 @@ WidgetBackground::~WidgetBackground() = default;
 
 void WidgetBackground::setConfig(const BackgroundConfig& config)
 {
-    p->m_config = config;
-    p->m_config.normalise();
+    auto validated{config};
+    validated.normalise();
+    if(p->m_config == validated) {
+        return;
+    }
+    p->m_config = std::move(validated);
     p->m_bgFadeController->setDurationMs(p->m_config.fadeDuration);
     p->m_bgFadeController->setEnabled(p->m_config.fadeDuration > 0);
 

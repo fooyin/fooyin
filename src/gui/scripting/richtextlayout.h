@@ -21,13 +21,15 @@
 
 #include <gui/scripting/richtextutils.h>
 
+#include <QIcon>
+
 #include <optional>
 
 class QPainter;
 class QStyleOptionViewItem;
 
 namespace Fooyin {
-struct PlaylistHeaderLine
+struct RichTextLine
 {
     RichText left;
     RichText right;
@@ -40,14 +42,17 @@ struct PlaylistHeaderLine
     int height{0};
 };
 
-struct PlaylistHeaderLayout
+struct RichTextLayout
 {
-    std::vector<PlaylistHeaderLine> lines;
+    std::vector<RichTextLine> lines;
     int width{0};
     int height{0};
 };
 
-PlaylistHeaderLayout preparePlaylistHeader(const RichText& text, const QFont& baseFont = {}, bool measureWidth = true);
-void drawPlaylistHeader(QPainter* painter, const QStyleOptionViewItem& option, const QRect& rect,
-                        const PlaylistHeaderLayout& layout);
+RichTextLayout prepareRichTextLayout(const RichText& text, const QFont& baseFont = {}, bool measureWidth = true);
+QString richTextLayoutPlainText(const RichTextLayout& layout);
+void drawRichTextLayout(QPainter* painter, const QStyleOptionViewItem& option, const QRect& rect,
+                        const RichTextLayout& layout, const QIcon& playingIcon = {});
 } // namespace Fooyin
+
+Q_DECLARE_METATYPE(Fooyin::RichTextLayout)

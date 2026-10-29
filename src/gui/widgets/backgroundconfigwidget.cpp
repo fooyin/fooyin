@@ -34,6 +34,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QSignalBlocker>
 #include <QSpinBox>
 
 using namespace Qt::StringLiterals;
@@ -67,6 +68,7 @@ public:
         , m_backgroundBlur{new SliderEditor(BackgroundConfigWidget::tr("Blur"), self)}
         , m_backgroundOpacity{new SliderEditor(BackgroundConfigWidget::tr("Opacity"), self)}
         , m_backgroundFadeDuration{new SliderEditor(BackgroundConfigWidget::tr("Fade length"), self)}
+        , m_options{BackgroundConfigWidget::TrackPreference | BackgroundConfigWidget::FadeDuration}
     { }
 
     void browseBackgroundImage() const
@@ -92,8 +94,11 @@ public:
 
         m_backgroundCoverTypeLabel->setVisible(albumCover);
         m_backgroundCoverType->setVisible(albumCover);
-        m_backgroundTrackPreferenceLabel->setVisible(albumCover);
-        m_backgroundTrackPreference->setVisible(albumCover);
+
+        const bool trackPreference = albumCover && m_options.testFlag(BackgroundConfigWidget::TrackPreference);
+        m_backgroundTrackPreferenceLabel->setVisible(trackPreference);
+        m_backgroundTrackPreference->setVisible(trackPreference);
+
         m_customImageLabel->setVisible(customImage);
         m_customImage->setVisible(customImage);
         m_backgroundScaling->setEnabled(hasImage);
@@ -102,6 +107,7 @@ public:
         m_backgroundBlur->setEnabled(hasImage);
         m_backgroundOpacity->setEnabled(hasImage);
         m_backgroundFadeDuration->setEnabled(hasImage);
+        m_backgroundFadeDuration->setVisible(m_options.testFlag(BackgroundConfigWidget::FadeDuration));
     }
 
     BackgroundConfigWidget* m_self;
@@ -118,6 +124,7 @@ public:
     SliderEditor* m_backgroundBlur;
     SliderEditor* m_backgroundOpacity;
     SliderEditor* m_backgroundFadeDuration;
+    BackgroundConfigWidget::Options m_options;
 };
 
 BackgroundConfigWidget::BackgroundConfigWidget(QWidget* parent)
@@ -131,7 +138,7 @@ BackgroundConfigWidget::BackgroundConfigWidget(QWidget* parent)
 
     addComboItem(p->m_backgroundImage, tr("No background image"), static_cast<int>(BackgroundImageMode::None));
     addComboItem(p->m_backgroundImage, tr("Track artwork"), static_cast<int>(BackgroundImageMode::AlbumCover),
-                 tr("Use artwork from the preferred track as the background"));
+                 tr("Use track artwork as the background"));
     addComboItem(p->m_backgroundImage, tr("Custom image"), static_cast<int>(BackgroundImageMode::Custom),
                  tr("Use the selected image file as the background"));
 
@@ -228,6 +235,16 @@ BackgroundConfigWidget::BackgroundConfigWidget(QWidget* parent)
     QObject::connect(p->m_backgroundScaling, &QComboBox::currentIndexChanged, this,
                      [this]() { p->updateBackgroundControls(); });
 
+    for(auto* combo : {p->m_backgroundImage, p->m_backgroundCoverType, p->m_backgroundTrackPreference,
+                       p->m_backgroundScaling, p->m_backgroundPosition}) {
+        QObject::connect(combo, &QComboBox::currentIndexChanged, this, &BackgroundConfigWidget::configChanged);
+    }
+    QObject::connect(p->m_customImage, &QLineEdit::textChanged, this, &BackgroundConfigWidget::configChanged);
+    QObject::connect(p->m_backgroundMaxSize, &QSpinBox::valueChanged, this, &BackgroundConfigWidget::configChanged);
+    for(auto* slider : {p->m_backgroundBlur, p->m_backgroundOpacity, p->m_backgroundFadeDuration}) {
+        QObject::connect(slider, &SliderEditor::valueChanged, this, &BackgroundConfigWidget::configChanged);
+    }
+
     setConfig({});
 }
 
@@ -251,6 +268,8 @@ BackgroundConfig BackgroundConfigWidget::config() const
 
 void BackgroundConfigWidget::setConfig(const BackgroundConfig& config)
 {
+    const QSignalBlocker blocker{this};
+
     p->m_backgroundImage->setCurrentIndex(p->m_backgroundImage->findData(config.imageMode));
     p->m_customImage->setText(config.customImage);
     p->m_backgroundCoverType->setCurrentIndex(p->m_backgroundCoverType->findData(config.coverType));
@@ -266,6 +285,12 @@ void BackgroundConfigWidget::setConfig(const BackgroundConfig& config)
     p->updateBackgroundControls();
 }
 
+void BackgroundConfigWidget::setOptions(Options options)
+{
+    if(std::exchange(p->m_options, options) != options) {
+        p->updateBackgroundControls();
+    }
+}
 } // namespace Fooyin
 
 #include "gui/widgets/moc_backgroundconfigwidget.cpp"

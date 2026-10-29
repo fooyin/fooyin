@@ -22,14 +22,21 @@
 #include "fygui_export.h"
 
 #include "filtercontroller.h"
+#include "filterexpansionpopulator.h"
 #include "filterfwd.h"
 #include "filterrows.h"
 
 #include <core/track.h>
+#include <gui/coverartworktypes.h>
 #include <gui/fywidget.h>
+#include <gui/widgets/backgroundconfig.h>
 #include <gui/widgets/expandedtreeview.h>
 
 #include <QBasicTimer>
+#include <QMargins>
+#include <QPointer>
+
+#include <optional>
 
 class QTimerEvent;
 
@@ -39,15 +46,19 @@ class AutoHeaderView;
 class ActionManager;
 class CoverProvider;
 class CoverRepository;
+class BackgroundImageSource;
 class LibraryManager;
-class MusicLibrary;
+class PlayerController;
+class TrackSelectionController;
 class SettingsManager;
 class WidgetContext;
 enum class TrackAction;
+struct CorePluginContext;
 
 namespace Filters {
 class FilterColumnRegistry;
 class FilterDelegate;
+class FilterExpansionWidget;
 class FilterModel;
 class FilterSortModel;
 class FilterView;
@@ -78,8 +89,9 @@ public:
         FilterScrollPolicy scrollPolicy{FilterScrollPolicy::Preserve};
     };
 
-    explicit FilterWidget(ActionManager* actionManager, FilterColumnRegistry* columnRegistry, MusicLibrary* library,
-                          CoverRepository* coverRepository, SettingsManager* settings, QWidget* parent = nullptr);
+    explicit FilterWidget(ActionManager* actionManager, FilterColumnRegistry* columnRegistry,
+                          const CorePluginContext& core, CoverRepository* coverRepository,
+                          TrackSelectionController* selection, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     [[nodiscard]] Id group() const;
@@ -105,6 +117,10 @@ public:
     void setIndex(int index);
     void setViewState(const FilterViewState& state);
 
+    [[nodiscard]] ExpansionRequest expansionPreviewRequest(const ExpansionScripts& scripts,
+                                                           std::shared_ptr<const TrackList> tracks) const;
+    [[nodiscard]] ScriptContextService* expansionScriptContext() const;
+
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
     void saveLayoutData(QJsonObject& layout) override;
@@ -118,6 +134,9 @@ public:
     {
         int doubleClickAction{1};
         int middleClickAction{0};
+        // -1 inherits the filter action
+        int expansionDoubleClickAction{-1};
+        int expansionMiddleClickAction{-1};
         bool sendPlayback{true};
         FilterSource source{FilterSource::Library};
         bool playlistEnabled{true};
@@ -125,12 +144,36 @@ public:
         bool preservePlaybackPlaylist{true};
         QString playlistName{FilterController::defaultPlaylistName()};
         bool restoreState{true};
+        ExpandedTreeView::ViewMode viewMode{ExpandedTreeView::ViewMode::Tree};
+        ExpandedTreeView::CaptionDisplay captionDisplay{ExpandedTreeView::CaptionDisplay::Bottom};
+        Track::Cover coverType{Track::Cover::Front};
+        std::optional<ArtworkSourcePreference> coverSource;
+        bool showSummary{true};
+        bool showHeader{true};
+        bool showScrollbar{true};
+        bool alternatingRows{false};
         int rowHeight{0};
         QSize iconSize{100, 100};
         int iconHorizontalGap{-1};
         int iconVerticalGap{10};
         int artworkCornerRadius{0};
         bool alignCaptionsToArtwork{true};
+        BackgroundConfig background;
+        bool expandGroups{false};
+        bool expandedArtwork{true};
+        int expansionMinimumRows{4};
+        int expansionMaximumColumns{0};
+        bool expansionStretchColumns{false};
+        int expansionMinimumColumnWidth{100};
+        bool expansionArtworkOnLeft{true};
+        int expansionArtworkSize{100};
+        bool expansionShowCloseButton{true};
+        bool expansionArtworkReflection{false};
+        bool expansionArtworkAutoMargins{false};
+        QMargins expansionArtworkMargins{10, 10, 10, 10};
+        ExpansionScripts expansionScripts;
+        BackgroundConfig expansionBackground;
+        QString expansionBackgroundColour;
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -146,13 +189,16 @@ public:
 Q_SIGNALS:
     void doubleClicked();
     void middleClicked();
+    void actionRequested(Fooyin::TrackAction action);
 
     void filterDeleted();
     void filterUpdated();
     void selectionKeysChanged(const std::vector<Fooyin::Filters::RowKey>& keys);
     void configChanged();
+    void expansionLayoutChanged();
+    void expansionScriptErrorsChanged(const QStringList& errors);
     void requestHeaderMenu(Fooyin::AutoHeaderView* header, const QPoint& pos);
-    void requestContextMenu(const QPoint& pos);
+    void requestContextMenu(const QPoint& pos, Fooyin::WidgetContext* context, bool hasSelection);
     void requestEditConnections();
     void searchTextChanged(const QString& search);
 
@@ -172,6 +218,17 @@ private:
     void scheduleVisibleCoverPinUpdate(int delay = 0);
     void updateVisibleCoverPins();
 
+    void expandSelection();
+    void scheduleExpansionUpdate();
+    void updateExpansion();
+    void submitExpansion(ExpansionRequest request);
+    [[nodiscard]] ExpansionRequest expansionRequest(std::shared_ptr<const TrackList> tracks,
+                                                    const ExpansionScripts& scripts) const;
+    void applyExpansionContent(const ExpansionResult& result);
+    void refreshExpansionScripts(const ScriptChanges& changes);
+    void closeExpansion(bool restoreFocus = false);
+    void restoreScrollPosition();
+
     void addDisplayMenu(QMenu* menu);
     void filterHeaderMenu(const QPoint& pos);
 
@@ -184,6 +241,7 @@ private:
 
     ActionManager* m_actionManager;
     FilterColumnRegistry* m_columnRegistry;
+    LibraryManager* m_libraryManager;
     SettingsManager* m_settings;
 
     FilterView* m_view;
@@ -191,6 +249,7 @@ private:
     AutoHeaderView* m_header;
     FilterModel* m_model;
     FilterSortModel* m_sortProxy;
+    BackgroundImageSource* m_backgroundSource;
 
     Id m_group;
     int m_index;
@@ -207,10 +266,24 @@ private:
 
     QByteArray m_headerState;
 
-    bool m_showScrollbar;
-    bool m_alternatingColours;
     ConfigData m_config;
     QBasicTimer m_visibleCoverPinUpdateTimer;
+
+    bool m_expansionUpdateQueued;
+    QPointer<FilterExpansionWidget> m_expansion;
+    TrackSelectionController* m_trackSelection;
+    PlayerController* m_player;
+    RowKey m_expandedKey;
+    RowKey m_displayedKey;
+    FilterColumnList m_expandedColumns;
+    uint64_t m_expansionRequest;
+    ScriptContextService* m_scriptContext;
+    ScriptSubscription* m_expansionSubscription;
+    std::shared_ptr<const TrackList> m_expansionTracks;
+    ExpansionDependencies m_expansionDependencies;
+    ScriptContextData m_expansionContext;
+    std::vector<QString> m_expansionColumnValues;
+    uint64_t m_displayedGeneration;
 };
 } // namespace Filters
 } // namespace Fooyin

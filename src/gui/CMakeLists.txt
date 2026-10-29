@@ -101,6 +101,8 @@ set(SOURCES
     artwork/artworkmodel.h
     artwork/artworkproperties.cpp
     artwork/artworkproperties.h
+    artwork/artworkreflection.cpp
+    artwork/artworkreflection.h
     artwork/artworkrow.cpp
     artwork/artworkrow.h
     artwork/artworksaveutils.cpp
@@ -224,6 +226,14 @@ set(SOURCES
     filters/filtercontroller.h
     filters/filterdelegate.cpp
     filters/filterdelegate.h
+    filters/filterexpansionmodel.cpp
+    filters/filterexpansionmodel.h
+    filters/filterexpansionpopulator.cpp
+    filters/filterexpansionpopulator.h
+    filters/filterexpansiontrackdelegate.cpp
+    filters/filterexpansiontrackdelegate.h
+    filters/filterexpansionwidget.cpp
+    filters/filterexpansionwidget.h
     filters/filterfwd.h
     filters/filteritem.cpp
     filters/filteritem.h
@@ -237,6 +247,8 @@ set(SOURCES
     filters/filterrows.h
     filters/filterscolumnmodel.cpp
     filters/filterscolumnmodel.h
+    filters/filterscripting.cpp
+    filters/filterscripting.h
     filters/filterwidget.cpp
     filters/filterwidget.h
     filters/libraryfilterswitcher.cpp
@@ -371,8 +383,6 @@ set(SOURCES
     playlist/playlistcontroller.h
     playlist/playlistdelegate.cpp
     playlist/playlistdelegate.h
-    playlist/playlistheaderlayout.cpp
-    playlist/playlistheaderlayout.h
     playlist/playlistinteractor.cpp
     playlist/playlistitem.cpp
     playlist/playlistitem.h
@@ -446,6 +456,8 @@ set(SOURCES
     scripting/expressiontreemodel.h
     scripting/richtextdelegateutils.cpp
     scripting/richtextdelegateutils.h
+    scripting/richtextlayout.cpp
+    scripting/richtextlayout.h
     scripting/richtextutils.cpp
     scripting/scriptcommandhandler.cpp
     scripting/scriptcommandhandler.h
