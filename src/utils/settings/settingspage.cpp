@@ -21,11 +21,31 @@
 
 #include <utils/settings/settingsdialogcontroller.h>
 
+#include <QAbstractButton>
+#include <QGroupBox>
+#include <QLabel>
+#include <QTextDocument>
+
+using namespace Qt::StringLiterals;
+
+namespace {
+QString searchText(QString text)
+{
+    for(qsizetype index{0}; index < text.size(); ++index) {
+        if(text.at(index) == '&'_L1) {
+            text.remove(index, 1);
+        }
+    }
+    return text;
+}
+} // namespace
+
 namespace Fooyin {
 SettingsPage::SettingsPage(SettingsDialogController* controller, QObject* parent)
     : QObject{parent}
     , m_position{SettingsPagePosition::Default}
     , m_relativePosition{SettingsPageRelativePosition::None}
+    , m_selector{SettingsPageSelector::Tabs}
     , m_widget{nullptr}
 {
     if(controller) {
@@ -63,9 +83,9 @@ Id SettingsPage::positionPage() const
     return m_positionPage;
 }
 
-void SettingsPage::setWidgetCreator(const WidgetCreator& widgetCreator)
+SettingsPageSelector SettingsPage::selector() const
 {
-    m_widgetCreator = widgetCreator;
+    return m_selector;
 }
 
 QWidget* SettingsPage::widget()
@@ -78,6 +98,61 @@ QWidget* SettingsPage::widget()
     }
 
     return m_widget;
+}
+
+bool SettingsPage::matches(const QString& text)
+{
+    if(text.isEmpty()) {
+        return true;
+    }
+
+    if(searchText(m_name).contains(text, Qt::CaseInsensitive)
+       || searchText(m_category.join(' '_L1)).contains(text, Qt::CaseInsensitive)) {
+        return true;
+    }
+
+    if(m_searchKeywords) {
+        return m_searchKeywords->contains(text, Qt::CaseInsensitive);
+    }
+
+    if(!m_searchText) {
+        QStringList keywords;
+        if(auto* pageWidget = widget()) {
+            const auto pageChildren = pageWidget->findChildren<QWidget*>();
+            for(const auto* child : pageChildren) {
+                if(child->window() != pageWidget->window()) {
+                    continue;
+                }
+
+                if(const auto* label = qobject_cast<const QLabel*>(child)) {
+                    QString labelText = label->text();
+                    if(label->textFormat() == Qt::RichText
+                       || (label->textFormat() == Qt::AutoText && Qt::mightBeRichText(labelText))) {
+                        QTextDocument document;
+                        document.setHtml(labelText);
+                        labelText = document.toPlainText();
+                    }
+                    keywords.append(labelText);
+                }
+                else if(const auto* button = qobject_cast<const QAbstractButton*>(child)) {
+                    keywords.append(button->text());
+                }
+                else if(const auto* group = qobject_cast<const QGroupBox*>(child)) {
+                    keywords.append(group->title());
+                }
+            }
+        }
+        m_searchText = searchText(keywords.join('\n'_L1));
+    }
+
+    return m_searchText->contains(text, Qt::CaseInsensitive);
+}
+
+void SettingsPage::setSearchFilter(const QString& text)
+{
+    if(auto* pageWidget = qobject_cast<SettingsPageWidget*>(m_widget)) {
+        pageWidget->setSearchFilter(text);
+    }
 }
 
 void SettingsPage::load()
@@ -108,6 +183,8 @@ void SettingsPage::finish()
         delete m_widget;
         m_widget = nullptr;
     }
+
+    m_searchText.reset();
 }
 
 void SettingsPage::reset()
@@ -176,6 +253,21 @@ void SettingsPage::setRelativePosition(SettingsPageRelativePosition position, co
     m_position         = SettingsPagePosition::Default;
     m_relativePosition = position;
     m_positionPage     = page;
+}
+
+void SettingsPage::setSelector(SettingsPageSelector selector)
+{
+    m_selector = selector;
+}
+
+void SettingsPage::setSearchKeywords(const QStringList& keywords)
+{
+    m_searchKeywords = searchText(keywords.join('\n'_L1));
+}
+
+void SettingsPage::setWidgetCreator(const WidgetCreator& widgetCreator)
+{
+    m_widgetCreator = widgetCreator;
 }
 } // namespace Fooyin
 

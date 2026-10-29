@@ -21,9 +21,13 @@
 
 #include "fycore_export.h"
 
+#include <core/engine/enginedefs.h>
+#include <core/player/playbackqueue.h>
 #include <core/playlist/playlist.h>
 #include <core/track.h>
 #include <utils/id.h>
+
+#include <optional>
 
 namespace Fooyin::Player {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
@@ -50,6 +54,15 @@ enum class AdvanceReason : uint8_t
 };
 Q_ENUM_NS(AdvanceReason)
 
+struct FYCORE_EXPORT ABRepeatRange
+{
+    std::optional<uint64_t> start;
+    std::optional<uint64_t> end;
+    bool enabled{false};
+
+    bool operator==(const ABRepeatRange&) const = default;
+};
+
 struct FYCORE_EXPORT TrackChangeContext
 {
     AdvanceReason reason{AdvanceReason::Unknown};
@@ -61,6 +74,7 @@ struct FYCORE_EXPORT TrackChangeRequest
     PlaylistTrack track;
     TrackChangeContext context;
     bool isQueueTrack{false};
+    PlaybackQueueItemId queueItemId{0};
     uint64_t itemId{0};
 };
 
@@ -68,6 +82,7 @@ struct FYCORE_EXPORT UpcomingTrack
 {
     PlaylistTrack track;
     bool isQueueTrack{false};
+    PlaybackQueueItemId queueItemId{0};
     uint64_t itemId{0};
 };
 
@@ -80,7 +95,10 @@ struct FYCORE_EXPORT PlaybackSnapshot
     uint64_t positionMs{0};
     uint64_t durationMs{0};
     int bitrate{0};
+    QString decoder;
+    Engine::PlaybackOutputInfo outputInfo;
     bool isQueueTrack{false};
+    PlaybackQueueItemId queueItemId{0};
 };
 } // namespace Fooyin::Player
 

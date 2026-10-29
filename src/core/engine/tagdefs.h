@@ -21,38 +21,38 @@
 
 namespace Fooyin {
 namespace Tag {
-constexpr auto Title         = "TITLE";
-constexpr auto Artist        = "ARTIST";
-constexpr auto Album         = "ALBUM";
-constexpr auto AlbumArtist   = "ALBUMARTIST";
-constexpr auto Genre         = "GENRE";
-constexpr auto Composer      = "COMPOSER";
-constexpr auto Performer     = "PERFORMER";
-constexpr auto Comment       = "COMMENT";
-constexpr auto Date          = "DATE";
-constexpr auto Year          = "YEAR";
-constexpr auto Rating        = "RATING";
-constexpr auto RatingAlt     = "FMPS_RATING";
-constexpr auto PlayCount     = "FMPS_PLAYCOUNT";
-constexpr auto TrackNumber   = "TRACKNUMBER";
-constexpr auto TrackAlt      = "TRACK";
-constexpr auto TrackTotal    = "TRACKTOTAL";
-constexpr auto TrackTotalAlt = "TOTALTRACKS";
-constexpr auto Disc          = "DISCNUMBER";
-constexpr auto DiscAlt       = "DISC";
-constexpr auto DiscTotal     = "DISCTOTAL";
-constexpr auto DiscTotalAlt  = "TOTALDISCS";
+constexpr auto Title          = "TITLE";
+constexpr auto Artist         = "ARTIST";
+constexpr auto Album          = "ALBUM";
+constexpr auto AlbumArtist    = "ALBUMARTIST";
+constexpr auto AlbumArtistAlt = "ALBUM ARTIST";
+constexpr auto Genre          = "GENRE";
+constexpr auto Composer       = "COMPOSER";
+constexpr auto Performer      = "PERFORMER";
+constexpr auto Comment        = "COMMENT";
+constexpr auto Date           = "DATE";
+constexpr auto Year           = "YEAR";
+constexpr auto Rating         = "RATING";
+constexpr auto RatingAlt      = "FMPS_RATING";
+constexpr auto PlayCount      = "FMPS_PLAYCOUNT";
+constexpr auto TrackNumber    = "TRACKNUMBER";
+constexpr auto TrackAlt       = "TRACK";
+constexpr auto TrackTotal     = "TRACKTOTAL";
+constexpr auto TrackTotalAlt  = "TOTALTRACKS";
+constexpr auto Disc           = "DISCNUMBER";
+constexpr auto DiscAlt        = "DISC";
+constexpr auto DiscTotal      = "DISCTOTAL";
+constexpr auto DiscTotalAlt   = "TOTALDISCS";
 
 namespace ReplayGain {
-constexpr auto ReplayGainStart = "REPLAYGAIN_";
-constexpr auto AlbumPeak       = "REPLAYGAIN_ALBUM_PEAK";
-constexpr auto AlbumPeakAlt    = "REPLAYGAIN_ALBUMPEAK";
-constexpr auto AlbumGain       = "REPLAYGAIN_ALBUM_GAIN";
-constexpr auto AlbumGainAlt    = "REPLAYGAIN_ALBUMGAIN";
-constexpr auto TrackPeak       = "REPLAYGAIN_TRACK_PEAK";
-constexpr auto TrackPeakAlt    = "REPLAYGAIN_TRACKPEAK";
-constexpr auto TrackGain       = "REPLAYGAIN_TRACK_GAIN";
-constexpr auto TrackGainAlt    = "REPLAYGAIN_TRACKGAIN";
+constexpr auto AlbumPeak    = "REPLAYGAIN_ALBUM_PEAK";
+constexpr auto AlbumPeakAlt = "REPLAYGAIN_ALBUMPEAK";
+constexpr auto AlbumGain    = "REPLAYGAIN_ALBUM_GAIN";
+constexpr auto AlbumGainAlt = "REPLAYGAIN_ALBUMGAIN";
+constexpr auto TrackPeak    = "REPLAYGAIN_TRACK_PEAK";
+constexpr auto TrackPeakAlt = "REPLAYGAIN_TRACKPEAK";
+constexpr auto TrackGain    = "REPLAYGAIN_TRACK_GAIN";
+constexpr auto TrackGainAlt = "REPLAYGAIN_TRACKGAIN";
 } // namespace ReplayGain
 } // namespace Tag
 

@@ -34,11 +34,13 @@ PopupLineEdit::PopupLineEdit(const QString& contents, QWidget* parent)
 
 void PopupLineEdit::paintEvent(QPaintEvent* event)
 {
-    QPainter painter{this};
+    {
+        QPainter painter{this};
 
-    // Some styles paint QLineEdit with a transparent background
-    // As we're designed to be used as a popup, override that
-    painter.fillRect(event->rect(), palette().base());
+        // Some styles paint QLineEdit with a transparent background
+        // As we're designed to be used as a popup, override that
+        painter.fillRect(event->rect(), palette().base());
+    }
 
     QLineEdit::paintEvent(event);
 }

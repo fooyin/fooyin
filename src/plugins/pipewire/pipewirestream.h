@@ -36,8 +36,7 @@ namespace Pipewire {
 class PipewireStream
 {
 public:
-    PipewireStream(PipewireCore* core, const AudioFormat& format, int targetBufferFrames = 0,
-                   const QString& device = {});
+    PipewireStream(PipewireCore* core, const AudioFormat& format, int latencyFrames = 0, const QString& device = {});
     ~PipewireStream();
 
     struct TimeInfo

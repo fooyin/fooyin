@@ -24,10 +24,14 @@
 #include <core/coresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
-#include <gui/trackselectioncontroller.h>
+#include <gui/widgets/colourbutton.h>
+#include <gui/widgets/fontbutton.h>
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
+#include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QGridLayout>
@@ -38,6 +42,16 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
+namespace {
+QColor defaultPlayingRowColour()
+{
+    QColor colour = QApplication::palette().color(QPalette::Inactive, QPalette::Highlight);
+    colour        = Utils::isDarkMode() ? colour.lighter(150) : colour.darker(150);
+    colour.setAlpha(110);
+    return colour;
+}
+} // namespace
+
 class PlaylistGeneralPageWidget : public SettingsPageWidget
 {
     Q_OBJECT
@@ -53,8 +67,9 @@ private:
     SettingsManager* m_settings;
 
     QSpinBox* m_preloadCount;
-    QComboBox* m_middleClick;
     QCheckBox* m_inlineTagEditing;
+    ColourButton* m_playingRowColour;
+    FontButton* m_playingRowFont;
     QCheckBox* m_skipMissing;
     QCheckBox* m_ignoreFolderPlaylists;
     QCheckBox* m_preventDuplicates;
@@ -66,8 +81,9 @@ private:
 PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_preloadCount{new QSpinBox(this)}
-    , m_middleClick{new QComboBox(this)}
     , m_inlineTagEditing{new QCheckBox(tr("Enable inline tag editing"), this)}
+    , m_playingRowColour{new ColourButton(tr("Background colour") + u":"_s, true, this)}
+    , m_playingRowFont{new FontButton(tr("Font") + u":"_s, true, this)}
     , m_skipMissing{new QCheckBox(tr("Skip missing tracks"), this)}
     , m_ignoreFolderPlaylists{new QCheckBox(tr("Ignore playlist files when adding folders"), this)}
     , m_preventDuplicates{new QCheckBox(tr("Prevent duplicate tracks when loading playlists"), this)}
@@ -91,17 +107,18 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     int row{0};
     behaviourLayout->addWidget(preloadCountLabel, row, 0);
     behaviourLayout->addWidget(m_preloadCount, row++, 1);
-    behaviourLayout->addWidget(new QLabel(u"🛈 "_s + tr("Set to '0' to disable preloading."), this), row++, 0, 1, 2);
+    behaviourLayout->addWidget(new HintLabel(tr("Set to ‘0’ to disable preloading."), this), row++, 0, 1, 2);
     behaviourLayout->addWidget(m_inlineTagEditing, row++, 0, 1, 2);
     behaviourLayout->setColumnStretch(behaviourLayout->columnCount(), 1);
 
-    auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
-    auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
+    m_playingRowColour->setToolTip(
+        tr("Use a custom background colour for the currently playing row; transparency is supported"));
+    m_playingRowFont->setToolTip(tr("Use a custom font for the currently playing row"));
 
-    row = 0;
-    clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + ":"_L1, this), row, 0);
-    clickBehaviourLayout->addWidget(m_middleClick, row++, 1);
-    clickBehaviourLayout->setColumnStretch(clickBehaviourLayout->columnCount(), 1);
+    auto* playingRow       = new QGroupBox(tr("Playing row"), this);
+    auto* playingRowLayout = new QGridLayout(playingRow);
+    playingRowLayout->addWidget(m_playingRowColour, 0, 0);
+    playingRowLayout->addWidget(m_playingRowFont, 1, 0);
 
     m_skipMissing->setToolTip(tr("Skip unavailable tracks when loading playlists"));
     m_ignoreFolderPlaylists->setToolTip(
@@ -134,7 +151,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
 
     row = 0;
     mainLayout->addWidget(behaviour, row++, 0);
-    mainLayout->addWidget(clickBehaviour, row++, 0);
+    mainLayout->addWidget(playingRow, row++, 0);
     mainLayout->addWidget(loading, row++, 0);
     mainLayout->addWidget(search, row++, 0);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
@@ -144,26 +161,38 @@ void PlaylistGeneralPageWidget::load()
 {
     m_preloadCount->setValue(m_settings->value<Settings::Gui::Internal::PlaylistTrackPreloadCount>());
     m_inlineTagEditing->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistInlineTagEditing>());
-
-    m_middleClick->clear();
-    TrackSelectionController::addAction(m_middleClick, tr("None"), TrackAction::None);
-    TrackSelectionController::addStandardActions(m_middleClick, ActionGroup::Queue);
-    TrackSelectionController::setCurrentAction(m_middleClick,
-                                               m_settings->value<Settings::Gui::Internal::PlaylistMiddleClick>());
+    const QVariant playingRowColour = m_settings->value<Settings::Gui::Internal::PlaylistPlayingRowColour>();
+    m_playingRowColour->setChecked(!playingRowColour.isNull());
+    m_playingRowColour->setColour(playingRowColour.isNull() ? defaultPlayingRowColour()
+                                                            : playingRowColour.value<QColor>());
+    const QVariant playingRowFont = m_settings->value<Settings::Gui::Internal::PlaylistPlayingRowFont>();
+    m_playingRowFont->setChecked(!playingRowFont.isNull());
+    m_playingRowFont->setButtonFont(playingRowFont.isNull() ? QApplication::font() : playingRowFont.value<QFont>());
 
     m_skipMissing->setChecked(m_settings->value<Settings::Core::PlaylistSkipMissing>());
     m_ignoreFolderPlaylists->setChecked(m_settings->value<Settings::Core::AddFoldersIgnorePlaylists>());
     m_preventDuplicates->setChecked(m_settings->value<Settings::Core::PlaylistPreventDuplicates>());
     m_integratedSearch->setChecked(m_settings->value<Settings::Gui::PlaylistIntegratedSearch>());
     m_searchMode->setCurrentIndex(m_searchMode->findData(m_settings->value<Settings::Gui::PlaylistSearchMode>()));
-    m_searchScript->setText(m_settings->value<Settings::Gui::PlaylistSearchScript>());
+    m_searchScript->setScript(m_settings->value<Settings::Gui::PlaylistSearchScript>());
 }
 
 void PlaylistGeneralPageWidget::apply()
 {
     m_settings->set<Settings::Gui::Internal::PlaylistTrackPreloadCount>(m_preloadCount->value());
     m_settings->set<Settings::Gui::Internal::PlaylistInlineTagEditing>(m_inlineTagEditing->isChecked());
-    m_settings->set<Settings::Gui::Internal::PlaylistMiddleClick>(m_middleClick->currentData().toInt());
+    if(m_playingRowColour->isChecked()) {
+        m_settings->set<Settings::Gui::Internal::PlaylistPlayingRowColour>(m_playingRowColour->colour());
+    }
+    else {
+        m_settings->reset<Settings::Gui::Internal::PlaylistPlayingRowColour>();
+    }
+    if(m_playingRowFont->isChecked()) {
+        m_settings->set<Settings::Gui::Internal::PlaylistPlayingRowFont>(m_playingRowFont->buttonFont());
+    }
+    else {
+        m_settings->reset<Settings::Gui::Internal::PlaylistPlayingRowFont>();
+    }
     m_settings->set<Settings::Core::PlaylistSkipMissing>(m_skipMissing->isChecked());
     m_settings->set<Settings::Core::AddFoldersIgnorePlaylists>(m_ignoreFolderPlaylists->isChecked());
     m_settings->set<Settings::Core::PlaylistPreventDuplicates>(m_preventDuplicates->isChecked());
@@ -176,7 +205,8 @@ void PlaylistGeneralPageWidget::reset()
 {
     m_settings->reset<Settings::Gui::Internal::PlaylistTrackPreloadCount>();
     m_settings->reset<Settings::Gui::Internal::PlaylistInlineTagEditing>();
-    m_settings->reset<Settings::Gui::Internal::PlaylistMiddleClick>();
+    m_settings->reset<Settings::Gui::Internal::PlaylistPlayingRowColour>();
+    m_settings->reset<Settings::Gui::Internal::PlaylistPlayingRowFont>();
     m_settings->reset<Settings::Core::PlaylistSkipMissing>();
     m_settings->reset<Settings::Core::AddFoldersIgnorePlaylists>();
     m_settings->reset<Settings::Core::PlaylistPreventDuplicates>();

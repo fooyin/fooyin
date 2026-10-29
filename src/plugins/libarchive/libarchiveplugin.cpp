@@ -32,6 +32,7 @@ QString LibArchivePlugin::inputName() const
 InputCreator LibArchivePlugin::inputCreator() const
 {
     InputCreator input;
+    input.priority      = 100;
     input.archiveReader = []() {
         return std::make_unique<LibArchiveReader>();
     };

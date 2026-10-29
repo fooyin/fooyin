@@ -29,8 +29,10 @@
 #include <unordered_map>
 
 class QAction;
+class QCloseEvent;
 class QDialog;
 class QMenu;
+class QToolBar;
 
 namespace Fooyin {
 class FyWidgetPrivate;
@@ -132,8 +134,21 @@ public:
 
     /** Returns the closest FyWidget parent of this widget. */
     [[nodiscard]] FyWidget* findParent() const;
+    /** Returns the toolbar hosting this widget, or @c nullptr if it is not hosted in one. */
+    [[nodiscard]] QToolBar* findToolbar() const;
+    /** Chooses an orientation from the available space, respecting toolbar orientation. */
+    [[nodiscard]] Qt::Orientation automaticOrientation() const;
+    /** Allows automatic orientation to change before the current layout's minimum size blocks resizing. */
+    void updateOrientationConstraints(bool automatic, const QSize& minimumSize);
     /** Returns the full geometry of this widget including frame. */
     [[nodiscard]] QRect widgetGeometry() const;
+
+    /** Returns whether layout contents margins have a saved per-widget override. */
+    [[nodiscard]] bool hasCustomLayoutMargins() const;
+    /** Sets and persists layout contents margins, preserving the original margins for reset. */
+    void setLayoutMargins(const QMargins& margins);
+    /** Restores the original layout contents margins and removes the saved override. */
+    void resetLayoutMargins();
 
     /*!
      * Serialises this widget into the layout array.
@@ -179,6 +194,15 @@ public:
     virtual void layoutEditingMenu(QMenu* menu);
 
     /*!
+     * Adds this widget's actions to @p menu.
+     *
+     * Reimplement this for widgets with a context menu so the same actions can be included when the widget is hosted
+     * in a toolbar.
+     * @note the base class implementation of this function does nothing.
+     */
+    virtual void populateContextMenu(QMenu* menu);
+
+    /*!
      * Called by @fn saveLayout() and @fn saveBaseLayout().
      * Reimplement to save widget-specific data to the layout object.
      * @note the base class implementation of this function does nothing.
@@ -208,7 +232,24 @@ public:
      */
     virtual void finalise();
 
+    /*!
+     * Shows this widget as a self-owned top-level window.
+     *
+     * The window geometry and widget-specific layout data are restored from and
+     * saved to @p stateKey. This gives the window configuration independent state
+     * from instances embedded in a layout. The window uses an opaque native
+     * surface unless the bool overload explicitly enables translucency.
+     *
+     * Only one standalone window is shown for each state key; an existing window is focused.
+     */
+    void showStandaloneWindow(const QString& title, const QString& stateKey,
+                              const QSize& defaultSize = QSize{800, 450});
+    void showStandaloneWindow(const QString& title, const QString& stateKey, bool translucentBackground,
+                              const QSize& defaultSize = QSize{800, 450});
+
 protected:
+    void closeEvent(QCloseEvent* event) override;
+
     /*!
      * Opens this widget's configuration dialog.
      * Reimplement for widgets that support per-instance configuration.
@@ -220,10 +261,15 @@ protected:
      */
     QAction* addConfigureAction(QMenu* menu, bool addSeparator = true);
     /*!
-     * Opens @p dialog and keeps it singleton per widget instance.
+     * Opens @p dialog as window-modal and keeps it singleton per widget instance.
      * If a config dialog is already open for this widget, that dialog is focused instead.
      */
     void showConfigDialog(QDialog* dialog);
+    /*!
+     * Shows @p dialog with @p modality and keeps it singleton per widget instance.
+     * If a config dialog is already open for this widget, that dialog is focused instead.
+     */
+    void showConfigDialog(QDialog* dialog, Qt::WindowModality modality);
 
 Q_SIGNALS:
     /*!

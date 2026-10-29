@@ -23,8 +23,11 @@
 
 #include <QButtonGroup>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QRadioButton>
 #include <QVBoxLayout>
 
@@ -35,9 +38,12 @@ CoverWidgetConfigDialog::CoverWidgetConfigDialog(CoverWidget* coverWidget, QWidg
     : WidgetConfigDialog{coverWidget, tr("Cover Widget Settings"), parent}
     , m_coverTypeGroup{new QButtonGroup(this)}
     , m_alignmentGroup{new QButtonGroup(this)}
+    , m_trackPreference{new QComboBox(this)}
     , m_keepAspectRatio{new QCheckBox(tr("Keep aspect ratio"), this)}
     , m_fadeEnabled{new QCheckBox(tr("Fade cover changes"), this)}
     , m_fadeDuration{new SliderEditor(tr("Fade length"), this)}
+    , m_doubleClick{new QComboBox(this)}
+    , m_middleClick{new QComboBox(this)}
 {
     auto* displayGroup  = new QGroupBox(tr("Display"), this);
     auto* displayLayout = new QGridLayout(displayGroup);
@@ -74,9 +80,24 @@ CoverWidgetConfigDialog::CoverWidgetConfigDialog(CoverWidget* coverWidget, QWidg
     m_alignmentGroup->addButton(leftButton, Qt::AlignLeft);
     m_alignmentGroup->addButton(rightButton, Qt::AlignRight);
 
+    m_trackPreference->addItem(tr("Playing track"), static_cast<int>(TrackDisplayPreference::PlayingTrack));
+    m_trackPreference->addItem(tr("Selected track"), static_cast<int>(TrackDisplayPreference::SelectedTrack));
+    m_trackPreference->addItem(tr("Playing (or selected when stopped)"),
+                               static_cast<int>(TrackDisplayPreference::PlayingTrackSelectedWhenStopped));
+    m_trackPreference->addItem(tr("Playing (no track at startup)"),
+                               static_cast<int>(TrackDisplayPreference::PlayingTrackBlankAtStartup));
+    m_trackPreference->addItem(tr("Playing (no track when stopped)"),
+                               static_cast<int>(TrackDisplayPreference::PlayingTrackBlankWhenStopped));
+
+    auto* trackPreferenceLayout = new QHBoxLayout();
+    trackPreferenceLayout->addWidget(new QLabel(tr("Preferred track") + u":"_s, displayGroup));
+    trackPreferenceLayout->addWidget(m_trackPreference);
+    trackPreferenceLayout->addStretch();
+
     int row{0};
     displayLayout->addWidget(coverTypeBox, row, 0);
     displayLayout->addWidget(alignmentBox, row++, 1);
+    displayLayout->addLayout(trackPreferenceLayout, row++, 0, 1, 2);
     displayLayout->addWidget(m_keepAspectRatio, row++, 0, 1, 2);
     displayLayout->setColumnStretch(0, 1);
     displayLayout->setColumnStretch(1, 1);
@@ -93,11 +114,37 @@ CoverWidgetConfigDialog::CoverWidgetConfigDialog(CoverWidget* coverWidget, QWidg
     fadeLayout->addWidget(m_fadeDuration, row++, 0);
     fadeLayout->setRowStretch(row, 1);
 
+    auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
+    auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
+
+    const auto addActions = [](QComboBox* box) {
+        box->addItem(tr("None"), static_cast<int>(CoverAction::None));
+        box->addItem(tr("View full size"), static_cast<int>(CoverAction::ViewFullSize));
+        box->addItem(tr("Next available artwork type"), static_cast<int>(CoverAction::NextArtworkType));
+        box->addItem(tr("Show track"), static_cast<int>(CoverAction::ShowTrack));
+        box->addItem(tr("Open containing folder"), static_cast<int>(CoverAction::OpenContainingFolder));
+        box->addItem(tr("Open properties"), static_cast<int>(CoverAction::OpenProperties));
+    };
+    addActions(m_doubleClick);
+    addActions(m_middleClick);
+
+    row = 0;
+    clickBehaviourLayout->addWidget(new QLabel(tr("Double-click") + u":"_s, clickBehaviour), row, 0);
+    clickBehaviourLayout->addWidget(m_doubleClick, row++, 1);
+    clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + u":"_s, clickBehaviour), row, 0);
+    clickBehaviourLayout->addWidget(m_middleClick, row++, 1);
+    clickBehaviourLayout->setColumnStretch(2, 1);
+
     auto* layout{contentLayout()};
-    layout->addWidget(displayGroup, 0, 0);
-    layout->addWidget(fadeGroup, 1, 0);
+
+    row = 0;
+    layout->addWidget(displayGroup, row++, 0);
+    layout->addWidget(fadeGroup, row++, 0);
+    layout->addWidget(clickBehaviour, row++, 0);
+    layout->setRowStretch(row, 1);
     layout->setColumnStretch(0, 1);
-    layout->setRowStretch(2, 1);
+
+    QObject::connect(coverWidget, &CoverWidget::configChanged, this, &CoverWidgetConfigDialog::syncCurrentConfig);
 
     loadCurrentConfig();
 }
@@ -112,18 +159,34 @@ void CoverWidgetConfigDialog::setConfig(const CoverWidget::ConfigData& config)
     }
 
     m_keepAspectRatio->setChecked(config.keepAspectRatio);
+    m_trackPreference->setCurrentIndex(m_trackPreference->findData(static_cast<int>(config.trackPreference)));
     m_fadeEnabled->setChecked(config.fadeCoverChanges);
     m_fadeDuration->setValue(config.fadeDurationMs);
+    m_doubleClick->setCurrentIndex(m_doubleClick->findData(static_cast<int>(config.doubleClickAction)));
+    m_middleClick->setCurrentIndex(m_middleClick->findData(static_cast<int>(config.middleClickAction)));
 }
 
 CoverWidget::ConfigData CoverWidgetConfigDialog::config() const
 {
     return {
-        .coverType        = static_cast<Track::Cover>(m_coverTypeGroup->checkedId()),
-        .coverAlignment   = static_cast<Qt::Alignment>(m_alignmentGroup->checkedId()),
-        .keepAspectRatio  = m_keepAspectRatio->isChecked(),
-        .fadeCoverChanges = m_fadeEnabled->isChecked(),
-        .fadeDurationMs   = m_fadeDuration->value(),
+        .coverType         = static_cast<Track::Cover>(m_coverTypeGroup->checkedId()),
+        .coverAlignment    = static_cast<Qt::Alignment>(m_alignmentGroup->checkedId()),
+        .keepAspectRatio   = m_keepAspectRatio->isChecked(),
+        .trackPreference   = static_cast<TrackDisplayPreference>(m_trackPreference->currentData().toInt()),
+        .fadeCoverChanges  = m_fadeEnabled->isChecked(),
+        .fadeDurationMs    = m_fadeDuration->value(),
+        .doubleClickAction = static_cast<CoverAction>(m_doubleClick->currentData().toInt()),
+        .middleClickAction = static_cast<CoverAction>(m_middleClick->currentData().toInt()),
     };
+}
+
+void CoverWidgetConfigDialog::mergeExternalConfig(const CoverWidget::ConfigData& previous,
+                                                  const CoverWidget::ConfigData& current)
+{
+    mergeExternalFields(previous, current, &CoverWidget::ConfigData::coverType,
+                        &CoverWidget::ConfigData::coverAlignment, &CoverWidget::ConfigData::keepAspectRatio,
+                        &CoverWidget::ConfigData::trackPreference, &CoverWidget::ConfigData::fadeCoverChanges,
+                        &CoverWidget::ConfigData::fadeDurationMs, &CoverWidget::ConfigData::doubleClickAction,
+                        &CoverWidget::ConfigData::middleClickAction);
 }
 } // namespace Fooyin

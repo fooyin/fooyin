@@ -22,14 +22,13 @@
 #include <utils/settings/settingspage.h>
 
 namespace Fooyin {
-class PlayerController;
-class SettingsManager;
+class Application;
 
 class NowPlayingOutputPage : public SettingsPage
 {
     Q_OBJECT
 
 public:
-    NowPlayingOutputPage(PlayerController* playerController, SettingsManager* settings, QObject* parent = nullptr);
+    explicit NowPlayingOutputPage(Application* core, QObject* parent = nullptr);
 };
 } // namespace Fooyin

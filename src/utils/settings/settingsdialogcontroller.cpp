@@ -29,6 +29,7 @@
 #include <QDataStream>
 #include <QIODevice>
 #include <QMainWindow>
+#include <QPointer>
 #include <QSettings>
 
 #include <unordered_map>
@@ -100,7 +101,8 @@ public:
     std::unordered_map<QString, QByteArray> pageStates;
     PageList pages;
     Id lastOpenPage;
-    bool isOpen{false};
+    QPointer<SettingsDialog> dialog;
+    SettingsDialogController::SearchBarPosition searchBarPosition{SettingsDialogController::SearchBarPosition::Top};
 
     void applyPageStates() const
     {
@@ -135,13 +137,21 @@ void SettingsDialogController::open()
 
 void SettingsDialogController::openAtPage(const Id& page)
 {
-    if(p->isOpen) {
+    if(p->dialog) {
+        p->dialog->show();
+        p->dialog->raise();
+        p->dialog->activateWindow();
+        if(page.isValid()) {
+            p->dialog->openPage(page);
+        }
         return;
     }
 
     p->applyPageStates();
 
     auto* settingsDialog = new SettingsDialog{p->pages, p->mainWindow};
+    settingsDialog->setSearchBarPosition(p->searchBarPosition);
+    p->dialog = settingsDialog;
 
     QObject::connect(settingsDialog, &QDialog::finished, this, [this, settingsDialog]() {
         p->updatePageStates();
@@ -149,7 +159,7 @@ void SettingsDialogController::openAtPage(const Id& page)
         p->size               = settingsDialog->size();
         p->expandedCategories = settingsDialog->saveState();
         p->lastOpenPage       = settingsDialog->currentPage();
-        p->isOpen             = false;
+        p->dialog             = nullptr;
         Q_EMIT closing();
         settingsDialog->deleteLater();
     });
@@ -164,7 +174,6 @@ void SettingsDialogController::openAtPage(const Id& page)
     }
     settingsDialog->restoreState(p->expandedCategories);
 
-    p->isOpen = true;
     Q_EMIT opening();
 
     settingsDialog->openSettings();
@@ -217,6 +226,26 @@ void SettingsDialogController::restoreState(const QSettings& settings)
         if(lastPage.isValid()) {
             p->lastOpenPage = lastPage;
         }
+    }
+}
+
+void SettingsDialogController::setWindowIcon(const QIcon& icon)
+{
+    if(p->dialog) {
+        p->dialog->setWindowIcon(icon);
+    }
+}
+
+void SettingsDialogController::setSearchBarPosition(SearchBarPosition position)
+{
+    if(position != SearchBarPosition::Hidden && position != SearchBarPosition::Top
+       && position != SearchBarPosition::Bottom) {
+        position = SearchBarPosition::Top;
+    }
+
+    p->searchBarPosition = position;
+    if(p->dialog) {
+        p->dialog->setSearchBarPosition(position);
     }
 }
 } // namespace Fooyin

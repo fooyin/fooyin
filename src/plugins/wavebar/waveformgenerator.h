@@ -46,15 +46,15 @@ public:
 
 Q_SIGNALS:
     void generatingWaveform();
-    void waveformGenerated(const Fooyin::Track& track, const Fooyin::WaveBar::WaveformData<float>& data);
+    void waveformGenerated(const Fooyin::Track& track, const Fooyin::WaveBar::WaveformData<float>& data,
+                           std::stop_token token);
 
 public Q_SLOTS:
     void initialiseThread() override;
-    void generate(const Fooyin::Track& track, int samplesPerChannel, bool render, bool update = false);
+    void generate(const Fooyin::Track& track, int samplesPerChannel, bool render, bool update, std::stop_token token);
 
 private:
     QString setup(const Track& track, int samplesPerChannel);
-    void processBuffer(const AudioBuffer& buffer);
 
     std::shared_ptr<AudioLoader> m_audioLoader;
     LoadedDecoder m_loadedDecoder;
@@ -65,7 +65,6 @@ private:
     Track m_track;
     AudioFormat m_format;
     AudioFormat m_requiredFormat;
-    int m_samplesPerChannel;
     WaveformData<float> m_data;
 };
 } // namespace WaveBar

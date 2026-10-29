@@ -21,21 +21,32 @@
 
 #include "fygui_export.h"
 
+#include <core/library/musiclibrary.h>
 #include <core/track.h>
 
-#include <QPointer>
 #include <QWidget>
 
+#include <memory>
 #include <set>
 
 class QWidget;
 
 namespace Fooyin {
 class ActionManager;
+class PropertiesDialogPrivate;
+class PropertiesDialogSessionPrivate;
+class PropertiesTabPrivate;
 class SettingsManager;
+
 class FYGUI_EXPORT PropertiesDialogSession
 {
 public:
+    PropertiesDialogSession();
+    ~PropertiesDialogSession();
+
+    PropertiesDialogSession(const PropertiesDialogSession& other);
+    PropertiesDialogSession& operator=(const PropertiesDialogSession& other);
+
     void reset(const TrackList& tracks);
 
     [[nodiscard]] const TrackList& originalTracks() const;
@@ -51,12 +62,10 @@ public:
 
     [[nodiscard]] bool hasChanges() const;
     [[nodiscard]] bool hasOnlyStatChanges() const;
-    [[nodiscard]] bool isTrackDirty(int index) const;
+    [[nodiscard]] int trackRevision(int index) const;
 
 private:
-    TrackList m_originalTracks;
-    TrackList m_workingTracks;
-    std::set<int> m_activeTrackIndexes;
+    std::unique_ptr<PropertiesDialogSessionPrivate> p;
 };
 
 class FYGUI_EXPORT PropertiesTabWidget : public QWidget
@@ -85,15 +94,19 @@ public:
 Q_SIGNALS:
     void pendingChangesStateChanged();
     void tracksChanged(const Fooyin::TrackList& tracks);
+    void writeRequestStarted(Fooyin::WriteRequest request);
 };
 
 using WidgetBuilder = std::function<PropertiesTabWidget*(const TrackList& tracks)>;
 
-class PropertiesTab
+class FYGUI_EXPORT PropertiesTab
 {
 public:
     PropertiesTab(QString title, WidgetBuilder widgetBuilder, int index = -1);
-    virtual ~PropertiesTab() = default;
+    virtual ~PropertiesTab();
+
+    PropertiesTab(const PropertiesTab& other);
+    PropertiesTab& operator=(const PropertiesTab& other);
 
     [[nodiscard]] int index() const;
     [[nodiscard]] QString title() const;
@@ -108,12 +121,7 @@ public:
     virtual void finish();
 
 private:
-    int m_index;
-    QString m_title;
-    WidgetBuilder m_widgetBuilder;
-    mutable QPointer<PropertiesTabWidget> m_widget;
-    bool m_loaded;
-    bool m_visited;
+    std::unique_ptr<PropertiesTabPrivate> p;
 };
 
 class FYGUI_EXPORT PropertiesDialog : public QObject
@@ -133,11 +141,6 @@ public:
     void show(const TrackList& tracks);
 
 private:
-    ActionManager* m_actionManager;
-    SettingsManager* m_settings;
-    QAction* m_toggleScopeAction;
-    QAction* m_previousTrackAction;
-    QAction* m_nextTrackAction;
-    TabList m_tabs;
+    std::unique_ptr<PropertiesDialogPrivate> p;
 };
 } // namespace Fooyin

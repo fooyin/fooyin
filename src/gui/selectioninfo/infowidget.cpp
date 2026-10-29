@@ -22,16 +22,17 @@
 #include "infodelegate.h"
 #include "infomodel.h"
 #include "infoview.h"
-#include "internalguisettings.h"
 #include "selectioninfofieldregistry.h"
 
 #include <core/application.h>
 #include <core/coresettings.h>
+#include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/guiutils.h>
+#include <gui/trackdisplay.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
@@ -39,6 +40,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/tooltipfilter.h>
 
+#include <QActionGroup>
 #include <QBasicTimer>
 #include <QClipboard>
 #include <QContextMenuEvent>
@@ -52,7 +54,6 @@
 #include <QMenu>
 #include <QScrollBar>
 #include <QSortFilterProxyModel>
-#include <utility>
 
 using namespace Qt::StringLiterals;
 
@@ -127,7 +128,7 @@ private:
     QAction* m_copyAction;
     Command* m_copyCmd;
     QBasicTimer m_resetTimer;
-    SelectionDisplay m_displayOption;
+    TrackDisplayPreference m_trackPreference;
     TrackList m_tracks;
     int m_scrollPos;
 
@@ -161,7 +162,7 @@ InfoPanel::InfoPanel(TrackList tracks, LibraryManager* libraryManager, ActionMan
           this, Context{Id{"Fooyin.Context.SelectionInfo."}.append(reinterpret_cast<uintptr_t>(this))}, this)}
     , m_copyAction{new QAction(tr("&Copy"), this)}
     , m_copyCmd{m_actionManager->registerAction(m_copyAction, Constants::Actions::Copy, m_context->context())}
-    , m_displayOption{SelectionDisplay::PreferSelection}
+    , m_trackPreference{TrackDisplayPreference::SelectedTrack}
     , m_tracks{std::move(tracks)}
     , m_scrollPos{-1}
     , m_showHeader{true}
@@ -208,7 +209,9 @@ InfoPanel::InfoPanel(Application* app, ActionManager* actionManager, TrackSelect
           this, Context{Id{"Fooyin.Context.SelectionInfo."}.append(reinterpret_cast<uintptr_t>(this))}, this)}
     , m_copyAction{new QAction(tr("&Copy"), this)}
     , m_copyCmd{m_actionManager->registerAction(m_copyAction, Constants::Actions::Copy, m_context->context())}
-    , m_displayOption{static_cast<SelectionDisplay>(m_settings->value<Settings::Gui::Internal::InfoDisplayPrefer>())}
+    , m_trackPreference{m_settings->fileValue(u"SelectionInfo/PreferDisplay", 0).toInt() == 1
+                            ? TrackDisplayPreference::SelectedTrack
+                            : TrackDisplayPreference::PlayingTrack}
     , m_scrollPos{-1}
     , m_showHeader{true}
     , m_showVerticalScrollbar{true}
@@ -227,20 +230,19 @@ InfoPanel::InfoPanel(Application* app, ActionManager* actionManager, TrackSelect
     m_view->header()->setSectionResizeMode(0, QHeaderView::Interactive);
     m_view->header()->setSectionResizeMode(1, QHeaderView::Fixed);
 
-    QObject::connect(selectionController, &TrackSelectionController::displaySelectionChanged, this,
-                     [this]() { m_resetTimer.start(50, this); });
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
-                     [this]() { m_resetTimer.start(50, this); });
+    const auto startResetTimer = [this] {
+        m_resetTimer.start(50, this);
+    };
+
+    QObject::connect(app->library(), &MusicLibrary::tracksMetadataChanged, this, startResetTimer);
+    QObject::connect(app->library(), &MusicLibrary::tracksUpdated, this, startResetTimer);
+    QObject::connect(selectionController, &TrackSelectionController::displaySelectionChanged, this, startResetTimer);
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, startResetTimer);
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, startResetTimer);
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() { queueViewReset(); });
 
     setupActions();
 
-    using namespace Settings::Gui::Internal;
-
-    m_settings->subscribe<InfoDisplayPrefer>(this, [this](const int option) {
-        m_displayOption = static_cast<SelectionDisplay>(option);
-        resetModel();
-    });
     m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
         const auto resolvedStyle = var.value<ResolvedAppStyle>();
         Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
@@ -322,6 +324,9 @@ bool InfoPropertiesTab::canApply() const
 
 void InfoPanel::saveLayoutData(QJsonObject& layout) const
 {
+    if(m_selectionController) {
+        layout["TrackPreference"_L1] = static_cast<int>(m_trackPreference);
+    }
     layout["Options"_L1]                 = static_cast<int>(m_model->options());
     layout["ShowHeader"_L1]              = m_showHeader;
     layout["ShowVerticalScrollbar"_L1]   = m_showVerticalScrollbar;
@@ -332,31 +337,36 @@ void InfoPanel::saveLayoutData(QJsonObject& layout) const
 
 void InfoPanel::loadLayoutData(const QJsonObject& layout)
 {
+    bool trackPreferenceChanged{false};
+    if(m_selectionController && layout.contains("TrackPreference"_L1)) {
+        const auto preference  = static_cast<TrackDisplayPreference>(layout.value("TrackPreference"_L1).toInt());
+        trackPreferenceChanged = m_trackPreference != preference;
+        m_trackPreference      = preference;
+    }
     if(layout.contains("Options"_L1)) {
         const auto options = static_cast<InfoItem::Options>(layout.value("Options"_L1).toInt());
         m_model->setOptions(options);
     }
-    if(layout.contains("ShowHeader"_L1)) {
-        m_showHeader = layout.value("ShowHeader"_L1).toBool();
-    }
-    if(layout.contains("ShowVerticalScrollbar"_L1)) {
-        m_showVerticalScrollbar = layout.value("ShowVerticalScrollbar"_L1).toBool();
-    }
-    if(layout.contains("ShowHorizontalScrollbar"_L1)) {
-        m_showHorizontalScrollbar = layout.value("ShowHorizontalScrollbar"_L1).toBool();
-    }
-    if(layout.contains("AlternatingRows"_L1)) {
-        m_alternatingColours = layout.value("AlternatingRows"_L1).toBool();
-    }
+
+    m_showHeader              = layout.value("ShowHeader"_L1).toBool(m_showHeader);
+    m_showVerticalScrollbar   = layout.value("ShowVerticalScrollbar"_L1).toBool(m_showVerticalScrollbar);
+    m_showHorizontalScrollbar = layout.value("ShowHorizontalScrollbar"_L1).toBool(m_showHorizontalScrollbar);
+    m_alternatingColours      = layout.value("AlternatingRows"_L1).toBool(m_alternatingColours);
+
     if(layout.contains("State"_L1)) {
         const auto state = QByteArray::fromBase64(layout["State"_L1].toString().toUtf8());
         m_view->header()->restoreState(state);
+    }
+
+    if(trackPreferenceChanged) {
+        resetModel();
     }
 }
 
 void InfoPanel::finalise()
 {
-    m_view->setHeaderHidden(!m_showHeader);
+    m_view->header()->setFixedHeight(m_showHeader ? QWIDGETSIZE_MAX : 0);
+    m_view->header()->adjustSize();
     m_view->setVerticalScrollBarPolicy(m_showVerticalScrollbar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
     m_view->setHorizontalScrollBarPolicy(m_showHorizontalScrollbar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
     m_view->setElideText(!m_showHorizontalScrollbar);
@@ -455,8 +465,6 @@ void InfoPanel::queueViewReset()
 
 void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
 {
-    using namespace Settings::Gui::Internal;
-
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -467,7 +475,7 @@ void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
 
     auto* showHeaders = new QAction(tr("Show header"), menu);
     showHeaders->setCheckable(true);
-    showHeaders->setChecked(!m_view->isHeaderHidden());
+    showHeaders->setChecked(m_showHeader);
     QAction::connect(showHeaders, &QAction::triggered, this, [this](bool checked) {
         m_showHeader = checked;
         finalise();
@@ -579,6 +587,31 @@ void InfoPanel::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(showReplayGain);
     menu->addAction(showOther);
 
+    if(m_selectionController) {
+        menu->addSeparator();
+        auto* preferredTrackMenu = menu->addMenu(tr("Preferred track"));
+        auto* preferenceGroup    = new QActionGroup(preferredTrackMenu);
+
+        const auto addPreference
+            = [this, preferredTrackMenu, preferenceGroup](const QString& text, TrackDisplayPreference preference) {
+                  auto* action = preferredTrackMenu->addAction(text);
+                  action->setCheckable(true);
+                  action->setChecked(m_trackPreference == preference);
+                  preferenceGroup->addAction(action);
+                  QObject::connect(action, &QAction::triggered, this, [this, preference] {
+                      m_trackPreference = preference;
+                      resetModel();
+                  });
+              };
+
+        addPreference(tr("Playing track"), TrackDisplayPreference::PlayingTrack);
+        addPreference(tr("Selected track"), TrackDisplayPreference::SelectedTrack);
+        addPreference(tr("Playing (or selected when stopped)"),
+                      TrackDisplayPreference::PlayingTrackSelectedWhenStopped);
+        addPreference(tr("Playing (blank at startup)"), TrackDisplayPreference::PlayingTrackBlankAtStartup);
+        addPreference(tr("Playing (blank when stopped)"), TrackDisplayPreference::PlayingTrackBlankWhenStopped);
+    }
+
     menu->popup(event->globalPos());
 }
 
@@ -639,12 +672,23 @@ void InfoPanel::resetModel()
 
     m_scrollPos = m_view->verticalScrollBar()->value();
 
-    const Track currentTrack = m_playerController->currentTrack();
+    const auto source = preferredTrackSource(m_trackPreference, m_playerController->playState(),
+                                             m_playerController->playbackStarted());
+    if(source == PreferredTrackSource::None) {
+        m_model->resetModel({});
+        return;
+    }
 
-    if(m_displayOption == SelectionDisplay::PreferPlaying && currentTrack.isValid()) {
+    const Track currentTrack = m_playerController->currentTrack();
+    const bool hasSelection  = m_selectionController->hasDisplayTracks();
+
+    if(source == PreferredTrackSource::Selected && hasSelection) {
+        m_model->resetModel(m_selectionController->displayTracks());
+    }
+    else if(source == PreferredTrackSource::Playing && currentTrack.isValid()) {
         m_model->resetModel({currentTrack});
     }
-    else if(m_selectionController->hasDisplayTracks()) {
+    else if(hasSelection) {
         m_model->resetModel(m_selectionController->displayTracks());
     }
     else if(currentTrack.isValid()) {

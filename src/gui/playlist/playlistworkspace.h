@@ -19,7 +19,13 @@
 
 #pragma once
 
-#include "playlistworkspacestate.h"
+#include "playlistcontroller.h"
+
+#include <optional>
+#include <unordered_map>
+
+class QUndoCommand;
+class QUndoStack;
 
 namespace Fooyin {
 class PlayerController;
@@ -58,10 +64,15 @@ public:
     void savePlaylistState(Playlist* playlist, const PlaylistViewState& state);
 
     void addToHistory(QUndoCommand* command);
+    void addToHistory(Playlist* playlist, QUndoCommand* command);
     [[nodiscard]] bool canUndo() const;
+    [[nodiscard]] bool canUndo(Playlist* playlist) const;
     [[nodiscard]] bool canRedo() const;
+    [[nodiscard]] bool canRedo(Playlist* playlist) const;
     void undo();
+    void undo(Playlist* playlist);
     void redo();
+    void redo(Playlist* playlist);
     void clearHistory();
 
     [[nodiscard]] bool clipboardEmpty() const;
@@ -69,8 +80,14 @@ public:
     void setClipboard(const TrackList& tracks);
 
 private:
+    QUndoStack* history(Playlist* playlist);
+    [[nodiscard]] const QUndoStack* history(Playlist* playlist) const;
+
     bool m_loaded;
     Playlist* m_currentPlaylist;
-    PlaylistWorkspaceState m_state;
+    std::unordered_map<Playlist*, std::unique_ptr<QUndoStack>> m_histories;
+    std::unordered_map<Playlist*, PlaylistViewState> m_states;
+    std::unordered_map<Playlist*, QString> m_currentSearches;
+    TrackList m_clipboard;
 };
 } // namespace Fooyin

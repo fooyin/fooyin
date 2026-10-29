@@ -22,8 +22,13 @@
 #include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/stringcollator.h>
 
+#include <QAction>
 #include <QMenu>
+#include <QMenuBar>
+
+#include <ranges>
 
 namespace Fooyin {
 MainMenuBar::MainMenuBar(ActionManager* actionManager, QObject* parent)
@@ -54,6 +59,27 @@ MainMenuBar::MainMenuBar(ActionManager* actionManager, QObject* parent)
     m_menubar->addMenu(viewMenu, Constants::Groups::View);
     viewMenu->menu()->setTitle(ActionManager::tr("&View"));
 
+    ActionContainer* visualisationsMenu = m_actionManager->createMenu(Constants::Menus::Visualisations);
+    visualisationsMenu->menu()->setTitle(ActionManager::tr("&Visualisations"));
+    QObject::connect(visualisationsMenu->menu(), &QMenu::aboutToShow, this, [visualisationsMenu]() {
+        auto actions = visualisationsMenu->menu()->actions();
+
+        StringCollator collator;
+        collator.setCaseSensitivity(Qt::CaseInsensitive);
+        std::ranges::sort(actions, [&collator](const QAction* lhs, const QAction* rhs) {
+            QString lhsText = lhs->text();
+            QString rhsText = rhs->text();
+            lhsText.remove(u'&');
+            rhsText.remove(u'&');
+            return collator.compare(lhsText, rhsText) < 0;
+        });
+
+        for(auto* action : std::as_const(actions)) {
+            visualisationsMenu->menu()->removeAction(action);
+            visualisationsMenu->menu()->addAction(action);
+        }
+    });
+
     ActionContainer* layoutMenu = m_actionManager->createMenu(Constants::Menus::Layout);
     m_menubar->addMenu(layoutMenu, Constants::Groups::Layout);
     layoutMenu->menu()->setTitle(ActionManager::tr("La&yout"));
@@ -74,6 +100,18 @@ MainMenuBar::MainMenuBar(ActionManager* actionManager, QObject* parent)
 QMenuBar* MainMenuBar::menuBar() const
 {
     return m_menubar->menuBar();
+}
+
+void MainMenuBar::populateMenu(QMenu* menu) const
+{
+    menu->clear();
+
+    const auto menuActions = menuBar()->actions();
+    for(auto* action : menuActions) {
+        if(action->isVisible()) {
+            menu->addAction(action);
+        }
+    }
 }
 } // namespace Fooyin
 

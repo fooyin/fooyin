@@ -42,6 +42,7 @@ public:
     {
         bool sorting{false};
         bool sortingColumn{false};
+        uint64_t searchRevision{0};
         QString search;
         EmptySearchMode emptyMode{EmptySearchMode::Clear};
         PlaylistTrackList filteredTracks;
@@ -52,6 +53,8 @@ public:
     [[nodiscard]] static std::unique_ptr<PlaylistWidgetSession> createEditable();
     [[nodiscard]] static std::unique_ptr<PlaylistWidgetSession> createDetachedPlaylist();
     [[nodiscard]] static std::unique_ptr<PlaylistWidgetSession> createDetachedLibrary();
+    [[nodiscard]] static std::unique_ptr<PlaylistWidgetSession> createDetachedTracks(const TrackList& tracks);
+    [[nodiscard]] static std::unique_ptr<PlaylistWidgetSession> createPreview(const TrackList& tracks);
 
     [[nodiscard]] virtual PlaylistWidget::ModeCapabilities capabilities() const                      = 0;
     [[nodiscard]] virtual QString emptyText() const                                                  = 0;
@@ -90,6 +93,8 @@ public:
     virtual void handleAboutToBeReset(PlaylistWidgetSessionHost& host);
     virtual void resetTree(PlaylistWidgetSessionHost& host);
     virtual void handleTracksChanged(PlaylistWidgetSessionHost& host, const std::vector<int>& indexes, bool allNew);
+    virtual bool replaceTracks(PlaylistWidgetSessionHost& host, const TrackList& tracks);
+    virtual void startPlayback(PlaylistWidgetSessionHost& host) const;
     virtual void searchEvent(PlaylistWidgetSessionHost& host, const SearchRequest& request);
     virtual void handleSearchChanged(PlaylistWidgetSessionHost& host, const QString& search);
     virtual void finalise(PlaylistWidgetSessionHost& host);
@@ -163,6 +168,7 @@ protected:
 
 private:
     State m_state;
+    uint64_t m_searchRequestToken{0};
 };
 
 } // namespace Fooyin

@@ -48,7 +48,6 @@ OpenMptSettings::OpenMptSettings(SettingsManager* settings, QWidget* parent)
     , m_loopCount{new QSpinBox(this)}
 {
     setWindowTitle(tr("OpenMPT Settings"));
-    setModal(true);
 
     auto* buttons
         = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Reset, this);

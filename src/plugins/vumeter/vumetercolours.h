@@ -42,13 +42,14 @@ struct Colours
         Legend,
         Gradient1,
         Gradient2,
+        Gridlines,
     };
 
     static QColor defaultColour(Type type, const QPalette& palette = QApplication::palette())
     {
         switch(type) {
             case Type::Background:
-                return Qt::transparent;
+                return palette.color(QPalette::Window);
             case Type::Peak:
                 return {190, 40, 10};
             case Type::Legend:
@@ -57,9 +58,18 @@ struct Colours
                 return defaultGradient(palette).front();
             case Type::Gradient2:
                 return defaultGradient(palette).back();
+            case Type::Gridlines:
+                return defaultGridColour(palette);
         }
 
         return {};
+    }
+
+    static QColor defaultGridColour(const QPalette& palette)
+    {
+        QColor colour = palette.color(QPalette::Active, QPalette::Text);
+        colour.setAlpha(65);
+        return colour;
     }
 
     static std::vector<QColor> defaultGradient(const QPalette& palette = QApplication::palette())
@@ -132,15 +142,7 @@ struct Colours
         }
     }
 
-    bool operator==(const Colours& other) const
-    {
-        return std::tie(meterColours, barGradient) == std::tie(other.meterColours, other.barGradient);
-    };
-
-    bool operator!=(const Colours& other) const
-    {
-        return !(*this == other);
-    };
+    bool operator==(const Colours& other) const = default;
 
     friend QDataStream& operator<<(QDataStream& stream, const Colours& colours)
     {

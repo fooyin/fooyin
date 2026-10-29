@@ -15,11 +15,13 @@ dnf -y install --skip-broken \
      cmake \
      ninja-build \
      glib2-devel \
+     glm-devel \
      libicu-devel \
      libxkbcommon-x11-devel \
      libxkbcommon-devel \
      zlib-ng-compat-devel \
      alsa-lib-devel \
+     jack-audio-connection-kit-devel \
      qt6-qtbase-devel \
      qt6-qtsvg-devel \
      qt6-qttools-devel \
@@ -37,8 +39,14 @@ dnf -y install --skip-broken \
      libopenmpt-devel \
      game-music-emu-devel \
      libarchive-devel \
+     flac-devel \
+     mpg123-devel \
+     opusfile-devel \
+     libvorbis-devel \
      libsndfile-devel \
      libebur128-devel \
+     libcdio-devel \
+     libcdio-paranoia-devel \
      soundtouch-devel \
      soxr-devel \
      gtest-devel

@@ -25,6 +25,7 @@
 #include <QMargins>
 #include <QPersistentModelIndex>
 #include <QPointer>
+#include <QTextDocument>
 
 class QColor;
 class QPaintEvent;
@@ -32,6 +33,8 @@ class QPainter;
 
 namespace Fooyin {
 class SettingsManager;
+class WidgetBackground;
+struct BackgroundConfig;
 class ToolTip;
 
 namespace Lyrics {
@@ -44,6 +47,9 @@ class LyricsView : public QListView
 
 public:
     explicit LyricsView(QWidget* parent = nullptr);
+
+    void setBackgroundConfig(const BackgroundConfig& config);
+    void setBackgroundPixmap(const QPixmap& pixmap);
 
     void setDisplayAlignment(Qt::Alignment alignment);
     void setEdgeFadeEnabled(bool enabled);
@@ -81,13 +87,17 @@ private:
     [[nodiscard]] int visiblePaddingHeight(bool top) const;
 
     void updateScrollSingleStep();
+    void updateDisplayDocument();
+    void updateDisplayDocumentWidth();
     void paintItems(QPainter& painter, const QPaintEvent* event) const;
     void paintEdgeFade(QPainter& painter) const;
     void updateSeekToolTip();
     void updateDragPreview(const QPoint& pos);
     void clearDragPreview();
 
+    WidgetBackground* m_background;
     RichText m_displayString;
+    QTextDocument m_displayDocument;
     Qt::Alignment m_displayAlignment;
     QMargins m_displayMargins;
 

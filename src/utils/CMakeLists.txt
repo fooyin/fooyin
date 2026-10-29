@@ -1,4 +1,5 @@
 set(SOURCES
+    #[[gersemi: sort]] #
     ${CMAKE_SOURCE_DIR}/include/utils/actions/actioncontainer.h
     ${CMAKE_SOURCE_DIR}/include/utils/actions/actionmanager.h
     ${CMAKE_SOURCE_DIR}/include/utils/actions/command.h
@@ -21,12 +22,16 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/fileutils.h
     ${CMAKE_SOURCE_DIR}/include/utils/fymath.h
     ${CMAKE_SOURCE_DIR}/include/utils/fypaths.h
+    ${CMAKE_SOURCE_DIR}/include/utils/heartdelegate.h
+    ${CMAKE_SOURCE_DIR}/include/utils/hearteditor.h
     ${CMAKE_SOURCE_DIR}/include/utils/helpers.h
     ${CMAKE_SOURCE_DIR}/include/utils/id.h
     ${CMAKE_SOURCE_DIR}/include/utils/itemregistry.h
+    ${CMAKE_SOURCE_DIR}/include/utils/jsonutils.h
     ${CMAKE_SOURCE_DIR}/include/utils/lockfreeringbuffer.h
     ${CMAKE_SOURCE_DIR}/include/utils/logging/messagehandler.h
     ${CMAKE_SOURCE_DIR}/include/utils/modelutils.h
+    ${CMAKE_SOURCE_DIR}/include/utils/scopeguard.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/advancedsettingsregistry.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsdialogcontroller.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsentry.h
@@ -40,8 +45,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/stringcollator.h
     ${CMAKE_SOURCE_DIR}/include/utils/stringutils.h
     ${CMAKE_SOURCE_DIR}/include/utils/tablemodel.h
-    ${CMAKE_SOURCE_DIR}/include/utils/timeconstants.h
     ${CMAKE_SOURCE_DIR}/include/utils/threadqueue.h
+    ${CMAKE_SOURCE_DIR}/include/utils/timeconstants.h
     ${CMAKE_SOURCE_DIR}/include/utils/timer.h
     ${CMAKE_SOURCE_DIR}/include/utils/tooltipfilter.h
     ${CMAKE_SOURCE_DIR}/include/utils/treeitem.h
@@ -67,8 +72,11 @@ set(SOURCES
     datastream.cpp
     fileutils.cpp
     fypaths.cpp
+    heartdelegate.cpp
+    hearteditor.cpp
     id.cpp
     itemregistry.cpp
+    jsonutils.cpp
     logging/logmodel.cpp
     logging/logmodel.h
     logging/logwidget.cpp
@@ -98,20 +106,26 @@ set(SOURCES
     worker.cpp
 )
 
-create_fooyin_library(
-    fooyin_utils
-    EXPORT_NAME Utils
-    SOURCES ${SOURCES}
-)
+create_fooyin_library(fooyin_utils EXPORT_NAME Utils SOURCES ${SOURCES})
 
 target_link_libraries(
     fooyin_utils
-    PUBLIC Qt6::Core
-           Qt6::Widgets
-           Qt6::Sql
-           Qt6::Concurrent
-    PRIVATE ICU::uc
-            ICU::i18n
+    PRIVATE #
+        ICU::uc
+        ICU::i18n
+    PUBLIC #
+        Qt6::Core
+        Qt6::Widgets
+        Qt6::Sql
+        Qt6::Concurrent
 )
 
-target_include_directories(fooyin_utils PUBLIC ${ICU_INCLUDE_DIRS})
+if(UNIX AND NOT APPLE)
+    find_package(Qt6 COMPONENTS DBus QUIET)
+    if(TARGET Qt6::DBus)
+        target_link_libraries(fooyin_utils PRIVATE Qt6::DBus)
+        target_compile_definitions(fooyin_utils PRIVATE FOOYIN_UTILS_DBUS)
+    endif()
+endif()
+
+target_include_directories(fooyin_utils PRIVATE ${ICU_INCLUDE_DIRS})

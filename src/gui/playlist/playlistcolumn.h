@@ -22,14 +22,33 @@
 #include <QDataStream>
 #include <QString>
 
+#include <array>
+#include <tuple>
+#include <vector>
+
 namespace Fooyin {
+struct DefaultPlaylistColumn
+{
+    int id;
+    Qt::Alignment alignment;
+    double width;
+};
+
+inline constexpr std::array DefaultPlaylistColumns{
+    DefaultPlaylistColumn{.id = 8, .alignment = Qt::AlignCenter, .width = 0.06},
+    DefaultPlaylistColumn{.id = 3, .alignment = Qt::AlignLeft, .width = 0.38},
+    DefaultPlaylistColumn{.id = 0, .alignment = Qt::AlignRight, .width = 0.08},
+    DefaultPlaylistColumn{.id = 1, .alignment = Qt::AlignLeft, .width = 0.38},
+    DefaultPlaylistColumn{.id = 7, .alignment = Qt::AlignRight, .width = 0.10},
+};
+
 struct PlaylistColumn
 {
     static constexpr qint32 Magic   = -0x50434F4C;
     static constexpr qint32 Version = 2;
 
     int id{-1};
-    bool enabled{true};
+    bool isEnabled{true};
     int index{-1};
     bool isDefault{false};
     QString name;
@@ -40,8 +59,8 @@ struct PlaylistColumn
 
     bool operator==(const PlaylistColumn& other) const
     {
-        return std::tie(id, enabled, index, name, field, sortField, writeField)
-            == std::tie(other.id, other.enabled, other.index, other.name, other.field, other.sortField,
+        return std::tie(id, isEnabled, index, name, field, sortField, writeField)
+            == std::tie(other.id, other.isEnabled, other.index, other.name, other.field, other.sortField,
                         other.writeField);
     }
 
@@ -55,7 +74,7 @@ struct PlaylistColumn
         stream << Magic;
         stream << Version;
         stream << column.id;
-        stream << column.enabled;
+        stream << column.isEnabled;
         stream << column.index;
         stream << column.name;
         stream << column.field;
@@ -74,7 +93,7 @@ struct PlaylistColumn
             stream >> version;
 
             stream >> column.id;
-            stream >> column.enabled;
+            stream >> column.isEnabled;
             stream >> column.index;
             stream >> column.name;
             stream >> column.field;

@@ -19,8 +19,10 @@
 
 #include "listenbrainzservice.h"
 
+#include <core/accountstore.h>
 #include <core/coresettings.h>
 #include <core/network/networkaccessmanager.h>
+#include <core/network/networkutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCoreApplication>
@@ -147,16 +149,26 @@ bool ListenBrainzService::isAuthenticated() const
     return !userToken().trimmed().isEmpty();
 }
 
+bool ListenBrainzService::supportsLoved() const
+{
+    return true;
+}
+
 void ListenBrainzService::saveSession()
 {
     FySettings settings;
-    settings.beginGroup(isCustom() ? u"Scrobbler-"_s + name() : name());
+    settings.beginGroup(accountName());
 
     settings.setValue("IsEnabled", details().isEnabled);
+    settings.setValue("SubmitLoved", details().submitLoved);
+
+    AccountStore::Values account{{u"UserToken"_s, details().token}};
     if(isCustom()) {
-        settings.setValue("URL", details().url.toDisplayString());
+        account.emplace(u"URL"_s, details().url.toString(QUrl::FullyEncoded));
     }
-    settings.setValue("UserToken", details().token);
+    if(!accountStore().save(accountName(), account)) {
+        qCWarning(SCROBBLER) << "Unable to persist account:" << name();
+    }
 
     settings.endGroup();
 }
@@ -164,16 +176,22 @@ void ListenBrainzService::saveSession()
 void ListenBrainzService::loadSession()
 {
     FySettings settings;
-    settings.beginGroup(isCustom() ? u"Scrobbler-"_s + name() : name());
+    settings.beginGroup(accountName());
 
     if(settings.contains("IsEnabled")) {
         detailsRef().isEnabled = settings.value("IsEnabled").toBool();
     }
-    if(settings.contains("URL")) {
-        detailsRef().url = settings.value("URL").toString();
+    detailsRef().submitLoved = settings.value("SubmitLoved", false).toBool();
+
+    std::vector fields{u"UserToken"_s};
+    if(isCustom()) {
+        fields.emplace_back(u"URL"_s);
     }
-    if(settings.contains("UserToken")) {
-        detailsRef().token = settings.value("UserToken").toString();
+    if(const auto account = accountStore().load(accountName(), fields); account && !account->empty()) {
+        detailsRef().token = account->at(u"UserToken"_s);
+        if(isCustom()) {
+            detailsRef().url = account->at(u"URL"_s);
+        }
     }
 
     settings.endGroup();
@@ -182,11 +200,17 @@ void ListenBrainzService::loadSession()
 void ListenBrainzService::deleteSession()
 {
     FySettings settings;
-    settings.beginGroup(isCustom() ? u"Scrobbler-"_s + name() : name());
+    settings.beginGroup(accountName());
 
     settings.remove("IsEnabled");
-    settings.remove("URL");
-    settings.remove("UserToken");
+
+    std::vector fields{u"UserToken"_s};
+    if(isCustom()) {
+        fields.emplace_back(u"URL"_s);
+    }
+    if(!accountStore().remove(accountName(), fields)) {
+        qCWarning(SCROBBLER) << "Unable to delete account:" << name();
+    }
 
     settings.endGroup();
 }
@@ -280,29 +304,7 @@ QString ListenBrainzService::tokenSetting() const
 
 QUrl ListenBrainzService::tokenUrl() const
 {
-    return u"https://listenbrainz.org/profile/"_s;
-}
-
-QNetworkReply* ListenBrainzService::createRequest(RequestType type, const QUrl& url, const QJsonDocument& json)
-{
-    QNetworkRequest req{url};
-    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-    req.setHeader(QNetworkRequest::ContentTypeHeader, u"application/json"_s);
-    req.setRawHeader("Authorization", u"Token %1"_s.arg(userToken()).toUtf8());
-    const QByteArray payload = json.toJson();
-
-    qCDebug(SCROBBLER) << (type == RequestType::Get ? "GET queued to network manager for"
-                                                    : "POST queued to network manager for")
-                       << name() << "url" << url.toString() << "bodyBytes" << payload.size();
-
-    switch(type) {
-        case RequestType::Get:
-            return addReply(network()->get(req));
-        case RequestType::Post:
-            return addReply(network()->post(req, payload));
-    }
-
-    return nullptr;
+    return u"https://listenbrainz.org/settings/"_s;
 }
 
 ScrobblerService::ReplyResult ListenBrainzService::getJsonFromReply(QNetworkReply* reply, QJsonObject* obj,
@@ -360,6 +362,46 @@ ScrobblerService::ReplyResult ListenBrainzService::getJsonFromReply(QNetworkRepl
     }
 
     return replyResult;
+}
+
+void ListenBrainzService::submitLoved(const LovedItem& item)
+{
+    const QString recordingMbid = normaliseMusicBrainzId(item.metadata.musicBrainzId);
+    if(recordingMbid.isEmpty()) {
+        qCInfo(SCROBBLER) << "Unable to submit ListenBrainz Loved state without a recording MBID:"
+                          << item.metadata.artist << u"-"_s << item.metadata.title;
+        lovedUpdateFinished(item, LovedUpdateResult::Discard);
+        return;
+    }
+
+    QJsonObject object;
+    object.insert(u"recording_mbid"_s, recordingMbid);
+    object.insert(u"score"_s, item.loved ? 1 : 0);
+
+    const QUrl reqUrl{u"%1/1/feedback/recording-feedback"_s.arg(QString::fromUtf8(url().toEncoded()))};
+    QNetworkReply* reply = createRequest(RequestType::Post, reqUrl, QJsonDocument{object});
+    QObject::connect(reply, &QNetworkReply::finished, this, [this, reply, item]() { lovedFinished(reply, item); });
+}
+
+QNetworkReply* ListenBrainzService::createRequest(RequestType type, const QUrl& url, const QJsonDocument& json)
+{
+    QNetworkRequest req = makeNetworkRequest(url);
+    req.setHeader(QNetworkRequest::ContentTypeHeader, u"application/json"_s);
+    req.setRawHeader("Authorization", u"Token %1"_s.arg(userToken()).toUtf8());
+    const QByteArray payload = json.toJson();
+
+    qCDebug(SCROBBLER) << (type == RequestType::Get ? "GET queued to network manager for"
+                                                    : "POST queued to network manager for")
+                       << name() << "url" << url.toString() << "bodyBytes" << payload.size();
+
+    switch(type) {
+        case RequestType::Get:
+            return addReply(network()->get(req));
+        case RequestType::Post:
+            return addReply(network()->post(req, payload));
+    }
+
+    return nullptr;
 }
 
 void ListenBrainzService::testFinished(QNetworkReply* reply)
@@ -449,6 +491,26 @@ void ListenBrainzService::scrobbleFinished(QNetworkReply* reply, const CacheItem
     }
 
     doDelayedSubmit();
+}
+
+void ListenBrainzService::lovedFinished(QNetworkReply* reply, const LovedItem& item)
+{
+    if(!removeReply(reply)) {
+        return;
+    }
+
+    QJsonObject object;
+    QString error;
+    const ReplyResult result = getJsonFromReply(reply, &object, &error);
+    if(result == ReplyResult::Success) {
+        lovedUpdateFinished(item, LovedUpdateResult::Success);
+        return;
+    }
+
+    const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    qCWarning(SCROBBLER) << "Unable to update Loved state for" << name() << item.metadata.artist << u"-"_s
+                         << item.metadata.title << ':' << error;
+    lovedUpdateFinished(item, status == 400 ? LovedUpdateResult::Discard : LovedUpdateResult::Retry);
 }
 
 QString ListenBrainzService::userToken() const

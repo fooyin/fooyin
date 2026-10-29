@@ -25,6 +25,7 @@
 #include <core/engine/enginedefs.h>
 #include <core/scripting/scriptparser.h>
 #include <gui/fywidget.h>
+#include <gui/widgets/backgroundconfig.h>
 
 #include <QBasicTimer>
 #include <QMargins>
@@ -35,12 +36,17 @@ class QJsonObject;
 class QPropertyAnimation;
 
 namespace Fooyin {
+struct CorePluginContext;
+class ScriptContextService;
+class BackgroundImageSource;
+class CoverRepository;
 class EngineController;
 class GuiStyleProvider;
 class PlayerController;
 class PlaylistHandler;
 class SettingsManager;
 class Track;
+class TrackSelectionController;
 struct RichText;
 
 namespace Lyrics {
@@ -49,19 +55,18 @@ class LyricsDelegate;
 class LyricsFinder;
 class LyricsModel;
 class LyricsSaver;
+class LyricsPlaybackService;
 
 class LyricsWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit LyricsWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
-                          LyricsFinder* lyricsFinder, LyricsSaver* lyricsSaver, SettingsManager* settings,
-                          GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
+    explicit LyricsWidget(const CorePluginContext& core, LyricsPlaybackService* lyricsService, LyricsSaver* lyricsSaver,
+                          GuiStyleProvider* styleProvider, CoverRepository* coverRepository,
+                          TrackSelectionController* trackSelection, QWidget* parent = nullptr);
 
     static QString defaultNoLyricsScript();
-
-    void updateLyrics(const Track& track, bool force = false);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -79,8 +84,8 @@ public:
         bool showScrollbar{true};
         int alignment{Qt::AlignCenter};
         int lineSpacing{5};
-        bool centreFirstSyncedLine{false};
-        bool centreLastSyncedLine{true};
+        bool centreFirstLine{false};
+        bool centreLastLine{true};
         int progressMode{static_cast<int>(ProgressMode::Off)};
         QMargins margins{Defaults::margins()};
         QVariant colours;
@@ -88,6 +93,7 @@ public:
         QString lineFont;
         QString wordLineFont;
         QString wordFont;
+        BackgroundConfig background;
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -97,6 +103,9 @@ public:
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
 
+Q_SIGNALS:
+    void configChanged();
+
 protected:
     void timerEvent(QTimerEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
@@ -104,9 +113,7 @@ protected:
     void openConfigDialog() override;
 
 private:
-    void loadLyrics(const Lyrics& lyrics);
-    void handleLyricsSearchFinished(const Track& track, bool foundAny);
-    void handleSavedLyrics(const Track& track, const Lyrics& lyrics);
+    void syncLyrics();
     void changeLyrics(const Lyrics& lyrics, const Track* sourceTrack = nullptr);
     void openEditor(const Lyrics& lyrics);
     void openSearchDialog();
@@ -125,22 +132,26 @@ private:
     void scrollToCurrentLine(int scrollValue);
     void updateScrollMode(ScrollMode mode);
 
-    void checkStartAutoScrollPos(uint64_t pos);
-    void checkStartAutoScroll(int startValue = -1);
-    void updateAutoScroll(int startValue);
+    void syncAutoScroll(uint64_t position);
+    void resumeAutoScroll();
+    void startAutoScroll(uint64_t position, bool syncPosition);
+    void stopAutoScroll();
+
     void updateEdgeFadeState();
     [[nodiscard]] bool shouldEnableEdgeFade() const;
 
     PlayerController* m_playerController;
+    ScriptContextService* m_scriptContext;
     PlaylistHandler* m_playlistHandler;
     SettingsManager* m_settings;
     GuiStyleProvider* m_styleProvider;
 
+    BackgroundImageSource* m_backgroundSource;
     LyricsView* m_lyricsView;
     LyricsModel* m_model;
     LyricsDelegate* m_delegate;
 
-    LyricsFinder* m_lyricsFinder;
+    LyricsPlaybackService* m_lyricsService;
     LyricsSaver* m_lyricsSaver;
 
     Lyrics m_currentLyrics;
@@ -149,8 +160,6 @@ private:
     int m_currentLineEnd;
 
     Track m_currentTrack;
-    std::vector<Lyrics> m_lyrics;
-    QMetaObject::Connection m_finderConnection;
     ScriptParser m_parser;
 
     ConfigData m_config;

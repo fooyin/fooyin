@@ -1,34 +1,38 @@
 create_fooyin_plugin_internal(
     scrobbler
-    DEPENDS Fooyin::Core
-            Fooyin::Gui
-            Qt6::Network
-    SOURCES customservicedialog.cpp
-            customservicedialog.h
-            scrobbler.cpp
-            scrobbler.h
-            scrobblerauthsession.cpp
-            scrobblerauthsession.h
-            scrobblercache.cpp
-            scrobblercache.h
-            scrobblerplugin.cpp
-            scrobblerplugin.h
-            scrobblertoggle.cpp
-            scrobblertoggle.h
-            services/lastfmservice.cpp
-            services/lastfmservice.h
-            services/librefmservice.cpp
-            services/librefmservice.h
-            services/listenbrainzservice.cpp
-            services/listenbrainzservice.h
-            services/scrobblerservice.cpp
-            services/scrobblerservice.h
-            services/servicedetails.cpp
-            services/servicedetails.h
-            settings/scrobblerpage.cpp
-            settings/scrobblerpage.h
-            settings/scrobblerservicespage.cpp
-            settings/scrobblerservicespage.h
-            settings/scrobblersettings.cpp
-            settings/scrobblersettings.h
+    DEPENDS #
+        Fooyin::Core
+        Fooyin::Gui
+        Qt6::Network
+    SOURCES
+        customservicedialog.cpp
+        customservicedialog.h
+        lovedcache.cpp
+        lovedcache.h
+        scrobbler.cpp
+        scrobbler.h
+        scrobblerauthsession.cpp
+        scrobblerauthsession.h
+        scrobblercache.cpp
+        scrobblercache.h
+        scrobblerplugin.cpp
+        scrobblerplugin.h
+        scrobblertoggle.cpp
+        scrobblertoggle.h
+        services/lastfmservice.cpp
+        services/lastfmservice.h
+        services/librefmservice.cpp
+        services/librefmservice.h
+        services/listenbrainzservice.cpp
+        services/listenbrainzservice.h
+        services/scrobblerservice.cpp
+        services/scrobblerservice.h
+        services/servicedetails.cpp
+        services/servicedetails.h
+        settings/scrobblerpage.cpp
+        settings/scrobblerpage.h
+        settings/scrobblerservicespage.cpp
+        settings/scrobblerservicespage.h
+        settings/scrobblersettings.cpp
+        settings/scrobblersettings.h
 )

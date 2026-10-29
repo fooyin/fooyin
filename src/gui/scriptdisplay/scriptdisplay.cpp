@@ -21,12 +21,13 @@
 
 #include "scriptdisplayconfigdialog.h"
 #include "scripting/scriptcommandhandler.h"
-#include "scripting/scriptvariableproviders.h"
 
+#include <core/application.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/scripting/scriptcontextservice.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/scripttypes.h>
 #include <core/track.h>
 #include <gui/configdialog.h>
 #include <gui/guiconstants.h>
@@ -35,8 +36,11 @@
 #include <gui/scripting/richtext.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
+#include <gui/trackselectioncontroller.h>
+#include <gui/widgets/backgroundimagesource.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/scriptlineedit.h>
+#include <gui/widgets/widgetbackground.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
@@ -50,13 +54,17 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QJsonObject>
+#include <QLoggingCategory>
 #include <QMenu>
+#include <QPainter>
 #include <QPalette>
+#include <QProcess>
 #include <QScrollBar>
 #include <QSignalBlocker>
 #include <QTextBrowser>
 #include <QTextDocument>
 #include <QUrl>
+#include <QUrlQuery>
 
 #include <array>
 
@@ -64,12 +72,17 @@ using namespace Qt::StringLiterals;
 
 constexpr auto ScriptKey              = "TextWidget/Script";
 constexpr auto FontKey                = "TextWidget/Font";
+constexpr auto BackgroundKey          = "TextWidget/Background";
 constexpr auto BackgroundColourKey    = "TextWidget/BackgroundColour";
 constexpr auto ForegroundColourKey    = "TextWidget/ForegroundColour";
 constexpr auto LinkColourKey          = "TextWidget/LinkColour";
 constexpr auto HorizontalAlignmentKey = "TextWidget/HorizontalAlignment";
 constexpr auto VerticalAlignmentKey   = "TextWidget/VerticalAlignment";
 constexpr auto ScrollBarKey           = "TextWidget/Scrollbar";
+constexpr auto ShowStoppedTrackKey    = "TextWidget/ShowStoppedTrack";
+constexpr auto TrackPreferenceKey     = "TextWidget/TrackPreference";
+
+Q_LOGGING_CATEGORY(SCRIPT_DISPLAY, "fy.scriptdisplay")
 
 namespace {
 QFont fontFromString(const QString& fontString)
@@ -110,15 +123,19 @@ public:
     using QTextBrowser::setViewportMargins;
 };
 
-ScriptDisplay::ScriptDisplay(PlayerController* playerController, PlaylistHandler* playlistHandler,
-                             ScriptCommandHandler* commandHandler, ActionManager* actionManager,
-                             SettingsManager* settings, QWidget* parent)
+ScriptDisplay::ScriptDisplay(Application* core, TrackSelectionController* trackSelection, CoverProvider* coverProvider,
+                             ScriptCommandHandler* commandHandler, ActionManager* actionManager, QWidget* parent)
     : FyWidget{parent}
-    , m_playerController{playerController}
-    , m_playlistHandler{playlistHandler}
+    , m_playerController{core->playerController()}
+    , m_scriptContext{core->scriptContextService()}
+    , m_playlistHandler{core->playlistHandler()}
+    , m_trackSelection{trackSelection}
     , m_commandHandler{commandHandler}
     , m_actionManager{actionManager}
-    , m_settings{settings}
+    , m_settings{core->settingsManager()}
+    , m_backgroundSource{new BackgroundImageSource(coverProvider, m_playerController, trackSelection, this)}
+    , m_background{new WidgetBackground(this)}
+    , m_scriptSubscription{m_scriptContext->subscribe(this)}
     , m_layout{new QHBoxLayout(this)}
     , m_text{new TextBrowser(this)}
     , m_context{new WidgetContext(this, Context{Id{"Fooyin.Context.ScriptDisplay."}.append(id())}, this)}
@@ -129,7 +146,6 @@ ScriptDisplay::ScriptDisplay(PlayerController* playerController, PlaylistHandler
     m_layout->addWidget(m_text, 1);
 
     m_actionManager->addContextObject(m_context);
-    m_scriptParser.addProvider(playlistVariableProvider());
 
     m_copyCmd->setCategories({tr("Edit")});
     m_copyCmd->setDefaultShortcut(QKeySequence::Copy);
@@ -145,17 +161,22 @@ ScriptDisplay::ScriptDisplay(PlayerController* playerController, PlaylistHandler
     m_text->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     m_text->document()->setDocumentMargin(0);
 
+    QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_background,
+                     &WidgetBackground::setPixmap);
+
     applyConfig(defaultConfig());
 
     QObject::connect(m_copyAction, &QAction::triggered, m_text, &QTextBrowser::copy);
     QObject::connect(m_text, &QTextBrowser::copyAvailable, this, &ScriptDisplay::updateActions);
 
-    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &ScriptDisplay::updateText);
-    QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this, &ScriptDisplay::updateText);
-    QObject::connect(m_playerController, &PlayerController::bitrateChanged, this, &ScriptDisplay::updateText);
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &ScriptDisplay::updateText);
-    QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, &ScriptDisplay::updateText);
-    QObject::connect(m_playerController, &PlayerController::playlistTrackUpdated, this, &ScriptDisplay::updateText);
+    QObject::connect(m_scriptSubscription, &ScriptSubscription::changed, this, &ScriptDisplay::updateText);
+
+    const auto refresh = [this]() {
+        m_scriptSubscription->refresh();
+    };
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, refresh);
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, refresh);
+    QObject::connect(m_trackSelection, &TrackSelectionController::displaySelectionChanged, this, refresh);
 
     m_settings->subscribe<Settings::Gui::RatingFullStarSymbol>(this, &ScriptDisplay::updateText);
     m_settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(this, &ScriptDisplay::updateText);
@@ -187,6 +208,7 @@ QString ScriptDisplay::layoutName() const
 ScriptDisplay::ConfigData ScriptDisplay::defaultConfig() const
 {
     auto config{factoryConfig()};
+    config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(BackgroundKey).toMap()));
 
     config.script              = m_settings->fileValue(ScriptKey, config.script).toString();
     config.font                = m_settings->fileValue(FontKey, config.font).toString();
@@ -197,18 +219,26 @@ ScriptDisplay::ConfigData ScriptDisplay::defaultConfig() const
     config.verticalAlignment   = m_settings->fileValue(VerticalAlignmentKey, config.verticalAlignment).toInt();
     config.showScrollBar       = m_settings->fileValue(ScrollBarKey, config.showScrollBar).toBool();
 
+    if(m_settings->fileContains(TrackPreferenceKey)) {
+        config.trackPreference = static_cast<TrackDisplayPreference>(
+            m_settings->fileValue(TrackPreferenceKey, static_cast<int>(config.trackPreference)).toInt());
+    }
+    else if(!m_settings->fileValue(ShowStoppedTrackKey, true).toBool()) {
+        config.trackPreference = TrackDisplayPreference::PlayingTrackBlankWhenStopped;
+    }
+
     return config;
 }
 
 ScriptDisplay::ConfigData ScriptDisplay::factoryConfig()
 {
     return {
-        .script   = uR"(<sized=3><b>%1</b></size>
+        .script = uR"(<sized=3><b>%1</b></sized>
 $crlf()
 <alpha=190>%2</alpha>)"_s.arg(tr("Script Display"), tr("Right-click to configure this panel.")),
-        .font     = {},
-        .bgColour = {},
-        .fgColour = {},
+        .font   = {},
+        .bgColour            = {},
+        .fgColour            = {},
         .linkColour          = {},
         .horizontalAlignment = Qt::AlignLeft,
         .verticalAlignment   = Qt::AlignVCenter,
@@ -230,9 +260,19 @@ void ScriptDisplay::applyConfig(const ConfigData& config)
     m_config.horizontalAlignment = config.horizontalAlignment;
     m_config.verticalAlignment   = config.verticalAlignment;
     m_config.showScrollBar       = config.showScrollBar;
+    m_config.trackPreference     = config.trackPreference;
+    m_config.background          = config.background;
+    m_config.background.normalise();
+
+    m_background->setConfig(m_config.background);
+    m_backgroundSource->setConfig(m_config.background);
+
+    m_scriptSubscription->setScript(m_config.script);
 
     applyAppearance();
     updateText();
+
+    Q_EMIT configChanged();
 }
 
 void ScriptDisplay::saveDefaults(const ConfigData& config) const
@@ -245,6 +285,12 @@ void ScriptDisplay::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(HorizontalAlignmentKey, config.horizontalAlignment);
     m_settings->fileSet(VerticalAlignmentKey, config.verticalAlignment);
     m_settings->fileSet(ScrollBarKey, config.showScrollBar);
+    m_settings->fileSet(TrackPreferenceKey, static_cast<int>(config.trackPreference));
+    m_settings->fileRemove(ShowStoppedTrackKey);
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    m_settings->fileSet(BackgroundKey, background.toVariantMap());
 }
 
 void ScriptDisplay::clearSavedDefaults() const
@@ -257,6 +303,9 @@ void ScriptDisplay::clearSavedDefaults() const
     m_settings->fileRemove(HorizontalAlignmentKey);
     m_settings->fileRemove(VerticalAlignmentKey);
     m_settings->fileRemove(ScrollBarKey);
+    m_settings->fileRemove(ShowStoppedTrackKey);
+    m_settings->fileRemove(TrackPreferenceKey);
+    m_settings->fileRemove(BackgroundKey);
 }
 
 void ScriptDisplay::saveLayoutData(QJsonObject& layout)
@@ -348,7 +397,7 @@ void ScriptDisplay::contextMenuEvent(QContextMenuEvent* event)
 
 void ScriptDisplay::openConfigDialog()
 {
-    showConfigDialog(new ScriptDisplayConfigDialog(this, this));
+    showConfigDialog(new ScriptDisplayConfigDialog(this, this), Qt::NonModal);
 }
 
 void ScriptDisplay::resizeEvent(QResizeEvent* event)
@@ -357,33 +406,33 @@ void ScriptDisplay::resizeEvent(QResizeEvent* event)
     updateViewportAlignment();
 }
 
+void ScriptDisplay::paintEvent(QPaintEvent*)
+{
+    QPainter painter{this};
+    m_background->draw(painter);
+}
+
 ScriptDisplay::ConfigData ScriptDisplay::configFromLayout(const QJsonObject& layout) const
 {
     ConfigData config{defaultConfig()};
+    config.background.loadLayout(layout);
 
-    if(layout.contains("Script"_L1)) {
-        config.script = layout.value("Script"_L1).toString();
+    config.script              = layout.value("Script"_L1).toString(config.script);
+    config.font                = layout.value("Font"_L1).toString(config.font);
+    config.bgColour            = normaliseColour(layout.value("BackgroundColour"_L1).toString(config.bgColour));
+    config.fgColour            = normaliseColour(layout.value("ForegroundColour"_L1).toString(config.fgColour));
+    config.linkColour          = normaliseColour(layout.value("LinkColour"_L1).toString(config.linkColour));
+    config.horizontalAlignment = layout.value("HorizontalAlignment"_L1).toInt(config.horizontalAlignment);
+    config.verticalAlignment   = layout.value("VerticalAlignment"_L1).toInt(config.verticalAlignment);
+    config.showScrollBar       = layout.value("ShowScrollbar"_L1).toBool(config.showScrollBar);
+
+    if(layout.contains("TrackPreference"_L1)) {
+        config.trackPreference = static_cast<TrackDisplayPreference>(layout.value("TrackPreference"_L1).toInt());
     }
-    if(layout.contains("Font"_L1)) {
-        config.font = layout.value("Font"_L1).toString();
-    }
-    if(layout.contains("BackgroundColour"_L1)) {
-        config.bgColour = normaliseColour(layout.value("BackgroundColour"_L1).toString());
-    }
-    if(layout.contains("ForegroundColour"_L1)) {
-        config.fgColour = normaliseColour(layout.value("ForegroundColour"_L1).toString());
-    }
-    if(layout.contains("LinkColour"_L1)) {
-        config.linkColour = normaliseColour(layout.value("LinkColour"_L1).toString());
-    }
-    if(layout.contains("HorizontalAlignment"_L1)) {
-        config.horizontalAlignment = layout.value("HorizontalAlignment"_L1).toInt();
-    }
-    if(layout.contains("VerticalAlignment"_L1)) {
-        config.verticalAlignment = layout.value("VerticalAlignment"_L1).toInt();
-    }
-    if(layout.contains("ShowScrollbar"_L1)) {
-        config.showScrollBar = layout.value("ShowScrollbar"_L1).toBool();
+    else if(layout.contains("ShowStoppedTrack"_L1)) {
+        config.trackPreference = layout.value("ShowStoppedTrack"_L1).toBool()
+                                   ? TrackDisplayPreference::PlayingTrack
+                                   : TrackDisplayPreference::PlayingTrackBlankWhenStopped;
     }
 
     return config;
@@ -391,6 +440,7 @@ ScriptDisplay::ConfigData ScriptDisplay::configFromLayout(const QJsonObject& lay
 
 void ScriptDisplay::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
 {
+    config.background.saveLayout(layout);
     layout["Script"_L1]              = config.script;
     layout["Font"_L1]                = config.font;
     layout["BackgroundColour"_L1]    = normaliseColour(config.bgColour);
@@ -399,6 +449,8 @@ void ScriptDisplay::saveConfigToLayout(const ConfigData& config, QJsonObject& la
     layout["HorizontalAlignment"_L1] = config.horizontalAlignment;
     layout["VerticalAlignment"_L1]   = config.verticalAlignment;
     layout["ShowScrollbar"_L1]       = config.showScrollBar;
+    layout["TrackPreference"_L1]     = static_cast<int>(config.trackPreference);
+    layout.remove("ShowStoppedTrack"_L1);
 }
 
 void ScriptDisplay::applyAppearance()
@@ -410,25 +462,28 @@ void ScriptDisplay::applyAppearance()
         m_text->setFont(fontFromString(m_config.font));
     }
 
-    if(m_config.bgColour.isEmpty()) {
-        setAutoFillBackground(false);
-        setPalette(QPalette{});
-        QPalette browserPalette = m_text->palette();
-        browserPalette.setBrush(QPalette::Base, Qt::NoBrush);
-        m_text->setPalette(browserPalette);
-        m_text->viewport()->setAutoFillBackground(false);
-    }
-    else {
-        QPalette pal = palette();
+    const bool customBackground = !m_config.bgColour.isEmpty();
+    if(customBackground) {
+        QPalette pal{palette()};
         pal.setColor(QPalette::Window, QColor{m_config.bgColour});
         setPalette(pal);
-        setAutoFillBackground(true);
-
-        QPalette browserPalette = m_text->palette();
-        browserPalette.setColor(QPalette::Base, QColor{m_config.bgColour});
-        m_text->setPalette(browserPalette);
-        m_text->viewport()->setAutoFillBackground(true);
     }
+    else {
+        setPalette(QPalette{});
+    }
+    setAutoFillBackground(customBackground);
+
+    const bool fillBrowserBackground
+        = customBackground && m_config.background.imageMode == static_cast<int>(BackgroundImageMode::None);
+    QPalette browserPalette{m_text->palette()};
+    if(fillBrowserBackground) {
+        browserPalette.setColor(QPalette::Base, QColor{m_config.bgColour});
+    }
+    else {
+        browserPalette.setBrush(QPalette::Base, Qt::NoBrush);
+    }
+    m_text->setPalette(browserPalette);
+    m_text->viewport()->setAutoFillBackground(fillBrowserBackground);
 
     m_text->show();
     m_text->setVerticalScrollBarPolicy(m_config.showScrollBar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
@@ -437,6 +492,9 @@ void ScriptDisplay::applyAppearance()
 
 void ScriptDisplay::updateText()
 {
+    const auto* playlist = currentPlaylist();
+    m_scriptSubscription->setScope(currentTrack(), playlist ? playlist->id() : UId{});
+
     ScriptFormatter formatter;
     formatter.setBaseFont(m_text->font());
     if(!m_config.fgColour.isEmpty()) {
@@ -448,7 +506,7 @@ void ScriptDisplay::updateText()
     const QString text     = evaluateScript();
 
     const QColor linkColour = m_config.linkColour.isEmpty() ? QColor{} : QColor{m_config.linkColour};
-    const QString body      = richTextToHtml(formatter.evaluate(text), linkColour);
+    const QString body      = richTextToHtml(formatter.evaluate(text), linkColour, m_config.horizontalAlignment);
     const QString html      = u"<html><body style=\"margin:0;text-align:%1;\">%2</body></html>"_s.arg(
         alignmentToCss(m_config.horizontalAlignment), body);
 
@@ -521,15 +579,38 @@ void ScriptDisplay::updateViewportAlignment()
 
 Track ScriptDisplay::currentTrack() const
 {
-    if(const Track track = m_playerController->currentTrack(); track.isValid()) {
+    const auto source = preferredTrackSource(m_config.trackPreference, m_playerController->playState(),
+                                             m_playerController->playbackStarted());
+    if(source == PreferredTrackSource::None) {
+        return {};
+    }
+
+    const auto playingTrack = [this]() {
+        if(const Track track = m_playerController->currentTrack(); track.isValid()) {
+            return track;
+        }
+        if(const PlaylistTrack track = m_playlistHandler->currentTrack(); track.isValid()) {
+            return track.track;
+        }
+        return Track{};
+    };
+
+    const auto selectedTrack = [this]() {
+        return m_trackSelection->hasDisplayTracks() ? m_trackSelection->displayTrack() : Track{};
+    };
+
+    if(source == PreferredTrackSource::Selected) {
+        if(const Track track = selectedTrack(); track.isValid()) {
+            return track;
+        }
+        return playingTrack();
+    }
+
+    if(const Track track = playingTrack(); track.isValid()) {
         return track;
     }
 
-    if(auto* playlist = m_playlistHandler->activePlaylist(); playlist && playlist->currentTrack().isValid()) {
-        return playlist->currentTrack();
-    }
-
-    return {};
+    return selectedTrack();
 }
 
 Playlist* ScriptDisplay::currentPlaylist() const
@@ -545,10 +626,11 @@ Playlist* ScriptDisplay::currentPlaylist() const
 
 QString ScriptDisplay::evaluateScript()
 {
-    auto contextData
-        = makePlaybackScriptContext(m_playerController, currentPlaylist(), TrackListContextPolicy::Fallback, {}, true,
-                                    false, Gui::ratingStarSymbols(*m_settings));
-    return m_scriptParser.evaluate(m_config.script, currentTrack(), contextData.context);
+    const auto scriptData = m_scriptContext->playbackContext(currentPlaylist());
+    const ScriptEvaluationOptions options{.trackListContextPolicy = TrackListContextPolicy::Fallback,
+                                          .escapeRichText         = true,
+                                          .ratingSymbols          = Gui::ratingStarSymbols(*m_settings)};
+    return m_scriptParser.evaluate(m_config.script, currentTrack(), scriptData.context(), options);
 }
 
 void ScriptDisplay::activateLink(const QString& link) const
@@ -569,6 +651,21 @@ void ScriptDisplay::activateLink(const QString& link) const
         }
 
         m_commandHandler->execute(commandId);
+        return;
+    }
+
+    if(url.scheme() == "fooyin"_L1 && url.host() == "application"_L1 && url.path() == "/run"_L1) {
+        const QUrlQuery query{url};
+        const QString application = query.queryItemValue(u"application"_s, QUrl::FullyDecoded);
+        if(application.isEmpty()) {
+            return;
+        }
+
+        const QString args = query.queryItemValue(u"arguments"_s, QUrl::FullyDecoded);
+        const QString dir  = query.queryItemValue(u"directory"_s, QUrl::FullyDecoded);
+        if(!QProcess::startDetached(application, QProcess::splitCommand(args), dir)) {
+            qCWarning(SCRIPT_DISPLAY) << "Could not launch application:" << application;
+        }
         return;
     }
 

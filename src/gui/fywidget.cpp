@@ -19,19 +19,33 @@
 
 #include <gui/fywidget.h>
 
+#include <core/coresettings.h>
+#include <gui/widgetcontainer.h>
 #include <utils/crypto.h>
 
 #include <QAction>
+#include <QCloseEvent>
 #include <QDialog>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QLayout>
 #include <QMenu>
 #include <QPointer>
+#include <QToolBar>
+
+#include <unordered_map>
 
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
+namespace {
+std::unordered_map<QString, QPointer<FyWidget>>& standaloneWindows()
+{
+    static std::unordered_map<QString, QPointer<FyWidget>> windows;
+    return windows;
+}
+} // namespace
+
 class FyWidgetPrivate
 {
 public:
@@ -61,6 +75,8 @@ public:
     Id m_id{Utils::generateUniqueHash()};
     FyWidget::Features m_features;
     bool m_hasCustomMargins{false};
+    QMargins m_defaultMargins;
+    QString m_standaloneStateKey;
     QPointer<QDialog> m_configDialog;
 };
 
@@ -114,6 +130,54 @@ FyWidget* FyWidget::findParent() const
     return qobject_cast<FyWidget*>(parent);
 }
 
+QToolBar* FyWidget::findToolbar() const
+{
+    QWidget* parent = parentWidget();
+    while(parent && !qobject_cast<QToolBar*>(parent)) {
+        parent = parent->parentWidget();
+    }
+    return qobject_cast<QToolBar*>(parent);
+}
+
+Qt::Orientation FyWidget::automaticOrientation() const
+{
+    if(const auto* toolbar = findToolbar()) {
+        return toolbar->orientation();
+    }
+
+    // At the square minimum, follow the surrounding row or column to avoid getting stuck
+    const auto availableSize = width() == height() && parentWidget() ? parentWidget()->size() : size();
+    return availableSize.height() > availableSize.width() ? Qt::Vertical : Qt::Horizontal;
+}
+
+void FyWidget::updateOrientationConstraints(bool automatic, const QSize& minimumSize)
+{
+    auto* widgetLayout{layout()};
+    if(!widgetLayout) {
+        return;
+    }
+
+    if(automatic && !findToolbar()) {
+        widgetLayout->setSizeConstraint(QLayout::SetNoConstraint);
+
+        const int minExtent = std::min(minimumSize.width(), minimumSize.height());
+        QSize flexibleMin{minExtent, minExtent};
+        if(const auto* container = qobject_cast<WidgetContainer*>(findParent())) {
+            if(container->orientation() == Qt::Horizontal) {
+                flexibleMin.setWidth(minimumSize.width());
+            }
+            else {
+                flexibleMin.setHeight(minimumSize.height());
+            }
+        }
+        setMinimumSize(flexibleMin);
+    }
+    else if(widgetLayout->sizeConstraint() == QLayout::SetNoConstraint) {
+        setMinimumSize(0, 0);
+        widgetLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+    }
+}
+
 QRect FyWidget::widgetGeometry() const
 {
     int x = this->x();
@@ -127,6 +191,32 @@ QRect FyWidget::widgetGeometry() const
     }
 
     return {x, y, width(), height()};
+}
+
+bool FyWidget::hasCustomLayoutMargins() const
+{
+    return p->m_hasCustomMargins;
+}
+
+void FyWidget::setLayoutMargins(const QMargins& margins)
+{
+    if(auto* widgetLayout = layout()) {
+        if(!p->m_hasCustomMargins) {
+            p->m_defaultMargins = widgetLayout->contentsMargins();
+        }
+        widgetLayout->setContentsMargins(margins);
+        p->m_hasCustomMargins = true;
+    }
+}
+
+void FyWidget::resetLayoutMargins()
+{
+    if(p->m_hasCustomMargins) {
+        if(auto* widgetLayout = layout()) {
+            widgetLayout->setContentsMargins(p->m_defaultMargins);
+        }
+        p->m_hasCustomMargins = false;
+    }
 }
 
 void FyWidget::saveLayout(QJsonArray& layout)
@@ -174,13 +264,12 @@ void FyWidget::loadLayout(const QJsonObject& layout)
         p->m_id = Id{layout["ID"_L1].toString()};
     }
 
-    p->m_hasCustomMargins = false;
+    resetLayoutMargins();
 
     if(this->layout() && layout.value("Margins"_L1).isObject()) {
         const QJsonObject marginData = layout.value("Margins"_L1).toObject();
-        this->layout()->setContentsMargins(marginData.value("Left"_L1).toInt(), marginData.value("Top"_L1).toInt(),
-                                           marginData.value("Right"_L1).toInt(), marginData.value("Bottom"_L1).toInt());
-        p->m_hasCustomMargins = true;
+        setLayoutMargins({marginData.value("Left"_L1).toInt(), marginData.value("Top"_L1).toInt(),
+                          marginData.value("Right"_L1).toInt(), marginData.value("Bottom"_L1).toInt()});
     }
 
     loadLayoutData(layout);
@@ -189,6 +278,8 @@ void FyWidget::loadLayout(const QJsonObject& layout)
 void FyWidget::searchEvent(const SearchRequest& /*request*/) { }
 
 void FyWidget::layoutEditingMenu(QMenu* /*menu*/) { }
+
+void FyWidget::populateContextMenu(QMenu* /*menu*/) { }
 
 void FyWidget::saveLayoutData(QJsonObject& /*object*/) { }
 
@@ -201,6 +292,72 @@ void FyWidget::saveCopyLayoutData(QJsonObject& layout, LayoutCopyContext& /*cont
 void FyWidget::loadLayoutData(const QJsonObject& /*object*/) { }
 
 void FyWidget::finalise() { }
+
+void FyWidget::showStandaloneWindow(const QString& title, const QString& stateKey, const QSize& defaultSize)
+{
+    showStandaloneWindow(title, stateKey, false, defaultSize);
+}
+
+void FyWidget::showStandaloneWindow(const QString& title, const QString& stateKey, bool translucentBackground,
+                                    const QSize& defaultSize)
+{
+    Q_ASSERT(!parentWidget());
+
+    auto& windows = standaloneWindows();
+    if(const auto it = windows.find(stateKey); it != windows.end()) {
+        if(auto* window = it->second.data(); window && window != this) {
+            deleteLater();
+            window->show();
+            window->raise();
+            window->activateWindow();
+            return;
+        }
+    }
+
+    windows.insert_or_assign(stateKey, this);
+    QObject::connect(this, &QObject::destroyed, this, [stateKey, window = this]() {
+        auto& widgetWindows = standaloneWindows();
+        if(const auto it = widgetWindows.find(stateKey);
+           it != widgetWindows.end() && (!it->second || it->second.data() == window)) {
+            widgetWindows.erase(it);
+        }
+    });
+
+    p->m_standaloneStateKey = stateKey;
+
+    setAttribute(Qt::WA_DeleteOnClose);
+    setAttribute(Qt::WA_TranslucentBackground, translucentBackground);
+    setWindowTitle(title);
+    resize(defaultSize);
+
+    const FyStateSettings settings;
+    const QJsonObject state = settings.value(stateKey).toJsonObject();
+    if(!state.isEmpty()) {
+        loadLayoutData(state);
+        if(const QByteArray geometry = QByteArray::fromBase64(state.value("Geometry"_L1).toString().toUtf8());
+           !geometry.isEmpty()) {
+            restoreGeometry(geometry);
+        }
+    }
+
+    show();
+    raise();
+    activateWindow();
+}
+
+void FyWidget::closeEvent(QCloseEvent* event)
+{
+    if(!p->m_standaloneStateKey.isEmpty()) {
+        QJsonObject state;
+        saveLayoutData(state);
+        state["Geometry"_L1] = QString::fromUtf8(saveGeometry().toBase64());
+
+        FyStateSettings settings;
+        settings.setValue(p->m_standaloneStateKey, state);
+    }
+
+    QWidget::closeEvent(event);
+}
 
 void FyWidget::openConfigDialog() { }
 
@@ -223,6 +380,11 @@ QAction* FyWidget::addConfigureAction(QMenu* menu, bool addSeparator)
 
 void FyWidget::showConfigDialog(QDialog* dialog)
 {
+    showConfigDialog(dialog, Qt::WindowModal);
+}
+
+void FyWidget::showConfigDialog(QDialog* dialog, const Qt::WindowModality modality)
+{
     if(!dialog) {
         return;
     }
@@ -235,8 +397,9 @@ void FyWidget::showConfigDialog(QDialog* dialog)
     }
 
     p->m_configDialog = dialog;
-    QObject::connect(dialog, &QDialog::destroyed, this, [this]() { p->m_configDialog = nullptr; });
-    dialog->open();
+
+    dialog->setWindowModality(modality);
+    dialog->show();
 }
 } // namespace Fooyin
 

@@ -24,9 +24,26 @@
 #include <utils/treemodel.h>
 #include <utils/treestatusitem.h>
 
+#include <vector>
+
 namespace Fooyin {
 class ActionManager;
 class Command;
+
+enum class ShortcutScope : uint8_t
+{
+    Application = 0,
+    Global,
+};
+
+struct ShortcutBinding
+{
+    QKeySequence shortcut;
+    ShortcutScope scope{ShortcutScope::Application};
+
+    bool operator==(const ShortcutBinding&) const = default;
+};
+using ShortcutBindingList = std::vector<ShortcutBinding>;
 
 struct ShortcutConflict
 {
@@ -46,24 +63,27 @@ public:
     };
 
     ShortcutItem();
-    explicit ShortcutItem(QString title, Command* command, ShortcutItem* parent);
+    explicit ShortcutItem(QString title, Command* command, ShortcutItem* parent, bool systemManaged = false);
 
     bool operator<(const ShortcutItem& other) const;
 
     [[nodiscard]] QString title() const;
     [[nodiscard]] QString shortcut() const;
-    [[nodiscard]] ShortcutList shortcuts() const;
+    [[nodiscard]] ShortcutBindingList bindings() const;
+    [[nodiscard]] bool isGlobalShortcutRegistered() const;
 
     [[nodiscard]] Command* command() const;
 
     [[nodiscard]] bool isCategory() const;
 
-    void updateShortcuts(const ShortcutList& shortcuts);
+    void updateBindings(const ShortcutBindingList& bindings);
+    void updateGlobalShortcutRegistration(bool registered);
 
 private:
     QString m_title;
     QString m_shortcut;
-    ShortcutList m_shortcuts;
+    ShortcutBindingList m_bindings;
+    bool m_globalShortcutRegistered{false};
     Command* m_command;
 };
 
@@ -75,12 +95,13 @@ public:
     explicit ShortcutsModel(QObject* parent = nullptr);
 
     void populate(ActionManager* actionManager);
-    void shortcutChanged(Command* command, const ShortcutList& shortcuts);
-    void shortcutDeleted(Command* command, const QKeySequence& shortcut);
+    void bindingsChanged(Command* command, const ShortcutBindingList& bindings);
+    void globalShortcutRegistrationChanged(Command* command, bool registered);
     void processQueue();
     void reassignConflicts(Command* command);
 
-    [[nodiscard]] ShortcutList shortcuts(Command* command) const;
+    [[nodiscard]] ShortcutBindingList bindings(Command* command) const;
+    [[nodiscard]] bool isGlobalShortcutRegistered(Command* command) const;
     [[nodiscard]] ShortcutConflictList conflicts(Command* command) const;
     [[nodiscard]] QString conflictDescription(Command* command) const;
     [[nodiscard]] QString firstConflictError() const;
@@ -90,15 +111,21 @@ public:
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
+Q_SIGNALS:
+    void bindingsSynchronised(Command* command);
+
 private:
     using ConflictMap = std::map<Id, ShortcutConflictList>;
 
     [[nodiscard]] ShortcutItem* itemForCommand(Command* command);
     [[nodiscard]] const ShortcutItem* itemForCommand(Command* command) const;
+    void synchroniseBindings(Command* command);
     void rebuildConflicts();
     void emitDataChanged(const IdSet& ids);
 
     std::map<Id, ShortcutItem> m_nodes;
     ConflictMap m_conflicts;
+    std::vector<QMetaObject::Connection> m_commandConnections;
+    bool m_systemManaged{false};
 };
 } // namespace Fooyin

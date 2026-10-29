@@ -99,4 +99,14 @@ TEST(UtilsStringTest, DetectEncodingPrefersCyrillicCandidateOverLatinFallback)
 
     EXPECT_EQ(Utils::detectEncoding(data, {.preferredFallbackEncoding = "windows-1251"}), "windows-1251");
 }
+
+TEST(UtilsStringTest, DecodeTextSupportsLegacyEncoding)
+{
+    const QByteArray data = QByteArray::fromHex("cae0ea20eceeebeee4fb20ecfb20e1fbebe8");
+
+    const auto decoded = Utils::decodeText(data, "windows-1251");
+
+    ASSERT_TRUE(decoded.has_value());
+    EXPECT_EQ(*decoded, u"Как молоды мы были"_s);
+}
 } // namespace Fooyin::Testing

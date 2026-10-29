@@ -7,12 +7,14 @@ endif()
 
 create_fooyin_plugin_internal(
     sndfile
-    DEPENDS Fooyin::Core
-            SndFile::sndfile
-    SOURCES sndfileinput.cpp
-            sndfileinput.h
-            sndfileplugin.cpp
-            sndfileplugin.h
+    DEPENDS #
+        Fooyin::Core
+        SndFile::sndfile
+    SOURCES #
+        sndfileinput.cpp
+        sndfileinput.h
+        sndfileplugin.cpp
+        sndfileplugin.h
 )
 
 fooyin_append_mimes(

@@ -20,12 +20,13 @@
 #include "devicepage.h"
 
 #include "dsp/dsppresetregistry.h"
-#include "output/outputprofilemanager.h"
 #include "outputdevicesdelegate.h"
 #include "outputdevicesmodel.h"
 
 #include <gui/guiconstants.h>
+#include <gui/output/outputprofilemanager.h>
 #include <gui/widgets/expandingcombobox.h>
+#include <gui/widgets/hintlabel.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
@@ -102,8 +103,7 @@ DevicePageWidget::DevicePageWidget(OutputProfileManager* profileManager, DspPres
     m_devices->verticalHeader()->hide();
     m_devices->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    auto* hint
-        = new QLabel(u"🛈 "_s + tr("Only checked devices will appear in the output device selector widget."), this);
+    auto* hint = new HintLabel(tr("Only checked devices will appear in the output device selector widget."), this);
     hint->setWordWrap(true);
 
     auto* layout = new QGridLayout(this);

@@ -35,6 +35,7 @@ TrackContextMenuPage::TrackContextMenuPage(TrackSelectionController* trackSelect
     setId(Constants::Page::InterfaceContextMenuTrack);
     setName(tr("Track"));
     setCategory({tr("Interface"), tr("Context Menu")});
+    setSelector(SettingsPageSelector::List);
     setWidgetCreator([trackSelection, settings] {
         return new ConfigurableContextMenuWidget(
             tr("Unchecked items will be hidden from track selection context menus."),

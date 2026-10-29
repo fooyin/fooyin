@@ -21,8 +21,8 @@
 
 #include "fycore_export.h"
 
-#include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/scripttypes.h>
 #include <core/track.h>
 #include <utils/stringcollator.h>
 
@@ -33,7 +33,6 @@
 #include <vector>
 
 namespace Fooyin {
-class LibraryManager;
 struct ParsedScript;
 class TrackSorterPrivate;
 
@@ -51,7 +50,8 @@ public:
     };
 
     TrackSorter();
-    explicit TrackSorter(LibraryManager* libraryManager);
+    explicit TrackSorter(LibraryInfoMap libraries);
+    TrackSorter(LibraryInfoMap libraries, ScriptRegistry* registry);
     ~TrackSorter();
 
     /*!
@@ -127,12 +127,23 @@ public:
         const std::scoped_lock lock{m_parserGuard};
 
         ScriptContext context;
-        context.environment = &m_scriptEnvironment;
-
-        for(const auto& item : items) {
-            const Track& track = extractor(item);
-            entries.push_back({item, m_parser.evaluate(sort, track, context)});
+        context.libraries = &m_libraries;
+        ScriptPlaylistData row;
+        if constexpr(std::is_same_v<Item, PlaylistTrack>) {
+            context.playlistData = &row;
         }
+
+        m_parser.withContext(context, [&]() {
+            for(const auto& item : items) {
+                if constexpr(std::is_same_v<Item, PlaylistTrack>) {
+                    row.playlistId = item.playlistId;
+                    row.entryId    = item.entryId;
+                    row.trackIndex = item.indexInPlaylist;
+                }
+                const Track& track = extractor(item);
+                entries.push_back({item, m_parser.evaluate(sort, track)});
+            }
+        });
 
         return entries;
     }
@@ -153,12 +164,23 @@ public:
         const std::scoped_lock lock{m_parserGuard};
 
         ScriptContext context;
-        context.environment = &m_scriptEnvironment;
-
-        for(auto& item : items) {
-            const Track& track = extractor(item);
-            entries.push_back({std::move(item), m_parser.evaluate(sort, track, context)});
+        context.libraries = &m_libraries;
+        ScriptPlaylistData row;
+        if constexpr(std::is_same_v<Item, PlaylistTrack>) {
+            context.playlistData = &row;
         }
+
+        m_parser.withContext(context, [&]() {
+            for(auto& item : items) {
+                if constexpr(std::is_same_v<Item, PlaylistTrack>) {
+                    row.playlistId = item.playlistId;
+                    row.entryId    = item.entryId;
+                    row.trackIndex = item.indexInPlaylist;
+                }
+                const Track& track = extractor(item);
+                entries.push_back({std::move(item), m_parser.evaluate(sort, track)});
+            }
+        });
 
         return entries;
     }
@@ -242,7 +264,7 @@ private:
     }
 
     ScriptParser m_parser;
-    LibraryScriptEnvironment m_scriptEnvironment;
+    LibraryInfoMap m_libraries;
     std::mutex m_parserGuard;
 };
 } // namespace Fooyin

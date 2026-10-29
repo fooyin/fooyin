@@ -7,10 +7,14 @@ endif()
 
 create_fooyin_plugin_internal(
     sdl
-    DEPENDS Fooyin::Core
-            ${SDL2_LIBRARIES}
-    SOURCES sdloutput.cpp
-            sdloutput.h
-            sdlplugin.cpp
-            sdlplugin.h
+    DEPENDS #
+        Fooyin::Core
+        ${SDL2_LIBRARIES}
+    SOURCES #
+        sdlaudiosubsystem.cpp
+        sdlaudiosubsystem.h
+        sdloutput.cpp
+        sdloutput.h
+        sdlplugin.cpp
+        sdlplugin.h
 )

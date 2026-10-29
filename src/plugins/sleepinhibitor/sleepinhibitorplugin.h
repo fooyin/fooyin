@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "inhibitor.h"
+
 #include <core/coresettings.h>
 #include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
@@ -37,7 +39,7 @@ class SleepInhibitorPlugin : public QObject,
                              public PluginConfigGuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "sleepinhibitor.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "sleepinhibitor.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::PluginConfigGuiPlugin)
 
 public:
@@ -54,5 +56,6 @@ private:
     PlayerController* m_playerController;
     FySettings m_settings;
     Inhibitor* m_inhibitor;
+    InhibitionType m_inhibitionType;
 };
 } // namespace Fooyin::SleepInhibitor

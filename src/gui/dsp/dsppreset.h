@@ -31,7 +31,6 @@ struct DspChainPreset
     int id{-1};
     int index{-1};
     QString name;
-    bool isDefault{false};
     Engine::DspChains chain;
 
     [[nodiscard]] bool isValid() const
@@ -39,10 +38,7 @@ struct DspChainPreset
         return !name.isEmpty();
     }
 
-    bool operator==(const DspChainPreset& other) const
-    {
-        return std::tie(id, index, name, chain) == std::tie(other.id, other.index, other.name, other.chain);
-    }
+    bool operator==(const DspChainPreset& other) const = default;
 };
 
 QDataStream& operator<<(QDataStream& stream, const DspChainPreset& preset);

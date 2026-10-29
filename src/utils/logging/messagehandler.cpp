@@ -25,39 +25,65 @@
 
 #include <iostream>
 
+namespace Fooyin {
 namespace {
-QString levelToFilterRule(QtMsgType level)
+QString levelToFilterRule(MessageHandler::Level level)
 {
     using namespace Qt::StringLiterals;
+    using Level = MessageHandler::Level;
 
     switch(level) {
-        case(QtDebugMsg):
-            return u"fy.*.critical=true\nfy.*.warning=true\nfy.*.info=true\nfy.*.debug=true\n"_s;
-        case(QtInfoMsg):
+        case Level::Trace:
+        case Level::Debug: {
+            auto rules = u"fy.*.critical=true\nfy.*.warning=true\nfy.*.info=true\nfy.*.debug=true\n"_s;
+            if(level == Level::Debug) {
+                rules += u"fy.trace.*.debug=false\n"_s;
+            }
+            return rules;
+        }
+        case Level::Info:
             return u"fy.*.critical=true\nfy.*.warning=true\nfy.*.info=true\nfy.*.debug=false\n"_s;
-        case(QtWarningMsg):
+        case Level::Warning:
             return u"fy.*.critical=true\nfy.*.warning=true\nfy.*.info=false\nfy.*.debug=false\n"_s;
-        case(QtCriticalMsg):
+        case Level::Critical:
             return u"fy.*.critical=true\nfy.*.warning=false\nfy.*.info=false\nfy.*.debug=false\n"_s;
-        case(QtFatalMsg):
+        case Level::Fatal:
         default:
             return {};
     }
 }
+
+bool filterLogMessage(QtMsgType type, const QString& message)
+{
+    // Qt's Wayland backend emits this warning for non-popup mouse grabs
+    if(type == QtWarningMsg
+       && message == QLatin1StringView{"This plugin supports grabbing the mouse only for popup windows"}) {
+        return true;
+    }
+
+    if((type == QtInfoMsg)
+       && (message.startsWith(QLatin1StringView{"OpenType support missing for"})
+           || message == QLatin1StringView{"libpng warning: eXIf: duplicate"}
+           || message == QLatin1StringView{"libpng warning: sRGB: out of place"}
+           || message.startsWith(QLatin1StringView{"libpng warning: iCCP: profile '"}))) {
+        return true;
+    }
+
+    return false;
+}
 } // namespace
 
-namespace Fooyin {
 MessageHandler::MessageHandler(QObject* parent)
     : QObject{parent}
-    , m_level{QtInfoMsg}
+    , m_level{Level::Info}
 {
     qRegisterMetaType<QtMsgType>();
 }
 
 void MessageHandler::install(LogWidget* widget)
 {
-    auto* self = MessageHandler::instance();
-    qInstallMessageHandler(MessageHandler::handler);
+    const auto* self = instance();
+    qInstallMessageHandler(handler);
 
     if(widget) {
         connect(self, &MessageHandler::showMessage, widget, &LogWidget::addEntry, Qt::QueuedConnection);
@@ -66,21 +92,23 @@ void MessageHandler::install(LogWidget* widget)
 
 void MessageHandler::handler(QtMsgType type, const QMessageLogContext& context, const QString& message)
 {
+    if(filterLogMessage(type, message)) {
+        return;
+    }
+
     const QString formattedMsg = qFormatLogMessage(type, context, message);
     const std::string msg      = formattedMsg.toLocal8Bit().constData();
 
     switch(type) {
-        case(QtDebugMsg):
-        case(QtInfoMsg):
+        case QtDebugMsg:
+        case QtInfoMsg:
+        case QtWarningMsg:
             std::clog << msg << '\n';
             break;
-        case(QtWarningMsg):
-            std::clog << msg << '\n';
-            break;
-        case(QtCriticalMsg):
+        case QtCriticalMsg:
             std::cerr << msg << '\n';
             break;
-        case(QtFatalMsg):
+        case QtFatalMsg:
             throw std::runtime_error(msg);
     }
 
@@ -89,12 +117,12 @@ void MessageHandler::handler(QtMsgType type, const QMessageLogContext& context, 
         Qt::QueuedConnection);
 }
 
-QtMsgType MessageHandler::level()
+MessageHandler::Level MessageHandler::level()
 {
     return instance()->m_level.load(std::memory_order_acquire);
 }
 
-void MessageHandler::setLevel(QtMsgType level)
+void MessageHandler::setLevel(Level level)
 {
     QString filterRules;
     filterRules.append(levelToFilterRule(level));

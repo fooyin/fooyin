@@ -21,10 +21,16 @@
 
 #include <core/constants.h>
 #include <core/library/tracksort.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/scripting/scripttypes.h>
 #include <utils/helpers.h>
+#include <utils/scopeguard.h>
 #include <utils/stringutils.h>
 #include <utils/utils.h>
+
+#include <QDir>
+#include <QScopedValueRollback>
+
+#include <optional>
 
 using namespace Qt::StringLiterals;
 
@@ -51,7 +57,7 @@ QDateTime evalDate(const Expression& expr)
 struct DateRange
 {
     QDateTime start;
-    QDateTime end;
+    QDateTime endExclusive;
 };
 
 DateRange calculateDateRange(const Expression& expr)
@@ -60,37 +66,33 @@ DateRange calculateDateRange(const Expression& expr)
         return {};
     }
 
-    const QString dateString = std::get<QString>(expr.value);
+    const auto parsed = Utils::parseDateTime(std::get<QString>(expr.value));
+    if(!parsed) {
+        return {};
+    }
 
     DateRange range;
+    range.start = parsed->toDateTime();
 
-    const auto formats = Utils::dateFormats();
-    for(const auto& format : formats) {
-        const auto date = QDateTime::fromString(dateString, QLatin1String{format});
-        if(!date.isValid()) {
-            continue;
-        }
-
-        range.start = date;
-
-        if(strcmp(format, "yyyy") == 0) {
-            range.end = range.start.addYears(1).addSecs(-1);
-        }
-        else if(strcmp(format, "yyyy-MM") == 0) {
-            range.end = range.start.addMonths(1).addSecs(-1);
-        }
-        else if(strcmp(format, "yyyy-MM-dd") == 0) {
-            range.end = range.start.addDays(1).addSecs(-1);
-        }
-        else if(strcmp(format, "yyyy-MM-dd hh") == 0) {
-            range.end = range.start.addSecs(3600 - 1);
-        }
-        else if(strcmp(format, "yyyy-MM-dd hh:mm") == 0) {
-            range.end = range.start.addSecs(60 - 1);
-        }
-        else if(strcmp(format, "yyyy-MM-dd hh:mm:ss") == 0) {
-            range.end = range.start;
-        }
+    switch(parsed->precision) {
+        case Utils::DateTimePrecision::Year:
+            range.endExclusive = range.start.addYears(1);
+            break;
+        case Utils::DateTimePrecision::Month:
+            range.endExclusive = range.start.addMonths(1);
+            break;
+        case Utils::DateTimePrecision::Day:
+            range.endExclusive = range.start.addDays(1);
+            break;
+        case Utils::DateTimePrecision::Hour:
+            range.endExclusive = range.start.addSecs(3600);
+            break;
+        case Utils::DateTimePrecision::Minute:
+            range.endExclusive = range.start.addSecs(60);
+            break;
+        case Utils::DateTimePrecision::Second:
+            range.endExclusive = range.start.addSecs(1);
+            break;
     }
 
     return range;
@@ -114,60 +116,18 @@ QStringList evalStringList(const ScriptResult& evalExpr, const QStringList& resu
     return listResult;
 }
 
-bool matchSearch(const Track& track, const QString& search, bool phraseMatch)
+bool matchSearch(const Track& track, const QString& search, bool phraseMatch, bool wholeWord = false)
 {
     if(search.isEmpty()) {
-        return true;
+        return !wholeWord;
     }
 
-    if(phraseMatch) {
-        return track.hasMatch(search);
+    if(phraseMatch || wholeWord) {
+        return track.hasMatch(search, wholeWord);
     }
 
     const QStringList terms = search.split(u' ', Qt::SkipEmptyParts);
     return std::ranges::all_of(terms, [&track](const QString& term) { return track.hasMatch(term); });
-}
-
-bool isQueryExpression(Expr::Type type)
-{
-    using Type = Expr::Type;
-    switch(type) {
-        case Type::Not:
-        case Type::Group:
-        case Type::And:
-        case Type::Or:
-        case Type::XOr:
-        case Type::Equals:
-        case Type::Contains:
-        case Type::Greater:
-        case Type::GreaterEqual:
-        case Type::Less:
-        case Type::LessEqual:
-        case Type::SortAscending:
-        case Type::SortDescending:
-        case Type::All:
-        case Type::Missing:
-        case Type::Present:
-        case Type::Before:
-        case Type::After:
-        case Type::Since:
-        case Type::During:
-        case Type::Date:
-        case Type::Limit:
-            return true;
-        case Type::Null:
-        case Type::Literal:
-        case Type::Variable:
-        case Type::VariableList:
-        case Type::VariableRaw:
-        case Type::Function:
-        case Type::FunctionArg:
-        case Type::Conditional:
-        case Type::QuotedLiteral:
-            break;
-    }
-
-    return false;
 }
 
 ParsedScript makeLiteralQuery(const QString& input)
@@ -187,6 +147,25 @@ ScriptResult evalLiteral(const BoundExpression& exp)
     return result;
 }
 
+bool isPathVariable(VariableKind kind)
+{
+    switch(kind) {
+        case VariableKind::FilePath:
+        case VariableKind::Directory:
+        case VariableKind::Path:
+        case VariableKind::LibraryPath:
+        case VariableKind::RelativePath:
+            return true;
+        default:
+            return false;
+    }
+}
+
+QString normaliseQueryValue(const QString& value, VariableKind fieldKind)
+{
+    return isPathVariable(fieldKind) ? QDir::fromNativeSeparators(value) : value;
+}
+
 Expression normaliseQueryField(Expression field)
 {
     if(field.type != Expr::Literal) {
@@ -201,8 +180,9 @@ Expression normaliseQueryField(Expression field)
 }
 } // namespace
 
-ScriptRuntime::ScriptRuntime()
-    : m_registry{std::make_unique<ScriptRegistry>()}
+ScriptRuntime::ScriptRuntime(ScriptRegistry* registry)
+    : m_registry{registry}
+    , m_evaluator{registry}
     , m_isQuery{false}
     , m_sortOrder{Qt::AscendingOrder}
     , m_limit{0}
@@ -211,21 +191,15 @@ ScriptRuntime::ScriptRuntime()
 
 ScriptRuntime::~ScriptRuntime() = default;
 
-void ScriptRuntime::addProvider(const ScriptVariableProvider& provider)
-{
-    m_registry->addProvider(provider);
-}
-
-void ScriptRuntime::addProvider(const ScriptFunctionProvider& provider)
-{
-    m_registry->addProvider(provider);
-}
-
 void ScriptRuntime::advance()
 {
     m_previous = m_current;
 
     m_current = m_scanner.next();
+    while(m_current.type == TokenType::TokComment) {
+        m_current = m_scanner.next();
+    }
+
     if(m_current.type == TokenType::TokError) {
         errorAtCurrent(m_current.value.toString());
     }
@@ -316,8 +290,14 @@ Expression ScriptRuntime::expression()
         case TokenType::TokXOr:
         case TokenType::TokMissing:
         case TokenType::TokPresent:
-        case TokenType::TokColon:
+        case TokenType::TokContains:
         case TokenType::TokEquals:
+        case TokenType::TokStarts:
+        case TokenType::TokEnds:
+        case TokenType::TokWith:
+        case TokenType::TokIn:
+        case TokenType::TokAny:
+        case TokenType::TokWord:
         case TokenType::TokLeftAngle:
         case TokenType::TokRightAngle:
         case TokenType::TokRightParen:
@@ -327,6 +307,7 @@ Expression ScriptRuntime::expression()
         case TokenType::TokAfter:
         case TokenType::TokSince:
         case TokenType::TokDuring:
+        case TokenType::TokBetween:
         case TokenType::TokLast:
         case TokenType::TokSecond:
         case TokenType::TokMinute:
@@ -343,6 +324,7 @@ Expression ScriptRuntime::expression()
         case TokenType::TokPlus:
         case TokenType::TokMinus:
             return literal();
+        case TokenType::TokComment:
         case TokenType::TokEos:
         case TokenType::TokError:
             break;
@@ -371,13 +353,20 @@ Expression ScriptRuntime::quote()
     QString val;
 
     while(!currentToken(TokenType::TokQuote) && !currentToken(TokenType::TokEos)) {
-        advance();
-        val.append(m_previous.value);
         if(currentToken(TokenType::TokEscape)) {
             advance();
-            val.append(m_current.value);
-            advance();
+            if(currentToken(TokenType::TokQuote) || currentToken(TokenType::TokEscape)) {
+                val.append(m_current.value);
+                advance();
+            }
+            else {
+                val.append(m_previous.value);
+            }
+            continue;
         }
+
+        advance();
+        val.append(m_previous.value);
     }
 
     expr.value = val;
@@ -430,7 +419,7 @@ Expression ScriptRuntime::function()
     FuncValue funcExpr;
     funcExpr.name = m_previous.value.toString().toLower();
 
-    if(resolveBuiltInFunctionKind(funcExpr.name) == FunctionKind::Generic && !m_registry->isFunction(funcExpr.name)) {
+    if(m_registry->isFinalised() && m_registry->resolveFunctionId(funcExpr.name) == InvalidScriptFunctionId) {
         error(u"Function not found"_s);
     }
 
@@ -578,12 +567,13 @@ Expression ScriptRuntime::group()
     ExpressionList args;
 
     while(!currentToken(TokenType::TokRightParen) && !currentToken(TokenType::TokEos)) {
-        Expression prevExpr = expression();
-        Expression argExpr  = checkOperator(prevExpr);
-
-        while(argExpr.type != prevExpr.type) {
-            prevExpr = argExpr;
-            argExpr  = checkOperator(prevExpr);
+        Expression argExpr = expression();
+        while(true) {
+            const int position = m_current.position;
+            argExpr            = checkOperator(argExpr);
+            if(m_current.position == position) {
+                break;
+            }
         }
 
         if(argExpr.type != Expr::Null) {
@@ -672,6 +662,86 @@ Expression ScriptRuntime::relationalOperator(const Expression& key, Expr::Type t
     return expr;
 }
 
+Expression ScriptRuntime::textBoundaryOperator(const Expression& key, Expr::Type type)
+{
+    const QString keyword = m_current.value.toString();
+
+    advance();
+
+    if(!currentToken(TokenType::TokWith)) {
+        errorAtCurrent(QObject::tr("Expected ‘WITH’ after ‘%1’").arg(keyword));
+        return {};
+    }
+
+    return relationalOperator(key, type);
+}
+
+Expression ScriptRuntime::containsOperator(const Expression& key)
+{
+    advance();
+
+    if(currentToken(TokenType::TokWord)) {
+        return relationalOperator(key, Expr::ContainsWord);
+    }
+
+    ExpressionList args;
+    args.emplace_back(normaliseQueryField(key));
+
+    if(match(TokenType::TokAny)) {
+        if(currentToken(TokenType::TokLeftParen)) {
+            return listOperator(key, Expr::ContainsAny, u"HAS ANY"_s);
+        }
+        args.emplace_back(literal());
+    }
+    else if(!currentToken(TokenType::TokEos)) {
+        const Expression value = expression();
+        if(value.type != Expr::Null) {
+            args.emplace_back(value);
+        }
+    }
+
+    return {Expr::Contains, std::move(args)};
+}
+
+Expression ScriptRuntime::inKeyword(const Expression& key)
+{
+    advance();
+    return listOperator(key, Expr::In, u"IN"_s);
+}
+
+Expression ScriptRuntime::listOperator(const Expression& key, Expr::Type type, const QString& keyword)
+{
+    if(!match(TokenType::TokLeftParen)) {
+        errorAtCurrent(QObject::tr("Expected ‘(’ after ‘%1’").arg(keyword));
+        return {};
+    }
+
+    ExpressionList args;
+    args.emplace_back(normaliseQueryField(key));
+
+    while(true) {
+        if(currentToken(TokenType::TokComma) || currentToken(TokenType::TokRightParen)
+           || currentToken(TokenType::TokEos)) {
+            errorAtCurrent(QObject::tr("Expected a value in ‘%1’ list").arg(keyword));
+            break;
+        }
+
+        Expression value = expression();
+        if(value.type == Expr::Null) {
+            error(QObject::tr("Expected a value in ‘%1’ list").arg(keyword));
+            break;
+        }
+        args.emplace_back(std::move(value));
+
+        if(!match(TokenType::TokComma)) {
+            break;
+        }
+    }
+
+    consume(TokenType::TokRightParen, QObject::tr("Expected ‘)’ at end of ‘%1’ list").arg(keyword));
+    return {type, std::move(args)};
+}
+
 Expression ScriptRuntime::metadataKeyword(const Expression& key, Expr::Type type)
 {
     Expression expr{type};
@@ -688,35 +758,38 @@ Expression ScriptRuntime::metadataKeyword(const Expression& key, Expr::Type type
 Expression ScriptRuntime::timeKeyword(const Expression& key, Expr::Type type)
 {
     Expression expr{type};
-    ExpressionList args;
+    DateValue dateExpr;
 
     advance();
 
-    args.emplace_back(normaliseQueryField(key));
+    dateExpr.args.emplace_back(normaliseQueryField(key));
 
+    const int operandStart{m_current.position};
     if(!currentToken(TokenType::TokEos)) {
         Expression argExpr   = expression();
         const QDateTime date = evalDate(argExpr);
         if(date.isValid()) {
             argExpr.type  = Expr::Date;
             argExpr.value = QString::number(date.toMSecsSinceEpoch());
-            args.emplace_back(argExpr);
+            dateExpr.args.emplace_back(argExpr);
         }
     }
 
-    expr.value = args;
+    dateExpr.operand = m_currentInput.mid(operandStart, m_previous.position + m_previous.value.size() - operandStart);
+    expr.value       = std::move(dateExpr);
     return expr;
 }
 
 Expression ScriptRuntime::duringKeyword(const Expression& key)
 {
     Expression expr{Expr::During};
-    ExpressionList args;
+    DateValue dateExpr;
 
     advance();
 
-    args.emplace_back(normaliseQueryField(key));
+    dateExpr.args.emplace_back(normaliseQueryField(key));
 
+    const int operandStart{m_current.position};
     if(currentToken(TokenType::TokLast)) {
         advance();
 
@@ -772,8 +845,8 @@ Expression ScriptRuntime::duringKeyword(const Expression& key)
         if(valid) {
             advance();
             if(validUserCount) {
-                args.emplace_back(Expr::Date, QString::number(date.toMSecsSinceEpoch()));
-                args.emplace_back(Expr::Date, QString::number(QDateTime::currentMSecsSinceEpoch()));
+                dateExpr.args.emplace_back(Expr::Date, QString::number(date.toMSecsSinceEpoch()));
+                dateExpr.args.emplace_back(Expr::Date, QString::number(QDateTime::currentMSecsSinceEpoch()));
             }
             else {
                 return {};
@@ -783,14 +856,57 @@ Expression ScriptRuntime::duringKeyword(const Expression& key)
     else if(!currentToken(TokenType::TokEos)) {
         const Expression argExpr  = expression();
         const DateRange dateRange = calculateDateRange(argExpr);
-        if(dateRange.start.isValid() && dateRange.end.isValid()) {
-            args.emplace_back(Expr::Date, QString::number(dateRange.start.toMSecsSinceEpoch()));
-            args.emplace_back(Expr::Date, QString::number(dateRange.end.toMSecsSinceEpoch()));
+        if(dateRange.start.isValid() && dateRange.endExclusive.isValid()) {
+            dateExpr.args.emplace_back(Expr::Date, QString::number(dateRange.start.toMSecsSinceEpoch()));
+            dateExpr.args.emplace_back(Expr::Date, QString::number(dateRange.endExclusive.toMSecsSinceEpoch()));
         }
     }
 
-    expr.value = args;
+    dateExpr.operand = m_currentInput.mid(operandStart, m_previous.position + m_previous.value.size() - operandStart);
+    expr.value       = std::move(dateExpr);
     return expr;
+}
+
+Expression ScriptRuntime::betweenKeyword(const Expression& key)
+{
+    advance();
+
+    DateValue dateExpr;
+
+    const auto readEndpoint = [this](QString& operand) {
+        const auto token{m_current};
+        if(!currentToken(TokenType::TokLiteral) && !currentToken(TokenType::TokQuote)) {
+            errorAtCurrent(QObject::tr("Expected a date in ‘BETWEEN’ range"));
+            return DateRange{};
+        }
+
+        const DateRange dateRange = calculateDateRange(expression());
+        operand = m_currentInput.mid(token.position, m_previous.position + m_previous.value.size() - token.position);
+        if(!dateRange.start.isValid() || !dateRange.endExclusive.isValid()) {
+            errorAt(token, QObject::tr("Invalid date in ‘BETWEEN’ range"));
+        }
+        return dateRange;
+    };
+
+    const auto start = readEndpoint(dateExpr.operand);
+    if(!match(TokenType::TokAnd)) {
+        errorAtCurrent(QObject::tr("Expected ‘AND’ between dates in ‘BETWEEN’ range"));
+        return {};
+    }
+
+    const auto end = readEndpoint(dateExpr.endOperand);
+    if(!start.start.isValid() || !start.endExclusive.isValid() || !end.start.isValid() || !end.endExclusive.isValid()) {
+        return {};
+    }
+    if(start.start >= end.endExclusive) {
+        error(QObject::tr("The start date must not be after the end date in ‘BETWEEN’ range"));
+        return {};
+    }
+
+    dateExpr.args.emplace_back(normaliseQueryField(key));
+    dateExpr.args.emplace_back(Expr::Date, QString::number(start.start.toMSecsSinceEpoch()));
+    dateExpr.args.emplace_back(Expr::Date, QString::number(end.endExclusive.toMSecsSinceEpoch()));
+    return {Expr::Between, std::move(dateExpr)};
 }
 
 Expression ScriptRuntime::sort()
@@ -817,7 +933,18 @@ Expression ScriptRuntime::sort()
         consume(TokenType::TokBy, QObject::tr("Expected %1 after %2").arg("'BY'"_L1, "'DESCENDING'"_L1));
     }
 
-    while(!currentToken(TokenType::TokLimit) && !currentToken(TokenType::TokEos)) {
+    bool insideQuote{false};
+    bool escapeNext{false};
+    while(!currentToken(TokenType::TokEos) && (insideQuote || !currentToken(TokenType::TokLimit))) {
+        if(escapeNext) {
+            escapeNext = false;
+        }
+        else if(insideQuote && currentToken(TokenType::TokEscape)) {
+            escapeNext = true;
+        }
+        else if(currentToken(TokenType::TokQuote)) {
+            insideQuote = !insideQuote;
+        }
         advance();
         val.append(m_previous.value);
     }
@@ -871,9 +998,14 @@ ScriptResult ScriptRuntime::evalExpression(const BoundExpression& exp, const aut
         case Expr::Present:
             return evalPresent(exp, tracks);
         case Expr::Equals:
+        case Expr::In:
             return evalEquals(exp, tracks);
         case Expr::Contains:
-            return evalContains(exp, tracks);
+        case Expr::ContainsAny:
+        case Expr::ContainsWord:
+        case Expr::StartsWith:
+        case Expr::EndsWith:
+            return evalTextMatch(exp, tracks);
         case Expr::Greater:
             return compareValues(exp, tracks, std::greater<>());
         case Expr::GreaterEqual:
@@ -889,6 +1021,7 @@ ScriptResult ScriptRuntime::evalExpression(const BoundExpression& exp, const aut
         case Expr::Since:
             return compareDates(exp, tracks, std::greater_equal<>());
         case Expr::During:
+        case Expr::Between:
             return compareDateRange(exp, tracks);
         case Expr::Limit:
             return evalLimit(exp);
@@ -906,10 +1039,10 @@ ScriptResult ScriptRuntime::evalExpression(const BoundExpression& exp, const aut
 ScriptResult ScriptRuntime::evalVariable(const BoundExpression& exp, const auto& tracks)
 {
     const auto& var     = std::get<QString>(exp.value);
-    ScriptResult result = m_registry->value(exp.variableKind, var, makeScriptSubject(tracks));
+    ScriptResult result = m_evaluator.value(exp.variableKind, var, makeScriptSubject(tracks));
 
     if(!result.cond) {
-        return {};
+        return {.value = m_missingVariableText, .cond = false};
     }
 
     if(result.value.contains(QLatin1String{Constants::UnitSeparator})) {
@@ -921,8 +1054,12 @@ ScriptResult ScriptRuntime::evalVariable(const BoundExpression& exp, const auto&
 
 ScriptResult ScriptRuntime::evalVariableList(const BoundExpression& exp, const auto& tracks)
 {
-    const auto& var = std::get<QString>(exp.value);
-    return m_registry->value(exp.variableKind, var, makeScriptSubject(tracks));
+    const auto& var     = std::get<QString>(exp.value);
+    ScriptResult result = m_evaluator.value(exp.variableKind, var, makeScriptSubject(tracks));
+    if(!result.cond && !m_missingVariableText.isEmpty()) {
+        result.value = m_missingVariableText;
+    }
+    return result;
 }
 
 ScriptResult ScriptRuntime::evalVariableRaw(const BoundExpression& exp, const auto& tracks)
@@ -939,7 +1076,7 @@ ScriptResult ScriptRuntime::evalVariableRaw(const BoundExpression& exp, const au
     result.cond = !result.value.isEmpty();
 
     if(!result.cond) {
-        return {};
+        return {.value = m_missingVariableText, .cond = false};
     }
 
     if(result.value.contains(QLatin1String{Constants::UnitSeparator})) {
@@ -1081,10 +1218,23 @@ ScriptResult ScriptRuntime::evalFunction(const BoundExpression& exp, const auto&
                 return {};
             }
 
-            if(first.value.size() >= length) {
+            if(first.value.length() > length) {
                 return evalExpression(func.args.at(2), tracks);
             }
             return evalExpression(func.args.at(3), tracks);
+        }
+        case FunctionKind::Select: {
+            if(func.args.size() < 2) {
+                return {};
+            }
+
+            bool ok{false};
+            const int index = evalExpression(func.args.front(), tracks).value.toInt(&ok);
+            if(!ok || index < 1 || std::cmp_greater_equal(index, func.args.size())) {
+                return {};
+            }
+
+            return evalExpression(func.args.at(index), tracks);
         }
         case FunctionKind::Add:
         case FunctionKind::Sub:
@@ -1192,7 +1342,7 @@ ScriptResult ScriptRuntime::evalFunction(const BoundExpression& exp, const auto&
     args.reserve(func.args.size());
     std::ranges::transform(func.args, std::back_inserter(args),
                            [this, &tracks](const BoundExpression& arg) { return evalExpression(arg, tracks); });
-    return m_registry->function(func.functionId, func.name, args, makeScriptSubject(tracks));
+    return m_evaluator.function(func.functionId, func.name, args, makeScriptSubject(tracks));
 }
 
 ScriptResult ScriptRuntime::evalFunctionArg(const BoundExpression& exp, const auto& tracks)
@@ -1207,25 +1357,34 @@ ScriptResult ScriptRuntime::evalFunctionArg(const BoundExpression& exp, const au
     }
 
     ScriptResult result;
-    bool allPassed{true};
+    QStringList expandedValues;
+    bool conditionPassed{false};
 
     for(const BoundExpression& subArg : arg) {
         const auto subExpr = evalExpression(subArg, tracks);
-        if(!subExpr.cond) {
-            allPassed = false;
+        if(subArg.type != Expr::Literal && subArg.type != Expr::QuotedLiteral) {
+            conditionPassed |= subExpr.cond;
         }
-        if(subExpr.value.contains(QLatin1String{Constants::UnitSeparator})) {
-            QStringList newResult;
-            const auto values = subExpr.value.split(QLatin1String{Constants::UnitSeparator});
-            std::ranges::transform(values, std::back_inserter(newResult),
-                                   [&](const auto& value) { return result.value + value; });
-            result.value = newResult.join(QLatin1String{Constants::UnitSeparator});
+        if(subExpr.value.contains(QLatin1StringView{Constants::UnitSeparator})) {
+            if(expandedValues.empty()) {
+                expandedValues.push_back(result.value);
+            }
+            expandedValues = evalStringList(subExpr, expandedValues);
         }
-        else {
+        else if(expandedValues.empty()) {
             result.value = result.value + subExpr.value;
         }
+        else {
+            for(auto& value : expandedValues) {
+                value.append(subExpr.value);
+            }
+        }
     }
-    result.cond = allPassed;
+
+    if(!expandedValues.empty()) {
+        result.value = expandedValues.join(QLatin1String{Constants::UnitSeparator});
+    }
+    result.cond = conditionPassed;
     return result;
 }
 
@@ -1238,35 +1397,25 @@ ScriptResult ScriptRuntime::evalConditional(const BoundExpression& exp, const au
 
     if(arg.size() == 1) {
         const BoundExpression& subArg = arg.front();
-        const ScriptResult subExpr    = evalExpression(subArg, tracks);
-
-        if(subArg.type != Expr::Literal && subArg.type != Expr::QuotedLiteral) {
-            if(!subExpr.cond || subExpr.value.isEmpty()) {
-                return {};
-            }
+        if(subArg.type == Expr::Literal || subArg.type == Expr::QuotedLiteral) {
+            return {};
         }
 
-        ScriptResult result;
-        result.value = subExpr.value;
-        result.cond  = true;
-        return result;
+        const ScriptResult subExpr = evalExpression(subArg, tracks);
+        return subExpr.cond ? subExpr : ScriptResult{};
     }
 
     ScriptResult result;
     QStringList exprResult;
-    result.cond = true;
+    bool hasCondition{false};
+    bool conditionPassed{false};
 
     for(const BoundExpression& subArg : arg) {
         const auto subExpr = evalExpression(subArg, tracks);
 
-        // Literals return false
         if(subArg.type != Expr::Literal && subArg.type != Expr::QuotedLiteral) {
-            if(!subExpr.cond || subExpr.value.isEmpty()) {
-                // No need to evaluate rest
-                result.value.clear();
-                result.cond = false;
-                return result;
-            }
+            hasCondition = true;
+            conditionPassed |= subExpr.cond;
         }
         if(subExpr.value.contains(QLatin1String{Constants::UnitSeparator})) {
             const QStringList evalList = evalStringList(subExpr, exprResult);
@@ -1290,6 +1439,12 @@ ScriptResult ScriptRuntime::evalConditional(const BoundExpression& exp, const au
     else if(exprResult.size() > 1) {
         result.value = exprResult.join(QLatin1String{Constants::UnitSeparator});
     }
+
+    result.cond = hasCondition && conditionPassed;
+    if(!result.cond) {
+        result.value.clear();
+    }
+
     return result;
 }
 
@@ -1416,48 +1571,28 @@ ScriptResult ScriptRuntime::evalEquals(const BoundExpression& exp, const auto& t
         return {};
     }
 
-    const ScriptResult first = evalExpression(args.at(0), tracks);
+    const BoundExpression& field = args.at(0);
+    const ScriptResult first     = evalExpression(field, tracks);
     if(!first.cond) {
         return {};
     }
 
-    const ScriptResult second = evalExpression(args.at(1), tracks);
-    if(!second.cond) {
-        return {};
-    }
+    const QString firstValue = normaliseQueryValue(first.value, field.variableKind);
 
     ScriptResult result;
-    if(first.value.compare(second.value, Qt::CaseInsensitive) == 0) {
-        result.cond = true;
+    for(size_t i{1}; i < args.size(); ++i) {
+        const ScriptResult second = evalExpression(args.at(i), tracks);
+        if(second.cond
+           && firstValue.compare(normaliseQueryValue(second.value, field.variableKind), Qt::CaseInsensitive) == 0) {
+            result.cond = true;
+            break;
+        }
     }
 
     return result;
 }
 
-ScriptResult ScriptRuntime::evalContains(const BoundExpression& exp, const auto& tracks)
-{
-    const auto& args = std::get<BoundExpressionList>(exp.value);
-    if(args.size() < 2) {
-        return {};
-    }
-
-    const ScriptResult first = evalExpression(args.at(0), tracks);
-    if(!first.cond) {
-        return {};
-    }
-
-    const ScriptResult second = evalExpression(args.at(1), tracks);
-    if(!second.cond) {
-        return {};
-    }
-
-    ScriptResult result;
-    result.cond = Utils::foldForSearch(first.value).contains(Utils::foldForSearch(second.value));
-
-    return result;
-}
-
-ScriptResult ScriptRuntime::evalContains(const BoundExpression& exp, const Track& track)
+ScriptResult ScriptRuntime::evalTextMatch(const BoundExpression& exp, const auto& tracks)
 {
     const auto& args = std::get<BoundExpressionList>(exp.value);
     if(args.size() < 2) {
@@ -1465,25 +1600,55 @@ ScriptResult ScriptRuntime::evalContains(const BoundExpression& exp, const Track
     }
 
     const BoundExpression& field = args.at(0);
-    const BoundExpression& value = args.at(1);
-
-    const ScriptResult first = evalExpression(field, track);
+    const ScriptResult first     = evalExpression(field, tracks);
     if(!first.cond) {
         return {};
     }
 
-    const ScriptResult second = evalExpression(value, track);
-    if(!second.cond) {
-        return {};
-    }
+    const QString firstValue = Utils::foldForSearch(normaliseQueryValue(first.value, field.variableKind));
 
     ScriptResult result;
+    for(size_t i{1}; i < args.size(); ++i) {
+        const BoundExpression& value = args.at(i);
+        const ScriptResult second    = evalExpression(value, tracks);
+        if(!second.cond) {
+            continue;
+        }
 
-    if(field.type == Expr::All) {
-        result.cond = matchSearch(track, second.value, value.type == Expr::QuotedLiteral);
-    }
-    else {
-        result.cond = Utils::foldForSearch(first.value).contains(Utils::foldForSearch(second.value));
+        if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, Track>) {
+            if((exp.type == Expr::Contains || exp.type == Expr::ContainsAny || exp.type == Expr::ContainsWord)
+               && field.type == Expr::All) {
+                result.cond = matchSearch(tracks, second.value, value.type == Expr::QuotedLiteral,
+                                          exp.type == Expr::ContainsWord);
+                if(result.cond) {
+                    return result;
+                }
+                continue;
+            }
+        }
+
+        const QString secondValue = Utils::foldForSearch(normaliseQueryValue(second.value, field.variableKind));
+        switch(exp.type) {
+            case Expr::Contains:
+            case Expr::ContainsAny:
+                result.cond = firstValue.contains(secondValue);
+                break;
+            case Expr::ContainsWord:
+                result.cond = Utils::containsWord(firstValue, secondValue);
+                break;
+            case Expr::StartsWith:
+                result.cond = firstValue.startsWith(secondValue);
+                break;
+            case Expr::EndsWith:
+                result.cond = firstValue.endsWith(secondValue);
+                break;
+            default:
+                break;
+        }
+
+        if(result.cond) {
+            return result;
+        }
     }
 
     return result;
@@ -1521,9 +1686,11 @@ ScriptResult ScriptRuntime::evalSort(const BoundExpression& exp)
 
 ParsedScript ScriptRuntime::parse(const QString& input, ScriptScanner::WhitespaceMode whitespaceMode)
 {
-    if(input.isEmpty()) {
+    if(input.isEmpty() || !m_registry->beginOperation()) {
         return {};
     }
+
+    const auto operation = scopeGuard([this]() { m_registry->endOperation(); });
 
     m_isQuery = false;
     m_scanner.setWhitespaceMode(whitespaceMode);
@@ -1565,9 +1732,11 @@ ParsedScript ScriptRuntime::parse(const QString& input, ScriptScanner::Whitespac
 
 ParsedScript ScriptRuntime::parseQuery(const QString& input)
 {
-    if(input.isEmpty()) {
+    if(input.isEmpty() || !m_registry->beginOperation()) {
         return {};
     }
+
+    const auto operation = scopeGuard([this]() { m_registry->endOperation(); });
 
     m_isQuery = true;
     m_scanner.setWhitespaceMode(ScriptScanner::WhitespaceMode::IgnoreAll);
@@ -1584,12 +1753,13 @@ ParsedScript ScriptRuntime::parseQuery(const QString& input)
 
     advance();
     while(m_current.type != TokenType::TokEos) {
-        Expression prevExpr = expression();
-        Expression expr     = checkOperator(prevExpr);
-
-        while(expr.type != prevExpr.type) {
-            prevExpr = expr;
-            expr     = checkOperator(prevExpr);
+        Expression expr = expression();
+        while(true) {
+            const int position = m_current.position;
+            expr               = checkOperator(expr);
+            if(m_current.position == position) {
+                break;
+            }
         }
 
         if(expr.type != Expr::Null) {
@@ -1603,6 +1773,19 @@ ParsedScript ScriptRuntime::parseQuery(const QString& input)
     return m_currentScript;
 }
 
+ScriptDependencies ScriptRuntime::dependencies(const ParsedScript& input)
+{
+    if(!m_registry->beginOperation()) {
+        return {};
+    }
+
+    const auto operation = scopeGuard([this]() { m_registry->endOperation(); });
+    if(!m_registry->isFinalised()) {
+        return {};
+    }
+    return bind(input).dependencies;
+}
+
 const BoundScript& ScriptRuntime::bind(const ParsedScript& input)
 {
     BoundScriptCache& cache = m_isQuery ? m_boundQueryCache : m_boundScriptCache;
@@ -1613,7 +1796,13 @@ const BoundScript& ScriptRuntime::bind(const ParsedScript& input)
         }
     }
 
-    BoundScript bound = bindScript(input, m_registry.get());
+    if(!m_registry->isFinalised()) {
+        qWarning() << "Cannot bind a script before registration is finalised";
+        m_currentBoundScript = {};
+        return m_currentBoundScript;
+    }
+
+    BoundScript bound = bindScript(input, m_registry, !m_isQuery);
 
     if(input.cacheId == 0) {
         m_currentBoundScript = std::move(bound);
@@ -1624,27 +1813,35 @@ const BoundScript& ScriptRuntime::bind(const ParsedScript& input)
     return *cache.find(input.cacheId);
 }
 
-QString ScriptRuntime::evaluate(const ParsedScript& input, const Track& track)
+QString ScriptRuntime::evaluate(const ParsedScript& input, const Track& track, const ScriptEvaluationOptions& options)
 {
-    return evaluateImpl(input, track);
+    return evaluateImpl(input, track, options);
 }
 
-QString ScriptRuntime::evaluate(const ParsedScript& input, const TrackList& tracks)
+QString ScriptRuntime::evaluate(const ParsedScript& input, const TrackList& tracks,
+                                const ScriptEvaluationOptions& options)
 {
-    return evaluateImpl(input, tracks);
+    return evaluateImpl(input, tracks, options);
 }
 
-QString ScriptRuntime::evaluate(const ParsedScript& input, const Playlist& playlist)
+QString ScriptRuntime::evaluate(const ParsedScript& input, const Playlist& playlist,
+                                const ScriptEvaluationOptions& options)
 {
-    return evaluateImpl(input, playlist);
+    return evaluateImpl(input, playlist, options);
 }
 
 template <typename Tracks>
-QString ScriptRuntime::evaluateImpl(const ParsedScript& input, const Tracks& tracks)
+QString ScriptRuntime::evaluateImpl(const ParsedScript& input, const Tracks& tracks,
+                                    const ScriptEvaluationOptions& options)
 {
-    if(!input.isValid()) {
+    if(!input.isValid() || !m_registry->beginOperation()) {
         return {};
     }
+
+    const auto evaluation = scopeGuard([this]() { m_registry->endOperation(); });
+
+    const QScopedValueRollback evaluationOptions{m_evaluator.options, options};
+    const QScopedValueRollback missingVariableText{m_missingVariableText, options.missingVariableText};
 
     const BoundScript& bound = bind(input);
     if(!bound.isValid()) {
@@ -1672,23 +1869,23 @@ QString ScriptRuntime::evaluateImpl(const ParsedScript& input, const Tracks& tra
                 m_currentResult.push_back(evalExpr.value);
             }
             else {
-                std::ranges::transform(m_currentResult, m_currentResult.begin(),
-                                       [&](const QString& retValue) -> QString { return retValue + evalExpr.value; });
+                for(auto& result : m_currentResult) {
+                    result.append(evalExpr.value);
+                }
             }
         }
     }
 
+    QString result;
     if(m_currentResult.size() == 1) {
         // Calling join on a QStringList with a single empty string will return a null QString, so return the first
         // result.
-        return m_currentResult.constFirst();
+        result = m_currentResult.constFirst();
     }
-
-    if(m_currentResult.size() > 1) {
-        return m_currentResult.join(QLatin1String{Constants::UnitSeparator});
+    else if(m_currentResult.size() > 1) {
+        result = m_currentResult.join(QLatin1StringView{Constants::UnitSeparator});
     }
-
-    return {};
+    return result;
 }
 
 template <typename TrackListType, typename UpdateContext>
@@ -1696,9 +1893,11 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
                                            const ScriptSearchOptions& options, const ScriptContext& context,
                                            UpdateContext&& updateContext)
 {
-    if(!input.isValid()) {
+    if(!input.isValid() || !m_registry->beginOperation()) {
         return {};
     }
+
+    const auto evaluation = scopeGuard([this]() { m_registry->endOperation(); });
 
     const BoundScript bound = bind(input);
     if(!bound.isValid()) {
@@ -1712,6 +1911,27 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
     const bool wasQuery             = std::exchange(m_isQuery, false);
     const ParsedScript searchScript = useSearchScript ? parse(options.script) : ParsedScript{};
     m_isQuery                       = wasQuery;
+
+    ScriptPlaylistData row;
+    if(context.playlistData) {
+        row = *context.playlistData;
+    }
+
+    ScriptContext queryContext{context};
+    if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
+        queryContext.playlistData = &row;
+    }
+
+    const auto applyItemContext = [&](const auto& item) {
+        if(updateContext) {
+            updateContext(item);
+        }
+        if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
+            row.playlistId = item.playlistId;
+            row.entryId    = item.entryId;
+            row.trackIndex = item.indexInPlaylist;
+        }
+    };
 
     const auto literalMatches = [&](const auto& item, const QString& search, bool phraseMatch) {
         const Track& track = [&]() -> const Track& {
@@ -1730,13 +1950,11 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
             return false;
         }
 
-        if(updateContext) {
-            updateContext(item);
-        }
+        applyItemContext(item);
 
         const bool wasQueryEval = m_isQuery;
         m_isQuery               = false;
-        const QString text      = m_registry->withContext(context, [&] { return evaluate(searchScript, track); });
+        const QString text      = m_evaluator.withContext(queryContext, [&] { return evaluate(searchScript, track); });
         m_isQuery               = wasQueryEval;
         return TrackQueryFilter::matchesSearch(text, search, options.mode, phraseMatch);
     };
@@ -1750,7 +1968,7 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
                 return literalMatches(track, search, firstExpr.type == Expr::QuotedLiteral);
             });
         }
-        else if(!isQueryExpression(firstExpr.type)) {
+        else if(!Expr::isQueryExpression(firstExpr.type)) {
             return {};
         }
     }
@@ -1764,12 +1982,15 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
                     return literalMatches(track, search, expr.type == Expr::QuotedLiteral);
                 }
 
-                if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
-                    return evalExpression(expr, track.track).cond;
-                }
-                else {
-                    return evalExpression(expr, track).cond;
-                }
+                applyItemContext(track);
+                return m_evaluator.withContext(queryContext, [&] {
+                    if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
+                        return evalExpression(expr, track.track).cond;
+                    }
+                    else {
+                        return evalExpression(expr, track).cond;
+                    }
+                });
             });
 
             if(matches) {
@@ -1779,7 +2000,7 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
     }
 
     if(!m_sortScript.isEmpty()) {
-        TrackSorter m_sorter;
+        TrackSorter sorter{context.libraries ? *context.libraries : LibraryInfoMap{}, m_registry};
         ParsedScript sort = parse(m_sortScript);
         if(sort.expressions.size() == 1) {
             auto& sortExpr = sort.expressions.front();
@@ -1788,10 +2009,10 @@ TrackListType ScriptRuntime::evaluateQuery(const ParsedScript& input, const Trac
             }
         }
         if constexpr(std::is_same_v<TrackListType, PlaylistTrackList>) {
-            filteredTracks = m_sorter.calcSortTracks(sort, filteredTracks, PlaylistTrack::extractor, m_sortOrder);
+            filteredTracks = sorter.calcSortTracks(sort, filteredTracks, PlaylistTrack::extractor, m_sortOrder);
         }
         else {
-            filteredTracks = m_sorter.calcSortTracks(sort, filteredTracks, m_sortOrder);
+            filteredTracks = sorter.calcSortTracks(sort, filteredTracks, m_sortOrder);
         }
     }
 
@@ -1923,7 +2144,7 @@ ScriptResult ScriptRuntime::compareDateRange(const BoundExpression& exp, const a
     const auto max = std::get<QString>(args.at(2).value).toLongLong();
 
     ScriptResult result;
-    result.cond = first.value() > min && first.value() < max;
+    result.cond = first.value() >= min && first.value() < max;
 
     return result;
 }
@@ -1935,10 +2156,16 @@ Expression ScriptRuntime::checkOperator(const Expression& expr)
     }
 
     switch(m_current.type) {
-        case TokenType::TokColon:
-            return relationalOperator(expr, Expr::Contains);
+        case TokenType::TokContains:
+            return containsOperator(expr);
+        case TokenType::TokStarts:
+            return textBoundaryOperator(expr, Expr::StartsWith);
+        case TokenType::TokEnds:
+            return textBoundaryOperator(expr, Expr::EndsWith);
         case TokenType::TokEquals:
             return relationalOperator(expr, Expr::Equals);
+        case TokenType::TokIn:
+            return inKeyword(expr);
         case TokenType::TokNot:
             return notKeyword(expr);
         case TokenType::TokAnd:
@@ -1963,6 +2190,8 @@ Expression ScriptRuntime::checkOperator(const Expression& expr)
             return timeKeyword(expr, Expr::Since);
         case TokenType::TokDuring:
             return duringKeyword(expr);
+        case TokenType::TokBetween:
+            return betweenKeyword(expr);
         default:
             break;
     }

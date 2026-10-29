@@ -27,7 +27,7 @@
 
 namespace Fooyin {
 class LibraryManager;
-class PlayerController;
+struct CorePluginContext;
 class TrackSelectionController;
 class ScriptEditorPrivate;
 
@@ -37,15 +37,15 @@ class FYGUI_EXPORT ScriptEditor : public QDialog
 
 public:
     ScriptEditor(LibraryManager* libraryManager, const Track& track, QWidget* parent = nullptr);
-    ScriptEditor(LibraryManager* libraryManager, TrackSelectionController* selectionController,
-                 PlayerController* playerController, QWidget* parent = nullptr);
+    ScriptEditor(const CorePluginContext& core, TrackSelectionController* selectionController,
+                 QWidget* parent = nullptr);
     explicit ScriptEditor(LibraryManager* libraryManager, QWidget* parent = nullptr);
     ScriptEditor(const QString& script, const Track& track, QWidget* parent = nullptr);
     explicit ScriptEditor(QWidget* parent = nullptr);
     ~ScriptEditor() override;
 
     static void openEditor(const QString& script, const std::function<void(const QString&)>& callback,
-                           const Track& track = {});
+                           const Track& track = {}, QWidget* parent = nullptr);
 
     [[nodiscard]] QSize sizeHint() const override;
 

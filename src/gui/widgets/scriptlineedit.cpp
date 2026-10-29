@@ -27,8 +27,13 @@
 
 #include <QAction>
 #include <QContextMenuEvent>
+#include <QHBoxLayout>
 #include <QIcon>
 #include <QMenu>
+#include <QResizeEvent>
+#include <QScrollBar>
+#include <QToolButton>
+#include <QToolTip>
 
 namespace Fooyin {
 ScriptLineEdit::ScriptLineEdit(QWidget* parent)
@@ -40,8 +45,10 @@ ScriptLineEdit::ScriptLineEdit(const QString& script, QWidget* parent)
 { }
 
 ScriptLineEdit::ScriptLineEdit(const QString& script, const Track& track, QWidget* parent)
-    : QLineEdit{script, parent}
+    : QLineEdit{parent}
 {
+    setScript(script);
+
     auto* openEditor = new QAction(tr("Open in script editor"), this);
     Gui::setThemeIcon(openEditor, Constants::Icons::ScriptEditor);
     QObject::connect(openEditor, &QAction::triggered, this, [this, track]() {
@@ -52,9 +59,18 @@ ScriptLineEdit::ScriptLineEdit(const QString& script, const Track& track, QWidge
                     setText(editedScript);
                 }
             },
-            track);
+            track, this);
     });
     addAction(openEditor, TrailingPosition);
+}
+
+void ScriptLineEdit::setScript(const QString& script)
+{
+    if(text() == script) {
+        return;
+    }
+    setText(script);
+    setCursorPosition(0);
 }
 
 ScriptTextEdit::ScriptTextEdit(QWidget* parent)
@@ -68,6 +84,8 @@ ScriptTextEdit::ScriptTextEdit(const QString& script, QWidget* parent)
 ScriptTextEdit::ScriptTextEdit(const QString& script, const Track& track, QWidget* parent)
     : QPlainTextEdit{script, parent}
     , m_openEditor{new QAction(tr("Open in script editor"), this)}
+    , m_toolArea{new QWidget(this)}
+    , m_toolAreaLayout{new QHBoxLayout(m_toolArea)}
 {
     Gui::setThemeIcon(m_openEditor, Constants::Icons::ScriptEditor);
     QObject::connect(m_openEditor, &QAction::triggered, this, [this, track]() {
@@ -78,8 +96,15 @@ ScriptTextEdit::ScriptTextEdit(const QString& script, const Track& track, QWidge
                     setText(editedScript);
                 }
             },
-            track);
+            track, this);
     });
+
+    m_toolAreaLayout->setContentsMargins(4, 0, 4, 0);
+    m_toolAreaLayout->addStretch();
+
+    m_toolArea->setAutoFillBackground(true);
+    m_toolArea->setBackgroundRole(QPalette::AlternateBase);
+    addToolAction(m_openEditor);
 }
 
 QString ScriptTextEdit::text() const
@@ -90,6 +115,64 @@ QString ScriptTextEdit::text() const
 void ScriptTextEdit::setText(const QString& text)
 {
     setPlainText(text);
+}
+
+void ScriptTextEdit::addToolAction(QAction* action)
+{
+    auto* button = new QToolButton(m_toolArea);
+    button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    button->setDefaultAction(action);
+    button->setAutoRaise(true);
+
+    int index{0};
+    while(index < m_toolAreaLayout->count() && !m_toolAreaLayout->itemAt(index)->spacerItem()) {
+        ++index;
+    }
+    m_toolAreaLayout->insertWidget(index, button);
+    m_toolArea->setFixedHeight(m_toolArea->sizeHint().height());
+    setViewportMargins(0, 0, 0, m_toolArea->height());
+}
+
+void ScriptTextEdit::addHint(const QString& hint)
+{
+    auto* button = new QToolButton(m_toolArea);
+    button->setText(tr("Script help"));
+    button->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    button->setAutoRaise(true);
+    button->setToolTip(hint);
+    Gui::setThemeIcon(button, Constants::Icons::Information);
+    QObject::connect(button, &QToolButton::clicked, button, [button]() {
+        QToolTip::showText(button->mapToGlobal(QPoint{0, button->height()}), button->toolTip(), button);
+    });
+
+    m_toolAreaLayout->addWidget(button);
+    m_toolArea->setFixedHeight(m_toolArea->sizeHint().height());
+    setViewportMargins(0, 0, 0, m_toolArea->height());
+}
+
+QSize ScriptTextEdit::sizeHint() const
+{
+    QSize hint = QPlainTextEdit::sizeHint();
+    hint.setHeight((3 * fontMetrics().lineSpacing()) + (2 * frameWidth()) + viewportMargins().bottom()
+                   + m_toolArea->height());
+    return hint;
+}
+
+QSize ScriptTextEdit::minimumSizeHint() const
+{
+    QSize hint = QPlainTextEdit::minimumSizeHint();
+    hint.setHeight((3 * fontMetrics().lineSpacing()) + (2 * frameWidth()) + viewportMargins().bottom()
+                   + m_toolArea->height());
+    return hint;
+}
+
+void ScriptTextEdit::changeEvent(QEvent* event)
+{
+    QPlainTextEdit::changeEvent(event);
+
+    if(event->type() == QEvent::ReadOnlyChange) {
+        m_openEditor->setDisabled(isReadOnly());
+    }
 }
 
 void ScriptTextEdit::contextMenuEvent(QContextMenuEvent* event)
@@ -103,6 +186,16 @@ void ScriptTextEdit::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(m_openEditor);
 
     menu->popup(event->globalPos());
+}
+
+void ScriptTextEdit::resizeEvent(QResizeEvent* event)
+{
+    QPlainTextEdit::resizeEvent(event);
+
+    const QRect rect          = contentsRect();
+    const int scrollbarHeight = horizontalScrollBar()->isVisible() ? horizontalScrollBar()->height() : 0;
+    m_toolArea->setGeometry(rect.x(), rect.bottom() + 1 - m_toolArea->height() - scrollbarHeight, rect.width(),
+                            m_toolArea->height());
 }
 
 ScriptComboBox::ScriptComboBox(QWidget* parent)

@@ -23,8 +23,6 @@
 #include "lyricssaver.h"
 #include "lyricswidget.h"
 
-#include <utils/settings/settingsmanager.h>
-
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Lyrics::Defaults {
@@ -40,6 +38,11 @@ QStringList searchTags()
     return values;
 }
 
+QString autoSearchSkipScript()
+{
+    return u"$if($stristr(%title%,instrumental),skip,)$if($stristr(%genre%,instrumental),skip,)$if($stristr(%genre%,classical),skip,)"_s;
+}
+
 QMargins margins()
 {
     return {20, 20, 20, 20};
@@ -47,8 +50,7 @@ QMargins margins()
 } // namespace Fooyin::Lyrics::Defaults
 
 namespace Fooyin::Lyrics {
-LyricsSettings::LyricsSettings(SettingsManager* settingsManager)
-    : m_settings{settingsManager}
+LyricsSettings::LyricsSettings()
 {
     qRegisterMetaType<QMargins>("QMargins");
     qRegisterMetaType<Fooyin::Lyrics::Colours>("Fooyin::Lyrics::Colours");

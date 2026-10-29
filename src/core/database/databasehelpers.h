@@ -28,6 +28,7 @@ class Track;
 
 namespace Database {
 using BindingsMap = std::map<QString, QVariant>;
+const QString& trackInsertStatement(bool ignoreDuplicates);
 BindingsMap trackBindings(const Track& track);
 } // namespace Database
 } // namespace Fooyin

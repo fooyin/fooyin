@@ -49,7 +49,6 @@ public:
                                   const std::set<Track>& selectedTracks) const override;
     [[nodiscard]] PlaylistTrackList searchSourceTracks(const PlaylistController* playlistController,
                                                        const MusicLibrary* library) const override;
-    void selectionChanged(PlaylistWidgetSessionHost& host) override;
 };
 
 class DetachedLibrarySession final : public DetachedSearchSession
@@ -66,5 +65,42 @@ public:
                                                        const MusicLibrary* library) const override;
     [[nodiscard]] bool canResetWithoutPlaylist() const override;
     [[nodiscard]] PlaylistAction::ActionOptions playbackOptions() const override;
+
+    void setupConnections(PlaylistWidgetSessionHost& host) override;
+};
+
+class DetachedTrackListSession : public DetachedSearchSession
+{
+public:
+    explicit DetachedTrackListSession(const TrackList& tracks);
+
+    [[nodiscard]] PlaylistWidget::ModeCapabilities capabilities() const override;
+    [[nodiscard]] TrackSelection selection(Playlist* currentPlaylist, const TrackList& tracks,
+                                           const std::set<int>& trackIndexes,
+                                           const PlaylistTrack& firstTrack) const override;
+    [[nodiscard]] bool canDequeue(const PlayerController* playerController, Playlist* currentPlaylist,
+                                  const std::set<int>& trackIndexes,
+                                  const std::set<Track>& selectedTracks) const override;
+    [[nodiscard]] PlaylistTrackList searchSourceTracks(const PlaylistController* playlistController,
+                                                       const MusicLibrary* library) const override;
+    void startPlayback(PlaylistWidgetSessionHost& host) const override;
+    void setupConnections(PlaylistWidgetSessionHost& host) override;
+    bool replaceTracks(PlaylistWidgetSessionHost& host, const TrackList& tracks) override;
+
+private:
+    [[nodiscard]] PlaylistTrack playingTrackForView(const PlaylistTrack& track) const;
+
+    PlaylistTrackList m_tracks;
+};
+
+class PlaylistPreviewSession final : public DetachedTrackListSession
+{
+public:
+    using DetachedTrackListSession::DetachedTrackListSession;
+
+    [[nodiscard]] PlaylistWidget::ModeCapabilities capabilities() const override;
+    void selectionChanged(PlaylistWidgetSessionHost& host) override;
+    void startPlayback(PlaylistWidgetSessionHost& host) const override;
+    void setupConnections(PlaylistWidgetSessionHost& host) override;
 };
 } // namespace Fooyin

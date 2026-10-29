@@ -23,10 +23,21 @@
 
 #include <QBasicTimer>
 
+#include <unordered_map>
+#include <vector>
+
 class QHeaderView;
 
 namespace Fooyin {
 class BaseView;
+
+struct ModelIndexHash
+{
+    size_t operator()(const QModelIndex& index) const noexcept
+    {
+        return qHash(index);
+    }
+};
 
 struct ExpandedTreeViewItem
 {
@@ -93,6 +104,7 @@ public:
     ExpandedTreeViewItem indexToListViewItem(const QModelIndex& index) const;
 
     int viewIndex(const QModelIndex& index) const;
+    void clearViewItems();
     void insertViewItems(int pos, int count, const ExpandedTreeViewItem& viewItem);
     bool hasVisibleChildren(const QModelIndex& parent) const;
     bool isIndexEnabled(const QModelIndex& index) const;
@@ -146,9 +158,9 @@ public:
     bool m_layingOutItems{false};
 
     mutable std::vector<ExpandedTreeViewItem> m_viewItems;
+    std::unordered_map<QModelIndex, int, ModelIndexHash> m_viewIndexes;
     mutable std::vector<int> m_itemOffsets;
     mutable bool m_itemOffsetsDirty{true};
-    mutable int m_lastViewedItem{0};
     int m_defaultItemHeight{20};
     int m_indent{0};
     int m_uniformHeightRole{-1};
@@ -158,6 +170,7 @@ public:
 
     mutable QBasicTimer m_delayedLayout;
     QPoint m_pressedPos;
+    bool m_canStartDrag{true};
     QPersistentModelIndex m_hoverIndex;
     QPoint m_dragPos;
     QRect m_dropIndicatorRect;

@@ -17,11 +17,17 @@
  *
  */
 
+#include <core/scripting/scriptparser.h>
+#include <core/scripting/scriptregistry.h>
+#include <core/track.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
 #include <gui/scripting/scriptformatterregistry.h>
+#include <gui/scripting/scriptreferenceentries.h>
 
 #include <gtest/gtest.h>
+
+#include <algorithm>
 
 using namespace Qt::StringLiterals;
 
@@ -31,6 +37,52 @@ class ScriptFormatterTest : public ::testing::Test
 protected:
     ScriptFormatter m_formattter;
 };
+
+TEST(ScriptReferenceTest, RegisteredMetadataAndAliasesReachTheEditor)
+{
+    ScriptRegistry registry;
+    ASSERT_TRUE(registry.registerVariable(makeScriptVariableDescriptor<[]() {
+        return u"value"_s;
+    }>(VariableKind::Generic, u"plugin_value"_s, u"Plugin"_s, u"Plugin variable"_s, {u"plugin_alias"_s})));
+    ASSERT_TRUE(registry.registerFunction(makeScriptFunctionDescriptor<[]() {
+        return u"value"_s;
+    }>(u"plugin_function"_s, u"$plugin_function(value)"_s, u"Plugin"_s, u"Plugin function"_s, {u"plugin_alias"_s})));
+    ASSERT_TRUE(registry.registerFunction(makeScriptFunctionDescriptor<[]() {
+        return u"value"_s;
+    }>(u"undocumented"_s)));
+    registry.finalise();
+
+    const auto entries   = scriptReferenceEntries(registry);
+    const auto findEntry = [&entries](const QString& insertion) {
+        return std::ranges::find(entries, insertion, &ScriptReferenceEntry::insertText);
+    };
+    for(const auto& name : {u"%plugin_value%"_s, u"%plugin_alias%"_s}) {
+        const auto entry = findEntry(name);
+        ASSERT_NE(entries.end(), entry);
+        EXPECT_EQ(name, entry->label);
+        EXPECT_EQ(u"Plugin", entry->category);
+        EXPECT_EQ(u"Plugin variable", entry->description);
+    }
+    for(const auto& name : {u"plugin_function"_s, u"plugin_alias"_s}) {
+        const auto entry = findEntry(u"$%1()"_s.arg(name));
+        ASSERT_NE(entries.end(), entry);
+        EXPECT_EQ(u"$%1(value)"_s.arg(name), entry->label);
+        EXPECT_EQ(u"Plugin", entry->category);
+        EXPECT_EQ(u"Plugin function", entry->description);
+    }
+    const auto cut = findEntry(u"$cut()"_s);
+    ASSERT_NE(entries.end(), cut);
+    EXPECT_EQ(u"$cut(text,count)", cut->label);
+    EXPECT_FALSE(cut->description.isEmpty());
+    const auto trackNumber = findEntry(u"%tracknumber%"_s);
+    ASSERT_NE(entries.end(), trackNumber);
+    EXPECT_EQ(u"Track number", trackNumber->description);
+    const auto undocumented = findEntry(u"$undocumented()"_s);
+    ASSERT_NE(entries.end(), undocumented);
+    EXPECT_EQ(u"$undocumented()", undocumented->label);
+    EXPECT_EQ(u"Plugins", undocumented->category);
+    EXPECT_TRUE(undocumented->description.isEmpty());
+}
 
 TEST_F(ScriptFormatterTest, NoFormat)
 {
@@ -45,6 +97,18 @@ TEST_F(ScriptFormatterTest, Bold)
     const auto result = m_formattter.evaluate(u"<b>I</b> am a test."_s);
     ASSERT_EQ(2, result.size());
     EXPECT_TRUE(result.blocks.front().format.font.bold());
+    EXPECT_FALSE(result.blocks.back().format.font.bold());
+}
+
+TEST_F(ScriptFormatterTest, LineLeadingSlashesAreText)
+{
+    const auto result = m_formattter.evaluate(u"//<b>text</b>"_s);
+
+    ASSERT_EQ(2, result.size());
+    EXPECT_EQ(u"//"_s, result.blocks.front().text);
+    EXPECT_FALSE(result.blocks.front().format.font.bold());
+    EXPECT_EQ(u"text"_s, result.blocks.back().text);
+    EXPECT_TRUE(result.blocks.back().format.font.bold());
 }
 
 TEST_F(ScriptFormatterTest, Italic)
@@ -52,6 +116,31 @@ TEST_F(ScriptFormatterTest, Italic)
     const auto result = m_formattter.evaluate(u"<i>I</i> am a test."_s);
     ASSERT_EQ(2, result.size());
     EXPECT_TRUE(result.blocks.front().format.font.italic());
+}
+
+TEST_F(ScriptFormatterTest, Underline)
+{
+    const auto result = m_formattter.evaluate(u"<u>I</u> am a test."_s);
+    ASSERT_EQ(2, result.size());
+    EXPECT_TRUE(result.blocks.front().format.font.underline());
+    EXPECT_FALSE(result.blocks.back().format.font.underline());
+}
+
+TEST_F(ScriptFormatterTest, StrikeOut)
+{
+    const auto result = m_formattter.evaluate(u"<s>I</s> am a test."_s);
+    ASSERT_EQ(2, result.size());
+    EXPECT_TRUE(result.blocks.front().format.font.strikeOut());
+    EXPECT_FALSE(result.blocks.back().format.font.strikeOut());
+}
+
+TEST_F(ScriptFormatterTest, CombinedTextDecorations)
+{
+    const auto result = m_formattter.evaluate(u"<u><s>test</s></u>"_s);
+    ASSERT_EQ(1, result.size());
+    EXPECT_TRUE(result.blocks.front().format.font.underline());
+    EXPECT_TRUE(result.blocks.front().format.font.strikeOut());
+    EXPECT_TRUE(richTextToHtml(result).contains(u"text-decoration:underline line-through"_s));
 }
 
 TEST_F(ScriptFormatterTest, Rgb)
@@ -127,11 +216,96 @@ TEST_F(ScriptFormatterTest, AlphaBeforeColour)
     EXPECT_EQ(QColor(u"#b4123456"_s), resolvedRichTextColour(result.blocks.front().format, Qt::black));
 }
 
+TEST_F(ScriptFormatterTest, UnclosedOuterTagsRemainActiveAfterNestedTagCloses)
+{
+    QFont baseFont;
+    baseFont.setPointSize(10);
+    m_formattter.setBaseFont(baseFont);
+
+    const auto result = m_formattter.evaluate(u"<b><color=red><sized=4>test</sized>   abc"_s);
+
+    ASSERT_EQ(2, result.size());
+    EXPECT_EQ(u"test"_s, result.blocks.at(0).text);
+    EXPECT_TRUE(result.blocks.at(0).format.font.bold());
+    EXPECT_EQ(QColor(u"red"_s), result.blocks.at(0).format.colour.colour);
+    EXPECT_EQ(14, result.blocks.at(0).format.font.pointSize());
+
+    EXPECT_EQ(u"   abc"_s, result.blocks.at(1).text);
+    EXPECT_TRUE(result.blocks.at(1).format.font.bold());
+    EXPECT_EQ(QColor(u"red"_s), result.blocks.at(1).format.colour.colour);
+    EXPECT_EQ(10, result.blocks.at(1).format.font.pointSize());
+}
+
+TEST_F(ScriptFormatterTest, NestedTagRestoresOuterFormatting)
+{
+    const auto result = m_formattter.evaluate(u"<b>before <i>inner</i> after</b> plain"_s);
+
+    ASSERT_EQ(4, result.size());
+    EXPECT_TRUE(result.blocks.at(0).format.font.bold());
+    EXPECT_FALSE(result.blocks.at(0).format.font.italic());
+    EXPECT_TRUE(result.blocks.at(1).format.font.bold());
+    EXPECT_TRUE(result.blocks.at(1).format.font.italic());
+    EXPECT_TRUE(result.blocks.at(2).format.font.bold());
+    EXPECT_FALSE(result.blocks.at(2).format.font.italic());
+    EXPECT_FALSE(result.blocks.at(3).format.font.bold());
+    EXPECT_FALSE(result.blocks.at(3).format.font.italic());
+}
+
+TEST_F(ScriptFormatterTest, NestedOverrideRestoresOuterValue)
+{
+    const auto result = m_formattter.evaluate(u"<color=red>red <color=blue>blue</color> red</color> base"_s);
+
+    ASSERT_EQ(4, result.size());
+    EXPECT_EQ(QColor(u"red"_s), result.blocks.at(0).format.colour.colour);
+    EXPECT_EQ(QColor(u"blue"_s), result.blocks.at(1).format.colour.colour);
+    EXPECT_EQ(QColor(u"red"_s), result.blocks.at(2).format.colour.colour);
+    EXPECT_FALSE(result.blocks.at(3).format.colour.isExplicit());
+}
+
 TEST_F(ScriptFormatterTest, EscapedLeftAngle)
 {
     const auto result = m_formattter.evaluate(u"\\<A"_s);
     ASSERT_EQ(1, result.size());
     EXPECT_EQ(u"<A"_s, result.blocks.front().text);
+}
+
+TEST_F(ScriptFormatterTest, EscapedBackslash)
+{
+    const auto result = m_formattter.evaluate(uR"(C:\\Music)"_s);
+    ASSERT_EQ(1, result.size());
+    EXPECT_EQ(uR"(C:\Music)"_s, result.blocks.front().text);
+}
+
+TEST_F(ScriptFormatterTest, LiteralBackslashes)
+{
+    const auto result = m_formattter.evaluate(uR"(C:\Music\Track.flac\)"_s);
+    ASSERT_EQ(1, result.size());
+    EXPECT_EQ(uR"(C:\Music\Track.flac\)"_s, result.blocks.front().text);
+}
+
+TEST_F(ScriptFormatterTest, MetadataSeparatorsCanContainFormatting)
+{
+    ScriptRegistry registry;
+    registry.finalise();
+    ScriptParser parser{&registry};
+    const ScriptEvaluationOptions options{.escapeRichText = true};
+    Track track;
+    track.setArtists({uR"(first\)"_s, uR"(<b>second</b>\)"_s, uR"(third\\)"_s});
+
+    const QString script = u"$meta_sep(artist,<rgb=1,2,3> / </rgb>,<rgb=4,5,6> and </rgb>)"_s;
+    const auto result    = m_formattter.evaluate(parser.evaluate(script, track, {}, options));
+    ASSERT_EQ(5, result.size());
+    EXPECT_EQ(track.artists().at(0), result.blocks.at(0).text);
+    EXPECT_EQ(u" / "_s, result.blocks.at(1).text);
+    EXPECT_EQ(QColor(1, 2, 3), result.blocks.at(1).format.colour.colour);
+    EXPECT_EQ(track.artists().at(1), result.blocks.at(2).text);
+    EXPECT_EQ(u" and "_s, result.blocks.at(3).text);
+    EXPECT_EQ(QColor(4, 5, 6), result.blocks.at(3).format.colour.colour);
+    EXPECT_EQ(track.artists().at(2), result.blocks.at(4).text);
+    EXPECT_FALSE(result.blocks.at(0).format.font.bold());
+    EXPECT_FALSE(result.blocks.at(2).format.font.bold());
+    EXPECT_EQ(uR"(first\<rgb=1,2,3> / </rgb><b>second</b>\<rgb=4,5,6> and </rgb>third\\)"_s,
+              parser.evaluate(script, track));
 }
 
 TEST_F(ScriptFormatterTest, Link)
@@ -141,5 +315,114 @@ TEST_F(ScriptFormatterTest, Link)
     EXPECT_EQ(u"Example"_s, result.blocks.front().text);
     EXPECT_EQ(u"https://example.com"_s, result.blocks.front().format.link);
     EXPECT_TRUE(result.blocks.front().format.font.underline());
+}
+
+TEST_F(ScriptFormatterTest, LiteralAngleBrackets)
+{
+    const auto result = m_formattter.evaluate(u"a < b > c"_s);
+    EXPECT_EQ(u"a < b > c"_s, result.joinedText());
+}
+
+TEST_F(ScriptFormatterTest, LiteralLessThanNumber)
+{
+    const auto result = m_formattter.evaluate(u"I <3 this"_s);
+    EXPECT_EQ(u"I <3 this"_s, result.joinedText());
+}
+
+TEST_F(ScriptFormatterTest, UnknownTagIsLiteral)
+{
+    const auto result = m_formattter.evaluate(u"<notatag>rest</notatag>"_s);
+    EXPECT_EQ(u"<notatag>rest</notatag>"_s, result.joinedText());
+}
+
+TEST_F(ScriptFormatterTest, IncompleteTagIsLiteral)
+{
+    const auto result = m_formattter.evaluate(u"an incomplete <b tag"_s);
+    EXPECT_EQ(u"an incomplete <b tag"_s, result.joinedText());
+}
+
+TEST_F(ScriptFormatterTest, KnownTagWithInvalidOptionStillRendersText)
+{
+    const auto result = m_formattter.evaluate(u"<size=large>text</size>"_s);
+
+    ASSERT_EQ(1, result.size());
+    EXPECT_EQ(u"text"_s, result.blocks.front().text);
+    EXPECT_FALSE(m_formattter.errors().empty());
+}
+
+TEST_F(ScriptFormatterTest, LiteralAngleBracketsDoNotReportErrors)
+{
+    m_formattter.evaluate(u"I <3 this; a < b > c; <notatag>"_s);
+    EXPECT_TRUE(m_formattter.errors().empty());
+}
+
+TEST_F(ScriptFormatterTest, ErrorsAreClearedBeforeEvaluation)
+{
+    m_formattter.evaluate(u"<size=large>text</size>"_s);
+    ASSERT_FALSE(m_formattter.errors().empty());
+
+    m_formattter.evaluate({});
+    EXPECT_TRUE(m_formattter.errors().empty());
+}
+
+TEST_F(ScriptFormatterTest, LiteralBeforeFormattingTag)
+{
+    const auto result = m_formattter.evaluate(u"I <3 <b>this</b>"_s);
+
+    ASSERT_EQ(2, result.size());
+    EXPECT_EQ(u"I <3 "_s, result.blocks.front().text);
+    EXPECT_FALSE(result.blocks.front().format.font.bold());
+    EXPECT_EQ(u"this"_s, result.blocks.back().text);
+    EXPECT_TRUE(result.blocks.back().format.font.bold());
+}
+
+TEST_F(ScriptFormatterTest, LiteralInsideFormattingTag)
+{
+    const auto result = m_formattter.evaluate(u"<b>I <3 this</b>"_s);
+
+    ASSERT_EQ(1, result.size());
+    EXPECT_EQ(u"I <3 this"_s, result.blocks.front().text);
+    EXPECT_TRUE(result.blocks.front().format.font.bold());
+}
+
+TEST_F(ScriptFormatterTest, KeywordWordsAreLiteral)
+{
+    const auto result = m_formattter.evaluate(u"<LESS> 5 LESS than 6 GREATER"_s);
+    EXPECT_EQ(u"<LESS> 5 LESS than 6 GREATER"_s, result.joinedText());
+}
+
+TEST_F(ScriptFormatterTest, KeywordWordsCannotCloseTag)
+{
+    const auto result = m_formattter.evaluate(u"<b>LESS/b GREATER</b>"_s);
+
+    ASSERT_EQ(1, result.size());
+    EXPECT_EQ(u"LESS/b GREATER"_s, result.blocks.front().text);
+    EXPECT_TRUE(result.blocks.front().format.font.bold());
+}
+
+TEST_F(ScriptFormatterTest, AlignmentScopesCloseUnclosedFormatting)
+{
+    const auto result = m_formattter.evaluate(u"<left><b><color=red>Title</left><right>Duration</right>"_s);
+    ASSERT_EQ(2, result.size());
+    EXPECT_EQ(u"TitleDuration"_s, result.joinedText());
+    EXPECT_TRUE(result.blocks.front().format.font.bold());
+    EXPECT_EQ(QColor(Qt::red), result.blocks.front().format.colour.colour);
+    EXPECT_EQ(RichAlignment::Left, result.blocks.front().format.alignment);
+    EXPECT_FALSE(result.blocks.back().format.font.bold());
+    EXPECT_FALSE(result.blocks.back().format.colour.isExplicit());
+    EXPECT_EQ(RichAlignment::Right, result.blocks.back().format.alignment);
+    EXPECT_TRUE(m_formattter.errors().empty());
+}
+
+TEST_F(ScriptFormatterTest, AlignmentTextPreservesFormattingAndLineBreaks)
+{
+    const auto result = m_formattter.evaluate(u"<b>Title</b>\nArtist<right><i>Duration\nCount</i></right>"_s);
+    const auto left   = richTextForAlignment(result, RichAlignment::Left);
+    const auto right  = richTextForAlignment(result, RichAlignment::Right);
+    EXPECT_EQ(u"Title\nArtist"_s, left.joinedText());
+    EXPECT_EQ(u"Duration\nCount"_s, right.joinedText());
+    EXPECT_TRUE(left.blocks.front().format.font.bold());
+    EXPECT_TRUE(right.blocks.front().format.font.italic());
+    EXPECT_EQ(RichAlignment::Left, right.blocks.front().format.alignment);
 }
 } // namespace Fooyin::Testing

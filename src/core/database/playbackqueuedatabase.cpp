@@ -28,7 +28,8 @@ namespace Fooyin {
 std::vector<PlaybackQueueInfo> PlaybackQueueDatabase::queue() const
 {
     static const QString statement
-        = u"SELECT TrackID, PlaylistID, PlaylistTrackIndex FROM PlaybackQueue ORDER BY QueueIndex;"_s;
+        = u"SELECT QueueIndex, TrackID, PlaylistID, PlaylistTrackIndex, Origin, SourceOrder, IsCurrent "
+          "FROM PlaybackQueue ORDER BY QueueIndex;"_s;
 
     DbQuery query{db(), statement};
     if(!query.exec()) {
@@ -39,9 +40,13 @@ std::vector<PlaybackQueueInfo> PlaybackQueueDatabase::queue() const
 
     while(query.next()) {
         PlaybackQueueInfo item;
-        item.trackId            = query.value(0).toInt();
-        item.playlistDbId       = query.value(1).isNull() ? -1 : query.value(1).toInt();
-        item.playlistTrackIndex = query.value(2).toInt();
+        item.queueIndex         = query.value(0).toInt();
+        item.trackId            = query.value(1).toInt();
+        item.playlistDbId       = query.value(2).isNull() ? -1 : query.value(2).toInt();
+        item.playlistTrackIndex = query.value(3).toInt();
+        item.origin             = query.value(4).toInt();
+        item.sourceOrder        = query.value(5).toInt();
+        item.isCurrent          = query.value(6).toBool();
         queue.emplace_back(item);
     }
 
@@ -59,15 +64,20 @@ bool PlaybackQueueDatabase::replaceQueue(const std::vector<PlaybackQueueInfo>& q
         return false;
     }
 
-    static const QString statement = u"INSERT INTO PlaybackQueue (QueueIndex, TrackID, PlaylistID, PlaylistTrackIndex) "
-                                     "VALUES (:queueIndex, :trackId, :playlistId, :playlistTrackIndex);"_s;
+    static const QString statement
+        = u"INSERT INTO PlaybackQueue "
+          "(QueueIndex, TrackID, PlaylistID, PlaylistTrackIndex, Origin, SourceOrder, IsCurrent) "
+          "VALUES (:queueIndex, :trackId, :playlistId, :playlistTrackIndex, :origin, :sourceOrder, :isCurrent);"_s;
 
+    DbQuery query{db(), statement};
     for(int i{0}; const auto& item : queue) {
-        DbQuery query{db(), statement};
         query.bindValue(u":queueIndex"_s, i++);
         query.bindValue(u":trackId"_s, item.trackId);
         query.bindValue(u":playlistId"_s, item.playlistDbId >= 0 ? item.playlistDbId : QVariant{});
         query.bindValue(u":playlistTrackIndex"_s, item.playlistTrackIndex);
+        query.bindValue(u":origin"_s, item.origin);
+        query.bindValue(u":sourceOrder"_s, item.sourceOrder);
+        query.bindValue(u":isCurrent"_s, item.isCurrent);
 
         if(!query.exec()) {
             return false;

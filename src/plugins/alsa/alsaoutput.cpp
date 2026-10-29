@@ -21,6 +21,8 @@
 
 #include "alsasettings.h"
 
+#include <utils/timeconstants.h>
+
 #include <alsa/asoundlib.h>
 
 #include <QDebug>
@@ -580,25 +582,38 @@ bool AlsaOutput::initAlsa()
         return false;
     }
 
-    uint32_t bufferTime
-        = std::min<uint32_t>(m_settings.value(BufferLengthSetting, DefaultBufferLength).toUInt() * 1000, maxBufferTime);
-    err = snd_pcm_hw_params_set_buffer_time_near(handle, hwParams, &bufferTime, nullptr);
+    uint32_t bufferTime = std::min<uint32_t>(m_settings.value(BufferLengthSetting, DefaultBufferLength).toUInt()
+                                                 * static_cast<uint32_t>(Time::UsPerMs),
+                                             maxBufferTime);
+    err                 = snd_pcm_hw_params_set_buffer_time_near(handle, hwParams, &bufferTime, nullptr);
     if(checkError(err, "Unable to set buffer time")) {
         return false;
     }
-    uint32_t periodTime
-        = std::min<uint32_t>(m_settings.value(PeriodLengthSetting, DefaultPeriodLength).toUInt() * 1000, maxPeriodTime);
-    err = snd_pcm_hw_params_set_period_time_near(handle, hwParams, &periodTime, nullptr);
+    uint32_t periodTime = std::min<uint32_t>(m_settings.value(PeriodLengthSetting, DefaultPeriodLength).toUInt()
+                                                 * static_cast<uint32_t>(Time::UsPerMs),
+                                             maxPeriodTime);
+    err                 = snd_pcm_hw_params_set_period_time_near(handle, hwParams, &periodTime, nullptr);
     if(checkError(err, "Unable to set period time")) {
         return false;
     }
 
-    m_bufferSize = m_format.framesForDuration(bufferTime / 1000);
-    m_periodSize = m_format.framesForDuration(periodTime / 1000);
+    m_bufferSize = m_format.framesForDuration(bufferTime / static_cast<uint32_t>(Time::UsPerMs));
+    m_periodSize = m_format.framesForDuration(periodTime / static_cast<uint32_t>(Time::UsPerMs));
 
     err = snd_pcm_hw_params(handle, hwParams);
     if(checkError(err, "Failed to apply hardware parameters")) {
         return false;
+    }
+
+    if(ALSA().isDebugEnabled()) {
+        snd_pcm_uframes_t bufferFrames{0};
+        snd_pcm_uframes_t periodFrames{0};
+        if(snd_pcm_get_params(handle, &bufferFrames, &periodFrames) >= 0) {
+            qCDebug(ALSA) << "Negotiated ALSA output:" << "device=" << m_device
+                          << "pcmType=" << snd_pcm_type_name(snd_pcm_type(handle))
+                          << "sampleRate=" << m_format.sampleRate() << "channels=" << m_format.channelCount()
+                          << "bufferFrames=" << bufferFrames << "periodFrames=" << periodFrames;
+        }
     }
 
     snd_pcm_sw_params_t* swParams;

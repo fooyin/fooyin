@@ -32,6 +32,7 @@
 #include <utils/utils.h>
 
 #include <QAction>
+#include <QMainWindow>
 #include <QMenu>
 
 using namespace Qt::StringLiterals;
@@ -79,12 +80,22 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     viewMenu->addAction(showPlaylistManagerCmd);
     QObject::connect(showPlaylistManager, &QAction::triggered, this, &ViewMenu::openPlaylistManager);
 
+    auto* showLibraryTree = new QAction(tr("&Library Tree"), this);
+    showLibraryTree->setStatusTip(tr("Open the library tree window"));
+    auto* showLibraryTreeCmd = m_actionManager->registerAction(showLibraryTree, Constants::Actions::LibraryTree);
+    showLibraryTreeCmd->setCategories(viewCategory);
+    viewMenu->addAction(showLibraryTreeCmd);
+    QObject::connect(showLibraryTree, &QAction::triggered, this, &ViewMenu::openLibraryTree);
+
     auto* showPlaybackQueue = new QAction(tr("Playback &Queue"), this);
     showPlaybackQueue->setStatusTip(tr("Open the playback queue window"));
     auto* showPlaybackQueueCmd = m_actionManager->registerAction(showPlaybackQueue, Constants::Actions::PlaybackQueue);
     showPlaybackQueueCmd->setCategories(viewCategory);
     viewMenu->addAction(showPlaybackQueueCmd);
     QObject::connect(showPlaybackQueue, &QAction::triggered, this, &ViewMenu::openPlaybackQueue);
+
+    viewMenu->addSeparator(Actions::Groups::Three);
+    viewMenu->addMenu(m_actionManager->actionContainer(Constants::Menus::Visualisations), Actions::Groups::Three);
 
     auto* separator   = viewMenu->addSeparator(Actions::Groups::Three);
     m_dspInsertBefore = separator->action();
@@ -135,11 +146,8 @@ void ViewMenu::registerDspSettingsActions(DspSettingsRegistry* registry, DspSett
         command->setDescription(provider->viewMenuText());
         command->setCategories(viewCategory);
 
-        QObject::connect(action, &QAction::triggered, this, [controller, dspId]() {
-            if(controller->hasDsp(dspId)) {
-                controller->showDialog(dspId);
-            }
-        });
+        QObject::connect(action, &QAction::triggered, this,
+                         [controller, dspId]() { controller->showDialog(dspId, Utils::getMainWindow()); });
 
         m_registeredDspActions.insert(dspId);
         m_dspActions.emplace(dspId, command);
@@ -168,12 +176,7 @@ void ViewMenu::refreshDspSettingsActions(DspSettingsController* controller)
             continue;
         }
 
-        if(controller->hasDsp(dspId)) {
-            viewMenu->insertAction(m_dspInsertBefore, action);
-        }
-        else {
-            viewMenu->menu()->removeAction(action);
-        }
+        viewMenu->insertAction(m_dspInsertBefore, action);
     }
 }
 } // namespace Fooyin

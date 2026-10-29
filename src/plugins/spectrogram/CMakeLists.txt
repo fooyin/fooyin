@@ -1,0 +1,21 @@
+create_fooyin_plugin_internal(
+    spectrogram
+    DEPENDS Fooyin::Gui
+    SOURCES
+        livespectrogramview.cpp
+        livespectrogramview.h
+        spectrogramconfig.h
+        spectrogramconfigwidget.cpp
+        spectrogramconfigwidget.h
+        spectrogramgenerator.cpp
+        spectrogramgenerator.h
+        spectrogramplugin.cpp
+        spectrogramplugin.h
+        spectrogramseekbar.cpp
+        spectrogramseekbar.h
+        spectrogramutils.cpp
+        spectrogramutils.h
+        spectrogramview.h
+        spectrogramwidget.cpp
+        spectrogramwidget.h
+)

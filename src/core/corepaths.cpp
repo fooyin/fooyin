@@ -26,6 +26,7 @@
 
 #include <QCoreApplication>
 #include <QDir>
+#include <QStandardPaths>
 
 using namespace Qt::StringLiterals;
 
@@ -49,18 +50,45 @@ QStringList pluginPaths()
 {
     QStringList paths;
 
+    const auto appendPath = [&paths](const QString& path) {
+        const QString cleanPath = Utils::File::cleanPath(path);
+        if(!cleanPath.isEmpty() && !paths.contains(cleanPath)) {
+            paths.append(cleanPath);
+        }
+    };
+
     const QDir appPath{QCoreApplication::applicationDirPath()};
 
-    paths.append(Utils::File::cleanPath(appPath.absolutePath() + u"/"_s + QString::fromLatin1(RELATIVE_PLUGIN_PATH)));
-    paths.append(Utils::File::cleanPath(appPath.absolutePath() + u"/plugins"_s));
-    paths.append(userPluginsPath());
+    appendPath(appPath.absolutePath() + u"/"_s + QString::fromLatin1(RELATIVE_PLUGIN_PATH));
+    appendPath(appPath.absolutePath() + u"/plugins"_s);
+
+    const QStringList environmentPaths
+        = qEnvironmentVariable("FOOYIN_PLUGIN_PATH").split(QDir::listSeparator(), Qt::SkipEmptyParts);
+    for(const QString& path : environmentPaths) {
+        appendPath(path);
+    }
+
+    appendPath(userPluginsPath());
 
     return paths;
 }
 
 QString userPluginsPath()
 {
-    return Utils::createPath(QDir::cleanPath(u"%1/.local/lib/fooyin/plugins/"_s.arg(QDir::homePath())));
+#ifdef Q_OS_WIN
+    if(Utils::isPortable()) {
+        const QDir appPath{QCoreApplication::applicationDirPath()};
+        return Utils::createPath(Utils::File::cleanPath(appPath.absolutePath() + u"/plugins"_s));
+    }
+    return Utils::createPath(
+        Utils::File::cleanPath(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)) + u"/plugins"_s);
+#else
+    if(Utils::isFlatpak()) {
+        return Utils::createPath(Utils::File::cleanPath(
+            u"%1/.var/app/org.fooyin.fooyin/.local/lib/fooyin/plugins/"_s.arg(QDir::homePath())));
+    }
+    return Utils::createPath(Utils::File::cleanPath(u"%1/.local/lib/fooyin/plugins/"_s.arg(QDir::homePath())));
+#endif
 }
 
 QString translationsPath()

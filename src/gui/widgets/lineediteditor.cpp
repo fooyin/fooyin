@@ -86,6 +86,11 @@ int LineEditEditor::labelWidth() const
     return m_label->minimumWidth();
 }
 
+int LineEditEditor::labelWidthHint() const
+{
+    return m_label->sizeHint().width();
+}
+
 void LineEditEditor::setLabelWidth(int width)
 {
     m_label->setMinimumWidth(width);

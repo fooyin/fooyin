@@ -30,29 +30,31 @@ using namespace Qt::StringLiterals;
 
 constexpr auto MessageSplit = R"lit(([^:]+): (.+))lit";
 
-namespace {
-QIcon iconForType(QtMsgType type)
-{
-    switch(type) {
-        case(QtDebugMsg):
-        case(QtInfoMsg):
-            return QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation);
-        case(QtWarningMsg):
-            return QApplication::style()->standardIcon(QStyle::SP_MessageBoxWarning);
-        case(QtCriticalMsg):
-        case(QtFatalMsg):
-            return QApplication::style()->standardIcon(QStyle::SP_MessageBoxCritical);
-        default:
-            return {};
-    }
-}
-} // namespace
-
 namespace Fooyin {
 LogModel::LogModel(QObject* parent)
     : QAbstractListModel{parent}
     , m_maxEntries{0}
-{ }
+{
+    refreshIcons();
+}
+
+void LogModel::refreshIcons()
+{
+    if(const auto* style = QApplication::style()) {
+        m_infoIcon     = style->standardIcon(QStyle::SP_MessageBoxInformation);
+        m_warningIcon  = style->standardIcon(QStyle::SP_MessageBoxWarning);
+        m_criticalIcon = style->standardIcon(QStyle::SP_MessageBoxCritical);
+    }
+    else {
+        m_infoIcon     = {};
+        m_warningIcon  = {};
+        m_criticalIcon = {};
+    }
+
+    if(!m_items.empty()) {
+        Q_EMIT dataChanged(index(0, Level), index(rowCount({}) - 1, Level), {Qt::DecorationRole});
+    }
+}
 
 void LogModel::addEntry(ConsoleEntry entry)
 {
@@ -134,18 +136,21 @@ int LogModel::getMaxEntries() const
     return m_maxEntries;
 }
 
-QString LogModel::typeToString(QtMsgType type)
+QString LogModel::typeToString(QtMsgType type, const QString& category)
 {
     switch(type) {
-        case(QtDebugMsg):
+        case QtDebugMsg:
+            if(category.startsWith("fy.trace."_L1)) {
+                return u"Trace"_s;
+            }
             return u"Debug"_s;
-        case(QtInfoMsg):
+        case QtInfoMsg:
             return u"Info"_s;
-        case(QtWarningMsg):
+        case QtWarningMsg:
             return u"Warning"_s;
-        case(QtCriticalMsg):
+        case QtCriticalMsg:
             return u"Critical"_s;
-        case(QtFatalMsg):
+        case QtFatalMsg:
             return u"Fatal"_s;
         default:
             return {};
@@ -167,6 +172,9 @@ std::deque<ConsoleEntry> LogModel::entries()
 QVariant LogModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if(role == Qt::TextAlignmentRole) {
+        if(orientation == Qt::Horizontal && section == Message) {
+            return (Qt::AlignLeft | Qt::AlignVCenter).toInt();
+        }
         return Qt::AlignCenter;
     }
 
@@ -190,22 +198,33 @@ QVariant LogModel::data(const QModelIndex& index, int role) const
     auto const& item = m_items.at(row);
 
     switch(role) {
-        case(Qt::DisplayRole): {
+        case Qt::DisplayRole: {
             switch(column) {
-                case(Level):
-                    return typeToString(item.type);
-                case(Time):
+                case Level:
+                    return typeToString(item.type, item.category);
+                case Time:
                     return item.time;
-                case(Message):
+                case Message:
                     return item.message;
                 default:
                     break;
             }
             break;
         }
-        case(Qt::DecorationRole): {
+        case Qt::DecorationRole: {
             if(column == Level) {
-                return iconForType(item.type);
+                switch(item.type) {
+                    case QtDebugMsg:
+                    case QtInfoMsg:
+                        return m_infoIcon;
+                    case QtWarningMsg:
+                        return m_warningIcon;
+                    case QtCriticalMsg:
+                    case QtFatalMsg:
+                        return m_criticalIcon;
+                    default:
+                        break;
+                }
             }
             break;
         }

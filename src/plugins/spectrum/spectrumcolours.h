@@ -95,8 +95,7 @@ public:
         const QColor highlight       = palette.color(QPalette::Active, QPalette::Highlight);
         const QColor highlightedText = palette.color(QPalette::Active, QPalette::HighlightedText);
         const QColor window          = palette.color(QPalette::Active, QPalette::Window);
-        QColor low                   = blendColours(highlight, window, 0.55);
-        low.setAlpha(210);
+        const QColor low             = blendColours(highlight, window, 0.55);
 
         return {blendColours(highlight, highlightedText, 0.25), highlight, low};
     }
@@ -151,6 +150,13 @@ public:
         return blendColours(window, dark, 0.75);
     }
 
+    static QColor defaultGridColour(const QPalette& palette)
+    {
+        QColor colour = palette.color(QPalette::Active, QPalette::Text);
+        colour.setAlpha(65);
+        return colour;
+    }
+
     [[nodiscard]] QColor colour(Type type, const QPalette& palette) const
     {
         switch(type) {
@@ -163,11 +169,11 @@ public:
             case Type::Text:
                 return m_text.isValid() ? m_text : palette.color(QPalette::Text);
             case Type::HorizontalGrid:
-                return m_horizontalGrid.isValid() ? m_horizontalGrid : palette.color(QPalette::Mid);
+                return m_horizontalGrid.isValid() ? m_horizontalGrid : defaultGridColour(palette);
             case Type::VerticalGrid:
-                return m_verticalGrid.isValid() ? m_verticalGrid : palette.color(QPalette::Midlight);
+                return m_verticalGrid.isValid() ? m_verticalGrid : defaultGridColour(palette);
             case Type::OctaveGrid:
-                return m_octaveGrid.isValid() ? m_octaveGrid : palette.color(QPalette::Midlight);
+                return m_octaveGrid.isValid() ? m_octaveGrid : defaultGridColour(palette);
             case Type::WhiteKey:
                 return m_whiteKey.isValid() ? m_whiteKey : defaultWhiteKeyColour(palette);
             case Type::BlackKey:

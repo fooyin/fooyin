@@ -19,11 +19,10 @@
 
 #pragma once
 
+#include <QEvent>
 #include <QObject>
 #include <QPersistentModelIndex>
 #include <QTreeView>
-
-class QEvent;
 
 namespace Fooyin {
 class LibraryTreeView : public QTreeView
@@ -38,6 +37,7 @@ public:
 
 Q_SIGNALS:
     void middleClicked(const QModelIndex& index);
+    void displayAboutToChange();
     void displayChanged();
 
 protected:

@@ -22,6 +22,7 @@
 #include "settingscategory.h"
 
 #include <utils/id.h>
+#include <utils/settings/settingsdialogcontroller.h>
 
 #include <QByteArray>
 #include <QDialog>
@@ -30,11 +31,14 @@
 #include <set>
 
 class QDialogButtonBox;
+class QLineEdit;
 class QStackedLayout;
+class QVBoxLayout;
 class QModelIndex;
 
 namespace Fooyin {
 class SettingsModel;
+class SettingsFilterModel;
 class SimpleTreeView;
 
 class SettingsDialog : public QDialog
@@ -46,6 +50,8 @@ public:
 
     void openSettings();
     void openPage(const Id& id);
+
+    void setSearchBarPosition(SettingsDialogController::SearchBarPosition position);
 
     [[nodiscard]] Id currentPage() const;
     [[nodiscard]] QByteArray saveState() const;
@@ -67,7 +73,9 @@ private:
     void showCategory(const QModelIndex& index);
     void checkCategoryWidget(SettingsCategory* category);
     void currentChanged(const QModelIndex& current);
-    void currentTabChanged(int index);
+    void currentPageChanged(int index);
+    void filterPages(const QString& text);
+    void updateCategoryPages(SettingsCategory* category);
     SettingsPage* findPage(const Id& id);
     static QString categoryKey(const QModelIndex& index);
 
@@ -75,11 +83,19 @@ private:
     SimpleTreeView* m_categoryTree;
     QStackedLayout* m_stackedLayout;
     QDialogButtonBox* m_buttonBox;
+    SettingsFilterModel* m_filterModel;
+    QLineEdit* m_search;
+    QVBoxLayout* m_navigationLayout;
 
     PageList m_pages;
     std::set<SettingsPage*> m_visitedPages;
 
     Id m_currentCategory;
     Id m_currentPage;
+
+    Id m_pageBeforeSearch;
+    Id m_categoryBeforeSearch;
+    QByteArray m_stateBeforeSearch;
+    bool m_searchActive;
 };
 } // namespace Fooyin

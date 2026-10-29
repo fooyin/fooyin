@@ -23,6 +23,8 @@
 
 #include <QTabBar>
 
+#include <functional>
+
 class QStyleOptionTab;
 
 namespace Fooyin {
@@ -47,6 +49,7 @@ public:
 
     void setEditTitle(const QString& title);
     void setEditMode(EditMode mode);
+    void setEditTextProvider(std::function<QString(int)> provider);
 
 Q_SIGNALS:
     void middleClicked(int index);
@@ -64,6 +67,7 @@ protected:
 private:
     QString m_title;
     EditMode m_mode;
+    std::function<QString(int)> m_editTextProvider;
     PopupLineEdit* m_lineEdit;
     QPoint m_accumDelta;
     bool m_suppressHoverState;

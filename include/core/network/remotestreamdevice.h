@@ -25,6 +25,7 @@
 
 #include <chrono>
 #include <optional>
+#include <stop_token>
 
 namespace Fooyin {
 struct NetworkStreamMetadata
@@ -33,6 +34,9 @@ struct NetworkStreamMetadata
     QString streamGenre;
     QString streamTitle;
     QString streamUrl;
+    QString title;
+    QString artist;
+    QString album;
     int bitrateKbps{0};
     quint64 revision{0};
 };
@@ -48,6 +52,8 @@ public:
     [[nodiscard]] virtual qsizetype bufferedByteCount() const = 0;
     virtual void setNonBlockingReadsEnabled(bool enabled)     = 0;
     virtual void setReconnectOnFinishedEnabled(bool enabled);
+
+    virtual void setReadCancellationToken(std::stop_token token) = 0;
 
     [[nodiscard]] virtual bool shouldExposePathToDecoder() const;
     [[nodiscard]] virtual std::optional<NetworkStreamMetadata> remoteStreamMetadata() const;

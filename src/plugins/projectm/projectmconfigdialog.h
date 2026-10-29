@@ -42,6 +42,8 @@ public:
 protected:
     [[nodiscard]] ProjectMWidget::ConfigData config() const override;
     void setConfig(const ProjectMWidget::ConfigData& config) override;
+    void mergeExternalConfig(const ProjectMWidget::ConfigData& previous,
+                             const ProjectMWidget::ConfigData& current) override;
 
 private:
     void browsePresetDir();

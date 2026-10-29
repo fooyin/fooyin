@@ -22,6 +22,7 @@
 #include "radiobrowserutils.h"
 
 #include <core/network/networkutils.h>
+#include <utils/async.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QDnsLookup>
@@ -37,6 +38,7 @@
 #include <QUrlQuery>
 
 #include <array>
+#include <expected>
 #include <ranges>
 
 using namespace Qt::StringLiterals;
@@ -263,6 +265,7 @@ void RadioBrowserService::fetchRecentlyChanged(const int limit, const int offset
 
 void RadioBrowserService::fetchCategories(const RadioCategoryType type)
 {
+    ++m_categoryGenerations[type];
     if(const auto replyIt = m_categoryReplies.find(type); replyIt != m_categoryReplies.end() && replyIt->second) {
         QObject::disconnect(replyIt->second, nullptr, this, nullptr);
         replyIt->second->abort();
@@ -756,46 +759,57 @@ void RadioBrowserService::handleCategoriesReply(const RadioCategoryType type)
         m_apiIndex = contextIt->second.apiIndex;
     }
 
-    QJsonParseError parseError;
-    const QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
-    if(parseError.error != QJsonParseError::NoError || !doc.isArray()) {
-        const QString error = parseError.error != QJsonParseError::NoError ? parseError.errorString()
-                                                                           : tr("Unexpected response format.");
-        reply->deleteLater();
-        m_categoryReplies.erase(type);
-        if(retryCategoryRequest(type)) {
+    reply->deleteLater();
+    m_categoryReplies.erase(type);
+
+    const uint64_t generation = m_categoryGenerations[type];
+
+    Fooyin::Utils::asyncExec([data, type]() -> std::expected<RadioCategoryList, QString> {
+        QJsonParseError parseError;
+        const QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
+        if(parseError.error != QJsonParseError::NoError || !doc.isArray()) {
+            return std::unexpected{parseError.error != QJsonParseError::NoError ? parseError.errorString()
+                                                                                : tr("Unexpected response format.")};
+        }
+
+        const QJsonArray array = doc.array();
+
+        RadioCategoryList categories;
+        categories.reserve(array.size());
+        for(const auto& value : array) {
+            if(!value.isObject()) {
+                continue;
+            }
+            RadioCategory category = categoryFromObject(type, value.toObject());
+            if(!category.name.isEmpty() && !category.value.isEmpty()) {
+                categories.push_back(std::move(category));
+            }
+        }
+        return categories;
+    }).then(this, [this, type, generation](QFuture<std::expected<RadioCategoryList, QString>> future) {
+        if(generation != m_categoryGenerations[type]) {
             return;
         }
 
-        const auto requestIt = m_categoryRequests.find(type);
-        qCWarning(RADIO_BROWSER) << "Radio Browser category response parse failed:"
-                                 << "type=" << static_cast<int>(type) << "attempts="
-                                 << (requestIt != m_categoryRequests.end() ? requestIt->second.attempts : 0)
-                                 << "error=" << error;
+        auto result = future.takeResult();
+        if(!result) {
+            if(retryCategoryRequest(type)) {
+                return;
+            }
+
+            const auto requestIt = m_categoryRequests.find(type);
+            qCWarning(RADIO_BROWSER) << "Radio Browser category response parse failed:"
+                                     << "type=" << static_cast<int>(type) << "attempts="
+                                     << (requestIt != m_categoryRequests.end() ? requestIt->second.attempts : 0)
+                                     << "error=" << result.error();
+            m_categoryRequests.erase(type);
+            Q_EMIT categoriesFailed(type, tr("Failed to parse category data."));
+            return;
+        }
+
         m_categoryRequests.erase(type);
-        Q_EMIT categoriesFailed(type, tr("Failed to parse category data."));
-        return;
-    }
-
-    const QJsonArray array = doc.array();
-    RadioCategoryList categories;
-    categories.reserve(array.size());
-
-    for(const auto& value : array) {
-        if(!value.isObject()) {
-            continue;
-        }
-
-        RadioCategory category = categoryFromObject(type, value.toObject());
-        if(!category.name.isEmpty() && !category.value.isEmpty()) {
-            categories.push_back(std::move(category));
-        }
-    }
-
-    reply->deleteLater();
-    m_categoryReplies.erase(type);
-    m_categoryRequests.erase(type);
-    Q_EMIT categoriesFinished(type, categories);
+        Q_EMIT categoriesFinished(type, *result);
+    });
 }
 
 QString RadioBrowserService::stationRequestText() const

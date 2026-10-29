@@ -26,6 +26,7 @@
 
 #include <QPointer>
 
+#include <cmath>
 #include <cstdint>
 #include <cstdlib>
 #include <iterator>
@@ -212,6 +213,39 @@ bool VisualisationSession::getSpectrumWindowEndingAt(SpectrumWindow& out, uint64
 {
     return p->backend
         && p->backend->getSpectrumWindowEndingAt(out, endTimeMs, fftSize, p->channelSelection, windowFunction);
+}
+
+bool VisualisationSession::getSpectrumWindowForDuration(SpectrumWindow& out, uint64_t centerTimeMs, uint64_t durationMs,
+                                                        SpectrumWindowFunction windowFunction) const
+{
+    return p->backend
+        && p->backend->getSpectrumWindowForDuration(out, centerTimeMs, durationMs, p->channelSelection, windowFunction);
+}
+
+bool VisualisationSession::getSpectrumWindowEndingAtDuration(SpectrumWindow& out, uint64_t endTimeMs,
+                                                             uint64_t durationMs,
+                                                             SpectrumWindowFunction windowFunction) const
+{
+    return p->backend
+        && p->backend->getSpectrumWindowEndingAtDuration(out, endTimeMs, durationMs, p->channelSelection,
+                                                         windowFunction);
+}
+
+float spectrumWindowGain(VisualisationSession::SpectrumWindowFunction windowFunction, float phase)
+{
+    using WindowFunction = VisualisationSession::SpectrumWindowFunction;
+
+    switch(windowFunction) {
+        case WindowFunction::BlackmanHarris:
+            return 0.35875F - (0.48829F * std::cos(phase)) + (0.14128F * std::cos(2.0F * phase))
+                 - (0.01168F * std::cos(3.0F * phase));
+        case WindowFunction::Hann:
+            return 0.5F * (1.0F - std::cos(phase));
+        case WindowFunction::None:
+            return 1.0F;
+    }
+
+    return 1.0F;
 }
 
 class VisualisationServicePrivate

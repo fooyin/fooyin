@@ -1,6 +1,10 @@
 #!/bin/sh
 
-sudo pkg update
+set -eu
+
+exec </dev/null
+
+sudo pkg -o ASSUME_ALWAYS_YES=yes update
 sudo pkg upgrade -y
 sudo pkg install -y \
      git \
@@ -10,13 +14,19 @@ sudo pkg install -y \
      cmake-core \
      pkgconf \
      ninja \
+     glm \
      libgme \
      libvgm \
      vulkan-headers \
      alsa-lib \
+     jackit \
      qt6-tools \
      qcoro-qt6 \
      ffmpeg \
+     flac \
+     mpg123 \
+     opusfile \
+     libvorbis \
      taglib \
      kdsingleapplication \
      pipewire-spa-oss \
@@ -25,6 +35,8 @@ sudo pkg install -y \
      libopenmpt \
      libarchive \
      ebur128 \
+     libcdio \
+     libcdio-paranoia \
      soundtouch \
      libsoxr \
      googletest

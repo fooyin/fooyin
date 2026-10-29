@@ -21,10 +21,13 @@
 
 #include "fygui_export.h"
 
+#include <QJsonObject>
 #include <QString>
+#include <Qt>
 
 #include <functional>
 #include <memory>
+#include <vector>
 
 class QUndoStack;
 class QMenu;
@@ -35,6 +38,20 @@ class Id;
 class FyWidget;
 class WidgetContainer;
 class WidgetProviderPrivate;
+
+struct WidgetRegistrationOptions
+{
+    bool supportsToolbar{false};
+    Qt::ToolBarAreas toolbarAreas{Qt::TopToolBarArea | Qt::BottomToolBarArea};
+};
+
+struct WidgetCatalogueEntry
+{
+    QString key;
+    QString name;
+    QStringList categories;
+    bool available;
+};
 
 /*!
  * Handles registration of FyWidgets.
@@ -47,15 +64,20 @@ public:
 
     void setCommandStack(QUndoStack* layoutCommands);
 
+    /** Visible widgets in category/name order, including entries at their instance limit. */
+    [[nodiscard]] std::vector<WidgetCatalogueEntry> widgetCatalogue() const;
+
     /*!
      * Registers a widget.
      * FyWidget subclasses must be registered to be used with the layout system.
      * @param key a unique key to associate with the widget.
      * @param instantiator a function to instantiate a FyWidget subclass.
      * @param displayName name to use in layout editing menus.
+     * @param options placement capabilities for the widget.
      * @returns true if the widget was registered, or false if a widget at @p key already exists.
      */
-    bool registerWidget(const QString& key, std::function<FyWidget*()> instantiator, const QString& displayName);
+    bool registerWidget(const QString& key, std::function<FyWidget*()> instantiator, const QString& displayName,
+                        WidgetRegistrationOptions options = {});
 
     /*!
      * Sets the submenus the widget at @p key appears at in add/replace menus when layout editing.
@@ -71,6 +93,8 @@ public:
     void setIsHidden(const QString& key, bool hidden);
     /** Sets a dynamic predicate controlling whether the widget is shown in layout editing menus. */
     void setIsVisibleWhen(const QString& key, std::function<bool()> predicate);
+    /** Sets the initial layout data used for new toolbar instances of the widget at @p key. */
+    void setToolbarDefaults(const QString& key, const QJsonObject& layout);
 
     /** Returns @c true if the widget at @p key exists. */
     [[nodiscard]] bool widgetExists(const QString& key) const;
@@ -78,12 +102,21 @@ public:
     [[nodiscard]] QString displayName(const QString& key) const;
     /** Returns @c true if an instance can be created of the widget at @p key. */
     [[nodiscard]] bool canCreateWidget(const QString& key) const;
+    /** Returns whether the widget at @p key may be hosted in a main window toolbar. */
+    [[nodiscard]] bool supportsToolbar(const QString& key) const;
+    /** Returns the toolbar areas supported by the widget at @p key. */
+    [[nodiscard]] Qt::ToolBarAreas toolbarAreas(const QString& key) const;
+    /** Returns the initial layout data for new toolbar instances of the widget at @p key. */
+    [[nodiscard]] QJsonObject toolbarDefaults(const QString& key) const;
 
     /*!
      * Creates the widget associated with the @p key.
      * @returns the new widget instance, or nullptr if not registered or over the limit for this widget.
      */
     FyWidget* createWidget(const QString& key);
+
+    /** Excludes a widget subtree retained by undo history from active instance limits. */
+    void setWidgetRetained(FyWidget* widget, bool retained);
 
     /*!
      * Fills the passed @p menu with actions to create a new instance of each registered widget.
@@ -106,6 +139,9 @@ public:
      * @param widgetId the widget to replace
      */
     void setupSplitWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container, const Id& widgetId);
+
+    /** Fills @p menu with widgets registered for toolbar use. */
+    void setupToolbarWidgetMenu(QMenu* menu, const std::function<void(const QString&)>& addWidget);
 
 private:
     std::unique_ptr<WidgetProviderPrivate> p;

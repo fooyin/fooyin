@@ -32,7 +32,8 @@ QString RawAudioPlugin::inputName() const
 InputCreator RawAudioPlugin::inputCreator() const
 {
     InputCreator creator;
-    creator.decoder = []() {
+    creator.priority = 100;
+    creator.decoder  = []() {
         return std::make_unique<RawAudioDecoder>();
     };
     creator.reader = []() {

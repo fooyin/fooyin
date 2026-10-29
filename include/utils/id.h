@@ -26,6 +26,7 @@
 #include <QUuid>
 
 #include <set>
+#include <vector>
 
 namespace Fooyin {
 class FYUTILS_EXPORT UId : public QUuid

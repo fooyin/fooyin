@@ -48,6 +48,7 @@ Q_SIGNALS:
     void openQuickSetup();
     void openPlaybackQueue();
     void openPlaylistManager();
+    void openLibraryTree();
     void openLog();
     void openScriptEditor();
     void showNowPlaying();

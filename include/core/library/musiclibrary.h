@@ -21,6 +21,7 @@
 
 #include "fycore_export.h"
 
+#include <core/library/libraryfilter.h>
 #include <core/library/libraryinfo.h>
 #include <core/track.h>
 
@@ -28,8 +29,10 @@
 #include <QObject>
 
 namespace Fooyin {
+class MusicLibraryPrivate;
 class PendingTrackCoverProvider;
 class TrackMetadataStore;
+
 /*!
  * Represents a queued or in-progress library scan operation.
  *
@@ -134,9 +137,8 @@ class FYCORE_EXPORT MusicLibrary : public QObject
     Q_OBJECT
 
 public:
-    explicit MusicLibrary(QObject* parent = nullptr)
-        : QObject{parent}
-    { }
+    explicit MusicLibrary(QObject* parent = nullptr);
+    ~MusicLibrary() override;
 
     /** Returns @c true if a library has been added by the user */
     [[nodiscard]] virtual bool hasLibrary() const = 0;
@@ -188,6 +190,16 @@ public:
     [[nodiscard]] virtual TrackList tracks() const = 0;
     /** Returns all tracks that belong to a music library. */
     [[nodiscard]] virtual TrackList libraryTracks() const = 0;
+    /** Returns library tracks constrained by the active global library filter. */
+    [[nodiscard]] TrackList visibleLibraryTracks() const;
+    /** Returns @c true if one or more global library filters are active. */
+    [[nodiscard]] bool hasActiveLibraryFilters() const;
+    /** Returns the active global library filters, which are combined using AND. */
+    [[nodiscard]] LibraryFilterList activeLibraryFilters() const;
+    /** Sets the active global library filters, which are combined using AND. */
+    void setActiveLibraryFilters(LibraryFilterList filters);
+    /** Clears all active global library filters. */
+    void clearActiveLibraryFilters();
     /** Returns the track with an id of @p id, or an invalid track if not found.  */
     [[nodiscard]] virtual Track trackForId(int id) const = 0;
     /** Returns a TrackList containing each track (if) found with an id from @p ids  */
@@ -216,10 +228,10 @@ public:
      */
     [[nodiscard]] virtual PendingTrackCoverProvider* pendingTrackCoverProvider() const = 0;
 
-    /** Updates the statistics (playcount, rating etc) in the database for @p tracks.  */
-    virtual void updateTrackStats(const TrackList& tracks) = 0;
-    /** Updates the statistics (playcount, rating etc) in the database for @p track.  */
-    virtual void updateTrackStats(const Track& track) = 0;
+    /** Updates the specified @p stats in the database for @p tracks. */
+    virtual void updateTrackStats(const TrackList& tracks, Track::Stats stats) = 0;
+    /** Updates the specified @p stats in the database for @p track. */
+    virtual void updateTrackStats(const Track& track, Track::Stats stats) = 0;
 
     /** Remove unavailable tracks from the library and database. */
     virtual WriteRequest removeUnavailbleTracks() = 0;
@@ -245,8 +257,16 @@ Q_SIGNALS:
     void tracksAdded(const Fooyin::TrackList& tracks);
     void tracksMetadataChanged(const Fooyin::TrackList& tracks);
     void tracksUpdated(const Fooyin::TrackList& tracks);
+    /** Emitted after changed playback statistics have been committed to the database and library. */
+    void tracksStatsChanged(const Fooyin::TrackList& tracks, Fooyin::Track::Stats stats);
     void tracksDeleted(const Fooyin::TrackList& tracks);
     void tracksSorted(const Fooyin::TrackList& tracks);
+
+    void activeLibraryFiltersChanged();
+    void visibleLibraryTracksChanged();
+
+private:
+    std::unique_ptr<MusicLibraryPrivate> p;
 };
 } // namespace Fooyin
 

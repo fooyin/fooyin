@@ -45,7 +45,7 @@ class RadioBrowserPlugin : public QObject,
                            public GuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "radiobrowser.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "radiobrowser.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
@@ -70,6 +70,7 @@ private:
 
     RadioStationStore* m_store;
     RadioBrowserController* m_controller;
+    QPointer<RadioBrowserDialog> m_radioBrowserDialog;
 };
 } // namespace RadioBrowser
 } // namespace Fooyin

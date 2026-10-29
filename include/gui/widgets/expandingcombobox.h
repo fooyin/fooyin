@@ -33,6 +33,7 @@ public:
 
     [[nodiscard]] bool resizeToCurrentEnabled() const;
     void setResizeToCurrentEnabled(bool enabled);
+    void invalidateSizeHint();
     void resizeToFitCurrent();
     void resizeDropDown();
 

@@ -45,15 +45,20 @@ public:
 
     [[nodiscard]] Engine::DspChain availableDsps() const;
     [[nodiscard]] Engine::DspChains activeChain() const;
+    [[nodiscard]] QString activePreset() const;
     [[nodiscard]] std::unique_ptr<DspNode> createDsp(const QString& id) const;
 
-    void setActiveChain(const Engine::DspChains& chain);
-    void syncActiveChain(const Engine::DspChains& chain);
+    void setActiveChain(const Engine::DspChains& chain, QString preset = {});
+    void syncActiveChain(const Engine::DspChains& chain, QString preset = {});
     bool updateLiveDspSettings(Engine::DspChainScope scope, uint64_t instanceId, const QByteArray& settings,
-                               bool persist);
+                               bool persist, QObject* source = nullptr);
+    bool setDspEnabled(Engine::DspChainScope scope, uint64_t instanceId, bool enabled, QObject* source = nullptr);
 
 Q_SIGNALS:
     void activeChainChanged(const Fooyin::Engine::DspChains& chain);
+    void liveDspSettingsChanged(Fooyin::Engine::DspChainScope scope, uint64_t instanceId, const QByteArray& settings,
+                                bool persisted, QObject* source);
+    void dspEnabledChanged(Fooyin::Engine::DspChainScope scope, uint64_t instanceId, bool enabled, QObject* source);
 
 private:
     [[nodiscard]] uint64_t nextInstanceId();
@@ -62,6 +67,7 @@ private:
 
     void loadFromSettings();
     void persistChain(const Engine::DspChains& chain);
+    void persistActivePreset();
     [[nodiscard]] Engine::DspChains normaliseChain(const Engine::DspChains& chain);
 
     SettingsManager* m_settings;
@@ -69,6 +75,7 @@ private:
     EngineHandler* m_engine;
 
     Engine::DspChains m_activeChain;
+    QString m_activePreset;
     uint64_t m_nextInstanceId;
     std::unordered_map<uint64_t, uint64_t> m_liveRevisionByKey;
 };

@@ -30,19 +30,29 @@
 #include <QPointer>
 #include <QWidget>
 
-namespace Fooyin::WaveBar {
+#include <optional>
+
+namespace Fooyin {
+class ABRepeatControls;
+class PlayerController;
+class SettingsManager;
+
+namespace WaveBar {
 class WaveSeekBar : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit WaveSeekBar(QWidget* parent = nullptr);
+    WaveSeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
+
+    [[nodiscard]] ABRepeatControls* repeatControls() const;
 
     void processData(const WaveformData<float>& waveData);
 
     void setPlayState(Player::PlayState state);
     void setSeekable(bool seekable);
     void setPosition(uint64_t pos);
+    void setPlayedThresholdPosition(std::optional<uint64_t> position);
     void setShowCursor(bool show);
     void setCursorWidth(int width);
     void setChannelScale(double scale);
@@ -65,6 +75,7 @@ Q_SIGNALS:
     void seekBackward();
 
 protected:
+    bool event(QEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
@@ -90,8 +101,7 @@ private:
     void ensureWaveformCache();
     [[nodiscard]] int cachedRenderWidth() const;
     void drawCachedWaveform(QPainter& painter, const QRect& dirtyRect);
-    void drawCachedSlice(QPainter& painter, const QImage& image, const QRectF& targetRect) const;
-    void drawCachedTransition(QPainter& painter, double positionX, const QRect& targetRect);
+    void drawCachedTransition(QPainter& painter, double positionX);
     void drawCursors(QPainter& painter);
     void paintWaveform(QPainter& painter, const QRect& rect, double renderWidth,
                        PlaybackColourMode colourMode = PlaybackColourMode::Position);
@@ -103,11 +113,13 @@ private:
 
     void invalidate();
 
+    ABRepeatControls* m_repeatControls;
     Player::PlayState m_playState;
     bool m_seekable;
     WaveformData<float> m_data;
     double m_scale;
     uint64_t m_position;
+    std::optional<uint64_t> m_playedThresholdPosition;
     QPoint m_pressPos;
     QPoint m_seekPos;
     QPointer<ToolTip> m_seekTip;
@@ -127,8 +139,10 @@ private:
 
     QImage m_unplayedWaveformCache;
     QImage m_playedWaveformCache;
+    QImage m_transitionCache;
     QSize m_waveformCacheSize;
     int m_waveformCacheRenderWidth;
     bool m_waveformCacheDirty;
 };
-} // namespace Fooyin::WaveBar
+} // namespace WaveBar
+} // namespace Fooyin

@@ -81,7 +81,7 @@ RGScannerPageWidget::RGScannerPageWidget(SettingsManager* settings)
 
     auto* albumGroupLabel = new QLabel(tr("Album grouping pattern") + ":"_L1, this);
 
-    const auto albumGroupToolTip = tr("Used with the \"Calculate as albums (by tags)\" action");
+    const auto albumGroupToolTip = tr("Used with the ‘Calculate as albums (by tags)’ action");
     albumGroupLabel->setToolTip(albumGroupToolTip);
     m_albumGroupScript->setToolTip(albumGroupToolTip);
 
@@ -112,7 +112,7 @@ void RGScannerPageWidget::load()
 
     m_truePeak->setChecked(m_settings->fileValue(TruePeakSetting, false).toBool());
     m_samplePeak->setChecked(!m_truePeak->isChecked());
-    m_albumGroupScript->setText(
+    m_albumGroupScript->setScript(
         m_settings->fileValue(AlbumGroupScriptSetting, QString::fromLatin1(DefaultAlbumGroupScript)).toString());
 }
 

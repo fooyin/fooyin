@@ -22,13 +22,16 @@
 #include "playlist/playlistmodel.h"
 
 #include <core/player/playbackqueue.h>
+#include <core/player/playerdefs.h>
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlistchangeset.h>
 #include <gui/playlist/currentplaylistcontroller.h>
+#include <gui/playlist/playlisteditcontroller.h>
 
 #include <QObject>
 
 #include <memory>
+#include <set>
 
 class QUndoCommand;
 
@@ -53,12 +56,13 @@ struct PlaylistViewState
     int scrollPos{0};
 };
 
-class PlaylistController : public CurrentPlaylistController
+class PlaylistController : public CurrentPlaylistController,
+                           public PlaylistEditController
 {
     Q_OBJECT
 
 public:
-    PlaylistController(Application* app, QObject* parent = nullptr);
+    explicit PlaylistController(Application* app, QObject* parent = nullptr);
     ~PlaylistController() override;
 
     [[nodiscard]] PlayerController* playerController() const;
@@ -79,11 +83,30 @@ public:
     [[nodiscard]] Playlist* currentPlaylist() const override;
     [[nodiscard]] UId currentPlaylistId() const override;
 
+    [[nodiscard]] int presetPlaylistCount(int presetId) const;
+    void applyPresetToPlaylists(int presetId, const std::vector<UId>& playlistIds);
+
     void changeCurrentPlaylist(Playlist* playlist);
     void changeCurrentPlaylist(const UId& id) override;
+    void selectTracks(const TrackList& tracks) override;
     void changePlaylistIndex(const UId& playlistId, int index);
     [[nodiscard]] bool canClearCurrentPlaylist() const;
     void clearCurrentPlaylist();
+
+    bool insertPlaylistItems(const UId& playlistId, int index, const TrackList& tracks) override;
+    bool replacePlaylistItem(const UId& playlistId, int index, const TrackList& tracks) override;
+    bool removePlaylistItems(const UId& playlistId, const std::vector<int>& indexes) override;
+    bool clearPlaylist(const UId& playlistId) override;
+    bool movePlaylistItems(const UId& playlistId, const std::vector<int>& indexes, int newIndex) override;
+    bool reorderPlaylistItems(const UId& playlistId, const std::vector<int>& order) override;
+
+    bool removePlaylist(const UId& playlistId, QWidget* parent) override;
+    bool confirmPlaylistRemoval(std::span<const UId> playlistIds, QWidget* parent) override;
+
+    [[nodiscard]] bool canUndo(const UId& playlistId) const override;
+    [[nodiscard]] bool canRedo(const UId& playlistId) const override;
+    bool undo(const UId& playlistId) override;
+    bool redo(const UId& playlistId) override;
 
     [[nodiscard]] QString currentSearch(Playlist* playlist) const;
     void setSearch(Playlist* playlist, const QString& search);
@@ -104,6 +127,7 @@ public:
 
 Q_SIGNALS:
     void playlistsLoaded();
+    void playlistLayoutChanged(Fooyin::Playlist* playlist);
     void currentPlaylistUpdated(Fooyin::Playlist* playlist);
     void currentPlaylistTracksPatched(const Fooyin::PlaylistChangeset& changeSet);
     void currentPlaylistTracksChanged(const std::vector<int>& indexes, bool allNew);
@@ -132,6 +156,7 @@ private:
     void handleTracksDequeued(const QueueTracks& tracks);
     void handleTracksDequeued(const PlaylistIndexes& indexes);
     void handleQueueChanged(const QueueTracks& removed, const QueueTracks& added);
+    void flushPendingQueueChanges();
 
     void handlePlaylistUpdated(Playlist* playlist, const std::vector<int>& indexes, PlaylistTrackChangeSource source);
     void handleTracksUpdated(Playlist* playlist, const std::vector<int>& indexes);
@@ -145,5 +170,11 @@ private:
     PlaylistUiController* m_uiController;
 
     std::unique_ptr<PlaylistWorkspace> m_workspace;
+
+    std::set<int> m_pendingQueueIndexes;
+    UId m_pendingQueuePlaylistId;
+    uint64_t m_playlistPatchRevision{0};
+    uint64_t m_pendingQueuePatchRevision{0};
+    bool m_queueRefreshPending{false};
 };
 } // namespace Fooyin

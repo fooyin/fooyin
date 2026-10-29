@@ -19,9 +19,23 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
+#include <QByteArrayView>
+#include <QString>
 #include <QStringList>
 
+#include <optional>
+
 namespace Fooyin::Id3Utils {
+struct TimedMetadata
+{
+    QString title;
+    QString artist;
+    QString station;
+};
+
+[[nodiscard]] FYCORE_EXPORT std::optional<TimedMetadata> parseTimedMetadata(QByteArrayView data);
 [[nodiscard]] QStringList splitStandardField(const QString& field, const QStringList& values,
                                              bool splitSemicolonSeparated);
 [[nodiscard]] QStringList splitExtraField(const QString& field, const QStringList& values,

@@ -49,18 +49,17 @@ public:
 
     explicit PlaylistOrganiserModel(PlaylistHandler* playlistHandler, PlayerController* playerController);
 
-    [[nodiscard]] static QString defaultLeftDisplayScript();
-    [[nodiscard]] static QString defaultRightDisplayScript();
+    [[nodiscard]] static QString defaultDisplayScript();
+    [[nodiscard]] QString displayScript() const;
 
     void populate();
     void populateMissing();
+
     QByteArray saveModel();
     bool restoreModel(QByteArray data);
-    void setDisplayScripts(const QString& leftScript, const QString& rightScript);
-    void setColours(const QColor& playingTextColour, const QColor& playingBackgroundColour);
 
-    [[nodiscard]] QString leftDisplayScript() const;
-    [[nodiscard]] QString rightDisplayScript() const;
+    void setDisplayScript(const QString& displayScript);
+    void setColours(const QColor& playingTextColour, const QColor& playingBackgroundColour);
 
     QModelIndex createGroup(const QModelIndex& parent);
     QModelIndex createPlaylist(Playlist* playlist, const QModelIndex& parent);
@@ -70,8 +69,8 @@ public:
     void playlistRenamed(Playlist* playlist);
     void playlistRemoved(Playlist* playlist);
 
-    void sortAllPlaylists(const SortOrder order);
-    void sortGroupPlaylists(const QModelIndexList& indexes, const SortOrder order);
+    void sortAllPlaylists(SortOrder order);
+    void sortGroupPlaylists(const QModelIndexList& indexes, SortOrder order);
 
     QModelIndex indexForPlaylist(Playlist* playlist);
 
@@ -89,7 +88,10 @@ public:
     bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                       const QModelIndex& parent) override;
 
-    void removeItems(const QModelIndexList& indexes);
+    [[nodiscard]] std::vector<UId> playlistIds(const QModelIndexList& indexes) const;
+    [[nodiscard]] std::vector<QString> groupNames(const QModelIndexList& indexes) const;
+
+    void removeGroups(const std::vector<QString>& names);
 
 Q_SIGNALS:
     void filesDroppedOnPlaylist(const QList<QUrl>& urls, const Fooyin::UId& id);
@@ -101,14 +103,18 @@ private:
     void refreshData(const QList<int>& roles, PlaylistOrganiserItem* parent = nullptr);
     void refreshPlaylist(Playlist* playlist, const QList<int>& roles = {});
     void sortPlaylists(PlaylistOrganiserItem* parent, SortOrder order);
+
     [[nodiscard]] QString evaluateScript(const ParsedScript& script, const PlaylistOrganiserItem* item) const;
     [[nodiscard]] RichText evaluateRichScript(const ParsedScript& script, const PlaylistOrganiserItem* item) const;
-    [[nodiscard]] RichText leftRichText(const PlaylistOrganiserItem* item) const;
-    [[nodiscard]] RichText rightRichText(const PlaylistOrganiserItem* item) const;
+
     QByteArray saveIndexes(const QModelIndexList& indexes) const;
     QModelIndexList restoreIndexes(QByteArray data);
+
+    void removeItems(const QModelIndexList& indexes);
+
     void recurseSaveModel(QDataStream& stream, PlaylistOrganiserItem* parent);
     QString findUniqueName(const QString& name) const;
+
     void deleteNodes(PlaylistOrganiserItem* node);
     bool itemsDropped(const QMimeData* data, int row, const QModelIndex& parent);
 
@@ -123,9 +129,7 @@ private:
 
     mutable ScriptParser m_scriptParser;
     mutable ScriptFormatter m_scriptFormatter;
-    QString m_leftScriptText;
-    QString m_rightScriptText;
-    ParsedScript m_leftScript;
-    ParsedScript m_rightScript;
+    QString m_displayScriptText;
+    ParsedScript m_displayScript;
 };
 } // namespace Fooyin

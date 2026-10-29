@@ -138,6 +138,7 @@ protected:
     void dragLeaveEvent(QDragLeaveEvent* event) override;
     void dropEvent(QDropEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
     void mouseDoubleClickEvent(QMouseEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
@@ -155,6 +156,10 @@ protected:
     [[nodiscard]] std::set<int> spans() const;
 
     void drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, int y) const;
+    virtual QRect drawSpan(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    [[nodiscard]] virtual int spanHeight(const QModelIndex& index) const;
+
+    [[nodiscard]] virtual int adjustVerticalScrollMaximum(int maximum) const;
 
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;
     [[nodiscard]] int horizontalOffset() const override;

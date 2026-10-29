@@ -32,6 +32,7 @@ using StaticContextMenu::isBuiltInSeparatorId;
 namespace TrackSelection {
 constexpr auto ArtworkSearchSeparator = "Fooyin.Menu.Artwork.SearchSeparator";
 constexpr auto ArtworkAttachSeparator = "Fooyin.Menu.Artwork.AttachSeparator";
+constexpr auto FileActionsSeparator   = "Fooyin.Menu.Track.FileActionsSeparator";
 } // namespace TrackSelection
 
 namespace LayoutEditing {
@@ -95,8 +96,10 @@ constexpr auto Sort               = "Fooyin.Context.Playlist.Sort";
 constexpr auto Clipboard          = "Fooyin.Context.Playlist.Clipboard";
 constexpr auto ClipboardSeparator = "Fooyin.Context.Playlist.Clipboard.Separator";
 constexpr auto Presets            = "Fooyin.Context.Playlist.Presets";
+constexpr auto Configure          = "Fooyin.Context.Playlist.Configure";
 constexpr auto PresetsSeparator   = "Fooyin.Context.Playlist.Presets.Separator";
 constexpr auto Queue              = "Fooyin.Context.Playlist.Queue";
+constexpr auto TrackSeparator     = "Fooyin.Context.Playlist.Track.Separator";
 constexpr auto TrackActions       = "Fooyin.Context.Playlist.TrackActions";
 
 constexpr auto DefaultItems = std::to_array<Item>({
@@ -124,6 +127,9 @@ constexpr auto DefaultItems = std::to_array<Item>({
     {.id          = Presets,
      .title       = {.context = "PlaylistWidget", .sourceText = QT_TRANSLATE_NOOP("PlaylistWidget", "Presets")},
      .isSeparator = false},
+    {.id          = Configure,
+     .title       = {.context = "PlaylistWidget", .sourceText = QT_TRANSLATE_NOOP("PlaylistWidget", "Configure")},
+     .isSeparator = false},
     {.id = PresetsSeparator, .title = {}, .isSeparator = true},
     {.id = Constants::Actions::AddToPlaylist,
      .title
@@ -139,12 +145,68 @@ constexpr auto DefaultItems = std::to_array<Item>({
      .title
      = {.context = "PlaylistWidget", .sourceText = QT_TRANSLATE_NOOP("PlaylistWidget", "Remove from playback queue")},
      .isSeparator = false},
+    {.id = TrackSeparator, .title = {}, .isSeparator = true},
     {.id          = TrackActions,
      .title       = {.context = "PlaylistWidget", .sourceText = QT_TRANSLATE_NOOP("PlaylistWidget", "Track menu")},
      .isSeparator = false},
 });
 
 } // namespace Playlist
+
+namespace QueueViewer {
+constexpr auto ViewMode          = "Fooyin.Context.QueueViewer.ViewMode";
+constexpr auto ViewSeparator     = "Fooyin.Context.QueueViewer.View.Separator";
+constexpr auto PlayNow           = "Fooyin.Context.QueueViewer.PlayNow";
+constexpr auto QueueNext         = "Fooyin.Context.QueueViewer.QueueNext";
+constexpr auto StopAfterThis     = "Fooyin.Context.QueueViewer.StopAfterThis";
+constexpr auto PlaybackSeparator = "Fooyin.Context.QueueViewer.Playback.Separator";
+constexpr auto Remove            = "Fooyin.Context.QueueViewer.Remove";
+constexpr auto Clear             = "Fooyin.Context.QueueViewer.Clear";
+constexpr auto Sort              = "Fooyin.Context.QueueViewer.Sort";
+constexpr auto QueueSeparator    = "Fooyin.Context.QueueViewer.Queue.Separator";
+constexpr auto PlaylistSeparator = "Fooyin.Context.QueueViewer.Playlist.Separator";
+constexpr auto Configure         = "Fooyin.Context.QueueViewer.Configure";
+constexpr auto TrackSeparator    = "Fooyin.Context.QueueViewer.Track.Separator";
+constexpr auto TrackActions      = "Fooyin.Context.QueueViewer.TrackActions";
+
+constexpr auto DefaultItems = std::to_array<Item>({
+    {.id          = ViewMode,
+     .title       = {.context = "QueueViewer", .sourceText = QT_TRANSLATE_NOOP("QueueViewer", "View mode")},
+     .isSeparator = false},
+    {.id = ViewSeparator, .title = {}, .isSeparator = true},
+    {.id          = PlayNow,
+     .title       = {.context = "QueueViewer", .sourceText = QT_TRANSLATE_NOOP("QueueViewer", "Play now")},
+     .isSeparator = false},
+    {.id          = QueueNext,
+     .title       = {.context = "QueueViewer", .sourceText = QT_TRANSLATE_NOOP("QueueViewer", "Queue next")},
+     .isSeparator = false},
+    {.id          = StopAfterThis,
+     .title       = {.context = "QueueViewer", .sourceText = QT_TRANSLATE_NOOP("QueueViewer", "Stop after this")},
+     .isSeparator = false},
+    {.id = PlaybackSeparator, .title = {}, .isSeparator = true},
+    {.id          = Remove,
+     .title       = {.context = "QueueViewer", .sourceText = QT_TRANSLATE_NOOP("QueueViewer", "Remove")},
+     .isSeparator = false},
+    {.id          = Clear,
+     .title       = {.context = "QueueViewer", .sourceText = QT_TRANSLATE_NOOP("QueueViewer", "Clear")},
+     .isSeparator = false},
+    {.id          = Sort,
+     .title       = {.context = "QueueViewer", .sourceText = QT_TRANSLATE_NOOP("QueueViewer", "Sort")},
+     .isSeparator = false},
+    {.id = QueueSeparator, .title = {}, .isSeparator = true},
+    {.id          = Constants::Actions::AddToPlaylist,
+     .title       = {.context = "QueueViewer", .sourceText = QT_TRANSLATE_NOOP("QueueViewer", "Add to playlist")},
+     .isSeparator = false},
+    {.id = PlaylistSeparator, .title = {}, .isSeparator = true},
+    {.id          = Configure,
+     .title       = {.context = "QueueViewer", .sourceText = QT_TRANSLATE_NOOP("QueueViewer", "Configure")},
+     .isSeparator = false},
+    {.id = TrackSeparator, .title = {}, .isSeparator = true},
+    {.id          = TrackActions,
+     .title       = {.context = "QueueViewer", .sourceText = QT_TRANSLATE_NOOP("QueueViewer", "Track menu")},
+     .isSeparator = false},
+});
+} // namespace QueueViewer
 
 namespace LibraryTree {
 constexpr auto Play              = "Fooyin.Context.LibraryTree.Play";
@@ -154,9 +216,11 @@ constexpr auto PlaylistSeparator = "Fooyin.Context.LibraryTree.Playlist.Separato
 constexpr auto Queue             = "Fooyin.Context.LibraryTree.Queue";
 constexpr auto QueueSeparator    = "Fooyin.Context.LibraryTree.Queue.Separator";
 constexpr auto OpenFolder        = "Fooyin.Context.LibraryTree.OpenFolder";
+constexpr auto TrackSeparator    = "Fooyin.Context.LibraryTree.Track.Separator";
 constexpr auto TrackActions      = "Fooyin.Context.LibraryTree.TrackActions";
 constexpr auto WidgetSeparator   = "Fooyin.Context.LibraryTree.Widget.Separator";
 constexpr auto Grouping          = "Fooyin.Context.LibraryTree.Grouping";
+constexpr auto Display           = "Fooyin.Context.LibraryTree.Display";
 constexpr auto Configure         = "Fooyin.Context.LibraryTree.Configure";
 
 constexpr auto DefaultItems = std::to_array<Item>({
@@ -199,6 +263,9 @@ constexpr auto DefaultItems = std::to_array<Item>({
     {.id = QueueSeparator, .title = {}, .isSeparator = true},
     {.id          = Grouping,
      .title       = {.context = "LibraryTreeWidget", .sourceText = QT_TRANSLATE_NOOP("LibraryTreeWidget", "Grouping")},
+     .isSeparator = false},
+    {.id          = Display,
+     .title       = {.context = "LibraryTreeWidget", .sourceText = QT_TRANSLATE_NOOP("LibraryTreeWidget", "Display")},
      .isSeparator = false},
     {.id          = Configure,
      .title       = {.context = "LibraryTreeWidget", .sourceText = QT_TRANSLATE_NOOP("LibraryTreeWidget", "Configure")},

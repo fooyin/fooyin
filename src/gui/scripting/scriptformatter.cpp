@@ -19,13 +19,14 @@
 
 #include <gui/scripting/scriptformatter.h>
 
-#include <core/scripting/scriptparser.h>
-#include <core/scripting/scriptscanner.h>
+#include <core/constants.h>
 #include <gui/scripting/scriptformatterregistry.h>
 
+#include <QCoreApplication>
 #include <QRegularExpression>
 
-#include <stack>
+#include <algorithm>
+#include <optional>
 
 using namespace Qt::StringLiterals;
 
@@ -89,223 +90,196 @@ namespace Fooyin {
 class ScriptFormatterPrivate
 {
 public:
-    void advance();
-    void consume(ScriptScanner::TokenType type);
-    void consume(ScriptScanner::TokenType type, const QString& message);
-
-    void errorAtCurrent(const QString& message);
-    void error(const QString& message);
-    void errorAt(const ScriptScanner::Token& token, const QString& message);
-
     void expression();
-    void formatBlock();
-    void processFormat(const FormatTag& tag);
-    void addBlock();
-    void closeBlock();
+    bool formatBlock();
+    void processFormat(const FormatTag& tag, qsizetype tagPosition, qsizetype tagLength);
+    void flushCurrentBlock();
     void resetFormat();
 
-    [[nodiscard]] QString readTagContent();
-    [[nodiscard]] QString peekClosingTagName();
+    void addError(qsizetype position, QStringView value);
 
-    ScriptScanner m_scanner;
-    ScriptFormatterRegistry m_registry;
+    [[nodiscard]] std::optional<FormatTag> peekFormatTag() const;
+    [[nodiscard]] bool isClosingTag(const QString& name) const;
+    [[nodiscard]] qsizetype tagEnd() const;
+    [[nodiscard]] qsizetype tagContentEnd() const;
+
     QFont m_font;
     QColor m_colour;
 
-    ScriptScanner::Token m_current;
-    ScriptScanner::Token m_previous;
+    QStringView m_input;
+    qsizetype m_position{0};
 
     RichTextBlock m_currentBlock;
-    std::stack<RichTextBlock> m_blockStack;
-    std::vector<RichTextBlock> m_blockGroup;
+    std::vector<QString> m_formatTags;
 
     ErrorList m_errors;
     RichText m_formatResult;
 };
 
-void ScriptFormatterPrivate::advance()
-{
-    m_previous = m_current;
-
-    m_current = m_scanner.next();
-    if(m_current.type == ScriptScanner::TokError) {
-        errorAtCurrent(m_current.value.toString());
-    }
-}
-
-void ScriptFormatterPrivate::consume(ScriptScanner::TokenType type)
-{
-    if(m_current.type == type) {
-        advance();
-    }
-}
-
-void ScriptFormatterPrivate::consume(ScriptScanner::TokenType type, const QString& message)
-{
-    if(m_current.type == type) {
-        advance();
-        return;
-    }
-    errorAtCurrent(message);
-}
-
-void ScriptFormatterPrivate::errorAtCurrent(const QString& message)
-{
-    errorAt(m_current, message);
-}
-
-void ScriptFormatterPrivate::error(const QString& message)
-{
-    errorAt(m_previous, message);
-}
-
-void ScriptFormatterPrivate::errorAt(const ScriptScanner::Token& token, const QString& message)
-{
-    QString errorMsg = u"[%1] Error"_s.arg(token.position);
-
-    if(token.type == ScriptScanner::TokEos) {
-        errorMsg += u" at end of string"_s;
-    }
-    else {
-        errorMsg += u": '"_s + token.value.toString() + u"'"_s;
-    }
-
-    errorMsg += u" (%1)"_s.arg(message);
-
-    ScriptError currentError;
-    currentError.value    = token.value.toString();
-    currentError.position = token.position;
-    currentError.message  = errorMsg;
-
-    m_errors.emplace_back(currentError);
-}
-
 void ScriptFormatterPrivate::expression()
 {
-    advance();
-    if(m_previous.type == ScriptScanner::TokLeftAngle) {
-        formatBlock();
-    }
-    else if(m_previous.type == ScriptScanner::TokEscape) {
-        advance();
-        m_currentBlock.text += m_previous.value;
-    }
-    else if(m_previous.type != ScriptScanner::TokEos && m_previous.type != ScriptScanner::TokError) {
-        m_currentBlock.text += m_previous.value;
-    }
-}
+    const QChar current = m_input.at(m_position);
 
-void ScriptFormatterPrivate::formatBlock()
-{
-    const FormatTag tag = parseFormatTag(readTagContent());
-    consume(ScriptScanner::TokRightAngle, u"Expected '>' after expression"_s);
-
-    if(tag.name.isEmpty()) {
-        error(u"Format option not found"_s);
+    if(current == Constants::PlayingIconMarker) {
+        flushCurrentBlock();
+        m_formatResult.blocks.push_back(
+            {.text = {}, .format = m_currentBlock.format, .type = RichTextBlock::Type::PlayingIcon});
+        ++m_position;
         return;
     }
 
-    processFormat(tag);
-    closeBlock();
-}
-
-QString ScriptFormatterPrivate::readTagContent()
-{
-    QString content;
-
-    while(m_current.type != ScriptScanner::TokRightAngle && m_current.type != ScriptScanner::TokEos) {
-        content.append(m_current.value);
-        advance();
+    if(current == u'<' && formatBlock()) {
+        return;
     }
 
-    return content.trimmed();
+    if(current == u'\\') {
+        const qsizetype nextPosition = m_position + 1;
+        if(nextPosition < m_input.size() && (m_input.at(nextPosition) == u'<' || m_input.at(nextPosition) == u'\\')) {
+            m_currentBlock.text += m_input.at(nextPosition);
+            m_position += 2;
+        }
+        else {
+            m_currentBlock.text += current;
+            ++m_position;
+        }
+        return;
+    }
+
+    const qsizetype start = m_position++;
+    while(m_position < m_input.size() && m_input.at(m_position) != u'<' && m_input.at(m_position) != u'\\'
+          && m_input.at(m_position) != Constants::PlayingIconMarker) {
+        ++m_position;
+    }
+    m_currentBlock.text += m_input.sliced(start, m_position - start);
 }
 
-QString ScriptFormatterPrivate::peekClosingTagName()
+bool ScriptFormatterPrivate::formatBlock()
 {
-    if(m_current.type != ScriptScanner::TokLeftAngle || m_scanner.peekNext().type != ScriptScanner::TokSlash) {
+    const qsizetype end = tagEnd();
+    if(end >= 0
+       && m_input.sliced(m_position + 1, end - m_position - 1).trimmed().compare(u"hr/"_s, Qt::CaseInsensitive) == 0) {
+        flushCurrentBlock();
+        m_formatResult.blocks.push_back(
+            {.text = {}, .format = m_currentBlock.format, .type = RichTextBlock::Type::Line});
+        m_position = end + 1;
+        return true;
+    }
+
+    const auto tag = peekFormatTag();
+    if(!tag) {
+        return false;
+    }
+
+    const qsizetype tagPos{m_position};
+    m_position = end + 1;
+    processFormat(*tag, tagPos, end - tagPos + 1);
+    return true;
+}
+
+std::optional<FormatTag> ScriptFormatterPrivate::peekFormatTag() const
+{
+    const qsizetype end = tagEnd();
+    if(end < 0 || end == m_position + 1) {
         return {};
     }
 
-    QString content;
-    int delta = 2;
-    while(true) {
-        const auto token = m_scanner.peekNext(delta++);
-        if(token.type == ScriptScanner::TokRightAngle || token.type == ScriptScanner::TokEos) {
-            break;
-        }
-        content.append(token.value);
+    const QStringView content = m_input.sliced(m_position + 1, end - m_position - 1);
+    if(content.front().isSpace()) {
+        return {};
     }
 
-    return content.trimmed().toLower();
+    FormatTag tag = parseFormatTag(content.toString());
+    if(!ScriptFormatterRegistry::isKnown(tag.name)) {
+        return {};
+    }
+
+    return tag;
 }
 
-void ScriptFormatterPrivate::processFormat(const FormatTag& tag)
+bool ScriptFormatterPrivate::isClosingTag(const QString& name) const
 {
+    if(m_position + 2 >= m_input.size() || m_input.at(m_position) != u'<' || m_input.at(m_position + 1) != u'/') {
+        return false;
+    }
+
+    const qsizetype end = tagEnd();
+    if(end < 0) {
+        return false;
+    }
+
+    return m_input.sliced(m_position + 2, end - m_position - 2).trimmed().compare(name, Qt::CaseInsensitive) == 0;
+}
+
+qsizetype ScriptFormatterPrivate::tagEnd() const
+{
+    const qsizetype end = tagContentEnd();
+    return end < m_input.size() && m_input.at(end) == u'>' ? end : -1;
+}
+
+qsizetype ScriptFormatterPrivate::tagContentEnd() const
+{
+    for(qsizetype pos{m_position + 1}; pos < m_input.size(); ++pos) {
+        const QChar current = m_input.at(pos);
+        if(current == u'>' || current == u'<') {
+            return pos;
+        }
+    }
+
+    return m_input.size();
+}
+
+void ScriptFormatterPrivate::processFormat(const FormatTag& tag, qsizetype tagPosition, qsizetype tagLength)
+{
+    const RichFormatting previousFormatting{m_currentBlock.format};
     RichFormatting nextFormatting{m_currentBlock.format};
 
-    if(ScriptFormatterRegistry::format(nextFormatting, tag.name, tag.option)) {
-        addBlock();
+    const bool formatApplied = ScriptFormatterRegistry::format(nextFormatting, tag.name, tag.option);
+
+    if(formatApplied) {
+        flushCurrentBlock();
         m_currentBlock.format = std::move(nextFormatting);
     }
     else {
-        error(u"Format option not found"_s);
+        addError(tagPosition, m_input.sliced(tagPosition, tagLength));
     }
 
-    while(m_current.type != ScriptScanner::TokEos) {
-        if(m_current.type == ScriptScanner::TokLeftAngle && peekClosingTagName() == tag.name) {
-            break;
-        }
+    m_formatTags.push_back(tag.name);
+    // Closing an enclosing scope also ends any unclosed tag inside it
+    while(m_position < m_input.size()
+          && !std::ranges::any_of(m_formatTags, [this](const auto& name) { return isClosingTag(name); })) {
         expression();
     }
 
-    consume(ScriptScanner::TokLeftAngle);
-    consume(ScriptScanner::TokSlash);
-
-    QString closeOption;
-    closeOption.reserve(tag.name.size());
-
-    while(m_current.type != ScriptScanner::TokRightAngle && m_current.type != ScriptScanner::TokEos) {
-        advance();
-        closeOption.append(m_previous.value);
+    m_formatTags.pop_back();
+    if(m_position < m_input.size() && isClosingTag(tag.name)) {
+        m_position = tagEnd() + 1;
     }
 
-    consume(ScriptScanner::TokRightAngle);
+    if(formatApplied) {
+        flushCurrentBlock();
+        m_currentBlock.format = previousFormatting;
+    }
 }
 
-void ScriptFormatterPrivate::addBlock()
+void ScriptFormatterPrivate::addError(qsizetype position, QStringView value)
+{
+    QString errorMessage = QCoreApplication::translate("Fooyin::ScriptFormatter",
+                                                       "[%1] Error in formatting tag ‘%2’: invalid formatting option.")
+                               .arg(position)
+                               .arg(value);
+
+    m_errors.emplace_back(ScriptError{
+        .position = static_cast<int>(position),
+        .value    = value.toString(),
+        .message  = std::move(errorMessage),
+    });
+}
+
+void ScriptFormatterPrivate::flushCurrentBlock()
 {
     if(!m_currentBlock.text.isEmpty()) {
-        if(m_blockGroup.empty()) {
-            m_formatResult.blocks.emplace_back(m_currentBlock);
-        }
-        else {
-            m_blockStack.emplace(m_currentBlock);
-        }
+        m_formatResult.blocks.emplace_back(m_currentBlock);
         m_currentBlock.text.clear();
-    }
-}
-
-void ScriptFormatterPrivate::closeBlock()
-{
-    if(!m_currentBlock.text.isEmpty()) {
-        if(m_blockStack.empty()) {
-            m_formatResult.blocks.emplace_back(m_currentBlock);
-        }
-        else {
-            m_blockGroup.emplace_back(m_currentBlock);
-        }
-    }
-
-    if(!m_blockStack.empty()) {
-        m_currentBlock = m_blockStack.top();
-        m_blockStack.pop();
-    }
-    else {
-        std::ranges::reverse(m_blockGroup);
-        m_formatResult.blocks.insert(m_formatResult.blocks.end(), m_blockGroup.cbegin(), m_blockGroup.cend());
-        m_blockGroup.clear();
-        resetFormat();
     }
 }
 
@@ -326,34 +300,38 @@ ScriptFormatter::~ScriptFormatter() = default;
 
 RichText ScriptFormatter::evaluate(const QString& input)
 {
+    p->m_errors.clear();
+    p->m_formatResult.clear();
+
     if(input.isEmpty()) {
         return {};
     }
 
     p->resetFormat();
-    p->m_formatResult.clear();
 
-    if(!input.contains(u'<') && !input.contains(u'\\')) {
+    if(!input.contains(u'<') && !input.contains(u'\\') && !input.contains(Constants::PlayingIconMarker)) {
         p->m_currentBlock.text = input;
         p->m_formatResult.blocks.emplace_back(p->m_currentBlock);
         return p->m_formatResult;
     }
 
-    p->m_scanner.setup(input);
-
-    p->advance();
-    while(p->m_current.type != ScriptScanner::TokEos) {
+    p->m_input    = input;
+    p->m_position = 0;
+    while(p->m_position < p->m_input.size()) {
         p->expression();
     }
 
-    p->consume(ScriptScanner::TokEos, u"Expected end of expression"_s);
-
-    if(!p->m_currentBlock.text.isEmpty()) {
-        p->m_formatResult.blocks.emplace_back(p->m_currentBlock);
-    }
+    p->flushCurrentBlock();
+    p->m_input = {};
 
     return p->m_formatResult;
 }
+
+const ErrorList& ScriptFormatter::errors() const
+{
+    return p->m_errors;
+}
+
 void ScriptFormatter::setBaseFont(const QFont& font)
 {
     p->m_font = font;

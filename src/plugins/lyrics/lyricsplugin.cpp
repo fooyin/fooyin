@@ -21,6 +21,7 @@
 
 #include "lyricseditordialog.h"
 #include "lyricsfinder.h"
+#include "lyricsplaybackservice.h"
 #include "lyricspropertiestab.h"
 #include "lyricssaver.h"
 #include "lyricssearchdialog.h"
@@ -37,6 +38,7 @@
 #include <gui/theme/themeregistry.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
+#include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/utils.h>
@@ -52,14 +54,16 @@ namespace Fooyin::Lyrics {
 void LyricsPlugin::initialise(const CorePluginContext& context)
 {
     m_playerController = context.playerController;
-    m_playlistHandler  = context.playlistHandler;
+    m_coreContext      = &context;
     m_audioLoader      = context.audioLoader;
     m_networkAccess    = context.networkAccess;
     m_settings         = context.settingsManager;
 
-    m_lyricsSettings = std::make_unique<LyricsSettings>(m_settings);
+    m_lyricsSettings = std::make_unique<LyricsSettings>();
     m_lyricsFinder   = new LyricsFinder(context.networkAccess, m_settings, this);
     m_lyricsSaver    = new LyricsSaver(context.library, m_settings, this);
+
+    m_lyricsService = new LyricsPlaybackService(context, m_lyricsFinder, m_lyricsSaver, this);
 }
 
 void LyricsPlugin::initialise(const GuiPluginContext& context)
@@ -68,19 +72,29 @@ void LyricsPlugin::initialise(const GuiPluginContext& context)
     m_trackSelection = context.trackSelection;
     m_widgetProvider = context.widgetProvider;
 
-    context.propertiesDialog->addTab(tr("Lyrics"), [this](const TrackList& tracks) {
-        return new LyricsPropertiesTab(tracks.empty() ? Track{} : tracks.front(), m_networkAccess, m_lyricsSaver,
-                                       m_playerController, m_settings,
-                                       [this](const Track& track) { return m_audioLoader->canWriteMetadata(track); });
+    const auto createLyricsWidget
+        = [this, styleProvider = context.styleProvider, coverRepository = context.coverRepository]() {
+              return new LyricsWidget(*m_coreContext, m_lyricsService, m_lyricsSaver, styleProvider, coverRepository,
+                                      m_trackSelection);
+          };
+
+    auto* showLyrics = new QAction(tr("Ly&rics"), this);
+    showLyrics->setStatusTip(tr("Open lyrics in a separate window"));
+    auto* showLyricsCmd = m_actionManager->registerAction(showLyrics, "Lyrics.ShowWindow");
+    showLyricsCmd->setCategories({tr("View")});
+    m_actionManager->actionContainer(Constants::Menus::View)->addAction(showLyricsCmd);
+    QObject::connect(showLyrics, &QAction::triggered, this, [createLyricsWidget]() {
+        auto* window = createLyricsWidget();
+        window->showStandaloneWindow(tr("Lyrics"), u"Lyrics/WindowState"_s, true);
     });
 
-    m_widgetProvider->registerWidget(
-        u"Lyrics"_s,
-        [this, styleProvider = context.styleProvider]() {
-            return new LyricsWidget(m_playerController, m_playlistHandler, m_lyricsFinder, m_lyricsSaver, m_settings,
-                                    styleProvider);
-        },
-        tr("Lyrics"));
+    context.propertiesDialog->addTab(tr("Lyrics"), [this](const TrackList& tracks) {
+        return new LyricsPropertiesTab(
+            tracks.empty() ? Track{} : tracks.front(), m_networkAccess, m_lyricsSaver, m_playerController, m_settings,
+            [this](const Track& track) { return track.isMetadataEditable(m_audioLoader->canWriteMetadata(track)); });
+    });
+
+    m_widgetProvider->registerWidget(u"Lyrics"_s, createLyricsWidget, tr("Lyrics"));
     context.themeRegistry->registerFontEntry(tr("Lyrics"), u"Fooyin::Lyrics::LyricsArea"_s);
 
     new LyricsSearchingPage(m_settings, this);

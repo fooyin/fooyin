@@ -20,11 +20,13 @@
 #pragma once
 
 #include <QObject>
+#include <QPointer>
 
 class QAction;
 
 namespace Fooyin {
 class ActionManager;
+class AboutDialog;
 
 class HelpMenu : public QObject
 {
@@ -33,7 +35,13 @@ class HelpMenu : public QObject
 public:
     explicit HelpMenu(ActionManager* actionManager, QObject* parent = nullptr);
 
+    void refreshApplicationIcon();
+
 private:
+    void showAboutDialog();
+
     ActionManager* m_actionManager;
+    QAction* m_aboutAction;
+    QPointer<AboutDialog> m_aboutDialog;
 };
 } // namespace Fooyin

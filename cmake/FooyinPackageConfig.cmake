@@ -1,3 +1,7 @@
+if(CPACK_GENERATOR STREQUAL "ZIP" AND CPACK_FOOYIN_WINDOWS_PACKAGE_FILE_NAME)
+    set(CPACK_PACKAGE_FILE_NAME "${CPACK_FOOYIN_WINDOWS_PACKAGE_FILE_NAME}-portable")
+endif()
+
 if(CPACK_GENERATOR STREQUAL "DEB")
     find_program(DPKG dpkg)
     if(NOT DPKG)
@@ -30,66 +34,99 @@ if(CPACK_GENERATOR STREQUAL "DEB")
 
     set(CPACK_DEBIAN_FILE_NAME "fooyin_${CPACK_PACKAGE_VERSION}-${DIST_RELEASE}_${CPACK_SYSTEM_NAME}.deb")
 
-    # cmake-format: off
+    # gersemi: off
 
     # Distro specific runtime dependencies
     set(DISTRO_ICU_PACKAGE_MAP
         bookworm libicu72
         noble    libicu74
         trixie   libicu76
-        questing libicu76
         forky    libicu78
         resolute libicu78
+        stonking libicu78
     )
 
     set(DISTRO_TAGLIB_PACKAGE_MAP
         bookworm libtag1v5
         noble    libtag1v5
         trixie   libtag2
-        questing libtag2
         forky    libtag2
         resolute libtag2
+        stonking libtag2
+    )
+
+    set(DISTRO_FLAC_PACKAGE_MAP
+        bookworm libflac12
+        noble    libflac12t64
+        trixie   libflac14
+        forky    libflac14
+        resolute libflac14
+        stonking libflac14
+    )
+
+    set(DISTRO_MPG123_PACKAGE_MAP
+        bookworm libmpg123-0
+        noble    libmpg123-0t64
+        trixie   libmpg123-0t64
+        forky    libmpg123-0t64
+        resolute libmpg123-0t64
+        stonking libmpg123-0t64
     )
 
     set(DISTRO_QT_PACKAGE_MAP
         bookworm "libqt6core6 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
         noble    "libqt6core6t64 (>= 6.4.0), libqt6gui6t64 (>= 6.4.0), libqt6widgets6t64 (>= 6.4.0), libqt6network6t64 (>= 6.4.0), libqt6concurrent6t64 (>= 6.4.0), libqt6sql6t64 (>= 6.4.0)"
         trixie   "libqt6core6t64 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
-        questing "libqt6core6t64 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
         forky    "libqt6core6t64 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
         resolute "libqt6core6t64 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
+        stonking "libqt6core6t64 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6widgets6 (>= 6.4.0), libqt6network6 (>= 6.4.0), libqt6concurrent6 (>= 6.4.0), libqt6sql6 (>= 6.4.0)"
     )
 
-    # cmake-format: on
+    set(DISTRO_DEB_REVISION_MAP
+        bookworm "1~debian.12~bookworm"
+        trixie   "1~debian.13~trixie"
+        forky    "1~debian.14~forky"
+        noble    "1~ubuntu.24.04~noble"
+        resolute "1~ubuntu.26.04~resolute"
+        stonking "1~ubuntu.26.10~stonking"
+    )
+
+    # gersemi: on
 
     function(get_distro_package map_name distro out_var)
         list(FIND ${map_name} "${distro}" idx)
         if(idx GREATER_EQUAL 0)
             math(EXPR pkg_idx "${idx} + 1")
             list(GET ${map_name} ${pkg_idx} pkg)
-            set(${out_var}
-                "${pkg}"
-                PARENT_SCOPE
-            )
+            set(${out_var} "${pkg}" PARENT_SCOPE)
         else()
-            set(${out_var}
-                ""
-                PARENT_SCOPE
-            )
+            set(${out_var} "" PARENT_SCOPE)
         endif()
     endfunction()
 
     get_distro_package(DISTRO_ICU_PACKAGE_MAP "${DIST_RELEASE}" ICU_PKG)
     get_distro_package(DISTRO_TAGLIB_PACKAGE_MAP "${DIST_RELEASE}" TAGLIB_PKG)
+    get_distro_package(DISTRO_FLAC_PACKAGE_MAP "${DIST_RELEASE}" FLAC_PKG)
+    get_distro_package(DISTRO_MPG123_PACKAGE_MAP "${DIST_RELEASE}" MPG123_PKG)
     get_distro_package(DISTRO_QT_PACKAGE_MAP "${DIST_RELEASE}" QT_PKGS)
+    get_distro_package(DISTRO_DEB_REVISION_MAP "${DIST_RELEASE}" DEB_REVISION)
 
-    if(NOT QT_PKGS)
-        message(
-            FATAL_ERROR "Unsupported distribution '${DIST_RELEASE}', update Qt runtime dependencies for cpack -G DEB"
-        )
+    if(NOT QT_PKGS OR NOT DEB_REVISION)
+        message(FATAL_ERROR "Unsupported distribution '${DIST_RELEASE}', update DEB packaging metadata")
     endif()
 
-    foreach(pkg IN ITEMS "${ICU_PKG}" "${TAGLIB_PKG}" "${QT_PKGS}")
+    set(CPACK_DEBIAN_PACKAGE_RELEASE "${DEB_REVISION}")
+
+    foreach(
+        pkg
+        IN
+        ITEMS #
+            "${ICU_PKG}"
+            "${TAGLIB_PKG}"
+            "${FLAC_PKG}"
+            "${MPG123_PKG}"
+            "${QT_PKGS}"
+    )
         if(pkg)
             string(APPEND CPACK_DEBIAN_PACKAGE_DEPENDS ", ${pkg}")
         endif()
@@ -120,13 +157,14 @@ if(CPACK_GENERATOR STREQUAL "DEB")
                 execute_process(
                     COMMAND "${APT_CACHE}" show "${dependency}"
                     RESULT_VARIABLE dependency_result
-                    OUTPUT_QUIET ERROR_QUIET
+                    OUTPUT_QUIET
+                    ERROR_QUIET
                 )
 
                 if(NOT dependency_result EQUAL 0)
                     message(
                         FATAL_ERROR
-                            "DEB runtime dependency '${dependency}' not found for ${DIST_RELEASE}/${CPACK_SYSTEM_NAME}"
+                        "DEB runtime dependency '${dependency}' not found for ${DIST_RELEASE}/${CPACK_SYSTEM_NAME}"
                     )
                 endif()
             endif()
@@ -173,8 +211,9 @@ if(CPACK_GENERATOR STREQUAL "RPM")
     )
 
     execute_process(
-        COMMAND /bin/sh "-c"
-                "${LSB_RELEASE} -ds | tr '[:upper:]' '[:lower:]' | sed 's/\"//g' | sed 's/\\.//g' | cut -d' ' -f3"
+        COMMAND
+            /bin/sh "-c"
+            "${LSB_RELEASE} -ds | tr '[:upper:]' '[:lower:]' | sed 's/\"//g' | sed 's/\\.//g' | cut -d' ' -f3"
         OUTPUT_VARIABLE DIST_VERSION
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )

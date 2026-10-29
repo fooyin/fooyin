@@ -22,10 +22,13 @@
 #include "corepaths.h"
 #include "version.h"
 
+#include <core/accountstore.h>
+
 #include <core/coresettings.h>
 #include <core/engine/audioformat.h>
 #include <core/engine/enginedefs.h>
 #include <core/network/networkaccessmanager.h>
+#include <core/player/playbackqueue.h>
 #include <utils/logging/messagehandler.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -37,11 +40,11 @@ constexpr auto LogLevel = "LogLevel";
 
 namespace Fooyin {
 FySettings::FySettings(QObject* parent)
-    : QSettings{Core::settingsPath(), QSettings::IniFormat, parent}
+    : QSettings{Core::settingsPath(), IniFormat, parent}
 { }
 
 FyStateSettings::FyStateSettings(QObject* parent)
-    : QSettings{Core::statePath(), QSettings::IniFormat, parent}
+    : QSettings{Core::statePath(), IniFormat, parent}
 { }
 
 namespace Settings::Core::Internal {
@@ -55,13 +58,56 @@ QStringList defaultReaderProbeAllExtensions()
     return defaultFFmpegPriorityExtensions();
 }
 
+bool shouldProbeAllReadersForFile(const QString& file)
+{
+    const QString ext = QFileInfo{file}.suffix().toLower();
+    if(ext.isEmpty()) {
+        return false;
+    }
+
+    const FySettings settings;
+    const QVariant value         = settings.contains(ReaderProbeAllExtensions)
+                                     ? settings.value(ReaderProbeAllExtensions)
+                                     : settings.value(FFmpegPriorityExtensions, defaultReaderProbeAllExtensions());
+    const QStringList extensions = value.toStringList();
+    return std::ranges::any_of(extensions,
+                               [&ext](const QString& extension) { return extension.trimmed().toLower() == ext; });
+}
+
 QStringList defaultOutputResamplerPreference()
 {
     return {u"Resampler (SoX)"_s, u"Resampler (FFmpeg)"_s};
 }
 } // namespace Settings::Core::Internal
 
-CoreSettings::CoreSettings(SettingsManager* settingsManager)
+namespace {
+void setupProxyAccount(SettingsManager* settingsManager, DbConnectionPoolPtr dbPool)
+{
+    if(!dbPool) {
+        return;
+    }
+
+    using namespace Settings::Core;
+
+    const AccountStore accountStore{dbPool};
+    if(const auto account = accountStore.load(u"Networking"_s, {u"ProxyUsername"_s, u"ProxyPassword"_s});
+       account && !account->empty()) {
+        settingsManager->set<Internal::ProxyUsername>(account->at(u"ProxyUsername"_s));
+        settingsManager->set<Internal::ProxyPassword>(account->at(u"ProxyPassword"_s));
+    }
+    const auto saveProxyAccount = [settings = settingsManager, dbPool = std::move(dbPool)]() {
+        const AccountStore accounts{dbPool};
+        if(!accounts.save(u"Networking"_s, {{u"ProxyUsername"_s, settings->value<Internal::ProxyUsername>()},
+                                            {u"ProxyPassword"_s, settings->value<Internal::ProxyPassword>()}})) {
+            qWarning() << "Unable to persist proxy credentials";
+        }
+    };
+    settingsManager->subscribe<Internal::ProxyUsername>(settingsManager, saveProxyAccount);
+    settingsManager->subscribe<Internal::ProxyPassword>(settingsManager, saveProxyAccount);
+}
+} // namespace
+
+CoreSettings::CoreSettings(SettingsManager* settingsManager, DbConnectionPoolPtr dbPool)
     : m_settings{settingsManager}
 {
     using namespace Settings::Core;
@@ -86,7 +132,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Language>(QString{}, u"Language"_s);
     m_settings->createSetting<BufferLength>(4000, u"Engine/BufferLength"_s);
     m_settings->createSetting<OpenFilesPlaylist>(u"Default"_s, u"Playlist/OpenFilesPlaylist"_s);
-    m_settings->createSetting<OpenFilesSendTo>(false, u"Playlist/OpenFilesSendToPlaylist"_s);
+    m_settings->createSetting<OpenFilesSendTo>(true, u"Playlist/OpenFilesSendToPlaylist"_s);
     m_settings->createSetting<SaveRatingToMetadata>(false, u"Library/SaveRatingToFile"_s);
     m_settings->createSetting<SavePlaycountToMetadata>(false, u"Library/SavePlaycountToFile"_s);
     m_settings->createSetting<PlayedThreshold>(0.5, u"Playback/PlayedThreshold"_s);
@@ -97,6 +143,8 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<StopAfterCurrent>(false, u"Playback/StopAfterCurrent"_s);
     m_settings->createSetting<RGMode>(0, u"Engine/ReplayGainMode"_s);
     m_settings->createSetting<RGType>(static_cast<int>(ReplayGainType::Track), u"Engine/ReplayGainType"_s);
+    m_settings->createSetting<Internal::ReplayGainLastActiveMode>(static_cast<int>(Engine::ApplyGain),
+                                                                  u"Engine/ReplayGainLastActiveMode"_s);
     m_settings->createSetting<RGPreAmp>(0.0F, u"Engine/ReplayGainPreAmp"_s);
     m_settings->createSetting<NonRGPreAmp>(0.0F, u"Engine/NonReplayGainPreAmp"_s);
     m_settings->createSetting<UseVariousForCompilations>(false, u"Library/UseVariousArtistsForCompilations"_s);
@@ -112,7 +160,12 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<PreserveTimestamps>(false, u"Tagging/PreserveTimestamps"_s);
     m_settings->createSetting<PlaylistSkipMissing>(true, u"Playlist/SkipMissing"_s);
     m_settings->createSetting<PlaybackQueueStopWhenFinished>(false, u"Playback/PlaybackQueueStopWhenFinished"_s);
-    m_settings->createSetting<ClearPlaybackQueueOnExit>(false, u"Playback/ClearPlaybackQueueOnExit"_s);
+    m_settings->createSetting<ClearPlaybackQueueOnStartup>(false, u"Playback/ClearPlaybackQueueOnStartup"_s);
+    m_settings->createSetting<Settings::Core::PlaybackQueueMode>(
+        static_cast<int>(PlaybackQueueMode::PlaylistWithOverrides), u"Playback/PlaybackQueueMode"_s);
+    m_settings->createSetting<PlaybackQueueHistoryLimit>(5, u"Playback/PlaybackQueueHistoryLimit"_s);
+    m_settings->createSetting<PlaybackQueuePlayNowAction>(static_cast<int>(PlayNowAction::AllTracks),
+                                                          u"Playback/PlaybackQueuePlayNowAction"_s);
     m_settings->createSetting<OverwriteRatingOnReload>(false, u"Library/OverwriteRatingOnReload"_s);
     m_settings->createSetting<OverwritePlaycountOnReload>(false, u"Library/OverwritePlaycountOnReload"_s);
     m_settings->createSetting<OpenFileAddDirectory>(false, u"Playlist/OpenFileAddDirectory"_s);
@@ -121,6 +174,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 
     m_settings->createSetting<Internal::MonitorLibraryDirectories>(false, u"Library/MonitorLibraries"_s);
     m_settings->createSetting<Internal::MonitorTrackFiles>(false, u"Library/MonitorTrackFiles"_s);
+    m_settings->createSetting<Internal::PlaylistSkipUnavailable>(false, u"Playlist/SkipUnavailable"_s);
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());
     m_settings->createSetting<Internal::DisabledPlugins>(QStringList{}, u"Plugins/Disabled"_s);
     m_settings->createSetting<Internal::EngineFading>(false, u"Engine/Fading"_s);
@@ -137,12 +191,18 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::ProxyHost>(u""_s, u"Networking/ProxyHost"_s);
     m_settings->createSetting<Internal::ProxyPort>(8080, u"Networking/ProxyPort"_s);
     m_settings->createSetting<Internal::ProxyAuth>(false, u"Networking/ProxyAuth"_s);
-    m_settings->createSetting<Internal::ProxyUsername>(u""_s, u"Networking/ProxyUsername"_s);
-    m_settings->createSetting<Internal::ProxyPassword>(u""_s, u"Networking/ProxyPassword"_s);
+
+    m_settings->createTempSetting<Internal::ProxyUsername>(QString{});
+    m_settings->createTempSetting<Internal::ProxyPassword>(QString{});
+    setupProxyAccount(m_settings, std::move(dbPool));
+
     m_settings->createSetting<Internal::DecodeLowWatermarkRatio>(0.50, u"Engine/DecodeLowWatermarkRatio"_s);
     m_settings->createSetting<Internal::DecodeHighWatermarkRatio>(0.95, u"Engine/DecodeHighWatermarkRatio"_s);
     m_settings->createSetting<Internal::CrossfadeSwitchPolicy>(
         static_cast<int>(Engine::CrossfadeSwitchPolicy::OverlapStart), u"Playback/CrossfadeSwitchPolicy"_s);
+    m_settings->createSetting<Internal::SkipSameAlbumCrossfade>(false, u"Playback/SkipSameAlbumCrossfade"_s);
+    m_settings->createSetting<Internal::AutoCrossfadeAlbumScript>(
+        QString::fromLatin1(Internal::DefaultAutoCrossfadeAlbumScript), u"Playback/AutoCrossfadeAlbumScript"_s);
     m_settings->createSetting<Internal::OutputDeviceProfiles>(QVariant::fromValue(Engine::OutputDeviceProfiles{}),
                                                               u"Engine/OutputDeviceProfiles"_s);
     m_settings->createSetting<Internal::OpusHeaderWriteMode>(static_cast<int>(OpusRGWriteMode::Album),
@@ -160,17 +220,27 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 
+    const int rgMode = m_settings->value<RGMode>();
+    if(rgMode != Engine::NoProcessing) {
+        m_settings->set<Internal::ReplayGainLastActiveMode>(rgMode);
+    }
+    m_settings->subscribe<RGMode>(m_settings, [settings = m_settings](int mode) {
+        if(mode != Engine::NoProcessing) {
+            settings->set<Internal::ReplayGainLastActiveMode>(mode);
+        }
+    });
+
     auto logLevel = m_settings->fileValue(LogLevel, QtInfoMsg);
     bool newLogFormat{false};
     int level = logLevel.toInt(&newLogFormat);
     if(!newLogFormat) {
-        level = QtMsgType::QtInfoMsg;
+        level = QtInfoMsg;
     }
-    MessageHandler::setLevel(static_cast<QtMsgType>(level));
+    MessageHandler::setLevel(static_cast<MessageHandler::Level>(level));
 }
 
 CoreSettings::~CoreSettings()
 {
-    m_settings->fileSet(LogLevel, MessageHandler::level());
+    m_settings->fileSet(LogLevel, static_cast<int>(MessageHandler::level()));
 }
 } // namespace Fooyin

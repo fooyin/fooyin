@@ -99,6 +99,13 @@ void NotifyPlugin::playStateChanged(Player::PlayState state)
 
 void NotifyPlugin::trackChanged(const Track& track)
 {
+    const bool isRepeat = track.isValid() && m_lastTrack.isValid() && track.sameIdentityAs(m_lastTrack);
+    m_lastTrack         = track;
+
+    if(isRepeat && !m_settings->value<Settings::Notify::NotifyOnRepeat>()) {
+        return;
+    }
+
     ++m_notificationGeneration;
 
     if(!m_settings->value<Settings::Notify::Enabled>()) {
@@ -170,11 +177,12 @@ void NotifyPlugin::sendPendingNotification()
     }
 
     const NotificationRequest request{
-        .title     = notification.title,
-        .body      = notification.body,
-        .cover     = notification.cover,
-        .actions   = notificationActions(),
-        .timeoutMs = m_settings->value<Settings::Notify::Timeout>(),
+        .title           = notification.title,
+        .body            = notification.body,
+        .cover           = notification.cover,
+        .actions         = notificationActions(),
+        .timeoutMs       = m_settings->value<Settings::Notify::Timeout>(),
+        .maxAlbumArtSize = m_settings->value<Settings::Notify::MaxAlbumArtSize>(),
     };
 
     m_activeBackend->sendNotification(request);

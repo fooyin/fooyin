@@ -23,6 +23,8 @@
 
 #include <core/network/networkutils.h>
 
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QLoggingCategory>
 #include <QMetaObject>
 #include <QNetworkAccessManager>
@@ -77,10 +79,11 @@ struct NetworkStreamDeviceState
 {
     QPointer<QNetworkReply> reply;
     std::mutex mutex;
-    std::condition_variable ready;
+    std::condition_variable_any ready;
     QString error;
     bool finished{false};
     bool aborted{false};
+    std::stop_token readCancellationToken;
     StreamUtils::BufferState streamBuffer;
     StreamUtils::ReadModeState readMode;
     NetworkStreamReconnectState reconnect;
@@ -89,8 +92,9 @@ struct NetworkStreamDeviceState
     void resetForOpen()
     {
         error.clear();
-        finished = false;
-        aborted  = false;
+        finished              = false;
+        aborted               = false;
+        readCancellationToken = {};
         streamBuffer.reset();
         readMode.reset();
         reconnect.reset();
@@ -111,19 +115,62 @@ QString decodeIcyText(QByteArray value)
 
 QString icyFieldValue(const QString& metadata, const QString& key)
 {
-    const QString prefix  = key + u"='"_s;
-    const qsizetype start = metadata.indexOf(prefix, 0, Qt::CaseInsensitive);
+    const QString prefix = key + u"='"_s;
+
+    qsizetype start{-1};
+    qsizetype searchFrom{0};
+
+    while(true) {
+        const qsizetype candidate = metadata.indexOf(prefix, searchFrom, Qt::CaseInsensitive);
+        if(candidate < 0) {
+            break;
+        }
+
+        qsizetype boundary{candidate};
+        while(boundary > 0 && metadata.at(boundary - 1).isSpace()) {
+            --boundary;
+        }
+
+        if(boundary == 0 || metadata.at(boundary - 1) == ';'_L1) {
+            start = candidate;
+            break;
+        }
+
+        searchFrom = candidate + prefix.size();
+    }
+
     if(start < 0) {
         return {};
     }
 
     const qsizetype valueStart = start + prefix.size();
-    qsizetype valueEnd         = valueStart;
+    qsizetype valueEnd{valueStart};
+    bool foundTerminator{false};
+
     while(valueEnd < metadata.size()) {
-        if(metadata.at(valueEnd) == '\''_L1 && (valueEnd == valueStart || metadata.at(valueEnd - 1) != '\\'_L1)) {
-            break;
+        if(metadata.at(valueEnd) == '\''_L1) {
+            qsizetype precedingBackslashes{0};
+            for(qsizetype index = valueEnd; index > valueStart && metadata.at(index - 1) == '\\'_L1; --index) {
+                ++precedingBackslashes;
+            }
+
+            qsizetype next = valueEnd + 1;
+            while(next < metadata.size() && metadata.at(next).isSpace()) {
+                ++next;
+            }
+
+            const bool escaped        = precedingBackslashes % 2 != 0;
+            const bool endsFieldValue = next == metadata.size() || metadata.at(next) == ';'_L1;
+            if(!escaped && endsFieldValue) {
+                foundTerminator = true;
+                break;
+            }
         }
         ++valueEnd;
+    }
+
+    if(!foundTerminator) {
+        return {};
     }
 
     QString value = metadata.mid(valueStart, valueEnd - valueStart);
@@ -131,12 +178,49 @@ QString icyFieldValue(const QString& metadata, const QString& key)
     return value.trimmed();
 }
 
+void parseIcyStreamTitle(NetworkStreamMetadata& metadata, const QString& value)
+{
+    metadata.streamTitle = value;
+    metadata.title.clear();
+    metadata.artist.clear();
+    metadata.album.clear();
+
+    if(!value.startsWith('{'_L1) && !value.startsWith('['_L1)) {
+        return;
+    }
+
+    const auto document = QJsonDocument::fromJson(value.toUtf8());
+    if(document.isNull()) {
+        return;
+    }
+
+    metadata.title = value;
+    if(!document.isObject()) {
+        return;
+    }
+
+    const auto object = document.object();
+    QString title     = object.value("title"_L1).toString().trimmed();
+    if(title.isEmpty()) {
+        title = object.value("name"_L1).toString().trimmed();
+    }
+    if(title.isEmpty()) {
+        return;
+    }
+
+    metadata.title       = title;
+    metadata.artist      = object.value("artist"_L1).toString().trimmed();
+    metadata.album       = object.value("album"_L1).toString().trimmed();
+    metadata.streamTitle = metadata.artist.isEmpty() ? title : metadata.artist + " - "_L1 + title;
+}
+
 bool updateMetadataRevision(NetworkStreamDeviceState& state, NetworkStreamMetadata metadata)
 {
     const bool changed
         = state.icy.metadata.streamName != metadata.streamName || state.icy.metadata.streamGenre != metadata.streamGenre
        || state.icy.metadata.streamTitle != metadata.streamTitle || state.icy.metadata.streamUrl != metadata.streamUrl
-       || state.icy.metadata.bitrateKbps != metadata.bitrateKbps;
+       || state.icy.metadata.title != metadata.title || state.icy.metadata.artist != metadata.artist
+       || state.icy.metadata.album != metadata.album || state.icy.metadata.bitrateKbps != metadata.bitrateKbps;
     if(!changed) {
         return false;
     }
@@ -183,12 +267,11 @@ void parseIcyMetadataBlock(NetworkStreamDeviceState& state)
     }
 
     NetworkStreamMetadata metadata{state.icy.metadata};
-    const QString previousTitle = metadata.streamTitle;
-    const QString title         = icyFieldValue(metadataText, u"StreamTitle"_s);
-    const QString url           = icyFieldValue(metadataText, u"StreamUrl"_s);
+    const QString title = icyFieldValue(metadataText, u"StreamTitle"_s);
+    const QString url   = icyFieldValue(metadataText, u"StreamUrl"_s);
 
     if(!title.isEmpty()) {
-        metadata.streamTitle = title;
+        parseIcyStreamTitle(metadata, title);
     }
     if(!url.isEmpty()) {
         metadata.streamUrl = url;
@@ -449,6 +532,15 @@ void NetworkStreamDevice::setReconnectOnFinishedEnabled(bool enabled)
     m_state->ready.notify_all();
 }
 
+void NetworkStreamDevice::setReadCancellationToken(std::stop_token token)
+{
+    {
+        const std::scoped_lock lock{m_state->mutex};
+        m_state->readCancellationToken = std::move(token);
+    }
+    m_state->ready.notify_all();
+}
+
 bool NetworkStreamDevice::open(OpenMode mode)
 {
     if(isOpen()) {
@@ -515,16 +607,22 @@ qint64 NetworkStreamDevice::readData(char* data, qint64 maxSize)
 
     std::unique_lock lock{m_state->mutex};
 
-    const auto hasReadableState = [state = m_state]() {
-        return !state->streamBuffer.data.isEmpty() || state->finished || state->aborted || !state->error.isEmpty();
+    const std::stop_token cancellationToken = m_state->readCancellationToken;
+    const auto hasReadableState             = [state = m_state, cancellationToken]() {
+        return cancellationToken.stop_requested() || !state->streamBuffer.data.isEmpty() || state->finished
+            || state->aborted || !state->error.isEmpty();
     };
 
     bool hasData{true};
     if(m_state->readMode.nonBlockingReadsEnabled) {
-        hasData = m_state->ready.wait_for(lock, ReadWaitTimeout, hasReadableState);
+        hasData = m_state->ready.wait_for(lock, cancellationToken, ReadWaitTimeout, hasReadableState);
     }
     else {
-        m_state->ready.wait(lock, hasReadableState);
+        hasData = m_state->ready.wait(lock, cancellationToken, hasReadableState);
+    }
+
+    if(cancellationToken.stop_requested()) {
+        return -1;
     }
 
     if(!hasData && m_state->streamBuffer.data.isEmpty() && !m_state->finished && !m_state->aborted

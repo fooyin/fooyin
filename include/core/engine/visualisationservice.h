@@ -39,7 +39,8 @@ class VisualisationService;
 class VisualisationServicePrivate;
 
 /*!
- * Pull-based visualisation session backed by shared post-master PCM history.
+ * Pull-based visualisation session backed by shared post-master-DSP,
+ * pre-output-fader PCM history.
  *
  * Sessions are intended for in-app visual widgets that query PCM or spectrum
  * data on demand. This keeps widget repaint timing separate from engine audio
@@ -162,6 +163,12 @@ public:
     [[nodiscard]] bool getSpectrumWindowEndingAt(SpectrumWindow& out, uint64_t endTimeMs, int fftSize,
                                                  SpectrumWindowFunction windowFunction
                                                  = SpectrumWindowFunction::Hann) const;
+    [[nodiscard]] bool getSpectrumWindowForDuration(SpectrumWindow& out, uint64_t centerTimeMs, uint64_t durationMs,
+                                                    SpectrumWindowFunction windowFunction
+                                                    = SpectrumWindowFunction::Hann) const;
+    [[nodiscard]] bool getSpectrumWindowEndingAtDuration(SpectrumWindow& out, uint64_t endTimeMs, uint64_t durationMs,
+                                                         SpectrumWindowFunction windowFunction
+                                                         = SpectrumWindowFunction::Hann) const;
 
 private:
     friend class VisualisationService;
@@ -170,6 +177,8 @@ private:
 
     std::unique_ptr<VisualisationSessionPrivate> p;
 };
+
+FYCORE_EXPORT float spectrumWindowGain(VisualisationSession::SpectrumWindowFunction windowFunction, float phase);
 
 using VisualisationSessionPtr = std::shared_ptr<VisualisationSession>;
 

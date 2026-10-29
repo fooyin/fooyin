@@ -21,17 +21,22 @@
 
 #include "fycore_export.h"
 
+#include <core/library/libraryinfo.h>
+#include <core/player/playbackqueue.h>
 #include <core/player/playerdefs.h>
 #include <core/ratingsymbols.h>
 #include <core/scripting/expression.h>
+#include <core/scripting/scriptdependencies.h>
 #include <core/scripting/scriptvalue.h>
 #include <core/track.h>
+#include <utils/id.h>
 
 #include <span>
 #include <variant>
 
 namespace Fooyin {
 class Playlist;
+class PlayerController;
 
 /*!
  * Controls how list-scoped variables behave when evaluation begins from a single Track.
@@ -43,138 +48,136 @@ enum class TrackListContextPolicy : uint8_t
     Fallback,
 };
 
-/*!
- * Playlist-specific capability interface used by variables such as `%list_index%`.
- */
-class FYCORE_EXPORT ScriptPlaylistEnvironment
+enum class ScriptQueueItemState : uint8_t
 {
-public:
-    virtual ~ScriptPlaylistEnvironment() = default;
+    None = 0,
+    Current,
+    Upcoming,
+    Played,
+};
 
-    [[nodiscard]] virtual int currentPlaylistTrackIndex() const = 0;
-    [[nodiscard]] virtual int currentPlayingTrackIndex() const
-    {
-        return -1;
-    }
-    [[nodiscard]] virtual int currentPlayingTrackId() const
-    {
-        return -1;
-    }
-    [[nodiscard]] virtual int playlistTrackCount() const                   = 0;
-    [[nodiscard]] virtual int trackDepth() const                           = 0;
-    [[nodiscard]] virtual std::span<const int> currentQueueIndexes() const = 0;
-    [[nodiscard]] virtual int currentQueueTotal() const
-    {
-        return 0;
-    }
+enum class ScriptPlayingIcon : uint8_t
+{
+    None = 0,
+    Play,
+    Pause,
+    Stop,
+    Disabled,
+};
+
+enum class ScriptWhitespaceMode : uint8_t
+{
+    IgnoreLayout = 0,
+    Preserve,
+};
+
+struct ScriptEvaluationOptions
+{
+    ScriptWhitespaceMode whitespaceMode{ScriptWhitespaceMode::IgnoreLayout};
+    QString missingVariableText{};
+    TrackListContextPolicy trackListContextPolicy{TrackListContextPolicy::Unresolved};
+    QString trackListPlaceholder{};
+    bool escapeRichText{false};
+    bool useVariousArtists{false};
+    RatingStarSymbols ratingSymbols{defaultRatingStarSymbols()};
+    bool replacePathSeparators{false};
+};
+
+struct ScriptPlaylistData
+{
+    UId playlistId{};
+    UId entryId{};
+    QString name{};
+    int trackCount{0};
+    int trackIndex{-1};
+    int playingTrackIndex{-1};
+    int playingTrackId{-1};
+    int depth{0};
+    std::vector<int> queueIndexes{};
+    int queueTotal{0};
+    ScriptQueueItemState queueItemState{ScriptQueueItemState::None};
+    ScriptPlayingIcon playingIcon{ScriptPlayingIcon::None};
+};
+
+struct ScriptPlaybackData
+{
+    uint64_t position{0};
+    uint64_t duration{0};
+    int bitrate{0};
+    QString decoder{};
+    Engine::PlaybackOutputInfo outputInfo{};
+    Player::PlayState playState{Player::PlayState::Stopped};
+    PlaybackQueueMode queueMode{PlaybackQueueMode::PlaylistWithOverrides};
+    Track track{};
+    uint64_t generation{0};
+};
+
+struct ScriptVariableValue
+{
+    QString name{};
+    ScriptResult result;
+    Track track{};
 };
 
 /*!
- * Exposes the active TrackList to list-scoped variables.
- */
-class FYCORE_EXPORT ScriptTrackListEnvironment
-{
-public:
-    virtual ~ScriptTrackListEnvironment() = default;
-
-    [[nodiscard]] virtual const TrackList* trackList() const = 0;
-};
-
-/*!
- * Playback capability interface used by base playback variables.
- */
-class FYCORE_EXPORT ScriptPlaybackEnvironment
-{
-public:
-    virtual ~ScriptPlaybackEnvironment() = default;
-
-    [[nodiscard]] virtual uint64_t currentPosition() const      = 0;
-    [[nodiscard]] virtual uint64_t currentTrackDuration() const = 0;
-    [[nodiscard]] virtual int bitrate() const                   = 0;
-    [[nodiscard]] virtual Player::PlayState playState() const   = 0;
-};
-
-/*!
- * Library capability interface used by base library variables.
- */
-class FYCORE_EXPORT ScriptLibraryEnvironment
-{
-public:
-    virtual ~ScriptLibraryEnvironment() = default;
-
-    [[nodiscard]] virtual QString libraryName(const Track& track) const  = 0;
-    [[nodiscard]] virtual QString libraryPath(const Track& track) const  = 0;
-    [[nodiscard]] virtual QString relativePath(const Track& track) const = 0;
-};
-
-/*!
- * Evaluation policy hooks that affect fallback and output formatting behaviour.
- */
-class FYCORE_EXPORT ScriptEvaluationEnvironment
-{
-public:
-    virtual ~ScriptEvaluationEnvironment() = default;
-
-    [[nodiscard]] virtual TrackListContextPolicy trackListContextPolicy() const = 0;
-    [[nodiscard]] virtual QString trackListPlaceholder() const                  = 0;
-    [[nodiscard]] virtual bool escapeRichText() const                           = 0;
-    [[nodiscard]] virtual bool useVariousArtists() const
-    {
-        return false;
-    }
-    [[nodiscard]] virtual RatingStarSymbols ratingStarSymbols() const
-    {
-        return defaultRatingStarSymbols();
-    }
-    [[nodiscard]] virtual bool replacePathSeparators() const
-    {
-        return false;
-    }
-};
-
-/*!
- * Aggregates the optional capabilities available to a script evaluation.
- */
-class FYCORE_EXPORT ScriptEnvironment
-{
-public:
-    virtual ~ScriptEnvironment() = default;
-
-    [[nodiscard]] virtual const ScriptPlaylistEnvironment* playlistEnvironment() const
-    {
-        return nullptr;
-    }
-
-    [[nodiscard]] virtual const ScriptTrackListEnvironment* trackListEnvironment() const
-    {
-        return nullptr;
-    }
-
-    [[nodiscard]] virtual const ScriptPlaybackEnvironment* playbackEnvironment() const
-    {
-        return nullptr;
-    }
-
-    [[nodiscard]] virtual const ScriptLibraryEnvironment* libraryEnvironment() const
-    {
-        return nullptr;
-    }
-
-    [[nodiscard]] virtual const ScriptEvaluationEnvironment* evaluationEnvironment() const
-    {
-        return nullptr;
-    }
-};
-
-/*!
- * Runtime evaluation state applied around a single script invocation.
+ * Evaluation data. All referenced data must outlive the invocation.
+ * Named values supply contextual variables and built-ins without registered callbacks.
+ * Values with a track scope resolve only for that track; provider captures own the result strings.
+ * Playback and playlist data are snapshots, safe to pass to scripting workers.
  */
 struct ScriptContext
 {
-    const ScriptEnvironment* environment{nullptr};
     const Track* track{nullptr};
     const TrackList* tracks{nullptr};
     const Playlist* playlist{nullptr};
+    const ScriptPlaylistData* playlistData{nullptr};
+    const ScriptPlaybackData* playback{nullptr};
+    const LibraryInfoMap* libraries{nullptr};
+    std::span<const ScriptVariableValue> values{};
+};
+
+/*! Owns snapshots */
+struct ScriptContextData
+{
+    ScriptPlaylistData playlistData;
+    ScriptPlaybackData playback;
+    const TrackList* tracks{nullptr};
+    const Playlist* playlist{nullptr};
+    std::vector<ScriptVariableValue> values{};
+    std::vector<ScriptSourceRevision> revisions{};
+    std::shared_ptr<const TrackList> ownedTracks{};
+
+    [[nodiscard]] ScriptContext context() const
+    {
+        return {.tracks       = ownedTracks ? ownedTracks.get() : tracks,
+                .playlist     = playlist,
+                .playlistData = &playlistData,
+                .playback     = &playback,
+                .values       = values};
+    }
+
+    /*! Detach borrowed model data before handing a context to a worker */
+    void freeze()
+    {
+        if(tracks && !ownedTracks) {
+            ownedTracks = std::make_shared<const TrackList>(*tracks);
+        }
+        tracks   = nullptr;
+        playlist = nullptr;
+    }
+};
+
+/*!
+ * Captures playback and row state on the main thread.
+ * Use ScriptContextService::playbackContext() to include registered provider values.
+ */
+[[nodiscard]] FYCORE_EXPORT ScriptContextData makePlaybackScriptData(PlayerController* playerController,
+                                                                     Playlist* playlist = nullptr);
+
+struct ScriptEvaluationContext
+{
+    ScriptContextData data;
+    ScriptEvaluationOptions options;
 };
 
 /*!
@@ -221,3 +224,5 @@ constexpr ScriptFunctionId InvalidScriptFunctionId{0};
 
 using ScriptFieldValue = std::variant<int, uint64_t, float, QString, QStringList>;
 } // namespace Fooyin
+
+Q_DECLARE_METATYPE(Fooyin::ScriptContextData)

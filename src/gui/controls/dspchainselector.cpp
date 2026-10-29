@@ -75,7 +75,7 @@ DspChainSelector::DspChainSelector(DspChainStore* chainStore, DspPresetRegistry*
             return;
         }
         if(const auto preset = m_presetRegistry->itemById(presetId)) {
-            m_chainStore->setActiveChain(preset->chain);
+            m_chainStore->setActiveChain(preset->chain, preset->name);
         }
     });
 
@@ -111,6 +111,15 @@ void DspChainSelector::saveLayoutData(QJsonObject& layout)
 void DspChainSelector::loadLayoutData(const QJsonObject& layout)
 {
     setShowLabel(layout.value("ShowLabel"_L1).toBool());
+}
+
+void DspChainSelector::populateContextMenu(QMenu* menu)
+{
+    auto* showLabel = new QAction(tr("Show label"), menu);
+    showLabel->setCheckable(true);
+    showLabel->setChecked(m_showLabel);
+    QObject::connect(showLabel, &QAction::triggered, this, &DspChainSelector::setShowLabel);
+    menu->addAction(showLabel);
 }
 
 void DspChainSelector::contextMenuEvent(QContextMenuEvent* event)
@@ -154,13 +163,7 @@ void DspChainSelector::showContextMenu(const QPoint& globalPos)
 {
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
-
-    auto* showLabel = new QAction(tr("Show label"), menu);
-    showLabel->setCheckable(true);
-    showLabel->setChecked(m_showLabel);
-    QObject::connect(showLabel, &QAction::triggered, this, &DspChainSelector::setShowLabel);
-    menu->addAction(showLabel);
-
+    populateContextMenu(menu);
     menu->popup(globalPos);
 }
 } // namespace Fooyin

@@ -21,6 +21,8 @@
 
 #include <QAbstractListModel>
 
+#include <vector>
+
 namespace Fooyin::Lyrics {
 class LyricSource;
 

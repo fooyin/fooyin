@@ -21,16 +21,29 @@
 
 #include <core/scripting/scriptscanner.h>
 
-#include <QRegularExpression>
+#include <QColor>
 #include <QSyntaxHighlighter>
 
 namespace Fooyin {
+struct ScriptHighlightColours
+{
+    QColor variable;
+    QColor function;
+    QColor conditional;
+    QColor operatorColour;
+    QColor quotedText;
+    QColor formattingTag;
+};
+
 class ScriptHighlighter : public QSyntaxHighlighter
 {
     Q_OBJECT
 
 public:
     explicit ScriptHighlighter(QTextDocument* parent = nullptr);
+
+    [[nodiscard]] static ScriptHighlightColours defaultColours();
+    void setColours(const ScriptHighlightColours& colours);
 
 protected:
     void highlightBlock(const QString& text) override;
@@ -42,6 +55,7 @@ private:
     void function();
     void functionArgs();
     void conditional();
+    void formattingTag();
 
     void setTokenFormat(const QTextCharFormat& format);
 
@@ -53,8 +67,9 @@ private:
     QTextCharFormat m_functionFormat;
     QTextCharFormat m_conditionalFormat;
     QTextCharFormat m_operatorFormat;
+    QTextCharFormat m_quotedTextFormat;
     QTextCharFormat m_commentFormat;
-    QTextCharFormat m_errorFormat;
+    QTextCharFormat m_formattingTagFormat;
 
     ScriptScanner m_scanner;
     ScriptScanner::Token m_current;

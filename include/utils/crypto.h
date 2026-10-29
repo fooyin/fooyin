@@ -30,6 +30,15 @@ namespace Fooyin {
 using Md5Hash = QByteArray;
 
 namespace Utils {
+namespace Detail {
+inline QCryptographicHash& md5Hash()
+{
+    thread_local QCryptographicHash hash{QCryptographicHash::Md5};
+    hash.reset();
+    return hash;
+}
+} // namespace Detail
+
 template <typename T>
 void addDataToHash(QCryptographicHash& hash, const T& arg)
 {
@@ -45,7 +54,7 @@ inline void addDataToHash(QCryptographicHash& hash, const QByteArray& arg)
 template <typename... Args>
 QString generateHash(const Args&... args)
 {
-    QCryptographicHash hash{QCryptographicHash::Md5};
+    QCryptographicHash& hash = Detail::md5Hash();
     (addDataToHash(hash, args), ...);
 
     return QString::fromUtf8(hash.result().toHex());
@@ -54,7 +63,7 @@ QString generateHash(const Args&... args)
 template <typename... Args>
 Md5Hash generateMd5Hash(const Args&... args)
 {
-    QCryptographicHash hash{QCryptographicHash::Md5};
+    QCryptographicHash& hash = Detail::md5Hash();
     (addDataToHash(hash, args), ...);
     return hash.result();
 }

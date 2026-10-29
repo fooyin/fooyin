@@ -25,6 +25,7 @@
 #include <QIcon>
 
 class QTabWidget;
+class QListWidget;
 
 namespace Fooyin {
 class SettingsPage;
@@ -35,10 +36,12 @@ struct SettingsCategory
     Id id;
     QString name;
     QTabWidget* tabWidget{nullptr};
+    QListWidget* pageList{nullptr};
     PageList pages{};
     int index{-1};
     int order{-1};
     SettingsPagePosition position{SettingsPagePosition::Default};
+    SettingsPageSelector selector{SettingsPageSelector::Tabs};
 
     bool operator==(const SettingsCategory& other) const
     {

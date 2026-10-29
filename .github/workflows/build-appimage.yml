@@ -1,0 +1,86 @@
+name: Build AppImage
+
+on:
+  workflow_call:
+    inputs:
+      version_suffix:
+        required: false
+        type: string
+        default: ''
+
+env:
+  FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
+  BUILD_CCACHE: ON
+  BUILD_PCH: ON
+  CCACHE_DIR: ${{ github.workspace }}/.ccache
+  CCACHE_BASEDIR: ${{ github.workspace }}
+  CCACHE_MAXSIZE: 500M
+  CCACHE_COMPILERCHECK: content
+  CCACHE_SLOPPINESS: pch_defines,time_macros
+
+jobs:
+  appimage:
+    name: AppImage (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-latest
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    container:
+      image: debian:bookworm
+    steps:
+      - name: Install git
+        run: |
+          apt-get update -qq
+          apt-get install -qq --yes ca-certificates git
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Install build dependencies
+        run: |
+          ./ci/ubuntu-depends.sh
+          apt-get install -y \
+            curl \
+            file \
+            patchelf \
+            qt6-wayland
+
+      - name: Set ccache generation
+        id: ccache-generation
+        run: echo "period=$(( $(date -u +%s) / 86400 ))" >> "$GITHUB_OUTPUT"
+
+      - name: Restore ccache
+        id: ccache-restore
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: appimage-debian-bookworm-${{ matrix.arch }}-ccache-${{ steps.ccache-generation.outputs.period }}
+          restore-keys: |
+            appimage-debian-bookworm-${{ matrix.arch }}-ccache-
+
+      - name: Build AppImage
+        run: |
+          ./ci/appimage-build.sh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: appimage-${{ matrix.arch }}
+          path: build-appimage/output/*.AppImage
+          compression-level: 0
+          if-no-files-found: error
+
+      - name: Save ccache
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
+        uses: ./.github/actions/save-ccache
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}

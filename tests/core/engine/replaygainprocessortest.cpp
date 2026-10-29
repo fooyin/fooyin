@@ -25,6 +25,7 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <cmath>
 
 namespace Fooyin::Testing {
 TEST(ReplayGainProcessorTest, ReactsToSharedSettingsChangesMidTrack)
@@ -63,5 +64,26 @@ TEST(ReplayGainProcessorTest, ReactsToSharedSettingsChangesMidTrack)
     samples = {0.25, 0.25, 0.25, 0.25};
     processor.process(samples.data(), samples.size());
     EXPECT_NEAR(samples[0], 0.25, 0.0001);
+}
+
+TEST(ReplayGainProcessorTest, OutputInfoUsesEffectiveGainAndReportsTrackPeak)
+{
+    Track track;
+    track.setRGAlbumGain(6.0F);
+    track.setRGAlbumPeak(0.8F);
+    track.setRGTrackPeak(0.5F);
+
+    const ReplayGainProcessor::RuntimeSettings settings{
+        .mode          = ReplayGainProcessor::SelectionMode::Album,
+        .processing    = Engine::ApplyGain | Engine::PreventClipping,
+        .rgPreampDb    = 0.0,
+        .nonRgPreampDb = 0.0,
+    };
+
+    const auto info = ReplayGainProcessor::outputInfo(track, settings);
+    EXPECT_EQ(info.source, Engine::ReplayGainSource::Album);
+    EXPECT_NEAR(info.gainDb, 20.0 * std::log10(1.0 / 0.8), 0.0001);
+    EXPECT_TRUE(info.hasPeak);
+    EXPECT_NEAR(info.peak, 0.5 / 0.8, 0.0001);
 }
 } // namespace Fooyin::Testing

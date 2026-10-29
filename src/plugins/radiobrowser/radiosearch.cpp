@@ -25,9 +25,13 @@
 #include <gui/iconloader.h>
 #include <gui/widgets/expandingcombobox.h>
 #include <gui/widgets/toolbutton.h>
+#include <utils/async.h>
+#include <utils/stringcollator.h>
 
+#include <QAbstractItemView>
 #include <QAction>
 #include <QComboBox>
+#include <QFontMetrics>
 #include <QFrame>
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -37,6 +41,8 @@
 #include <QMenu>
 #include <QSignalBlocker>
 #include <QSpinBox>
+#include <QStandardItemModel>
+#include <QStyle>
 #include <QToolButton>
 #include <QWidget>
 
@@ -50,6 +56,13 @@ constexpr int RetryCategoryRole  = Qt::UserRole + 1;
 
 namespace Fooyin::RadioBrowser {
 namespace {
+struct TagComboData
+{
+    std::vector<std::unique_ptr<QStandardItem>> items;
+    std::unordered_map<QString, QString> names;
+    int maxWidth{0};
+};
+
 void syncComboValue(QComboBox* target, const QString& value)
 {
     const int index = value.isEmpty() ? 0 : target->findData(value);
@@ -125,6 +138,7 @@ RadioSearch::RadioSearch(SettingsManager* settings, QWidget* parent)
     , m_popupFiltersLayout{new QGridLayout(m_filterPopup)}
     , m_savedSearch{false}
     , m_showFilterButtonText{true}
+    , m_tagPopulationGeneration{0}
 {
     m_mainLayout->setContentsMargins({});
 
@@ -291,9 +305,7 @@ void RadioSearch::saveLayoutData(QJsonObject& layout)
 
 void RadioSearch::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(ShowFilterTextKey)) {
-        m_showFilterButtonText = layout.value(ShowFilterTextKey).toBool(true);
-    }
+    m_showFilterButtonText = layout.value(ShowFilterTextKey).toBool(m_showFilterButtonText);
 
     for(size_t i{0}; i < filterIndex(FilterControl::Count); ++i) {
         const auto control          = static_cast<FilterControl>(i);
@@ -393,32 +405,33 @@ void RadioSearch::setCodecCategories(const RadioCategoryList& categories)
 void RadioSearch::setCountryCategoriesFailed(const QString& error)
 {
     setCategoriesFailed(m_popupCountryCombo, m_countryCombo, tr("Any country"),
-                        error.isEmpty() ? tr("Countries unavailable - select to retry")
-                                        : tr("Countries unavailable: %1 - select to retry").arg(error),
+                        error.isEmpty() ? tr("Countries unavailable — select to retry")
+                                        : tr("Countries unavailable: %1 — select to retry").arg(error),
                         FilterControl::Country);
 }
 
 void RadioSearch::setLanguageCategoriesFailed(const QString& error)
 {
     setCategoriesFailed(m_popupLanguageCombo, m_languageCombo, tr("Any language"),
-                        error.isEmpty() ? tr("Languages unavailable - select to retry")
-                                        : tr("Languages unavailable: %1 - select to retry").arg(error),
+                        error.isEmpty() ? tr("Languages unavailable — select to retry")
+                                        : tr("Languages unavailable: %1 — select to retry").arg(error),
                         FilterControl::Language);
 }
 
 void RadioSearch::setTagCategoriesFailed(const QString& error)
 {
+    ++m_tagPopulationGeneration;
     setCategoriesFailed(m_popupTagCombo, m_tagCombo, tr("Any tag"),
-                        error.isEmpty() ? tr("Tags unavailable - select to retry")
-                                        : tr("Tags unavailable: %1 - select to retry").arg(error),
+                        error.isEmpty() ? tr("Tags unavailable — select to retry")
+                                        : tr("Tags unavailable: %1 — select to retry").arg(error),
                         FilterControl::Tag);
 }
 
 void RadioSearch::setCodecCategoriesFailed(const QString& error)
 {
     setCategoriesFailed(m_popupCodecCombo, m_codecCombo, tr("Any codec"),
-                        error.isEmpty() ? tr("Codecs unavailable - select to retry")
-                                        : tr("Codecs unavailable: %1 - select to retry").arg(error),
+                        error.isEmpty() ? tr("Codecs unavailable — select to retry")
+                                        : tr("Codecs unavailable: %1 — select to retry").arg(error),
                         FilterControl::Codec);
 }
 
@@ -611,52 +624,73 @@ void RadioSearch::populateGenreCombo()
 
 void RadioSearch::populateTagCombo()
 {
-    const QSignalBlocker popupBlocker{m_popupTagCombo};
-    std::optional<QSignalBlocker> pinnedBlocker;
-    if(m_tagCombo) {
-        pinnedBlocker.emplace(m_tagCombo);
-    }
+    const uint64_t generation = ++m_tagPopulationGeneration;
 
-    m_popupTagCombo->clear();
-    m_popupTagCombo->addItem(tr("Any tag"), QString{});
-    if(m_tagCombo) {
-        m_tagCombo->clear();
-        m_tagCombo->addItem(tr("Any tag"), QString{});
-    }
+    Utils::asyncExec([categories = m_tagCategories, font = m_popupTagCombo->font(), anyTag = tr("Any tag")]() mutable {
+        StringCollator collator;
+        collator.setCaseSensitivity(Qt::CaseInsensitive);
 
-    m_tagNames.clear();
+        std::ranges::sort(categories, [&collator](const RadioCategory& lhs, const RadioCategory& rhs) {
+            return collator.compare(lhs.name, rhs.name) < 0;
+        });
 
-    RadioCategoryList sorted{m_tagCategories};
-    std::ranges::sort(sorted, [](const RadioCategory& lhs, const RadioCategory& rhs) {
-        return QString::localeAwareCompare(lhs.name, rhs.name) < 0;
-    });
+        auto comboData = std::make_unique<TagComboData>();
+        comboData->items.reserve(categories.size() + 1);
+        comboData->names.reserve(categories.size());
 
-    for(const RadioCategory& tag : sorted) {
-        m_popupTagCombo->addItem(tag.name, tag.value);
-        if(m_tagCombo) {
-            m_tagCombo->addItem(tag.name, tag.value);
+        const QFontMetrics fm{font};
+        const auto appendItem = [&comboData, &fm](const QString& name, const QString& value) {
+            auto item = std::make_unique<QStandardItem>(name);
+            item->setData(value, Qt::UserRole);
+            comboData->maxWidth = std::max(comboData->maxWidth, fm.horizontalAdvance(name));
+            comboData->items.push_back(std::move(item));
+        };
+
+        appendItem(anyTag, {});
+        for(const auto& tag : categories) {
+            appendItem(tag.name, tag.value);
+            comboData->names.emplace(tag.value, tag.name);
         }
-        m_tagNames.emplace(tag.value, tag.name);
-    }
 
-    const QString stateTag = m_state.tag.trimmed();
-    if(!stateTag.isEmpty() && m_popupTagCombo->findData(stateTag) < 0) {
-        m_popupTagCombo->addItem(stateTag, stateTag);
-        if(m_tagCombo) {
-            m_tagCombo->addItem(stateTag, stateTag);
+        return comboData;
+    }).then(this, [this, generation](std::unique_ptr<TagComboData> comboData) {
+        if(generation != m_tagPopulationGeneration) {
+            return;
         }
-        m_tagNames.emplace(stateTag, stateTag);
-    }
 
-    m_popupTagCombo->resizeDropDown();
-    if(m_tagCombo) {
-        m_tagCombo->resizeDropDown();
-    }
+        const QSignalBlocker popupBlocker{m_popupTagCombo};
+        std::optional<QSignalBlocker> pinnedBlocker;
+        if(m_tagCombo) {
+            pinnedBlocker.emplace(m_tagCombo);
+        }
 
-    if(m_filterGroups.at(filterIndex(FilterControl::Tag)).label) {
+        auto* model = qobject_cast<QStandardItemModel*>(m_popupTagCombo->model());
+        model->clear();
+
+        QList<QStandardItem*> items;
+        items.reserve(static_cast<qsizetype>(comboData->items.size()));
+        for(auto& item : comboData->items) {
+            items.push_back(item.release());
+        }
+        model->invisibleRootItem()->appendRows(items);
+
+        m_tagNames = std::move(comboData->names);
+
         renderControlFromState(FilterControl::Tag);
         updateFilterButton();
-    }
+
+        for(auto* combo : {m_popupTagCombo, m_tagCombo.data()}) {
+            if(!combo) {
+                continue;
+            }
+            const int maxWidth
+                = std::max(comboData->maxWidth, QFontMetrics{combo->font()}.horizontalAdvance(combo->currentText()));
+            if(combo->view()->minimumWidth() < maxWidth) {
+                combo->view()->setMinimumWidth(maxWidth + combo->style()->pixelMetric(QStyle::PM_ScrollBarExtent)
+                                               + combo->view()->autoScrollMargin());
+            }
+        }
+    });
 }
 
 void RadioSearch::setState(const FilterState& state, const bool notify)
@@ -984,8 +1018,8 @@ void RadioSearch::ensurePinnedControls(FilterControl control)
             }
 
             m_tagCombo = new ExpandingComboBox(m_pinnedFiltersWidget);
+            m_tagCombo->setModel(m_popupTagCombo->model());
             setupFilterCombo(m_tagCombo);
-            populateTagCombo();
             syncComboValue(m_tagCombo, m_state.tag);
             updateFilterComboWidth(m_tagCombo);
 

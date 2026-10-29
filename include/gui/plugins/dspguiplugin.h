@@ -36,4 +36,4 @@ public:
 };
 } // namespace Fooyin
 
-Q_DECLARE_INTERFACE(Fooyin::DspGuiPlugin, "org.fooyin.fooyin.plugin.engine.dspgui/1.0")
+Q_DECLARE_INTERFACE(Fooyin::DspGuiPlugin, "org.fooyin.fooyin.plugin.engine.dspgui")

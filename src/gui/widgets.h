@@ -27,6 +27,8 @@
 #include <QObject>
 #include <memory>
 
+class QWidget;
+
 namespace Fooyin {
 class Application;
 class ArtworkFinder;
@@ -40,6 +42,7 @@ class GuiApplication;
 class GuiStyleProvider;
 struct GuiPluginContext;
 class LibraryTreeController;
+class LibraryTreeWidget;
 class MainWindow;
 class NowPlayingOutputService;
 class OutputProfileManager;
@@ -51,6 +54,11 @@ class SettingsManager;
 class StatusWidget;
 class ThemeRegistry;
 class WidgetProvider;
+
+namespace Filters {
+class FilterController;
+class LibraryFilterRegistry;
+} // namespace Filters
 
 class Widgets : public QObject
 {
@@ -71,13 +79,16 @@ public:
     [[nodiscard]] DspSettingsRegistry* dspSettingsRegistry() const;
     [[nodiscard]] DspSettingsController* dspSettingsController() const;
     [[nodiscard]] PluginSettingsRegistry* pluginSettingsRegistry() const;
+    [[nodiscard]] OutputProfileManager* outputProfileManager() const;
 
+    void showLibraryTree();
     void showArtworkDialog(const TrackList& tracks, Track::Cover type, bool quick);
     void removeArtwork(const TrackList& tracks, Track::Cover type);
     void refreshCoverWidgets();
 
 private:
     FyWidget* createDirBrowser();
+    LibraryTreeWidget* createLibraryTree(QWidget* parent, bool controlsVisibleByDefault = false);
 
     Application* m_core;
     GuiApplication* m_gui;
@@ -92,6 +103,8 @@ private:
     PlaylistInteractor* m_playlistInteractor;
     PlaylistController* m_playlistController;
     LibraryTreeController* m_libraryTreeController;
+    Filters::FilterController* m_filterController;
+    Filters::LibraryFilterRegistry* m_libraryFilterRegistry;
     SelectionInfoFieldRegistry* m_selectionInfoFieldRegistry;
     DspPresetRegistry* m_dspPresetRegistry;
     OutputProfileManager* m_outputProfileManager;

@@ -28,8 +28,9 @@
 
 namespace Fooyin {
 namespace SleepInhibitor::Settings {
-constexpr auto Enabled            = "SleepInhibitor/Enabled";
-constexpr auto OnlyDuringPlayback = "SleepInhibitor/OnlyDuringPlayback";
+constexpr auto Enabled             = "SleepInhibitor/Enabled";
+constexpr auto OnlyDuringPlayback  = "SleepInhibitor/OnlyDuringPlayback";
+constexpr auto PreventDisplaySleep = "SleepInhibitor/PreventDisplaySleep";
 } // namespace SleepInhibitor::Settings
 
 class SleepInhibitorSettings : public QDialog
@@ -48,5 +49,6 @@ private:
     FySettings m_settings;
     QCheckBox* m_enabled;
     QCheckBox* m_onlyDuringPlayback;
+    QCheckBox* m_preventDisplaySleep;
 };
 } // namespace Fooyin

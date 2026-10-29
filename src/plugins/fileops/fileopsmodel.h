@@ -30,6 +30,7 @@
 namespace Fooyin {
 class AudioLoader;
 class MusicLibrary;
+class LibraryManager;
 
 namespace FileOps {
 struct FileOpsItem;
@@ -40,12 +41,18 @@ class FileOpsModel : public QAbstractItemModel
 
 public:
     FileOpsModel(MusicLibrary* library, std::shared_ptr<AudioLoader> audioLoader, TrackList tracks,
-                 SettingsManager* settings, QObject* parent = nullptr);
+                 SettingsManager* settings, LibraryManager* libraryManager, QObject* parent = nullptr);
     ~FileOpsModel() override;
 
     void simulate(const FileOpPreset& preset);
     void run();
     void stop();
+
+    [[nodiscard]] int pendingCount() const;
+    [[nodiscard]] int succeededCount() const;
+    [[nodiscard]] int failedCount() const;
+    [[nodiscard]] int skippedCount() const;
+    [[nodiscard]] int cancelledCount() const;
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
@@ -60,13 +67,19 @@ Q_SIGNALS:
     void finished();
 
 private:
-    void populate(const FileOperations& operations);
-    void operationFinished(const FileOpsItem& operation);
+    void populate(const FileOperations& operations, std::stop_token token);
+    void operationCompleted(const FileOpResult& result);
+    void workerFinished();
     QString operationToString(Operation op) const;
+    static QString resultToString(const FileOpResult& result);
 
+    MusicLibrary* m_library;
+    LibraryManager* m_libraryManager;
     QThread m_workerThread;
     FileOpsWorker m_worker;
     FileOperations m_operations;
+    std::deque<FileOpResult> m_results;
+    int m_succeededCount;
 };
 } // namespace FileOps
 } // namespace Fooyin

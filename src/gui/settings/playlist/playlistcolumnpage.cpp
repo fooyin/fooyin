@@ -82,13 +82,18 @@ PlaylistColumnPageWidget::PlaylistColumnPageWidget(PlaylistColumnRegistry* colum
 
     QObject::connect(m_columnList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &PlaylistColumnPageWidget::updateButtonState);
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, &PlaylistColumnPageWidget::updateButtonState);
 
     QObject::connect(m_openEditor, &QToolButton::clicked, this, [this]() {
-        const auto selection    = m_columnList->selectionModel()->selectedIndexes();
+        const auto selection = m_columnList->selectionModel()->selectedIndexes();
+        if(selection.size() != 1 || (selection.front().column() != 3 && selection.front().column() != 4)) {
+            return;
+        }
+
         const QModelIndex index = selection.front();
-        ScriptEditor::openEditor(index.data(Qt::EditRole).toString(), [this, index](const QString& script) {
-            m_model->setData(index, script, Qt::EditRole);
-        });
+        ScriptEditor::openEditor(
+            index.data(Qt::EditRole).toString(),
+            [this, index](const QString& script) { m_model->setData(index, script, Qt::EditRole); }, {}, this);
     });
 }
 

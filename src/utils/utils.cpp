@@ -38,9 +38,28 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr std::array<const char*, 6> DateFormats{"yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd hh:mm", "yyyy-MM-dd hh",
-                                                 "yyyy-MM-dd",          "yyyy-MM",          "yyyy"};
 constexpr auto StatusTipsForwardedProp = "fooyin_statusTipsForwarded";
+
+namespace {
+std::optional<int> parseDigits(QStringView value, qsizetype position, qsizetype count)
+{
+    const auto end = position + count;
+
+    if(end > value.size()) {
+        return {};
+    }
+
+    int result{0};
+    for(qsizetype i{position}; i < end; ++i) {
+        const char16_t character = value.at(i).unicode();
+        if(character < u'0' || character > u'9') {
+            return {};
+        }
+        result = (result * 10) + (character - u'0');
+    }
+    return result;
+}
+} // namespace
 
 namespace Fooyin::Utils {
 int randomNumber(int min, int max)
@@ -69,21 +88,67 @@ QString formatTimeMs(uint64_t time)
     return formattedDateTime;
 }
 
-std::array<const char*, 6> dateFormats()
+std::optional<ParsedDateTime> parseDateTime(QStringView value)
 {
-    return DateFormats;
+    const auto size = value.size();
+
+    DateTimePrecision precision;
+    switch(size) {
+        case 4:
+            precision = DateTimePrecision::Year;
+            break;
+        case 7:
+            precision = DateTimePrecision::Month;
+            break;
+        case 10:
+            precision = DateTimePrecision::Day;
+            break;
+        case 13:
+            precision = DateTimePrecision::Hour;
+            break;
+        case 16:
+            precision = DateTimePrecision::Minute;
+            break;
+        case 19:
+            precision = DateTimePrecision::Second;
+            break;
+        default:
+            return {};
+    }
+
+    // clang-format off
+    if((size >= 7 && value.at(4) != '-'_L1) ||
+       (size >= 10 && value.at(7) != '-'_L1) ||
+       (size >= 13 && value.at(10) != ' '_L1) ||
+       (size >= 16 && value.at(13) != ':'_L1) ||
+       (size >= 19 && value.at(16) != ':'_L1)) {
+        return {};
+    }
+    // clang-format on
+
+    const auto year   = parseDigits(value, 0, 4);
+    const auto month  = size >= 7 ? parseDigits(value, 5, 2) : 1;
+    const auto day    = size >= 10 ? parseDigits(value, 8, 2) : 1;
+    const auto hour   = size >= 13 ? parseDigits(value, 11, 2) : 0;
+    const auto minute = size >= 16 ? parseDigits(value, 14, 2) : 0;
+    const auto second = size >= 19 ? parseDigits(value, 17, 2) : 0;
+    if(!year || !month || !day || !hour || !minute || !second) {
+        return {};
+    }
+
+    const QDate date{*year, *month, *day};
+    const QTime time{*hour, *minute, *second};
+    if(!date.isValid() || !time.isValid()) {
+        return {};
+    }
+
+    return ParsedDateTime{.date = date, .time = time, .precision = precision};
 }
 
 QDateTime dateStringToDate(const QString& str)
 {
-    for(const auto& format : DateFormats) {
-        const QDateTime date = QDateTime::fromString(str, QLatin1String{format});
-        if(date.isValid()) {
-            return date;
-        }
-    }
-
-    return {};
+    const auto parsed = parseDateTime(str);
+    return parsed ? parsed->toDateTime() : QDateTime{};
 }
 
 std::optional<int64_t> dateStringToMs(const QString& str)

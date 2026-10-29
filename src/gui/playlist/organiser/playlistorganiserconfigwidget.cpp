@@ -20,6 +20,7 @@
 #include "playlistorganiserconfigwidget.h"
 
 #include <gui/widgets/colourbutton.h>
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/scriptlineedit.h>
 
 #include <QCheckBox>
@@ -54,39 +55,33 @@ QColor defaultPlayingBackgroundColour(const QWidget* widget)
 namespace Fooyin {
 PlaylistOrganiserConfigDialog::PlaylistOrganiserConfigDialog(PlaylistOrganiser* organiser, QWidget* parent)
     : WidgetConfigDialog{organiser, tr("Playlist Organiser Settings"), parent}
-    , m_leftScript{new ScriptLineEdit(this)}
-    , m_rightScript{new ScriptLineEdit(this)}
-    , m_customPlayingTextColour{new QCheckBox(tr("Playing text"), this)}
-    , m_playingTextColour{new ColourButton(this)}
-    , m_customPlayingBackgroundColour{new QCheckBox(tr("Playing background"), this)}
-    , m_playingBackgroundColour{new ColourButton(this)}
+    , m_displayScript{new ScriptTextEdit(this)}
+    , m_playingTextColour{new ColourButton(tr("Playing text"), true, this)}
+    , m_playingBackgroundColour{new ColourButton(tr("Playing background"), true, this)}
 {
-    auto* scriptGroup       = new QGroupBox(tr("Scripts"), this);
+    auto* scriptGroup       = new QGroupBox(tr("Display script"), this);
     auto* scriptGroupLayout = new QGridLayout(scriptGroup);
-    auto* scriptHint        = new QLabel(
-        u"🛈 "_s
-            + tr("Available variables: <code>%node_name%</code>, <code>%is_group%</code>, <code>%count%</code>, "
-                 "<code>%playlist_size%</code>, <code>%playlist_duration%</code>"),
+    auto* scriptHint        = new HintLabel(
+        tr("Available variables: <code>%node_name%</code>, <code>%is_group%</code>, <code>%count%</code>, "
+           "<code>%playlist_size%</code>, <code>%playlist_duration%</code>"),
         this);
     scriptHint->setTextFormat(Qt::RichText);
     scriptHint->setWordWrap(true);
 
-    //: Refers to the left script field.
-    scriptGroupLayout->addWidget(new QLabel(tr("Left") + u":"_s, this), 0, 0);
-    scriptGroupLayout->addWidget(m_leftScript, 0, 1);
-    //: Refers to the right script field.
-    scriptGroupLayout->addWidget(new QLabel(tr("Right") + u":"_s, this), 1, 0);
-    scriptGroupLayout->addWidget(m_rightScript, 1, 1);
+    scriptGroupLayout->addWidget(m_displayScript, 0, 0, 1, 2);
+    auto* alignmentHint = new HintLabel(tr("Use <code>&lt;right&gt;</code> for right-aligned text."), this);
+    alignmentHint->setWordWrap(true);
+    scriptGroupLayout->addWidget(alignmentHint, 1, 0, 1, 2);
     scriptGroupLayout->addWidget(scriptHint, 2, 0, 1, 2);
     scriptGroupLayout->setColumnStretch(1, 1);
 
     auto* appearanceGroup       = new QGroupBox(tr("Colours"), this);
     auto* appearanceGroupLayout = new QGridLayout(appearanceGroup);
 
-    appearanceGroupLayout->addWidget(m_customPlayingTextColour, 0, 0);
-    appearanceGroupLayout->addWidget(m_playingTextColour, 0, 1);
-    appearanceGroupLayout->addWidget(m_customPlayingBackgroundColour, 1, 0);
-    appearanceGroupLayout->addWidget(m_playingBackgroundColour, 1, 1);
+    ColourButton::alignLabels({m_playingTextColour, m_playingBackgroundColour});
+
+    appearanceGroupLayout->addWidget(m_playingTextColour, 0, 0, 1, 2);
+    appearanceGroupLayout->addWidget(m_playingBackgroundColour, 1, 0, 1, 2);
     appearanceGroupLayout->setColumnStretch(1, 1);
 
     auto* layout = contentLayout();
@@ -96,22 +91,17 @@ PlaylistOrganiserConfigDialog::PlaylistOrganiserConfigDialog(PlaylistOrganiser* 
     layout->addWidget(appearanceGroup, row++, 0);
     layout->setRowStretch(row, 1);
 
-    QObject::connect(m_customPlayingTextColour, &QCheckBox::toggled, m_playingTextColour, &QWidget::setEnabled);
-    QObject::connect(m_customPlayingBackgroundColour, &QCheckBox::toggled, m_playingBackgroundColour,
-                     &QWidget::setEnabled);
-
     loadCurrentConfig();
 }
 
 PlaylistOrganiser::ConfigData PlaylistOrganiserConfigDialog::config() const
 {
     return {
-        .leftScript              = m_leftScript->text(),
-        .rightScript             = m_rightScript->text(),
-        .playingTextColour       = m_customPlayingTextColour->isChecked()
+        .displayScript           = m_displayScript->text(),
+        .playingTextColour       = m_playingTextColour->isChecked()
                                      ? normaliseColour(m_playingTextColour->colour().name(QColor::HexArgb))
                                      : QString{},
-        .playingBackgroundColour = m_customPlayingBackgroundColour->isChecked()
+        .playingBackgroundColour = m_playingBackgroundColour->isChecked()
                                      ? normaliseColour(m_playingBackgroundColour->colour().name(QColor::HexArgb))
                                      : QString{},
     };
@@ -119,17 +109,14 @@ PlaylistOrganiser::ConfigData PlaylistOrganiserConfigDialog::config() const
 
 void PlaylistOrganiserConfigDialog::setConfig(const PlaylistOrganiser::ConfigData& config)
 {
-    m_leftScript->setText(config.leftScript);
-    m_rightScript->setText(config.rightScript);
+    m_displayScript->setText(config.displayScript);
 
-    m_customPlayingTextColour->setChecked(!config.playingTextColour.isEmpty());
+    m_playingTextColour->setChecked(!config.playingTextColour.isEmpty());
     m_playingTextColour->setColour(
         colourOrDefault(config.playingTextColour, widget()->palette().color(QPalette::Text)));
-    m_playingTextColour->setEnabled(m_customPlayingTextColour->isChecked());
 
-    m_customPlayingBackgroundColour->setChecked(!config.playingBackgroundColour.isEmpty());
+    m_playingBackgroundColour->setChecked(!config.playingBackgroundColour.isEmpty());
     m_playingBackgroundColour->setColour(
         colourOrDefault(config.playingBackgroundColour, defaultPlayingBackgroundColour(widget())));
-    m_playingBackgroundColour->setEnabled(m_customPlayingBackgroundColour->isChecked());
 }
 } // namespace Fooyin

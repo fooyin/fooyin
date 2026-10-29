@@ -25,8 +25,11 @@
 #include "tagpolicy.h"
 
 #include <core/constants.h>
+#include <core/coresettings.h>
+#include <core/internalcoresettings.h>
 #include <core/track.h>
 #include <utils/helpers.h>
+#include <utils/stringutils.h>
 
 #include <taglib/aifffile.h>
 #include <taglib/apefile.h>
@@ -36,6 +39,7 @@
 #include <taglib/asfpicture.h>
 #include <taglib/asftag.h>
 #include <taglib/attachedpictureframe.h>
+#include <taglib/commentsframe.h>
 #if (TAGLIB_MAJOR_VERSION >= 2)
 #include <taglib/dsdifffile.h>
 #include <taglib/dsffile.h>
@@ -70,12 +74,15 @@
 #include <QLoggingCategory>
 #include <QMimeDatabase>
 #include <QPixmap>
+#include <QtEndian>
 
 #include <cmath>
 #include <cstring>
 #include <limits>
 #include <optional>
+#include <ranges>
 #include <set>
+#include <vector>
 
 Q_LOGGING_CATEGORY(TAGLIB, "fy.taglib")
 
@@ -117,7 +124,6 @@ public:
         std::vector<char> data(length);
         const auto lenRead = m_input->read(data.data(), static_cast<qint64>(length));
         if(lenRead < 0) {
-            m_input->close();
             return {};
         }
         return TagLib::ByteVector{data.data(), static_cast<unsigned int>(lenRead)};
@@ -423,17 +429,17 @@ constexpr std::array mp4ToTag{
 };
 
 constexpr std::array tagToMp4{
-    std::pair(Fooyin::Tag::Title, Fooyin::Mp4::Title),
-    std::pair(Fooyin::Tag::Artist, Fooyin::Mp4::Artist),
-    std::pair(Fooyin::Tag::Album, Fooyin::Mp4::Album),
-    std::pair(Fooyin::Tag::AlbumArtist, Fooyin::Mp4::AlbumArtist),
-    std::pair(Fooyin::Tag::Genre, Fooyin::Mp4::Genre),
-    std::pair(Fooyin::Tag::Composer, Fooyin::Mp4::Composer),
-    std::pair(Fooyin::Tag::Performer, Fooyin::Mp4::Performer),
-    std::pair(Fooyin::Tag::Comment, Fooyin::Mp4::Comment),
-    std::pair(Fooyin::Tag::Date, Fooyin::Mp4::Date),
-    std::pair(Fooyin::Tag::Rating, Fooyin::Mp4::Rating),
-    std::pair(Fooyin::Tag::TrackNumber, Fooyin::Mp4::TrackNumber),
+    std::pair(Tag::Title, Mp4::Title),
+    std::pair(Tag::Artist, Mp4::Artist),
+    std::pair(Tag::Album, Mp4::Album),
+    std::pair(Tag::AlbumArtist, Mp4::AlbumArtist),
+    std::pair(Tag::Genre, Mp4::Genre),
+    std::pair(Tag::Composer, Mp4::Composer),
+    std::pair(Tag::Performer, Mp4::Performer),
+    std::pair(Tag::Comment, Mp4::Comment),
+    std::pair(Tag::Date, Mp4::Date),
+    std::pair(Tag::Rating, Mp4::Rating),
+    std::pair(Tag::TrackNumber, Mp4::TrackNumber),
     std::pair(Tag::Disc, Mp4::Disc),
     std::pair("COMPILATION", "cpil"),
     std::pair("BPM", "tmpo"),
@@ -542,6 +548,139 @@ QStringList convertStringList(const TagLib::StringList& strList)
     }
 
     return list;
+}
+
+void addUniqueExtraTagValues(Track& track, const QString& tag, const QStringList& values)
+{
+    QStringList existing = track.extraTag(tag);
+
+    for(const QString& value : values) {
+        if(value.isEmpty() || existing.contains(value)) {
+            continue;
+        }
+
+        track.addExtraTag(tag, value);
+        existing.emplace_back(value);
+    }
+}
+
+std::optional<TagLib::PropertyMap> latin1FrameProperties(const TagLib::ID3v2::Frame* frame)
+{
+    if(const auto* textFrame = dynamic_cast<const TagLib::ID3v2::TextIdentificationFrame*>(frame)) {
+        if(textFrame->textEncoding() == TagLib::String::Latin1) {
+            return textFrame->asProperties();
+        }
+    }
+    if(const auto* commentFrame = dynamic_cast<const TagLib::ID3v2::CommentsFrame*>(frame)) {
+        if(commentFrame->textEncoding() == TagLib::String::Latin1) {
+            return commentFrame->asProperties();
+        }
+    }
+    return {};
+}
+
+QByteArray detectLegacyEncoding(const QByteArray& data)
+{
+    if(!std::ranges::any_of(data, [](char byte) { return static_cast<unsigned char>(byte) >= 0x80; })) {
+        return {};
+    }
+
+    const FySettings settings;
+    const Utils::DetectEncodingOptions options{
+        .preferredFallbackEncoding
+        = settings.value(QString::fromLatin1(Utils::PreferredFallbackEncodingSetting)).toString().toLatin1()};
+    QByteArray encoding = Utils::detectEncoding(data, options);
+    if(encoding.isEmpty()) {
+        return {};
+    }
+
+    const auto decoded = Utils::decodeText(data, encoding);
+    if(!decoded || *decoded == QString::fromLatin1(data)) {
+        return {};
+    }
+
+    return encoding;
+}
+
+QString decodeLegacyId3Value(const TagLib::String& value, const QByteArray& encoding)
+{
+    QString text          = convertString(value);
+    const QByteArray data = text.toLatin1();
+    if(QString::fromLatin1(data) != text) {
+        return text;
+    }
+
+    const auto decoded = Utils::decodeText(data, encoding);
+    return decoded.value_or(text);
+}
+
+TagLib::PropertyMap id3v1Properties(const TagLib::ID3v1::Tag* tag)
+{
+    TagLib::PropertyMap properties = tag->properties();
+    QByteArray latin1Data;
+
+    for(const auto& values : properties | std::views::values) {
+        for(const TagLib::String& value : values) {
+            const QString text    = convertString(value);
+            const QByteArray data = text.toLatin1();
+            if(QString::fromLatin1(data) == text) {
+                latin1Data.append(data);
+                latin1Data.append(u'\n');
+            }
+        }
+    }
+
+    const QByteArray encoding = detectLegacyEncoding(latin1Data);
+    if(!encoding.isEmpty()) {
+        for(auto& values : properties | std::views::values) {
+            for(TagLib::String& value : values) {
+                value = convertString(decodeLegacyId3Value(value, encoding));
+            }
+        }
+    }
+
+    return properties;
+}
+
+TagLib::PropertyMap id3Properties(const TagLib::ID3v2::Tag* tag)
+{
+    std::vector<TagLib::PropertyMap> latin1Properties;
+    QByteArray latin1Data;
+
+    for(const auto* frame : tag->frameList()) {
+        if(auto properties = latin1FrameProperties(frame)) {
+            for(const auto& values : *properties | std::views::values) {
+                for(const TagLib::String& value : values) {
+                    const QString text    = convertString(value);
+                    const QByteArray data = text.toLatin1();
+                    if(QString::fromLatin1(data) == text) {
+                        latin1Data.append(data);
+                        latin1Data.append(u'\n');
+                    }
+                }
+            }
+            latin1Properties.emplace_back(std::move(*properties));
+        }
+    }
+
+    const QByteArray encoding = detectLegacyEncoding(latin1Data);
+
+    TagLib::PropertyMap properties = tag->properties();
+    if(!encoding.isEmpty()) {
+        for(const auto& framePropertyMap : latin1Properties) {
+            for(const auto& [key, frameValues] : framePropertyMap) {
+                TagLib::StringList& values = properties[key];
+                for(const TagLib::String& frameValue : frameValues) {
+                    const auto value = std::ranges::find(values, frameValue);
+                    if(value != values.end()) {
+                        *value = convertString(decodeLegacyId3Value(*value, encoding));
+                    }
+                }
+            }
+        }
+    }
+
+    return properties;
 }
 
 TagLib::StringList convertStringList(const QStringList& strList)
@@ -712,24 +851,6 @@ std::optional<OpusHeadPage> readOpusHeadPage(QIODevice* device)
     };
 }
 
-enum class AudioFileFormat : uint8_t
-{
-    Unknown = 0,
-    Mpeg,
-    Aiff,
-    Wav,
-    Musepack,
-    Ape,
-    WavPack,
-    Mp4,
-    Flac,
-    Vorbis,
-    Opus,
-    Asf,
-    Dsf,
-    Dsdiff,
-};
-
 AudioFileFormat audioFileFormat(const QString& mimeType)
 {
     if(mimeType == "audio/mpeg"_L1 || mimeType == "audio/mpeg3"_L1 || mimeType == "audio/x-mpeg"_L1) {
@@ -766,12 +887,14 @@ AudioFileFormat audioFileFormat(const QString& mimeType)
     if(mimeType == "audio/x-ms-wma"_L1 || mimeType == "video/x-ms-asf"_L1 || mimeType == "application/vnd.ms-asf"_L1) {
         return AudioFileFormat::Asf;
     }
+#if (TAGLIB_MAJOR_VERSION >= 2)
     if(mimeType == "audio/x-dsf"_L1) {
         return AudioFileFormat::Dsf;
     }
     if(mimeType == "audio/x-dff"_L1) {
         return AudioFileFormat::Dsdiff;
     }
+#endif
 
     return AudioFileFormat::Unknown;
 }
@@ -792,7 +915,24 @@ DetectedAudioFileFormat detectAudioFileFormat(const AudioSource& source)
         mimeType = mimeDb.mimeTypeForData(source.device).name();
     }
 
-    return {.format = audioFileFormat(mimeType), .mimeType = std::move(mimeType)};
+    auto format = audioFileFormat(mimeType);
+
+#if (TAGLIB_MAJOR_VERSION >= 2)
+    if(format == AudioFileFormat::Unknown) {
+        // Qt's MIME database may not recognise DSD on some systems
+        const QByteArray header = source.device->peek(16);
+        if(header.size() >= 12 && header.startsWith("DSD ")
+           && qFromLittleEndian<uint64_t>(header.constData() + 4) == 28) {
+            format = AudioFileFormat::Dsf;
+        }
+        else if(header.size() >= 16 && header.startsWith("FRM8")
+                && std::memcmp(header.constData() + 12, "DSD ", 4) == 0) {
+            format = AudioFileFormat::Dsdiff;
+        }
+    }
+#endif
+
+    return {.format = format, .mimeType = std::move(mimeType)};
 }
 
 QString codecForFormat(AudioFileFormat format)
@@ -828,9 +968,10 @@ QString codecForFormat(AudioFileFormat format)
     return {};
 }
 
-void readAudioProperties(const TagLib::File& file, Track& track)
+template <typename Type>
+void readAudioProperties(const Type& file, Track& track)
 {
-    if(TagLib::AudioProperties* props = file.audioProperties()) {
+    if(const auto* props = file.audioProperties()) {
         const uint64_t duration = props->lengthInMilliseconds();
         const int bitrate       = props->bitrate();
         const int sampleRate    = props->sampleRate();
@@ -847,6 +988,14 @@ void readAudioProperties(const TagLib::File& file, Track& track)
         }
         if(channels > 0) {
             track.setChannels(channels);
+        }
+
+        if constexpr(requires { props->sampleFrames(); }) {
+            const uint64_t sampleFrames = props->sampleFrames();
+
+            if(sampleFrames > 0) {
+                track.setSampleFrames(sampleFrames);
+            }
         }
     }
 }
@@ -894,6 +1043,34 @@ TextRatingWrite textRatingWrite(const Track& track, const RatingTagPolicy& polic
     return {.tag = tag, .value = formatTextRating(track.rating(), policy.writeScale)};
 }
 
+void readPlaycountTag(Track& track, const PlaycountTagPolicy& policy, const QString& tag, const QString& rawCount)
+{
+    if(!policy.shouldReadTag(tag, track.playCount() > 0)) {
+        return;
+    }
+
+    bool ok{false};
+    const int count = rawCount.toInt(&ok);
+    if(ok && count > 0) {
+        track.setPlayCount(count);
+    }
+}
+
+struct TextPlaycountWrite
+{
+    QString tag;
+    QString value;
+};
+
+TextPlaycountWrite textPlaycountWrite(const Track& track, const PlaycountTagPolicy& policy)
+{
+    const QString tag = policy.effectiveWriteTag();
+    if(tag.isEmpty()) {
+        return {};
+    }
+    return {.tag = tag, .value = track.playCount() > 0 ? QString::number(track.playCount()) : QString{}};
+}
+
 void readGeneralProperties(const TagLib::PropertyMap& props, Track& track, bool skipEmptyValues, bool clearExtraTags,
                            const TagPolicy& policy, bool isId3v23 = false)
 {
@@ -922,13 +1099,17 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Track& track, bool 
         else if(field == Album) {
             track.setAlbum(convertString(value.toString()));
         }
-        else if(field == AlbumArtist) {
+        else if(field == AlbumArtist || (field == AlbumArtistAlt && !props.contains(AlbumArtist))) {
             QStringList values = convertStringList(value);
             if(isId3v23) {
                 values = Id3Utils::splitStandardField(convertString(field), values,
                                                       policy.splitId3v23SemicolonSeparatedTags);
             }
             track.setAlbumArtists(values);
+        }
+        else if(field == AlbumArtistAlt) {
+            // Handled above with ALBUMARTIST taking precedence
+            continue;
         }
         else if(field == Genre) {
             QStringList values = convertStringList(value);
@@ -986,28 +1167,26 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Track& track, bool 
             readTextRatingTag(track, policy.rating, tag, rawRating, false);
         }
         else if(field == PlayCount) {
-            const int count = convertString(value.toString()).toInt();
-            if(count > 0) {
-                track.setPlayCount(count);
-            }
+            readPlaycountTag(track, policy.playcount, QString::fromLatin1(PlayCount), convertString(value.toString()));
         }
-        else if(field.startsWith(ReplayGain::ReplayGainStart)) {
-            if(field == ReplayGain::TrackGain || field == ReplayGain::TrackGainAlt) {
-                track.setRGTrackGain(gainStringToFloat(value.toString()));
-            }
-            else if(field == ReplayGain::AlbumGain || field == ReplayGain::AlbumGainAlt) {
-                track.setRGAlbumGain(gainStringToFloat(value.toString()));
-            }
-            else if(field == ReplayGain::TrackPeak || field == ReplayGain::TrackPeakAlt) {
-                track.setRGTrackPeak(peakStringToFloat(value.toString()));
-            }
-            else if(field == ReplayGain::AlbumPeak || field == ReplayGain::AlbumPeakAlt) {
-                track.setRGAlbumPeak(peakStringToFloat(value.toString()));
-            }
+        else if(field == ReplayGain::TrackGain || field == ReplayGain::TrackGainAlt) {
+            track.setRGTrackGain(gainStringToFloat(value.toString()));
+        }
+        else if(field == ReplayGain::AlbumGain || field == ReplayGain::AlbumGainAlt) {
+            track.setRGAlbumGain(gainStringToFloat(value.toString()));
+        }
+        else if(field == ReplayGain::TrackPeak || field == ReplayGain::TrackPeakAlt) {
+            track.setRGTrackPeak(peakStringToFloat(value.toString()));
+        }
+        else if(field == ReplayGain::AlbumPeak || field == ReplayGain::AlbumPeakAlt) {
+            track.setRGAlbumPeak(peakStringToFloat(value.toString()));
         }
         else {
             const auto tagEntry = convertString(field);
-            if(!policy.rating.automaticRead() && tagEntry == policy.rating.readTag && !value.isEmpty()) {
+            if(policy.playcount.shouldReadTag(tagEntry, track.playCount() > 0) && !value.isEmpty()) {
+                readPlaycountTag(track, policy.playcount, tagEntry, convertString(value.front()));
+            }
+            else if(!policy.rating.automaticRead() && tagEntry == policy.rating.readTag && !value.isEmpty()) {
                 readTextRatingTag(track, policy.rating, policy.rating.readTag, tagEntry, convertString(value.front()),
                                   useRatingTagFallback(policy.rating));
             }
@@ -1016,9 +1195,7 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Track& track, bool 
                 if(isId3v23) {
                     values = Id3Utils::splitExtraField(tagEntry, values, policy.splitId3v23SemicolonSeparatedTags);
                 }
-                for(const QString& tagValue : values) {
-                    track.addExtraTag(tagEntry, tagValue);
-                }
+                addUniqueExtraTagValues(track, tagEntry, values);
             }
         }
     }
@@ -1053,6 +1230,7 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Track& tra
     replaceOrErase(oldProperties, Artist, track.artists());
     replaceOrErase(oldProperties, Album, track.album());
     replaceOrErase(oldProperties, AlbumArtist, track.albumArtists());
+    oldProperties.erase(AlbumArtistAlt);
     replaceOrErase(oldProperties, Genre, track.genres());
     replaceOrErase(oldProperties, Composer, track.composers());
     replaceOrErase(oldProperties, Performer, track.performers());
@@ -1115,14 +1293,46 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Track& tra
         handleRGProperty(track.hasAlbumPeak(), track.rgAlbumPeak(), ReplayGain::AlbumPeak, ReplayGain::AlbumPeakAlt,
                          false);
 
+        static const std::set baseTags{QString::fromLatin1(Title),
+                                       QString::fromLatin1(Artist),
+                                       QString::fromLatin1(Album),
+                                       QString::fromLatin1(AlbumArtist),
+                                       QString::fromLatin1(Genre),
+                                       QString::fromLatin1(Composer),
+                                       QString::fromLatin1(Performer),
+                                       QString::fromLatin1(Comment),
+                                       QString::fromLatin1(Date),
+                                       QString::fromLatin1(TrackNumber),
+                                       QString::fromLatin1(TrackAlt),
+                                       QString::fromLatin1(TrackTotal),
+                                       QString::fromLatin1(TrackTotalAlt),
+                                       QString::fromLatin1(Disc),
+                                       QString::fromLatin1(DiscAlt),
+                                       QString::fromLatin1(DiscTotal),
+                                       QString::fromLatin1(DiscTotalAlt),
+                                       QString::fromLatin1(ReplayGain::TrackGain),
+                                       QString::fromLatin1(ReplayGain::TrackGainAlt),
+                                       QString::fromLatin1(ReplayGain::TrackPeak),
+                                       QString::fromLatin1(ReplayGain::TrackPeakAlt),
+                                       QString::fromLatin1(ReplayGain::AlbumGain),
+                                       QString::fromLatin1(ReplayGain::AlbumGainAlt),
+                                       QString::fromLatin1(ReplayGain::AlbumPeak),
+                                       QString::fromLatin1(ReplayGain::AlbumPeakAlt)};
+
         const auto customTags = track.extraTags();
         for(const auto& [tag, values] : customTags) {
+            if(baseTags.contains(tag) || !Track::isExtraTag(tag)) {
+                continue;
+            }
             const TagLib::String name = convertString(tag);
             oldProperties.replace(name, convertStringList(values));
         }
 
         const auto removedTags = track.removedTags();
         for(const auto& tag : removedTags) {
+            if(baseTags.contains(tag) || !Track::isExtraTag(tag)) {
+                continue;
+            }
             const TagLib::String name = convertString(tag);
             oldProperties.erase(name);
         }
@@ -1217,20 +1427,40 @@ void writeId3TextRating(TagLib::ID3v2::Tag* id3Tags, const TextRatingWrite& rati
     }
 }
 
-void removePopmFrame(TagLib::ID3v2::Tag* id3Tags, const TagLib::String& owner)
+void writeId3TextPlaycount(TagLib::ID3v2::Tag* id3Tags, const TextPlaycountWrite& playcount)
 {
-    const TagLib::ID3v2::FrameListMap& map = id3Tags->frameListMap();
-    if(!map.contains("POPM")) {
+    removeUserTextFrame(id3Tags, "FMPS_Playcount");
+    removeUserTextFrame(id3Tags, "PLAYCOUNT");
+    if(!playcount.tag.isEmpty() && playcount.tag != "FMPS_PLAYCOUNT"_L1 && playcount.tag != "PLAYCOUNT"_L1) {
+        removeUserTextFrame(id3Tags, convertString(playcount.tag));
+    }
+
+    if(playcount.tag.isEmpty() || playcount.value.isEmpty()) {
         return;
     }
 
+    const QString description = playcount.tag == "FMPS_PLAYCOUNT"_L1 ? u"FMPS_Playcount"_s : playcount.tag;
+    auto frame                = std::make_unique<TagLib::ID3v2::UserTextIdentificationFrame>(TagLib::String::UTF8);
+    frame->setDescription(convertString(description));
+    frame->setText(convertString(playcount.value));
+    id3Tags->addFrame(frame.release());
+}
+
+TagLib::ID3v2::PopularimeterFrame* popmFrameByOwner(const TagLib::ID3v2::Tag* id3Tags, const TagLib::String& owner)
+{
+    const TagLib::ID3v2::FrameListMap& map = id3Tags->frameListMap();
+    if(!map.contains("POPM")) {
+        return nullptr;
+    }
+
     for(auto* popmFrame : map["POPM"]) {
-        const auto* ratingFrame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(popmFrame);
-        if(ratingFrame && (owner.isEmpty() || ratingFrame->email() == owner)) {
-            id3Tags->removeFrame(popmFrame, true);
-            return;
+        auto* frame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(popmFrame);
+        if(frame && (owner.isEmpty() || frame->email() == owner)) {
+            return frame;
         }
     }
+
+    return nullptr;
 }
 
 void readId3Tags(const TagLib::ID3v2::Tag* id3Tags, Track& track, const TagPolicy& policy, bool id3PopmSupported)
@@ -1290,43 +1520,19 @@ void readId3Tags(const TagLib::ID3v2::Tag* id3Tags, Track& track, const TagPolic
         }
     }
 
-    if(frames.contains("FMPS_Playcount")) {
-        const TagLib::ID3v2::FrameList& countFrame = frames["FMPS_Playcount"];
-        if(!countFrame.isEmpty()) {
-            const int count = convertString(countFrame.front()->toString()).toInt();
-            if(count > 0) {
-                track.setPlayCount(count);
-            }
-        }
-    }
-
-    if(id3PopmSupported && policy.rating.readId3Popm && frames.contains("POPM")) {
-        // Use only first rating
-        const TagLib::ID3v2::FrameList& popmFrames = frames["POPM"];
-        if(!popmFrames.isEmpty()) {
-            auto* ratingFrame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(popmFrames.front());
-            if(!policy.rating.popmOwner.isEmpty()) {
-                const TagLib::String owner = convertString(policy.rating.popmOwner);
-                const auto frameIt         = std::ranges::find_if(popmFrames, [&owner](auto* frame) {
-                    const auto* popmFrame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(frame);
-                    return popmFrame && popmFrame->email() == owner;
-                });
-                if(frameIt != popmFrames.end()) {
-                    ratingFrame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(*frameIt);
-                }
-            }
-
-            if(ratingFrame) {
-                const QString rawRating = u"%1|%2|%3"_s.arg(convertString(ratingFrame->email()))
-                                              .arg(ratingFrame->rating())
-                                              .arg(ratingFrame->counter());
+    if(id3PopmSupported && (policy.rating.readId3Popm || policy.playcount.readId3Popm)) {
+        const TagLib::String owner = convertString(policy.rating.popmOwner);
+        if(const auto* frame = popmFrameByOwner(id3Tags, owner)) {
+            if(policy.rating.readId3Popm) {
+                const QString rawRating
+                    = u"%1|%2|%3"_s.arg(convertString(frame->email())).arg(frame->rating()).arg(frame->counter());
                 track.setRawRatingTag(u"POPM"_s, rawRating);
-                if(track.playCount() <= 0 && ratingFrame->counter() > 0) {
-                    track.setPlayCount(static_cast<int>(ratingFrame->counter()));
+                if(track.rating() <= 0 && frame->rating() > 0) {
+                    track.setRating(popmToRating(frame->rating(), policy.rating.popmMapping));
                 }
-                if(track.rating() <= 0 && ratingFrame->rating() > 0) {
-                    track.setRating(popmToRating(ratingFrame->rating(), policy.rating.popmMapping));
-                }
+            }
+            if(policy.playcount.readId3Popm && track.playCount() <= 0 && frame->counter() > 0) {
+                track.setPlayCount(static_cast<int>(frame->counter()));
             }
         }
     }
@@ -1387,60 +1593,38 @@ void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Track& track, AudioReader
 
     if(options & AudioReader::Rating) {
         writeId3TextRating(id3Tags, textRatingWrite(track, policy.rating));
-
-        if(id3PopmSupported && policy.rating.writeId3Popm) {
-            const TagLib::String owner = convertString(policy.rating.popmOwner);
-            if(track.rating() <= 0.0F) {
-                removePopmFrame(id3Tags, owner);
-                return;
-            }
-
-            TagLib::ID3v2::PopularimeterFrame* frame{nullptr};
-            const TagLib::ID3v2::FrameListMap& map = id3Tags->frameListMap();
-            if(map.contains("POPM")) {
-                const TagLib::ID3v2::FrameList& popmFrames = map["POPM"];
-                const auto frameIt = std::ranges::find_if(popmFrames, [&owner](auto* popmFrame) {
-                    const auto* ratingFrame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(popmFrame);
-                    return ratingFrame && (owner.isEmpty() || ratingFrame->email() == owner);
-                });
-                if(frameIt != popmFrames.end()) {
-                    frame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(*frameIt);
-                }
-            }
-
-            if(!frame) {
-                frame = new TagLib::ID3v2::PopularimeterFrame();
-                frame->setEmail(owner);
-                id3Tags->addFrame(frame);
-            }
-            else {
-                frame->setEmail(owner);
-            }
-            frame->setRating(ratingToPopm(track.rating(), policy.rating.popmMapping));
-        }
+    }
+    if(options & AudioReader::Playcount) {
+        writeId3TextPlaycount(id3Tags, textPlaycountWrite(track, policy.playcount));
     }
 
-    if(options & AudioReader::Playcount) {
-        id3Tags->removeFrames("FMPS_Playcount");
+    const bool writePopmRating = id3PopmSupported && (options & AudioReader::Rating) && policy.rating.writeId3Popm;
+    const bool writePopmPlaycount
+        = id3PopmSupported && (options & AudioReader::Playcount) && policy.playcount.writeId3Popm;
+    if(writePopmRating || writePopmPlaycount) {
+        const TagLib::String owner = convertString(policy.rating.popmOwner);
+        auto* frame                = popmFrameByOwner(id3Tags, owner);
+        const bool needsFrame
+            = (writePopmRating && track.rating() > 0.0F) || (writePopmPlaycount && track.playCount() > 0);
 
-        const auto count = QString::number(track.playCount());
-        auto countFrame
-            = std::make_unique<TagLib::ID3v2::TextIdentificationFrame>("FMPS_Playcount", TagLib::String::UTF8);
-        countFrame->setText(convertString(count));
-        id3Tags->addFrame(countFrame.release());
-
-        TagLib::ID3v2::PopularimeterFrame* frame{nullptr};
-        const TagLib::ID3v2::FrameListMap& map = id3Tags->frameListMap();
-        if(map.contains("POPM")) {
-            frame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(map["POPM"].front());
-        }
-
-        if(!frame) {
+        if(!frame && needsFrame) {
             frame = new TagLib::ID3v2::PopularimeterFrame();
+            frame->setEmail(owner);
             id3Tags->addFrame(frame);
         }
 
-        frame->setCounter(static_cast<unsigned int>(track.playCount()));
+        if(frame) {
+            frame->setEmail(owner);
+            if(writePopmRating) {
+                frame->setRating(ratingToPopm(track.rating(), policy.rating.popmMapping));
+            }
+            if(writePopmPlaycount) {
+                frame->setCounter(static_cast<unsigned int>(track.playCount()));
+            }
+            if(frame->rating() == 0 && frame->counter() == 0) {
+                id3Tags->removeFrame(frame, true);
+            }
+        }
     }
 }
 
@@ -1529,10 +1713,8 @@ void readApeTags(const TagLib::APE::Tag* apeTags, Track& track, const TagPolicy&
     }
 
     if(items.contains("FMPS_PLAYCOUNT")) {
-        const int count = convertString(items["FMPS_PLAYCOUNT"].toString()).toInt();
-        if(count > 0) {
-            track.setPlayCount(count);
-        }
+        readPlaycountTag(track, policy.playcount, u"FMPS_PLAYCOUNT"_s,
+                         convertString(items["FMPS_PLAYCOUNT"].toString()));
     }
 }
 
@@ -1597,11 +1779,15 @@ void writeApeTags(TagLib::APE::Tag* apeTags, const Track& track, AudioReader::Wr
     }
 
     if(options & AudioReader::Playcount) {
-        if(track.playCount() <= 0) {
-            apeTags->removeItem("FMPS_PLAYCOUNT");
-        }
-        else {
-            apeTags->setItem("FMPS_PLAYCOUNT", {"FMPS_PLAYCOUNT", convertString(QString::number(track.playCount()))});
+        apeTags->removeItem("FMPS_PLAYCOUNT");
+
+        const auto playcount = textPlaycountWrite(track, policy.playcount);
+        if(!playcount.tag.isEmpty()) {
+            const TagLib::String tag = convertString(playcount.tag);
+            apeTags->removeItem(tag);
+            if(!playcount.value.isEmpty()) {
+                apeTags->setItem(tag, {tag, convertString(playcount.value)});
+            }
         }
     }
 }
@@ -1664,6 +1850,31 @@ QString stripMp4FreeFormName(const TagLib::String& name)
     return freeFormName;
 }
 
+QString mp4TagName(const TagLib::String& name)
+{
+    QString tagName = findMp4Tag(name);
+    if(tagName.isEmpty()) {
+        tagName = stripMp4FreeFormName(name);
+    }
+    return tagName;
+}
+
+void removeMp4TagAliases(TagLib::MP4::Tag* mp4Tags, const QString& tag)
+{
+    std::vector<TagLib::String> aliases;
+
+    const auto items = mp4Tags->itemMap();
+    for(const auto& key : items | std::views::keys) {
+        if(mp4TagName(key).compare(tag, Qt::CaseInsensitive) == 0) {
+            aliases.emplace_back(key);
+        }
+    }
+
+    for(const auto& alias : aliases) {
+        mp4Tags->removeItem(alias);
+    }
+}
+
 void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const TagPolicy& policy, bool skipExtra = false)
 {
     if(mp4Tags->isEmpty()) {
@@ -1688,27 +1899,27 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const TagPolicy&
             track.setTrackTotal(QString::number(trackNumbers.second));
         }
     }
-    if(items.contains(Fooyin::Mp4::TrackAlt)) {
-        const auto& trackNumber = items[Fooyin::Mp4::TrackAlt].toStringList();
+    if(items.contains(Mp4::TrackAlt)) {
+        const auto& trackNumber = items[Mp4::TrackAlt].toStringList();
         if(trackNumber.size() > 0) {
             track.setTrackNumber(convertString(trackNumber.toString()));
         }
     }
-    if(items.contains(Fooyin::Mp4::TrackTotal)) {
-        const auto& trackTotal = items[Fooyin::Mp4::TrackTotal].toStringList();
+    if(items.contains(Mp4::TrackTotal)) {
+        const auto& trackTotal = items[Mp4::TrackTotal].toStringList();
         if(trackTotal.size() > 0) {
             track.setTrackTotal(convertString(trackTotal.toString()));
         }
     }
-    if(items.contains(Fooyin::Mp4::TrackTotalAlt)) {
-        const auto& trackTotal = items[Fooyin::Mp4::TrackTotalAlt].toStringList();
+    if(items.contains(Mp4::TrackTotalAlt)) {
+        const auto& trackTotal = items[Mp4::TrackTotalAlt].toStringList();
         if(trackTotal.size() > 0) {
             track.setTrackTotal(convertString(trackTotal.toString()));
         }
     }
 
-    if(items.contains(Fooyin::Mp4::Disc)) {
-        const TagLib::MP4::Item::IntPair& discNumbers = items[Fooyin::Mp4::Disc].toIntPair();
+    if(items.contains(Mp4::Disc)) {
+        const TagLib::MP4::Item::IntPair& discNumbers = items[Mp4::Disc].toIntPair();
         if(discNumbers.first > 0) {
             track.setDiscNumber(QString::number(discNumbers.first));
         }
@@ -1716,20 +1927,20 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const TagPolicy&
             track.setDiscTotal(QString::number(discNumbers.second));
         }
     }
-    if(items.contains(Fooyin::Mp4::DiscAlt)) {
-        const auto& discNumber = items[Fooyin::Mp4::DiscAlt].toStringList();
+    if(items.contains(Mp4::DiscAlt)) {
+        const auto& discNumber = items[Mp4::DiscAlt].toStringList();
         if(discNumber.size() > 0) {
             track.setDiscNumber(convertString(discNumber.toString()));
         }
     }
-    if(items.contains(Fooyin::Mp4::DiscTotal)) {
-        const auto& discTotal = items[Fooyin::Mp4::DiscTotal].toStringList();
+    if(items.contains(Mp4::DiscTotal)) {
+        const auto& discTotal = items[Mp4::DiscTotal].toStringList();
         if(discTotal.size() > 0) {
             track.setDiscTotal(convertString(discTotal.toString()));
         }
     }
-    if(items.contains(Fooyin::Mp4::DiscTotalAlt)) {
-        const auto& discTotal = items[Fooyin::Mp4::DiscTotalAlt].toStringList();
+    if(items.contains(Mp4::DiscTotalAlt)) {
+        const auto& discTotal = items[Mp4::DiscTotalAlt].toStringList();
         if(discTotal.size() > 0) {
             track.setDiscTotal(convertString(discTotal.toString()));
         }
@@ -1755,71 +1966,60 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const TagPolicy&
         return 1.0;
     };
 
-    if(items.contains(Fooyin::Mp4::Rating) && track.rating() <= 0) {
-        const int rating = items[Fooyin::Mp4::Rating].toInt();
+    if(items.contains(Mp4::Rating) && track.rating() <= 0) {
+        const int rating = items[Mp4::Rating].toInt();
         track.setRawRatingTag(u"rate"_s, QString::number(rating));
         track.setRating(convertRating(rating));
     }
 
-    if(items.contains(Fooyin::Mp4::RatingAlt)) {
-        const QString rawRating = convertString(items[Fooyin::Mp4::RatingAlt].toStringList().toString("\n"));
-        readTextRatingTag(track, policy.rating, u"FMPS_RATING"_s, QString::fromLatin1(Fooyin::Mp4::RatingAlt),
-                          rawRating, false);
+    if(items.contains(Mp4::RatingAlt)) {
+        const QString rawRating = convertString(items[Mp4::RatingAlt].toStringList().toString("\n"));
+        readTextRatingTag(track, policy.rating, u"FMPS_RATING"_s, QString::fromLatin1(Mp4::RatingAlt), rawRating,
+                          false);
         track.setRawRatingTag(u"FMPS_RATING"_s, rawRating);
     }
 
-    if(items.contains(Fooyin::Mp4::RatingAlt2)) {
-        const QString rawRating = convertString(items[Fooyin::Mp4::RatingAlt2].toStringList().toString("\n"));
-        readTextRatingTag(track, policy.rating, u"RATING"_s, QString::fromLatin1(Fooyin::Mp4::RatingAlt2), rawRating,
-                          true);
+    if(items.contains(Mp4::RatingAlt2)) {
+        const QString rawRating = convertString(items[Mp4::RatingAlt2].toStringList().toString("\n"));
+        readTextRatingTag(track, policy.rating, u"RATING"_s, QString::fromLatin1(Mp4::RatingAlt2), rawRating, true);
         track.setRawRatingTag(u"RATING"_s, rawRating);
     }
 
-    if(items.contains(Fooyin::Mp4::PlayCount) && track.playCount() <= 0) {
-        const int count = items[Fooyin::Mp4::PlayCount].toInt();
-        if(count > 0) {
-            track.setPlayCount(count);
-        }
+    if(items.contains(Mp4::PlayCount)) {
+        readPlaycountTag(track, policy.playcount, u"FMPS_PLAYCOUNT"_s,
+                         convertString(items[Mp4::PlayCount].toStringList().toString("\n")));
     }
 
-    if(items.contains(Fooyin::Mp4::ReplayGain::TrackGain)) {
-        track.setRGTrackGain(
-            gainStringToFloat(items[Fooyin::Mp4::ReplayGain::TrackGain].toStringList().toString("\n")));
+    if(items.contains(Mp4::ReplayGain::TrackGain)) {
+        track.setRGTrackGain(gainStringToFloat(items[Mp4::ReplayGain::TrackGain].toStringList().toString("\n")));
     }
-    if(items.contains(Fooyin::Mp4::ReplayGain::TrackGainAlt)) {
-        track.setRGTrackGain(
-            gainStringToFloat(items[Fooyin::Mp4::ReplayGain::TrackGainAlt].toStringList().toString("\n")));
+    if(items.contains(Mp4::ReplayGain::TrackGainAlt)) {
+        track.setRGTrackGain(gainStringToFloat(items[Mp4::ReplayGain::TrackGainAlt].toStringList().toString("\n")));
     }
 
-    if(items.contains(Fooyin::Mp4::ReplayGain::TrackPeak)) {
-        track.setRGTrackPeak(
-            peakStringToFloat(items[Fooyin::Mp4::ReplayGain::TrackPeak].toStringList().toString("\n")));
+    if(items.contains(Mp4::ReplayGain::TrackPeak)) {
+        track.setRGTrackPeak(peakStringToFloat(items[Mp4::ReplayGain::TrackPeak].toStringList().toString("\n")));
     }
-    if(items.contains(Fooyin::Mp4::ReplayGain::TrackPeakAlt)) {
-        track.setRGTrackPeak(
-            peakStringToFloat(items[Fooyin::Mp4::ReplayGain::TrackPeakAlt].toStringList().toString("\n")));
+    if(items.contains(Mp4::ReplayGain::TrackPeakAlt)) {
+        track.setRGTrackPeak(peakStringToFloat(items[Mp4::ReplayGain::TrackPeakAlt].toStringList().toString("\n")));
     }
 
-    if(items.contains(Fooyin::Mp4::ReplayGain::AlbumGain)) {
-        track.setRGAlbumGain(
-            gainStringToFloat(items[Fooyin::Mp4::ReplayGain::AlbumGain].toStringList().toString("\n")));
+    if(items.contains(Mp4::ReplayGain::AlbumGain)) {
+        track.setRGAlbumGain(gainStringToFloat(items[Mp4::ReplayGain::AlbumGain].toStringList().toString("\n")));
     }
-    if(items.contains(Fooyin::Mp4::ReplayGain::AlbumGainAlt)) {
-        track.setRGAlbumGain(
-            gainStringToFloat(items[Fooyin::Mp4::ReplayGain::AlbumGainAlt].toStringList().toString("\n")));
+    if(items.contains(Mp4::ReplayGain::AlbumGainAlt)) {
+        track.setRGAlbumGain(gainStringToFloat(items[Mp4::ReplayGain::AlbumGainAlt].toStringList().toString("\n")));
     }
 
-    if(items.contains(Fooyin::Mp4::ReplayGain::AlbumPeak)) {
-        track.setRGAlbumPeak(
-            peakStringToFloat(items[Fooyin::Mp4::ReplayGain::AlbumPeak].toStringList().toString("\n")));
+    if(items.contains(Mp4::ReplayGain::AlbumPeak)) {
+        track.setRGAlbumPeak(peakStringToFloat(items[Mp4::ReplayGain::AlbumPeak].toStringList().toString("\n")));
     }
-    if(items.contains(Fooyin::Mp4::ReplayGain::AlbumPeakAlt)) {
-        track.setRGAlbumPeak(
-            peakStringToFloat(items[Fooyin::Mp4::ReplayGain::AlbumPeakAlt].toStringList().toString("\n")));
+    if(items.contains(Mp4::ReplayGain::AlbumPeakAlt)) {
+        track.setRGAlbumPeak(peakStringToFloat(items[Mp4::ReplayGain::AlbumPeakAlt].toStringList().toString("\n")));
     }
 
     if(!skipExtra) {
-        using namespace Fooyin::Mp4;
+        using namespace Mp4;
         static const std::set<TagLib::String> baseMp4Tags = {
             Title,
             Artist,
@@ -1857,33 +2057,31 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const TagPolicy&
 
         for(const auto& [key, item] : items) {
             if(!baseMp4Tags.contains(key)) {
-                QString tagName = findMp4Tag(key);
-                if(tagName.isEmpty()) {
-                    tagName = stripMp4FreeFormName(key);
+                const QString tagName = mp4TagName(key);
+                const auto values     = convertStringList(item.toStringList());
+                if(policy.playcount.shouldReadTag(tagName, track.playCount() > 0) && !values.isEmpty()) {
+                    readPlaycountTag(track, policy.playcount, tagName, values.front());
                 }
-                const auto values = convertStringList(item.toStringList());
-                if(!policy.rating.automaticRead() && tagName == policy.rating.readTag && !values.isEmpty()) {
+                else if(!policy.rating.automaticRead() && tagName == policy.rating.readTag && !values.isEmpty()) {
                     readTextRatingTag(track, policy.rating, policy.rating.readTag, tagName, values.front(),
                                       useRatingTagFallback(policy.rating));
                 }
                 else {
-                    for(const auto& value : values) {
-                        track.addExtraTag(tagName, value);
-                    }
+                    addUniqueExtraTagValues(track, tagName, values);
                 }
             }
         }
     }
 }
 
-QByteArray readMp4Cover(const TagLib::MP4::Tag* mp4Tags, Fooyin::Track::Cover cover)
+QByteArray readMp4Cover(const TagLib::MP4::Tag* mp4Tags, Track::Cover cover)
 {
-    if(cover != Fooyin::Track::Cover::Front) {
+    if(cover != Track::Cover::Front) {
         // Only front cover is supported for now
         return {};
     }
 
-    const TagLib::MP4::Item coverArtItem = mp4Tags->item(Fooyin::Mp4::Cover);
+    const TagLib::MP4::Item coverArtItem = mp4Tags->item(Mp4::Cover);
     if(!coverArtItem.isValid()) {
         return {};
     }
@@ -1930,7 +2128,7 @@ TagLib::String prefixMp4FreeFormName(const QString& name, const TagLib::MP4::Ite
 void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Track& track, AudioReader::WriteOptions options,
                   const TagPolicy& policy)
 {
-    if(options & Fooyin::AudioReader::Metadata) {
+    if(options & AudioReader::Metadata) {
         const QString trackNumber = track.trackNumber();
         const QString trackTotal  = track.trackTotal();
 
@@ -2017,50 +2215,59 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Track& track, AudioReader::Wr
     }
 
     if(options & AudioReader::Playcount) {
-        if(track.playCount() <= 0) {
-            mp4Tags->removeItem(Mp4::PlayCount);
-        }
-        else {
-            mp4Tags->setItem(Mp4::PlayCount, {convertString(QString::number(track.playCount()))});
+        mp4Tags->removeItem(Mp4::PlayCount);
+
+        const auto playcount = textPlaycountWrite(track, policy.playcount);
+        if(!playcount.tag.isEmpty()) {
+            if(playcount.tag == "FMPS_PLAYCOUNT"_L1) {
+                if(!playcount.value.isEmpty()) {
+                    mp4Tags->setItem(Mp4::PlayCount, {convertString(playcount.value)});
+                }
+            }
+            else {
+                const TagLib::String tag = prefixMp4FreeFormName(playcount.tag, mp4Tags->itemMap());
+                if(!tag.isEmpty()) {
+                    mp4Tags->removeItem(tag);
+                    if(!playcount.value.isEmpty()) {
+                        mp4Tags->setItem(tag, {convertString(playcount.value)});
+                    }
+                }
+            }
         }
     }
 
-    if(options & Fooyin::AudioReader::Metadata) {
-        mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::AlbumGain);
-        mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::AlbumGainAlt);
-        mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::AlbumPeak);
-        mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::AlbumPeakAlt);
-        mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::TrackGain);
-        mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::TrackGainAlt);
-        mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::TrackPeak);
-        mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::TrackPeakAlt);
+    if(options & AudioReader::Metadata) {
+        mp4Tags->removeItem(Mp4::ReplayGain::AlbumGain);
+        mp4Tags->removeItem(Mp4::ReplayGain::AlbumGainAlt);
+        mp4Tags->removeItem(Mp4::ReplayGain::AlbumPeak);
+        mp4Tags->removeItem(Mp4::ReplayGain::AlbumPeakAlt);
+        mp4Tags->removeItem(Mp4::ReplayGain::TrackGain);
+        mp4Tags->removeItem(Mp4::ReplayGain::TrackGainAlt);
+        mp4Tags->removeItem(Mp4::ReplayGain::TrackPeak);
+        mp4Tags->removeItem(Mp4::ReplayGain::TrackPeakAlt);
 
         if(track.hasTrackGain()) {
-            mp4Tags->setItem(Fooyin::Mp4::ReplayGain::TrackGain, {convertString(gainToString(track.rgTrackGain()))});
+            mp4Tags->setItem(Mp4::ReplayGain::TrackGain, {convertString(gainToString(track.rgTrackGain()))});
         }
         if(track.hasTrackPeak()) {
-            mp4Tags->setItem(Fooyin::Mp4::ReplayGain::TrackPeak, {convertString(QString::number(track.rgTrackPeak()))});
+            mp4Tags->setItem(Mp4::ReplayGain::TrackPeak, {convertString(QString::number(track.rgTrackPeak()))});
         }
         if(track.hasAlbumGain()) {
-            mp4Tags->setItem(Fooyin::Mp4::ReplayGain::AlbumGain, {convertString(gainToString(track.rgAlbumGain()))});
+            mp4Tags->setItem(Mp4::ReplayGain::AlbumGain, {convertString(gainToString(track.rgAlbumGain()))});
         }
         if(track.hasAlbumPeak()) {
-            mp4Tags->setItem(Fooyin::Mp4::ReplayGain::AlbumPeak, {convertString(QString::number(track.rgAlbumPeak()))});
+            mp4Tags->setItem(Mp4::ReplayGain::AlbumPeak, {convertString(QString::number(track.rgAlbumPeak()))});
         }
 
-        using namespace Fooyin::Tag;
-        static const std::set<QString> baseMp4Tags
-            = {QString::fromLatin1(Title),         QString::fromLatin1(Artist),
-               QString::fromLatin1(Album),         QString::fromLatin1(AlbumArtist),
-               QString::fromLatin1(Genre),         QString::fromLatin1(Composer),
-               QString::fromLatin1(Performer),     QString::fromLatin1(Comment),
-               QString::fromLatin1(Date),          QString::fromLatin1(Rating),
-               QString::fromLatin1(RatingAlt),     QString::fromLatin1(Fooyin::Mp4::RatingAlt2),
-               QString::fromLatin1(PlayCount),     QString::fromLatin1(TrackNumber),
-               QString::fromLatin1(TrackAlt),      QString::fromLatin1(TrackTotal),
-               QString::fromLatin1(TrackTotalAlt), QString::fromLatin1(Disc),
-               QString::fromLatin1(DiscAlt),       QString::fromLatin1(DiscTotal),
-               QString::fromLatin1(DiscTotalAlt)};
+        using namespace Tag;
+        static const std::set baseMp4Tags = {
+            QString::fromLatin1(Title),       QString::fromLatin1(Artist),        QString::fromLatin1(Album),
+            QString::fromLatin1(AlbumArtist), QString::fromLatin1(Genre),         QString::fromLatin1(Composer),
+            QString::fromLatin1(Performer),   QString::fromLatin1(Comment),       QString::fromLatin1(Date),
+            QString::fromLatin1(Rating),      QString::fromLatin1(RatingAlt),     QString::fromLatin1(Mp4::RatingAlt2),
+            QString::fromLatin1(PlayCount),   QString::fromLatin1(TrackNumber),   QString::fromLatin1(TrackAlt),
+            QString::fromLatin1(TrackTotal),  QString::fromLatin1(TrackTotalAlt), QString::fromLatin1(Disc),
+            QString::fromLatin1(DiscAlt),     QString::fromLatin1(DiscTotal),     QString::fromLatin1(DiscTotalAlt)};
 
         const auto customTags = track.extraTags();
         for(const auto& [tag, values] : customTags) {
@@ -2069,24 +2276,23 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Track& track, AudioReader::Wr
                 if(tagName.isEmpty()) {
                     tagName = prefixMp4FreeFormName(tag, mp4Tags->itemMap());
                 }
+                removeMp4TagAliases(mp4Tags, tag);
                 mp4Tags->setItem(tagName, convertStringList(values));
             }
         }
 
         const auto removedTags = track.removedTags();
         for(const auto& tag : removedTags) {
-            TagLib::String tagName = findMp4Tag(tag);
-            if(tagName.isEmpty()) {
-                tagName = prefixMp4FreeFormName(tag, mp4Tags->itemMap());
+            if(!baseMp4Tags.contains(tag)) {
+                removeMp4TagAliases(mp4Tags, tag);
             }
-            mp4Tags->removeItem(tagName);
         }
     }
 }
 
-bool writeMp4Cover(TagLib::MP4::Tag* mp4Tags, const Fooyin::TrackCovers& covers)
+bool writeMp4Cover(TagLib::MP4::Tag* mp4Tags, const TrackCovers& covers)
 {
-    const auto coverIt = covers.find(Fooyin::Track::Cover::Front);
+    const auto coverIt = covers.find(Track::Cover::Front);
     if(coverIt == covers.end()) {
         return false;
     }
@@ -2158,7 +2364,7 @@ bool writeMp4Cover(TagLib::MP4::Tag* mp4Tags, const Fooyin::TrackCovers& covers)
     return modified;
 }
 
-void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& track, const TagPolicy& policy)
+void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Track& track, const TagPolicy& policy)
 {
     if(xiphTags->isEmpty()) {
         return;
@@ -2166,7 +2372,7 @@ void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& tr
 
     const TagLib::Ogg::FieldListMap& fields = xiphTags->fieldListMap();
 
-    using namespace Fooyin::Tag;
+    using namespace Tag;
 
     if(fields.contains(TrackNumber)) {
         const TagLib::StringList& trackNumber = fields[TrackNumber];
@@ -2207,23 +2413,20 @@ void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& tr
     if(fields.contains("FMPS_PLAYCOUNT")) {
         const TagLib::StringList& countList = fields["FMPS_PLAYCOUNT"];
         if(!countList.isEmpty()) {
-            const int count = convertString(countList.front()).toInt();
-            if(count > 0) {
-                track.setPlayCount(count);
-            }
+            readPlaycountTag(track, policy.playcount, u"FMPS_PLAYCOUNT"_s, convertString(countList.front()));
         }
     }
 }
 
-void readOpusReplayGain(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& track)
+void readOpusReplayGain(const TagLib::Ogg::XiphComment* xiphTags, Track& track)
 {
     if(xiphTags->isEmpty()) {
         return;
     }
 
     const TagLib::Ogg::FieldListMap& fields = xiphTags->fieldListMap();
-    track.setRGTrackGain(Fooyin::Constants::InvalidGain);
-    track.setRGAlbumGain(Fooyin::Constants::InvalidGain);
+    track.setRGTrackGain(Constants::InvalidGain);
+    track.setRGAlbumGain(Constants::InvalidGain);
     track.removeExtraTag(u"R128_TRACK_GAIN"_s);
     track.removeExtraTag(u"R128_ALBUM_GAIN"_s);
 
@@ -2246,7 +2449,7 @@ void readOpusReplayGain(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track&
     }
 }
 
-QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures, Fooyin::Track::Cover cover)
+QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures, Track::Cover cover)
 {
     if(pictures.isEmpty()) {
         return {};
@@ -2258,9 +2461,9 @@ QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures, F
     for(const auto& pic : pictures) {
         const auto type = pic->type();
 
-        if((cover == Fooyin::Track::Cover::Front && (type == FlacPicture::FrontCover || type == FlacPicture::Other))
-           || (cover == Fooyin::Track::Cover::Back && type == FlacPicture::BackCover)
-           || (cover == Fooyin::Track::Cover::Artist && type == FlacPicture::Artist)) {
+        if((cover == Track::Cover::Front && (type == FlacPicture::FrontCover || type == FlacPicture::Other))
+           || (cover == Track::Cover::Back && type == FlacPicture::BackCover)
+           || (cover == Track::Cover::Artist && type == FlacPicture::Artist)) {
             picture = pic->data();
         }
     }
@@ -2272,12 +2475,12 @@ QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures, F
     return {};
 }
 
-void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& track,
-                      Fooyin::AudioReader::WriteOptions options, const TagPolicy& policy)
+void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Track& track, AudioReader::WriteOptions options,
+                      const TagPolicy& policy)
 {
-    using namespace Fooyin::Tag;
+    using namespace Tag;
 
-    if(options & Fooyin::AudioReader::Metadata) {
+    if(options & AudioReader::Metadata) {
         if(track.trackNumber().isEmpty()) {
             xiphTags->removeFields(TrackNumber);
         }
@@ -2307,7 +2510,7 @@ void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& t
         }
     }
 
-    if(options & Fooyin::AudioReader::Rating) {
+    if(options & AudioReader::Rating) {
         xiphTags->removeFields("FMPS_RATING");
         xiphTags->removeFields("RATING");
 
@@ -2320,24 +2523,27 @@ void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& t
         }
     }
 
-    if(options & Fooyin::AudioReader::Playcount) {
-        if(track.playCount() <= 0) {
-            xiphTags->removeFields("FMPS_PLAYCOUNT");
-        }
-        else {
-            xiphTags->addField("FMPS_PLAYCOUNT", convertString(QString::number(track.playCount())));
+    if(options & AudioReader::Playcount) {
+        xiphTags->removeFields("FMPS_PLAYCOUNT");
+
+        const auto playcount = textPlaycountWrite(track, policy.playcount);
+        if(!playcount.tag.isEmpty()) {
+            const TagLib::String tag = convertString(playcount.tag);
+            xiphTags->removeFields(tag);
+            if(!playcount.value.isEmpty()) {
+                xiphTags->addField(tag, convertString(playcount.value));
+            }
         }
     }
 }
 
-void writeOpusReplayGain(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& track,
-                         Fooyin::AudioReader::WriteOptions options)
+void writeOpusReplayGain(TagLib::Ogg::XiphComment* xiphTags, const Track& track, AudioReader::WriteOptions options)
 {
-    if(!(options & Fooyin::AudioReader::Metadata)) {
+    if(!(options & AudioReader::Metadata)) {
         return;
     }
 
-    using namespace Fooyin::Tag::ReplayGain;
+    using namespace Tag::ReplayGain;
 
     const auto removeField = [xiphTags](QStringView fieldName) {
         QStringList fieldsToRemove;
@@ -2374,30 +2580,30 @@ void writeOpusReplayGain(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track
     }
 }
 
-bool writeXiphCover(auto* file, const Fooyin::TrackCovers& covers)
+bool writeXiphCover(auto* file, const TrackCovers& covers)
 {
     using Picture = TagLib::FLAC::Picture;
 
     const auto toCoverType = [](Picture::Type type) {
         switch(type) {
             case Picture::FrontCover:
-                return Fooyin::Track::Cover::Front;
+                return Track::Cover::Front;
             case Picture::BackCover:
-                return Fooyin::Track::Cover::Back;
+                return Track::Cover::Back;
             case Picture::Artist:
-                return Fooyin::Track::Cover::Artist;
+                return Track::Cover::Artist;
             default:
-                return Fooyin::Track::Cover::Other;
+                return Track::Cover::Other;
         }
     };
 
-    const auto fromCoverType = [](Fooyin::Track::Cover type) {
+    const auto fromCoverType = [](Track::Cover type) {
         switch(type) {
-            case Fooyin::Track::Cover::Front:
+            case Track::Cover::Front:
                 return Picture::FrontCover;
-            case Fooyin::Track::Cover::Back:
+            case Track::Cover::Back:
                 return Picture::BackCover;
-            case Fooyin::Track::Cover::Artist:
+            case Track::Cover::Artist:
                 return Picture::Artist;
             default:
                 return Picture::Other;
@@ -2457,12 +2663,64 @@ bool saveModifiedFile(auto& file, bool modified, QStringView operation, const QS
     return false;
 }
 
+TagLib::ID3v2::Version id3v2Version(const TagPolicy& policy)
+{
+    return policy.id3v2WriteVersion == Id3v2WriteVersion::V3 ? TagLib::ID3v2::v3 : TagLib::ID3v2::v4;
+}
+
+int mpegTagTypesForWrite(const TagLib::MPEG::File& file, const TagPolicy& policy)
+{
+    int tagTypes{TagLib::MPEG::File::NoTags};
+    if(file.hasID3v1Tag()) {
+        tagTypes |= TagLib::MPEG::File::ID3v1;
+    }
+    if(file.hasID3v2Tag()) {
+        tagTypes |= TagLib::MPEG::File::ID3v2;
+    }
+    if(file.hasAPETag()) {
+        tagTypes |= TagLib::MPEG::File::APE;
+    }
+
+    if(tagTypes != TagLib::MPEG::File::NoTags) {
+        return tagTypes;
+    }
+
+    switch(policy.mp3TagWritingScheme) {
+        case Mp3TagWritingScheme::Id3v2AndId3v1:
+            return TagLib::MPEG::File::ID3v2 | TagLib::MPEG::File::ID3v1;
+        case Mp3TagWritingScheme::Id3v2:
+            return TagLib::MPEG::File::ID3v2;
+        case Mp3TagWritingScheme::ApeAndId3v1:
+            return TagLib::MPEG::File::APE | TagLib::MPEG::File::ID3v1;
+        case Mp3TagWritingScheme::Ape:
+            return TagLib::MPEG::File::APE;
+    }
+
+    return TagLib::MPEG::File::ID3v2 | TagLib::MPEG::File::ID3v1;
+}
+
+bool saveModifiedMpegFile(TagLib::MPEG::File& file, bool modified, int tagTypes, const TagPolicy& policy,
+                          QStringView operation, const QString& filepath, const QString& mimeType, bool& failureLogged)
+{
+    if(!modified) {
+        return true;
+    }
+
+    if(file.save(tagTypes, TagLib::MPEG::File::StripOthers, id3v2Version(policy), TagLib::MPEG::File::DoNotDuplicate)) {
+        return true;
+    }
+
+    logWriteFailure(operation, filepath, mimeType, u"save() returned false"_s);
+    failureLogged = true;
+    return false;
+}
+
 bool isHandledAsfRatingTag(const QString& tag)
 {
     return tag == "FMPS_RATING"_L1 || tag == "RATING"_L1 || tag == "WM/SHAREDUSERRATING"_L1;
 }
 
-void readAsfTags(const TagLib::ASF::Tag* asfTags, Fooyin::Track& track, const TagPolicy& policy)
+void readAsfTags(const TagLib::ASF::Tag* asfTags, Track& track, const TagPolicy& policy)
 {
     if(asfTags->isEmpty()) {
         return;
@@ -2517,13 +2775,19 @@ void readAsfTags(const TagLib::ASF::Tag* asfTags, Fooyin::Track& track, const Ta
         }
     }
 
-    if(map.contains("FMPS/Playcount") && track.rating() <= 0) {
+    if(map.contains("FMPS/Playcount")) {
         const TagLib::ASF::AttributeList& counts = map["FMPS/Playcount"];
         if(!counts.isEmpty()) {
-            const int count = convertString(counts.front().toString()).toInt();
-            if(count > 0) {
-                track.setPlayCount(count);
-            }
+            readPlaycountTag(track, policy.playcount, u"FMPS_PLAYCOUNT"_s, convertString(counts.front().toString()));
+        }
+    }
+
+    if(policy.playcount.automaticRead() || policy.playcount.readTag != "FMPS_PLAYCOUNT"_L1) {
+        const QString readTag    = policy.playcount.automaticRead() ? u"PLAYCOUNT"_s : policy.playcount.readTag;
+        const TagLib::String tag = convertString(readTag);
+        const auto countIt       = map.find(tag);
+        if(countIt != map.end() && !countIt->second.isEmpty()) {
+            readPlaycountTag(track, policy.playcount, readTag, convertString(countIt->second.front().toString()));
         }
     }
 
@@ -2539,7 +2803,7 @@ void readAsfTags(const TagLib::ASF::Tag* asfTags, Fooyin::Track& track, const Ta
     }
 }
 
-QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags, Fooyin::Track::Cover cover)
+QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags, Track::Cover cover)
 {
     if(asfTags->isEmpty()) {
         return {};
@@ -2554,9 +2818,9 @@ QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags, Fooyin::Track::Cover co
         const Picture pic = attribute.toPicture();
         const auto type   = pic.type();
 
-        if((cover == Fooyin::Track::Cover::Front && (type == Picture::FrontCover || type == Picture::Other))
-           || (cover == Fooyin::Track::Cover::Back && type == Picture::BackCover)
-           || (cover == Fooyin::Track::Cover::Artist && type == Picture::Artist)) {
+        if((cover == Track::Cover::Front && (type == Picture::FrontCover || type == Picture::Other))
+           || (cover == Track::Cover::Back && type == Picture::BackCover)
+           || (cover == Track::Cover::Artist && type == Picture::Artist)) {
             picture = pic.picture();
         }
     }
@@ -2568,15 +2832,15 @@ QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags, Fooyin::Track::Cover co
     return {};
 }
 
-void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track, Fooyin::AudioReader::WriteOptions options,
+void writeAsfTags(TagLib::ASF::Tag* asfTags, const Track& track, AudioReader::WriteOptions options,
                   const TagPolicy& policy)
 {
-    if(options & Fooyin::AudioReader::Metadata) {
+    if(options & AudioReader::Metadata) {
         asfTags->setAttribute("WM/TrackNumber", convertString(track.trackNumber()));
         asfTags->setAttribute("WM/PartOfSet", convertString(track.discNumber()));
     }
 
-    if(options & Fooyin::AudioReader::Rating) {
+    if(options & AudioReader::Rating) {
         asfTags->removeItem("FMPS/Rating");
         asfTags->removeItem("RATING");
 
@@ -2613,40 +2877,45 @@ void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track, Fooyin:
         }
     }
 
-    if(options & Fooyin::AudioReader::Playcount) {
-        if(track.playCount() <= 0) {
-            asfTags->removeItem("FMPS/Playcount");
-        }
-        else {
-            asfTags->setAttribute("FMPS/Playcount", convertString(QString::number(track.playCount())));
+    if(options & AudioReader::Playcount) {
+        asfTags->removeItem("FMPS/Playcount");
+
+        const auto playcount = textPlaycountWrite(track, policy.playcount);
+        if(!playcount.tag.isEmpty()) {
+            const TagLib::String tag = playcount.tag == "FMPS_PLAYCOUNT"_L1 ? TagLib::String{"FMPS/Playcount"}
+                                                                            : convertString(playcount.tag);
+            asfTags->removeItem(tag);
+            if(!playcount.value.isEmpty()) {
+                asfTags->setAttribute(tag, convertString(playcount.value));
+            }
         }
     }
 }
 
-bool writeAsfCover(TagLib::ASF::Tag* asfTags, const Fooyin::TrackCovers& covers)
+bool writeAsfCover(TagLib::ASF::Tag* asfTags, const TrackCovers& covers)
 {
     using Picture = TagLib::ASF::Picture;
 
     const auto toCoverType = [](Picture::Type type) {
         switch(type) {
             case Picture::FrontCover:
-                return Fooyin::Track::Cover::Front;
+                return Track::Cover::Front;
             case Picture::BackCover:
-                return Fooyin::Track::Cover::Back;
+                return Track::Cover::Back;
             case Picture::Artist:
-                return Fooyin::Track::Cover::Artist;
+                return Track::Cover::Artist;
             default:
-                return Fooyin::Track::Cover::Other;
+                return Track::Cover::Other;
         }
     };
 
-    const auto fromCoverType = [](Fooyin::Track::Cover type) {
+    const auto fromCoverType = [](Track::Cover type) {
         switch(type) {
-            case Fooyin::Track::Cover::Front:
+            case Track::Cover::Front:
                 return Picture::FrontCover;
-            case Fooyin::Track::Cover::Back:
+            case Track::Cover::Back:
                 return Picture::BackCover;
-            case Fooyin::Track::Cover::Artist:
+            case Track::Cover::Artist:
                 return Picture::Artist;
             default:
                 return Picture::Other;
@@ -2731,10 +3000,11 @@ bool writeOpusHeaderGainQ78(QIODevice* device, int16_t gain)
 
 QStringList TagLibReader::extensions() const
 {
-    static const QStringList extensions{u"mp3"_s,  u"ogg"_s, u"opus"_s, u"oga"_s, u"m4a"_s,  u"wav"_s, u"wv"_s,
-                                        u"flac"_s, u"wma"_s, u"asf"_s,  u"mpc"_s, u"aiff"_s, u"ape"_s, u"mp4"_s,
+    static const QStringList extensions{u"mp1"_s, u"mp2"_s,  u"mp3"_s, u"ogg"_s,  u"opus"_s, u"oga"_s,
+                                        u"m4a"_s, u"wav"_s,  u"wv"_s,  u"flac"_s, u"wma"_s,  u"asf"_s,
+                                        u"mpc"_s, u"aiff"_s, u"ape"_s, u"mp4"_s,
 #if (TAGLIB_MAJOR_VERSION >= 2)
-                                        u"dsf"_s,  u"dff"_s
+                                        u"dsf"_s, u"dff"_s
 #endif
     };
     return extensions;
@@ -2748,6 +3018,17 @@ bool TagLibReader::canReadCover() const
 bool TagLibReader::canWriteMetaData() const
 {
     return true;
+}
+
+bool TagLibReader::init(const AudioSource& source)
+{
+    m_format = AudioFileFormat::Unknown;
+    m_mimeType.clear();
+
+    auto detected = detectAudioFileFormat(source);
+    m_format      = detected.format;
+    m_mimeType    = std::move(detected.mimeType);
+    return m_format != AudioFileFormat::Unknown;
 }
 
 enum VbrMethod : uint8_t
@@ -2771,7 +3052,7 @@ enum XingFlag : uint8_t
     VBRScale = 8,
 };
 
-void checkXingHeader(TagLib::MPEG::File* file, Fooyin::Track& track)
+void checkXingHeader(TagLib::MPEG::File* file, Track& track)
 {
     // Reference: http://gabriel.mp3-tech.org/mp3infotag.html
 
@@ -2928,18 +3209,15 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
         return false;
     }
 
-    const auto detected    = detectAudioFileFormat(source);
-    const auto format      = detected.format;
-    const auto& mimeType   = detected.mimeType;
     const auto style       = TagLib::AudioProperties::Average;
     const TagPolicy policy = tagPolicy();
 
-    const auto readProperties = [&track, &policy](const TagLib::File& file) {
+    const auto readProperties = [&track, &policy]<typename Type>(const Type& file) {
         readAudioProperties(file, track);
         readGeneralProperties(file.properties(), track, false, true, policy);
     };
 
-    switch(format) {
+    switch(m_format) {
         case AudioFileFormat::Mpeg: {
 #if (TAGLIB_MAJOR_VERSION >= 2)
             TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
@@ -2951,7 +3229,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
 
                 bool readTags{false};
                 if(file.hasID3v1Tag()) {
-                    readGeneralProperties(file.ID3v1Tag()->properties(), track, false, true, policy);
+                    readGeneralProperties(id3v1Properties(file.ID3v1Tag()), track, false, true, policy);
                     readTags = true;
                 }
                 if(file.hasAPETag()) {
@@ -2962,7 +3240,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
                 }
                 if(file.hasID3v2Tag()) {
                     const auto* id3Tag = file.ID3v2Tag();
-                    readGeneralProperties(id3Tag->properties(), track, readTags, !readTags, policy,
+                    readGeneralProperties(id3Properties(id3Tag), track, readTags, !readTags, policy,
                                           id3Tag->header()->majorVersion() == 3);
                     readId3Tags(id3Tag, track, policy, true);
                     readTags = true;
@@ -3002,7 +3280,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
                 }
                 if(file.hasID3v2Tag()) {
                     const auto* id3Tag = file.tag();
-                    readGeneralProperties(id3Tag->properties(), track, false, true, policy,
+                    readGeneralProperties(id3Properties(id3Tag), track, false, true, policy,
                                           id3Tag->header()->majorVersion() == 3);
                     readId3Tags(id3Tag, track, policy, false);
                     track.setTagTypes({u"ID3v2.%1"_s.arg(id3Tag->header()->majorVersion())});
@@ -3026,7 +3304,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
                 }
                 if(file.hasID3v2Tag()) {
                     const auto* id3Tag = file.ID3v2Tag();
-                    readGeneralProperties(id3Tag->properties(), track, false, true, policy,
+                    readGeneralProperties(id3Properties(id3Tag), track, false, true, policy,
                                           id3Tag->header()->majorVersion() == 3);
                     readId3Tags(id3Tag, track, policy, false);
                     track.setTagTypes({u"ID3v2.%1"_s.arg(id3Tag->header()->majorVersion())});
@@ -3132,6 +3410,28 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
                             track.setCodec(u"ALAC"_s);
                             track.setEncoding(u"Lossless"_s);
                             break;
+#if TAGLIB_MAJOR_VERSION >= 2 && TAGLIB_MINOR_VERSION >= 3 && TAGLIB_PATCH_VERSION >= 2
+                        case TagLib::MP4::Properties::AC3:
+                            track.setCodec(u"AC3"_s);
+                            track.setEncoding(u"Lossy"_s);
+                            break;
+                        case TagLib::MP4::Properties::EAC3:
+                            track.setCodec(u"EAC3"_s);
+                            track.setEncoding(u"Lossy"_s);
+                            break;
+                        case TagLib::MP4::Properties::FLAC:
+                            track.setCodec(u"FLAC"_s);
+                            track.setEncoding(u"Lossless"_s);
+                            break;
+                        case TagLib::MP4::Properties::DTS:
+                            track.setCodec(u"DTS"_s);
+                            track.setEncoding(u"Lossy"_s);
+                            break;
+                        case TagLib::MP4::Properties::Opus:
+                            track.setCodec(u"Opus"_s);
+                            track.setEncoding(u"Lossy"_s);
+                            break;
+#endif
                         case TagLib::MP4::Properties::Unknown:
                             break;
                     }
@@ -3249,7 +3549,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
 
                 if(file.tag()) {
                     const auto* id3Tag = file.tag();
-                    readGeneralProperties(id3Tag->properties(), track, false, true, policy,
+                    readGeneralProperties(id3Properties(id3Tag), track, false, true, policy,
                                           id3Tag->header()->majorVersion() == 3);
                     readId3Tags(id3Tag, track, policy, false);
                     track.setTagTypes({u"ID3v2.%1"_s.arg(id3Tag->header()->majorVersion())});
@@ -3273,7 +3573,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
                 }
                 if(file.hasID3v2Tag()) {
                     const auto* id3Tag = file.ID3v2Tag();
-                    readGeneralProperties(id3Tag->properties(), track, false, true, policy,
+                    readGeneralProperties(id3Properties(id3Tag), track, false, true, policy,
                                           id3Tag->header()->majorVersion() == 3);
                     readId3Tags(id3Tag, track, policy, false);
                     track.setTagTypes({u"ID3v2.%1"_s.arg(id3Tag->header()->majorVersion())});
@@ -3284,15 +3584,18 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
             }
             break;
         }
+#else
+        case AudioFileFormat::Dsf:
+        case AudioFileFormat::Dsdiff:
 #endif
         case AudioFileFormat::Unknown: {
-            qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
+            qCInfo(TAGLIB) << "Unsupported mime type (" << m_mimeType << "):" << source.filepath;
             return false;
         }
     }
 
     if(track.codec().isEmpty()) {
-        track.setCodec(codecForFormat(format));
+        track.setCodec(codecForFormat(m_format));
     }
 
     return true;
@@ -3306,12 +3609,9 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
         return {};
     }
 
-    const auto detected  = detectAudioFileFormat(source);
-    const auto format    = detected.format;
-    const auto& mimeType = detected.mimeType;
-    const auto style     = TagLib::AudioProperties::Average;
+    const auto style = TagLib::AudioProperties::Average;
 
-    switch(format) {
+    switch(m_format) {
         case AudioFileFormat::Mpeg: {
 #if (TAGLIB_MAJOR_VERSION >= 2)
             TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
@@ -3395,9 +3695,9 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
             if(file.isValid() && file.tag()) {
                 return readAsfCover(file.tag(), cover);
             }
+            break;
         }
 #if (TAGLIB_MAJOR_VERSION >= 2)
-        break;
         case AudioFileFormat::Dsf: {
             const TagLib::DSF::File file(&stream, true);
             if(file.isValid() && file.tag()) {
@@ -3410,11 +3710,14 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
             if(file.isValid() && file.hasID3v2Tag()) {
                 return readId3Cover(file.ID3v2Tag(), cover);
             }
+            break;
         }
+#else
+        case AudioFileFormat::Dsf:
+        case AudioFileFormat::Dsdiff:
 #endif
-        break;
         case AudioFileFormat::Unknown: {
-            qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
+            qCInfo(TAGLIB) << "Unsupported mime type (" << m_mimeType << "):" << source.filepath;
             return {};
         }
     }
@@ -3442,21 +3745,18 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
     }
 
     const auto writeProperties
-        = [&track, options](TagLib::File& file, bool skipExtra = false, bool useId3PairedTotals = false) {
+        = [&track, options]<typename T>(T& file, bool skipExtra = false, bool useId3PairedTotals = false) {
               auto savedProperties = file.properties();
               writeGenericProperties(savedProperties, track, options, skipExtra, useId3PairedTotals);
               file.setProperties(savedProperties);
           };
 
-    const auto detected    = detectAudioFileFormat(source);
-    const auto format      = detected.format;
-    const auto& mimeType   = detected.mimeType;
     const auto style       = TagLib::AudioProperties::Average;
     const TagPolicy policy = tagPolicy();
     bool success{false};
     bool failureLogged{false};
 
-    switch(format) {
+    switch(m_format) {
         case AudioFileFormat::Mpeg: {
 #if (TAGLIB_MAJOR_VERSION >= 2)
             TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
@@ -3464,11 +3764,24 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
             TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
 #endif
             if(file.isValid()) {
-                writeProperties(file, false, true);
-                if(auto* tag = file.ID3v2Tag(true)) {
+                const int tagTypes = mpegTagTypesForWrite(file, policy);
+
+                if(tagTypes & TagLib::MPEG::File::ID3v2) {
+                    auto* tag = file.ID3v2Tag(true);
+                    writeProperties(*tag, false, true);
                     writeID3v2Tags(tag, track, options, policy, true);
                 }
-                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType, failureLogged);
+                if(tagTypes & TagLib::MPEG::File::APE) {
+                    auto* tag = file.APETag(true);
+                    writeProperties(*tag, false, true);
+                    writeApeTags(tag, track, options, policy);
+                }
+                if(tagTypes & TagLib::MPEG::File::ID3v1) {
+                    writeProperties(*file.ID3v1Tag(true), true);
+                }
+
+                success = saveModifiedMpegFile(file, true, tagTypes, policy, u"write metadata"_s, source.filepath,
+                                               m_mimeType, failureLogged);
             }
             break;
         }
@@ -3480,12 +3793,12 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                     writeID3v2Tags(file.tag(), track, options, policy, false);
                 }
                 else {
-                    logWriteFailure(u"write metadata"_s, source.filepath, mimeType, u"file has no ID3v2 tag block"_s);
+                    logWriteFailure(u"write metadata"_s, source.filepath, m_mimeType, u"file has no ID3v2 tag block"_s);
                     failureLogged = true;
                 }
 
                 success = failureLogged ? false
-                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType,
+                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType,
                                                            failureLogged);
             }
             break;
@@ -3494,16 +3807,16 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
             TagLib::RIFF::WAV::File file(&stream, false);
             if(file.isValid()) {
                 writeProperties(file, false, true);
-                if(file.hasID3v2Tag()) {
-                    writeID3v2Tags(file.ID3v2Tag(), track, options, policy, false);
+                if(auto* tag = file.ID3v2Tag()) {
+                    writeID3v2Tags(tag, track, options, policy, false);
                 }
                 else {
-                    logWriteFailure(u"write metadata"_s, source.filepath, mimeType, u"file has no ID3v2 tag block"_s);
+                    logWriteFailure(u"write metadata"_s, source.filepath, m_mimeType, u"file has no ID3v2 tag block"_s);
                     failureLogged = true;
                 }
 
                 success = failureLogged ? false
-                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType,
+                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType,
                                                            failureLogged);
             }
             break;
@@ -3515,7 +3828,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                 if(auto* tag = file.APETag(true)) {
                     writeApeTags(tag, track, options, policy);
                 }
-                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType, failureLogged);
+                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType, failureLogged);
             }
             break;
         }
@@ -3526,7 +3839,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                 if(auto* tag = file.APETag(true)) {
                     writeApeTags(tag, track, options, policy);
                 }
-                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType, failureLogged);
+                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType, failureLogged);
             }
             break;
         }
@@ -3537,7 +3850,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                 if(auto* tag = file.APETag(true)) {
                     writeApeTags(tag, track, options, policy);
                 }
-                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType, failureLogged);
+                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType, failureLogged);
             }
             break;
         }
@@ -3548,7 +3861,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                 if(file.hasMP4Tag()) {
                     writeMp4Tags(file.tag(), track, options, policy);
                 }
-                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType, failureLogged);
+                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType, failureLogged);
             }
             break;
         }
@@ -3563,7 +3876,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                 if(auto* tags = file.xiphComment(true)) {
                     writeXiphComment(tags, track, options, policy);
                 }
-                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType, failureLogged);
+                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType, failureLogged);
             }
             break;
         }
@@ -3575,13 +3888,13 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                     writeXiphComment(file.tag(), track, options, policy);
                 }
                 else {
-                    logWriteFailure(u"write metadata"_s, source.filepath, mimeType,
+                    logWriteFailure(u"write metadata"_s, source.filepath, m_mimeType,
                                     u"file has no Xiph comment block"_s);
                     failureLogged = true;
                 }
 
                 success = failureLogged ? false
-                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType,
+                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType,
                                                            failureLogged);
             }
             break;
@@ -3595,20 +3908,20 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                     writeOpusReplayGain(file.tag(), track, options);
                 }
                 else {
-                    logWriteFailure(u"write metadata"_s, source.filepath, mimeType,
+                    logWriteFailure(u"write metadata"_s, source.filepath, m_mimeType,
                                     u"file has no Xiph comment block"_s);
                     failureLogged = true;
                 }
 
                 if(const auto headerGain = track.opusHeaderGainQ78(); headerGain.has_value()) {
                     if(!writeOpusHeaderGainQ78(source.device, *headerGain)) {
-                        logWriteFailure(u"write opus header gain"_s, source.filepath, mimeType, u"failed"_s);
+                        logWriteFailure(u"write opus header gain"_s, source.filepath, m_mimeType, u"failed"_s);
                         failureLogged = true;
                     }
                 }
 
                 success = failureLogged ? false
-                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType,
+                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType,
                                                            failureLogged);
             }
             break;
@@ -3621,17 +3934,17 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                     writeAsfTags(file.tag(), track, options, policy);
                 }
                 else {
-                    logWriteFailure(u"write metadata"_s, source.filepath, mimeType, u"file has no ASF tag block"_s);
+                    logWriteFailure(u"write metadata"_s, source.filepath, m_mimeType, u"file has no ASF tag block"_s);
                     failureLogged = true;
                 }
 
                 success = failureLogged ? false
-                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType,
+                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType,
                                                            failureLogged);
             }
+            break;
         }
 #if (TAGLIB_MAJOR_VERSION >= 2)
-        break;
         case AudioFileFormat::Dsf: {
             TagLib::DSF::File file(&stream, false);
             if(file.isValid()) {
@@ -3640,12 +3953,12 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                     writeID3v2Tags(file.tag(), track, options, policy, false);
                 }
                 else {
-                    logWriteFailure(u"write metadata"_s, source.filepath, mimeType, u"file has no ID3v2 tag block"_s);
+                    logWriteFailure(u"write metadata"_s, source.filepath, m_mimeType, u"file has no ID3v2 tag block"_s);
                     failureLogged = true;
                 }
 
                 success = failureLogged ? false
-                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType,
+                                        : saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType,
                                                            failureLogged);
             }
             break;
@@ -3657,19 +3970,22 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
                 if(auto* tag = file.ID3v2Tag(true)) {
                     writeID3v2Tags(tag, track, options, policy, false);
                 }
-                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, mimeType, failureLogged);
+                success = saveModifiedFile(file, true, u"write metadata"_s, source.filepath, m_mimeType, failureLogged);
             }
             break;
         }
+#else
+        case AudioFileFormat::Dsf:
+        case AudioFileFormat::Dsdiff:
 #endif
         case AudioFileFormat::Unknown: {
-            qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
+            qCInfo(TAGLIB) << "Unsupported mime type (" << m_mimeType << "):" << source.filepath;
             return false;
         }
     }
 
     if(!success && !failureLogged) {
-        logWriteFailure(u"write metadata"_s, source.filepath, mimeType,
+        logWriteFailure(u"write metadata"_s, source.filepath, m_mimeType,
                         u"file is invalid or no writable tag handler was available"_s);
     }
 
@@ -3677,14 +3993,17 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
         return false;
     }
 
-    if(atime.isValid() || mtime.isValid()) {
-        if(auto* fileDev = qobject_cast<QFile*>(source.device)) {
+    if(auto* fileDev = qobject_cast<QFile*>(source.device)) {
+        fileDev->flush();
+        if(mtime.isValid()) {
             fileDev->setFileTime(mtime, QFileDevice::FileModificationTime);
+        }
+        if(atime.isValid()) {
             fileDev->setFileTime(atime, QFileDevice::FileAccessTime);
         }
     }
 
-    return success;
+    return true;
 }
 
 bool TagLibReader::writeCover(const AudioSource& source, const Track& track, const TrackCovers& covers,
@@ -3703,14 +4022,12 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
         mtime = info.lastModified();
     }
 
-    const auto detected  = detectAudioFileFormat(source);
-    const auto format    = detected.format;
-    const auto& mimeType = detected.mimeType;
-    const auto style     = TagLib::AudioProperties::Average;
+    const auto style       = TagLib::AudioProperties::Average;
+    const TagPolicy policy = tagPolicy();
     bool success{false};
     bool failureLogged{false};
 
-    switch(format) {
+    switch(m_format) {
         case AudioFileFormat::Mpeg: {
 #if (TAGLIB_MAJOR_VERSION >= 2)
             TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
@@ -3718,9 +4035,27 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
 #endif
             if(file.isValid()) {
-                if(auto* tag = file.ID3v2Tag(true)) {
-                    success = saveModifiedFile(file, writeId3Cover(tag, covers), u"write cover artwork"_s,
-                                               source.filepath, mimeType, failureLogged);
+                const int tagTypes = mpegTagTypesForWrite(file, policy);
+                bool modified{false};
+
+                if(tagTypes & TagLib::MPEG::File::ID3v2) {
+                    modified |= writeId3Cover(file.ID3v2Tag(true), covers);
+                }
+                if(tagTypes & TagLib::MPEG::File::APE) {
+                    modified |= writeApeCover(file.APETag(true), covers);
+                }
+
+                if(modified) {
+                    success = saveModifiedMpegFile(file, true, tagTypes, policy, u"write cover artwork"_s,
+                                                   source.filepath, m_mimeType, failureLogged);
+                }
+                else if(!(tagTypes & (TagLib::MPEG::File::ID3v2 | TagLib::MPEG::File::APE))) {
+                    logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType,
+                                    u"existing tag scheme cannot store cover artwork"_s);
+                    failureLogged = true;
+                }
+                else {
+                    success = true;
                 }
             }
             break;
@@ -3729,23 +4064,22 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             TagLib::RIFF::AIFF::File file(&stream, false);
             if(file.isValid() && file.hasID3v2Tag()) {
                 success = saveModifiedFile(file, writeId3Cover(file.tag(), covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
+                                           source.filepath, m_mimeType, failureLogged);
             }
             else if(file.isValid()) {
-                logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType, u"file has no ID3v2 tag block"_s);
+                logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType,
+                                u"file has no ID3v2 tag block"_s);
                 failureLogged = true;
             }
             break;
         }
         case AudioFileFormat::Wav: {
             TagLib::RIFF::WAV::File file(&stream, false);
-            if(file.isValid() && file.hasID3v2Tag()) {
-                success = saveModifiedFile(file, writeId3Cover(file.ID3v2Tag(), covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
-            }
-            else if(file.isValid()) {
-                logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType, u"file has no ID3v2 tag block"_s);
-                failureLogged = true;
+            if(file.isValid()) {
+                if(auto* tag = file.ID3v2Tag()) {
+                    success = saveModifiedFile(file, writeId3Cover(tag, covers), u"write cover artwork"_s,
+                                               source.filepath, m_mimeType, failureLogged);
+                }
             }
             break;
         }
@@ -3754,7 +4088,7 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             if(file.isValid()) {
                 if(auto* tag = file.APETag(true)) {
                     success = saveModifiedFile(file, writeApeCover(tag, covers), u"write cover artwork"_s,
-                                               source.filepath, mimeType, failureLogged);
+                                               source.filepath, m_mimeType, failureLogged);
                 }
             }
             break;
@@ -3764,7 +4098,7 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             if(file.isValid()) {
                 if(auto* tag = file.APETag(true)) {
                     success = saveModifiedFile(file, writeApeCover(tag, covers), u"write cover artwork"_s,
-                                               source.filepath, mimeType, failureLogged);
+                                               source.filepath, m_mimeType, failureLogged);
                 }
             }
             break;
@@ -3774,7 +4108,7 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             if(file.isValid()) {
                 if(auto* tag = file.APETag(true)) {
                     success = saveModifiedFile(file, writeApeCover(tag, covers), u"write cover artwork"_s,
-                                               source.filepath, mimeType, failureLogged);
+                                               source.filepath, m_mimeType, failureLogged);
                 }
             }
             break;
@@ -3783,10 +4117,10 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             TagLib::MP4::File file(&stream, false);
             if(file.isValid() && file.hasMP4Tag()) {
                 success = saveModifiedFile(file, writeMp4Cover(file.tag(), covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
+                                           source.filepath, m_mimeType, failureLogged);
             }
             else if(file.isValid()) {
-                logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType, u"file has no MP4 tag block"_s);
+                logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType, u"file has no MP4 tag block"_s);
                 failureLogged = true;
             }
             break;
@@ -3799,7 +4133,7 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
 #endif
             if(file.isValid() && file.xiphComment(true)) {
                 success = saveModifiedFile(file, writeXiphCover(&file, covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
+                                           source.filepath, m_mimeType, failureLogged);
             }
             break;
         }
@@ -3807,10 +4141,10 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             TagLib::Ogg::Vorbis::File file(&stream, false);
             if(file.isValid() && file.tag()) {
                 success = saveModifiedFile(file, writeXiphCover(file.tag(), covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
+                                           source.filepath, m_mimeType, failureLogged);
             }
             else if(file.isValid()) {
-                logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType,
+                logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType,
                                 u"file has no Xiph comment block"_s);
                 failureLogged = true;
             }
@@ -3820,10 +4154,10 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             TagLib::Ogg::Opus::File file(&stream, false);
             if(file.isValid() && file.tag()) {
                 success = saveModifiedFile(file, writeXiphCover(file.tag(), covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
+                                           source.filepath, m_mimeType, failureLogged);
             }
             else if(file.isValid()) {
-                logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType,
+                logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType,
                                 u"file has no Xiph comment block"_s);
                 failureLogged = true;
             }
@@ -3833,10 +4167,10 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             TagLib::ASF::File file(&stream, false);
             if(file.isValid() && file.tag()) {
                 success = saveModifiedFile(file, writeAsfCover(file.tag(), covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
+                                           source.filepath, m_mimeType, failureLogged);
             }
             else if(file.isValid()) {
-                logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType, u"file has no ASF tag block"_s);
+                logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType, u"file has no ASF tag block"_s);
                 failureLogged = true;
             }
             break;
@@ -3846,10 +4180,11 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             TagLib::DSF::File file(&stream, false);
             if(file.isValid() && file.tag()) {
                 success = saveModifiedFile(file, writeId3Cover(file.tag(), covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
+                                           source.filepath, m_mimeType, failureLogged);
             }
             else if(file.isValid()) {
-                logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType, u"file has no ID3v2 tag block"_s);
+                logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType,
+                                u"file has no ID3v2 tag block"_s);
                 failureLogged = true;
             }
             break;
@@ -3858,23 +4193,27 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
             TagLib::DSDIFF::File file(&stream, false);
             if(file.isValid() && file.hasID3v2Tag()) {
                 success = saveModifiedFile(file, writeId3Cover(file.ID3v2Tag(), covers), u"write cover artwork"_s,
-                                           source.filepath, mimeType, failureLogged);
+                                           source.filepath, m_mimeType, failureLogged);
             }
             else if(file.isValid()) {
-                logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType, u"file has no ID3v2 tag block"_s);
+                logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType,
+                                u"file has no ID3v2 tag block"_s);
                 failureLogged = true;
             }
             break;
         }
+#else
+        case AudioFileFormat::Dsf:
+        case AudioFileFormat::Dsdiff:
 #endif
         case AudioFileFormat::Unknown: {
-            qCInfo(TAGLIB) << "Unsupported mime type (" << mimeType << "):" << source.filepath;
+            qCInfo(TAGLIB) << "Unsupported mime type (" << m_mimeType << "):" << source.filepath;
             return false;
         }
     }
 
     if(!success && !failureLogged) {
-        logWriteFailure(u"write cover artwork"_s, source.filepath, mimeType,
+        logWriteFailure(u"write cover artwork"_s, source.filepath, m_mimeType,
                         u"file is invalid or no writable tag handler was available"_s);
     }
 
@@ -3882,13 +4221,16 @@ bool TagLibReader::writeCover(const AudioSource& source, const Track& track, con
         return false;
     }
 
-    if(atime.isValid() || mtime.isValid()) {
-        if(auto* fileDev = qobject_cast<QFile*>(source.device)) {
-            fileDev->setFileTime(mtime, QFileDevice::FileModificationTime);
+    if(auto* fileDev = qobject_cast<QFile*>(source.device)) {
+        fileDev->flush();
+        if(atime.isValid()) {
             fileDev->setFileTime(atime, QFileDevice::FileAccessTime);
+        }
+        if(mtime.isValid()) {
+            fileDev->setFileTime(mtime, QFileDevice::FileModificationTime);
         }
     }
 
-    return success;
+    return true;
 }
 } // namespace Fooyin

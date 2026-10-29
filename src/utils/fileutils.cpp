@@ -18,11 +18,23 @@
  */
 
 #include <utils/fileutils.h>
+#include <utils/fypaths.h>
 
 #include <QDesktopServices>
 #include <QDir>
 #include <QDirIterator>
 #include <QFile>
+#include <QLoggingCategory>
+
+#include <vector>
+
+#ifdef FOOYIN_UTILS_DBUS
+#include <QDBusInterface>
+#include <QDBusReply>
+#include <QDBusUnixFileDescriptor>
+#endif
+
+Q_LOGGING_CATEGORY(FILE_UTILS, "fy.fileutils")
 
 using namespace Qt::StringLiterals;
 
@@ -62,6 +74,34 @@ PathParts splitPath(const QString& path)
 } // namespace
 
 namespace Fooyin::Utils::File {
+bool moveToTrash(const QString& path)
+{
+#ifdef FOOYIN_UTILS_DBUS
+    if(isFlatpak()) {
+        QFile file{path};
+        if(!file.open(QIODevice::ReadWrite | QIODevice::ExistingOnly)) {
+            qCWarning(FILE_UTILS) << "Failed to open file for trash portal" << path << file.errorString();
+            return false;
+        }
+
+        QDBusInterface portal{u"org.freedesktop.portal.Desktop"_s, u"/org/freedesktop/portal/desktop"_s,
+                              u"org.freedesktop.portal.Trash"_s, QDBusConnection::sessionBus()};
+        const QDBusReply<uint> reply
+            = portal.call(u"TrashFile"_s, QVariant::fromValue(QDBusUnixFileDescriptor{file.handle()}));
+        if(!reply.isValid()) {
+            qCWarning(FILE_UTILS) << "Trash portal failed for" << path << reply.error().message();
+            return false;
+        }
+        if(reply.value() != 1) {
+            qCWarning(FILE_UTILS) << "Trash portal did not move" << path << "(result" << reply.value() << ')';
+            return false;
+        }
+        return true;
+    }
+#endif
+    return QFile::moveToTrash(path);
+}
+
 QString cleanPath(const QString& path)
 {
     if(path.trimmed().isEmpty()) {
@@ -117,8 +157,8 @@ bool isSubdir(const QString& dir, const QString& parentDir)
 
 QString getParentDirectory(const QString& filename)
 {
-    const auto cleaned = cleanPath(filename);
-    const auto index   = cleaned.lastIndexOf(QDir::separator());
+    const QString cleaned = QDir::fromNativeSeparators(cleanPath(filename));
+    const auto index      = cleaned.lastIndexOf('/'_L1);
 
     return (index > 0) ? cleanPath(cleaned.left(index)) : QDir::rootPath();
 }
@@ -249,10 +289,15 @@ QStringList getFiles(const QList<QUrl>& urls, const QStringList& fileExtensions)
 
 QStringList getAllSubdirectories(const QDir& dir)
 {
+    return getAllSubdirectories(dir, {});
+}
+
+QStringList getAllSubdirectories(const QDir& dir, const std::stop_token stopToken)
+{
     QStringList directories;
     QDirIterator it{dir.absolutePath(), QDir::Dirs | QDir::NoDotAndDotDot, QDirIterator::Subdirectories};
 
-    while(it.hasNext()) {
+    while(!stopToken.stop_requested() && it.hasNext()) {
         const QString subdir = it.next();
         directories.push_back(subdir);
     }

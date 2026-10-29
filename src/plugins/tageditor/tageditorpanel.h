@@ -22,8 +22,11 @@
 #include <core/track.h>
 #include <gui/fywidget.h>
 
+#include <QPointer>
+
 #include <memory>
 
+class QDialog;
 class QJsonObject;
 class QPushButton;
 
@@ -54,6 +57,7 @@ public:
 
 private:
     bool apply();
+    void autoFillValues();
     void selectionChanged();
     void updateForTracks(const TrackList& tracks);
 
@@ -63,6 +67,7 @@ private:
     SettingsManager* m_settings;
     TagEditorEditor* m_editor;
     QPushButton* m_applyButton;
+    QPointer<QDialog> m_fillDialog;
     TrackList m_currentTracks;
 };
 } // namespace TagEditor

@@ -26,6 +26,9 @@
 
 #include <QObject>
 
+#include <memory>
+#include <vector>
+
 class QAction;
 class QMainWindow;
 
@@ -36,6 +39,13 @@ class SettingsManager;
 class ActionContainer;
 
 using CommandList = std::vector<Command*>;
+
+enum class GlobalShortcutManagement : uint8_t
+{
+    Unavailable = 0,
+    ApplicationManaged,
+    SystemManaged,
+};
 
 class FYUTILS_EXPORT ActionManager : public QObject
 {
@@ -52,12 +62,16 @@ public:
     [[nodiscard]] WidgetContext* currentContextObject() const;
     [[nodiscard]] QWidget* currentContextWidget() const;
     [[nodiscard]] WidgetContext* contextObject(QWidget* widget) const;
+
     void addContextObject(WidgetContext* context);
     void overrideContext(WidgetContext* context, bool override);
     void removeContextObject(WidgetContext* context);
 
     ActionContainer* createMenu(const Id& id);
     ActionContainer* createMenuBar(const Id& id);
+
+    /** Declares a command without an action, retaining it when its action bindings are removed. */
+    Command* registerCommand(const Id& id);
     Command* registerAction(QAction* action, const Id& id,
                             const Context& context = Context{Constants::Context::Global});
     bool unregisterAction(QAction* action, const Id& id, const Context& context = Context{Constants::Context::Global});
@@ -66,11 +80,20 @@ public:
     [[nodiscard]] CommandList commands() const;
     [[nodiscard]] ActionContainer* actionContainer(const Id& id) const;
 
+    [[nodiscard]] GlobalShortcutManagement globalShortcutManagement() const;
+    void setGlobalShortcutManagement(GlobalShortcutManagement management);
+    [[nodiscard]] bool globalShortcutConfigurationAvailable() const;
+    void setGlobalShortcutConfigurationAvailable(bool available);
+    void configureGlobalShortcuts();
+
     bool eventFilter(QObject* watched, QEvent* event) override;
 
 Q_SIGNALS:
     void commandsChanged();
     void contextChanged(const Fooyin::Context& context);
+    void globalShortcutManagementChanged(Fooyin::GlobalShortcutManagement management);
+    void globalShortcutConfigurationAvailabilityChanged(bool available);
+    void globalShortcutConfigurationRequested();
 
 private:
     std::unique_ptr<ActionManagerPrivate> p;

@@ -19,6 +19,8 @@
 
 #include <gui/widgets/actiondelegate.h>
 
+#include <gui/guiutils.h>
+
 #include <QAbstractItemView>
 #include <QApplication>
 #include <QHelpEvent>
@@ -69,54 +71,34 @@ void ActionDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     QStyleOptionViewItem opt{option};
     initStyleOption(&opt, index);
 
+    const auto colourGroup = !(opt.state & QStyle::State_Enabled) ? QPalette::Disabled
+                           : (opt.state & QStyle::State_Active)   ? QPalette::Active
+                                                                  : QPalette::Inactive;
+    opt.palette.setCurrentColorGroup(colourGroup);
+
     painter->save();
 
-    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);
+    const QStyle* style  = opt.widget ? opt.widget->style() : QApplication::style();
+    const auto btns      = buttons(index);
+    const int btnCount   = static_cast<int>(btns.size());
+    const int totalWidth = buttonsWidth(btnCount);
 
-    const auto btns              = buttons(index);
-    const int btnCount           = static_cast<int>(btns.size());
-    const int totalWidth         = buttonsWidth(btnCount);
-    const QVariant checkStateVar = index.data(Qt::CheckStateRole);
-    const bool hasCheck          = (index.flags() & Qt::ItemIsUserCheckable) && checkStateVar.isValid();
-
-    QRect textRect{opt.rect};
-    textRect.setRight(textRect.right() - totalWidth);
-
-    if(hasCheck) {
-        const QRect indicatorRect = checkRect(opt, style);
-
-        QStyleOptionViewItem checkOpt{opt};
-        checkOpt.rect = indicatorRect;
-        switch(static_cast<Qt::CheckState>(checkStateVar.toInt())) {
-            case Qt::Unchecked:
-                checkOpt.state = (checkOpt.state | QStyle::State_Off) & ~QStyle::State_On;
-                break;
-            case Qt::PartiallyChecked:
-                checkOpt.state = (checkOpt.state | QStyle::State_NoChange) & ~QStyle::State_On;
-                break;
-            case Qt::Checked:
-            default:
-                checkOpt.state = (checkOpt.state | QStyle::State_On) & ~QStyle::State_Off;
-                break;
-        }
-
-        style->drawPrimitive(QStyle::PE_IndicatorItemViewItemCheck, &checkOpt, painter, opt.widget);
-        textRect.setLeft(indicatorRect.right() + ButtonSpacing);
+    if(totalWidth > 0) {
+        const QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
+        const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) + 1;
+        const int textWidth  = std::max(0, textRect.width() - totalWidth - (2 * textMargin));
+        opt.text             = opt.fontMetrics.elidedText(opt.text, opt.textElideMode, textWidth);
     }
 
-    const auto itemTextRole = opt.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::NoRole;
-    const QString text      = index.data(Qt::DisplayRole).toString();
-    style->drawItemText(painter, textRect, Qt::AlignVCenter | Qt::AlignLeft, opt.palette,
-                        opt.state & QStyle::State_Enabled, text, itemTextRole);
+    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
     const bool isHoveredRow = (m_hoveredIndex.isValid() && m_hoveredIndex == index);
+    const bool itemEnabled  = (opt.state & QStyle::State_Enabled);
+    const auto itemTextRole
+        = (opt.state & QStyle::State_Selected) ? Gui::itemViewSelectionTextRole(opt) : QPalette::Text;
 
+    painter->setFont(opt.font);
     painter->setRenderHint(QPainter::Antialiasing);
-
-    const bool itemEnabled = (opt.state & QStyle::State_Enabled);
-    const QPalette::ColorRole itemRole
-        = (opt.state & QStyle::State_Selected) ? QPalette::HighlightedText : QPalette::Text;
 
     for(int i{0}; i < btnCount; ++i) {
         const QRect rect     = buttonRect(opt, i);
@@ -128,7 +110,7 @@ void ActionDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
             painter->drawRoundedRect(rect, ButtonRadius, ButtonRadius);
         }
 
-        const auto textRole = isHovered ? QPalette::ButtonText : itemRole;
+        const auto textRole = isHovered ? QPalette::ButtonText : itemTextRole;
         style->drawItemText(painter, rect, Qt::AlignCenter, opt.palette, itemEnabled, btns[i].text, textRole);
     }
 

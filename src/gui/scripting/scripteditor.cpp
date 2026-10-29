@@ -20,22 +20,27 @@
 #include <gui/scripting/scripteditor.h>
 
 #include "expressiontreemodel.h"
+#include "scripteditortextedit.h"
 #include "scripthighlighter.h"
 #include "scriptreferenceentries.h"
+#include "trackgenerator.h"
 
 #include <core/coresettings.h>
 #include <core/library/librarymanager.h>
 #include <core/player/playercontroller.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/plugins/coreplugincontext.h>
+#include <core/scripting/scriptcontextservice.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/scripttypes.h>
 #include <core/track.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/colourbutton.h>
 #include <utils/utils.h>
 
-#include <QApplication>
 #include <QBasicTimer>
+#include <QCheckBox>
 #include <QCompleter>
 #include <QDesktopServices>
 #include <QDir>
@@ -44,9 +49,13 @@
 #include <QHeaderView>
 #include <QItemSelection>
 #include <QLineEdit>
+#include <QPainter>
 #include <QPalette>
+#include <QPlainTextEdit>
+#include <QPushButton>
 #include <QRegularExpression>
 #include <QScrollBar>
+#include <QSignalBlocker>
 #include <QSortFilterProxyModel>
 #include <QSplitter>
 #include <QStandardItemModel>
@@ -71,20 +80,25 @@ constexpr auto TextChangeInterval = 1500ms;
 constexpr auto TextChangeInterval = 1500;
 #endif
 
-constexpr auto DialogState = "Interface/ScriptEditorState";
+constexpr auto DialogState             = "Interface/ScriptEditorState";
+constexpr auto VariableColourKey       = "Interface/ScriptEditor/VariableColour";
+constexpr auto FunctionColourKey       = "Interface/ScriptEditor/FunctionColour";
+constexpr auto ConditionalColourKey    = "Interface/ScriptEditor/ConditionalColour";
+constexpr auto OperatorColourKey       = "Interface/ScriptEditor/OperatorColour";
+constexpr auto QuotedTextColourKey     = "Interface/ScriptEditor/QuotedTextColour";
+constexpr auto FormattingTagColourKey  = "Interface/ScriptEditor/FormattingTagColour";
+constexpr auto WordWrapKey             = "Interface/ScriptEditor/WordWrap";
+constexpr auto AutocompleteKey         = "Interface/ScriptEditor/Autocomplete";
+constexpr auto FunctionHintsKey        = "Interface/ScriptEditor/FunctionHints";
+constexpr auto ShowWhitespaceKey       = "Interface/ScriptEditor/ShowWhitespace";
+constexpr auto HighlightBracketsKey    = "Interface/ScriptEditor/HighlightBrackets";
+constexpr auto HighlightCurrentLineKey = "Interface/ScriptEditor/HighlightCurrentLine";
+constexpr auto ShowLineNumbersKey      = "Interface/ScriptEditor/ShowLineNumbers";
 
 namespace Fooyin {
-enum ScriptReferenceRole : int
-{
-    InsertTextRole = Qt::UserRole + 1,
-    CursorOffsetRole,
-    KindRole,
-};
-
+namespace {
 class ScriptReferenceFilterModel : public QSortFilterProxyModel
 {
-    Q_OBJECT
-
 public:
     using QSortFilterProxyModel::QSortFilterProxyModel;
 
@@ -107,369 +121,7 @@ protected:
     }
 };
 
-class ScriptCompleter : public QCompleter
-{
-    Q_OBJECT
-
-public:
-    using QCompleter::QCompleter;
-
-    [[nodiscard]] QString pathFromIndex(const QModelIndex& index) const override
-    {
-        return index.data(InsertTextRole).toString();
-    }
-};
-
-class ScriptEditorTextEdit : public QTextEdit
-{
-    Q_OBJECT
-
-public:
-    explicit ScriptEditorTextEdit(QWidget* parent = nullptr)
-        : QTextEdit{parent}
-        , m_completer{new ScriptCompleter(this)}
-        , m_variableModel{new QStandardItemModel(this)}
-        , m_functionModel{new QStandardItemModel(this)}
-    {
-        populateCompletionModels();
-
-        m_completer->setWidget(this);
-        m_completer->setCaseSensitivity(Qt::CaseInsensitive);
-        m_completer->setCompletionMode(QCompleter::PopupCompletion);
-        m_completer->setFilterMode(Qt::MatchStartsWith);
-
-        QObject::connect(m_completer, qOverload<const QModelIndex&>(&QCompleter::activated), this,
-                         &ScriptEditorTextEdit::insertCompletion);
-    }
-
-    void insertSnippet(const QString& insertText, int cursorOffset = 0,
-                       ScriptReferenceKind kind = ScriptReferenceKind::Variable)
-    {
-        QTextCursor cursor{textCursor()};
-
-        if(kind == ScriptReferenceKind::Formatting && cursor.hasSelection() && cursorOffset > 0) {
-            const auto splitPosition = insertText.size() - cursorOffset;
-            const QString prefix     = insertText.left(splitPosition);
-            const QString suffix     = insertText.mid(splitPosition);
-            const QString selected   = cursor.selectedText();
-
-            cursor.insertText(prefix + selected + suffix);
-            setTextCursor(cursor);
-            return;
-        }
-
-        cursor.insertText(insertText);
-        setTextCursor(cursor);
-
-        if(cursorOffset > 0) {
-            cursor = textCursor();
-            cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, cursorOffset);
-            setTextCursor(cursor);
-        }
-    }
-
-protected:
-    void keyPressEvent(QKeyEvent* event) override
-    {
-        if(m_completer->popup()->isVisible()) {
-            switch(event->key()) {
-                case Qt::Key_Return:
-                case Qt::Key_Enter:
-                case Qt::Key_Escape:
-                case Qt::Key_Tab:
-                case Qt::Key_Backtab:
-                    event->ignore();
-                    return;
-                default:
-                    break;
-            }
-        }
-
-        QTextEdit::keyPressEvent(event);
-
-        if(shouldUpdateCompletion(event)) {
-            updateCompletion();
-        }
-        else if(isCompletionDismissKey(event)) {
-            m_completer->popup()->hide();
-        }
-    }
-
-private:
-    struct CompletionContext
-    {
-        bool valid{false};
-        ScriptReferenceKind kind{ScriptReferenceKind::Variable};
-        QString prefix;
-        int startPos{-1};
-        int endPos{-1};
-    };
-
-    [[nodiscard]] static bool shouldUpdateCompletion(const QKeyEvent* event)
-    {
-        if(event->modifiers().testFlag(Qt::ControlModifier) || event->modifiers().testFlag(Qt::AltModifier)
-           || event->modifiers().testFlag(Qt::MetaModifier)) {
-            return false;
-        }
-
-        switch(event->key()) {
-            case Qt::Key_Backspace:
-            case Qt::Key_Delete:
-                return true;
-            case Qt::Key_Left:
-            case Qt::Key_Right:
-            case Qt::Key_Up:
-            case Qt::Key_Down:
-            case Qt::Key_Home:
-            case Qt::Key_End:
-            case Qt::Key_PageUp:
-            case Qt::Key_PageDown:
-                return false;
-            default:
-                break;
-        }
-
-        const QString text = event->text();
-        if(text.size() != 1) {
-            return false;
-        }
-
-        return !text.front().isNull();
-    }
-
-    [[nodiscard]] static bool isCompletionDismissKey(const QKeyEvent* event)
-    {
-        switch(event->key()) {
-            case Qt::Key_Left:
-            case Qt::Key_Right:
-            case Qt::Key_Up:
-            case Qt::Key_Down:
-            case Qt::Key_Home:
-            case Qt::Key_End:
-            case Qt::Key_PageUp:
-            case Qt::Key_PageDown:
-            case Qt::Key_Escape:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    void populateCompletionModels()
-    {
-        for(const auto& entry : scriptReferenceEntries()) {
-            auto* item = new QStandardItem(entry.label);
-            item->setData(entry.insertText, InsertTextRole);
-            item->setData(entry.cursorOffset, CursorOffsetRole);
-            item->setData(static_cast<int>(entry.kind), KindRole);
-            item->setToolTip(entry.description);
-
-            switch(entry.kind) {
-                case ScriptReferenceKind::Variable:
-                    m_variableModel->appendRow(item);
-                    break;
-                case ScriptReferenceKind::Function:
-                case ScriptReferenceKind::CommandAlias:
-                    m_functionModel->appendRow(item);
-                    break;
-                case ScriptReferenceKind::Formatting:
-                    break;
-            }
-        }
-    }
-
-    void updateCompletion()
-    {
-        const CompletionContext context = completionContext();
-        if(!context.valid) {
-            m_completer->popup()->hide();
-            return;
-        }
-
-        m_completionStart = context.startPos;
-        m_completionEnd   = context.endPos;
-
-        QStandardItemModel* model{nullptr};
-        switch(context.kind) {
-            case ScriptReferenceKind::Variable:
-                model = m_variableModel;
-                break;
-            case ScriptReferenceKind::Function:
-                model = m_functionModel;
-                break;
-            case ScriptReferenceKind::Formatting:
-            case ScriptReferenceKind::CommandAlias:
-                break;
-        }
-
-        if(model) {
-            m_completer->setModel(model);
-        }
-
-        m_completer->setCompletionPrefix(context.prefix);
-
-        if(!m_completer->setCurrentRow(0)) {
-            m_completer->popup()->hide();
-            return;
-        }
-
-        QRect rect{cursorRect()};
-        rect.setWidth(m_completer->popup()->sizeHintForColumn(0)
-                      + m_completer->popup()->verticalScrollBar()->sizeHint().width() + 24);
-        m_completer->complete(rect);
-    }
-
-    [[nodiscard]] CompletionContext completionContext() const
-    {
-        const QTextCursor cursor = textCursor();
-        const QTextBlock block   = cursor.block();
-        const QString text       = block.text();
-        const int posInBlock     = cursor.position() - block.position();
-
-        if(posInBlock <= 0 || posInBlock > text.size()) {
-            return {};
-        }
-
-        int start{posInBlock};
-
-        while(start > 0) {
-            const QChar ch = text.at(start - 1);
-
-            if(ch.isLetterOrNumber() || ch == u'_') {
-                --start;
-                continue;
-            }
-
-            if(ch == '%'_L1 || ch == '$'_L1) {
-                --start;
-            }
-
-            break;
-        }
-
-        if(start < 0 || start >= posInBlock) {
-            return {};
-        }
-
-        const QChar opener = text.at(start);
-        if(opener != '%'_L1 && opener != '$'_L1) {
-            return {};
-        }
-
-        // Don't open if at end of variable
-        if(opener == '%'_L1 && start == posInBlock - 1 && start > 0) {
-            const QChar previous = text.at(start - 1);
-            if(previous.isLetterOrNumber() || previous == '_'_L1) {
-                return {};
-            }
-        }
-
-        int end{posInBlock};
-
-        while(end < text.size()) {
-            const QChar ch = text.at(end);
-
-            if(ch.isLetterOrNumber() || ch == '_'_L1) {
-                ++end;
-                continue;
-            }
-
-            break;
-        }
-
-        if(opener == '%'_L1 && end < text.size() && text.at(end) == '%'_L1) {
-            ++end;
-        }
-
-        CompletionContext context;
-        context.valid    = true;
-        context.kind     = opener == '%'_L1 ? ScriptReferenceKind::Variable : ScriptReferenceKind::Function;
-        context.prefix   = text.mid(start, posInBlock - start);
-        context.startPos = block.position() + start;
-        context.endPos   = block.position() + end;
-        return context;
-    }
-
-    void insertCompletion(const QModelIndex& index)
-    {
-        if(!index.isValid() || m_completionStart < 0 || m_completionEnd < m_completionStart) {
-            return;
-        }
-
-        QTextCursor cursor{textCursor()};
-        cursor.setPosition(m_completionStart);
-        cursor.setPosition(m_completionEnd, QTextCursor::KeepAnchor);
-        cursor.insertText(index.data(InsertTextRole).toString());
-        setTextCursor(cursor);
-
-        const int cursorOffset = index.data(CursorOffsetRole).toInt();
-        if(cursorOffset > 0) {
-            cursor = textCursor();
-            cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, cursorOffset);
-            setTextCursor(cursor);
-        }
-    }
-
-    ScriptCompleter* m_completer;
-    QStandardItemModel* m_variableModel;
-    QStandardItemModel* m_functionModel;
-    int m_completionStart{-1};
-    int m_completionEnd{-1};
-};
-
-class ScriptEditorEnvironment : public ScriptEnvironment
-{
-public:
-    explicit ScriptEditorEnvironment(LibraryManager* libraryManager)
-        : m_libraryEnvironment{libraryManager}
-    { }
-
-    void updatePlaybackState(PlayerController* playerController)
-    {
-        m_playbackEnvironment.setPlaylistData(nullptr, playerController ? &playerController->playbackQueue() : nullptr,
-                                              nullptr, playerController ? playerController->queuedTracksCount() : 0);
-
-        int currentPlayingTrackIndex{-1};
-        int currentPlayingTrackId{-1};
-
-        if(playerController) {
-            const PlaylistTrack currentTrack = playerController->currentPlaylistTrack();
-            currentPlayingTrackIndex         = currentTrack.indexInPlaylist;
-            currentPlayingTrackId            = playerController->currentTrackId();
-        }
-
-        m_playbackEnvironment.setTrackState(-1, currentPlayingTrackIndex, currentPlayingTrackId, 0);
-        m_playbackEnvironment.setPlaybackState(playerController ? playerController->currentPosition() : 0,
-                                               playerController ? playerController->currentTrack().duration() : 0,
-                                               playerController ? playerController->bitrate() : 0,
-                                               playerController ? playerController->playState()
-                                                                : Player::PlayState::Stopped);
-    }
-
-    [[nodiscard]] const ScriptPlaybackEnvironment* playbackEnvironment() const override
-    {
-        return m_playbackEnvironment.playbackEnvironment();
-    }
-
-    [[nodiscard]] const ScriptPlaylistEnvironment* playlistEnvironment() const override
-    {
-        return m_playbackEnvironment.playlistEnvironment();
-    }
-
-    [[nodiscard]] const ScriptLibraryEnvironment* libraryEnvironment() const override
-    {
-        return m_libraryEnvironment.libraryEnvironment();
-    }
-
-    [[nodiscard]] const ScriptEvaluationEnvironment* evaluationEnvironment() const override
-    {
-        return m_libraryEnvironment.evaluationEnvironment();
-    }
-
-private:
-    LibraryScriptEnvironment m_libraryEnvironment;
-    PlaylistScriptEnvironment m_playbackEnvironment;
-};
+} // namespace
 
 class ScriptEditorPrivate : public QObject
 {
@@ -478,12 +130,15 @@ class ScriptEditorPrivate : public QObject
 public:
     ScriptEditorPrivate(ScriptEditor* self, LibraryManager* libraryManager, const Track& track,
                         TrackSelectionController* selectionController = nullptr,
-                        PlayerController* playerController            = nullptr);
+                        PlayerController* playerController = nullptr, ScriptContextService* scriptContext = nullptr);
     ~ScriptEditorPrivate() override;
 
     void setupConnections();
     void setupPlaceholder();
     void setupReference();
+    void setupSettings();
+    void updateSyntaxColours();
+    void updateEditorSettings();
 
     void updateResults();
     void updateResults(const Expression& expression);
@@ -495,7 +150,7 @@ public:
     void referenceItemActivated(const QModelIndex& index);
     void referenceTabChanged(int index);
 
-    void showErrors() const;
+    void showErrors();
 
     void saveState();
     void restoreState();
@@ -504,6 +159,7 @@ public:
     LibraryManager* m_libraryManager;
     TrackSelectionController* m_selectionController;
     PlayerController* m_playerController;
+    ScriptContextService* m_scriptContext;
     FySettings m_settings;
     Track m_track;
     Track m_placeholderTrack;
@@ -516,40 +172,53 @@ public:
     QTextBrowser* m_results;
     ScriptHighlighter m_highlighter;
 
+    QCheckBox* m_wordWrap{nullptr};
+    QCheckBox* m_autocomplete{nullptr};
+    QCheckBox* m_functionHints{nullptr};
+    QCheckBox* m_showWhitespace{nullptr};
+    QCheckBox* m_highlightBrackets{nullptr};
+    QCheckBox* m_highlightCurrentLine{nullptr};
+    QCheckBox* m_showLineNumbers{nullptr};
+    ColourButton* m_variableColour{nullptr};
+    ColourButton* m_functionColour{nullptr};
+    ColourButton* m_conditionalColour{nullptr};
+    ColourButton* m_operatorColour{nullptr};
+    ColourButton* m_quotedTextColour{nullptr};
+    ColourButton* m_formattingTagColour{nullptr};
+
     QTreeView* m_expressionTree;
     QTabWidget* m_referenceTabs;
     QLineEdit* m_referenceSearch;
     QTreeView* m_variableReferenceTree;
     QTreeView* m_functionReferenceTree;
     QTreeView* m_formattingReferenceTree;
-    QTreeView* m_commandReferenceTree;
     QStandardItemModel* m_variableReferenceModel;
     QStandardItemModel* m_functionReferenceModel;
     QStandardItemModel* m_formattingReferenceModel;
-    QStandardItemModel* m_commandReferenceModel;
     ScriptReferenceFilterModel* m_variableReferenceFilter;
     ScriptReferenceFilterModel* m_functionReferenceFilter;
     ScriptReferenceFilterModel* m_formattingReferenceFilter;
-    ScriptReferenceFilterModel* m_commandReferenceFilter;
     ExpressionTreeModel* m_model;
 
     QBasicTimer m_textChangeTimer;
 
     ScriptParser m_parser;
+    ScriptSubscription* m_subscription{nullptr};
     ScriptFormatter m_formatter;
-    ScriptEditorEnvironment m_environment;
-    ScriptContext m_scriptContext;
 
     ParsedScript m_currentScript;
+    ErrorList m_formatErrors;
+    bool m_errorsVisible{false};
 };
 
 ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* libraryManager, const Track& track,
                                          TrackSelectionController* selectionController,
-                                         PlayerController* playerController)
+                                         PlayerController* playerController, ScriptContextService* scriptContext)
     : m_self{self}
     , m_libraryManager{libraryManager}
     , m_selectionController{selectionController}
     , m_playerController{playerController}
+    , m_scriptContext{scriptContext}
     , m_track{track}
     , m_mainSplitter{new QSplitter(Qt::Horizontal, m_self)}
     , m_documentSplitter{new QSplitter(Qt::Vertical, m_self)}
@@ -563,21 +232,14 @@ ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* lib
     , m_variableReferenceTree{new QTreeView(m_self)}
     , m_functionReferenceTree{new QTreeView(m_self)}
     , m_formattingReferenceTree{new QTreeView(m_self)}
-    , m_commandReferenceTree{new QTreeView(m_self)}
     , m_variableReferenceModel{new QStandardItemModel(m_self)}
     , m_functionReferenceModel{new QStandardItemModel(m_self)}
     , m_formattingReferenceModel{new QStandardItemModel(m_self)}
-    , m_commandReferenceModel{new QStandardItemModel(m_self)}
     , m_variableReferenceFilter{new ScriptReferenceFilterModel(m_self)}
     , m_functionReferenceFilter{new ScriptReferenceFilterModel(m_self)}
     , m_formattingReferenceFilter{new ScriptReferenceFilterModel(m_self)}
-    , m_commandReferenceFilter{new ScriptReferenceFilterModel(m_self)}
     , m_model{new ExpressionTreeModel(m_self)}
-    , m_environment{libraryManager}
 {
-    m_scriptContext.environment = &m_environment;
-    m_environment.updatePlaybackState(m_playerController);
-
     auto* mainLayout = new QGridLayout(m_self);
     mainLayout->setContentsMargins({});
     mainLayout->addWidget(m_mainSplitter);
@@ -615,6 +277,7 @@ ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* lib
 
     m_sideTabs->addTab(structureTab, ScriptEditor::tr("Structure"));
     m_sideTabs->addTab(referenceTab, ScriptEditor::tr("Reference"));
+    setupSettings();
 
     m_mainSplitter->addWidget(m_documentSplitter);
     m_mainSplitter->addWidget(m_sideTabs);
@@ -635,7 +298,7 @@ ScriptEditorPrivate::~ScriptEditorPrivate()
 
 void ScriptEditorPrivate::setupConnections()
 {
-    QObject::connect(m_editor, &QTextEdit::textChanged, this, &ScriptEditorPrivate::textChanged);
+    QObject::connect(m_editor, &QPlainTextEdit::textChanged, this, &ScriptEditorPrivate::textChanged);
     QObject::connect(m_model, &QAbstractItemModel::modelReset, m_expressionTree, &QTreeView::expandAll);
     QObject::connect(m_expressionTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &ScriptEditorPrivate::selectionChanged);
@@ -644,8 +307,7 @@ void ScriptEditorPrivate::setupConnections()
     const auto connectReferenceTree = [this](QTreeView* tree) {
         QObject::connect(tree, &QTreeView::doubleClicked, this, &ScriptEditorPrivate::referenceItemActivated);
     };
-    for(auto* tree :
-        {m_variableReferenceTree, m_functionReferenceTree, m_formattingReferenceTree, m_commandReferenceTree}) {
+    for(auto* tree : {m_variableReferenceTree, m_functionReferenceTree, m_formattingReferenceTree}) {
         connectReferenceTree(tree);
     }
     QObject::connect(m_referenceTabs, &QTabWidget::currentChanged, this, &ScriptEditorPrivate::referenceTabChanged);
@@ -660,62 +322,44 @@ void ScriptEditorPrivate::setupConnections()
         QObject::connect(m_selectionController, &TrackSelectionController::displaySelectionChanged, this,
                          &ScriptEditorPrivate::trackContextChanged);
     }
+    if(m_libraryManager) {
+        QObject::connect(m_libraryManager, &LibraryManager::librariesChanged, this,
+                         qOverload<>(&ScriptEditorPrivate::updateResults));
+    }
+    if(m_scriptContext) {
+        m_subscription = m_scriptContext->subscribe(this);
+        QObject::connect(m_subscription, &ScriptSubscription::changed, this, [this](const ScriptChanges& changes) {
+            for(const auto& change : changes) {
+                if(change.source == ScriptSources::TrackMetadata && change.track.sameIdentityAs(m_track)) {
+                    m_track = change.track;
+                }
+            }
+            updateResults();
+        });
+    }
     if(m_playerController) {
         QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
                          &ScriptEditorPrivate::trackContextChanged);
         QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
                          &ScriptEditorPrivate::trackContextChanged);
-        QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this,
-                         &ScriptEditorPrivate::trackContextChanged);
-        QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,
-                         qOverload<>(&ScriptEditorPrivate::updateResults));
-        QObject::connect(m_playerController, &PlayerController::bitrateChanged, this,
-                         qOverload<>(&ScriptEditorPrivate::updateResults));
     }
 }
 
 void ScriptEditorPrivate::setupPlaceholder()
 {
     QString basePath = QDir::homePath() + "/Music"_L1;
+    int libraryId{-1};
     if(m_libraryManager && m_libraryManager->hasLibrary()) {
         const auto& libraries = m_libraryManager->allLibraries();
         if(!libraries.empty()) {
             const auto& library = libraries.cbegin()->second;
-            m_placeholderTrack.setLibraryId(library.id);
-            basePath = library.path;
+            libraryId           = library.id;
+            basePath            = library.path;
         }
     }
 
-    m_placeholderTrack.setFilePath(
-        QDir{basePath}.filePath(u"The Static Hour/City After Midnight/04 - Signal Fires.flac"_s));
-    m_placeholderTrack.setTitle(u"Signal Fires"_s);
-    m_placeholderTrack.setAlbum(u"City After Midnight"_s);
-    m_placeholderTrack.setAlbumArtists({u"The Static Hour"_s});
-    m_placeholderTrack.setArtists({u"The Static Hour"_s, u"Mina Vale"_s});
-    m_placeholderTrack.setDate(u"2023-10-06"_s);
-    m_placeholderTrack.setTrackNumber(u"4"_s);
-    m_placeholderTrack.setTrackTotal(u"11"_s);
-    m_placeholderTrack.setDiscNumber(u"1"_s);
-    m_placeholderTrack.setDiscTotal(u"1"_s);
-    m_placeholderTrack.setGenres({u"Synthpop"_s, u"Indie Pop"_s});
-    m_placeholderTrack.setBitDepth(24);
-    m_placeholderTrack.setSampleRate(44100);
-    m_placeholderTrack.setBitrate(1012);
-    m_placeholderTrack.setChannels(2);
-    m_placeholderTrack.setCodec(u"FLAC"_s);
-    m_placeholderTrack.setTagTypes({u"XiphComment"_s});
-    m_placeholderTrack.setEncoding(u"Lossless"_s);
-    m_placeholderTrack.setComment(u"Single mix"_s);
-    m_placeholderTrack.setComposers({u"Ada Mercer"_s, u"Jon Keene"_s});
-    m_placeholderTrack.setPerformers({u"Ada Mercer"_s, u"Jon Keene"_s, u"Mina Vale"_s});
-    m_placeholderTrack.setRatingStars(4);
-    m_placeholderTrack.setPlayCount(27);
-    m_placeholderTrack.addExtraTag(u"LABEL"_s, u"Northline Records"_s);
-    m_placeholderTrack.addExtraTag(u"CATALOGNUMBER"_s, u"NLR-042"_s);
-    m_placeholderTrack.setCreatedTime(1696618800000);
-    m_placeholderTrack.setAddedTime(1696963320000);
-    m_placeholderTrack.setDuration(222000);
-    m_placeholderTrack.setFileSize(28700000);
+    m_placeholderTrack = TrackGenerator::generateTrack(basePath);
+    m_placeholderTrack.setLibraryId(libraryId);
 }
 
 void ScriptEditorPrivate::setupReference()
@@ -723,8 +367,7 @@ void ScriptEditorPrivate::setupReference()
     const auto headers
         = QStringList{ScriptEditor::tr("Item"), ScriptEditor::tr("Category"), ScriptEditor::tr("Description")};
 
-    for(auto* model :
-        {m_variableReferenceModel, m_functionReferenceModel, m_formattingReferenceModel, m_commandReferenceModel}) {
+    for(auto* model : {m_variableReferenceModel, m_functionReferenceModel, m_formattingReferenceModel}) {
         model->setHorizontalHeaderLabels(headers);
     }
 
@@ -749,6 +392,9 @@ void ScriptEditorPrivate::setupReference()
     };
 
     for(const auto& entry : scriptReferenceEntries()) {
+        if(entry.isAlias) {
+            continue;
+        }
         switch(entry.kind) {
             case ScriptReferenceKind::Variable:
                 appendRow(m_variableReferenceModel, entry);
@@ -758,9 +404,6 @@ void ScriptEditorPrivate::setupReference()
                 break;
             case ScriptReferenceKind::Formatting:
                 appendRow(m_formattingReferenceModel, entry);
-                break;
-            case ScriptReferenceKind::CommandAlias:
-                appendRow(m_commandReferenceModel, entry);
                 break;
         }
     }
@@ -790,14 +433,179 @@ void ScriptEditorPrivate::setupReference()
     configureReferenceTree(m_variableReferenceTree, m_variableReferenceFilter, m_variableReferenceModel);
     configureReferenceTree(m_functionReferenceTree, m_functionReferenceFilter, m_functionReferenceModel);
     configureReferenceTree(m_formattingReferenceTree, m_formattingReferenceFilter, m_formattingReferenceModel);
-    configureReferenceTree(m_commandReferenceTree, m_commandReferenceFilter, m_commandReferenceModel);
 
     m_referenceTabs->addTab(m_variableReferenceTree, ScriptEditor::tr("Variables"));
     m_referenceTabs->addTab(m_functionReferenceTree, ScriptEditor::tr("Functions"));
     m_referenceTabs->addTab(m_formattingReferenceTree, ScriptEditor::tr("Formatting"));
-    m_referenceTabs->addTab(m_commandReferenceTree, ScriptEditor::tr("Commands"));
 
     m_referenceSearch->setPlaceholderText(ScriptEditor::tr("Filter"));
+}
+
+void ScriptEditorPrivate::setupSettings()
+{
+    const auto defaults = ScriptHighlighter::defaultColours();
+
+    auto* settingsTabs   = new QTabWidget(m_sideTabs);
+    auto* settingsTab    = new QWidget(settingsTabs);
+    auto* settingsLayout = new QGridLayout(settingsTab);
+    auto* coloursTab     = new QWidget(settingsTabs);
+    auto* coloursLayout  = new QGridLayout(coloursTab);
+
+    m_wordWrap             = new QCheckBox(ScriptEditor::tr("Word wrap"), settingsTab);
+    m_autocomplete         = new QCheckBox(ScriptEditor::tr("Autocomplete"), settingsTab);
+    m_functionHints        = new QCheckBox(ScriptEditor::tr("Function parameter hints"), settingsTab);
+    m_showWhitespace       = new QCheckBox(ScriptEditor::tr("Show whitespace"), settingsTab);
+    m_highlightBrackets    = new QCheckBox(ScriptEditor::tr("Highlight matching brackets"), settingsTab);
+    m_highlightCurrentLine = new QCheckBox(ScriptEditor::tr("Highlight current line"), settingsTab);
+    m_showLineNumbers      = new QCheckBox(ScriptEditor::tr("Show line numbers"), settingsTab);
+
+    m_wordWrap->setChecked(m_settings.value(WordWrapKey, true).toBool());
+    m_autocomplete->setChecked(m_settings.value(AutocompleteKey, true).toBool());
+    m_functionHints->setChecked(m_settings.value(FunctionHintsKey, true).toBool());
+    m_showWhitespace->setChecked(m_settings.value(ShowWhitespaceKey, false).toBool());
+    m_highlightBrackets->setChecked(m_settings.value(HighlightBracketsKey, true).toBool());
+    m_highlightCurrentLine->setChecked(m_settings.value(HighlightCurrentLineKey, true).toBool());
+    m_showLineNumbers->setChecked(m_settings.value(ShowLineNumbersKey, false).toBool());
+
+    int row{0};
+    for(auto* option : {m_wordWrap, m_autocomplete, m_functionHints, m_showWhitespace, m_highlightBrackets,
+                        m_highlightCurrentLine, m_showLineNumbers}) {
+        settingsLayout->addWidget(option, row++, 0, 1, 2);
+    }
+    settingsLayout->setColumnStretch(2, 1);
+
+    const auto connectOption = [this](QCheckBox* option, const char* key) {
+        QObject::connect(option, &QCheckBox::clicked, this, [this, key](bool checked) {
+            m_settings.setValue(key, checked);
+            updateEditorSettings();
+        });
+    };
+
+    connectOption(m_wordWrap, WordWrapKey);
+    connectOption(m_autocomplete, AutocompleteKey);
+    connectOption(m_functionHints, FunctionHintsKey);
+    connectOption(m_showWhitespace, ShowWhitespaceKey);
+    connectOption(m_highlightBrackets, HighlightBracketsKey);
+    connectOption(m_highlightCurrentLine, HighlightCurrentLineKey);
+    connectOption(m_showLineNumbers, ShowLineNumbersKey);
+
+    auto* resetEditor = new QPushButton(ScriptEditor::tr("Reset editor settings"), settingsTab);
+    settingsLayout->addWidget(resetEditor, row++, 0, 1, 2, Qt::AlignLeft);
+    settingsLayout->setRowStretch(row, 1);
+    QObject::connect(resetEditor, &QPushButton::clicked, this, [this]() {
+        m_wordWrap->setChecked(true);
+        m_autocomplete->setChecked(true);
+        m_functionHints->setChecked(true);
+        m_showWhitespace->setChecked(false);
+        m_highlightBrackets->setChecked(true);
+        m_highlightCurrentLine->setChecked(true);
+        m_showLineNumbers->setChecked(false);
+
+        for(const char* key : {WordWrapKey, AutocompleteKey, FunctionHintsKey, ShowWhitespaceKey, HighlightBracketsKey,
+                               HighlightCurrentLineKey, ShowLineNumbersKey}) {
+            m_settings.remove(key);
+        }
+
+        updateEditorSettings();
+    });
+
+    const auto createColourButton
+        = [this, coloursTab](const QString& label, const char* key, const QColor& defaultColour) {
+              const QVariant savedColour = m_settings.value(key);
+              const bool custom          = savedColour.canConvert<QColor>() && savedColour.value<QColor>().isValid();
+              auto* button = new ColourButton(label + u":"_s, custom ? savedColour.value<QColor>() : defaultColour,
+                                              true, coloursTab);
+              button->setChecked(custom);
+
+              QObject::connect(button, &ColourButton::colourUpdated, this, [this, button, key](const QColor& colour) {
+                  if(button->isChecked()) {
+                      m_settings.setValue(key, colour);
+                      updateSyntaxColours();
+                  }
+              });
+              QObject::connect(button, &ColourButton::toggled, this, [this, button, key](bool checked) {
+                  if(checked) {
+                      m_settings.setValue(key, button->colour());
+                  }
+                  else {
+                      m_settings.remove(key);
+                  }
+                  updateSyntaxColours();
+              });
+
+              return button;
+          };
+
+    m_variableColour = createColourButton(ScriptEditor::tr("Variables"), VariableColourKey, defaults.variable);
+    m_functionColour = createColourButton(ScriptEditor::tr("Functions"), FunctionColourKey, defaults.function);
+    m_conditionalColour
+        = createColourButton(ScriptEditor::tr("Conditionals"), ConditionalColourKey, defaults.conditional);
+    m_operatorColour   = createColourButton(ScriptEditor::tr("Operators"), OperatorColourKey, defaults.operatorColour);
+    m_quotedTextColour = createColourButton(ScriptEditor::tr("Quoted text"), QuotedTextColourKey, defaults.quotedText);
+    m_formattingTagColour
+        = createColourButton(ScriptEditor::tr("Formatting tags"), FormattingTagColourKey, defaults.formattingTag);
+
+    ColourButton::alignLabels({m_variableColour, m_functionColour, m_conditionalColour, m_operatorColour,
+                               m_quotedTextColour, m_formattingTagColour});
+
+    row = 0;
+    for(auto* button : {m_variableColour, m_functionColour, m_conditionalColour, m_operatorColour, m_quotedTextColour,
+                        m_formattingTagColour}) {
+        coloursLayout->addWidget(button, row++, 0);
+    }
+
+    auto* resetColours = new QPushButton(ScriptEditor::tr("Reset colours"), coloursTab);
+    coloursLayout->addWidget(resetColours, row++, 0, Qt::AlignLeft);
+    coloursLayout->setRowStretch(row, 1);
+
+    QObject::connect(resetColours, &QPushButton::clicked, this, [this]() {
+        const auto resetButton = [this](ColourButton* button, const char* key, const QColor& colour) {
+            const QSignalBlocker blocker{button};
+            button->setChecked(false);
+            button->setColour(colour);
+            m_settings.remove(key);
+        };
+
+        const auto defaultColours = ScriptHighlighter::defaultColours();
+        resetButton(m_variableColour, VariableColourKey, defaultColours.variable);
+        resetButton(m_functionColour, FunctionColourKey, defaultColours.function);
+        resetButton(m_conditionalColour, ConditionalColourKey, defaultColours.conditional);
+        resetButton(m_operatorColour, OperatorColourKey, defaultColours.operatorColour);
+        resetButton(m_quotedTextColour, QuotedTextColourKey, defaultColours.quotedText);
+        resetButton(m_formattingTagColour, FormattingTagColourKey, defaultColours.formattingTag);
+        updateSyntaxColours();
+    });
+
+    settingsTabs->addTab(settingsTab, ScriptEditor::tr("Editor"));
+    settingsTabs->addTab(coloursTab, ScriptEditor::tr("Colours"));
+    m_sideTabs->addTab(settingsTabs, ScriptEditor::tr("Settings"));
+
+    updateSyntaxColours();
+    updateEditorSettings();
+}
+
+void ScriptEditorPrivate::updateSyntaxColours()
+{
+    const auto defaults = ScriptHighlighter::defaultColours();
+    m_highlighter.setColours({
+        .variable       = m_variableColour->isChecked() ? m_variableColour->colour() : defaults.variable,
+        .function       = m_functionColour->isChecked() ? m_functionColour->colour() : defaults.function,
+        .conditional    = m_conditionalColour->isChecked() ? m_conditionalColour->colour() : defaults.conditional,
+        .operatorColour = m_operatorColour->isChecked() ? m_operatorColour->colour() : defaults.operatorColour,
+        .quotedText     = m_quotedTextColour->isChecked() ? m_quotedTextColour->colour() : defaults.quotedText,
+        .formattingTag  = m_formattingTagColour->isChecked() ? m_formattingTagColour->colour() : defaults.formattingTag,
+    });
+}
+
+void ScriptEditorPrivate::updateEditorSettings()
+{
+    m_editor->setLineWrapMode(m_wordWrap->isChecked() ? QPlainTextEdit::WidgetWidth : QPlainTextEdit::NoWrap);
+    m_editor->setAutocompleteEnabled(m_autocomplete->isChecked());
+    m_editor->setFunctionHintsEnabled(m_functionHints->isChecked());
+    m_editor->setWhitespaceVisible(m_showWhitespace->isChecked());
+    m_editor->setMatchingBracketsHighlighted(m_highlightBrackets->isChecked());
+    m_editor->setCurrentLineHighlighted(m_highlightCurrentLine->isChecked());
+    m_editor->setLineNumbersVisible(m_showLineNumbers->isChecked());
 }
 
 void ScriptEditorPrivate::updateResults()
@@ -822,17 +630,31 @@ void ScriptEditorPrivate::updateResults(const Expression& expression)
     ParsedScript script;
     script.expressions = {expression};
 
+    if(m_subscription) {
+        m_subscription->setDependencies(m_parser.dependencies(script));
+        m_subscription->setScope(m_track);
+    }
+
     m_formatter.setBaseFont(m_results->font());
 
-    m_environment.updatePlaybackState(m_playerController);
+    const auto libraries = m_libraryManager ? m_libraryManager->allLibraries() : LibraryInfoMap{};
+    auto data = m_scriptContext ? m_scriptContext->playbackContext() : makePlaybackScriptData(m_playerController);
+    data.playlistData.trackIndex = -1;
+    auto context                 = data.context();
+    context.libraries            = &libraries;
+    const ScriptEvaluationOptions options{.escapeRichText = true};
 
     const Track track      = m_track.isValid() ? m_track : m_placeholderTrack;
-    const auto result      = m_parser.evaluate(script, track, m_scriptContext);
+    const auto result      = m_parser.evaluate(script, track, context, options);
     const auto formatted   = m_formatter.evaluate(result);
+    m_formatErrors         = m_formatter.errors();
     const QString htmlBody = richTextToHtml(formatted);
     const QString html     = u"<html><body style=\"margin:0;\">%1</body></html>"_s.arg(htmlBody);
 
     m_results->setHtml(html);
+    if(m_errorsVisible) {
+        showErrors();
+    }
 }
 
 void ScriptEditorPrivate::trackContextChanged()
@@ -860,6 +682,8 @@ void ScriptEditorPrivate::textChanged()
 {
     m_textChangeTimer.start(TextChangeInterval, m_self);
     m_results->clear();
+    m_formatErrors.clear();
+    m_errorsVisible = false;
 
     m_currentScript = m_parser.parse(m_editor->toPlainText());
     m_model->populate(m_currentScript.expressions);
@@ -872,7 +696,6 @@ void ScriptEditorPrivate::referenceSearchChanged(const QString& text)
     m_variableReferenceFilter->setFilterRegularExpression(expression);
     m_functionReferenceFilter->setFilterRegularExpression(expression);
     m_formattingReferenceFilter->setFilterRegularExpression(expression);
-    m_commandReferenceFilter->setFilterRegularExpression(expression);
 }
 
 void ScriptEditorPrivate::referenceItemActivated(const QModelIndex& index)
@@ -898,10 +721,14 @@ void ScriptEditorPrivate::referenceTabChanged(int index)
     }
 }
 
-void ScriptEditorPrivate::showErrors() const
+void ScriptEditorPrivate::showErrors()
 {
-    const auto errors = m_currentScript.errors;
-    for(const ScriptError& error : errors) {
+    m_errorsVisible = true;
+
+    for(const ScriptError& error : m_currentScript.errors) {
+        m_results->append(error.message.toHtmlEscaped());
+    }
+    for(const ScriptError& error : m_formatErrors) {
         m_results->append(error.message.toHtmlEscaped());
     }
 }
@@ -925,7 +752,7 @@ void ScriptEditorPrivate::restoreState()
 {
     QByteArray byteArray = m_settings.value(DialogState).toByteArray();
 
-    static auto defaultScript = u"%track%. %title%"_s;
+    static const QString defaultScript = u"%track%. %title%"_s;
 
     if(byteArray.isEmpty()) {
         m_editor->setPlainText(defaultScript);
@@ -969,15 +796,15 @@ ScriptEditor::ScriptEditor(LibraryManager* libraryManager, const Track& track, Q
     setWindowTitle(tr("Script Editor"));
 }
 
-ScriptEditor::ScriptEditor(LibraryManager* libraryManager, TrackSelectionController* selectionController,
-                           PlayerController* playerController, QWidget* parent)
+ScriptEditor::ScriptEditor(const CorePluginContext& core, TrackSelectionController* selectionController,
+                           QWidget* parent)
     : QDialog{parent}
-    , p{std::make_unique<ScriptEditorPrivate>(this, libraryManager,
+    , p{std::make_unique<ScriptEditorPrivate>(this, core.libraryManager,
                                               selectionController && selectionController->displayTrack().isValid()
                                                   ? selectionController->displayTrack()
-                                              : playerController ? playerController->currentTrack()
-                                                                 : Track{},
-                                              selectionController, playerController)}
+                                              : core.playerController ? core.playerController->currentTrack()
+                                                                      : Track{},
+                                              selectionController, core.playerController, core.scriptContext)}
 {
     setWindowTitle(tr("Script Editor"));
 }
@@ -1002,9 +829,9 @@ ScriptEditor::~ScriptEditor()
 }
 
 void ScriptEditor::openEditor(const QString& script, const std::function<void(const QString&)>& callback,
-                              const Track& track)
+                              const Track& track, QWidget* parent)
 {
-    auto* editor = new ScriptEditor(script, track);
+    auto* editor = new ScriptEditor(script, track, parent);
     editor->setAttribute(Qt::WA_DeleteOnClose);
     editor->setModal(true);
 

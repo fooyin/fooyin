@@ -18,8 +18,10 @@
  */
 
 #include <gui/guiconstants.h>
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 
+#include <QAbstractButton>
 #include <QAction>
 #include <QApplication>
 #include <QDir>
@@ -31,6 +33,7 @@
 #include <QPixmapCache>
 #include <QSet>
 #include <QStringList>
+#include <QStyle>
 #include <QStyleOptionViewItem>
 
 using namespace Qt::StringLiterals;
@@ -38,12 +41,25 @@ using namespace Qt::StringLiterals;
 constexpr auto DefaultIconSize       = 20;
 constexpr auto ThemeIconNameProperty = "_fy_themeIconName";
 
+namespace Fooyin::Gui {
 namespace {
 struct IconThemeState
 {
     QString primaryTheme;
     QString fallbackTheme;
 };
+
+struct ApplicationIconState
+{
+    ApplicationIconOption option{ApplicationIconOption::Dragon};
+    QString customPath;
+};
+
+ApplicationIconState& applicationIconState()
+{
+    static ApplicationIconState state;
+    return state;
+}
 
 IconThemeState& iconThemeState()
 {
@@ -123,10 +139,34 @@ public:
 };
 } // namespace
 
-namespace Fooyin::Gui {
+void setApplicationIconOption(ApplicationIconOption option, const QString& customPath)
+{
+    auto& state      = applicationIconState();
+    state.option     = option;
+    state.customPath = customPath;
+}
+
 bool setThemeIconOverrides(const QString& primaryTheme, const QString& fallbackTheme)
 {
     return IconLoader::setThemeOverrides(primaryTheme, fallbackTheme);
+}
+
+QIcon applicationIcon()
+{
+    const auto& state = applicationIconState();
+    if(state.option == ApplicationIconOption::Custom && !state.customPath.isEmpty()) {
+        const QIcon customIcon{state.customPath};
+        if(!customIcon.pixmap(48, 48).isNull()) {
+            return customIcon;
+        }
+    }
+
+    QIcon icon;
+    const QString suffix = state.option == ApplicationIconOption::Typographic ? u"-typographic"_s : QString{};
+    for(const int size : {16, 22, 32, 48, 64, 128, 256, 512}) {
+        icon.addFile(u":/icons/%1-fooyin%2.png"_s.arg(size).arg(suffix), QSize{size, size});
+    }
+    return icon;
 }
 
 QIcon iconFromTheme(const QString& icon)
@@ -173,6 +213,21 @@ void setThemeIcon(QAction* action, const char* icon)
     setThemeIcon(action, QString::fromLatin1(icon));
 }
 
+void setThemeIcon(QAbstractButton* button, const QString& icon)
+{
+    if(!button) {
+        return;
+    }
+
+    button->setProperty(ThemeIconNameProperty, icon);
+    button->setIcon(iconFromTheme(icon));
+}
+
+void setThemeIcon(QAbstractButton* button, const char* icon)
+{
+    setThemeIcon(button, QString::fromLatin1(icon));
+}
+
 QString themeIconName(const QAction* action)
 {
     return action ? action->property(ThemeIconNameProperty).toString() : QString{};
@@ -206,6 +261,18 @@ void refreshThemeIcons(QObject* object)
     for(QAction* action : object->findChildren<QAction*>()) {
         refreshThemeIcon(action);
     }
+
+    auto buttons = object->findChildren<QAbstractButton*>();
+    if(auto* button = qobject_cast<QAbstractButton*>(object)) {
+        buttons.prepend(button);
+    }
+
+    for(QAbstractButton* button : buttons) {
+        const QString iconName = button->property(ThemeIconNameProperty).toString();
+        if(!iconName.isEmpty()) {
+            button->setIcon(iconFromTheme(iconName));
+        }
+    }
 }
 
 QPixmap pixmapFromTheme(const char* icon)
@@ -231,11 +298,14 @@ void drawItemViewIcon(QPainter* painter, const QStyleOptionViewItem& option, con
                        : option.widget && !option.widget->hasFocus() ? QPalette::Inactive
                                                                      : QPalette::Active;
     if(role == QPalette::NoRole) {
-        role = option.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::Text;
+        role = QPalette::Text;
+        if(option.state & QStyle::State_Selected) {
+            role = itemViewSelectionTextRole(option);
+        }
     }
     const qreal dpr = option.widget ? option.widget->devicePixelRatioF() : qApp->devicePixelRatio();
 
-    QPixmap pixmap = icon.pixmap(rect.size() * dpr, dpr, mode);
+    QPixmap pixmap = icon.pixmap(rect.size(), dpr, mode);
     QPainter pixmapPainter{&pixmap};
     pixmapPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
     pixmapPainter.fillRect(pixmap.rect(), option.palette.color(group, role));

@@ -23,7 +23,6 @@
 #include <utils/stringutils.h>
 
 #include <QFileInfo>
-#include <QStringDecoder>
 #include <QUrl>
 
 using namespace Qt::StringLiterals;
@@ -75,40 +74,6 @@ QString PlaylistParser::determineTrackPath(const QUrl& url, const QDir& dir, Pat
 
 QByteArray PlaylistParser::toUtf8(QIODevice* file)
 {
-    const QByteArray data = file->readAll();
-    if(data.isEmpty()) {
-        return {};
-    }
-
-    QStringDecoder toUtf16;
-
-    auto encoding = QStringConverter::encodingForData(data);
-    if(encoding) {
-        toUtf16 = QStringDecoder{encoding.value()};
-    }
-    else {
-        const auto encodingName = Utils::detectEncoding(data, detectEncodingOptions());
-        if(encodingName.isEmpty()) {
-            return {};
-        }
-
-        encoding = QStringConverter::encodingForName(encodingName.constData());
-        if(encoding) {
-            toUtf16 = QStringDecoder{encoding.value()};
-        }
-        else {
-            toUtf16 = QStringDecoder{encodingName.constData()};
-        }
-    }
-
-    if(!toUtf16.isValid()) {
-        toUtf16 = QStringDecoder{QStringConverter::Utf8};
-    }
-
-    QString string = toUtf16(data);
-    string.replace("\n\n"_L1, "\n"_L1);
-    string.replace('\r'_L1, '\n'_L1);
-
-    return string.toUtf8();
+    return Utils::decodeTextWithDetection(file->readAll(), detectEncodingOptions()).toUtf8();
 }
 } // namespace Fooyin

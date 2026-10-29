@@ -246,7 +246,8 @@ GradientEditor::GradientEditor(QWidget* parent)
     buttonLayout->addWidget(addButton);
     buttonLayout->addWidget(removeButton);
     buttonLayout->addWidget(reverseButton);
-    buttonLayout->addWidget(p->m_orientation, 0, Qt::AlignBottom);
+    buttonLayout->addStretch();
+    buttonLayout->addWidget(p->m_orientation);
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins({});

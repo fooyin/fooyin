@@ -27,7 +27,7 @@ class QCheckBox;
 
 namespace Fooyin {
 class ColourButton;
-class ScriptLineEdit;
+class ScriptTextEdit;
 
 class PlaylistOrganiserConfigDialog : public WidgetConfigDialog<PlaylistOrganiser, PlaylistOrganiser::ConfigData>
 {
@@ -41,11 +41,8 @@ protected:
     [[nodiscard]] PlaylistOrganiser::ConfigData config() const override;
 
 private:
-    ScriptLineEdit* m_leftScript;
-    ScriptLineEdit* m_rightScript;
-    QCheckBox* m_customPlayingTextColour;
+    ScriptTextEdit* m_displayScript;
     ColourButton* m_playingTextColour;
-    QCheckBox* m_customPlayingBackgroundColour;
     ColourButton* m_playingBackgroundColour;
 };
 } // namespace Fooyin

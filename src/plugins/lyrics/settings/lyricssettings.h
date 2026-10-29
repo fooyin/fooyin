@@ -23,12 +23,10 @@
 #include <QMargins>
 #include <QStringList>
 
-namespace Fooyin {
-class SettingsManager;
-
-namespace Lyrics {
+namespace Fooyin::Lyrics {
 namespace Settings {
 constexpr auto Paths           = u"Lyrics/Paths";
+constexpr auto Background      = u"Lyrics/Background";
 constexpr auto Colours         = u"Lyrics/Colours";
 constexpr auto BaseFont        = u"Lyrics/BaseFont";
 constexpr auto LineFont        = u"Lyrics/CurrentLineFont";
@@ -62,6 +60,7 @@ constexpr auto SaveConflict    = u"Lyrics/SaveConflicts";
 constexpr auto SkipRemaining   = u"Lyrics/SkipRemaining";
 constexpr auto SkipExternal    = u"Lyrics/SkipExternal";
 constexpr auto AutoSearch      = u"Lyrics/AutoSearch";
+constexpr auto AutoSearchSkip  = u"Lyrics/AutoSearchSkip";
 constexpr auto SaveOptions     = u"Lyrics/SaveOptions";
 constexpr auto MatchThreshold  = u"Lyrics/MatchThreshold";
 } // namespace Settings
@@ -118,16 +117,13 @@ enum class SaveConflictPolicy : uint8_t
 namespace Defaults {
 QStringList paths();
 QStringList searchTags();
+QString autoSearchSkipScript();
 QMargins margins();
 } // namespace Defaults
 
 class LyricsSettings
 {
 public:
-    explicit LyricsSettings(SettingsManager* settingsManager);
-
-private:
-    SettingsManager* m_settings;
+    LyricsSettings();
 };
-} // namespace Lyrics
-} // namespace Fooyin
+} // namespace Fooyin::Lyrics

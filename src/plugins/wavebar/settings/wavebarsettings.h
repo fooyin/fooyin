@@ -45,14 +45,14 @@ enum WaveMode : uint32_t
 };
 Q_DECLARE_FLAGS(WaveModes, WaveMode)
 
-enum class DownmixOption
+enum class DownmixOption : uint8_t
 {
     Off = 0,
     Stereo,
     Mono,
 };
 
-enum class PeakDisplayMode
+enum class PeakDisplayMode : uint8_t
 {
     Maximum = 0,
     Average,

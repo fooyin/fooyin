@@ -22,14 +22,14 @@
 #include "fygui_export.h"
 
 #include "internalguisettings.h"
-#include "playlist/playlistinteractor.h"
 #include "widgets.h"
 
 #include <core/engine/enginedefs.h>
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <gui/coverprovider.h>
-#include <gui/layoutprovider.h>
+#include <gui/layout/layoutprovider.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <gui/plugins/guiplugincontext.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
@@ -38,16 +38,21 @@
 #include <QObject>
 #include <QPointer>
 
+#include <functional>
 #include <memory>
 #include <set>
+#include <vector>
 
 class QTimerEvent;
+class QAction;
 
 namespace Fooyin {
 class ActionManager;
 class AdvancedSettingsRegistry;
 class Application;
 class CoverRepository;
+class ConversionController;
+class Command;
 class EditableLayout;
 class GuiStyleProvider;
 class EditMenu;
@@ -57,7 +62,10 @@ class LibraryMenu;
 class LogWidget;
 class MainMenuBar;
 class MainWindow;
+class MetadataLookupDialog;
+enum class LookupMode : uint8_t;
 class Playlist;
+class AutoPlaylistDialog;
 class PlaylistController;
 class PlaylistManagerWidget;
 class PlaybackMenu;
@@ -65,8 +73,10 @@ class PropertiesDialog;
 class QueueViewer;
 class SearchController;
 class ScriptCommandHandler;
+class ScriptSubscription;
 class SystemTrayIcon;
 class ThemeRegistry;
+class VerificationController;
 class UId;
 class ViewMenu;
 class WindowController;
@@ -76,6 +86,7 @@ class SettingsManager;
 class MusicLibrary;
 class PlayerController;
 class PlaylistHandler;
+struct StoredConversionPreset;
 
 class FYGUI_EXPORT GuiApplication : public QObject
 {
@@ -91,8 +102,15 @@ public:
     void raise();
     void openFiles(const QList<QUrl>& files);
     void savePlaylist(const UId& playlistId) const;
+    void setVolume(double volume) const;
+    void increaseVolume() const;
+    void decreaseVolume() const;
+    void toggleMute() const;
 
     void createNewLayout();
+
+    void createNewAutoPlaylist(std::function<void(Playlist*)> onFinished = {});
+    void editAutoPlaylist(const UId& playlistId);
 
     void searchForArtwork(const TrackList& tracks, Track::Cover type, bool quick);
     void attachArtwork(const TrackList& tracks, Track::Cover type, const QString& filepath);
@@ -100,6 +118,7 @@ public:
     void removeAllArtwork(const TrackList& tracks);
 
     [[nodiscard]] ActionManager* actionManager() const;
+    [[nodiscard]] MainMenuBar* mainMenuBar() const;
     [[nodiscard]] LayoutProvider* layoutProvider() const;
     [[nodiscard]] PlaylistController* playlistController() const;
     [[nodiscard]] TrackSelectionController* trackSelection() const;
@@ -137,17 +156,27 @@ private:
     void rescanTracks(const TrackList& tracks, bool onlyModified) const;
 
     void setupScanMenu();
-    void setupRatingMenu();
+    void setupArtworkMenu();
+    void setupPlaybackStatisticsMenu();
+    void setupConvertMenu();
+    void refreshConversionPresetActions();
     void setupUtilitiesMenu();
+
+    void startConversionPreset(const StoredConversionPreset& preset, const TrackList& tracks);
+    void startDefaultConversion(const TrackList& tracks);
+    void startLastUsedConversion(const TrackList& tracks);
+    void showConvertedFiles(const TrackList& tracks);
 
     void close();
     void changeVolume(double delta) const;
     void mute() const;
     void setStyle() const;
+    void updateColourScheme() const;
     void scheduleThemeUpdate(bool refreshSystemBaseline = false);
     void applyTheme();
     void handleSystemThemeChanged();
     bool setIconTheme() const;
+    void updateApplicationIcon();
     void refreshThemeIcons();
     void refreshAutoDetectedIconTheme() const;
     void registerLayouts();
@@ -169,8 +198,12 @@ private:
     void showTrackNotFoundMessage(const Track& track) const;
     void showTrackUnreableMessage(const Track& track) const;
 
+    void showMetadataLookupDialog(LookupMode mode);
+    void showMetadataLookupByDiscToc();
+    void showMetadataLookupById();
+
     void createNewPlaylist() const;
-    void createNewAutoPlaylist();
+    AutoPlaylistDialog* showAutoPlaylistDialog(Playlist* playlist = nullptr);
 
     void addFiles();
     void addFolders();
@@ -225,7 +258,28 @@ private:
     QPointer<QueueViewer> m_playbackQueueWidget;
     QPointer<PlaylistManagerWidget> m_playlistManagerWidget;
     Widgets* m_widgets;
+    ConversionController* m_conversionController;
+    VerificationController* m_verificationController;
+
+    struct ConversionPresetAction
+    {
+        QString presetId;
+        QAction* action;
+        Command* command;
+    };
+    QAction* m_defaultConversionAction;
+    Command* m_defaultConversionCommand;
+    QAction* m_lastUsedConversionAction;
+    Command* m_lastUsedConversionCommand;
+    std::vector<ConversionPresetAction> m_conversionPresetActions;
+
+    QAction* m_lookupArtistAlbumAction;
+    QAction* m_lookupDiscTocAction;
+    QAction* m_lookupIdAction;
+    QPointer<MetadataLookupDialog> m_metadataLookupDialog;
+
     ScriptParser m_scriptParser;
+    ScriptSubscription* m_titleSubscription;
     CoverProvider m_coverProvider;
 
     QBasicTimer m_themeUpdateTimer;

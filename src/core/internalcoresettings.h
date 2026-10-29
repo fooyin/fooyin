@@ -21,12 +21,27 @@
 
 #include "fycore_export.h"
 
+#include <utils/database/dbconnectionpool.h>
 #include <utils/settings/settingsentry.h>
 
 #include <QStringList>
 
 namespace Fooyin {
 class SettingsManager;
+
+enum class Id3v2WriteVersion : uint8_t
+{
+    V3 = 3,
+    V4 = 4,
+};
+
+enum class Mp3TagWritingScheme : uint8_t
+{
+    Id3v2AndId3v1 = 0,
+    Id3v2,
+    ApeAndId3v1,
+    Ape,
+};
 
 enum class ReplayGainType : uint8_t
 {
@@ -39,7 +54,6 @@ enum class ReplayGainType : uint8_t
 namespace Settings::Core::Internal {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 
-constexpr auto PlaylistSkipUnavailable           = "Playlist/SkipUnavailable";
 constexpr auto PlaylistSaveMetadata              = "Playlist/SaveMetadata";
 constexpr auto PlaylistSavePathType              = "Playlist/SavePathType";
 constexpr auto AutoExportPlaylists               = "Playlist/AutoExport";
@@ -59,14 +73,26 @@ constexpr auto FFmpegAllExtensions               = "Engine/FFmpegAllExtensions";
 constexpr auto FFmpegPriorityExtensions          = "Engine/FFmpegPriorityExtensions";
 constexpr auto ReaderProbeAllExtensions          = "Engine/ReaderProbeAllExtensions";
 constexpr auto SplitId3v23SemicolonSeparatedTags = "Tagging/SplitId3v23SemicolonSeparatedTags";
+constexpr auto Id3v2WriteVersion                 = "Tagging/Id3v2WriteVersion";
+constexpr auto Mp3TagWritingScheme               = "Tagging/Mp3TagWritingScheme";
+
+constexpr auto ExtraTagCompressionMinSize       = "Library/ExtraTagCompressionMinSizeBytes";
+constexpr auto ExtraTagCompressionLevel         = "Library/ExtraTagCompressionLevel";
+constexpr auto ExtraTagCompressionAlways        = "Library/ExtraTagCompressionAlways";
+constexpr auto ExtraTagCompressionNever         = "Library/ExtraTagCompressionNever";
+constexpr int DefaultExtraTagCompressionMinSize = 256;
+constexpr int DefaultExtraTagCompressionLevel   = 1;
 
 constexpr auto DefaultRemoteReadAheadKb   = 2048;
 constexpr auto DefaultRemotePrebufferMs   = 0;
 constexpr auto DefaultRemoteOpenTimeoutMs = 8000;
 
-[[nodiscard]] FYCORE_EXPORT QStringList defaultFFmpegPriorityExtensions();
-[[nodiscard]] FYCORE_EXPORT QStringList defaultReaderProbeAllExtensions();
-[[nodiscard]] FYCORE_EXPORT QStringList defaultOutputResamplerPreference();
+constexpr auto DefaultAutoCrossfadeAlbumScript = "$if(%album%,%albumartist%|%date%|%album%,)";
+
+FYCORE_EXPORT QStringList defaultFFmpegPriorityExtensions();
+FYCORE_EXPORT QStringList defaultReaderProbeAllExtensions();
+FYCORE_EXPORT bool shouldProbeAllReadersForFile(const QString& file);
+FYCORE_EXPORT QStringList defaultOutputResamplerPreference();
 
 enum CoreInternalSettings : uint32_t
 {
@@ -97,6 +123,10 @@ enum CoreInternalSettings : uint32_t
     MonitorTrackFiles         = 24 | Type::Bool,
     OutputAutoResample        = 25 | Type::Bool,
     OutputResamplerPreference = 26 | Type::StringList,
+    PlaylistSkipUnavailable   = 27 | Type::Bool,
+    ReplayGainLastActiveMode  = 28 | Type::Int,
+    SkipSameAlbumCrossfade    = 29 | Type::Bool,
+    AutoCrossfadeAlbumScript  = 30 | Type::String,
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal
@@ -104,7 +134,7 @@ Q_ENUM_NS(CoreInternalSettings)
 class FYCORE_EXPORT CoreSettings
 {
 public:
-    explicit CoreSettings(SettingsManager* settingsManager);
+    explicit CoreSettings(SettingsManager* settingsManager, DbConnectionPoolPtr dbPool = {});
     ~CoreSettings();
 
 private:

@@ -20,6 +20,7 @@
 #include <gui/widgets/expandingcombobox.h>
 
 #include <QAbstractItemView>
+#include <QEvent>
 
 using namespace Qt::StringLiterals;
 
@@ -45,6 +46,14 @@ void ExpandingComboBox::setResizeToCurrentEnabled(bool enabled)
     else {
         setMinimumSize(0, 0);
     }
+}
+
+void ExpandingComboBox::invalidateSizeHint()
+{
+    // QComboBox doesn't invalidate its cached minimum size hint when item text changes
+    QEvent styleChange{QEvent::StyleChange};
+    changeEvent(&styleChange);
+    updateGeometry();
 }
 
 void ExpandingComboBox::resizeToFitCurrent()

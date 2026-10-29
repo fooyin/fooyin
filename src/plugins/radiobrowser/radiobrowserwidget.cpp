@@ -37,6 +37,7 @@
 #include <QDialog>
 #include <QGridLayout>
 #include <QGuiApplication>
+#include <QHideEvent>
 #include <QInputDialog>
 #include <QItemSelectionModel>
 #include <QJsonObject>
@@ -334,6 +335,8 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
 
     const QScopedValueRollback loadingLayout{m_loadingLayout, true};
     applyConfig(defaultConfig());
+    m_resultsView->resetColumnsToDefault();
+    updateIconColumnOrder();
 
     refreshThemeIcons();
     m_controller->fetchCategories(RadioCategoryType::Country);
@@ -346,6 +349,8 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
 
 RadioBrowserWidget::~RadioBrowserWidget()
 {
+    m_model->clearVisibleIcons(this);
+
     const auto menus = findChildren<QMenu*>();
     for(QMenu* menu : menus) {
         menu->close();
@@ -398,55 +403,31 @@ void RadioBrowserWidget::loadLayoutData(const QJsonObject& layout)
 {
     const QScopedValueRollback loadingLayout{m_loadingLayout, true};
 
-    if(layout.contains("Display"_L1)) {
-        m_viewConfig.viewMode = static_cast<ExpandedTreeView::ViewMode>(layout.value("Display"_L1).toInt());
-    }
-    if(layout.contains("Captions"_L1)) {
-        m_viewConfig.captions = static_cast<ExpandedTreeView::CaptionDisplay>(layout.value("Captions"_L1).toInt());
-    }
-    if(layout.contains("SeparateSavedView"_L1)) {
-        m_viewConfig.separateSavedStationsViewState = layout.value("SeparateSavedView"_L1).toBool();
-    }
-    if(layout.contains("ShowHeader"_L1)) {
-        m_viewConfig.showHeader = layout.value("ShowHeader"_L1).toBool();
-    }
-    if(layout.contains("ShowScrollbar"_L1)) {
-        m_viewConfig.showScrollbar = layout.value("ShowScrollbar"_L1).toBool();
-    }
-    if(layout.contains("AlternatingRows"_L1)) {
-        m_viewConfig.alternatingRows = layout.value("AlternatingRows"_L1).toBool();
-    }
-    if(layout.contains("ShowIcons"_L1)) {
-        m_viewConfig.showIcons = layout.value("ShowIcons"_L1).toBool();
-    }
-    if(layout.contains("ShowSavedIcons"_L1)) {
-        m_viewConfig.showSavedStationIcons = layout.value("ShowSavedIcons"_L1).toBool();
-    }
-    if(layout.contains("ShowToolTips"_L1)) {
-        m_viewConfig.showToolTips = layout.value("ShowToolTips"_L1).toBool();
-    }
-    if(layout.contains("RowHeight"_L1)) {
-        m_viewConfig.rowHeight = layout.value("RowHeight"_L1).toInt();
-    }
+    m_viewConfig.viewMode = static_cast<ExpandedTreeView::ViewMode>(
+        layout.value("Display"_L1).toInt(static_cast<int>(m_viewConfig.viewMode)));
+    m_viewConfig.captions = static_cast<ExpandedTreeView::CaptionDisplay>(
+        layout.value("Captions"_L1).toInt(static_cast<int>(m_viewConfig.captions)));
+    m_viewConfig.separateSavedStationsViewState
+        = layout.value("SeparateSavedView"_L1).toBool(m_viewConfig.separateSavedStationsViewState);
+    m_viewConfig.showHeader            = layout.value("ShowHeader"_L1).toBool(m_viewConfig.showHeader);
+    m_viewConfig.showScrollbar         = layout.value("ShowScrollbar"_L1).toBool(m_viewConfig.showScrollbar);
+    m_viewConfig.alternatingRows       = layout.value("AlternatingRows"_L1).toBool(m_viewConfig.alternatingRows);
+    m_viewConfig.showIcons             = layout.value("ShowIcons"_L1).toBool(m_viewConfig.showIcons);
+    m_viewConfig.showSavedStationIcons = layout.value("ShowSavedIcons"_L1).toBool(m_viewConfig.showSavedStationIcons);
+    m_viewConfig.showToolTips          = layout.value("ShowToolTips"_L1).toBool(m_viewConfig.showToolTips);
+    m_viewConfig.rowHeight             = layout.value("RowHeight"_L1).toInt(m_viewConfig.rowHeight);
+
     if(layout.contains("IconSize"_L1)) {
         const int iconSize    = layout.value("IconSize"_L1).toInt();
         m_viewConfig.iconSize = {iconSize, iconSize};
     }
-    if(layout.contains("IconHorizontalGap"_L1)) {
-        m_viewConfig.iconHorizontalGap = layout.value("IconHorizontalGap"_L1).toInt();
-    }
-    if(layout.contains("IconVerticalGap"_L1)) {
-        m_viewConfig.iconVerticalGap = layout.value("IconVerticalGap"_L1).toInt();
-    }
-    if(layout.contains("UseIconGapsForSideCaptions"_L1)) {
-        m_viewConfig.useIconGapsForSideCaptions = layout.value("UseIconGapsForSideCaptions"_L1).toBool();
-    }
-    if(layout.contains("IconItemBorder"_L1)) {
-        m_viewConfig.iconItemBorderWidth = layout.value("IconItemBorder"_L1).toInt();
-    }
-    if(layout.contains("UniformIcons"_L1)) {
-        m_viewConfig.uniformStationIcons = layout.value("UniformIcons"_L1).toBool();
-    }
+
+    m_viewConfig.iconHorizontalGap = layout.value("IconHorizontalGap"_L1).toInt(m_viewConfig.iconHorizontalGap);
+    m_viewConfig.iconVerticalGap   = layout.value("IconVerticalGap"_L1).toInt(m_viewConfig.iconVerticalGap);
+    m_viewConfig.useIconGapsForSideCaptions
+        = layout.value("UseIconGapsForSideCaptions"_L1).toBool(m_viewConfig.useIconGapsForSideCaptions);
+    m_viewConfig.iconItemBorderWidth = layout.value("IconItemBorder"_L1).toInt(m_viewConfig.iconItemBorderWidth);
+    m_viewConfig.uniformStationIcons = layout.value("UniformIcons"_L1).toBool(m_viewConfig.uniformStationIcons);
 
     m_browseViewState.viewMode = m_viewConfig.viewMode;
     m_browseViewState.captions = m_viewConfig.captions;
@@ -455,20 +436,17 @@ void RadioBrowserWidget::loadLayoutData(const QJsonObject& layout)
         m_browseViewState.headerState = decodeHeaderState(layout.value("State"_L1));
     }
 
-    m_savedStationsViewState = m_browseViewState;
-    if(layout.contains("SavedDisplay"_L1)) {
-        m_savedStationsViewState.viewMode
-            = static_cast<ExpandedTreeView::ViewMode>(layout.value("SavedDisplay"_L1).toInt());
-    }
-    if(layout.contains("SavedCaptions"_L1)) {
-        m_savedStationsViewState.captions
-            = static_cast<ExpandedTreeView::CaptionDisplay>(layout.value("SavedCaptions"_L1).toInt());
-    }
+    m_savedStationsViewState          = m_browseViewState;
+    m_savedStationsViewState.viewMode = static_cast<ExpandedTreeView::ViewMode>(
+        layout.value("SavedDisplay"_L1).toInt(static_cast<int>(m_savedStationsViewState.viewMode)));
+    m_savedStationsViewState.captions = static_cast<ExpandedTreeView::CaptionDisplay>(
+        layout.value("SavedCaptions"_L1).toInt(static_cast<int>(m_savedStationsViewState.captions)));
+
     if(layout.contains("SavedState"_L1)) {
         m_savedStationsViewState.headerState = decodeHeaderState(layout.value("SavedState"_L1));
     }
 
-    setViewConfig(m_viewConfig);
+    applyActiveViewState();
 
     m_doubleClickAction = layout.value("DoubleClickAction"_L1).toInt(m_doubleClickAction);
     m_middleClickAction = layout.value("MiddleClickAction"_L1).toInt(m_middleClickAction);
@@ -490,9 +468,6 @@ void RadioBrowserWidget::loadLayoutData(const QJsonObject& layout)
 
 void RadioBrowserWidget::finalise()
 {
-    m_resultsView->finaliseView(m_browseViewState.headerState);
-    updateIconColumnOrder();
-
     if(m_initialSearchState == InitialSearchState::Disabled && syncControllerBrowseState()) {
         return;
     }
@@ -698,6 +673,8 @@ void RadioBrowserWidget::clearSavedDefaults() const
 
 void RadioBrowserWidget::applyConfig(const ConfigData& config)
 {
+    const ConfigData previousConfig{m_config};
+
     const bool searchConfigChanged = m_hideBroken != config.hideBroken;
 
     m_config.doubleClickAction = config.doubleClickAction;
@@ -710,10 +687,14 @@ void RadioBrowserWidget::applyConfig(const ConfigData& config)
     m_hideBroken               = config.hideBroken;
 
     m_controller->setHideBroken(m_hideBroken);
-    setViewConfig(config.view);
+    setViewConfig(config.view, false);
 
     if(searchConfigChanged && !m_loadingLayout) {
         applyFilterSearch();
+    }
+
+    if(previousConfig != m_config) {
+        Q_EMIT configChanged();
     }
 }
 
@@ -724,9 +705,13 @@ bool RadioBrowserWidget::sendClicks() const
 
 void RadioBrowserWidget::setSendClicks(const bool enabled)
 {
-    m_sendClicks = enabled;
+    if(std::exchange(m_sendClicks, enabled) == enabled) {
+        return;
+    }
+
     m_settings->fileSet(SendClicksKey, enabled);
     m_controller->setSendClicks(enabled);
+    Q_EMIT sendClicksChanged(enabled);
 }
 
 bool RadioBrowserWidget::separateSavedStationsViewStateAllowed() const
@@ -753,9 +738,15 @@ void RadioBrowserWidget::showEvent(QShowEvent* event)
     scheduleVisibleIconRequest();
 }
 
+void RadioBrowserWidget::hideEvent(QHideEvent* event)
+{
+    m_model->clearVisibleIcons(this);
+    FyWidget::hideEvent(event);
+}
+
 void RadioBrowserWidget::openConfigDialog()
 {
-    showConfigDialog(new RadioBrowserConfigDialog(this, this));
+    showConfigDialog(new RadioBrowserConfigDialog(this, this), Qt::NonModal);
 }
 
 void RadioBrowserWidget::handleIconSizeChanged(const QSize& size)
@@ -1076,6 +1067,8 @@ RadioSearchRequest RadioBrowserWidget::currentFilterRequest() const
 
 void RadioBrowserWidget::setFilterRequest(const RadioSearchRequest& request)
 {
+    const bool hideBrokenChanged = m_config.hideBroken != request.hideBroken;
+
     m_filterRequest = request;
 
     if(m_filterBar) {
@@ -1086,6 +1079,10 @@ void RadioBrowserWidget::setFilterRequest(const RadioSearchRequest& request)
     m_config.hideBroken = m_hideBroken;
     m_controller->setHideBroken(m_hideBroken);
     updateSavedSearchState();
+
+    if(hideBrokenChanged) {
+        Q_EMIT configChanged();
+    }
 }
 
 void RadioBrowserWidget::updateSavedSearchState()
@@ -1122,7 +1119,7 @@ void RadioBrowserWidget::showSavedSearchMenu()
     menu->setAttribute(Qt::WA_DeleteOnClose);
     Utils::forwardMenuStatusTips(menu);
 
-    auto* titleAction = menu->addAction(tr("Saved as \"%1\"").arg(search.name));
+    auto* titleAction = menu->addAction(tr("Saved as ‘%1’").arg(search.name));
     titleAction->setEnabled(false);
     menu->addSeparator();
 
@@ -1232,10 +1229,11 @@ void RadioBrowserWidget::scheduleVisibleIconRequest()
 void RadioBrowserWidget::requestVisibleIcons()
 {
     if(!m_viewConfig.showIcons) {
+        m_model->clearVisibleIcons(this);
         return;
     }
 
-    m_model->requestIcons(m_resultsView->visibleIndexes(128));
+    m_model->setVisibleIcons(this, m_resultsView->visibleIndexes(128));
 }
 
 void RadioBrowserWidget::maybeLoadMoreStations()
@@ -1536,7 +1534,7 @@ void RadioBrowserWidget::showContextMenu(const QPoint& pos)
             if(id == QLatin1StringView{Constants::Actions::AddToPlaylist}) {
                 if(hasSelection && m_trackSelection && sectionEnabled(Constants::Actions::AddToPlaylist)) {
                     auto* playlistMenu = new QMenu(tr("Add to playlist"), targetMenu);
-                    m_trackSelection->addTrackAddToPlaylistContextMenu(playlistMenu);
+                    m_trackSelection->addTrackAddToPlaylistContextMenu(playlistMenu, m_context);
                     if(!playlistMenu->actions().empty()) {
                         auto* playlistAction = targetMenu->addMenu(playlistMenu);
                         playlistAction->setStatusTip(tr("Add the selected stations to another playlist"));
@@ -1898,8 +1896,9 @@ void RadioBrowserWidget::applyActiveViewState()
     updateIconColumnOrder();
 }
 
-void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config)
+void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config, const bool notify)
 {
+    const ConfigData::ViewConfig previousConfig{m_config.view};
     const bool separateViewStateWasEnabled = m_config.view.separateSavedStationsViewState;
 
     ConfigData::ViewConfig requestedConfig{config};
@@ -1952,6 +1951,7 @@ void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config)
     }
 
     const QSize previousIconSize{m_config.view.iconSize};
+    const bool previouslyShowedIcons{m_config.view.showIcons};
     m_config.view = m_viewConfig;
 
     ViewState& activeState = (m_viewConfig.separateSavedStationsViewState && m_browsingSavedStations)
@@ -1978,8 +1978,7 @@ void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config)
                                            && m_viewConfig.alternatingRows);
 
     auto* header = m_resultsView->stationHeader();
-    header->setFixedHeight(!m_viewConfig.showHeader ? 0 : QWIDGETSIZE_MAX);
-    header->adjustSize();
+    header->setCollapsed(!m_viewConfig.showHeader);
 
     if(restoringBrowseViewState) {
         if(m_browseViewState.headerState.isEmpty()) {
@@ -1993,11 +1992,15 @@ void RadioBrowserWidget::setViewConfig(const ConfigData::ViewConfig& config)
     m_model->setShowIcons(m_viewConfig.showIcons);
     updateIconColumnOrder();
 
-    if(previousIconSize != m_viewConfig.iconSize) {
+    if(previousIconSize != m_viewConfig.iconSize || previouslyShowedIcons != m_viewConfig.showIcons) {
         scheduleVisibleIconRequest();
     }
 
     QMetaObject::invokeMethod(m_resultsView->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+
+    if(notify && previousConfig != m_config.view) {
+        Q_EMIT configChanged();
+    }
 }
 
 void RadioBrowserWidget::updateIconColumnOrder()

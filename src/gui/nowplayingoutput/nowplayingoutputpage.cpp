@@ -22,9 +22,11 @@
 #include "internalguisettings.h"
 #include "nowplayingoutput/nowplayingoutputservice.h"
 
+#include <core/application.h>
 #include <core/player/playercontroller.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/scripting/scriptcontextservice.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/scripttypes.h>
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
 #include <gui/widgets/scriptlineedit.h>
@@ -50,7 +52,7 @@ class NowPlayingOutputPageWidget : public SettingsPageWidget
     Q_OBJECT
 
 public:
-    NowPlayingOutputPageWidget(PlayerController* playerController, SettingsManager* settings);
+    explicit NowPlayingOutputPageWidget(Application* core);
 
     void load() override;
     void apply() override;
@@ -70,6 +72,7 @@ private:
 
     SettingsManager* m_settings;
     PlayerController* m_playerController;
+    ScriptContextService* m_scriptContext;
     ScriptParser m_scriptParser;
 
     QCheckBox* m_enabled;
@@ -79,6 +82,7 @@ private:
     QCheckBox* m_updateOnPlayPause;
     QCheckBox* m_updateOnStop;
     QCheckBox* m_updateEverySecond;
+    QCheckBox* m_updateOnPlayed;
     QCheckBox* m_copyToClipboard;
     QCheckBox* m_writeToFile;
     QLabel* m_outputFilePathLabel;
@@ -88,9 +92,10 @@ private:
     QSpinBox* m_appendLineLimit;
 };
 
-NowPlayingOutputPageWidget::NowPlayingOutputPageWidget(PlayerController* playerController, SettingsManager* settings)
-    : m_settings{settings}
-    , m_playerController{playerController}
+NowPlayingOutputPageWidget::NowPlayingOutputPageWidget(Application* core)
+    : m_settings{core->settingsManager()}
+    , m_playerController{core->playerController()}
+    , m_scriptContext{core->scriptContextService()}
     , m_enabled{new QCheckBox(tr("Enabled"), this)}
     , m_script{new ScriptTextEdit(this)}
     , m_preview{new QPlainTextEdit(this)}
@@ -98,6 +103,7 @@ NowPlayingOutputPageWidget::NowPlayingOutputPageWidget(PlayerController* playerC
     , m_updateOnPlayPause{new QCheckBox(tr("Play and pause"), this)}
     , m_updateOnStop{new QCheckBox(tr("Stop"), this)}
     , m_updateEverySecond{new QCheckBox(tr("Every second"), this)}
+    , m_updateOnPlayed{new QCheckBox(tr("Played threshold reached"), this)}
     , m_copyToClipboard{new QCheckBox(tr("Clipboard"), this)}
     , m_writeToFile{new QCheckBox(tr("File"), this)}
     , m_outputFilePathLabel{new QLabel(tr("Path") + ":"_L1, this)}
@@ -117,7 +123,6 @@ NowPlayingOutputPageWidget::NowPlayingOutputPageWidget(PlayerController* playerC
 
     m_script->setMinimumHeight(120);
     m_preview->setReadOnly(true);
-    m_preview->setMaximumHeight(56);
     m_preview->setWordWrapMode(QTextOption::NoWrap);
     m_preview->setPlaceholderText(tr("No current track"));
 
@@ -125,6 +130,8 @@ NowPlayingOutputPageWidget::NowPlayingOutputPageWidget(PlayerController* playerC
     scriptLayout->addWidget(m_script, row++, 0);
     scriptLayout->addWidget(m_preview, row++, 0);
     scriptLayout->setColumnStretch(0, 1);
+    scriptLayout->setRowStretch(0, 2);
+    scriptLayout->setRowStretch(1, 1);
 
     auto* eventsGroup  = new QGroupBox(tr("Update events"), this);
     auto* eventsLayout = new QGridLayout(eventsGroup);
@@ -134,6 +141,7 @@ NowPlayingOutputPageWidget::NowPlayingOutputPageWidget(PlayerController* playerC
     eventsLayout->addWidget(m_updateOnPlayPause, row++, 1);
     eventsLayout->addWidget(m_updateOnStop, row, 0);
     eventsLayout->addWidget(m_updateEverySecond, row++, 1);
+    eventsLayout->addWidget(m_updateOnPlayed, row++, 0, 1, 2);
 
     auto* outputGroup  = new QGroupBox(tr("Output"), this);
     auto* outputLayout = new QGridLayout(outputGroup);
@@ -171,10 +179,10 @@ NowPlayingOutputPageWidget::NowPlayingOutputPageWidget(PlayerController* playerC
 
     row = 0;
     layout->addWidget(generalGroup, row++, 0);
+    layout->setRowStretch(row, 1);
     layout->addWidget(scriptGroup, row++, 0);
     layout->addWidget(eventsGroup, row++, 0);
     layout->addWidget(outputGroup, row++, 0);
-    layout->setRowStretch(row, 1);
 
     QObject::connect(m_enabled, &QCheckBox::toggled, this, &NowPlayingOutputPageWidget::updateWidgetState);
     QObject::connect(m_writeToFile, &QCheckBox::toggled, this, &NowPlayingOutputPageWidget::updateWidgetState);
@@ -188,6 +196,8 @@ NowPlayingOutputPageWidget::NowPlayingOutputPageWidget(PlayerController* playerC
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
                      &NowPlayingOutputPageWidget::updatePreview);
     QObject::connect(m_playerController, &PlayerController::positionChangedSeconds, this,
+                     &NowPlayingOutputPageWidget::updatePreview);
+    QObject::connect(m_playerController, &PlayerController::playbackOutputInfoChanged, this,
                      &NowPlayingOutputPageWidget::updatePreview);
 }
 
@@ -245,6 +255,7 @@ void NowPlayingOutputPageWidget::updateWidgetState()
     m_updateOnPlayPause->setEnabled(enabled);
     m_updateOnStop->setEnabled(enabled);
     m_updateEverySecond->setEnabled(enabled);
+    m_updateOnPlayed->setEnabled(enabled);
     m_copyToClipboard->setEnabled(enabled);
     m_writeToFile->setEnabled(enabled);
     m_outputFilePathLabel->setEnabled(writeToFile);
@@ -262,9 +273,9 @@ void NowPlayingOutputPageWidget::updatePreview()
         return;
     }
 
-    auto playbackContext = makePlaybackScriptContext(m_playerController, nullptr, TrackListContextPolicy::Placeholder);
-    playbackContext.context.track = &track;
-    m_preview->setPlainText(m_scriptParser.evaluate(m_script->toPlainText(), track, playbackContext.context));
+    const auto playbackContext = m_scriptContext->playbackContext();
+    m_preview->setPlainText(m_scriptParser.evaluate(m_script->toPlainText(), track, playbackContext.context(),
+                                                    {.trackListContextPolicy = TrackListContextPolicy::Placeholder}));
 }
 
 NowPlayingOutputService::UpdateEvents NowPlayingOutputPageWidget::updateEvents() const
@@ -282,6 +293,9 @@ NowPlayingOutputService::UpdateEvents NowPlayingOutputPageWidget::updateEvents()
     if(m_updateEverySecond->isChecked()) {
         events.setFlag(NowPlayingOutputService::UpdateSecond);
     }
+    if(m_updateOnPlayed->isChecked()) {
+        events.setFlag(NowPlayingOutputService::UpdatePlayed);
+    }
     return events;
 }
 
@@ -291,6 +305,7 @@ void NowPlayingOutputPageWidget::setUpdateEvents(NowPlayingOutputService::Update
     m_updateOnPlayPause->setChecked(events.testFlag(NowPlayingOutputService::UpdatePlayPause));
     m_updateOnStop->setChecked(events.testFlag(NowPlayingOutputService::UpdateStop));
     m_updateEverySecond->setChecked(events.testFlag(NowPlayingOutputService::UpdateSecond));
+    m_updateOnPlayed->setChecked(events.testFlag(NowPlayingOutputService::UpdatePlayed));
 }
 
 NowPlayingOutputService::OutputTargets NowPlayingOutputPageWidget::outputTargets() const
@@ -339,15 +354,13 @@ void NowPlayingOutputPageWidget::browseOutputFile()
     }
 }
 
-NowPlayingOutputPage::NowPlayingOutputPage(PlayerController* playerController, SettingsManager* settings,
-                                           QObject* parent)
-    : SettingsPage{settings->settingsDialog(), parent}
+NowPlayingOutputPage::NowPlayingOutputPage(Application* core, QObject* parent)
+    : SettingsPage{core->settingsManager()->settingsDialog(), parent}
 {
     setId(Constants::Page::NowPlaying);
     setName(tr("Now Playing"));
     setCategory({tr("Playback"), tr("Now Playing")});
-    setWidgetCreator(
-        [playerController, settings] { return new NowPlayingOutputPageWidget(playerController, settings); });
+    setWidgetCreator([core] { return new NowPlayingOutputPageWidget(core); });
 }
 } // namespace Fooyin
 

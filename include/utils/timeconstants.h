@@ -23,6 +23,9 @@
 #include <ratio>
 
 namespace Fooyin::Time {
-constexpr uint64_t NsPerSecond = static_cast<uint64_t>(std::nano::den);
-constexpr uint64_t NsPerMs     = NsPerSecond / std::kilo::num;
+constexpr uint64_t MsPerSecond = std::milli::den;
+constexpr uint64_t UsPerSecond = std::micro::den;
+constexpr uint64_t UsPerMs     = UsPerSecond / MsPerSecond;
+constexpr uint64_t NsPerSecond = std::nano::den;
+constexpr uint64_t NsPerMs     = NsPerSecond / MsPerSecond;
 } // namespace Fooyin::Time

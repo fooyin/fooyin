@@ -184,6 +184,17 @@ TEST(PlaylistChangesetTest, FallsBackWhenEntryIdsAreDuplicated)
                                       makePlaylistTrack(u"/music/b.flac"_s, playlistId, UId::create(), 1)};
 
     EXPECT_FALSE(buildPlaylistChangeset(oldTracks, newTracks).has_value());
+    EXPECT_FALSE(buildPlaylistChangeset(newTracks, oldTracks).has_value());
+}
+
+TEST(PlaylistChangesetTest, FallsBackWhenEntryIdsAreInvalid)
+{
+    const UId playlistId = UId::create();
+    const PlaylistTrackList validTracks{makePlaylistTrack(u"/music/a.flac"_s, playlistId, UId::create(), 0)};
+    const PlaylistTrackList invalidTracks{makePlaylistTrack(u"/music/a.flac"_s, playlistId, {}, 0)};
+
+    EXPECT_FALSE(buildPlaylistChangeset(invalidTracks, validTracks).has_value());
+    EXPECT_FALSE(buildPlaylistChangeset(validTracks, invalidTracks).has_value());
 }
 
 TEST(PlaylistChangesetTest, MarksLargeChangesetForReset)

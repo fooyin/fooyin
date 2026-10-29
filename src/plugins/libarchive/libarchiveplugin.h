@@ -29,7 +29,7 @@ class LibArchivePlugin : public QObject,
                          public InputPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin" FILE "libarchive.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "libarchive.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::InputPlugin)
 
 public:

@@ -68,6 +68,14 @@ public:
                                                  int fftSize, const ChannelSelection& selection,
                                                  SpectrumWindowFunction windowFunction
                                                  = SpectrumWindowFunction::Hann) const;
+    [[nodiscard]] bool getSpectrumWindowForDuration(VisualisationSession::SpectrumWindow& out, uint64_t centerTimeMs,
+                                                    uint64_t durationMs, const ChannelSelection& selection,
+                                                    SpectrumWindowFunction windowFunction
+                                                    = SpectrumWindowFunction::Hann) const;
+    [[nodiscard]] bool getSpectrumWindowEndingAtDuration(VisualisationSession::SpectrumWindow& out, uint64_t endTimeMs,
+                                                         uint64_t durationMs, const ChannelSelection& selection,
+                                                         SpectrumWindowFunction windowFunction
+                                                         = SpectrumWindowFunction::Hann) const;
 
 private:
     enum class WindowAnchor : uint8_t
@@ -96,8 +104,11 @@ private:
     };
 
     [[nodiscard]] static uint64_t msToFrames(uint64_t ms, int sampleRate);
+    [[nodiscard]] int spectrumFramesForDuration(uint64_t durationMs) const;
     [[nodiscard]] bool resolveWindow(WindowRange& out, uint64_t timeMs, int requestedFrameCount, int minimumFrameCount,
                                      WindowAnchor anchor) const;
+    [[nodiscard]] bool resolvePcmWindowEndingAt(WindowRange& out, uint64_t endTimeMs, int requestedFrameCount,
+                                                int minimumFrameCount) const;
     [[nodiscard]] bool resolveSpectrumWindowEndingAt(WindowRange& out, uint64_t endTimeMs, int requestedFrameCount,
                                                      int minimumFrameCount) const;
     [[nodiscard]] uint64_t mapSourceTimeToVisualTime(uint32_t streamId, uint64_t sourceTimeMs) const;
@@ -119,6 +130,7 @@ private:
 
     AudioFormat m_format;
     std::vector<float> m_samples;
+    uint64_t m_presentationLeadMs{0};
     size_t m_capacityFrames;
     size_t m_headFrame;
     size_t m_frameCount;
@@ -130,9 +142,22 @@ private:
     {
         uint64_t nextFrame{0};
         int64_t visualTimeOffsetMs{0};
+        std::chrono::steady_clock::time_point nextPresentationTime;
     };
     std::unordered_map<uint32_t, SourceTimeline> m_sourceTimelines;
 
+    struct CurrentTimeSnapshot
+    {
+        uint64_t timeMs{0};
+        int64_t referenceClockMs{0};
+        bool published{false};
+        bool hasPresentationClock{false};
+    };
+
+    void publishCurrentTime(uint64_t timeMs, int64_t referenceClockMs, bool published, bool hasPresentationClock);
+    [[nodiscard]] CurrentTimeSnapshot currentTimeSnapshot() const;
+
+    std::atomic<uint64_t> m_currentTimeSequence;
     std::atomic<uint64_t> m_currentTimeMs;
     std::atomic<int64_t> m_currentTimeReferenceClockMs;
     std::atomic_bool m_currentTimePublished;

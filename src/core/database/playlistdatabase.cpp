@@ -92,78 +92,6 @@ int PlaylistDatabase::insertPlaylist(const QString& name, int index, bool isAuto
     return query.lastInsertId().toInt();
 }
 
-bool PlaylistDatabase::savePlaylist(Playlist& playlist)
-{
-    bool updated{false};
-
-    if(playlist.modified()) {
-        static const QString statement = u"UPDATE Playlists SET Name = :name, PlaylistIndex = :index, IsAutoPlaylist = "
-                                         ":isAutoPlaylist, Query = :query, SortQuery = :sortQuery, "
-                                         "ForceSorted = :forceSorted, ExtraProperties = :extraProperties "
-                                         "WHERE PlaylistID = :id;"_s;
-
-        DbQuery query{db(), statement};
-
-        query.bindValue(u":name"_s, playlist.name());
-        query.bindValue(u":index"_s, playlist.index());
-        query.bindValue(u":isAutoPlaylist"_s, playlist.isAutoPlaylist());
-        query.bindValue(u":query"_s, playlist.query());
-        query.bindValue(u":sortQuery"_s, playlist.sortQuery());
-        query.bindValue(u":forceSorted"_s, playlist.forceSorted());
-        query.bindValue(u":extraProperties"_s, playlist.serialiseExtraProperties());
-        query.bindValue(u":id"_s, playlist.dbId());
-
-        updated = query.exec();
-    }
-
-    if(playlist.tracksModified()) {
-        updated = insertPlaylistTracks(playlist.dbId(), playlist.tracks());
-    }
-
-    if(updated) {
-        playlist.resetFlags();
-        return true;
-    }
-
-    return false;
-}
-
-bool PlaylistDatabase::saveModifiedPlaylists(const PlaylistList& playlists)
-{
-    DbTransaction transaction{db()};
-
-    for(const auto& playlist : playlists) {
-        savePlaylist(*playlist);
-    }
-
-    return transaction.commit();
-}
-
-bool PlaylistDatabase::removePlaylist(int id)
-{
-    static const QString statement = u"DELETE FROM Playlists WHERE PlaylistID = :id;"_s;
-
-    DbQuery query{db(), statement};
-    query.bindValue(u":id"_s, id);
-
-    return query.exec();
-}
-
-bool PlaylistDatabase::renamePlaylist(int id, const QString& name)
-{
-    if(name.isEmpty()) {
-        return false;
-    }
-
-    static const QString statement = u"UPDATE Playlists SET Name = :name WHERE PlaylistID = :id;"_s;
-
-    DbQuery query{db(), statement};
-    query.bindValue(u":name"_s, name);
-    query.bindValue(u":id"_s, id);
-
-    return query.exec();
-}
-
 Track PlaylistDatabase::ensureTrack(Track track) const
 {
     if(!track.isValid() || track.id() >= 0) {
@@ -172,88 +100,7 @@ Track PlaylistDatabase::ensureTrack(Track track) const
 
     track.generateHash();
 
-    static const QString insertStatement = u"INSERT OR IGNORE INTO Tracks ("
-                                           "FilePath,"
-                                           "Subsong,"
-                                           "Title,"
-                                           "TrackNumber,"
-                                           "TrackTotal,"
-                                           "Artists,"
-                                           "AlbumArtist,"
-                                           "Album,"
-                                           "DiscNumber,"
-                                           "DiscTotal,"
-                                           "Date,"
-                                           "Composer,"
-                                           "Performer,"
-                                           "Genres,"
-                                           "Comment,"
-                                           "CuePath,"
-                                           "Offset,"
-                                           "Duration,"
-                                           "FileSize,"
-                                           "BitRate,"
-                                           "SampleRate,"
-                                           "Channels,"
-                                           "BitDepth,"
-                                           "Codec,"
-                                           "CodecProfile,"
-                                           "Tool,"
-                                           "TagTypes,"
-                                           "Encoding,"
-                                           "ExtraTags,"
-                                           "ExtraProperties,"
-                                           "ModifiedDate,"
-                                           "TrackHash,"
-                                           "LibraryID,"
-                                           "RGTrackGain,"
-                                           "RGAlbumGain,"
-                                           "RGTrackPeak,"
-                                           "RGAlbumPeak,"
-                                           "CreatedDate"
-                                           ") "
-                                           "VALUES ("
-                                           ":filePath,"
-                                           ":subsong,"
-                                           ":title,"
-                                           ":trackNumber,"
-                                           ":trackTotal,"
-                                           ":artists,"
-                                           ":albumArtist,"
-                                           ":album,"
-                                           ":discNumber,"
-                                           ":discTotal,"
-                                           ":date,"
-                                           ":composer,"
-                                           ":performer,"
-                                           ":genres,"
-                                           ":comment,"
-                                           ":cuePath,"
-                                           ":offset,"
-                                           ":duration,"
-                                           ":fileSize,"
-                                           ":bitRate,"
-                                           ":sampleRate,"
-                                           ":channels,"
-                                           ":bitDepth,"
-                                           ":codec,"
-                                           ":codecProfile,"
-                                           ":tool,"
-                                           ":tagTypes,"
-                                           ":encoding,"
-                                           ":extraTags,"
-                                           ":extraProperties,"
-                                           ":modifiedDate,"
-                                           ":trackHash,"
-                                           ":libraryID,"
-                                           ":rgTrackGain,"
-                                           ":rgAlbumGain,"
-                                           ":rgTrackPeak,"
-                                           ":rgAlbumPeak,"
-                                           ":createdDate"
-                                           ");"_s;
-
-    DbQuery insertQuery{db(), insertStatement};
+    DbQuery insertQuery{db(), Database::trackInsertStatement(true)};
 
     const auto bindings = Database::trackBindings(track);
     for(const auto& [name, value] : bindings) {
@@ -283,6 +130,95 @@ Track PlaylistDatabase::ensureTrack(Track track) const
 
     track.setId(idQuery.value(0).toInt());
     return track;
+}
+
+bool PlaylistDatabase::savePlaylist(Playlist& playlist)
+{
+    return saveModifiedPlaylists({&playlist});
+}
+
+bool PlaylistDatabase::saveModifiedPlaylists(const PlaylistList& playlists)
+{
+    if(playlists.empty()) {
+        return true;
+    }
+
+    DbTransaction transaction{db()};
+    if(!transaction) {
+        return false;
+    }
+
+    for(const auto& playlist : playlists) {
+        if(!writePlaylist(*playlist)) {
+            return false;
+        }
+    }
+
+    if(!transaction.commit()) {
+        return false;
+    }
+
+    for(const auto& playlist : playlists) {
+        playlist->resetFlags();
+    }
+
+    return true;
+}
+
+bool PlaylistDatabase::removePlaylist(int id)
+{
+    static const QString statement = u"DELETE FROM Playlists WHERE PlaylistID = :id;"_s;
+
+    DbQuery query{db(), statement};
+    query.bindValue(u":id"_s, id);
+
+    return query.exec();
+}
+
+bool PlaylistDatabase::renamePlaylist(int id, const QString& name)
+{
+    if(name.isEmpty()) {
+        return false;
+    }
+
+    static const QString statement = u"UPDATE Playlists SET Name = :name WHERE PlaylistID = :id;"_s;
+
+    DbQuery query{db(), statement};
+    query.bindValue(u":name"_s, name);
+    query.bindValue(u":id"_s, id);
+
+    return query.exec();
+}
+
+bool PlaylistDatabase::writePlaylist(const Playlist& playlist)
+{
+    if(playlist.modified()) {
+        static const QString statement = u"UPDATE Playlists SET Name = :name, PlaylistIndex = :index, IsAutoPlaylist = "
+                                         ":isAutoPlaylist, Query = :query, SortQuery = :sortQuery, "
+                                         "ForceSorted = :forceSorted, ExtraProperties = :extraProperties "
+                                         "WHERE PlaylistID = :id;"_s;
+
+        DbQuery query{db(), statement};
+
+        query.bindValue(u":name"_s, playlist.name());
+        query.bindValue(u":index"_s, playlist.index());
+        query.bindValue(u":isAutoPlaylist"_s, playlist.isAutoPlaylist());
+        query.bindValue(u":query"_s, playlist.query());
+        query.bindValue(u":sortQuery"_s, playlist.sortQuery());
+        query.bindValue(u":forceSorted"_s, playlist.forceSorted());
+        query.bindValue(u":extraProperties"_s, playlist.serialiseExtraProperties());
+        query.bindValue(u":id"_s, playlist.dbId());
+
+        if(!query.exec()) {
+            return false;
+        }
+    }
+
+    if(playlist.tracksModified() && !insertPlaylistTracks(playlist.dbId(), playlist.tracks())) {
+        return false;
+    }
+
+    return true;
 }
 
 bool PlaylistDatabase::insertPlaylistTrack(int playlistId, int trackId, int index)
@@ -316,10 +252,9 @@ bool PlaylistDatabase::insertPlaylistTracks(int playlistId, const TrackList& tra
 
     for(int i{0}; const auto& track : tracks) {
         const Track storedTrack = ensureTrack(track);
-        if(storedTrack.isValid() && storedTrack.isInDatabase()) {
-            if(!insertPlaylistTrack(playlistId, storedTrack.id(), i++)) {
-                return false;
-            }
+        if(!storedTrack.isValid() || !storedTrack.isInDatabase()
+           || !insertPlaylistTrack(playlistId, storedTrack.id(), i++)) {
+            return false;
         }
     }
 

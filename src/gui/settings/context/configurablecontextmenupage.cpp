@@ -21,6 +21,8 @@
 
 #include "configurablecontextmenudelegate.h"
 
+#include <gui/widgets/hintlabel.h>
+
 #include <algorithm>
 
 #include <QGridLayout>
@@ -102,7 +104,7 @@ ConfigurableContextMenuWidget::ConfigurableContextMenuWidget(QString description
     layout->setRowStretch(0, 1);
     layout->setColumnStretch(0, 1);
 
-    auto* descriptionLabel = new QLabel(u"🛈 "_s + m_description, this);
+    auto* descriptionLabel = new HintLabel(m_description, this);
     descriptionLabel->setWordWrap(true);
     layout->addWidget(descriptionLabel, 1, 0);
 }

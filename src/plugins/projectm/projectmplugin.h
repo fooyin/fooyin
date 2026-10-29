@@ -28,13 +28,15 @@ class ActionManager;
 class SettingsManager;
 
 namespace ProjectM {
+class ProjectMFavouriteStore;
+
 class ProjectMPlugin : public QObject,
                        public Plugin,
                        public CorePlugin,
                        public GuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "projectm.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "projectm.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
@@ -46,6 +48,7 @@ private:
 
     ActionManager* m_actionManager;
     EngineController* m_engine;
+    ProjectMFavouriteStore* m_favourites;
     SettingsManager* m_settings;
     WidgetProvider* m_widgetProvider;
 };

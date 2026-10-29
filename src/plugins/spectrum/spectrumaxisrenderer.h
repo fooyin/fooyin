@@ -48,6 +48,7 @@ struct SpectrumPlotGeometry
     std::vector<QRectF> barRects;
     std::vector<int> sourceBands;
     std::vector<SpectrumHorizontalLabel> horizontalLabels;
+    bool drawHorizontalLabels{false};
     bool drawAmplitudeLabels{false};
 };
 

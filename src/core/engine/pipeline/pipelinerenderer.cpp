@@ -182,7 +182,9 @@ void PipelineRenderer::applyLiveSettingsUpdate(const Engine::LiveDspSettingsUpda
 
 PipelineRenderer::RenderResult PipelineRenderer::render(int framesToProcess, OutputFader& outputFader,
                                                         bool outputSupportsVolume, double masterVolume,
-                                                        AudioAnalysisBus* analysisBus, uint64_t playbackDelayMs)
+                                                        AudioAnalysisBus* visualisationBus,
+                                                        AudioAnalysisBus* analysisBus,
+                                                        std::chrono::nanoseconds playbackDelay)
 {
     RenderResult result;
 
@@ -220,6 +222,8 @@ PipelineRenderer::RenderResult PipelineRenderer::render(int framesToProcess, Out
         m_outputResampler->process(m_processChunks);
     }
 
+    tapAnalysis(visualisationBus, playbackDelay, mixerRead.primaryStreamId);
+
     outputFader.process(m_processChunks);
 
     if(!outputSupportsVolume) {
@@ -228,7 +232,7 @@ PipelineRenderer::RenderResult PipelineRenderer::render(int framesToProcess, Out
 
     result.fadeCompletion = outputFader.takeCompletion();
 
-    tapAnalysis(analysisBus, playbackDelayMs, mixerRead.primaryStreamId);
+    tapAnalysis(analysisBus, playbackDelay, mixerRead.primaryStreamId);
 
     return result;
 }
@@ -830,7 +834,8 @@ void PipelineRenderer::rebuildProcessChunksFromMixerRead(const AudioMixer::ReadR
     }
 }
 
-void PipelineRenderer::tapAnalysis(AudioAnalysisBus* analysisBus, uint64_t playbackDelayMs, const StreamId streamId)
+void PipelineRenderer::tapAnalysis(AudioAnalysisBus* analysisBus, std::chrono::nanoseconds playbackDelay,
+                                   const StreamId streamId)
 {
     if(!analysisBus
        || (!analysisBus->hasSubscription(Engine::AnalysisDataType::LevelFrameData)
@@ -908,7 +913,7 @@ void PipelineRenderer::tapAnalysis(AudioAnalysisBus* analysisBus, uint64_t playb
         return;
     }
 
-    const auto presentationTime = AudioAnalysisBus::Clock::now() + std::chrono::milliseconds{playbackDelayMs};
+    const auto presentationTime = AudioAnalysisBus::Clock::now() + playbackDelay;
     analysisBus->push(std::span<const float>{m_analysisScratch.data(), writeOffset}, analysisFormat, streamTimeMs,
                       streamId, presentationTime);
 }

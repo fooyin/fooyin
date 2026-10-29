@@ -19,10 +19,6 @@
 
 #include "playlistcolumnregistry.h"
 
-#include "scripting/scriptvariableproviders.h"
-
-#include <core/constants.h>
-
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
@@ -48,7 +44,7 @@ void PlaylistColumnRegistry::loadDefaults()
     addDefaultItem({.id = 4, .name = tr("Album Artist"), .field = u"%albumartist%"_s, .sortField = {}, .writeField = u"albumartist"_s});
     addDefaultItem({.id = 5, .name = tr("Album"), .field = u"%album%"_s, .sortField = {}, .writeField = u"album"_s});
     addDefaultItem({.id = 7, .name = tr("Duration"), .field = u"%duration%"_s, .sortField = u"%duration_ms%"_s, .writeField = {}});
-    addDefaultItem({.id = 8, .name = tr("Playing"), .field = QString::fromLatin1(PlayingIcon), .sortField = {}, .writeField = {}});
+    addDefaultItem({.id = 8, .name = tr("Playing"), .field = u"$if2(%playingicon%,[\\[%queue_indexes%\\]])"_s, .sortField = {}, .writeField = {}});
     addDefaultItem({.id = 9, .name = tr("Codec"), .field = u"%codec%[ / %codec_profile%]"_s, .sortField = {}, .writeField = {}});
     addDefaultItem({.id = 10, .name = tr("Extension"), .field = u"%extension%"_s, .sortField = {}, .writeField = {}});
     addDefaultItem({.id = 11, .name = tr("Bitrate"), .field = u"%bitrate% kbps"_s, .sortField = {}, .writeField = {}});
@@ -58,6 +54,7 @@ void PlaylistColumnRegistry::loadDefaults()
     addDefaultItem({.id = 17, .name = tr("Last Modified"), .field = u"%lastmodified%"_s, .sortField = {}, .writeField = {}});
     addDefaultItem({.id = 6, .name = tr("Playcount"), .field = u"$ifgreater(%playcount%,0,%playcount%)"_s, .sortField = u"%playcount%"_s, .writeField = {}});
     addDefaultItem({.id = 21, .name = tr("Rating"), .field = u"%rating_editor%"_s, .sortField = {}, .writeField = u"rating_editor"_s});
+    addDefaultItem({.id = 22, .name = tr("Love"), .field = u"%love_editor%"_s, .sortField = u"%loved%"_s, .writeField = u"love_editor"_s});
     addDefaultItem({.id = 19, .name = tr("First Played"), .field = u"%firstplayed%"_s, .sortField = {}, .writeField = {}});
     addDefaultItem({.id = 20, .name = tr("Last Played"), .field = u"%lastplayed%"_s, .sortField = {}, .writeField = {}});
     addDefaultItem({.id = 13, .name = tr("Front Cover"), .field = u"%frontcover%"_s, .sortField = {}, .writeField = {}, .isPixmap = true});

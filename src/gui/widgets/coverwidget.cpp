@@ -22,6 +22,7 @@
 #include "artwork/artworkexporter.h"
 #include "artwork/artworkviewerdialog.h"
 #include "coverwidgetconfigwidget.h"
+#include "internalguisettings.h"
 #include "pixmapfadecontroller.h"
 
 #include <core/engine/audioloader.h>
@@ -34,6 +35,9 @@
 #include <gui/guisettings.h>
 #include <gui/statusevent.h>
 #include <gui/trackselectioncontroller.h>
+#include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
+#include <utils/fileutils.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -41,6 +45,7 @@
 #include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QDir>
+#include <QFileInfo>
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QMenu>
@@ -52,11 +57,15 @@
 using namespace std::chrono_literals;
 using namespace Qt::StringLiterals;
 
-constexpr auto CoverWidgetCoverTypeKey       = u"ArtworkPanel/CoverType";
-constexpr auto CoverWidgetCoverAlignmentKey  = u"ArtworkPanel/CoverAlignment";
-constexpr auto CoverWidgetKeepAspectRatioKey = u"ArtworkPanel/KeepAspectRatio";
-constexpr auto CoverWidgetFadeEnabledKey     = u"ArtworkPanel/FadeCoverChanges";
-constexpr auto CoverWidgetFadeDurationKey    = u"ArtworkPanel/FadeDurationMs";
+constexpr auto CoverWidgetCoverTypeKey        = u"ArtworkPanel/CoverType";
+constexpr auto CoverWidgetCoverAlignmentKey   = u"ArtworkPanel/CoverAlignment";
+constexpr auto CoverWidgetKeepAspectRatioKey  = u"ArtworkPanel/KeepAspectRatio";
+constexpr auto CoverWidgetTrackPreferenceKey  = u"ArtworkPanel/TrackPreference";
+constexpr auto CoverWidgetShowStoppedTrackKey = u"ArtworkPanel/ShowStoppedTrack";
+constexpr auto CoverWidgetFadeEnabledKey      = u"ArtworkPanel/FadeCoverChanges";
+constexpr auto CoverWidgetFadeDurationKey     = u"ArtworkPanel/FadeDurationMs";
+constexpr auto CoverWidgetDoubleClickKey      = u"ArtworkPanel/DoubleClickAction";
+constexpr auto CoverWidgetMiddleClickKey      = u"ArtworkPanel/MiddleClickAction";
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 constexpr auto ResizeInterval = 5ms;
@@ -65,23 +74,24 @@ constexpr auto ResizeInterval = 5;
 #endif
 
 namespace Fooyin {
-CoverWidget::CoverWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
-                         TrackSelectionController* trackSelection, std::shared_ptr<AudioLoader> audioLoader,
-                         CoverRepository* coverRepository, SettingsManager* settings, QWidget* parent)
+CoverWidget::CoverWidget(ActionManager* actionManager, PlayerController* playerController,
+                         PlaylistHandler* playlistHandler, TrackSelectionController* trackSelection,
+                         std::shared_ptr<AudioLoader> audioLoader, CoverRepository* coverRepository,
+                         SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
+    , m_actionManager{actionManager}
     , m_playerController{playerController}
     , m_playlistHandler{playlistHandler}
     , m_trackSelection{trackSelection}
     , m_audioLoader{std::move(audioLoader)}
     , m_settings{settings}
     , m_coverProvider{new CoverProvider(coverRepository, this)}
-    , m_displayOption{static_cast<SelectionDisplay>(
-          m_settings->value<Settings::Gui::Internal::TrackCoverDisplayOption>())}
     , m_coverType{Track::Cover::Front}
     , m_keepAspectRatio{false}
     , m_fadeCoverChanges{false}
     , m_fadeController{new PixmapFadeController(this)}
     , m_coverRequestId{0}
+    , m_actionRequestId{0}
     , m_noCover{m_coverProvider->placeholderCover(m_coverType)}
 {
     setObjectName(CoverWidget::name());
@@ -92,6 +102,7 @@ CoverWidget::CoverWidget(PlayerController* playerController, PlaylistHandler* pl
 
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &CoverWidget::reloadCover);
     QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, &CoverWidget::reloadCover);
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &CoverWidget::reloadCover);
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &CoverWidget::checkTrackArtwork);
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistsPopulated, this, &CoverWidget::reloadCover);
     QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this, &CoverWidget::reloadCover);
@@ -104,10 +115,6 @@ CoverWidget::CoverWidget(PlayerController* playerController, PlaylistHandler* pl
         reloadCover();
     });
 
-    m_settings->subscribe<Settings::Gui::Internal::TrackCoverDisplayOption>(this, [this](const int option) {
-        m_displayOption = static_cast<SelectionDisplay>(option);
-        reloadCover();
-    });
     m_settings->subscribe<Settings::Gui::IconTheme>(this, &CoverWidget::reloadCover);
     m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, &CoverWidget::reloadCover);
 
@@ -128,9 +135,26 @@ CoverWidget::ConfigData CoverWidget::defaultConfig() const
         m_settings->fileValue(CoverWidgetCoverTypeKey, static_cast<int>(config.coverType)).toInt());
     config.coverAlignment = static_cast<Qt::Alignment>(
         m_settings->fileValue(CoverWidgetCoverAlignmentKey, static_cast<int>(config.coverAlignment)).toInt());
-    config.keepAspectRatio  = m_settings->fileValue(CoverWidgetKeepAspectRatioKey, config.keepAspectRatio).toBool();
-    config.fadeCoverChanges = m_settings->fileValue(CoverWidgetFadeEnabledKey, config.fadeCoverChanges).toBool();
-    config.fadeDurationMs   = m_settings->fileValue(CoverWidgetFadeDurationKey, config.fadeDurationMs).toInt();
+    config.keepAspectRatio = m_settings->fileValue(CoverWidgetKeepAspectRatioKey, config.keepAspectRatio).toBool();
+
+    if(m_settings->fileContains(CoverWidgetTrackPreferenceKey)) {
+        config.trackPreference = static_cast<TrackDisplayPreference>(
+            m_settings->fileValue(CoverWidgetTrackPreferenceKey, static_cast<int>(config.trackPreference)).toInt());
+    }
+    else {
+        const bool preferSelection  = m_settings->fileValue(u"Artwork/DisplayOption", 0).toInt() == 1;
+        const bool showStoppedTrack = m_settings->fileValue(CoverWidgetShowStoppedTrackKey, true).toBool();
+        config.trackPreference      = preferSelection  ? TrackDisplayPreference::SelectedTrack
+                                    : showStoppedTrack ? TrackDisplayPreference::PlayingTrack
+                                                       : TrackDisplayPreference::PlayingTrackBlankWhenStopped;
+    }
+
+    config.fadeCoverChanges  = m_settings->fileValue(CoverWidgetFadeEnabledKey, config.fadeCoverChanges).toBool();
+    config.fadeDurationMs    = m_settings->fileValue(CoverWidgetFadeDurationKey, config.fadeDurationMs).toInt();
+    config.doubleClickAction = static_cast<CoverAction>(
+        m_settings->fileValue(CoverWidgetDoubleClickKey, static_cast<int>(config.doubleClickAction)).toInt());
+    config.middleClickAction = static_cast<CoverAction>(
+        m_settings->fileValue(CoverWidgetMiddleClickKey, static_cast<int>(config.middleClickAction)).toInt());
     config.fadeDurationMs
         = std::clamp(config.fadeDurationMs, PixmapFadeController::MinDurationMs, PixmapFadeController::MaxDurationMs);
 
@@ -144,19 +168,23 @@ const CoverWidget::ConfigData& CoverWidget::currentConfig() const
 
 void CoverWidget::applyConfig(const ConfigData& config)
 {
-    const bool coverTypeChanged   = m_coverType != config.coverType;
-    const bool keepAspectChanged  = m_keepAspectRatio != config.keepAspectRatio;
-    const bool alignmentChanged   = m_coverAlignment != config.coverAlignment;
-    const bool fadeEnabledChanged = m_fadeCoverChanges != config.fadeCoverChanges;
+    const bool coverTypeChanged       = m_coverType != config.coverType;
+    const bool keepAspectChanged      = m_keepAspectRatio != config.keepAspectRatio;
+    const bool alignmentChanged       = m_coverAlignment != config.coverAlignment;
+    const bool fadeEnabledChanged     = m_fadeCoverChanges != config.fadeCoverChanges;
+    const bool trackPreferenceChanged = m_config.trackPreference != config.trackPreference;
     const int fadeDurationMs
         = std::clamp(config.fadeDurationMs, PixmapFadeController::MinDurationMs, PixmapFadeController::MaxDurationMs);
 
     m_config = {
-        .coverType        = config.coverType,
-        .coverAlignment   = config.coverAlignment,
-        .keepAspectRatio  = config.keepAspectRatio,
-        .fadeCoverChanges = config.fadeCoverChanges,
-        .fadeDurationMs   = fadeDurationMs,
+        .coverType         = config.coverType,
+        .coverAlignment    = config.coverAlignment,
+        .keepAspectRatio   = config.keepAspectRatio,
+        .trackPreference   = config.trackPreference,
+        .fadeCoverChanges  = config.fadeCoverChanges,
+        .fadeDurationMs    = fadeDurationMs,
+        .doubleClickAction = config.doubleClickAction,
+        .middleClickAction = config.middleClickAction,
     };
 
     m_coverType        = m_config.coverType;
@@ -167,12 +195,17 @@ void CoverWidget::applyConfig(const ConfigData& config)
     m_fadeController->setDurationMs(m_config.fadeDurationMs);
     m_fadeController->setEnabled(m_config.fadeCoverChanges);
 
+    Q_EMIT configChanged();
+
     if(!m_fadeCoverChanges) {
         stopCoverFade();
     }
 
-    if(coverTypeChanged) {
-        m_noCover = m_coverProvider->placeholderCover(m_coverType);
+    if(coverTypeChanged || trackPreferenceChanged) {
+        ++m_actionRequestId;
+        if(coverTypeChanged) {
+            m_noCover = m_coverProvider->placeholderCover(m_coverType);
+        }
         reloadCover();
         return;
     }
@@ -192,10 +225,14 @@ void CoverWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(CoverWidgetCoverTypeKey, static_cast<int>(config.coverType));
     m_settings->fileSet(CoverWidgetCoverAlignmentKey, static_cast<int>(config.coverAlignment));
     m_settings->fileSet(CoverWidgetKeepAspectRatioKey, config.keepAspectRatio);
+    m_settings->fileSet(CoverWidgetTrackPreferenceKey, static_cast<int>(config.trackPreference));
+    m_settings->fileRemove(CoverWidgetShowStoppedTrackKey);
     m_settings->fileSet(CoverWidgetFadeEnabledKey, config.fadeCoverChanges);
     m_settings->fileSet(
         CoverWidgetFadeDurationKey,
         std::clamp(config.fadeDurationMs, PixmapFadeController::MinDurationMs, PixmapFadeController::MaxDurationMs));
+    m_settings->fileSet(CoverWidgetDoubleClickKey, static_cast<int>(config.doubleClickAction));
+    m_settings->fileSet(CoverWidgetMiddleClickKey, static_cast<int>(config.middleClickAction));
 }
 
 void CoverWidget::clearSavedDefaults() const
@@ -203,8 +240,12 @@ void CoverWidget::clearSavedDefaults() const
     m_settings->fileRemove(CoverWidgetCoverTypeKey);
     m_settings->fileRemove(CoverWidgetCoverAlignmentKey);
     m_settings->fileRemove(CoverWidgetKeepAspectRatioKey);
+    m_settings->fileRemove(CoverWidgetTrackPreferenceKey);
+    m_settings->fileRemove(CoverWidgetShowStoppedTrackKey);
     m_settings->fileRemove(CoverWidgetFadeEnabledKey);
     m_settings->fileRemove(CoverWidgetFadeDurationKey);
+    m_settings->fileRemove(CoverWidgetDoubleClickKey);
+    m_settings->fileRemove(CoverWidgetMiddleClickKey);
 }
 
 QPixmap CoverWidget::effectiveCover(const QPixmap& cover) const
@@ -234,19 +275,38 @@ QPixmap CoverWidget::scaledCover(const QPixmap& cover) const
 
 Track CoverWidget::displayTrack() const
 {
-    if(m_displayOption == SelectionDisplay::PreferSelection && m_trackSelection->hasDisplayTracks()) {
-        return m_trackSelection->displayTrack();
+    const auto source = preferredTrackSource(m_config.trackPreference, m_playerController->playState(),
+                                             m_playerController->playbackStarted());
+    if(source == PreferredTrackSource::None) {
+        return {};
     }
 
-    if(const Track track = m_playerController->currentTrack(); track.isValid()) {
+    const auto playingTrack = [this]() {
+        if(const Track track = m_playerController->currentTrack(); track.isValid()) {
+            return track;
+        }
+        if(const PlaylistTrack track = m_playlistHandler->currentTrack(); track.isValid()) {
+            return track.track;
+        }
+        return Track{};
+    };
+
+    const auto selectedTrack = [this]() {
+        return m_trackSelection->hasDisplayTracks() ? m_trackSelection->displayTrack() : Track{};
+    };
+
+    if(source == PreferredTrackSource::Selected) {
+        if(const Track track = selectedTrack(); track.isValid()) {
+            return track;
+        }
+        return playingTrack();
+    }
+
+    if(const Track track = playingTrack(); track.isValid()) {
         return track;
     }
 
-    if(const PlaylistTrack track = m_playlistHandler->currentTrack(); track.isValid()) {
-        return track.track;
-    }
-
-    return {};
+    return selectedTrack();
 }
 
 bool CoverWidget::sameDisplayTrack(const Track& lhs, const Track& rhs)
@@ -326,10 +386,6 @@ void CoverWidget::reloadCover()
 
 void CoverWidget::handleSelectionChanged()
 {
-    if(m_displayOption != SelectionDisplay::PreferSelection) {
-        return;
-    }
-
     if(sameDisplayTrack(displayTrack(), m_track)) {
         return;
     }
@@ -351,21 +407,26 @@ CoverWidget::ConfigData CoverWidget::configFromLayout(const QJsonObject& layout)
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("CoverType"_L1)) {
-        config.coverType = static_cast<Track::Cover>(layout.value("CoverType"_L1).toInt());
+    config.coverType
+        = static_cast<Track::Cover>(layout.value("CoverType"_L1).toInt(static_cast<int>(config.coverType)));
+    config.coverAlignment
+        = static_cast<Qt::Alignment>(layout.value("CoverAlignment"_L1).toInt(static_cast<int>(config.coverAlignment)));
+    config.keepAspectRatio = layout.value("KeepAspectRatio"_L1).toBool(config.keepAspectRatio);
+
+    if(layout.contains("TrackPreference"_L1)) {
+        config.trackPreference = static_cast<TrackDisplayPreference>(layout.value("TrackPreference"_L1).toInt());
     }
-    if(layout.contains("CoverAlignment"_L1)) {
-        config.coverAlignment = static_cast<Qt::Alignment>(layout.value("CoverAlignment"_L1).toInt());
+    else if(layout.contains("ShowStoppedTrack"_L1) && !layout.value("ShowStoppedTrack"_L1).toBool()
+            && config.trackPreference == TrackDisplayPreference::PlayingTrack) {
+        config.trackPreference = TrackDisplayPreference::PlayingTrackBlankWhenStopped;
     }
-    if(layout.contains("KeepAspectRatio"_L1)) {
-        config.keepAspectRatio = layout.value("KeepAspectRatio"_L1).toBool();
-    }
-    if(layout.contains("FadeCoverChanges"_L1)) {
-        config.fadeCoverChanges = layout.value("FadeCoverChanges"_L1).toBool();
-    }
-    if(layout.contains("FadeDurationMs"_L1)) {
-        config.fadeDurationMs = layout.value("FadeDurationMs"_L1).toInt();
-    }
+
+    config.fadeCoverChanges  = layout.value("FadeCoverChanges"_L1).toBool(config.fadeCoverChanges);
+    config.fadeDurationMs    = layout.value("FadeDurationMs"_L1).toInt(config.fadeDurationMs);
+    config.doubleClickAction = static_cast<CoverAction>(
+        layout.value("DoubleClickAction"_L1).toInt(static_cast<int>(config.doubleClickAction)));
+    config.middleClickAction = static_cast<CoverAction>(
+        layout.value("MiddleClickAction"_L1).toInt(static_cast<int>(config.middleClickAction)));
 
     config.fadeDurationMs
         = std::clamp(config.fadeDurationMs, PixmapFadeController::MinDurationMs, PixmapFadeController::MaxDurationMs);
@@ -375,11 +436,15 @@ CoverWidget::ConfigData CoverWidget::configFromLayout(const QJsonObject& layout)
 
 void CoverWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
 {
-    layout["CoverType"_L1]        = static_cast<int>(config.coverType);
-    layout["CoverAlignment"_L1]   = static_cast<int>(config.coverAlignment);
-    layout["KeepAspectRatio"_L1]  = config.keepAspectRatio;
-    layout["FadeCoverChanges"_L1] = config.fadeCoverChanges;
-    layout["FadeDurationMs"_L1]   = config.fadeDurationMs;
+    layout["CoverType"_L1]       = static_cast<int>(config.coverType);
+    layout["CoverAlignment"_L1]  = static_cast<int>(config.coverAlignment);
+    layout["KeepAspectRatio"_L1] = config.keepAspectRatio;
+    layout["TrackPreference"_L1] = static_cast<int>(config.trackPreference);
+    layout.remove("ShowStoppedTrack"_L1);
+    layout["FadeCoverChanges"_L1]  = config.fadeCoverChanges;
+    layout["FadeDurationMs"_L1]    = config.fadeDurationMs;
+    layout["DoubleClickAction"_L1] = static_cast<int>(config.doubleClickAction);
+    layout["MiddleClickAction"_L1] = static_cast<int>(config.middleClickAction);
 }
 
 void CoverWidget::saveLayoutData(QJsonObject& layout)
@@ -570,12 +635,23 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
 void CoverWidget::mouseDoubleClickEvent(QMouseEvent* event)
 {
     if(event->button() == Qt::LeftButton) {
-        showArtworkViewer();
+        performAction(m_config.doubleClickAction);
         event->accept();
         return;
     }
 
     FyWidget::mouseDoubleClickEvent(event);
+}
+
+void CoverWidget::mousePressEvent(QMouseEvent* event)
+{
+    if(event->button() == Qt::MiddleButton) {
+        performAction(m_config.middleClickAction);
+        event->accept();
+        return;
+    }
+
+    FyWidget::mousePressEvent(event);
 }
 
 void CoverWidget::timerEvent(QTimerEvent* event)
@@ -604,7 +680,34 @@ void CoverWidget::paintEvent(QPaintEvent* /*event*/)
 
 void CoverWidget::openConfigDialog()
 {
-    showConfigDialog(new CoverWidgetConfigDialog(this, this));
+    showConfigDialog(new CoverWidgetConfigDialog(this, this), Qt::NonModal);
+}
+
+void CoverWidget::performAction(const CoverAction action)
+{
+    ++m_actionRequestId;
+
+    switch(action) {
+        case CoverAction::None:
+            break;
+        case CoverAction::ViewFullSize:
+            showArtworkViewer();
+            break;
+        case CoverAction::OpenContainingFolder:
+            openContainingFolder();
+            break;
+        case CoverAction::NextArtworkType:
+            showNextArtworkType();
+            break;
+        case CoverAction::ShowTrack:
+            showTrack();
+            break;
+        case CoverAction::OpenProperties:
+            if(m_track.isValid()) {
+                Q_EMIT requestPropertiesDialog({m_track});
+            }
+            break;
+    }
 }
 
 void CoverWidget::showArtworkViewer()
@@ -619,6 +722,70 @@ void CoverWidget::showArtworkViewer()
     m_coverProvider->trackCoverOriginal(m_track, m_config.coverType).then(dialog, [dialog](const QPixmap& cover) {
         if(!cover.isNull()) {
             dialog->setCover(cover);
+        }
+    });
+}
+
+void CoverWidget::openContainingFolder() const
+{
+    if(!m_track.isValid()) {
+        return;
+    }
+
+    const QString dir = m_track.isInArchive() ? QFileInfo{m_track.archivePath()}.absolutePath() : m_track.path();
+    if(!dir.isEmpty()) {
+        Utils::File::openDirectory(dir);
+    }
+}
+
+void CoverWidget::showTrack() const
+{
+    if(auto* command = m_actionManager->command(Constants::Actions::ShowNowPlaying)) {
+        command->action()->trigger();
+    }
+}
+
+void CoverWidget::showNextArtworkType()
+{
+    if(!m_track.isValid()) {
+        return;
+    }
+
+    Track::Cover nextType{Track::Cover::Front};
+    switch(m_config.coverType) {
+        case Track::Cover::Front:
+            nextType = Track::Cover::Back;
+            break;
+        case Track::Cover::Back:
+            nextType = Track::Cover::Artist;
+            break;
+        case Track::Cover::Artist:
+        case Track::Cover::Other:
+            break;
+    }
+
+    tryArtworkType(m_track, nextType, 2, m_actionRequestId);
+}
+
+void CoverWidget::tryArtworkType(const Track& track, const Track::Cover type, const int remaining, const int requestId)
+{
+    m_coverProvider->trackHasCover(track, type).then(this, [this, track, type, remaining, requestId](bool found) {
+        if(requestId != m_actionRequestId || !sameDisplayTrack(track, m_track)) {
+            return;
+        }
+
+        if(found) {
+            auto config{m_config};
+            config.coverType = type;
+            applyConfig(config);
+            return;
+        }
+
+        if(remaining > 1) {
+            const Track::Cover nextType = type == Track::Cover::Front ? Track::Cover::Back
+                                        : type == Track::Cover::Back  ? Track::Cover::Artist
+                                                                      : Track::Cover::Front;
+            tryArtworkType(track, nextType, remaining - 1, requestId);
         }
     });
 }

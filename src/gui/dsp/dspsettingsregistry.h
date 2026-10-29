@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <gui/dsp/dspsettingsprovider.h>
 
 #include <memory>
@@ -26,9 +28,16 @@
 #include <vector>
 
 namespace Fooyin {
-class DspSettingsRegistry
+class FYGUI_EXPORT DspSettingsRegistry
 {
 public:
+    DspSettingsRegistry() = default;
+
+    DspSettingsRegistry(const DspSettingsRegistry&)            = delete;
+    DspSettingsRegistry& operator=(const DspSettingsRegistry&) = delete;
+    DspSettingsRegistry(DspSettingsRegistry&&)                 = delete;
+    DspSettingsRegistry& operator=(DspSettingsRegistry&&)      = delete;
+
     void registerProvider(std::unique_ptr<DspSettingsProvider> provider);
 
     [[nodiscard]] DspSettingsProvider* providerFor(const QString& id) const;

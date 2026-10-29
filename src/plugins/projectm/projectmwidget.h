@@ -28,6 +28,7 @@
 #include <QPoint>
 #include <QPointer>
 #include <QString>
+#include <QStringList>
 
 #include <vector>
 
@@ -47,6 +48,7 @@ class SettingsManager;
 class WidgetContext;
 
 namespace ProjectM {
+class ProjectMFavouriteStore;
 class ProjectMView;
 
 class ProjectMWidget : public FyWidget
@@ -61,7 +63,7 @@ public:
     };
 
     ProjectMWidget(ActionManager* actionManager, EngineController* engine, SettingsManager* settings,
-                   QWidget* parent = nullptr);
+                   ProjectMFavouriteStore* favourites, QWidget* parent = nullptr);
     ~ProjectMWidget() override;
 
     [[nodiscard]] QString name() const override;
@@ -82,47 +84,65 @@ public:
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
+Q_SIGNALS:
+    void configChanged();
+
 protected:
+    void changeEvent(QEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
     void showEvent(QShowEvent* event) override;
-    void closeEvent(QCloseEvent* event) override;
 
     void openConfigDialog() override;
 
 private:
     void setupActions();
     void updateActionState();
+
     void showContextMenu(const QPoint& globalPos);
     void showPresetDialog();
+
     void toggleFullScreen();
     void openDetachedWindow(bool fullScreen);
     void enterFullScreen();
     void leaveFullScreen();
+
     void saveSelectedPreset();
     void scanPresetLibrary();
+    [[nodiscard]] QString presetIdentifier(const QString& path) const;
+    [[nodiscard]] QStringList favouritePresetPaths() const;
+
+    void toggleCurrentPresetFavourite(bool favourite);
+    void updateFavouritePlaylist();
+    void setCycleFavouritesOnly(bool enabled);
+
     void selectRandomPreset();
     void setRememberPreset(bool remember);
     void setPresetLocked(bool locked);
     void setShuffle(bool shuffle);
     void setPresetDuration(int seconds);
+
     void installSplitterEventFilters();
     void beginSplitterResize();
     void endSplitterResize();
-    void updateResizeSnapshotGeometry();
-    [[nodiscard]] bool isWindowWidget() const;
-    void saveTopLevelState();
-    void loadTopLevelState();
+
+    void updateSnapshot();
+    void updateSnapshotGeometry();
+
+    ActionManager* m_actionManager;
+    SettingsManager* m_settings;
+    ProjectMFavouriteStore* m_favourites;
 
     ProjectMView* m_view;
     QWidget* m_viewContainer;
     QLabel* m_statusLabel;
-    QLabel* m_resizeSnapshot;
+    QLabel* m_snapshot;
     QPointer<QWidget> m_fullScreenWindow;
-    ActionManager* m_actionManager;
     WidgetContext* m_context;
-    SettingsManager* m_settings;
+
     QAction* m_fullScreenAction;
     QAction* m_selectPresetAction;
+    QAction* m_favouritePresetAction;
+    QAction* m_cycleFavouritesOnlyAction;
     QAction* m_previousPresetAction;
     QAction* m_nextPresetAction;
     QAction* m_randomPresetAction;
@@ -131,19 +151,24 @@ private:
     QAction* m_rememberPresetAction;
     Command* m_fullScreenCmd;
     Command* m_selectPresetCmd;
+    Command* m_favouritePresetCmd;
+    Command* m_cycleFavouritesOnlyCmd;
     Command* m_previousPresetCmd;
     Command* m_nextPresetCmd;
     Command* m_randomPresetCmd;
     Command* m_lockPresetCmd;
     Command* m_shufflePresetsCmd;
+
     std::vector<QPointer<QObject>> m_splitterEventObjects;
     ConfigData m_config;
     ProjectMPresetLibrary m_library;
     QString m_presetPath;
+    Qt::WindowStates m_standaloneWindowState;
     bool m_rememberPreset;
+    bool m_cycleFavouritesOnly;
     bool m_detachedWindowFullScreen;
     bool m_splitterResizeActive;
-    bool m_topLevelStateLoaded;
+    bool m_snapshotActive;
 };
 } // namespace ProjectM
 } // namespace Fooyin

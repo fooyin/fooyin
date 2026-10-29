@@ -28,18 +28,35 @@
 namespace Fooyin {
 class SettingsManager;
 
+enum class LayoutTransitionType : uint8_t
+{
+    CrossFade = 0,
+    FadeThroughBackground,
+    ScaleAndFade,
+    SlideAndFade,
+};
+
+enum class LayoutSlideDirection : uint8_t
+{
+    Automatic = 0,
+    Left,
+    Right,
+    Top,
+    Bottom,
+};
+
+enum class LayoutScaleDirection : uint8_t
+{
+    Grow = 0,
+    Shrink,
+};
+
 enum class IconThemeOption : uint8_t
 {
     AutoDetect = 0,
     System,
     Light,
     Dark,
-};
-
-enum class SelectionDisplay : uint8_t
-{
-    PreferPlaying = 0,
-    PreferSelection
 };
 
 struct CoverPaths
@@ -105,34 +122,6 @@ enum class ArtworkSaveMethod : uint8_t
     Directory
 };
 
-enum class PlaylistBgImage : uint8_t
-{
-    None = 0,
-    AlbumCover,
-    Custom
-};
-
-enum class PlaylistBgImagePosition : uint8_t
-{
-    TopLeft = 0,
-    Top,
-    TopRight,
-    Left,
-    Middle,
-    Right,
-    BottomLeft,
-    Bottom,
-    BottomRight
-};
-
-enum class PlaylistBgScaling : uint8_t
-{
-    ScaledAndCropped = 0,
-    Scaled,
-    ScaledKeepProportions,
-    OriginalSize
-};
-
 struct ArtworkSaveOptions
 {
     ArtworkSaveMethod method{ArtworkSaveMethod::Embedded};
@@ -181,80 +170,83 @@ Q_NAMESPACE_EXPORT(FYGUI_EXPORT)
 
 constexpr auto PlaylistCurrentPreset = "PlaylistWidget/CurrentPreset";
 constexpr auto LastFilePath          = "Interface/LastFilePath";
+constexpr auto LastPlaylistPath      = "Playlist/LastPlaylistPath";
+constexpr auto ConfirmMetadataWipe   = "MetadataLookup/ConfirmWipeWritableTags";
+constexpr auto ShowLayoutEditingHint = "Interface/ShowLayoutEditingHint";
+
+constexpr auto LayoutTransitionEnabled        = "Interface/LayoutTransitionEnabled";
+constexpr auto LayoutTransitionDuration       = "Interface/LayoutTransitionDuration";
+constexpr auto LayoutTransitionMethod         = "Interface/LayoutTransitionMethod";
+constexpr auto LayoutTransitionSlideDirection = "Interface/LayoutTransitionSlideDirection";
+constexpr auto LayoutTransitionScaleDirection = "Interface/LayoutTransitionScaleDirection";
+constexpr auto LayoutTransitionScaleAmount    = "Interface/LayoutTransitionScaleAmount";
+
+constexpr auto DefaultLayoutTransitionEnabled        = false;
+constexpr auto DefaultLayoutTransitionDuration       = 400;
+constexpr auto DefaultLayoutTransitionMethod         = LayoutTransitionType::CrossFade;
+constexpr auto DefaultLayoutTransitionSlideDirection = LayoutSlideDirection::Automatic;
+constexpr auto DefaultLayoutTransitionScaleDirection = LayoutScaleDirection::Grow;
+constexpr auto DefaultLayoutTransitionScaleAmount    = 2;
 
 enum GuiInternalSettings : uint32_t
 {
     EditingMenuLevels                        = 1 | Type::Int,
-    PlaylistAltColours                       = 2 | Type::Bool,
-    PlaylistHeader                           = 3 | Type::Bool,
-    PlaylistScrollBar                        = 4 | Type::Bool,
-    StatusPlayingScript                      = 5 | Type::String,
-    StatusSelectionScript                    = 6 | Type::String,
-    StatusShowIcon                           = 7 | Type::Bool,
-    StatusShowSelection                      = 8 | Type::Bool,
-    SystemIconTheme                          = 9 | Type::String,
-    SystemStyle                              = 10 | Type::String,
-    SystemFont                               = 11 | Type::Variant,
-    SystemPalette                            = 12 | Type::Variant,
-    WindowTitleTrackScript                   = 13 | Type::String,
-    TrackCoverPaths                          = 14 | Type::Variant,
-    TrackCoverDisplayOption                  = 15 | Type::Int,
-    PlaylistImagePadding                     = 16 | Type::Int,
-    PlaylistImagePaddingTop                  = 17 | Type::Int,
-    PixmapCacheSize                          = 18 | Type::Int,
-    EditableLayoutMargin                     = 19 | Type::Int,
-    PlaylistTabsAddButton                    = 20 | Type::Bool,
-    ShowTrayIcon                             = 21 | Type::Bool,
-    TrayOnClose                              = 22 | Type::Bool,
-    PlaylistTabsCloseButton                  = 23 | Type::Bool,
-    PlaylistTabsMiddleClose                  = 24 | Type::Bool,
-    PlaylistTabsExpand                       = 25 | Type::Bool,
-    PlaylistTabsClearButton                  = 26 | Type::Bool,
-    PlaylistMiddleClick                      = 27 | Type::Int,
-    InfoDisplayPrefer                        = 28 | Type::Int,
-    LibTreeIconSize                          = 29 | Type::Variant,
-    ArtworkSaveMethods                       = 30 | Type::Variant,
-    ArtworkAutoSearch                        = 31 | Type::Bool,
-    ArtworkTitleField                        = 32 | Type::String,
-    ArtworkAlbumField                        = 33 | Type::String,
-    ArtworkArtistField                       = 34 | Type::String,
-    ArtworkMatchThreshold                    = 35 | Type::Int,
-    ArtworkDownloadThumbSize                 = 36 | Type::Int,
-    ImageAllocationLimit                     = 37 | Type::Int,
-    PlaylistTrackPreloadCount                = 38 | Type::Int,
-    TrackCoverSourcePreference               = 39 | Type::Int,
-    PlaylistInlineTagEditing                 = 40 | Type::Bool,
-    ContextMenuTrackDisabledSections         = 41 | Type::StringList,
-    ContextMenuPlaylistDisabledSections      = 42 | Type::StringList,
-    ContextMenuTrackLayout                   = 43 | Type::StringList,
-    ContextMenuPlaylistLayout                = 44 | Type::StringList,
-    ContextMenuLibraryTreeDisabledSections   = 45 | Type::StringList,
-    ContextMenuLibraryTreeLayout             = 46 | Type::StringList,
-    PropertiesSidebarTrackScript             = 47 | Type::String,
-    StatusPlaylistScript                     = 48 | Type::String,
-    StatusShowPlaylist                       = 49 | Type::Bool,
-    TrackCoverThumbnailGroupScript           = 50 | Type::String,
-    ContextMenuDirBrowserDisabledSections    = 51 | Type::StringList,
-    ContextMenuDirBrowserLayout              = 52 | Type::StringList,
-    ContextMenuLayoutEditingDisabledSections = 53 | Type::StringList,
-    ContextMenuLayoutEditingLayout           = 54 | Type::StringList,
-    PlaylistBackgroundImageMode              = 55 | Type::Int,
-    PlaylistBackgroundCustomImage            = 56 | Type::String,
-    PlaylistBackgroundScaling                = 57 | Type::Int,
-    PlaylistBackgroundPosition               = 58 | Type::Int,
-    PlaylistBackgroundMaxSize                = 59 | Type::Int,
-    PlaylistBackgroundBlur                   = 60 | Type::Int,
-    PlaylistBackgroundOpacity                = 61 | Type::Int,
-    PlaylistBackgroundFadeDuration           = 62 | Type::Int,
-    PlaylistBackgroundCoverType              = 63 | Type::Int,
-    NowPlayingOutputEnabled                  = 64 | Type::Bool,
-    NowPlayingOutputScript                   = 65 | Type::String,
-    NowPlayingOutputUpdateEvents             = 66 | Type::Int,
-    NowPlayingOutputTargets                  = 67 | Type::Int,
-    NowPlayingOutputFilePath                 = 68 | Type::String,
-    NowPlayingOutputOptions                  = 69 | Type::Int,
-    NowPlayingOutputAppendLineLimit          = 70 | Type::Int,
-    OutputDeviceRefreshMs                    = 71 | Type::Int,
+    StatusPlayingScript                      = 2 | Type::String,
+    StatusSelectionScript                    = 3 | Type::String,
+    StatusShowIcon                           = 4 | Type::Bool,
+    StatusShowSelection                      = 5 | Type::Bool,
+    SystemIconTheme                          = 6 | Type::String,
+    SystemStyle                              = 7 | Type::String,
+    SystemFont                               = 8 | Type::Variant,
+    SystemPalette                            = 9 | Type::Variant,
+    WindowTitleTrackScript                   = 10 | Type::String,
+    TrackCoverPaths                          = 11 | Type::Variant,
+    PixmapCacheSize                          = 12 | Type::Int,
+    EditableLayoutMargin                     = 13 | Type::Int,
+    ShowTrayIcon                             = 14 | Type::Bool,
+    TrayOnClose                              = 15 | Type::Bool,
+    LibTreeIconSize                          = 16 | Type::Variant,
+    ArtworkSaveMethods                       = 17 | Type::Variant,
+    ArtworkAutoSearch                        = 18 | Type::Bool,
+    ArtworkTitleField                        = 19 | Type::String,
+    ArtworkAlbumField                        = 20 | Type::String,
+    ArtworkArtistField                       = 21 | Type::String,
+    ArtworkMatchThreshold                    = 22 | Type::Int,
+    ArtworkDownloadThumbSize                 = 23 | Type::Int,
+    ImageAllocationLimit                     = 24 | Type::Int,
+    PlaylistTrackPreloadCount                = 25 | Type::Int,
+    TrackCoverSourcePreference               = 26 | Type::Int,
+    PlaylistInlineTagEditing                 = 27 | Type::Bool,
+    ContextMenuTrackDisabledSections         = 28 | Type::StringList,
+    ContextMenuPlaylistDisabledSections      = 29 | Type::StringList,
+    ContextMenuTrackLayout                   = 30 | Type::StringList,
+    ContextMenuPlaylistLayout                = 31 | Type::StringList,
+    ContextMenuLibraryTreeDisabledSections   = 32 | Type::StringList,
+    ContextMenuLibraryTreeLayout             = 33 | Type::StringList,
+    PropertiesSidebarTrackScript             = 34 | Type::String,
+    StatusPlaylistScript                     = 35 | Type::String,
+    StatusShowPlaylist                       = 36 | Type::Bool,
+    TrackCoverThumbnailGroupScript           = 37 | Type::String,
+    ContextMenuDirBrowserDisabledSections    = 38 | Type::StringList,
+    ContextMenuDirBrowserLayout              = 39 | Type::StringList,
+    ContextMenuLayoutEditingDisabledSections = 40 | Type::StringList,
+    ContextMenuLayoutEditingLayout           = 41 | Type::StringList,
+    NowPlayingOutputEnabled                  = 42 | Type::Bool,
+    NowPlayingOutputScript                   = 43 | Type::String,
+    NowPlayingOutputUpdateEvents             = 44 | Type::Int,
+    NowPlayingOutputTargets                  = 45 | Type::Int,
+    NowPlayingOutputFilePath                 = 46 | Type::String,
+    NowPlayingOutputOptions                  = 47 | Type::Int,
+    NowPlayingOutputAppendLineLimit          = 48 | Type::Int,
+    OutputDeviceRefreshMs                    = 49 | Type::Int,
+    PlaylistPlayingRowColour                 = 50 | Type::Variant,
+    PlaylistPlayingRowFont                   = 51 | Type::Variant,
+    ArtistCoverFallbackToFront               = 52 | Type::Bool,
+    StatusDoubleClick                        = 53 | Type::Int,
+    StatusMiddleClick                        = 54 | Type::Int,
+    ContextMenuQueueViewerDisabledSections   = 55 | Type::StringList,
+    ContextMenuQueueViewerLayout             = 56 | Type::StringList,
+    PlaylistInlineEditDelayMs                = 57 | Type::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

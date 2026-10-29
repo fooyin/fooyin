@@ -129,6 +129,13 @@ struct PipelineStatus
 class FYCORE_EXPORT AudioPipeline : public AudioPipelineFader
 {
 public:
+    struct RuntimeOutputInfo
+    {
+        AudioFormat format;
+        QString device;
+        int bufferFrames{0};
+    };
+
     struct FadeEvent
     {
         //! Fade completion type reported by `OutputFader`.
@@ -290,6 +297,8 @@ public:
     void setSignalWakeTarget(QObject* target, int wakeEventType = 0);
     //! Set optional analysis bus tap for post-master processed PCM.
     void setAnalysisBus(AudioAnalysisBus* analysisBus);
+    //! Set pull-visualisation PCM tap before output volume and transport fades.
+    void setVisualisationAnalysisBus(AudioAnalysisBus* analysisBus);
     //! Drain and clear pending level-triggered signals on engine thread.
     [[nodiscard]] PendingSignals drainPendingSignals();
 
@@ -315,6 +324,7 @@ public:
 
     [[nodiscard]] AudioFormat inputFormat() const;
     [[nodiscard]] AudioFormat outputFormat() const;
+    [[nodiscard]] RuntimeOutputInfo runtimeOutputInfo() const;
 
     [[nodiscard]] QString lastInitError() const;
 
@@ -646,6 +656,7 @@ private:
     AtomicSharedPtr<const FormatSnapshot> m_outputSnapshot;
     AtomicSharedPtr<const QString> m_lastInitError;
     std::atomic<AudioAnalysisBus*> m_analysisBus;
+    std::atomic<AudioAnalysisBus*> m_visualisationAnalysisBus;
 
     PipelineSignalMailbox m_signalMailbox;
     OrphanStreamTracker m_orphanTracker;

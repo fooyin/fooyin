@@ -152,7 +152,7 @@ ScriptResult iflonger(const ScriptValueList& vec)
         return {};
     }
 
-    if(vec.at(0).value.size() >= length) {
+    if(vec.at(0).value.length() > length) {
         return vec.at(2);
     }
     return vec.at(3);

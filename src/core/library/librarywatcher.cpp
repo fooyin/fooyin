@@ -25,6 +25,8 @@
 
 using namespace std::chrono_literals;
 
+Q_LOGGING_CATEGORY(LIB_WATCHER, "fy.librarywatcher")
+
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 constexpr auto Interval = 1000ms;
 #else
@@ -43,8 +45,8 @@ LibraryWatcher::LibraryWatcher(QObject* parent)
         m_files.emplace(path);
         m_timer.start(Interval, this);
 
-        if(!files().contains(path) && QFileInfo::exists(path)) {
-            addPath(path);
+        if(!files().contains(path) && QFileInfo::exists(path) && !addPath(path)) {
+            qCWarning(LIB_WATCHER) << "Failed to resume monitoring track file" << path;
         }
     });
 }

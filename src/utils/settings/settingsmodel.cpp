@@ -339,6 +339,9 @@ void SettingsModel::setPages(const PageList& pages)
 
         if(category) {
             category->pages.emplace_back(page);
+            if(page->selector() == SettingsPageSelector::List) {
+                category->selector = SettingsPageSelector::List;
+            }
         }
     }
 

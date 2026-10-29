@@ -1,0 +1,31 @@
+{
+  "name": "libopenmpt",
+  "config-opts": [
+    "--disable-examples",
+    "--disable-openmpt123",
+    "--disable-static",
+    "--disable-tests",
+    "--without-portaudio",
+    "--without-portaudiocpp"
+  ],
+  "cleanup": [
+    "/include",
+    "*.la",
+    "*.so",
+    "/lib/pkgconfig",
+    "/share/doc"
+  ],
+  "sources": [
+    {
+      "type": "archive",
+      "url": "https://lib.openmpt.org/files/libopenmpt/src/libopenmpt-0.8.7+release.autotools.tar.gz",
+      "sha256": "275c29ef47be9992f62a35fcc96f7ca05c06d2fd05c9298b8dee9f743f75b089",
+      "x-checker-data": {
+        "type": "anitya",
+        "project-id": 141468,
+        "stable-only": true,
+        "url-template": "https://lib.openmpt.org/files/libopenmpt/src/libopenmpt-$version+release.autotools.tar.gz"
+      }
+    }
+  ]
+}

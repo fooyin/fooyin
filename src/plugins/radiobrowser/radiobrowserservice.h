@@ -169,6 +169,7 @@ private:
     std::unordered_map<RadioCategoryType, QPointer<QNetworkReply>> m_categoryReplies;
     std::unordered_map<RadioCategoryType, CategoryRequestContext> m_categoryRequests;
     std::unordered_map<RadioCategoryType, CategoryRequestContext> m_pendingCategoryRequests;
+    std::unordered_map<RadioCategoryType, uint64_t> m_categoryGenerations;
 };
 } // namespace RadioBrowser
 } // namespace Fooyin

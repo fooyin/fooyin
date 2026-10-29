@@ -22,6 +22,7 @@
 #include <gui/fywidget.h>
 
 class QWheelEvent;
+class QResizeEvent;
 
 namespace Fooyin {
 class ActionManager;
@@ -49,9 +50,11 @@ public:
     [[nodiscard]] QString layoutName() const override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
+    void populateContextMenu(QMenu* menu) override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
 
 private:

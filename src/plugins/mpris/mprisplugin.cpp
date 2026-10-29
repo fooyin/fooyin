@@ -23,6 +23,7 @@
 #include "mprisroot.h"
 
 #include <core/coresettings.h>
+#include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <gui/guipaths.h>
 #include <gui/windowcontroller.h>
@@ -30,6 +31,7 @@
 #include <utils/crypto.h>
 #include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/timeconstants.h>
 
 #include <QApplication>
 #include <QDBusObjectPath>
@@ -42,16 +44,33 @@ Q_LOGGING_CATEGORY(MPRIS, "fy.mpris")
 
 using namespace Qt::StringLiterals;
 
-constexpr auto MprisObjectPath = "/org/mpris/MediaPlayer2";
-constexpr auto ServiceName     = "org.mpris.MediaPlayer2.fooyin";
-constexpr auto PlayerEntity    = "org.mpris.MediaPlayer2.Player";
-constexpr auto DbusPath        = "org.freedesktop.DBus.Properties";
+constexpr auto MprisObjectPath = "/org/mpris/MediaPlayer2"_L1;
+constexpr auto ServiceName     = "org.mpris.MediaPlayer2.fooyin"_L1;
+constexpr auto PlayerEntity    = "org.mpris.MediaPlayer2.Player"_L1;
+constexpr auto DbusPath        = "org.freedesktop.DBus.Properties"_L1;
+constexpr auto NoTrackPath     = "/org/mpris/MediaPlayer2/TrackList/NoTrack"_L1;
 
+namespace Fooyin::Mpris {
 namespace {
-QDBusObjectPath formatTrackId(int index)
+QDBusObjectPath formatTrackId(const PlaylistTrack& playlistTrack)
 {
-    const QString trackId = u"/org/fooyin/fooyin/track/%1"_s.arg(index);
-    return QDBusObjectPath{trackId};
+    if(!playlistTrack.isValid()) {
+        return QDBusObjectPath{NoTrackPath};
+    }
+
+    if(playlistTrack.playlistId.isValid() && playlistTrack.entryId.isValid()) {
+        return QDBusObjectPath{u"/org/fooyin/fooyin/track/p%1/e%2"_s.arg(
+            playlistTrack.playlistId.toString(QUuid::Id128), playlistTrack.entryId.toString(QUuid::Id128))};
+    }
+
+    if(playlistTrack.track.id() > 0) {
+        return QDBusObjectPath{u"/org/fooyin/fooyin/track/t%1"_s.arg(playlistTrack.track.id())};
+    }
+
+    const QString hash = !playlistTrack.track.hash().isEmpty()
+                           ? playlistTrack.track.hash()
+                           : Utils::generateHash(playlistTrack.track.uniqueFilepath());
+    return QDBusObjectPath{u"/org/fooyin/fooyin/track/h%1"_s.arg(hash)};
 }
 
 QString formatDateTime(uint64_t time)
@@ -64,7 +83,7 @@ QString formatDateTime(uint64_t time)
     return dateTime.toOffsetFromUtc(dateTime.offsetFromUtc()).toString(Qt::ISODate);
 }
 
-QString formatContentCreated(const Fooyin::Track& track)
+QString formatContentCreated(const Track& track)
 {
     QString date = track.date().trimmed();
 
@@ -104,7 +123,7 @@ QString formatContentCreated(const Fooyin::Track& track)
     return {};
 }
 
-QString lyricsText(const Fooyin::Track& track)
+QString lyricsText(const Track& track)
 {
     static const QStringList tags{
         u"LYRICS"_s,
@@ -126,9 +145,9 @@ QString lyricsText(const Fooyin::Track& track)
 }
 } // namespace
 
-namespace Fooyin::Mpris {
 MprisPlugin::MprisPlugin()
     : m_registered{false}
+    , m_mprisPausePending{false}
     , m_coverLoadGeneration{0}
     , m_coverProvider{nullptr}
 { }
@@ -145,17 +164,38 @@ void MprisPlugin::initialise(const CorePluginContext& context)
                 {u"CanGoNext"_s, canGoNext()},
                 {u"CanGoPrevious"_s, canGoPrevious()}});
     });
-    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, [this]() {
-        notify({{u"PlaybackStatus"_s, playbackStatus()},
-                {u"CanPause"_s, canPause()},
-                {u"CanPlay"_s, canPlay()},
-                {u"CanGoNext"_s, canGoNext()},
-                {u"CanGoPrevious"_s, canGoPrevious()},
-                {u"CanSeek"_s, canSeek()}});
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, [this](Player::PlayState state) {
+        QVariantMap properties{{u"CanPause"_s, canPause()},
+                               {u"CanPlay"_s, canPlay()},
+                               {u"CanGoNext"_s, canGoNext()},
+                               {u"CanGoPrevious"_s, canGoPrevious()},
+                               {u"CanSeek"_s, canSeek()}};
+
+        m_mprisPausePending = state == Player::PlayState::Paused;
+        if(!m_mprisPausePending) {
+            properties.insert(u"PlaybackStatus"_s, playbackStatus());
+        }
+
+        notify(properties);
     });
     QObject::connect(m_playerController, &PlayerController::playlistTrackUpdated, this, &MprisPlugin::trackChanged);
-    QObject::connect(m_playerController, &PlayerController::positionMoved, this,
-                     [this](uint64_t ms) { Q_EMIT Seeked(static_cast<qlonglong>(ms) * 1000); });
+    QObject::connect(m_playerController, &PlayerController::playlistTrackChanged, this,
+                     [this](const PlaylistTrack& playlistTrack) {
+                         if(m_currentPlaylistTrack.sameOccurrenceAs(playlistTrack)) {
+                             Q_EMIT Seeked(0);
+                         }
+                     });
+    QObject::connect(m_playerController, &PlayerController::positionMoved, this, [this](uint64_t ms) {
+        Q_EMIT Seeked(static_cast<qlonglong>(ms) * static_cast<qlonglong>(Time::UsPerMs));
+    });
+    QObject::connect(context.engine, &EngineController::audiblePauseDrainCompleted, this, [this]() {
+        if(!m_mprisPausePending || m_playerController->playState() != Player::PlayState::Paused) {
+            return;
+        }
+
+        m_mprisPausePending = false;
+        notify(u"PlaybackStatus"_s, playbackStatus());
+    });
 
     m_settings->subscribe<Settings::Core::OutputVolume>(this, [this](double volume) {
         notify(u"Volume"_s, volume);
@@ -183,14 +223,14 @@ void MprisPlugin::initialise(const GuiPluginContext& context)
         return;
     }
 
-    if(!QDBusConnection::sessionBus().registerService(QString::fromLatin1(ServiceName))) {
+    if(!QDBusConnection::sessionBus().registerService(ServiceName)) {
         qCWarning(MPRIS) << "Cannot register with the session dbus";
         return;
     }
 
     m_registered = true;
 
-    if(!QDBusConnection::sessionBus().registerObject(QString::fromLatin1(MprisObjectPath), this)) {
+    if(!QDBusConnection::sessionBus().registerObject(MprisObjectPath, this)) {
         qCWarning(MPRIS) << "Cannot register object to the dbus";
         return;
     }
@@ -207,7 +247,7 @@ void MprisPlugin::shutdown()
         return;
     }
 
-    QDBusConnection::sessionBus().unregisterService(QString::fromLatin1(ServiceName));
+    QDBusConnection::sessionBus().unregisterService(ServiceName);
 }
 
 QString MprisPlugin::identity() const
@@ -301,6 +341,10 @@ void MprisPlugin::setVolume(double volume)
 
 QString MprisPlugin::playbackStatus() const
 {
+    if(m_mprisPausePending) {
+        return Utils::Enum::toString(Player::PlayState::Playing);
+    }
+
     return Utils::Enum::toString(m_playerController->playState());
 }
 
@@ -370,7 +414,7 @@ QVariantMap MprisPlugin::metadata() const
 
 int64_t MprisPlugin::position() const
 {
-    return static_cast<int64_t>(m_playerController->currentPosition()) * 1000;
+    return static_cast<int64_t>(m_playerController->currentPosition()) * static_cast<int64_t>(Time::UsPerMs);
 }
 
 double MprisPlugin::minimumRate() const
@@ -425,13 +469,22 @@ void MprisPlugin::Play()
 
 void MprisPlugin::Seek(int64_t offset)
 {
-    const int64_t newPosition = position() + offset;
-    SetPosition({}, newPosition);
+    const int64_t newPosition = std::max<int64_t>(0, position() + offset);
+    m_playerController->seek(static_cast<uint64_t>(newPosition / static_cast<int64_t>(Time::UsPerMs)));
 }
 
-void MprisPlugin::SetPosition(const QDBusObjectPath& /*path*/, int64_t position)
+void MprisPlugin::SetPosition(const QDBusObjectPath& path, int64_t position)
 {
-    m_playerController->seek(position / 1000);
+    if(position < 0) {
+        return;
+    }
+
+    const auto currentTrackId = m_currentMetaData.value(u"mpris:trackid"_s).value<QDBusObjectPath>();
+    if(path != currentTrackId) {
+        return;
+    }
+
+    m_playerController->seek(static_cast<uint64_t>(position / static_cast<int64_t>(Time::UsPerMs)));
 }
 
 QString MprisPlugin::currentCoverPath() const
@@ -450,9 +503,8 @@ void MprisPlugin::notify(const QString& name, const QVariant& value)
 
 void MprisPlugin::notify(const QVariantMap& properties)
 {
-    QDBusMessage msg = QDBusMessage::createSignal(QString::fromLatin1(MprisObjectPath), QString::fromLatin1(DbusPath),
-                                                  u"PropertiesChanged"_s);
-    msg.setArguments({QString::fromLatin1(PlayerEntity), properties, QStringList{}});
+    QDBusMessage msg = QDBusMessage::createSignal(MprisObjectPath, DbusPath, u"PropertiesChanged"_s);
+    msg.setArguments({PlayerEntity, properties, QStringList{}});
     QDBusConnection::sessionBus().send(msg);
 }
 
@@ -462,6 +514,7 @@ void MprisPlugin::trackChanged(const PlaylistTrack& playlistTrack)
 
     ++m_coverLoadGeneration;
 
+    m_currentPlaylistTrack = playlistTrack;
     m_currentMetaData.clear();
     m_currCoverKey.clear();
 
@@ -500,8 +553,8 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
             }
         };
 
-        m_currentMetaData[u"mpris:trackid"_s]   = formatTrackId(std::max(0, playlistTrack.indexInPlaylist));
-        m_currentMetaData[u"mpris:length"_s]    = static_cast<quint64>(track.duration() * 1000);
+        m_currentMetaData[u"mpris:trackid"_s]   = formatTrackId(playlistTrack);
+        m_currentMetaData[u"mpris:length"_s]    = static_cast<quint64>(track.duration() * Time::UsPerMs);
         m_currentMetaData[u"xesam:url"_s]       = QUrl::fromLocalFile(track.filepath()).toString();
         m_currentMetaData[u"xesam:title"_s]     = track.effectiveTitle();
         m_currentMetaData[u"xesam:album"_s]     = track.album();
@@ -547,7 +600,13 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
             m_currentMetaData.remove(u"mpris:artUrl"_s);
         }
 
-        qCDebug(MPRIS) << "Sending MPRIS data:" << m_currentMetaData;
+        if(MPRIS().isDebugEnabled()) {
+            auto logData{m_currentMetaData};
+            if(auto lyrics = logData.find(u"xesam:asText"_s); lyrics != logData.end()) {
+                lyrics.value() = u"<lyrics omitted: %1 characters>"_s.arg(lyrics.value().toString().size());
+            }
+            qCDebug(MPRIS) << "Sending MPRIS data:" << logData;
+        }
         Q_EMIT reloadMetadata();
     };
 

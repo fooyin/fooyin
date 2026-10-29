@@ -26,6 +26,9 @@
 namespace Fooyin::Scripting {
 QString num(const QStringList& vec);
 QString replace(const QStringList& vec);
+QString regexReplace(const QStringList& vec);
+QString regexMatch(const QStringList& vec);
+QString regexMatches(const QStringList& vec);
 QString ascii(const QStringList& vec);
 QString slice(const QStringList& vec);
 QString chop(const QStringList& vec);
@@ -41,6 +44,9 @@ QString split(const QStringList& vec);
 QString join(const QStringList& vec);
 QString len(const QStringList& vec);
 QString longest(const QStringList& vec);
+QString shortest(const QStringList& vec);
+QString strchr(const QStringList& vec);
+QString strrchr(const QStringList& vec);
 QString crlf(const QStringList& vec);
 QString tab(const QStringList& vec);
 QString swapPrefix(const QStringList& vec);
@@ -63,12 +69,16 @@ QString progress(const QStringList& vec);
 QString progress2(const QStringList& vec);
 QString doclink(const QStringList& vec);
 QString cmdlink(const QStringList& vec);
+QString applink(const QStringList& vec);
 QString urlencode(const QStringList& vec);
+QString crc32(const QStringList& vec);
+QString hex(const QStringList& vec);
 
 QString sep();
 
 ScriptResult strcmp(const QStringList& vec);
 ScriptResult stricmp(const QStringList& vec);
+ScriptResult regexTest(const QStringList& vec);
 ScriptResult longer(const QStringList& vec);
 ScriptResult isalpha(const QStringList& vec);
 ScriptResult isalnum(const QStringList& vec);

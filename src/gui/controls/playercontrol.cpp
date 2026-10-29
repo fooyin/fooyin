@@ -22,6 +22,7 @@
 #include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/widgets/toolbutton.h>
 #include <utils/actions/actionmanager.h>
@@ -30,10 +31,12 @@
 #include <utils/utils.h>
 
 #include <QAction>
+#include <QBoxLayout>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QMenu>
+#include <QResizeEvent>
 
 using namespace Qt::StringLiterals;
 
@@ -43,23 +46,30 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_playerController{playerController}
+    , m_layout{new QHBoxLayout(this)}
     , m_stop{new ToolButton(settings, this)}
     , m_prev{new ToolButton(settings, this)}
+    , m_pause{new ToolButton(settings, this)}
+    , m_play{new ToolButton(settings, this)}
     , m_playPause{new ToolButton(settings, this)}
     , m_next{new ToolButton(settings, this)}
+    , m_randomTrack{new ToolButton(settings, this)}
     , m_showStop{true}
     , m_showPrev{true}
+    , m_showPause{false}
+    , m_showPlay{false}
     , m_showPlayPause{true}
     , m_showNext{true}
+    , m_showRandomTrack{false}
+    , m_orientation{Qt::Horizontal}
+    , m_autoOrientation{true}
 {
-    auto* layout = new QHBoxLayout(this);
-    layout->setContentsMargins({});
-    layout->setSpacing(0);
+    m_layout->setContentsMargins({});
+    m_layout->setSpacing(0);
 
-    layout->addWidget(m_stop);
-    layout->addWidget(m_prev);
-    layout->addWidget(m_playPause);
-    layout->addWidget(m_next);
+    for(auto* button : {m_stop, m_prev, m_pause, m_play, m_playPause, m_next, m_randomTrack}) {
+        m_layout->addWidget(button);
+    }
 
     if(auto* stopCmd = m_actionManager->command(Constants::Actions::Stop)) {
         m_stop->setDefaultAction(stopCmd->action());
@@ -67,13 +77,25 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
     if(auto* prevCmd = m_actionManager->command(Constants::Actions::Previous)) {
         m_prev->setDefaultAction(prevCmd->action());
     }
+    if(auto* pauseCmd = m_actionManager->command(Constants::Actions::Pause)) {
+        m_pause->setDefaultAction(pauseCmd->action());
+    }
+    if(auto* playCmd = m_actionManager->command(Constants::Actions::Play)) {
+        m_play->setDefaultAction(playCmd->action());
+    }
     if(auto* playCmd = m_actionManager->command(Constants::Actions::PlayPause)) {
         m_playPause->setDefaultAction(playCmd->action());
     }
     if(auto* nextCmd = m_actionManager->command(Constants::Actions::Next)) {
         m_next->setDefaultAction(nextCmd->action());
     }
+    if(auto* randomTrackCmd = m_actionManager->command(Constants::Actions::RandomTrack)) {
+        m_randomTrack->setDefaultAction(randomTrackCmd->action());
+    }
 
+    m_pause->hide();
+    m_play->hide();
+    m_randomTrack->hide();
     updateIcons();
 
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &PlayerControl::stateChanged);
@@ -93,10 +115,17 @@ QString PlayerControl::layoutName() const
 
 void PlayerControl::saveLayoutData(QJsonObject& layout)
 {
-    layout["ShowStop"_L1]      = m_showStop;
-    layout["ShowPrevious"_L1]  = m_showPrev;
-    layout["ShowPlayPause"_L1] = m_showPlayPause;
-    layout["ShowNext"_L1]      = m_showNext;
+    layout["ShowStop"_L1]        = m_showStop;
+    layout["ShowPrevious"_L1]    = m_showPrev;
+    layout["ShowPause"_L1]       = m_showPause;
+    layout["ShowPlay"_L1]        = m_showPlay;
+    layout["ShowPlayPause"_L1]   = m_showPlayPause;
+    layout["ShowNext"_L1]        = m_showNext;
+    layout["ShowRandomTrack"_L1] = m_showRandomTrack;
+
+    if(!m_autoOrientation) {
+        layout["Orientation"_L1] = m_orientation;
+    }
 }
 
 void PlayerControl::loadLayoutData(const QJsonObject& layout)
@@ -112,19 +141,34 @@ void PlayerControl::loadLayoutData(const QJsonObject& layout)
     if(layout.contains("ShowPrevious"_L1)) {
         updateButton(m_prev, m_showPrev, layout.value("ShowPrevious"_L1).toBool());
     }
+    if(layout.contains("ShowPause"_L1)) {
+        updateButton(m_pause, m_showPause, layout.value("ShowPause"_L1).toBool());
+    }
+    if(layout.contains("ShowPlay"_L1)) {
+        updateButton(m_play, m_showPlay, layout.value("ShowPlay"_L1).toBool());
+    }
     if(layout.contains("ShowPlayPause"_L1)) {
         updateButton(m_playPause, m_showPlayPause, layout.value("ShowPlayPause"_L1).toBool());
     }
     if(layout.contains("ShowNext"_L1)) {
         updateButton(m_next, m_showNext, layout.value("ShowNext"_L1).toBool());
     }
+    if(layout.contains("ShowRandomTrack"_L1)) {
+        updateButton(m_randomTrack, m_showRandomTrack, layout.value("ShowRandomTrack"_L1).toBool());
+    }
+
+    if(layout.contains("Orientation"_L1)) {
+        const auto orientation = static_cast<Qt::Orientation>(layout.value("Orientation"_L1).toInt());
+        if(orientation == Qt::Horizontal || orientation == Qt::Vertical) {
+            m_orientation     = orientation;
+            m_autoOrientation = false;
+            updateOrientation();
+        }
+    }
 }
 
-void PlayerControl::contextMenuEvent(QContextMenuEvent* event)
+void PlayerControl::populateContextMenu(QMenu* menu)
 {
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-
     const auto setupButtonControl = [this, menu](const QString& title, ToolButton* button, bool* member) {
         auto* action = menu->addAction(title);
         action->setCheckable(true);
@@ -137,17 +181,62 @@ void PlayerControl::contextMenuEvent(QContextMenuEvent* event)
 
     setupButtonControl(tr("Show Stop"), m_stop, &m_showStop);
     setupButtonControl(tr("Show Previous"), m_prev, &m_showPrev);
+    setupButtonControl(tr("Show Pause"), m_pause, &m_showPause);
+    setupButtonControl(tr("Show Play"), m_play, &m_showPlay);
     setupButtonControl(tr("Show Play/Pause"), m_playPause, &m_showPlayPause);
     setupButtonControl(tr("Show Next"), m_next, &m_showNext);
+    setupButtonControl(tr("Show Random Track"), m_randomTrack, &m_showRandomTrack);
+    menu->addSeparator();
 
+    Gui::addOrientationMenu(menu, this,
+                            {.title      = tr("Orientation"),
+                             .automatic  = tr("Automatic"),
+                             .horizontal = tr("Horizontal"),
+                             .vertical   = tr("Vertical")},
+                            m_autoOrientation, m_orientation, [this](std::optional<Qt::Orientation> orientation) {
+                                m_autoOrientation = !orientation.has_value();
+                                if(orientation) {
+                                    m_orientation = *orientation;
+                                }
+                                updateOrientation();
+                            });
+}
+
+void PlayerControl::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    populateContextMenu(menu);
     menu->popup(event->globalPos());
+}
+
+void PlayerControl::resizeEvent(QResizeEvent* event)
+{
+    updateOrientation();
+    FyWidget::resizeEvent(event);
+}
+
+void PlayerControl::updateOrientation()
+{
+    auto orientation{m_orientation};
+    if(m_autoOrientation) {
+        orientation = automaticOrientation();
+    }
+    const auto direction = orientation == Qt::Vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight;
+    if(m_layout->direction() != direction) {
+        m_layout->setDirection(direction);
+    }
+    updateOrientationConstraints(m_autoOrientation, m_layout->minimumSize());
 }
 
 void PlayerControl::updateIcons() const
 {
     m_stop->setIcon(Gui::iconFromTheme(Constants::Icons::Stop));
     m_prev->setIcon(Gui::iconFromTheme(Constants::Icons::Prev));
+    m_pause->setIcon(Gui::iconFromTheme(Constants::Icons::Pause));
+    m_play->setIcon(Gui::iconFromTheme(Constants::Icons::Play));
     m_next->setIcon(Gui::iconFromTheme(Constants::Icons::Next));
+    m_randomTrack->setIcon(Gui::iconFromTheme(Constants::Icons::RandomPlay));
     stateChanged(m_playerController->playState());
 }
 

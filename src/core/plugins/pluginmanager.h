@@ -23,6 +23,9 @@
 
 #include "plugininfo.h"
 
+#include <ranges>
+#include <unordered_set>
+
 namespace Fooyin {
 class SettingsManager;
 
@@ -38,6 +41,7 @@ public:
 
     const PluginInfoMap& allPluginInfo() const;
     PluginInfo* pluginInfo(const QString& name) const;
+    [[nodiscard]] QString removalError(const QString& identifier) const;
 
     void findPlugins(const QStringList& pluginDirs);
     void loadPlugins();
@@ -45,7 +49,7 @@ public:
     template <typename T, typename Function>
     void initialisePlugins(Function function)
     {
-        for(auto& [name, plugin] : m_plugins) {
+        for(auto& plugin : m_plugins | std::views::values) {
             if(const auto& pluginInstance = qobject_cast<T*>(plugin->root())) {
                 function(pluginInstance);
                 plugin->initialise();
@@ -53,11 +57,18 @@ public:
         }
     }
 
-    static bool installPlugin(const QString& filepath);
     void unloadPlugins();
 
 private:
+#ifdef Q_OS_WIN
+    void registerPluginDirectory(const QString& filepath);
+#endif
+
     SettingsManager* m_settings;
     PluginInfoMap m_plugins;
+    std::unordered_map<QString, QString> m_removalErrors;
+#ifdef Q_OS_WIN
+    std::unordered_set<QString> m_registeredPluginDirectories;
+#endif
 };
 } // namespace Fooyin

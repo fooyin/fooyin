@@ -19,6 +19,7 @@
 
 #include "splitterwidget.h"
 
+#include "fysplitter.h"
 #include "internalguisettings.h"
 #include "widgets/dummy.h"
 
@@ -38,13 +39,13 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
-class SplitterHandle : public QSplitterHandle
+class SplitterHandle : public FySplitterHandle
 {
     Q_OBJECT
 
 public:
-    explicit SplitterHandle(Qt::Orientation type, QSplitter* parent = nullptr)
-        : QSplitterHandle{type, parent}
+    explicit SplitterHandle(Qt::Orientation type, FySplitter* parent = nullptr)
+        : FySplitterHandle{type, parent}
     { }
 
     void showHandle(bool show);
@@ -85,7 +86,7 @@ void SplitterHandle::setHandleSize(int size)
 
 QSize SplitterHandle::sizeHint() const
 {
-    QSize size = QSplitterHandle::sizeHint();
+    QSize size = FySplitterHandle::sizeHint();
 
     if(m_customSize >= 0) {
         if(orientation() == Qt::Vertical) {
@@ -105,7 +106,7 @@ void SplitterHandle::mousePressEvent(QMouseEvent* event)
         event->ignore();
     }
     else {
-        QSplitterHandle::mousePressEvent(event);
+        FySplitterHandle::mousePressEvent(event);
     }
 }
 
@@ -115,7 +116,7 @@ void SplitterHandle::mouseMoveEvent(QMouseEvent* event)
         event->ignore();
     }
     else {
-        QSplitterHandle::mouseMoveEvent(event);
+        FySplitterHandle::mouseMoveEvent(event);
     }
 }
 
@@ -125,13 +126,13 @@ void SplitterHandle::mouseReleaseEvent(QMouseEvent* event)
         event->ignore();
     }
     else {
-        QSplitterHandle::mouseReleaseEvent(event);
+        FySplitterHandle::mouseReleaseEvent(event);
     }
 }
 
 void SplitterHandle::enterEvent(QEnterEvent* event)
 {
-    QSplitterHandle::enterEvent(event);
+    FySplitterHandle::enterEvent(event);
 
     if(m_lockHandle) {
         setCursor({});
@@ -144,28 +145,31 @@ void SplitterHandle::enterEvent(QEnterEvent* event)
 void SplitterHandle::paintEvent(QPaintEvent* event)
 {
     if(m_showHandle) {
-        QSplitterHandle::paintEvent(event);
+        FySplitterHandle::paintEvent(event);
     }
 }
 
-class Splitter : public QSplitter
+class Splitter : public FySplitter
 {
     Q_OBJECT
 
 public:
     explicit Splitter(Qt::Orientation type, SettingsManager* settings, QWidget* parent = nullptr)
-        : QSplitter{type, parent}
+        : FySplitter{type, parent}
         , m_settings{settings}
     {
         setObjectName(u"Splitter"_s);
         setChildrenCollapsible(false);
+        setLockedWidgetsResizeAdjacentOnly(m_settings->value<Settings::Gui::ResizeLockedAdjacentOnly>());
+        m_settings->subscribe<Settings::Gui::ResizeLockedAdjacentOnly>(this,
+                                                                       &FySplitter::setLockedWidgetsResizeAdjacentOnly);
     }
 
     void setCustomHandleSize(int size);
     void clearCustomHandleSize();
 
 protected:
-    QSplitterHandle* createHandle() override
+    FySplitterHandle* createHandle() override
     {
         auto* handle = new SplitterHandle(orientation(), this);
 
@@ -260,6 +264,11 @@ bool SplitterWidget::canAddWidget() const
     return true;
 }
 
+bool SplitterWidget::canInsertWidget(int index) const
+{
+    return index >= 0 && std::cmp_less_equal(index, m_widgets.size());
+}
+
 bool SplitterWidget::canMoveWidget(int index, int newIndex) const
 {
     const auto count = static_cast<int>(m_widgets.size());
@@ -341,23 +350,11 @@ int SplitterWidget::addWidget(FyWidget* widget)
 
 void SplitterWidget::insertWidget(int index, FyWidget* widget)
 {
-    if(!widget) {
+    if(!widget || !canInsertWidget(index)) {
         return;
     }
-
-    if(index < 0 || std::cmp_greater(index, m_widgets.size())) {
-        return;
-    }
-
-    if(std::cmp_less(index, m_widgets.size()) && qobject_cast<Dummy*>(m_widgets.at(index))) {
-        m_widgets.at(index)->deleteLater();
-        m_widgets[index] = widget;
-        m_splitter->replaceWidget(index, widget);
-    }
-    else {
-        m_widgets.insert(m_widgets.begin() + index, widget);
-        m_splitter->insertWidget(index, widget);
-    }
+    m_widgets.insert(m_widgets.begin() + index, widget);
+    m_splitter->insertWidget(index, widget);
 }
 
 void SplitterWidget::removeWidget(int index)
@@ -373,22 +370,8 @@ void SplitterWidget::removeWidget(int index)
         m_widgets[index] = dummy;
     }
     else {
-        m_widgets.at(index)->deleteLater();
-        m_widgets.erase(m_widgets.begin() + index);
+        WidgetContainer::removeWidget(index);
     }
-}
-
-void SplitterWidget::replaceWidget(int index, FyWidget* newWidget)
-{
-    if(index < 0 || std::cmp_greater_equal(index, m_widgets.size())) {
-        return;
-    }
-
-    auto* replacedWidget = m_splitter->replaceWidget(index, newWidget);
-    m_widgets.erase(m_widgets.begin() + index);
-    replacedWidget->deleteLater();
-
-    m_widgets.insert(m_widgets.begin() + index, newWidget);
 }
 
 void SplitterWidget::moveWidget(int index, int newIndex)
@@ -396,6 +379,82 @@ void SplitterWidget::moveWidget(int index, int newIndex)
     auto* widget = m_widgets.at(index);
     Utils::move(m_widgets, index, newIndex);
     m_splitter->insertWidget(newIndex, widget);
+}
+
+FyWidget* SplitterWidget::takeWidget(int index)
+{
+    if(index < 0 || std::cmp_greater_equal(index, m_widgets.size())) {
+        return nullptr;
+    }
+
+    auto* widget = m_widgets.at(index);
+    m_widgets.erase(m_widgets.begin() + index);
+    widget->hide();
+    widget->setParent(nullptr);
+    return widget;
+}
+
+QJsonObject SplitterWidget::saveChildState(int index) const
+{
+    return {{"Locked"_L1, isWidgetLocked(index)}};
+}
+
+void SplitterWidget::restoreChildState(int index, const QJsonObject& state)
+{
+    setWidgetLocked(index, state.value("Locked"_L1).toBool());
+}
+
+void SplitterWidget::restoreEditingState(const QJsonObject& state)
+{
+    const auto children = state.value("Children"_L1).toArray();
+    const auto count    = std::min(children.size(), static_cast<qsizetype>(m_widgets.size()));
+
+    // Unlock first so restoring locks doesn't depend on child order
+    for(int i{0}; i < count; ++i) {
+        if(!children.at(i).toObject().value("Locked"_L1).toBool()) {
+            setWidgetLocked(i, false);
+        }
+    }
+    for(int i{0}; i < count; ++i) {
+        restoreChildState(i, children.at(i).toObject());
+    }
+
+    restoreState(QByteArray::fromBase64(state.value("State"_L1).toString().toUtf8()));
+}
+
+void SplitterWidget::expandSingleWidget()
+{
+    if(m_widgets.size() == 1) {
+        m_splitter->setLocked(0, false);
+        m_splitter->refresh();
+    }
+}
+
+bool SplitterWidget::isWidgetLocked(int index) const
+{
+    return index >= 0 && std::cmp_less(index, m_widgets.size()) && m_splitter->isLocked(index);
+}
+
+bool SplitterWidget::canLockWidget(int index) const
+{
+    if(index < 0 || std::cmp_greater_equal(index, m_widgets.size())) {
+        return false;
+    }
+    if(m_splitter->isLocked(index)) {
+        return true;
+    }
+
+    for(int i{0}; i < m_splitter->count(); ++i) {
+        if(i != index && !m_splitter->isLocked(i)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool SplitterWidget::setWidgetLocked(int index, bool locked)
+{
+    return m_splitter->setLocked(index, locked);
 }
 
 QString SplitterWidget::name() const
@@ -425,6 +484,20 @@ void SplitterWidget::saveLayoutData(QJsonObject& layout)
 {
     layout["State"_L1] = QString::fromUtf8(saveState().toBase64());
 
+    QJsonArray locked;
+    bool hasLockedWidget{false};
+    for(int index{0}; index < m_splitter->count(); ++index) {
+        const bool isLocked = m_splitter->isLocked(index);
+        locked.append(isLocked);
+        hasLockedWidget |= isLocked;
+    }
+    if(hasLockedWidget) {
+        layout["Locked"_L1] = locked;
+    }
+    else {
+        layout.remove("Locked"_L1);
+    }
+
     if(m_customSpacing >= 0) {
         layout["Spacing"_L1] = m_customSpacing;
     }
@@ -452,6 +525,22 @@ void SplitterWidget::loadLayoutData(const QJsonObject& layout)
         WidgetContainer::loadWidgets(children);
     }
 
+    // Apply policies that affect geometry before restoring the splitter state
+    // restoreState() lays out the children immediately, so applying locks afterwards could preserve sizes
+    // that were already scaled to the current window rather than their saved sizes
+    for(int index{0}; index < m_splitter->count(); ++index) {
+        m_splitter->setLocked(index, false);
+    }
+
+    if(layout.contains("Locked"_L1)) {
+        const QJsonArray locked = layout.value("Locked"_L1).toArray();
+        for(int index{0}; index < qMin(m_splitter->count(), locked.size()); ++index) {
+            if(locked.at(index).toBool()) {
+                m_splitter->setLocked(index, true);
+            }
+        }
+    }
+
     if(layout.contains("State"_L1)) {
         restoreState(QByteArray::fromBase64(layout.value("State"_L1).toString().toUtf8()));
     }
@@ -469,6 +558,15 @@ void SplitterWidget::finalise()
         addDummy();
         addDummy();
     }
+}
+
+FyWidget* SplitterWidget::exchangeWidgetImpl(int index, FyWidget* newWidget)
+{
+    auto* previous = qobject_cast<FyWidget*>(m_splitter->replaceWidget(index, newWidget));
+    if(previous) {
+        m_widgets[index] = newWidget;
+    }
+    return previous;
 }
 } // namespace Fooyin
 

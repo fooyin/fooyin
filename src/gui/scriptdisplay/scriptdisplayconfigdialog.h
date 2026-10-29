@@ -23,11 +23,11 @@
 
 #include "scriptdisplay.h"
 
-class QCheckBox;
 class QComboBox;
 class QTabWidget;
 
 namespace Fooyin {
+class BackgroundConfigWidget;
 class ColourButton;
 class FontButton;
 class ScriptTextEdit;
@@ -42,25 +42,25 @@ public:
 protected:
     [[nodiscard]] ScriptDisplay::ConfigData config() const override;
     void setConfig(const ScriptDisplay::ConfigData& config) override;
+    void mergeExternalConfig(const ScriptDisplay::ConfigData& previous,
+                             const ScriptDisplay::ConfigData& current) override;
 
 private:
     ScriptTextEdit* m_script;
+    QComboBox* m_trackPreference;
 
     QTabWidget* m_tabs;
     QWidget* m_formatTab;
     QWidget* m_styleTab;
+    BackgroundConfigWidget* m_background;
 
     QComboBox* m_horizontalAlignment;
     QComboBox* m_verticalAlignment;
 
-    QCheckBox* m_customFont;
     FontButton* m_font;
 
-    QCheckBox* m_customTextColour;
     ColourButton* m_textColour;
-    QCheckBox* m_customBackgroundColour;
     ColourButton* m_backgroundColour;
-    QCheckBox* m_customLinkColour;
     ColourButton* m_linkColour;
 };
 } // namespace Fooyin

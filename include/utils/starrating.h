@@ -21,17 +21,22 @@
 
 #include "fyutils_export.h"
 
+#include <QColor>
 #include <QMetaType>
 #include <QPixmap>
 #include <QPolygonF>
 #include <QSize>
 #include <QVariant>
 
+#include <array>
+
 class QPainter;
 class QPalette;
 class QRect;
 
 namespace Fooyin {
+using RatingStarColours = std::array<QColor, 5>;
+
 class FYUTILS_EXPORT StarRating
 {
 public:
@@ -44,14 +49,19 @@ public:
     StarRating();
     StarRating(float rating, int maxStarCount);
     StarRating(float rating, int maxStarCount, int scale);
+    StarRating(float rating, int maxStarCount, int scale, const RatingStarColours& colours);
+    StarRating(float rating, int maxStarCount, int scale, const RatingStarColours& colours,
+               const QColor& unratedColour);
 
     [[nodiscard]] float rating() const;
     [[nodiscard]] int maxStarCount() const;
     [[nodiscard]] int starScale() const;
+    [[nodiscard]] Qt::Orientation orientation() const;
 
     void setRating(float rating);
     void setMaxStarCount(int maxStarCount);
     void setStarScale(int scale);
+    void setOrientation(Qt::Orientation orientation);
 
     void paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode,
                Qt::Alignment alignment = Qt::AlignLeft, bool selected = false) const;
@@ -67,6 +77,9 @@ private:
     float m_rating;
     int m_maxCount;
     int m_scale;
+    RatingStarColours m_colours;
+    QColor m_unratedColour;
+    Qt::Orientation m_orientation;
 };
 } // namespace Fooyin
 

@@ -6,9 +6,14 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 include(CheckBuildDir)
 include(CheckLevel)
 
+if(BUILD_TESTING)
+    list(APPEND VCPKG_MANIFEST_FEATURES fooyin-tests)
+    list(REMOVE_DUPLICATES VCPKG_MANIFEST_FEATURES)
+endif()
+
 project(
     fooyin
-    VERSION 0.11.1
+    VERSION 0.14.1
     DESCRIPTION "A customisable music player"
     HOMEPAGE_URL "https://www.fooyin.org"
     LANGUAGES CXX
@@ -17,7 +22,14 @@ project(
 set(FOOYIN_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 set(FOOYIN_VERSION_MINOR ${PROJECT_VERSION_MINOR})
 set(FOOYIN_VERSION_PATCH ${PROJECT_VERSION_PATCH})
-set(FOOYIN_VERSION ${PROJECT_VERSION})
+
+set(FOOYIN_VERSION_SUFFIX
+    "$ENV{FOOYIN_VERSION_SUFFIX}"
+    CACHE STRING
+    "Suffix appended to the fooyin version (e.g. .g01234567)"
+)
+
+set(FOOYIN_VERSION "${PROJECT_VERSION}${FOOYIN_VERSION_SUFFIX}")
 set(FOOYIN_SOVERSION "0.0.0")
 set(FOOYIN_PLUGIN_VERSION "0.0")
 
@@ -32,6 +44,10 @@ set(CMAKE_LINK_DEPENDS_NO_SHARED ON)
 # Needed for some 3rdparty libs
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
+if(POLICY CMP0177)
+    cmake_policy(SET CMP0177 NEW)
+endif()
+
 if(NOT DEFINED CMAKE_SKIP_BUILD_RPATH)
     set(CMAKE_SKIP_BUILD_RPATH OFF)
 endif()
@@ -43,10 +59,7 @@ if(NOT DEFINED CMAKE_INSTALL_RPATH_USE_LINK_PATH)
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE
-        "Release"
-        CACHE STRING "" FORCE
-    )
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
 endif()
 
 set(FOOYIN_REQUIRED_CXX_FEATURES cxx_std_23)
@@ -59,12 +72,14 @@ fooyin_option(BUILD_SENSITIVE_TESTING "Build time-sensitive tests" OFF)
 fooyin_option(BUILD_PLUGINS "Build plugins included with fooyin" ON)
 set(PLUGIN_SELECTION
     ""
-    CACHE STRING "Plugin selection filter. Empty builds the default set; use 'none' to build no plugins; use a semicolon
+    CACHE STRING
+    "Plugin selection filter. Empty builds the default set; use 'none' to build no plugins; use a semicolon
 or comma-separated list to build only those plugins, or prefix names with '-' to exclude them from the default set
 (for example: -discord or discord,lyrics)."
 )
 fooyin_option(BUILD_ALSA "Build ALSA plugin" ON)
 fooyin_option(FETCH_PROJECTM "Fetch projectM when a system package is unavailable" OFF)
+fooyin_option(ENABLE_SYSTEM_GLM "Use system GLM package for fetched projectM" OFF)
 fooyin_option(BUILD_TRANSLATIONS "Build translation files" ON)
 fooyin_option(BUILD_CCACHE "Build using CCache if found" ON)
 fooyin_option(BUILD_PCH "Build with precompiled header support" OFF)
@@ -75,8 +90,7 @@ fooyin_option(INSTALL_HEADERS "Install public development headers" OFF)
 
 if(UNIX)
     list(
-        APPEND
-        FOOYIN_COMPILE_OPTIONS
+        APPEND FOOYIN_COMPILE_OPTIONS
         -Wall
         -Wextra
         -Wpedantic
@@ -105,10 +119,9 @@ if(UNIX)
 endif()
 
 list(
-    APPEND
-    FOOYIN_COMPILE_DEFINITIONS
+    APPEND FOOYIN_COMPILE_DEFINITIONS
     QT_USE_QSTRINGBUILDER
-    QT_DISABLE_DEPRECATED_BEFORE=0x060200
+    QT_DISABLE_DEPRECATED_BEFORE=0x060400
     QT_NO_CAST_FROM_ASCII
     QT_NO_CAST_TO_ASCII
     QT_NO_CAST_FROM_BYTEARRAY
@@ -119,15 +132,18 @@ list(
 
 # ---- Dependencies ----
 
+if(WIN32)
+    set(FOOYIN_QT_MIN_VERSION 6.8)
+else()
+    set(FOOYIN_QT_MIN_VERSION 6.4)
+endif()
+
 find_package(
-    Qt6 REQUIRED
-    COMPONENTS Core
-               Widgets
-               Gui
-               Sql
-               Concurrent
-               Network
-               Svg
+    Qt6
+    ${FOOYIN_QT_MIN_VERSION}
+    REQUIRED
+    COMPONENTS Core Widgets Gui Sql Concurrent Network Svg
+    OPTIONAL_COMPONENTS OpenGL
 )
 set_package_properties(Qt6Core PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Widgets PROPERTIES TYPE REQUIRED)
@@ -143,13 +159,20 @@ if(APPLE)
     fooyin_prepare_macos_icu()
 endif()
 find_package(Taglib REQUIRED taglib>=1.12)
+find_package(ZLIB REQUIRED)
+if(APPLE AND NOT LibArchive_ROOT)
+    foreach(homebrew_libarchive_root "/opt/homebrew/opt/libarchive" "/usr/local/opt/libarchive")
+        if(EXISTS "${homebrew_libarchive_root}")
+            set(LibArchive_ROOT "${homebrew_libarchive_root}")
+            break()
+        endif()
+    endforeach()
+endif()
+find_package(LibArchive REQUIRED)
 find_package(
-    FFmpeg REQUIRED
-    COMPONENTS AVCODEC
-               AVFILTER
-               AVFORMAT
-               AVUTIL
-               SWRESAMPLE
+    FFmpeg
+    REQUIRED
+    COMPONENTS AVCODEC AVFILTER AVFORMAT AVUTIL SWRESAMPLE
 )
 
 if(WIN32)
@@ -192,11 +215,12 @@ elseif(INSTALL_FHS)
 else()
     set(BIN_INSTALL_DIR .)
     set(LIB_INSTALL_DIR .)
-    set(TRANSLATION_INSTALL_DIR "${BIN_INSTALL_DIR}/translations")
+    set(TRANSLATION_INSTALL_DIR translations)
 endif()
 
 fooyin_convert_to_relative_path(BIN_INSTALL_DIR)
 fooyin_convert_to_relative_path(LIB_INSTALL_DIR)
+set(FOOYIN_LIBRARY_INSTALL_DIR "${LIB_INSTALL_DIR}")
 
 set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/fooyin")
 set(CMAKECONFIG_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/fooyin")
@@ -210,6 +234,8 @@ file(RELATIVE_PATH FOOYIN_RELATIVE_TRANSLATION_PATH "/${BIN_INSTALL_DIR}" "/${TR
 
 if(APPLE)
     set(FOOYIN_PLUGIN_INSTALL_DIR "${FOOYIN_BUNDLE_NAME}/Contents/PlugIns")
+elseif(LIB_INSTALL_DIR STREQUAL ".")
+    set(FOOYIN_PLUGIN_INSTALL_DIR plugins)
 else()
     set(FOOYIN_PLUGIN_INSTALL_DIR "${LIB_INSTALL_DIR}/plugins")
 endif()
@@ -232,24 +258,19 @@ else()
 endif()
 
 if(BUILD_PCH)
-    file(
-        GENERATE
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/empty_pch.cpp
-        CONTENT "/*dummy pch file*/"
-    )
+    file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/empty_pch.cpp CONTENT "/*dummy pch file*/")
     add_library(fooyin_pch STATIC ${CMAKE_CURRENT_BINARY_DIR}/empty_pch.cpp)
     target_precompile_headers(fooyin_pch PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/app/pch.h)
     set_target_properties(
         fooyin_pch
-        PROPERTIES POSITION_INDEPENDENT_CODE ON
-                   CXX_VISIBILITY_PRESET hidden
-                   VISIBILITY_INLINES_HIDDEN YES
+        PROPERTIES POSITION_INDEPENDENT_CODE ON CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN YES
     )
     target_link_libraries(
         fooyin_pch
-        PRIVATE Qt::Core
-                Qt::Gui
-                Qt::Widgets
+        PRIVATE #
+            Qt::Core
+            Qt::Gui
+            Qt::Widgets
     )
     target_compile_features(fooyin_pch PRIVATE ${FOOYIN_REQUIRED_CXX_FEATURES})
     target_compile_definitions(fooyin_pch PRIVATE ${FOOYIN_COMPILE_DEFINITIONS})
@@ -270,8 +291,8 @@ target_include_directories(fooyin_config PUBLIC $<BUILD_INTERFACE:${CMAKE_CURREN
 add_library(fooyin_lib OBJECT)
 
 target_include_directories(
-    fooyin_lib PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
-                      "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/app>"
+    fooyin_lib
+    PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>" "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/app>"
 )
 
 set_target_properties(fooyin_lib PROPERTIES VERSION "${FOOYIN_VERSION}" EXPORT_NAME Fooyin)
@@ -280,38 +301,39 @@ set_target_properties(fooyin_lib PROPERTIES VERSION "${FOOYIN_VERSION}" EXPORT_N
 
 set_property(
     GLOBAL
-    PROPERTY MIMETYPES
-             x-content/audio-player
-             application/x-cue
-             audio/x-mpegurl
-             audio/x-scpls
-             application/vnd.apple.mpegurl
-             application/ogg
-             application/x-ogg
-             application/x-ogm-audio
-             audio/flac
-             audio/ogg
-             audio/vorbis
-             audio/aac
-             audio/mp4
-             audio/mpeg
-             audio/mpegurl
-             audio/vnd.rn-realaudio
-             audio/x-flac
-             audio/x-oggflac
-             audio/x-vorbis
-             audio/x-vorbis+ogg
-             audio/x-speex
-             audio/x-wav
-             audio/x-wavpack
-             audio/x-ape
-             audio/x-mp3
-             audio/x-mpeg
-             audio/x-mpegurl
-             audio/x-ms-wma
-             audio/x-musepack
-             video/x-ms-asf
-             application/vnd.ms-asf
+    PROPERTY
+        MIMETYPES
+            x-content/audio-player
+            application/x-cue
+            audio/x-mpegurl
+            audio/x-scpls
+            application/vnd.apple.mpegurl
+            application/ogg
+            application/x-ogg
+            application/x-ogm-audio
+            audio/flac
+            audio/ogg
+            audio/vorbis
+            audio/aac
+            audio/mp4
+            audio/mpeg
+            audio/mpegurl
+            audio/vnd.rn-realaudio
+            audio/x-flac
+            audio/x-oggflac
+            audio/x-vorbis
+            audio/x-vorbis+ogg
+            audio/x-speex
+            audio/x-wav
+            audio/x-wavpack
+            audio/x-ape
+            audio/x-mp3
+            audio/x-mpeg
+            audio/x-mpegurl
+            audio/x-ms-wma
+            audio/x-musepack
+            video/x-ms-asf
+            application/vnd.ms-asf
 )
 
 add_subdirectory(src)
@@ -321,14 +343,16 @@ list(REMOVE_DUPLICATES FOOYIN_MIMETYPES)
 
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/dist/linux/org.fooyin.fooyin.desktop.in"
-    "${CMAKE_BINARY_DIR}/dist/linux/org.fooyin.fooyin.desktop" @ONLY
+    "${CMAKE_BINARY_DIR}/dist/linux/org.fooyin.fooyin.desktop"
+    @ONLY
 )
 
 target_link_libraries(
     fooyin_lib
-    PUBLIC Fooyin::Core
-           Fooyin::Gui
-           Fooyin::Utils
+    PUBLIC #
+        Fooyin::Core
+        Fooyin::Gui
+        Fooyin::Utils
 )
 
 target_compile_features(fooyin_lib PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
@@ -345,17 +369,10 @@ if(BUILD_TRANSLATIONS)
     find_package(Qt6 REQUIRED COMPONENTS LinguistTools)
 
     if(Qt6LinguistTools_FOUND)
-        set(translation_dir
-            "${PROJECT_SOURCE_DIR}/data/translations"
-            CACHE PATH "Path to the *.ts translation files"
-        )
+        set(translation_dir "${PROJECT_SOURCE_DIR}/data/translations" CACHE PATH "Path to the *.ts translation files")
 
         # Detect new .ts files
-        set_property(
-            DIRECTORY
-            APPEND
-            PROPERTY CMAKE_CONFIGURE_DEPENDS ${translation_dir}
-        )
+        set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${translation_dir})
 
         file(GLOB_RECURSE ts_files ${translation_dir}/*.ts)
         # Exclude the translation source
@@ -363,21 +380,10 @@ if(BUILD_TRANSLATIONS)
 
         set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/data")
 
-        qt_add_lrelease(
-            fooyin_lib
-            TS_FILES
-            ${ts_files}
-            NO_GLOBAL_TARGET
-            QM_FILES_OUTPUT_VARIABLE
-            qm_files
-        )
+        qt_add_lrelease(fooyin_lib TS_FILES ${ts_files} NO_GLOBAL_TARGET QM_FILES_OUTPUT_VARIABLE qm_files)
 
         if(NOT CMAKE_SKIP_INSTALL_RULES)
-            install(
-                FILES ${qm_files}
-                DESTINATION ${TRANSLATION_INSTALL_DIR}
-                COMPONENT fooyin
-            )
+            install(FILES ${qm_files} DESTINATION ${TRANSLATION_INSTALL_DIR} COMPONENT fooyin)
         endif()
     endif()
 endif()
@@ -385,6 +391,7 @@ endif()
 # ---- Fooyin testing ----
 
 if(BUILD_TESTING)
+    enable_testing()
     find_package(Qt6 REQUIRED COMPONENTS Test)
     set_package_properties(Qt6Test PROPERTIES TYPE REQUIRED)
     find_package(GTest)
@@ -393,7 +400,12 @@ endif()
 
 # ---- Fooyin executable ----
 
-set(SOURCES ${SOURCES} src/app/commandline.cpp src/app/main.cpp)
+set(SOURCES
+    #[[gersemi: sort]] #
+    ${SOURCES}
+    src/app/commandline.cpp
+    src/app/main.cpp
+)
 
 qt_add_resources(SOURCES data/data.qrc)
 qt_add_resources(SOURCES data/icons.qrc)
@@ -410,16 +422,22 @@ target_compile_options(fooyin PRIVATE ${FOOYIN_COMPILE_OPTIONS})
 target_link_options(fooyin INTERFACE ${FOOYIN_LINK_OPTIONS})
 target_link_libraries(
     fooyin
-    PRIVATE KDAB::kdsingleapplication
-            Qt6::Network
-            fooyin_version
-            fooyin_lib
-            Fooyin::CorePrivate
+    PRIVATE #
+        KDAB::kdsingleapplication
+        Qt6::Network
+        fooyin_version
+        fooyin_lib
+        Fooyin::CorePrivate
 )
 
 if(WIN32)
     target_include_directories(fooyin PRIVATE ${GETOPT_INCLUDE_DIR})
-    target_link_libraries(fooyin PRIVATE ${GETOPT_LIBRARY})
+    target_link_libraries(
+        fooyin
+        PRIVATE #
+            ${GETOPT_LIBRARY}
+            RuntimeObject
+    )
     configure_file(data/win_version.rc.in win_version.rc @ONLY)
     target_sources(fooyin PRIVATE win_version.rc)
 endif()
@@ -442,7 +460,8 @@ if(APPLE)
     endif()
     configure_file(
         "${CMAKE_CURRENT_SOURCE_DIR}/cmake/FooyinMacBundleFixup.cmake.in"
-        "${CMAKE_CURRENT_BINARY_DIR}/cmake/FooyinMacBundleFixup.cmake" @ONLY
+        "${CMAKE_CURRENT_BINARY_DIR}/cmake/FooyinMacBundleFixup.cmake"
+        @ONLY
     )
 endif()
 
@@ -472,7 +491,9 @@ endif()
 # ---- Fooyin uninstall ----
 
 configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/FooyinUninstall.cmake.in" "${CMAKE_BINARY_DIR}/cmake_uninstall.cmake" @ONLY
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/FooyinUninstall.cmake.in"
+    "${CMAKE_BINARY_DIR}/cmake_uninstall.cmake"
+    @ONLY
 )
 add_custom_target(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
 

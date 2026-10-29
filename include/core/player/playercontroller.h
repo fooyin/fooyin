@@ -45,6 +45,8 @@ public:
 
     /** Returns the current state (playing, paused or stopped). */
     [[nodiscard]] Player::PlayState playState() const;
+    /** Returns whether playback has started since the application was launched. */
+    [[nodiscard]] bool playbackStarted() const;
 
     /** Returns the current playlist mode (shuffle and repeat flags). */
     [[nodiscard]] Playlist::PlayModes playMode() const;
@@ -53,10 +55,16 @@ public:
     [[nodiscard]] uint64_t currentPosition() const;
     /** Returns the listened playback time in ms used for playcount thresholding. */
     [[nodiscard]] uint64_t currentTimeListened() const;
+    /** Returns the listened playback time in ms required to count the current track as played. */
+    [[nodiscard]] uint64_t playedThreshold() const;
     /** Returns whether the current track has already crossed the played threshold. */
     [[nodiscard]] bool playedThresholdReached() const;
     /** Returns the current bitrate. */
     [[nodiscard]] int bitrate() const;
+    /** Returns the decoder backend used for the current track. */
+    [[nodiscard]] QString decoder() const;
+    /** Returns current post-DSP output and processing information. */
+    [[nodiscard]] Engine::PlaybackOutputInfo playbackOutputInfo() const;
     /** Returns @c true if the current track can be seeked. */
     [[nodiscard]] bool currentTrackSeekable() const;
 
@@ -77,6 +85,8 @@ public:
 
     /** Starts playback of the current playlist. */
     void play();
+    /** Restarts the current track when already playing, otherwise starts playback. */
+    void playFromStart();
 
     /** Toggles playback. */
     void playPause();
@@ -97,16 +107,29 @@ public:
     void reset();
 
     void setPlayMode(Playlist::PlayModes mode);
+
+    /** Returns the current track’s temporary A–B repeat range, in ms. */
+    [[nodiscard]] Player::ABRepeatRange abRepeatRange() const;
+    /** Optionally seek to the new start when an enabled repeat range is adjusted. */
+    void setABRepeatStart(uint64_t ms, bool seekToStart = false);
+    void setABRepeatEnd(uint64_t ms);
+    void setABRepeatEnabled(bool enabled);
+    void clearABRepeat();
+
     void seek(uint64_t ms);
     void seekForward(uint64_t delta);
     void seekBackward(uint64_t delta);
     void startPlayback(const UId& playlistId);
     void startPlayback(Playlist* playlist);
+    void startPlayback(Playlist* playlist, const QueueTracks& trackReferences);
 
+    void restorePlaybackQueue(PlaybackQueueSnapshot snapshot);
     void restoreCurrentPosition(uint64_t ms);
     void restorePlaybackProgress(uint64_t positionMs, uint64_t timeListenedMs);
     void setCurrentPosition(uint64_t ms);
     void setBitrate(int bitrate);
+    void setDecoder(const QString& decoder);
+    void setPlaybackOutputInfo(const Fooyin::Engine::PlaybackOutputInfo& info);
     void setCurrentTrackSeekable(bool seekable);
 
     void changeCurrentTrack(const Track& track);
@@ -129,7 +152,13 @@ public:
     [[nodiscard]] Player::PlaybackSnapshot playbackSnapshot() const;
 
     [[nodiscard]] const PlaybackQueue& playbackQueue() const;
+    [[nodiscard]] PlaybackQueueMode playbackQueueMode() const;
     [[nodiscard]] int queuedTracksCount() const;
+    [[nodiscard]] PlaybackQueueItemId currentQueueItemId() const;
+    [[nodiscard]] PlaybackQueueItemId stopAfterQueueItemId() const;
+
+    void playQueueItem(PlaybackQueueItemId id);
+    void stopAfterQueueItem(PlaybackQueueItemId id);
 
     /** Queues the @p track to be played at the end of the current track. */
     void queueTrack(const Track& track);
@@ -140,12 +169,19 @@ public:
     void queueTrackNext(const PlaylistTrack& track);
     void queueTracksNext(const TrackList& tracks);
     void queueTracksNext(const QueueTracks& tracks);
+    void queueTracksNextAndPlay(const QueueTracks& tracks);
 
     void dequeueTrack(const Track& track);
     void dequeueTrack(const PlaylistTrack& track);
     void dequeueTracks(const TrackList& tracks);
     void dequeueTracks(const QueueTracks& tracks);
     void dequeueTracks(const std::vector<int>& indexes);
+    void dequeueQueueItems(const std::vector<PlaybackQueueItemId>& ids);
+
+    void insertQueueTracks(int index, const QueueTracks& tracks);
+    void moveQueueItems(int index, const std::vector<PlaybackQueueItemId>& ids);
+    void reorderQueueItems(const std::vector<PlaybackQueueItemId>& ids);
+    void updateQueuedTrackMetadata(const TrackList& tracks);
 
     void replaceTracks(const TrackList& tracks);
     void replaceTracks(const QueueTracks& tracks);
@@ -162,7 +198,9 @@ Q_SIGNALS:
     void positionChanged(uint64_t ms);
     void positionChangedSeconds(uint64_t seconds);
     void bitrateChanged(int bitrate);
+    void playbackOutputInfoChanged(const Fooyin::Engine::PlaybackOutputInfo& info);
     void positionMoved(uint64_t ms);
+    void abRepeatRangeChanged();
 
     /*! Emitted when the actual playback track changes. */
     void currentTrackChanged(const Fooyin::Track& track);
@@ -187,8 +225,11 @@ Q_SIGNALS:
     void tracksDequeued(const Fooyin::QueueTracks& tracks);
     void trackIndexesDequeued(const Fooyin::PlaylistIndexes& indexes);
     void trackQueueChanged(const Fooyin::QueueTracks& removed, const Fooyin::QueueTracks& added);
+    void playbackQueueModeChanged(Fooyin::PlaybackQueueMode queueMode);
 
     void playbackSnapshotChanged(const Fooyin::Player::PlaybackSnapshot& snapshot);
+    void playbackQueuePositionChanged(Fooyin::PlaybackQueueItemId currentItemId);
+    void stopAfterQueueItemChanged(Fooyin::PlaybackQueueItemId queueItemId);
 
 private:
     std::unique_ptr<PlayerControllerPrivate> p;

@@ -22,25 +22,35 @@
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <gui/fywidget.h>
+#include <gui/trackdisplay.h>
+#include <gui/widgets/backgroundconfig.h>
 
 #include <QString>
 
 class QContextMenuEvent;
 class QHBoxLayout;
 class QJsonObject;
+class QPaintEvent;
 class QAction;
 class QResizeEvent;
 class QTextBrowser;
 
 namespace Fooyin {
+class Application;
+class ScriptContextService;
 class ActionManager;
+class BackgroundImageSource;
 class Command;
+class CoverProvider;
 class Playlist;
 class PlayerController;
 class PlaylistHandler;
 class PropertiesDialog;
 class ScriptCommandHandler;
+class ScriptSubscription;
 class SettingsManager;
+class TrackSelectionController;
+class WidgetBackground;
 class WidgetContext;
 
 class ScriptDisplay : public FyWidget
@@ -58,11 +68,12 @@ public:
         int horizontalAlignment{Qt::AlignLeft};
         int verticalAlignment{Qt::AlignVCenter};
         bool showScrollBar{true};
+        TrackDisplayPreference trackPreference{TrackDisplayPreference::PlayingTrack};
+        BackgroundConfig background{};
     };
 
-    ScriptDisplay(PlayerController* playerController, PlaylistHandler* playlistHandler,
-                  ScriptCommandHandler* commandHandler, ActionManager* actionManager, SettingsManager* settings,
-                  QWidget* parent = nullptr);
+    ScriptDisplay(Application* core, TrackSelectionController* trackSelection, CoverProvider* coverProvider,
+                  ScriptCommandHandler* commandHandler, ActionManager* actionManager, QWidget* parent = nullptr);
     ~ScriptDisplay() override;
 
     [[nodiscard]] QString name() const override;
@@ -81,10 +92,14 @@ public:
     [[nodiscard]] QSize sizeHint() const override;
     [[nodiscard]] QSize minimumSizeHint() const override;
 
+Q_SIGNALS:
+    void configChanged();
+
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
     void openConfigDialog() override;
     void resizeEvent(QResizeEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
 
 private:
     [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
@@ -100,12 +115,17 @@ private:
     void activateLink(const QString& link) const;
 
     PlayerController* m_playerController;
+    ScriptContextService* m_scriptContext;
     PlaylistHandler* m_playlistHandler;
+    TrackSelectionController* m_trackSelection;
     ScriptCommandHandler* m_commandHandler;
     ActionManager* m_actionManager;
     SettingsManager* m_settings;
 
+    BackgroundImageSource* m_backgroundSource;
+    WidgetBackground* m_background;
     ScriptParser m_scriptParser;
+    ScriptSubscription* m_scriptSubscription;
 
     QHBoxLayout* m_layout;
     QTextBrowser* m_text;

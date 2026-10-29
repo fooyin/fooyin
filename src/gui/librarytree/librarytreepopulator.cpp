@@ -19,15 +19,12 @@
 
 #include "librarytreepopulator.h"
 
-#include "librarytreescriptenvironment.h"
-#include "scripting/scriptvariableproviders.h"
+#include "librarytreescriptcontext.h"
 
 #include <core/constants.h>
 #include <core/scripting/scriptparser.h>
-#include <gui/guiutils.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/scripting/scriptformatter.h>
-#include <utils/settings/settingsmanager.h>
 
 #include <unordered_map>
 #include <unordered_set>
@@ -48,37 +45,54 @@ QString identityText(const RichText& richText)
 class LibraryTreePopulatorPrivate
 {
 public:
-    explicit LibraryTreePopulatorPrivate(LibraryTreePopulator* self, LibraryManager* libraryManager,
-                                         SettingsManager* settings)
+    explicit LibraryTreePopulatorPrivate(LibraryTreePopulator* self)
         : m_self{self}
-        , m_settings{settings}
-        , m_scriptEnvironment{libraryManager}
     {
-        m_scriptContext.environment = &m_scriptEnvironment;
-        m_parser.addProvider(artworkMarkerVariableProvider());
-        m_parser.addProvider(libraryTreeNodeVariableProvider());
+        m_scriptContext.values = m_nodeValues;
     }
 
     LibraryTreeItem* getOrInsertItem(const Md5Hash& key, const LibraryTreeItem* parent, const QString& title,
                                      const RichText& richTitle, const QString& sortTitle, int level);
+    Md5Hash nodeKey(const Md5Hash& parentKey, const QString& title);
+    void setNodeScriptSource(LibraryTreeItem& item, const Track& track, int valueIndex, const QStringList& levels);
+    void refreshNodeScriptSource(LibraryTreeItem& item, const Track& track);
+    QString evaluateNodeTitle(LibraryTreeItem& item);
     void updateRichTitle(LibraryTreeItem& item);
     PendingTreeData buildBatchData();
+    PendingTreeData buildCompleteData();
     void clearBatchData();
     void iterateTrack(const Track& track);
     bool runBatch(int size);
 
     LibraryTreePopulator* m_self;
-    SettingsManager* m_settings;
+    LibraryTreePopulationContext m_context;
+
+    bool mayRun() const
+    {
+        return m_self->mayRun();
+    }
+
+    void setContext(LibraryTreePopulationContext context)
+    {
+        m_context = std::move(context);
+        m_formatter.setBaseFont(m_context.font);
+        m_scriptContext.libraries   = &m_context.libraries;
+        m_options.ratingSymbols     = m_context.ratingSymbols;
+        m_options.escapeRichText    = true;
+        m_options.useVariousArtists = m_context.useVarious;
+    }
 
     ScriptParser m_parser;
     ScriptFormatter m_formatter;
-    LibraryTreeScriptEnvironment m_scriptEnvironment;
+    LibraryTreeScriptValues m_nodeValues{libraryTreeScriptValues(1, 0)};
+    ScriptEvaluationOptions m_options;
     ScriptContext m_scriptContext;
-    ScriptContext m_identityScriptContext;
 
     LibraryTreeGrouping m_currentGrouping;
+    ParsedScript m_groupScript;
     ParsedScript m_displayScript;
     ParsedScript m_sortScript;
+    bool m_usesNodeCounts{false};
 
     LibraryTreeItem m_root;
     ItemKeyMap m_items;
@@ -86,8 +100,10 @@ public:
     std::unordered_set<Md5Hash> m_touchedItems;
     std::unordered_set<Md5Hash> m_emittedItems;
     std::unordered_map<Md5Hash, std::unordered_set<Md5Hash>> m_childKeys;
+    std::unordered_map<Md5Hash, std::unordered_map<QString, Md5Hash>> m_nodeKeyCache;
     TrackList m_pendingTracks;
     size_t m_pendingTrackIndex{0};
+    LibraryTreePopulator::PopulationMode m_populationMode{LibraryTreePopulator::PopulationMode::Incremental};
 };
 
 LibraryTreeItem* LibraryTreePopulatorPrivate::getOrInsertItem(const Md5Hash& key, const LibraryTreeItem* parent,
@@ -109,22 +125,98 @@ LibraryTreeItem* LibraryTreePopulatorPrivate::getOrInsertItem(const Md5Hash& key
         child->setSortTitle(sortTitle);
     }
 
-    if(!m_emittedItems.contains(key) && !m_data.items.contains(key)) {
+    if(inserted) {
         m_data.nodes[parent->key()].push_back(key);
     }
     return child;
 }
 
+Md5Hash LibraryTreePopulatorPrivate::nodeKey(const Md5Hash& parentKey, const QString& title)
+{
+    auto& childKeys      = m_nodeKeyCache[parentKey];
+    auto [key, inserted] = childKeys.try_emplace(title);
+    if(inserted) {
+        key->second = Utils::generateMd5Hash(parentKey, title);
+    }
+    return key->second;
+}
+
+void LibraryTreePopulatorPrivate::setNodeScriptSource(LibraryTreeItem& item, const Track&, int valueIndex,
+                                                      const QStringList& levels)
+{
+    item.setTitleSource(levels.value(item.level()));
+    if(!m_usesNodeCounts) {
+        item.setScriptSource({});
+        return;
+    }
+    item.setScriptSource({.scriptIndex = 0, .valueIndex = valueIndex, .level = item.level()});
+}
+
+void LibraryTreePopulatorPrivate::refreshNodeScriptSource(LibraryTreeItem& item, const Track& track)
+{
+    const auto identityValues = m_parser.evaluate(m_groupScript, track, m_scriptContext, m_options)
+                                    .split(QLatin1StringView{Constants::UnitSeparator}, Qt::SkipEmptyParts);
+    const auto displayValues  = m_currentGrouping.groupingScript.isEmpty()
+                                  ? identityValues
+                                  : m_parser.evaluate(m_displayScript, track, m_scriptContext, m_options)
+                                        .split(QLatin1StringView{Constants::UnitSeparator});
+    for(int index{0}; const auto& value : identityValues) {
+        Md5Hash key;
+        const auto levels = value.split(u"||"_s);
+        for(int level{0}; const auto& text : levels) {
+            key = nodeKey(key, identityText(trimRichText(m_formatter.evaluate(text))));
+            if(level == item.level()) {
+                if(key == item.key()) {
+                    const int displayIndex = displayValues.size() == identityValues.size() ? index : 0;
+                    setNodeScriptSource(item, track, displayIndex, displayValues.value(displayIndex).split(u"||"_s));
+                    return;
+                }
+                break;
+            }
+            ++level;
+        }
+        ++index;
+    }
+}
+
+QString LibraryTreePopulatorPrivate::evaluateNodeTitle(LibraryTreeItem& item)
+{
+    if(item.scriptSource().scriptIndex < 0 || item.tracks().empty()) {
+        return item.titleSource();
+    }
+
+    const auto& track = item.tracks().front();
+    if(item.scriptSource().valueIndex < 0) {
+        refreshNodeScriptSource(item, track);
+    }
+
+    const auto& source = item.scriptSource();
+    if(source.valueIndex < 0) {
+        return {};
+    }
+
+    if(item.trackCount() == 1 && item.scriptChildCount() == 0) {
+        return item.titleSource();
+    }
+
+    const auto nodeValues = libraryTreeScriptValues(item.trackCount(), item.scriptChildCount());
+    auto context{m_scriptContext};
+    context.values           = nodeValues;
+    const auto displayValues = m_parser.evaluate(m_displayScript, track, context, m_options)
+                                   .split(QLatin1StringView{Constants::UnitSeparator}, Qt::SkipEmptyParts);
+    return displayValues.value(source.valueIndex).section(u"||"_s, source.level, source.level);
+}
+
 void LibraryTreePopulatorPrivate::updateRichTitle(LibraryTreeItem& item)
 {
-    const QString title
-        = resolveLibraryTreeNodeVariables(item.titleSource(), item.trackCount(), item.scriptChildCount());
+    const QString title = evaluateNodeTitle(item);
     item.setRichTitle(trimRichText(m_formatter.evaluate(title)));
 }
 
 PendingTreeData LibraryTreePopulatorPrivate::buildBatchData()
 {
     PendingTreeData data;
+    data.generation   = m_context.generation;
     data.nodes        = m_data.nodes;
     data.trackParents = m_data.trackParents;
 
@@ -150,6 +242,22 @@ PendingTreeData LibraryTreePopulatorPrivate::buildBatchData()
     return data;
 }
 
+PendingTreeData LibraryTreePopulatorPrivate::buildCompleteData()
+{
+    for(auto& [key, item] : m_items) {
+        item.setScriptChildCount(static_cast<int>(m_childKeys[key].size()));
+        updateRichTitle(item);
+        item.setPending(true);
+    }
+
+    PendingTreeData data;
+    data.generation   = m_context.generation;
+    data.items        = std::move(m_items);
+    data.nodes        = std::move(m_data.nodes);
+    data.trackParents = std::move(m_data.trackParents);
+    return data;
+}
+
 void LibraryTreePopulatorPrivate::clearBatchData()
 {
     for(const auto& key : m_touchedItems) {
@@ -162,58 +270,71 @@ void LibraryTreePopulatorPrivate::clearBatchData()
 
 void LibraryTreePopulatorPrivate::iterateTrack(const Track& track)
 {
-    const QString displayField = m_parser.evaluate(m_displayScript, track, m_scriptContext);
-    if(displayField.isNull()) {
+    const QString identityField = m_parser.evaluate(m_groupScript, track, m_scriptContext, m_options);
+    if(identityField.isNull()) {
         return;
     }
-    const QString sortField
-        = m_sortScript.input.isEmpty() ? displayField : m_parser.evaluate(m_sortScript, track, m_scriptContext);
+    const QString displayField   = m_currentGrouping.groupingScript.isEmpty()
+                                     ? identityField
+                                     : m_parser.evaluate(m_displayScript, track, m_scriptContext, m_options);
+    const QString sortField      = m_sortScript.input.isEmpty()
+                                     ? identityField
+                                     : m_parser.evaluate(m_sortScript, track, m_scriptContext, m_options);
+    const auto identityValues    = identityField.split(QLatin1StringView{Constants::UnitSeparator}, Qt::SkipEmptyParts);
+    const auto displayValues     = m_currentGrouping.groupingScript.isEmpty()
+                                     ? identityValues
+                                     : displayField.split(QLatin1StringView{Constants::UnitSeparator});
+    const auto sortValues        = m_sortScript.input.isEmpty()
+                                     ? identityValues
+                                     : sortField.split(QLatin1StringView{Constants::UnitSeparator}, Qt::SkipEmptyParts);
+    const bool pairDisplayValues = displayValues.size() == identityValues.size();
+    const bool pairSortValues    = sortValues.size() == identityValues.size();
 
-    const QStringList displayValues = displayField.split(QLatin1String{Constants::UnitSeparator}, Qt::SkipEmptyParts);
-    const QStringList sortValues    = sortField.split(QLatin1String{Constants::UnitSeparator}, Qt::SkipEmptyParts);
-    const bool pairSortValues       = displayValues.size() == sortValues.size();
+    for(int valueIndex{0}; const auto& identityValue : identityValues) {
+        const LibraryTreeItem* parent = &m_root;
+        const auto identityItems      = identityValue.split(u"||"_s);
+        const int displayIndex        = pairDisplayValues ? valueIndex : 0;
+        const auto displayItems       = m_currentGrouping.groupingScript.isEmpty()
+                                          ? identityItems
+                                          : displayValues.value(displayIndex).split(u"||"_s);
+        const auto sortItems          = m_sortScript.input.isEmpty() ? identityItems
+                                      : pairSortValues               ? sortValues.value(valueIndex).split(u"||"_s)
+                                                                     : QStringList{};
+        const bool pairSortItems      = identityItems.size() == sortItems.size();
 
-    for(int valueIndex{0}; const QString& displayValue : displayValues) {
-        if(displayValue.isNull()) {
-            continue;
-        }
-
-        const LibraryTreeItem* parent  = &m_root;
-        const QStringList displayItems = displayValue.split(u"||"_s);
-        const QStringList sortItems    = pairSortValues ? sortValues.value(valueIndex).split(u"||"_s) : QStringList{};
-        const bool pairSortItems       = displayItems.size() == sortItems.size();
-
-        for(int level{0}; const QString& item : displayItems) {
-            const QString identityItem = resolveLibraryTreeNodeVariables(item, 0, 0);
-            const RichText richTitle   = trimRichText(m_formatter.evaluate(identityItem));
-            QString title              = identityText(richTitle);
-
-            const auto key          = Utils::generateMd5Hash(parent->key(), title);
-            const QString sortTitle = [&] {
-                if(!pairSortItems) {
-                    return title;
-                }
-                const QString sortItem = resolveLibraryTreeNodeVariables(sortItems.value(level), 0, 0);
-                return identityText(trimRichText(m_formatter.evaluate(sortItem)));
-            }();
-
-            auto* node = getOrInsertItem(key, parent, title, richTitle, sortTitle.isEmpty() ? title : sortTitle, level);
-            node->setTitleSource(item);
-
+        for(int level{0}; const auto& identityItem : identityItems) {
+            const auto identityRichTitle = trimRichText(m_formatter.evaluate(identityItem));
+            const QString groupingTitle  = identityText(identityRichTitle);
+            const auto key               = nodeKey(parent->key(), groupingTitle);
+            const auto richTitle         = m_currentGrouping.groupingScript.isEmpty()
+                                             ? identityRichTitle
+                                             : trimRichText(m_formatter.evaluate(displayItems.value(level)));
+            const QString title          = identityText(richTitle);
+            const QString sortTitle      = pairSortItems
+                                             ? identityText(trimRichText(m_formatter.evaluate(sortItems.value(level))))
+                                             : groupingTitle;
+            auto* node = getOrInsertItem(key, parent, title, richTitle, sortTitle.isEmpty() ? groupingTitle : sortTitle,
+                                         level);
+            if(node->tracks().empty()) {
+                setNodeScriptSource(*node, track, displayIndex, displayItems);
+            }
+            if(node->scriptSource().scriptIndex < 0) {
+                node->setTitleSource(displayItems.value(level));
+            }
             node->addTrack(track);
 
-            auto [batchNode, inserted] = m_data.items.try_emplace(key, LibraryTreeItem{title, nullptr, level});
-            if(inserted) {
-                batchNode->second.setKey(key);
-                batchNode->second.setPending(true);
-                batchNode->second.setTitleSource(item);
-                batchNode->second.setRichTitle(richTitle);
-                batchNode->second.setSortTitle(sortTitle.isEmpty() ? title : sortTitle);
+            if(m_populationMode == LibraryTreePopulator::PopulationMode::Incremental) {
+                auto [batchNode, inserted] = m_data.items.try_emplace(key, LibraryTreeItem{title, nullptr, level});
+                if(inserted) {
+                    batchNode->second.setKey(key);
+                    batchNode->second.setPending(true);
+                    setNodeScriptSource(batchNode->second, track, displayIndex, displayItems);
+                    batchNode->second.setRichTitle(richTitle);
+                    batchNode->second.setSortTitle(sortTitle.isEmpty() ? groupingTitle : sortTitle);
+                }
+                batchNode->second.addTrack(track);
             }
-            batchNode->second.addTrack(track);
-
             m_data.trackParents[track.id()].push_back(node->key());
-
             parent = node;
             ++level;
         }
@@ -230,7 +351,7 @@ bool LibraryTreePopulatorPrivate::runBatch(int size)
     const size_t batchEnd = std::min(m_pendingTrackIndex + static_cast<size_t>(size), m_pendingTracks.size());
 
     for(size_t index{m_pendingTrackIndex}; index < batchEnd; ++index) {
-        if(!m_self->mayRun()) {
+        if(!mayRun()) {
             return false;
         }
 
@@ -240,74 +361,84 @@ bool LibraryTreePopulatorPrivate::runBatch(int size)
         }
     }
 
-    if(!m_self->mayRun()) {
+    if(!mayRun()) {
         return false;
     }
 
-    Q_EMIT m_self->populated(std::make_shared<PendingTreeData>(buildBatchData()));
-
-    clearBatchData();
     m_pendingTrackIndex = batchEnd;
 
     const auto remaining = static_cast<int>(m_pendingTracks.size() - m_pendingTrackIndex);
+
+    if(m_populationMode == LibraryTreePopulator::PopulationMode::Incremental) {
+        Q_EMIT m_self->populated(std::make_shared<PendingTreeData>(buildBatchData()));
+        clearBatchData();
+    }
+    else if(remaining == 0) {
+        Q_EMIT m_self->populated(std::make_shared<PendingTreeData>(buildCompleteData()));
+    }
+
     return runBatch(std::min(remaining, BatchSize));
 }
 
-LibraryTreePopulator::LibraryTreePopulator(LibraryManager* libraryManager, SettingsManager* settings, QObject* parent)
+LibraryTreePopulator::LibraryTreePopulator(QObject* parent)
     : Worker{parent}
-    , p{std::make_unique<LibraryTreePopulatorPrivate>(this, libraryManager, settings)}
+    , p{std::make_unique<LibraryTreePopulatorPrivate>(this)}
 { }
 
 LibraryTreePopulator::~LibraryTreePopulator() = default;
 
-void LibraryTreePopulator::setFont(const QFont& font)
+void LibraryTreePopulator::run(const LibraryTreeGrouping& grouping, const TrackList& tracks,
+                               LibraryTreePopulationContext context, PopulationMode mode)
 {
-    p->m_formatter.setBaseFont(font);
-}
+    if(!startWork(context.stopToken)) {
+        return;
+    }
 
-void LibraryTreePopulator::run(const LibraryTreeGrouping& grouping, const TrackList& tracks, bool useVarious)
-{
-    setState(Running);
+    p->setContext(std::move(context));
 
     p->m_data.clear();
     p->m_items.clear();
     p->m_touchedItems.clear();
     p->m_emittedItems.clear();
     p->m_childKeys.clear();
-
-    p->m_scriptEnvironment.setRatingStarSymbols(Gui::ratingStarSymbols(*p->m_settings));
-    p->m_scriptEnvironment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true, useVarious);
-    p->m_scriptEnvironment.setNodeVariablePolicy(LibraryTreeNodePolicy::Unresolved);
+    p->m_nodeKeyCache.clear();
 
     if(std::exchange(p->m_currentGrouping, grouping) != grouping) {
-        p->m_displayScript = p->m_parser.parse(p->m_currentGrouping.script);
-        p->m_sortScript    = p->m_currentGrouping.sortScript.isEmpty()
-                               ? ParsedScript{}
-                               : p->m_parser.parse(p->m_currentGrouping.sortScript);
+        p->m_displayScript  = p->m_parser.parse(p->m_currentGrouping.script);
+        p->m_sortScript     = p->m_currentGrouping.sortScript.isEmpty()
+                                ? ParsedScript{}
+                                : p->m_parser.parse(p->m_currentGrouping.sortScript);
+        p->m_groupScript    = p->m_currentGrouping.groupingScript.isEmpty()
+                                ? p->m_displayScript
+                                : p->m_parser.parse(p->m_currentGrouping.groupingScript);
+        p->m_usesNodeCounts = usesLibraryTreeNodeVariables(p->m_displayScript.input);
     }
 
     p->m_pendingTracks     = tracks;
     p->m_pendingTrackIndex = 0;
+    p->m_populationMode    = mode;
     const bool success     = p->runBatch(InitialBatchSize);
 
     setState(Idle);
 
     if(success) {
-        Q_EMIT finished();
+        Q_EMIT populationFinished(p->m_context.generation, p->m_context.requestId);
     }
 }
 
-void LibraryTreePopulator::updateItems(ItemKeyMap items, bool useVarious)
+void LibraryTreePopulator::updateItems(ItemKeyMap items, LibraryTreePopulationContext context)
 {
-    setState(Running);
+    if(!startWork(context.stopToken)) {
+        return;
+    }
 
-    p->m_scriptEnvironment.setRatingStarSymbols(Gui::ratingStarSymbols(*p->m_settings));
-    p->m_scriptEnvironment.setEvaluationPolicy(TrackListContextPolicy::Unresolved, {}, true, useVarious);
-    p->m_scriptEnvironment.setNodeVariablePolicy(LibraryTreeNodePolicy::Unresolved);
+    p->setContext(std::move(context));
 
     PendingTreeData data;
+    data.generation = p->m_context.generation;
+
     for(auto& [key, item] : items) {
-        if(!mayRun()) {
+        if(!p->mayRun()) {
             setState(Idle);
             return;
         }
@@ -316,7 +447,7 @@ void LibraryTreePopulator::updateItems(ItemKeyMap items, bool useVarious)
     }
 
     Q_EMIT populated(std::make_shared<PendingTreeData>(std::move(data)));
-    Q_EMIT finished();
+    Q_EMIT populationFinished(p->m_context.generation, p->m_context.requestId);
 
     setState(Idle);
 }

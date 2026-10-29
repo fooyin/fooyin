@@ -22,6 +22,7 @@
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <gui/widgets/gradienteditor.h>
+#include <utils/timeconstants.h>
 
 #include <QContextMenuEvent>
 #include <QFont>
@@ -122,12 +123,6 @@ float interpolate(std::span<const float> values, size_t index, float t)
     return (a0 * y1) + (a1 * m0) + (a2 * m1) + (a3 * y2);
 }
 
-int updateIntervalFromFps(int fps)
-{
-    const int clampedFps = std::clamp(fps, MinUpdateFps, MaxUpdateFps);
-    return std::max(1, 1000 / clampedFps);
-}
-
 QFont fontFromString(const QString& fontString)
 {
     QFont font;
@@ -154,7 +149,7 @@ void drawBarOutline(QPainter& painter, const QRectF& barRect, int barHeight, con
 }
 } // namespace
 
-SpectrumView::SpectrumView(EngineController* engine, PlayerController* playerController, QWidget* parent)
+SpectrumView::SpectrumView(EngineController* engine, QWidget* parent)
     : QWidget(parent)
     , m_session{engine->visualisationService()->createSession()}
     , m_geometryDpr{1.0}
@@ -172,16 +167,11 @@ SpectrumView::SpectrumView(EngineController* engine, PlayerController* playerCon
     setMouseTracking(true);
 
     m_axisRenderer.setConfig(m_config);
-
     m_session->requestBacklog(1000);
-
     m_elapsedTimer.start();
-    playStateChanged(playerController ? playerController->playState() : Player::PlayState::Stopped);
 
-    QObject::connect(playerController, &PlayerController::playStateChanged, this,
-                     [this](const Player::PlayState state) { playStateChanged(state); });
-    QObject::connect(playerController, &PlayerController::currentTrackChanged, this,
-                     &SpectrumView::currentTrackChanged);
+    engineStateChanged(engine->engineState());
+    QObject::connect(engine, &EngineController::engineStateChanged, this, &SpectrumView::engineStateChanged);
 }
 
 void SpectrumView::setConfig(const SpectrumWidget::ConfigData& config)
@@ -203,7 +193,7 @@ void SpectrumView::setConfig(const SpectrumWidget::ConfigData& config)
 
     m_session->requestBacklog(1000);
 
-    if(m_updateTimer.isActive() && !m_paused) {
+    if(m_updateTimer.isActive()) {
         startUpdateTimer();
     }
     if(!m_config.showTooltip) {
@@ -250,6 +240,7 @@ void SpectrumView::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == m_updateTimer.timerId()) {
         tick();
+        m_updateTimer.scheduleNext(this);
         return;
     }
 
@@ -273,36 +264,22 @@ void SpectrumView::contextMenuEvent(QContextMenuEvent* event)
     Q_EMIT contextMenuRequested(event->globalPos());
 }
 
-void SpectrumView::playStateChanged(Player::PlayState state)
+void SpectrumView::engineStateChanged(Engine::PlaybackState state)
 {
-    m_paused  = state != Player::PlayState::Playing;
-    m_stopped = state == Player::PlayState::Stopped;
+    m_paused  = state != Engine::PlaybackState::Playing;
+    m_stopped = state == Engine::PlaybackState::Stopped || state == Engine::PlaybackState::Error;
 
-    if(state == Player::PlayState::Stopped) {
+    if(m_stopped) {
         hideToolTip();
-        clearLevels();
-        return;
     }
 
-    if(state == Player::PlayState::Playing) {
-        startUpdateTimer();
-    }
-    else {
-        m_updateTimer.stop();
-    }
-}
-
-void SpectrumView::currentTrackChanged()
-{
-    if(m_paused || m_stopped) {
-        clearLevels();
-    }
+    startUpdateTimer();
 }
 
 void SpectrumView::startUpdateTimer()
 {
     m_elapsedTimer.restart();
-    m_updateTimer.start(updateIntervalFromFps(m_config.updateFps), Qt::PreciseTimer, this);
+    m_updateTimer.start(m_config.updateFps, this);
 }
 
 void SpectrumView::clearLevels()
@@ -346,28 +323,26 @@ size_t SpectrumView::effectiveBandCount() const
 
 void SpectrumView::tick()
 {
-    if(m_paused) {
-        m_updateTimer.stop();
-        return;
-    }
-
-    const int elapsedMs          = std::max(1, static_cast<int>(m_elapsedTimer.restart()));
-    const float dbRange          = static_cast<float>(std::max(1, m_config.amplitudeMaxDb - m_config.amplitudeMinDb));
-    const float barFalloffPerMs  = static_cast<float>(std::max(0, m_config.amplitudeGravity)) / dbRange / 1000.0F;
-    const float peakFalloffPerMs = static_cast<float>(std::max(0, m_config.peakGravity)) / dbRange / 1000.0F;
+    const double elapsedMs = static_cast<double>(m_elapsedTimer.nsecsElapsed()) / static_cast<double>(Time::NsPerMs);
+    m_elapsedTimer.restart();
+    const float dbRange = static_cast<float>(std::max(1, m_config.amplitudeMaxDb - m_config.amplitudeMinDb));
+    const float barFalloffPerMs
+        = static_cast<float>(std::max(0, m_config.amplitudeGravity)) / dbRange / static_cast<float>(Time::MsPerSecond);
+    const float peakFalloffPerMs
+        = static_cast<float>(std::max(0, m_config.peakGravity)) / dbRange / static_cast<float>(Time::MsPerSecond);
 
     QRegion dirtyRegion;
     bool changed{false};
 
     for(size_t index{0}; index < m_levels.size(); ++index) {
-        float& current = m_levels[index];
-        int& barHoldMs = m_barHoldRemainingMs[index];
+        float& current    = m_levels[index];
+        double& barHoldMs = m_barHoldRemainingMs[index];
         float next{current};
 
         if(m_config.amplitudesEnabled && barHoldMs > 0) {
-            barHoldMs = std::max(0, barHoldMs - elapsedMs);
+            barHoldMs = std::max(0.0, barHoldMs - elapsedMs);
         }
-        else if(m_config.amplitudesEnabled) {
+        else if(m_config.amplitudesEnabled || m_paused) {
             next = std::max(0.0F, current - (barFalloffPerMs * static_cast<float>(elapsedMs)));
         }
         if(next != current) {
@@ -376,11 +351,11 @@ void SpectrumView::tick()
         }
 
         if(m_config.peaksEnabled && index < m_peakLevels.size()) {
-            float& peak = m_peakLevels[index];
-            int& holdMs = m_peakHoldRemainingMs[index];
+            float& peak    = m_peakLevels[index];
+            double& holdMs = m_peakHoldRemainingMs[index];
 
             if(holdMs > 0) {
-                holdMs = std::max(0, holdMs - elapsedMs);
+                holdMs = std::max(0.0, holdMs - elapsedMs);
             }
             else {
                 const float nextPeak = std::max(current, peak - (peakFalloffPerMs * static_cast<float>(elapsedMs)));
@@ -392,22 +367,43 @@ void SpectrumView::tick()
         }
     }
 
-    changed |= renderLatestSpectrum();
+    if(!m_paused) {
+        changed |= renderLatestSpectrum();
+    }
 
     if(changed) {
         updateDirtyRegion(dirtyRegion);
         repaintDirtyRegion(dirtyRegion);
         refreshToolTip();
     }
+
+    if(m_paused) {
+        const bool barsActive  = std::ranges::any_of(m_levels, [](float level) { return level > 0.0F; });
+        const bool peaksActive = std::ranges::any_of(m_peakLevels, [](float level) { return level > 0.0F; });
+        const bool barHoldsActive
+            = std::ranges::any_of(m_barHoldRemainingMs, [](double remainingMs) { return remainingMs > 0; });
+        const bool peakHoldsActive
+            = std::ranges::any_of(m_peakHoldRemainingMs, [](double remainingMs) { return remainingMs > 0; });
+        if(!barsActive && !peaksActive && !barHoldsActive && !peakHoldsActive) {
+            m_updateTimer.stop();
+        }
+    }
 }
 
 bool SpectrumView::renderLatestSpectrum()
 {
     VisualisationSession::SpectrumWindow spectrum;
-    const auto windowFunction = toBackendWindowFunction(m_config.windowFunction);
-    const uint64_t endTimeMs  = m_session->currentTimeMs();
-    const bool gotSpectrum
-        = endTimeMs > 0 && m_session->getSpectrumWindowEndingAt(spectrum, endTimeMs, m_config.fftSize, windowFunction);
+    const uint64_t currentTimeMs = m_session->currentTimeMs();
+
+    bool gotSpectrum{false};
+    if(currentTimeMs > 0) {
+        const auto windowFunction = toBackendWindowFunction(m_config.windowFunction);
+        // Centre the analysis on audible playback using audio already buffered for output
+        gotSpectrum = m_config.fftSizingMode == FftSizingMode::Duration
+                        ? m_session->getSpectrumWindowForDuration(spectrum, currentTimeMs, m_config.fftDurationMs,
+                                                                  windowFunction)
+                        : m_session->getSpectrumWindow(spectrum, currentTimeMs, m_config.fftSize, windowFunction);
+    }
 
     if(!gotSpectrum) {
         return false;
@@ -428,11 +424,15 @@ bool SpectrumView::updateLevelsFromSpectrum(const VisualisationSession::Spectrum
     }
 
     ensureBandMap(spectrum);
-    std::vector<float> nextLevels(m_levels.size(), 0.0F);
+    std::vector nextLevels(m_levels.size(), 0.0F);
     bool changed{false};
 
     for(size_t band{0}; band < m_levels.size() && band < m_bandBinRanges.size(); ++band) {
         const BandBinRange& range = m_bandBinRanges[band];
+        if(!range.available) {
+            continue;
+        }
+
         float maxMagnitude{0.0F};
         for(size_t bin{range.startBin}; bin < range.endBin; ++bin) {
             maxMagnitude = std::max(maxMagnitude, bins[bin]);
@@ -660,9 +660,14 @@ void SpectrumView::drawPeak(QPainter& painter, const QRectF& barRect, int peakHe
         return;
     }
 
-    const double peakY = std::clamp(barRect.bottom() - static_cast<double>(peakHeight),
-                                    static_cast<double>(m_plotRect.top()), static_cast<double>(m_plotRect.bottom()));
-    painter.fillRect(QRectF{barRect.left(), peakY, barRect.width(), 1.0}, colour);
+    const auto dpr   = std::max<double>(m_geometryDpr, 1.0);
+    const auto peakY = std::clamp(barRect.bottom() - static_cast<double>(peakHeight), barRect.top(), barRect.bottom());
+    const auto deviceTop    = static_cast<int>(std::round(barRect.top() * dpr));
+    const auto deviceBottom = static_cast<int>(std::round(barRect.bottom() * dpr));
+    const auto deviceY
+        = std::clamp(static_cast<int>(std::round(peakY * dpr)), deviceTop, std::max(deviceTop, deviceBottom - 1));
+
+    painter.fillRect(QRectF{barRect.left(), static_cast<double>(deviceY) / dpr, barRect.width(), 1.0 / dpr}, colour);
 }
 
 void SpectrumView::drawCurveSpectrum(QPainter& painter, const QBrush& brush) const
@@ -935,10 +940,18 @@ void SpectrumView::ensureBandMap(const VisualisationSession::SpectrumWindow& spe
 
     const auto bins      = spectrum.bins();
     const float nyquist  = static_cast<float>(spectrum.sampleRate) * 0.5F;
-    const float minFreq  = std::clamp(effectiveMinFrequencyHz(), 1.0F, nyquist);
-    const float maxFreq  = std::clamp(effectiveMaxFrequencyHz(), minFreq + 1.0F, nyquist);
+    const float minFreq  = std::max(1.0F, effectiveMinFrequencyHz());
+    const float maxFreq  = std::max(minFreq + 1.0F, effectiveMaxFrequencyHz());
     const float binFreq  = static_cast<float>(spectrum.sampleRate) / static_cast<float>(spectrum.fftSize);
     const size_t lastBin = bins.empty() ? 0 : (bins.size() - 1);
+
+    const auto mapBand = [this, binFreq, lastBin, nyquist](size_t band, double centerFrequency) {
+        const double centerBin = centerFrequency / static_cast<double>(binFreq);
+        const size_t keyBin = std::clamp(static_cast<size_t>(std::llround(centerBin)), static_cast<size_t>(1), lastBin);
+        m_bandCenterBins[band]          = std::clamp(centerBin, 1.0, static_cast<double>(lastBin));
+        m_bandKeys[band]                = keyBin;
+        m_bandBinRanges[band].available = centerFrequency <= static_cast<double>(nyquist);
+    };
 
     if(m_config.labelMode == LabelMode::Notes) {
         const int noteCount   = std::max(1, m_config.maxNote - m_config.minNote + 1);
@@ -949,11 +962,7 @@ void SpectrumView::ensureBandMap(const VisualisationSession::SpectrumWindow& spe
         for(size_t band{0}; band < bandCount; ++band) {
             const double noteFrequency
                 = static_cast<double>(m_config.pitchHz) * std::pow(2.0, (static_cast<double>(band) - a4Pos) / octave);
-            const double centerBin = noteFrequency / static_cast<double>(binFreq);
-            const size_t keyBin
-                = std::clamp(static_cast<size_t>(std::llround(centerBin)), static_cast<size_t>(1), lastBin);
-            m_bandCenterBins[band] = std::clamp(centerBin, 1.0, static_cast<double>(lastBin));
-            m_bandKeys[band]       = keyBin;
+            mapBand(band, noteFrequency);
         }
     }
     else {
@@ -961,11 +970,7 @@ void SpectrumView::ensureBandMap(const VisualisationSession::SpectrumWindow& spe
         for(size_t band{0}; band < bandCount; ++band) {
             const double t = bandCount > 1 ? static_cast<double>(band) / static_cast<double>(bandCount - 1) : 0.0;
             const double centerFreq = static_cast<double>(minFreq) * std::pow(ratio, t);
-            const double centerBin  = centerFreq / static_cast<double>(binFreq);
-            const size_t keyBin
-                = std::clamp(static_cast<size_t>(std::llround(centerBin)), static_cast<size_t>(1), lastBin);
-            m_bandCenterBins[band] = std::clamp(centerBin, 1.0, static_cast<double>(lastBin));
-            m_bandKeys[band]       = keyBin;
+            mapBand(band, centerFreq);
         }
     }
 
@@ -987,11 +992,13 @@ void SpectrumView::ensureBandMap(const VisualisationSession::SpectrumWindow& spe
             endBin = std::min(lastBin + 1, endBin);
         }
 
-        m_bandBinRanges[band] = {.startBin = startBin, .endBin = endBin};
+        m_bandBinRanges[band].startBin = startBin;
+        m_bandBinRanges[band].endBin   = endBin;
     }
 
     for(size_t band{1}; band < bandCount; ++band) {
-        if(m_bandKeys[band] == m_bandKeys[band - 1]) {
+        if(m_bandBinRanges[band].available && m_bandBinRanges[band - 1].available
+           && m_bandKeys[band] == m_bandKeys[band - 1]) {
             m_lowResEnd = static_cast<int>(band);
         }
     }

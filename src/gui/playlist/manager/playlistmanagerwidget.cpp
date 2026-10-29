@@ -19,15 +19,17 @@
 
 #include "playlistmanagerwidget.h"
 
-#include "dialog/autoplaylistdialog.h"
 #include "playlist/playlistcontroller.h"
-#include "playlist/playlistinteractor.h"
+#include "playlist/presetregistry.h"
+#include "playlistmanagerdelegate.h"
 #include "playlistmanagermodel.h"
 
 #include <core/coresettings.h>
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
+#include <gui/iconloader.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/expandedtreeview.h>
 #include <utils/actions/actionmanager.h>
@@ -35,6 +37,7 @@
 #include <utils/actions/proxyaction.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/stringcollator.h>
 #include <utils/stringutils.h>
 #include <utils/utils.h>
 
@@ -50,7 +53,6 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QSignalBlocker>
-#include <QSortFilterProxyModel>
 #include <QVBoxLayout>
 
 using namespace Qt::StringLiterals;
@@ -121,7 +123,7 @@ PlaylistManagerWidget::PlaylistManagerWidget(ActionManager* actionManager, Playl
     , m_selectionController{selectionController}
     , m_settings{settings}
     , m_model{new PlaylistManagerModel(playlistInteractor, this)}
-    , m_proxyModel{new QSortFilterProxyModel(this)}
+    , m_proxyModel{new StringSortProxyModel(this)}
     , m_view{new PlaylistManagerView(this)}
     , m_context{new WidgetContext(this, Context{IdList{Id{"Fooyin.Context.PlaylistManager."}.append(id())}}, this)}
     , m_activateAction{new QAction(tr("Activate"), this)}
@@ -132,6 +134,9 @@ PlaylistManagerWidget::PlaylistManagerWidget(ActionManager* actionManager, Playl
     , m_renameCmd{m_actionManager->registerAction(m_renameAction, Constants::Actions::Rename, m_context->context())}
     , m_removeAction{new QAction(tr("&Remove playlist"), this)}
     , m_removeCmd{m_actionManager->registerAction(m_removeAction, Constants::Actions::Remove, m_context->context())}
+    , m_savePlaylistAction{new QAction(tr("&Save playlist…"), this)}
+    , m_savePlaylistCmd{m_actionManager->registerAction(m_savePlaylistAction, Constants::Actions::SavePlaylist,
+                                                        m_context->context())}
     , m_newPlaylistAction{new QAction(tr("Add &new playlist"), this)}
     , m_newPlaylistCmd{m_actionManager->registerAction(m_newPlaylistAction, Constants::Actions::NewPlaylist,
                                                        m_context->context())}
@@ -157,6 +162,7 @@ PlaylistManagerWidget::PlaylistManagerWidget(ActionManager* actionManager, Playl
     layout->addWidget(m_view);
 
     m_view->setModel(m_proxyModel);
+    m_view->setItemDelegate(new PlaylistManagerDelegate(this));
     m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_view->setSelectionMode(QAbstractItemView::SingleSelection);
     m_view->setSortingEnabled(true);
@@ -228,9 +234,7 @@ void PlaylistManagerWidget::loadLayoutData(const QJsonObject& layout)
 
     resetToPlaylistIndexOrder();
 
-    if(layout.contains(ActivateOnSelection)) {
-        m_activateOnSelection = layout.value(ActivateOnSelection).toBool();
-    }
+    m_activateOnSelection = layout.value(ActivateOnSelection).toBool(m_activateOnSelection);
 }
 
 void PlaylistManagerWidget::finalise()
@@ -314,9 +318,9 @@ void PlaylistManagerWidget::setupActions()
 
     m_activateAction->setStatusTip(tr("Activate the selected playlist"));
     m_activateAction->setShortcut(QKeySequence(Qt::Key_Return));
-    m_activateAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    m_activateAction->setShortcutContext(Qt::WidgetShortcut);
     m_activateAction->setShortcutVisibleInContextMenu(true);
-    addAction(m_activateAction);
+    m_view->addAction(m_activateAction);
     QObject::connect(m_activateAction, &QAction::triggered, this, &PlaylistManagerWidget::activateCurrentPlaylist);
 
     m_editAutoPlaylistAction->setStatusTip(tr("Edit the selected autoplaylist"));
@@ -340,6 +344,14 @@ void PlaylistManagerWidget::setupActions()
     m_removeCmd->setDefaultShortcut(QKeySequence::Delete);
     QObject::connect(m_removeAction, &QAction::triggered, this, &PlaylistManagerWidget::removeCurrentPlaylist);
 
+    m_savePlaylistAction->setStatusTip(tr("Save the selected playlist to the specified file"));
+    m_savePlaylistCmd->setAttribute(ProxyAction::UpdateText);
+    QObject::connect(m_savePlaylistAction, &QAction::triggered, this, [this]() {
+        if(const auto* playlist = actionPlaylist()) {
+            Q_EMIT savePlaylistRequested(playlist->id());
+        }
+    });
+
     m_newPlaylistAction->setStatusTip(tr("Create a new empty playlist"));
     m_newPlaylistAction->setShortcutVisibleInContextMenu(true);
     QObject::connect(m_newPlaylistAction, &QAction::triggered, this, [this]() {
@@ -349,18 +361,8 @@ void PlaylistManagerWidget::setupActions()
     });
 
     m_newAutoPlaylistAction->setStatusTip(tr("Create a new autoplaylist"));
-    QObject::connect(m_newAutoPlaylistAction, &QAction::triggered, this, [this]() {
-        auto* autoDialog = new AutoPlaylistDialog(Utils::getMainWindow());
-        autoDialog->setAttribute(Qt::WA_DeleteOnClose);
-        QObject::connect(autoDialog, &AutoPlaylistDialog::playlistEdited, autoDialog,
-                         [this](const QString& name, const QString& query, const QString& sortQuery, bool forceSorted) {
-                             if(auto* newPlaylist = m_playlistController->playlistHandler()->createNewAutoPlaylist(
-                                    name, query, sortQuery, forceSorted)) {
-                                 m_playlistController->changeCurrentPlaylist(newPlaylist);
-                             }
-                         });
-        autoDialog->show();
-    });
+    QObject::connect(m_newAutoPlaylistAction, &QAction::triggered, this,
+                     [this]() { Q_EMIT newAutoPlaylistRequested(); });
 }
 
 void PlaylistManagerWidget::updateActionState() const
@@ -389,6 +391,9 @@ void PlaylistManagerWidget::updateActionState() const
         }
         m_removeAction->setText(isAuto ? tr("&Remove autoplaylist") : tr("&Remove playlist"));
         m_removeAction->setEnabled(hasPlaylist);
+    }
+    if(m_savePlaylistAction) {
+        m_savePlaylistAction->setEnabled(hasPlaylist && playlist->trackCount() > 0);
     }
     if(m_newPlaylistAction && m_newPlaylistCmd) {
         m_newPlaylistAction->setShortcut(m_newPlaylistCmd->shortcut());
@@ -431,16 +436,13 @@ void PlaylistManagerWidget::activateCurrentPlaylist() const
     activatePlaylist(actionProxyIndex());
 }
 
-void PlaylistManagerWidget::editAutoPlaylist(Playlist* playlist) const
+void PlaylistManagerWidget::editAutoPlaylist(Playlist* playlist)
 {
     if(!playlist || !playlist->isAutoPlaylist()) {
         return;
     }
 
-    auto* autoDialog
-        = new AutoPlaylistDialog(m_playlistController->playlistHandler(), playlist, Utils::getMainWindow());
-    autoDialog->setAttribute(Qt::WA_DeleteOnClose);
-    autoDialog->show();
+    Q_EMIT editAutoPlaylistRequested(playlist->id());
 }
 
 void PlaylistManagerWidget::removePlaylist(const Playlist* playlist)
@@ -449,7 +451,7 @@ void PlaylistManagerWidget::removePlaylist(const Playlist* playlist)
         return;
     }
 
-    m_playlistController->playlistHandler()->removePlaylist(playlist->id());
+    m_playlistController->removePlaylist(playlist->id(), this);
 }
 
 void PlaylistManagerWidget::editCurrentAutoPlaylist()
@@ -492,7 +494,29 @@ void PlaylistManagerWidget::showPlaylistContextMenu(const QPoint& pos)
         }
 
         menu->addAction(m_renameCmd->action());
+
+        if(!playlist->isAutoPlaylist()) {
+            auto* lockAction = new QAction(Gui::iconFromTheme(Constants::Icons::ReadOnly), tr("Lock playlist"), menu);
+            lockAction->setCheckable(true);
+            lockAction->setChecked(playlist->isLocked());
+            QObject::connect(lockAction, &QAction::toggled, this, [this, id = playlist->id()](bool locked) {
+                m_playlistController->playlistHandler()->setPlaylistLocked(id, locked);
+            });
+            menu->addAction(lockAction);
+        }
+
         menu->addAction(m_removeCmd->action());
+
+        menu->addSeparator();
+
+        auto* presetsMenu  = menu->addMenu(tr("Apply preset"));
+        const auto presets = m_playlistController->presetRegistry()->items();
+        for(const auto& preset : presets) {
+            auto* action = presetsMenu->addAction(preset.name);
+            QObject::connect(action, &QAction::triggered, this, [this, presetId = preset.id, id = playlist->id()]() {
+                m_playlistController->applyPresetToPlaylists(presetId, {id});
+            });
+        }
 
         menu->addSeparator();
     }
@@ -513,6 +537,16 @@ void PlaylistManagerWidget::showPlaylistContextMenu(const QPoint& pos)
         }
 
         menu->addMenu(restoreMenu);
+    }
+
+    menu->addSeparator();
+
+    if(playlist) {
+        menu->addAction(m_savePlaylistCmd->action());
+    }
+
+    if(auto* saveAllPlaylists = m_actionManager->command(Constants::Actions::SaveAllPlaylists)) {
+        menu->addAction(saveAllPlaylists->action());
     }
 
     if(playlist) {

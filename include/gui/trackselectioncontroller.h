@@ -21,7 +21,7 @@
 
 #include "fygui_export.h"
 
-#include <core/track.h>
+#include <core/playlist/playlist.h>
 #include <utils/id.h>
 
 #include <QObject>
@@ -30,6 +30,7 @@
 #include <optional>
 #include <vector>
 
+class QAction;
 class QComboBox;
 class QMenu;
 
@@ -44,6 +45,10 @@ class WidgetContext;
 struct FYGUI_EXPORT TrackSelection
 {
     TrackList tracks;
+    PlaylistTrackList playbackGroupTracks;
+    std::optional<int> playbackGroupCurrentIndex;
+    PlaylistTrackList playbackViewTracks;
+    std::optional<int> playbackViewCurrentIndex;
     std::optional<UId> playlistId;
     std::vector<int> playlistIndexes;
     std::vector<UId> playlistEntryIds;
@@ -52,6 +57,12 @@ struct FYGUI_EXPORT TrackSelection
     bool playlistBacked{false};
 
     bool operator==(const TrackSelection& other) const = default;
+};
+
+struct FYGUI_EXPORT TrackSelectionTarget
+{
+    TrackSelection selection;
+    WidgetContext* context{nullptr};
 };
 
 enum class TrackAction
@@ -96,11 +107,11 @@ Q_DECLARE_FLAGS(ActionGroups, ActionGroup)
 namespace PlaylistAction {
 enum ActionOption : uint8_t
 {
-    None          = 0,
-    Switch        = 1 << 0,
-    KeepActive    = 1 << 1,
-    StartPlayback = 1 << 2,
-    TempPlaylist  = 1 << 3
+    None                     = 0,
+    Switch                   = 1 << 0,
+    PreservePlaybackPlaylist = 1 << 1,
+    StartPlayback            = 1 << 2,
+    TempPlaylist             = 1 << 3
 };
 Q_DECLARE_FLAGS(ActionOptions, ActionOption)
 } // namespace PlaylistAction
@@ -129,22 +140,32 @@ public:
     [[nodiscard]] TrackList displayTracks() const;
     [[nodiscard]] bool hasDisplayTracks() const;
 
+    [[nodiscard]] std::optional<TrackSelectionTarget> activeSelectionTarget() const;
+    [[nodiscard]] std::optional<TrackSelectionTarget> playlistSelectionTarget(const UId& playlistId) const;
+    [[nodiscard]] std::optional<bool> selectionActionEnabled(const QAction* action) const;
+    [[nodiscard]] std::optional<bool> selectionActionEnabled(const QAction* action,
+                                                             const TrackSelection& selection) const;
+
     void changeSelectedTracks(WidgetContext* context, const TrackSelection& selection);
-    void changeSelectedTracks(const TrackSelection& selection);
     void changePlaybackOnSend(WidgetContext* context, bool enabled);
 
     void addTrackContextMenu(QMenu* menu) const;
+    void addTrackContextMenu(QMenu* menu, WidgetContext* context) const;
     void addTrackContextMenu(QMenu* menu, const TrackSelection& selection) const;
     void addTrackQueueContextMenu(QMenu* menu) const;
     void addTrackPlaylistContextMenu(QMenu* menu) const;
     void addTrackAddToPlaylistContextMenu(QMenu* menu) const;
+    void addTrackAddToPlaylistContextMenu(QMenu* menu, WidgetContext* context) const;
     void addTrackAddToOtherPlaylistContextMenu(QMenu* menu) const;
+    void addTrackAddToOtherPlaylistContextMenu(QMenu* menu, WidgetContext* context) const;
 
     bool registerTrackContextSubmenu(QObject* owner, TrackContextMenuArea area, const Id& parentId, const Id& id,
                                      const QString& title, const Id& beforeId = {});
     bool registerTrackContextAction(QObject* owner, TrackContextMenuArea area, const Id& parentId, const Id& id,
                                     const QString& title, const TrackContextMenuRenderer& renderer,
                                     const Id& beforeId = {});
+    bool registerTrackContextSeparator(QObject* owner, TrackContextMenuArea area, const Id& parentId, const Id& id,
+                                       const Id& beforeId = {});
     bool registerTrackContextDynamicSubmenu(QObject* owner, TrackContextMenuArea area, const Id& parentId, const Id& id,
                                             const QString& title, const TrackContextMenuRenderer& renderer,
                                             const Id& beforeId = {});
@@ -156,6 +177,8 @@ public:
 
     void executeAction(TrackAction action, PlaylistAction::ActionOptions options = {},
                        const QString& playlistName = {});
+    //! Starts a temporary playback sequence at @p trackIndex without changing the current selection.
+    void startPlayback(const TrackList& tracks, int trackIndex = 0);
 
 Q_SIGNALS:
     void actionExecuted(Fooyin::TrackAction action);

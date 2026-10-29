@@ -68,8 +68,6 @@ void PixmapFadeController::setDurationMs(const int durationMs)
 void PixmapFadeController::setPixmap(const QPixmap& pixmap)
 {
     if(pixmapsMatch(m_pixmap, pixmap)) {
-        m_pixmap = pixmap;
-        stop();
         return;
     }
 

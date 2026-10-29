@@ -214,11 +214,11 @@ void LyricsSavingPageWidget::load()
     m_saveSynced->setChecked(savePrefer == SavePrefer::Synced);
     m_saveUnsynced->setChecked(savePrefer == SavePrefer::Unsynced);
 
-    m_syncedTag->setText(m_settings->fileValue(Settings::SaveSyncedTag, u"LYRICS"_s).toString());
-    m_unyncedTag->setText(m_settings->fileValue(Settings::SaveUnsyncedTag, u"UNSYNCED LYRICS"_s).toString());
+    m_syncedTag->setScript(m_settings->fileValue(Settings::SaveSyncedTag, u"LYRICS"_s).toString());
+    m_unyncedTag->setScript(m_settings->fileValue(Settings::SaveUnsyncedTag, u"UNSYNCED LYRICS"_s).toString());
 
     m_path->setText(m_settings->fileValue(Settings::SaveDir, u"%path%"_s).toString());
-    m_filename->setText(m_settings->fileValue(Settings::SaveFilename, u"%filename%"_s).toString());
+    m_filename->setScript(m_settings->fileValue(Settings::SaveFilename, u"%filename%"_s).toString());
 
     const auto opts = static_cast<LyricsSaver::SaveOptions>(m_settings->fileValue(Settings::SaveOptions, 0).toInt());
     m_collapse->setChecked(opts & LyricsSaver::Collapse);

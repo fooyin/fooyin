@@ -39,36 +39,8 @@ Q_LOGGING_CATEGORY(FILEOPS, "fy.fileops")
 
 using namespace Qt::StringLiterals;
 
+namespace Fooyin::FileOps {
 namespace {
-class FileOpsScriptEnvironment : public Fooyin::ScriptEnvironment,
-                                 public Fooyin::ScriptEvaluationEnvironment
-{
-public:
-    [[nodiscard]] const ScriptEvaluationEnvironment* evaluationEnvironment() const override
-    {
-        return this;
-    }
-
-    [[nodiscard]] Fooyin::TrackListContextPolicy trackListContextPolicy() const override
-    {
-        return Fooyin::TrackListContextPolicy::Unresolved;
-    }
-
-    [[nodiscard]] QString trackListPlaceholder() const override
-    {
-        return {};
-    }
-
-    [[nodiscard]] bool escapeRichText() const override
-    {
-        return false;
-    }
-
-    [[nodiscard]] bool replacePathSeparators() const override
-    {
-        return true;
-    }
-};
 
 QString replaceSeparators(const QString& input)
 {
@@ -87,7 +59,7 @@ QString cleanArchiveEntryPath(const QString& path)
     return cleaned;
 }
 
-QString entryPathRelativeToTrackLevel(const QString& entryPath, const Fooyin::Track& track)
+QString entryPathRelativeToTrackLevel(const QString& entryPath, const Track& track)
 {
     const QString trackLevel = cleanArchiveEntryPath(track.relativeArchivePath());
     if(trackLevel.isEmpty() || trackLevel == "."_L1) {
@@ -108,7 +80,6 @@ QString archiveEntryKey(const QString& archivePath, const QString& entryPath)
 }
 } // namespace
 
-namespace Fooyin::FileOps {
 FileOpsWorker::FileOpsWorker(MusicLibrary* library, std::shared_ptr<AudioLoader> audioLoader, TrackList tracks,
                              SettingsManager* settings, QObject* parent)
     : Worker{parent}
@@ -117,22 +88,128 @@ FileOpsWorker::FileOpsWorker(MusicLibrary* library, std::shared_ptr<AudioLoader>
     , m_settings{settings}
     , m_tracks{std::move(tracks)}
     , m_isMonitoring{settings->value<Fooyin::Settings::Core::Internal::MonitorLibraryDirectories>()}
-{ }
-
-void FileOpsWorker::simulate(const FileOpPreset& preset)
 {
-    prepareOperations(preset, true);
+    m_libraryTracks = library->tracks();
+    for(const Track& track : m_tracks) {
+        if(const auto info = library->libraryInfo(track.libraryId())) {
+            m_libraries.insert_or_assign(info->id, *info);
+        }
+    }
 }
 
-void FileOpsWorker::deleteFiles()
+void FileOpsWorker::setLibraryData(LibraryInfoMap libraries, TrackList tracks)
 {
-    setState(Running);
+    m_libraries     = std::move(libraries);
+    m_libraryTracks = std::move(tracks);
+}
+
+void FileOpsWorker::simulate(const FileOpPreset& preset, std::stop_token token)
+{
+    prepareOperations(preset, true, token);
+}
+
+void FileOpsWorker::run(std::stop_token token)
+{
+    if(!startWork(token.stop_possible() ? token : prepareWork())) {
+        Q_EMIT finished();
+        return;
+    }
+
+    if(m_isMonitoring) {
+        m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraryDirectories>(false);
+    }
+
+    while(!m_operations.empty()) {
+        if(!mayRun()) {
+            break;
+        }
+
+        const FileOpsItem item = m_operations.front();
+        FileOpResult result{.operation = item, .status = FileOpStatus::Succeeded, .error = {}};
+
+        switch(item.op) {
+            case Operation::Create: {
+                const bool success = QDir{}.mkpath(item.destination);
+                if(!success) {
+                    qCWarning(FILEOPS) << "Failed to create directory" << item.destination;
+                    result.status = FileOpStatus::Failed;
+                    result.error  = tr("Could not create directory");
+                }
+                break;
+            }
+            case Operation::Remove: {
+                const bool success = QDir{}.rmdir(item.source);
+                if(!success) {
+                    qCWarning(FILEOPS) << "Failed to remove directory" << item.source;
+                    result.status = FileOpStatus::Failed;
+                    result.error  = tr("Could not remove directory");
+                }
+                break;
+            }
+            case Operation::Rename:
+            case Operation::Move: {
+                result = renameFile(item);
+                break;
+            }
+            case Operation::Copy: {
+                result = copyFile(item);
+                break;
+            }
+            case Operation::Extract: {
+                result = extractFile(item);
+                if(result.status == FileOpStatus::Succeeded) {
+                    m_successfulArchives.emplace(item.archivePath);
+                    if(m_preset.removeSourceArchive && m_trackPaths.contains(item.source)) {
+                        m_extractedTrackDestinations.emplace(item.source, item.destination);
+                    }
+                }
+                else {
+                    m_failedArchives.emplace(item.archivePath);
+                }
+                break;
+            }
+            case Operation::RemoveArchive: {
+                result = removeArchive(item);
+                break;
+            }
+            case Operation::Delete:
+                break;
+        }
+
+        Q_EMIT operationCompleted(result);
+        m_operations.pop_front();
+    }
+
+    if(!m_tracksToUpdate.empty()) {
+        m_library->updateTrackMetadata(m_tracksToUpdate);
+    }
+
+    if(!m_tracksToDelete.empty()) {
+        m_library->deleteTracks(m_tracksToDelete);
+    }
+
+    setState(Idle);
+
+    if(m_isMonitoring) {
+        m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraryDirectories>(true);
+    }
+
+    Q_EMIT finished();
+}
+
+void FileOpsWorker::deleteFiles(bool forceImmediateDelete, std::stop_token token)
+{
+    if(!startWork(token.stop_possible() ? token : prepareWork())) {
+        Q_EMIT deleteFinished({}, {});
+        Q_EMIT finished();
+        return;
+    }
 
     reset();
 
     if(!populateTrackPaths()) {
         setState(Idle);
-        Q_EMIT deleteFinished({});
+        Q_EMIT deleteFinished({}, {});
         Q_EMIT finished();
         return;
     }
@@ -147,6 +224,7 @@ void FileOpsWorker::deleteFiles()
         }
     };
 
+    TrackList failedTrashTracks;
     for(const Track& track : m_tracks) {
         if(!mayRun()) {
             break;
@@ -158,18 +236,21 @@ void FileOpsWorker::deleteFiles()
         }
         m_tracksProcessed.emplace(filepath);
 
-        const bool immediateDelete = m_settings->fileValue(Settings::ImmediateDelete, false).toBool();
-        const bool deleted         = immediateDelete ? QFile::remove(filepath) : QFile::moveToTrash(filepath);
+        const bool immediateDelete
+            = forceImmediateDelete || m_settings->fileValue(Settings::ImmediateDelete, false).toBool();
+        const bool deleted = immediateDelete ? QFile::remove(filepath) : Utils::File::moveToTrash(filepath);
 
         if(!deleted) {
             qCWarning(FILEOPS) << "Failed to delete file" << filepath;
+            if(!immediateDelete) {
+                failedTrashTracks.push_back(track);
+            }
             continue;
         }
 
         appendDeletedTrack(track);
 
-        const bool deleteEmptyFolders = m_settings->fileValue(Settings::DeleteEmptyFolders, false).toBool();
-        if(deleteEmptyFolders) {
+        if(m_settings->fileValue(Settings::RemoveEmptyParentFolders, false).toBool()) {
             removeEmptyFoldersUpToLibraryRoot(filepath, track.libraryId());
         }
 
@@ -191,13 +272,15 @@ void FileOpsWorker::deleteFiles()
         m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraryDirectories>(true);
     }
 
-    Q_EMIT deleteFinished(m_tracksToDelete);
+    Q_EMIT deleteFinished(m_tracksToDelete, failedTrashTracks);
     Q_EMIT finished();
 }
 
-bool FileOpsWorker::prepareOperations(const FileOpPreset& preset, bool emitSimulation)
+bool FileOpsWorker::prepareOperations(const FileOpPreset& preset, bool emitSimulation, std::stop_token token)
 {
-    setState(Running);
+    if(!startWork(token.stop_possible() ? token : prepareWork())) {
+        return false;
+    }
 
     reset();
     m_preset = preset;
@@ -228,7 +311,7 @@ bool FileOpsWorker::prepareOperations(const FileOpPreset& preset, bool emitSimul
 
     const bool shouldContinue = canContinue && mayRun();
     if(emitSimulation && shouldContinue) {
-        Q_EMIT simulated(m_operations);
+        Q_EMIT simulated(m_operations, stopToken());
     }
 
     setState(Idle);
@@ -238,8 +321,7 @@ bool FileOpsWorker::prepareOperations(const FileOpPreset& preset, bool emitSimul
 
 bool FileOpsWorker::populateTrackPaths()
 {
-    const auto tracks = m_library->tracks();
-    for(const Track& track : tracks) {
+    for(const Track& track : m_libraryTracks) {
         if(!mayRun()) {
             return false;
         }
@@ -247,86 +329,6 @@ bool FileOpsWorker::populateTrackPaths()
     }
 
     return true;
-}
-
-void FileOpsWorker::run()
-{
-    setState(Running);
-
-    if(m_isMonitoring) {
-        m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraryDirectories>(false);
-    }
-
-    while(!m_operations.empty()) {
-        if(!mayRun()) {
-            break;
-        }
-
-        const FileOpsItem& item = m_operations.front();
-
-        switch(item.op) {
-            case Operation::Create: {
-                const bool success = QDir{}.mkpath(item.destination);
-                if(!success) {
-                    qCWarning(FILEOPS) << "Failed to create directory" << item.destination;
-                }
-                break;
-            }
-            case Operation::Remove: {
-                const bool success = QDir{}.rmdir(item.source);
-                if(!success) {
-                    qCWarning(FILEOPS) << "Failed to remove directory" << item.destination;
-                }
-                break;
-            }
-            case Operation::Rename:
-            case Operation::Move: {
-                renameFile(item);
-                break;
-            }
-            case Operation::Copy: {
-                copyFile(item);
-                break;
-            }
-            case Operation::Extract: {
-                if(extractFile(item)) {
-                    m_successfulArchives.emplace(item.archivePath);
-                    if(m_preset.removeSourceArchive && m_trackPaths.contains(item.source)) {
-                        m_extractedTrackDestinations.emplace(item.source, item.destination);
-                    }
-                }
-                else {
-                    m_failedArchives.emplace(item.archivePath);
-                }
-                break;
-            }
-            case Operation::RemoveArchive: {
-                removeArchive(item);
-                break;
-            }
-            case Operation::Delete:
-                break;
-        }
-
-        Q_EMIT operationFinished(item);
-        m_operations.pop_front();
-    }
-
-    if(!m_tracksToUpdate.empty()) {
-        m_library->updateTrackMetadata(m_tracksToUpdate);
-    }
-
-    if(!m_tracksToDelete.empty()) {
-        m_library->deleteTracks(m_tracksToDelete);
-    }
-
-    setState(Idle);
-
-    if(m_isMonitoring) {
-        m_settings->set<Fooyin::Settings::Core::Internal::MonitorLibraryDirectories>(true);
-    }
-
-    Q_EMIT finished();
 }
 
 void FileOpsWorker::simulateMove()
@@ -364,29 +366,28 @@ void FileOpsWorker::simulateMove()
             const auto files = Utils::File::getFilesInDirRecursive(srcPath);
             for(const QString& file : files) {
                 const QFileInfo info{file};
-                const QDir fileDir{info.absolutePath()};
-
-                handleEmptyDirs(fileDir, file);
-
                 const QString relativePath = srcDir.relativeFilePath(file);
-                const QString fileDestPath = QDir::cleanPath(destPath + "/"_L1 + relativePath);
-
-                const QString parentPath = QFileInfo{fileDestPath}.absolutePath();
-                createDir(parentPath);
+                QString fileDestPath       = QDir::cleanPath(destPath + "/"_L1 + relativePath);
+                QString name               = info.fileName();
 
                 if(m_trackPaths.contains(file)) {
-                    const Track fileTrack  = m_trackPaths.equal_range(file).first->second;
-                    const QString filePath = QDir::cleanPath(evaluatePath(script, fileTrack));
-                    m_operations.emplace_back(Operation::Move, fileTrack.filenameExt(), fileTrack.filepath(), filePath);
+                    const Track fileTrack = m_trackPaths.equal_range(file).first->second;
+                    fileDestPath          = QDir::cleanPath(evaluatePath(script, fileTrack));
+                    name                  = fileTrack.filenameExt();
                 }
-                else {
-                    m_operations.emplace_back(Operation::Move, info.fileName(), file, fileDestPath);
+
+                if(file == fileDestPath) {
+                    continue;
                 }
+
+                handleEmptyDirs(QDir{info.absolutePath()}, file, srcDir);
+                createDir(QFileInfo{fileDestPath}.absolutePath());
+                m_operations.emplace_back(Operation::Move, name, file, fileDestPath);
             }
         }
         else {
             const QDir trackDir{srcPath};
-            handleEmptyDirs(trackDir, track.filepath());
+            handleEmptyDirs(trackDir, track.filepath(), trackDir);
 
             createDir(destPath);
 
@@ -395,7 +396,7 @@ void FileOpsWorker::simulateMove()
     }
 
     if(m_currentDir && !m_filesToMove.empty()) {
-        addEmptyDirs(m_currentDir.value());
+        addEmptyDirs(m_currentDir.value(), m_currentSourceRoot.value());
     }
 }
 
@@ -434,18 +435,20 @@ void FileOpsWorker::simulateCopy()
             const auto files = Utils::File::getFilesInDirRecursive(srcPath);
             for(const QString& file : files) {
                 const QString relativePath = srcDir.relativeFilePath(file);
-                const QString fileDestPath = QDir::cleanPath(destPath + "/"_L1 + relativePath);
-
-                const QString parentPath = QFileInfo{fileDestPath}.absolutePath();
-                createDir(parentPath);
 
                 if(m_trackPaths.contains(file)) {
-                    const Track fileTrack = m_trackPaths.equal_range(file).first->second;
+                    const Track fileTrack      = m_trackPaths.equal_range(file).first->second;
+                    const QString fileDestPath = QDir::cleanPath(evaluatePath(script, fileTrack));
+
+                    createDir(QFileInfo{fileDestPath}.absolutePath());
                     m_operations.emplace_back(Operation::Copy, fileTrack.filenameExt(), fileTrack.filepath(),
                                               fileDestPath);
                 }
                 else {
+                    const QString fileDestPath = QDir::cleanPath(destPath + "/"_L1 + relativePath);
                     const QFileInfo info{file};
+
+                    createDir(QFileInfo{fileDestPath}.absolutePath());
                     m_operations.emplace_back(Operation::Copy, info.fileName(), file, fileDestPath);
                 }
             }
@@ -502,9 +505,6 @@ void FileOpsWorker::simulateExtract()
 
             archiveReader->readEntries(
                 [this, &track, &destPath, &script, &archiveTracks](const ArchiveEntryInfo& entry) {
-                    if(!mayRun()) {
-                        return false;
-                    }
                     if(!entry.isRegularFile) {
                         return true;
                     }
@@ -534,7 +534,8 @@ void FileOpsWorker::simulateExtract()
                     item.archiveEntry = entryPath;
                     m_operations.emplace_back(std::move(item));
                     return true;
-                });
+                },
+                [this]() { return !mayRun(); });
 
             if(m_preset.removeSourceArchive) {
                 FileOpsItem item;
@@ -589,18 +590,24 @@ void FileOpsWorker::simulateRename()
     }
 }
 
-bool FileOpsWorker::renameFile(const FileOpsItem& item)
+QString FileOpsWorker::evaluatePath(const ParsedScript& script, const Track& track)
+{
+    const ScriptEvaluationOptions options{.replacePathSeparators = true};
+    return m_scriptParser.evaluate(script, track, {}, options);
+}
+
+FileOpResult FileOpsWorker::renameFile(const FileOpsItem& item)
 {
     QFile file{item.source};
 
     if(!file.exists()) {
         qCWarning(FILEOPS) << "File doesn't exist:" << item.source;
-        return false;
+        return {.operation = item, .status = FileOpStatus::Failed, .error = tr("Source file does not exist")};
     }
 
     if(!file.rename(item.destination)) {
         qCWarning(FILEOPS) << "Failed to move file from" << item.source << "to" << item.destination;
-        return false;
+        return {.operation = item, .status = FileOpStatus::Failed, .error = file.errorString()};
     }
 
     if(m_trackPaths.contains(item.source)) {
@@ -622,7 +629,7 @@ bool FileOpsWorker::renameFile(const FileOpsItem& item)
                 track.setFilePath(item.destination);
             }
 
-            if(const auto library = m_library->libraryForPath(item.destination)) {
+            if(const auto library = libraryForPath(item.destination)) {
                 if(track.libraryId() != library->id) {
                     track.setLibraryId(library->id);
                 }
@@ -635,90 +642,89 @@ bool FileOpsWorker::renameFile(const FileOpsItem& item)
         }
     }
 
-    return true;
+    return {.operation = item, .status = FileOpStatus::Succeeded, .error = {}};
 }
 
-QString FileOpsWorker::evaluatePath(const ParsedScript& script, const Track& track)
-{
-    static const FileOpsScriptEnvironment environment;
-    const ScriptContext context{.environment = &environment};
-    return m_scriptParser.evaluate(script, track, context);
-}
-
-bool FileOpsWorker::copyFile(const FileOpsItem& item)
+FileOpResult FileOpsWorker::copyFile(const FileOpsItem& item)
 {
     QFile file{item.source};
 
     if(!file.exists()) {
         qCWarning(FILEOPS) << "File doesn't exist:" << item.source;
-        return false;
+        return {.operation = item, .status = FileOpStatus::Failed, .error = tr("Source file does not exist")};
     }
 
     if(!file.copy(item.destination)) {
         qCWarning(FILEOPS) << "Failed to copy file from" << item.source << "to" << item.destination;
-        return false;
+        return {.operation = item, .status = FileOpStatus::Failed, .error = file.errorString()};
     }
 
-    return true;
+    return {.operation = item, .status = FileOpStatus::Succeeded, .error = {}};
 }
 
-bool FileOpsWorker::extractFile(const FileOpsItem& item)
+FileOpResult FileOpsWorker::extractFile(const FileOpsItem& item)
 {
     auto archiveReader = m_audioLoader->archiveReaderForFile(item.archivePath);
     if(!archiveReader || !archiveReader->init(item.archivePath)) {
         qCWarning(FILEOPS) << "Failed to initialise archive reader for" << item.archivePath;
-        return false;
+        return {.operation = item, .status = FileOpStatus::Failed, .error = tr("Could not open archive")};
     }
 
     QFile file{item.destination};
     if(file.exists()) {
         qCWarning(FILEOPS) << "Destination file already exists:" << item.destination;
-        return false;
+        return {.operation = item, .status = FileOpStatus::Failed, .error = tr("Destination file already exists")};
     }
 
     if(!file.open(QIODevice::WriteOnly)) {
         qCWarning(FILEOPS) << "Failed to create file" << item.destination << file.errorString();
-        return false;
+        return {.operation = item, .status = FileOpStatus::Failed, .error = file.errorString()};
     }
 
-    if(!archiveReader->copyEntryToDevice(item.archiveEntry, &file, [this]() { return mayRun(); })) {
+    if(!archiveReader->copyEntryToDevice(item.archiveEntry, &file, [this]() { return !mayRun(); })) {
         qCWarning(FILEOPS) << "Failed to extract archive entry" << item.archiveEntry << "from" << item.archivePath
                            << "to" << item.destination;
         file.close();
         file.remove();
-        return false;
+        if(!mayRun()) {
+            return {.operation = item,
+                    .status    = FileOpStatus::Cancelled,
+                    .error     = tr("Archive extraction was interrupted")};
+        }
+        return {.operation = item, .status = FileOpStatus::Failed, .error = tr("Could not extract archive entry")};
     }
 
-    return true;
+    return {.operation = item, .status = FileOpStatus::Succeeded, .error = {}};
 }
 
-bool FileOpsWorker::removeArchive(const FileOpsItem& item)
+FileOpResult FileOpsWorker::removeArchive(const FileOpsItem& item)
 {
     if(m_failedArchives.contains(item.archivePath)) {
         qCWarning(FILEOPS) << "Skipping archive deletion after extraction failure:" << item.archivePath;
-        return false;
+        return {.operation = item,
+                .status    = FileOpStatus::Skipped,
+                .error     = tr("One or more archive entries could not be extracted")};
     }
 
     if(!m_successfulArchives.contains(item.archivePath)) {
         qCWarning(FILEOPS) << "Skipping archive deletion without successful extraction:" << item.archivePath;
-        return false;
+        return {.operation = item, .status = FileOpStatus::Skipped, .error = tr("No archive entries were extracted")};
     }
 
     const bool immediateDelete = m_settings->fileValue(Settings::ImmediateDelete, false).toBool();
-    const bool deleted = immediateDelete ? QFile::remove(item.archivePath) : QFile::moveToTrash(item.archivePath);
+    const bool deleted = immediateDelete ? QFile::remove(item.archivePath) : Utils::File::moveToTrash(item.archivePath);
 
     if(!deleted) {
         qCWarning(FILEOPS) << "Failed to delete source archive" << item.archivePath;
-        return false;
+        return {.operation = item, .status = FileOpStatus::Failed, .error = tr("Could not delete source archive")};
     }
 
-    const bool deleteEmptyFolders = m_settings->fileValue(Settings::DeleteEmptyFolders, false).toBool();
-    if(deleteEmptyFolders) {
+    if(m_settings->fileValue(Settings::RemoveEmptyParentFolders, false).toBool()) {
         removeEmptyFoldersUpToLibraryRoot(item.archivePath, archiveLibraryId(item.archivePath));
     }
 
     updateExtractedArchiveTracks(item.archivePath);
-    return true;
+    return {.operation = item, .status = FileOpStatus::Succeeded, .error = {}};
 }
 
 void FileOpsWorker::createDir(const QDir& dir)
@@ -744,7 +750,8 @@ void FileOpsWorker::removeDir(const QDir& dir)
 void FileOpsWorker::reset()
 {
     m_operations.clear();
-    m_currentDir = {};
+    m_currentDir        = {};
+    m_currentSourceRoot = {};
     m_tracksProcessed.clear();
     m_filesToMove.clear();
     m_dirsToCreate.clear();
@@ -772,7 +779,7 @@ void FileOpsWorker::updateExtractedArchiveTracks(const QString& archivePath)
             }
 
             track.setFilePath(destination);
-            if(const auto library = m_library->libraryForPath(destination)) {
+            if(const auto library = libraryForPath(destination)) {
                 if(track.libraryId() != library->id) {
                     track.setLibraryId(library->id);
                 }
@@ -786,24 +793,36 @@ void FileOpsWorker::updateExtractedArchiveTracks(const QString& archivePath)
     }
 }
 
-void FileOpsWorker::handleEmptyDirs(const QDir& dir, const QString& filepath)
+void FileOpsWorker::handleEmptyDirs(const QDir& dir, const QString& filepath, const QDir& sourceRoot)
 {
     if(m_preset.removeEmpty) {
-        if(m_currentDir && m_currentDir != dir) {
-            addEmptyDirs(m_currentDir.value());
-            m_filesToMove.clear();
+        if(m_currentDir && (m_currentDir != dir || m_currentSourceRoot != sourceRoot)) {
+            addEmptyDirs(m_currentDir.value(), m_currentSourceRoot.value());
         }
-        m_currentDir = dir;
+        m_currentDir        = dir;
+        m_currentSourceRoot = sourceRoot;
         m_filesToMove.emplace(filepath);
     }
 }
 
-void FileOpsWorker::addEmptyDirs(const QDir& dir)
+void FileOpsWorker::addEmptyDirs(const QDir& dir, const QDir& sourceRoot)
 {
     QDir currentDir{dir};
-    QString dirToRemove;
+
+    const bool removeEmptyParentFolders = m_settings->fileValue(Settings::RemoveEmptyParentFolders, false).toBool();
+    QString libraryRoot;
+
+    if(removeEmptyParentFolders) {
+        if(const auto libraryInfo = libraryForPath(sourceRoot.absolutePath())) {
+            libraryRoot = QDir::cleanPath(QFileInfo{libraryInfo->path}.absoluteFilePath());
+        }
+    }
 
     while(true) {
+        if(!libraryRoot.isEmpty() && Utils::File::isSamePath(currentDir.absolutePath(), libraryRoot)) {
+            break;
+        }
+
         const QFileInfoList files = currentDir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
         bool isEmpty{true};
 
@@ -818,27 +837,26 @@ void FileOpsWorker::addEmptyDirs(const QDir& dir)
             const QFileInfoList dirs = currentDir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
             for(const QFileInfo& dirInfo : dirs) {
                 const QDir subDir{dirInfo.absoluteFilePath()};
-                if(!m_dirsToRemove.contains(subDir.absolutePath()) && !subDir.isEmpty()) {
+                if(!m_dirsToRemove.contains(subDir.absolutePath())) {
                     isEmpty = false;
                     break;
                 }
             }
             if(isEmpty) {
-                m_dirsToRemove.emplace(currentDir.absolutePath());
-                dirToRemove = currentDir.absolutePath();
+                if(m_dirsToRemove.emplace(currentDir.absolutePath()).second) {
+                    removeDir(currentDir);
+                }
             }
         }
         else {
             break;
         }
 
-        if(!currentDir.cdUp()) {
+        if((Utils::File::isSamePath(currentDir.absolutePath(), sourceRoot.absolutePath())
+            && (!removeEmptyParentFolders || libraryRoot.isEmpty()))
+           || !currentDir.cdUp()) {
             break;
         }
-    }
-
-    if(!dirToRemove.isEmpty()) {
-        removeDir(dirToRemove);
     }
 }
 
@@ -880,15 +898,15 @@ QString FileOpsWorker::libraryRootForDeletedPath(const QString& filePath, int li
     const QString fileDir = QFileInfo{filePath}.absolutePath();
 
     if(libraryId >= 0) {
-        if(const auto libraryInfo = m_library->libraryInfo(libraryId)) {
-            const QString libraryRoot = QDir::cleanPath(QFileInfo{libraryInfo->path}.absoluteFilePath());
+        if(const auto libraryInfo = m_libraries.find(libraryId); libraryInfo != m_libraries.end()) {
+            const QString libraryRoot = QDir::cleanPath(QFileInfo{libraryInfo->second.path}.absoluteFilePath());
             if(Utils::File::isSamePath(fileDir, libraryRoot) || Utils::File::isSubdir(fileDir, libraryRoot)) {
                 return libraryRoot;
             }
         }
     }
 
-    if(const auto libraryInfo = m_library->libraryForPath(fileDir)) {
+    if(const auto libraryInfo = libraryForPath(fileDir)) {
         return QDir::cleanPath(QFileInfo{libraryInfo->path}.absoluteFilePath());
     }
 
@@ -904,5 +922,15 @@ int FileOpsWorker::archiveLibraryId(const QString& archivePath) const
     }
 
     return -1;
+}
+
+std::optional<LibraryInfo> FileOpsWorker::libraryForPath(const QString& path) const
+{
+    for(const auto& library : m_libraries | std::views::values) {
+        if(Utils::File::isSamePath(path, library.path) || Utils::File::isSubdir(path, library.path)) {
+            return library;
+        }
+    }
+    return {};
 }
 } // namespace Fooyin::FileOps

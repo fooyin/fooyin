@@ -18,16 +18,22 @@ $SUDO apt-get install -y \
         debhelper \
         lsb-release \
         libicu-dev \
+        libglm-dev \
         libglu1-mesa-dev \
+        libx11-dev \
+        libx11-xcb-dev \
+        libxcb1-dev \
         libxkbcommon-dev \
         dpkg-dev \
         dh-make \
         zlib1g-dev \
         libasound2-dev \
+        libjack-jackd2-dev \
         libpipewire-0.3-dev \
         libpulse-dev \
         libsdl2-dev \
         qt6-base-dev \
+        libqt6sql6-sqlite \
         libqt6opengl6-dev \
         libqt6svg6-dev \
         qt6-tools-dev \
@@ -41,8 +47,14 @@ $SUDO apt-get install -y \
         libopenmpt-dev \
         libgme-dev \
         libarchive-dev \
+        libflac-dev \
+        libmpg123-dev \
+        libopusfile-dev \
+        libvorbis-dev \
         libsndfile1-dev \
         libebur128-dev \
+        libcdio-dev \
+        libcdio-paranoia-dev \
         libsoundtouch-dev \
         libsoxr-dev \
         libgtest-dev

@@ -24,6 +24,7 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
+#include <core/engine/input/ratingtagpolicy.h>
 #include <core/library/musiclibrary.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionhandler.h>
@@ -32,23 +33,49 @@
 #include <QFileInfo>
 #include <QLoggingCategory>
 
+#include <ranges>
+
 Q_LOGGING_CATEGORY(TRK_DBMAN, "fy.trackdbmanager")
 
 using namespace Qt::StringLiterals;
 
+namespace Fooyin {
 namespace {
 bool shouldContinue(const std::stop_token& stopToken)
 {
     return !stopToken.stop_requested();
 }
 
-bool isDbOnlyMetadataTrack(const Fooyin::Track& track)
+AudioReader::WriteOptions writeOptionsForStats(Track::Stats stats)
 {
-    return track.isRemote();
+    AudioReader::WriteOptions options{AudioReader::None};
+    if(stats.testFlag(Track::Stat::Rating)) {
+        options |= AudioReader::Rating;
+    }
+    if(stats.testFlag(Track::Stat::Playcount)) {
+        options |= AudioReader::Playcount;
+    }
+    return options;
+}
+
+bool syncRawRatingTag(Track& track)
+{
+    const RatingTagPolicy policy = ratingTagPolicy();
+    const QString tag            = policy.effectiveWriteTag();
+    if(tag.isEmpty()) {
+        return false;
+    }
+
+    const QString value = formatTextRating(track.rating(), policy.writeScale);
+    if(track.rawRatingTag(tag) == value) {
+        return false;
+    }
+
+    track.setRawRatingTag(tag, value);
+    return true;
 }
 } // namespace
 
-namespace Fooyin {
 TrackDatabaseManager::TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
                                            SettingsManager* settings, std::shared_ptr<TrackMetadataStore> metadataStore,
                                            QObject* parent)
@@ -68,9 +95,11 @@ void TrackDatabaseManager::initialiseThread()
     m_trackDatabase.setMetadataStore(m_metadataStore);
 }
 
-void TrackDatabaseManager::getAllTracks()
+void TrackDatabaseManager::getAllTracks(std::stop_token workerToken)
 {
-    setState(Running);
+    if(!startWork(workerToken)) {
+        return;
+    }
 
     const TrackList tracks = m_trackDatabase.getAllTracks();
     Q_EMIT gotTracks(tracks);
@@ -78,9 +107,11 @@ void TrackDatabaseManager::getAllTracks()
     setState(Idle);
 }
 
-void TrackDatabaseManager::checkTrackAvailability(const TrackList& tracks)
+void TrackDatabaseManager::checkTrackAvailability(const TrackList& tracks, std::stop_token workerToken)
 {
-    setState(Running);
+    if(!startWork(workerToken)) {
+        return;
+    }
 
     TrackList updatedTracks;
     updatedTracks.reserve(tracks.size());
@@ -107,14 +138,21 @@ void TrackDatabaseManager::checkTrackAvailability(const TrackList& tracks)
     setState(Idle);
 }
 
-void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write)
+void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, std::stop_token workerToken)
 {
-    updateTracks(tracks, write, -1, {});
+    updateTracks(tracks, write, -1, {}, workerToken);
 }
 
-void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int operationId, std::stop_token stopToken)
+void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int operationId, std::stop_token stopToken,
+                                        std::stop_token workerToken)
 {
-    setState(Running);
+    if(!startWork(workerToken)) {
+        Q_EMIT updatedTracks({});
+        if(operationId >= 0) {
+            Q_EMIT trackWriteCompleted(operationId, {}, 0, true);
+        }
+        return;
+    }
 
     TrackList tracksToUpdate{tracks};
     TrackList tracksUpdated;
@@ -144,8 +182,11 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
 
         Track updatedTrack{track};
 
-        if(write && !isDbOnlyMetadataTrack(updatedTrack)) {
+        if(write && !updatedTrack.isDatabaseOnlyMetadata()) {
             if(m_audioLoader->writeTrackMetadata(updatedTrack, options)) {
+                if(options.testFlag(AudioReader::Rating)) {
+                    syncRawRatingTag(updatedTrack);
+                }
                 const QDateTime modifiedTime = QFileInfo{updatedTrack.filepath()}.lastModified();
                 updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
                 updatedTrack.normaliseExtraProperties();
@@ -177,11 +218,42 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
     setState(Idle);
 }
 
-void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, AudioReader::WriteOptions requestedWriteOptions)
+void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, Track::Stats updatedStats, bool writeToFiles,
+                                            std::stop_token workerToken)
 {
-    setState(Running);
+    updateTrackStats({{.tracks = tracks, .stats = updatedStats, .writeToFiles = writeToFiles}}, workerToken);
+}
 
-    TrackList tracksToUpdate{tracks};
+void TrackDatabaseManager::updateTrackStats(const std::vector<TrackStatsBatch>& batches, std::stop_token workerToken)
+{
+    if(!startWork(workerToken)) {
+        return;
+    }
+
+    TrackList tracksUpdated;
+    Track::Stats updatedStats;
+
+    for(const auto& batch : batches) {
+        if(!mayRun()) {
+            break;
+        }
+
+        auto updatedTracks = writeTrackStats(batch.tracks, batch.stats, batch.writeToFiles);
+        if(!updatedTracks.empty()) {
+            updatedStats |= batch.stats;
+            std::ranges::move(updatedTracks, std::back_inserter(tracksUpdated));
+        }
+    }
+
+    if(!tracksUpdated.empty()) {
+        Q_EMIT updatedTracksStats(tracksUpdated, updatedStats);
+    }
+
+    setState(Idle);
+}
+
+TrackList TrackDatabaseManager::writeTrackStats(const TrackList& tracks, Track::Stats updatedStats, bool writeToFiles)
+{
     TrackList tracksUpdated;
 
     AudioReader::WriteOptions options{AudioReader::None};
@@ -193,34 +265,57 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, AudioReader
         options |= AudioReader::Playcount;
     }
 
-    AudioReader::WriteOptions writeOptions = requestedWriteOptions & options;
+    const AudioReader::WriteOptions requestedWriteOptions = writeOptionsForStats(updatedStats) & options;
+    AudioReader::WriteOptions writeOptions                = writeToFiles ? requestedWriteOptions : AudioReader::None;
     if(writeOptions != AudioReader::None && m_settings->value<Settings::Core::PreserveTimestamps>()) {
         writeOptions |= AudioReader::PreserveTimestamps;
     }
 
-    for(const Track& track : std::as_const(tracksToUpdate)) {
+    for(const Track& track : tracks) {
         if(!mayRun()) {
             break;
         }
 
         Track updatedTrack{track};
-        bool success{true};
         bool needsTrackUpdate{false};
+        bool ratingWritten{false};
 
         if(updatedTrack.hash().isEmpty()) {
             updatedTrack.generateHash();
         }
 
-        if(!track.isInArchive() && !isDbOnlyMetadataTrack(updatedTrack) && writeOptions != AudioReader::None) {
-            success                        = m_audioLoader->writeTrackMetadata(updatedTrack, writeOptions);
-            const QDateTime modifiedTime   = QFileInfo{updatedTrack.filepath()}.lastModified();
-            const uint64_t newModifiedTime = modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0;
-            updatedTrack.setModifiedTime(newModifiedTime);
-            updatedTrack.normaliseExtraProperties();
-            needsTrackUpdate = newModifiedTime != track.modifiedTime();
+        if(!track.isInArchive() && !updatedTrack.isDatabaseOnlyMetadata() && writeOptions != AudioReader::None) {
+            if(m_audioLoader->writeTrackMetadata(updatedTrack, writeOptions)) {
+                ratingWritten = writeOptions.testFlag(AudioReader::Rating);
+                if(ratingWritten) {
+                    syncRawRatingTag(updatedTrack);
+                }
+                const QDateTime modifiedTime   = QFileInfo{updatedTrack.filepath()}.lastModified();
+                const uint64_t newModifiedTime = modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0;
+                updatedTrack.setModifiedTime(newModifiedTime);
+                updatedTrack.normaliseExtraProperties();
+                needsTrackUpdate = ratingWritten || newModifiedTime != track.modifiedTime();
+            }
+            else {
+                qCWarning(TRK_DBMAN) << "Failed to write track playback statistics to file:" << updatedTrack.filepath();
+            }
         }
-        if(success && (!needsTrackUpdate || m_trackDatabase.updateTrack(updatedTrack))
-           && m_trackDatabase.updateTrackStats(updatedTrack)) {
+
+        if(writeToFiles && updatedStats.testFlag(Track::Stat::Rating) && !ratingWritten) {
+            Track storedTrack{track};
+            const QString tag = ratingTagPolicy().effectiveWriteTag();
+            if(!tag.isEmpty() && m_trackDatabase.reloadTrack(storedTrack)) {
+                updatedTrack.setRawRatingTag(tag, storedTrack.rawRatingTag(tag));
+            }
+        }
+
+        if((!needsTrackUpdate || m_trackDatabase.updateTrack(updatedTrack))
+           && m_trackDatabase.updateTrackStats(updatedTrack, updatedStats)) {
+            if(!writeToFiles && requestedWriteOptions.testFlag(AudioReader::Rating) && !track.isInArchive()
+               && !track.isDatabaseOnlyMetadata()) {
+                // Publish the pending value for scripts, but persist the raw tag only after the file write succeeds
+                syncRawRatingTag(updatedTrack);
+            }
             tracksUpdated.push_back(updatedTrack);
         }
         else {
@@ -228,21 +323,24 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks, AudioReader
         }
     }
 
-    if(!tracksUpdated.empty()) {
-        Q_EMIT updatedTracksStats(tracksUpdated);
+    return tracksUpdated;
+}
+
+void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks, std::stop_token workerToken)
+{
+    writeCovers(tracks, -1, {}, workerToken);
+}
+
+void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks, int operationId, std::stop_token stopToken,
+                                       std::stop_token workerToken)
+{
+    if(!startWork(workerToken)) {
+        Q_EMIT updatedTracks({});
+        if(operationId >= 0) {
+            Q_EMIT trackCoverWriteCompleted(operationId, {}, 0, true);
+        }
+        return;
     }
-
-    setState(Idle);
-}
-
-void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks)
-{
-    writeCovers(tracks, -1, {});
-}
-
-void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks, int operationId, std::stop_token stopToken)
-{
-    setState(Running);
 
     TrackList tracksToUpdate{tracks.tracks};
     TrackList tracksUpdated;
@@ -291,19 +389,25 @@ void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks, int operati
     setState(Idle);
 }
 
-void TrackDatabaseManager::removeUnavailbleTracks(const TrackList& tracks)
+void TrackDatabaseManager::removeUnavailbleTracks(const TrackList& tracks, std::stop_token workerToken)
 {
-    removeUnavailbleTracks(tracks, -1, {});
+    removeUnavailbleTracks(tracks, -1, {}, workerToken);
 }
 
-void TrackDatabaseManager::deleteTracks(const TrackList& tracks)
+void TrackDatabaseManager::deleteTracks(const TrackList& tracks, std::stop_token workerToken)
 {
-    deleteTracks(tracks, -1, {});
+    deleteTracks(tracks, -1, {}, workerToken);
 }
 
-void TrackDatabaseManager::deleteTracks(const TrackList& tracks, int operationId, std::stop_token stopToken)
+void TrackDatabaseManager::deleteTracks(const TrackList& tracks, int operationId, std::stop_token stopToken,
+                                        std::stop_token workerToken)
 {
-    setState(Running);
+    if(!startWork(workerToken)) {
+        if(operationId >= 0) {
+            Q_EMIT tracksDeleted(operationId, {}, 0, true);
+        }
+        return;
+    }
 
     TrackList tracksToDelete;
     int failedCount{0};
@@ -332,9 +436,15 @@ void TrackDatabaseManager::deleteTracks(const TrackList& tracks, int operationId
     setState(Idle);
 }
 
-void TrackDatabaseManager::removeUnavailbleTracks(const TrackList& tracks, int operationId, std::stop_token stopToken)
+void TrackDatabaseManager::removeUnavailbleTracks(const TrackList& tracks, int operationId, std::stop_token stopToken,
+                                                  std::stop_token workerToken)
 {
-    setState(Running);
+    if(!startWork(workerToken)) {
+        if(operationId >= 0) {
+            Q_EMIT unavailableTracksRemoved(operationId, {}, 0, true);
+        }
+        return;
+    }
 
     TrackList trackstoRemove;
     int failedCount{0};
@@ -365,9 +475,11 @@ void TrackDatabaseManager::removeUnavailbleTracks(const TrackList& tracks, int o
     setState(Idle);
 }
 
-void TrackDatabaseManager::cleanupTracks()
+void TrackDatabaseManager::cleanupTracks(std::stop_token workerToken)
 {
-    setState(Running);
+    if(!startWork(workerToken)) {
+        return;
+    }
 
     m_settings->set<Settings::Core::ActiveTrackId>(-2);
     m_trackDatabase.cleanupTracks();

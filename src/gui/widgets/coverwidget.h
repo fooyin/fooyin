@@ -19,15 +19,15 @@
 
 #pragma once
 
-#include "internalguisettings.h"
-
 #include <core/track.h>
 #include <gui/fywidget.h>
+#include <gui/trackdisplay.h>
 
 #include <QBasicTimer>
 #include <QPixmap>
 
 namespace Fooyin {
+class ActionManager;
 class AudioLoader;
 class CoverProvider;
 class CoverRepository;
@@ -36,6 +36,16 @@ class PlaylistHandler;
 class PlayerController;
 class SettingsManager;
 class TrackSelectionController;
+
+enum class CoverAction : uint8_t
+{
+    None = 0,
+    ViewFullSize,
+    OpenContainingFolder,
+    NextArtworkType,
+    ShowTrack,
+    OpenProperties,
+};
 
 class CoverWidget : public FyWidget
 {
@@ -47,13 +57,17 @@ public:
         Track::Cover coverType{Track::Cover::Front};
         Qt::Alignment coverAlignment{Qt::AlignCenter};
         bool keepAspectRatio{true};
+        TrackDisplayPreference trackPreference{TrackDisplayPreference::PlayingTrack};
         bool fadeCoverChanges{false};
         int fadeDurationMs{1000};
+        CoverAction doubleClickAction{CoverAction::ViewFullSize};
+        CoverAction middleClickAction{CoverAction::NextArtworkType};
     };
 
-    explicit CoverWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
-                         TrackSelectionController* trackSelection, std::shared_ptr<AudioLoader> audioLoader,
-                         CoverRepository* coverRepository, SettingsManager* settings, QWidget* parent = nullptr);
+    explicit CoverWidget(ActionManager* actionManager, PlayerController* playerController,
+                         PlaylistHandler* playlistHandler, TrackSelectionController* trackSelection,
+                         std::shared_ptr<AudioLoader> audioLoader, CoverRepository* coverRepository,
+                         SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] ConfigData factoryConfig() const;
     [[nodiscard]] ConfigData defaultConfig() const;
@@ -72,12 +86,15 @@ public:
     void loadLayoutData(const QJsonObject& layout) override;
 
 Q_SIGNALS:
+    void configChanged();
+    void requestPropertiesDialog(const Fooyin::TrackList& tracks);
     void requestArtworkSearch(const Fooyin::TrackList& tracks, Fooyin::Track::Cover type, bool quick);
     void requestArtworkRemoval(const Fooyin::TrackList& tracks, Fooyin::Track::Cover type);
 
 protected:
     void resizeEvent(QResizeEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
     void mouseDoubleClickEvent(QMouseEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
@@ -99,9 +116,15 @@ private:
     void setCoverPixmap(const QPixmap& cover);
     void handleSelectionChanged();
 
+    void performAction(CoverAction action);
     void showArtworkViewer();
+    void openContainingFolder() const;
+    void showTrack() const;
+    void showNextArtworkType();
+    void tryArtworkType(const Track& track, Track::Cover type, int remaining, int requestId);
     void checkTrackArtwork(const Track& track);
 
+    ActionManager* m_actionManager;
     PlayerController* m_playerController;
     PlaylistHandler* m_playlistHandler;
     TrackSelectionController* m_trackSelection;
@@ -110,7 +133,6 @@ private:
     CoverProvider* m_coverProvider;
 
     ConfigData m_config;
-    SelectionDisplay m_displayOption;
     Track::Cover m_coverType;
     Qt::Alignment m_coverAlignment;
     bool m_keepAspectRatio;
@@ -120,6 +142,7 @@ private:
     bool m_fadeCoverChanges;
     PixmapFadeController* m_fadeController;
     int m_coverRequestId;
+    int m_actionRequestId;
 
     Track m_track;
     QPixmap m_cover;

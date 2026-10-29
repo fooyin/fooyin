@@ -20,6 +20,7 @@
 #include "artworksource.h"
 
 #include <core/coresettings.h>
+#include <core/network/networkutils.h>
 #include <utils/stringutils.h>
 #include <utils/utils.h>
 
@@ -30,7 +31,6 @@
 #include <QJsonParseError>
 #include <QMimeDatabase>
 #include <QNetworkReply>
-#include <QStringDecoder>
 #include <QUrlQuery>
 
 Q_LOGGING_CATEGORY(ARTWORK, "fy.artwork")
@@ -171,41 +171,7 @@ SettingsManager* ArtworkSource::settings() const
 
 QString ArtworkSource::toUtf8(QIODevice* file)
 {
-    const QByteArray data = file->readAll();
-    if(data.isEmpty()) {
-        return {};
-    }
-
-    QStringDecoder toUtf16;
-
-    auto encoding = QStringConverter::encodingForData(data);
-    if(encoding) {
-        toUtf16 = QStringDecoder{encoding.value()};
-    }
-    else {
-        const auto encodingName = Utils::detectEncoding(data, detectEncodingOptions());
-        if(encodingName.isEmpty()) {
-            return {};
-        }
-
-        encoding = QStringConverter::encodingForName(encodingName.constData());
-        if(encoding) {
-            toUtf16 = QStringDecoder{encoding.value()};
-        }
-        else {
-            toUtf16 = QStringDecoder{encodingName.constData()};
-        }
-    }
-
-    if(!toUtf16.isValid()) {
-        toUtf16 = QStringDecoder{QStringConverter::Utf8};
-    }
-
-    QString string = toUtf16(data);
-    string.replace("\n\n"_L1, "\n"_L1);
-    string.replace('\r'_L1, '\n'_L1);
-
-    return string;
+    return Utils::decodeTextWithDetection(file->readAll(), detectEncodingOptions());
 }
 
 QString ArtworkSource::encode(const QString& str)
@@ -238,8 +204,7 @@ QNetworkRequest ArtworkSource::createRequest(const QUrl& url, const std::map<QSt
     QUrl reqUrl{url};
     reqUrl.setQuery(queryUrl);
 
-    QNetworkRequest req{reqUrl};
-    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+    QNetworkRequest req = makeNetworkRequest(reqUrl);
     req.setHeader(QNetworkRequest::ContentTypeHeader, u"application/x-www-form-urlencoded"_s);
 
     qCDebug(ARTWORK) << "Sending request" << queryUrl.toString(QUrl::FullyDecoded);

@@ -45,6 +45,8 @@ struct ResolvedAppStyle
 namespace Settings::Gui {
 Q_NAMESPACE_EXPORT(FYGUI_EXPORT)
 
+constexpr auto PresetComboBoxModeKey = "Interface/PresetComboBoxMode";
+
 enum ToolButtonOption : uint8_t
 {
     None    = 0,
@@ -91,6 +93,34 @@ enum GuiSettings : uint32_t
     PlaylistSearchMode         = 34 | Type::Int,
     PlaylistSearchScript       = 35 | Type::String,
     DragOnlyAfterSelect        = 36 | Type::Bool,
+    DarkMode                   = 37 | Type::Bool,
+    ResizeLockedAdjacentOnly   = 38 | Type::Bool,
+    LoveHeartSize              = 39 | Type::Int,
+    LoveHeartColour            = 40 | Type::Variant,
+    RatingOneStarColour        = 41 | Type::Variant,
+    RatingTwoStarColour        = 42 | Type::Variant,
+    RatingThreeStarColour      = 43 | Type::Variant,
+    RatingFourStarColour       = 44 | Type::Variant,
+    RatingFiveStarColour       = 45 | Type::Variant,
+    UnlovedHeartColour         = 46 | Type::Variant,
+    UnratedStarColour          = 47 | Type::Variant,
+    PlaybackQueueFollowCurrent = 48 | Type::Bool,
+    PlaylistShowQueueIndexes   = 49 | Type::Bool,
+    RatingEditorOnlyOnHover    = 50 | Type::Bool,
+    LoveEditorOnlyOnHover      = 51 | Type::Bool,
+    ConfirmPlaylistRemoval     = 52 | Type::Bool,
+    ApplicationIcon            = 53 | Type::Int,
+    CustomApplicationIcon      = 54 | Type::String,
+    MenuBarMovable             = 55 | Type::Bool,
+    ToolbarsLocked             = 56 | Type::Bool,
+    DockWidgetPalette          = 57 | Type::Bool,
+    SettingsSearchBarPosition  = 58 | Type::Int,
+    ABRepeatMarkerWidth        = 59 | Type::Double,
+    ABRepeatMarkerColourA      = 60 | Type::Variant,
+    ABRepeatMarkerColourB      = 61 | Type::Variant,
+    ABRepeatSeekOnAChange      = 62 | Type::Bool,
+    VolumeControlStepSmall     = 63 | Type::Double,
+    VolumeControlStepLarge     = 64 | Type::Double,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Settings::Gui

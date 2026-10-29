@@ -24,16 +24,19 @@
 #include <core/ratingsymbols.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guiutils.h>
+#include <gui/widgets/colourbutton.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QButtonGroup>
+#include <QCheckBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
 #include <QLineEdit>
-#include <QRadioButton>
 #include <QSpinBox>
+
+#include <array>
 
 using namespace Qt::StringLiterals;
 
@@ -61,27 +64,42 @@ private:
 
     ScriptLineEdit* m_propertiesSidebarTrackScript;
 
-    QRadioButton* m_preferPlaying;
-    QRadioButton* m_preferSelection;
-
     QSpinBox* m_starRatingSize;
+    QCheckBox* m_ratingEditorOnlyOnHover;
+    QSpinBox* m_loveHeartSize;
+    QCheckBox* m_loveEditorOnlyOnHover;
     QLineEdit* m_fullStarSymbol;
     QLineEdit* m_halfStarSymbol;
     QLineEdit* m_emptyStarSymbol;
     QLabel* m_ratingPreview;
+    std::array<ColourButton*, 5> m_ratingColours;
+    ColourButton* m_unratedColour;
+    ColourButton* m_loveColour;
+    ColourButton* m_unlovedColour;
 };
 
 GuiTrackDisplayPageWidget::GuiTrackDisplayPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_titleScript{new ScriptLineEdit(this)}
     , m_propertiesSidebarTrackScript{new ScriptLineEdit(this)}
-    , m_preferPlaying{new QRadioButton(tr("Prefer currently playing track"), this)}
-    , m_preferSelection{new QRadioButton(tr("Prefer current selection"), this)}
     , m_starRatingSize{new QSpinBox(this)}
+    , m_ratingEditorOnlyOnHover{new QCheckBox(tr("Only show unrated stars on hovered\nor selected rows"), this)}
+    , m_loveHeartSize{new QSpinBox(this)}
+    , m_loveEditorOnlyOnHover{new QCheckBox(tr("Only show unloved hearts on hovered\nor selected rows"), this)}
     , m_fullStarSymbol{new QLineEdit(this)}
     , m_halfStarSymbol{new QLineEdit(this)}
     , m_emptyStarSymbol{new QLineEdit(this)}
     , m_ratingPreview{new QLabel(this)}
+    , m_ratingColours{
+          new ColourButton(tr("1 star") + u":"_s, true, this),
+          new ColourButton(tr("2 stars") + u":"_s, true, this),
+          new ColourButton(tr("3 stars") + u":"_s, true, this),
+          new ColourButton(tr("4 stars") + u":"_s, true, this),
+          new ColourButton(tr("5 stars") + u":"_s, true, this),
+      }
+    , m_unratedColour{new ColourButton(tr("Unrated") + u":"_s, true, this)}
+    , m_loveColour{new ColourButton(tr("Heart colour") + u":"_s, true, this)}
+    , m_unlovedColour{new ColourButton(tr("Unloved heart colour") + u":"_s, true, this)}
 {
     auto* nowPlayingGroup       = new QGroupBox(tr("Now Playing"), this);
     auto* nowPlayingGroupLayout = new QGridLayout(nowPlayingGroup);
@@ -113,42 +131,62 @@ GuiTrackDisplayPageWidget::GuiTrackDisplayPageWidget(SettingsManager* settings)
     m_emptyStarSymbol->setToolTip(tr("Used for the trailing empty portion of %rating_stars_padded%"));
     m_ratingPreview->setToolTip(tr("Preview of %rating_stars_padded% using the current font."));
 
-    auto* ratingsGroupBox = new QGroupBox(tr("Ratings"), this);
+    auto* ratingScriptsGroupBox = new QGroupBox(tr("Rating Script Variables"), this);
+    auto* ratingScriptsLayout   = new QGridLayout(ratingScriptsGroupBox);
+
+    row = 0;
+    ratingScriptsLayout->addWidget(new QLabel(tr("Full star symbol") + u":"_s, this), row, 0);
+    ratingScriptsLayout->addWidget(m_fullStarSymbol, row++, 1);
+    ratingScriptsLayout->addWidget(new QLabel(tr("Half star symbol") + u":"_s, this), row, 0);
+    ratingScriptsLayout->addWidget(m_halfStarSymbol, row++, 1);
+    ratingScriptsLayout->addWidget(new QLabel(tr("Empty star symbol") + u":"_s, this), row, 0);
+    ratingScriptsLayout->addWidget(m_emptyStarSymbol, row++, 1);
+    ratingScriptsLayout->addWidget(new QLabel(tr("Preview") + u":"_s, this), row, 0);
+    ratingScriptsLayout->addWidget(m_ratingPreview, row++, 1);
+    ratingScriptsLayout->setColumnStretch(2, 1);
+
+    auto* ratingsGroupBox = new QGroupBox(tr("Rating Editor"), this);
     auto* ratingsLayout   = new QGridLayout(ratingsGroupBox);
 
     row = 0;
-    ratingsLayout->addWidget(new QLabel(tr("Rating editor star size") + u":"_s, this), row, 0);
+    ratingsLayout->addWidget(m_ratingEditorOnlyOnHover, row++, 0, 1, 2);
+    ratingsLayout->addWidget(new QLabel(tr("Star size") + u":"_s, this), row, 0);
     ratingsLayout->addWidget(m_starRatingSize, row++, 1);
-    ratingsLayout->addWidget(new QLabel(tr("Full star symbol") + u":"_s, this), row, 0);
-    ratingsLayout->addWidget(m_fullStarSymbol, row++, 1);
-    ratingsLayout->addWidget(new QLabel(tr("Half star symbol") + u":"_s, this), row, 0);
-    ratingsLayout->addWidget(m_halfStarSymbol, row++, 1);
-    ratingsLayout->addWidget(new QLabel(tr("Empty star symbol") + u":"_s, this), row, 0);
-    ratingsLayout->addWidget(m_emptyStarSymbol, row++, 1);
-    ratingsLayout->addWidget(new QLabel(tr("Preview") + u":"_s, this), row, 0);
-    ratingsLayout->addWidget(m_ratingPreview, row++, 1);
+    ratingsLayout->addWidget(Gui::createSectionHeader(tr("Colours"), this), row++, 0, 1, 2);
+    ratingsLayout->addWidget(m_unratedColour, row++, 0, 1, 2);
+    for(auto* colour : m_ratingColours) {
+        ratingsLayout->addWidget(colour, row++, 0, 1, 2);
+    }
+    ColourButton::alignLabels({m_ratingColours.at(0), m_ratingColours.at(1), m_ratingColours.at(2),
+                               m_ratingColours.at(3), m_ratingColours.at(4), m_unratedColour});
     ratingsLayout->setColumnStretch(3, 1);
 
-    auto* selectionGroupBox    = new QGroupBox(tr("Selection Display"), this);
-    auto* selectionGroup       = new QButtonGroup(this);
-    auto* selectionGroupLayout = new QGridLayout(selectionGroupBox);
+    m_loveHeartSize->setRange(5, 30);
+    m_loveHeartSize->setSuffix(u" px"_s);
+    m_loveHeartSize->setToolTip(tr("Controls the heart size used by the love editor widget"));
 
-    selectionGroup->addButton(m_preferPlaying);
-    selectionGroup->addButton(m_preferSelection);
+    auto* loveGroupBox = new QGroupBox(tr("Love Editor"), this);
+    auto* loveLayout   = new QGridLayout(loveGroupBox);
 
     row = 0;
-    selectionGroupLayout->addWidget(new QLabel(tr("Selection info") + u":"_s, this), row++, 0, 1, 3);
-    selectionGroupLayout->addWidget(m_preferPlaying, row++, 0, 1, 3);
-    selectionGroupLayout->addWidget(m_preferSelection, row++, 0, 1, 3);
-    selectionGroupLayout->setColumnStretch(2, 1);
+    loveLayout->addWidget(m_loveEditorOnlyOnHover, row++, 0, 1, 2);
+    loveLayout->addWidget(new QLabel(tr("Heart size") + u":"_s, this), row, 0);
+    loveLayout->addWidget(m_loveHeartSize, row++, 1);
+    loveLayout->addWidget(Gui::createSectionHeader(tr("Colours"), this), row++, 0, 1, 2);
+    loveLayout->addWidget(m_unlovedColour, row++, 0, 1, 2);
+    loveLayout->addWidget(m_loveColour, row++, 0, 1, 2);
+    ColourButton::alignLabels({m_loveColour, m_unlovedColour});
+    loveLayout->setColumnStretch(2, 1);
+    loveLayout->setRowStretch(row, 1);
 
     auto* mainLayout = new QGridLayout(this);
 
     row = 0;
     mainLayout->addWidget(nowPlayingGroup, row++, 0, 1, 2);
     mainLayout->addWidget(propertiesDialogGroup, row++, 0, 1, 2);
-    mainLayout->addWidget(selectionGroupBox, row++, 0, 1, 2);
-    mainLayout->addWidget(ratingsGroupBox, row++, 0, 1, 2);
+    mainLayout->addWidget(ratingScriptsGroupBox, row++, 0, 1, 2);
+    mainLayout->addWidget(ratingsGroupBox, row, 0, 1, 1);
+    mainLayout->addWidget(loveGroupBox, row++, 1, 1, 1);
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
@@ -172,21 +210,41 @@ void GuiTrackDisplayPageWidget::updateRatingPreview()
 
 void GuiTrackDisplayPageWidget::load()
 {
-    m_titleScript->setText(m_settings->value<WindowTitleTrackScript>());
-    m_propertiesSidebarTrackScript->setText(m_settings->value<PropertiesSidebarTrackScript>());
-
-    const auto option = static_cast<SelectionDisplay>(m_settings->value<InfoDisplayPrefer>());
-    if(option == SelectionDisplay::PreferPlaying) {
-        m_preferPlaying->setChecked(true);
-    }
-    else {
-        m_preferSelection->setChecked(true);
-    }
+    m_titleScript->setScript(m_settings->value<WindowTitleTrackScript>());
+    m_propertiesSidebarTrackScript->setScript(m_settings->value<PropertiesSidebarTrackScript>());
 
     m_starRatingSize->setValue(m_settings->value<StarRatingSize>());
+    m_ratingEditorOnlyOnHover->setChecked(m_settings->value<RatingEditorOnlyOnHover>());
+    m_loveHeartSize->setValue(m_settings->value<LoveHeartSize>());
+    m_loveEditorOnlyOnHover->setChecked(m_settings->value<LoveEditorOnlyOnHover>());
     m_fullStarSymbol->setText(m_settings->value<RatingFullStarSymbol>());
     m_halfStarSymbol->setText(m_settings->value<RatingHalfStarSymbol>());
     m_emptyStarSymbol->setText(m_settings->value<RatingEmptyStarSymbol>());
+
+    const std::array ratingColours{
+        m_settings->value<RatingOneStarColour>(),   m_settings->value<RatingTwoStarColour>(),
+        m_settings->value<RatingThreeStarColour>(), m_settings->value<RatingFourStarColour>(),
+        m_settings->value<RatingFiveStarColour>(),
+    };
+    const std::array defaultRatingColours{
+        QColor{u"#d9534f"_s}, QColor{u"#f0ad4e"_s}, QColor{u"#f1c40f"_s}, QColor{u"#8bc34a"_s}, QColor{u"#43a047"_s},
+    };
+    for(size_t i{0}; i < m_ratingColours.size(); ++i) {
+        m_ratingColours.at(i)->setChecked(!ratingColours.at(i).isNull());
+        m_ratingColours.at(i)->setColour(ratingColours.at(i).isNull() ? defaultRatingColours.at(i)
+                                                                      : ratingColours.at(i).value<QColor>());
+    }
+    const QVariant unratedColour = m_settings->value<UnratedStarColour>();
+    m_unratedColour->setChecked(!unratedColour.isNull());
+    m_unratedColour->setColour(unratedColour.isNull() ? QColor{u"#339e9e9e"_s} : unratedColour.value<QColor>());
+
+    const QVariant loveColour = m_settings->value<LoveHeartColour>();
+    m_loveColour->setChecked(!loveColour.isNull());
+    m_loveColour->setColour(loveColour.isNull() ? QColor{u"#e53935"_s} : loveColour.value<QColor>());
+    const QVariant unlovedColour = m_settings->value<UnlovedHeartColour>();
+    m_unlovedColour->setChecked(!unlovedColour.isNull());
+    m_unlovedColour->setColour(unlovedColour.isNull() ? QColor{u"#339e9e9e"_s} : unlovedColour.value<QColor>());
+
     updateRatingPreview();
 }
 
@@ -195,29 +253,56 @@ void GuiTrackDisplayPageWidget::apply()
     m_settings->set<WindowTitleTrackScript>(m_titleScript->text());
     m_settings->set<PropertiesSidebarTrackScript>(m_propertiesSidebarTrackScript->text());
 
-    const SelectionDisplay option
-        = m_preferPlaying->isChecked() ? SelectionDisplay::PreferPlaying : SelectionDisplay::PreferSelection;
-    m_settings->set<InfoDisplayPrefer>(static_cast<int>(option));
+    m_settings->set<RatingEditorOnlyOnHover>(m_ratingEditorOnlyOnHover->isChecked());
+    m_settings->set<LoveEditorOnlyOnHover>(m_loveEditorOnlyOnHover->isChecked());
 
     const auto& defaultSymbols = defaultRatingStarSymbols();
     m_settings->set<StarRatingSize>(m_starRatingSize->value());
+    m_settings->set<LoveHeartSize>(m_loveHeartSize->value());
     m_settings->set<RatingFullStarSymbol>(m_fullStarSymbol->text().isEmpty() ? defaultSymbols.fullStarSymbol
                                                                              : m_fullStarSymbol->text());
     m_settings->set<RatingHalfStarSymbol>(m_halfStarSymbol->text().isEmpty() ? defaultSymbols.halfStarSymbol
                                                                              : m_halfStarSymbol->text());
     m_settings->set<RatingEmptyStarSymbol>(m_emptyStarSymbol->text().isEmpty() ? defaultSymbols.emptyStarSymbol
                                                                                : m_emptyStarSymbol->text());
+
+    const auto setColour = [this]<Settings::Gui::GuiSettings Setting>(const ColourButton* button) {
+        if(button->isChecked()) {
+            m_settings->set<Setting>(button->colour());
+        }
+        else {
+            m_settings->reset<Setting>();
+        }
+    };
+    setColour.template operator()<RatingOneStarColour>(m_ratingColours.at(0));
+    setColour.template operator()<RatingTwoStarColour>(m_ratingColours.at(1));
+    setColour.template operator()<RatingThreeStarColour>(m_ratingColours.at(2));
+    setColour.template operator()<RatingFourStarColour>(m_ratingColours.at(3));
+    setColour.template operator()<RatingFiveStarColour>(m_ratingColours.at(4));
+    setColour.template operator()<UnratedStarColour>(m_unratedColour);
+    setColour.template operator()<LoveHeartColour>(m_loveColour);
+    setColour.template operator()<UnlovedHeartColour>(m_unlovedColour);
 }
 
 void GuiTrackDisplayPageWidget::reset()
 {
     m_settings->reset<WindowTitleTrackScript>();
     m_settings->reset<PropertiesSidebarTrackScript>();
-    m_settings->reset<InfoDisplayPrefer>();
+    m_settings->reset<RatingEditorOnlyOnHover>();
+    m_settings->reset<LoveEditorOnlyOnHover>();
     m_settings->reset<StarRatingSize>();
+    m_settings->reset<LoveHeartSize>();
     m_settings->reset<RatingFullStarSymbol>();
     m_settings->reset<RatingHalfStarSymbol>();
     m_settings->reset<RatingEmptyStarSymbol>();
+    m_settings->reset<RatingOneStarColour>();
+    m_settings->reset<RatingTwoStarColour>();
+    m_settings->reset<RatingThreeStarColour>();
+    m_settings->reset<RatingFourStarColour>();
+    m_settings->reset<RatingFiveStarColour>();
+    m_settings->reset<UnratedStarColour>();
+    m_settings->reset<LoveHeartColour>();
+    m_settings->reset<UnlovedHeartColour>();
 }
 
 GuiTrackDisplayPage::GuiTrackDisplayPage(SettingsManager* settings, QObject* parent)

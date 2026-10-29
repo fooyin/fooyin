@@ -31,6 +31,11 @@ QByteArray networkUserAgent()
     return u"fooyin/%1 (https://www.fooyin.org)"_s.arg(QString::fromLatin1(VERSION)).toUtf8();
 }
 
+bool isHlsStreamUrl(const QUrl& url)
+{
+    return url.path().endsWith(".m3u8"_L1, Qt::CaseInsensitive);
+}
+
 QNetworkRequest makeNetworkRequest(const QUrl& url, NetworkRequestOptions options)
 {
     QNetworkRequest request{url};

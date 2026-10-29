@@ -77,6 +77,7 @@ QIcon placeholderIcon(const RadioStation& station, int size)
     painter.setFont(font);
     painter.setPen(Qt::black);
     painter.drawText(pixmap.rect(), Qt::AlignCenter, initials);
+    painter.end();
 
     return QIcon{pixmap};
 }

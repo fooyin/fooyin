@@ -43,7 +43,7 @@ class NotifyPlugin : public QObject,
                      public GuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "notify.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "notify.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
@@ -96,6 +96,7 @@ private:
     std::optional<PendingNotification> m_pendingNotification;
 
     ScriptParser m_scriptParser;
+    Track m_lastTrack;
     uint64_t m_notificationGeneration;
     bool m_notificationRequestInFlight;
 };

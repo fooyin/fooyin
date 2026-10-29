@@ -49,7 +49,7 @@ class QuickTaggerPlugin : public QObject,
                           public GuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "quicktagger.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "quicktagger.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:

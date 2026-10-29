@@ -32,6 +32,7 @@ class QTabWidget;
 
 namespace Fooyin {
 class ColourButton;
+class BackgroundConfigWidget;
 class FontButton;
 class ScriptLineEdit;
 class SliderEditor;
@@ -47,6 +48,8 @@ public:
 protected:
     [[nodiscard]] LyricsWidget::ConfigData config() const override;
     void setConfig(const LyricsWidget::ConfigData& config) override;
+    void mergeExternalConfig(const LyricsWidget::ConfigData& previous,
+                             const LyricsWidget::ConfigData& current) override;
 
 private:
     [[nodiscard]] ScrollMode scrollMode() const;
@@ -55,6 +58,7 @@ private:
     GuiStyleProvider* m_styleProvider;
 
     QTabWidget* m_tabs;
+    BackgroundConfigWidget* m_background;
 
     QCheckBox* m_seekOnClick;
     ScriptLineEdit* m_noLyricsScript;
@@ -67,8 +71,8 @@ private:
     QRadioButton* m_scrollAutomatic;
 
     QCheckBox* m_showScrollbar;
-    QCheckBox* m_centreFirstSyncedLine;
-    QCheckBox* m_centreLastSyncedLine;
+    QCheckBox* m_centreFirstLine;
+    QCheckBox* m_centreLastLine;
     QComboBox* m_progressMode;
     QComboBox* m_alignment;
     QSpinBox* m_lineSpacing;
@@ -78,28 +82,17 @@ private:
     QSpinBox* m_bottomMargin;
 
     QGroupBox* m_coloursGroup;
-    QCheckBox* m_bgColour;
     ColourButton* m_bgColourBtn;
-    QCheckBox* m_lineColour;
     ColourButton* m_lineColourBtn;
-    QCheckBox* m_unplayedColour;
     ColourButton* m_unplayedColourBtn;
-    QCheckBox* m_playedColour;
     ColourButton* m_playedColourBtn;
-    QCheckBox* m_syncedLineColour;
     ColourButton* m_syncedLineColourBtn;
-    QCheckBox* m_wordLineColour;
     ColourButton* m_wordLineColourBtn;
-    QCheckBox* m_wordColour;
     ColourButton* m_wordColourBtn;
 
-    QCheckBox* m_baseFont;
     FontButton* m_baseFontBtn;
-    QCheckBox* m_lineFont;
     FontButton* m_lineFontBtn;
-    QCheckBox* m_wordLineFont;
     FontButton* m_wordLineFontBtn;
-    QCheckBox* m_wordFont;
     FontButton* m_wordFontBtn;
 };
 } // namespace Lyrics

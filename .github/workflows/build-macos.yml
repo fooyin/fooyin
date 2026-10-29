@@ -2,14 +2,22 @@ name: Build macOS
 
 on:
   workflow_call:
+    inputs:
+      version_suffix:
+        required: false
+        type: string
+        default: ''
 
 env:
+  FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
   BUILD_TESTS: ON
+  BUILD_CCACHE: ON
+  BUILD_PCH: OFF
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
   CCACHE_DIR: ${{ github.workspace }}/.ccache
   CCACHE_BASEDIR: ${{ github.workspace }}
-  CCACHE_MAXSIZE: 1G
+  CCACHE_MAXSIZE: 500M
   CCACHE_COMPILERCHECK: content
-  CCACHE_SLOPPINESS: pch_defines,time_macros
 
 jobs:
   macOS:
@@ -20,11 +28,11 @@ jobs:
 #          - arch: amd64
 #            runs-on: macos-15-intel
           - arch: aarch64
-            runs-on: macos-latest
+            runs-on: macos-15
     runs-on: ${{ matrix.runs-on }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           submodules: recursive
@@ -33,20 +41,32 @@ jobs:
         run: |
           ./ci/macos-depends.sh
 
-      - name: Cache ccache
-        uses: actions/cache@v5
+      - name: Set ccache generation
+        id: ccache-generation
+        run: echo "period=$(( $(date -u +%s) / 86400 ))" >> "$GITHUB_OUTPUT"
+
+      - name: Restore ccache
+        id: ccache-restore
+        uses: actions/cache/restore@v6
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: ${{ runner.os }}-${{ runner.arch }}-ccache-${{ github.sha }}
+          key: macos-${{ matrix.runs-on }}-${{ matrix.arch }}-ccache-${{ steps.ccache-generation.outputs.period }}
           restore-keys: |
-            ${{ runner.os }}-${{ runner.arch }}-ccache-
+            macos-${{ matrix.runs-on }}-${{ matrix.arch }}-ccache-
 
       - name: Build
         run: |
           ./ci/macos-build.sh
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: macos-${{ matrix.arch }}
           path: dmg
+
+      - name: Save ccache
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
+        uses: ./.github/actions/save-ccache
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}

@@ -22,18 +22,27 @@
 #include <core/engine/outputplugin.h>
 #include <core/plugins/plugin.h>
 
+#include <memory>
+
 namespace Fooyin::Sdl {
+class SdlAudioSubsystem;
+
 class SdlPlugin : public QObject,
                   public Plugin,
                   public OutputPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin" FILE "sdl.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "sdl.json")
     Q_INTERFACES(Fooyin::Plugin)
     Q_INTERFACES(Fooyin::OutputPlugin)
 
 public:
+    SdlPlugin();
+
     [[nodiscard]] QString name() const override;
     [[nodiscard]] OutputCreator creator() const override;
+
+private:
+    std::shared_ptr<SdlAudioSubsystem> m_audioSubsystem;
 };
 } // namespace Fooyin::Sdl

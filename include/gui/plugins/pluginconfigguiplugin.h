@@ -38,4 +38,4 @@ public:
 };
 } // namespace Fooyin
 
-Q_DECLARE_INTERFACE(Fooyin::PluginConfigGuiPlugin, "org.fooyin.fooyin.plugin.gui.config/1.0")
+Q_DECLARE_INTERFACE(Fooyin::PluginConfigGuiPlugin, "org.fooyin.fooyin.plugin.gui.config")

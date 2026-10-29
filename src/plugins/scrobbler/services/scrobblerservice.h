@@ -19,9 +19,11 @@
 
 #pragma once
 
+#include "lovedcache.h"
 #include "scrobblercache.h"
 #include "servicedetails.h"
 
+#include <core/accountstore.h>
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
 
@@ -31,6 +33,8 @@
 #include <QString>
 #include <QUrl>
 #include <QVariant>
+
+#include <optional>
 
 Q_DECLARE_LOGGING_CATEGORY(SCROBBLER)
 
@@ -50,13 +54,20 @@ enum class RequestType : uint8_t
     Post
 };
 
+struct RemoteTrackStats
+{
+    Track track;
+    std::optional<bool> loved;
+    std::optional<int> playCount;
+};
+
 class ScrobblerService : public QObject
 {
     Q_OBJECT
 
 public:
     ScrobblerService(ServiceDetails details, NetworkAccessManager* network, SettingsManager* settings,
-                     QObject* parent = nullptr);
+                     DbConnectionPoolPtr dbPool, QObject* parent = nullptr);
     ~ScrobblerService() override;
 
     [[nodiscard]] bool isEnabled() const;
@@ -66,6 +77,8 @@ public:
     [[nodiscard]] virtual QString username() const;
     [[nodiscard]] virtual bool requiresAuthentication() const;
     [[nodiscard]] virtual bool isAuthenticated() const;
+    [[nodiscard]] virtual bool supportsLoved() const;
+    [[nodiscard]] virtual bool supportsTrackStatsSync() const;
 
     [[nodiscard]] bool isCustom() const;
     [[nodiscard]] ServiceDetails details() const;
@@ -84,6 +97,9 @@ public:
     void updateNowPlaying(const Track& track);
     void refreshNowPlaying();
     void scrobble(const Track& track);
+    void updateLoved(const Track& track);
+    [[nodiscard]] bool hasPendingLoved(const Track& track);
+    virtual void fetchTrackStats(const Track& track);
 
     virtual void testApi()          = 0;
     virtual void updateNowPlaying() = 0;
@@ -95,6 +111,7 @@ public:
 Q_SIGNALS:
     void testApiFinished(bool success, const QString& error = {});
     void authenticationFinished(bool success, const QString& error = {});
+    void trackStatsFetched(const Fooyin::Scrobbler::RemoteTrackStats& stats);
 
 protected:
     virtual void setupAuthQuery(ScrobblerAuthSession* session, QUrlQuery& query);
@@ -105,7 +122,10 @@ protected:
     [[nodiscard]] NetworkAccessManager* network() const;
     [[nodiscard]] ScrobblerAuthSession* authSession() const;
     [[nodiscard]] ScrobblerCache* cache() const;
+    [[nodiscard]] LovedCache* lovedCache() const;
     [[nodiscard]] SettingsManager* settings() const;
+    [[nodiscard]] const AccountStore& accountStore() const;
+    [[nodiscard]] QString accountName() const;
 
     ServiceDetails& detailsRef();
     ScriptParser* scriptParser();
@@ -125,12 +145,22 @@ protected:
     virtual ReplyResult getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc) = 0;
     bool extractJsonObj(const QByteArray& data, QJsonObject* obj, QString* errorDesc);
 
+    enum class LovedUpdateResult : uint8_t
+    {
+        Success = 0,
+        Retry,
+        Discard,
+    };
+    virtual void submitLoved(const LovedItem& item);
+    void lovedUpdateFinished(const LovedItem& item, LovedUpdateResult result);
+
     void handleTestError(const char* error);
     void handleAuthError(const char* error);
     void cleanupAuth();
     void deleteAll();
 
     void doDelayedSubmit(bool initial = false);
+    void doDelayedLovedSubmit(bool initial = false);
     void setSubmitted(bool submitted);
     void setSubmitError(bool error);
     void setScrobbled(bool scrobbled);
@@ -140,6 +170,7 @@ protected:
 private:
     NetworkAccessManager* m_network;
     SettingsManager* m_settings;
+    AccountStore m_accountStore;
 
     ScriptParser m_scriptParser;
 
@@ -148,14 +179,20 @@ private:
     ScrobblerAuthSession* m_authSession;
     std::vector<QNetworkReply*> m_replies;
     ScrobblerCache* m_cache;
+    LovedCache* m_lovedCache;
 
     QBasicTimer m_submitTimer;
+    QBasicTimer m_lovedSubmitTimer;
     bool m_submitError;
+    bool m_lovedSubmitError;
 
     Track m_currentTrack;
     uint64_t m_timestamp;
     bool m_scrobbled;
     bool m_submitted;
+    bool m_lovedSubmitted;
 };
 } // namespace Scrobbler
 } // namespace Fooyin
+
+Q_DECLARE_METATYPE(Fooyin::Scrobbler::RemoteTrackStats)

@@ -24,22 +24,26 @@
 #include <functional>
 
 namespace Fooyin {
-class EngineController;
-class SettingsManager;
-class PlayerController;
+class Application;
 class PlaylistController;
-class PlaylistHandler;
 class StatusWidgetPrivate;
 class TrackSelectionController;
+
+enum class StatusAction : uint8_t
+{
+    None = 0,
+    ShowTrack,
+    OpenProperties,
+    OpenContainingFolder,
+};
 
 class StatusWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    StatusWidget(EngineController* engine, PlayerController* playerController, PlaylistHandler* playlistHandler,
-                 PlaylistController* playlistController, TrackSelectionController* selectionController,
-                 SettingsManager* settings, QWidget* parent = nullptr);
+    StatusWidget(Application* core, PlaylistController* playlistController,
+                 TrackSelectionController* selectionController, QWidget* parent = nullptr);
     ~StatusWidget() override;
 
     [[nodiscard]] QString name() const override;
@@ -63,6 +67,7 @@ Q_SIGNALS:
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
     void mouseDoubleClickEvent(QMouseEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
 

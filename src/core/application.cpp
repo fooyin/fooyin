@@ -27,6 +27,7 @@
 #include "engine/enginehandler.h"
 #include "engine/enginehelpers.h"
 #include "engine/input/archiveinput.h"
+#include "engine/input/ffmpeg/ffmpegencoder.h"
 #include "engine/input/ffmpeg/ffmpeginput.h"
 #include "engine/input/taglibparser.h"
 #include "internalcoresettings.h"
@@ -41,8 +42,10 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audiobuffer.h>
+#include <core/engine/audioencoderregistry.h>
 #include <core/engine/audioloader.h>
 #include <core/engine/dsp/dspplugin.h>
+#include <core/engine/encoderplugin.h>
 #include <core/engine/outputplugin.h>
 #include <core/network/networkaccessmanager.h>
 #include <core/network/remoteioservice.h>
@@ -50,9 +53,14 @@
 #include <core/playlist/playlisthandler.h>
 #include <core/playlist/playlistloader.h>
 #include <core/plugins/coreplugin.h>
+#include <core/scripting/scriptcontextservice.h>
+#include <core/scripting/scriptregistry.h>
+#include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCoreApplication>
+#include <QFile>
+#include <QFileInfo>
 #include <QLoggingCategory>
 #include <QProcess>
 #include <QTimerEvent>
@@ -63,11 +71,13 @@ using namespace std::chrono_literals;
 using namespace Qt::StringLiterals;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-constexpr auto PlaylistSaveInterval = 30s;
-constexpr auto SettingsSaveInterval = 5min;
+constexpr auto PlaylistSaveInterval      = 30s;
+constexpr auto PlaybackQueueSaveInterval = 1s;
+constexpr auto SettingsSaveInterval      = 5min;
 #else
-constexpr auto PlaylistSaveInterval = 30000;
-constexpr auto SettingsSaveInterval = 300000;
+constexpr auto PlaylistSaveInterval      = 30000;
+constexpr auto PlaybackQueueSaveInterval = 1000;
+constexpr auto SettingsSaveInterval      = 300000;
 #endif
 
 namespace {
@@ -92,9 +102,10 @@ namespace Fooyin {
 Application::Application(QObject* parent)
     : QObject{parent}
     , m_settings{new SettingsManager(Core::settingsPath(), this)}
-    , m_coreSettings{m_settings}
     , m_database{new Database(this)}
+    , m_coreSettings{m_settings, m_database->connectionPool()}
     , m_audioLoader{std::make_shared<AudioLoader>()}
+    , m_audioEncoderRegistry{std::make_unique<AudioEncoderRegistry>()}
     , m_dspRegistry{std::make_unique<DspRegistry>()}
     , m_dspChainStore{std::make_unique<DspChainStore>(m_settings, m_dspRegistry.get())}
     , m_networkManager{std::make_shared<NetworkAccessManager>(m_settings)}
@@ -105,12 +116,23 @@ Application::Application(QObject* parent)
                                         m_remoteIo, m_settings, this)}
     , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_audioLoader, m_library, m_settings, this)}
     , m_playerController{new PlayerController(m_settings, m_playlistHandler, this)}
+    , m_scriptContext{new ScriptContextService(m_playerController, m_playlistHandler, this)}
     , m_playbackQueueStore{m_database->connectionPool(), m_library, m_playlistHandler}
     , m_engine{std::make_unique<EngineHandler>(m_audioLoader, m_playerController, m_settings, m_dspRegistry.get())}
     , m_sortingRegistry{new SortingRegistry(m_settings, this)}
     , m_pluginManager{std::make_unique<PluginManager>(m_settings)}
-    , m_corePluginContext{m_engine.get(), m_playerController, m_libraryManager, m_library,         m_playlistHandler,
-                          m_settings,     m_audioLoader,      m_playlistLoader, m_sortingRegistry, m_networkManager}
+    , m_corePluginContext{m_engine.get(),
+                          m_playerController,
+                          m_libraryManager,
+                          m_library,
+                          m_playlistHandler,
+                          m_settings,
+                          m_audioLoader,
+                          m_playlistLoader,
+                          m_sortingRegistry,
+                          m_networkManager,
+                          m_database->connectionPool(),
+                          m_scriptContext}
 {
     m_audioLoader->setRemoteSourceProvider(m_remoteIo);
     m_translations.initialiseTranslations(m_settings->value<Settings::Core::Language>());
@@ -119,20 +141,30 @@ Application::Application(QObject* parent)
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistAdded, this, &Application::startSaveTimer);
     QObject::connect(m_playlistHandler, &PlaylistHandler::playlistRemoved, this, &Application::startSaveTimer);
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksAdded, this, &Application::startSaveTimer);
+    QObject::connect(m_playlistHandler, &PlaylistHandler::tracksPatched, this, &Application::startSaveTimer);
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksChanged, this, &Application::startSaveTimer);
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksUpdated, this, &Application::startSaveTimer);
     QObject::connect(m_playlistHandler, &PlaylistHandler::tracksRemoved, this, &Application::startSaveTimer);
     QObject::connect(
         m_playlistHandler, &PlaylistHandler::playlistsPopulated, this,
-        [this]() { m_playerController->replaceTracks(m_playbackQueueStore.load()); }, Qt::SingleShotConnection);
+        [this]() {
+            if(m_settings->value<Settings::Core::ClearPlaybackQueueOnStartup>()) {
+                m_playbackQueueStore.save(PlaybackQueue{});
+                return;
+            }
+            m_playerController->restorePlaybackQueue(m_playbackQueueStore.load());
+        },
+        Qt::SingleShotConnection);
     QObject::connect(m_playerController, &PlayerController::tracksQueued, this,
-                     [this]() { m_playbackQueueStore.save(m_playerController->playbackQueue()); });
+                     &Application::startPlaybackQueueSaveTimer);
     QObject::connect(m_playerController, &PlayerController::tracksDequeued, this,
-                     [this]() { m_playbackQueueStore.save(m_playerController->playbackQueue()); });
+                     &Application::startPlaybackQueueSaveTimer);
     QObject::connect(m_playerController, &PlayerController::trackIndexesDequeued, this,
-                     [this]() { m_playbackQueueStore.save(m_playerController->playbackQueue()); });
+                     &Application::startPlaybackQueueSaveTimer);
     QObject::connect(m_playerController, &PlayerController::trackQueueChanged, this,
-                     [this]() { m_playbackQueueStore.save(m_playerController->playbackQueue()); });
+                     &Application::startPlaybackQueueSaveTimer);
+    QObject::connect(m_playerController, &PlayerController::playbackQueuePositionChanged, this,
+                     &Application::startPlaybackQueueSaveTimer);
 
     QObject::connect(m_library, &MusicLibrary::tracksMetadataChanged, this,
                      [this](const TrackList& tracks) { tracksWereUpdated(tracks); });
@@ -148,6 +180,8 @@ Application::Application(QObject* parent)
                              m_library->flushPendingWrites();
                          }
                      });
+    QObject::connect(m_libraryManager, &LibraryManager::librariesChanged, this,
+                     [this]() { m_scriptContext->publish(ScriptSources::Libraries); });
     QObject::connect(m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, m_playlistHandler,
                      &PlaylistHandler::savePlaylists);
     QObject::connect(m_engine.get(), &EngineHandler::trackChanged, this, [this](const Track& track) {
@@ -173,22 +207,27 @@ void Application::startup()
     initialise();
 }
 
+void Application::completeStartup()
+{
+    Q_ASSERT(ScriptRegistry::instance().isFinalised());
+    m_library->loadAllTracks();
+}
+
 void Application::shutdown()
 {
+    m_playlistHandler->finishPendingUpdates();
+    m_playbackQueueSaveTimer.stop();
     saveDatabaseSettings();
 
     if(m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylists).toBool()) {
         exportAllPlaylists(true);
     }
 
-    if(m_settings->value<Settings::Core::ClearPlaybackQueueOnExit>()) {
-        m_playbackQueueStore.save(PlaybackQueue{});
-    }
-    else {
-        m_playbackQueueStore.save(m_playerController->playbackQueue());
-    }
+    m_playbackQueueStore.save(m_playerController->playbackQueue());
 
     m_playlistHandler->savePlaylists();
+    m_scriptContext->shutdown();
+    ScriptRegistry::instance().shutdown();
     m_pluginManager->unloadPlugins();
     m_audioLoader->saveState();
     m_settings->storeSettings();
@@ -213,6 +252,11 @@ void Application::restart()
         Qt::QueuedConnection);
 }
 
+const CorePluginContext& Application::corePluginContext() const
+{
+    return m_corePluginContext;
+}
+
 Database* Application::database() const
 {
     return m_database;
@@ -231,6 +275,11 @@ PluginManager* Application::pluginManager() const
 PlayerController* Application::playerController() const
 {
     return m_playerController;
+}
+
+ScriptContextService* Application::scriptContextService() const
+{
+    return m_scriptContext;
 }
 
 LibraryManager* Application::libraryManager() const
@@ -273,6 +322,11 @@ std::shared_ptr<AudioLoader> Application::audioLoader() const
     return m_audioLoader;
 }
 
+AudioEncoderRegistry* Application::audioEncoderRegistry() const
+{
+    return m_audioEncoderRegistry.get();
+}
+
 std::shared_ptr<NetworkAccessManager> Application::networkManager() const
 {
     return m_networkManager;
@@ -307,6 +361,10 @@ void Application::timerEvent(QTimerEvent* event)
         }
         m_playlistHandler->savePlaylists();
     }
+    else if(event->timerId() == m_playbackQueueSaveTimer.timerId()) {
+        m_playbackQueueSaveTimer.stop();
+        m_playbackQueueStore.save(m_playerController->playbackQueue());
+    }
     else if(event->timerId() == m_settingsSaveTimer.timerId()) {
         if(m_settings->settingsHaveChanged()) {
             m_settings->storeSettings();
@@ -328,7 +386,6 @@ void Application::initialise()
     m_audioLoader->restoreState();
     m_settingsSaveTimer.start(SettingsSaveInterval, this);
 
-    m_library->loadAllTracks();
     m_engine->setup();
 }
 
@@ -341,13 +398,14 @@ void Application::registerPlaylistParsers()
 
 void Application::registerInputs()
 {
-    m_audioLoader->addDecoder(
-        u"Archive"_s, [this]() { return std::make_unique<ArchiveDecoder>(m_audioLoader); }, -1, true);
+    m_audioEncoderRegistry->addEncoderBackend(
+        u"ffmpeg"_s, u"FFmpeg"_s, []() { return std::make_unique<FFmpegEncoder>(); },
+        AudioEncoderRegistry::BackendPriority::Fallback);
     m_audioLoader->addReader(
-        u"Archive"_s, [this]() { return std::make_unique<GeneralArchiveReader>(m_audioLoader); }, -1, true);
-    m_audioLoader->addReader(u"TagLib"_s, []() { return std::make_unique<TagLibReader>(); });
-    m_audioLoader->addDecoder(u"FFmpeg"_s, []() { return std::make_unique<FFmpegDecoder>(); }, 99);
-    m_audioLoader->addReader(u"FFmpeg"_s, []() { return std::make_unique<FFmpegReader>(); }, 99);
+        u"Archive"_s, [this]() { return std::make_unique<GeneralArchiveReader>(m_audioLoader); }, 100, true);
+    m_audioLoader->addReader(u"TagLib"_s, []() { return std::make_unique<TagLibReader>(); }, 100);
+    m_audioLoader->addDecoder(u"FFmpeg"_s, []() { return std::make_unique<FFmpegDecoder>(); }, 1000);
+    m_audioLoader->addReader(u"FFmpeg"_s, []() { return std::make_unique<FFmpegReader>(); }, 1000);
 }
 
 void Application::setupConnections()
@@ -403,12 +461,10 @@ void Application::markTrack(const Track& track) const
 
 void Application::tracksWereUpdated(const TrackList& tracks) const
 {
-    const Track currentTrack = m_playerController->currentTrack();
-    if(!currentTrack.isValid()) {
-        return;
-    }
+    m_playerController->updateQueuedTrackMetadata(tracks);
 
-    const auto trackIt = std::ranges::find_if(
+    const Track currentTrack = m_playerController->currentTrack();
+    const auto trackIt       = std::ranges::find_if(
         tracks, [&currentTrack](const Track& track) { return sameTrackIdentity(track, currentTrack); });
     if(trackIt != tracks.cend()) {
         const Track& updatedTrack{*trackIt};
@@ -417,11 +473,16 @@ void Application::tracksWereUpdated(const TrackList& tracks) const
                      << "rating=" << updatedTrack.rating();
         m_playerController->updateCurrentTrack(updatedTrack);
     }
+
+    for(const auto& track : tracks) {
+        m_scriptContext->publish(ScriptSources::TrackMetadata, track);
+    }
 }
 
 void Application::loadPlugins()
 {
     const QStringList pluginPaths{Core::pluginPaths()};
+    qCInfo(APP) << "Plugin search paths:" << pluginPaths.join("; "_L1);
     m_pluginManager->findPlugins(pluginPaths);
     m_pluginManager->loadPlugins();
 
@@ -434,13 +495,20 @@ void Application::loadPlugins()
     m_pluginManager->initialisePlugins<InputPlugin>([this](InputPlugin* plugin) {
         const auto creator = plugin->inputCreator();
         if(creator.decoder) {
-            m_audioLoader->addDecoder(plugin->inputName(), creator.decoder);
+            m_audioLoader->addDecoder(plugin->inputName(), creator.decoder, creator.priority);
         }
         if(creator.reader) {
-            m_audioLoader->addReader(plugin->inputName(), creator.reader);
+            m_audioLoader->addReader(plugin->inputName(), creator.reader, creator.priority);
         }
         if(creator.archiveReader) {
-            m_audioLoader->addArchiveReader(plugin->inputName(), creator.archiveReader);
+            m_audioLoader->addArchiveReader(plugin->inputName(), creator.archiveReader, creator.priority);
+        }
+    });
+
+    m_pluginManager->initialisePlugins<EncoderPlugin>([this](EncoderPlugin* plugin) {
+        const auto creator = plugin->encoderCreator();
+        if(creator) {
+            m_audioEncoderRegistry->addEncoderBackend(plugin->encoderName(), plugin->encoderName(), creator);
         }
     });
 
@@ -461,22 +529,46 @@ void Application::startSaveTimer()
     m_playlistSaveTimer.start(PlaylistSaveInterval, this);
 }
 
+void Application::startPlaybackQueueSaveTimer()
+{
+    m_playbackQueueSaveTimer.start(PlaybackQueueSaveInterval, this);
+}
+
+bool Application::exportPlaylist(const Playlist& playlist, const QString& filepath, const QString& extension) const
+{
+    auto* parser = m_playlistLoader->parserForExtension(extension);
+    if(!parser) {
+        qCInfo(APP) << "Could not save playlist: No parser found for" << extension;
+        return false;
+    }
+
+    QFile file{filepath};
+    if(!file.open(QIODevice::WriteOnly)) {
+        qCWarning(APP) << "Could not open playlist file" << filepath << "for writing:" << file.errorString();
+        return false;
+    }
+
+    const QDir playlistDir{QFileInfo{file}.absolutePath()};
+    const auto pathType = static_cast<PlaylistParser::PathType>(
+        m_settings->fileValue(Settings::Core::Internal::PlaylistSavePathType, 0).toInt());
+    const bool writeMetadata = m_settings->fileValue(Settings::Core::Internal::PlaylistSaveMetadata, false).toBool();
+
+    parser->savePlaylist(&file, extension, playlist.tracks(), playlistDir, pathType, writeMetadata);
+    return true;
+}
+
 void Application::exportAllPlaylists(bool shutdown)
 {
     using namespace Settings::Core::Internal;
 
     const auto ext = m_settings->fileValue(AutoExportPlaylistsType).toString();
 
-    auto* parser = m_playlistLoader->parserForExtension(ext);
-    if(!parser) {
+    if(!m_playlistLoader->parserForExtension(ext)) {
         return;
     }
 
     const QString path = m_settings->fileValue(AutoExportPlaylistsPath, Core::playlistsPath()).toString();
     const QDir playlistPath{path};
-    const auto pathType = static_cast<PlaylistParser::PathType>(
-        m_settings->fileValue(Settings::Core::Internal::PlaylistSavePathType, 0).toInt());
-    const bool writeMetadata = m_settings->fileValue(Settings::Core::Internal::PlaylistSaveMetadata, false).toBool();
 
     enum ExportType : uint8_t
     {
@@ -489,25 +581,15 @@ void Application::exportAllPlaylists(bool shutdown)
         const QString playlistFilepath = playlistPath.absoluteFilePath(playlist->name() + u'.' + ext);
         playlistPath.mkpath(path);
 
-        QFile playlistFile{playlistFilepath};
         const bool emptyPlaylist = playlist->trackCount() == 0;
         if(exportType == ForceDelete || (exportType == SaveAndDeleteEmpty && emptyPlaylist)) {
-            if(playlistFile.exists() && !playlistFile.moveToTrash()) {
-                qCInfo(APP) << "Could not remove" << (emptyPlaylist ? "empty" : "")
-                            << "playlist:" << playlistFile.errorString();
+            if(QFile::exists(playlistFilepath) && !Utils::File::moveToTrash(playlistFilepath)) {
+                qCInfo(APP) << "Could not remove" << (emptyPlaylist ? "empty" : "") << "playlist:" << playlistFilepath;
             }
             return;
         }
 
-        if(!playlistFile.open(QIODevice::WriteOnly)) {
-            qCWarning(APP) << "Could not open playlist file" << playlistPath
-                           << "for writing:" << playlistFile.errorString();
-            return;
-        }
-
-        const QFileInfo info{playlistFile};
-        const QDir playlistDir{info.absolutePath()};
-        parser->savePlaylist(&playlistFile, ext, playlist->tracks(), playlistDir, pathType, writeMetadata);
+        exportPlaylist(*playlist, playlistFilepath, ext);
     };
 
     auto playlists       = m_playlistHandler->playlists();

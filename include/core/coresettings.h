@@ -85,7 +85,7 @@ enum CoreSettings : uint32_t
     PlaybackQueueStopWhenFinished = 34 | Type::Bool,
     OutputBitDepth                = 35 | Type::Int,
     OutputDither                  = 36 | Type::Bool,
-    ClearPlaybackQueueOnExit      = 37 | Type::Bool,
+    ClearPlaybackQueueOnStartup   = 37 | Type::Bool,
     LibraryViewPlaylistSortScript = 38 | Type::String,
     OverwriteRatingOnReload       = 39 | Type::Bool,
     OverwritePlaycountOnReload    = 40 | Type::Bool,
@@ -93,6 +93,9 @@ enum CoreSettings : uint32_t
     AddFoldersIgnorePlaylists     = 42 | Type::Bool,
     PlaylistPreventDuplicates     = 43 | Type::Bool,
     PlayedThresholdTime           = 44 | Type::Int,
+    PlaybackQueueMode             = 45 | Type::Int,
+    PlaybackQueueHistoryLimit     = 46 | Type::Int,
+    PlaybackQueuePlayNowAction    = 47 | Type::Int,
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Settings::Core

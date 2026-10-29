@@ -19,9 +19,8 @@
 
 #include "outputselector.h"
 
-#include "output/outputprofilemanager.h"
-
 #include <gui/guiconstants.h>
+#include <gui/output/outputprofilemanager.h>
 #include <gui/widgets/expandingcombobox.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
@@ -103,6 +102,24 @@ void OutputSelector::loadLayoutData(const QJsonObject& layout)
     setShowLabel(layout.value("ShowLabel"_L1).toBool());
 }
 
+void OutputSelector::populateContextMenu(QMenu* menu)
+{
+    auto* showLabel = new QAction(tr("Show label"), menu);
+    showLabel->setCheckable(true);
+    showLabel->setChecked(m_showLabel);
+    QObject::connect(showLabel, &QAction::triggered, this, &OutputSelector::setShowLabel);
+    menu->addAction(showLabel);
+
+    auto* configureDevices = new QAction(tr("Configure listed devices…"), menu);
+    QObject::connect(configureDevices, &QAction::triggered, this, [this]() {
+        if(m_settings && m_settings->settingsDialog()) {
+            m_settings->settingsDialog()->openAtPage(Id{Constants::Page::OutputDevices});
+        }
+    });
+
+    menu->addAction(configureDevices);
+}
+
 void OutputSelector::contextMenuEvent(QContextMenuEvent* event)
 {
     showContextMenu(event->globalPos());
@@ -144,21 +161,7 @@ void OutputSelector::showContextMenu(const QPoint& globalPos)
 {
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
-
-    auto* showLabel = new QAction(tr("Show label"), menu);
-    showLabel->setCheckable(true);
-    showLabel->setChecked(m_showLabel);
-    QObject::connect(showLabel, &QAction::triggered, this, &OutputSelector::setShowLabel);
-    menu->addAction(showLabel);
-
-    auto* configureDevices = new QAction(tr("Configure listed devices…"), menu);
-    QObject::connect(configureDevices, &QAction::triggered, this, [this]() {
-        if(m_settings && m_settings->settingsDialog()) {
-            m_settings->settingsDialog()->openAtPage(Id{Constants::Page::OutputDevices});
-        }
-    });
-    menu->addAction(configureDevices);
-
+    populateContextMenu(menu);
     menu->popup(globalPos);
 }
 } // namespace Fooyin

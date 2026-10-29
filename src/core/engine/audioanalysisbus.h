@@ -150,6 +150,7 @@ private:
     uint64_t m_hopStreamTimeMs;
     uint32_t m_hopStreamId;
     TimePoint m_hopPresentationTime;
+    bool m_hopDiscontinuityBefore;
     AudioFormat m_hopFormat;
 };
 } // namespace Fooyin

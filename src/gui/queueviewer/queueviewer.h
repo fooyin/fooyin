@@ -22,6 +22,7 @@
 #include <core/player/playbackqueue.h>
 #include <core/playlist/playlist.h>
 #include <gui/fywidget.h>
+#include <gui/widgets/backgroundconfig.h>
 
 #include "sortactionhandler.h"
 
@@ -37,12 +38,15 @@ class QShowEvent;
 
 namespace Fooyin {
 class ActionManager;
+class Application;
+class BackgroundImageSource;
 class Command;
 class AudioLoader;
 class PlayerController;
 class PlaylistInteractor;
 class CoverRepository;
 class QueueViewerModel;
+class QueueViewerDelegate;
 class QueueViewerView;
 class SettingsManager;
 class SortingRegistry;
@@ -54,9 +58,15 @@ class QueueViewer : public FyWidget
     Q_OBJECT
 
 public:
-    explicit QueueViewer(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
+    enum class DisplayMode : uint8_t
+    {
+        PlayingTracks = 0,
+        UpcomingTracks,
+    };
+
+    explicit QueueViewer(Application* core, ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
                          TrackSelectionController* selectionController, CoverRepository* coverRepository,
-                         SortingRegistry* sortingRegistry, SettingsManager* settings, QWidget* parent = nullptr);
+                         QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -69,14 +79,16 @@ public:
 
     struct ConfigData
     {
-        QString leftScript;
-        QString rightScript;
+        QString displayScript;
         bool showCurrent{true};
         bool showIcon{true};
         QSize iconSize{36, 36};
+        int artworkCornerRadius{0};
         bool showHeader{true};
         bool showScrollBar{true};
         bool alternatingRows{false};
+        DisplayMode displayMode{DisplayMode::PlayingTracks};
+        BackgroundConfig background{};
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -86,15 +98,22 @@ public:
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
 
+Q_SIGNALS:
+    void configChanged();
+    void displayModeAvailabilityChanged(bool available);
+
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
     void showEvent(QShowEvent* event) override;
     void closeEvent(QCloseEvent* event) override;
 
+    void openConfigDialog() override;
+
 private:
     struct ViewRowState
     {
         PlaylistTrack track;
+        PlaybackQueueItemId queueItemId{0};
         int occurrence{0};
         bool currentRow{false};
 
@@ -122,9 +141,13 @@ private:
     void setupConnections();
 
     void resetModel() const;
+    void resetModelAndFollowCurrent() const;
+    void scrollToCurrentTrack() const;
+    void resumeUpdatesAfterTrackChange();
     void addSortMenu(QMenu* menu) const;
     void refreshSortActions();
     void updateSortActionState() const;
+    [[nodiscard]] bool showsUpcomingTracks() const;
 
     [[nodiscard]] ViewState captureViewState() const;
     void restoreViewState(const ViewState& state) const;
@@ -132,29 +155,32 @@ private:
     [[nodiscard]] QModelIndex indexForViewRowState(const ViewRowState& state) const;
 
     [[nodiscard]] bool canRemoveSelected() const;
+    [[nodiscard]] bool canQueueSelectedNext() const;
+    [[nodiscard]] bool canClearQueue() const;
     void updateSelectedTracks() const;
 
     void handleRowsChanged() const;
+    void playSelectedTrack() const;
+    void queueSelectedTracksNext() const;
     void removeSelectedTracks() const;
+    void stopAfterSelectedTrack() const;
     void handleQueueTracksMoved(int row, const QList<int>& indexes) const;
     void handleTracksDropped(int row, const QMimeData* mimeData) const;
     void handlePlaylistTracksDropped(int row, const QByteArray& mimeData) const;
     void handleQueueDoubleClicked(const QModelIndex& index) const;
-    void randomiseTracks(SortScope scope) const;
-    void reverseTracks(SortScope scope) const;
-    void sortTracks(const QString& script, SortScope scope) const;
-    void reorderTracks(QueueReorder reorder, SortScope scope) const;
-    void reorderTracks(QueueTracks reorderedTracks) const;
+    void randomiseTracks(SortScope scope);
+    void reverseTracks(SortScope scope);
+    void sortTracks(const QString& script, SortScope scope);
+    void reorderTracks(QueueReorder reorder, SortScope scope);
+    void reorderTracks(std::vector<PlaybackQueueItemId> reorderedIds);
     [[nodiscard]] std::vector<int> queueIndexesToSort(SortScope scope) const;
     [[nodiscard]] std::vector<int> selectedQueueIndexes() const;
-    void replaceQueueTracks(QueueTracks tracks) const;
     void insertQueueTracks(int row, const QueueTracks& tracks) const;
 
     [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
     void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
     void saveTopLevelState();
     void loadTopLevelState();
-    void openConfigDialog() override;
 
     ActionManager* m_actionManager;
     PlaylistInteractor* m_playlistInteractor;
@@ -163,7 +189,9 @@ private:
     SortingRegistry* m_sortingRegistry;
     SettingsManager* m_settings;
 
+    BackgroundImageSource* m_backgroundSource;
     QueueViewerView* m_view;
+    QueueViewerDelegate* m_delegate;
     QueueViewerModel* m_model;
     WidgetContext* m_context;
     ConfigData m_config;
@@ -171,14 +199,22 @@ private:
     QAction* m_remove;
     Command* m_removeCmd;
 
+    QAction* m_playNow;
+    QAction* m_queueNext;
+
     QAction* m_clear;
     Command* m_clearCmd;
+
+    QAction* m_stopAfter;
 
     QAction* m_randomise;
     QAction* m_reverse;
 
     std::unique_ptr<SortActionHandler> m_sortActions;
 
+    bool m_updatesPausedForTrackChange;
+    int m_updatePauseToken;
+    uint64_t m_sortRequestToken;
     bool m_topLevelStateLoaded;
 };
 } // namespace Fooyin

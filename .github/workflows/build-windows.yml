@@ -2,17 +2,48 @@ name: Build Windows
 
 on:
   workflow_call:
+    inputs:
+      version_suffix:
+        required: false
+        type: string
+        default: ''
+      signing_policy_slug:
+        required: false
+        type: string
+        default: ''
+  workflow_dispatch:
+    inputs:
+      signing_policy_slug:
+        description: SignPath signing policy slug
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  actions: write
+  contents: read
 
 env:
-  QT_VERSION: '6.8.3'
+  FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
+  QT_VERSION: '6.12.0'
   VCPKG_DISABLE_METRICS: true
-  BUILD_CCACHE: OFF
-  BUILD_PCH: ON
+  VCPKG_ROOT_DIR: 'C:/vcpkg'
+  VCPKG_INSTALLED_DIR: 'C:/v'
+  VCPKG_DOWNLOADS: 'C:/v/dl'
+  CCACHE_VERSION: '4.13.6'
+  CCACHE_DIR: 'S:/.ccache'
+  CCACHE_BASEDIR: 'S:/'
+  CCACHE_MAXSIZE: 500M
+  CCACHE_COMPILERCHECK: content
+  BUILD_CCACHE: ON
+  BUILD_PCH: OFF
+  BUILD_TESTS: ON
 
 jobs:
   windows:
     name: Windows
     strategy:
+      fail-fast: false
       matrix:
         include:
           - arch: amd64
@@ -31,66 +62,217 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           submodules: recursive
+
+      - name: Set up build paths
+        shell: pwsh
+        run: |
+          subst S: "$env:GITHUB_WORKSPACE"
+          $vcpkgCommit = (Get-Content "$env:GITHUB_WORKSPACE/vcpkg.json" | ConvertFrom-Json).'builtin-baseline'
+          git init $env:VCPKG_ROOT_DIR
+          git -C $env:VCPKG_ROOT_DIR remote add origin https://github.com/microsoft/vcpkg.git
+          git -C $env:VCPKG_ROOT_DIR fetch --depth 1 origin $vcpkgCommit
+          git -C $env:VCPKG_ROOT_DIR checkout --detach FETCH_HEAD
+          & "$env:VCPKG_ROOT_DIR/bootstrap-vcpkg.bat" -disableMetrics
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
 
       - name: Install CMake
         uses: lukka/get-cmake@latest
 
       - name: Install dependencies
-        run: choco install ninja nsis -y
+        shell: pwsh
+        run: |
+          choco install ccache --version $env:CCACHE_VERSION -y
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+          choco install ninja nsis -y
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+          ccache --version
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
           version: ${{ env.QT_VERSION }}
+          # Support the Windows x64 repository layout used by Qt 6.11 and later
+          aqtsource: git+https://github.com/miurahr/aqtinstall.git@8c3695d4a4e1ceabf6a74dc6c79681656dc6b74b
           archives: qtbase qtsvg qttools
           cache: true
           arch: ${{ matrix.qt-arch }}
           install-deps: 'true'
 
       - name: Setup MSVC Environment
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: TheMrMilchmann/setup-msvc-dev@v4
         with:
           arch: ${{ matrix.msvc-arch }}
 
       - name: Setup vcpkg cache
+        id: vcpkg-cache
         shell: pwsh
         run: |
-          $cacheDir = "${{ github.workspace }}/vcpkg-binary-cache"
+          $cacheDir = "S:/vcpkg-binary-cache"
           New-Item -ItemType Directory -Force -Path $cacheDir
+          $compilerPath = (Get-Command cl.exe -ErrorAction Stop).Source
+          $compilerHash = (Get-FileHash -Algorithm SHA256 $compilerPath).Hash.ToLowerInvariant()
+          $sdkVersion = $env:WindowsSDKVersion.TrimEnd('\')
+          $toolchain = "$env:VCToolsVersion-$sdkVersion-$compilerHash"
+          echo "toolchain=$toolchain" >> $env:GITHUB_OUTPUT
           echo "VCPKG_BINARY_SOURCES=clear;files,$cacheDir,readwrite" >> $env:GITHUB_ENV
           echo "VCPKG_TARGET_TRIPLET=${{ matrix.triplet }}" >> $env:GITHUB_ENV
 
       - name: Cache vcpkg
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
-          path: |
-            ${{ github.workspace }}/vcpkg-binary-cache
-            build-${{ matrix.cmake-preset }}_installed
-          key: ${{ runner.os }}-vcpkg-${{ matrix.cmake-preset }}-${{ hashFiles('**/vcpkg.json', '**/vcpkg-configuration.json') }}
+          path: ${{ github.workspace }}/vcpkg-binary-cache
+          key: ${{ runner.os }}-vcpkg-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json', 'CMakePresets.json', 'triplets/**') }}
           restore-keys: |
-            ${{ runner.os }}-vcpkg-${{ matrix.cmake-preset }}-
-            ${{ runner.os }}-vcpkg-
+            ${{ runner.os }}-vcpkg-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-
+
+      - name: Set ccache generation
+        id: ccache-generation
+        shell: pwsh
+        run: |
+          $period = [Math]::Floor([DateTimeOffset]::UtcNow.ToUnixTimeSeconds() / 86400)
+          echo "period=$period" >> $env:GITHUB_OUTPUT
+
+      - name: Restore ccache
+        id: ccache-restore
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ github.workspace }}/.ccache
+          key: ${{ runner.os }}-ccache-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ env.QT_VERSION }}-${{ env.CCACHE_VERSION }}-${{ steps.ccache-generation.outputs.period }}
+          restore-keys: |
+            ${{ runner.os }}-ccache-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ env.QT_VERSION }}-${{ env.CCACHE_VERSION }}-
 
       - name: Set CMAKE_PRESET
         shell: pwsh
         run: echo "CMAKE_PRESET=${{ matrix.cmake-preset }}" >> $env:GITHUB_ENV
 
-      - name: Build & Package
-        run: .\ci\windows-build.ps1
+      - name: Build & Test
         shell: pwsh
+        env:
+          VCPKG_ROOT: ${{ env.VCPKG_ROOT_DIR }}
+        run: |
+          Set-Location S:/
+          .\ci\windows-build.ps1
+
+      - name: Upload unsigned binaries for SignPath
+        if: inputs.signing_policy_slug != '' && github.repository == 'fooyin/fooyin'
+        id: upload-unsigned-binaries
+        uses: actions/upload-artifact@v7
+        with:
+          name: signpath-input-binaries-${{ matrix.arch }}
+          path: build-${{ matrix.cmake-preset }}/run
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Sign Windows binaries
+        if: inputs.signing_policy_slug != '' && github.repository == 'fooyin/fooyin'
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ inputs.signing_policy_slug }}
+          artifact-configuration-slug: ${{ vars.SIGNPATH_BINARIES_CONFIG_SLUG }}
+          github-artifact-id: ${{ steps.upload-unsigned-binaries.outputs.artifact-id }}
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: 3600
+          output-artifact-directory: signpath-signed-binaries
+
+      - name: Apply signed binaries
+        if: inputs.signing_policy_slug != '' && github.repository == 'fooyin/fooyin'
+        shell: pwsh
+        run: |
+          Copy-Item `
+            -Path "signpath-signed-binaries/*" `
+            -Destination "build-${{ matrix.cmake-preset }}/run" `
+            -Recurse `
+            -Force
+
+      - name: Package
+        shell: pwsh
+        run: |
+          Set-Location S:/
+          .\ci\windows-package.ps1
+
+      - name: Package SDK
+        if: matrix.arch == 'amd64'
+        shell: pwsh
+        run: |
+          Set-Location S:/
+          cmake --build "build-$env:CMAKE_PRESET" --target package_sdk --config Release
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+      - name: Verify relocated SDK
+        if: matrix.arch == 'amd64'
+        shell: pwsh
+        run: |
+          Set-Location S:/
+          .\ci\windows-sdk-verify.ps1
+
+      - name: Upload SDK artifact
+        if: matrix.arch == 'amd64'
+        uses: actions/upload-artifact@v7
+        with:
+          name: sdk-windows-${{ matrix.arch }}
+          path: build-${{ matrix.cmake-preset }}/sdk/*.zip
+          if-no-files-found: error
+
+      - name: Upload unsigned installer for SignPath
+        if: inputs.signing_policy_slug != '' && github.repository == 'fooyin/fooyin'
+        id: upload-unsigned-installer
+        uses: actions/upload-artifact@v7
+        with:
+          name: signpath-input-installer-${{ matrix.arch }}
+          path: artifacts/*.exe
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Sign Windows installer
+        if: inputs.signing_policy_slug != '' && github.repository == 'fooyin/fooyin'
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ inputs.signing_policy_slug }}
+          artifact-configuration-slug: ${{ vars.SIGNPATH_INSTALLER_CONFIG_SLUG }}
+          github-artifact-id: ${{ steps.upload-unsigned-installer.outputs.artifact-id }}
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: 3600
+          output-artifact-directory: signpath-signed-installer
+
+      - name: Apply signed installer
+        if: inputs.signing_policy_slug != '' && github.repository == 'fooyin/fooyin'
+        shell: pwsh
+        run: |
+          Copy-Item -Path "signpath-signed-installer/*.exe" -Destination artifacts -Force
 
       - name: Upload installer artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: windows-setup-${{ matrix.arch }}
           path: artifacts/*.exe
 
       - name: Upload portable artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: windows-portable-${{ matrix.arch }}
           path: artifacts/*.zip
+
+      - name: Save ccache
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
+        uses: ./.github/actions/save-ccache
+        with:
+          path: ${{ github.workspace }}/.ccache
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}

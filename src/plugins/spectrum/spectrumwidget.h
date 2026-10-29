@@ -35,6 +35,7 @@ class SettingsManager;
 
 namespace Spectrum {
 class SpectrumView;
+
 class SpectrumWidget : public FyWidget
 {
     Q_OBJECT
@@ -62,6 +63,8 @@ public:
         int peakGravity{DefaultPeakGravity};
         int updateFps{DefaultUpdateFps};
         int fftSize{DefaultFftSize};
+        int fftDurationMs{DefaultFftDurationMs};
+        FftSizingMode fftSizingMode{FftSizingMode::Duration};
         WindowFunction windowFunction{WindowFunction::BlackmanHarris};
         GradientOrientation gradientOrientation{GradientOrientation::Vertical};
         LabelMode labelMode{LabelMode::Frequency};
@@ -81,14 +84,14 @@ public:
         QVariant colours;
     };
 
-    explicit SpectrumWidget(EngineController* engine, PlayerController* playerController, SettingsManager* settings,
-                            QWidget* parent = nullptr);
+    explicit SpectrumWidget(EngineController* engine, SettingsManager* settings, QWidget* parent = nullptr);
     ~SpectrumWidget() override;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
+    void populateContextMenu(QMenu* menu) override;
 
     [[nodiscard]] ConfigData factoryConfig() const;
     [[nodiscard]] ConfigData defaultConfig() const;
@@ -99,6 +102,9 @@ public:
 
     [[nodiscard]] QSize minimumSizeHint() const override;
     [[nodiscard]] QSize sizeHint() const override;
+
+Q_SIGNALS:
+    void configChanged();
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

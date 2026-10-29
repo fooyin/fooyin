@@ -28,6 +28,7 @@
 
 #include <memory>
 #include <stop_token>
+#include <vector>
 
 namespace Fooyin {
 class Database;
@@ -40,17 +41,26 @@ class TrackDatabaseManager : public Worker
     Q_OBJECT
 
 public:
+    struct TrackStatsBatch
+    {
+        TrackList tracks;
+        Track::Stats stats;
+        bool writeToFiles{false};
+    };
+
     explicit TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
                                   SettingsManager* settings, std::shared_ptr<TrackMetadataStore> metadataStore = {},
                                   QObject* parent = nullptr);
 
     void initialiseThread() override;
 
+    void updateTrackStats(const std::vector<TrackStatsBatch>& batches, std::stop_token workerToken);
+
 Q_SIGNALS:
     void gotTracks(const Fooyin::TrackList& tracks);
     void updatedTracks(const Fooyin::TrackList& tracks);
     void availabilityChecked(const Fooyin::TrackList& tracks);
-    void updatedTracksStats(const Fooyin::TrackList& tracks);
+    void updatedTracksStats(const Fooyin::TrackList& tracks, Fooyin::Track::Stats stats);
     void removedTracks(const Fooyin::TrackList& tracks);
     void trackWriteCompleted(int operationId, const Fooyin::TrackList& tracks, int failed, bool cancelled);
     void trackCoverWriteCompleted(int operationId, const Fooyin::TrackList& tracks, int failed, bool cancelled);
@@ -58,21 +68,28 @@ Q_SIGNALS:
     void unavailableTracksRemoved(int operationId, const Fooyin::TrackList& tracks, int failed, bool cancelled);
 
 public Q_SLOTS:
-    void getAllTracks();
-    void checkTrackAvailability(const Fooyin::TrackList& tracks);
-    void updateTracks(const Fooyin::TrackList& tracks, bool write);
-    void updateTrackStats(const Fooyin::TrackList& track, AudioReader::WriteOptions writeOptions);
-    void writeCovers(const Fooyin::TrackCoverData& tracks);
-    void deleteTracks(const TrackList& tracks);
-    void removeUnavailbleTracks(const TrackList& tracks);
-    void cleanupTracks();
+    void getAllTracks(std::stop_token workerToken);
+    void checkTrackAvailability(const Fooyin::TrackList& tracks, std::stop_token workerToken);
+    void updateTracks(const Fooyin::TrackList& tracks, bool write, std::stop_token workerToken);
+    void updateTrackStats(const Fooyin::TrackList& tracks, Fooyin::Track::Stats updatedStats, bool writeToFiles,
+                          std::stop_token workerToken);
+    void writeCovers(const Fooyin::TrackCoverData& tracks, std::stop_token workerToken);
+    void deleteTracks(const Fooyin::TrackList& tracks, std::stop_token workerToken);
+    void removeUnavailbleTracks(const Fooyin::TrackList& tracks, std::stop_token workerToken);
+    void cleanupTracks(std::stop_token workerToken);
 
-    void updateTracks(const Fooyin::TrackList& tracks, bool write, int operationId, std::stop_token stopToken);
-    void writeCovers(const Fooyin::TrackCoverData& tracks, int operationId, std::stop_token stopToken);
-    void deleteTracks(const TrackList& tracks, int operationId, std::stop_token stopToken);
-    void removeUnavailbleTracks(const TrackList& tracks, int operationId, std::stop_token stopToken);
+    void updateTracks(const Fooyin::TrackList& tracks, bool write, int operationId, std::stop_token stopToken,
+                      std::stop_token workerToken);
+    void writeCovers(const Fooyin::TrackCoverData& tracks, int operationId, std::stop_token stopToken,
+                     std::stop_token workerToken);
+    void deleteTracks(const Fooyin::TrackList& tracks, int operationId, std::stop_token stopToken,
+                      std::stop_token workerToken);
+    void removeUnavailbleTracks(const Fooyin::TrackList& tracks, int operationId, std::stop_token stopToken,
+                                std::stop_token workerToken);
 
 private:
+    TrackList writeTrackStats(const TrackList& tracks, Track::Stats updatedStats, bool writeToFiles);
+
     DbConnectionPoolPtr m_dbPool;
     std::shared_ptr<AudioLoader> m_audioLoader;
     SettingsManager* m_settings;

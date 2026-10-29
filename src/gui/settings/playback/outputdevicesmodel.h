@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "output/outputprofilemanager.h"
+#include <gui/output/outputprofilemanager.h>
 
 #include <QAbstractTableModel>
 

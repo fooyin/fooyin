@@ -25,13 +25,13 @@
 
 namespace Fooyin {
 class FyWidget;
-class PlaylistHandler;
 class Track;
 class TrackSelectionController;
 
 namespace Lyrics {
 class LyricsFinder;
 class LyricsSaver;
+class LyricsPlaybackService;
 class LyricsSettings;
 struct Lyrics;
 
@@ -41,7 +41,7 @@ class LyricsPlugin : public QObject,
                      public GuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "lyrics.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "lyrics.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
@@ -58,7 +58,7 @@ private:
 
     ActionManager* m_actionManager;
     PlayerController* m_playerController;
-    PlaylistHandler* m_playlistHandler;
+    const CorePluginContext* m_coreContext;
     std::shared_ptr<AudioLoader> m_audioLoader;
     std::shared_ptr<NetworkAccessManager> m_networkAccess;
     TrackSelectionController* m_trackSelection;
@@ -66,6 +66,7 @@ private:
     SettingsManager* m_settings;
 
     std::unique_ptr<LyricsSettings> m_lyricsSettings;
+    LyricsPlaybackService* m_lyricsService;
     LyricsFinder* m_lyricsFinder;
     LyricsSaver* m_lyricsSaver;
 };

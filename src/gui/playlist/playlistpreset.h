@@ -22,37 +22,57 @@
 #include <core/scripting/scriptparser.h>
 #include <gui/scripting/scriptformatter.h>
 
+#include <QByteArray>
 #include <QColor>
 #include <QDataStream>
 #include <QFont>
+#include <QJsonObject>
 #include <QString>
 
 #include <QList>
 #include <QVariant>
 
+#include <optional>
+#include <vector>
+
 namespace Fooyin {
+constexpr QLatin1StringView PlaylistLayoutProperty{"gui/playlist-layout"};
+
+struct PlaylistLayoutColumn
+{
+    int id{-1};
+    Qt::Alignment alignment{Qt::AlignLeft};
+
+    bool operator==(const PlaylistLayoutColumn& other) const = default;
+};
+
+struct PlaylistColumnLayout
+{
+    bool singleMode{false};
+    std::vector<PlaylistLayoutColumn> columns;
+    QByteArray headerState;
+
+    bool operator==(const PlaylistColumnLayout& other) const = default;
+
+    [[nodiscard]] QJsonObject toJson() const;
+    static PlaylistColumnLayout fromJson(const QJsonObject& object);
+};
+
 struct HeaderRow
 {
-    RichScript title;
-    RichScript subtitle;
-    RichScript sideText;
-    RichScript info;
+    QString grouping;
+    RichScript text;
 
     int rowHeight{0};
     bool showCover{true};
-    bool simple{false};
+    int artworkPadding{10};
+    int artworkPaddingVertical{10};
 
-    bool operator==(const HeaderRow& other) const
-    {
-        return std::tie(title, subtitle, sideText, info, rowHeight, showCover, simple)
-            == std::tie(other.title, other.subtitle, other.sideText, other.info, other.rowHeight, other.showCover,
-                        other.simple);
-    };
+    bool operator==(const HeaderRow& other) const = default;
 
     [[nodiscard]] bool isValid() const
     {
-        return !title.script.isEmpty() || !subtitle.script.isEmpty() || !sideText.script.isEmpty()
-            || !info.script.isEmpty();
+        return !text.script.isEmpty();
     }
 
     friend QDataStream& operator<<(QDataStream& stream, const HeaderRow& header);
@@ -61,19 +81,16 @@ struct HeaderRow
 
 struct SubheaderRow
 {
-    RichScript leftText;
-    RichScript rightText;
+    QString grouping;
+    RichScript text;
 
     int rowHeight{0};
 
-    bool operator==(const SubheaderRow& other) const
-    {
-        return std::tie(leftText, rightText, rowHeight) == std::tie(other.leftText, other.rightText, other.rowHeight);
-    };
+    bool operator==(const SubheaderRow& other) const = default;
 
     [[nodiscard]] bool isValid() const
     {
-        return !leftText.script.isEmpty() || !rightText.script.isEmpty();
+        return !text.script.isEmpty();
     }
 
     friend QDataStream& operator<<(QDataStream& stream, const SubheaderRow& subheader);
@@ -84,20 +101,15 @@ using SubheaderRows = QList<SubheaderRow>;
 struct TrackRow
 {
     std::vector<RichScript> columns;
-    RichScript leftText;
-    RichScript rightText;
+    RichScript text;
 
     int rowHeight{0};
 
-    bool operator==(const TrackRow& other) const
-    {
-        return std::tie(columns, leftText, rightText, rowHeight)
-            == std::tie(other.columns, other.leftText, other.rightText, other.rowHeight);
-    };
+    bool operator==(const TrackRow& other) const = default;
 
     [[nodiscard]] bool isValid() const
     {
-        return !columns.empty() || !leftText.script.isEmpty() || !rightText.script.isEmpty();
+        return !columns.empty() || !text.script.isEmpty();
     }
 
     friend QDataStream& operator<<(QDataStream& stream, const TrackRow& track);
@@ -116,13 +128,14 @@ struct PlaylistPreset
     TrackRow track;
     bool insetSubheadersToImageColumns{false};
     bool showCoverBelowEverySubheader{false};
+    std::optional<PlaylistColumnLayout> columnLayout;
 
     bool operator==(const PlaylistPreset& other) const
     {
         return std::tie(id, index, name, header, subHeaders, track, insetSubheadersToImageColumns,
-                        showCoverBelowEverySubheader)
+                        showCoverBelowEverySubheader, columnLayout)
             == std::tie(other.id, other.index, other.name, other.header, other.subHeaders, other.track,
-                        other.insetSubheadersToImageColumns, other.showCoverBelowEverySubheader);
+                        other.insetSubheadersToImageColumns, other.showCoverBelowEverySubheader, other.columnLayout);
     };
 
     [[nodiscard]] bool isValid() const

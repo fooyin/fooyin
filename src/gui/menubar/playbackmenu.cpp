@@ -42,6 +42,8 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     , m_playerController{playerController}
     , m_settings{settings}
     , m_stop{new QAction(tr("&Stop"), this)}
+    , m_play{new QAction(tr("&Play"), this)}
+    , m_pause{new QAction(tr("P&ause"), this)}
     , m_playPause{new QAction(tr("&Play"), this)}
     , m_previous{new QAction(tr("P&revious"), this)}
     , m_next{new QAction(tr("&Next"), this)}
@@ -60,6 +62,8 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     , m_resetStopAfterCurrent{new QAction(tr("&Reset the above after stopping"), this)}
 {
     Gui::setThemeIcon(m_stop, Constants::Icons::Stop);
+    Gui::setThemeIcon(m_play, Constants::Icons::Play);
+    Gui::setThemeIcon(m_pause, Constants::Icons::Pause);
     Gui::setThemeIcon(m_previous, Constants::Icons::Prev);
     Gui::setThemeIcon(m_next, Constants::Icons::Next);
     Gui::setThemeIcon(m_randomTrack, Constants::Icons::RandomPlay);
@@ -80,6 +84,18 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     stopCmd->setAttribute(ProxyAction::UpdateText);
     playbackMenu->addAction(stopCmd);
 
+    m_play->setStatusTip(tr("Restart the current track or start playback"));
+    auto* playCmd = actionManager->registerAction(m_play, Constants::Actions::Play);
+    playCmd->setCategories(playbackCategory);
+    playCmd->setAttribute(ProxyAction::UpdateText);
+    playbackMenu->addAction(playCmd);
+
+    m_pause->setStatusTip(tr("Pause playback"));
+    auto* pauseCmd = actionManager->registerAction(m_pause, Constants::Actions::Pause);
+    pauseCmd->setCategories(playbackCategory);
+    pauseCmd->setAttribute(ProxyAction::UpdateText);
+    playbackMenu->addAction(pauseCmd);
+
     m_playPause->setStatusTip(tr("Pause or unpause playback"));
     auto* playPauseCmd = actionManager->registerAction(m_playPause, Constants::Actions::PlayPause);
     playPauseCmd->setCategories(playbackCategory);
@@ -87,7 +103,6 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     playPauseCmd->setDefaultShortcut(Qt::Key_Space);
     playPauseCmd->setAttribute(ProxyAction::UpdateText);
     playPauseCmd->setAttribute(ProxyAction::UpdateIcon);
-    playbackMenu->addAction(playPauseCmd);
 
     m_next->setStatusTip(tr("Start playing the next track in the current playlist"));
     auto* nextCmd = actionManager->registerAction(m_next, Constants::Actions::Next);
@@ -140,6 +155,8 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     skipToMenu->addAction(previousAlbumCmd);
 
     QObject::connect(m_stop, &QAction::triggered, playerController, &PlayerController::stop);
+    QObject::connect(m_play, &QAction::triggered, playerController, &PlayerController::playFromStart);
+    QObject::connect(m_pause, &QAction::triggered, playerController, &PlayerController::pause);
     QObject::connect(m_playPause, &QAction::triggered, playerController, &PlayerController::playPause);
     QObject::connect(m_next, &QAction::triggered, playerController, &PlayerController::next);
     QObject::connect(m_previous, &QAction::triggered, playerController, &PlayerController::previous);
@@ -149,6 +166,59 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     QObject::connect(m_randomAlbum, &QAction::triggered, playerController, &PlayerController::randomAlbum);
 
     playbackMenu->addSeparator();
+
+    auto* repeatMenu = m_actionManager->createMenu(Constants::Menus::ABRepeat);
+    repeatMenu->menu()->setTitle(tr("A–B repeat"));
+    playbackMenu->addMenu(repeatMenu);
+
+    auto* repeatStart   = new QAction(tr("Set A"), this);
+    auto* repeatEnd     = new QAction(tr("Set B"), this);
+    auto* repeatEnabled = new QAction(tr("Enable A–B repeat"), this);
+    auto* repeatClear   = new QAction(tr("Clear A–B repeat"), this);
+    repeatEnabled->setCheckable(true);
+
+    const auto registerRepeatAction = [&](QAction* action, const char* id) {
+        auto* command = actionManager->registerAction(action, id);
+        command->setCategories({tr("Playback"), tr("A–B repeat")});
+        repeatMenu->addAction(command);
+    };
+
+    registerRepeatAction(repeatStart, Constants::Actions::ABRepeatSetStart);
+    registerRepeatAction(repeatEnd, Constants::Actions::ABRepeatSetEnd);
+    registerRepeatAction(repeatEnabled, Constants::Actions::ABRepeatEnable);
+    registerRepeatAction(repeatClear, Constants::Actions::ABRepeatClear);
+
+    QObject::connect(repeatStart, &QAction::triggered, this, [this]() {
+        m_playerController->setABRepeatStart(m_playerController->currentPosition(),
+                                             m_settings->value<Settings::Gui::ABRepeatSeekOnAChange>());
+    });
+    QObject::connect(repeatEnd, &QAction::triggered, this,
+                     [this]() { m_playerController->setABRepeatEnd(m_playerController->currentPosition()); });
+    QObject::connect(repeatEnabled, &QAction::triggered, playerController, &PlayerController::setABRepeatEnabled);
+    QObject::connect(repeatClear, &QAction::triggered, playerController, &PlayerController::clearABRepeat);
+
+    const auto updateRepeatActions = [this, repeatStart, repeatEnd, repeatEnabled, repeatClear]() {
+        const auto range        = m_playerController->abRepeatRange();
+        const bool canSet       = m_playerController->currentTrackSeekable()
+                               && m_playerController->playState() != Player::PlayState::Stopped
+                               && m_playerController->currentTrack().duration() >= 100;
+        const uint64_t position = m_playerController->currentPosition();
+
+        repeatStart->setEnabled(canSet && position < m_playerController->currentTrack().duration());
+        repeatEnd->setEnabled(canSet && range.start && position > *range.start
+                              && position <= m_playerController->currentTrack().duration());
+        repeatEnabled->setEnabled(canSet && range.start && range.end);
+        repeatEnabled->setChecked(range.enabled);
+        repeatClear->setEnabled(range.start.has_value() || range.end.has_value());
+    };
+
+    QObject::connect(playerController, &PlayerController::abRepeatRangeChanged, this, updateRepeatActions);
+    QObject::connect(playerController, &PlayerController::playStateChanged, this, updateRepeatActions);
+    QObject::connect(playerController, &PlayerController::currentTrackChanged, this, updateRepeatActions);
+    QObject::connect(playerController, &PlayerController::currentTrackSeekableChanged, this, updateRepeatActions);
+    QObject::connect(playerController, &PlayerController::positionChanged, this, updateRepeatActions);
+    QObject::connect(playerController, &PlayerController::positionMoved, this, updateRepeatActions);
+    updateRepeatActions();
 
     QStringList orderCategory{playbackCategory};
     orderCategory.append(tr("Order"));
@@ -222,18 +292,26 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
 
     auto* followPlayback = new QAction(tr("Cursor follows play&back"), this);
     followPlayback->setStatusTip(tr("Select the currently playing track when changed"));
+    auto* followPlaybackCmd = actionManager->registerAction(followPlayback, Constants::Actions::CursorFollowsPlayback);
+    followPlaybackCmd->setCategories(playbackCategory);
+    followPlaybackCmd->setAttribute(ProxyAction::UpdateText);
+
     auto* followCursor = new QAction(tr("Playback follows &cursor"), this);
     followCursor->setStatusTip(tr("Start playback of the currently selected track on next"));
+    auto* followCursorCmd = actionManager->registerAction(followCursor, Constants::Actions::PlaybackFollowsCursor);
+    followCursorCmd->setCategories(playbackCategory);
+    followCursorCmd->setAttribute(ProxyAction::UpdateText);
 
     m_stopAfterCurrent->setStatusTip(tr("Stop playback at the end of the current track"));
     auto* stopCurrentCmd = actionManager->registerAction(m_stopAfterCurrent, Constants::Actions::StopAfterCurrent);
     stopCurrentCmd->setCategories(playbackCategory);
     stopCurrentCmd->setAttribute(ProxyAction::UpdateText);
 
-    m_resetStopAfterCurrent->setStatusTip(tr("Reset 'Stop after current' after stopping"));
+    m_resetStopAfterCurrent->setStatusTip(tr("Reset ‘Stop after current’ after stopping"));
     auto* resetStopCurrentCmd
         = actionManager->registerAction(m_resetStopAfterCurrent, Constants::Actions::StopAfterCurrentReset);
     resetStopCurrentCmd->setCategories(playbackCategory);
+    resetStopCurrentCmd->setDescription(tr("Reset ‘Stop after current’ after stopping"));
     resetStopCurrentCmd->setAttribute(ProxyAction::UpdateText);
 
     m_stopAfterCurrent->setCheckable(true);
@@ -264,8 +342,8 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     m_settings->subscribe<Settings::Gui::PlaybackFollowsCursor>(
         this, [followCursor](bool enabled) { followCursor->setChecked(enabled); });
 
-    playbackMenu->addAction(followPlayback);
-    playbackMenu->addAction(followCursor);
+    playbackMenu->addAction(followPlaybackCmd->action());
+    playbackMenu->addAction(followCursorCmd->action());
     playbackMenu->addSeparator();
     playbackMenu->addAction(stopCurrentCmd->action());
     playbackMenu->addAction(resetStopCurrentCmd->action());

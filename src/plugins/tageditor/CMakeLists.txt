@@ -1,38 +1,42 @@
 create_fooyin_plugin_internal(
     tageditor
-    DEPENDS Fooyin::Gui
-            Fooyin::CorePrivate
-    SOURCES settings/tageditorfieldregistry.cpp
-            settings/tageditorfieldregistry.h
-            settings/tageditorfieldsmodel.cpp
-            settings/tageditorfieldsmodel.h
-            settings/tageditorpage.cpp
-            settings/tageditorpage.h
-            tageditorconstants.h
-            tageditorsettings.cpp
-            tageditorsettings.h
-            tageditorautocompletedelegate.cpp
-            tageditorautocompletedelegate.h
-            tageditoritem.cpp
-            tageditoritem.h
-            tageditormodel.cpp
-            tageditormodel.h
-            tagfillpattern.cpp
-            tagfillpattern.h
-            tagfilloperation.cpp
-            tagfilloperation.h
-            tagfilldialog.cpp
-            tagfilldialog.h
-            tageditorpanel.cpp
-            tageditorpanel.h
-            tagfillpreviewmodel.cpp
-            tagfillpreviewmodel.h
-            tageditorplugin.cpp
-            tageditorplugin.h
-            tageditoreditor.cpp
-            tageditoreditor.h
-            tageditorpropertiestab.cpp
-            tageditorpropertiestab.h
-            tageditorview.cpp
-            tageditorview.h
+    DEPENDS #
+        Fooyin::Gui
+        Fooyin::CorePrivate
+    SOURCES
+        settings/tageditorfieldregistry.cpp
+        settings/tageditorfieldregistry.h
+        settings/tageditorfieldsmodel.cpp
+        settings/tageditorfieldsmodel.h
+        settings/tageditorpage.cpp
+        settings/tageditorpage.h
+        tageditorautocompletedelegate.cpp
+        tageditorautocompletedelegate.h
+        tageditorconstants.h
+        tageditoreditor.cpp
+        tageditoreditor.h
+        tageditoritem.cpp
+        tageditoritem.h
+        tageditormodel.cpp
+        tageditormodel.h
+        tageditorpanel.cpp
+        tageditorpanel.h
+        tageditorplugin.cpp
+        tageditorplugin.h
+        tageditorpopulator.cpp
+        tageditorpopulator.h
+        tageditorpropertiestab.cpp
+        tageditorpropertiestab.h
+        tageditorsettings.cpp
+        tageditorsettings.h
+        tageditorview.cpp
+        tageditorview.h
+        tagfilldialog.cpp
+        tagfilldialog.h
+        tagfilloperation.cpp
+        tagfilloperation.h
+        tagfillpattern.cpp
+        tagfillpattern.h
+        tagfillpreviewmodel.cpp
+        tagfillpreviewmodel.h
 )

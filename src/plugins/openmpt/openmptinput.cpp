@@ -65,6 +65,8 @@ void setupModule(Fooyin::SettingsManager* settings, openmpt::module* module)
 namespace Fooyin::OpenMpt {
 OpenMptDecoder::OpenMptDecoder(SettingsManager* settings)
     : m_settings{settings}
+    , m_boundedRepeatCount{0}
+    , m_allowInfiniteRepeat{true}
     , m_eof{false}
 {
     m_format.setSampleFormat(SampleFormat::F32);
@@ -82,6 +84,11 @@ bool OpenMptDecoder::isSeekable() const
     return true;
 }
 
+AudioDecoder::RepeatHandling OpenMptDecoder::repeatHandling() const
+{
+    return RepeatHandling::DecoderLoop;
+}
+
 std::optional<AudioFormat> OpenMptDecoder::init(const AudioSource& source, const Track& track, DecoderOptions options)
 {
     std::vector<char> data(static_cast<std::size_t>(source.device->size()));
@@ -95,23 +102,33 @@ std::optional<AudioFormat> OpenMptDecoder::init(const AudioSource& source, const
 
         m_module->select_subsong(track.subsong());
 
-        int repeat = m_settings->value<Settings::OpenMpt::LoopCount>();
-        if(options & NoLooping || options & NoInfiniteLooping) {
-            repeat = 0;
+        m_boundedRepeatCount  = m_settings->value<Settings::OpenMpt::LoopCount>();
+        m_allowInfiniteRepeat = !(options & (NoLooping | NoInfiniteLooping));
+        if(!m_allowInfiniteRepeat) {
+            m_boundedRepeatCount = 0;
         }
-        else if(isRepeatingTrack()) {
-            repeat = -1;
-        }
-        m_module->set_repeat_count(repeat);
+        applyRepeatPolicy();
 
         setupModule(m_settings, m_module.get());
     }
     catch(...) {
-        qCWarning(OPENMPT) << "Failed to open" << track.filepath();
+        qCDebug(OPENMPT) << "Failed to open" << track.filepath();
         return {};
     }
 
     return m_format;
+}
+
+void OpenMptDecoder::playbackHintsChanged(PlaybackHints /*hints*/)
+{
+    applyRepeatPolicy();
+}
+
+void OpenMptDecoder::applyRepeatPolicy()
+{
+    if(m_module) {
+        m_module->set_repeat_count(m_allowInfiniteRepeat && isRepeatingTrack() ? -1 : m_boundedRepeatCount);
+    }
 }
 
 void OpenMptDecoder::stop()
@@ -196,7 +213,7 @@ bool OpenMptReader::init(const AudioSource& source)
         m_subsongCount = m_module->get_num_subsongs();
     }
     catch(...) {
-        qCWarning(OPENMPT) << "Failed to open" << source.filepath;
+        qCDebug(OPENMPT) << "Failed to open" << source.filepath;
         return {};
     }
 

@@ -25,7 +25,9 @@
 #include <QObject>
 
 namespace Fooyin {
+class Application;
 class PlayerController;
+class ScriptContextService;
 class SettingsManager;
 
 class NowPlayingOutputService : public QObject
@@ -40,6 +42,7 @@ public:
         UpdatePlayPause = 1 << 1,
         UpdateStop      = 1 << 2,
         UpdateSecond    = 1 << 3,
+        UpdatePlayed    = 1 << 4,
         DefaultEvents   = UpdateTrack
     };
     Q_DECLARE_FLAGS(UpdateEvents, UpdateEvent)
@@ -63,7 +66,7 @@ public:
     Q_DECLARE_FLAGS(OutputOptions, OutputOption)
     Q_FLAG(OutputOptions)
 
-    NowPlayingOutputService(PlayerController* playerController, SettingsManager* settings, QObject* parent = nullptr);
+    explicit NowPlayingOutputService(Application* core, QObject* parent = nullptr);
     ~NowPlayingOutputService() override;
 
 private:
@@ -74,6 +77,7 @@ private:
     void writeFile(const QString& output) const;
 
     PlayerController* m_playerController;
+    ScriptContextService* m_scriptContext;
     SettingsManager* m_settings;
 
     bool m_enabled;

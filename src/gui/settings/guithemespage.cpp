@@ -24,27 +24,90 @@
 #include <gui/guiutils.h>
 #include <gui/internalguisettings.h>
 #include <gui/theme/fytheme.h>
+#include <gui/theme/fythemefile.h>
 #include <gui/theme/themeregistry.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/fontbutton.h>
+#include <gui/widgets/hintlabel.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
 #include <QCheckBox>
+#include <QEvent>
+#include <QFileDialog>
+#include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QListWidget>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QSignalBlocker>
 #include <QTabWidget>
 
 #include <optional>
+#include <ranges>
+#include <set>
+
+using namespace Qt::StringLiterals;
 
 constexpr auto ThemeIdRole = Qt::UserRole;
 
 namespace Fooyin {
+namespace {
+template <typename T>
+T mergeThemeValue(const T& base, const T& external, const T& draft)
+{
+    return draft == base ? external : draft;
+}
+
+template <typename Map>
+Map mergeThemeMap(const Map& base, const Map& external, const Map& draft)
+{
+    using Key   = Map::key_type;
+    using Value = Map::mapped_type;
+
+    std::set<Key> keys;
+    for(auto it = base.cbegin(); it != base.cend(); ++it) {
+        keys.emplace(it.key());
+    }
+    for(auto it = external.cbegin(); it != external.cend(); ++it) {
+        keys.emplace(it.key());
+    }
+    for(auto it = draft.cbegin(); it != draft.cend(); ++it) {
+        keys.emplace(it.key());
+    }
+
+    const auto value = [](const Map& map, const Key& key) -> std::optional<Value> {
+        const auto it = map.constFind(key);
+        return it == map.cend() ? std::nullopt : std::make_optional(it.value());
+    };
+
+    Map merged;
+    for(const auto& key : keys) {
+        const auto mergedValue = mergeThemeValue(value(base, key), value(external, key), value(draft, key));
+        if(mergedValue) {
+            merged.insert(key, *mergedValue);
+        }
+    }
+    return merged;
+}
+
+FyTheme mergeTheme(const FyTheme& base, const FyTheme& external, const FyTheme& draft)
+{
+    return {
+        .id        = mergeThemeValue(base.id, external.id, draft.id),
+        .name      = mergeThemeValue(base.name, external.name, draft.name),
+        .index     = mergeThemeValue(base.index, external.index, draft.index),
+        .isDefault = mergeThemeValue(base.isDefault, external.isDefault, draft.isDefault),
+        .colours   = mergeThemeMap(base.colours, external.colours, draft.colours),
+        .fonts     = mergeThemeMap(base.fonts, external.fonts, draft.fonts),
+    };
+}
+} // namespace
+
 class GuiColoursPageWidget : public SettingsPageWidget
 {
     Q_OBJECT
@@ -56,19 +119,28 @@ public:
     void apply() override;
     void reset() override;
 
+protected:
+    void changeEvent(QEvent* event) override;
+
 private:
     void addColourOption(QGridLayout* layout, const QString& title, QPalette::ColorRole role,
                          QPalette::ColorGroup group = QPalette::All);
     void addFontOption(QGridLayout* layout, const QString& title, const QString& className);
 
     void updateButtonState() const;
+    void updateColourOptionState() const;
+    void updateFontOptions() const;
     [[nodiscard]] std::optional<FyTheme> selectedTheme() const;
     [[nodiscard]] FyTheme currentTheme() const;
     void loadDefaults();
     void loadCurrentTheme();
+    void displayTheme(const FyTheme& theme);
+    void mergeExternalTheme();
 
     void saveTheme();
     void newTheme();
+    void importTheme();
+    void exportTheme();
     void renameTheme(QListWidgetItem* item);
     void loadTheme();
     void deleteTheme();
@@ -80,11 +152,18 @@ private:
     QPushButton* m_newButton;
     QPushButton* m_saveButton;
     QPushButton* m_deleteButton;
+    QPushButton* m_importButton;
+    QPushButton* m_exportButton;
+    QTabWidget* m_themeDetails;
+    QLabel* m_colourHint;
 
     QString m_defaultTheme;
-    std::map<PaletteKey, std::pair<ColourButton*, QCheckBox*>> m_colourMapping;
-    std::map<QString, std::pair<FontButton*, QCheckBox*>> m_fontMapping;
+    std::map<PaletteKey, ColourButton*> m_colourMapping;
+    std::map<QString, FontButton*> m_fontMapping;
     std::optional<FyTheme> m_loadedTheme;
+    FyTheme m_themeBaseline;
+    bool m_isLoaded{false};
+    bool m_updatingSetting{false};
 };
 
 GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, SettingsManager* settings)
@@ -94,6 +173,12 @@ GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, Setting
     , m_newButton{new QPushButton(tr("&New"), this)}
     , m_saveButton{new QPushButton(tr("&Save"), this)}
     , m_deleteButton{new QPushButton(tr("&Delete"), this)}
+    , m_importButton{new QPushButton(tr("&Import…"), this)}
+    , m_exportButton{new QPushButton(tr("E&xport…"), this)}
+    , m_themeDetails{new QTabWidget(this)}
+    , m_colourHint{new HintLabel(tr("Theme colours are disabled when using a Windows style. Select Fusion as the "
+                                    "interface style to customise colours."),
+                                 this)}
     , m_defaultTheme{tr("System default")}
 {
     QObject::connect(m_themesList, &QListWidget::currentItemChanged, this, &GuiColoursPageWidget::loadTheme);
@@ -101,6 +186,11 @@ GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, Setting
     QObject::connect(m_newButton, &QPushButton::clicked, this, &GuiColoursPageWidget::newTheme);
     QObject::connect(m_saveButton, &QPushButton::clicked, this, &GuiColoursPageWidget::saveTheme);
     QObject::connect(m_deleteButton, &QPushButton::clicked, this, &GuiColoursPageWidget::deleteTheme);
+    QObject::connect(m_importButton, &QPushButton::clicked, this, &GuiColoursPageWidget::importTheme);
+    QObject::connect(m_exportButton, &QPushButton::clicked, this, &GuiColoursPageWidget::exportTheme);
+
+    m_settings->subscribe<Settings::Gui::CustomTheme>(this, &GuiColoursPageWidget::mergeExternalTheme);
+    m_settings->subscribe<Settings::Gui::Style>(this, &GuiColoursPageWidget::updateColourOptionState);
 
     auto* themesLayout = new QGridLayout();
 
@@ -109,6 +199,12 @@ GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, Setting
     themesLayout->addWidget(m_saveButton, row, 1);
     themesLayout->addWidget(m_deleteButton, row++, 2);
     themesLayout->addWidget(m_themesList, row++, 0, 1, 3);
+
+    auto* transferLayout = new QHBoxLayout();
+    transferLayout->setContentsMargins({});
+    transferLayout->addWidget(m_importButton, 1);
+    transferLayout->addWidget(m_exportButton, 1);
+    themesLayout->addLayout(transferLayout, row++, 0, 1, 3);
 
     auto* baseColours = new QWidget(this);
     auto* baseLayout  = new QGridLayout(baseColours);
@@ -125,7 +221,6 @@ GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, Setting
     addColourOption(baseLayout, tr("Button (Background)"), QPalette::Button);
     addColourOption(baseLayout, tr("Button (Foreground)"), QPalette::ButtonText);
 
-    baseLayout->setColumnStretch(1, 1);
     baseLayout->setRowStretch(baseLayout->rowCount(), 1);
 
     auto* advancedColours = new QWidget(this);
@@ -146,7 +241,8 @@ GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, Setting
     addColourOption(advancedLayout, tr("Mid"), QPalette::Mid);
     addColourOption(advancedLayout, tr("Shadow"), QPalette::Shadow);
 
-    advancedLayout->setColumnStretch(1, 1);
+    ColourButton::alignLabels(m_colourMapping | std::views::values);
+
     advancedLayout->setRowStretch(advancedLayout->rowCount(), 1);
 
     auto* fonts       = new QWidget(this);
@@ -155,26 +251,35 @@ GuiColoursPageWidget::GuiColoursPageWidget(ThemeRegistry* themeRegistry, Setting
     const auto fontEntries = m_themeRegistry->fontEntries();
 
     std::map<QString, QString> sortedEntries;
-    for(const auto& [className, title] : fontEntries) {
-        sortedEntries.emplace(title, className);
+    for(const auto& [className, entry] : fontEntries) {
+        if(className.isEmpty()) {
+            addFontOption(fontsLayout, entry.title, className);
+        }
+        else {
+            sortedEntries.emplace(entry.title, className);
+        }
     }
     for(const auto& [title, className] : sortedEntries) {
         addFontOption(fontsLayout, title, className);
     }
+    FontButton::alignLabels(m_fontMapping | std::views::values);
 
     fontsLayout->setColumnStretch(1, 1);
-    fontsLayout->setRowStretch(baseLayout->rowCount(), 1);
+    fontsLayout->setRowStretch(fontsLayout->rowCount(), 1);
 
-    auto* themeDetails = new QTabWidget(this);
-    themeDetails->addTab(baseColours, tr("Basic Colours"));
-    themeDetails->addTab(advancedColours, tr("Advanced Colours"));
-    themeDetails->addTab(fonts, tr("Fonts"));
+    m_themeDetails->addTab(baseColours, tr("Basic Colours"));
+    m_themeDetails->addTab(advancedColours, tr("Advanced Colours"));
+    m_themeDetails->addTab(fonts, tr("Fonts"));
 
     auto* layout = new QGridLayout(this);
 
     layout->addLayout(themesLayout, 0, 0);
-    layout->addWidget(themeDetails, 0, 1);
+    layout->addWidget(m_themeDetails, 0, 1);
+    layout->addWidget(m_colourHint, 1, 0, 1, 2);
     layout->setColumnStretch(1, 1);
+
+    m_colourHint->setWordWrap(true);
+    updateColourOptionState();
 }
 
 void GuiColoursPageWidget::load()
@@ -205,55 +310,74 @@ void GuiColoursPageWidget::load()
 
     loadDefaults();
     loadCurrentTheme();
+    m_themeBaseline = current;
+    m_isLoaded      = true;
     updateButtonState();
+    updateColourOptionState();
 }
 
 void GuiColoursPageWidget::apply()
 {
     const FyTheme theme = currentTheme();
+    m_updatingSetting   = true;
     if(theme.isValid()) {
         m_settings->set<Settings::Gui::CustomTheme>(QVariant::fromValue(theme));
     }
     else {
         m_settings->reset<Settings::Gui::CustomTheme>();
     }
-    loadDefaults();
-    loadCurrentTheme();
+    m_updatingSetting = false;
+
+    m_themeBaseline = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
+    displayTheme(m_themeBaseline);
 }
 
 void GuiColoursPageWidget::reset()
 {
+    m_updatingSetting = true;
     m_settings->reset<Settings::Gui::CustomTheme>();
-    m_loadedTheme.reset();
+    m_updatingSetting = false;
+
+    m_themeBaseline = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
+    displayTheme(m_themeBaseline);
+}
+
+void GuiColoursPageWidget::changeEvent(QEvent* event)
+{
+    SettingsPageWidget::changeEvent(event);
+
+    if(event->type() == QEvent::FontChange) {
+        ColourButton::alignLabels(m_colourMapping | std::views::values);
+        FontButton::alignLabels(m_fontMapping | std::views::values);
+    }
 }
 
 void GuiColoursPageWidget::addColourOption(QGridLayout* layout, const QString& title, QPalette::ColorRole role,
                                            QPalette::ColorGroup group)
 {
-    auto* option = new QCheckBox(title, this);
-    auto* colour = new ColourButton(this);
-    colour->setDisabled(true);
+    auto* colour = new ColourButton(title, true, this);
 
     const int row = layout->rowCount();
-    layout->addWidget(option, row, 0);
-    layout->addWidget(colour, row, 1);
+    layout->addWidget(colour, row, 0);
 
-    QObject::connect(option, &QCheckBox::toggled, colour, &QWidget::setEnabled);
-    m_colourMapping[PaletteKey{role, group}] = std::make_pair(colour, option);
+    m_colourMapping[PaletteKey{.role = role, .group = group}] = colour;
 }
 
 void GuiColoursPageWidget::addFontOption(QGridLayout* layout, const QString& title, const QString& className)
 {
-    auto* option = new QCheckBox(title, this);
-    auto* font   = new FontButton(this);
-    font->setDisabled(true);
+    auto* font = new FontButton(title, true, this);
 
     const int row = layout->rowCount();
-    layout->addWidget(option, row, 0);
-    layout->addWidget(font, row, 1);
+    layout->addWidget(font, row, 0, 1, 2);
 
-    QObject::connect(option, &QCheckBox::toggled, font, &QWidget::setEnabled);
-    m_fontMapping[className] = std::make_pair(font, option);
+    m_fontMapping[className] = font;
+
+    QObject::connect(font, &FontButton::toggled, this, &GuiColoursPageWidget::updateFontOptions);
+    QObject::connect(font, &FontButton::fontUpdated, this, [this, font]() {
+        if(font->isChecked()) {
+            updateFontOptions();
+        }
+    });
 }
 
 void GuiColoursPageWidget::updateButtonState() const
@@ -263,6 +387,35 @@ void GuiColoursPageWidget::updateButtonState() const
 
     m_saveButton->setEnabled(isEditable);
     m_deleteButton->setEnabled(isEditable);
+    m_exportButton->setEnabled(theme.has_value());
+}
+
+void GuiColoursPageWidget::updateColourOptionState() const
+{
+    QString styleName = m_settings->value<Settings::Gui::Style>();
+    if(styleName.isEmpty()) {
+        styleName = m_settings->value<Settings::Gui::Internal::SystemStyle>();
+    }
+
+    const bool enabled = Gui::styleSupportsCustomPalette(styleName);
+    const QString tooltip
+        = enabled ? QString{} : tr("Custom colours are only supported with the Fusion style on Windows.");
+    for(int index : {0, 1}) {
+        m_themeDetails->setTabEnabled(index, enabled);
+        m_themeDetails->setTabToolTip(index, tooltip);
+    }
+    m_colourHint->setVisible(!enabled);
+}
+
+void GuiColoursPageWidget::updateFontOptions() const
+{
+    const auto theme      = currentTheme();
+    const auto systemFont = m_settings->value<Settings::Gui::Internal::SystemFont>().value<QFont>();
+
+    for(const auto& [className, button] : m_fontMapping) {
+        const QSignalBlocker blocker{button};
+        button->setButtonFont(m_themeRegistry->resolveFont(className, theme, systemFont));
+    }
 }
 
 std::optional<FyTheme> GuiColoursPageWidget::selectedTheme() const
@@ -285,19 +438,21 @@ FyTheme GuiColoursPageWidget::currentTheme() const
     FyTheme theme;
     if(m_loadedTheme) {
         theme = *m_loadedTheme;
-        theme.colours.clear();
-        theme.fonts.clear();
+        for(const auto& key : m_colourMapping | std::views::keys) {
+            theme.colours.remove(key);
+        }
+        for(const auto& key : m_fontMapping | std::views::keys) {
+            theme.fonts.remove(key);
+        }
     }
 
-    for(const auto& [key, pair] : m_colourMapping) {
-        const auto& [button, option] = pair;
-        if(option->isChecked()) {
+    for(const auto& [key, button] : m_colourMapping) {
+        if(button->isChecked()) {
             theme.colours[key] = button->colour();
         }
     }
-    for(const auto& [key, pair] : m_fontMapping) {
-        const auto& [button, option] = pair;
-        if(option->isChecked()) {
+    for(const auto& [key, button] : m_fontMapping) {
+        if(button->isChecked()) {
             theme.fonts[key] = button->buttonFont();
         }
     }
@@ -311,17 +466,16 @@ void GuiColoursPageWidget::loadDefaults()
     const auto currentColours = Gui::coloursFromPalette(systemPalette);
     for(const auto& [key, colour] : Utils::asRange(currentColours)) {
         if(m_colourMapping.contains(key)) {
-            const auto& [button, option] = m_colourMapping.at(key);
+            auto* button = m_colourMapping.at(key);
             button->setColour(colour);
-            option->setChecked(false);
+            button->setChecked(false);
         }
     }
 
     const auto systemFont = m_settings->value<Settings::Gui::Internal::SystemFont>().value<QFont>();
-    for(const auto& [className, font] : m_fontMapping) {
-        const auto& [button, option] = font;
-        button->setButtonFont(systemFont);
-        option->setChecked(false);
+    for(const auto& [className, button] : m_fontMapping) {
+        button->setButtonFont(m_themeRegistry->resolveFont(className, {}, systemFont));
+        button->setChecked(false);
     }
 }
 
@@ -332,19 +486,72 @@ void GuiColoursPageWidget::loadCurrentTheme()
     if(currentTheme.isValid()) {
         for(const auto& [key, colour] : Utils::asRange(currentTheme.colours)) {
             if(m_colourMapping.contains(key)) {
-                const auto& [button, option] = m_colourMapping.at(key);
+                auto* button = m_colourMapping.at(key);
                 button->setColour(colour);
-                option->setChecked(true);
+                button->setChecked(true);
             }
         }
         for(const auto& [key, font] : Utils::asRange(currentTheme.fonts)) {
             if(m_fontMapping.contains(key)) {
-                const auto& [button, option] = m_fontMapping.at(key);
+                auto* button = m_fontMapping.at(key);
                 button->setButtonFont(font);
-                option->setChecked(true);
+                button->setChecked(true);
             }
         }
     }
+}
+
+void GuiColoursPageWidget::displayTheme(const FyTheme& theme)
+{
+    {
+        const QSignalBlocker blocker{m_themesList};
+
+        int currentThemeRow{0};
+        for(int row{1}; row < m_themesList->count(); ++row) {
+            const auto* item         = m_themesList->item(row);
+            const auto registryTheme = m_themeRegistry->itemById(item->data(ThemeIdRole).toInt());
+            if(registryTheme && registryTheme->id == theme.id && registryTheme->name == theme.name) {
+                currentThemeRow = row;
+                break;
+            }
+            if(currentThemeRow == 0 && registryTheme && registryTheme->name == theme.name) {
+                currentThemeRow = row;
+            }
+        }
+        m_themesList->setCurrentRow(currentThemeRow);
+    }
+
+    loadDefaults();
+    m_loadedTheme = theme.isValid() ? std::make_optional(theme) : std::nullopt;
+
+    for(const auto& [key, colour] : Utils::asRange(theme.colours)) {
+        if(m_colourMapping.contains(key)) {
+            auto* button = m_colourMapping.at(key);
+            button->setColour(colour);
+            button->setChecked(true);
+        }
+    }
+    for(const auto& [key, font] : Utils::asRange(theme.fonts)) {
+        if(m_fontMapping.contains(key)) {
+            auto* button = m_fontMapping.at(key);
+            button->setButtonFont(font);
+            button->setChecked(true);
+        }
+    }
+
+    updateButtonState();
+}
+
+void GuiColoursPageWidget::mergeExternalTheme()
+{
+    if(!m_isLoaded || m_updatingSetting) {
+        return;
+    }
+
+    const FyTheme external = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
+    const FyTheme merged   = mergeTheme(m_themeBaseline, external, currentTheme());
+    m_themeBaseline        = external;
+    displayTheme(merged);
 }
 
 void GuiColoursPageWidget::saveTheme()
@@ -382,6 +589,55 @@ void GuiColoursPageWidget::newTheme()
     m_themesList->editItem(item);
 
     updateButtonState();
+}
+
+void GuiColoursPageWidget::importTheme()
+{
+    const QString path = QFileDialog::getOpenFileName(this, tr("Open Theme"), {}, tr("fooyin Theme (*.fyt)"), nullptr,
+                                                      QFileDialog::DontResolveSymlinks);
+    if(path.isEmpty()) {
+        return;
+    }
+
+    const auto imported = FyThemeFile::read(path);
+    if(!imported) {
+        QMessageBox::warning(this, tr("Import Theme"), tr("Could not import theme") + u": %1"_s.arg(imported.error()));
+        return;
+    }
+
+    FyTheme theme{*imported};
+    theme.id        = 0;
+    theme.index     = 0;
+    theme.isDefault = false;
+    theme           = m_themeRegistry->addItem(theme);
+
+    auto* item = new QListWidgetItem(theme.name, m_themesList);
+    item->setData(ThemeIdRole, theme.id);
+    item->setFlags(item->flags() | Qt::ItemIsEditable);
+    m_themesList->setCurrentItem(item);
+    updateButtonState();
+}
+
+void GuiColoursPageWidget::exportTheme()
+{
+    if(!selectedTheme()) {
+        return;
+    }
+
+    const FyTheme theme = currentTheme();
+    QString path = QFileDialog::getSaveFileName(this, tr("Save Theme"), theme.name + u".fyt"_s,
+                                                tr("fooyin Theme (*.fyt)"), nullptr, QFileDialog::DontResolveSymlinks);
+    if(path.isEmpty()) {
+        return;
+    }
+    if(QFileInfo{path}.suffix().compare(u"fyt"_s, Qt::CaseInsensitive) != 0) {
+        path += u".fyt"_s;
+    }
+
+    const auto result = FyThemeFile::write(theme, path);
+    if(!result) {
+        QMessageBox::warning(this, tr("Export Theme"), tr("Could not export theme") + u": %1"_s.arg(result.error()));
+    }
 }
 
 void GuiColoursPageWidget::renameTheme(QListWidgetItem* item)
@@ -427,18 +683,16 @@ void GuiColoursPageWidget::loadTheme()
     loadDefaults();
     m_loadedTheme = theme;
 
-    for(const auto& [key, pair] : m_colourMapping) {
+    for(const auto& [key, button] : m_colourMapping) {
         if(theme && theme->colours.contains(key)) {
-            const auto& [button, option] = pair;
             button->setColour(theme->colours.value(key));
-            option->setChecked(true);
+            button->setChecked(true);
         }
     }
-    for(const auto& [key, pair] : m_fontMapping) {
+    for(const auto& [key, button] : m_fontMapping) {
         if(theme && theme->fonts.contains(key)) {
-            const auto& [button, option] = pair;
             button->setButtonFont(theme->fonts.value(key));
-            option->setChecked(true);
+            button->setChecked(true);
         }
     }
 

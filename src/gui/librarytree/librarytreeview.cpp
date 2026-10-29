@@ -19,6 +19,8 @@
 
 #include "librarytreeview.h"
 
+#include <gui/contextmenuutils.h>
+
 #include <QHeaderView>
 #include <QMouseEvent>
 #include <QPaintEvent>
@@ -58,6 +60,16 @@ void LibraryTreeView::setExpandsOnSingleClick(bool enabled)
 
 void LibraryTreeView::changeEvent(QEvent* event)
 {
+    switch(event->type()) {
+        case QEvent::FontChange:
+        case QEvent::PaletteChange:
+        case QEvent::StyleChange:
+            Q_EMIT displayAboutToChange();
+            break;
+        default:
+            break;
+    }
+
     QTreeView::changeEvent(event);
 
     switch(event->type()) {
@@ -73,6 +85,8 @@ void LibraryTreeView::changeEvent(QEvent* event)
 
 void LibraryTreeView::mousePressEvent(QMouseEvent* event)
 {
+    const auto modifierGuard = ContextMenuUtils::normaliseContextMenuModifiers(event);
+
     if(event->button() > Qt::MiddleButton) {
         event->ignore();
         return;
@@ -87,6 +101,7 @@ void LibraryTreeView::mousePressEvent(QMouseEvent* event)
     }
 
     if(event->button() == Qt::MiddleButton) {
+        QTreeView::mousePressEvent(event);
         Q_EMIT middleClicked(index);
         return;
     }
@@ -156,16 +171,14 @@ void LibraryTreeView::wheelEvent(QWheelEvent* event)
 
 void LibraryTreeView::paintEvent(QPaintEvent* event)
 {
-    QPainter painter{viewport()};
-
-    auto drawCentreText = [this, &painter](const QString& text) {
-        QRect textRect = painter.fontMetrics().boundingRect(text);
-        textRect.moveCenter(viewport()->rect().center());
-        painter.drawText(textRect, Qt::AlignCenter, text);
-    };
-
     if(m_isLoading) {
-        drawCentreText(tr("Loading Library…"));
+        QPainter painter{viewport()};
+
+        const QString text = tr("Loading Library…");
+        QRect textRect     = painter.fontMetrics().boundingRect(text);
+        textRect.moveCenter(viewport()->rect().center());
+
+        painter.drawText(textRect, Qt::AlignCenter, text);
         return;
     }
 

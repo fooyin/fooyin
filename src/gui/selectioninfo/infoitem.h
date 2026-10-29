@@ -42,6 +42,7 @@ public:
         Concat = 0,
         Average,
         Total,
+        CompleteTotal,
         Min,
         Max,
         Percentage

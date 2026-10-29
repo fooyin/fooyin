@@ -1,27 +1,66 @@
-enable_testing(true)
-
 include(GoogleTest)
+
+set(test_working_directory "${CMAKE_CURRENT_BINARY_DIR}")
+
+if(WIN32)
+    set(CMAKE_GTEST_DISCOVER_TESTS_DISCOVERY_MODE PRE_TEST)
+
+    # Keep test DLLs out of packaging
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/run/$<CONFIG>")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+    set(test_working_directory "$<TARGET_FILE_DIR:fooyin>")
+
+    add_custom_target(
+        fooyin_test_runtime
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:Qt6::Test>" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+        COMMENT "Deploying the Qt Test runtime"
+    )
+    add_dependencies(fooyin_test_runtime fooyin)
+endif()
 
 function(fooyin_add_test name)
     add_executable(${name} ${ARGN} testutils.cpp)
+    set_property(GLOBAL APPEND PROPERTY FOOYIN_TEST_TARGETS ${name})
+    if(WIN32)
+        add_dependencies(${name} fooyin_test_runtime)
+    endif()
     fooyin_set_rpath(${name} ${LIB_INSTALL_DIR})
     target_include_directories(${name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    target_include_directories(${name} SYSTEM PRIVATE ${FFMPEG_INCLUDE_DIRS})
     target_compile_definitions(${name} PRIVATE FOOYIN_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
     target_link_libraries(
         ${name}
-        PRIVATE Fooyin::Core
-                Fooyin::CorePrivate
-                Fooyin::Gui
-                Fooyin::GuiPrivate
-                Fooyin::Utils
-                Qt6::Test
-                GTest::gtest_main
+        PRIVATE
+            Fooyin::Core
+            Fooyin::CorePrivate
+            Fooyin::Gui
+            Fooyin::GuiPrivate
+            Fooyin::Utils
+            Qt6::Test
+            Taglib::Taglib
+            ${FFMPEG_LIBRARIES}
+            GTest::gtest_main
     )
-    gtest_discover_tests(${name})
+    gtest_discover_tests(${name} WORKING_DIRECTORY "${test_working_directory}")
 endfunction()
+
+fooyin_add_test(test_commandline app/commandlinetest.cpp ${CMAKE_SOURCE_DIR}/src/app/commandline.cpp)
+target_include_directories(test_commandline PRIVATE ${CMAKE_SOURCE_DIR}/src/app)
+target_link_libraries(test_commandline PRIVATE fooyin_version)
+if(WIN32)
+    target_include_directories(test_commandline PRIVATE ${GETOPT_INCLUDE_DIR})
+    target_link_libraries(test_commandline PRIVATE ${GETOPT_LIBRARY})
+endif()
 
 fooyin_add_test(test_audioconverter core/engine/audioconvertertest.cpp)
 fooyin_add_test(test_audioclock core/engine/audioclocktest.cpp)
+fooyin_add_test(test_conversionpathresolver core/engine/conversion/conversionpathresolvertest.cpp)
+fooyin_add_test(test_conversionrunner core/engine/conversion/conversionrunnertest.cpp)
+fooyin_add_test(test_accurateripcore core/engine/accurateriptest.cpp)
+fooyin_add_test(test_audioverifier core/engine/audioverifiertest.cpp)
+fooyin_add_test(test_ffmpegencoder core/engine/ffmpegencodertest.cpp)
+fooyin_add_test(test_carrierdecoder core/engine/carrierdecodertest.cpp)
 fooyin_add_test(test_audioloader core/engine/audioloadertest.cpp)
 fooyin_add_test(test_audioengine core/engine/audioenginetest.cpp)
 fooyin_add_test(test_visualisationbackend core/engine/visualisationbackendtest.cpp)
@@ -43,11 +82,12 @@ fooyin_add_test(test_playbacktransitioncoordinator core/engine/playbacktransitio
 fooyin_add_test(test_replaygainprocessor core/engine/replaygainprocessortest.cpp)
 fooyin_add_test(test_seekplanner core/engine/seekplannertest.cpp)
 fooyin_add_test(test_trackloadplanner core/engine/trackloadplannertest.cpp)
-fooyin_add_test(test_networkstreamdevice core/network/networkstreamdevicetest.cpp)
-fooyin_add_test(test_remoteioservice core/network/remoteioservicetest.cpp)
+fooyin_add_test(test_networkstreamdevice core/network/networkstreamdevicetest.cpp networktestutils.h)
+fooyin_add_test(test_remoteioservice core/network/remoteioservicetest.cpp networktestutils.h)
 
 fooyin_add_test(test_playbackcursor core/playback/playbackcursortest.cpp)
 fooyin_add_test(test_playbackprogresstracker core/playback/playbackprogresstrackertest.cpp)
+fooyin_add_test(test_playbackqueue core/playback/playbackqueuetest.cpp)
 fooyin_add_test(test_playbacksession core/playback/playbacksessiontest.cpp)
 fooyin_add_test(test_playercontroller core/playback/playercontrollertest.cpp)
 fooyin_add_test(test_playlistnavigator core/playback/playlistnavigatortest.cpp)
@@ -58,11 +98,24 @@ fooyin_add_test(test_plsparser core/playlist/plsparsertest.cpp data/playlists.qr
 fooyin_add_test(test_playlistchangeset core/playlist/playlistchangesettest.cpp)
 fooyin_add_test(test_playlisthandler core/playlist/playlisthandlertest.cpp)
 fooyin_add_test(test_libraryscanner core/library/libraryscannertest.cpp ${CMAKE_SOURCE_DIR}/data/data.qrc)
+fooyin_add_test(test_musiclibraryfilter core/library/musiclibraryfiltertest.cpp)
 fooyin_add_test(test_unifiedmusiclibrary core/library/unifiedmusiclibrarytest.cpp ${CMAKE_SOURCE_DIR}/data/data.qrc)
 
 fooyin_add_test(test_scriptparser core/scriptparsertest.cpp)
 fooyin_add_test(test_stringpool core/stringpooltest.cpp)
 fooyin_add_test(test_track core/tracktest.cpp)
+
+create_fooyin_plugin(
+    testbundleplugin
+    NO_INSTALL
+    JSON_IN core/plugins/testplugin.json.in
+    DEPENDS Fooyin::Core
+    SOURCES core/plugins/testplugin.cpp
+)
+fooyin_add_test(test_plugininstaller core/plugins/plugininstallertest.cpp)
+target_compile_definitions(test_plugininstaller PRIVATE TEST_PLUGIN_PATH="$<TARGET_FILE:testbundleplugin>")
+target_link_libraries(test_plugininstaller PRIVATE LibArchive::LibArchive)
+add_dependencies(test_plugininstaller testbundleplugin)
 
 fooyin_add_test(test_tagreader core/tagging/tagreadertest.cpp data/audio.qrc)
 target_include_directories(test_tagreader PRIVATE ${FFMPEG_INCLUDE_DIRS})
@@ -70,40 +123,108 @@ fooyin_add_test(test_ratingtagpolicy core/tagging/ratingtagpolicytest.cpp)
 fooyin_add_test(test_tagwriter core/tagging/tagwritertest.cpp data/audio.qrc)
 
 fooyin_add_test(test_guiutils gui/guiutilstest.cpp)
+fooyin_add_test(test_fythemefile gui/fythemefiletest.cpp)
+fooyin_add_test(test_fysplitter gui/fysplittertest.cpp)
 fooyin_add_test(test_scriptformatter gui/scriptformattertest.cpp)
+fooyin_add_test(test_autoplaylist gui/autoplaylisttest.cpp)
+fooyin_add_test(test_filtercontroller gui/filters/filtercontrollertest.cpp)
+fooyin_add_test(test_filterpipeline gui/filters/filterpipelinetest.cpp)
 
 fooyin_add_test(test_helpers utils/helperstest.cpp)
+fooyin_add_test(test_dbtransaction utils/dbtransactiontest.cpp)
 fooyin_add_test(test_stringutils utils/stringutilstest.cpp)
 
-set(FILTERS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/plugins/filters)
-set(FILTER_PIPELINE_TEST_SOURCES ${FILTERS_SOURCE_DIR}/filterpipeline.cpp ${FILTERS_SOURCE_DIR}/filterrows.cpp)
-set(FILTER_CONTROLLER_TEST_SOURCES
-    ${FILTERS_SOURCE_DIR}/filtercolumnregistry.cpp
-    ${FILTERS_SOURCE_DIR}/filtercolumneditordialog.cpp
-    ${FILTERS_SOURCE_DIR}/filterscolumnmodel.cpp
-    ${FILTERS_SOURCE_DIR}/filtercontroller.cpp
-    ${FILTERS_SOURCE_DIR}/filterdelegate.cpp
-    ${FILTERS_SOURCE_DIR}/filteritem.cpp
-    ${FILTERS_SOURCE_DIR}/filtermanager.cpp
-    ${FILTERS_SOURCE_DIR}/filtermodel.cpp
-    ${FILTERS_SOURCE_DIR}/filterpipeline.cpp
-    ${FILTERS_SOURCE_DIR}/filterrows.cpp
-    ${FILTERS_SOURCE_DIR}/filterwidget.cpp
-    ${FILTERS_SOURCE_DIR}/filterconfigwidget.cpp
-)
+if(TARGET fileops)
+    set(FILEOPS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/plugins/fileops)
+    fooyin_add_test(test_fileopsworker plugins/fileops/fileopsworkertest.cpp ${FILEOPS_SOURCE_DIR}/fileopsworker.cpp)
+    target_include_directories(test_fileopsworker PRIVATE ${FILEOPS_SOURCE_DIR})
+endif()
 
-fooyin_add_test(test_filtercontroller plugins/filters/filtercontrollertest.cpp ${FILTER_CONTROLLER_TEST_SOURCES})
-target_include_directories(test_filtercontroller PRIVATE ${CMAKE_SOURCE_DIR}/src)
-fooyin_add_test(test_filterpipeline plugins/filters/filterpipelinetest.cpp ${FILTER_PIPELINE_TEST_SOURCES})
-target_include_directories(test_filterpipeline PRIVATE ${CMAKE_SOURCE_DIR}/src)
+if(TARGET tageditor)
+    fooyin_add_test(
+        test_tagfillpattern
+        plugins/tageditor/tagfillpatterntest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/tageditor/tagfillpattern.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/tageditor/tageditorsettings.cpp
+    )
+endif()
 
-fooyin_add_test(
-    test_tagfillpattern
-    plugins/tageditor/tagfillpatterntest.cpp ${CMAKE_SOURCE_DIR}/src/plugins/tageditor/tagfillpattern.cpp
-    ${CMAKE_SOURCE_DIR}/src/plugins/tageditor/tageditorsettings.cpp
-)
+if(TARGET lyrics)
+    fooyin_add_test(
+        test_lyricsparser
+        plugins/lyrics/lyricsparsertest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/lyrics/lyricsparser.cpp
+    )
+    target_include_directories(test_lyricsparser PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/lyrics)
+endif()
 
-fooyin_add_test(
-    test_lyricsparser plugins/lyrics/lyricsparsertest.cpp ${CMAKE_SOURCE_DIR}/src/plugins/lyrics/lyricsparser.cpp
-)
-target_include_directories(test_lyricsparser PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/lyrics)
+fooyin_add_test(test_metadatamatcher gui/metadatalookup/metadatamatchertest.cpp)
+fooyin_add_test(test_metadataapply gui/metadatalookup/metadataapplytest.cpp)
+
+if(TARGET cdda)
+    fooyin_add_test(
+        test_cddadomain
+        plugins/cdda/cddadomaintest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddatoc.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddaurl.cpp
+    )
+    target_include_directories(test_cddadomain PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
+
+    fooyin_add_test(
+        test_accuraterip
+        plugins/cdda/accurateriptest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/accuraterip.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddatoc.cpp
+    )
+    target_include_directories(test_accuraterip PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
+
+    fooyin_add_test(
+        test_cddrivebackend
+        plugins/cdda/cddrivebackendtest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/drive/cddrivebackend.cpp
+    )
+    target_include_directories(test_cddrivebackend PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
+
+    fooyin_add_test(
+        test_cddasectorreader
+        plugins/cdda/cddasectorreadertest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddasectorreader.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddatoc.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/drive/cddrivebackend.cpp
+    )
+    target_include_directories(test_cddasectorreader PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
+
+    fooyin_add_test(
+        test_cddrivemanager
+        plugins/cdda/cddadrivemanagertest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddadrivemanager.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddatoc.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddaurl.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/drive/cddrivebackend.cpp
+    )
+    target_include_directories(test_cddrivemanager PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
+
+    fooyin_add_test(
+        test_cddareader
+        plugins/cdda/cddareadertest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddareader.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddadrivemanager.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddatoc.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddaurl.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/drive/cddrivebackend.cpp
+    )
+    target_include_directories(test_cddareader PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
+
+    fooyin_add_test(
+        test_cddadecoder
+        plugins/cdda/cddadecodertest.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddadecoder.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddadrivesettings.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddadrivemanager.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddasectorreader.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddatoc.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/cddaurl.cpp
+        ${CMAKE_SOURCE_DIR}/src/plugins/cdda/drive/cddrivebackend.cpp
+    )
+    target_include_directories(test_cddadecoder PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/cdda)
+endif()

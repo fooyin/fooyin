@@ -57,6 +57,9 @@ public:
     [[nodiscard]] bool hasOverrideActions() const;
 
     void setShortcut(const ShortcutList& keys);
+    void setGlobalShortcuts(const ShortcutList& keys);
+    void setGlobalShortcutRegistered(bool registered);
+    void setGlobalShortcutDescription(const QString& description);
     [[nodiscard]] QString stringWithShortcut(const QString& str) const;
     void actionWithShortcutToolTip(QAction* action) const;
 
@@ -64,6 +67,9 @@ public:
     void setDefaultShortcut(const ShortcutList& keys);
     [[nodiscard]] ShortcutList defaultShortcuts() const;
     [[nodiscard]] ShortcutList shortcuts() const;
+    [[nodiscard]] ShortcutList globalShortcuts() const;
+    [[nodiscard]] bool isGlobalShortcutRegistered() const;
+    [[nodiscard]] QString globalShortcutDescription() const;
     [[nodiscard]] QKeySequence shortcut() const;
 
     void setDescription(const QString& text);
@@ -72,12 +78,27 @@ public:
     void setCategories(const QStringList& text);
     [[nodiscard]] QStringList categories() const;
 
+    /*!
+     * Returns the exclusive scope used for application shortcut conflict checking.
+     * The default invalid scope overlaps all scopes. Global shortcut conflicts are unaffected.
+     */
+    [[nodiscard]] Id shortcutConflictScope() const;
+    /*!
+     * Sets an exclusive scope for application shortcut conflict checking.
+     * Commands in different valid scopes may share application shortcuts. An invalid scope overlaps all scopes.
+     * This metadata does not change action routing or global shortcut conflicts.
+     */
+    void setShortcutConflictScope(const Id& scope);
+
     void setCurrentContext(const Context& newContext);
     void addOverrideAction(QAction* actionToAdd, const Context& context, bool changeContext = true);
     bool removeOverrideAction(QAction* action, const Context& context);
 
 Q_SIGNALS:
     void shortcutChanged();
+    void globalShortcutsChanged();
+    void globalShortcutRegistrationChanged();
+    void globalShortcutDescriptionChanged();
     void activeStateChanged();
 
 private:

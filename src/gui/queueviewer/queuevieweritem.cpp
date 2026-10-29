@@ -24,28 +24,24 @@
 #include <gui/scripting/scriptformatter.h>
 
 namespace Fooyin {
-QueueViewerItem::QueueViewerItem(PlaylistTrack track)
+QueueViewerItem::QueueViewerItem(PlaylistTrack track, PlaybackQueueItemId queueItemId)
     : m_track{std::move(track)}
+    , m_queueItemId{queueItemId}
 { }
 
 QString QueueViewerItem::title() const
 {
-    return m_title.joinedText();
-}
-
-QString QueueViewerItem::subtitle() const
-{
-    return m_subtitle.joinedText();
+    return m_title;
 }
 
 const RichText& QueueViewerItem::richTitle() const
 {
-    return m_title;
+    return m_richTitle;
 }
 
-const RichText& QueueViewerItem::richSubtitle() const
+const RichText& QueueViewerItem::rightRichTitle() const
 {
-    return m_subtitle;
+    return m_rightRichTitle;
 }
 
 PlaylistTrack QueueViewerItem::track() const
@@ -53,14 +49,34 @@ PlaylistTrack QueueViewerItem::track() const
     return m_track;
 }
 
-void QueueViewerItem::generateTitle(ScriptParser* parser, ScriptFormatter* formatter, const QString& leftScript,
-                                    const QString& rightScript, const ScriptContext& context)
+PlaybackQueueItemId QueueViewerItem::queueItemId() const
+{
+    return m_queueItemId;
+}
+
+void QueueViewerItem::setTrack(const PlaylistTrack& track)
+{
+    m_track = track;
+}
+
+bool QueueViewerItem::generateTitle(ScriptParser* parser, ScriptFormatter* formatter, const QString& displayScript,
+                                    const ScriptContext& context, const ScriptEvaluationOptions& options)
 {
     if(!parser || !formatter) {
-        return;
+        return false;
     }
 
-    m_title    = trimRichText(formatter->evaluate(parser->evaluate(leftScript, m_track.track, context)));
-    m_subtitle = trimRichText(formatter->evaluate(parser->evaluate(rightScript, m_track.track, context)));
+    const auto text     = formatter->evaluate(parser->evaluate(displayScript, m_track.track, context, options));
+    const auto title    = text.joinedText();
+    auto richTitle      = trimRichText(richTextForAlignment(text, RichAlignment::Left));
+    auto rightRichTitle = trimRichText(richTextForAlignment(text, RichAlignment::Right));
+    if(m_title == title && m_richTitle == richTitle && m_rightRichTitle == rightRichTitle) {
+        return false;
+    }
+
+    m_title          = title;
+    m_richTitle      = std::move(richTitle);
+    m_rightRichTitle = std::move(rightRichTitle);
+    return true;
 }
 } // namespace Fooyin

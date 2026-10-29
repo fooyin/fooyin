@@ -24,6 +24,97 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Database {
+const QString& trackInsertStatement(bool ignoreDuplicates)
+{
+    static const QString body = u"INTO Tracks ("
+                                "FilePath,"
+                                "Subsong,"
+                                "Title,"
+                                "TrackNumber,"
+                                "TrackTotal,"
+                                "Artists,"
+                                "AlbumArtist,"
+                                "Album,"
+                                "DiscNumber,"
+                                "DiscTotal,"
+                                "Date,"
+                                "Composer,"
+                                "Performer,"
+                                "Genres,"
+                                "Comment,"
+                                "CuePath,"
+                                "Offset,"
+                                "Duration,"
+                                "FileSize,"
+                                "BitRate,"
+                                "SampleRate,"
+                                "SampleFrames,"
+                                "Channels,"
+                                "BitDepth,"
+                                "Codec,"
+                                "CodecProfile,"
+                                "Tool,"
+                                "TagTypes,"
+                                "Encoding,"
+                                "ExtraTags,"
+                                "ExtraProperties,"
+                                "ModifiedDate,"
+                                "TrackHash,"
+                                "LibraryID,"
+                                "RGTrackGain,"
+                                "RGAlbumGain,"
+                                "RGTrackPeak,"
+                                "RGAlbumPeak,"
+                                "CreatedDate"
+                                ") "
+                                "VALUES ("
+                                ":filePath,"
+                                ":subsong,"
+                                ":title,"
+                                ":trackNumber,"
+                                ":trackTotal,"
+                                ":artists,"
+                                ":albumArtist,"
+                                ":album,"
+                                ":discNumber,"
+                                ":discTotal,"
+                                ":date,"
+                                ":composer,"
+                                ":performer,"
+                                ":genres,"
+                                ":comment,"
+                                ":cuePath,"
+                                ":offset,"
+                                ":duration,"
+                                ":fileSize,"
+                                ":bitRate,"
+                                ":sampleRate,"
+                                ":sampleFrames,"
+                                ":channels,"
+                                ":bitDepth,"
+                                ":codec,"
+                                ":codecProfile,"
+                                ":tool,"
+                                ":tagTypes,"
+                                ":encoding,"
+                                ":extraTags,"
+                                ":extraProperties,"
+                                ":modifiedDate,"
+                                ":trackHash,"
+                                ":libraryID,"
+                                ":rgTrackGain,"
+                                ":rgAlbumGain,"
+                                ":rgTrackPeak,"
+                                ":rgAlbumPeak,"
+                                ":createdDate"
+                                ");"_s;
+
+    static const QString insertStatement = "INSERT "_L1 + body;
+    static const QString ignoreStatement = "INSERT OR IGNORE "_L1 + body;
+
+    return ignoreDuplicates ? ignoreStatement : insertStatement;
+}
+
 BindingsMap trackBindings(const Track& track)
 {
     return {{u":filePath"_s, track.filepath()},
@@ -47,6 +138,7 @@ BindingsMap trackBindings(const Track& track)
             {u":fileSize"_s, static_cast<quint64>(track.fileSize())},
             {u":bitRate"_s, track.bitrate()},
             {u":sampleRate"_s, track.sampleRate()},
+            {u":sampleFrames"_s, static_cast<quint64>(track.sampleFrames())},
             {u":channels"_s, track.channels()},
             {u":bitDepth"_s, track.bitDepth()},
             {u":codec"_s, track.codec()},

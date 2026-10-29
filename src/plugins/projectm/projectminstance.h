@@ -49,8 +49,12 @@ public:
     void selectRandom(bool hardCut);
     void selectPreset(int index, bool hardCut);
     void selectPreset(const QString& path, bool hardCut);
+    void showIdlePreset();
+    void resumeIdlePreset();
+    void restoreSelectedPreset(bool locked);
     void setPresetLocked(bool locked);
     void setShuffle(bool shuffle);
+    void setPlaylistPresetPaths(const QStringList& presetPaths);
     void applySettings(const ProjectMSettings& settings);
 
     [[nodiscard]] int playlistSize() const;
@@ -79,6 +83,10 @@ private:
 
     [[nodiscard]] int presetIndexForPath(const QString& path) const;
     [[nodiscard]] int presetIndexForFailedPath(const QString& path) const;
+
+    void addPresetPaths(const QStringList& presetPaths);
+    int addPresetDirs();
+
     void notifyPresetChanged(int index);
 
     static void presetSwitched(bool isHardCut, unsigned int index, void* userData);

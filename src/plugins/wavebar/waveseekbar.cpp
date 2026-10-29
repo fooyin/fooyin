@@ -19,8 +19,10 @@
 
 #include "waveseekbar.h"
 
+#include <gui/widgets/abrepeatcontrols.h>
 #include <utils/stringutils.h>
 
+#include <QApplication>
 #include <QImage>
 #include <QMouseEvent>
 #include <QPainter>
@@ -64,8 +66,9 @@ void setupPainter(QPainter& painter, bool isInProgress, bool isPlayed, int barWi
 } // namespace
 
 namespace Fooyin::WaveBar {
-WaveSeekBar::WaveSeekBar(QWidget* parent)
+WaveSeekBar::WaveSeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
+    , m_repeatControls{new ABRepeatControls(playerController, settings, this)}
     , m_playState{Player::PlayState::Stopped}
     , m_seekable{false}
     , m_scale{1.0}
@@ -87,9 +90,9 @@ WaveSeekBar::WaveSeekBar(QWidget* parent)
     setFocusPolicy(Qt::TabFocus);
 }
 
-void WaveSeekBar::setMouseFocusEnabled(bool enabled)
+ABRepeatControls* WaveSeekBar::repeatControls() const
 {
-    setFocusPolicy(enabled ? Qt::StrongFocus : Qt::TabFocus);
+    return m_repeatControls;
 }
 
 void WaveSeekBar::processData(const WaveformData<float>& waveData)
@@ -115,6 +118,10 @@ void WaveSeekBar::setSeekable(bool seekable)
 
 void WaveSeekBar::setPosition(uint64_t pos)
 {
+    if(isSeeking() && !QApplication::mouseButtons().testFlag(Qt::LeftButton)) {
+        stopSeeking();
+    }
+
     const uint64_t oldPos = std::exchange(m_position, pos);
 
     if(oldPos == pos) {
@@ -125,6 +132,19 @@ void WaveSeekBar::setPosition(uint64_t pos)
     const double x    = positionFromValue(static_cast<double>(pos));
 
     updateRange(oldX, x);
+}
+
+void WaveSeekBar::setPlayedThresholdPosition(std::optional<uint64_t> position)
+{
+    if(position == m_playedThresholdPosition) {
+        return;
+    }
+
+    const auto oldPosition = std::exchange(m_playedThresholdPosition, position);
+    const double oldX      = oldPosition.has_value() ? positionFromValue(static_cast<double>(*oldPosition))
+                                                     : positionFromValue(static_cast<double>(position.value_or(0)));
+    const double newX      = position.has_value() ? positionFromValue(static_cast<double>(*position)) : oldX;
+    updateRange(std::min(oldX, newX) - 1.0, std::max(oldX, newX) + 1.0);
 }
 
 void WaveSeekBar::setShowCursor(bool show)
@@ -211,6 +231,11 @@ void WaveSeekBar::setSupersampleFactor(int factor)
     }
 }
 
+void WaveSeekBar::setMouseFocusEnabled(bool enabled)
+{
+    setFocusPolicy(enabled ? Qt::StrongFocus : Qt::TabFocus);
+}
+
 bool WaveSeekBar::isSeeking() const
 {
     return !m_seekPos.isNull();
@@ -219,11 +244,23 @@ bool WaveSeekBar::isSeeking() const
 void WaveSeekBar::stopSeeking()
 {
     if(m_seekTip) {
+        m_seekTip->hide();
         m_seekTip->deleteLater();
     }
 
-    m_seekPos = {};
+    m_seekPos  = {};
+    m_pressPos = {};
     update();
+}
+
+bool WaveSeekBar::event(QEvent* event)
+{
+    if(isSeeking()
+       && (event->type() == QEvent::UngrabMouse || event->type() == QEvent::WindowDeactivate
+           || event->type() == QEvent::Hide)) {
+        stopSeeking();
+    }
+    return QWidget::event(event);
 }
 
 void WaveSeekBar::paintEvent(QPaintEvent* event)
@@ -231,12 +268,13 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
     QPainter painter{this};
     if(m_data.empty() || m_supersampleFactor <= 1) {
         paintWaveform(painter, event->rect(), width());
-        drawCursors(painter);
-        return;
+    }
+    else {
+        drawCachedWaveform(painter, event->rect());
     }
 
-    drawCachedWaveform(painter, event->rect());
     drawCursors(painter);
+    m_repeatControls->paint(painter, rect());
 }
 
 void WaveSeekBar::mouseMoveEvent(QMouseEvent* event)
@@ -259,6 +297,13 @@ void WaveSeekBar::mouseMoveEvent(QMouseEvent* event)
 
 void WaveSeekBar::mousePressEvent(QMouseEvent* event)
 {
+    if((event->button() == Qt::RightButton && isSeeking())
+       || (event->button() == Qt::LeftButton && event->buttons() != Qt::LeftButton)) {
+        stopSeeking();
+        event->accept();
+        return;
+    }
+
     if(!m_seekable) {
         event->ignore();
         return;
@@ -411,32 +456,31 @@ void WaveSeekBar::invalidateWaveformCache()
     m_waveformCacheDirty = true;
 }
 
-int WaveSeekBar::cachedRenderWidth() const
-{
-    const int widgetWidth = std::max(1, width());
-    return std::max(widgetWidth * m_supersampleFactor, m_data.sampleCount() * m_sampleWidth);
-}
-
 void WaveSeekBar::ensureWaveformCache()
 {
     const QSize targetSize{cachedRenderWidth(), height()};
+    const qreal dpr = devicePixelRatioF();
     if(targetSize.isEmpty()) {
         m_unplayedWaveformCache    = {};
         m_playedWaveformCache      = {};
         m_waveformCacheSize        = {};
+        m_transitionCache          = {};
         m_waveformCacheRenderWidth = 0;
         m_waveformCacheDirty       = true;
         return;
     }
 
-    if(!m_waveformCacheDirty && m_waveformCacheSize == targetSize) {
+    if(!m_waveformCacheDirty && m_waveformCacheSize == targetSize
+       && qFuzzyCompare(m_unplayedWaveformCache.devicePixelRatio(), dpr)) {
         return;
     }
 
     m_waveformCacheSize        = targetSize;
     m_waveformCacheRenderWidth = targetSize.width();
 
-    m_unplayedWaveformCache = QImage{targetSize, QImage::Format_ARGB32_Premultiplied};
+    const QSize pixelSize{qCeil(targetSize.width() * dpr), qCeil(targetSize.height() * dpr)};
+    m_unplayedWaveformCache = QImage{pixelSize, QImage::Format_ARGB32_Premultiplied};
+    m_unplayedWaveformCache.setDevicePixelRatio(dpr);
     m_unplayedWaveformCache.fill(Qt::transparent);
     {
         QPainter painter{&m_unplayedWaveformCache};
@@ -444,7 +488,8 @@ void WaveSeekBar::ensureWaveformCache()
                       PlaybackColourMode::Unplayed);
     }
 
-    m_playedWaveformCache = QImage{targetSize, QImage::Format_ARGB32_Premultiplied};
+    m_playedWaveformCache = QImage{pixelSize, QImage::Format_ARGB32_Premultiplied};
+    m_playedWaveformCache.setDevicePixelRatio(dpr);
     m_playedWaveformCache.fill(Qt::transparent);
     {
         QPainter painter{&m_playedWaveformCache};
@@ -452,6 +497,12 @@ void WaveSeekBar::ensureWaveformCache()
     }
 
     m_waveformCacheDirty = false;
+}
+
+int WaveSeekBar::cachedRenderWidth() const
+{
+    const int widgetWidth = std::max(1, width());
+    return std::max(widgetWidth * m_supersampleFactor, m_data.sampleCount() * m_sampleWidth);
 }
 
 void WaveSeekBar::drawCachedWaveform(QPainter& painter, const QRect& dirtyRect)
@@ -463,94 +514,121 @@ void WaveSeekBar::drawCachedWaveform(QPainter& painter, const QRect& dirtyRect)
         return;
     }
 
-    const int padPx = std::max(2, m_sampleWidth * 2);
-    const QRect targetRect
-        = QRect{dirtyRect.left() - padPx, 0, dirtyRect.width() + (padPx * 2), height()}.intersected(rect());
-
     painter.save();
     painter.setClipRect(dirtyRect);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-    const double positionX   = positionFromValue(static_cast<double>(m_position));
-    const double targetLeft  = targetRect.left();
-    const double targetRight = targetRect.right() + 1;
+    const QRectF targetRect{0.0, 0.0, static_cast<double>(width()), static_cast<double>(height())};
+    const double positionX = positionFromValue(static_cast<double>(m_position));
 
-    if(positionX <= targetLeft || positionX >= targetRight) {
-        const bool played = positionX >= targetRight;
-        drawCachedSlice(painter, played ? m_playedWaveformCache : m_unplayedWaveformCache, QRectF{targetRect});
-    }
-    else {
-        drawCachedSlice(painter, m_unplayedWaveformCache, QRectF{targetRect});
+    painter.drawImage(targetRect, m_unplayedWaveformCache);
 
+    const double radius    = std::max(2.0, static_cast<double>(m_barWidth) * 2.0);
+    const double playedEnd = std::max(0.0, positionX - radius);
+
+    if(playedEnd > 0.0) {
         painter.save();
-        painter.setClipRect(QRectF{targetLeft, static_cast<double>(targetRect.top()), positionX - targetLeft,
-                                   static_cast<double>(targetRect.height())},
-                            Qt::IntersectClip);
-        drawCachedSlice(painter, m_playedWaveformCache, QRectF{targetRect});
+
+        painter.setClipRect(QRectF{0.0, 0.0, playedEnd, static_cast<double>(height())}, Qt::IntersectClip);
+        painter.drawImage(targetRect, m_playedWaveformCache);
+
         painter.restore();
     }
 
-    if(m_barGap == 0) {
-        drawCachedTransition(painter, positionX, targetRect);
-    }
+    drawCachedTransition(painter, positionX);
 
     painter.restore();
 }
 
-void WaveSeekBar::drawCachedSlice(QPainter& painter, const QImage& image, const QRectF& targetRect) const
+void WaveSeekBar::drawCachedTransition(QPainter& painter, double positionX)
 {
-    if(targetRect.width() <= 0.0 || targetRect.height() <= 0.0 || image.isNull()) {
+    const double radius = std::max(2.0, static_cast<double>(m_barWidth) * 2.0);
+    const QRectF transitionRect{positionX - radius, 0.0, radius * 2.0, static_cast<double>(height())};
+    const QRectF clipped = transitionRect.intersected(QRectF{rect()});
+
+    if(clipped.isEmpty()) {
         return;
     }
 
-    const double widgetWidth = std::max(1, width());
-    const double scale       = static_cast<double>(m_waveformCacheRenderWidth) / widgetWidth;
-    const QRectF sourceRect{targetRect.x() * scale, targetRect.y(), targetRect.width() * scale, targetRect.height()};
+    const qreal dpr = devicePixelRatioF();
+    const QSize pixelSize{qCeil(width() * dpr), qCeil(height() * dpr)};
 
-    painter.drawImage(targetRect, image, sourceRect);
-}
+    // Allocate only on resize
+    if(m_transitionCache.size() != pixelSize || !qFuzzyCompare(m_transitionCache.devicePixelRatio(), dpr)) {
+        m_transitionCache = QImage{pixelSize, QImage::Format_ARGB32_Premultiplied};
 
-void WaveSeekBar::drawCachedTransition(QPainter& painter, double positionX, const QRect& targetRect)
-{
-    const int radius = std::max(2, m_barWidth * 2);
-    const QRect transitionRect{static_cast<int>(std::floor(positionX)), 0, radius + 1, height()};
-    const QRect overlayRect = transitionRect.intersected(targetRect);
-    if(!overlayRect.isValid()) {
+        m_transitionCache.setDevicePixelRatio(dpr);
+        m_transitionCache.fill(Qt::transparent);
+    }
+
+    const QRect clearRect = clipped.toAlignedRect().adjusted(-2, 0, 2, 0).intersected(rect());
+    if(clearRect.isEmpty()) {
         return;
     }
 
-    QImage overlay{overlayRect.size(), QImage::Format_ARGB32_Premultiplied};
-    overlay.fill(Qt::transparent);
+    // Clear only the region we're about to regenerate
+    {
+        QPainter clearPainter{&m_transitionCache};
+        clearPainter.setCompositionMode(QPainter::CompositionMode_Source);
+        clearPainter.fillRect(clearRect, Qt::transparent);
+    }
 
-    QPainter overlayPainter{&overlay};
-    overlayPainter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    {
+        QPainter p{&m_transitionCache};
+        p.setClipRect(clearRect);
+        p.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-    const QPointF offset{-static_cast<double>(overlayRect.left()), -static_cast<double>(overlayRect.top())};
-    overlayPainter.translate(offset);
-    drawCachedSlice(overlayPainter, m_playedWaveformCache, QRectF{targetRect});
+        p.setCompositionMode(QPainter::CompositionMode_Source);
 
-    overlayPainter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-    QLinearGradient alphaGradient{QPointF{positionX, 0.0}, QPointF{positionX + radius, 0.0}};
-    alphaGradient.setColorAt(0.0, QColor{0, 0, 0, 255});
-    alphaGradient.setColorAt(1.0, QColor{0, 0, 0, 0});
-    overlayPainter.fillRect(QRectF{overlayRect}, alphaGradient);
-    overlayPainter.end();
+        const QRectF targetRect{0.0, 0.0, static_cast<double>(width()), static_cast<double>(height())};
+        p.drawImage(targetRect, m_playedWaveformCache);
 
-    painter.drawImage(overlayRect.topLeft(), overlay);
+        p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+
+        QLinearGradient gradient{QPointF{positionX - radius, 0.0}, QPointF{positionX + radius, 0.0}};
+        gradient.setColorAt(0.0, QColor{255, 255, 255, 255});
+        gradient.setColorAt(1.0, QColor{255, 255, 255, 0});
+        p.fillRect(clearRect, gradient);
+    }
+
+    painter.save();
+    painter.setClipRect(clearRect, Qt::IntersectClip);
+    painter.drawImage(QPointF{0.0, 0.0}, m_transitionCache);
+    painter.restore();
 }
 
 void WaveSeekBar::drawCursors(QPainter& painter)
 {
+    if(m_playedThresholdPosition.has_value()) {
+        painter.save();
+
+        QPen thresholdPen{m_colours.colour(Colours::Type::PlayedThreshold, palette()), 2.0, Qt::SolidLine, Qt::FlatCap};
+        thresholdPen.setCosmetic(true);
+        painter.setPen(thresholdPen);
+
+        const double posX = positionFromValue(static_cast<double>(*m_playedThresholdPosition));
+        painter.drawLine(QPointF{posX, 0.0}, QPointF{posX, static_cast<double>(height())});
+
+        painter.restore();
+    }
+
     if(m_showCursor && m_playState != Player::PlayState::Stopped) {
         const double posX = positionFromValue(static_cast<double>(m_position));
-        painter.setPen({m_colours.colour(Colours::Type::Cursor, palette()), static_cast<double>(m_cursorWidth),
-                        Qt::SolidLine, Qt::FlatCap});
+
+        QPen cursorPen{m_colours.colour(Colours::Type::Cursor, palette()), static_cast<double>(m_cursorWidth),
+                       Qt::SolidLine, Qt::FlatCap};
+        cursorPen.setCosmetic(true);
+        painter.setPen(cursorPen);
+
         painter.drawLine(QPointF{posX, 0.0}, QPointF{posX, static_cast<double>(height())});
     }
 
     if(isSeeking()) {
-        painter.setPen({m_colours.colour(Colours::Type::SeekingCursor, palette()), static_cast<double>(m_cursorWidth),
-                        Qt::SolidLine, Qt::FlatCap});
+        QPen cursorPen{m_colours.colour(Colours::Type::SeekingCursor, palette()), static_cast<double>(m_cursorWidth),
+                       Qt::SolidLine, Qt::FlatCap};
+        cursorPen.setCosmetic(true);
+        painter.setPen(cursorPen);
+
         painter.drawLine(QPointF{static_cast<double>(m_seekPos.x()), 0.0},
                          QPointF{static_cast<double>(m_seekPos.x()), static_cast<double>(height())});
     }

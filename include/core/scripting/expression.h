@@ -21,6 +21,9 @@
 
 #include <QString>
 
+#include <variant>
+#include <vector>
+
 namespace Fooyin {
 namespace Expr {
 enum Type : uint8_t
@@ -56,8 +59,61 @@ enum Type : uint8_t
     Since,
     During,
     Limit,
+    StartsWith,
+    EndsWith,
+    In,
+    ContainsAny,
+    ContainsWord,
+    Between,
 };
+
+constexpr bool isQueryExpression(Type type)
+{
+    switch(type) {
+        case Not:
+        case Group:
+        case And:
+        case Or:
+        case XOr:
+        case Equals:
+        case Contains:
+        case StartsWith:
+        case EndsWith:
+        case In:
+        case ContainsAny:
+        case ContainsWord:
+        case Greater:
+        case GreaterEqual:
+        case Less:
+        case LessEqual:
+        case SortAscending:
+        case SortDescending:
+        case All:
+        case Missing:
+        case Present:
+        case Before:
+        case After:
+        case Since:
+        case During:
+        case Between:
+        case Date:
+        case Limit:
+            return true;
+        case Null:
+        case Literal:
+        case Variable:
+        case VariableList:
+        case VariableRaw:
+        case Function:
+        case FunctionArg:
+        case Conditional:
+        case QuotedLiteral:
+            break;
+    }
+
+    return false;
 }
+} // namespace Expr
 
 enum class FunctionKind : uint8_t
 {
@@ -71,6 +127,7 @@ enum class FunctionKind : uint8_t
     IfEqual,
     IfGreater,
     IfLonger,
+    Select,
     Add,
     Sub,
     Mul,
@@ -90,7 +147,8 @@ enum class VariableKind : uint8_t
     DiscTotal,
     Title,
     Artist,
-    UniqueArtist,
+    TrackArtist,
+    UniqueArtist = TrackArtist,
     PlayCount,
     Duration,
     DurationSecs,
@@ -117,6 +175,8 @@ enum class VariableKind : uint8_t
     RatingStars,
     RatingStarsPadded,
     RatingEditor,
+    Loved,
+    LoveEditor,
     Codec,
     CodecProfile,
     Tool,
@@ -141,6 +201,7 @@ enum class VariableKind : uint8_t
     RGAlbumPeakDB,
     TrackCount,
     Playtime,
+    PlaylistName,
     PlaylistSize,
     PlaylistDuration,
     PlaylistElapsed,
@@ -148,6 +209,21 @@ enum class VariableKind : uint8_t
     PlaybackTimeSeconds,
     PlaybackTimeRemaining,
     PlaybackTimeRemainingSeconds,
+    InputDecoder,
+    OutputSampleRate,
+    OutputChannels,
+    OutputChannelMask,
+    OutputBitDepth,
+    OutputDevice,
+    OutputDsps,
+    OutputDspPreset,
+    OutputVolume,
+    OutputRgSource,
+    OutputRgMode,
+    OutputRgGain,
+    OutputRgPeak,
+    OutputRgPeakDb,
+    OutputBufferLength,
     IsPlaying,
     IsPaused,
     IsStopped,
@@ -163,6 +239,11 @@ enum class VariableKind : uint8_t
     FrontCover,
     BackCover,
     ArtistPicture,
+    IsQueueCurrent,
+    IsQueueUpcoming,
+    IsQueuePlayed,
+    QueueMode,
+    AverageBitrate,
 };
 
 struct Expression;
@@ -174,7 +255,15 @@ struct FuncValue
     ExpressionList args;
 };
 
-using ExpressionValue = std::variant<QString, FuncValue, ExpressionList>;
+struct DateValue
+{
+    // Date comparisons resolve their operands during parsing, so retain the original syntax
+    QString operand;
+    QString endOperand;
+    ExpressionList args;
+};
+
+using ExpressionValue = std::variant<QString, FuncValue, DateValue, ExpressionList>;
 
 struct Expression
 {

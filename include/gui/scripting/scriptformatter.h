@@ -21,6 +21,7 @@
 
 #include "fygui_export.h"
 
+#include <core/scripting/scriptparser.h>
 #include <gui/scripting/richtext.h>
 
 #include <QColor>
@@ -28,7 +29,6 @@
 
 namespace Fooyin {
 class ScriptFormatterPrivate;
-class ScriptFormatterRegistry;
 
 class FYGUI_EXPORT ScriptFormatter
 {
@@ -37,6 +37,7 @@ public:
     ~ScriptFormatter();
 
     RichText evaluate(const QString& input);
+    [[nodiscard]] const ErrorList& errors() const;
 
     void setBaseFont(const QFont& font);
     void setBaseColour(const QColor& colour);

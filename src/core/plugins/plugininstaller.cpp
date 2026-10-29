@@ -1,0 +1,556 @@
+/*
+ * Fooyin
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
+ *
+ * Fooyin is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fooyin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "plugininstaller.h"
+
+#include "plugininfo.h"
+
+#include <core/coresettings.h>
+#include <core/plugins/plugin.h>
+#include <utils/fileutils.h>
+#include <utils/fypaths.h>
+
+#include <QCoreApplication>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QLibrary>
+#include <QLoggingCategory>
+#include <QPluginLoader>
+#include <QRegularExpression>
+#include <QSysInfo>
+#include <QTemporaryDir>
+
+#include <archive.h>
+#include <archive_entry.h>
+
+#include <array>
+#include <optional>
+#include <unordered_set>
+#include <vector>
+
+using namespace Qt::StringLiterals;
+
+Q_LOGGING_CATEGORY(PLUGIN_INSTALLER, "fy.plugininstaller")
+
+constexpr qint64 MaxEntrySize     = 256LL * 1024 * 1024;
+constexpr qint64 MaxExtractedSize = 512LL * 1024 * 1024;
+constexpr auto MaxEntryCount      = 4096;
+constexpr auto PendingRemovalKey  = "Plugins/PendingRemoval"_L1;
+
+namespace Fooyin::PluginInstaller {
+namespace {
+
+struct ArchiveDeleter
+{
+    void operator()(archive* value) const
+    {
+        archive_read_close(value);
+        archive_read_free(value);
+    }
+};
+using ArchivePtr = std::unique_ptr<archive, ArchiveDeleter>;
+
+struct InstalledPlugin
+{
+    QString identifier;
+    QString relativePath;
+    QJsonObject metadata;
+};
+
+QString targetDirectory()
+{
+    QString osName;
+#ifdef Q_OS_WIN
+    osName = "windows"_L1;
+#elifdef Q_OS_LINUX
+    osName = "linux"_L1;
+#elifdef Q_OS_MACOS
+    osName = "macos"_L1;
+#elifdef Q_OS_FREEBSD
+    osName = "freebsd"_L1;
+#else
+    return {};
+#endif
+
+    const QString arch = QSysInfo::buildCpuArchitecture();
+    if(arch == "x86_64"_L1 || arch == "amd64"_L1) {
+        return osName + "-x64"_L1;
+    }
+    if(arch == "arm64"_L1 || arch == "aarch64"_L1) {
+        return osName + "-arm64"_L1;
+    }
+    return {};
+}
+
+bool isPlatformDirectory(const QString& name)
+{
+    static const std::array directories{"windows-x64"_L1, "windows-arm64"_L1, "linux-x64"_L1,   "linux-arm64"_L1,
+                                        "macos-x64"_L1,   "macos-arm64"_L1,   "freebsd-x64"_L1, "freebsd-arm64"_L1};
+    return std::ranges::find(directories, name) != directories.cend();
+}
+
+bool isValidPathPart(const QString& part)
+{
+    if(part.isEmpty() || part == u"." || part == u".." || part.endsWith(u'.') || part.endsWith(u' ')
+       || std::ranges::any_of(
+           part, [](QChar character) { return character.unicode() < 0x20 || u"<>:\"|?*"_s.contains(character); })) {
+        return false;
+    }
+
+    const QString baseName = part.section(u'.', 0, 0).toUpper();
+    static const std::array reservedNames{"CON"_L1,  "PRN"_L1,  "AUX"_L1,  "NUL"_L1,  "COM1"_L1, "COM2"_L1,
+                                          "COM3"_L1, "COM4"_L1, "COM5"_L1, "COM6"_L1, "COM7"_L1, "COM8"_L1,
+                                          "COM9"_L1, "LPT1"_L1, "LPT2"_L1, "LPT3"_L1, "LPT4"_L1, "LPT5"_L1,
+                                          "LPT6"_L1, "LPT7"_L1, "LPT8"_L1, "LPT9"_L1};
+    return std::ranges::find(reservedNames, baseName) == reservedNames.cend();
+}
+
+bool isValidIdentifier(const QString& identifier)
+{
+    static const QRegularExpression identifierRegex{u"^[a-z0-9][a-z0-9._-]*$"_s};
+    return identifierRegex.match(identifier).hasMatch() && isValidPathPart(identifier);
+}
+
+bool hasFooyinMetadata(const QJsonObject& metadata)
+{
+    const QString iid = metadata.value("IID"_L1).toString();
+    return metadata.contains("MetaData"_L1)
+        && (iid == "org.fooyin.fooyin.plugin"_L1 || iid.startsWith("org.fooyin.fooyin.plugin/"_L1));
+}
+
+std::optional<QString> outputPath(const QString& entryPath, bool isDirectory, const QString& target)
+{
+    QString path = QDir::fromNativeSeparators(entryPath);
+    path.replace(u'\\', u'/');
+    while(isDirectory && path.endsWith(u'/')) {
+        path.chop(1);
+    }
+
+    static const QRegularExpression pathRegex{u"^[A-Za-z]:"_s};
+
+    if(path.isEmpty() || path.startsWith(u'/') || path.startsWith("//"_L1) || pathRegex.match(path).hasMatch()) {
+        return {};
+    }
+
+    const QStringList parts = path.split(u'/', Qt::KeepEmptyParts);
+    if(std::ranges::any_of(parts, [](const QString& part) { return !isValidPathPart(part); })) {
+        return {};
+    }
+
+    if(parts.front() == target) {
+        if(parts.size() == 1) {
+            return isDirectory ? std::optional{QString{}} : std::nullopt;
+        }
+        return QStringList{parts.cbegin() + 1, parts.cend()}.join(u'/');
+    }
+
+    if(isPlatformDirectory(parts.front())) {
+        return QString{};
+    }
+
+    if(parts.front() == "licenses"_L1 || parts.size() == 1) {
+        return path;
+    }
+
+    return {};
+}
+
+std::expected<void, InstallError> extractBundle(const QString& filepath, const QString& destination)
+{
+    const QString target = targetDirectory();
+    if(target.isEmpty()) {
+        qCWarning(PLUGIN_INSTALLER) << "Unsupported plugin bundle target" << QSysInfo::buildCpuArchitecture();
+        return std::unexpected{InstallError::UnsupportedPlatform};
+    }
+
+    const ArchivePtr reader{archive_read_new()};
+    archive_read_support_filter_none(reader.get());
+    archive_read_support_format_zip(reader.get());
+
+    if(archive_read_open_filename(reader.get(), QFile::encodeName(filepath).constData(), 10240) != ARCHIVE_OK) {
+        qCWarning(PLUGIN_INSTALLER) << "Could not open plugin bundle:" << archive_error_string(reader.get());
+        return std::unexpected{InstallError::BundleReadFailed};
+    }
+
+    std::unordered_set<QString> extractedPaths;
+    archive_entry* entry{nullptr};
+    qint64 extractedSize{0};
+    int entryCount{0};
+    bool foundTarget{false};
+
+    int archiveResult{ARCHIVE_OK};
+    while((archiveResult = archive_read_next_header(reader.get(), &entry)) == ARCHIVE_OK) {
+        if(++entryCount > MaxEntryCount || archive_entry_is_encrypted(entry) == 1) {
+            return std::unexpected{InstallError::InvalidBundle};
+        }
+
+        const auto fileType = archive_entry_filetype(entry);
+        const bool isDir    = fileType == AE_IFDIR;
+        if(!isDir && fileType != AE_IFREG) {
+            return std::unexpected{InstallError::InvalidBundle};
+        }
+
+        const char* utf8Path = archive_entry_pathname_utf8(entry);
+        const char* rawPath  = utf8Path ? utf8Path : archive_entry_pathname(entry);
+        if(!rawPath) {
+            return std::unexpected{InstallError::InvalidBundle};
+        }
+
+        const QString entryPath = utf8Path ? QString::fromUtf8(rawPath) : QFile::decodeName(rawPath);
+        const auto relativePath = outputPath(entryPath, isDir, target);
+        if(!relativePath) {
+            return std::unexpected{InstallError::InvalidBundle};
+        }
+
+        if(relativePath->isEmpty()) {
+            archive_read_data_skip(reader.get());
+            continue;
+        }
+
+        foundTarget |= QDir::fromNativeSeparators(entryPath).startsWith(target + u'/');
+        const QString pathKey = relativePath->toCaseFolded();
+        if(!extractedPaths.emplace(pathKey).second) {
+            return std::unexpected{InstallError::InvalidBundle};
+        }
+
+        const QString output = QDir{destination}.filePath(*relativePath);
+        if(isDir) {
+            if(!QDir{}.mkpath(output)) {
+                return std::unexpected{InstallError::WriteFailed};
+            }
+            continue;
+        }
+
+        const la_int64_t declaredSize = archive_entry_size_is_set(entry) ? archive_entry_size(entry) : 0;
+        if(declaredSize < 0 || declaredSize > MaxEntrySize || extractedSize + declaredSize > MaxExtractedSize) {
+            return std::unexpected{InstallError::InvalidBundle};
+        }
+        if(!QDir{}.mkpath(QFileInfo{output}.absolutePath())) {
+            return std::unexpected{InstallError::WriteFailed};
+        }
+
+        QFile outputFile{output};
+        if(!outputFile.open(QIODevice::WriteOnly | QIODevice::NewOnly)) {
+            return std::unexpected{InstallError::WriteFailed};
+        }
+
+        std::array<char, 64UL * 1024> buffer{};
+        qint64 entrySize{0};
+        la_ssize_t bytesRead{0};
+        while((bytesRead = archive_read_data(reader.get(), buffer.data(), buffer.size())) > 0) {
+            entrySize += bytesRead;
+            extractedSize += bytesRead;
+            if(entrySize > MaxEntrySize || extractedSize > MaxExtractedSize) {
+                return std::unexpected{InstallError::InvalidBundle};
+            }
+            if(outputFile.write(buffer.data(), bytesRead) != bytesRead) {
+                return std::unexpected{InstallError::WriteFailed};
+            }
+        }
+        if(bytesRead < 0) {
+            return std::unexpected{InstallError::BundleReadFailed};
+        }
+    }
+
+    if(archiveResult != ARCHIVE_EOF) {
+        return std::unexpected{InstallError::BundleReadFailed};
+    }
+    if(!foundTarget) {
+        return std::unexpected{InstallError::MissingPlatform};
+    }
+    return {};
+}
+
+std::expected<InstalledPlugin, InstallError> inspectPlugin(const QString& directory)
+{
+    std::optional<InstalledPlugin> installedPlugin;
+
+    const auto files = Utils::File::getFilesInDirRecursive(QDir{directory});
+    for(const QString& filepath : files) {
+        if(!QLibrary::isLibrary(filepath)) {
+            continue;
+        }
+
+        const QPluginLoader loader{filepath};
+        const QJsonObject metadata = loader.metaData();
+        if(!hasFooyinMetadata(metadata)) {
+            continue;
+        }
+        if(metadata.value("IID"_L1).toString() != QLatin1StringView{FOOYIN_PLUGIN_IID}) {
+            return std::unexpected{InstallError::IncompatibleApi};
+        }
+
+        const PluginInfo plugin{filepath, metadata};
+        const QString identifier = plugin.identifier();
+        if(installedPlugin) {
+            return std::unexpected{InstallError::MultiplePlugins};
+        }
+        if(plugin.version().isEmpty() || !isValidIdentifier(identifier)) {
+            return std::unexpected{InstallError::InvalidMetadata};
+        }
+
+        installedPlugin = InstalledPlugin{
+            .identifier = identifier, .relativePath = QDir{directory}.relativeFilePath(filepath), .metadata = metadata};
+    }
+
+    if(!installedPlugin) {
+        return std::unexpected{InstallError::InvalidPlugin};
+    }
+    return *installedPlugin;
+}
+
+bool moveStagingDirectory(const QString& stagingPath, const QString& destination, QTemporaryDir& stagingDir)
+{
+    if(!QDir{}.rename(stagingPath, destination)) {
+        return false;
+    }
+    stagingDir.setAutoRemove(false);
+    return true;
+}
+
+std::vector<QString> loosePluginFiles(const QString& pluginsPath, const QString& identifier)
+{
+    std::vector<QString> paths;
+    const QFileInfoList files = QDir{pluginsPath}.entryInfoList(QDir::Files);
+    for(const QFileInfo& file : files) {
+        const QString filepath = file.absoluteFilePath();
+        if(!QLibrary::isLibrary(filepath)) {
+            continue;
+        }
+
+        const QPluginLoader loader{filepath};
+        const QJsonObject metadata = loader.metaData();
+        if(!hasFooyinMetadata(metadata)) {
+            continue;
+        }
+
+        if(PluginInfo{filepath, metadata}.identifier() == identifier) {
+            paths.emplace_back(filepath);
+        }
+    }
+    return paths;
+}
+
+std::expected<void, QString> removePath(const QString& path)
+{
+    const QFileInfo info{path};
+    if(!info.exists() && !info.isSymLink()) {
+        return {};
+    }
+    if(info.isDir() && !info.isSymLink()) {
+        if(!QDir{path}.removeRecursively()) {
+            return std::unexpected{
+                QCoreApplication::translate("Fooyin::PluginInstaller",
+                                            "Could not remove plugin directory ‘%1’. "
+                                            "Check that it is writable and its files are not in use.")
+                    .arg(path)};
+        }
+    }
+    else {
+        QFile file{path};
+        if(!file.remove()) {
+            return std::unexpected{QCoreApplication::translate("Fooyin::PluginInstaller", "Could not remove ‘%1’: %2")
+                                       .arg(path, file.errorString())};
+        }
+    }
+    return {};
+}
+} // namespace
+
+std::expected<std::unique_ptr<PluginInfo>, InstallError> install(const QString& filepath, const QString& pluginsPath,
+                                                                 bool overwrite)
+{
+    const QFileInfo source{filepath};
+    if(!source.isFile()) {
+        return std::unexpected{InstallError::InvalidSource};
+    }
+    if(!QDir{}.mkpath(pluginsPath)) {
+        return std::unexpected{InstallError::WriteFailed};
+    }
+
+    QTemporaryDir stagingDirectory{QDir{pluginsPath}.filePath(u".staging-XXXXXX"_s)};
+    if(!stagingDirectory.isValid()) {
+        return std::unexpected{InstallError::WriteFailed};
+    }
+
+    const QString suffix = source.suffix().toLower();
+    if(suffix == "fyplugin"_L1 || suffix == "zip"_L1) {
+        if(const auto result = extractBundle(filepath, stagingDirectory.path()); !result) {
+            return std::unexpected{result.error()};
+        }
+    }
+    else {
+        if(!QLibrary::isLibrary(filepath)) {
+            return std::unexpected{InstallError::InvalidPlugin};
+        }
+        if(!QFile::copy(filepath, QDir{stagingDirectory.path()}.filePath(source.fileName()))) {
+            return std::unexpected{InstallError::WriteFailed};
+        }
+    }
+
+    const auto plugin = inspectPlugin(stagingDirectory.path());
+    if(!plugin) {
+        return std::unexpected{plugin.error()};
+    }
+
+    const QString pluginPath  = QDir{pluginsPath}.filePath(plugin->identifier);
+    const QString updatesPath = QDir{pluginsPath}.filePath(u".updates"_s);
+    const QString updatePath  = QDir{updatesPath}.filePath(plugin->identifier);
+    if(!overwrite) {
+        auto existingPlugin = inspectPlugin(updatePath);
+        if(!existingPlugin) {
+            existingPlugin = inspectPlugin(pluginPath);
+        }
+
+        QString existingVersion;
+        const auto loosePlugins = loosePluginFiles(pluginsPath, plugin->identifier);
+        if(existingPlugin) {
+            existingVersion = PluginInfo{QString{}, existingPlugin->metadata}.version();
+        }
+        else if(!loosePlugins.empty()) {
+            const QString& loosePath = loosePlugins.front();
+            existingVersion          = PluginInfo{loosePath, QPluginLoader{loosePath}.metaData()}.version();
+        }
+
+        if(QFileInfo::exists(pluginPath) || QFileInfo::exists(updatePath) || !loosePlugins.empty()) {
+            const QString version = PluginInfo{QString{}, plugin->metadata}.version();
+            return std::unexpected{version == existingVersion ? InstallError::SameVersionInstalled
+                                                              : InstallError::AlreadyInstalled};
+        }
+    }
+
+    const auto installTo = [&](const QString& destination) -> std::expected<std::unique_ptr<PluginInfo>, InstallError> {
+        if(!moveStagingDirectory(stagingDirectory.path(), destination, stagingDirectory)) {
+            return std::unexpected{InstallError::WriteFailed};
+        }
+        return std::make_unique<PluginInfo>(QDir{destination}.filePath(plugin->relativePath), plugin->metadata);
+    };
+
+    if(!QFileInfo::exists(pluginPath)) {
+        return installTo(pluginPath);
+    }
+
+    if(!QDir{}.mkpath(updatesPath)) {
+        return std::unexpected{InstallError::WriteFailed};
+    }
+    if(QFileInfo::exists(updatePath) && !QDir{updatePath}.removeRecursively()) {
+        return std::unexpected{InstallError::WriteFailed};
+    }
+
+    return installTo(updatePath);
+}
+
+bool canRemove(const PluginInfo& plugin, const QString& pluginsPath)
+{
+    if(!isValidIdentifier(plugin.identifier())) {
+        return false;
+    }
+
+    const QString rootPath = QFileInfo{pluginsPath}.canonicalFilePath();
+    const QString filepath = QFileInfo{plugin.filepath()}.canonicalFilePath();
+    if(rootPath.isEmpty() || filepath.isEmpty()) {
+        return false;
+    }
+
+    const QString relativePath = QDir{rootPath}.relativeFilePath(filepath);
+    return relativePath.startsWith(plugin.identifier() + u'/')
+        || relativePath.startsWith(u".updates/"_s + plugin.identifier() + u'/');
+}
+
+std::expected<void, QString> remove(const QString& identifier, const QString& pluginsPath)
+{
+    if(!isValidIdentifier(identifier)) {
+        return std::unexpected{
+            QCoreApplication::translate("Fooyin::PluginInstaller", "Invalid plugin identifier ‘%1’.").arg(identifier)};
+    }
+
+    const QDir directory{pluginsPath};
+    const QString updatesPath = directory.filePath(u".updates"_s);
+    if(QFileInfo{updatesPath}.isSymLink()) {
+        return std::unexpected{QCoreApplication::translate("Fooyin::PluginInstaller",
+                                                           "The plugin update directory ‘%1’ is a symbolic link.")
+                                   .arg(updatesPath)};
+    }
+
+    std::vector<QString> paths;
+#ifdef Q_OS_WIN
+    // Portable installs share this root with bundled loose plugins
+    if(!Utils::isPortable()) {
+        paths = loosePluginFiles(pluginsPath, identifier);
+    }
+#else
+    paths = loosePluginFiles(pluginsPath, identifier);
+#endif
+    paths.emplace_back(QDir{updatesPath}.filePath(identifier));
+    paths.emplace_back(directory.filePath(identifier));
+
+    for(const QString& path : paths) {
+        if(const auto result = removePath(path); !result) {
+            return result;
+        }
+    }
+    QDir{pluginsPath}.rmdir(u".updates"_s);
+    return {};
+}
+
+QStringList pendingRemovals()
+{
+    const FyStateSettings settings;
+    return settings.value(PendingRemovalKey).toStringList();
+}
+
+void setPendingRemovals(const QStringList& identifiers)
+{
+    FyStateSettings settings;
+    if(identifiers.isEmpty()) {
+        settings.remove(PendingRemovalKey);
+    }
+    else {
+        settings.setValue(PendingRemovalKey, identifiers);
+    }
+}
+
+bool applyPendingUpdates(const QString& pluginsPath, const QStringList& pendingRemovals)
+{
+    const QDir updates{QDir{pluginsPath}.filePath(u".updates"_s)};
+    if(!updates.exists()) {
+        return true;
+    }
+
+    bool success{true};
+    const QFileInfoList pendingUpdates = updates.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+    for(const QFileInfo& pendingUpdate : pendingUpdates) {
+        if(pendingRemovals.contains(pendingUpdate.fileName())) {
+            continue;
+        }
+        const QString targetPath = QDir{pluginsPath}.filePath(pendingUpdate.fileName());
+        if((QFileInfo::exists(targetPath) && !QDir{targetPath}.removeRecursively())
+           || !QDir{}.rename(pendingUpdate.absoluteFilePath(), targetPath)) {
+            qCWarning(PLUGIN_INSTALLER) << "Could not apply plugin update" << pendingUpdate.fileName();
+            success = false;
+        }
+    }
+
+    if(updates.entryList(QDir::AllEntries | QDir::NoDotAndDotDot).isEmpty()) {
+        QDir{pluginsPath}.rmdir(u".updates"_s);
+    }
+    return success;
+}
+} // namespace Fooyin::PluginInstaller

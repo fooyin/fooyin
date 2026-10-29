@@ -21,7 +21,7 @@
 
 #include "librarytreecontroller.h"
 #include "librarytreegroup.h"
-#include "librarytreescriptenvironment.h"
+#include "librarytreescriptcontext.h"
 
 #include <core/track.h>
 #include <gui/fywidget.h>
@@ -35,6 +35,8 @@
 #include <vector>
 
 class QAction;
+class QComboBox;
+class QHBoxLayout;
 class QItemSelection;
 class QJsonObject;
 class QMenu;
@@ -46,8 +48,10 @@ namespace Fooyin {
 class ActionManager;
 class Application;
 class CoverRepository;
+class LibraryManager;
 class LibraryTreeController;
 class LibraryTreeGroupRegistry;
+class LibraryTreeDelegate;
 class LibraryTreeModel;
 class LibraryTreeSortModel;
 class LibraryTreeView;
@@ -59,6 +63,8 @@ class PlaylistController;
 class PlaylistHandler;
 struct PlaylistTrack;
 class SettingsManager;
+class SearchController;
+class SearchWidget;
 class SignalThrottler;
 class TrackSelectionController;
 class WidgetContext;
@@ -69,6 +75,12 @@ class LibraryTreeWidget : public FyWidget
     Q_OBJECT
 
 public:
+    enum class ControlsPosition : uint8_t
+    {
+        Top = 0,
+        Bottom,
+    };
+
     LibraryTreeWidget(ActionManager* actionManager, PlaylistController* playlistController,
                       TrackSelectionController* trackSelection, LibraryTreeController* controller, Application* core,
                       CoverRepository* coverRepository, GuiStyleProvider* styleProvider, QWidget* parent = nullptr);
@@ -79,7 +91,9 @@ public:
 
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
+    void populateContextMenu(QMenu* menu) override;
 
+    void enableIntegratedControls(SearchController* searchController, bool visibleByDefault = false);
     void searchEvent(const SearchRequest& request) override;
 
     struct ConfigData
@@ -89,10 +103,12 @@ public:
         bool sendPlayback{true};
         bool playlistEnabled{false};
         bool autoSwitch{true};
-        bool keepAlive{false};
+        bool preservePlaybackPlaylist{true};
         QString playlistName{LibraryTreeController::defaultPlaylistName()};
         bool restoreState{true};
         bool expandOnSingleClick{false};
+        bool showControls{false};
+        ControlsPosition controlsPosition{ControlsPosition::Bottom};
         int autoExpandSearchResultLimit{10};
         bool animated{true};
         bool showHeader{true};
@@ -102,6 +118,7 @@ public:
         QString summaryNodeTitle{defaultLibraryTreeSummaryTitle()};
         int rowHeight{0};
         QSize iconSize{36, 36};
+        int artworkCornerRadius{0};
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -110,6 +127,9 @@ public:
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
+
+Q_SIGNALS:
+    void configChanged();
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
@@ -121,9 +141,12 @@ protected:
 
 private:
     void setupConnections();
-    void reset() const;
-    void populateContextMenu(QMenu* menu);
+    void refreshGroupingSelector();
+    void setControlsPosition(ControlsPosition position);
+    void setControlsVisible(bool visible);
+    void reset();
 
+    void addDisplayMenu(QMenu* parent);
     void changeGrouping(const LibraryTreeGrouping& newGrouping);
 
     void activePlaylistChanged(Playlist* playlist) const;
@@ -141,10 +164,14 @@ private:
     void dequeueSelectedTracks() const;
 
     void searchChanged(const SearchRequest& request);
+    void refreshSearch();
     [[nodiscard]] bool shouldAutoExpandSearchResults(const TrackList& tracks) const;
     void expandSearchResults();
 
-    void handlePlayback(const QModelIndexList& indexes, int row = 0);
+    [[nodiscard]] TrackList sourceTracks() const;
+
+    void handlePlayback(const QModelIndexList& indexes, const QModelIndex& selectedIndex = {});
+    void handlePlaySelection();
     void handlePlayTrack(const QModelIndex& index);
     void handleDoubleClick(const QModelIndex& index);
     void handleMiddleClick(const QModelIndex& index) const;
@@ -155,9 +182,10 @@ private:
     void restoreSelection(const std::vector<Md5Hash>& expandedKeys, const std::vector<Md5Hash>& selectedKeys);
     [[nodiscard]] QByteArray saveState() const;
     void restoreIndexState(const QByteArray& topKey, const std::vector<QByteArray>& keys, int currentIndex = 0);
-    void restoreState(const QByteArray& state);
+    void restoreState(const QByteArray& state, bool force = false);
 
     ActionManager* m_actionManager;
+    LibraryManager* m_libraryManager;
     MusicLibrary* m_library;
     PlaylistHandler* m_playlistHandler;
     PlayerController* m_playerController;
@@ -166,12 +194,18 @@ private:
     TrackSelectionController* m_trackSelection;
     SettingsManager* m_settings;
     GuiStyleProvider* m_styleProvider;
+    bool m_styleInitialised;
 
     SignalThrottler* m_resetThrottler;
     LibraryTreeGrouping m_grouping;
 
     QVBoxLayout* m_layout;
+    QHBoxLayout* m_controlsLayout;
+    QComboBox* m_groupSelector;
+    SearchWidget* m_searchBar;
+    bool m_controlsVisibleByDefault;
     LibraryTreeView* m_libraryTree;
+    LibraryTreeDelegate* m_delegate;
     LibraryTreeModel* m_model;
     LibraryTreeSortModel* m_sortProxy;
 
@@ -188,9 +222,11 @@ private:
     QString m_currentSearch;
     EmptySearchMode m_currentEmptySearchMode;
     TrackList m_filteredTracks;
+    uint64_t m_searchRevision;
 
     bool m_updating;
     QByteArray m_pendingState;
+    QByteArray m_pendingResetState;
     ConfigData m_config;
 
     Playlist* m_playlist;

@@ -105,6 +105,18 @@ bool italic(RichFormatting& formatting, const QString& /*option*/)
     return true;
 }
 
+bool underline(RichFormatting& formatting, const QString& /*option*/)
+{
+    formatting.font.setUnderline(true);
+    return true;
+}
+
+bool strikeOut(RichFormatting& formatting, const QString& /*option*/)
+{
+    formatting.font.setStrikeOut(true);
+    return true;
+}
+
 bool fontFamily(RichFormatting& formatting, const QString& option)
 {
     if(option.isEmpty()) {
@@ -130,6 +142,22 @@ bool fontSize(RichFormatting& formatting, const QString& option)
     }
 
     return false;
+}
+
+bool fontWeight(RichFormatting& formatting, const QString& option)
+{
+    if(option.isEmpty()) {
+        return false;
+    }
+
+    bool isInt{false};
+    const int weight = option.toInt(&isInt);
+    if(!isInt || weight < 1 || weight > 1000) {
+        return false;
+    }
+
+    formatting.font.setWeight(static_cast<QFont::Weight>(weight));
+    return true;
 }
 
 bool fontDelta(RichFormatting& formatting, const QString& option)
@@ -199,6 +227,12 @@ bool linkHref(RichFormatting& formatting, const QString& option)
     return true;
 }
 
+bool alignLeft(RichFormatting& formatting, const QString& /*option*/)
+{
+    formatting.alignment = RichAlignment::Left;
+    return true;
+}
+
 bool alignRight(RichFormatting& formatting, const QString& /*option*/)
 {
     formatting.alignment = RichAlignment::Right;
@@ -208,7 +242,10 @@ bool alignRight(RichFormatting& formatting, const QString& /*option*/)
 constexpr std::array FormatterHandlers{
     FormatterHandlerEntry{.name = "b"_L1, .handler = &bold},
     FormatterHandlerEntry{.name = "i"_L1, .handler = &italic},
+    FormatterHandlerEntry{.name = "u"_L1, .handler = &underline},
+    FormatterHandlerEntry{.name = "s"_L1, .handler = &strikeOut},
     FormatterHandlerEntry{.name = "font"_L1, .handler = &fontFamily},
+    FormatterHandlerEntry{.name = "weight"_L1, .handler = &fontWeight},
     FormatterHandlerEntry{.name = "size"_L1, .handler = &fontSize},
     FormatterHandlerEntry{.name = "sized"_L1, .handler = &fontDelta},
     FormatterHandlerEntry{.name = "alpha"_L1, .handler = &colourAlpha},
@@ -216,6 +253,7 @@ constexpr std::array FormatterHandlers{
     FormatterHandlerEntry{.name = "rgba"_L1, .handler = &colourRgb},
     FormatterHandlerEntry{.name = "color"_L1, .handler = &colourGeneric},
     FormatterHandlerEntry{.name = "a"_L1, .handler = &linkHref},
+    FormatterHandlerEntry{.name = "left"_L1, .handler = &alignLeft},
     FormatterHandlerEntry{.name = "right"_L1, .handler = &alignRight},
 };
 } // namespace

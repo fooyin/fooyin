@@ -22,6 +22,7 @@
 #include "advancedsettingsmodel.h"
 
 #include <QApplication>
+#include <QDoubleSpinBox>
 #include <QMouseEvent>
 #include <QSpinBox>
 
@@ -31,22 +32,35 @@ QWidget* AdvancedItemDelegate::createEditor(QWidget* parent, const QStyleOptionV
 {
     using Role = AdvancedSettingsModel::AdvancedItemRole;
 
-    if(!index.data(Role::IsSpinBoxEditor).toBool()) {
-        return QStyledItemDelegate::createEditor(parent, option, index);
+    if(index.data(Role::IsSpinBoxEditor).toBool()) {
+        auto* spinBox = new QSpinBox(parent);
+        spinBox->setRange(index.data(Role::MinimumValue).toInt(), index.data(Role::MaximumValue).toInt());
+        spinBox->setSingleStep(std::max(1, index.data(Role::SingleStep).toInt()));
+        spinBox->setSuffix(index.data(Role::Suffix).toString());
+        spinBox->setSpecialValueText(index.data(Role::SpecialValueText).toString());
+        return spinBox;
+    }
+    if(index.data(Role::IsDoubleSpinBoxEditor).toBool()) {
+        auto* spinBox = new QDoubleSpinBox(parent);
+        spinBox->setDecimals(index.data(Role::Decimals).toInt());
+        spinBox->setRange(index.data(Role::MinimumValue).toDouble(), index.data(Role::MaximumValue).toDouble());
+        spinBox->setSingleStep(index.data(Role::SingleStep).toDouble());
+        spinBox->setSuffix(index.data(Role::Suffix).toString());
+        spinBox->setSpecialValueText(index.data(Role::SpecialValueText).toString());
+        return spinBox;
     }
 
-    auto* spinBox = new QSpinBox(parent);
-    spinBox->setRange(index.data(Role::MinimumValue).toInt(), index.data(Role::MaximumValue).toInt());
-    spinBox->setSingleStep(std::max(1, index.data(Role::SingleStep).toInt()));
-    spinBox->setSuffix(index.data(Role::Suffix).toString());
-    spinBox->setSpecialValueText(index.data(Role::SpecialValueText).toString());
-    return spinBox;
+    return QStyledItemDelegate::createEditor(parent, option, index);
 }
 
 void AdvancedItemDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
     if(auto* spinBox = qobject_cast<QSpinBox*>(editor)) {
         spinBox->setValue(index.data(Qt::EditRole).toInt());
+        return;
+    }
+    if(auto* spinBox = qobject_cast<QDoubleSpinBox*>(editor)) {
+        spinBox->setValue(index.data(Qt::EditRole).toDouble());
         return;
     }
 
@@ -56,6 +70,10 @@ void AdvancedItemDelegate::setEditorData(QWidget* editor, const QModelIndex& ind
 void AdvancedItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
     if(auto* spinBox = qobject_cast<QSpinBox*>(editor)) {
+        model->setData(index, spinBox->value(), Qt::EditRole);
+        return;
+    }
+    if(auto* spinBox = qobject_cast<QDoubleSpinBox*>(editor)) {
         model->setData(index, spinBox->value(), Qt::EditRole);
         return;
     }

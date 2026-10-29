@@ -26,8 +26,6 @@
 #include <QMetaType>
 #include <QPalette>
 
-#include <tuple>
-
 constexpr quint8 SerialisationVersion = 1;
 
 namespace Fooyin::WaveBar {
@@ -50,7 +48,8 @@ struct Colours
         RmsMinPlayed,
         RmsMinBorder,
         Cursor,
-        SeekingCursor
+        SeekingCursor,
+        PlayedThreshold
     };
 
     QMap<Type, QColor> waveColours;
@@ -63,6 +62,7 @@ struct Colours
         switch(type) {
             case Type::BgUnplayed:
             case Type::BgPlayed:
+                return palette.color(QPalette::Window);
             case Type::MaxBorder:
             case Type::MinBorder:
             case Type::RmsMaxBorder:
@@ -75,6 +75,8 @@ struct Colours
             case Type::MinPlayed:
             case Type::Cursor:
                 return highlight;
+            case Type::PlayedThreshold:
+                return palette.color(QPalette::Active, QPalette::Text);
             case Type::RmsMaxUnplayed:
             case Type::RmsMinUnplayed:
                 return {65, 65, 65};
@@ -112,15 +114,7 @@ struct Colours
         }
     }
 
-    bool operator==(const Colours& other) const
-    {
-        return std::tie(waveColours) == std::tie(other.waveColours);
-    };
-
-    bool operator!=(const Colours& other) const
-    {
-        return !(*this == other);
-    };
+    bool operator==(const Colours& other) const = default;
 
     friend QDataStream& operator<<(QDataStream& stream, const Colours& colours)
     {

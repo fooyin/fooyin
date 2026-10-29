@@ -45,7 +45,8 @@ void ScrobblerPlugin::initialise(const CorePluginContext& context)
     m_settings         = context.settingsManager;
 
     m_scrobblerSettings = std::make_unique<ScrobblerSettings>(m_settings);
-    m_scrobbler         = std::make_unique<Scrobbler>(m_playerController, m_networkAccess, m_settings);
+    m_scrobbler
+        = std::make_unique<Scrobbler>(m_playerController, context.library, m_networkAccess, m_settings, context.dbPool);
 }
 
 void ScrobblerPlugin::initialise(const GuiPluginContext& context)
@@ -64,7 +65,7 @@ void ScrobblerPlugin::initialise(const GuiPluginContext& context)
 
     context.widgetProvider->registerWidget(
         u"ScrobbleToggle"_s, [this]() { return new ScrobblerToggle(m_actionManager, m_settings); },
-        tr("Scrobble Toggle"));
+        tr("Scrobble Toggle"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     context.widgetProvider->setSubMenus(u"ScrobbleToggle"_s, {tr("Controls")});
 
     new ScrobblerPage(m_settings, this);

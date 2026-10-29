@@ -23,6 +23,8 @@
 
 #include <QPointer>
 
+#include <functional>
+
 class QAction;
 class QComboBox;
 class QPoint;
@@ -52,6 +54,7 @@ public:
     void addPlaylist(const Playlist* playlist);
     void removePlaylist(const Playlist* playlist);
     void playlistRenamed(const Playlist* playlist) const;
+    void playlistUpdated(const Playlist* playlist) const;
     void currentPlaylistChanged(const Playlist* playlist) const;
     void changePlaylist(int index);
 
@@ -62,7 +65,12 @@ public:
 
     [[nodiscard]] Playlist* currentPlaylist() const;
 
+Q_SIGNALS:
+    void newAutoPlaylistRequested(std::function<void(Fooyin::Playlist*)> onFinished = {});
+    void editAutoPlaylistRequested(const Fooyin::UId& playlistId);
+
 private:
+    void refreshPlaylistIcons() const;
     void setupActions();
     void updateActionState();
     void editCurrentAutoPlaylist();

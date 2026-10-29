@@ -29,7 +29,7 @@ class RawAudioPlugin : public QObject,
                        public InputPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin" FILE "rawaudio.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "rawaudio.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::InputPlugin)
 
 public:

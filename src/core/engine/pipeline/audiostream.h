@@ -34,6 +34,7 @@
 #include <deque>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <unordered_map>
 
 namespace Fooyin {
@@ -127,6 +128,11 @@ public:
     [[nodiscard]] uint64_t position() const;
     [[nodiscard]] uint64_t positionMs() const;
     [[nodiscard]] bool endOfInput() const;
+    [[nodiscard]] std::optional<uint64_t> readLimitSamples() const;
+    [[nodiscard]] bool readLimitReached() const;
+    //! Prevent the audio thread from consuming samples at or beyond @p samplePosition.
+    void setReadLimitSamples(uint64_t samplePosition);
+    void clearReadLimit();
 
     [[nodiscard]] double fadeGain() const;
     [[nodiscard]] bool isFading() const;
@@ -172,7 +178,7 @@ public:
 
     //! True when buffered data is below low-water threshold.
     [[nodiscard]] bool isBufferLow() const;
-    //! True when decode ended and no buffered samples remain.
+    //! True when decode ended and no buffered samples remain, or the logical read limit was reached.
     [[nodiscard]] bool isEndOfStream() const;
     //! Number of buffered interleaved samples.
     [[nodiscard]] size_t bufferedSamples() const;
@@ -186,6 +192,12 @@ public:
     void appendBitrateSpan(uint64_t startSample, uint64_t endSample, int bitrate);
     //! Drop all buffered bitrate metadata.
     void clearBitrateSpans();
+    //! Queue a track metadata change at an absolute source-timeline timestamp.
+    void appendTimedTrackChange(uint64_t timestampMs, const Track& track);
+    //! Remove all due changes and return the newest one.
+    [[nodiscard]] std::optional<Track> takeTimedTrackChange(uint64_t timestampMs);
+    //! Drop all queued timestamped metadata.
+    void clearTimedTrackChanges();
 
 private:
     struct BitrateSpan
@@ -206,6 +218,7 @@ private:
     std::atomic<uint64_t> m_trackRevision;
 
     std::atomic<uint64_t> m_position;
+    std::atomic<uint64_t> m_readLimitSamples;
 
     std::atomic<double> m_fadeGain;
     int64_t m_fadeTotalFrames;
@@ -216,6 +229,14 @@ private:
     mutable std::mutex m_metadataMutex;
     mutable std::mutex m_bitrateMutex;
     mutable std::deque<BitrateSpan> m_bitrateSpans;
+
+    struct TimedTrackChange
+    {
+        uint64_t timestampMs{0};
+        Track track;
+    };
+    mutable std::mutex m_timedMetadataMutex;
+    std::deque<TimedTrackChange> m_timedTrackChanges;
 
     const StreamId m_id;
 

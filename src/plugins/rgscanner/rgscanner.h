@@ -34,9 +34,10 @@ class RGWorker : public Worker
 public:
     explicit RGWorker(QObject* parent = nullptr);
 
-    virtual void calculatePerTrack(const TrackList& tracks, bool truePeak)                                = 0;
-    virtual void calculateAsAlbum(const TrackList& tracks, bool truePeak)                                 = 0;
-    virtual void calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak) = 0;
+    virtual void calculatePerTrack(const TrackList& tracks, bool truePeak, std::stop_token token) = 0;
+    virtual void calculateAsAlbum(const TrackList& tracks, bool truePeak, std::stop_token token)  = 0;
+    virtual void calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak,
+                                      std::stop_token token)                                      = 0;
 
 Q_SIGNALS:
     void startingCalculation(const QString& filepath);

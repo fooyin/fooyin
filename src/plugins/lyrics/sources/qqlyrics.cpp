@@ -20,6 +20,7 @@
 #include "qqlyrics.h"
 
 #include <core/network/networkaccessmanager.h>
+#include <core/network/networkutils.h>
 
 #include <QJsonArray>
 #include <QJsonObject>
@@ -33,16 +34,16 @@ using namespace Qt::StringLiterals;
 constexpr auto SearchUrl = "https://c.y.qq.com/splcloud/fcgi-bin/smartbox_new.fcg";
 constexpr auto LyricUrl  = "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg";
 
+namespace Fooyin::Lyrics {
 namespace {
 QNetworkRequest setupRequest(const char* url)
 {
-    QNetworkRequest req{QString::fromLatin1(url)};
+    QNetworkRequest req = makeNetworkRequest(QString::fromLatin1(url));
     req.setRawHeader("Referer", "https://y.qq.com/portal/player.html");
     return req;
 }
 } // namespace
 
-namespace Fooyin::Lyrics {
 QString QQLyrics::name() const
 {
     return u"QQ Music"_s;
@@ -132,7 +133,7 @@ void QQLyrics::handleLyricReply()
         resetReply();
 
         const QString lyrics = obj.value("lyric"_L1).toString();
-        if(!lyrics.isEmpty()) {
+        if(!lyrics.isEmpty() && !lyrics.contains("此歌曲为没有填词的纯音乐，请您欣赏"_L1)) {
             m_currentData->data = lyrics;
         }
     }

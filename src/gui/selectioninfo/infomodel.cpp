@@ -21,6 +21,7 @@
 
 #include "selectioninfofieldregistry.h"
 
+#include <core/library/librarymanager.h>
 #include <core/track.h>
 
 #include <QFileInfo>
@@ -36,7 +37,8 @@ constexpr auto HeaderFontDelta = 2;
 namespace Fooyin {
 InfoModel::InfoModel(LibraryManager* libraryManager, SelectionInfoFieldRegistry* fieldRegistry, QObject* parent)
     : TreeModel{parent}
-    , m_populator{libraryManager}
+    , m_libraryManager{libraryManager}
+    , m_generation{0}
     , m_fieldRegistry{fieldRegistry}
 {
     qRegisterMetaType<InfoDataPtr>("Fooyin::InfoDataPtr");
@@ -52,6 +54,7 @@ InfoModel::InfoModel(LibraryManager* libraryManager, SelectionInfoFieldRegistry*
     const auto resetFields = [this]() {
         resetModel(m_tracks);
     };
+    QObject::connect(m_libraryManager, &LibraryManager::librariesChanged, this, resetFields);
     QObject::connect(m_fieldRegistry, &RegistryBase::itemAdded, this, resetFields);
     QObject::connect(m_fieldRegistry, &RegistryBase::itemChanged, this, resetFields);
     QObject::connect(m_fieldRegistry, &RegistryBase::itemRemoved, this, resetFields);
@@ -75,6 +78,7 @@ Qt::ItemFlags InfoModel::flags(const QModelIndex& index) const
 
 InfoModel::~InfoModel()
 {
+    m_populator.closeThread();
     m_populatorThread.quit();
     m_populatorThread.wait();
 }
@@ -169,21 +173,29 @@ void InfoModel::setOptions(InfoItem::Options options)
 
 void InfoModel::resetModel(const TrackList& tracks)
 {
+    ++m_generation;
+
     m_tracks = tracks;
 
-    if(m_populatorThread.isRunning()) {
-        m_populator.stopThread();
-    }
-    else {
+    m_populator.stopThread();
+    if(!m_populatorThread.isRunning()) {
         m_populatorThread.start();
     }
 
     const auto fields = m_fieldRegistry->items();
-    QMetaObject::invokeMethod(&m_populator, [this, tracks, fields] { m_populator.run(m_options, tracks, fields); });
+    QMetaObject::invokeMethod(&m_populator, [worker = &m_populator, tracks, fields, options = m_options,
+                                             libraries = m_libraryManager->allLibraries(), generation = m_generation,
+                                             stopToken = m_populator.prepareWork()]() mutable {
+        worker->run(options, tracks, fields, std::move(libraries), generation, stopToken);
+    });
 }
 
 void InfoModel::populate(InfoDataPtr data)
 {
+    if(data && data->generation != m_generation) {
+        return;
+    }
+
     beginResetModel();
     resetRoot();
     m_nodes.clear();

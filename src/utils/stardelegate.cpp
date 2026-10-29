@@ -26,6 +26,14 @@
 #include <QPainter>
 
 namespace Fooyin {
+namespace {
+int itemViewTextMargin(const QWidget* widget, const QStyleOption* option = nullptr)
+{
+    const QStyle* style = widget ? widget->style() : QApplication::style();
+    return style->pixelMetric(QStyle::PM_FocusFrameHMargin, option, widget) + 1;
+}
+} // namespace
+
 QModelIndex StarDelegate::hoveredIndex() const
 {
     return m_hoverIndex;
@@ -43,6 +51,22 @@ void StarDelegate::setHoverIndex(const QModelIndex& index, const QPoint& pos, co
     m_selected   = selected;
 }
 
+void StarDelegate::setHoveredRow(const QModelIndex& index)
+{
+    m_hoveredRow = index;
+}
+
+void StarDelegate::setShowEmptyOnlyOnActiveRow(bool enabled)
+{
+    m_showEmptyOnlyOnActiveRow = enabled;
+}
+
+QRect StarDelegate::contentRect(const QRect& rect, const QWidget* widget)
+{
+    const int horizontalPadding = itemViewTextMargin(widget);
+    return rect.adjusted(horizontalPadding, 0, -horizontalPadding, 0);
+}
+
 void StarDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     QStyleOptionViewItem opt{option};
@@ -55,15 +79,24 @@ void StarDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
         return;
     }
 
+    const int horizontalPadding = itemViewTextMargin(opt.widget, &opt);
+    opt.rect.adjust(horizontalPadding, 0, -horizontalPadding, 0);
+
     auto starRating        = index.data().value<StarRating>();
     const bool mixedValues = index.data(MixedValues).toBool();
     const bool selected    = opt.state.testFlag(QStyle::State_Selected);
+    const bool hoveredRow  = m_hoveredRow.isValid() && index.siblingAtColumn(0) == m_hoveredRow;
+    const bool unrated     = starRating.rating() * static_cast<float>(starRating.maxStarCount()) < 0.5F;
+
+    if(m_showEmptyOnlyOnActiveRow && unrated && !hoveredRow && !selected) {
+        return;
+    }
 
     const bool hover = m_hoverIndex.isValid()
                     && (m_hoverIndex == index || (m_selected.contains(m_hoverIndex) && m_selected.contains(index)));
 
     if(hover) {
-        starRating.setRating(StarEditor::ratingAtPosition(m_hoverPos, option.rect, starRating, opt.displayAlignment));
+        starRating.setRating(StarEditor::ratingAtPosition(m_hoverPos, opt.rect, starRating, opt.displayAlignment));
     }
 
     starRating.paint(painter, opt.rect, opt.palette, StarRating::EditMode::ReadOnly, opt.displayAlignment, selected);
@@ -99,8 +132,9 @@ void StarDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
 QSize StarDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     if(index.data().canConvert<StarRating>()) {
-        const auto starRating = index.data().value<StarRating>();
-        return starRating.sizeHint();
+        const auto starRating       = index.data().value<StarRating>();
+        const int horizontalPadding = itemViewTextMargin(option.widget, &option);
+        return starRating.sizeHint() + QSize{horizontalPadding * 2, 0};
     }
 
     return QStyledItemDelegate::sizeHint(option, index);

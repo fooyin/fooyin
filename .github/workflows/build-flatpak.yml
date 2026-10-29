@@ -1,0 +1,125 @@
+name: Build Flatpak
+
+on:
+  workflow_call:
+    inputs:
+      version_suffix:
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  flatpak:
+    name: Flatpak (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-latest
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:kde-6.10
+      options: --privileged
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set ccache generation
+        id: ccache-generation
+        run: echo "period=$(( $(date -u +%s) / 86400 ))" >> "$GITHUB_OUTPUT"
+
+      - name: Set Flatpak cache key
+        id: flatpak-cache
+        shell: bash
+        run: |
+          echo "key=flatpak-builder-${{ matrix.arch }}-${{ hashFiles('dist/linux/flatpak/**') }}-${{ steps.ccache-generation.outputs.period }}" >> "$GITHUB_OUTPUT"
+
+      - name: Set bundle name
+        id: flatpak-bundle
+        env:
+          FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
+        shell: bash
+        run: |
+          version="$(awk '$1 == "VERSION" { print $2; exit }' CMakeLists.txt)${FOOYIN_VERSION_SUFFIX}"
+          echo "name=fooyin-${version}-${{ matrix.arch }}.flatpak" >> "$GITHUB_OUTPUT"
+
+      - name: Set version suffix
+        if: inputs.version_suffix != ''
+        env:
+          FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
+        shell: bash
+        run: |
+          sed -i "/- -DBUILD_PCH=ON/a\\      - -DFOOYIN_VERSION_SUFFIX=${FOOYIN_VERSION_SUFFIX}" \
+            dist/linux/flatpak/org.fooyin.fooyin.yaml
+
+      - name: Build Flatpak
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: ${{ steps.flatpak-bundle.outputs.name }}
+          manifest-path: dist/linux/flatpak/org.fooyin.fooyin.yaml
+          cache-key: ${{ steps.flatpak-cache.outputs.key }}
+          arch: ${{ matrix.arch }}
+          upload-artifact: false
+
+      - name: Remove older Flatpak caches
+        if: github.event_name != 'pull_request'
+        continue-on-error: true
+        uses: actions/github-script@v9
+        env:
+          FLATPAK_ARCH: ${{ matrix.arch }}
+          FLATPAK_CACHE_KEY: ${{ steps.flatpak-cache.outputs.key }}-${{ matrix.arch }}
+        with:
+          script: |
+            const arch = process.env.FLATPAK_ARCH;
+            const key = process.env.FLATPAK_CACHE_KEY;
+            const prefix = `flatpak-builder-${arch}-`;
+            const pattern = new RegExp(`^${prefix}[a-f0-9]{64}-(\\d+)-${arch}$`);
+            const match = key.match(pattern);
+            if (!match) {
+              throw new Error(`Unexpected Flatpak cache key: ${key}`);
+            }
+
+            const generation = Number(match[1]);
+            const caches = await github.paginate(github.rest.actions.getActionsCacheList, {
+              ...context.repo,
+              ref: context.ref,
+              key: prefix,
+              sort: 'created_at',
+              direction: 'desc',
+              per_page: 100
+            });
+            const replacement = caches.find(cache => cache.key === key && cache.ref === context.ref);
+            if (!replacement) {
+              core.warning(`Replacement cache ${key} was not found; keeping older Flatpak caches`);
+              return;
+            }
+
+            for (const cache of caches) {
+              const cachedMatch = cache.key.match(pattern);
+              if (!cachedMatch || cache.ref !== context.ref || cache.version !== replacement.version
+                  || Number(cachedMatch[1]) > generation || cache.created_at >= replacement.created_at) {
+                continue;
+              }
+
+              core.info(`Deleting superseded Flatpak cache: ${cache.key}`);
+              try {
+                await github.rest.actions.deleteActionsCacheById({
+                  ...context.repo,
+                  cache_id: cache.id
+                });
+              } catch (error) {
+                // Another run may have already removed the same cache
+                if (error.status !== 404) {
+                  throw error;
+                }
+              }
+            }
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: flatpak-${{ matrix.arch }}
+          path: ${{ steps.flatpak-bundle.outputs.name }}

@@ -24,32 +24,72 @@
 #include <QColor>
 #include <QWidget>
 
+#include <concepts>
+#include <initializer_list>
+#include <ranges>
+
+class QCheckBox;
+
 namespace Fooyin {
+class ColourSwatch;
+
 class FYGUI_EXPORT ColourButton : public QWidget
 {
     Q_OBJECT
 
 public:
     explicit ColourButton(QWidget* parent = nullptr);
+    explicit ColourButton(bool checkable, QWidget* parent = nullptr);
     explicit ColourButton(const QColor& colour, QWidget* parent = nullptr);
+    explicit ColourButton(const QString& text, const QColor& colour, QWidget* parent = nullptr);
+    explicit ColourButton(const QString& text, bool checkable, QWidget* parent = nullptr);
+    explicit ColourButton(const QString& text, const QColor& colour, bool checkable, QWidget* parent = nullptr);
 
     [[nodiscard]] QColor colour() const;
     [[nodiscard]] bool colourChanged() const;
 
+    [[nodiscard]] bool isCheckable() const;
+    [[nodiscard]] bool isChecked() const;
+
+    [[nodiscard]] int labelWidthHint() const;
+    [[nodiscard]] QString text() const;
+
     void setColour(const QColor& colour);
+    void setCheckable(bool checkable);
+    void setChecked(bool checked);
+    void setLabelWidth(int width);
+    void setText(const QString& text);
+    void setToolTip(const QString& text);
+
+    static int alignLabels(std::initializer_list<ColourButton*> buttons, int minimumWidth = 0)
+    {
+        return alignLabels<std::initializer_list<ColourButton*>>(std::move(buttons), minimumWidth);
+    }
+    template <std::ranges::forward_range R>
+        requires std::convertible_to<std::ranges::range_reference_t<R>, ColourButton*>
+    static int alignLabels(R&& buttons, int minimumWidth = 0)
+    {
+        int width{minimumWidth};
+        for(const ColourButton* button : buttons) {
+            width = std::max(width, button->labelWidthHint());
+        }
+        for(ColourButton* button : buttons) {
+            button->setLabelWidth(width);
+        }
+        return width;
+    }
 
 Q_SIGNALS:
     void clicked();
     void colourUpdated(const QColor& colour);
-
-protected:
-    void mousePressEvent(QMouseEvent* event) override;
-    void paintEvent(QPaintEvent* event) override;
+    void toggled(bool checked);
 
 private:
     void pickColour();
+    void updateButtonState();
 
-    QColor m_colour;
     bool m_changed;
+    QCheckBox* m_checkBox;
+    ColourSwatch* m_swatch;
 };
 } // namespace Fooyin

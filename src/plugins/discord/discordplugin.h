@@ -26,12 +26,21 @@
 
 #include <QCoro/QCoroTask>
 
+#include <QBasicTimer>
+
+#include <memory>
 #include <optional>
 
+class QDateTime;
+
 namespace Fooyin {
+class CoverProvider;
+class NetworkAccessManager;
 class SignalThrottler;
 
 namespace Discord {
+class DiscordArtworkUploader;
+class DiscordCoverArtResolver;
 class DiscordIPCClient;
 class DiscordPage;
 class DiscordSettings;
@@ -42,7 +51,7 @@ class DiscordPlugin : public QObject,
                       public GuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "discord.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "discord.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
@@ -51,6 +60,9 @@ public:
     void initialise(const CorePluginContext& context) override;
     void initialise(const GuiPluginContext& context) override;
     void shutdown() override;
+
+protected:
+    void timerEvent(QTimerEvent* event) override;
 
 private:
     void startConnectTask();
@@ -63,16 +75,35 @@ private:
     void updateActivity();
     void positionChanged(uint64_t ms);
 
+    void resetArtwork(bool clearCache = false);
+    void scheduleArtworkLoad();
+    void startArtworkLoad();
+    void tryArtworkSource(const Track& track, uint64_t generation, int attempt);
+    void tryArtworkUpload(const Track& track, uint64_t generation, int attempt);
+    void tryMusicBrainzArtwork(const Track& track, uint64_t generation, int attempt);
+    void setArtworkUrl(const QString& url, const std::optional<QDateTime>& expiresAt = {});
+    void restartArtwork(bool clearCache = false);
+
     PlayerController* m_player;
     SettingsManager* m_settings;
+    std::shared_ptr<NetworkAccessManager> m_networkAccess;
+    CoverProvider* m_coverProvider;
 
     std::unique_ptr<DiscordSettings> m_discordSettings;
     DiscordPage* m_discordPage;
 
+    DiscordArtworkUploader* m_artworkUploader;
+    DiscordCoverArtResolver* m_coverArtResolver;
     DiscordIPCClient* m_discordClient;
     SignalThrottler* m_throttler;
+    QBasicTimer m_artworkLoadTimer;
+    QBasicTimer m_artworkRefreshTimer;
     ScriptParser m_scriptParser;
+    QString m_artworkTrackKey;
+    QString m_artworkUrl;
+    uint64_t m_artworkGeneration;
     int m_positionSyncedTrackId;
+    bool m_artworkAttempted;
     bool m_clearOnPause;
 
     std::optional<QCoro::Task<>> m_clientIdTask;

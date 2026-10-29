@@ -51,6 +51,8 @@ public:
     explicit LyricsFinder(std::shared_ptr<NetworkAccessManager> networkManager, SettingsManager* settings,
                           QObject* parent = nullptr);
 
+    void cancel();
+
     void findLyrics(const LyricsSearchRequest& request);
     void findLyrics(const Track& track);
     void findLocalLyrics(const Track& track);
@@ -65,6 +67,7 @@ public:
     void reset();
 
 Q_SIGNALS:
+    void lyricsSearchStarted(const Fooyin::Track& track);
     void lyricsFound(const Fooyin::Track& track, const Fooyin::Lyrics::Lyrics& lyrics);
     void lyricsSearchFinished(const Fooyin::Track& track, bool foundAny);
 
@@ -108,6 +111,7 @@ private:
     bool m_foundAnyResults;
     bool m_externalPhaseStarted;
     bool m_searchFinished;
+    bool m_searchScheduled;
     size_t m_nextResultIndex;
     uint64_t m_searchGeneration;
 };

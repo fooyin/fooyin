@@ -77,7 +77,7 @@ ConfigDialog::ConfigDialog(const QString& title, QWidget* parent)
     QObject::connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
     auto* footerLayout = new QHBoxLayout();
-    footerLayout->addWidget(defaultsButtons);
+    footerLayout->addWidget(defaultsButtons, 0, Qt::AlignLeft);
     footerLayout->addStretch();
     footerLayout->addWidget(buttons);
 

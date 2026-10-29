@@ -30,9 +30,16 @@ namespace Fooyin {
 class PlaylistCommand : public QUndoCommand
 {
 public:
-    PlaylistCommand(PlaylistHandler* handler, const UId& playlistId);
+    PlaylistCommand(PlaylistHandler* handler, const UId& playlistId, PlaylistTrackList oldTracks);
+
+    void undo() override;
+    void redo() override;
 
 protected:
+    PlaylistTrackList m_oldTracks;
+    PlaylistTrackList m_newTracks;
+
+private:
     PlaylistHandler* m_handler;
     UId m_playlistId;
 };
@@ -41,39 +48,18 @@ class InsertTracks : public PlaylistCommand
 {
 public:
     InsertTracks(PlaylistHandler* handler, const UId& playlistId, TrackGroups groups);
-
-    void undo() override;
-    void redo() override;
-
-private:
-    PlaylistTrackList m_oldTracks;
-    PlaylistTrackList m_newTracks;
 };
 
 class RemoveTracks : public PlaylistCommand
 {
 public:
     RemoveTracks(PlaylistHandler* handler, const UId& playlistId, std::vector<int> indexes);
-
-    void undo() override;
-    void redo() override;
-
-private:
-    PlaylistTrackList m_oldTracks;
-    PlaylistTrackList m_newTracks;
 };
 
 class MoveTracks : public PlaylistCommand
 {
 public:
     MoveTracks(PlaylistHandler* handler, const UId& playlistId, MoveOperation operation);
-
-    void undo() override;
-    void redo() override;
-
-private:
-    PlaylistTrackList m_oldTracks;
-    PlaylistTrackList m_newTracks;
 };
 
 class ResetTracks : public PlaylistCommand
@@ -81,12 +67,5 @@ class ResetTracks : public PlaylistCommand
 public:
     ResetTracks(PlaylistHandler* handler, const UId& playlistId, PlaylistTrackList oldTracks,
                 const PlaylistTrackList& newTracks);
-
-    void undo() override;
-    void redo() override;
-
-private:
-    PlaylistTrackList m_oldTracks;
-    PlaylistTrackList m_newTracks;
 };
 } // namespace Fooyin

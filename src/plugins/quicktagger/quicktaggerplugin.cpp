@@ -23,6 +23,7 @@
 #include "quicktaggerconstants.h"
 #include "quicktaggerpage.h"
 
+#include <core/constants.h>
 #include <core/engine/audioloader.h>
 #include <core/library/musiclibrary.h>
 #include <core/scripting/scripttrackwriter.h>
@@ -65,8 +66,20 @@ Id removeActionId(const QuickTag& tag)
 bool canWriteTracks(const TrackList& tracks, const std::shared_ptr<AudioLoader>& audioLoader)
 {
     return !tracks.empty() && std::ranges::all_of(tracks, [&audioLoader](const Track& track) {
-        return !track.hasCue() && !track.isInArchive() && audioLoader->canWriteMetadata(track);
+        return track.isMetadataEditable(audioLoader->canWriteMetadata(track));
     });
+}
+
+bool isRatingField(const QString& field)
+{
+    const auto matches = [&field](const char* name) {
+        return field.compare(QLatin1StringView{name}, Qt::CaseInsensitive) == 0;
+    };
+
+    using namespace Fooyin::Constants::MetaData;
+
+    return matches(Rating) || matches(RatingEditor) || matches(RatingNormalized) || matches(RatingStars)
+        || matches(RatingStarsPadded) || matches(Stars);
 }
 } // namespace
 
@@ -264,7 +277,12 @@ void QuickTaggerPlugin::applyQuickTag(const QuickTag& tag, const QString& value,
         setTrackScriptValue(tag.field, value, track);
     }
 
-    m_library->writeTrackMetadata(tracks);
+    if(isRatingField(tag.field)) {
+        m_library->updateTrackStats(tracks, Track::Stat::Rating);
+    }
+    else {
+        m_library->writeTrackMetadata(tracks);
+    }
 }
 
 void QuickTaggerPlugin::removeQuickTag(const QuickTag& tag, TrackList tracks)
@@ -276,7 +294,12 @@ void QuickTaggerPlugin::removeQuickTag(const QuickTag& tag, TrackList tracks)
         setTrackScriptValue(tag.field, QString{}, track);
     }
 
-    m_library->writeTrackMetadata(tracks);
+    if(isRatingField(tag.field)) {
+        m_library->updateTrackStats(tracks, Track::Stat::Rating);
+    }
+    else {
+        m_library->writeTrackMetadata(tracks);
+    }
 }
 
 bool QuickTaggerPlugin::confirmQuickTag(const QString& field, int trackCount, int threshold)
@@ -287,7 +310,7 @@ bool QuickTaggerPlugin::confirmQuickTag(const QString& field, int trackCount, in
 
     const auto response = QMessageBox::question(Utils::getMainWindow(), tr("Quick Tagger"),
                                                 //: %1 is the Quick Tagger entry name, for example "Rating".
-                                                tr("Set \"%1\" on %Ln track(s)?", nullptr, trackCount).arg(field));
+                                                tr("Set ‘%1’ on %Ln track(s)?", nullptr, trackCount).arg(field));
     return response == QMessageBox::Yes;
 }
 

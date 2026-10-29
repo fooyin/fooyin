@@ -59,9 +59,12 @@ public:
     void setSearch(const QString& search);
 
 protected:
-    void keyPressEvent(QKeyEvent* event) override;
+    bool eventFilter(QObject* watched, QEvent* event) override;
 
 private:
+    void navigateResults(int delta);
+    void playCurrentResult();
+
     void search();
     void updateTitle();
     void showOptionsMenu();

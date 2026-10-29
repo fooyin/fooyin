@@ -42,7 +42,9 @@ ToolButton::ToolButton(QWidget* parent)
     , m_maximumSize{100}
     , m_stretchEnabled{false}
     , m_menuIndicatorHidden{true}
-{ }
+{
+    setFocusPolicy(Qt::NoFocus);
+}
 
 ToolButton::ToolButton(SettingsManager* settings, QWidget* parent)
     : ToolButton{parent}

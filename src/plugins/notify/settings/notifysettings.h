@@ -30,12 +30,14 @@ namespace Settings::Notify {
 Q_NAMESPACE
 enum NotifySettings : uint32_t
 {
-    Enabled      = 1 | Type::Bool,
-    TitleField   = 2 | Type::String,
-    BodyField    = 3 | Type::String,
-    ShowAlbumArt = 4 | Type::Bool,
-    Timeout      = 5 | Type::Int,
-    Controls     = 6 | Type::Int,
+    Enabled         = 1 | Type::Bool,
+    TitleField      = 2 | Type::String,
+    BodyField       = 3 | Type::String,
+    ShowAlbumArt    = 4 | Type::Bool,
+    Timeout         = 5 | Type::Int,
+    Controls        = 6 | Type::Int,
+    MaxAlbumArtSize = 7 | Type::Int,
+    NotifyOnRepeat  = 8 | Type::Bool,
 };
 Q_ENUM_NS(NotifySettings)
 } // namespace Settings::Notify

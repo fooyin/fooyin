@@ -202,6 +202,8 @@ void readFileProperties(Track& track)
 
 void mergeReloadedTrackStats(Track& track, const Track& existingTrack, const TrackReloadOptions& options)
 {
+    track.setLoved(existingTrack.isLoved());
+
     const bool fileHasRating    = track.rating() > 0;
     const bool fileHasPlayStats = track.playCount() > 0 || track.firstPlayed() > 0 || track.lastPlayed() > 0;
 

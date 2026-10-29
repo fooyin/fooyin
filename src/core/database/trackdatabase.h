@@ -46,6 +46,7 @@ public:
 
     bool updateTrack(const Track& track);
     bool updateTrackStats(const Track& track);
+    bool updateTrackStats(Track& track, Track::Stats updatedStats);
     bool updateTrackStats(const TrackList& tracks);
 
     bool deleteTrack(int id);
@@ -60,7 +61,20 @@ public:
 private:
     [[nodiscard]] int trackCount() const;
     bool insertTrack(Track& track, bool ignoreDuplicates = false) const;
-    bool insertOrUpdateStats(const Track& track) const;
+
+    struct StoredTrackStats
+    {
+        uint64_t added{0};
+        uint64_t firstPlayed{0};
+        uint64_t lastPlayed{0};
+        int playCount{0};
+        float rating{-1.0F};
+        bool loved{false};
+    };
+    std::optional<StoredTrackStats> existingTrackStats(const QString& hash) const;
+    bool insertOrUpdateStats(const Track& track, StoredTrackStats* mergedStats = nullptr,
+                             Track::Stats updatedStats = Track::Stat::All) const;
+
     void removeUnmanagedTracks() const;
     void updateLastSeenStats() const;
     void deleteExpiredStats() const;

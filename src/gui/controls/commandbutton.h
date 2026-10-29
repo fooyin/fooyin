@@ -20,6 +20,7 @@
 #pragma once
 
 #include <gui/fywidget.h>
+#include <gui/scripting/scriptcommandhandler.h>
 
 #include <QIcon>
 
@@ -32,7 +33,6 @@ namespace Fooyin {
 class ActionManager;
 class Command;
 class PlayerController;
-class ScriptCommandHandler;
 class SettingsManager;
 class ToolButton;
 
@@ -48,6 +48,7 @@ public:
         QString iconName;
         QString iconPath;
         int toolButtonStyle{Qt::ToolButtonIconOnly};
+        ScriptCommandTarget target{ScriptCommandTarget::FollowActiveContext};
     };
 
     CommandButton(ActionManager* actionManager, PlayerController* playerController,
@@ -69,6 +70,7 @@ public:
 
     [[nodiscard]] QSize sizeHint() const override;
     [[nodiscard]] QSize minimumSizeHint() const override;
+    void populateContextMenu(QMenu* menu) override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

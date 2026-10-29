@@ -19,6 +19,8 @@
 
 #include "outputpump.h"
 
+#include <utils/timeconstants.h>
+
 #include <algorithm>
 #include <cmath>
 
@@ -54,8 +56,9 @@ std::chrono::milliseconds OutputPump::writeBackoff(const AudioFormat& outputForm
 
     const int queuedFrames = std::max(1, outputState.queuedFrames);
     const int drainFrames  = std::max(1, queuedFrames / divisor);
-    const int waitMs       = static_cast<int>(
-        std::llround(static_cast<double>(drainFrames) * 1000.0 / static_cast<double>(outputFormat.sampleRate())));
+    const int waitMs
+        = static_cast<int>(std::llround(static_cast<double>(drainFrames) * static_cast<double>(Time::MsPerSecond)
+                                        / static_cast<double>(outputFormat.sampleRate())));
 
     return std::chrono::milliseconds{std::clamp(waitMs, minWaitMs, maxWaitMs)};
 }

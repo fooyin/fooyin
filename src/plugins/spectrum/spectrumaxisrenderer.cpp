@@ -25,6 +25,7 @@
 #include <QFontMetrics>
 #include <QPainter>
 #include <QPalette>
+#include <QPen>
 
 #include <algorithm>
 #include <array>
@@ -41,6 +42,13 @@ constexpr auto HighestHorizontalLabelPriority = 2;
 
 namespace Fooyin::Spectrum {
 namespace {
+QPen cosmeticPen(const QColor& colour)
+{
+    QPen pen{colour};
+    pen.setCosmetic(true);
+    return pen;
+}
+
 QString noteNameForSemitone(int semitone)
 {
     static constexpr std::array<const char*, 12> NoteNames
@@ -194,19 +202,29 @@ SpectrumPlotGeometry SpectrumAxisRenderer::layout(const QRect& widgetRect, const
     geometry.drawAmplitudeLabels         = requestedAmplitudeLabels;
     bool drawHorizontalLabels            = requestedHorizontalLabels;
 
+    const auto fitRectForLabels = [&](bool amplitudeLabels, bool horizontalLabels) {
+        QRect rect{widgetRect};
+        rect.adjust(m_config.showLeftLabels && amplitudeLabels ? dbWidth : 0,
+                    m_config.showTopLabels && horizontalLabels ? labelHeight : 0,
+                    m_config.showRightLabels && amplitudeLabels ? -dbWidth : 0,
+                    m_config.showBottomLabels && horizontalLabels ? -labelHeight : 0);
+        return rect;
+    };
+
     for(int pass{0}; pass < 3; ++pass) {
-        QRect fitRect = widgetRect;
-        fitRect.adjust(m_config.showLeftLabels && geometry.drawAmplitudeLabels ? dbWidth : 0,
-                       m_config.showTopLabels && drawHorizontalLabels ? labelHeight : 0,
-                       m_config.showRightLabels && geometry.drawAmplitudeLabels ? -dbWidth : 0,
-                       m_config.showBottomLabels && drawHorizontalLabels ? -labelHeight : 0);
-        const QRect fitPlotRect = plotRectForSpectrumRect(fitRect);
+        const QRect amplitudeFitRect     = fitRectForLabels(geometry.drawAmplitudeLabels, drawHorizontalLabels);
+        const QRect amplitudeFitPlotRect = plotRectForSpectrumRect(amplitudeFitRect);
 
         const bool drawAmplitudeLabels
-            = requestedAmplitudeLabels && !amplitudeLabels(metrics, widgetRect.height(), fitPlotRect).empty();
-        const bool nextDrawHorizontalLabels
-            = requestedHorizontalLabels
-           && !horizontalLabels(metrics, fitRect, fitPlotRect, bandCount, HighestHorizontalLabelPriority, dpr).empty();
+            = requestedAmplitudeLabels && !amplitudeLabels(metrics, widgetRect.height(), amplitudeFitPlotRect).empty();
+
+        const QRect horizontalFitRect       = fitRectForLabels(geometry.drawAmplitudeLabels, requestedHorizontalLabels);
+        const QRect horizontalFitPlotRect   = plotRectForSpectrumRect(horizontalFitRect);
+        const bool nextDrawHorizontalLabels = requestedHorizontalLabels
+                                           && horizontalFitPlotRect.height() >= (2 * labelHeight)
+                                           && !horizontalLabels(metrics, horizontalFitRect, horizontalFitPlotRect,
+                                                                bandCount, HighestHorizontalLabelPriority, dpr)
+                                                   .empty();
 
         if(drawAmplitudeLabels == geometry.drawAmplitudeLabels && nextDrawHorizontalLabels == drawHorizontalLabels) {
             break;
@@ -231,10 +249,12 @@ SpectrumPlotGeometry SpectrumAxisRenderer::layout(const QRect& widgetRect, const
     SpectrumPlotGeometry barGeometry = barGeometryForPlotRect(geometry.plotRect, bandCount, dpr);
     geometry.barRects                = std::move(barGeometry.barRects);
     geometry.sourceBands             = std::move(barGeometry.sourceBands);
-    geometry.horizontalLabels = drawHorizontalLabels
-                                  ? horizontalLabels(metrics, geometry.spectrumRect, geometry.plotRect, bandCount,
-                                                     HighestHorizontalLabelPriority, dpr)
-                                  : std::vector<SpectrumHorizontalLabel>{};
+    geometry.drawHorizontalLabels    = drawHorizontalLabels;
+    geometry.horizontalLabels
+        = drawHorizontalLabels || (m_config.showVerticalGrid && m_config.labelMode == LabelMode::Frequency)
+            ? horizontalLabels(metrics, geometry.spectrumRect, geometry.plotRect, bandCount,
+                               HighestHorizontalLabelPriority, dpr)
+            : std::vector<SpectrumHorizontalLabel>{};
     return geometry;
 }
 
@@ -262,7 +282,7 @@ void SpectrumAxisRenderer::paint(QPainter& painter, const SpectrumPlotGeometry& 
     drawKeyBackgrounds(painter, geometry, palette);
 
     if(m_config.showHorizontalGrid) {
-        painter.setPen(gridColour);
+        painter.setPen(cosmeticPen(gridColour));
         for(int index{0}; index <= GridLineCount; ++index) {
             const int y
                 = geometry.plotRect.top() + ((geometry.plotRect.height() - 1) * index / std::max(1, GridLineCount));
@@ -271,7 +291,7 @@ void SpectrumAxisRenderer::paint(QPainter& painter, const SpectrumPlotGeometry& 
     }
 
     if(m_config.showVerticalGrid) {
-        painter.setPen(verticalGridColour);
+        painter.setPen(cosmeticPen(verticalGridColour));
         if(m_config.labelMode == LabelMode::Notes) {
             for(int note{m_config.minNote}; note <= m_config.maxNote; ++note) {
                 const int semitone = ((note % 12) + 12) % 12;
@@ -300,7 +320,7 @@ void SpectrumAxisRenderer::paint(QPainter& painter, const SpectrumPlotGeometry& 
     const QFontMetrics metrics{painter.font()};
     painter.setPen(textColour);
 
-    if(!geometry.horizontalLabels.empty()) {
+    if(geometry.drawHorizontalLabels && !geometry.horizontalLabels.empty()) {
         for(const auto& label : geometry.horizontalLabels) {
             const int textWidth = metrics.horizontalAdvance(label.text);
             const int x         = std::clamp(label.centerX - (textWidth / 2), geometry.spectrumRect.left(),
@@ -456,7 +476,8 @@ std::vector<float> SpectrumAxisRenderer::verticalGridFrequencies() const
 
 QRect SpectrumAxisRenderer::plotRectForSpectrumRect(const QRect& spectrumRect) const
 {
-    QRect plotRect = spectrumRect.adjusted(0, PlotHeadroomPx, 0, 0);
+    const int headroom = std::clamp(spectrumRect.height() / 10, 0, PlotHeadroomPx);
+    QRect plotRect     = spectrumRect.adjusted(0, headroom, 0, 0);
     if(plotRect.width() <= 0 || plotRect.height() <= 0) {
         return plotRect;
     }
@@ -732,6 +753,13 @@ void SpectrumAxisRenderer::drawKeyBackgrounds(QPainter& painter, const SpectrumP
         return;
     }
 
+    const DevicePlotRect deviceKeyRect = toDevicePlotRect(keyRect, painter.device()->devicePixelRatioF());
+    const auto noteDeviceEdge          = [&deviceKeyRect, noteCount](int noteIndex) {
+        return deviceKeyRect.left
+             + static_cast<int>(std::round(static_cast<double>(noteIndex) * static_cast<double>(deviceKeyRect.width)
+                                           / static_cast<double>(noteCount)));
+    };
+
     for(int note = startNote; note <= endNote; ++note) {
         const int semitone = ((note % 12) + 12) % 12;
         const bool black   = isBlackKey(semitone);
@@ -739,15 +767,19 @@ void SpectrumAxisRenderer::drawKeyBackgrounds(QPainter& painter, const SpectrumP
             continue;
         }
 
-        const QRect rect = noteCellRect(keyRect, note - startNote, noteCount);
+        const int left    = noteDeviceEdge(note - startNote);
+        const int right   = noteDeviceEdge(note - startNote + 1);
+        const QRectF rect = logicalBarRect(deviceKeyRect, left, std::max(1, right - left));
         painter.fillRect(rect, black ? blackKeyColour : whiteKeyColour);
     }
 
     if(noteWidth > 2.0) {
-        painter.setPen(separatorColour);
+        painter.setPen(cosmeticPen(separatorColour));
+        const qreal separatorTop    = devicePixelToLogical(deviceKeyRect.top, deviceKeyRect.dpr);
+        const qreal separatorBottom = devicePixelToLogical(deviceKeyRect.top + deviceKeyRect.height, deviceKeyRect.dpr);
         for(int note = startNote + 1; note <= endNote; ++note) {
-            const int x = noteEdgeX(geometry.plotRect, note - startNote, noteCount);
-            painter.drawLine(x, keyRect.top(), x, keyRect.bottom());
+            const qreal x = devicePixelToLogical(noteDeviceEdge(note - startNote), deviceKeyRect.dpr);
+            painter.drawLine(QLineF{x, separatorTop, x, separatorBottom});
         }
     }
 }

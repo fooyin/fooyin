@@ -43,7 +43,7 @@ class WaveBarPlugin : public QObject,
                       public GuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "wavebar.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "wavebar.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
@@ -57,7 +57,8 @@ private:
     FyWidget* createWavebar();
     void registerWaveBar(WaveBarWidget* widget);
     void pruneWaveBars();
-    void refreshWaveBars(const Track& track, bool update = false);
+    bool refreshWaveBars(const Track& track, bool update = false);
+    void reloadWaveBars(bool update = false);
 
     void regenerateSelection(bool onlyMissing = false);
     void removeTrack(const Track& track);

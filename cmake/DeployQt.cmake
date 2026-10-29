@@ -27,6 +27,12 @@ function(windeployqt target)
         --include-plugins
         qsqlite
     )
+    set(WINDEPLOYQT_INSTALL_OPENGL_ARG "")
+    if(TARGET Qt6::OpenGL)
+        list(APPEND WINDEPLOYQT_COMMON_ARGS --opengl)
+        string(APPEND WINDEPLOYQT_INSTALL_OPENGL_ARG "--opengl")
+    endif()
+
     set(WINDEPLOYQT_INSTALL_QTPATHS_ARG "")
     if(QTPATHS_EXECUTABLE)
         list(APPEND WINDEPLOYQT_COMMON_ARGS --qtpaths "${QTPATHS_EXECUTABLE}")
@@ -43,12 +49,14 @@ function(windeployqt target)
     )
 
     install(
-        CODE "
+        CODE
+            "
         execute_process(
             COMMAND \"${WINDEPLOYQT_RELEASE}\"
                     --release
                     --verbose 1
                     --concurrent
+                    ${WINDEPLOYQT_INSTALL_OPENGL_ARG}
                     --no-translations
                     --include-plugins qsqlite${WINDEPLOYQT_INSTALL_QTPATHS_ARG}
                     --dir \"\${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\"
@@ -58,10 +66,28 @@ function(windeployqt target)
         COMPONENT fooyin
     )
 
-    install(
-        DIRECTORY "$<TARGET_FILE_DIR:fooyin>/"
-        DESTINATION ${BIN_INSTALL_DIR}
-        FILES_MATCHING
-        PATTERN "*.dll"
+    # vcpkg deploys dependencies into the build tree. Skip plugin dependencies
+    # that are identical to DLLs beside the exe.
+    set(install_runtime_dlls
+        [[
+        set(runtime_dir "$<TARGET_FILE_DIR:fooyin>")
+        file(GLOB_RECURSE runtime_dlls LIST_DIRECTORIES false RELATIVE "${runtime_dir}"
+            "${runtime_dir}/*.[dD][lL][lL]")
+        foreach(dll IN LISTS runtime_dlls)
+            get_filename_component(dll_directory "${dll}" DIRECTORY)
+            get_filename_component(dll_name "${dll}" NAME)
+            if(dll_directory STREQUAL "@FOOYIN_RELATIVE_PLUGIN_PATH@" AND EXISTS "${runtime_dir}/${dll_name}")
+                file(SHA256 "${runtime_dir}/${dll_name}" runtime_hash)
+                file(SHA256 "${runtime_dir}/${dll}" plugin_hash)
+                if(runtime_hash STREQUAL plugin_hash)
+                    continue()
+                endif()
+            endif()
+            file(INSTALL "${runtime_dir}/${dll}"
+                DESTINATION "${CMAKE_INSTALL_PREFIX}/@BIN_INSTALL_DIR@/${dll_directory}")
+        endforeach()
+    ]]
     )
+    string(CONFIGURE "${install_runtime_dlls}" install_runtime_dlls @ONLY)
+    install(CODE "${install_runtime_dlls}" COMPONENT fooyin)
 endfunction()

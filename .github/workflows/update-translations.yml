@@ -7,9 +7,18 @@ jobs:
   update-translations:
     if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.event.pull_request.user.login == 'weblate')
     runs-on: ubuntu-latest
+    container: archlinux:latest
     steps:
+      - name: Install dependencies
+        run: |
+          pacman -Syu --noconfirm \
+              git \
+              gnupg \
+              qt6-declarative \
+              qt6-tools
+
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -18,10 +27,11 @@ jobs:
           ./ci/translations.sh
 
       - name: Setup gpg
-        uses: crazy-max/ghaction-import-gpg@v6.3.0
+        uses: crazy-max/ghaction-import-gpg@v7.0.0
         with:
           gpg_private_key: ${{ secrets.BOT_GPG_SIGN_KEY }}
           passphrase: ${{ secrets.BOT_GPG_PASSPHRASE }}
+          git_config_global: true
           git_user_signingkey: true
           git_commit_gpgsign: true
 

@@ -1,0 +1,21 @@
+{
+  "name": "KDSingleApplication",
+  "buildsystem": "cmake-ninja",
+  "builddir": true,
+  "config-opts": [
+    "-DCMAKE_BUILD_TYPE=Release",
+    "-DKDSingleApplication_EXAMPLES=OFF"
+  ],
+  "sources": [
+    {
+      "type": "git",
+      "url": "https://github.com/KDAB/KDSingleApplication.git",
+      "tag": "v1.2.1",
+      "commit": "b63420aebb78df20e37310bb090f075990a5a4f6",
+      "x-checker-data": {
+        "type": "git",
+        "tag-pattern": "v([\\d.]+)"
+      }
+    }
+  ]
+}

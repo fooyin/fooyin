@@ -40,15 +40,22 @@ class VuMeterConfigDialog : public WidgetConfigDialog<VuMeterWidget, VuMeterWidg
 public:
     explicit VuMeterConfigDialog(VuMeterWidget* vuMeter, QWidget* parent = nullptr);
 
-private:
+protected:
     [[nodiscard]] VuMeterWidget::ConfigData config() const override;
     void setConfig(const VuMeterWidget::ConfigData& config) override;
+    void mergeExternalConfig(const VuMeterWidget::ConfigData& previous,
+                             const VuMeterWidget::ConfigData& current) override;
 
+private:
     QSpinBox* m_peakHold;
     QSpinBox* m_falloff;
     QSpinBox* m_peakFalloff;
     QComboBox* m_updateFps;
-    QCheckBox* m_showLegend;
+    QCheckBox* m_showTopLabels;
+    QCheckBox* m_showBottomLabels;
+    QCheckBox* m_showLeftLabels;
+    QCheckBox* m_showRightLabels;
+    QCheckBox* m_rightAlignScaleLabels;
     QGroupBox* m_peaksGroup;
 
     QSpinBox* m_channelSpacing;
@@ -58,9 +65,11 @@ private:
     QSpinBox* m_sectionSpacing;
 
     QGroupBox* m_colourGroup;
+    QCheckBox* m_barGradientEnabled;
     ColourButton* m_bgColour;
     ColourButton* m_peakColour;
     ColourButton* m_legendColour;
+    ColourButton* m_gridlinesColour;
     GradientEditor* m_barGradient;
 };
 } // namespace VuMeter

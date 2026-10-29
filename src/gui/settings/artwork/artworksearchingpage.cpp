@@ -106,9 +106,9 @@ ArtworkSearchingPageWidget::ArtworkSearchingPageWidget(SettingsManager* settings
 void ArtworkSearchingPageWidget::load()
 {
     m_autoSearch->setChecked(m_settings->value<Settings::Gui::Internal::ArtworkAutoSearch>());
-    m_titleParam->setText(m_settings->value<Settings::Gui::Internal::ArtworkTitleField>());
-    m_artistParam->setText(m_settings->value<Settings::Gui::Internal::ArtworkArtistField>());
-    m_albumParam->setText(m_settings->value<Settings::Gui::Internal::ArtworkAlbumField>());
+    m_titleParam->setScript(m_settings->value<Settings::Gui::Internal::ArtworkTitleField>());
+    m_artistParam->setScript(m_settings->value<Settings::Gui::Internal::ArtworkArtistField>());
+    m_albumParam->setScript(m_settings->value<Settings::Gui::Internal::ArtworkAlbumField>());
     m_matchThreshold->setValue(m_settings->value<Settings::Gui::Internal::ArtworkMatchThreshold>());
     m_finderThumbSize->setValue(m_settings->value<Settings::Gui::Internal::ArtworkDownloadThumbSize>());
 }

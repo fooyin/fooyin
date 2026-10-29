@@ -1,0 +1,91 @@
+/*
+ * Fooyin
+ * Copyright © 2023, Luke Taylor <luket@pm.me>
+ *
+ * Fooyin is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fooyin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#pragma once
+
+#include "fygui_export.h"
+
+#include <gui/fywidget.h>
+#include <gui/widgetcontainer.h>
+
+#include <QWidget>
+
+#include <stack>
+
+namespace Fooyin {
+class ActionManager;
+class EditableLayoutPrivate;
+class FyLayout;
+class Id;
+class LayoutProvider;
+class SettingsManager;
+class ToolbarManager;
+class WidgetProvider;
+
+class FYGUI_EXPORT EditableLayout : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit EditableLayout(ActionManager* actionManager, WidgetProvider* widgetProvider,
+                            LayoutProvider* layoutProvider, SettingsManager* settings, QWidget* parent = nullptr);
+    ~EditableLayout() override;
+
+    void initialise();
+    void setToolbarManager(ToolbarManager* toolbarManager);
+    FyLayout saveCurrentToLayout(const QString& name, bool saveWindowSize);
+
+    [[nodiscard]] FyWidget* root() const;
+
+    /** Returns all widgets in the editable layout and application toolbars. */
+    [[nodiscard]] WidgetList allWidgets() const;
+    [[nodiscard]] FyWidget* findWidget(const Id& id) const;
+    [[nodiscard]] WidgetList findWidgetsByName(const QString& name) const;
+    [[nodiscard]] WidgetList findWidgetsByFeatures(const FyWidget::Features& features) const;
+
+    template <typename T>
+    [[nodiscard]] std::vector<T*> findWidgetsByType() const
+    {
+        std::vector<T*> widgets;
+        for(auto* current : allWidgets()) {
+            if(auto* w = qobject_cast<T*>(current)) {
+                widgets.push_back(w);
+            }
+        }
+        return widgets;
+    }
+
+    bool eventFilter(QObject* watched, QEvent* event) override;
+
+    void changeLayout(const FyLayout& layout);
+    void saveLayout();
+    bool loadLayout(const FyLayout& layout);
+    void exportLayout(QWidget* parent);
+
+    static QJsonObject saveWidget(FyWidget* widget);
+    static QJsonObject saveBaseWidget(FyWidget* widget);
+    static FyWidget* loadWidget(WidgetProvider* provider, const QJsonObject& layout);
+
+Q_SIGNALS:
+    void layoutChanged();
+
+private:
+    std::unique_ptr<EditableLayoutPrivate> p;
+};
+} // namespace Fooyin

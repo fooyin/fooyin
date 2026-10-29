@@ -24,6 +24,8 @@
 #include <QString>
 #include <QStringView>
 
+#include <vector>
+
 namespace Fooyin {
 class FYCORE_EXPORT ScriptScanner
 {
@@ -50,7 +52,7 @@ public:
         TokLeftSquare  = 10,
         TokRightSquare = 11,
         TokSlash       = 12,
-        TokColon       = 13,
+        TokContains    = 13,
         TokEquals      = 14,
         TokNot         = 15,
         TokEscape      = 16,
@@ -80,6 +82,14 @@ public:
         TokLimit       = 40,
         TokPlus        = 41,
         TokMinus       = 42,
+        TokComment     = 43,
+        TokStarts      = 44,
+        TokEnds        = 45,
+        TokIn          = 46,
+        TokWith        = 47,
+        TokAny         = 48,
+        TokWord        = 49,
+        TokBetween     = 50,
     };
 
     struct Token
@@ -98,13 +108,15 @@ public:
     void setWhitespaceMode(WhitespaceMode mode);
 
 private:
-    Token scanNext();
+    Token scanNext(bool insideQuote);
     [[nodiscard]] Token makeToken(TokenType type) const;
+    Token comment();
     Token literal();
     Token keyword();
     Token checkKeyword(int start, QAnyStringView rest, TokenType type);
 
     [[nodiscard]] bool isAtEnd() const;
+    [[nodiscard]] bool shouldSkipWhitespace(QChar ch) const;
     QChar advance();
     [[nodiscard]] QChar peek() const;
     [[nodiscard]] int currentLength() const;

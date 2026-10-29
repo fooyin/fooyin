@@ -23,6 +23,7 @@
 #include "tageditorautocompletedelegate.h"
 #include "tageditorconstants.h"
 #include "tageditormodel.h"
+#include "tageditorsettings.h"
 #include "tageditorview.h"
 
 #include <core/constants.h>
@@ -31,6 +32,7 @@
 #include <gui/widgets/multilinedelegate.h>
 #include <gui/widgets/toolbutton.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/heartdelegate.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/stardelegate.h>
@@ -38,6 +40,7 @@
 #include <QHeaderView>
 #include <QMenu>
 #include <QTimer>
+#include <QTimerEvent>
 #include <QVBoxLayout>
 
 using namespace Qt::StringLiterals;
@@ -49,19 +52,25 @@ TagEditorEditor::TagEditorEditor(ActionManager* actionManager, TagEditorFieldReg
     , m_registry{registry}
     , m_settings{settings}
     , m_readOnly{false}
+    , m_loading{false}
     , m_firstReset{true}
     , m_view{new TagEditorView(actionManager, this)}
     , m_model{new TagEditorModel(settings, this)}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
+    , m_populationRequest{0}
     , m_autocompleteDelegate{new TagEditorAutocompleteDelegate(this)}
     , m_multilineDelegate{nullptr}
     , m_starDelegate{nullptr}
+    , m_heartDelegate{nullptr}
     , m_toolsButton{new ToolButton(this)}
     , m_autoTrackNum{new QAction(tr("Auto &track number"), this)}
     , m_autoFillValuesAction{new QAction(tr("Automatically &fill values…"), this)}
     , m_changeFields{new QAction(tr("&Change default fields…"), this)}
 {
     setObjectName(u"TagEditorEditor"_s);
+
+    qRegisterMetaType<TagEditorDataPtr>("Fooyin::TagEditor::TagEditorDataPtr");
+    m_populator.moveToThread(&m_populatorThread);
 
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins({});
@@ -91,7 +100,7 @@ TagEditorEditor::TagEditorEditor(ActionManager* actionManager, TagEditorFieldReg
         [this]() {
             m_view->resizeRowsToContents();
 
-            if(m_firstReset) {
+            if(m_firstReset && m_model->rowCount({}) > 0) {
                 m_firstReset = false;
                 QTimer::singleShot(0, this, [this]() { m_header->resizeColumnToContents(0); });
             }
@@ -102,12 +111,23 @@ TagEditorEditor::TagEditorEditor(ActionManager* actionManager, TagEditorFieldReg
     QObject::connect(m_model, &QAbstractItemModel::rowsRemoved, this, &TagEditorEditor::updatePendingScopeState);
     QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
         const QModelIndexList selected = m_view->selectionModel()->selectedIndexes();
-        m_view->removeRowAction()->setEnabled(!m_readOnly && !selected.empty());
+        m_view->removeRowAction()->setEnabled(!m_readOnly && !m_loading && !selected.empty());
     });
     QObject::connect(m_autoTrackNum, &QAction::triggered, m_model, &TagEditorModel::autoNumberTracks);
     QObject::connect(m_autoFillValuesAction, &QAction::triggered, this, &TagEditorEditor::autoFillValuesRequested);
     QObject::connect(m_changeFields, &QAction::triggered, this,
                      [this]() { m_settings->settingsDialog()->openAtPage(Constants::Page::TagEditorFields); });
+    QObject::connect(&m_populator, &TagEditorPopulator::populated, this, &TagEditorEditor::populationFinished);
+
+    m_settings->subscribe(SettingsKeys::EditValuesOnSingleClick, this, &TagEditorEditor::updateEditState);
+}
+
+TagEditorEditor::~TagEditorEditor()
+{
+    m_populator.request(++m_populationRequest);
+    m_populator.closeThread();
+    m_populatorThread.quit();
+    m_populatorThread.wait();
 }
 
 void TagEditorEditor::setTracks(const TrackList& tracks)
@@ -117,12 +137,12 @@ void TagEditorEditor::setTracks(const TrackList& tracks)
 
     m_tracks = tracks;
 
-    refreshModel();
+    scheduleRefresh();
 
     const auto refreshEditor = [this]() {
         const auto fieldItems = m_registry->items();
         configureDelegates(fieldItems);
-        this->refreshModel();
+        scheduleRefresh();
     };
 
     QObject::disconnect(m_registry, nullptr, this, nullptr);
@@ -134,12 +154,25 @@ void TagEditorEditor::setTracks(const TrackList& tracks)
 void TagEditorEditor::setReadOnly(bool readOnly)
 {
     m_readOnly = readOnly;
+    updateEditState();
+}
 
-    m_view->setTagEditTriggers(readOnly ? QAbstractItemView::NoEditTriggers
-                                        : (QAbstractItemView::DoubleClicked | QAbstractItemView::SelectedClicked
-                                           | QAbstractItemView::EditKeyPressed));
+void TagEditorEditor::updateEditState()
+{
+    const bool readOnly                = m_readOnly || m_loading;
+    const bool editValuesOnSingleClick = m_settings->value(SettingsKeys::EditValuesOnSingleClick).toBool();
+
+    QAbstractItemView::EditTriggers triggers{QAbstractItemView::NoEditTriggers};
+    if(!readOnly) {
+        triggers |= QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed;
+        if(editValuesOnSingleClick) {
+            triggers |= QAbstractItemView::SelectedClicked;
+        }
+    }
+    m_view->setTagEditTriggers(triggers);
+
     m_view->addRowAction()->setDisabled(readOnly);
-    m_view->removeRowAction()->setDisabled(readOnly);
+    m_view->removeRowAction()->setDisabled(readOnly || m_view->selectionModel()->selectedIndexes().empty());
     m_autoTrackNum->setDisabled(readOnly);
     m_autoFillValuesAction->setDisabled(readOnly);
 }
@@ -152,13 +185,14 @@ void TagEditorEditor::configureDelegates(const std::vector<TagEditorField>& item
     m_delegateRows.clear();
     m_view->setRatingRow(-1);
     m_model->setRatingRow(-1);
+    m_model->setLoveRow(-1);
 
     for(int row{0}; const auto& item : items) {
-        if(!item.enabled) {
+        if(!item.isEnabled) {
             continue;
         }
 
-        if(item.scriptField.compare(QLatin1String{Fooyin::Constants::MetaData::RatingEditor}, Qt::CaseInsensitive)
+        if(item.scriptField.compare(QLatin1StringView{Fooyin::Constants::MetaData::RatingEditor}, Qt::CaseInsensitive)
            == 0) {
             if(!m_starDelegate) {
                 m_starDelegate = new StarDelegate(this);
@@ -166,6 +200,17 @@ void TagEditorEditor::configureDelegates(const std::vector<TagEditorField>& item
             m_view->setItemDelegateForRow(row, m_starDelegate);
             m_view->setRatingRow(row);
             m_model->setRatingRow(row);
+            m_delegateRows.emplace(row);
+        }
+        else if(item.scriptField.compare(QLatin1StringView{Fooyin::Constants::MetaData::LoveEditor},
+                                         Qt::CaseInsensitive)
+                == 0) {
+            if(!m_heartDelegate) {
+                m_heartDelegate = new HeartDelegate(this);
+            }
+            m_view->setItemDelegateForRow(row, m_heartDelegate);
+            m_view->setLovedRow(row);
+            m_model->setLoveRow(row);
             m_delegateRows.emplace(row);
         }
         else if(item.multiline) {
@@ -182,20 +227,65 @@ void TagEditorEditor::configureDelegates(const std::vector<TagEditorField>& item
 
 void TagEditorEditor::refreshModel()
 {
-    const auto items = m_registry->items();
-    m_model->reset(m_tracks, items);
-    m_autocompleteDelegate->setTracks(m_tracks);
+    if(!m_populatorThread.isRunning()) {
+        m_populatorThread.start();
+    }
+
+    const auto items      = m_registry->items();
+    const auto separators = multiValueSeparators(*m_settings);
+
+    auto* populator = &m_populator;
+    QMetaObject::invokeMethod(
+        populator, [populator, requestId = m_populationRequest, tracks = m_tracks, items, separators,
+                    token = populator->prepareWork()] { populator->run(requestId, tracks, items, separators, token); });
+}
+
+void TagEditorEditor::scheduleRefresh()
+{
+    m_populator.request(++m_populationRequest);
+
+    m_loading = true;
+    updateEditState();
+    updatePendingScopeState();
+    m_resetTimer.start(50, this);
+}
+
+void TagEditorEditor::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_resetTimer.timerId()) {
+        m_resetTimer.stop();
+        refreshModel();
+    }
+
+    QWidget::timerEvent(event);
+}
+
+void TagEditorEditor::populationFinished(TagEditorDataPtr result)
+{
+    if(!result || result->requestId != m_populationRequest) {
+        return;
+    }
+
+    m_autocompleteDelegate->setCompletionValues(result->completionValues);
+    m_model->populate(std::move(result));
+    m_loading = false;
+    updateEditState();
     updatePendingScopeState();
 }
 
 bool TagEditorEditor::hasChanges() const
 {
-    return m_model->haveChanges();
+    return !m_loading && m_model->haveChanges();
+}
+
+Track::Stats TagEditorEditor::changedStats() const
+{
+    return m_model->changedStats();
 }
 
 bool TagEditorEditor::hasOnlyStatChanges() const
 {
-    return m_model->haveOnlyStatChanges();
+    return !m_loading && m_model->haveOnlyStatChanges();
 }
 
 TrackList TagEditorEditor::tracks() const
@@ -205,7 +295,7 @@ TrackList TagEditorEditor::tracks() const
 
 TrackList TagEditorEditor::applyChanges()
 {
-    if(!m_model->haveChanges()) {
+    if(m_loading || !m_model->haveChanges()) {
         return {};
     }
 

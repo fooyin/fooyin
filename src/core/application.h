@@ -36,6 +36,7 @@
 
 namespace Fooyin {
 class AudioLoader;
+class AudioEncoderRegistry;
 class Database;
 class DspChainStore;
 class DspRegistry;
@@ -46,10 +47,12 @@ class MusicLibrary;
 class NetworkAccessManager;
 class PendingTrackCoverProvider;
 class PlayerController;
+class Playlist;
 class PlaylistHandler;
 class PlaylistLoader;
 class PluginManager;
 class RemoteIoService;
+class ScriptContextService;
 class SettingsManager;
 class SortingRegistry;
 class UnifiedMusicLibrary;
@@ -63,14 +66,20 @@ public:
     ~Application() override;
 
     void startup();
+    /** Completes core startup after scripting registration has been finalised. */
+    void completeStartup();
     void shutdown();
     static void quit();
     static void restart();
 
+    bool exportPlaylist(const Playlist& playlist, const QString& filepath, const QString& extension) const;
+
+    [[nodiscard]] const CorePluginContext& corePluginContext() const;
     [[nodiscard]] Database* database() const;
     [[nodiscard]] DbConnectionPoolPtr databasePool() const;
     [[nodiscard]] PluginManager* pluginManager() const;
     [[nodiscard]] PlayerController* playerController() const;
+    [[nodiscard]] ScriptContextService* scriptContextService() const;
     [[nodiscard]] LibraryManager* libraryManager() const;
     [[nodiscard]] MusicLibrary* library() const;
     [[nodiscard]] PendingTrackCoverProvider* pendingTrackCoverProvider() const;
@@ -79,6 +88,7 @@ public:
     [[nodiscard]] EngineController* engine() const;
     [[nodiscard]] std::shared_ptr<PlaylistLoader> playlistLoader() const;
     [[nodiscard]] std::shared_ptr<AudioLoader> audioLoader() const;
+    [[nodiscard]] AudioEncoderRegistry* audioEncoderRegistry() const;
     [[nodiscard]] std::shared_ptr<NetworkAccessManager> networkManager() const;
     [[nodiscard]] std::shared_ptr<RemoteIoService> remoteIoService() const;
     [[nodiscard]] SortingRegistry* sortingRegistry() const;
@@ -99,16 +109,18 @@ private:
     void loadPlugins();
 
     void startSaveTimer();
+    void startPlaybackQueueSaveTimer();
     void exportAllPlaylists(bool shutdown);
 
     void loadDatabaseSettings() const;
     void saveDatabaseSettings() const;
 
     SettingsManager* m_settings;
+    Database* m_database;
     CoreSettings m_coreSettings;
     TranslationLoader m_translations;
-    Database* m_database;
     std::shared_ptr<AudioLoader> m_audioLoader;
+    std::unique_ptr<AudioEncoderRegistry> m_audioEncoderRegistry;
     std::unique_ptr<DspRegistry> m_dspRegistry;
     std::unique_ptr<DspChainStore> m_dspChainStore;
     std::shared_ptr<NetworkAccessManager> m_networkManager;
@@ -118,6 +130,7 @@ private:
     UnifiedMusicLibrary* m_library;
     PlaylistHandler* m_playlistHandler;
     PlayerController* m_playerController;
+    ScriptContextService* m_scriptContext;
     PlaybackQueueStore m_playbackQueueStore;
     std::unique_ptr<EngineHandler> m_engine;
     SortingRegistry* m_sortingRegistry;
@@ -126,6 +139,7 @@ private:
     CorePluginContext m_corePluginContext;
 
     QBasicTimer m_playlistSaveTimer;
+    QBasicTimer m_playbackQueueSaveTimer;
     QBasicTimer m_settingsSaveTimer;
 };
 } // namespace Fooyin

@@ -17,6 +17,12 @@
  *
  */
 
+#include <QtGlobal>
+
+#ifdef Q_OS_WIN
+#include <GL/glew.h>
+#endif
+
 #include "projectmview.h"
 
 #include "projectminstance.h"
@@ -24,11 +30,14 @@
 #include <gui/framerate.h>
 
 #include <QDir>
+#include <QGuiApplication>
+#include <QLoggingCategory>
 #include <QMouseEvent>
 #include <QOpenGLContext>
-#include <QtGlobal>
-
+#include <QOpenGLDebugLogger>
 #include <algorithm>
+
+Q_LOGGING_CATEGORY(PROJECTM_GL, "fooyin.projectm")
 
 using namespace Qt::StringLiterals;
 
@@ -90,18 +99,14 @@ ProjectMView::ProjectMView()
     , m_lastPcmTimeMs{0}
     , m_ready{false}
     , m_initialised{false}
+    , m_openGLReady{false}
     , m_recreateProjectM{false}
     , m_hasPcmCursor{false}
+    , m_playbackIdle{false}
+    , m_idlePresetActive{false}
     , m_presetLocked{false}
     , m_shuffle{false}
-{
-    QSurfaceFormat format;
-    format.setRenderableType(QSurfaceFormat::OpenGL);
-    format.setProfile(QSurfaceFormat::CompatibilityProfile);
-    format.setVersion(2, 1);
-    format.setSwapInterval(1);
-    setFormat(format);
-}
+{ }
 
 ProjectMView::~ProjectMView()
 {
@@ -175,17 +180,22 @@ void ProjectMView::shutdown()
     m_ready = false;
     resetPcmCursor();
 
-    if(!m_projectM) {
+    if(!m_projectM && !m_debugLogger) {
         return;
     }
 
     if(context()) {
         makeCurrent();
         m_projectM.reset();
+        if(m_debugLogger) {
+            m_debugLogger->stopLogging();
+            m_debugLogger.reset();
+        }
         doneCurrent();
     }
     else {
         m_projectM.reset();
+        m_debugLogger.reset();
     }
 }
 
@@ -194,6 +204,7 @@ void ProjectMView::selectNextPreset()
     if(isReady()) {
         queueGLOperation([this]() {
             if(isReady()) {
+                leaveIdleForUserSelection();
                 m_projectM->selectNext(true);
                 m_projectM->setShuffle(m_shuffle);
             }
@@ -206,6 +217,7 @@ void ProjectMView::selectPreviousPreset()
     if(isReady()) {
         queueGLOperation([this]() {
             if(isReady()) {
+                leaveIdleForUserSelection();
                 m_projectM->selectPrevious(true);
                 m_projectM->setShuffle(m_shuffle);
             }
@@ -218,6 +230,7 @@ void ProjectMView::selectRandomPreset()
     if(isReady()) {
         queueGLOperation([this]() {
             if(isReady()) {
+                leaveIdleForUserSelection();
                 m_projectM->selectRandom(true);
             }
         });
@@ -229,6 +242,7 @@ void ProjectMView::selectPreset(int index)
     if(isReady() && index >= 0) {
         queueGLOperation([this, index]() {
             if(isReady() && index >= 0 && index < m_projectM->playlistSize()) {
+                leaveIdleForUserSelection();
                 m_projectM->selectPreset(index, true);
             }
         });
@@ -241,9 +255,38 @@ void ProjectMView::selectPreset(const QString& path)
     if(isReady()) {
         queueGLOperation([this, path]() {
             if(isReady()) {
+                leaveIdleForUserSelection();
                 m_projectM->selectPreset(path, true);
             }
         });
+    }
+}
+
+void ProjectMView::setPlaylistPresetPaths(const QStringList& presetPaths)
+{
+    const QStringList normalised = normaliseDirs(presetPaths);
+    if(std::exchange(m_playlistPresetPaths, normalised) == normalised) {
+        return;
+    }
+
+    if(isReady()) {
+        queueGLOperation([this, normalised]() {
+            if(isReady()) {
+                m_projectM->setPlaylistPresetPaths(normalised);
+                m_projectM->setShuffle(m_shuffle);
+            }
+        });
+    }
+}
+
+void ProjectMView::setPlaybackIdle(bool idle)
+{
+    if(std::exchange(m_playbackIdle, idle) == idle) {
+        return;
+    }
+
+    if(isReady()) {
+        queueGLOperation([this]() { applyIdleState(); });
     }
 }
 
@@ -251,11 +294,7 @@ void ProjectMView::setPresetLocked(bool locked)
 {
     m_presetLocked = locked;
     if(isReady()) {
-        queueGLOperation([this, locked]() {
-            if(isReady()) {
-                m_projectM->setPresetLocked(locked);
-            }
-        });
+        queueGLOperation([this]() { applyIdleState(); });
     }
 }
 
@@ -311,6 +350,9 @@ int ProjectMView::selectedPresetIndex()
 
 QString ProjectMView::selectedPresetPath()
 {
+    if(!m_currentPresetPath.isEmpty()) {
+        return m_currentPresetPath;
+    }
     if(!isReady()) {
         return {};
     }
@@ -377,24 +419,39 @@ std::vector<ProjectMPreset> ProjectMView::presets()
 void ProjectMView::initializeGL()
 {
     m_initialised = true;
+    m_openGLReady = false;
     initializeOpenGLFunctions();
 
-    glShadeModel(GL_SMOOTH);
+#ifdef Q_OS_WIN
+    glewExperimental       = GL_TRUE;
+    const GLenum glewError = glewInit();
+    // glewInit() may leave GL_INVALID_ENUM set when using a core profile context
+    glGetError();
+    if(glewError != GLEW_OK) {
+        const QString error = QString::fromUtf8(reinterpret_cast<const char*>(glewGetErrorString(glewError)));
+        qCWarning(PROJECTM_GL) << "Failed to initialise GLEW:" << error;
+        setUnavailable(tr("Could not initialise OpenGL: %1").arg(error));
+        return;
+    }
+    if(!GLEW_VERSION_3_3) {
+        qCWarning(PROJECTM_GL) << "GLEW reports that OpenGL 3.3 is unavailable";
+        setUnavailable(tr("projectM requires OpenGL 3.3 or newer."));
+        return;
+    }
+#endif
+    m_openGLReady = true;
+
+    initialiseOpenGLDebugLogger();
+
+    logOpenGLContext();
+
     glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
     const QSize viewportSize = framebufferSize(width(), height());
     glViewport(0, 0, viewportSize.width(), viewportSize.height());
-    glMatrixMode(GL_TEXTURE);
-    glLoadIdentity();
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
     glDrawBuffer(GL_BACK);
     glReadBuffer(GL_BACK);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_POINT_SMOOTH);
 
     createProjectM();
 }
@@ -412,7 +469,7 @@ void ProjectMView::paintGL()
     }
     processQueuedGLOperations();
     feedPendingPcm();
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if(m_projectM) {
         m_projectM->renderFrame();
@@ -432,6 +489,7 @@ void ProjectMView::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == m_renderTimer.timerId()) {
         requestUpdate();
+        m_renderTimer.scheduleNext(this);
         return;
     }
 
@@ -499,17 +557,39 @@ void ProjectMView::createProjectM()
     m_renderTimer.stop();
     m_pendingGLOperations.clear();
     m_projectM.reset();
+    m_idlePresetActive = false;
     m_failedPresets.clear();
     m_failedPresetPaths.clear();
     m_ready = false;
     resetPcmCursor();
+
+    if(!m_openGLReady) {
+        setUnavailable(tr("projectM requires an initialised OpenGL 3.3 context."));
+        return;
+    }
 
     if(m_presetDirs.empty()) {
         setUnavailable(tr("No projectM preset folders are configured."));
         return;
     }
 
-    m_paths       = resolveProjectMPaths();
+    m_paths = resolveProjectMPaths();
+
+    const char* version  = projectm_get_version_string();
+    const char* revision = projectm_get_vcs_version_string();
+    qCDebug(PROJECTM_GL) << "Creating projectM; runtime version=" << QString::fromUtf8(version ? version : "unknown")
+                         << "revision=" << QString::fromUtf8(revision ? revision : "unknown")
+                         << "dataDir=" << m_paths.dataDir << "presetDirs=" << m_presetDirs
+                         << "recursive=" << m_settings.scanRecursive
+                         << "mesh=" << QSize{m_settings.meshWidth, m_settings.meshHeight}
+                         << "maxFps=" << m_settings.maxFps;
+    if(version) {
+        projectm_free_string(version);
+    }
+    if(revision) {
+        projectm_free_string(revision);
+    }
+
     auto projectM = std::make_unique<ProjectMInstance>(m_paths.dataDir, m_presetDirs, m_settings);
     QObject::connect(projectM.get(), &ProjectMInstance::presetLoadFailed, this,
                      [this](int index, const QString& path, const QString& message) {
@@ -518,12 +598,17 @@ void ProjectMView::createProjectM()
                          if(!path.isEmpty()) {
                              m_failedPresetPaths.insert_or_assign(QDir::cleanPath(path), failureMessage);
                          }
+                         qCWarning(PROJECTM_GL) << "projectM failed to load preset" << index << path << message;
                          Q_EMIT presetLoadFailed(index, path, failureMessage);
                      });
     QObject::connect(projectM.get(), &ProjectMInstance::presetChanged, this, [this](const QString& path) {
         m_pendingPresetPath = path;
+        m_currentPresetPath = path;
         Q_EMIT presetChanged(path);
     });
+
+    qCDebug(PROJECTM_GL) << "projectM instance created; ready=" << projectM->isReady()
+                         << "error=" << projectM->errorMessage() << "presets=" << projectM->playlistSize();
 
     if(!projectM->isReady()) {
         const QString message
@@ -535,13 +620,24 @@ void ProjectMView::createProjectM()
     m_projectM = std::move(projectM);
     m_projectM->setPresetLocked(m_presetLocked);
     m_projectM->setShuffle(m_shuffle);
+    m_projectM->setPlaylistPresetPaths(m_playlistPresetPaths);
+
     if(!m_pendingPresetPath.isEmpty()) {
         m_projectM->selectPreset(m_pendingPresetPath, true);
     }
+    else {
+        m_projectM->selectRandom(true);
+    }
+
     resizeRenderer(width(), height(), true);
-    m_ready      = true;
-    m_statusText = m_presetDirs.size() == 1 ? tr("Using presets from %1").arg(m_presetDirs.front())
-                                            : tr("Using presets from %1 folders").arg(m_presetDirs.size());
+
+    m_ready = true;
+    applyIdleState();
+
+    m_statusText = m_presetDirs.size() == 1
+                     ? tr("Using presets from %1").arg(m_presetDirs.front())
+                     : tr("Using presets from %Ln folder(s)", nullptr, static_cast<int>(m_presetDirs.size()));
+
     emitAvailability();
     updateRenderTimer();
 }
@@ -636,6 +732,78 @@ void ProjectMView::feedPcmWindow(const VisualisationSession::PcmWindow& window)
     m_projectM->addPcm(m_stereoBuffer.data(), static_cast<unsigned int>(frameCount));
 }
 
+void ProjectMView::initialiseOpenGLDebugLogger()
+{
+    m_debugLogger = std::make_unique<QOpenGLDebugLogger>();
+    if(!m_debugLogger->initialize()) {
+        qCWarning(PROJECTM_GL) << "OpenGL debug logging is unavailable for this context";
+        m_debugLogger.reset();
+        return;
+    }
+
+    QObject::connect(m_debugLogger.get(), &QOpenGLDebugLogger::messageLogged, this,
+                     [](const QOpenGLDebugMessage& message) { qCWarning(PROJECTM_GL) << message; });
+    m_debugLogger->disableMessages(QOpenGLDebugMessage::AnySource, QOpenGLDebugMessage::AnyType,
+                                   QOpenGLDebugMessage::NotificationSeverity);
+    m_debugLogger->startLogging(QOpenGLDebugLogger::SynchronousLogging);
+}
+
+void ProjectMView::logOpenGLContext()
+{
+    const auto* currentContext = QOpenGLContext::currentContext();
+    if(!currentContext) {
+        qCWarning(PROJECTM_GL) << "No current OpenGL context";
+        return;
+    }
+
+    const QSurfaceFormat actualFormat    = currentContext->format();
+    const QSurfaceFormat requestedFormat = format();
+    const auto stringValue               = [this](GLenum name) {
+        const auto* value = glGetString(name);
+        return value ? QString::fromLatin1(value) : u"unavailable"_s;
+    };
+
+    qCDebug(PROJECTM_GL) << "Qt version=" << qVersion() << "platform=" << QGuiApplication::platformName();
+    qCDebug(PROJECTM_GL) << "Requested OpenGL format:" << requestedFormat.majorVersion() << '.'
+                         << requestedFormat.minorVersion() << "profile=" << requestedFormat.profile()
+                         << "renderableType=" << requestedFormat.renderableType()
+                         << "depth=" << requestedFormat.depthBufferSize()
+                         << "stencil=" << requestedFormat.stencilBufferSize() << "samples=" << requestedFormat.samples()
+                         << "swapBehavior=" << requestedFormat.swapBehavior()
+                         << "swapInterval=" << requestedFormat.swapInterval()
+                         << "options=" << requestedFormat.options();
+    qCDebug(PROJECTM_GL) << "Actual OpenGL context:" << actualFormat.majorVersion() << '.'
+                         << actualFormat.minorVersion() << "profile=" << actualFormat.profile()
+                         << "GLES=" << currentContext->isOpenGLES() << "depth=" << actualFormat.depthBufferSize()
+                         << "stencil=" << actualFormat.stencilBufferSize() << "samples=" << actualFormat.samples()
+                         << "options=" << actualFormat.options();
+
+    const bool versionTooOld
+        = actualFormat.majorVersion() < 3 || (actualFormat.majorVersion() == 3 && actualFormat.minorVersion() < 3);
+    if(currentContext->isOpenGLES()) {
+        qCWarning(PROJECTM_GL) << "projectM requested desktop OpenGL 3.3 core, but Qt created an OpenGL ES context";
+    }
+    else if(versionTooOld) {
+        qCWarning(PROJECTM_GL) << "projectM requires desktop OpenGL 3.3 or newer, but Qt created"
+                               << actualFormat.majorVersion() << '.' << actualFormat.minorVersion();
+    }
+    else if(actualFormat.profile() != QSurfaceFormat::CoreProfile) {
+        qCWarning(PROJECTM_GL) << "projectM requested an OpenGL core profile, but Qt created" << actualFormat.profile();
+    }
+    else {
+        qCDebug(PROJECTM_GL) << "projectM OpenGL requirements satisfied: desktop OpenGL 3.3+ core profile";
+    }
+
+    qCDebug(PROJECTM_GL) << "GL_VERSION:" << stringValue(GL_VERSION);
+    qCDebug(PROJECTM_GL) << "GLSL_VERSION:" << stringValue(GL_SHADING_LANGUAGE_VERSION);
+    qCDebug(PROJECTM_GL) << "GL_VENDOR:" << stringValue(GL_VENDOR);
+    qCDebug(PROJECTM_GL) << "GL_RENDERER:" << stringValue(GL_RENDERER);
+    qCDebug(PROJECTM_GL) << "Window logical size=" << size()
+                         << "framebuffer size=" << framebufferSize(width(), height())
+                         << "devicePixelRatio=" << devicePixelRatio()
+                         << "defaultFramebufferObject=" << defaultFramebufferObject();
+}
+
 void ProjectMView::resetPcmCursor()
 {
     m_hasPcmCursor  = false;
@@ -661,6 +829,41 @@ void ProjectMView::processQueuedGLOperations()
         m_pendingGLOperations.pop_front();
         operation();
     }
+}
+
+void ProjectMView::applyIdleState()
+{
+    if(!isReady()) {
+        return;
+    }
+
+    const bool shouldShowIdle = m_playbackIdle && !m_presetLocked;
+    if(shouldShowIdle == m_idlePresetActive) {
+        m_projectM->setPresetLocked(shouldShowIdle || m_presetLocked);
+        return;
+    }
+
+    if(shouldShowIdle) {
+        m_projectM->showIdlePreset();
+    }
+    else if(m_presetLocked) {
+        m_projectM->restoreSelectedPreset(true);
+    }
+    else {
+        m_projectM->resumeIdlePreset();
+    }
+
+    m_idlePresetActive = shouldShowIdle;
+}
+
+void ProjectMView::leaveIdleForUserSelection()
+{
+    if(!m_idlePresetActive) {
+        return;
+    }
+
+    m_projectM->setPresetLocked(m_presetLocked);
+    m_idlePresetActive = false;
 }
 
 void ProjectMView::scheduleProjectMRecreation()
@@ -694,7 +897,7 @@ void ProjectMView::emitAvailability()
 void ProjectMView::updateRenderTimer()
 {
     if(isReady() && isExposed()) {
-        m_renderTimer.start(Gui::FrameRate::intervalMsForFps(m_settings.maxFps), this);
+        m_renderTimer.start(m_settings.maxFps, this);
         requestUpdate();
     }
     else {

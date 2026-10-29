@@ -20,6 +20,7 @@
 #include <core/engine/audioinput.h>
 
 #include <array>
+#include <stop_token>
 #include <utility>
 
 namespace Fooyin {
@@ -27,6 +28,7 @@ class AudioDecoderPrivate
 {
 public:
     AudioDecoder::PlaybackHints playbackHints{AudioDecoder::NoHints};
+    std::stop_source abortSource;
 };
 
 AudioDecoder::AudioDecoder()
@@ -40,14 +42,39 @@ QStringList AudioDecoder::preferredExtensions() const
     return {};
 }
 
+QStringList AudioDecoder::supportedSchemes() const
+{
+    return {};
+}
+
 bool AudioDecoder::supportsRemoteSources() const
 {
     return false;
 }
 
+bool AudioDecoder::allowsConcurrentDecoding() const
+{
+    return true;
+}
+
+int AudioDecoder::playbackPrebufferMs() const
+{
+    return 0;
+}
+
+QStringList AudioDecoder::takeWarnings()
+{
+    return {};
+}
+
 bool AudioDecoder::needsMoreInput() const
 {
     return false;
+}
+
+AudioDecoder::RepeatHandling AudioDecoder::repeatHandling() const
+{
+    return RepeatHandling::EngineTransition;
 }
 
 AudioDecoder::PlaybackHints AudioDecoder::playbackHints() const
@@ -57,8 +84,15 @@ AudioDecoder::PlaybackHints AudioDecoder::playbackHints() const
 
 void AudioDecoder::setPlaybackHints(PlaybackHints hints)
 {
-    p->playbackHints = hints;
+    if(std::exchange(p->playbackHints, hints) == hints) {
+        return;
+    }
+    playbackHintsChanged(hints);
 }
+
+void AudioDecoder::playbackHintsChanged(PlaybackHints /*hints*/) { }
+
+void AudioDecoder::interruptRead() { }
 
 bool AudioDecoder::isRepeatingTrack() const
 {
@@ -75,12 +109,28 @@ Track AudioDecoder::changedTrack() const
     return {};
 }
 
+std::optional<AudioDecoder::TimedTrackChange> AudioDecoder::takeTimedTrackChange()
+{
+    return {};
+}
+
 int AudioDecoder::bitrate() const
 {
     return 0;
 }
 
 void AudioDecoder::start() { }
+
+void AudioDecoder::requestAbort()
+{
+    p->abortSource.request_stop();
+    interruptRead();
+}
+
+std::stop_token AudioDecoder::abortToken() const noexcept
+{
+    return p->abortSource.get_token();
+}
 
 AudioDecoder::ReadResult AudioDecoder::readAudio(size_t bytes)
 {
@@ -95,6 +145,11 @@ AudioDecoder::ReadResult AudioDecoder::readAudio(size_t bytes)
 }
 
 QStringList AudioReader::preferredExtensions() const
+{
+    return {};
+}
+
+QStringList AudioReader::supportedSchemes() const
 {
     return {};
 }
@@ -136,7 +191,7 @@ bool AudioReader::writeCover(const AudioSource& /*source*/, const Track& /*track
 }
 
 bool ArchiveReader::copyEntryToDevice(const QString& file, QIODevice* device,
-                                      const ShouldContinueCallback& shouldContinue)
+                                      const StopRequestedCallback& stopRequested)
 {
     if(!device || !device->isWritable()) {
         return false;
@@ -148,7 +203,7 @@ bool ArchiveReader::copyEntryToDevice(const QString& file, QIODevice* device,
     }
 
     std::array<char, 64UL * 1024> buffer{};
-    while(shouldContinue()) {
+    while(!stopRequested()) {
         const qint64 read = entryData.device->read(buffer.data(), buffer.size());
         if(read == 0) {
             return true;
@@ -159,7 +214,7 @@ bool ArchiveReader::copyEntryToDevice(const QString& file, QIODevice* device,
 
         qint64 writtenTotal{0};
         while(writtenTotal < read) {
-            if(!shouldContinue()) {
+            if(stopRequested()) {
                 return false;
             }
             const qint64 written = device->write(buffer.data() + writtenTotal, read - writtenTotal);
@@ -173,14 +228,18 @@ bool ArchiveReader::copyEntryToDevice(const QString& file, QIODevice* device,
     return false;
 }
 
-bool ArchiveReader::readEntries(const ReadEntryInfoCallback& readEntry)
+bool ArchiveReader::readEntries(const ReadEntryInfoCallback& readEntry, const StopRequestedCallback& stopRequested)
 {
     bool keepReading{true};
-    return readTracks([&readEntry, &keepReading](ArchiveEntryData&& entryData) {
-        if(!readEntry || !keepReading) {
-            return;
-        }
-        keepReading = readEntry(entryData.info);
-    });
+    const bool result = readTracks(
+        [&readEntry, &keepReading](ArchiveEntryData&& entryData) {
+            if(!readEntry || !keepReading) {
+                return;
+            }
+            keepReading = readEntry(entryData.info);
+        },
+        [&keepReading, &stopRequested]() { return !keepReading || stopRequested(); });
+
+    return !keepReading || result;
 }
 } // namespace Fooyin

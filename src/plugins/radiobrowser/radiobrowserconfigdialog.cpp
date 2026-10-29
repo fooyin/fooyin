@@ -21,6 +21,7 @@
 
 #include <gui/guiutils.h>
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/hintlabel.h>
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -52,7 +53,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     , m_uniformStationIcons{new QCheckBox(tr("Use uniform station icon frames"), this)}
 {
     TrackSelectionController::addAction(m_doubleClick, tr("None"), TrackAction::None);
-    TrackSelectionController::addAction(m_doubleClick, tr("Play"), TrackAction::Play);
+    TrackSelectionController::addAction(m_doubleClick, tr("Play now"), TrackAction::Play);
     m_doubleClick->addItem(tr("Add or remove from My Stations"), RadioBrowserWidget::ToggleSavedStation);
     TrackSelectionController::addStandardActions(m_doubleClick);
 
@@ -61,7 +62,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     TrackSelectionController::addStandardActions(m_middleClick);
 
     m_playbackOnSend->setToolTip(
-        tr(R"(For "Replace current playlist" and "Create new playlist", start playback immediately)"));
+        tr(R"(For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately)"));
     m_hideBroken->setToolTip(tr("Exclude stations marked as broken by radio-browser.info from search results"));
     m_sendClicks->setToolTip(
         tr("Report played stations to radio-browser.info so click counts and station statistics stay up to date"));
@@ -88,7 +89,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     m_iconHorizontalGap->setSpecialValueText(tr("Auto"));
     m_iconHorizontalGap->setSuffix(u" px"_s);
     m_iconHorizontalGap->setToolTip(
-        tr("Horizontal spacing between stations in icon display mode. Auto uses the view's default spacing."));
+        tr("Horizontal spacing between stations in icon display mode. Auto uses the view’s default spacing."));
 
     m_iconVerticalGap->setRange(0, 256);
     m_iconVerticalGap->setSuffix(u" px"_s);
@@ -143,8 +144,8 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     iconLayout->addWidget(m_iconItemBorder, row++, 1);
     iconLayout->addWidget(new QLabel(tr("Icon size") + u":"_s, this), row, 0);
     iconLayout->addWidget(m_iconSize, row++, 1);
-    iconLayout->addWidget(new QLabel(u"🛈 "_s + tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this),
-                          row++, 0, 1, 3);
+    iconLayout->addWidget(new HintLabel(tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this), row++, 0, 1,
+                          3);
     iconLayout->addWidget(Gui::createSectionHeader(tr("Gap"), this), row++, 0);
     iconLayout->addLayout(gapLayout, row++, 0, 1, 3);
     iconLayout->addWidget(m_useIconGapsForSideCaptions, row++, 0, 1, 3);
@@ -161,6 +162,11 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     layout->setRowStretch(row, 1);
 
     QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);
+
+    m_sendClicks->setChecked(radioBrowser->sendClicks());
+    QObject::connect(radioBrowser, &RadioBrowserWidget::configChanged, this,
+                     &RadioBrowserConfigDialog::syncCurrentConfig);
+    QObject::connect(radioBrowser, &RadioBrowserWidget::sendClicksChanged, m_sendClicks, &QCheckBox::setChecked);
 
     loadCurrentConfig();
 }
@@ -200,7 +206,6 @@ void RadioBrowserConfigDialog::setConfig(const RadioBrowserWidget::ConfigData& c
 
     m_playbackOnSend->setChecked(config.playbackOnSend);
     m_hideBroken->setChecked(config.hideBroken);
-    m_sendClicks->setChecked(widget()->sendClicks());
     m_rowHeight->setEnabled(config.view.rowHeight > 0);
     m_overrideRowHeight->setChecked(config.view.rowHeight > 0);
     m_rowHeight->setValue(config.view.rowHeight);
@@ -214,5 +219,31 @@ void RadioBrowserConfigDialog::setConfig(const RadioBrowserWidget::ConfigData& c
     m_useIconGapsForSideCaptions->setChecked(config.view.useIconGapsForSideCaptions);
     m_iconItemBorder->setValue(config.view.iconItemBorderWidth);
     m_uniformStationIcons->setChecked(config.view.uniformStationIcons);
+}
+
+void RadioBrowserConfigDialog::mergeExternalConfig(const RadioBrowserWidget::ConfigData& previous,
+                                                   const RadioBrowserWidget::ConfigData& current)
+{
+    auto draft{config()};
+    mergeExternalFieldValues(previous, current, draft, &RadioBrowserWidget::ConfigData::doubleClickAction,
+                             &RadioBrowserWidget::ConfigData::middleClickAction,
+                             &RadioBrowserWidget::ConfigData::playbackOnSend,
+                             &RadioBrowserWidget::ConfigData::hideBroken);
+    mergeExternalFieldValues(
+        previous.view, current.view, draft.view, &RadioBrowserWidget::ConfigData::ViewConfig::viewMode,
+        &RadioBrowserWidget::ConfigData::ViewConfig::captions, &RadioBrowserWidget::ConfigData::ViewConfig::showHeader,
+        &RadioBrowserWidget::ConfigData::ViewConfig::showScrollbar,
+        &RadioBrowserWidget::ConfigData::ViewConfig::alternatingRows,
+        &RadioBrowserWidget::ConfigData::ViewConfig::showIcons,
+        &RadioBrowserWidget::ConfigData::ViewConfig::showSavedStationIcons,
+        &RadioBrowserWidget::ConfigData::ViewConfig::showToolTips,
+        &RadioBrowserWidget::ConfigData::ViewConfig::separateSavedStationsViewState,
+        &RadioBrowserWidget::ConfigData::ViewConfig::rowHeight, &RadioBrowserWidget::ConfigData::ViewConfig::iconSize,
+        &RadioBrowserWidget::ConfigData::ViewConfig::iconHorizontalGap,
+        &RadioBrowserWidget::ConfigData::ViewConfig::iconVerticalGap,
+        &RadioBrowserWidget::ConfigData::ViewConfig::useIconGapsForSideCaptions,
+        &RadioBrowserWidget::ConfigData::ViewConfig::iconItemBorderWidth,
+        &RadioBrowserWidget::ConfigData::ViewConfig::uniformStationIcons);
+    setConfig(draft);
 }
 } // namespace Fooyin::RadioBrowser

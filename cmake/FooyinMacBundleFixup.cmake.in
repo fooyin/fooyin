@@ -13,12 +13,7 @@ set(ICU_DATA_BUNDLE_NAME "@FOOYIN_ICU_DATA_LIBRARY_NAME@")
 
 file(MAKE_DIRECTORY "${FRAMEWORKS_DIR}")
 
-set(macdeployqt_args
-    "${APP_BUNDLE_DIR}"
-    -appstore-compliant
-    -always-overwrite
-    -no-codesign
-)
+set(macdeployqt_args "${APP_BUNDLE_DIR}" -appstore-compliant -always-overwrite -no-codesign)
 
 file(GLOB fooyin_plugin_binaries LIST_DIRECTORIES FALSE "${PLUGINS_DIR}/*")
 foreach(plugin_binary IN LISTS fooyin_plugin_binaries)
@@ -28,10 +23,7 @@ foreach(plugin_binary IN LISTS fooyin_plugin_binaries)
     list(APPEND macdeployqt_args "-executable=${plugin_binary}")
 endforeach()
 
-execute_process(
-    COMMAND "@MACDEPLOYQT_EXECUTABLE@" ${macdeployqt_args}
-    RESULT_VARIABLE macdeployqt_result
-)
+execute_process(COMMAND "@MACDEPLOYQT_EXECUTABLE@" ${macdeployqt_args} RESULT_VARIABLE macdeployqt_result)
 if(NOT macdeployqt_result EQUAL 0)
     message(FATAL_ERROR "macdeployqt failed with exit code ${macdeployqt_result}")
 endif()
@@ -50,11 +42,9 @@ function(copy_icu_library source_path dest_name install_name)
         message(FATAL_ERROR "Failed to copy ${source_path} to ${dest_path}")
     endif()
 
-    file(CHMOD "${dest_path}"
-        PERMISSIONS
-            OWNER_READ OWNER_WRITE OWNER_EXECUTE
-            GROUP_READ GROUP_EXECUTE
-            WORLD_READ WORLD_EXECUTE
+    file(
+        CHMOD "${dest_path}"
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
     )
 
     execute_process(
@@ -71,9 +61,9 @@ copy_icu_library("@FOOYIN_ICU_UC_LIBRARY_REALPATH@" "${ICU_UC_BUNDLE_NAME}" "${I
 copy_icu_library("@FOOYIN_ICU_I18N_LIBRARY_REALPATH@" "${ICU_I18N_BUNDLE_NAME}" "${ICU_I18N_BUNDLE_NAME}")
 
 execute_process(
-    COMMAND /usr/bin/install_name_tool
-            -change "@loader_path/${ICU_DATA_BUNDLE_NAME}" "@loader_path/${ICU_DATA_BUNDLE_NAME}"
-            "${FRAMEWORKS_DIR}/${ICU_UC_BUNDLE_NAME}"
+    COMMAND
+        /usr/bin/install_name_tool -change "@loader_path/${ICU_DATA_BUNDLE_NAME}" "@loader_path/${ICU_DATA_BUNDLE_NAME}"
+        "${FRAMEWORKS_DIR}/${ICU_UC_BUNDLE_NAME}"
     RESULT_VARIABLE icu_uc_fixup_result
 )
 if(NOT icu_uc_fixup_result EQUAL 0)
@@ -81,10 +71,10 @@ if(NOT icu_uc_fixup_result EQUAL 0)
 endif()
 
 execute_process(
-    COMMAND /usr/bin/install_name_tool
-            -change "@loader_path/${ICU_UC_BUNDLE_NAME}" "@loader_path/${ICU_UC_BUNDLE_NAME}"
-            -change "@loader_path/${ICU_DATA_BUNDLE_NAME}" "@loader_path/${ICU_DATA_BUNDLE_NAME}"
-            "${FRAMEWORKS_DIR}/${ICU_I18N_BUNDLE_NAME}"
+    COMMAND
+        /usr/bin/install_name_tool -change "@loader_path/${ICU_UC_BUNDLE_NAME}" "@loader_path/${ICU_UC_BUNDLE_NAME}"
+        -change "@loader_path/${ICU_DATA_BUNDLE_NAME}" "@loader_path/${ICU_DATA_BUNDLE_NAME}"
+        "${FRAMEWORKS_DIR}/${ICU_I18N_BUNDLE_NAME}"
     RESULT_VARIABLE icu_i18n_fixup_result
 )
 if(NOT icu_i18n_fixup_result EQUAL 0)

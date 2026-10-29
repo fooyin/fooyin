@@ -34,6 +34,11 @@ template <typename T>
     return std::get_if<AdvancedSettingSpinBox>(&descriptor.editor);
 }
 
+const AdvancedSettingDoubleSpinBox* doubleSpinBoxEditor(const AdvancedSettingDescriptor& descriptor)
+{
+    return std::get_if<AdvancedSettingDoubleSpinBox>(&descriptor.editor);
+}
+
 [[nodiscard]] const AdvancedSettingStringListLineEdit*
 stringListLineEditEditor(const AdvancedSettingDescriptor& descriptor)
 {
@@ -48,7 +53,7 @@ stringListLineEditEditor(const AdvancedSettingDescriptor& descriptor)
 [[nodiscard]] bool isInlineTextEditor(const AdvancedSettingDescriptor& descriptor)
 {
     return isEditor<AdvancedSettingLineEdit>(descriptor) || stringListLineEditEditor(descriptor)
-        || spinBoxEditor(descriptor);
+        || spinBoxEditor(descriptor) || doubleSpinBoxEditor(descriptor);
 }
 
 [[nodiscard]] QString stringListText(const QStringList& values, QChar separator)
@@ -68,6 +73,12 @@ stringListLineEditEditor(const AdvancedSettingDescriptor& descriptor)
 
 [[nodiscard]] QString displayText(const AdvancedSettingDescriptor& descriptor, const QVariant& value)
 {
+    if(const auto* spinBox = doubleSpinBoxEditor(descriptor)) {
+        if(!spinBox->specialValueText.isEmpty() && value.toDouble() == spinBox->minimum) {
+            return spinBox->specialValueText;
+        }
+        return QString::number(value.toDouble(), 'f', spinBox->decimals) + spinBox->suffix;
+    }
     if(const auto* spinBox = spinBoxEditor(descriptor)) {
         if(!spinBox->specialValueText.isEmpty() && value.toInt() == spinBox->minimum) {
             return spinBox->specialValueText;
@@ -121,6 +132,20 @@ QString AdvancedSettingsModel::validationError() const
     return validationErrorForNode(rootItem());
 }
 
+QString AdvancedSettingsModel::searchText(const AdvancedSettingDescriptor& descriptor)
+{
+    QStringList keywords{descriptor.category};
+    keywords.append(descriptor.label);
+    keywords.append(descriptor.description);
+    keywords.append(descriptor.id);
+    if(const auto* radioButtons = radioButtonsEditor(descriptor)) {
+        for(const auto& option : radioButtons->options) {
+            keywords.append(option.label);
+        }
+    }
+    return keywords.join('\n'_L1);
+}
+
 QVariant AdvancedSettingsModel::data(const QModelIndex& index, int role) const
 {
     if(!index.isValid()) {
@@ -141,12 +166,19 @@ QVariant AdvancedSettingsModel::data(const QModelIndex& index, int role) const
             if(isSetting && isEditor<AdvancedSettingStringListLineEdit>(node->descriptor)) {
                 return displayText(node->descriptor, node->value);
             }
-            if(isSetting && (isEditor<AdvancedSettingLineEdit>(node->descriptor) || spinBoxEditor(node->descriptor))) {
+            if(isSetting
+               && (isEditor<AdvancedSettingLineEdit>(node->descriptor) || spinBoxEditor(node->descriptor)
+                   || doubleSpinBoxEditor(node->descriptor))) {
                 return node->value;
             }
             return {};
         case Qt::ToolTipRole:
             return node->description;
+        case SearchText:
+            if(isSetting) {
+                return searchText(node->descriptor);
+            }
+            return node->label;
         case Qt::CheckStateRole:
             if(isSetting && isEditor<AdvancedSettingCheckBox>(node->descriptor)) {
                 return node->value.toBool() ? Qt::Checked : Qt::Unchecked;
@@ -159,8 +191,13 @@ QVariant AdvancedSettingsModel::data(const QModelIndex& index, int role) const
             return static_cast<int>(node->type);
         case IsSpinBoxEditor:
             return isSetting && spinBoxEditor(node->descriptor);
+        case IsDoubleSpinBoxEditor:
+            return isSetting && doubleSpinBoxEditor(node->descriptor);
         case MinimumValue:
             if(const auto* spinBox = spinBoxEditor(node->descriptor)) {
+                return spinBox->minimum;
+            }
+            if(const auto* spinBox = doubleSpinBoxEditor(node->descriptor)) {
                 return spinBox->minimum;
             }
             return {};
@@ -168,9 +205,20 @@ QVariant AdvancedSettingsModel::data(const QModelIndex& index, int role) const
             if(const auto* spinBox = spinBoxEditor(node->descriptor)) {
                 return spinBox->maximum;
             }
+            if(const auto* spinBox = doubleSpinBoxEditor(node->descriptor)) {
+                return spinBox->maximum;
+            }
+            return {};
+        case Decimals:
+            if(const auto* spinBox = doubleSpinBoxEditor(node->descriptor)) {
+                return spinBox->decimals;
+            }
             return {};
         case SingleStep:
             if(const auto* spinBox = spinBoxEditor(node->descriptor)) {
+                return spinBox->singleStep;
+            }
+            if(const auto* spinBox = doubleSpinBoxEditor(node->descriptor)) {
                 return spinBox->singleStep;
             }
             return {};
@@ -178,9 +226,15 @@ QVariant AdvancedSettingsModel::data(const QModelIndex& index, int role) const
             if(const auto* spinBox = spinBoxEditor(node->descriptor)) {
                 return spinBox->suffix;
             }
+            if(const auto* spinBox = doubleSpinBoxEditor(node->descriptor)) {
+                return spinBox->suffix;
+            }
             return {};
         case SpecialValueText:
             if(const auto* spinBox = spinBoxEditor(node->descriptor)) {
+                return spinBox->specialValueText;
+            }
+            if(const auto* spinBox = doubleSpinBoxEditor(node->descriptor)) {
                 return spinBox->specialValueText;
             }
             return {};

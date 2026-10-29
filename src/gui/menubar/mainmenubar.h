@@ -22,6 +22,7 @@
 #include <QObject>
 
 class QMenuBar;
+class QMenu;
 
 namespace Fooyin {
 class ActionContainer;
@@ -35,6 +36,7 @@ public:
     explicit MainMenuBar(ActionManager* actionManager, QObject* parent = nullptr);
 
     [[nodiscard]] QMenuBar* menuBar() const;
+    void populateMenu(QMenu* menu) const;
 
 private:
     ActionManager* m_actionManager;

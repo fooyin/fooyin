@@ -23,6 +23,7 @@
 #include <gui/widgets/clickablelabel.h>
 #include <utils/stringutils.h>
 
+#include <QBoxLayout>
 #include <QEvent>
 #include <QFontMetrics>
 #include <QHBoxLayout>
@@ -63,7 +64,7 @@ public:
 
     PlayerController* m_playerController;
 
-    QHBoxLayout* m_layout;
+    QBoxLayout* m_layout;
     ClickableLabel* m_elapsed;
     ClickableLabel* m_total;
     uint64_t m_max{0};
@@ -206,7 +207,24 @@ SeekContainer::~SeekContainer() = default;
 
 void SeekContainer::insertWidget(int index, QWidget* widget)
 {
-    p->m_layout->insertWidget(index, widget, Qt::AlignVCenter);
+    const auto alignment = p->m_layout->direction() == QBoxLayout::LeftToRight ? Qt::AlignVCenter : Qt::AlignHCenter;
+    p->m_layout->insertWidget(index, widget, alignment);
+}
+
+void SeekContainer::setOrientation(Qt::Orientation orientation)
+{
+    const auto direction = orientation == Qt::Vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight;
+    p->m_layout->setDirection(direction);
+
+    const auto alignment = direction == QBoxLayout::LeftToRight ? Qt::AlignVCenter : Qt::AlignHCenter;
+    for(int i{0}; i < p->m_layout->count(); ++i) {
+        if(auto* widget = p->m_layout->itemAt(i)->widget()) {
+            p->m_layout->setAlignment(widget, alignment);
+        }
+    }
+
+    p->updateLabelWidths();
+    updateGeometry();
 }
 
 bool SeekContainer::labelsEnabled() const

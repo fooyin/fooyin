@@ -34,17 +34,13 @@ PositionCoordinator::PositionCoordinator()
     : m_lastSourcePositionValid{false}
     , m_lastSourcePositionMs{0}
     , m_lastSourceStreamId{InvalidStreamId}
-    , m_holdGaplessPositionUntilRendered{false}
     , m_gaplessHoldStreamId{InvalidStreamId}
 { }
 
 void PositionCoordinator::reset()
 {
-    m_lastSourcePositionValid          = false;
-    m_lastSourcePositionMs             = 0;
-    m_lastSourceStreamId               = InvalidStreamId;
-    m_holdGaplessPositionUntilRendered = false;
-    m_gaplessHoldStreamId              = InvalidStreamId;
+    resetContinuity();
+    clearGaplessHold();
 }
 
 void PositionCoordinator::resetContinuity()
@@ -56,14 +52,12 @@ void PositionCoordinator::resetContinuity()
 
 void PositionCoordinator::clearGaplessHold()
 {
-    m_holdGaplessPositionUntilRendered = false;
-    m_gaplessHoldStreamId              = InvalidStreamId;
+    m_gaplessHoldStreamId = InvalidStreamId;
 }
 
 void PositionCoordinator::setGaplessHold(const StreamId streamId)
 {
-    m_holdGaplessPositionUntilRendered = streamId != InvalidStreamId;
-    m_gaplessHoldStreamId              = m_holdGaplessPositionUntilRendered ? streamId : InvalidStreamId;
+    m_gaplessHoldStreamId = streamId;
 }
 
 void PositionCoordinator::notePublishedDiscontinuity(const uint64_t sourcePositionMs)
@@ -97,7 +91,7 @@ PositionCoordinator::Output PositionCoordinator::evaluate(const Input& input)
     const bool mappedForActiveStream
         = input.pipelineStatus.renderedSegment.valid && input.pipelineStatus.renderedSegment.streamId == input.streamId;
 
-    if(m_holdGaplessPositionUntilRendered && m_gaplessHoldStreamId == input.streamId) {
+    if(m_gaplessHoldStreamId != InvalidStreamId && m_gaplessHoldStreamId == input.streamId) {
         const bool hasRenderedProgress = mappedForActiveStream && input.pipelineStatus.renderedSegment.outputFrames > 0;
         const auto expectedRenderedLeadMs   = static_cast<uint64_t>(std::max<long double>(
             0.0, std::llround(static_cast<long double>(input.pipelineDelayMs) * input.delayToSourceScale)));
@@ -123,8 +117,7 @@ PositionCoordinator::Output PositionCoordinator::evaluate(const Input& input)
             }
         }
 
-        m_holdGaplessPositionUntilRendered = false;
-        m_gaplessHoldStreamId              = InvalidStreamId;
+        clearGaplessHold();
     }
 
     output.preparedCrossfadeArmed = input.preparedCrossfade.armed;

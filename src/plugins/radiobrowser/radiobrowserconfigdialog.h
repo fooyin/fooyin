@@ -40,6 +40,8 @@ public:
 protected:
     [[nodiscard]] RadioBrowserWidget::ConfigData config() const override;
     void setConfig(const RadioBrowserWidget::ConfigData& config) override;
+    void mergeExternalConfig(const RadioBrowserWidget::ConfigData& previous,
+                             const RadioBrowserWidget::ConfigData& current) override;
 
 private:
     QComboBox* m_middleClick;

@@ -19,7 +19,10 @@
 
 #include "plsparser.h"
 
+#include "playlistparserutils.h"
+
 #include <core/track.h>
+#include <utils/timeconstants.h>
 
 #include <QBuffer>
 #include <QDir>
@@ -42,28 +45,6 @@ struct PlsEntry
     QString title;
     int durationSeconds{-1};
 };
-
-QString resolvePlaylistEntryPath(const QString& playlistPath, const QString& entry, const QDir& dir)
-{
-    if(Track::isArchivePath(entry) || Track::isRemotePath(entry)) {
-        return entry;
-    }
-
-    const QUrl playlistUrl{playlistPath};
-
-    if(Track::isRemotePath(playlistUrl.toString())) {
-        const QUrl resolved = playlistUrl.resolved(QUrl{entry});
-        if(resolved.isValid() && !resolved.scheme().isEmpty()) {
-            return resolved.toString();
-        }
-    }
-
-    if(dir.exists() && !QDir::isAbsolutePath(entry)) {
-        return QDir::cleanPath(dir.absoluteFilePath(entry));
-    }
-
-    return entry;
-}
 
 std::map<int, PlsEntry> parseEntries(QIODevice* device)
 {
@@ -177,10 +158,16 @@ TrackList PlsParser::readPlaylist(QIODevice* device, const QString& filepath, co
             continue;
         }
 
-        QString path = resolvePlaylistEntryPath(filepath, entry.file, dir);
-        Track track{path};
+        QString path      = Utils::resolveEntryPath(filepath, entry.file, dir);
+        const int subsong = Utils::takeSubsongSuffix(path);
 
-        if(!Track::isArchivePath(path) && !Track::isRemotePath(path) && !QFile::exists(path)) {
+        Track track{path};
+        if(subsong > 0) {
+            track.setSubsong(subsong);
+        }
+
+        if(!Track::isArchivePath(path) && !Track::isRemotePath(path) && !Track::isVirtualPath(path)
+           && !QFile::exists(path)) {
             track.setFilePath(path.replace(u'\\', u'/'));
         }
 
@@ -191,7 +178,7 @@ TrackList PlsParser::readPlaylist(QIODevice* device, const QString& filepath, co
                 track.setTitle(entry.title);
             }
             if(track.duration() == 0 && entry.durationSeconds > 0) {
-                track.setDuration(static_cast<uint64_t>(entry.durationSeconds) * 1000);
+                track.setDuration(static_cast<uint64_t>(entry.durationSeconds) * Time::MsPerSecond);
             }
             tracks.emplace_back(track);
         }
@@ -211,9 +198,16 @@ void PlsParser::savePlaylist(QIODevice* device, const QString& /*extension*/, co
     for(size_t i{0}; i < count; ++i) {
         const Track& track      = tracks.at(i);
         const size_t entryIndex = i + 1;
-        const QUrl trackUrl     = track.isRemote() ? QUrl{track.filepath()} : QUrl::fromLocalFile(track.filepath());
 
-        stream << "File" << entryIndex << "=" << PlaylistParser::determineTrackPath(trackUrl, dir, type) << "\n";
+        QString path = track.filepath();
+        if(track.subsong() > 0) {
+            path += u"#%1"_s.arg(track.subsong());
+        }
+
+        const QUrl trackUrl
+            = track.isRemote() || track.isVirtual() ? QUrl{path, QUrl::StrictMode} : QUrl::fromLocalFile(path);
+
+        stream << "File" << entryIndex << "=" << determineTrackPath(trackUrl, dir, type) << "\n";
 
         if(writeMetdata) {
             const QString title = track.title();
@@ -221,7 +215,7 @@ void PlsParser::savePlaylist(QIODevice* device, const QString& /*extension*/, co
                 stream << "Title" << entryIndex << "=" << title << "\n";
             }
             if(track.duration() > 0) {
-                stream << "Length" << entryIndex << "=" << (track.duration() / 1000) << "\n";
+                stream << "Length" << entryIndex << "=" << (track.duration() / Time::MsPerSecond) << "\n";
             }
         }
     }

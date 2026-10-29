@@ -2,14 +2,20 @@ name: Build Linux
 
 on:
   workflow_call:
+    inputs:
+      version_suffix:
+        required: false
+        type: string
+        default: ''
 
 env:
+  FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
   BUILD_TESTS: ON
   BUILD_CCACHE: ON
   BUILD_PCH: ON
   CCACHE_DIR: ${{ github.workspace }}/.ccache
   CCACHE_BASEDIR: ${{ github.workspace }}
-  CCACHE_MAXSIZE: 1G
+  CCACHE_MAXSIZE: 500M
   CCACHE_COMPILERCHECK: content
   CCACHE_SLOPPINESS: pch_defines,time_macros
 
@@ -23,7 +29,7 @@ jobs:
         runner:
           - { os: ubuntu-latest, arch: amd64 }
           - { os: ubuntu-24.04-arm, arch: arm64 }
-        fedora_version: ['42', '43', '44']
+        fedora_version: ['43', '44']
     container:
       image: fedora:${{matrix.fedora_version}}
     steps:
@@ -32,7 +38,7 @@ jobs:
           dnf -y install git
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           submodules: recursive
@@ -41,12 +47,16 @@ jobs:
         run: |
           ./ci/fedora-depends.sh
 
-      - name: Cache ccache
-        if: env.BUILD_CCACHE == 'ON'
-        uses: actions/cache@v5
+      - name: Set ccache generation
+        id: ccache-generation
+        run: echo "period=$(( $(date -u +%s) / 86400 ))" >> "$GITHUB_OUTPUT"
+
+      - name: Restore ccache
+        id: ccache-restore
+        uses: actions/cache/restore@v6
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: linux-fedora-${{ matrix.fedora_version }}-${{ matrix.runner.arch }}-ccache-${{ github.sha }}
+          key: linux-fedora-${{ matrix.fedora_version }}-${{ matrix.runner.arch }}-ccache-${{ steps.ccache-generation.outputs.period }}
           restore-keys: |
             linux-fedora-${{ matrix.fedora_version }}-${{ matrix.runner.arch }}-ccache-
 
@@ -60,10 +70,17 @@ jobs:
           ./ci/tests.sh
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: fedora-${{matrix.fedora_version}}-${{ matrix.runner.arch }}
           path: rpm
+
+      - name: Save ccache
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
+        uses: ./.github/actions/save-ccache
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
 
   debian:
     name: Debian (${{matrix.debian_version}}, ${{ matrix.runner.arch }})
@@ -84,7 +101,7 @@ jobs:
           apt-get install -qq --yes ca-certificates git
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           submodules: recursive
@@ -102,12 +119,16 @@ jobs:
           ln -sf /usr/lib/libgtest.a /usr/local/lib/libgtest.a
           ln -sf /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
 
-      - name: Cache ccache
-        if: env.BUILD_CCACHE == 'ON'
-        uses: actions/cache@v5
+      - name: Set ccache generation
+        id: ccache-generation
+        run: echo "period=$(( $(date -u +%s) / 86400 ))" >> "$GITHUB_OUTPUT"
+
+      - name: Restore ccache
+        id: ccache-restore
+        uses: actions/cache/restore@v6
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: linux-debian-${{ matrix.debian_version }}-${{ matrix.runner.arch }}-ccache-${{ github.sha }}
+          key: linux-debian-${{ matrix.debian_version }}-${{ matrix.runner.arch }}-ccache-${{ steps.ccache-generation.outputs.period }}
           restore-keys: |
             linux-debian-${{ matrix.debian_version }}-${{ matrix.runner.arch }}-ccache-
 
@@ -121,10 +142,17 @@ jobs:
           ./ci/tests.sh
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: debian-${{matrix.debian_version}}-${{ matrix.runner.arch }}
           path: deb
+
+      - name: Save ccache
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
+        uses: ./.github/actions/save-ccache
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
 
   ubuntu:
     name: Ubuntu (${{matrix.ubuntu_version}}, ${{ matrix.runner.arch }})
@@ -135,7 +163,7 @@ jobs:
         runner:
           - { os: ubuntu-latest, arch: amd64 }
           - { os: ubuntu-24.04-arm, arch: arm64 }
-        ubuntu_version: ['noble', 'questing', 'resolute']
+        ubuntu_version: ['noble', 'resolute', 'stonking']
     container:
       image: ubuntu:${{matrix.ubuntu_version}}
     steps:
@@ -145,7 +173,7 @@ jobs:
           apt-get install -qq --yes ca-certificates git
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           submodules: recursive
@@ -163,19 +191,23 @@ jobs:
           ln -sf /usr/lib/libgtest.a /usr/local/lib/libgtest.a
           ln -sf /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
 
-      - name: Cache ccache
-        if: ${{ !(matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64') && env.BUILD_CCACHE == 'ON' }}
-        uses: actions/cache@v5
+      - name: Set ccache generation
+        id: ccache-generation
+        run: echo "period=$(( $(date -u +%s) / 86400 ))" >> "$GITHUB_OUTPUT"
+
+      - name: Restore ccache
+        id: ccache-restore
+        uses: actions/cache/restore@v6
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: linux-ubuntu-${{ matrix.ubuntu_version }}-${{ matrix.runner.arch }}-ccache-${{ github.sha }}
+          key: linux-ubuntu-${{ matrix.ubuntu_version }}-${{ matrix.runner.arch }}-ccache-${{ steps.ccache-generation.outputs.period }}
           restore-keys: |
             linux-ubuntu-${{ matrix.ubuntu_version }}-${{ matrix.runner.arch }}-ccache-
 
       - name: Build
         env:
-          BUILD_CCACHE: ${{ matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64' && 'OFF' || env.BUILD_CCACHE }}
           BUILD_PCH: ${{ matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64' && 'OFF' || env.BUILD_PCH }}
+          INSTALL_HEADERS: ${{ matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64' && 'ON' || 'OFF' }}
         run: |
           ./ci/ubuntu-build.sh
 
@@ -184,8 +216,33 @@ jobs:
         run: |
           ./ci/tests.sh
 
+      - name: Package SDK
+        if: matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64'
+        run: |
+          cmake --build build --target package_sdk
+
+      - name: Verify relocated SDK
+        if: matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64'
+        shell: bash
+        run: ./ci/linux-sdk-verify.sh
+
+      - name: Upload SDK
+        if: matrix.ubuntu_version == 'noble' && matrix.runner.arch == 'amd64'
+        uses: actions/upload-artifact@v7
+        with:
+          name: sdk-linux-x64-qt6.4
+          path: build/sdk/*.tar.xz
+          if-no-files-found: error
+
       - name: Upload artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ubuntu-${{matrix.ubuntu_version}}-${{ matrix.runner.arch }}
           path: deb
+
+      - name: Save ccache
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
+        uses: ./.github/actions/save-ccache
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}

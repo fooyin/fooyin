@@ -25,6 +25,30 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 namespace {
+bool isSplitter(const LayoutItem* item)
+{
+    return item && (item->key() == u"SplitterVertical"_s || item->key() == u"SplitterHorizontal"_s);
+}
+
+QJsonArray splitterLocks(const LayoutItem* item)
+{
+    return isSplitter(item) ? item->data().value("Locked"_L1).toArray() : QJsonArray{};
+}
+
+void setSplitterLocks(LayoutItem* item, const QJsonArray& locks)
+{
+    if(!isSplitter(item)) {
+        return;
+    }
+
+    QJsonObject data  = item->data();
+    data["Locked"_L1] = locks;
+    item->setData(data);
+    item->setStatus(LayoutItem::Changed);
+}
+
+QJsonObject saveItemData(const LayoutItem* item);
+
 QJsonArray saveChildren(const LayoutItem* parent)
 {
     QJsonArray children;
@@ -33,17 +57,46 @@ QJsonArray saveChildren(const LayoutItem* parent)
             continue;
         }
 
-        QJsonObject data = child->data();
-        if(child->childCount() > 0 || data.contains("Widgets"_L1)) {
-            data["Widgets"_L1] = saveChildren(child);
-        }
-
         QJsonObject childObject;
-        childObject[child->key()] = data;
+        childObject[child->key()] = saveItemData(child);
         children.append(childObject);
     }
 
     return children;
+}
+
+QJsonObject saveItemData(const LayoutItem* item)
+{
+    QJsonObject data = item->data();
+
+    if(isSplitter(item) && data.contains("Locked"_L1)) {
+        const QJsonArray locks = splitterLocks(item);
+        QJsonArray activeLocks;
+        bool hasLockedChild{false};
+
+        for(const LayoutItem* child : item->children()) {
+            if(!child || child->status() == LayoutItem::Removed) {
+                continue;
+            }
+
+            const bool locked = child->row() < locks.size() && locks.at(child->row()).toBool();
+            activeLocks.append(locked);
+            hasLockedChild |= locked;
+        }
+
+        if(hasLockedChild) {
+            data["Locked"_L1] = activeLocks;
+        }
+        else {
+            data.remove("Locked"_L1);
+        }
+    }
+
+    if(item->childCount() > 0 || data.contains("Widgets"_L1)) {
+        data["Widgets"_L1] = saveChildren(item);
+    }
+
+    return data;
 }
 
 QJsonObject saveItem(const LayoutItem* item)
@@ -52,13 +105,8 @@ QJsonObject saveItem(const LayoutItem* item)
         return {};
     }
 
-    QJsonObject data = item->data();
-    if(item->childCount() > 0 || data.contains("Widgets"_L1)) {
-        data["Widgets"_L1] = saveChildren(item);
-    }
-
     QJsonObject itemObject;
-    itemObject[item->key()] = data;
+    itemObject[item->key()] = saveItemData(item);
     return itemObject;
 }
 
@@ -70,14 +118,6 @@ bool isValidItemObject(const QJsonObject& item)
 
     const auto it = item.constBegin();
     return it->isObject();
-}
-
-bool isSplitter(const LayoutItem* item)
-{
-    if(!item) {
-        return false;
-    }
-    return item->key() == u"SplitterVertical"_s || item->key() == u"SplitterHorizontal"_s;
 }
 
 int minimumChildCount(const LayoutItem* item)
@@ -183,6 +223,18 @@ void LayoutTreeModel::moveUp(const QModelIndex& index)
     if(!beginMoveRows(parentIndex, row, row, parentIndex, row - 1)) {
         return;
     }
+
+    QJsonArray locks = splitterLocks(parent);
+    if(!locks.empty()) {
+        while(locks.size() < parent->childCount()) {
+            locks.append(false);
+        }
+        const QJsonValue movedLock = locks.at(row);
+        locks.removeAt(row);
+        locks.insert(row - 1, movedLock);
+        setSplitterLocks(parent, locks);
+    }
+
     parent->moveChild(row, row - 1);
     item->setStatus(LayoutItem::Changed);
     endMoveRows();
@@ -204,6 +256,18 @@ void LayoutTreeModel::moveDown(const QModelIndex& index)
     if(!beginMoveRows(parentIndex, row, row, parentIndex, row + 2)) {
         return;
     }
+
+    QJsonArray locks = splitterLocks(parent);
+    if(!locks.empty()) {
+        while(locks.size() < parent->childCount()) {
+            locks.append(false);
+        }
+        const QJsonValue movedLock = locks.at(row);
+        locks.removeAt(row);
+        locks.insert(row + 1, movedLock);
+        setSplitterLocks(parent, locks);
+    }
+
     parent->moveChild(row, row + 2);
     item->setStatus(LayoutItem::Changed);
     endMoveRows();
@@ -298,11 +362,21 @@ void LayoutTreeModel::pasteAfter(const QModelIndex& index, const QJsonObject& it
         return;
     }
 
-    auto* target = itemForIndex(index);
-    auto* parent = target->parent();
+    auto* target        = itemForIndex(index);
+    auto* parent        = target->parent();
+    const int pastedRow = target->row() + 1;
+
+    QJsonArray locks = splitterLocks(parent);
+    if(!locks.empty()) {
+        while(locks.size() < parent->childCount()) {
+            locks.append(false);
+        }
+        locks.insert(pastedRow, false);
+        setSplitterLocks(parent, locks);
+    }
 
     const auto it = item.constBegin();
-    auto* pasted  = insertItem(parent, target->row() + 1, it.key(), it->toObject());
+    auto* pasted  = insertItem(parent, pastedRow, it.key(), it->toObject());
     populateChildren(pasted, pasted->data().value("Widgets"_L1).toArray(), LayoutItem::Added);
     pasted->setStatus(LayoutItem::Added);
 
@@ -467,6 +541,86 @@ void LayoutTreeModel::clearSplitterSpacing(const QModelIndex& index)
     item->setData(data);
     item->setStatus(LayoutItem::Changed);
     Q_EMIT dataChanged(index, index, {Qt::FontRole});
+}
+
+bool LayoutTreeModel::hasConfigurableSplitterLock(const QModelIndex& index) const
+{
+    if(!index.isValid() || !checkIndex(index, CheckIndexOption::IndexIsValid) || isDummy(index)) {
+        return false;
+    }
+
+    const auto* item = itemForIndex(index);
+    return item && isSplitter(item->parent());
+}
+
+Qt::Orientation LayoutTreeModel::splitterLockOrientation(const QModelIndex& index) const
+{
+    if(!hasConfigurableSplitterLock(index)) {
+        return Qt::Horizontal;
+    }
+
+    return itemForIndex(index)->parent()->key() == u"SplitterVertical"_s ? Qt::Vertical : Qt::Horizontal;
+}
+
+bool LayoutTreeModel::isSplitterItemLocked(const QModelIndex& index) const
+{
+    if(!hasConfigurableSplitterLock(index)) {
+        return false;
+    }
+
+    const auto* item        = itemForIndex(index);
+    const QJsonArray locked = splitterLocks(item->parent());
+    const int splitterIndex = item->row();
+    return splitterIndex < locked.size() && locked.at(splitterIndex).toBool();
+}
+
+bool LayoutTreeModel::canLockSplitterItem(const QModelIndex& index) const
+{
+    if(!hasConfigurableSplitterLock(index)) {
+        return false;
+    }
+    if(isSplitterItemLocked(index)) {
+        return true;
+    }
+
+    const auto* item        = itemForIndex(index);
+    const auto* parent      = item->parent();
+    const QJsonArray locked = splitterLocks(parent);
+
+    for(const LayoutItem* sibling : parent->children()) {
+        if(sibling == item || sibling->status() == LayoutItem::Removed) {
+            continue;
+        }
+        if(sibling->row() >= locked.size() || !locked.at(sibling->row()).toBool()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool LayoutTreeModel::setSplitterItemLocked(const QModelIndex& index, bool locked)
+{
+    if(!hasConfigurableSplitterLock(index) || (locked && !canLockSplitterItem(index))) {
+        return false;
+    }
+
+    auto* item       = itemForIndex(index);
+    auto* parent     = item->parent();
+    QJsonArray locks = splitterLocks(parent);
+    while(locks.size() < parent->childCount()) {
+        locks.append(false);
+    }
+
+    locks[item->row()] = locked;
+
+    QJsonObject data  = parent->data();
+    data["Locked"_L1] = locks;
+    parent->setData(data);
+    parent->setStatus(LayoutItem::Changed);
+
+    const QModelIndex parentIndex = indexOfItem(parent);
+    Q_EMIT dataChanged(parentIndex, parentIndex, {Qt::FontRole});
+    return true;
 }
 
 QVariant LayoutTreeModel::headerData(int section, Qt::Orientation orientation, int role) const

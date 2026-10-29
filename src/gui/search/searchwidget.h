@@ -24,6 +24,7 @@
 #include <gui/fywidget.h>
 
 #include <QBasicTimer>
+#include <QPointer>
 
 #include <cstdint>
 
@@ -62,10 +63,15 @@ public:
 
     static QString defaultPlaylistName();
 
+    void setSearchTarget(FyWidget* target);
+    void clear();
+    void selectAll();
+
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
     void layoutEditingMenu(QMenu* menu) override;
+    void populateContextMenu(QMenu* menu) override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 
@@ -97,6 +103,7 @@ private:
     void showOptionsMenu();
 
     SearchController* m_searchController;
+    QPointer<FyWidget> m_searchTarget;
     PlaylistController* m_playlistController;
     PlaylistHandler* m_playlistHandler;
     MusicLibrary* m_library;

@@ -28,12 +28,10 @@ namespace Fooyin::Alsa {
 namespace {
 class AlsaPluginSettingsProvider : public PluginSettingsProvider
 {
-public:
-    void showSettings(QWidget* parent) override
+private:
+    QDialog* createSettings(QWidget* parent) override
     {
-        auto* dialog = new AlsaSettings(parent);
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-        dialog->show();
+        return new AlsaSettings(parent);
     }
 };
 } // namespace

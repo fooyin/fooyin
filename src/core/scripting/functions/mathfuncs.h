@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <core/scripting/scriptvalue.h>
+
 #include <QStringList>
 
 namespace Fooyin::Scripting {
@@ -29,6 +31,8 @@ QString div(const QStringList& vec);
 QString mod(const QStringList& vec);
 QString min(const QStringList& vec);
 QString max(const QStringList& vec);
+QString select(const QStringList& vec);
 QString rand(const QStringList& vec);
 QString round(const QStringList& vec);
+ScriptResult greater(const QStringList& vec);
 } // namespace Fooyin::Scripting

@@ -33,7 +33,7 @@ class ScrobblerPlugin : public QObject,
                         public GuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "scrobbler.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "scrobbler.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:

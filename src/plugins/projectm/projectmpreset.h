@@ -29,5 +29,6 @@ struct ProjectMPreset
     QString path;
     QString relativePath;
     QString failureMessage;
+    bool favourite{false};
 };
 } // namespace Fooyin::ProjectM

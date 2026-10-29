@@ -36,11 +36,10 @@ public:
         : m_settings{settings}
     { }
 
-    void showSettings(QWidget* parent) override
+protected:
+    QDialog* createSettings(QWidget* parent) override
     {
-        auto* dialog = new OpenMptSettings(m_settings, parent);
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-        dialog->show();
+        return new OpenMptSettings(m_settings, parent);
     }
 
 private:
@@ -68,7 +67,8 @@ QString OpenMptPlugin::inputName() const
 InputCreator OpenMptPlugin::inputCreator() const
 {
     InputCreator creator;
-    creator.decoder = [this]() {
+    creator.priority = 100;
+    creator.decoder  = [this]() {
         return std::make_unique<OpenMptDecoder>(m_settings);
     };
     creator.reader = [this]() {

@@ -22,6 +22,7 @@
 #include <core/coresettings.h>
 #include <core/internalcoresettings.h>
 #include <gui/guiconstants.h>
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -74,7 +75,7 @@ ShellIntegrationPageWidget::ShellIntegrationPageWidget(SettingsManager* settings
     fileTypesLayout->addWidget(new QLabel(tr("Exclude") + ":"_L1, this), row, 0);
     fileTypesLayout->addWidget(m_excludeTypes, row++, 1);
     //: Example of semicolon-separated file extensions (e.g. mp3;m4a)
-    fileTypesLayout->addWidget(new QLabel(u"🛈 "_s + tr("e.g. \"%1\"").arg("mp3;m4a"_L1), this), row++, 1);
+    fileTypesLayout->addWidget(new HintLabel(tr("e.g. ‘%1’").arg("mp3;m4a"_L1), this), row++, 1);
     fileTypesLayout->setColumnStretch(1, 1);
 
     auto* playlistGroup       = new QGroupBox(tr("Playlist"), this);
@@ -116,7 +117,7 @@ void ShellIntegrationPageWidget::load()
     m_alwaysSend->setChecked(m_settings->value<Settings::Core::OpenFilesSendTo>());
     m_openFileAddDirectory->setChecked(m_settings->value<Settings::Core::OpenFileAddDirectory>());
     m_externalPlaylist->setText(m_settings->value<Settings::Core::OpenFilesPlaylist>());
-    m_externalSortScript->setText(m_settings->value<Settings::Core::ExternalSortScript>());
+    m_externalSortScript->setScript(m_settings->value<Settings::Core::ExternalSortScript>());
 }
 
 void ShellIntegrationPageWidget::apply()

@@ -23,6 +23,8 @@
 
 #include <QDialog>
 
+#include <optional>
+
 class QGridLayout;
 
 namespace Fooyin {
@@ -89,6 +91,8 @@ private:
  * Subclasses only need to translate between UI controls and the config value by
  * implementing @fn config() and @fn setConfig(). Call @fn loadCurrentConfig()
  * during construction to initialise the editor from the widget's current state.
+ * Dialogs that observe external config changes should connect the notification to
+ * @fn syncCurrentConfig() and override @fn mergeExternalConfig() to preserve draft values.
  */
 template <typename WidgetType, typename ConfigType>
 class WidgetConfigDialog : public ConfigDialog
@@ -102,7 +106,7 @@ public:
     void apply() override
     {
         m_widget->applyConfig(config());
-        setConfig(m_widget->currentConfig());
+        loadCurrentConfig();
     }
 
     void saveDefaults() override
@@ -132,7 +136,63 @@ protected:
      */
     void loadCurrentConfig()
     {
-        setConfig(m_widget->currentConfig());
+        const ConfigType currentConfig = m_widget->currentConfig();
+        setConfig(currentConfig);
+        m_syncedConfig = currentConfig;
+    }
+
+    /*!
+     * Merges changes made outside the dialog into the editor state.
+     */
+    void syncCurrentConfig()
+    {
+        const ConfigType currentConfig = m_widget->currentConfig();
+        if(!m_syncedConfig) {
+            setConfig(currentConfig);
+        }
+        else {
+            mergeExternalConfig(*m_syncedConfig, currentConfig);
+        }
+
+        m_syncedConfig = currentConfig;
+    }
+
+    /*!
+     * Copies an externally changed value into the dialog's draft.
+     */
+    template <typename Value>
+    static void mergeExternalValue(const Value& previous, const Value& current, Value& draft)
+    {
+        if(previous != current) {
+            draft = current;
+        }
+    }
+
+    /*!
+     * Copies externally changed member values from @p current into @p draft.
+     *
+     * @p members must be pointers to members of @c Object. Draft values are
+     * preserved for members that have not changed since @p previous.
+     */
+    template <typename Object, typename... Members>
+    static void mergeExternalFieldValues(const Object& previous, const Object& current, Object& draft,
+                                         Members... members)
+    {
+        (mergeExternalValue(previous.*members, current.*members, draft.*members), ...);
+    }
+
+    /*!
+     * Merges externally changed ConfigType members into the dialog's draft.
+     *
+     * @p members must be pointers to members of ConfigType. The merged draft is
+     * written back to the editor with setConfig().
+     */
+    template <typename... Members>
+    void mergeExternalFields(const ConfigType& previous, const ConfigType& current, Members... members)
+    {
+        auto draft{config()};
+        mergeExternalFieldValues(previous, current, draft, members...);
+        setConfig(draft);
     }
 
     /*!
@@ -151,8 +211,17 @@ protected:
      * Updates the editor state from a config value.
      */
     virtual void setConfig(const ConfigType& config) = 0;
+    /*!
+     * Updates only values changed outside the dialog.
+     * The default replaces the entire editor state.
+     */
+    virtual void mergeExternalConfig(const ConfigType& /*previous*/, const ConfigType& current)
+    {
+        setConfig(current);
+    }
 
 private:
     WidgetType* m_widget;
+    std::optional<ConfigType> m_syncedConfig;
 };
 } // namespace Fooyin

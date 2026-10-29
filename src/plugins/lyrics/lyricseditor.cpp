@@ -122,8 +122,8 @@ void LyricsEditor::setupUi()
     m_reset      = new QPushButton(tr("Reset Changes"), this);
     m_insert     = new QPushButton(tr("Insert/Update"), this);
     m_insertNext = new QPushButton(tr("Update and Next Line"), this);
-    m_rewind     = new QPushButton(tr("Rewind line (-100ms)"), this);
-    m_forward    = new QPushButton(tr("Forward line (+100ms)"), this);
+    m_rewind     = new QPushButton(tr("Rewind line (−100 ms)"), this);
+    m_forward    = new QPushButton(tr("Forward line (+100 ms)"), this);
     m_remove     = new QPushButton(tr("Remove"), this);
     m_removeAll  = new QPushButton(tr("Remove All"), this);
     m_lyricsText = new QTextEdit(this);

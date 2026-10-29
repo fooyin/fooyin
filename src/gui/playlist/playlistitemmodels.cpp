@@ -19,6 +19,8 @@
 
 #include "playlistitemmodels.h"
 
+#include "playlistheaderlayout.h"
+
 #include <gui/scripting/richtextutils.h>
 
 #include <QFontMetrics>
@@ -31,10 +33,10 @@ QSize singleLineTrackSize(const RichText& richText)
 {
     QSize blockSize;
 
-    for(const auto& [blockText, format] : richText.blocks) {
-        const QFontMetrics fm{format.font};
-        const QRect br = fm.boundingRect(blockText);
-        blockSize.setWidth(blockSize.width() + br.width());
+    for(const auto& block : richText.blocks) {
+        const QFontMetrics fm{block.format.font};
+        blockSize.rwidth()
+            += block.type == RichTextBlock::Type::PlayingIcon ? fm.height() : fm.horizontalAdvance(block.text);
     }
 
     return blockSize;
@@ -42,15 +44,15 @@ QSize singleLineTrackSize(const RichText& richText)
 
 int singleLineTrackHeight(const RichText& richText)
 {
-    int height{0};
+    TextBaselineMetrics baseline = textBaselineMetrics({});
 
     for(const auto& block : richText.blocks) {
         const QFont font = resolvedRichTextFont(block.format, {});
         const QFontMetrics fm{font};
-        height = std::max(height, fm.height());
+        baseline.expand(fm);
     }
 
-    return std::max(height, QFontMetrics{QFont{}}.height());
+    return baseline.height();
 }
 
 int trackExtraLineHeight(const RichText& richText)
@@ -87,16 +89,6 @@ const RichText& PlaylistContainerItem::subtitle() const
     return m_subtitle;
 }
 
-const RichText& PlaylistContainerItem::sideText() const
-{
-    return m_sideText;
-}
-
-const RichText& PlaylistContainerItem::info() const
-{
-    return m_info;
-}
-
 PlaylistContainerItem::LayoutKind PlaylistContainerItem::layoutKind() const
 {
     return m_layoutKind;
@@ -109,7 +101,16 @@ int PlaylistContainerItem::rowHeight() const
 
 QSize PlaylistContainerItem::size() const
 {
+    if(!m_widthCalculated) {
+        m_size            = calculateSize(true);
+        m_widthCalculated = true;
+    }
     return m_size;
+}
+
+int PlaylistContainerItem::height() const
+{
+    return m_size.height();
 }
 
 int PlaylistContainerItem::scriptIndex() const
@@ -122,6 +123,14 @@ const std::optional<Track>& PlaylistContainerItem::coverTrack() const
     return m_coverTrack;
 }
 
+bool PlaylistContainerItem::sameDataAs(const PlaylistContainerItem& other) const
+{
+    return m_title == other.m_title && m_subtitle == other.m_subtitle && m_layoutKind == other.m_layoutKind
+        && m_rowHeight == other.m_rowHeight && m_showCover == other.m_showCover && m_scriptIndex == other.m_scriptIndex
+        && m_coverTrack.has_value() == other.m_coverTrack.has_value()
+        && (!m_coverTrack || m_coverTrack->sameDataAs(*other.m_coverTrack));
+}
+
 void PlaylistContainerItem::setTitle(const RichText& title)
 {
     m_title = title;
@@ -132,14 +141,9 @@ void PlaylistContainerItem::setSubtitle(const RichText& subtitle)
     m_subtitle = subtitle;
 }
 
-void PlaylistContainerItem::setSideText(const RichText& text)
+void PlaylistContainerItem::setShowCover(bool showCover)
 {
-    m_sideText = text;
-}
-
-void PlaylistContainerItem::setInfo(const RichText& info)
-{
-    m_info = info;
+    m_showCover = showCover;
 }
 
 void PlaylistContainerItem::setRowHeight(int height)
@@ -164,68 +168,27 @@ void PlaylistContainerItem::clearCoverTrack()
 
 void PlaylistContainerItem::calculateSize()
 {
+    m_size            = calculateSize(false);
+    m_widthCalculated = m_rowHeight > 0;
+}
+
+QSize PlaylistContainerItem::calculateSize(bool measureWidth) const
+{
     if(m_rowHeight > 0) {
-        m_size.setHeight(m_rowHeight);
-        return;
+        return {m_size.width(), m_rowHeight};
     }
 
-    QSize totalSize;
-
-    auto addSize = [&totalSize](const RichText& text, bool addToTotal = true) {
-        const auto metrics = measureRichText(text);
-        const QSize blockSize{metrics.width, metrics.height};
-
-        if(addToTotal) {
-            totalSize.setWidth(totalSize.width() + blockSize.width());
-            totalSize.setHeight(totalSize.height() + blockSize.height() + 4);
-        }
-        return blockSize;
-    };
-
-    if(!m_title.empty()) {
-        addSize(m_title);
+    if(m_layoutKind == LayoutKind::Header) {
+        const auto layout = preparePlaylistHeader(m_title, {}, measureWidth);
+        return {measureWidth ? layout.width : 0,
+                std::max(m_showCover ? 50 : 0, layout.height + ContainerVerticalPadding)};
     }
 
-    QSize subtitleSize;
-
-    if(!m_subtitle.empty()) {
-        subtitleSize = addSize(m_subtitle, false);
-    }
-
-    if(!m_sideText.empty()) {
-        const QSize sideSize = addSize(m_sideText, false);
-        subtitleSize.setWidth(subtitleSize.width() + sideSize.width());
-        subtitleSize.setHeight(std::max(subtitleSize.height(), sideSize.height()));
-    }
-
-    switch(m_layoutKind) {
-        case LayoutKind::SimpleHeader: {
-            totalSize.setWidth(totalSize.width() + subtitleSize.width());
-            totalSize.setHeight(std::max(totalSize.height(), subtitleSize.height()));
-            const bool hasMultiline = richTextHasLineBreaks(m_title) || richTextHasLineBreaks(m_subtitle)
-                                   || richTextHasLineBreaks(m_sideText) || richTextHasLineBreaks(m_info);
-            if(hasMultiline) {
-                totalSize.rheight() += ContainerVerticalPadding;
-            }
-            break;
-        }
-        case LayoutKind::Subheader: {
-            totalSize.setWidth(totalSize.width() + subtitleSize.width());
-            totalSize.setHeight(std::max(totalSize.height(), subtitleSize.height()) + ContainerVerticalPadding);
-            break;
-        }
-        case LayoutKind::Header: {
-            totalSize.setWidth(totalSize.width() + subtitleSize.width());
-            totalSize.setHeight(totalSize.height() + subtitleSize.height() + 4);
-
-            if(!m_info.empty()) {
-                addSize(m_info);
-            }
-            break;
-        }
-    }
-
-    m_size = totalSize;
+    const auto layout      = preparePlaylistHeader(m_title, {}, measureWidth);
+    const bool hasLeftText = std::ranges::any_of(
+        m_title.blocks, [](const auto& block) { return block.format.alignment != RichAlignment::Right; });
+    const int padding = ContainerVerticalPadding + (hasLeftText ? 4 : 0);
+    return {measureWidth ? layout.width : 0, layout.height + padding};
 }
 
 PlaylistTrackItem::PlaylistTrackItem(std::vector<RichText> columns, PlaylistTrack track)
@@ -273,6 +236,11 @@ const PlaylistTrack& PlaylistTrackItem::track() const
     return m_track;
 }
 
+ScriptPlayingIcon PlaylistTrackItem::playingIcon() const
+{
+    return m_playingIcon;
+}
+
 int PlaylistTrackItem::index() const
 {
     return m_track.indexInPlaylist;
@@ -312,22 +280,38 @@ QSize PlaylistTrackItem::size(int column) const
     return m_sizes.front();
 }
 
+bool PlaylistTrackItem::sameDataAs(const PlaylistTrackItem& other) const
+{
+    return m_columns == other.m_columns && m_left == other.m_left && m_right == other.m_right
+        && m_playingIcon == other.m_playingIcon && m_rowHeight == other.m_rowHeight && m_depth == other.m_depth
+        && m_track.playlistId == other.m_track.playlistId && m_track.entryId == other.m_track.entryId
+        && m_track.indexInPlaylist == other.m_track.indexInPlaylist && m_track.track.sameDataAs(other.m_track.track);
+}
+
 void PlaylistTrackItem::setColumns(const std::vector<RichText>& columns)
 {
-    m_columns = columns;
+    if(std::exchange(m_columns, columns) == columns) {
+        return;
+    }
     m_sizes.clear();
 }
 
 void PlaylistTrackItem::setLeftRight(const RichText& left, const RichText& right)
 {
-    m_left  = left;
-    m_right = right;
+    if(std::exchange(m_left, left) == left && std::exchange(m_right, right) == right) {
+        return;
+    }
     m_sizes.clear();
 }
 
 void PlaylistTrackItem::setTrack(const PlaylistTrack& track)
 {
     m_track = track;
+}
+
+void PlaylistTrackItem::setPlayingIcon(ScriptPlayingIcon icon)
+{
+    m_playingIcon = icon;
 }
 
 void PlaylistTrackItem::setIndex(int index)
@@ -337,7 +321,9 @@ void PlaylistTrackItem::setIndex(int index)
 
 void PlaylistTrackItem::setRowHeight(int height)
 {
-    m_rowHeight = height;
+    if(std::exchange(m_rowHeight, height) == height) {
+        return;
+    }
     m_sizes.clear();
 }
 

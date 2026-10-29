@@ -23,9 +23,9 @@
 #include "projectmsettings.h"
 
 #include <core/engine/visualisationservice.h>
+#include <gui/frametimer.h>
 
-#include <QBasicTimer>
-#include <QOpenGLFunctions_2_1>
+#include <QOpenGLFunctions>
 #include <QOpenGLWindow>
 #include <QSize>
 #include <QStringList>
@@ -35,11 +35,13 @@
 #include <map>
 #include <unordered_map>
 
+class QOpenGLDebugLogger;
+
 namespace Fooyin::ProjectM {
 class ProjectMInstance;
 
 class ProjectMView : public QOpenGLWindow,
-                     protected QOpenGLFunctions_2_1
+                     protected QOpenGLFunctions
 {
     Q_OBJECT
 
@@ -65,6 +67,8 @@ public:
     void selectRandomPreset();
     void selectPreset(int index);
     void selectPreset(const QString& path);
+    void setPlaylistPresetPaths(const QStringList& presetPaths);
+    void setPlaybackIdle(bool idle);
     void setPresetLocked(bool locked);
     void setShuffle(bool shuffle);
     void applySettings(const ProjectMSettings& settings);
@@ -118,13 +122,18 @@ private:
     void resetPcmCursor();
     void queueGLOperation(std::function<void()> operation);
     void processQueuedGLOperations();
+    void applyIdleState();
+    void leaveIdleForUserSelection();
     void scheduleProjectMRecreation();
+    void initialiseOpenGLDebugLogger();
+    void logOpenGLContext();
 
     void setUnavailable(const QString& statusText);
     void emitAvailability();
     void updateRenderTimer();
 
     std::unique_ptr<ProjectMInstance> m_projectM;
+    std::unique_ptr<QOpenGLDebugLogger> m_debugLogger;
     VisualisationSessionPtr m_visualisationSession;
     ProjectMPaths m_paths;
     VisualisationSession::PcmWindow m_pcmWindow;
@@ -133,15 +142,20 @@ private:
     std::map<QString, QString> m_failedPresetPaths;
     std::vector<float> m_stereoBuffer;
     std::deque<std::function<void()>> m_pendingGLOperations;
-    QBasicTimer m_renderTimer;
+    Gui::FrameTimer m_renderTimer;
     QString m_statusText;
     QString m_pendingPresetPath;
+    QString m_currentPresetPath;
+    QStringList m_playlistPresetPaths;
     QStringList m_presetDirs;
     uint64_t m_lastPcmTimeMs;
     bool m_ready;
     bool m_initialised;
+    bool m_openGLReady;
     bool m_recreateProjectM;
     bool m_hasPcmCursor;
+    bool m_playbackIdle;
+    bool m_idlePresetActive;
     bool m_presetLocked;
     bool m_shuffle;
     ProjectMSettings m_settings;

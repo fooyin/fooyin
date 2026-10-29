@@ -21,6 +21,7 @@
 
 #include "decoderdelegate.h"
 #include "decodermodel.h"
+#include "ffmpegsettings.h"
 
 #include <core/engine/audioloader.h>
 #include <core/engine/inputplugin.h>
@@ -63,9 +64,14 @@ void applyChanges(std::vector<T> existing, std::vector<T> loaders,
 }
 
 Fooyin::DecoderModel::SettingsHandlerMap inputSettingsHandlers(Fooyin::PluginManager& pluginManager,
-                                                               Fooyin::PluginSettingsRegistry& registry)
+                                                               Fooyin::PluginSettingsRegistry& registry,
+                                                               Fooyin::PluginSettingsProvider& ffmpegSettings)
 {
     Fooyin::DecoderModel::SettingsHandlerMap handlers;
+
+    handlers[u"FFmpeg"_s] = [&ffmpegSettings](QWidget* parent) {
+        ffmpegSettings.showSettings(parent);
+    };
 
     for(const auto& [pluginId, pluginInfo] : pluginManager.allPluginInfo()) {
         auto* const inputPlugin = pluginInfo ? qobject_cast<Fooyin::InputPlugin*>(pluginInfo->root()) : nullptr;
@@ -100,6 +106,31 @@ readerSettingsHandlers(const std::vector<Fooyin::AudioLoader::LoaderEntry<Fooyin
 } // namespace
 
 namespace Fooyin {
+namespace {
+class FFmpegSettingsProvider : public PluginSettingsProvider
+{
+public:
+    FFmpegSettingsProvider(AudioLoader* audioLoader, SettingsManager* settings, std::function<void()> settingsApplied)
+        : m_audioLoader{audioLoader}
+        , m_settings{settings}
+        , m_settingsApplied{std::move(settingsApplied)}
+    { }
+
+protected:
+    QDialog* createSettings(QWidget* parent) override
+    {
+        auto* settings = new FFmpegSettings(m_audioLoader, m_settings, parent);
+        QObject::connect(settings, &QDialog::accepted, settings, m_settingsApplied);
+        return settings;
+    }
+
+private:
+    AudioLoader* m_audioLoader;
+    SettingsManager* m_settings;
+    std::function<void()> m_settingsApplied;
+};
+} // namespace
+
 class DecoderPageWidget : public SettingsPageWidget
 {
     Q_OBJECT
@@ -119,6 +150,7 @@ private:
     PluginManager* m_pluginManager;
     PluginSettingsRegistry* m_pluginSettingsRegistry;
     SettingsManager* m_settings;
+    std::unique_ptr<PluginSettingsProvider> m_ffmpegSettings;
 
     QListView* m_decoderList;
     DecoderModel* m_decoderModel;
@@ -134,6 +166,7 @@ DecoderPageWidget::DecoderPageWidget(AudioLoader* audioLoader, PluginManager* pl
     , m_pluginManager{pluginManager}
     , m_pluginSettingsRegistry{pluginSettingsRegistry}
     , m_settings{settings}
+    , m_ffmpegSettings{std::make_unique<FFmpegSettingsProvider>(audioLoader, settings, [this] { load(); })}
     , m_decoderList{new QListView(this)}
     , m_decoderModel{new DecoderModel(this)}
     , m_decoderDelegate{new DecoderDelegate(m_decoderList, this)}
@@ -186,7 +219,7 @@ DecoderPageWidget::DecoderPageWidget(AudioLoader* audioLoader, PluginManager* pl
 
 void DecoderPageWidget::load()
 {
-    const auto decoderHandlers = inputSettingsHandlers(*m_pluginManager, *m_pluginSettingsRegistry);
+    const auto decoderHandlers = inputSettingsHandlers(*m_pluginManager, *m_pluginSettingsRegistry, *m_ffmpegSettings);
     const auto decoders        = m_audioLoader->decoders();
 
     m_decoderModel->setup(decoders, decoderHandlers);

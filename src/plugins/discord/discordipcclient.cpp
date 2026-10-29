@@ -91,6 +91,7 @@ QString socketErrorToString(QLocalSocket::LocalSocketError error)
     }
 }
 
+#if !defined(Q_OS_WIN) && !defined(Q_OS_MACOS)
 void addUniquePath(QStringList& paths, const QString& path)
 {
     if(path.isEmpty()) {
@@ -143,6 +144,7 @@ QStringList unixPipeDirs()
 
     return dirs;
 }
+#endif
 
 QStringList pipeLocations()
 {
@@ -152,7 +154,7 @@ QStringList pipeLocations()
     for(int index{0}; index < MaxPipeCount; ++index) {
         locations.emplace_back(uR"(\\.\pipe\discord-ipc-%1)"_s.arg(index));
     }
-#elifdef Q_OS_MAC
+#elifdef Q_OS_MACOS
     for(int index{0}; index < MaxPipeCount; ++index) {
         locations.emplace_back(QDir::homePath() + u"/Library/Application Support/discord-ipc-%1"_s.arg(index));
     }
@@ -236,20 +238,6 @@ bool DiscordIPCClient::isConnected() const
 QString DiscordIPCClient::errorMessage() const
 {
     return m_error;
-}
-
-void DiscordIPCClient::logSocketError(QLocalSocket::LocalSocketError error)
-{
-    if(error == QLocalSocket::ServerNotFoundError) {
-        if(m_connectInProgress && std::exchange(m_loggedServerNotFound, true)) {
-            return;
-        }
-
-        qCDebug(DISCORD) << "Socket:" << socketErrorToString(error);
-        return;
-    }
-
-    qCWarning(DISCORD) << "Socket:" << socketErrorToString(error);
 }
 
 QCoro::Task<bool> DiscordIPCClient::connectToDiscord()
@@ -376,24 +364,41 @@ QCoro::Task<> DiscordIPCClient::changeClientId(const QString clientId)
     }
 }
 
-void DiscordIPCClient::sendMessage(const QJsonObject& packet, int opCode)
+void DiscordIPCClient::logSocketError(QLocalSocket::LocalSocketError error)
 {
-    const QByteArray payload = QJsonDocument(packet).toJson(QJsonDocument::Compact);
-    qCDebug(DISCORD) << "→ SEND" << opCode << payload.length() << packet;
+    if(error == QLocalSocket::ServerNotFoundError) {
+        if(m_connectInProgress && std::exchange(m_loggedServerNotFound, true)) {
+            return;
+        }
 
-    MessageHeader header;
-    header.opcode = static_cast<uint32_t>(opCode);
-    header.length = static_cast<uint32_t>(payload.length());
+        qCDebug(DISCORD) << "Socket:" << socketErrorToString(error);
+        return;
+    }
 
-    m_stream.writeRawData(reinterpret_cast<const char*>(&header), sizeof(MessageHeader));
-    m_stream.writeRawData(payload.constData(), payload.size());
-    m_socket.flush();
+    qCWarning(DISCORD) << "Socket:" << socketErrorToString(error);
 }
 
 void DiscordIPCClient::setError(const QString& error)
 {
     m_error = error;
     qCWarning(DISCORD) << m_error;
+}
+
+bool DiscordIPCClient::hasCompleteMessage()
+{
+    if(m_socket.bytesAvailable() < static_cast<qint64>(sizeof(MessageHeader))) {
+        return false;
+    }
+
+    const QByteArray headerData = m_socket.peek(sizeof(MessageHeader));
+    if(headerData.size() < static_cast<qsizetype>(sizeof(MessageHeader))) {
+        return false;
+    }
+
+    MessageHeader header;
+    memcpy(&header, headerData.constData(), sizeof(MessageHeader));
+
+    return std::cmp_greater_equal(m_socket.bytesAvailable(), sizeof(MessageHeader) + header.length);
 }
 
 std::optional<DiscordMessage> DiscordIPCClient::readMessage()
@@ -424,21 +429,44 @@ std::optional<DiscordMessage> DiscordIPCClient::readMessage()
     return result;
 }
 
-bool DiscordIPCClient::hasCompleteMessage()
+void DiscordIPCClient::sendMessage(const QJsonObject& packet, int opCode)
 {
-    if(m_socket.bytesAvailable() < static_cast<qint64>(sizeof(MessageHeader))) {
-        return false;
-    }
-
-    const QByteArray headerData = m_socket.peek(sizeof(MessageHeader));
-    if(headerData.size() < static_cast<qsizetype>(sizeof(MessageHeader))) {
-        return false;
-    }
+    const QByteArray payload = QJsonDocument(packet).toJson(QJsonDocument::Compact);
+    qCDebug(DISCORD) << "→ SEND" << opCode << payload.length() << packet;
 
     MessageHeader header;
-    memcpy(&header, headerData.constData(), sizeof(MessageHeader));
+    header.opcode = static_cast<uint32_t>(opCode);
+    header.length = static_cast<uint32_t>(payload.length());
 
-    return std::cmp_greater_equal(m_socket.bytesAvailable(), sizeof(MessageHeader) + header.length);
+    m_stream.writeRawData(reinterpret_cast<const char*>(&header), sizeof(MessageHeader));
+    m_stream.writeRawData(payload.constData(), payload.size());
+    m_socket.flush();
+}
+
+bool DiscordIPCClient::processMessage(const DiscordMessage& message)
+{
+    const auto json = message.json();
+    if(json.isEmpty()) {
+        qCDebug(DISCORD) << "Received empty message";
+        return false;
+    }
+
+    if(json.value("cmd"_L1) == "ERROR"_L1) {
+        const int errorCode        = json.value("code"_L1).toInt();
+        const QString errorMessage = json.value("message"_L1).toString();
+
+        setError(u"ERROR %1: %2"_s.arg(errorCode).arg(errorMessage));
+
+        return false;
+    }
+
+    if(json.value("cmd"_L1) != "SET_ACTIVITY"_L1) {
+        setError(u"Unexpected response: %1"_s.arg(json.value("cmd"_L1).toString()));
+
+        return false;
+    }
+
+    return true;
 }
 
 QCoro::Task<bool> DiscordIPCClient::waitForReadyRead()
@@ -469,31 +497,5 @@ QCoro::Task<bool> DiscordIPCClient::startHandshake()
 
     setError(u"Handshake failed"_s);
     co_return false;
-}
-
-bool DiscordIPCClient::processMessage(const DiscordMessage& message)
-{
-    const auto json = message.json();
-    if(json.isEmpty()) {
-        qCDebug(DISCORD) << "Received empty message";
-        return false;
-    }
-
-    if(json.value("cmd"_L1) == "ERROR"_L1) {
-        const int errorCode        = json.value("code"_L1).toInt();
-        const QString errorMessage = json.value("message"_L1).toString();
-
-        setError(u"ERROR %1: %2"_s.arg(errorCode).arg(errorMessage));
-
-        return false;
-    }
-
-    if(json.value("cmd"_L1) != "SET_ACTIVITY"_L1) {
-        setError(u"Unexpected response: %1"_s.arg(json.value("cmd"_L1).toString()));
-
-        return false;
-    }
-
-    return true;
 }
 } // namespace Fooyin::Discord

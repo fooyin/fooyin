@@ -11,10 +11,7 @@ set(CPACK_PACKAGE_VERSION_MAJOR "${FOOYIN_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${FOOYIN_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${FOOYIN_VERSION_PATCH}")
 set(CPACK_PACKAGE_VERSION "${FOOYIN_VERSION}")
-set(CPACK_PACKAGE_RELOCATABLE
-    ON
-    CACHE BOOL "Build relocatable package"
-)
+set(CPACK_PACKAGE_RELOCATABLE ON CACHE BOOL "Build relocatable package")
 set(CPACK_PACKAGE_RELEASE 1)
 
 set(FOOYIN_PACKAGE_ARCH "${CMAKE_SYSTEM_PROCESSOR}")
@@ -38,7 +35,10 @@ endif()
 
 if(WIN32)
     set(CPACK_GENERATOR "NSIS" "ZIP")
-    set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-windows-${FOOYIN_PACKAGE_ARCH}")
+    set(CPACK_FOOYIN_WINDOWS_PACKAGE_FILE_NAME
+        "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-windows-${FOOYIN_PACKAGE_ARCH}"
+    )
+    set(CPACK_PACKAGE_FILE_NAME "${CPACK_FOOYIN_WINDOWS_PACKAGE_FILE_NAME}")
     set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/data/icons\\\\fooyin.ico")
     set(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}/data/icons\\\\fooyin.ico")
     set(CPACK_NSIS_URL_INFO_ABOUT "https://www.fooyin.org/")
@@ -81,6 +81,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
     qt6-qpa-plugins,
     zlib1g,
     libasound2,
+    libjack-jackd2-0,
     ffmpeg (>= 7:4.4),
     pipewire,
     libpulse0,
@@ -90,14 +91,75 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
     libarchive13,
     libsndfile1,
     libebur128-1,
+    libopusfile0,
+    libvorbisfile3,
     libsoundtouch1,
     libsoxr0"
 )
 
-set(CPACK_RPM_PACKAGE_LICENSE "GPLv3")
+set(CPACK_RPM_PACKAGE_LICENSE "GPL-3.0-or-later")
 set(CPACK_RPM_PACKAGE_GROUP "Applications/Multimedia")
 set(CPACK_RPM_PACKAGE_REQUIRES_POST "qt6-qtimageformats")
 
 set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_SOURCE_DIR}/cmake/FooyinPackageConfig.cmake")
 
+get_cmake_property(fooyin_package_components COMPONENTS)
+list(REMOVE_ITEM fooyin_package_components fooyin_development)
+set(CPACK_INSTALL_CMAKE_PROJECTS "")
+foreach(component IN LISTS fooyin_package_components)
+    list(APPEND CPACK_INSTALL_CMAKE_PROJECTS "${PROJECT_BINARY_DIR}" "${PROJECT_NAME}" "${component}" "/")
+endforeach()
+
 include(CPack)
+
+# The dev component includes the libraries, headers, and CMake exports needed by plugins
+if(
+    INSTALL_HEADERS
+    AND BUILD_SHARED_LIBS
+    AND (WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    AND NOT CMAKE_SKIP_INSTALL_RULES
+)
+    find_package(Git QUIET)
+    set(FOOYIN_SDK_COMMIT "unknown")
+    if(GIT_FOUND)
+        execute_process(
+            COMMAND "${GIT_EXECUTABLE}" rev-parse HEAD
+            WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+            OUTPUT_VARIABLE sdk_commit
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            RESULT_VARIABLE sdk_commit_result
+            ERROR_QUIET
+        )
+        if(sdk_commit_result EQUAL 0)
+            set(FOOYIN_SDK_COMMIT "${sdk_commit}")
+        endif()
+    endif()
+
+    include(FetchContent)
+    FetchContent_GetProperties(qcoro SOURCE_DIR FOOYIN_SDK_QCORO_SOURCE_DIR)
+
+    set(sdk_platform "linux-${FOOYIN_PACKAGE_ARCH}")
+    set(sdk_runtime_files "")
+    if(WIN32)
+        string(TOLOWER "${CMAKE_CXX_COMPILER_ID}" sdk_compiler)
+        set(sdk_platform "windows-${FOOYIN_PACKAGE_ARCH}-${sdk_compiler}")
+        set(sdk_runtime_files "$<TARGET_FILE:fooyin_core>;$<TARGET_FILE:fooyin_gui>;$<TARGET_FILE:fooyin_utils>")
+    endif()
+    set(FOOYIN_SDK_NAME
+        "fooyin-sdk-${FOOYIN_VERSION}-${sdk_platform}-qt${Qt6Core_VERSION_MAJOR}.${Qt6Core_VERSION_MINOR}"
+    )
+    configure_file(
+        "${CMAKE_CURRENT_LIST_DIR}/FooyinSdkPackage.cmake.in"
+        "${PROJECT_BINARY_DIR}/FooyinSdkPackage.cmake"
+        @ONLY
+    )
+    add_custom_target(
+        package_sdk
+        COMMAND
+            "${CMAKE_COMMAND}" -DSDK_CONFIG=$<CONFIG> "-DSDK_RUNTIME_FILES=${sdk_runtime_files}" -P
+            "${PROJECT_BINARY_DIR}/FooyinSdkPackage.cmake"
+        DEPENDS fooyin_core fooyin_gui fooyin_utils
+        COMMENT "Packaging the fooyin SDK"
+        VERBATIM
+    )
+endif()

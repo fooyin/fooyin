@@ -20,15 +20,19 @@
 #pragma once
 
 #include "tageditorfield.h"
+#include "tageditorpopulator.h"
 
 #include <core/track.h>
 
+#include <QBasicTimer>
 #include <QString>
+#include <QThread>
 #include <QWidget>
 
 namespace Fooyin {
 class ActionManager;
 class AutoHeaderView;
+class HeartDelegate;
 class MultiLineEditDelegate;
 class SettingsManager;
 class StarDelegate;
@@ -48,11 +52,13 @@ class TagEditorEditor : public QWidget
 public:
     explicit TagEditorEditor(ActionManager* actionManager, TagEditorFieldRegistry* registry, SettingsManager* settings,
                              QWidget* parent = nullptr);
+    ~TagEditorEditor() override;
 
     void setTracks(const TrackList& tracks);
     void setReadOnly(bool readOnly);
     [[nodiscard]] bool hasChanges() const;
     [[nodiscard]] bool hasOnlyStatChanges() const;
+    [[nodiscard]] Track::Stats changedStats() const;
     [[nodiscard]] TrackList tracks() const;
     TrackList applyChanges();
 
@@ -60,23 +66,35 @@ public:
 
     [[nodiscard]] AutoHeaderView* header() const;
 
+protected:
+    void timerEvent(QTimerEvent* event) override;
+
 Q_SIGNALS:
     void pendingChangesStateChanged();
     void autoFillValuesRequested();
 
 private:
     void configureDelegates(const std::vector<TagEditorField>& items);
+    void scheduleRefresh();
     void refreshModel();
+    void populationFinished(TagEditorDataPtr result);
+    void updateEditState();
     void updatePendingScopeState();
 
     TagEditorFieldRegistry* m_registry;
     SettingsManager* m_settings;
 
     bool m_readOnly;
+    bool m_loading;
     bool m_firstReset;
     TagEditorView* m_view;
     TagEditorModel* m_model;
     AutoHeaderView* m_header;
+
+    QThread m_populatorThread;
+    TagEditorPopulator m_populator;
+    QBasicTimer m_resetTimer;
+    uint64_t m_populationRequest;
 
     TrackList m_tracks;
 
@@ -84,6 +102,7 @@ private:
     TagEditorAutocompleteDelegate* m_autocompleteDelegate;
     MultiLineEditDelegate* m_multilineDelegate;
     StarDelegate* m_starDelegate;
+    HeartDelegate* m_heartDelegate;
 
     ToolButton* m_toolsButton;
     QAction* m_autoTrackNum;

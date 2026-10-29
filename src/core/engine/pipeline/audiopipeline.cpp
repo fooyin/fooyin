@@ -63,8 +63,9 @@ constexpr auto MaxMappedPositionRegressionMs = 250;
 constexpr auto SeekPrerollGraceMs            = std::chrono::milliseconds{500};
 constexpr auto CrossfadeFadeCurve            = Fooyin::Engine::FadeCurve::Sine;
 
+namespace Fooyin {
 namespace {
-int processFrameChunkLimit(const Fooyin::AudioFormat& outputFormat)
+int processFrameChunkLimit(const AudioFormat& outputFormat)
 {
     if(!outputFormat.isValid() || outputFormat.sampleRate() <= 0) {
         return MaxProcessChunkFrames;
@@ -72,14 +73,12 @@ int processFrameChunkLimit(const Fooyin::AudioFormat& outputFormat)
 
     const auto desiredFrames
         = (static_cast<uint64_t>(outputFormat.sampleRate()) * static_cast<uint64_t>(ProcessChunkTargetMs.count()))
-        / 1000ULL;
+        / Time::MsPerSecond;
 
-    return static_cast<int>(std::clamp<uint64_t>(desiredFrames, static_cast<uint64_t>(MinProcessChunkFrames),
-                                                 static_cast<uint64_t>(MaxProcessChunkFrames)));
+    return static_cast<int>(std::clamp<uint64_t>(desiredFrames, MinProcessChunkFrames, MaxProcessChunkFrames));
 }
 
-int inputFramesForOutputFrames(const Fooyin::AudioFormat& inputFormat, const Fooyin::AudioFormat& outputFormat,
-                               int outputFrames)
+int inputFramesForOutputFrames(const AudioFormat& inputFormat, const AudioFormat& outputFormat, int outputFrames)
 {
     if(outputFrames <= 0) {
         return 0;
@@ -99,10 +98,10 @@ int inputFramesForOutputFrames(const Fooyin::AudioFormat& inputFormat, const Foo
                              + static_cast<uint64_t>(outputRate) - 1ULL)
                           / static_cast<uint64_t>(outputRate);
 
-    return static_cast<int>(std::min<uint64_t>(scaled, static_cast<uint64_t>(std::numeric_limits<int>::max())));
+    return static_cast<int>(std::min<uint64_t>(scaled, std::numeric_limits<int>::max()));
 }
 
-void applyMasterVolume(Fooyin::ProcessingBufferList& chunks, double volume)
+void applyMasterVolume(ProcessingBufferList& chunks, double volume)
 {
     const double gain = std::clamp(volume, 0.0, 1.0);
     if(gain == 1.0) {
@@ -128,7 +127,7 @@ void applyMasterVolume(Fooyin::ProcessingBufferList& chunks, double volume)
     }
 }
 
-QString describeFormat(const Fooyin::AudioFormat& format)
+QString describeFormat(const AudioFormat& format)
 {
     if(!format.isValid()) {
         return u"invalid"_s;
@@ -160,7 +159,7 @@ bool shouldLogEveryN(std::atomic_uint32_t& counter, uint32_t interval)
     return value == 1 || (value % interval) == 0;
 }
 
-bool sameRateAndChannelCount(const Fooyin::AudioFormat& lhs, const Fooyin::AudioFormat& rhs)
+bool sameRateAndChannelCount(const AudioFormat& lhs, const AudioFormat& rhs)
 {
     if(!lhs.isValid() || !rhs.isValid()) {
         return false;
@@ -170,13 +169,13 @@ bool sameRateAndChannelCount(const Fooyin::AudioFormat& lhs, const Fooyin::Audio
 }
 } // namespace
 
-namespace Fooyin {
 AudioPipeline::AudioPipeline()
     : m_fadeEvents{MaxQueuedFadeEvents}
     , m_masterVolume{1.0}
     , m_dspRegistry{nullptr}
     , m_fadeEventDropCount{0}
     , m_analysisBus{nullptr}
+    , m_visualisationAnalysisBus{nullptr}
     , m_playbackState{PipelinePlaybackState::Stopped}
     , m_playing{false}
     , m_pauseDrainActive{false}
@@ -336,7 +335,8 @@ int AudioPipeline::masterPrerollFrames() const
         = std::chrono::milliseconds{static_cast<int64_t>(m_renderer.outputFormat().durationForFrames(latencyFrames))};
     const auto prerollMs = std::clamp(std::max(MasterPrerollMinMs, latencyMs), MasterPrerollMinMs, MasterPrerollMaxMs);
 
-    return std::max(0, static_cast<int>((prerollMs.count() * m_renderer.outputFormat().sampleRate()) / 1000));
+    return std::max(0, static_cast<int>((prerollMs.count() * m_renderer.outputFormat().sampleRate())
+                                        / static_cast<int64_t>(Time::MsPerSecond)));
 }
 
 void AudioPipeline::appendPendingOutput(const AudioBuffer& buffer)
@@ -413,10 +413,6 @@ void AudioPipeline::stop()
     m_threadHost.setRunning(false);
     m_threadHost.setShutdownRequested(false);
     m_threadHost.clearAudioThreadIdentity();
-
-    if(m_outputUnit.output() && m_outputUnit.output()->initialised()) {
-        m_outputUnit.output()->uninit();
-    }
 
     m_threadHost.clearCommands();
 
@@ -666,6 +662,9 @@ void AudioPipeline::uninit()
         }
 
         pipeline.m_outputUnit.setOutputInitialized(false);
+        pipeline.m_playing.store(false, std::memory_order_release);
+        pipeline.m_pauseDrainActive.store(false, std::memory_order_release);
+        pipeline.m_bufferingPaused.store(false, std::memory_order_release);
         pipeline.m_playbackState.store(PipelinePlaybackState::Stopped, std::memory_order_release);
         pipeline.m_renderPhase = RenderPhase::Stopped;
         pipeline.m_renderer.setOutputFormat({});
@@ -1091,6 +1090,11 @@ void AudioPipeline::setAnalysisBus(AudioAnalysisBus* analysisBus)
     m_analysisBus.store(analysisBus, std::memory_order_release);
 }
 
+void AudioPipeline::setVisualisationAnalysisBus(AudioAnalysisBus* analysisBus)
+{
+    m_visualisationAnalysisBus.store(analysisBus, std::memory_order_release);
+}
+
 AudioPipeline::PendingSignals AudioPipeline::drainPendingSignals()
 {
     PendingSignals pendingSignals;
@@ -1418,6 +1422,19 @@ AudioFormat AudioPipeline::outputFormat() const
     return formatFromSnapshot(snapshot);
 }
 
+AudioPipeline::RuntimeOutputInfo AudioPipeline::runtimeOutputInfo() const
+{
+    return onAudioThread([](const AudioPipeline& pipeline) {
+        RuntimeOutputInfo info;
+        info.format       = pipeline.m_renderer.outputFormat();
+        info.bufferFrames = pipeline.m_outputUnit.bufferFrames();
+        if(pipeline.m_outputUnit.output()) {
+            info.device = pipeline.m_outputUnit.output()->device();
+        }
+        return info;
+    });
+}
+
 QString AudioPipeline::lastInitError() const
 {
     const auto error = m_lastInitError.load(std::memory_order_acquire);
@@ -1455,6 +1472,11 @@ void AudioPipeline::audioThreadFunc()
             m_threadHost.waitFor(IdleWaitMs);
         }
     }
+
+    if(m_outputUnit.output() && m_outputUnit.output()->initialised()) {
+        m_outputUnit.output()->uninit();
+    }
+    m_outputUnit.setOutputInitialized(false);
 
     m_threadHost.clearAudioThreadIdentity();
 }
@@ -1584,7 +1606,15 @@ void AudioPipeline::processAudio()
     const int desiredBufferedFrames = std::max({0, freeFrames, prerollFrames});
     const int processChunkFrames    = processFrameChunkLimit(m_renderer.outputFormat());
     const int initialQueuedFrames   = pendingOutputFrames();
-    const int initialDeficitFrames  = std::max(1, desiredBufferedFrames - initialQueuedFrames);
+    // Analysis runs after the master DSP chain, so use the current output queue rather than the previous
+    // cycle's playback delay, which may include DSP latency
+    const int backendQueuedFrames = backendQueuedFramesForState(stateWithWrites(state, framesWrittenThisCycle));
+    const auto queuedFramesBeforeRender
+        = static_cast<uint64_t>(backendQueuedFrames) + static_cast<uint64_t>(initialQueuedFrames);
+    const auto initialPlaybackDelay = std::chrono::nanoseconds{
+        static_cast<int64_t>((queuedFramesBeforeRender * Time::NsPerSecond)
+                             / static_cast<uint64_t>(m_renderer.outputFormat().sampleRate()))};
+    const int initialDeficitFrames = std::max(1, desiredBufferedFrames - initialQueuedFrames);
     const int topUpPullBudget
         = std::max(1, (initialDeficitFrames + processChunkFrames - 1) / std::max(1, processChunkFrames));
     const int maxTopUpPulls = std::clamp(topUpPullBudget, MasterTopUpMinPulls, MasterTopUpMaxPulls);
@@ -1620,9 +1650,18 @@ void AudioPipeline::processAudio()
             break;
         }
 
+        const int newlyQueuedFrames = std::max(0, queuedFrames - initialQueuedFrames);
+        std::chrono::nanoseconds presentationDelay{initialPlaybackDelay};
+        if(newlyQueuedFrames > 0 && m_renderer.outputFormat().sampleRate() > 0) {
+            const auto queuedNs = (static_cast<uint64_t>(newlyQueuedFrames) * Time::NsPerSecond)
+                                / static_cast<uint64_t>(m_renderer.outputFormat().sampleRate());
+            presentationDelay += std::chrono::nanoseconds{queuedNs};
+        }
+
         const auto pullResult
             = m_renderer.render(framesToProcess, m_outputFader, m_outputUnit.outputSupportsVolume(), m_masterVolume,
-                                m_analysisBus.load(std::memory_order_acquire), m_timelineUnit.playbackDelayMs());
+                                m_visualisationAnalysisBus.load(std::memory_order_acquire),
+                                m_analysisBus.load(std::memory_order_acquire), presentationDelay);
         const int framesRead = pullResult.framesRead;
 
         if(framesRead <= 0) {
@@ -1770,13 +1809,16 @@ void AudioPipeline::updatePlaybackDelay(const OutputState& outputState, const Po
             = std::clamp(backendQueuedFrames + pendingQueuedFrames, 0, std::numeric_limits<int>::max());
         const auto queuedMs = m_renderer.outputFormat().durationForFrames(totalQueuedFrames);
         const uint64_t deviceDelayMs
-            = outputState.delay > 0.0 ? static_cast<uint64_t>(std::llround(outputState.delay * 1000.0)) : 0;
+            = outputState.delay > 0.0
+                ? static_cast<uint64_t>(std::llround(outputState.delay * static_cast<double>(Time::MsPerSecond)))
+                : 0;
 
         // Some outputs provide explicit device delay, others only queued frames.
         outputDelayMs = std::max(queuedMs, deviceDelayMs);
 
         const double totalLatencySeconds = m_renderer.totalLatencySeconds();
-        transitionDspDelayMs             = static_cast<uint64_t>(std::llround(totalLatencySeconds * 1000.0));
+        transitionDspDelayMs
+            = static_cast<uint64_t>(std::llround(totalLatencySeconds * static_cast<double>(Time::MsPerSecond)));
 
         if(basis == PositionBasis::DecodeHead) {
             dspDelayMs = transitionDspDelayMs;
@@ -1966,8 +2008,8 @@ bool AudioPipeline::handleMixerUnderrun(const OutputState& state, int framesWrit
                                 << "masterChainStarved=" << masterChainStarved
                                 << "streamCount=" << m_renderer.streamCount()
                                 << "queuedFrames=" << outputStateWithWrites.queuedFrames
-                                << "freeFrames=" << outputStateWithWrites.freeFrames
-                                << "delayMs=" << std::llround(outputStateWithWrites.delay * 1000.0)
+                                << "freeFrames=" << outputStateWithWrites.freeFrames << "delayMs="
+                                << std::llround(outputStateWithWrites.delay * static_cast<double>(Time::MsPerSecond))
                                 << "pendingFrames=" << pendingOutputFrames();
         }
 
@@ -1977,8 +2019,9 @@ bool AudioPipeline::handleMixerUnderrun(const OutputState& state, int framesWrit
                 qCWarning(PIPELINE) << "Output underrun during active transition:" << "orphanId="
                                     << m_orphanTracker.streamId()
                                     << "queuedFrames=" << outputStateWithWrites.queuedFrames
-                                    << "freeFrames=" << outputStateWithWrites.freeFrames
-                                    << "delayMs=" << std::llround(outputStateWithWrites.delay * 1000.0);
+                                    << "freeFrames=" << outputStateWithWrites.freeFrames << "delayMs="
+                                    << std::llround(outputStateWithWrites.delay
+                                                    * static_cast<double>(Time::MsPerSecond));
             }
         }
         else {
@@ -1991,7 +2034,7 @@ bool AudioPipeline::handleMixerUnderrun(const OutputState& state, int framesWrit
             const int concealFrameBudget
                 = std::max(1, static_cast<int>((static_cast<int64_t>(m_renderer.outputFormat().sampleRate())
                                                 * UnderrunConcealMaxMs.count())
-                                               / 1000));
+                                               / static_cast<int64_t>(Time::MsPerSecond)));
             const int concealFrames  = std::min(outputStateWithWrites.freeFrames, concealFrameBudget);
             const int writtenConceal = writeUnderrunConcealFrames(concealFrames);
 
@@ -2435,7 +2478,8 @@ void AudioPipeline::updatePlaybackState(const OutputState& state, int framesWrit
        && m_renderer.outputFormat().sampleRate() > 0) {
         const int outputRate = m_renderer.outputFormat().sampleRate();
         const auto currentOutputDurMs
-            = (static_cast<double>(cycleSegment.outputFrames) * 1000.0) / static_cast<double>(outputRate);
+            = (static_cast<double>(cycleSegment.outputFrames) * static_cast<double>(Time::MsPerSecond))
+            / static_cast<double>(outputRate);
         const auto currentSourceDurMs = static_cast<double>(cycleSegment.endMs - cycleSegment.startMs);
 
         double observedScale{0.0};
@@ -2446,7 +2490,8 @@ void AudioPipeline::updatePlaybackState(const OutputState& state, int framesWrit
             const int prevFrames       = m_timelineUnit.prevMasterOutputFrames();
 
             if(prevFrames > 0 && cycleSegment.startMs >= prevStartMs) {
-                const auto outputDeltaMs = (static_cast<double>(prevFrames) * 1000.0) / static_cast<double>(outputRate);
+                const auto outputDeltaMs = (static_cast<double>(prevFrames) * static_cast<double>(Time::MsPerSecond))
+                                         / static_cast<double>(outputRate);
                 const auto sourceDeltaMs = static_cast<double>(cycleSegment.startMs - prevStartMs);
 
                 if(outputDeltaMs > 0.0 && sourceDeltaMs > 0.0) {

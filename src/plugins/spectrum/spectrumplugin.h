@@ -30,7 +30,7 @@ class SpectrumPlugin : public QObject,
                        public GuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "spectrum.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "spectrum.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
@@ -38,9 +38,8 @@ public:
     void initialise(const GuiPluginContext& context) override;
 
 private:
-    PlayerController* m_playerController{nullptr};
-    EngineController* m_engine{nullptr};
-    SettingsManager* m_settings{nullptr};
-    WidgetProvider* m_widgetProvider{nullptr};
+    EngineController* m_engine;
+    SettingsManager* m_settings;
+    WidgetProvider* m_widgetProvider;
 };
 } // namespace Fooyin::Spectrum

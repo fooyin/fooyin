@@ -25,8 +25,9 @@
 #include <QIcon>
 #include <QObject>
 
+#include <deque>
+#include <map>
 #include <memory>
-#include <queue>
 #include <set>
 #include <unordered_map>
 
@@ -47,6 +48,9 @@ public:
     [[nodiscard]] QIcon icon(const RadioStation& station, int size) const;
     void requestIcon(const RadioStation& station, int size);
 
+    void setVisibleIcons(QObject* owner, const RadioStationList& stations, int size);
+    void clearVisibleIcons(QObject* owner);
+
 Q_SIGNALS:
     void iconLoaded(const QString& favicon);
 
@@ -54,6 +58,14 @@ private:
     void startNextRequests();
     void handleReply(QNetworkReply* reply);
     void finishFailedReply(QNetworkReply* reply, const QString& favicon);
+
+    void queueIcon(const RadioStation& station, int size, bool unscoped);
+    void pruneQueuedRequests();
+    void prioritiseQueuedRequests();
+    void rebuildPinnedIcons();
+    void pinLoadedIcon(const QString& key, const QIcon& icon);
+    [[nodiscard]] bool isVisible(const QString& key) const;
+    void markFailed(const QString& favicon);
 
     struct IconRequest
     {
@@ -64,10 +76,13 @@ private:
     std::shared_ptr<NetworkAccessManager> m_network;
 
     QCache<QString, QIcon> m_icons;
-    std::set<QString> m_failed;
+    QCache<QString, bool> m_failed;
     std::set<QString> m_pending;
-    std::queue<IconRequest> m_queue;
+    std::set<QString> m_unscopedPending;
+    std::deque<IconRequest> m_queue;
     std::unordered_map<QNetworkReply*, IconRequest> m_replies;
+    std::unordered_map<QObject*, std::set<QString>> m_visibleIconKeys;
+    std::map<QString, QIcon> m_pinnedIcons;
 };
 } // namespace RadioBrowser
 } // namespace Fooyin

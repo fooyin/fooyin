@@ -186,6 +186,7 @@ private:
 
     bool m_savedSearch;
     bool m_showFilterButtonText;
+    uint64_t m_tagPopulationGeneration;
 };
 } // namespace RadioBrowser
 } // namespace Fooyin

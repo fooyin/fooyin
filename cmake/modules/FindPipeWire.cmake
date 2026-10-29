@@ -1,4 +1,4 @@
-# cmake-format: off
+# gersemi: off
 # .rst: FindPipeWire
 # -------
 #
@@ -49,7 +49,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # =============================================================================
-# cmake-format: on
+# gersemi: on
 
 # Use pkg-config to get the directories and then use these values in the FIND_PATH() and FIND_LIBRARY() calls
 find_package(PkgConfig QUIET)
@@ -66,17 +66,8 @@ find_path(
     HINTS ${PKG_PIPEWIRE_INCLUDE_DIRS} ${PKG_PIPEWIRE_INCLUDE_DIRS}/pipewire-0.3
 )
 
-find_path(
-    SPA_INCLUDE_DIRS
-    NAMES spa/param/props.h
-    HINTS ${PKG_SPA_INCLUDE_DIRS} ${PKG_SPA_INCLUDE_DIRS}/spa-0.2
-)
-
-find_library(
-    PIPEWIRE_LIBRARIES
-    NAMES pipewire-0.3
-    HINTS ${PKG_PIPEWIRE_LIBRARY_DIRS}
-)
+find_path(SPA_INCLUDE_DIRS NAMES spa/param/props.h HINTS ${PKG_SPA_INCLUDE_DIRS} ${PKG_SPA_INCLUDE_DIRS}/spa-0.2)
+find_library(PIPEWIRE_LIBRARIES NAMES pipewire-0.3 HINTS ${PKG_PIPEWIRE_LIBRARY_DIRS})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
@@ -90,9 +81,10 @@ if(PIPEWIRE_FOUND AND NOT TARGET PipeWire::PipeWire)
     add_library(PipeWire::PipeWire UNKNOWN IMPORTED)
     set_target_properties(
         PipeWire::PipeWire
-        PROPERTIES IMPORTED_LOCATION "${PIPEWIRE_LIBRARIES}"
-                   INTERFACE_COMPILE_OPTIONS "${PIPEWIRE_COMPILE_FLAGS}"
-                   INTERFACE_INCLUDE_DIRECTORIES "${PIPEWIRE_INCLUDE_DIRS};${SPA_INCLUDE_DIRS}"
+        PROPERTIES
+            IMPORTED_LOCATION "${PIPEWIRE_LIBRARIES}"
+            INTERFACE_COMPILE_OPTIONS "${PIPEWIRE_COMPILE_FLAGS}"
+            INTERFACE_INCLUDE_DIRECTORIES "${PIPEWIRE_INCLUDE_DIRS};${SPA_INCLUDE_DIRS}"
     )
 endif()
 
@@ -100,7 +92,6 @@ mark_as_advanced(PIPEWIRE_LIBRARIES PIPEWIRE_INCLUDE_DIRS)
 
 include(FeatureSummary)
 set_package_properties(
-    PipeWire PROPERTIES
-    URL "https://www.pipewire.org"
-    DESCRIPTION "PipeWire - multimedia processing"
+    PipeWire
+    PROPERTIES URL "https://www.pipewire.org" DESCRIPTION "PipeWire - multimedia processing"
 )

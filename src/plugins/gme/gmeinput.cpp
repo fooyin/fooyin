@@ -184,6 +184,7 @@ void MusicEmuDeleter::operator()(Music_Emu* emu) const
 
 GmeDecoder::GmeDecoder()
     : m_repeatTrack{false}
+    , m_allowInfiniteRepeat{true}
     , m_shouldFade{false}
     , m_subsong{0}
     , m_duration{0}
@@ -204,6 +205,11 @@ bool GmeDecoder::isSeekable() const
     return true;
 }
 
+AudioDecoder::RepeatHandling GmeDecoder::repeatHandling() const
+{
+    return RepeatHandling::DecoderLoop;
+}
+
 bool GmeDecoder::trackHasChanged() const
 {
     return m_changedTrack.isValid();
@@ -216,10 +222,11 @@ Track GmeDecoder::changedTrack() const
 
 std::optional<AudioFormat> GmeDecoder::init(const AudioSource& source, const Track& track, DecoderOptions options)
 {
-    m_repeatTrack = !(options & (NoLooping | NoInfiniteLooping)) && isRepeatingTrack();
-    m_shouldFade  = false;
-    m_duration    = 0;
-    m_fadeLength  = 0;
+    m_allowInfiniteRepeat = !(options & (NoLooping | NoInfiniteLooping));
+    m_repeatTrack         = m_allowInfiniteRepeat && isRepeatingTrack();
+    m_shouldFade          = false;
+    m_duration            = 0;
+    m_fadeLength          = 0;
 
     const QByteArray data = source.device->readAll();
     if(data.isEmpty()) {
@@ -258,6 +265,23 @@ std::optional<AudioFormat> GmeDecoder::init(const AudioSource& source, const Tra
 
     gme_start_track(m_emu.get(), m_subsong);
 
+    applyRepeatPolicy();
+
+    return m_format;
+}
+
+void GmeDecoder::playbackHintsChanged(PlaybackHints /*hints*/)
+{
+    m_repeatTrack = m_allowInfiniteRepeat && isRepeatingTrack();
+    applyRepeatPolicy();
+}
+
+void GmeDecoder::applyRepeatPolicy()
+{
+    if(!m_emu) {
+        return;
+    }
+
     if(m_repeatTrack) {
         gme_set_fade(m_emu.get(), -1);
     }
@@ -269,8 +293,6 @@ std::optional<AudioFormat> GmeDecoder::init(const AudioSource& source, const Tra
         gme_set_fade(m_emu.get(), std::max(m_duration - m_fadeLength, 0));
 #endif
     }
-
-    return m_format;
 }
 
 void GmeDecoder::start()

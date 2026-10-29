@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "sdlaudiosubsystem.h"
+
 #include <core/engine/audiooutput.h>
 
 #include <SDL2/SDL_audio.h>
@@ -26,11 +28,14 @@
 
 #include <QString>
 
+#include <memory>
+#include <optional>
+
 namespace Fooyin::Sdl {
 class SdlOutput : public AudioOutput
 {
 public:
-    SdlOutput();
+    explicit SdlOutput(std::shared_ptr<SdlAudioSubsystem> audioSubsystem);
 
     bool init(const AudioFormat& format) override;
     void uninit() override;
@@ -56,6 +61,8 @@ private:
     void checkEvents();
     [[nodiscard]] int queuedFrames() const;
 
+    std::shared_ptr<SdlAudioSubsystem> m_audioSubsystem;
+    std::optional<SdlAudioLease> m_audioLease;
     AudioFormat m_format;
     int m_deviceBufferFrames;
     int m_targetBufferFrames;

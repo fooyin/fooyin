@@ -30,57 +30,68 @@
 #include <QAction>
 #include <QDesktopServices>
 #include <QIcon>
+#include <QMainWindow>
 #include <QUrl>
-
-using namespace Qt::StringLiterals;
-
-namespace {
-void showAboutDialog()
-{
-    auto* aboutDialog = new Fooyin::AboutDialog();
-    aboutDialog->setAttribute(Qt::WA_DeleteOnClose);
-    aboutDialog->show();
-}
-} // namespace
 
 namespace Fooyin {
 HelpMenu::HelpMenu(ActionManager* actionManager, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
+    , m_aboutAction{new QAction(tr("&About"), this)}
 {
     auto* helpMenu = m_actionManager->actionContainer(Constants::Menus::Help);
 
     auto* quickStart = new QAction(tr("&Quick start"), this);
     quickStart->setStatusTip(tr("Open the quick start guide"));
-    QObject::connect(quickStart, &QAction::triggered, this, []() {
-        QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/quick-start/quick-start.html"_s);
-    });
+    QObject::connect(quickStart, &QAction::triggered, this,
+                     []() { QDesktopServices::openUrl(QString::fromLatin1(Constants::Urls::QuickStart)); });
 
     auto* scripting = new QAction(tr("&Scripting help"), this);
     scripting->setStatusTip(tr("Open the scripting documentation"));
     QObject::connect(scripting, &QAction::triggered, this,
-                     []() { QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/scripting/basics.html"_s); });
+                     []() { QDesktopServices::openUrl(QString::fromLatin1(Constants::Urls::Scripting)); });
 
     auto* searching = new QAction(tr("S&earching help"), this);
     searching->setStatusTip(tr("Open the search documentation"));
     QObject::connect(searching, &QAction::triggered, this,
-                     []() { QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/searching/basics.html"_s); });
+                     []() { QDesktopServices::openUrl(QString::fromLatin1(Constants::Urls::Searching)); });
 
     auto* faq = new QAction(tr("&Frequently asked questions"), this);
     faq->setStatusTip(tr("Open the FAQ"));
     QObject::connect(faq, &QAction::triggered, this,
-                     []() { QDesktopServices::openUrl(u"https://www.fooyin.org/faq"_s); });
+                     []() { QDesktopServices::openUrl(QString::fromLatin1(Constants::Urls::Faq)); });
 
-    auto* about = new QAction(tr("&About"), this);
-    Gui::setThemeIcon(about, Constants::Icons::Fooyin);
-    about->setStatusTip(tr("Open the about dialog"));
-    QObject::connect(about, &QAction::triggered, this, showAboutDialog);
+    m_aboutAction->setIcon(Gui::applicationIcon());
+    m_aboutAction->setStatusTip(tr("Open the about dialog"));
+    QObject::connect(m_aboutAction, &QAction::triggered, this, &HelpMenu::showAboutDialog);
 
     helpMenu->addAction(quickStart);
     helpMenu->addAction(scripting);
     helpMenu->addAction(searching);
     helpMenu->addAction(faq);
-    helpMenu->addAction(about);
+    helpMenu->addAction(m_aboutAction);
+}
+
+void HelpMenu::refreshApplicationIcon()
+{
+    m_aboutAction->setIcon(Gui::applicationIcon());
+    if(m_aboutDialog) {
+        m_aboutDialog->refreshApplicationIcon();
+    }
+}
+
+void HelpMenu::showAboutDialog()
+{
+    if(m_aboutDialog) {
+        m_aboutDialog->show();
+        m_aboutDialog->raise();
+        m_aboutDialog->activateWindow();
+        return;
+    }
+
+    m_aboutDialog = new AboutDialog(Utils::getMainWindow());
+    m_aboutDialog->setAttribute(Qt::WA_DeleteOnClose);
+    m_aboutDialog->show();
 }
 } // namespace Fooyin
 

@@ -17,12 +17,13 @@
  *
  */
 
+#include "testutils.h"
+
 #include <core/playlist/playlisthandler.h>
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
 #include <core/internalcoresettings.h>
-#include <core/library/musiclibrary.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/database/dbconnectionpool.h>
@@ -38,7 +39,7 @@
 
 #include <gtest/gtest.h>
 
-#include <optional>
+#include <ranges>
 
 using namespace Qt::StringLiterals;
 
@@ -103,151 +104,6 @@ Track makeTrack(const QString& path, int id)
     track.generateHash();
     return track;
 }
-
-class StubMusicLibrary : public MusicLibrary
-{
-public:
-    explicit StubMusicLibrary(QObject* parent = nullptr)
-        : MusicLibrary(parent)
-    { }
-
-    void setTracks(TrackList tracks)
-    {
-        m_tracks = std::move(tracks);
-    }
-
-    void emitTracksLoaded()
-    {
-        Q_EMIT tracksLoaded(m_tracks);
-    }
-
-    bool hasLibrary() const override
-    {
-        return false;
-    }
-
-    std::optional<LibraryInfo> libraryInfo(int) const override
-    {
-        return std::nullopt;
-    }
-
-    std::optional<LibraryInfo> libraryForPath(const QString&) const override
-    {
-        return std::nullopt;
-    }
-
-    void loadAllTracks() override { }
-    bool isEmpty() const override
-    {
-        return m_tracks.empty();
-    }
-    void refreshAll() override { }
-    void rescanAll() override { }
-
-    ScanRequest refresh(const LibraryInfo&) override
-    {
-        return {.type = ScanRequest::Library, .cancel = []() { }};
-    }
-
-    ScanRequest rescan(const LibraryInfo&) override
-    {
-        return {.type = ScanRequest::Library, .cancel = []() { }};
-    }
-
-    void cancelScan(int) override { }
-
-    ScanRequest scanTracks(const TrackList&) override
-    {
-        return {.type = ScanRequest::Tracks, .cancel = []() { }};
-    }
-
-    ScanRequest scanModifiedTracks(const TrackList&) override
-    {
-        return {.type = ScanRequest::Tracks, .cancel = []() { }};
-    }
-
-    ScanRequest scanFiles(const QList<QUrl>&) override
-    {
-        return {.type = ScanRequest::Files, .cancel = []() { }};
-    }
-
-    ScanRequest loadPlaylist(const QList<QUrl>&) override
-    {
-        return {.type = ScanRequest::Playlist, .cancel = []() { }};
-    }
-
-    TrackList tracks() const override
-    {
-        return m_tracks;
-    }
-
-    TrackList libraryTracks() const override
-    {
-        return m_tracks;
-    }
-
-    Track trackForId(int id) const override
-    {
-        for(const auto& track : m_tracks) {
-            if(track.id() == id) {
-                return track;
-            }
-        }
-        return {};
-    }
-
-    TrackList tracksForIds(const TrackIds& ids) const override
-    {
-        TrackList result;
-        result.reserve(ids.size());
-        for(const int id : ids) {
-            if(const Track track = trackForId(id); track.isValid()) {
-                result.emplace_back(track);
-            }
-        }
-        return result;
-    }
-
-    std::shared_ptr<TrackMetadataStore> metadataStore() const override
-    {
-        return {};
-    }
-
-    void updateTrack(const Track&) override { }
-    void updateTracks(const TrackList&) override { }
-    void updateTrackMetadata(const TrackList&) override { }
-
-    WriteRequest writeTrackMetadata(const TrackList&) override
-    {
-        return {};
-    }
-
-    WriteRequest writeTrackCovers(const TrackCoverData&) override
-    {
-        return {};
-    }
-
-    PendingTrackCoverProvider* pendingTrackCoverProvider() const override
-    {
-        return nullptr;
-    }
-
-    void updateTrackStats(const TrackList&) override { }
-    void updateTrackStats(const Track&) override { }
-
-    WriteRequest removeUnavailbleTracks() override
-    {
-        return {};
-    }
-
-    WriteRequest deleteTracks(const TrackList&) override
-    {
-        return {};
-    }
-
-private:
-    TrackList m_tracks;
-};
 
 struct PlaylistHandlerHarness
 {
@@ -401,6 +257,65 @@ TEST(PlaylistHandlerTest, RestoreRemovedPlaylistReaddsSameObjectWithFreshDatabas
     EXPECT_EQ(harness.handler.playlistById(playlistId), restored);
 }
 
+TEST(PlaylistHandlerTest, LockedPlaylistRejectsContentChangesAndPersistsState)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_locked_test.ini"_s};
+    registerCoreSettings(settings);
+    PlaylistHandlerHarness harness{settings};
+    ASSERT_TRUE(harness.dbInitialised);
+
+    const Track original = makeTrack(u"/tmp/original.flac"_s, 1);
+    auto* playlist       = harness.handler.createPlaylist(u"Locked"_s, {original});
+    ASSERT_NE(playlist, nullptr);
+
+    harness.handler.setPlaylistLocked(playlist->id(), true);
+    EXPECT_TRUE(playlist->isLocked());
+    EXPECT_TRUE(playlist->hasExtraProperty(u"core/locked"_s));
+
+    auto* restoredProperties = harness.handler.createNewPlaylist(u"Restored properties"_s);
+    restoredProperties->storeExtraProperties(playlist->serialiseExtraProperties());
+    EXPECT_TRUE(restoredProperties->isLocked());
+
+    harness.handler.appendToPlaylist(playlist->id(), {makeTrack(u"/tmp/appended.flac"_s, 2)});
+    harness.handler.replacePlaylistTracks(playlist->id(), {makeTrack(u"/tmp/replaced.flac"_s, 3)});
+    harness.handler.createPlaylist(playlist->name(), {makeTrack(u"/tmp/recreated.flac"_s, 4)});
+    harness.handler.removePlaylistTracks(playlist->id(), {0});
+    harness.handler.clearPlaylistTracks(playlist->id());
+
+    ASSERT_EQ(playlist->trackCount(), 1);
+    EXPECT_EQ(playlist->track(0)->filepath(), original.filepath());
+
+    harness.handler.setPlaylistLocked(playlist->id(), false);
+    EXPECT_FALSE(playlist->isLocked());
+    EXPECT_FALSE(playlist->hasExtraProperty(u"core/locked"_s));
+
+    harness.handler.clearPlaylistTracks(playlist->id());
+    EXPECT_EQ(playlist->trackCount(), 0);
+}
+
+TEST(PlaylistHandlerTest, AutoPlaylistRejectsAppendedTracks)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_auto_append_test.ini"_s};
+    registerCoreSettings(settings);
+    PlaylistHandlerHarness harness{settings};
+    ASSERT_TRUE(harness.dbInitialised);
+
+    const Track libraryTrack = makeTrack(u"/music/library.flac"_s, 1);
+    harness.library.setTracks({libraryTrack});
+    harness.library.setLibraryTracks({libraryTrack});
+
+    auto* playlist = harness.handler.createNewAutoPlaylist(u"Read only"_s, u"title PRESENT"_s);
+    ASSERT_NE(playlist, nullptr);
+    ASSERT_EQ(playlist->trackCount(), 1);
+
+    harness.handler.appendToPlaylist(playlist->id(), {makeTrack(u"/music/appended.flac"_s, 2)});
+
+    ASSERT_EQ(playlist->trackCount(), 1);
+    EXPECT_EQ(playlist->tracks().front().filepath(), libraryTrack.filepath());
+}
+
 TEST(PlaylistHandlerTest, TracksMetadataChangedUpdatesPlaylistTrackWhenFilepathChanges)
 {
     ensureCoreApplication();
@@ -469,5 +384,65 @@ TEST(PlaylistHandlerTest, TracksMetadataChangedUpdatesAutoPlaylistTrackCustomTag
     ASSERT_EQ(changeSet.updatedEntries.size(), 1);
     EXPECT_EQ(playlistTrack->track.metaValue(u"custom"_s), u"After"_s);
     EXPECT_EQ(changeSet.updatedEntries.front(), playlistTrack->entryId);
+}
+
+TEST(PlaylistHandlerTest, AutoPlaylistsOnlyContainLibraryTracks)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_auto_library_tracks_test.ini"_s};
+    registerCoreSettings(settings);
+    PlaylistHandlerHarness harness{settings};
+    ASSERT_TRUE(harness.dbInitialised);
+
+    const Track libraryTrack = makeTrack(u"/music/track.flac"_s, 1);
+    const Track portalTrack  = makeTrack(u"/run/user/1000/doc/portal/track.flac"_s, 2);
+    harness.library.setTracks({libraryTrack, portalTrack});
+    harness.library.setLibraryTracks({libraryTrack});
+
+    auto* playlist = harness.handler.createNewAutoPlaylist(u"Library only"_s, u"title PRESENT"_s);
+    ASSERT_NE(playlist, nullptr);
+    ASSERT_EQ(playlist->trackCount(), 1);
+    EXPECT_EQ(playlist->tracks().front().filepath(), libraryTrack.filepath());
+
+    harness.library.emitTracksLoaded();
+    ASSERT_EQ(playlist->trackCount(), 1);
+    EXPECT_EQ(playlist->tracks().front().filepath(), libraryTrack.filepath());
+
+    const Track addedLibraryTrack = makeTrack(u"/music/added.flac"_s, 3);
+    harness.library.setTracks({libraryTrack, portalTrack, addedLibraryTrack});
+    harness.library.setLibraryTracks({libraryTrack, addedLibraryTrack});
+    Q_EMIT harness.library.tracksAdded({addedLibraryTrack});
+
+    ASSERT_EQ(playlist->trackCount(), 2);
+    EXPECT_TRUE(std::ranges::any_of(playlist->tracks(), [&libraryTrack](const Track& track) {
+        return track.filepath() == libraryTrack.filepath();
+    }));
+    EXPECT_TRUE(std::ranges::any_of(playlist->tracks(), [&addedLibraryTrack](const Track& track) {
+        return track.filepath() == addedLibraryTrack.filepath();
+    }));
+}
+
+TEST(PlaylistHandlerTest, DeletedTracksAreRemovedFromAllPlaylists)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_track_delete_test.ini"_s};
+    registerCoreSettings(settings);
+    PlaylistHandlerHarness harness{settings};
+    ASSERT_TRUE(harness.dbInitialised);
+
+    const Track deletedTrack  = makeTrack(u"/tmp/deleted.flac"_s, 1);
+    const Track retainedTrack = makeTrack(u"/tmp/retained.flac"_s, 2);
+
+    auto* firstPlaylist  = harness.handler.createPlaylist(u"First"_s, {deletedTrack, retainedTrack, deletedTrack});
+    auto* secondPlaylist = harness.handler.createPlaylist(u"Second"_s, {retainedTrack, deletedTrack});
+    ASSERT_NE(firstPlaylist, nullptr);
+    ASSERT_NE(secondPlaylist, nullptr);
+
+    harness.handler.handleTracksDeleted({deletedTrack});
+
+    ASSERT_EQ(firstPlaylist->trackCount(), 1);
+    EXPECT_EQ(firstPlaylist->tracks().front().identityKey(), retainedTrack.identityKey());
+    ASSERT_EQ(secondPlaylist->trackCount(), 1);
+    EXPECT_EQ(secondPlaylist->tracks().front().identityKey(), retainedTrack.identityKey());
 }
 } // namespace Fooyin::Testing

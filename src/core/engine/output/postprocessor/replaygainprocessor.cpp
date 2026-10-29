@@ -31,18 +31,10 @@ namespace Fooyin {
 ReplayGainProcessor::ReplayGainProcessor(std::shared_ptr<const SharedSettings> settings)
     : m_settings{std::move(settings)}
     , m_settingsEpoch{0}
-    , m_mode{Mode::Off}
+    , m_mode{SelectionMode::Off}
     , m_processing{Engine::NoProcessing}
     , m_rgPreampDb{0.0}
     , m_nonRgPreampDb{0.0}
-    , m_trackGainDb{0.0}
-    , m_albumGainDb{0.0}
-    , m_trackPeak{1.0}
-    , m_albumPeak{1.0}
-    , m_haveTrackGain{false}
-    , m_haveAlbumGain{false}
-    , m_haveTrackPeak{false}
-    , m_haveAlbumPeak{false}
     , m_linearGain{1.0}
     , m_active{false}
 { }
@@ -72,19 +64,9 @@ void ReplayGainProcessor::refreshSharedSettings(const SettingsManager& settings,
     });
 }
 
-void ReplayGainProcessor::init(const Track& track, const AudioFormat& format)
+void ReplayGainProcessor::init(const Track& track, const AudioFormat& /*format*/)
 {
-    m_format = format;
-
-    m_haveTrackGain = track.hasTrackGain();
-    m_haveAlbumGain = track.hasAlbumGain();
-    m_haveTrackPeak = track.hasTrackPeak();
-    m_haveAlbumPeak = track.hasAlbumPeak();
-
-    m_trackGainDb = m_haveTrackGain ? static_cast<double>(track.rgTrackGain()) : 0.0;
-    m_albumGainDb = m_haveAlbumGain ? static_cast<double>(track.rgAlbumGain()) : 0.0;
-    m_trackPeak   = m_haveTrackPeak ? static_cast<double>(track.rgTrackPeak()) : 1.0;
-    m_albumPeak   = m_haveAlbumPeak ? static_cast<double>(track.rgAlbumPeak()) : 1.0;
+    m_track = track;
 
     refreshSettings();
     updateGain();
@@ -119,9 +101,9 @@ void ReplayGainProcessor::reset() { }
 void ReplayGainProcessor::refreshSettings()
 {
     if(!m_settings) {
-        if(m_mode != Mode::Off || m_processing != Engine::NoProcessing || m_rgPreampDb != 0.0
+        if(m_mode != SelectionMode::Off || m_processing != Engine::NoProcessing || m_rgPreampDb != 0.0
            || m_nonRgPreampDb != 0.0) {
-            m_mode          = Mode::Off;
+            m_mode          = SelectionMode::Off;
             m_processing    = Engine::NoProcessing;
             m_rgPreampDb    = 0.0;
             m_nonRgPreampDb = 0.0;
@@ -136,18 +118,7 @@ void ReplayGainProcessor::refreshSettings()
     }
     m_settingsEpoch = snapshot->epoch;
 
-    const auto mode = [selectionMode = snapshot->value.mode]() {
-        switch(selectionMode) {
-            case(SelectionMode::Track):
-                return Mode::Track;
-            case(SelectionMode::Album):
-                return Mode::Album;
-            case(SelectionMode::Off):
-            default:
-                return Mode::Off;
-        }
-    }();
-
+    const auto mode            = snapshot->value.mode;
     const auto processing      = snapshot->value.processing;
     const double rgPreampDb    = snapshot->value.rgPreampDb;
     const double nonRgPreampDb = snapshot->value.nonRgPreampDb;
@@ -164,50 +135,88 @@ void ReplayGainProcessor::refreshSettings()
     updateGain();
 }
 
-ReplayGainProcessor::ReplayGainValues ReplayGainProcessor::extractValues(bool preferTrack) const
+Engine::ReplayGainOutputInfo ReplayGainProcessor::outputInfo(const Track& track, const RuntimeSettings& settings)
 {
-    ReplayGainValues values;
+    Engine::ReplayGainOutputInfo info;
+    info.processing = settings.processing;
+    info.source     = settings.mode == SelectionMode::Track ? Engine::ReplayGainSource::Track
+                    : settings.mode == SelectionMode::Album ? Engine::ReplayGainSource::Album
+                                                            : Engine::ReplayGainSource::None;
+
+    if(settings.mode == SelectionMode::Off || settings.processing == Engine::NoProcessing) {
+        return info;
+    }
+
+    const bool preferTrack = settings.mode == SelectionMode::Track;
+    double sourceGainDb{0.0};
+    double processingPeak{1.0};
+    bool hasProcessingPeak{false};
+    bool hasGain{false};
+
+    if(track.hasTrackPeak()) {
+        info.peak    = track.rgTrackPeak();
+        info.hasPeak = true;
+    }
+    else if(track.hasAlbumPeak()) {
+        info.peak    = track.rgAlbumPeak();
+        info.hasPeak = true;
+    }
 
     if(preferTrack) {
-        if(m_haveTrackGain) {
-            values.gainDb   = m_trackGainDb;
-            values.haveGain = true;
+        if(track.hasTrackGain()) {
+            sourceGainDb = track.rgTrackGain();
+            hasGain      = true;
         }
-        else if(m_haveAlbumGain) {
-            values.gainDb   = m_albumGainDb;
-            values.haveGain = true;
+        else if(track.hasAlbumGain()) {
+            sourceGainDb = track.rgAlbumGain();
+            hasGain      = true;
         }
 
-        if(m_haveTrackPeak) {
-            values.peak     = m_trackPeak;
-            values.havePeak = true;
+        if(track.hasTrackPeak()) {
+            processingPeak    = track.rgTrackPeak();
+            hasProcessingPeak = true;
         }
-        else if(m_haveAlbumPeak) {
-            values.peak     = m_albumPeak;
-            values.havePeak = true;
+        else if(track.hasAlbumPeak()) {
+            processingPeak    = track.rgAlbumPeak();
+            hasProcessingPeak = true;
         }
     }
     else {
-        if(m_haveAlbumGain) {
-            values.gainDb   = m_albumGainDb;
-            values.haveGain = true;
+        if(track.hasAlbumGain()) {
+            sourceGainDb = track.rgAlbumGain();
+            hasGain      = true;
         }
-        else if(m_haveTrackGain) {
-            values.gainDb   = m_trackGainDb;
-            values.haveGain = true;
+        else if(track.hasTrackGain()) {
+            sourceGainDb = track.rgTrackGain();
+            hasGain      = true;
         }
 
-        if(m_haveAlbumPeak) {
-            values.peak     = m_albumPeak;
-            values.havePeak = true;
+        if(track.hasAlbumPeak()) {
+            processingPeak    = track.rgAlbumPeak();
+            hasProcessingPeak = true;
         }
-        else if(m_haveTrackPeak) {
-            values.peak     = m_trackPeak;
-            values.havePeak = true;
+        else if(track.hasTrackPeak()) {
+            processingPeak    = track.rgTrackPeak();
+            hasProcessingPeak = true;
         }
     }
 
-    return values;
+    const bool applyGain       = settings.processing.testFlag(Engine::ApplyGain);
+    const bool preventClipping = settings.processing.testFlag(Engine::PreventClipping);
+
+    info.gainDb       = applyGain ? sourceGainDb + (hasGain ? settings.rgPreampDb : settings.nonRgPreampDb) : 0.0;
+    double linearGain = std::pow(10.0, info.gainDb / 20.0);
+
+    if(preventClipping && hasProcessingPeak && processingPeak > 0.0 && linearGain * processingPeak > 1.0) {
+        linearGain  = 1.0 / processingPeak;
+        info.gainDb = 20.0 * std::log10(linearGain);
+    }
+
+    if(info.hasPeak) {
+        info.peak *= linearGain;
+    }
+
+    return info;
 }
 
 void ReplayGainProcessor::updateGain()
@@ -219,29 +228,12 @@ void ReplayGainProcessor::updateGain()
 
 double ReplayGainProcessor::calculateGain() const
 {
-    if(m_mode == Mode::Off || m_processing == Engine::NoProcessing) {
-        return 1.0;
-    }
-
-    const bool applyGain       = m_processing.testFlag(Engine::ApplyGain);
-    const bool preventClipping = m_processing.testFlag(Engine::PreventClipping);
-
-    const bool preferTrack = (m_mode == Mode::Track);
-    const auto selected    = extractValues(preferTrack);
-
-    double gainDb         = applyGain ? selected.gainDb : 0.0;
-    const double preampDb = applyGain ? (selected.haveGain ? m_rgPreampDb : m_nonRgPreampDb) : 0.0;
-    gainDb += preampDb;
-
-    double gain = std::pow(10.0, gainDb / 20.0);
-
-    if(preventClipping) {
-        const double peak = selected.havePeak ? selected.peak : 1.0;
-        if(peak > 0.0 && gain * peak > 1.0) {
-            gain = 1.0 / peak;
-        }
-    }
-
-    return gain;
+    const auto info = outputInfo(m_track, RuntimeSettings{
+                                              .mode          = m_mode,
+                                              .processing    = m_processing,
+                                              .rgPreampDb    = m_rgPreampDb,
+                                              .nonRgPreampDb = m_nonRgPreampDb,
+                                          });
+    return std::pow(10.0, info.gainDb / 20.0);
 }
 } // namespace Fooyin

@@ -21,10 +21,12 @@
 
 #include <utils/logging/messagehandler.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/signalthrottler.h>
 #include <utils/utils.h>
 
 #include <QAction>
 #include <QApplication>
+#include <QCheckBox>
 #include <QClipboard>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -36,6 +38,8 @@
 #include <QMenu>
 #include <QPushButton>
 #include <QScrollBar>
+#include <QSettings>
+#include <QStyledItemDelegate>
 #include <QTimerEvent>
 #include <QTreeView>
 
@@ -47,8 +51,31 @@ using namespace Qt::StringLiterals;
 
 constexpr auto FlushInterval    = 200;
 constexpr auto MaxQueuedEntries = 250;
+constexpr auto ScrollInterval   = 200;
+constexpr auto WordWrap         = "Log/WordWrap";
 
 namespace {
+class LogMessageDelegate : public QStyledItemDelegate
+{
+public:
+    explicit LogMessageDelegate(QTreeView* view)
+        : QStyledItemDelegate{view}
+        , m_view{view}
+    { }
+
+    [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override
+    {
+        QStyleOptionViewItem opt{option};
+        if(m_view->wordWrap()) {
+            opt.rect.setSize({m_view->columnWidth(index.column()), option.fontMetrics.height()});
+        }
+        return QStyledItemDelegate::sizeHint(opt, index);
+    }
+
+private:
+    QTreeView* m_view;
+};
+
 QModelIndexList allRowIndexes(const QAbstractItemModel* model)
 {
     QModelIndexList indexes;
@@ -77,6 +104,8 @@ LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
     , m_view{new QTreeView(this)}
     , m_model{new LogModel(this)}
     , m_level{new QComboBox(this)}
+    , m_wordWrap{new QCheckBox(tr("Word wrap"), this)}
+    , m_scrollThrottler{new SignalThrottler(this)}
     , m_scrollIsAtBottom{false}
 {
     setWindowTitle(tr("Log"));
@@ -93,23 +122,29 @@ LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
     buttonBox->addButton(copyButton, QDialogButtonBox::ActionRole);
     buttonBox->addButton(saveButton, QDialogButtonBox::ApplyRole);
 
-    m_level->addItem(tr("Debug"), QtMsgType::QtDebugMsg);
-    m_level->addItem(tr("Info"), QtMsgType::QtInfoMsg);
-    m_level->addItem(tr("Warning"), QtMsgType::QtWarningMsg);
-    m_level->addItem(tr("Critical"), QtMsgType::QtCriticalMsg);
+    m_level->addItem(tr("Trace"), static_cast<int>(MessageHandler::Level::Trace));
+    m_level->addItem(tr("Debug"), static_cast<int>(MessageHandler::Level::Debug));
+    m_level->addItem(tr("Info"), static_cast<int>(MessageHandler::Level::Info));
+    m_level->addItem(tr("Warning"), static_cast<int>(MessageHandler::Level::Warning));
+    m_level->addItem(tr("Critical"), static_cast<int>(MessageHandler::Level::Critical));
 
-    m_level->setCurrentIndex(m_level->findData(MessageHandler::level()));
+    m_level->setCurrentIndex(m_level->findData(static_cast<int>(MessageHandler::level())));
 
     auto* layout = new QGridLayout(this);
-    layout->addWidget(m_view, 0, 0, 1, 2);
+    layout->addWidget(m_view, 0, 0, 1, 3);
     layout->addWidget(m_level, 1, 0);
-    layout->addWidget(buttonBox, 1, 1);
+    layout->addWidget(m_wordWrap, 1, 1, Qt::AlignLeft);
+    layout->addWidget(buttonBox, 1, 2);
     layout->setColumnStretch(1, 1);
 
     m_view->setModel(m_model);
+    m_view->setItemDelegateForColumn(LogModel::Message, new LogMessageDelegate(m_view));
     m_view->setRootIsDecorated(false);
+    m_view->setUniformRowHeights(true);
     m_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    m_view->header()->setStretchLastSection(true);
+    m_view->header()->setStretchLastSection(false);
+    m_view->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+    m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
     m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
     m_view->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -120,19 +155,51 @@ LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
     QObject::connect(copyAction, &QAction::triggered, this, &LogWidget::copySelectedRows);
     m_view->addAction(copyAction);
 
-    QObject::connect(m_level, &QComboBox::currentIndexChanged, this,
-                     [this]() { MessageHandler::setLevel(m_level->currentData().value<QtMsgType>()); });
+    QObject::connect(m_level, &QComboBox::currentIndexChanged, this, [this]() {
+        MessageHandler::setLevel(static_cast<MessageHandler::Level>(m_level->currentData().toInt()));
+    });
     QObject::connect(m_view, &QWidget::customContextMenuRequested, this, &LogWidget::showContextMenu);
+
+    m_scrollThrottler->setTimeout(ScrollInterval);
+    QObject::connect(m_scrollThrottler, &SignalThrottler::triggered, this, [this]() {
+        if(m_scrollIsAtBottom) {
+            m_view->scrollToBottom();
+        }
+        else {
+            m_scrollIsAtBottom = false;
+        }
+    });
+
+    QObject::connect(m_view->verticalScrollBar(), &QScrollBar::actionTriggered, this,
+                     [this]() { m_scrollIsAtBottom = false; });
     QObject::connect(m_model, &QAbstractItemModel::rowsAboutToBeInserted, this, [this]() {
-        if(const auto* bar = m_view->verticalScrollBar()) {
-            m_scrollIsAtBottom = (bar->value() == bar->maximum());
+        if(!m_scrollThrottler->isActive()) {
+            if(const auto* bar = m_view->verticalScrollBar()) {
+                m_scrollIsAtBottom = (bar->value() == bar->maximum());
+            }
         }
     });
     QObject::connect(m_model, &QAbstractItemModel::rowsInserted, this, [this]() {
         if(m_scrollIsAtBottom) {
-            m_view->scrollToBottom();
+            m_scrollThrottler->throttle();
         }
     });
+
+    QObject::connect(m_wordWrap, &QCheckBox::toggled, this, [this](bool enabled) {
+        m_view->setUniformRowHeights(!enabled);
+        m_view->header()->setSectionResizeMode(LogModel::Message,
+                                               enabled ? QHeaderView::Stretch : QHeaderView::ResizeToContents);
+        m_view->setWordWrap(enabled);
+        m_view->setVerticalScrollMode(enabled ? QAbstractItemView::ScrollPerPixel : QAbstractItemView::ScrollPerItem);
+    });
+    QObject::connect(
+        m_view->header(), &QHeaderView::sectionResized, this,
+        [this](int column) {
+            if(column == LogModel::Message && m_view->wordWrap()) {
+                m_view->doItemsLayout();
+            }
+        },
+        Qt::QueuedConnection);
 
     MessageHandler::install(this);
 }
@@ -144,9 +211,35 @@ void LogWidget::addEntry(const QString& message, QtMsgType type)
     m_flushTimer.start(m_queue.size() >= MaxQueuedEntries ? 0 : FlushInterval, this);
 }
 
+void LogWidget::saveState(QSettings& settings) const
+{
+    settings.setValue(WordWrap, m_wordWrap->isChecked());
+}
+
+void LogWidget::restoreState(const QSettings& settings)
+{
+    m_wordWrap->setChecked(settings.value(WordWrap, false).toBool());
+}
+
 QSize LogWidget::sizeHint() const
 {
     return Utils::proportionateSize(this, 0.3, 0.4);
+}
+
+void LogWidget::changeEvent(QEvent* event)
+{
+    QWidget::changeEvent(event);
+
+    switch(event->type()) {
+        case QEvent::ApplicationPaletteChange:
+        case QEvent::PaletteChange:
+        case QEvent::StyleChange:
+        case QEvent::ThemeChange:
+            m_model->refreshIcons();
+            break;
+        default:
+            break;
+    }
 }
 
 void LogWidget::timerEvent(QTimerEvent* event)
@@ -258,8 +351,9 @@ void LogWidget::saveLog()
 
     const auto entries = m_model->entries();
     for(const auto& entry : entries) {
-        out << u"%1 %2 %3: %4\n"_s.arg(entry.time.toString(Qt::ISODateWithMs), LogModel::typeToString(entry.type),
-                                       entry.category, entry.message);
+        out << u"%1 %2 %3: %4\n"_s.arg(entry.time.toString(Qt::ISODateWithMs),
+                                       LogModel::typeToString(entry.type, entry.category), entry.category,
+                                       entry.message);
     }
 
     logFile.close();

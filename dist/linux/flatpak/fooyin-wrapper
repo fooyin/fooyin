@@ -1,0 +1,33 @@
+#!/bin/bash
+
+discord_flatpak_ids=(
+    "${FOOYIN_DISCORD_FLATPAK_ID:-}"
+    com.discordapp.Discord
+    dev.vencord.Vesktop
+)
+
+for i in {0..9}; do
+    socket="/tmp/discord-ipc-$i"
+
+    if [ ! -S "$socket" ]; then
+        for id in "${discord_flatpak_ids[@]}"; do
+            [ -n "$id" ] || continue
+
+            for discord_socket in \
+                "$XDG_RUNTIME_DIR/app/$id/discord-ipc-$i" \
+                "$XDG_RUNTIME_DIR/.flatpak/$id/xdg-run/discord-ipc-$i"; do
+                if [ -S "$discord_socket" ]; then
+                    ln -sfn "$discord_socket" "$socket"
+                    break 2
+                fi
+            done
+        done
+    fi
+
+    if [ ! -e "$socket" ]; then
+        ln -sfn "$XDG_RUNTIME_DIR/app/${FOOYIN_DISCORD_FLATPAK_ID:-com.discordapp.Discord}/discord-ipc-$i" \
+            "$socket"
+    fi
+done
+
+exec fooyin "$@"

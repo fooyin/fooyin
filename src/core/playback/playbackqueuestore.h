@@ -34,7 +34,7 @@ public:
     PlaybackQueueStore(DbConnectionPoolPtr dbPool, MusicLibrary* library, PlaylistHandler* playlistHandler);
 
     void save(const PlaybackQueue& queue) const;
-    [[nodiscard]] QueueTracks load() const;
+    [[nodiscard]] PlaybackQueueSnapshot load() const;
 
 private:
     MusicLibrary* m_library;

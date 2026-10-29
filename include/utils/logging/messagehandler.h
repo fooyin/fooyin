@@ -24,6 +24,8 @@
 #include <QObject>
 #include <QWidget>
 
+#include <atomic>
+
 namespace Fooyin {
 class LogWidget;
 
@@ -32,20 +34,31 @@ class FYUTILS_EXPORT MessageHandler : public QObject
     Q_OBJECT
 
 public:
+    enum class Level
+    {
+        Debug    = QtDebugMsg,
+        Info     = QtInfoMsg,
+        Warning  = QtWarningMsg,
+        Critical = QtCriticalMsg,
+        Fatal    = QtFatalMsg,
+        Trace    = 5,
+    };
+    Q_ENUM(Level)
+
     explicit MessageHandler(QObject* parent = nullptr);
 
     static void install(LogWidget* widget);
     static void handler(QtMsgType type, const QMessageLogContext&, const QString& msg);
 
-    static QtMsgType level();
-    static void setLevel(QtMsgType level);
+    static Level level();
+    static void setLevel(Level level);
 
 Q_SIGNALS:
     void showMessage(QString msg, QtMsgType type);
 
 private:
     static MessageHandler* instance();
-    std::atomic<QtMsgType> m_level;
+    std::atomic<Level> m_level;
 };
 } // namespace Fooyin
 

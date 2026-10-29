@@ -19,14 +19,25 @@
 
 #pragma once
 
+#include "fileopsdefs.h"
+
 #include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
+#include <core/track.h>
 #include <gui/plugins/guiplugin.h>
+#include <utils/id.h>
 
 #include <memory>
+#include <vector>
+
+class QAction;
 
 namespace Fooyin {
 class AudioLoader;
+class Command;
+class PlayerController;
+struct TrackSelection;
+
 namespace FileOps {
 class FileOpsPlugin : public QObject,
                       public Plugin,
@@ -34,24 +45,37 @@ class FileOpsPlugin : public QObject,
                       public GuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "fileops.json")
+    Q_PLUGIN_METADATA(IID FOOYIN_PLUGIN_IID FILE "fileops.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
-    FileOpsPlugin();
-
     void initialise(const CorePluginContext& context) override;
     void initialise(const GuiPluginContext& context) override;
 
 private:
+    struct PresetAction
+    {
+        Operation operation;
+        QString presetName;
+        Id id;
+        QAction* action;
+        Command* command;
+    };
+
     void setupMenu();
+    void deleteTracks(const TrackList& tracks);
+    void runDelete(const TrackList& tracks, bool forceImmediateDelete);
+    void openDialog(const TrackSelection& selection, Operation operation, const QString& presetName = {});
+    void refreshPresetActions();
 
     ActionManager* m_actionManager;
     std::shared_ptr<AudioLoader> m_audioLoader;
     MusicLibrary* m_library;
     LibraryManager* m_libraryManager;
+    PlayerController* m_playerController;
     TrackSelectionController* m_trackSelectionController;
     SettingsManager* m_settings;
+    std::vector<PresetAction> m_presetActions;
 };
 } // namespace FileOps
 } // namespace Fooyin

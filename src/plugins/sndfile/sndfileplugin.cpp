@@ -32,7 +32,8 @@ QString SndFilePlugin::inputName() const
 InputCreator SndFilePlugin::inputCreator() const
 {
     InputCreator creator;
-    creator.decoder = []() {
+    creator.priority = 100;
+    creator.decoder  = []() {
         return std::make_unique<SndFileDecoder>();
     };
     creator.reader = []() {

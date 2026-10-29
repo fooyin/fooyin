@@ -34,7 +34,6 @@
 #include <QSignalBlocker>
 
 #include <algorithm>
-#include <functional>
 #include <unordered_map>
 
 using namespace Qt::StringLiterals;
@@ -70,7 +69,7 @@ class DspSettingsDialogSession : public QObject
 
 public:
     DspSettingsDialogSession(DspSettingsController* controller, QString dspId, DspSettingsDialog* editor,
-                             std::vector<DspSettingsController::Target> targets, std::function<void()> rollback);
+                             std::vector<DspSettingsController::Target> targets, QByteArray defaultSettings);
 
     void open();
     void finish(int result);
@@ -85,6 +84,8 @@ private:
     void setupControls();
     void populateSelector(const std::vector<DspSettingsController::Target>& targets);
     void refreshInstances();
+    void syncSettings(uint64_t instanceId, const QByteArray& settings, QObject* source);
+    void syncEnabled(uint64_t instanceId, bool enabled, QObject* source);
 
     PendingState& pendingFor(const DspSettingsController::Target& target);
 
@@ -93,18 +94,23 @@ private:
     void loadTarget(uint64_t instanceId);
 
     void commit();
+    void rollback();
 
     DspSettingsController* m_controller;
     QString m_dspId;
     QPointer<DspSettingsDialog> m_editor;
     std::vector<DspSettingsController::Target> m_targets;
-    std::function<void()> m_rollback;
+    QByteArray m_defaultSettings;
 
     QComboBox* m_instanceSelector;
     QCheckBox* m_enabledToggle;
 
+    std::unordered_map<uint64_t, PendingState> m_original;
     std::unordered_map<uint64_t, PendingState> m_pending;
     uint64_t m_currentInstanceId{0};
+    uint64_t m_createdInstanceId{0};
+    bool m_unbound{false};
+    bool m_creating{false};
 
     QMetaObject::Connection m_previewConnection;
     QMetaObject::Connection m_enabledConnection;
@@ -113,15 +119,16 @@ private:
 DspSettingsDialogSession::DspSettingsDialogSession(DspSettingsController* controller, QString dspId,
                                                    DspSettingsDialog* editor,
                                                    std::vector<DspSettingsController::Target> targets,
-                                                   std::function<void()> rollback)
+                                                   QByteArray defaultSettings)
     : QObject{controller}
     , m_controller{controller}
     , m_dspId{std::move(dspId)}
     , m_editor{editor}
     , m_targets{std::move(targets)}
-    , m_rollback{std::move(rollback)}
+    , m_defaultSettings{std::move(defaultSettings)}
     , m_instanceSelector{addInstanceSelector(m_editor)}
-    , m_enabledToggle{addEnabledToggle(m_editor, m_targets.front().enabled)}
+    , m_enabledToggle{addEnabledToggle(m_editor, !m_targets.empty() && m_targets.front().enabled)}
+    , m_unbound{m_targets.empty()}
 {
     QObject::connect(m_editor, &QObject::destroyed, this, &QObject::deleteLater);
 }
@@ -129,16 +136,54 @@ DspSettingsDialogSession::DspSettingsDialogSession(DspSettingsController* contro
 void DspSettingsDialogSession::open()
 {
     setupControls();
-    loadTarget(m_targets.front().instanceId);
+
+    if(m_unbound) {
+        m_editor->loadSettings(m_defaultSettings);
+        m_previewConnection = QObject::connect(m_editor, &DspSettingsDialog::previewSettingsChanged, this,
+                                               [this](const QByteArray& settings) { m_defaultSettings = settings; });
+        m_enabledConnection = QObject::connect(m_enabledToggle, &QCheckBox::toggled, this, [this](bool enabled) {
+            if(!enabled) {
+                return;
+            }
+
+            if(m_controller->hasDsp(m_dspId)) {
+                const QSignalBlocker blocker{m_enabledToggle};
+                m_enabledToggle->setChecked(false);
+                return;
+            }
+
+            m_creating = true;
+            // Maybe make scope and index configurable by DSP implementations?
+            const uint64_t instanceId
+                = m_controller->addDsp(m_dspId, m_editor->saveSettings(), Engine::DspChainScope::Master, 0);
+            m_creating = false;
+            if(instanceId == 0) {
+                const QSignalBlocker blocker{m_enabledToggle};
+                m_enabledToggle->setChecked(false);
+                return;
+            }
+
+            m_createdInstanceId = instanceId;
+            m_unbound           = false;
+            populateSelector(m_controller->targetsFor(m_dspId));
+            loadTarget(instanceId);
+        });
+    }
+    else {
+        loadTarget(m_targets.front().instanceId);
+    }
 
     QObject::connect(m_editor, &QDialog::finished, this, &DspSettingsDialogSession::finish);
-    m_editor->open();
+    m_editor->setWindowModality(Qt::NonModal);
+    m_editor->show();
+    m_editor->raise();
+    m_editor->activateWindow();
 }
 
 void DspSettingsDialogSession::finish(int result)
 {
     if(result != QDialog::Accepted) {
-        m_rollback();
+        rollback();
     }
     else {
         commit();
@@ -155,6 +200,10 @@ void DspSettingsDialogSession::setupControls()
     QObject::connect(m_instanceSelector, &QComboBox::currentIndexChanged, this, &DspSettingsDialogSession::selectIndex);
     QObject::connect(m_controller, &DspSettingsController::dspInstancesChanged, this,
                      &DspSettingsDialogSession::refreshInstances);
+    QObject::connect(m_controller, &DspSettingsController::dspSettingsChanged, this,
+                     &DspSettingsDialogSession::syncSettings);
+    QObject::connect(m_controller, &DspSettingsController::dspEnabledChanged, this,
+                     &DspSettingsDialogSession::syncEnabled);
 }
 
 void DspSettingsDialogSession::populateSelector(const std::vector<DspSettingsController::Target>& targets)
@@ -178,7 +227,18 @@ void DspSettingsDialogSession::populateSelector(const std::vector<DspSettingsCon
 
 void DspSettingsDialogSession::refreshInstances()
 {
+    if(m_creating) {
+        return;
+    }
+
     const auto targets = m_controller->targetsFor(m_dspId);
+
+    if(m_unbound && !targets.empty()) {
+        m_unbound = false;
+        populateSelector(targets);
+        loadTarget(targets.front().instanceId);
+        return;
+    }
 
     const bool currentExists
         = m_currentInstanceId == 0 || std::ranges::any_of(targets, [this](const DspSettingsController::Target& target) {
@@ -190,7 +250,64 @@ void DspSettingsDialogSession::refreshInstances()
         return;
     }
 
+    bool reloadCurrent{false};
+    for(const auto& target : targets) {
+        const auto original = m_original.find(target.instanceId);
+        if(original == m_original.end()) {
+            continue;
+        }
+
+        auto& pending = m_pending[target.instanceId];
+        if(original->second.settings != target.settings) {
+            original->second.settings = target.settings;
+            pending.settings          = target.settings;
+            reloadCurrent |= target.instanceId == m_currentInstanceId;
+        }
+        if(original->second.enabled != target.enabled) {
+            original->second.enabled = target.enabled;
+            pending.enabled          = target.enabled;
+            reloadCurrent |= target.instanceId == m_currentInstanceId;
+        }
+    }
+
     populateSelector(targets);
+
+    if(reloadCurrent) {
+        loadTarget(m_currentInstanceId);
+    }
+}
+
+void DspSettingsDialogSession::syncSettings(uint64_t instanceId, const QByteArray& settings, QObject* source)
+{
+    const auto target = m_controller->targetForInstance(m_dspId, instanceId);
+    if(source == m_editor || !target) {
+        return;
+    }
+
+    pendingFor(*target);
+    m_original[instanceId].settings = settings;
+    m_pending[instanceId].settings  = settings;
+
+    if(instanceId == m_currentInstanceId) {
+        loadTarget(instanceId);
+    }
+}
+
+void DspSettingsDialogSession::syncEnabled(uint64_t instanceId, const bool enabled, QObject* source)
+{
+    const auto target = m_controller->targetForInstance(m_dspId, instanceId);
+    if(source == m_editor || !target) {
+        return;
+    }
+
+    pendingFor(*target);
+    m_original[instanceId].enabled = enabled;
+    m_pending[instanceId].enabled  = enabled;
+
+    if(instanceId == m_currentInstanceId) {
+        const QSignalBlocker blocker{m_enabledToggle};
+        m_enabledToggle->setChecked(enabled);
+    }
 }
 
 void DspSettingsDialogSession::saveCurrent()
@@ -239,12 +356,12 @@ void DspSettingsDialogSession::loadTarget(const uint64_t instanceId)
     m_previewConnection = QObject::connect(
         m_editor, &DspSettingsDialog::previewSettingsChanged, this, [this, target](const QByteArray& settings) {
             m_pending[target->instanceId].settings = settings;
-            m_controller->updateDspSettings(target->scope, target->instanceId, settings, false);
+            m_controller->updateDspSettings(target->scope, target->instanceId, settings, false, m_editor);
         });
     m_enabledConnection
         = QObject::connect(m_enabledToggle, &QCheckBox::toggled, this, [this, target](const bool enabled) {
               m_pending[target->instanceId].enabled = enabled;
-              m_controller->setDspEnabled(target->scope, target->instanceId, enabled);
+              m_controller->setDspEnabled(target->scope, target->instanceId, enabled, m_editor);
           });
 }
 
@@ -254,17 +371,36 @@ void DspSettingsDialogSession::commit()
 
     for(const auto& [instanceId, state] : m_pending) {
         if(const auto target = m_controller->targetForInstance(m_dspId, instanceId)) {
-            m_controller->setDspEnabled(target->scope, target->instanceId, state.enabled);
-            m_controller->updateDspSettings(target->scope, target->instanceId, state.settings, true);
+            m_controller->setDspEnabled(target->scope, target->instanceId, state.enabled, m_editor);
+            m_controller->updateDspSettings(target->scope, target->instanceId, state.settings, true, m_editor);
         }
+    }
+}
+
+void DspSettingsDialogSession::rollback()
+{
+    for(const auto& [instanceId, state] : m_original) {
+        if(instanceId == m_createdInstanceId) {
+            continue;
+        }
+        if(const auto target = m_controller->targetForInstance(m_dspId, instanceId)) {
+            m_controller->setDspEnabled(target->scope, target->instanceId, state.enabled, m_editor);
+            m_controller->updateDspSettings(target->scope, target->instanceId, state.settings, true, m_editor);
+        }
+    }
+
+    if(m_createdInstanceId != 0) {
+        m_currentInstanceId = 0;
+        m_controller->removeDsp(m_dspId, std::exchange(m_createdInstanceId, 0));
     }
 }
 
 DspSettingsDialogSession::PendingState&
 DspSettingsDialogSession::pendingFor(const DspSettingsController::Target& target)
 {
-    auto [it, _]
-        = m_pending.emplace(target.instanceId, PendingState{.settings = target.settings, .enabled = target.enabled});
+    const PendingState initialState{.settings = target.settings, .enabled = target.enabled};
+    m_original.emplace(target.instanceId, initialState);
+    auto [it, _] = m_pending.emplace(target.instanceId, initialState);
     return it->second;
 }
 } // namespace
@@ -273,9 +409,21 @@ DspSettingsController::DspSettingsController(DspChainStore* chainStore, DspSetti
     : QObject{parent}
     , m_chainStore{chainStore}
     , m_registry{registry}
+    , m_settingEnabled{false}
 {
-    QObject::connect(m_chainStore, &DspChainStore::activeChainChanged, this,
-                     &DspSettingsController::dspInstancesChanged);
+    QObject::connect(m_chainStore, &DspChainStore::activeChainChanged, this, [this]() {
+        if(!m_settingEnabled) {
+            Q_EMIT dspInstancesChanged();
+        }
+    });
+    QObject::connect(m_chainStore, &DspChainStore::liveDspSettingsChanged, this,
+                     [this](Engine::DspChainScope /*scope*/, uint64_t instanceId, const QByteArray& settings,
+                            bool /*persisted*/,
+                            QObject* source) { Q_EMIT dspSettingsChanged(instanceId, settings, source); });
+    QObject::connect(m_chainStore, &DspChainStore::dspEnabledChanged, this,
+                     [this](Engine::DspChainScope /*scope*/, uint64_t instanceId, bool enabled, QObject* source) {
+                         Q_EMIT dspEnabledChanged(instanceId, enabled, source);
+                     });
 }
 
 QString DspSettingsController::displayName(const QString& dspId) const
@@ -305,26 +453,42 @@ DspLayoutEditor* DspSettingsController::createLayoutEditor(const QString& dspId,
 
 void DspSettingsController::showDialog(const QString& dspId, QWidget* parent)
 {
+    if(const auto dialog = m_dialogs.find(dspId); dialog != m_dialogs.end()) {
+        if(dialog->second) {
+            dialog->second->show();
+            dialog->second->raise();
+            dialog->second->activateWindow();
+            return;
+        }
+        m_dialogs.erase(dialog);
+    }
+
     auto* editor = createEditor(dspId, parent);
     if(!editor) {
-        QMessageBox::warning(parent, tr("DSP Settings"), tr("Unable to open settings for DSP \"%1\".").arg(dspId));
+        QMessageBox::warning(parent, tr("DSP Settings"), tr("Unable to open settings for DSP ‘%1’.").arg(dspId));
         return;
     }
 
+    QByteArray defaultSettings;
     const auto targets = targetsFor(dspId);
     if(targets.empty()) {
-        editor->deleteLater();
-        QMessageBox::warning(parent, tr("DSP Settings"), tr("Unable to find DSP \"%1\".").arg(dspId));
-        return;
+        auto dsp = m_chainStore->createDsp(dspId);
+        if(!dsp) {
+            editor->deleteLater();
+            QMessageBox::warning(parent, tr("DSP Settings"), tr("Unable to find DSP ‘%1’.").arg(dspId));
+            return;
+        }
+        defaultSettings = dsp->saveSettings();
     }
 
-    const auto originalChain = m_chainStore->activeChain();
+    m_dialogs.insert_or_assign(dspId, editor);
+    QObject::connect(editor, &QObject::destroyed, this, [this, dspId, editor]() {
+        if(const auto dialog = m_dialogs.find(dspId); dialog != m_dialogs.end() && dialog->second == editor) {
+            m_dialogs.erase(dialog);
+        }
+    });
 
-    const auto rollback = [this, originalChain]() {
-        m_chainStore->setActiveChain(originalChain);
-    };
-
-    auto* session = new DspSettingsDialogSession(this, dspId, editor, targets, rollback);
+    auto* session = new DspSettingsDialogSession(this, dspId, editor, targets, defaultSettings);
     session->open();
 }
 
@@ -409,36 +573,70 @@ void DspSettingsController::bindEditor(DspSettingsDialog* editor, const Target& 
         return;
     }
 
-    QObject::connect(
-        editor, &DspSettingsDialog::previewSettingsChanged, this,
-        [this, scope = target.scope, instanceId = target.instanceId, persistPreview](const QByteArray& settings) {
-            updateDspSettings(scope, instanceId, settings, persistPreview);
-        });
+    QObject::connect(editor, &DspSettingsDialog::previewSettingsChanged, this,
+                     [this, editor, scope = target.scope, instanceId = target.instanceId,
+                      persistPreview](const QByteArray& settings) {
+                         updateDspSettings(scope, instanceId, settings, persistPreview, editor);
+                     });
 }
 
-bool DspSettingsController::updateDspSettings(const Engine::DspChainScope scope, const uint64_t instanceId,
-                                              const QByteArray& settings, const bool persist)
+bool DspSettingsController::updateDspSettings(Engine::DspChainScope scope, uint64_t instanceId,
+                                              const QByteArray& settings, bool persist, QObject* source)
 {
-    return m_chainStore->updateLiveDspSettings(scope, instanceId, settings, persist);
+    return m_chainStore->updateLiveDspSettings(scope, instanceId, settings, persist, source);
 }
 
-bool DspSettingsController::setDspEnabled(const Engine::DspChainScope scope, const uint64_t instanceId,
-                                          const bool enabled)
+bool DspSettingsController::setDspEnabled(Engine::DspChainScope scope, uint64_t instanceId, bool enabled,
+                                          QObject* source)
 {
     if(instanceId == 0) {
         return false;
     }
 
-    auto chain        = m_chainStore->activeChain();
-    auto& targetChain = (scope == Engine::DspChainScope::Master) ? chain.masterChain : chain.perTrackChain;
+    m_settingEnabled  = true;
+    const bool result = m_chainStore->setDspEnabled(scope, instanceId, enabled, source);
+    m_settingEnabled  = false;
+    return result;
+}
 
-    for(auto& entry : targetChain) {
-        if(entry.instanceId == instanceId) {
-            if(entry.enabled == enabled) {
-                return true;
-            }
+uint64_t DspSettingsController::addDsp(const QString& dspId, const QByteArray& settings,
+                                       const Engine::DspChainScope scope, size_t index)
+{
+    auto dsp = m_chainStore->createDsp(dspId);
+    if(!dsp) {
+        return 0;
+    }
 
-            entry.enabled = enabled;
+    auto activeChain     = m_chainStore->activeChain();
+    auto& targetChain    = scope == Engine::DspChainScope::Master ? activeChain.masterChain : activeChain.perTrackChain;
+    const auto insertPos = static_cast<int>(std::min(index, targetChain.size()));
+
+    Engine::DspDefinition definition{
+        .id          = dspId,
+        .name        = dsp->name(),
+        .hasSettings = true,
+        .enabled     = true,
+        .settings    = settings,
+    };
+    targetChain.insert(targetChain.begin() + insertPos, std::move(definition));
+    m_chainStore->setActiveChain(activeChain);
+
+    activeChain = m_chainStore->activeChain();
+    const auto& activeTargetChain
+        = scope == Engine::DspChainScope::Master ? activeChain.masterChain : activeChain.perTrackChain;
+    return activeTargetChain.at(insertPos).instanceId;
+}
+
+bool DspSettingsController::removeDsp(const QString& dspId, uint64_t instanceId)
+{
+    auto chain = m_chainStore->activeChain();
+
+    for(auto* subChain : {&chain.masterChain, &chain.perTrackChain}) {
+        const auto entry = std::ranges::find_if(*subChain, [&dspId, instanceId](const auto& definition) {
+            return definition.id == dspId && definition.instanceId == instanceId;
+        });
+        if(entry != subChain->end()) {
+            subChain->erase(entry);
             m_chainStore->setActiveChain(chain);
             return true;
         }

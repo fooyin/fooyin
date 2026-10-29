@@ -20,9 +20,10 @@
 #include "librarytreeconfigwidget.h"
 
 #include "librarytreegroupeditordialog.h"
-#include "librarytreescriptenvironment.h"
+#include "librarytreescriptcontext.h"
 
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/hintlabel.h>
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -46,10 +47,12 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     , m_playbackOnSend{new QCheckBox(tr("Start playback immediately"), this)}
     , m_playlistEnabled{new QCheckBox(tr("Enabled"), this)}
     , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
-    , m_keepAlive{new QCheckBox(tr("Keep alive"), this)}
+    , m_preservePlaybackPlaylist{new QCheckBox(tr("Preserve playback playlist"), this)}
     , m_playlistName{new QLineEdit(this)}
     , m_restoreState{new QCheckBox(tr("Restore state on startup"), this)}
     , m_expandOnSingleClick{new QCheckBox(tr("Single-click expands/collapses nodes"), this)}
+    , m_showControls{new QCheckBox(tr("Show controls"), this)}
+    , m_controlsPosition{new QComboBox(this)}
     , m_autoExpandSearchResultLimit{new QSpinBox(this)}
     , m_showSummaryNode{new QCheckBox(tr("Show summary node"), this)}
     , m_summaryNodeTitle{new QLineEdit(this)}
@@ -61,17 +64,9 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     , m_rowHeight{new QSpinBox(this)}
     , m_iconWidth{new QSpinBox(this)}
     , m_iconHeight{new QSpinBox(this)}
-    , m_manageGroupings{new QPushButton(tr("Manage groupings..."), this)}
+    , m_artworkCornerRadius{new QSpinBox(this)}
+    , m_manageGroupings{new QPushButton(tr("Manage groupings…"), this)}
 {
-    m_playbackOnSend->setToolTip(
-        tr(R"(For "Replace current playlist" and "Create new playlist", start playback immediately.)"));
-    m_summaryNodeTitle->setPlaceholderText(defaultLibraryTreeSummaryTitle());
-    m_summaryNodeTitle->setToolTip(
-        tr("Supports <right> for right-aligned text, %trackcount% for tracks, and %childcount% for child nodes."));
-    m_autoExpandSearchResultLimit->setRange(0, 1000);
-    m_autoExpandSearchResultLimit->setSingleStep(5);
-    m_autoExpandSearchResultLimit->setSpecialValueText(tr("Disabled"));
-
     auto* tabs = new QTabWidget(this);
 
     auto* generalTab = new QWidget(tabs);
@@ -79,6 +74,9 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
 
     tabs->addTab(generalTab, tr("General"));
     tabs->addTab(styleTab, tr("Appearance"));
+
+    m_playbackOnSend->setToolTip(
+        tr(R"(For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately.)"));
 
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), generalTab);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
@@ -95,15 +93,21 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     auto* selectionPlaylist       = new QGroupBox(tr("Library Selection Playlist"), generalTab);
     auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
 
-    m_keepAlive->setToolTip(tr("If this is the active playlist, keep it alive when changing selection"));
+    m_preservePlaybackPlaylist->setToolTip(
+        tr("When this selection playlist is used for playback, preserve it with ‘(Playback)’ appended to its "
+           "name instead of replacing its tracks."));
 
     row = 0;
     selectionPlaylistLayout->addWidget(m_playlistEnabled, row++, 0, 1, 3);
     selectionPlaylistLayout->addWidget(m_autoSwitch, row++, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(m_keepAlive, row++, 0, 1, 3);
+    selectionPlaylistLayout->addWidget(m_preservePlaybackPlaylist, row++, 0, 1, 3);
     selectionPlaylistLayout->addWidget(new QLabel(tr("Name") + u":"_s, this), row, 0);
     selectionPlaylistLayout->addWidget(m_playlistName, row++, 1, 1, 2);
     selectionPlaylistLayout->setColumnStretch(2, 1);
+
+    m_summaryNodeTitle->setPlaceholderText(defaultLibraryTreeSummaryTitle());
+    m_summaryNodeTitle->setToolTip(
+        tr("Supports <right> for right-aligned text, %trackcount% for tracks, and %childcount% for child nodes."));
 
     auto* generalGroup       = new QGroupBox(tr("General"), generalTab);
     auto* generalGroupLayout = new QGridLayout(generalGroup);
@@ -116,12 +120,24 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     generalGroupLayout->addWidget(m_manageGroupings, row++, 0, 1, 3);
     generalGroupLayout->setColumnStretch(2, 1);
 
+    m_controlsPosition->addItem(tr("Top"), static_cast<int>(LibraryTreeWidget::ControlsPosition::Top));
+    m_controlsPosition->addItem(tr("Bottom"), static_cast<int>(LibraryTreeWidget::ControlsPosition::Bottom));
+
+    m_autoExpandSearchResultLimit->setRange(0, 1000);
+    m_autoExpandSearchResultLimit->setSingleStep(5);
+    m_autoExpandSearchResultLimit->setSpecialValueText(tr("Disabled"));
+
+    auto* autoExpandLabel = new QLabel(tr("Auto-expand if matching track count is at most") + u":"_s, this);
+    autoExpandLabel->setWordWrap(true);
+
     auto* searchingGroup       = new QGroupBox(tr("Searching"), generalTab);
     auto* searchingGroupLayout = new QGridLayout(searchingGroup);
 
     row = 0;
-    searchingGroupLayout->addWidget(new QLabel(tr("Auto-expand if matching track count is at most") + u":"_s, this),
-                                    row, 0, 1, 2);
+    searchingGroupLayout->addWidget(m_showControls, row++, 0, 1, 3);
+    searchingGroupLayout->addWidget(new QLabel(tr("Controls position") + u":"_s, this), row, 0);
+    searchingGroupLayout->addWidget(m_controlsPosition, row++, 1, 1, 2, Qt::AlignLeft);
+    searchingGroupLayout->addWidget(autoExpandLabel, row, 0, 1, 2);
     searchingGroupLayout->addWidget(m_autoExpandSearchResultLimit, row++, 2);
     searchingGroupLayout->setColumnStretch(3, 1);
 
@@ -137,8 +153,12 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     m_iconHeight->setMaximum(512);
     m_iconWidth->setSingleStep(5);
     m_iconHeight->setSingleStep(5);
+    m_artworkCornerRadius->setRange(0, 100);
+    m_artworkCornerRadius->setSingleStep(5);
+    m_artworkCornerRadius->setSuffix(u" %"_s);
+    m_artworkCornerRadius->setSpecialValueText(tr("Square"));
 
-    auto* iconSizeHint = new QLabel(u"🛈 "_s + tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this);
+    auto* iconSizeHint = new HintLabel(tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this);
     iconSizeHint->setTextFormat(Qt::RichText);
 
     row = 0;
@@ -146,6 +166,8 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     iconGroupLayout->addWidget(m_iconWidth, row++, 1);
     iconGroupLayout->addWidget(new QLabel(tr("Height") + u":"_s, this), row, 0);
     iconGroupLayout->addWidget(m_iconHeight, row++, 1);
+    iconGroupLayout->addWidget(new QLabel(tr("Corner radius") + u":"_s, this), row, 0);
+    iconGroupLayout->addWidget(m_artworkCornerRadius, row++, 1);
     iconGroupLayout->addWidget(iconSizeHint, row, 0, 1, 4);
     iconGroupLayout->setColumnStretch(2, 1);
 
@@ -166,12 +188,13 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     auto* generalLayout = new QGridLayout(generalTab);
 
     row = 0;
-    generalLayout->addWidget(generalGroup, row++, 0);
-    generalLayout->addWidget(searchingGroup, row++, 0);
-    generalLayout->addWidget(clickBehaviour, row++, 0);
-    generalLayout->addWidget(selectionPlaylist, row++, 0);
+    generalLayout->addWidget(generalGroup, row, 0);
+    generalLayout->addWidget(clickBehaviour, row++, 1);
+    generalLayout->addWidget(searchingGroup, row, 0);
+    generalLayout->addWidget(selectionPlaylist, row++, 1);
     generalLayout->setColumnStretch(0, 1);
-    generalLayout->setRowStretch(4, 1);
+    generalLayout->setColumnStretch(1, 1);
+    generalLayout->setRowStretch(2, 1);
 
     auto* styleLayout = new QGridLayout(styleTab);
 
@@ -187,7 +210,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     mainLayout->setRowStretch(0, 1);
 
     TrackSelectionController::addAction(m_doubleClick, tr("Expand/collapse"), TrackAction::None);
-    TrackSelectionController::addAction(m_doubleClick, tr("Expand/collapse or play"), TrackAction::Play);
+    TrackSelectionController::addAction(m_doubleClick, tr("Expand/collapse or play now"), TrackAction::Play);
     TrackSelectionController::addStandardActions(m_doubleClick);
 
     TrackSelectionController::addAction(m_middleClick, tr("None"), TrackAction::None);
@@ -195,15 +218,18 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
 
     QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);
     QObject::connect(m_showSummaryNode, &QCheckBox::toggled, m_summaryNodeTitle, &QWidget::setEnabled);
+    QObject::connect(m_showControls, &QCheckBox::toggled, m_controlsPosition, &QWidget::setEnabled);
     QObject::connect(m_playlistEnabled, &QCheckBox::toggled, this, [this](bool checked) {
         m_playlistName->setEnabled(checked);
         m_autoSwitch->setEnabled(checked);
-        m_keepAlive->setEnabled(checked);
+        m_preservePlaybackPlaylist->setEnabled(checked);
     });
     QObject::connect(m_manageGroupings, &QPushButton::clicked, this, [this]() {
         auto* dialog = new LibraryTreeGroupEditorDialog(m_groupsRegistry, this);
         dialog->open();
     });
+
+    QObject::connect(libraryTree, &LibraryTreeWidget::configChanged, this, &LibraryTreeConfigDialog::syncCurrentConfig);
 
     loadCurrentConfig();
 }
@@ -211,15 +237,17 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
 LibraryTreeWidget::ConfigData LibraryTreeConfigDialog::config() const
 {
     return {
-        .doubleClickAction           = m_doubleClick->currentData().toInt(),
-        .middleClickAction           = m_middleClick->currentData().toInt(),
-        .sendPlayback                = m_playbackOnSend->isChecked(),
-        .playlistEnabled             = m_playlistEnabled->isChecked(),
-        .autoSwitch                  = m_autoSwitch->isChecked(),
-        .keepAlive                   = m_keepAlive->isChecked(),
-        .playlistName                = m_playlistName->text(),
-        .restoreState                = m_restoreState->isChecked(),
-        .expandOnSingleClick         = m_expandOnSingleClick->isChecked(),
+        .doubleClickAction        = m_doubleClick->currentData().toInt(),
+        .middleClickAction        = m_middleClick->currentData().toInt(),
+        .sendPlayback             = m_playbackOnSend->isChecked(),
+        .playlistEnabled          = m_playlistEnabled->isChecked(),
+        .autoSwitch               = m_autoSwitch->isChecked(),
+        .preservePlaybackPlaylist = m_preservePlaybackPlaylist->isChecked(),
+        .playlistName             = m_playlistName->text(),
+        .restoreState             = m_restoreState->isChecked(),
+        .expandOnSingleClick      = m_expandOnSingleClick->isChecked(),
+        .showControls             = m_showControls->isChecked(),
+        .controlsPosition = static_cast<LibraryTreeWidget::ControlsPosition>(m_controlsPosition->currentData().toInt()),
         .autoExpandSearchResultLimit = m_autoExpandSearchResultLimit->value(),
         .animated                    = m_animated->isChecked(),
         .showHeader                  = m_header->isChecked(),
@@ -229,6 +257,7 @@ LibraryTreeWidget::ConfigData LibraryTreeConfigDialog::config() const
         .summaryNodeTitle            = m_summaryNodeTitle->text(),
         .rowHeight                   = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
         .iconSize                    = {m_iconWidth->value(), m_iconHeight->value()},
+        .artworkCornerRadius         = m_artworkCornerRadius->value(),
     };
 }
 
@@ -240,10 +269,13 @@ void LibraryTreeConfigDialog::setConfig(const LibraryTreeWidget::ConfigData& con
     m_playbackOnSend->setChecked(config.sendPlayback);
     m_playlistEnabled->setChecked(config.playlistEnabled);
     m_autoSwitch->setChecked(config.autoSwitch);
-    m_keepAlive->setChecked(config.keepAlive);
+    m_preservePlaybackPlaylist->setChecked(config.preservePlaybackPlaylist);
     m_playlistName->setText(config.playlistName);
     m_restoreState->setChecked(config.restoreState);
     m_expandOnSingleClick->setChecked(config.expandOnSingleClick);
+    m_showControls->setChecked(config.showControls);
+    m_controlsPosition->setCurrentIndex(m_controlsPosition->findData(static_cast<int>(config.controlsPosition)));
+    m_controlsPosition->setEnabled(m_showControls->isChecked());
     m_autoExpandSearchResultLimit->setValue(config.autoExpandSearchResultLimit);
     m_animated->setChecked(config.animated);
     m_header->setChecked(config.showHeader);
@@ -257,8 +289,26 @@ void LibraryTreeConfigDialog::setConfig(const LibraryTreeWidget::ConfigData& con
     m_rowHeight->setEnabled(m_overrideRowHeight->isChecked());
     m_iconWidth->setValue(config.iconSize.width());
     m_iconHeight->setValue(config.iconSize.height());
+    m_artworkCornerRadius->setValue(config.artworkCornerRadius);
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
-    m_keepAlive->setEnabled(m_playlistEnabled->isChecked());
+    m_preservePlaybackPlaylist->setEnabled(m_playlistEnabled->isChecked());
+}
+
+void LibraryTreeConfigDialog::mergeExternalConfig(const LibraryTreeWidget::ConfigData& previous,
+                                                  const LibraryTreeWidget::ConfigData& current)
+{
+    mergeExternalFields(
+        previous, current, &LibraryTreeWidget::ConfigData::doubleClickAction,
+        &LibraryTreeWidget::ConfigData::middleClickAction, &LibraryTreeWidget::ConfigData::sendPlayback,
+        &LibraryTreeWidget::ConfigData::playlistEnabled, &LibraryTreeWidget::ConfigData::autoSwitch,
+        &LibraryTreeWidget::ConfigData::preservePlaybackPlaylist, &LibraryTreeWidget::ConfigData::playlistName,
+        &LibraryTreeWidget::ConfigData::restoreState, &LibraryTreeWidget::ConfigData::expandOnSingleClick,
+        &LibraryTreeWidget::ConfigData::controlsPosition, &LibraryTreeWidget::ConfigData::showControls,
+        &LibraryTreeWidget::ConfigData::autoExpandSearchResultLimit, &LibraryTreeWidget::ConfigData::animated,
+        &LibraryTreeWidget::ConfigData::showHeader, &LibraryTreeWidget::ConfigData::showScrollbar,
+        &LibraryTreeWidget::ConfigData::alternatingRows, &LibraryTreeWidget::ConfigData::showSummaryNode,
+        &LibraryTreeWidget::ConfigData::summaryNodeTitle, &LibraryTreeWidget::ConfigData::rowHeight,
+        &LibraryTreeWidget::ConfigData::iconSize, &LibraryTreeWidget::ConfigData::artworkCornerRadius);
 }
 } // namespace Fooyin

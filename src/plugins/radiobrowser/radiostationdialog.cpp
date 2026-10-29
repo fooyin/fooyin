@@ -282,6 +282,7 @@ void RadioStationDialog::initialise()
                          });
     }
 
+    setMinimumSize(minimumSizeHint());
     updateAcceptState();
 }
 
@@ -317,12 +318,12 @@ RadioStation RadioStationDialog::station() const
 
 QSize RadioStationDialog::sizeHint() const
 {
-    return QDialog::sizeHint().expandedTo({560, 220});
+    return QDialog::sizeHint().expandedTo({420, 220});
 }
 
 QSize RadioStationDialog::minimumSizeHint() const
 {
-    return QDialog::minimumSizeHint().expandedTo({560, 180});
+    return sizeHint();
 }
 
 void RadioStationDialog::resizeEvent(QResizeEvent* event)

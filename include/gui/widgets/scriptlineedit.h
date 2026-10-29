@@ -27,6 +27,8 @@
 #include <QLineEdit>
 #include <QPlainTextEdit>
 
+class QHBoxLayout;
+
 namespace Fooyin {
 class Track;
 
@@ -38,6 +40,9 @@ public:
     explicit ScriptLineEdit(QWidget* parent = nullptr);
     explicit ScriptLineEdit(const QString& script, QWidget* parent = nullptr);
     ScriptLineEdit(const QString& script, const Track& track, QWidget* parent = nullptr);
+
+    //! Sets the script and moves the cursor to the beginning only if the text changes.
+    void setScript(const QString& script);
 };
 
 class FYGUI_EXPORT ScriptTextEdit : public QPlainTextEdit
@@ -52,11 +57,21 @@ public:
     [[nodiscard]] QString text() const;
     void setText(const QString& text);
 
+    void addToolAction(QAction* action);
+    void addHint(const QString& hint);
+
+    [[nodiscard]] QSize sizeHint() const override;
+    [[nodiscard]] QSize minimumSizeHint() const override;
+
 protected:
+    void changeEvent(QEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
     QAction* m_openEditor;
+    QWidget* m_toolArea;
+    QHBoxLayout* m_toolAreaLayout;
 };
 
 class FYGUI_EXPORT ScriptComboBox : public QComboBox

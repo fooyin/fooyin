@@ -22,7 +22,7 @@
 #include "scripting/scriptruntime.h"
 
 #include <core/coresettings.h>
-#include <core/scripting/scriptproviders.h>
+#include <core/scripting/scriptdefs.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/stringutils.h>
 
@@ -52,18 +52,17 @@ QStringList searchWords(const QString& text)
     return words;
 }
 
-bool matchesWordBeginnings(const QString& text, const QString& query)
+bool matchesWordBeginnings(const QString& foldedText, const QString& foldedQuery)
 {
-    const QStringList queryWords = searchWords(query);
+    const QStringList queryWords = searchWords(foldedQuery);
     if(queryWords.empty()) {
         return false;
     }
 
-    const QStringList textWords = searchWords(text);
+    const QStringList textWords = searchWords(foldedText);
     for(const QString& queryWord : queryWords) {
-        const auto match = std::ranges::find_if(textWords, [&queryWord](const QString& textWord) {
-            return textWord.startsWith(queryWord, Qt::CaseInsensitive);
-        });
+        const auto match = std::ranges::find_if(
+            textWords, [&queryWord](const QString& textWord) { return textWord.startsWith(queryWord); });
         if(match == textWords.cend()) {
             return false;
         }
@@ -78,12 +77,11 @@ class TrackSearchFilterPrivate
 public:
     TrackSearchFilterPrivate();
     explicit TrackSearchFilterPrivate(ScriptSearchOptions options);
+    TrackSearchFilterPrivate(ScriptSearchOptions options, ScriptRegistry* registry);
 
-    void addProvider(const ScriptVariableProvider& provider);
-    void addProvider(const ScriptFunctionProvider& provider);
-
-    [[nodiscard]] TrackList filter(const QString& search, const TrackList& tracks);
-    [[nodiscard]] PlaylistTrackList filter(const QString& search, const PlaylistTrackList& tracks);
+    [[nodiscard]] TrackList filter(const QString& search, const TrackList& tracks, const ScriptContext& context);
+    [[nodiscard]] PlaylistTrackList filter(const QString& search, const PlaylistTrackList& tracks,
+                                           const ScriptContext& context);
 
 private:
     ScriptRuntime m_runtime;
@@ -91,38 +89,27 @@ private:
 };
 
 TrackSearchFilterPrivate::TrackSearchFilterPrivate()
-{
-    const FySettings settings;
-    m_options
-        = {.script
-           = settings.value(Settings::Core::SearchScriptKey, QString::fromLatin1(TrackQueryFilter::DefaultSearchScript))
-                 .toString(),
-           .mode = static_cast<ScriptSearchMode>(
-               settings.value(Settings::Core::SearchModeKey, TrackQueryFilter::DefaultSearchMode).toInt())};
-}
+    : m_options{TrackQueryFilter::defaultSearchOptions()}
+{ }
 
 TrackSearchFilterPrivate::TrackSearchFilterPrivate(ScriptSearchOptions options)
     : m_options{std::move(options)}
 { }
 
-void TrackSearchFilterPrivate::addProvider(const ScriptVariableProvider& provider)
+TrackSearchFilterPrivate::TrackSearchFilterPrivate(ScriptSearchOptions options, ScriptRegistry* registry)
+    : m_runtime{registry}
+    , m_options{std::move(options)}
+{ }
+
+TrackList TrackSearchFilterPrivate::filter(const QString& search, const TrackList& tracks, const ScriptContext& context)
 {
-    m_runtime.addProvider(provider);
+    return m_runtime.filterQuery(search, tracks, m_options, context);
 }
 
-void TrackSearchFilterPrivate::addProvider(const ScriptFunctionProvider& provider)
+PlaylistTrackList TrackSearchFilterPrivate::filter(const QString& search, const PlaylistTrackList& tracks,
+                                                   const ScriptContext& context)
 {
-    m_runtime.addProvider(provider);
-}
-
-TrackList TrackSearchFilterPrivate::filter(const QString& search, const TrackList& tracks)
-{
-    return m_runtime.filterQuery(search, tracks, m_options);
-}
-
-PlaylistTrackList TrackSearchFilterPrivate::filter(const QString& search, const PlaylistTrackList& tracks)
-{
-    return m_runtime.filterQuery(search, tracks, m_options);
+    return m_runtime.filterQuery(search, tracks, m_options, context);
 }
 
 TrackQueryFilter::TrackQueryFilter()
@@ -133,16 +120,19 @@ TrackQueryFilter::TrackQueryFilter(ScriptSearchOptions options)
     : p{std::make_unique<TrackSearchFilterPrivate>(std::move(options))}
 { }
 
+TrackQueryFilter::TrackQueryFilter(ScriptSearchOptions options, ScriptRegistry* registry)
+    : p{std::make_unique<TrackSearchFilterPrivate>(std::move(options), registry)}
+{ }
+
 TrackQueryFilter::~TrackQueryFilter() = default;
 
-void TrackQueryFilter::addProvider(const ScriptVariableProvider& provider)
+ScriptSearchOptions TrackQueryFilter::defaultSearchOptions()
 {
-    p->addProvider(provider);
-}
-
-void TrackQueryFilter::addProvider(const ScriptFunctionProvider& provider)
-{
-    p->addProvider(provider);
+    const FySettings settings;
+    return {.script
+            = settings.value(Settings::Core::SearchScriptKey, QString::fromLatin1(DefaultSearchScript)).toString(),
+            .mode
+            = static_cast<ScriptSearchMode>(settings.value(Settings::Core::SearchModeKey, DefaultSearchMode).toInt())};
 }
 
 bool TrackQueryFilter::matchesSearch(const QString& text, const QString& search, ScriptSearchMode mode,
@@ -152,28 +142,29 @@ bool TrackQueryFilter::matchesSearch(const QString& text, const QString& search,
         return true;
     }
 
-    const QString foldedText = Utils::foldForSearch(text);
+    const QString foldedText   = Utils::foldForSearch(text);
+    const QString foldedSearch = Utils::foldForSearch(search);
     if(phraseMatch) {
-        return foldedText.contains(Utils::foldForSearch(search));
+        return foldedText.contains(foldedSearch);
     }
 
     if(mode == ScriptSearchMode::MatchWordBeginnings) {
-        return matchesWordBeginnings(text, search);
+        return matchesWordBeginnings(foldedText, foldedSearch);
     }
 
-    const QStringList terms = search.split(u' ', Qt::SkipEmptyParts);
-    return std::ranges::all_of(
-        terms, [&foldedText](const QString& term) { return foldedText.contains(Utils::foldForSearch(term)); });
+    const QStringList terms = foldedSearch.split(u' ', Qt::SkipEmptyParts);
+    return std::ranges::all_of(terms, [&foldedText](const QString& term) { return foldedText.contains(term); });
 }
 
-TrackList TrackQueryFilter::filter(const QString& search, const TrackList& tracks)
+TrackList TrackQueryFilter::filter(const QString& search, const TrackList& tracks, const ScriptContext& context)
 {
-    return p->filter(search, tracks);
+    return p->filter(search, tracks, context);
 }
 
-PlaylistTrackList TrackQueryFilter::filter(const QString& search, const PlaylistTrackList& tracks)
+PlaylistTrackList TrackQueryFilter::filter(const QString& search, const PlaylistTrackList& tracks,
+                                           const ScriptContext& context)
 {
-    return p->filter(search, tracks);
+    return p->filter(search, tracks, context);
 }
 
 } // namespace Fooyin

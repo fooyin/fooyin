@@ -35,6 +35,8 @@ namespace Testing {
 class PlaylistTestUtils;
 }
 struct PlaylistTrack;
+struct PlaylistChangeset;
+struct ScriptSearchOptions;
 class SettingsManager;
 
 using PlaylistTrackList = std::vector<PlaylistTrack>;
@@ -60,6 +62,7 @@ struct FYCORE_EXPORT PlaylistTrack
     bool operator<(const PlaylistTrack& other) const;
 
     [[nodiscard]] bool sameIdentityAs(const PlaylistTrack& other) const;
+    [[nodiscard]] bool sameOccurrenceAs(const PlaylistTrack& other) const;
 
     operator QVariant() const
     {
@@ -79,8 +82,10 @@ struct FYCORE_EXPORT PlaylistTrack
 
 /*!
  * Represents a list of tracks for playback.
- * Playlists are saved to the database and restored
- * on startup unless marked temporary.
+ * Playlists are saved to the database and restored on startup unless marked temporary.
+ *
+ * Owned by PlaylistHandler and accessed only on the main thread. Pass
+ * copied track data and metadata to workers instead of the live playlist.
  */
 class FYCORE_EXPORT Playlist final
 {
@@ -132,6 +137,8 @@ public:
     [[nodiscard]] bool isTemporary() const;
     /** Returns @c true if this an autoplaylist (generated from a query). */
     [[nodiscard]] bool isAutoPlaylist() const;
+    /** Returns @c true if changes to this playlist's contents are disabled. */
+    [[nodiscard]] bool isLocked() const;
     /** Returns the query used to generate this autoplaylist, else an empty string. */
     [[nodiscard]] QString query() const;
     /** Returns the optional sort pattern used to order this autoplaylist. */
@@ -205,12 +212,20 @@ private:
     void setQuery(const QString& query);
     void setSortQuery(const QString& query);
     void setForceSorted(bool forceSorted);
+    void setLocked(bool locked);
 
     void setModified(bool modified);
     void setTracksModified(bool modified);
 
+    [[nodiscard]] uint64_t contentRevision() const;
+    static TrackList calculateAutoPlaylistTracks(const TrackList& libraryTracks, const TrackList& previousTracks,
+                                                 const QString& query, const QString& sortQuery, bool forceSorted,
+                                                 const ScriptSearchOptions& searchOptions);
     void replaceTracks(const TrackList& tracks);
     void replaceTracks(const PlaylistTrackList& tracks);
+    void replaceTracksUnchecked(const PlaylistTrackList& tracks);
+    void applyTrackChanges(const PlaylistTrackList& tracks, const PlaylistChangeset& changeSet);
+    std::vector<int> updateTrackMetadata(const TrackList& tracks);
     void appendTracks(const TrackList& tracks);
     void updateTrackAtIndex(int index, const Track& track);
     std::vector<int> removeTracks(const std::vector<int>& indexes);

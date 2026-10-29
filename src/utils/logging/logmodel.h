@@ -21,8 +21,10 @@
 
 #include <QAbstractListModel>
 #include <QDateTime>
+#include <QIcon>
 
 #include <deque>
+#include <vector>
 
 namespace Fooyin {
 struct ConsoleEntry
@@ -51,13 +53,14 @@ public:
     void addEntry(ConsoleEntry entry);
     void addEntries(std::vector<ConsoleEntry> entries);
     void clear();
+    void refreshIcons();
 
     [[nodiscard]] std::deque<ConsoleEntry> entries();
 
     void setMaxEntries(int maxEntries);
     [[nodiscard]] int getMaxEntries() const;
 
-    static QString typeToString(QtMsgType type);
+    static QString typeToString(QtMsgType type, const QString& category);
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
@@ -65,6 +68,10 @@ public:
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
 
 private:
+    QIcon m_infoIcon;
+    QIcon m_warningIcon;
+    QIcon m_criticalIcon;
+
     std::deque<ConsoleEntry> m_items;
     int m_maxEntries;
 };

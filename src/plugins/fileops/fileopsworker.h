@@ -21,12 +21,14 @@
 
 #include "fileopsdefs.h"
 
+#include <core/library/libraryinfo.h>
 #include <core/scripting/scriptparser.h>
 #include <utils/worker.h>
 
 #include <QDir>
 
 #include <deque>
+#include <optional>
 #include <set>
 #include <unordered_map>
 
@@ -57,6 +59,21 @@ struct FileOpsItem
 };
 using FileOperations = std::deque<FileOpsItem>;
 
+enum class FileOpStatus : uint8_t
+{
+    Succeeded = 0,
+    Failed,
+    Skipped,
+    Cancelled
+};
+
+struct FileOpResult
+{
+    FileOpsItem operation;
+    FileOpStatus status{FileOpStatus::Succeeded};
+    QString error;
+};
+
 class FileOpsWorker : public Worker
 {
     Q_OBJECT
@@ -65,17 +82,19 @@ public:
     FileOpsWorker(MusicLibrary* library, std::shared_ptr<AudioLoader> audioLoader, TrackList tracks,
                   SettingsManager* settings, QObject* parent = nullptr);
 
-    void simulate(const FileOpPreset& preset);
-    void run();
-    void deleteFiles();
+    void setLibraryData(LibraryInfoMap libraries, TrackList tracks);
+
+    void simulate(const FileOpPreset& preset, std::stop_token token = {});
+    void run(std::stop_token token = {});
+    void deleteFiles(bool forceImmediateDelete = false, std::stop_token token = {});
 
 Q_SIGNALS:
-    void simulated(const Fooyin::FileOps::FileOperations& operations);
-    void deleteFinished(const Fooyin::TrackList& deletedTracks);
-    void operationFinished(const Fooyin::FileOps::FileOpsItem& operation);
+    void simulated(const Fooyin::FileOps::FileOperations& operations, std::stop_token token);
+    void deleteFinished(const Fooyin::TrackList& deletedTracks, const Fooyin::TrackList& failedTrashTracks);
+    void operationCompleted(const Fooyin::FileOps::FileOpResult& result);
 
 private:
-    bool prepareOperations(const FileOpPreset& preset, bool emitSimulation);
+    bool prepareOperations(const FileOpPreset& preset, bool emitSimulation, std::stop_token token);
     bool populateTrackPaths();
 
     void simulateMove();
@@ -83,12 +102,12 @@ private:
     void simulateExtract();
     void simulateRename();
 
-    [[nodiscard]] QString evaluatePath(const ParsedScript& script, const Track& track);
+    QString evaluatePath(const ParsedScript& script, const Track& track);
 
-    bool renameFile(const FileOpsItem& item);
-    static bool copyFile(const FileOpsItem& item);
-    bool extractFile(const FileOpsItem& item);
-    bool removeArchive(const FileOpsItem& item);
+    FileOpResult renameFile(const FileOpsItem& item);
+    static FileOpResult copyFile(const FileOpsItem& item);
+    FileOpResult extractFile(const FileOpsItem& item);
+    FileOpResult removeArchive(const FileOpsItem& item);
 
     void createDir(const QDir& dir);
     void removeDir(const QDir& dir);
@@ -96,13 +115,17 @@ private:
     void reset();
 
     void updateExtractedArchiveTracks(const QString& archivePath);
-    void handleEmptyDirs(const QDir& dir, const QString& filepath);
-    void addEmptyDirs(const QDir& dir);
+    void handleEmptyDirs(const QDir& dir, const QString& filepath, const QDir& sourceRoot);
+    void addEmptyDirs(const QDir& dir, const QDir& sourceRoot);
     void removeEmptyFoldersUpToLibraryRoot(const QString& filePath, int libraryId = -1);
     [[nodiscard]] QString libraryRootForDeletedPath(const QString& filePath, int libraryId) const;
     [[nodiscard]] int archiveLibraryId(const QString& archivePath) const;
 
+    [[nodiscard]] std::optional<LibraryInfo> libraryForPath(const QString& path) const;
+
     MusicLibrary* m_library;
+    LibraryInfoMap m_libraries;
+    TrackList m_libraryTracks;
     std::shared_ptr<AudioLoader> m_audioLoader;
     SettingsManager* m_settings;
     ScriptParser m_scriptParser;
@@ -113,6 +136,7 @@ private:
 
     bool m_isMonitoring;
     std::optional<QDir> m_currentDir;
+    std::optional<QDir> m_currentSourceRoot;
     std::set<QString> m_tracksProcessed;
     std::set<QString> m_filesToMove;
     std::set<QString> m_dirsToCreate;

@@ -19,52 +19,61 @@
 
 #include "scriptbinder.h"
 
-#include "scriptregistry.h"
+#include <core/scripting/scriptregistry.h>
 
 #include <core/constants.h>
 
 using namespace Qt::StringLiterals;
 
+namespace Fooyin {
 namespace {
-Fooyin::BoundExpression bindExpression(const Fooyin::Expression& expr, const Fooyin::ScriptRegistry* registry)
+BoundExpression bindExpression(const Expression& expr, const ScriptRegistry* registry, ScriptDependencies& dependencies)
 {
-    Fooyin::BoundExpression bound;
+    BoundExpression bound;
     bound.type = expr.type;
 
     if(const auto* value = std::get_if<QString>(&expr.value)) {
         bound.value = *value;
 
-        if(expr.type == Fooyin::Expr::Variable || expr.type == Fooyin::Expr::VariableList) {
-            bound.variableKind = registry ? registry->resolveVariable(*value) : Fooyin::VariableKind::Generic;
+        if(expr.type == Expr::Variable || expr.type == Expr::VariableList) {
+            bound.variableKind     = registry ? registry->resolveVariable(*value) : VariableKind::Generic;
+            const auto* descriptor = registry ? registry->variableDescriptor(*value) : nullptr;
+            dependencies.merge(
+                descriptor ? descriptor->dependencies
+                           : ScriptDependencies{.sources = {ScriptSources::TrackMetadata}, .unclassified = false});
+        }
+        else if(expr.type == Expr::VariableRaw) {
+            dependencies.merge({.sources = {ScriptSources::TrackMetadata}, .unclassified = false});
         }
 
         return bound;
     }
 
-    if(const auto* func = std::get_if<Fooyin::FuncValue>(&expr.value)) {
-        Fooyin::BoundFunctionValue boundFunc;
-        boundFunc.name       = func->name;
-        boundFunc.kind       = Fooyin::resolveBuiltInFunctionKind(func->name);
-        boundFunc.functionId = (boundFunc.kind == Fooyin::FunctionKind::Generic && registry)
-                                 ? registry->resolveFunctionId(func->name)
-                                 : Fooyin::InvalidScriptFunctionId;
+    if(const auto* func = std::get_if<FuncValue>(&expr.value)) {
+        BoundFunctionValue boundFunc;
+        boundFunc.name         = func->name;
+        boundFunc.functionId   = registry ? registry->resolveFunctionId(func->name) : InvalidScriptFunctionId;
+        boundFunc.kind         = registry ? registry->functionKind(boundFunc.functionId) : FunctionKind::Generic;
+        const auto* descriptor = registry ? registry->functionDescriptor(boundFunc.functionId) : nullptr;
+        dependencies.merge(descriptor ? descriptor->dependencies : ScriptDependencies{});
         boundFunc.args.reserve(func->args.size());
 
         for(const auto& arg : func->args) {
-            boundFunc.args.emplace_back(bindExpression(arg, registry));
+            boundFunc.args.emplace_back(bindExpression(arg, registry, dependencies));
         }
 
         bound.value = std::move(boundFunc);
         return bound;
     }
 
-    const auto& exprArgs = std::get<Fooyin::ExpressionList>(expr.value);
+    const auto* date     = std::get_if<DateValue>(&expr.value);
+    const auto& exprArgs = date ? date->args : std::get<ExpressionList>(expr.value);
 
-    Fooyin::BoundExpressionList args;
+    BoundExpressionList args;
     args.reserve(exprArgs.size());
 
     for(const auto& arg : exprArgs) {
-        args.emplace_back(bindExpression(arg, registry));
+        args.emplace_back(bindExpression(arg, registry, dependencies));
     }
 
     bound.value = std::move(args);
@@ -72,285 +81,7 @@ Fooyin::BoundExpression bindExpression(const Fooyin::Expression& expr, const Foo
 }
 } // namespace
 
-namespace Fooyin {
-VariableKind resolveBuiltInVariableKind(const QString& var)
-{
-    using namespace Fooyin::Constants;
-
-    if(var == QLatin1String{MetaData::TrackNumber}) {
-        return VariableKind::Track;
-    }
-    if(var == QLatin1String{MetaData::TrackTotal}) {
-        return VariableKind::TrackTotal;
-    }
-    if(var == QLatin1String{MetaData::Disc}) {
-        return VariableKind::Disc;
-    }
-    if(var == QLatin1String{MetaData::DiscTotal}) {
-        return VariableKind::DiscTotal;
-    }
-    if(var == QLatin1String{MetaData::Title}) {
-        return VariableKind::Title;
-    }
-    if(var == QLatin1String{MetaData::Artist}) {
-        return VariableKind::Artist;
-    }
-    if(var == QLatin1String{MetaData::UniqueArtist}) {
-        return VariableKind::UniqueArtist;
-    }
-    if(var == QLatin1String{MetaData::Album}) {
-        return VariableKind::Album;
-    }
-    if(var == QLatin1String{MetaData::AlbumArtist}) {
-        return VariableKind::AlbumArtist;
-    }
-    if(var == QLatin1String{MetaData::Genre}) {
-        return VariableKind::Genre;
-    }
-    if(var == "GENRES"_L1) {
-        return VariableKind::Genres;
-    }
-    if(var == QLatin1String{MetaData::Composer}) {
-        return VariableKind::Composer;
-    }
-    if(var == QLatin1String{MetaData::Performer}) {
-        return VariableKind::Performer;
-    }
-    if(var == QLatin1String{MetaData::PlayCount}) {
-        return VariableKind::PlayCount;
-    }
-    if(var == QLatin1String{MetaData::Duration}) {
-        return VariableKind::Duration;
-    }
-    if(var == QLatin1String{MetaData::DurationSecs}) {
-        return VariableKind::DurationSecs;
-    }
-    if(var == QLatin1String{MetaData::DurationMSecs}) {
-        return VariableKind::DurationMSecs;
-    }
-    if(var == QLatin1String{MetaData::Comment}) {
-        return VariableKind::Comment;
-    }
-    if(var == QLatin1String{MetaData::Date}) {
-        return VariableKind::Date;
-    }
-    if(var == QLatin1String{MetaData::Year}) {
-        return VariableKind::Year;
-    }
-    if(var == QLatin1String{MetaData::FileSize}) {
-        return VariableKind::FileSize;
-    }
-    if(var == QLatin1String{MetaData::FileSizeNatural}) {
-        return VariableKind::FileSizeNatural;
-    }
-    if(var == QLatin1String{MetaData::Bitrate}) {
-        return VariableKind::Bitrate;
-    }
-    if(var == QLatin1String{MetaData::SampleRate}) {
-        return VariableKind::SampleRate;
-    }
-    if(var == QLatin1String{MetaData::BitDepth}) {
-        return VariableKind::BitDepth;
-    }
-    if(var == QLatin1String{MetaData::FirstPlayed}) {
-        return VariableKind::FirstPlayed;
-    }
-    if(var == QLatin1String{MetaData::LastPlayed}) {
-        return VariableKind::LastPlayed;
-    }
-    if(var == QLatin1String{MetaData::Rating}) {
-        return VariableKind::Rating;
-    }
-    if(var == QLatin1String{MetaData::RatingNormalized}) {
-        return VariableKind::RatingNormalized;
-    }
-    if(var == QLatin1String{MetaData::Stars}) {
-        return VariableKind::Stars;
-    }
-    if(var == QLatin1String{MetaData::RatingStars}) {
-        return VariableKind::RatingStars;
-    }
-    if(var == QLatin1String{MetaData::RatingStarsPadded}) {
-        return VariableKind::RatingStarsPadded;
-    }
-    if(var == QLatin1String{MetaData::RatingEditor}) {
-        return VariableKind::RatingEditor;
-    }
-    if(var == QLatin1String{MetaData::Codec}) {
-        return VariableKind::Codec;
-    }
-    if(var == QLatin1String{MetaData::CodecProfile}) {
-        return VariableKind::CodecProfile;
-    }
-    if(var == QLatin1String{MetaData::Tool}) {
-        return VariableKind::Tool;
-    }
-    if(var == QLatin1String{MetaData::TagType}) {
-        return VariableKind::TagType;
-    }
-    if(var == QLatin1String{MetaData::Encoding}) {
-        return VariableKind::Encoding;
-    }
-    if(var == QLatin1String{MetaData::Channels}) {
-        return VariableKind::Channels;
-    }
-    if(var == QLatin1String{MetaData::CreatedTime}) {
-        return VariableKind::CreatedTime;
-    }
-    if(var == QLatin1String{MetaData::AddedTime}) {
-        return VariableKind::AddedTime;
-    }
-    if(var == QLatin1String{MetaData::LastModified}) {
-        return VariableKind::LastModified;
-    }
-    if(var == QLatin1String{MetaData::FilePath}) {
-        return VariableKind::FilePath;
-    }
-    if(var == QLatin1String{MetaData::FileName}) {
-        return VariableKind::FileName;
-    }
-    if(var == QLatin1String{MetaData::Extension}) {
-        return VariableKind::Extension;
-    }
-    if(var == QLatin1String{MetaData::FileNameWithExt}) {
-        return VariableKind::FileNameWithExt;
-    }
-    if(var == QLatin1String{MetaData::Directory}) {
-        return VariableKind::Directory;
-    }
-    if(var == QLatin1String{MetaData::Path}) {
-        return VariableKind::Path;
-    }
-    if(var == QLatin1String{MetaData::Subsong}) {
-        return VariableKind::Subsong;
-    }
-    if(var == QLatin1String{MetaData::RGTrackGain}) {
-        return VariableKind::RGTrackGain;
-    }
-    if(var == QLatin1String{MetaData::RGTrackPeak}) {
-        return VariableKind::RGTrackPeak;
-    }
-    if(var == QLatin1String{MetaData::RGTrackPeakDB}) {
-        return VariableKind::RGTrackPeakDB;
-    }
-    if(var == QLatin1String{MetaData::RGAlbumGain}) {
-        return VariableKind::RGAlbumGain;
-    }
-    if(var == QLatin1String{MetaData::RGAlbumPeak}) {
-        return VariableKind::RGAlbumPeak;
-    }
-    if(var == QLatin1String{MetaData::RGAlbumPeakDB}) {
-        return VariableKind::RGAlbumPeakDB;
-    }
-    if(var == "TRACKCOUNT"_L1) {
-        return VariableKind::TrackCount;
-    }
-    if(var == "PLAYTIME"_L1) {
-        return VariableKind::Playtime;
-    }
-    if(var == "PLAYLIST_SIZE"_L1) {
-        return VariableKind::PlaylistSize;
-    }
-    if(var == "PLAYLIST_DURATION"_L1) {
-        return VariableKind::PlaylistDuration;
-    }
-    if(var == "PLAYLIST_ELAPSED"_L1) {
-        return VariableKind::PlaylistElapsed;
-    }
-    if(var == "PLAYBACK_TIME"_L1) {
-        return VariableKind::PlaybackTime;
-    }
-    if(var == "PLAYBACK_TIME_S"_L1) {
-        return VariableKind::PlaybackTimeSeconds;
-    }
-    if(var == "PLAYBACK_TIME_REMAINING"_L1) {
-        return VariableKind::PlaybackTimeRemaining;
-    }
-    if(var == "PLAYBACK_TIME_REMAINING_S"_L1) {
-        return VariableKind::PlaybackTimeRemainingSeconds;
-    }
-    if(var == "ISPLAYING"_L1) {
-        return VariableKind::IsPlaying;
-    }
-    if(var == "ISPAUSED"_L1) {
-        return VariableKind::IsPaused;
-    }
-    if(var == "ISSTOPPED"_L1) {
-        return VariableKind::IsStopped;
-    }
-    if(var == "LIBRARYNAME"_L1) {
-        return VariableKind::LibraryName;
-    }
-    if(var == "LIBRARYPATH"_L1) {
-        return VariableKind::LibraryPath;
-    }
-    if(var == "RELATIVEPATH"_L1) {
-        return VariableKind::RelativePath;
-    }
-
-    return VariableKind::Generic;
-}
-
-FunctionKind resolveBuiltInFunctionKind(const QString& name)
-{
-    using Kind = FunctionKind;
-
-    if(name == "if"_L1) {
-        return Kind::If;
-    }
-    if(name == "get"_L1) {
-        return Kind::Get;
-    }
-    if(name == "put"_L1) {
-        return Kind::Put;
-    }
-    if(name == "puts"_L1) {
-        return Kind::Puts;
-    }
-    if(name == "if2"_L1) {
-        return Kind::If2;
-    }
-    if(name == "if3"_L1) {
-        return Kind::If3;
-    }
-    if(name == "ifequal"_L1) {
-        return Kind::IfEqual;
-    }
-    if(name == "ifgreater"_L1) {
-        return Kind::IfGreater;
-    }
-    if(name == "iflonger"_L1) {
-        return Kind::IfLonger;
-    }
-    if(name == "add"_L1) {
-        return Kind::Add;
-    }
-    if(name == "sub"_L1) {
-        return Kind::Sub;
-    }
-    if(name == "mul"_L1) {
-        return Kind::Mul;
-    }
-    if(name == "div"_L1) {
-        return Kind::Div;
-    }
-    if(name == "mod"_L1) {
-        return Kind::Mod;
-    }
-    if(name == "num"_L1) {
-        return Kind::Num;
-    }
-    if(name == "pad"_L1) {
-        return Kind::Pad;
-    }
-    if(name == "padright"_L1) {
-        return Kind::PadRight;
-    }
-
-    return Kind::Generic;
-}
-
-BoundScript bindScript(const ParsedScript& script, const ScriptRegistry* registry)
+BoundScript bindScript(const ParsedScript& script, const ScriptRegistry* registry, bool combineLiterals)
 {
     BoundScript bound;
     bound.input  = script.input;
@@ -358,7 +89,18 @@ BoundScript bindScript(const ParsedScript& script, const ScriptRegistry* registr
     bound.expressions.reserve(script.expressions.size());
 
     for(const auto& expr : script.expressions) {
-        bound.expressions.emplace_back(bindExpression(expr, registry));
+        if(combineLiterals && expr.type == Expr::Literal && !bound.expressions.empty()
+           && bound.expressions.back().type == Expr::Literal) {
+            const auto& value = std::get<QString>(expr.value);
+            auto& previous    = std::get<QString>(bound.expressions.back().value);
+            // A literal containing the list separator must retain its expansion step
+            if(!value.contains(QLatin1StringView{Constants::UnitSeparator})
+               && !previous.contains(QLatin1StringView{Constants::UnitSeparator})) {
+                previous.append(value);
+                continue;
+            }
+        }
+        bound.expressions.emplace_back(bindExpression(expr, registry, bound.dependencies));
     }
 
     return bound;

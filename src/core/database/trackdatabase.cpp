@@ -65,6 +65,7 @@ QString fetchTrackColumns()
                                    "FileSize,"
                                    "BitRate,"
                                    "SampleRate,"
+                                   "SampleFrames,"
                                    "Channels,"
                                    "BitDepth,"
                                    "Codec,"
@@ -86,7 +87,8 @@ QString fetchTrackColumns()
                                    "FirstPlayed,"
                                    "LastPlayed,"
                                    "PlayCount,"
-                                   "Rating"_s;
+                                   "Rating,"
+                                   "Loved"_s;
 
     return columns;
 }
@@ -117,39 +119,41 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q, const std::shared_ptr<Fooyin
     track.setFileSize(q.value(19).toInt());
     track.setBitrate(q.value(20).toInt());
     track.setSampleRate(q.value(21).toInt());
-    track.setChannels(q.value(22).toInt());
-    track.setBitDepth(q.value(23).toInt());
-    track.setCodec(q.value(24).toString());
-    track.setCodecProfile(q.value(25).toString());
-    track.setTool(q.value(26).toString());
-    track.setTagTypes(q.value(27).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
-    track.setEncoding(q.value(28).toString());
-    track.storeExtraTags(q.value(29).toByteArray());
-    track.storeExtraProperties(q.value(30).toByteArray());
-    track.setModifiedTime(q.value(31).toULongLong());
-    track.setLibraryId(q.value(32).toInt());
-    track.setHash(q.value(33).toString());
+    track.setSampleFrames(q.value(22).toULongLong());
+    track.setChannels(q.value(23).toInt());
+    track.setBitDepth(q.value(24).toInt());
+    track.setCodec(q.value(25).toString());
+    track.setCodecProfile(q.value(26).toString());
+    track.setTool(q.value(27).toString());
+    track.setTagTypes(q.value(28).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
+    track.setEncoding(q.value(29).toString());
+    track.storeExtraTags(q.value(30).toByteArray());
+    track.storeExtraProperties(q.value(31).toByteArray());
+    track.setModifiedTime(q.value(32).toULongLong());
+    track.setLibraryId(q.value(33).toInt());
+    track.setHash(q.value(34).toString());
 
     bool isValid{false};
-    if(const auto rgTrackGain = q.value(34).toFloat(&isValid); isValid) {
+    if(const auto rgTrackGain = q.value(35).toFloat(&isValid); isValid) {
         track.setRGTrackGain(rgTrackGain);
     }
-    if(const auto rgAlbumGain = q.value(35).toFloat(&isValid); isValid) {
+    if(const auto rgAlbumGain = q.value(36).toFloat(&isValid); isValid) {
         track.setRGAlbumGain(rgAlbumGain);
     }
-    if(const auto rgTrackPeak = q.value(36).toFloat(&isValid); isValid) {
+    if(const auto rgTrackPeak = q.value(37).toFloat(&isValid); isValid) {
         track.setRGTrackPeak(rgTrackPeak);
     }
-    if(const auto rgAlbumPeak = q.value(37).toFloat(&isValid); isValid) {
+    if(const auto rgAlbumPeak = q.value(38).toFloat(&isValid); isValid) {
         track.setRGAlbumPeak(rgAlbumPeak);
     }
-    track.setCreatedTime(q.value(38).toULongLong());
+    track.setCreatedTime(q.value(39).toULongLong());
 
-    track.setAddedTime(q.value(39).toULongLong());
-    track.setFirstPlayed(q.value(40).toULongLong());
-    track.setLastPlayed(q.value(41).toULongLong());
-    track.setPlayCount(q.value(42).toInt());
-    track.setRating(q.value(43).toFloat());
+    track.setAddedTime(q.value(40).toULongLong());
+    track.setFirstPlayed(q.value(41).toULongLong());
+    track.setLastPlayed(q.value(42).toULongLong());
+    track.setPlayCount(q.value(43).toInt());
+    track.setRating(q.value(44).toFloat());
+    track.setLoved(q.value(45).toBool());
 
     track.setMetadataWasRead(true);
     track.generateHash();
@@ -190,6 +194,23 @@ bool TrackDatabase::storeTracks(TrackList& tracks)
                     return false;
                 }
             }
+
+            Track::Stats importedStats{Track::Stat::Playcount};
+            if(track.rating() > 0) {
+                importedStats |= Track::Stat::Rating;
+            }
+
+            StoredTrackStats stats;
+            if(!insertOrUpdateStats(track, &stats, importedStats)) {
+                return false;
+            }
+
+            track.setAddedTime(stats.added);
+            track.setFirstPlayed(stats.firstPlayed);
+            track.setLastPlayed(stats.lastPlayed);
+            track.setPlayCount(stats.playCount);
+            track.setRating(stats.rating);
+            track.setLoved(stats.loved);
         }
     }
 
@@ -209,8 +230,8 @@ bool TrackDatabase::updateTracks(TrackList& tracks)
     }
 
     for(auto& track : tracks) {
-        if(track.id() >= 0) {
-            updateTrack(track);
+        if(track.id() >= 0 && !updateTrack(track)) {
+            return false;
         }
     }
 
@@ -366,6 +387,7 @@ bool TrackDatabase::updateTrack(const Track& track)
                                      "FileSize = :fileSize,"
                                      "BitRate = :bitRate,"
                                      "SampleRate = :sampleRate,"
+                                     "SampleFrames = :sampleFrames,"
                                      "Channels = :channels,"
                                      "BitDepth = :bitDepth,"
                                      "Codec = :codec,"
@@ -402,19 +424,40 @@ bool TrackDatabase::updateTrackStats(const Track& track)
     return insertOrUpdateStats(track);
 }
 
+bool TrackDatabase::updateTrackStats(Track& track, Track::Stats updatedStats)
+{
+    StoredTrackStats stats;
+    if(!insertOrUpdateStats(track, &stats, updatedStats)) {
+        return false;
+    }
+
+    track.setAddedTime(stats.added);
+    track.setFirstPlayed(stats.firstPlayed);
+    track.setLastPlayed(stats.lastPlayed);
+    track.setPlayCount(stats.playCount);
+    track.setRating(stats.rating);
+    track.setLoved(stats.loved);
+    return true;
+}
+
 bool TrackDatabase::updateTrackStats(const TrackList& tracks)
 {
-    bool success{true};
+    if(tracks.empty()) {
+        return true;
+    }
 
     DbTransaction transaction{db()};
+    if(!transaction) {
+        return false;
+    }
 
     for(const Track& track : tracks) {
         if(!insertOrUpdateStats(track)) {
-            success = false;
+            return false;
         }
     }
 
-    return success && transaction.commit();
+    return transaction.commit();
 }
 
 bool TrackDatabase::deleteTrack(int id)
@@ -440,12 +483,13 @@ bool TrackDatabase::deleteTracks(const TrackList& tracks)
         return false;
     }
 
-    const int fileCount = static_cast<int>(
-        std::count_if(tracks.cbegin(), tracks.cend(), [this](const Track& track) { return deleteTrack(track.id()); }));
+    for(const Track& track : tracks) {
+        if(!deleteTrack(track.id())) {
+            return false;
+        }
+    }
 
-    const auto success = transaction.commit();
-
-    return (success && (fileCount == static_cast<int>(tracks.size())));
+    return transaction.commit();
 }
 
 std::set<int> TrackDatabase::deleteLibraryTracks(int libraryId)
@@ -538,6 +582,7 @@ void TrackDatabase::insertViews(const QSqlDatabase& db)
                                      "Tracks.FileSize,"
                                      "Tracks.BitRate,"
                                      "Tracks.SampleRate,"
+                                     "Tracks.SampleFrames,"
                                      "Tracks.Channels,"
                                      "Tracks.BitDepth,"
                                      "Tracks.Codec,"
@@ -559,7 +604,8 @@ void TrackDatabase::insertViews(const QSqlDatabase& db)
                                      "TrackStats.FirstPlayed,"
                                      "TrackStats.LastPlayed,"
                                      "TrackStats.PlayCount,"
-                                     "TrackStats.Rating"
+                                     "TrackStats.Rating,"
+                                     "TrackStats.Loved"
                                      " FROM Tracks "
                                      "LEFT JOIN TrackStats ON Tracks.TrackHash = TrackStats.TrackHash;"_s;
 
@@ -587,171 +633,7 @@ int TrackDatabase::trackCount() const
 
 bool TrackDatabase::insertTrack(Track& track, bool ignoreDuplicates) const
 {
-    static const QString insertStatement = u"INSERT INTO Tracks ("
-                                           "FilePath,"
-                                           "Subsong,"
-                                           "Title,"
-                                           "TrackNumber,"
-                                           "TrackTotal,"
-                                           "Artists,"
-                                           "AlbumArtist,"
-                                           "Album,"
-                                           "DiscNumber,"
-                                           "DiscTotal,"
-                                           "Date,"
-                                           "Composer,"
-                                           "Performer,"
-                                           "Genres,"
-                                           "Comment,"
-                                           "CuePath,"
-                                           "Offset,"
-                                           "Duration,"
-                                           "FileSize,"
-                                           "BitRate,"
-                                           "SampleRate,"
-                                           "Channels,"
-                                           "BitDepth,"
-                                           "Codec,"
-                                           "CodecProfile,"
-                                           "Tool,"
-                                           "TagTypes,"
-                                           "Encoding,"
-                                           "ExtraTags,"
-                                           "ExtraProperties,"
-                                           "ModifiedDate,"
-                                           "TrackHash,"
-                                           "LibraryID,"
-                                           "RGTrackGain,"
-                                           "RGAlbumGain,"
-                                           "RGTrackPeak,"
-                                           "RGAlbumPeak,"
-                                           "CreatedDate"
-                                           ") "
-                                           "VALUES ("
-                                           ":filePath,"
-                                           ":subsong,"
-                                           ":title,"
-                                           ":trackNumber,"
-                                           ":trackTotal,"
-                                           ":artists,"
-                                           ":albumArtist,"
-                                           ":album,"
-                                           ":discNumber,"
-                                           ":discTotal,"
-                                           ":date,"
-                                           ":composer,"
-                                           ":performer,"
-                                           ":genres,"
-                                           ":comment,"
-                                           ":cuePath,"
-                                           ":offset,"
-                                           ":duration,"
-                                           ":fileSize,"
-                                           ":bitRate,"
-                                           ":sampleRate,"
-                                           ":channels,"
-                                           ":bitDepth,"
-                                           ":codec,"
-                                           ":codecProfile,"
-                                           ":tool,"
-                                           ":tagTypes,"
-                                           ":encoding,"
-                                           ":extraTags,"
-                                           ":extraProperties,"
-                                           ":modifiedDate,"
-                                           ":trackHash,"
-                                           ":libraryID,"
-                                           ":rgTrackGain,"
-                                           ":rgAlbumGain,"
-                                           ":rgTrackPeak,"
-                                           ":rgAlbumPeak,"
-                                           ":createdDate"
-                                           ");"_s;
-
-    static const QString ignoreStatement = u"INSERT OR IGNORE INTO Tracks ("
-                                           "FilePath,"
-                                           "Subsong,"
-                                           "Title,"
-                                           "TrackNumber,"
-                                           "TrackTotal,"
-                                           "Artists,"
-                                           "AlbumArtist,"
-                                           "Album,"
-                                           "DiscNumber,"
-                                           "DiscTotal,"
-                                           "Date,"
-                                           "Composer,"
-                                           "Performer,"
-                                           "Genres,"
-                                           "Comment,"
-                                           "CuePath,"
-                                           "Offset,"
-                                           "Duration,"
-                                           "FileSize,"
-                                           "BitRate,"
-                                           "SampleRate,"
-                                           "Channels,"
-                                           "BitDepth,"
-                                           "Codec,"
-                                           "CodecProfile,"
-                                           "Tool,"
-                                           "TagTypes,"
-                                           "Encoding,"
-                                           "ExtraTags,"
-                                           "ExtraProperties,"
-                                           "ModifiedDate,"
-                                           "TrackHash,"
-                                           "LibraryID,"
-                                           "RGTrackGain,"
-                                           "RGAlbumGain,"
-                                           "RGTrackPeak,"
-                                           "RGAlbumPeak,"
-                                           "CreatedDate"
-                                           ") "
-                                           "VALUES ("
-                                           ":filePath,"
-                                           ":subsong,"
-                                           ":title,"
-                                           ":trackNumber,"
-                                           ":trackTotal,"
-                                           ":artists,"
-                                           ":albumArtist,"
-                                           ":album,"
-                                           ":discNumber,"
-                                           ":discTotal,"
-                                           ":date,"
-                                           ":composer,"
-                                           ":performer,"
-                                           ":genres,"
-                                           ":comment,"
-                                           ":cuePath,"
-                                           ":offset,"
-                                           ":duration,"
-                                           ":fileSize,"
-                                           ":bitRate,"
-                                           ":sampleRate,"
-                                           ":channels,"
-                                           ":bitDepth,"
-                                           ":codec,"
-                                           ":codecProfile,"
-                                           ":tool,"
-                                           ":tagTypes,"
-                                           ":encoding,"
-                                           ":extraTags,"
-                                           ":extraProperties,"
-                                           ":modifiedDate,"
-                                           ":trackHash,"
-                                           ":libraryID,"
-                                           ":rgTrackGain,"
-                                           ":rgAlbumGain,"
-                                           ":rgTrackPeak,"
-                                           ":rgAlbumPeak,"
-                                           ":createdDate"
-                                           ");"_s;
-
-    const QString& statement = ignoreDuplicates ? ignoreStatement : insertStatement;
-
-    DbQuery query{db(), statement};
+    DbQuery query{db(), Database::trackInsertStatement(ignoreDuplicates)};
 
     const auto bindings = Database::trackBindings(track);
     for(const auto& [name, value] : bindings) {
@@ -767,43 +649,49 @@ bool TrackDatabase::insertTrack(Track& track, bool ignoreDuplicates) const
     }
 
     track.setId(query.lastInsertId().toInt());
-
-    return insertOrUpdateStats(track);
+    return true;
 }
 
-bool TrackDatabase::insertOrUpdateStats(const Track& track) const
+std::optional<TrackDatabase::StoredTrackStats> TrackDatabase::existingTrackStats(const QString& hash) const
+{
+    static const QString statement = u"SELECT AddedDate, FirstPlayed, LastPlayed, PlayCount, Rating, Loved "
+                                     "FROM TrackStats WHERE TrackHash = :trackHash;"_s;
+
+    DbQuery query{db(), statement};
+    query.bindValue(u":trackHash"_s, hash);
+
+    if(!query.exec()) {
+        return {};
+    }
+
+    if(!query.next()) {
+        return StoredTrackStats{};
+    }
+
+    return StoredTrackStats{
+        .added       = query.value(0).toULongLong(),
+        .firstPlayed = query.value(1).toULongLong(),
+        .lastPlayed  = query.value(2).toULongLong(),
+        .playCount   = query.value(3).toInt(),
+        .rating      = normaliseTrackRating(query.value(4).toFloat()),
+        .loved       = query.value(5).toBool(),
+    };
+}
+
+bool TrackDatabase::insertOrUpdateStats(const Track& track, StoredTrackStats* mergedStats,
+                                        Track::Stats updatedStats) const
 {
     if(track.hash().isEmpty()) {
         qCWarning(TRK_DB) << "Cannot insert/update track stats (Hash empty)";
         return false;
     }
 
-    uint64_t added{0};
-    uint64_t firstPlayed{0};
-    uint64_t lastPlayed{0};
-    int playCount{0};
-    float rating{-1.0F};
-
-    {
-        static const QString statement = u"SELECT AddedDate, FirstPlayed, LastPlayed, PlayCount, Rating FROM "
-                                         "TrackStats WHERE TrackHash = :trackHash;"_s;
-
-        DbQuery query{db(), statement};
-
-        query.bindValue(u":trackHash"_s, track.hash());
-
-        if(!query.exec()) {
-            return false;
-        }
-
-        if(query.next()) {
-            added       = query.value(0).toULongLong();
-            firstPlayed = query.value(1).toULongLong();
-            lastPlayed  = query.value(2).toULongLong();
-            playCount   = query.value(3).toInt();
-            rating      = normaliseTrackRating(query.value(4).toFloat());
-        }
+    const auto currentStats = existingTrackStats(track.hash());
+    if(!currentStats) {
+        return false;
     }
+
+    auto [added, firstPlayed, lastPlayed, playCount, rating, loved] = *currentStats;
 
     bool dbNeedsUpdate{false};
 
@@ -812,6 +700,7 @@ bool TrackDatabase::insertOrUpdateStats(const Track& track) const
     const uint64_t trackLastPlayed  = track.lastPlayed();
     const int trackPlayCount        = track.playCount();
     const float trackRating         = normaliseTrackRating(track.rating());
+    const bool trackLoved           = track.isLoved();
 
     if(trackAdded != added) {
         if(added == 0 || (trackAdded > 0 && trackAdded < added)) {
@@ -819,57 +708,90 @@ bool TrackDatabase::insertOrUpdateStats(const Track& track) const
             dbNeedsUpdate = true;
         }
     }
-    if(trackFirstPlayed != firstPlayed) {
-        if(firstPlayed == 0 || (trackFirstPlayed > 0 && trackFirstPlayed < firstPlayed)) {
-            firstPlayed   = trackFirstPlayed;
-            dbNeedsUpdate = true;
+    if(updatedStats.testFlag(Track::Stat::Playcount)) {
+        if(trackFirstPlayed != firstPlayed) {
+            if(firstPlayed == 0 || (trackFirstPlayed > 0 && trackFirstPlayed < firstPlayed)) {
+                firstPlayed   = trackFirstPlayed;
+                dbNeedsUpdate = true;
+            }
+        }
+        if(trackLastPlayed != lastPlayed) {
+            if(trackLastPlayed > lastPlayed) {
+                lastPlayed    = trackLastPlayed;
+                dbNeedsUpdate = true;
+            }
+        }
+        if(trackPlayCount != playCount) {
+            if(trackPlayCount > playCount) {
+                playCount     = trackPlayCount;
+                dbNeedsUpdate = true;
+            }
         }
     }
-    if(trackLastPlayed != lastPlayed) {
-        if(trackLastPlayed > lastPlayed) {
-            lastPlayed    = trackLastPlayed;
-            dbNeedsUpdate = true;
-        }
-    }
-    if(trackPlayCount != playCount) {
-        if(trackPlayCount > playCount) {
-            playCount     = trackPlayCount;
-            dbNeedsUpdate = true;
-        }
-    }
-    if(trackRating != rating) {
+    if(updatedStats.testFlag(Track::Stat::Rating) && trackRating != rating) {
         rating        = trackRating;
         dbNeedsUpdate = true;
     }
-
-    if(!dbNeedsUpdate) {
-        return true;
+    if(updatedStats.testFlag(Track::Stat::Loved) && trackLoved != loved) {
+        loved         = trackLoved;
+        dbNeedsUpdate = true;
     }
 
-    static const QString statement
-        = u"INSERT OR REPLACE INTO TrackStats (TrackHash, AddedDate, FirstPlayed, LastPlayed, "
-          u"PlayCount, Rating) VALUES "
-          "(:trackHash, :addedDate, :firstPlayed, :lastPlayed, :playCount, :rating);"_s;
+    if(dbNeedsUpdate) {
+        static const QString statement
+            = u"INSERT OR REPLACE INTO TrackStats (TrackHash, AddedDate, FirstPlayed, LastPlayed, "
+              u"PlayCount, Rating, Loved) VALUES "
+              "(:trackHash, :addedDate, :firstPlayed, :lastPlayed, :playCount, :rating, :loved);"_s;
 
-    DbQuery query{db(), statement};
+        DbQuery query{db(), statement};
 
-    query.bindValue(u":trackHash"_s, track.hash());
-    query.bindValue(u":addedDate"_s, QVariant::fromValue(added));
-    query.bindValue(u":firstPlayed"_s, QVariant::fromValue(firstPlayed));
-    query.bindValue(u":lastPlayed"_s, QVariant::fromValue(lastPlayed));
-    query.bindValue(u":playCount"_s, playCount);
-    query.bindValue(u":rating"_s, rating);
+        query.bindValue(u":trackHash"_s, track.hash());
+        query.bindValue(u":addedDate"_s, QVariant::fromValue(added));
+        query.bindValue(u":firstPlayed"_s, QVariant::fromValue(firstPlayed));
+        query.bindValue(u":lastPlayed"_s, QVariant::fromValue(lastPlayed));
+        query.bindValue(u":playCount"_s, playCount);
+        query.bindValue(u":rating"_s, rating);
+        query.bindValue(u":loved"_s, loved);
 
-    return query.exec();
+        if(!query.exec()) {
+            return false;
+        }
+    }
+
+    if(mergedStats) {
+        *mergedStats = {
+            .added       = added,
+            .firstPlayed = firstPlayed,
+            .lastPlayed  = lastPlayed,
+            .playCount   = playCount,
+            .rating      = rating,
+            .loved       = loved,
+        };
+    }
+
+    return true;
 }
 
 void TrackDatabase::removeUnmanagedTracks() const
 {
-    static const QString statement
-        = u"DELETE FROM Tracks WHERE LibraryID = -1 AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);"_s;
+    static const QString statement = uR"(
+        DELETE FROM Tracks
+        WHERE
+            (
+                LibraryID = -1
+                OR NOT EXISTS (
+                    SELECT 1
+                    FROM Libraries
+                    WHERE Libraries.LibraryID = Tracks.LibraryID
+                )
+            )
+            AND TrackID NOT IN (
+                SELECT TrackID
+                FROM PlaylistTracks
+            );
+    )"_s;
 
     DbQuery query{db(), statement};
-
     query.exec();
 }
 

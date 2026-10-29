@@ -23,10 +23,9 @@
 #include <core/track.h>
 #include <gui/widgets/expandedtreeview.h>
 
-#include "internalguisettings.h"
-
 #include <QBasicTimer>
 #include <QPixmap>
+#include <QRegion>
 
 class QKeyEvent;
 class QLineEdit;
@@ -36,37 +35,37 @@ class QTimerEvent;
 class QWidget;
 
 namespace Fooyin {
-class PixmapFadeController;
+class HeartDelegate;
 class StarDelegate;
+class WidgetBackground;
+struct BackgroundConfig;
 
 class PlaylistView : public ExpandedTreeView
 {
     Q_OBJECT
 
 public:
-    struct BackgroundOptions
-    {
-        PlaylistBgImage imageMode{PlaylistBgImage::None};
-        PlaylistBgScaling scaling{PlaylistBgScaling::ScaledAndCropped};
-        PlaylistBgImagePosition position{PlaylistBgImagePosition::Middle};
-        int maxSize{0};
-        int blur{0};
-        int opacity{40};
-        bool fadeChanges{false};
-        int fadeDurationMs{1000};
-    };
-
     explicit PlaylistView(QWidget* parent = nullptr);
 
+    void setInlineEditDelay(int delayMs);
     void setLoadingText(const QString& text);
     void setEmptyText(const QString& text);
-    void setupRatingDelegate();
-    void setBackgroundOptions(const BackgroundOptions& options);
+    void setStickyHeaders(bool enabled);
+    void setStickySubheaders(bool enabled);
+    void setStickyArtwork(bool enabled);
+    void setRatingColumn(int column);
+    void setLovedColumn(int column);
+    void setRatingEditorOnlyOnHover(bool enabled);
+    void setLoveEditorOnlyOnHover(bool enabled);
+    void setTrackStatsEditable(bool editable);
+    void setBackgroundConfig(const BackgroundConfig& config);
     void setBackgroundPixmap(const QPixmap& pixmap);
 
     void playlistAboutToBeReset();
     void playlistReset();
     [[nodiscard]] bool playlistLoaded() const;
+
+    [[nodiscard]] bool stickyArtworkIntersects(const QRect& rect) const;
 
     [[nodiscard]] bool hasActiveInlineEditor() const;
     void setSingleWriteInProgress(bool inProgress);
@@ -86,16 +85,23 @@ protected:
     void closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint) override;
     void leaveEvent(QEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
-    DropIndicatorPosition dropPosition(const QPoint& pos, const QRect& rect, const QModelIndex& index) override;
     bool eventFilter(QObject* watched, QEvent* event) override;
+
+    DropIndicatorPosition dropPosition(const QPoint& pos, const QRect& rect, const QModelIndex& index) override;
+    QRect drawSpan(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+    [[nodiscard]] int spanHeight(const QModelIndex& index) const override;
+    [[nodiscard]] int adjustVerticalScrollMaximum(int maximum) const override;
 
 Q_SIGNALS:
     void bulkWriteRequested(const Fooyin::TrackList& tracks);
+    void tracksLoved(const Fooyin::TrackList& tracks);
     void tracksRated(const Fooyin::TrackList& tracks);
     void displayChanged();
 
 private:
     [[nodiscard]] QModelIndexList selectedTrackRows() const;
+    void editTrackStat(const QModelIndex& index, const QVariant& value, Track::Stat stat);
+    void emitTrackStatChanged(const TrackList& tracks, Track::Stat stat);
     [[nodiscard]] std::vector<int> bulkEditableColumns() const;
     [[nodiscard]] QModelIndex bulkEditAnchorIndex(int column) const;
     [[nodiscard]] QRect bulkEditRect(int column) const;
@@ -115,37 +121,51 @@ private:
 
     void ratingHoverIn(const QModelIndex& index, const QPoint& pos);
     void ratingHoverOut();
+    void loveHoverIn(const QModelIndex& index);
+    void loveHoverOut();
+    void updateHoveredRow(const QModelIndex& index);
+
+    struct StickyHeader
+    {
+        QModelIndex index;
+        QRect rect;
+        QRect clipRect;
+    };
+
+    [[nodiscard]] QModelIndex stickyHeaderIndex(int scrollOffset = 0) const;
+    [[nodiscard]] QRect stickyHeaderRect(const QModelIndex& index, int scrollOffset = 0, int top = 0) const;
+    [[nodiscard]] std::vector<StickyHeader> stickyHeaderLayout(int scrollOffset = 0) const;
+    [[nodiscard]] QRect stickyHeaderPaintRect(const StickyHeader& header) const;
+    void drawStickyHeader(QPainter& painter) const;
+    void snapScrollToStickyHeader(int delta);
 
     void drawBackground(QPainter& painter);
     void updateBackgroundTransparency();
-    void invalidateScaledBackground();
-    struct BackgroundPixmapCache
-    {
-        qint64 sourceKey{0};
-        QSize viewportSize;
-        qreal dpr{1.0};
-        QPixmap pixmap;
-    };
-    [[nodiscard]] QPixmap preparedBackgroundPixmap(const QPixmap& source, BackgroundPixmapCache& cache) const;
-    [[nodiscard]] QPoint backgroundPixmapPosition(const QSize& pixmapSize) const;
-    void drawBackgroundPixmap(QPainter& painter, const QPixmap& pixmap);
 
     QString m_emptyText;
     QString m_loadingText;
     bool m_playlistLoaded;
+    bool m_stickyHeaders;
+    bool m_stickySubheaders;
+    bool m_stickyArtwork;
+    bool m_snappingScroll;
+    bool m_stickyHeaderPressed;
+    mutable QRegion m_stickyArtworkRegion;
 
+    bool m_trackStatsEditable;
     StarDelegate* m_starDelegate;
     int m_ratingColumn;
+    HeartDelegate* m_heartDelegate;
+    int m_lovedColumn;
+    QPersistentModelIndex m_hoveredRow;
 
-    BackgroundOptions m_bgOptions;
-    PixmapFadeController* m_bgFadeController;
-    mutable BackgroundPixmapCache m_cachedBg;
-    mutable BackgroundPixmapCache m_cachedPreviousBg;
+    WidgetBackground* m_background;
 
     QPersistentModelIndex m_pressedSelectedIndex;
     QPersistentModelIndex m_pendingEditIndex;
     QLineEdit* m_bulkEditor;
     QBasicTimer m_editTimer;
+    int m_inlineEditDelayMs;
     QModelIndexList m_bulkEditRows;
     std::vector<int> m_bulkEditColumns;
     int m_bulkEditColumnIndex;

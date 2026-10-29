@@ -53,12 +53,13 @@ public:
     [[nodiscard]] QString layoutName() const override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
+    void populateContextMenu(QMenu* menu) override;
 
     void renderLevel(const LevelFrame& frame);
 
+    [[nodiscard]] Type type() const;
     [[nodiscard]] Qt::Orientation orientation() const;
     void setOrientation(Qt::Orientation orientation);
-    void setShowLegend(bool show);
     void setChannelSpacing(int size);
     void setBarSize(int size);
     void setBarSpacing(int size);
@@ -66,6 +67,7 @@ public:
     void setSectionSpacing(int size);
 
     [[nodiscard]] QSize minimumSizeHint() const override;
+    [[nodiscard]] QSize sizeHint() const override;
 
     struct ConfigData
     {
@@ -73,7 +75,11 @@ public:
         int falloffTime{13};
         int peakFalloffTime{13};
         bool showPeaks{false};
-        bool showLegend{false};
+        bool showTopLabels{false};
+        bool showBottomLabels{false};
+        bool showLeftLabels{false};
+        bool showRightLabels{false};
+        bool rightAlignScaleLabels{false};
         int updateFps{40};
         int channelSpacing{1};
         int barSize{0};
@@ -90,8 +96,10 @@ public:
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
 
+Q_SIGNALS:
+    void configChanged();
+
 protected:
-    void showEvent(QShowEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
@@ -100,6 +108,7 @@ protected:
     void openConfigDialog() override;
 
 private:
+    [[nodiscard]] QString settingsKey(QStringView key) const;
     [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
     void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
 

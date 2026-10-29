@@ -45,6 +45,7 @@ public:
 
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
+    void populateContextMenu(QMenu* menu) override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

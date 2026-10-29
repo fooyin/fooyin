@@ -23,14 +23,19 @@ namespace Fooyin::Constants {
 constexpr auto RecordSeparator = "\036";
 constexpr auto UnitSeparator   = "\037";
 
+constexpr auto PlayingIconMarker = u'\uE000';
+
 constexpr auto InvalidGain        = -1000;
 constexpr auto InvalidPeak        = -1;
 constexpr auto OpusHeaderGainQ78  = "_OPUS_HEADER_GAIN_Q78";
 constexpr auto RawRatingTagPrefix = "_FY_RATING_RAW_";
+constexpr auto CueIndex01Sector   = "_CUE_INDEX01_SECTOR";
+constexpr auto CueEndSector       = "_CUE_END_SECTOR";
 
 namespace MetaData {
 constexpr auto Title             = "TITLE";
 constexpr auto Artist            = "ARTIST";
+constexpr auto TrackArtist       = "TRACKARTIST";
 constexpr auto UniqueArtist      = "UNIQUEARTIST";
 constexpr auto Album             = "ALBUM";
 constexpr auto AlbumArtist       = "ALBUMARTIST";
@@ -61,6 +66,8 @@ constexpr auto Stars             = "STARS";
 constexpr auto RatingStars       = "RATING_STARS";
 constexpr auto RatingStarsPadded = "RATING_STARS_PADDED";
 constexpr auto RatingEditor      = "RATING_EDITOR";
+constexpr auto Loved             = "LOVED";
+constexpr auto LoveEditor        = "LOVE_EDITOR";
 constexpr auto Codec             = "CODEC";
 constexpr auto CodecProfile      = "CODEC_PROFILE";
 constexpr auto Tool              = "TOOL";
@@ -92,4 +99,5 @@ constexpr auto FrontCover    = "%frontcover%";
 constexpr auto BackCover     = "%backcover%";
 constexpr auto ArtistPicture = "%artistpicture%";
 constexpr auto RatingEditor  = "%rating_editor%";
+constexpr auto LoveEditor    = "%love_editor%";
 } // namespace Fooyin::Constants

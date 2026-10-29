@@ -19,13 +19,7 @@
 
 #pragma once
 
-#if defined(__GNUG__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#elif defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wold-style-cast"
-#endif
+#include "ffmpegutils.h"
 
 extern "C"
 {
@@ -33,26 +27,7 @@ extern "C"
 #include <libavformat/avformat.h>
 }
 
-#if defined(__GNUG__)
-#pragma GCC diagnostic pop
-#elif defined(__clang__)
-#pragma clang diagnostic pop
-#endif
-
-#include <memory>
-
 namespace Fooyin {
-struct CodecContextDeleter
-{
-    void operator()(AVCodecContext* context) const
-    {
-        if(context) {
-            avcodec_free_context(&context);
-        }
-    }
-};
-using CodecContextPtr = std::unique_ptr<AVCodecContext, CodecContextDeleter>;
-
 class Codec
 {
 public:

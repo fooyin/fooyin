@@ -21,20 +21,22 @@
 
 #include "artworkexporter.h"
 #include "artworkrow.h"
+#include "artworkviewerdialog.h"
 #include "sources/artworksource.h"
 
 #include <core/engine/audioloader.h>
 #include <core/library/pendingtrackcoverprovider.h>
 #include <gui/coverrepository.h>
 #include <gui/statusevent.h>
+#include <utils/async.h>
 
 #include <QDir>
 #include <QFutureWatcher>
 #include <QGridLayout>
+#include <QImage>
 #include <QPainter>
+#include <QPointer>
 #include <QtConcurrentRun>
-
-#include <optional>
 
 using namespace Qt::StringLiterals;
 
@@ -87,6 +89,17 @@ ArtworkProperties::ArtworkProperties(AudioLoader* loader, MusicLibrary* library,
     int row{0};
     for(ArtworkRow* artworkRow : m_rows) {
         artworkLayout->addWidget(artworkRow, row++, 0);
+        QObject::connect(artworkRow, &ArtworkRow::requestView, this, [this, artworkRow]() {
+            const Track track = m_tracks.empty() ? Track{} : m_tracks.front();
+            Utils::asyncExec([imageData = artworkRow->image()] {
+                return QImage::fromData(imageData);
+            }).then(this, [this, track](const QImage& image) {
+                if(!image.isNull()) {
+                    auto* dialog = new ArtworkViewerDialog(track, QPixmap::fromImage(image), this);
+                    dialog->show();
+                }
+            });
+        });
         QObject::connect(artworkRow, &ArtworkRow::requestExtract, this, [this, artworkRow]() {
             const ArtworkResult artwork{.mimeType = artworkRow->mimeType(), .image = artworkRow->image()};
             const auto summary = ArtworkExporter::extractTracks(m_tracks, artworkRow->type(), artwork);
@@ -111,9 +124,6 @@ ArtworkProperties::ArtworkProperties(AudioLoader* loader, MusicLibrary* library,
 ArtworkProperties::~ArtworkProperties()
 {
     m_cancelLoading->store(true);
-    if(m_writeRequest && m_writeRequest->cancel) {
-        m_writeRequest->cancel();
-    }
 }
 
 void ArtworkProperties::loadTrackArtwork()
@@ -146,7 +156,7 @@ void ArtworkProperties::loadTrackArtwork()
                 auto& entry             = result->entries[i];
                 const auto pendingCover = pendingCoverProvider->pendingTrackCover(track, entry.type);
                 const QByteArray cover
-                    = pendingCover.has_value() ? pendingCover->data : loader->readTrackCover(track, entry.type);
+                    = pendingCover.has_value() ? pendingCover->image.data : loader->readTrackCover(track, entry.type);
 
                 if(cancel->load()) {
                     result->cancelled = true;
@@ -239,23 +249,30 @@ void ArtworkProperties::apply()
     m_artworkWidget->hide();
     update();
 
-    m_writeRequest = m_library->writeTrackCovers(coverData);
-    m_writeRequest->finished.then(this, [this, tracks = m_tracks](const WriteResult& result) {
-        if(result.succeeded > 0) {
-            for(const Track& track : tracks) {
-                m_coverRepository->removeFromCache(track, *m_settings);
+    WriteRequest writeRequest = m_library->writeTrackCovers(coverData);
+    const QPointer self{this};
+    writeRequest.finished = writeRequest.finished.then(
+        m_coverRepository, [self, coverRepository = m_coverRepository, settings = m_settings,
+                            tracks = m_tracks](const WriteResult& result) {
+            if(result.succeeded > 0) {
+                for(const Track& track : tracks) {
+                    coverRepository->removeFromCache(track, *settings);
+                }
             }
-        }
 
-        if(const QString status = writeStatusMessage(result); !status.isEmpty()) {
-            StatusEvent::post(status);
-        }
+            if(const QString status = writeStatusMessage(result); !status.isEmpty()) {
+                StatusEvent::post(status);
+            }
 
-        m_writeRequest = {};
-        m_writing      = false;
-        m_artworkWidget->show();
-        update();
-    });
+            if(self) {
+                self->m_writing = false;
+                self->m_artworkWidget->show();
+                self->update();
+            }
+            return result;
+        });
+
+    Q_EMIT writeRequestStarted(std::move(writeRequest));
 }
 
 void ArtworkProperties::setTrackScope(const TrackList& tracks)

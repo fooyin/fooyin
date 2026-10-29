@@ -49,6 +49,8 @@ struct LoadedSource
 
 struct LoadedDecoder
 {
+    //! Registered name of the decoder backend that processes the audio.
+    QString name;
     //! Opened input source backing `decoder`.
     LoadedSource input;
     //! Format resolved during decoder initialisation, if any.
@@ -77,12 +79,16 @@ struct LoadedReader
 class FYCORE_EXPORT AudioLoader final
 {
 public:
+    static constexpr int DefaultPriority = DefaultInputPriority;
+
     template <typename T>
     struct LoaderEntry
     {
         int index{0};
+        int priority{DefaultPriority};
         QString name;
         QStringList extensions;
+        QStringList schemes;
         bool enabled{true};
         bool isArchiveWrapper{false};
         T creator;
@@ -152,6 +158,12 @@ public:
     [[nodiscard]] std::vector<std::unique_ptr<AudioDecoder>> decodersForTrack(const Track& track) const;
     //! Create metadata reader candidates for `file`, ordered by configured priority.
     [[nodiscard]] std::vector<std::unique_ptr<AudioReader>> readersForFile(const QString& file) const;
+    /*!
+     * Create metadata reader candidates for `file`, ordered by configured priority.
+     * When @p includeDisabled is @c true, candidates disabled for metadata reading are also returned.
+     */
+    [[nodiscard]] std::vector<std::unique_ptr<AudioReader>> readersForFile(const QString& file,
+                                                                           bool includeDisabled) const;
     //! Create metadata reader candidates for `track`, ordered by configured priority.
     [[nodiscard]] std::vector<std::unique_ptr<AudioReader>> readersForTrack(const Track& track) const;
     //! Create the highest-priority archive reader backend for `file`, if any.
@@ -167,13 +179,13 @@ public:
     [[nodiscard]] bool writeTrackCover(const Track& track, const TrackCovers& coverData,
                                        AudioReader::WriteOptions options) const;
 
-    //! Register decoder backend with optional priority and archive-wrapper flag.
-    void addDecoder(const QString& name, const DecoderCreator& creator, int priority = -1,
-                    bool isArchiveWrapper = false);
-    //! Register metadata reader backend with optional priority.
-    void addReader(const QString& name, const ReaderCreator& creator, int priority = -1, bool isArchiveWrapper = false);
-    //! Register archive reader backend with optional priority.
-    void addArchiveReader(const QString& name, const ArchiveReaderCreator& creator, int priority = -1);
+    //! Register decoder backend with optional priority. Lower values are tried first.
+    void addDecoder(const QString& name, const DecoderCreator& creator, int priority = DefaultPriority);
+    //! Register metadata reader backend with optional priority. Lower values are tried first.
+    void addReader(const QString& name, const ReaderCreator& creator, int priority = DefaultPriority,
+                   bool isArchiveWrapper = false);
+    //! Register archive reader backend with optional priority. Lower values are tried first.
+    void addArchiveReader(const QString& name, const ArchiveReaderCreator& creator, int priority = DefaultPriority);
 
     [[nodiscard]] std::vector<LoaderEntry<DecoderCreator>> decoders() const;
     [[nodiscard]] std::vector<LoaderEntry<ReaderCreator>> readers() const;

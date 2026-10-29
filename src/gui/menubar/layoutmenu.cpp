@@ -21,7 +21,7 @@
 
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
-#include <gui/layoutprovider.h>
+#include <gui/layout/layoutprovider.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
@@ -52,6 +52,7 @@ LayoutMenu::LayoutMenu(ActionManager* actionManager, LayoutProvider* layoutProvi
     , m_layoutActionGroup{nullptr}
 {
     QObject::connect(m_layoutProvider, &LayoutProvider::layoutAdded, this, &LayoutMenu::refreshLayouts);
+    QObject::connect(m_layoutProvider, &LayoutProvider::layoutChanged, this, &LayoutMenu::refreshLayouts);
     QObject::connect(m_layoutProvider, &LayoutProvider::layoutRemoved, this, &LayoutMenu::refreshLayouts);
     QObject::connect(m_layoutProvider, &LayoutProvider::currentLayoutChanged, this, &LayoutMenu::updateCurrentLayout);
 }
@@ -163,12 +164,16 @@ void LayoutMenu::refreshLayouts()
         auto* layoutAction = new QAction(name, m_layoutMenu->menu());
         layoutAction->setStatusTip(tr("Replace the current layout"));
         layoutAction->setCheckable(true);
+        layoutAction->setVisible(layout.isShownInMenu());
 
         auto* layoutCmd = m_actionManager->registerAction(layoutAction, Id{u"Layout.Switch.%1"_s.arg(name)});
         layoutCmd->setCategories({tr("Layout"), tr("Switch")});
         m_layoutActionGroup->addAction(layoutCmd->action());
 
         QObject::connect(layoutAction, &QAction::triggered, this, [this, name]() {
+            if(name == m_layoutProvider->currentLayout().name()) {
+                return;
+            }
             const auto fyLayout = m_layoutProvider->layoutByName(name);
             if(fyLayout.isValid()) {
                 Q_EMIT changeLayout(fyLayout);

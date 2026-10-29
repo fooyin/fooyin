@@ -23,6 +23,15 @@ namespace Fooyin::Constants {
 constexpr auto LightIconTheme = "light";
 constexpr auto DarkIconTheme  = "dark";
 
+constexpr auto PlayingIcon = "%playingicon%";
+
+namespace Urls {
+constexpr auto QuickStart = "https://docs.fooyin.org/en/latest/quick-start/quick-start.html";
+constexpr auto Scripting  = "https://docs.fooyin.org/en/latest/scripting/basics.html";
+constexpr auto Searching  = "https://docs.fooyin.org/en/latest/library/searching-library.html";
+constexpr auto Faq        = "https://www.fooyin.org/faq";
+} // namespace Urls
+
 namespace Icons {
 constexpr auto Fooyin       = "fooyin";
 constexpr auto FooyinWindow = "org.fooyin.fooyin";
@@ -52,6 +61,7 @@ constexpr auto Close        = "window-close";
 constexpr auto WindowPin    = "window-pin";
 constexpr auto WindowUnpin  = "window-unpin";
 constexpr auto Clear        = "edit-clear";
+constexpr auto ReadOnly     = "emblem-readonly";
 constexpr auto Search       = "edit-find";
 constexpr auto Filter       = "view-filter";
 constexpr auto ScriptEditor = "view-scripteditor";
@@ -60,7 +70,12 @@ constexpr auto Bookmarks    = "user-bookmarks";
 constexpr auto Users        = "view-process-users";
 constexpr auto Favorite     = "favorite-favorited";
 constexpr auto FavoriteOff  = "favorite";
+constexpr auto Love         = "love";
+constexpr auto Unlove       = "unlove";
 constexpr auto Rss          = "rss-symbolic";
+
+constexpr auto Information = "dialog-information";
+constexpr auto Warning     = "dialog-warning";
 
 constexpr auto ScriptExpression = "script-expression";
 constexpr auto ScriptVariable   = "script-variable";
@@ -68,16 +83,19 @@ constexpr auto ScriptFunction   = "script-function";
 constexpr auto ScriptLiteral    = "script-literal";
 constexpr auto ScriptFormatting = "format-text-bold";
 constexpr auto Command          = "command";
+constexpr auto MainMenu         = "application-menu";
 
-constexpr auto Quit          = "application-exit";
-constexpr auto Settings      = "preferences-system";
-constexpr auto RescanLibrary = "view-refresh";
-constexpr auto PlaylistPlay  = "media-playlist-play";
-constexpr auto Randomize     = "randomize";
-constexpr auto LayoutEditing = "applications-graphics";
-constexpr auto QuickSetup    = "preferences-desktop";
-constexpr auto Options       = "preferences-other";
-constexpr auto SidebarRight  = "sidebar-right";
+constexpr auto Quit           = "application-exit";
+constexpr auto Settings       = "preferences-system";
+constexpr auto RescanLibrary  = "view-refresh";
+constexpr auto PlaylistPlay   = "media-playlist-play";
+constexpr auto Randomize      = "randomize";
+constexpr auto LayoutEditing  = "applications-graphics";
+constexpr auto GripHorizontal = "grip-horizontal";
+constexpr auto GripVertical   = "grip-vertical";
+constexpr auto QuickSetup     = "preferences-desktop";
+constexpr auto Options        = "preferences-other";
+constexpr auto SidebarRight   = "sidebar-right";
 } // namespace Icons
 
 constexpr auto MenuBar = "Fooyin.MenuBar";
@@ -86,31 +104,37 @@ namespace Menus {
 constexpr auto File           = "Fooyin.Menu.File";
 constexpr auto Edit           = "Fooyin.Menu.Edit";
 constexpr auto View           = "Fooyin.Menu.View";
+constexpr auto Visualisations = "Fooyin.Menu.View.Visualisations";
 constexpr auto EditSort       = "Fooyin.Menu.Edit.Sort";
 constexpr auto Layout         = "Fooyin.Menu.Layout";
 constexpr auto Playback       = "Fooyin.Menu.Playback";
 constexpr auto PlaybackRandom = "Fooyin.Menu.Playback.Random";
 constexpr auto PlaybackSkipTo = "Fooyin.Menu.Playback.SkipTo";
 constexpr auto PlaybackOrder  = "Fooyin.Menu.Playback.Order";
+constexpr auto ABRepeat       = "Fooyin.Menu.Playback.ABRepeat";
 constexpr auto Library        = "Fooyin.Menu.Library";
 constexpr auto Database       = "Fooyin.Menu.Database";
 constexpr auto SwitchLibrary  = "Fooyin.Menu.Library.Switch";
 constexpr auto Help           = "Fooyin.Menu.Help";
 
 namespace Context {
-constexpr auto Layout              = "Fooyin.Menu.Layout";
-constexpr auto AddWidget           = "Fooyin.Menu.Widget.Add";
-constexpr auto TrackSelection      = "Fooyin.Menu.Tracks";
-constexpr auto TrackQueue          = "Fooyin.Menu.Queue";
-constexpr auto TracksPlaylist      = "Fooyin.Menu.Tracks.Playlist";
-constexpr auto Playlist            = "Fooyin.Menu.Playlist";
-constexpr auto PlaylistAddTo       = "Fooyin.Menu.Playlist.AddTo";
-constexpr auto ReplayGain          = "Fooyin.Menu.ReplayGain";
-constexpr auto Artwork             = "Fooyin.Menu.Artwork";
-constexpr auto ArtworkAttach       = "Fooyin.Menu.Artwork.Attach";
-constexpr auto Tagging             = "Fooyin.Menu.Tagging";
-constexpr auto TrackFinalSeparator = "Fooyin.Menu.Track.FinalSeparator";
-constexpr auto Utilities           = "Fooyin.Menu.Utilities";
+constexpr auto Layout                   = "Fooyin.Menu.Layout";
+constexpr auto AddWidget                = "Fooyin.Menu.Widget.Add";
+constexpr auto TrackSelection           = "Fooyin.Menu.Tracks";
+constexpr auto TrackQueue               = "Fooyin.Menu.Queue";
+constexpr auto TracksPlaylist           = "Fooyin.Menu.Tracks.Playlist";
+constexpr auto Playlist                 = "Fooyin.Menu.Playlist";
+constexpr auto PlaylistAddTo            = "Fooyin.Menu.Playlist.AddTo";
+constexpr auto ReplayGain               = "Fooyin.Menu.ReplayGain";
+constexpr auto Artwork                  = "Fooyin.Menu.Artwork";
+constexpr auto ArtworkAttach            = "Fooyin.Menu.Artwork.Attach";
+constexpr auto Tagging                  = "Fooyin.Menu.Tagging";
+constexpr auto TaggingLookupSeparator   = "Fooyin.Menu.Tagging.LookupSeparator";
+constexpr auto TaggingReloadSeparator   = "Fooyin.Menu.Tagging.ReloadSeparator";
+constexpr auto TrackFinalSeparator      = "Fooyin.Menu.Track.FinalSeparator";
+constexpr auto Utilities                = "Fooyin.Menu.Utilities";
+constexpr auto UtilitiesVerifySeparator = "Fooyin.Menu.Utilities.VerifySeparator";
+constexpr auto Convert                  = "Fooyin.Menu.Convert";
 } // namespace Context
 } // namespace Menus
 
@@ -132,11 +156,12 @@ constexpr auto PlaylistAddTo = "Fooyin.Group.Playlist.AddTo";
 } // namespace Groups
 
 namespace Context {
-constexpr auto TrackSelection   = "Fooyin.Context.TrackSelection";
-constexpr auto Playlist         = "Fooyin.Context.Playlist";
-constexpr auto PlaylistSwitcher = "Fooyin.Context.PlaylistSwitcher";
-constexpr auto DirBrowser       = "Fooyin.Context.DirBrowser";
-constexpr auto Search           = "Fooyin.Context.Search";
+constexpr auto TrackSelection     = "Fooyin.Context.TrackSelection";
+constexpr auto Playlist           = "Fooyin.Context.Playlist";
+constexpr auto PlaylistSwitcher   = "Fooyin.Context.PlaylistSwitcher";
+constexpr auto DirBrowser         = "Fooyin.Context.DirBrowser";
+constexpr auto Search             = "Fooyin.Context.Search";
+constexpr auto AutoPlaylistDialog = "Fooyin.Context.AutoPlaylistDialog";
 } // namespace Context
 
 namespace Actions {
@@ -151,22 +176,30 @@ constexpr auto LoadPlaylist              = "File.LoadPlaylist";
 constexpr auto SavePlaylist              = "File.SavePlaylist";
 constexpr auto SaveAllPlaylists          = "File.SaveAllPlaylists";
 constexpr auto ClearPlaylist             = "Playlist.Clear";
+constexpr auto LockPlaylist              = "Playlist.Lock";
+constexpr auto ToggleAutoPlaylistSidebar = "Playlist.AutoPlaylist.ToggleSidebar";
 constexpr auto New                       = "File.New";
 constexpr auto Exit                      = "File.Exit";
 constexpr auto Settings                  = "Edit.Settings";
 constexpr auto SearchPlaylist            = "Edit.SearchPlaylist";
 constexpr auto LayoutEditing             = "Layout.LayoutEditing";
 constexpr auto LockSplitters             = "Layout.LockSplitters";
+constexpr auto MenuBarInToolbar          = "Layout.MenuBarInToolbar";
+constexpr auto LockToolbars              = "Layout.LockToolbars";
 constexpr auto QuickSetup                = "View.QuickSetup";
 constexpr auto PlaybackQueue             = "View.PlaybackQueue";
 constexpr auto PlaylistManager           = "View.PlaylistManager";
+constexpr auto LibraryTree               = "View.LibraryTree";
 constexpr auto ShowNowPlaying            = "View.ShowNowPlaying";
+constexpr auto ToggleMainWindow          = "View.ToggleMainWindow";
 constexpr auto FocusSearchBar            = "View.FocusSearchBar";
 constexpr auto QuickSearch               = "Library.QuickSearch";
 constexpr auto SearchLibrary             = "Library.SearchLibrary";
 constexpr auto Refresh                   = "Library.Refresh";
 constexpr auto Rescan                    = "Library.Rescan";
 constexpr auto Stop                      = "Playback.Stop";
+constexpr auto Play                      = "Playback.Play";
+constexpr auto Pause                     = "Playback.Pause";
 constexpr auto PlayPause                 = "Playback.PlayPause";
 constexpr auto Next                      = "Playback.Next";
 constexpr auto Previous                  = "Playback.Previous";
@@ -174,6 +207,10 @@ constexpr auto RandomTrack               = "Playback.RandomTrack";
 constexpr auto RandomAlbum               = "Playback.RandomAlbum";
 constexpr auto PreviousAlbum             = "Playback.PreviousAlbum";
 constexpr auto NextAlbum                 = "Playback.NextAlbum";
+constexpr auto ABRepeatSetStart          = "Playback.ABRepeat.SetStart";
+constexpr auto ABRepeatSetEnd            = "Playback.ABRepeat.SetEnd";
+constexpr auto ABRepeatEnable            = "Playback.ABRepeat.Enable";
+constexpr auto ABRepeatClear             = "Playback.ABRepeat.Clear";
 constexpr auto PlaybackDefault           = "Playback.Order.Default";
 constexpr auto RepeatTrack               = "Playback.Order.RepeatTrack";
 constexpr auto RepeatAlbum               = "Playback.Order.RepeatAlbum";
@@ -181,6 +218,8 @@ constexpr auto RepeatPlaylist            = "Playback.Order.RepeatPlaylist";
 constexpr auto ShuffleTracks             = "Playback.Order.ShuffleTracks";
 constexpr auto ShuffleAlbums             = "Playback.Order.ShuffleAlbums";
 constexpr auto Random                    = "Playback.Order.Random";
+constexpr auto CursorFollowsPlayback     = "Playback.CursorFollowsPlayback";
+constexpr auto PlaybackFollowsCursor     = "Playback.PlaybackFollowsCursor";
 constexpr auto StopAfterCurrent          = "Playback.StopAfterCurrent";
 constexpr auto StopAfterCurrentReset     = "Playback.StopAfterCurrent.Reset";
 constexpr auto ScriptEditor              = "View.ScriptEditor";
@@ -217,13 +256,26 @@ constexpr auto CopyLocation              = "Tracks.CopyLocation";
 constexpr auto CopyDirectoryPath         = "Tracks.CopyDirectoryPath";
 constexpr auto SearchArtwork             = "Tracks.SearchArtwork";
 constexpr auto SearchArtworkQuick        = "Tracks.SearchArtworkQuick";
+constexpr auto ViewArtwork               = "Tracks.ViewArtwork";
 constexpr auto ExportArtwork             = "Tracks.ExportArtwork";
 constexpr auto RemoveArtwork             = "Tracks.RemoveArtwork";
+constexpr auto Convert                   = "Tracks.Convert";
+constexpr auto ConvertDefault            = "Tracks.Convert.Default";
+constexpr auto ConvertLastUsed           = "Tracks.Convert.LastUsed";
+constexpr auto VerifyIntegrity           = "Tracks.VerifyIntegrity";
+constexpr auto VerifyAccurateRip         = "Tracks.VerifyAccurateRipAlbum";
 constexpr auto OpenProperties            = "Tracks.OpenProperties";
 constexpr auto TogglePropertiesTrackList = "Tracks.Properties.ToggleTrackList";
 constexpr auto PropertiesPreviousTrack   = "Tracks.Properties.PreviousTrack";
 constexpr auto PropertiesNextTrack       = "Tracks.Properties.NextTrack";
+constexpr auto ToggleLove                = "Tracks.Loved.Toggle";
+constexpr auto LoveTracks                = "Tracks.Loved.Love";
+constexpr auto UnloveTracks              = "Tracks.Loved.Unlove";
+constexpr auto ShowMainMenu              = "View.MainMenu";
 constexpr auto ToggleMenubar             = "View.ToggleMenubar";
+constexpr auto LookupMetadata            = "Tracks.LookupMetadata";
+constexpr auto LookupMetadataByDiscToc   = "Tracks.LookupMetadataByDiscToc";
+constexpr auto LookupMetadataById        = "Tracks.LookupMetadataById";
 } // namespace Actions
 
 namespace Mime {
@@ -251,6 +303,7 @@ constexpr auto InterfaceContextMenuTrack          = "Fooyin.Page.Interface.Conte
 constexpr auto InterfaceContextMenuPlaylistWidget = "Fooyin.Page.Interface.ContextMenu.PlaylistWidget";
 constexpr auto InterfaceContextMenuLibraryTree    = "Fooyin.Page.Interface.ContextMenu.LibraryTree";
 constexpr auto InterfaceContextMenuDirBrowser     = "Fooyin.Page.Interface.ContextMenu.DirBrowser";
+constexpr auto InterfaceContextMenuQueueViewer    = "Fooyin.Page.Interface.ContextMenu.QueueViewer";
 constexpr auto InterfaceContextMenuLayoutEditing  = "Fooyin.Page.Interface.ContextMenu.LayoutEditing";
 constexpr auto InterfaceTheme                     = "Fooyin.Page.Interface.Theme";
 constexpr auto ArtworkGeneral                     = "Fooyin.Page.Interface.Artwork.General";
@@ -264,7 +317,6 @@ constexpr auto LibrarySearching                   = "Fooyin.Page.Library.Searchi
 constexpr auto LibrarySorting                     = "Fooyin.Page.Library.Sorting";
 constexpr auto PlaylistGeneral                    = "Fooyin.Page.Playlist.General";
 constexpr auto PlaylistInterface                  = "Fooyin.Page.Playlist.Interface";
-constexpr auto PlaylistAppearance                 = "Fooyin.Page.Playlist.Appearance";
 constexpr auto PlaylistTabs                       = "Fooyin.Page.Playlist.Tabs";
 constexpr auto PlaylistSaving                     = "Fooyin.Page.Playlist.Saving";
 constexpr auto PlaylistPresets                    = "Fooyin.Page.Playlist.Presets";
@@ -272,7 +324,7 @@ constexpr auto PlaylistColumns                    = "Fooyin.Page.Playlist.Column
 constexpr auto LibraryTreeGeneral                 = "Fooyin.Page.Widgets.LibraryTree.General";
 constexpr auto LibraryTreeGroups                  = "Fooyin.Page.Widgets.LibraryTree.Groups";
 constexpr auto StatusWidget                       = "Fooyin.Page.Interface.StatusBar";
-constexpr auto PlaybackQueue                      = "Fooyin.Page.Widgets.PlaybackQueue";
+constexpr auto PlaybackQueue                      = "Fooyin.Page.Playback.Queue";
 constexpr auto Plugins                            = "Fooyin.Page.Plugins";
 constexpr auto ShellIntegration                   = "Fooyin.Page.Integrations.System";
 constexpr auto Shortcuts                          = "Fooyin.Page.Shortcuts";

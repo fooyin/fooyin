@@ -53,6 +53,8 @@ private:
     QCheckBox* m_skipRemaining;
     QCheckBox* m_skipExternal;
 
+    QLabel* m_skipLabel;
+    ScriptLineEdit* m_autoSearchSkipScript;
     ScriptLineEdit* m_titleParam;
     ScriptLineEdit* m_artistParam;
     ScriptLineEdit* m_albumParam;
@@ -64,18 +66,25 @@ LyricsSearchingPageWidget::LyricsSearchingPageWidget(SettingsManager* settings)
     , m_autoSearch{new QCheckBox(tr("Automatically search for lyrics on starting playback"), this)}
     , m_skipRemaining{new QCheckBox(tr("Skip remaining sources when lyrics are found"), this)}
     , m_skipExternal{new QCheckBox(tr("Skip external sources if local lyrics are found"), this)}
+    , m_skipLabel{new QLabel(tr("Skip automatic searches if") + ":"_L1, this)}
+    , m_autoSearchSkipScript{new ScriptLineEdit(this)}
     , m_titleParam{new ScriptLineEdit(this)}
     , m_artistParam{new ScriptLineEdit(this)}
     , m_albumParam{new ScriptLineEdit(this)}
     , m_matchThreshold{new SliderEditor(tr("Minimum match threshold"), this)}
 {
+    m_autoSearchSkipScript->setToolTip(tr("Return any text to skip automatic searches, or nothing to allow them.\n"
+                                          "Local lyrics will still be loaded."));
+
     auto* behaviourGroup  = new QGroupBox(tr("Behaviour"), this);
     auto* behaviourLayout = new QGridLayout(behaviourGroup);
 
     int row{0};
-    behaviourLayout->addWidget(m_autoSearch, row++, 0);
-    behaviourLayout->addWidget(m_skipRemaining, row++, 0);
-    behaviourLayout->addWidget(m_skipExternal, row++, 0);
+    behaviourLayout->addWidget(m_autoSearch, row++, 0, 1, 2);
+    behaviourLayout->addWidget(m_skipLabel, row, 0);
+    behaviourLayout->addWidget(m_autoSearchSkipScript, row++, 1);
+    behaviourLayout->addWidget(m_skipRemaining, row++, 0, 1, 2);
+    behaviourLayout->addWidget(m_skipExternal, row++, 0, 1, 2);
 
     auto* paramsGroup  = new QGroupBox(tr("Search parameters"), this);
     auto* paramsLayout = new QGridLayout(paramsGroup);
@@ -98,22 +107,30 @@ LyricsSearchingPageWidget::LyricsSearchingPageWidget(SettingsManager* settings)
     layout->addWidget(behaviourGroup, row++, 0);
     layout->addWidget(paramsGroup, row++, 0);
     layout->setRowStretch(layout->rowCount(), 1);
+
+    QObject::connect(m_autoSearch, &QCheckBox::toggled, m_autoSearchSkipScript, &QWidget::setEnabled);
+    QObject::connect(m_autoSearch, &QCheckBox::toggled, m_skipLabel, &QWidget::setEnabled);
 }
 
 void LyricsSearchingPageWidget::load()
 {
     m_autoSearch->setChecked(m_settings->fileValue(Settings::AutoSearch, false).toBool());
+    m_skipLabel->setEnabled(m_autoSearch->isChecked());
+    m_autoSearchSkipScript->setScript(
+        m_settings->fileValue(Settings::AutoSearchSkip, Defaults::autoSearchSkipScript()).toString());
+    m_autoSearchSkipScript->setEnabled(m_autoSearch->isChecked());
     m_skipRemaining->setChecked(m_settings->fileValue(Settings::SkipRemaining, true).toBool());
     m_skipExternal->setChecked(m_settings->fileValue(Settings::SkipExternal, true).toBool());
-    m_titleParam->setText(m_settings->fileValue(Settings::TitleField, u"%title%"_s).toString());
-    m_artistParam->setText(m_settings->fileValue(Settings::ArtistField, u"%artist%"_s).toString());
-    m_albumParam->setText(m_settings->fileValue(Settings::AlbumField, u"%album%"_s).toString());
+    m_titleParam->setScript(m_settings->fileValue(Settings::TitleField, u"%title%"_s).toString());
+    m_artistParam->setScript(m_settings->fileValue(Settings::ArtistField, u"%artist%"_s).toString());
+    m_albumParam->setScript(m_settings->fileValue(Settings::AlbumField, u"%album%"_s).toString());
     m_matchThreshold->setValue(m_settings->fileValue(Settings::MatchThreshold, 75).toInt());
 }
 
 void LyricsSearchingPageWidget::apply()
 {
     m_settings->fileSet(Settings::AutoSearch, m_autoSearch->isChecked());
+    m_settings->fileSet(Settings::AutoSearchSkip, m_autoSearchSkipScript->text());
     m_settings->fileSet(Settings::SkipRemaining, m_skipRemaining->isChecked());
     m_settings->fileSet(Settings::SkipExternal, m_skipExternal->isChecked());
     m_settings->fileSet(Settings::TitleField, m_titleParam->text());
@@ -125,6 +142,7 @@ void LyricsSearchingPageWidget::apply()
 void LyricsSearchingPageWidget::reset()
 {
     m_settings->fileRemove(Settings::AutoSearch);
+    m_settings->fileRemove(Settings::AutoSearchSkip);
     m_settings->fileRemove(Settings::SkipRemaining);
     m_settings->fileRemove(Settings::SkipExternal);
     m_settings->fileRemove(Settings::TitleField);

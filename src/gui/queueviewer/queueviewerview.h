@@ -22,6 +22,9 @@
 #include <gui/widgets/expandedtreeview.h>
 
 namespace Fooyin {
+struct BackgroundConfig;
+class WidgetBackground;
+
 class QueueViewerView : public ExpandedTreeView
 {
     Q_OBJECT
@@ -29,7 +32,13 @@ class QueueViewerView : public ExpandedTreeView
 public:
     explicit QueueViewerView(QWidget* parent = nullptr);
 
+    void setBackgroundConfig(const BackgroundConfig& config);
+    void setBackgroundPixmap(const QPixmap& pixmap);
+
 protected:
     void paintEvent(QPaintEvent* event) override;
+
+private:
+    WidgetBackground* m_background;
 };
 } // namespace Fooyin

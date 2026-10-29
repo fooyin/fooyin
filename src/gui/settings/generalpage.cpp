@@ -28,13 +28,13 @@
 #include <core/internalcoresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <utils/fileutils.h>
 #include <utils/fypaths.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
-#include <QDesktopServices>
 #include <QDir>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -89,7 +89,7 @@ private:
 GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_startupBehaviour{new QComboBox(this)}
-    , m_waitForTracks{new QCheckBox(tr("Wait for tracks"), this)}
+    , m_waitForTracks{new QCheckBox(tr("Wait for tracks to load before showing the window"), this)}
     , m_showTray{new QCheckBox(tr("Show system tray icon"), this)}
     , m_minimiseToTray{new QCheckBox(tr("Minimise to tray on close"), this)}
     , m_language{new QComboBox(this)}
@@ -105,24 +105,39 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     startupGroupLayout->addWidget(m_waitForTracks, row++, 0, 1, 2);
     startupGroupLayout->setColumnStretch(1, 1);
 
-    auto* dirGroup       = new QGroupBox(tr("User Directories"), this);
+    auto* windowGroup       = new QGroupBox(tr("System Tray"), this);
+    auto* windowGroupLayout = new QGridLayout(windowGroup);
+
+    row = 0;
+    windowGroupLayout->addWidget(m_showTray, row++, 0);
+    windowGroupLayout->addWidget(m_minimiseToTray, row++, 0);
+
+    auto* dirGroup       = new QGroupBox(tr("User Folders"), this);
     auto* dirGroupLayout = new QGridLayout(dirGroup);
 
-    auto* openConfig = new QPushButton(tr("Open Config Directory"), this);
-    auto* openShare  = new QPushButton(tr("Open Share Directory"), this);
+    auto* openConfig = new QPushButton(tr("Open Configuration Folder"), this);
+    auto* openShare  = new QPushButton(tr("Open Data Folder"), this);
+    auto* openCache  = new QPushButton(tr("Open Cache Folder"), this);
 
     row = 0;
     dirGroupLayout->addWidget(openConfig, row, 0);
     dirGroupLayout->addWidget(openShare, row++, 1);
+    dirGroupLayout->addWidget(openCache, row, 0);
+
+    if(Utils::statePath() != Utils::sharePath()) {
+        auto* openState = new QPushButton(tr("Open State Folder"), this);
+        dirGroupLayout->addWidget(openState, row, 1);
+        QObject::connect(openState, &QPushButton::clicked, this,
+                         []() { Utils::File::openDirectory(Utils::statePath()); });
+    }
 
     auto* mainLayout = new QGridLayout(this);
 
     row = 0;
     mainLayout->addWidget(new QLabel(tr("Language") + u":"_s, this), 0, 0);
     mainLayout->addWidget(m_language, row++, 1);
-    mainLayout->addWidget(m_showTray, row++, 0, 1, 2);
-    mainLayout->addWidget(m_minimiseToTray, row++, 0, 1, 2);
     mainLayout->addWidget(startupGroup, row++, 0, 1, 2);
+    mainLayout->addWidget(windowGroup, row++, 0, 1, 2);
     mainLayout->addWidget(dirGroup, row++, 0, 1, 2);
 
     mainLayout->setColumnStretch(1, 1);
@@ -138,8 +153,10 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     addStartupBehaviour(tr("Remember from last run"), MainWindow::StartPrev);
 
     QObject::connect(m_showTray, &QCheckBox::toggled, m_minimiseToTray, &QWidget::setEnabled);
-    QObject::connect(openConfig, &QPushButton::clicked, this, []() { QDesktopServices::openUrl(Utils::configPath()); });
-    QObject::connect(openShare, &QPushButton::clicked, this, []() { QDesktopServices::openUrl(Utils::sharePath()); });
+    QObject::connect(openConfig, &QPushButton::clicked, this,
+                     []() { Utils::File::openDirectory(Utils::configPath()); });
+    QObject::connect(openShare, &QPushButton::clicked, this, []() { Utils::File::openDirectory(Utils::sharePath()); });
+    QObject::connect(openCache, &QPushButton::clicked, this, []() { Utils::File::openDirectory(Utils::cachePath()); });
 }
 
 void GeneralPageWidget::load()

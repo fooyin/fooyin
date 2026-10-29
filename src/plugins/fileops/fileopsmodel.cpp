@@ -19,26 +19,33 @@
 
 #include "fileopsmodel.h"
 
+#include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <utils/enum.h>
 
+#include <QColor>
+
 namespace Fooyin::FileOps {
 FileOpsModel::FileOpsModel(MusicLibrary* library, std::shared_ptr<AudioLoader> audioLoader, TrackList tracks,
-                           SettingsManager* settings, QObject* parent)
+                           SettingsManager* settings, LibraryManager* libraryManager, QObject* parent)
     : QAbstractItemModel{parent}
+    , m_library{library}
+    , m_libraryManager{libraryManager}
     , m_worker{library, std::move(audioLoader), std::move(tracks), settings}
+    , m_succeededCount{0}
 {
     m_worker.moveToThread(&m_workerThread);
 
     QObject::connect(&m_worker, &FileOpsWorker::simulated, this, &FileOpsModel::populate);
-    QObject::connect(&m_worker, &FileOpsWorker::operationFinished, this, &FileOpsModel::operationFinished);
+    QObject::connect(&m_worker, &FileOpsWorker::operationCompleted, this, &FileOpsModel::operationCompleted);
+    QObject::connect(&m_worker, &Worker::finished, this, &FileOpsModel::workerFinished);
 
     m_workerThread.start();
 }
 
 FileOpsModel::~FileOpsModel()
 {
-    m_worker.stopThread();
+    m_worker.closeThread();
     m_workerThread.quit();
     m_workerThread.wait();
 }
@@ -47,19 +54,48 @@ void FileOpsModel::simulate(const FileOpPreset& preset)
 {
     m_worker.stopThread();
 
-    QMetaObject::invokeMethod(&m_worker, [this, preset]() { m_worker.simulate(preset); });
+    QMetaObject::invokeMethod(&m_worker, [worker = &m_worker, preset, libraries = m_libraryManager->allLibraries(),
+                                          tracks = m_library->tracks(), token = m_worker.prepareWork()]() mutable {
+        worker->setLibraryData(std::move(libraries), std::move(tracks));
+        worker->simulate(preset, token);
+    });
 }
 
 void FileOpsModel::run()
 {
     m_worker.stopThread();
 
-    QMetaObject::invokeMethod(&m_worker, &FileOpsWorker::run);
+    QMetaObject::invokeMethod(&m_worker, [worker = &m_worker, token = m_worker.prepareWork()] { worker->run(token); });
 }
 
 void FileOpsModel::stop()
 {
     m_worker.stopThread();
+}
+
+int FileOpsModel::pendingCount() const
+{
+    return static_cast<int>(m_operations.size());
+}
+
+int FileOpsModel::succeededCount() const
+{
+    return m_succeededCount;
+}
+
+int FileOpsModel::failedCount() const
+{
+    return static_cast<int>(std::ranges::count(m_results, FileOpStatus::Failed, &FileOpResult::status));
+}
+
+int FileOpsModel::skippedCount() const
+{
+    return static_cast<int>(std::ranges::count(m_results, FileOpStatus::Skipped, &FileOpResult::status));
+}
+
+int FileOpsModel::cancelledCount() const
+{
+    return static_cast<int>(std::ranges::count(m_results, FileOpStatus::Cancelled, &FileOpResult::status));
 }
 
 Qt::ItemFlags FileOpsModel::flags(const QModelIndex& index) const
@@ -91,6 +127,8 @@ QVariant FileOpsModel::headerData(int section, Qt::Orientation orientation, int 
             return tr("Source");
         case 2:
             return tr("Destination");
+        case 3:
+            return tr("Result");
         default:
             break;
     }
@@ -104,11 +142,24 @@ QVariant FileOpsModel::data(const QModelIndex& index, int role) const
         return {};
     }
 
+    const int pending   = pendingCount();
+    const bool isResult = index.row() >= pending;
+    const auto& item    = isResult ? m_results.at(index.row() - pending).operation : m_operations.at(index.row());
+
+    if(isResult) {
+        const auto& result = m_results.at(index.row() - pending);
+
+        if(role == Qt::ToolTipRole) {
+            return result.error;
+        }
+        if(role == Qt::ForegroundRole && result.status == FileOpStatus::Failed) {
+            return QColor{Qt::red};
+        }
+    }
+
     if(role != Qt::DisplayRole) {
         return {};
     }
-
-    const auto& item = m_operations.at(index.row());
 
     switch(index.column()) {
         case 0:
@@ -117,6 +168,8 @@ QVariant FileOpsModel::data(const QModelIndex& index, int role) const
             return item.displayName();
         case 2:
             return item.displayDestination();
+        case 3:
+            return isResult ? resultToString(m_results.at(index.row() - pending)) : tr("Pending");
         default:
             break;
     }
@@ -140,28 +193,53 @@ QModelIndex FileOpsModel::parent(const QModelIndex& /*child*/) const
 
 int FileOpsModel::columnCount(const QModelIndex& /*parent*/) const
 {
-    return 3;
+    return 4;
 }
 
 int FileOpsModel::rowCount(const QModelIndex& /*parent*/) const
 {
-    return static_cast<int>(m_operations.size());
+    return static_cast<int>(m_operations.size() + m_results.size());
 }
 
-void FileOpsModel::populate(const FileOperations& operations)
+void FileOpsModel::populate(const FileOperations& operations, std::stop_token token)
 {
+    if(token.stop_requested()) {
+        return;
+    }
+
     beginResetModel();
     m_operations = operations;
+    m_results.clear();
+    m_succeededCount = 0;
     endResetModel();
 
     Q_EMIT simulated();
 }
 
-void FileOpsModel::operationFinished(const FileOpsItem& /*operation*/)
+void FileOpsModel::operationCompleted(const FileOpResult& result)
 {
+    if(m_operations.empty()) {
+        return;
+    }
+
     beginRemoveRows({}, 0, 0);
     m_operations.pop_front();
     endRemoveRows();
+
+    if(result.status == FileOpStatus::Succeeded) {
+        ++m_succeededCount;
+        return;
+    }
+
+    const int resultRow = rowCount({});
+    beginInsertRows({}, resultRow, resultRow);
+    m_results.push_back(result);
+    endInsertRows();
+}
+
+void FileOpsModel::workerFinished()
+{
+    Q_EMIT finished();
 }
 
 QString FileOpsModel::operationToString(Operation op) const
@@ -185,5 +263,20 @@ QString FileOpsModel::operationToString(Operation op) const
             return tr("Remove");
     }
     return tr("Unknown");
+}
+
+QString FileOpsModel::resultToString(const FileOpResult& result)
+{
+    switch(result.status) {
+        case FileOpStatus::Succeeded:
+            return tr("Succeeded");
+        case FileOpStatus::Failed:
+            return tr("Failed: %1").arg(result.error);
+        case FileOpStatus::Skipped:
+            return tr("Skipped: %1").arg(result.error);
+        case FileOpStatus::Cancelled:
+            return result.error.isEmpty() ? tr("Cancelled") : tr("Cancelled: %1").arg(result.error);
+    }
+    return {};
 }
 } // namespace Fooyin::FileOps

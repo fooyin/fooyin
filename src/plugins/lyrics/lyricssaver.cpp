@@ -26,6 +26,7 @@
 
 #include <core/library/musiclibrary.h>
 #include <core/track.h>
+#include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QDir>
@@ -216,13 +217,13 @@ Lyrics LyricsSaver::savedLyrics(const Lyrics& lyrics, const Track& track)
     return savedLyrics;
 }
 
-void LyricsSaver::writeLyricsToTags(const TrackList& tracks)
+WriteRequest LyricsSaver::writeLyricsToTags(const TrackList& tracks)
 {
     if(tracks.empty()) {
-        return;
+        return {};
     }
 
-    m_library->writeTrackMetadata(tracks);
+    return m_library->writeTrackMetadata(tracks);
 }
 
 bool LyricsSaver::saveLyricsToFile(const Lyrics& lyrics, const Track& track)
@@ -237,12 +238,14 @@ bool LyricsSaver::saveLyricsToFile(const Lyrics& lyrics, const Track& track)
 
     const auto removeFile = [&track](const QString& file) {
         qCInfo(LYRICS) << "Removing file" << file << "for" << track.prettyFilepath();
-        QFile{file}.moveToTrash();
+        if(!Utils::File::moveToTrash(file)) {
+            qCWarning(LYRICS) << "Failed to move lyrics file to Trash" << file;
+        }
     };
 
     if(lyrics.isEmpty()) {
         if(QFile::exists(filepath)) {
-            QFile{filepath}.moveToTrash();
+            removeFile(filepath);
         }
         if(changedFile) {
             removeFile(lyrics.filepath);
@@ -414,7 +417,9 @@ bool LyricsSaver::saveToConfiguredMethod(const Lyrics& lyrics, const Track& trac
                     if(QFile::exists(filepath)) {
                         qCInfo(LYRICS) << "Removing original lyrics file" << filepath << "for"
                                        << track.prettyFilepath();
-                        QFile{filepath}.moveToTrash();
+                        if(!Utils::File::moveToTrash(filepath)) {
+                            qCWarning(LYRICS) << "Failed to move lyrics file to Trash" << filepath;
+                        }
                     }
                 }
             }

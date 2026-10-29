@@ -22,6 +22,7 @@
 #include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/widgets/toolbutton.h>
 #include <utils/actions/actionmanager.h>
@@ -30,9 +31,12 @@
 
 #include <QAction>
 #include <QActionGroup>
+#include <QBoxLayout>
+#include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QMenu>
+#include <QResizeEvent>
 
 using namespace Qt::StringLiterals;
 
@@ -40,16 +44,18 @@ namespace Fooyin {
 PlaylistControl::PlaylistControl(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerController{playerController}
+    , m_layout{new QHBoxLayout(this)}
     , m_repeat{new ToolButton(settings, this)}
     , m_shuffle{new ToolButton(settings, this)}
+    , m_orientation{Qt::Horizontal}
+    , m_autoOrientation{true}
 
 {
-    auto* layout = new QHBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(0);
+    m_layout->setContentsMargins({});
+    m_layout->setSpacing(0);
 
-    layout->addWidget(m_repeat);
-    layout->addWidget(m_shuffle);
+    m_layout->addWidget(m_repeat);
+    m_layout->addWidget(m_shuffle);
 
     m_repeat->setPopupMode(QToolButton::InstantPopup);
     m_shuffle->setPopupMode(QToolButton::InstantPopup);
@@ -80,6 +86,68 @@ QString PlaylistControl::name() const
 QString PlaylistControl::layoutName() const
 {
     return u"PlaylistControls"_s;
+}
+
+void PlaylistControl::saveLayoutData(QJsonObject& layout)
+{
+    if(!m_autoOrientation) {
+        layout["Orientation"_L1] = m_orientation;
+    }
+}
+
+void PlaylistControl::loadLayoutData(const QJsonObject& layout)
+{
+    if(layout.contains("Orientation"_L1)) {
+        const auto orientation = static_cast<Qt::Orientation>(layout.value("Orientation"_L1).toInt());
+        if(orientation == Qt::Horizontal || orientation == Qt::Vertical) {
+            m_orientation     = orientation;
+            m_autoOrientation = false;
+            updateOrientation();
+        }
+    }
+}
+
+void PlaylistControl::populateContextMenu(QMenu* menu)
+{
+    Gui::addOrientationMenu(menu, this,
+                            {.title      = tr("Orientation"),
+                             .automatic  = tr("Automatic"),
+                             .horizontal = tr("Horizontal"),
+                             .vertical   = tr("Vertical")},
+                            m_autoOrientation, m_orientation, [this](std::optional<Qt::Orientation> orientation) {
+                                m_autoOrientation = !orientation.has_value();
+                                if(orientation) {
+                                    m_orientation = *orientation;
+                                }
+                                updateOrientation();
+                            });
+}
+
+void PlaylistControl::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    populateContextMenu(menu);
+    menu->popup(event->globalPos());
+}
+
+void PlaylistControl::resizeEvent(QResizeEvent* event)
+{
+    updateOrientation();
+    FyWidget::resizeEvent(event);
+}
+
+void PlaylistControl::updateOrientation()
+{
+    auto orientation{m_orientation};
+    if(m_autoOrientation) {
+        orientation = automaticOrientation();
+    }
+    const auto direction = orientation == Qt::Vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight;
+    if(m_layout->direction() != direction) {
+        m_layout->setDirection(direction);
+    }
+    updateOrientationConstraints(m_autoOrientation, m_layout->minimumSize());
 }
 
 void PlaylistControl::setupMenus()

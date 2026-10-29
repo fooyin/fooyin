@@ -19,21 +19,43 @@
 
 #include "scripthighlighter.h"
 
-#include "utils/utils.h"
+#include <gui/scripting/scriptformatterregistry.h>
+#include <utils/utils.h>
+
+using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 ScriptHighlighter::ScriptHighlighter(QTextDocument* parent)
     : QSyntaxHighlighter{parent}
 {
+    setColours(defaultColours());
+}
+
+ScriptHighlightColours ScriptHighlighter::defaultColours()
+{
     const bool isDarkMode = Utils::isDarkMode();
 
-    // TODO: Make colours user configurable
-    m_varFormat.setForeground(isDarkMode ? QColor{0x87cefa} : QColor{0x4682b4});
-    m_functionFormat.setForeground(isDarkMode ? QColor{0xff8c00} : QColor{0x804000});
-    m_conditionalFormat.setForeground(isDarkMode ? QColor{0xffff00} : QColor{0x808000});
-    m_operatorFormat.setForeground(isDarkMode ? QColor{0xffffff} : QColor{0xa0a0a0});
-    m_commentFormat.setForeground(isDarkMode ? QColor{0x808080} : QColor{0x404040});
-    m_errorFormat.setBackground(QColor{0xff0000});
+    return {
+        .variable       = isDarkMode ? QColor{0x61afef} : QColor{0x0969da},
+        .function       = isDarkMode ? QColor{0xe5c07b} : QColor{0x8250df},
+        .conditional    = isDarkMode ? QColor{0xc678dd} : QColor{0x9a6700},
+        .operatorColour = isDarkMode ? QColor{0xabb2bf} : QColor{0x57606a},
+        .quotedText     = isDarkMode ? QColor{0x98c379} : QColor{0x1a7f37},
+        .formattingTag  = isDarkMode ? QColor{0x56b6c2} : QColor{0x0550ae},
+    };
+}
+
+void ScriptHighlighter::setColours(const ScriptHighlightColours& colours)
+{
+    m_varFormat.setForeground(colours.variable);
+    m_functionFormat.setForeground(colours.function);
+    m_conditionalFormat.setForeground(colours.conditional);
+    m_operatorFormat.setForeground(colours.operatorColour);
+    m_quotedTextFormat.setForeground(colours.quotedText);
+    m_formattingTagFormat.setForeground(colours.formattingTag);
+    m_commentFormat.setForeground(colours.operatorColour);
+    m_commentFormat.setFontItalic(true);
+    rehighlight();
 }
 
 void ScriptHighlighter::highlightBlock(const QString& text)
@@ -62,55 +84,23 @@ void ScriptHighlighter::expression()
         case ScriptScanner::TokQuote:
             quote();
             break;
+        case ScriptScanner::TokComment:
+            setTokenFormat(m_commentFormat);
+            break;
         case ScriptScanner::TokLeftSquare:
             conditional();
             break;
-        case ScriptScanner::TokEscape:
         case ScriptScanner::TokLeftAngle:
-        case ScriptScanner::TokRightAngle:
-        case ScriptScanner::TokComma:
-        case ScriptScanner::TokLeftParen:
-        case ScriptScanner::TokRightParen:
-        case ScriptScanner::TokRightSquare:
-        case ScriptScanner::TokLiteral:
-        case ScriptScanner::TokSlash:
-        case ScriptScanner::TokColon:
-        case ScriptScanner::TokEquals:
-        case ScriptScanner::TokEos:
-        case ScriptScanner::TokError:
-        case ScriptScanner::TokNot:
-        case ScriptScanner::TokAscending:
-        case ScriptScanner::TokDescending:
-        case ScriptScanner::TokAnd:
-        case ScriptScanner::TokOr:
-        case ScriptScanner::TokXOr:
-        case ScriptScanner::TokMissing:
-        case ScriptScanner::TokPresent:
-        case ScriptScanner::TokAll:
-        case ScriptScanner::TokSort:
-        case ScriptScanner::TokBy:
-        case ScriptScanner::TokBefore:
-        case ScriptScanner::TokAfter:
-        case ScriptScanner::TokSince:
-        case ScriptScanner::TokDuring:
-        case ScriptScanner::TokLast:
-        case ScriptScanner::TokSecond:
-        case ScriptScanner::TokMinute:
-        case ScriptScanner::TokHour:
-        case ScriptScanner::TokDay:
-        case ScriptScanner::TokWeek:
-        case ScriptScanner::TokMonth:
-        case ScriptScanner::TokYear:
-        case ScriptScanner::TokLimit:
-        case ScriptScanner::TokPlus:
-        case ScriptScanner::TokMinus:
+            formattingTag();
+            break;
+        default:
             break;
     }
 }
 
 void ScriptHighlighter::quote()
 {
-    setTokenFormat(m_commentFormat);
+    setTokenFormat(m_quotedTextFormat);
 }
 
 void ScriptHighlighter::variable()
@@ -173,6 +163,51 @@ void ScriptHighlighter::conditional()
     advance();
 
     setTokenFormat(m_conditionalFormat);
+}
+
+void ScriptHighlighter::formattingTag()
+{
+    int escapes{0};
+    while(m_scanner.peekNext(-2 - escapes).type == ScriptScanner::TokEscape) {
+        ++escapes;
+    }
+    if(escapes % 2 != 0) {
+        return;
+    }
+
+    const bool closing   = currentToken(ScriptScanner::TokSlash);
+    const auto nameToken = closing ? m_scanner.peekNext() : m_current;
+    if(nameToken.value.isEmpty() || nameToken.value.front().isSpace()) {
+        return;
+    }
+
+    const QString name = nameToken.value.toString().section(u' ', 0, 0).trimmed().toLower();
+    const bool hRule   = !closing && name == "hr"_L1 && m_scanner.peekNext().type == ScriptScanner::TokSlash
+                      && m_scanner.peekNext(2).type == ScriptScanner::TokRightAngle;
+    if(!ScriptFormatterRegistry::isKnown(name) && !hRule) {
+        return;
+    }
+
+    setTokenFormat(m_formattingTagFormat);
+
+    while(!currentToken(ScriptScanner::TokRightAngle) && !currentToken(ScriptScanner::TokLeftAngle)
+          && !currentToken(ScriptScanner::TokEos)) {
+        switch(m_current.type) {
+            case ScriptScanner::TokVar:
+            case ScriptScanner::TokFunc:
+            case ScriptScanner::TokLeftSquare:
+                expression();
+                break;
+            default:
+                advance();
+                setTokenFormat(m_formattingTagFormat);
+                break;
+        }
+    }
+
+    if(match(ScriptScanner::TokRightAngle)) {
+        setTokenFormat(m_formattingTagFormat);
+    }
 }
 
 void ScriptHighlighter::setTokenFormat(const QTextCharFormat& format)

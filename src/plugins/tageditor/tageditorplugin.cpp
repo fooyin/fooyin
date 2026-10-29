@@ -47,16 +47,10 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin::TagEditor {
 namespace {
-bool isDbOnlyMetadataTrack(const Track& track)
-{
-    return track.isRemote() && track.isInDatabase();
-}
-
 bool canWriteTracks(const TrackList& tracks, const std::shared_ptr<AudioLoader>& audioLoader)
 {
     return !tracks.empty() && std::ranges::all_of(tracks, [&audioLoader](const Track& track) {
-        return !track.hasCue() && !track.isInArchive()
-            && (isDbOnlyMetadataTrack(track) || audioLoader->canWriteMetadata(track));
+        return track.isMetadataEditable(audioLoader->canWriteMetadata(track));
     });
 }
 } // namespace
@@ -71,6 +65,7 @@ void TagEditorPlugin::initialise(const CorePluginContext& context)
                               QString::fromLatin1(SettingsKeys::DefaultMultiValueSeparators));
     m_settings->createSetting(QString::fromLatin1(SettingsKeys::AutoFillMultiValueSeparators),
                               QString::fromLatin1(SettingsKeys::DefaultMultiValueSeparators));
+    m_settings->createSetting(QString::fromLatin1(SettingsKeys::EditValuesOnSingleClick), true);
 
     m_registry = new TagEditorFieldRegistry(m_settings, this);
 }
@@ -147,10 +142,14 @@ TagEditorPropertiesTab* TagEditorPlugin::createEditor(const TrackList& tracks)
     auto* tagEditor = new TagEditorPropertiesTab(m_actionManager, m_registry, m_settings);
     tagEditor->setReadOnly(!canWriteTracks(tracks, m_audioLoader));
     tagEditor->setTracks(tracks);
-    QObject::connect(tagEditor, &TagEditorPropertiesTab::trackMetadataChanged, m_library,
-                     &MusicLibrary::writeTrackMetadata);
+    QObject::connect(tagEditor, &TagEditorPropertiesTab::trackMetadataChanged, tagEditor,
+                     [this, tagEditor](const TrackList& changedTracks) {
+                         Q_EMIT tagEditor->writeRequestStarted(m_library->writeTrackMetadata(changedTracks));
+                     });
     QObject::connect(tagEditor, &TagEditorPropertiesTab::trackStatsChanged, m_library,
-                     [this](const TrackList& changedTracks) { m_library->updateTrackStats(changedTracks); });
+                     [this](const TrackList& changedTracks) {
+                         m_library->updateTrackStats(changedTracks, Track::Stat::Rating | Track::Stat::Loved);
+                     });
     return tagEditor;
 }
 

@@ -27,11 +27,11 @@
 #include <core/playlist/playlist.h>
 
 #include <cstdint>
+#include <functional>
 
 namespace Fooyin {
 class ScriptRuntime;
-class ScriptVariableProvider;
-class ScriptFunctionProvider;
+class ScriptRegistry;
 
 /*!
  * Parse error emitted by the script parser.
@@ -43,17 +43,6 @@ struct ScriptError
     QString message;
 };
 using ErrorList = std::vector<ScriptError>;
-
-enum class ScriptWhitespaceMode : uint8_t
-{
-    IgnoreLayout = 0,
-    Preserve,
-};
-
-struct ScriptEvaluationOptions
-{
-    ScriptWhitespaceMode whitespaceMode{ScriptWhitespaceMode::IgnoreLayout};
-};
 
 /*!
  * Parsed script plus cache identity and parse errors.
@@ -78,16 +67,8 @@ class FYCORE_EXPORT ScriptParser
 {
 public:
     ScriptParser();
+    explicit ScriptParser(ScriptRegistry* registry);
     ~ScriptParser();
-
-    /*!
-     * Installs all variables exported by `provider`.
-     */
-    void addProvider(const ScriptVariableProvider& provider);
-    /*!
-     * Installs all functions exported by `provider`.
-     */
-    void addProvider(const ScriptFunctionProvider& provider);
 
     ParsedScript parse(const QString& input);
     ParsedScript parseQuery(const QString& input);
@@ -95,11 +76,14 @@ public:
     [[nodiscard]] static bool canEvaluateAsQuery(const ParsedScript& input);
     [[nodiscard]] static bool containsQueryExpression(const ParsedScript& input);
 
+    ScriptDependencies dependencies(const ParsedScript& input);
+
     QString evaluate(const QString& input);
     QString evaluate(const ParsedScript& input);
     QString evaluate(const QString& input, const ScriptContext& context);
     QString evaluate(const QString& input, const ScriptContext& context, const ScriptEvaluationOptions& options);
     QString evaluate(const ParsedScript& input, const ScriptContext& context);
+    QString evaluate(const ParsedScript& input, const ScriptContext& context, const ScriptEvaluationOptions& options);
 
     QString evaluate(const QString& input, const Track& track);
     QString evaluate(const ParsedScript& input, const Track& track);
@@ -107,6 +91,8 @@ public:
     QString evaluate(const QString& input, const Track& track, const ScriptContext& context,
                      const ScriptEvaluationOptions& options);
     QString evaluate(const ParsedScript& input, const Track& track, const ScriptContext& context);
+    QString evaluate(const ParsedScript& input, const Track& track, const ScriptContext& context,
+                     const ScriptEvaluationOptions& options);
 
     QString evaluate(const QString& input, const TrackList& tracks);
     QString evaluate(const ParsedScript& input, const TrackList& tracks);
@@ -114,6 +100,8 @@ public:
     QString evaluate(const QString& input, const TrackList& tracks, const ScriptContext& context,
                      const ScriptEvaluationOptions& options);
     QString evaluate(const ParsedScript& input, const TrackList& tracks, const ScriptContext& context);
+    QString evaluate(const ParsedScript& input, const TrackList& tracks, const ScriptContext& context,
+                     const ScriptEvaluationOptions& options);
 
     QString evaluate(const QString& input, const Playlist& playlist);
     QString evaluate(const ParsedScript& input, const Playlist& playlist);
@@ -121,6 +109,10 @@ public:
     QString evaluate(const QString& input, const Playlist& playlist, const ScriptContext& context,
                      const ScriptEvaluationOptions& options);
     QString evaluate(const ParsedScript& input, const Playlist& playlist, const ScriptContext& context);
+    QString evaluate(const ParsedScript& input, const Playlist& playlist, const ScriptContext& context,
+                     const ScriptEvaluationOptions& options);
+
+    void withContext(const ScriptContext& context, const std::function<void()>& operation);
 
     /*!
      * Returns the maximum number of cached parsed and bound scripts.

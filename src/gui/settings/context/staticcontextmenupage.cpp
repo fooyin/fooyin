@@ -44,6 +44,7 @@ StaticContextMenuPage::StaticContextMenuPage(SettingsManager* settings, StaticCo
     setId(descriptor.pageId);
     setName(translate(descriptor.pageName));
     setCategory({tr("Interface"), tr("Context Menu")});
+    setSelector(SettingsPageSelector::List);
 
     const QString description = translate(descriptor.description);
     setWidgetCreator([description, descriptor = std::move(descriptor)] {

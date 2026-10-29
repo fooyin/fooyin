@@ -150,7 +150,7 @@ ProjectMConfigDialog::ProjectMConfigDialog(ProjectMWidget* widget, QWidget* pare
     m_hardCutDuration->setToolTip(tr("Minimum time a preset must be shown before a beat can trigger a hard cut"));
     m_hardCutSensitivity->setToolTip(
         tr("Volume-change threshold for hard cuts; higher values require a stronger beat"));
-    m_beatSensitivity->setToolTip(tr("Sensitivity of projectM's beat detection"));
+    m_beatSensitivity->setToolTip(tr("Sensitivity of projectM’s beat detection"));
 
     for(auto* spin : {m_hardCutSensitivity, m_beatSensitivity}) {
         spin->setRange(0.0, 5.0);
@@ -192,6 +192,8 @@ ProjectMConfigDialog::ProjectMConfigDialog(ProjectMWidget* widget, QWidget* pare
     QObject::connect(m_hardCutsEnabled, &QCheckBox::toggled, m_beatSensitivity, &QWidget::setEnabled);
     QObject::connect(m_presetDir, &QLineEdit::editingFinished, this, &ProjectMConfigDialog::updateSummary);
 
+    QObject::connect(widget, &ProjectMWidget::configChanged, this, &ProjectMConfigDialog::syncCurrentConfig);
+
     loadCurrentConfig();
 }
 
@@ -232,6 +234,20 @@ void ProjectMConfigDialog::setConfig(const ProjectMWidget::ConfigData& config)
     updateSummary();
 }
 
+void ProjectMConfigDialog::mergeExternalConfig(const ProjectMWidget::ConfigData& previous,
+                                               const ProjectMWidget::ConfigData& current)
+{
+    auto draft{config()};
+    mergeExternalFieldValues(previous, current, draft, &ProjectMWidget::ConfigData::presetDir);
+    mergeExternalFieldValues(previous.settings, current.settings, draft.settings, &ProjectMSettings::scanRecursive,
+                             &ProjectMSettings::maxFps, &ProjectMSettings::meshWidth, &ProjectMSettings::meshHeight,
+                             &ProjectMSettings::aspectCorrection, &ProjectMSettings::presetDuration,
+                             &ProjectMSettings::softCutDuration, &ProjectMSettings::hardCutsEnabled,
+                             &ProjectMSettings::hardCutDuration, &ProjectMSettings::hardCutSensitivity,
+                             &ProjectMSettings::beatSensitivity);
+    setConfig(draft);
+}
+
 void ProjectMConfigDialog::browsePresetDir()
 {
     const QString startDir = m_presetDir->text().trimmed().isEmpty() ? QDir::homePath() : m_presetDir->text();
@@ -260,7 +276,7 @@ void ProjectMConfigDialog::updateSummary()
     library.setRootDir(path);
     library.setRecursive(m_scanRecursive->isChecked());
     library.scan();
-    m_summary->setText(tr("%1 presets found.").arg(library.presetCount()));
+    m_summary->setText(tr("%Ln preset(s) found.", nullptr, library.presetCount()));
 }
 } // namespace Fooyin::ProjectM
 

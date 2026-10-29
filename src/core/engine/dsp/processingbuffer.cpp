@@ -18,6 +18,8 @@
  */
 
 #include <core/engine/dsp/processingbuffer.h>
+
+#include <core/engine/audioutils.h>
 #include <utils/timeconstants.h>
 
 #include <cassert>
@@ -31,14 +33,6 @@ int clampSizeToInt(size_t value)
     return (value > kIntMax) ? std::numeric_limits<int>::max() : static_cast<int>(value);
 }
 
-Fooyin::AudioFormat normaliseProcessingFormat(Fooyin::AudioFormat format)
-{
-    if(format.isValid()) {
-        format.setSampleFormat(Fooyin::SampleFormat::F64);
-    }
-    return format;
-}
-
 } // namespace
 
 namespace Fooyin {
@@ -48,13 +42,13 @@ ProcessingBuffer::ProcessingBuffer()
 { }
 
 ProcessingBuffer::ProcessingBuffer(const AudioFormat& format, uint64_t startTimeNs)
-    : m_format{normaliseProcessingFormat(format)}
+    : m_format{Audio::normaliseProcessingFormat(format)}
     , m_startTimeNs{startTimeNs}
     , m_sourceFrameDurationNs{0}
 { }
 
 ProcessingBuffer::ProcessingBuffer(std::span<const double> samples, const AudioFormat& format, uint64_t startTimeNs)
-    : m_format{normaliseProcessingFormat(format)}
+    : m_format{Audio::normaliseProcessingFormat(format)}
     , m_startTimeNs{startTimeNs}
     , m_sourceFrameDurationNs{0}
 {

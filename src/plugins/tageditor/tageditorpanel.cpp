@@ -20,6 +20,7 @@
 #include "tageditorpanel.h"
 
 #include "tageditoreditor.h"
+#include "tagfilldialog.h"
 
 #include <core/engine/audioloader.h>
 #include <core/library/musiclibrary.h>
@@ -40,14 +41,10 @@ constexpr auto DontAskAgain = "TagEditor/DontAskAgain";
 
 namespace Fooyin::TagEditor {
 namespace {
-bool isDbOnlyMetadataTrack(const Track& track)
-{
-    return track.isRemote() && track.isInDatabase();
-}
-
 bool allDbOnlyTracks(const TrackList& tracks)
 {
-    return std::ranges::all_of(tracks, isDbOnlyMetadataTrack);
+    return std::ranges::all_of(
+        tracks, [](const Track& track) { return track.isInDatabase() && track.isDatabaseOnlyMetadata(); });
 }
 } // namespace
 
@@ -70,6 +67,7 @@ TagEditorPanel::TagEditorPanel(ActionManager* actionManager, TagEditorFieldRegis
     m_editor->addTool(m_applyButton);
 
     QObject::connect(m_applyButton, &QPushButton::clicked, this, &TagEditorPanel::apply);
+    QObject::connect(m_editor, &TagEditorEditor::autoFillValuesRequested, this, &TagEditorPanel::autoFillValues);
     QObject::connect(m_selectionController, &TrackSelectionController::displaySelectionChanged, this,
                      &TagEditorPanel::selectionChanged);
 
@@ -135,13 +133,14 @@ bool TagEditorPanel::apply()
     }
 
     const bool statOnly = m_editor->hasOnlyStatChanges();
+    const auto stats    = m_editor->changedStats();
     if(!statOnly && !allDbOnlyTracks(m_currentTracks) && !m_settings->fileValue(DontAskAgain).toBool()) {
         QMessageBox message;
         message.setIcon(QMessageBox::Warning);
         message.setText(tr("Are you sure?"));
         message.setInformativeText(tr("Metadata in the associated files will be overwritten."));
 
-        auto* dontAskAgain = new QCheckBox(tr("Don't ask again"), &message);
+        auto* dontAskAgain = new QCheckBox(tr("Don’t ask again"), &message);
         message.setCheckBox(dontAskAgain);
 
         message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -161,7 +160,7 @@ bool TagEditorPanel::apply()
     }
 
     if(statOnly) {
-        m_library->updateTrackStats(changedTracks);
+        m_library->updateTrackStats(changedTracks, stats);
     }
     else {
         m_library->writeTrackMetadata(changedTracks);
@@ -170,14 +169,32 @@ bool TagEditorPanel::apply()
     return true;
 }
 
+void TagEditorPanel::autoFillValues()
+{
+    if(m_fillDialog) {
+        m_fillDialog->raise();
+        m_fillDialog->activateWindow();
+        return;
+    }
+
+    if(!apply()) {
+        return;
+    }
+
+    m_fillDialog = openFillDialog(m_editor->tracks(), m_settings, this, [this](const FillValuesResult& result) {
+        if(!result.tracks.empty()) {
+            m_library->writeTrackMetadata(result.tracks);
+        }
+    });
+}
+
 void TagEditorPanel::updateForTracks(const TrackList& tracks)
 {
     m_currentTracks = tracks;
 
     const bool hasTracks = !tracks.empty();
     const bool canWrite  = hasTracks && std::ranges::all_of(tracks, [this](const Track& track) {
-                              return !track.hasCue() && !track.isInArchive()
-                                  && (isDbOnlyMetadataTrack(track) || m_audioLoader->canWriteMetadata(track));
+                              return track.isMetadataEditable(m_audioLoader->canWriteMetadata(track));
                            });
     m_applyButton->setEnabled(canWrite);
     m_editor->setReadOnly(!canWrite);

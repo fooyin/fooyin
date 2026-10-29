@@ -233,7 +233,7 @@ QVariant PlaylistColumnModel::data(const QModelIndex& index, int role) const
     const QString& writeField        = columnData.writeField;
 
     if(column == 0 && role == Qt::CheckStateRole) {
-        return columnData.enabled ? Qt::Checked : Qt::Unchecked;
+        return columnData.isEnabled ? Qt::Checked : Qt::Unchecked;
     }
 
     if((column == 4 && role == Qt::ForegroundRole && sortField.isEmpty())
@@ -296,10 +296,10 @@ bool PlaylistColumnModel::setData(const QModelIndex& index, const QVariant& valu
 
     if(index.column() == 0 && role == Qt::CheckStateRole) {
         const bool enabled = value.value<Qt::CheckState>() == Qt::Checked;
-        if(column.enabled == enabled) {
+        if(column.isEnabled == enabled) {
             return false;
         }
-        column.enabled = enabled;
+        column.isEnabled = enabled;
     }
     else if(role == Qt::EditRole) {
         switch(index.column()) {

@@ -19,7 +19,6 @@
 
 #include "playlistwidgetsession.h"
 
-#include "playlist/playlistinteractor.h"
 #include "playlistcontroller.h"
 #include "playlistview.h"
 
@@ -29,6 +28,7 @@
 #include <core/scripting/trackqueryfilter.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/playlist/playlistinteractor.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
@@ -124,8 +124,47 @@ void PlaylistWidgetSession::selectionChanged(PlaylistWidgetSessionHost& host)
         }
     }
 
-    const auto selection
-        = this->selection(host.playlistController()->currentPlaylist(), tracks, trackIndexes, firstTrack);
+    auto selection = this->selection(host.playlistController()->currentPlaylist(), tracks, trackIndexes, firstTrack);
+    if(firstTrack.isValid()) {
+        const auto primaryIndex = std::ranges::find_if(indexes, [&firstTrack](const QModelIndex& index) {
+            return index.data(PlaylistItem::Role::Type).toInt() == PlaylistItem::Track
+                && index.data(PlaylistItem::Role::Index).toInt() == firstTrack.indexInPlaylist;
+        });
+        if(primaryIndex != indexes.end()) {
+            const QModelIndex groupIndex = primaryIndex->parent();
+            if(groupIndex.isValid()) {
+                QModelIndexList groupTrackIndexes;
+                getAllTrackIndexes(host.playlistView()->model(), groupIndex, groupTrackIndexes);
+                selection.playbackGroupTracks.reserve(groupTrackIndexes.size());
+                std::ranges::transform(groupTrackIndexes, std::back_inserter(selection.playbackGroupTracks),
+                                       [](const QModelIndex& index) {
+                                           return index.data(PlaylistItem::PersistentItemData).value<PlaylistTrack>();
+                                       });
+                const auto primaryGroupTrack
+                    = std::ranges::find(groupTrackIndexes, firstTrack.indexInPlaylist, [](const QModelIndex& index) {
+                          return index.data(PlaylistItem::Role::Index).toInt();
+                      });
+                if(primaryGroupTrack != groupTrackIndexes.end()) {
+                    selection.playbackGroupCurrentIndex
+                        = static_cast<int>(std::distance(groupTrackIndexes.begin(), primaryGroupTrack));
+                }
+            }
+        }
+    }
+
+    if(hasSearch()) {
+        selection.playbackViewTracks = filteredTracks();
+        const auto currentTrack      = std::ranges::find_if(selection.playbackViewTracks, [&](const auto& track) {
+            if(firstTrack.entryId.isValid()) {
+                return track.entryId == firstTrack.entryId;
+            }
+            return !selection.tracks.empty() && track.track == selection.tracks.front();
+        });
+        if(currentTrack != selection.playbackViewTracks.end()) {
+            selection.playbackViewCurrentIndex
+                = static_cast<int>(std::distance(selection.playbackViewTracks.begin(), currentTrack));
+        }
+    }
     host.selectionController()->changeSelectedTracks(host.playlistContext(), selection);
 
     if(tracks.empty()) {
@@ -163,8 +202,20 @@ void PlaylistWidgetSession::handleTracksChanged(PlaylistWidgetSessionHost& /*hos
                                                 const std::vector<int>& /*indexes*/, bool /*allNew*/)
 { }
 
+bool PlaylistWidgetSession::replaceTracks(PlaylistWidgetSessionHost& /*host*/, const TrackList& /*tracks*/)
+{
+    return false;
+}
+
+void PlaylistWidgetSession::startPlayback(PlaylistWidgetSessionHost& host) const
+{
+    host.selectionController()->executeAction(TrackAction::Play, playbackOptions());
+}
+
 void PlaylistWidgetSession::searchEvent(PlaylistWidgetSessionHost& host, const SearchRequest& request)
 {
+    const uint64_t requestToken = ++m_searchRequestToken;
+
     setEmptyMode(request.emptyMode);
     handleSearchChanged(host, request.text);
 
@@ -197,14 +248,16 @@ void PlaylistWidgetSession::searchEvent(PlaylistWidgetSessionHost& host, const S
     Utils::asyncExec([search = request.text, sourceTracks]() {
         TrackQueryFilter filter;
         return filter.filter(search, sourceTracks);
-    }).then(receiver, [this, search = request.text, hostPtr = &host](const PlaylistTrackList& filteredTracks) {
-        if(this->search() != search) {
-            return;
-        }
+    })
+        .then(receiver,
+              [this, search = request.text, requestToken, hostPtr = &host](const PlaylistTrackList& filteredTracks) {
+                  if(requestToken != m_searchRequestToken || this->search() != search) {
+                      return;
+                  }
 
-        setFilteredTracks(filteredTracks);
-        hostPtr->resetModelThrottled();
-    });
+                  setFilteredTracks(filteredTracks);
+                  hostPtr->resetModelThrottled();
+              });
 }
 
 void PlaylistWidgetSession::handleSearchChanged(PlaylistWidgetSessionHost& /*host*/, const QString& /*search*/) { }
