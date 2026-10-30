@@ -32,6 +32,7 @@
 #include <gui/widgets/expandedtreeview.h>
 #include <gui/widgets/widgetbackground.h>
 #include <utils/actions/widgetcontext.h>
+#include <utils/tooltipfilter.h>
 #include <utils/utils.h>
 
 #include <QApplication>
@@ -184,6 +185,7 @@ FilterExpansionWidget::FilterExpansionWidget(TrackSelectionController* selection
     m_tracks->setMouseTracking(true);
     m_tracks->installEventFilter(this);
     m_tracks->viewport()->installEventFilter(this);
+    m_tracks->viewport()->installEventFilter(new ToolTipFilter(this));
 
     m_close->setAutoRaise(true);
     Gui::setThemeIcon(m_close, Constants::Icons::Close);
