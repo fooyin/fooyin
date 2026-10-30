@@ -236,6 +236,9 @@ void DiscordPlugin::startUpdateActivityTask()
     if(m_artworkTrackKey == track.identityKey()) {
         data.largeImage = m_artworkUrl;
     }
+    if(data.largeText.length() < 2) {
+        data.largeText.append("  "_L1);
+    }
     if(data.state.length() < 2) {
         data.state.append("  "_L1);
     }
