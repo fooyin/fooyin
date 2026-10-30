@@ -21,6 +21,7 @@
 
 #include <QDateTime>
 #include <QDir>
+#include <QPainter>
 #include <QStringList>
 #include <QTimeZone>
 
@@ -238,5 +239,36 @@ TrackList TrackGenerator::generateTracks(const Options& options)
     }
 
     return tracks;
+}
+
+QPixmap TrackGenerator::generateArtwork()
+{
+    QPixmap artwork{512, 512};
+
+    QPainter painter{&artwork};
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    QLinearGradient sky{0, 0, 0, 512};
+    sky.setColorAt(0.0, QColor{24, 32, 66});
+    sky.setColorAt(1.0, QColor{179, 101, 100});
+    painter.fillRect(artwork.rect(), sky);
+
+    const QRect sun{320, 88, 96, 96};
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(QColor{242, 199, 145});
+    painter.drawEllipse(sun);
+
+    static constexpr std::array Heights{140, 190, 120, 240, 175, 210, 130, 260, 180, 150, 220, 165};
+    int x{0};
+    for(const int height : Heights) {
+        painter.fillRect(x, 512 - height, 44, height, QColor{26, 33, 53});
+        for(int y{528 - height}; y < 490; y += 24) {
+            painter.fillRect(x + 12, y, 5, 8, QColor{222, 170, 115});
+            painter.fillRect(x + 28, y, 5, 8, QColor{222, 170, 115});
+        }
+        x += 44;
+    }
+
+    return artwork;
 }
 } // namespace Fooyin

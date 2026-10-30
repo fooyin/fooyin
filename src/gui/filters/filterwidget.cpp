@@ -89,6 +89,9 @@ constexpr auto FilterExpansionMiddleClickKey        = u"Filters/ExpansionMiddleC
 constexpr auto FilterExpansionArtworkMarginsKey     = u"Filters/ExpansionArtworkMargins";
 constexpr auto FilterExpansionArtworkAutoMarginsKey = u"Filters/ExpansionArtworkAutoMargins";
 constexpr auto FilterExpansionReflectionKey         = u"Filters/ExpansionArtworkReflection";
+constexpr auto FilterExpansionReflectionHeightKey   = u"Filters/ExpansionArtworkReflectionHeight";
+constexpr auto FilterExpansionReflectionOpacityKey  = u"Filters/ExpansionArtworkReflectionOpacity";
+constexpr auto FilterExpansionReflectionGapKey      = u"Filters/ExpansionArtworkReflectionGap";
 constexpr auto FilterExpansionCloseButtonKey        = u"Filters/ExpansionShowCloseButton";
 constexpr auto FilterExpansionArtworkPositionKey    = u"Filters/ExpansionArtworkOnLeft";
 constexpr auto FilterExpansionArtworkSizeKey        = u"Filters/ExpansionArtworkSize";
@@ -631,6 +634,14 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
         = m_settings->fileValue(FilterExpansionArtworkAutoMarginsKey, config.expansionArtworkAutoMargins).toBool();
     config.expansionArtworkReflection
         = m_settings->fileValue(FilterExpansionReflectionKey, config.expansionArtworkReflection).toBool();
+    config.expansionArtworkReflectionHeight = std::clamp(
+        m_settings->fileValue(FilterExpansionReflectionHeightKey, config.expansionArtworkReflectionHeight).toInt(), 1,
+        100);
+    config.expansionArtworkReflectionOpacity = std::clamp(
+        m_settings->fileValue(FilterExpansionReflectionOpacityKey, config.expansionArtworkReflectionOpacity).toInt(), 0,
+        100);
+    config.expansionArtworkReflectionGap = std::clamp(
+        m_settings->fileValue(FilterExpansionReflectionGapKey, config.expansionArtworkReflectionGap).toInt(), 0, 100);
     config.expansionShowCloseButton
         = m_settings->fileValue(FilterExpansionCloseButtonKey, config.expansionShowCloseButton).toBool();
     config.expansionArtworkOnLeft
@@ -703,6 +714,9 @@ void FilterWidget::saveDefaults(const ConfigData& config) const
                         artworkMarginsToJson(config.expansionArtworkMargins).toVariantMap());
     m_settings->fileSet(FilterExpansionArtworkAutoMarginsKey, config.expansionArtworkAutoMargins);
     m_settings->fileSet(FilterExpansionReflectionKey, config.expansionArtworkReflection);
+    m_settings->fileSet(FilterExpansionReflectionHeightKey, config.expansionArtworkReflectionHeight);
+    m_settings->fileSet(FilterExpansionReflectionOpacityKey, config.expansionArtworkReflectionOpacity);
+    m_settings->fileSet(FilterExpansionReflectionGapKey, config.expansionArtworkReflectionGap);
     m_settings->fileSet(FilterExpansionCloseButtonKey, config.expansionShowCloseButton);
     m_settings->fileSet(FilterExpansionArtworkPositionKey, config.expansionArtworkOnLeft);
     m_settings->fileSet(FilterExpansionArtworkSizeKey, config.expansionArtworkSize);
@@ -755,6 +769,9 @@ void FilterWidget::clearSavedDefaults() const
     m_settings->fileRemove(FilterExpansionArtworkMarginsKey);
     m_settings->fileRemove(FilterExpansionArtworkAutoMarginsKey);
     m_settings->fileRemove(FilterExpansionReflectionKey);
+    m_settings->fileRemove(FilterExpansionReflectionHeightKey);
+    m_settings->fileRemove(FilterExpansionReflectionOpacityKey);
+    m_settings->fileRemove(FilterExpansionReflectionGapKey);
     m_settings->fileRemove(FilterExpansionCloseButtonKey);
     m_settings->fileRemove(FilterExpansionArtworkPositionKey);
     m_settings->fileRemove(FilterExpansionArtworkSizeKey);
@@ -815,11 +832,14 @@ void FilterWidget::applyConfig(const ConfigData& config)
         validated.iconSize = factoryConfig().iconSize;
     }
 
-    validated.expansionArtworkMargins     = artworkMarginsFromJson({}, validated.expansionArtworkMargins);
-    validated.expansionArtworkSize        = std::clamp(validated.expansionArtworkSize, 50, 200);
-    validated.expansionMinimumRows        = std::max(1, validated.expansionMinimumRows);
-    validated.expansionMaximumColumns     = std::max(0, validated.expansionMaximumColumns);
-    validated.expansionMinimumColumnWidth = std::clamp(validated.expansionMinimumColumnWidth, 25, 300);
+    validated.expansionArtworkMargins           = artworkMarginsFromJson({}, validated.expansionArtworkMargins);
+    validated.expansionArtworkSize              = std::clamp(validated.expansionArtworkSize, 50, 200);
+    validated.expansionArtworkReflectionHeight  = std::clamp(validated.expansionArtworkReflectionHeight, 1, 100);
+    validated.expansionArtworkReflectionOpacity = std::clamp(validated.expansionArtworkReflectionOpacity, 0, 100);
+    validated.expansionArtworkReflectionGap     = std::clamp(validated.expansionArtworkReflectionGap, 0, 100);
+    validated.expansionMinimumRows              = std::max(1, validated.expansionMinimumRows);
+    validated.expansionMaximumColumns           = std::max(0, validated.expansionMaximumColumns);
+    validated.expansionMinimumColumnWidth       = std::clamp(validated.expansionMinimumColumnWidth, 25, 300);
 
     const bool appearanceChanged
         = m_config.viewMode != validated.viewMode || m_config.captionDisplay != validated.captionDisplay
@@ -837,6 +857,9 @@ void FilterWidget::applyConfig(const ConfigData& config)
                                 || m_config.expansionArtworkSize != validated.expansionArtworkSize
                                 || m_config.expansionShowCloseButton != validated.expansionShowCloseButton
                                 || m_config.expansionArtworkReflection != validated.expansionArtworkReflection
+                                || m_config.expansionArtworkReflectionHeight != validated.expansionArtworkReflectionHeight
+                                || m_config.expansionArtworkReflectionOpacity != validated.expansionArtworkReflectionOpacity
+                                || m_config.expansionArtworkReflectionGap != validated.expansionArtworkReflectionGap
                                 || m_config.expansionArtworkAutoMargins != validated.expansionArtworkAutoMargins
                                 || m_config.expansionArtworkMargins != validated.expansionArtworkMargins;
     const bool hasConfigChanged
@@ -892,7 +915,10 @@ void FilterWidget::applyConfig(const ConfigData& config)
         m_expansion->setArtworkOnLeft(m_config.expansionArtworkOnLeft);
         m_expansion->setArtworkSize(m_config.expansionArtworkSize);
         m_expansion->setCloseButtonVisible(m_config.expansionShowCloseButton);
-        m_expansion->setArtworkReflection(m_config.expansionArtworkReflection);
+        m_expansion->setArtworkReflection({.enabled = m_config.expansionArtworkReflection,
+                                           .height  = m_config.expansionArtworkReflectionHeight,
+                                           .opacity = m_config.expansionArtworkReflectionOpacity,
+                                           .gap     = m_config.expansionArtworkReflectionGap});
         m_expansion->setArtworkAutoMargins(m_config.expansionArtworkAutoMargins);
         m_expansion->setArtworkMargins(m_config.expansionArtworkMargins);
         m_expansion->setMinimumColumnRows(m_config.expansionMinimumRows);
@@ -1460,7 +1486,10 @@ void FilterWidget::applyExpansionContent(const ExpansionResult& result)
     m_expansion->setArtworkOnLeft(m_config.expansionArtworkOnLeft);
     m_expansion->setArtworkSize(m_config.expansionArtworkSize);
     m_expansion->setCloseButtonVisible(m_config.expansionShowCloseButton);
-    m_expansion->setArtworkReflection(m_config.expansionArtworkReflection);
+    m_expansion->setArtworkReflection({.enabled = m_config.expansionArtworkReflection,
+                                       .height  = m_config.expansionArtworkReflectionHeight,
+                                       .opacity = m_config.expansionArtworkReflectionOpacity,
+                                       .gap     = m_config.expansionArtworkReflectionGap});
     m_expansion->setArtworkAutoMargins(m_config.expansionArtworkAutoMargins);
     m_expansion->setArtworkMargins(m_config.expansionArtworkMargins);
 
@@ -1893,6 +1922,12 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
         = layout.value("ExpansionArtworkAutoMargins"_L1).toBool(config.expansionArtworkAutoMargins);
     config.expansionArtworkReflection
         = layout.value("ExpansionArtworkReflection"_L1).toBool(config.expansionArtworkReflection);
+    config.expansionArtworkReflectionHeight = std::clamp(
+        layout.value("ExpansionArtworkReflectionHeight"_L1).toInt(config.expansionArtworkReflectionHeight), 1, 100);
+    config.expansionArtworkReflectionOpacity = std::clamp(
+        layout.value("ExpansionArtworkReflectionOpacity"_L1).toInt(config.expansionArtworkReflectionOpacity), 0, 100);
+    config.expansionArtworkReflectionGap = std::clamp(
+        layout.value("ExpansionArtworkReflectionGap"_L1).toInt(config.expansionArtworkReflectionGap), 0, 100);
     config.expansionShowCloseButton
         = layout.value("ExpansionShowCloseButton"_L1).toBool(config.expansionShowCloseButton);
     config.expansionArtworkOnLeft = layout.value("ExpansionArtworkOnLeft"_L1).toBool(config.expansionArtworkOnLeft);
@@ -1941,37 +1976,40 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
 
 void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
 {
-    layout["DoubleClickAction"_L1]           = config.doubleClickAction;
-    layout["MiddleClickAction"_L1]           = config.middleClickAction;
-    layout["ExpansionDoubleClickAction"_L1]  = config.expansionDoubleClickAction;
-    layout["ExpansionMiddleClickAction"_L1]  = config.expansionMiddleClickAction;
-    layout["SendPlayback"_L1]                = config.sendPlayback;
-    layout["FilterSource"_L1]                = static_cast<int>(config.source);
-    layout["PlaylistEnabled"_L1]             = config.playlistEnabled;
-    layout["AutoSwitch"_L1]                  = config.autoSwitch;
-    layout["KeepAlive"_L1]                   = config.preservePlaybackPlaylist;
-    layout["PlaylistName"_L1]                = config.playlistName;
-    layout["RestoreState"_L1]                = config.restoreState;
-    layout["RowHeight"_L1]                   = config.rowHeight;
-    layout["IconWidth"_L1]                   = config.iconSize.width();
-    layout["IconHeight"_L1]                  = config.iconSize.height();
-    layout["IconHorizontalGap"_L1]           = config.iconHorizontalGap;
-    layout["IconVerticalGap"_L1]             = config.iconVerticalGap;
-    layout["ArtworkCornerRadius"_L1]         = config.artworkCornerRadius;
-    layout["AlignCaptionsToArtwork"_L1]      = config.alignCaptionsToArtwork;
-    layout["ExpandGroups"_L1]                = config.expandGroups;
-    layout["ExpandedArtwork"_L1]             = config.expandedArtwork;
-    layout["ExpansionArtworkMargins"_L1]     = artworkMarginsToJson(config.expansionArtworkMargins);
-    layout["ExpansionArtworkAutoMargins"_L1] = config.expansionArtworkAutoMargins;
-    layout["ExpansionArtworkReflection"_L1]  = config.expansionArtworkReflection;
-    layout["ExpansionShowCloseButton"_L1]    = config.expansionShowCloseButton;
-    layout["ExpansionArtworkOnLeft"_L1]      = config.expansionArtworkOnLeft;
-    layout["ExpansionArtworkSize"_L1]        = config.expansionArtworkSize;
-    layout["ExpansionMaximumColumns"_L1]     = config.expansionMaximumColumns;
-    layout["ExpansionMinimumRows"_L1]        = config.expansionMinimumRows;
-    layout["ExpansionStretchColumns"_L1]     = config.expansionStretchColumns;
-    layout["ExpansionMinimumColumnWidth"_L1] = config.expansionMinimumColumnWidth;
-    layout["ExpansionScripts"_L1]            = config.expansionScripts.toJson();
+    layout["DoubleClickAction"_L1]                 = config.doubleClickAction;
+    layout["MiddleClickAction"_L1]                 = config.middleClickAction;
+    layout["ExpansionDoubleClickAction"_L1]        = config.expansionDoubleClickAction;
+    layout["ExpansionMiddleClickAction"_L1]        = config.expansionMiddleClickAction;
+    layout["SendPlayback"_L1]                      = config.sendPlayback;
+    layout["FilterSource"_L1]                      = static_cast<int>(config.source);
+    layout["PlaylistEnabled"_L1]                   = config.playlistEnabled;
+    layout["AutoSwitch"_L1]                        = config.autoSwitch;
+    layout["KeepAlive"_L1]                         = config.preservePlaybackPlaylist;
+    layout["PlaylistName"_L1]                      = config.playlistName;
+    layout["RestoreState"_L1]                      = config.restoreState;
+    layout["RowHeight"_L1]                         = config.rowHeight;
+    layout["IconWidth"_L1]                         = config.iconSize.width();
+    layout["IconHeight"_L1]                        = config.iconSize.height();
+    layout["IconHorizontalGap"_L1]                 = config.iconHorizontalGap;
+    layout["IconVerticalGap"_L1]                   = config.iconVerticalGap;
+    layout["ArtworkCornerRadius"_L1]               = config.artworkCornerRadius;
+    layout["AlignCaptionsToArtwork"_L1]            = config.alignCaptionsToArtwork;
+    layout["ExpandGroups"_L1]                      = config.expandGroups;
+    layout["ExpandedArtwork"_L1]                   = config.expandedArtwork;
+    layout["ExpansionArtworkMargins"_L1]           = artworkMarginsToJson(config.expansionArtworkMargins);
+    layout["ExpansionArtworkAutoMargins"_L1]       = config.expansionArtworkAutoMargins;
+    layout["ExpansionArtworkReflection"_L1]        = config.expansionArtworkReflection;
+    layout["ExpansionArtworkReflectionHeight"_L1]  = config.expansionArtworkReflectionHeight;
+    layout["ExpansionArtworkReflectionOpacity"_L1] = config.expansionArtworkReflectionOpacity;
+    layout["ExpansionArtworkReflectionGap"_L1]     = config.expansionArtworkReflectionGap;
+    layout["ExpansionShowCloseButton"_L1]          = config.expansionShowCloseButton;
+    layout["ExpansionArtworkOnLeft"_L1]            = config.expansionArtworkOnLeft;
+    layout["ExpansionArtworkSize"_L1]              = config.expansionArtworkSize;
+    layout["ExpansionMaximumColumns"_L1]           = config.expansionMaximumColumns;
+    layout["ExpansionMinimumRows"_L1]              = config.expansionMinimumRows;
+    layout["ExpansionStretchColumns"_L1]           = config.expansionStretchColumns;
+    layout["ExpansionMinimumColumnWidth"_L1]       = config.expansionMinimumColumnWidth;
+    layout["ExpansionScripts"_L1]                  = config.expansionScripts.toJson();
     QJsonObject background;
     config.background.saveLayout(background);
     layout["Background"_L1] = background;

@@ -21,6 +21,8 @@
 
 #include "filterexpansionpopulator.h"
 
+#include "artwork/artworkreflection.h"
+
 #include <core/track.h>
 #include <gui/coverartworktypes.h>
 #include <gui/widgets/backgroundconfig.h>
@@ -63,6 +65,7 @@ public:
     void updateContent(const ExpansionResult& content);
 
     void setPreviewMode();
+    void setPreviewArtwork(const QPixmap& artwork, bool show);
     void setBackground(const BackgroundConfig& config, const QString& colour);
     void setMinimumColumnRows(int rows);
     void setMaximumColumns(int columns);
@@ -72,7 +75,7 @@ public:
     void setArtworkSize(int size);
     void setArtworkMargins(const QMargins& margins);
     void setArtworkAutoMargins(bool enabled);
-    void setArtworkReflection(bool enabled);
+    void setArtworkReflection(const Gui::ArtworkReflectionOptions& options);
     void setCloseButtonVisible(bool visible);
     void setArtwork(const Track& track, Track::Cover type, std::optional<ArtworkSourcePreference> source, bool show,
                     const QPixmap& preview);
@@ -141,7 +144,7 @@ private:
     std::optional<ArtworkSourcePreference> m_coverSource;
     bool m_showArtwork;
     bool m_artworkOnLeft;
-    bool m_artworkReflection;
+    Gui::ArtworkReflectionOptions m_artworkReflection;
     bool m_artworkAutoMargins;
     bool m_showCloseButton;
     bool m_previewMode;

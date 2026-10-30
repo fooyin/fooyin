@@ -169,6 +169,9 @@ public:
         int expansionArtworkSize{100};
         bool expansionShowCloseButton{true};
         bool expansionArtworkReflection{false};
+        int expansionArtworkReflectionHeight{33};
+        int expansionArtworkReflectionOpacity{35};
+        int expansionArtworkReflectionGap{3};
         bool expansionArtworkAutoMargins{false};
         QMargins expansionArtworkMargins{10, 10, 10, 10};
         ExpansionScripts expansionScripts;

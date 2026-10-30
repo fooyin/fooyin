@@ -19,7 +19,6 @@
 
 #include "filterexpansionwidget.h"
 
-#include "artwork/artworkreflection.h"
 #include "filterexpansionmodel.h"
 #include "filterexpansionpopulator.h"
 #include "filterexpansiontrackdelegate.h"
@@ -135,7 +134,6 @@ FilterExpansionWidget::FilterExpansionWidget(TrackSelectionController* selection
     , m_coverType{Track::Cover::Front}
     , m_showArtwork{true}
     , m_artworkOnLeft{true}
-    , m_artworkReflection{false}
     , m_artworkAutoMargins{false}
     , m_showCloseButton{true}
     , m_previewMode{false}
@@ -350,11 +348,19 @@ void FilterExpansionWidget::setPreviewMode()
 {
     m_previewMode = true;
     m_showArtwork = false;
-    m_close->hide();
+    m_close->setVisible(m_showCloseButton);
     m_tracks->setDragEnabled(false);
     m_tracks->setSelectionMode(QAbstractItemView::NoSelection);
     m_tracks->setFocusPolicy(Qt::NoFocus);
     updateLayout();
+}
+
+void FilterExpansionWidget::setPreviewArtwork(const QPixmap& artwork, bool show)
+{
+    m_artwork     = artwork;
+    m_showArtwork = show;
+    updateLayout();
+    scheduleLayoutUpdate();
 }
 
 void FilterExpansionWidget::setBackground(const BackgroundConfig& config, const QString& colour)
@@ -474,9 +480,9 @@ void FilterExpansionWidget::setArtworkAutoMargins(bool enabled)
     scheduleLayoutUpdate();
 }
 
-void FilterExpansionWidget::setArtworkReflection(bool enabled)
+void FilterExpansionWidget::setArtworkReflection(const Gui::ArtworkReflectionOptions& options)
 {
-    if(std::exchange(m_artworkReflection, enabled) != enabled) {
+    if(std::exchange(m_artworkReflection, options) != options) {
         update();
     }
 }
@@ -488,7 +494,7 @@ void FilterExpansionWidget::setCloseButtonVisible(bool visible)
     }
 
     rememberScrollAnchor();
-    m_close->setVisible(visible && !m_previewMode);
+    m_close->setVisible(visible);
     updateLayout();
     scheduleLayoutUpdate();
 }
@@ -588,14 +594,18 @@ void FilterExpansionWidget::paintEvent(QPaintEvent* /*event*/)
 
     const QColor customColour{m_backgroundColour};
     const QColor background = customColour.isValid() ? customColour : defaultBackgroundColour();
-    const int anchor        = std::clamp(property("expansionAnchor").toInt(), PointerHeight,
-                                         std::max(PointerHeight, width() - PointerHeight));
 
     QPainterPath shape;
-    shape.addRect(rect().adjusted(0, PointerHeight, 0, 0));
-    shape.addPolygon(QPolygonF{{static_cast<qreal>(anchor - PointerHeight), PointerHeight},
-                               {static_cast<qreal>(anchor), 0},
-                               {static_cast<qreal>(anchor + PointerHeight), PointerHeight}});
+    shape.addRect(rect().adjusted(0, m_previewMode ? 0 : PointerHeight, 0, 0));
+
+    if(!m_previewMode) {
+        const int anchor = std::clamp(property("expansionAnchor").toInt(), PointerHeight,
+                                      std::max(PointerHeight, width() - PointerHeight));
+        shape.addPolygon(QPolygonF{{static_cast<qreal>(anchor - PointerHeight), PointerHeight},
+                                   {static_cast<qreal>(anchor), 0},
+                                   {static_cast<qreal>(anchor + PointerHeight), PointerHeight}});
+    }
+
     painter.save();
     painter.setClipPath(shape);
     painter.fillRect(rect(), background);
@@ -610,15 +620,14 @@ void FilterExpansionWidget::paintEvent(QPaintEvent* /*event*/)
 
         painter.drawPixmap(target.topLeft(), scaled);
 
-        if(m_artworkReflection) {
-            const Gui::ArtworkReflectionOptions options{.enabled = true};
+        if(m_artworkReflection.enabled) {
             const qreal dpr = scaled.devicePixelRatio();
             const qreal reflectionHeight
-                = std::ceil(Gui::artworkReflectionHeight(target.height(), options) * dpr) / dpr;
-            const qreal bottom = target.bottom() + 1 + options.gap + reflectionHeight;
+                = std::ceil(Gui::artworkReflectionHeight(target.height(), m_artworkReflection) * dpr) / dpr;
+            const qreal bottom = target.bottom() + 1 + m_artworkReflection.gap + reflectionHeight;
 
-            if(bottom <= height() - m_effectiveArtworkMargins.bottom()) {
-                Gui::drawArtworkReflection(painter, m_artwork, scaled, target, 0, options);
+            if(bottom <= height()) {
+                Gui::drawArtworkReflection(painter, m_artwork, scaled, target, 0, m_artworkReflection);
             }
         }
     }
@@ -790,6 +799,7 @@ void FilterExpansionWidget::updateLayout()
     m_tracks->setFlowMinimumColumnWidth(static_cast<int>(std::llround(scaledColumnWidth)));
 
     const auto metrics        = layoutMetrics(width());
+    const int pointerHeight   = m_previewMode ? 0 : PointerHeight;
     const int extent          = metrics.artworkExtent;
     const bool artwork        = extent > 0;
     m_effectiveArtworkMargins = metrics.artworkMargins;
@@ -797,18 +807,18 @@ void FilterExpansionWidget::updateLayout()
     const int artworkX
         = m_artworkOnLeft ? m_effectiveArtworkMargins.left() : width() - extent - m_effectiveArtworkMargins.right();
     m_artworkRect
-        = artwork ? QRect{artworkX, PointerHeight + m_effectiveArtworkMargins.top(), extent, extent} : QRect{};
+        = artwork ? QRect{artworkX, pointerHeight + m_effectiveArtworkMargins.top(), extent, extent} : QRect{};
 
     const int artworkMargin
         = artwork ? extent + m_effectiveArtworkMargins.left() + m_effectiveArtworkMargins.right() : ContentMargin;
     const int controlsMargin = metrics.controlsMargin;
 
-    layout()->setContentsMargins(m_artworkOnLeft ? artworkMargin : controlsMargin, PointerHeight + ContentMargin,
+    layout()->setContentsMargins(m_artworkOnLeft ? artworkMargin : controlsMargin, pointerHeight + ContentMargin,
                                  m_artworkOnLeft ? controlsMargin : artworkMargin, ContentMargin);
 
     const QSize closeSize = m_close->sizeHint();
     const int closeX      = m_artworkOnLeft ? width() - closeSize.width() - 2 : 2;
-    m_close->setGeometry({closeX, PointerHeight + 2, closeSize.width(), closeSize.height()});
+    m_close->setGeometry({closeX, pointerHeight + 2, closeSize.width(), closeSize.height()});
 
     update();
 }
@@ -822,6 +832,10 @@ void FilterExpansionWidget::scheduleLayoutUpdate()
     QMetaObject::invokeMethod(
         this,
         [this]() {
+            if(m_previewMode) {
+                // QWidgetItem otherwise derives the height from the inner text layout
+                setFixedHeight(heightForWidth(width()));
+            }
             updateGeometry();
             Q_EMIT contentChanged();
 
@@ -877,14 +891,14 @@ void FilterExpansionWidget::rememberScrollAnchor()
 
 FilterExpansionWidget::LayoutMetrics FilterExpansionWidget::layoutMetrics(int width) const
 {
+    const int pointerHeight = m_previewMode ? 0 : PointerHeight;
     LayoutMetrics metrics;
     metrics.artworkMargins = m_artworkMargins;
-    metrics.controlsMargin
-        = (m_previewMode || !m_showCloseButton) ? ContentMargin : m_close->sizeHint().width() + ContentMargin;
+    metrics.controlsMargin = m_showCloseButton ? m_close->sizeHint().width() + ContentMargin : ContentMargin;
 
     const auto contentHeight = [&](int artworkWidth) {
         const int contentWidth = std::max(1, width - metrics.controlsMargin - artworkWidth);
-        int height = PointerHeight + (2 * ContentMargin) + m_tracks->contentSizeForWidth(contentWidth).height();
+        int height = pointerHeight + (2 * ContentMargin) + m_tracks->contentSizeForWidth(contentWidth).height();
         if(!m_footer->isHidden()) {
             height += m_footer->sizeHint().height() + layout()->spacing();
         }
@@ -905,16 +919,20 @@ FilterExpansionWidget::LayoutMetrics FilterExpansionWidget::layoutMetrics(int wi
         }
     }
 
-    // Reserve margins before measuring content so artwork size is independent of track height
-    const int availableExtent = width - metrics.controlsMargin - minimumTextWidth - metrics.artworkMargins.left()
-                              - metrics.artworkMargins.right();
-    const int extent          = std::min(preferredExtent, availableExtent);
-    if(m_showArtwork && extent >= minimumExtent) {
-        metrics.artworkExtent = extent;
-        if(m_artworkAutoMargins && contentHeight(extent + ContentMargin) <= PointerHeight + extent) {
+    const int availableExtent = width - metrics.controlsMargin - minimumTextWidth;
+    int extent
+        = std::min(preferredExtent, availableExtent - metrics.artworkMargins.left() - metrics.artworkMargins.right());
+    if(m_showArtwork && m_artworkAutoMargins) {
+        // Measure the margin-free artwork before deciding whether it fills the height
+        const int autoExtent = std::min(preferredExtent, availableExtent - ContentMargin);
+        if(autoExtent >= minimumExtent && contentHeight(autoExtent + ContentMargin) <= pointerHeight + autoExtent) {
+            extent = autoExtent;
             metrics.artworkMargins
                 = m_artworkOnLeft ? QMargins{0, 0, ContentMargin, 0} : QMargins{ContentMargin, 0, 0, 0};
         }
+    }
+    if(m_showArtwork && extent >= minimumExtent) {
+        metrics.artworkExtent = extent;
     }
 
     const int artworkWidth = metrics.artworkExtent > 0
@@ -922,7 +940,7 @@ FilterExpansionWidget::LayoutMetrics FilterExpansionWidget::layoutMetrics(int wi
                                : ContentMargin;
     metrics.height         = contentHeight(artworkWidth);
     if(metrics.artworkExtent > 0) {
-        metrics.height = std::max(metrics.height, PointerHeight + metrics.artworkExtent + metrics.artworkMargins.top()
+        metrics.height = std::max(metrics.height, pointerHeight + metrics.artworkExtent + metrics.artworkMargins.top()
                                                       + metrics.artworkMargins.bottom());
     }
 

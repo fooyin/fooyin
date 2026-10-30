@@ -64,6 +64,7 @@ private:
     void updateExpansionControls();
     void updatePreviewVisibility();
     void updatePreviewArtworkMargins();
+    void updatePreviewArtworkReflection();
     void updatePreviewBackground();
     void applyPreview(const ExpansionResult& result);
     void schedulePreview();
@@ -124,6 +125,9 @@ private:
     QCheckBox* m_expandedArtwork;
     QCheckBox* m_expansionCloseButton;
     QCheckBox* m_expansionArtworkReflection;
+    QSpinBox* m_expansionArtworkReflectionHeight;
+    QSpinBox* m_expansionArtworkReflectionOpacity;
+    QSpinBox* m_expansionArtworkReflectionGap;
     QCheckBox* m_expansionArtworkAutoMargins;
     QSpinBox* m_expansionArtworkLeftMargin;
     QSpinBox* m_expansionArtworkTopMargin;

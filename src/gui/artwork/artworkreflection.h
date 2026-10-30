@@ -30,6 +30,8 @@ struct ArtworkReflectionOptions
     int height{33};
     int opacity{35};
     int gap{3};
+
+    bool operator==(const ArtworkReflectionOptions&) const = default;
 };
 
 int artworkReflectionHeight(int artworkHeight, const ArtworkReflectionOptions& options);
