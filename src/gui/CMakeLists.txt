@@ -249,6 +249,8 @@ set(SOURCES
     filters/filterscolumnmodel.h
     filters/filterscripting.cpp
     filters/filterscripting.h
+    filters/filterview.cpp
+    filters/filterview.h
     filters/filterwidget.cpp
     filters/filterwidget.h
     filters/libraryfilterswitcher.cpp

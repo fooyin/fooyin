@@ -26,6 +26,7 @@
 #include "filterexpansionwidget.h"
 #include "filteritem.h"
 #include "filtermodel.h"
+#include "filterview.h"
 
 #include <core/coresettings.h>
 #include <core/library/librarymanager.h>
@@ -41,7 +42,6 @@
 #include <gui/widgets/autoheaderview.h>
 #include <gui/widgets/backgroundimagesource.h>
 #include <gui/widgets/expandedtreeview.h>
-#include <gui/widgets/widgetbackground.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/async.h>
 #include <utils/settings/settingsmanager.h>
@@ -56,7 +56,6 @@
 #include <QJsonObject>
 #include <QLoggingCategory>
 #include <QMenu>
-#include <QPainter>
 #include <QScrollBar>
 #include <QSignalBlocker>
 #include <QTimerEvent>
@@ -138,63 +137,6 @@ QJsonObject artworkMarginsToJson(const QMargins& margins)
             {"Bottom"_L1, margins.bottom()}};
 }
 } // namespace
-
-class FilterView : public ExpandedTreeView
-{
-    Q_OBJECT
-
-public:
-    explicit FilterView(QWidget* parent)
-        : ExpandedTreeView{parent}
-        , m_background{new WidgetBackground(viewport())}
-    {
-        viewport()->setAutoFillBackground(false);
-    }
-
-    void setBackgroundConfig(const BackgroundConfig& config)
-    {
-        m_background->setConfig(config);
-        setProperty("transparent_base_rows", m_background->hasImage());
-    }
-
-    void setBackgroundPixmap(const QPixmap& pixmap)
-    {
-        m_background->setPixmap(pixmap);
-        setProperty("transparent_base_rows", m_background->hasImage());
-    }
-
-Q_SIGNALS:
-    void displayChanged();
-
-protected:
-    void paintEvent(QPaintEvent* event) override
-    {
-        {
-            QPainter painter{viewport()};
-            painter.fillRect(viewport()->rect(), palette().brush(QPalette::Base));
-            m_background->draw(painter);
-        }
-        ExpandedTreeView::paintEvent(event);
-    }
-
-    void changeEvent(QEvent* event) override
-    {
-        ExpandedTreeView::changeEvent(event);
-
-        switch(event->type()) {
-            case QEvent::FontChange:
-            case QEvent::PaletteChange:
-            case QEvent::StyleChange:
-                Q_EMIT displayChanged();
-                break;
-            default:
-                break;
-        }
-    }
-
-private:
-    WidgetBackground* m_background;
-};
 
 FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* columnRegistry,
                            const CorePluginContext& core, CoverRepository* coverRepository,
@@ -1176,6 +1118,7 @@ void FilterWidget::setupConnections()
     QObject::connect(m_sortProxy, &QAbstractItemModel::rowsRemoved, this,
                      [this]() { scheduleVisibleCoverPinUpdate(FilterModelPinUpdateDelay); });
     QObject::connect(m_view, &ExpandedTreeView::clicked, this, &FilterWidget::expandSelection);
+    QObject::connect(m_view, &FilterView::collapseRequested, this, [this]() { closeExpansion(true); });
     QObject::connect(m_sortProxy, &QAbstractItemModel::layoutChanged, this, [this]() {
         if(!m_applyingViewState && !m_expandedKey.isEmpty()) {
             scheduleExpansionUpdate();
@@ -1257,6 +1200,7 @@ void FilterWidget::handleSelectionChanged(const QItemSelection& selected, const 
         return;
     }
 
+    m_view->cancelPendingCollapse();
     m_restoredSelectedKeys.clear();
     m_selectionRestorePending = false;
 
@@ -1656,6 +1600,7 @@ void FilterWidget::refreshExpansionScripts(const ScriptChanges& changes)
 
 void FilterWidget::closeExpansion(bool restoreFocus)
 {
+    m_view->cancelPendingCollapse();
     ++m_expansionRequest;
     m_expandedKey.clear();
     m_displayedKey.clear();
@@ -2045,5 +1990,4 @@ void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
 }
 } // namespace Fooyin::Filters
 
-#include "filterwidget.moc"
 #include "moc_filterwidget.cpp"
