@@ -23,6 +23,7 @@
 
 #include <QBasicTimer>
 #include <QPointer>
+#include <QVariantAnimation>
 
 #include <unordered_map>
 #include <vector>
@@ -140,6 +141,10 @@ public:
     std::vector<QRect> rectsToPaint(const QModelIndex& index, const QStyleOptionViewItem& option, int y) const;
 
     void updateExpansionGeometry();
+    void updateExpansionAnimation(const QVariant& value);
+    QPixmap captureExpansion() const;
+    [[nodiscard]] const QPixmap& animationSnapshot() const;
+    void stopExpansionAnimation();
 
     QPoint offset() const;
     bool isIndexValid(const QModelIndex& index) const;
@@ -194,6 +199,15 @@ public:
     QPointer<QWidget> m_expansionWidget;
     QPersistentModelIndex m_expandedIndex;
     QRect m_expansionRect;
+    bool m_expansionAnimated{true};
+    QVariantAnimation m_expansionAnimation;
+    QPersistentModelIndex m_expansionAnimationIndex;
+    QPersistentModelIndex m_expansionAnimationNextIndex;
+    QPixmap m_expansionSnapshot;
+    QPixmap m_expansionPreviousSnapshot;
+    QSize m_expansionAnimationViewSize;
+    int m_expansionAnimationHeight{-1};
+    int m_expansionAnimationScrollMax{0};
     QRect m_dropIndicatorRect;
     ExpandedTreeView::DropIndicatorPosition m_dropIndicatorPos{ExpandedTreeView::OnViewport};
 

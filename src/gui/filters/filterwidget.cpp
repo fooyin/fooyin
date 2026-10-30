@@ -83,6 +83,7 @@ constexpr auto FilterArtworkRadiusKey     = u"Filters/ArtworkCornerRadius";
 constexpr auto FilterAlignCaptionsKey     = u"Filters/AlignCaptionsToArtwork";
 
 constexpr auto FilterExpandGroupsKey                = u"Filters/ExpandGroups";
+constexpr auto FilterExpansionAnimatedKey           = u"Filters/ExpansionAnimated";
 constexpr auto FilterExpandedArtworkKey             = u"Filters/ExpandedArtwork";
 constexpr auto FilterExpansionDoubleClickKey        = u"Filters/ExpansionDoubleClickBehaviour";
 constexpr auto FilterExpansionMiddleClickKey        = u"Filters/ExpansionMiddleClickBehaviour";
@@ -626,8 +627,9 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
     config.artworkCornerRadius = m_settings->fileValue(FilterArtworkRadiusKey, config.artworkCornerRadius).toInt();
     config.alignCaptionsToArtwork
         = m_settings->fileValue(FilterAlignCaptionsKey, config.alignCaptionsToArtwork).toBool();
-    config.expandGroups            = m_settings->fileValue(FilterExpandGroupsKey, config.expandGroups).toBool();
-    config.expandedArtwork         = m_settings->fileValue(FilterExpandedArtworkKey, config.expandedArtwork).toBool();
+    config.expandGroups      = m_settings->fileValue(FilterExpandGroupsKey, config.expandGroups).toBool();
+    config.expansionAnimated = m_settings->fileValue(FilterExpansionAnimatedKey, config.expansionAnimated).toBool();
+    config.expandedArtwork   = m_settings->fileValue(FilterExpandedArtworkKey, config.expandedArtwork).toBool();
     config.expansionArtworkMargins = artworkMarginsFromJson(
         QJsonObject::fromVariantMap(m_settings->fileValue(FilterExpansionArtworkMarginsKey).toMap()), {10, 10, 10, 10});
     config.expansionArtworkAutoMargins
@@ -709,6 +711,7 @@ void FilterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(FilterArtworkRadiusKey, config.artworkCornerRadius);
     m_settings->fileSet(FilterAlignCaptionsKey, config.alignCaptionsToArtwork);
     m_settings->fileSet(FilterExpandGroupsKey, config.expandGroups);
+    m_settings->fileSet(FilterExpansionAnimatedKey, config.expansionAnimated);
     m_settings->fileSet(FilterExpandedArtworkKey, config.expandedArtwork);
     m_settings->fileSet(FilterExpansionArtworkMarginsKey,
                         artworkMarginsToJson(config.expansionArtworkMargins).toVariantMap());
@@ -765,6 +768,7 @@ void FilterWidget::clearSavedDefaults() const
     m_settings->fileRemove(FilterArtworkRadiusKey);
     m_settings->fileRemove(FilterAlignCaptionsKey);
     m_settings->fileRemove(FilterExpandGroupsKey);
+    m_settings->fileRemove(FilterExpansionAnimatedKey);
     m_settings->fileRemove(FilterExpandedArtworkKey);
     m_settings->fileRemove(FilterExpansionArtworkMarginsKey);
     m_settings->fileRemove(FilterExpansionArtworkAutoMarginsKey);
@@ -876,7 +880,8 @@ void FilterWidget::applyConfig(const ConfigData& config)
        || m_config.iconVerticalGap != validated.iconVerticalGap
        || m_config.artworkCornerRadius != validated.artworkCornerRadius
        || m_config.alignCaptionsToArtwork != validated.alignCaptionsToArtwork
-       || m_config.expandGroups != validated.expandGroups || m_config.expandedArtwork != validated.expandedArtwork
+       || m_config.expandGroups != validated.expandGroups || m_config.expansionAnimated != validated.expansionAnimated
+       || m_config.expandedArtwork != validated.expandedArtwork
        || m_config.expansionScripts != validated.expansionScripts;
 
     if(hasConfigChanged) {
@@ -896,6 +901,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
     m_model->setShowSummary(m_config.showSummary);
     m_header->setCollapsed(!m_config.showHeader);
     m_view->setCollapseDelayEnabled(doubleClickAction() != TrackAction::None);
+    m_view->setExpansionAnimated(m_config.expansionAnimated);
     m_view->setBackgroundConfig(m_config.background);
     m_backgroundSource->setConfig(m_config.background);
     updateAppearance();
@@ -1496,6 +1502,9 @@ void FilterWidget::applyExpansionContent(const ExpansionResult& result)
 
     const bool changed = m_displayedKey != result.key;
     if(result.rebuild) {
+        if(changed) {
+            m_view->prepareExpansionChange();
+        }
         {
             const QSignalBlocker blocker{m_expansion};
             m_expansion->setContent(result, !changed);
@@ -1943,6 +1952,7 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
         = std::clamp(layout.value("ExpansionMinimumColumnWidth"_L1).toInt(config.expansionMinimumColumnWidth), 25, 300);
     config.expansionScripts.load(layout.value("ExpansionScripts"_L1).toObject());
     config.expandGroups        = layout.value("ExpandGroups"_L1).toBool(config.expandGroups);
+    config.expansionAnimated   = layout.value("ExpansionAnimated"_L1).toBool(config.expansionAnimated);
     config.expandedArtwork     = layout.value("ExpandedArtwork"_L1).toBool(config.expandedArtwork);
     config.rowHeight           = std::max(config.rowHeight, 0);
     config.iconHorizontalGap   = std::max(config.iconHorizontalGap, -1);
@@ -1996,6 +2006,7 @@ void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["ArtworkCornerRadius"_L1]               = config.artworkCornerRadius;
     layout["AlignCaptionsToArtwork"_L1]            = config.alignCaptionsToArtwork;
     layout["ExpandGroups"_L1]                      = config.expandGroups;
+    layout["ExpansionAnimated"_L1]                 = config.expansionAnimated;
     layout["ExpandedArtwork"_L1]                   = config.expandedArtwork;
     layout["ExpansionArtworkMargins"_L1]           = artworkMarginsToJson(config.expansionArtworkMargins);
     layout["ExpansionArtworkAutoMargins"_L1]       = config.expansionArtworkAutoMargins;

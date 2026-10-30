@@ -122,6 +122,7 @@ private:
     BackgroundConfigWidget* m_expansionBackground;
     ColourButton* m_expansionBackgroundColour;
     QCheckBox* m_expandGroups;
+    QCheckBox* m_expansionAnimated;
     QCheckBox* m_expandedArtwork;
     QCheckBox* m_expansionCloseButton;
     QCheckBox* m_expansionArtworkReflection;

@@ -115,8 +115,10 @@ public:
     void changeIconSize(const QSize& size);
 
     [[nodiscard]] QModelIndex expandedIndex() const;
+    void prepareExpansionChange();
     void setExpandedIndex(const QModelIndex& index);
     void setExpansionWidget(QWidget* widget);
+    void setExpansionAnimated(bool enabled);
     void refreshExpansion();
 
     [[nodiscard]] QRect visualRect(const QModelIndex& index) const override;

@@ -160,6 +160,7 @@ public:
         bool alignCaptionsToArtwork{true};
         BackgroundConfig background;
         bool expandGroups{false};
+        bool expansionAnimated{true};
         bool expandedArtwork{true};
         int expansionMinimumRows{4};
         int expansionMaximumColumns{0};
