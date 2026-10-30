@@ -377,6 +377,10 @@ public:
     {
         return {width, m_contentsSize.height()};
     }
+    [[nodiscard]] virtual int spacing() const
+    {
+        return 0;
+    }
 
     [[nodiscard]] virtual int itemHeight(int item) const                                     = 0;
     [[nodiscard]] virtual int firstVisibleItem(int* offset) const                            = 0;
@@ -1948,6 +1952,7 @@ public:
     void drawView(QPainter* painter, const QRegion& region) const override;
 
     [[nodiscard]] bool canReuseMeasurements() const;
+    [[nodiscard]] int spacing() const override;
 
     [[nodiscard]] QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const override;
     [[nodiscard]] ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const override;
@@ -1984,7 +1989,6 @@ private:
     [[nodiscard]] QSize indexSizeHint(const QModelIndex& index) const;
     [[nodiscard]] int itemWidth(int item) const;
     [[nodiscard]] int rowHeight(int rowStart) const;
-    [[nodiscard]] int spacing() const;
     [[nodiscard]] QSize iconSize() const;
     [[nodiscard]] bool haveSideCaptions() const;
     [[nodiscard]] bool haveBottomCaptions() const;
@@ -2031,7 +2035,7 @@ void IconView::doItemLayout(bool reuseMeasurements)
     const QPoint topLeft{m_layoutBounds.x(), m_layoutBounds.y() + m_rowSpacing};
 
     int segStartPosition{m_layoutBounds.left()};
-    int segEndPosition{m_layoutBounds.right()};
+    int segEndPosition{m_layoutBounds.right() + 1};
 
     int deltaSegPosition{0};
     int segPosition{topLeft.y()};
@@ -2675,13 +2679,13 @@ QSize IconView::indexSizeHint(const QModelIndex& index) const
     QSize size = delegate(iconIndex)->sizeHint(opt, iconIndex);
 
     if(m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Bottom) {
-        size.rwidth() = std::max(size.width(), iconSize().width() + (2 * MinItemSpacing));
+        size.rwidth() = std::max(size.width(), iconSize().width());
     }
     else if(m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Right) {
-        size.rwidth() = iconSize().width() + (2 * MinItemSpacing) + RightCaptionWidth;
+        size.rwidth() = std::max(size.width(), iconSize().width() + (2 * MinItemSpacing) + RightCaptionWidth);
     }
     else {
-        size.rheight() = iconSize().height();
+        size.rheight() = std::max(size.height(), iconSize().height());
     }
 
     return size;
@@ -3915,9 +3919,10 @@ void ExpandedTreeViewPrivate::updateExpansionAnimation(const QVariant& value)
         // Artwork and prepared backgrounds can arrive after the opening animation starts
         m_expansionSnapshot = captureExpansion();
         const QRect icon    = m_self->visualRect(m_expandedIndex);
+        const int spacing   = m_view->spacing();
         const int scroll = m_expansionAnimationIndex == m_expandedIndex
                              ? std::clamp(m_expansionRect.bottom() + 1 - bar->value() - m_self->viewport()->height(), 0,
-                                          std::max(0, icon.top()))
+                                          std::max(0, icon.top() - spacing))
                              : 0;
         bar->setValue(bar->value() + scroll);
     }
@@ -4506,9 +4511,14 @@ void ExpandedTreeView::scrollTo(const QModelIndex& index, ScrollHint hint)
         p->m_view->updateScrollBars();
     }
 
-    const QRect rect = visualRect(index);
+    QRect rect = visualRect(index);
     if(!rect.isValid()) {
         return;
+    }
+
+    if(p->m_viewMode == ViewMode::Icon) {
+        const int spacing = p->m_view->spacing();
+        rect.adjust(0, -spacing, 0, spacing);
     }
 
     int item = p->viewIndex(index);
@@ -4557,7 +4567,7 @@ void ExpandedTreeView::scrollTo(const QModelIndex& index, ScrollHint hint)
                 verticalValue += rect.top();
             }
             else if(hint == PositionAtBottom || below) {
-                verticalValue += rect.bottom() - area.height();
+                verticalValue += rect.bottom() - area.bottom();
             }
             else if(hint == PositionAtCenter) {
                 verticalValue += rect.top() - ((area.height() - rect.height()) / 2);

@@ -129,7 +129,10 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_iconHorizontalGap{new QSpinBox(this)}
     , m_iconVerticalGap{new QSpinBox(this)}
     , m_artworkCornerRadius{new QSpinBox(this)}
-    , m_alignCaptionsToArtwork{new QCheckBox(tr("Align labels to artwork"), this)}
+    , m_artworkLeftMargin{new QSpinBox(this)}
+    , m_artworkTopMargin{new QSpinBox(this)}
+    , m_artworkRightMargin{new QSpinBox(this)}
+    , m_artworkBottomMargin{new QSpinBox(this)}
     , m_background{new BackgroundConfigWidget(this)}
     , m_expansionBackground{new BackgroundConfigWidget(this)}
     , m_expansionBackgroundColour{new ColourButton(tr("Background"), true, this)}
@@ -406,17 +409,12 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     QObject::connect(m_source, &QComboBox::currentIndexChanged, selectionPlaylist, updateSourceMode);
     updateSourceMode();
 
-    m_alignCaptionsToArtwork->setToolTip(
-        tr("Align bottom labels to the horizontal bounds of the artwork in artwork mode."));
-
     auto* displayModeGroup = new QButtonGroup(this);
     for(auto* button : {m_columnsMode, m_artworkBottomMode, m_artworkRightMode, m_artworkNoLabelsMode}) {
         displayModeGroup->addButton(button);
     }
 
-    auto* displayMode       = new QGroupBox(tr("Display Mode"), appearanceTab);
-    auto* displayModeLayout = new QVBoxLayout(displayMode);
-
+    auto* displayModeLayout = new QVBoxLayout();
     displayModeLayout->addWidget(m_columnsMode);
     displayModeLayout->addWidget(m_artworkBottomMode);
     displayModeLayout->addWidget(m_artworkRightMode);
@@ -434,6 +432,9 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     auto* appearanceLayout = new QGridLayout(appearance);
 
     row = 0;
+    appearanceLayout->addWidget(Gui::createSectionHeader(tr("View mode"), appearance), row++, 0, 1, 4);
+    appearanceLayout->addLayout(displayModeLayout, row++, 0, 1, 4);
+    appearanceLayout->addWidget(Gui::createSectionHeader(tr("Options"), appearance), row++, 0, 1, 4);
     appearanceLayout->addWidget(m_showSummary, row++, 0, 1, 3);
     appearanceLayout->addWidget(m_showHeader, row++, 0, 1, 3);
     appearanceLayout->addWidget(m_showScrollbar, row++, 0, 1, 3);
@@ -461,6 +462,29 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     m_artworkCornerRadius->setSuffix(u" %"_s);
     m_artworkCornerRadius->setSpecialValueText(tr("Square"));
 
+    for(auto* margin : {m_artworkLeftMargin, m_artworkTopMargin, m_artworkRightMargin, m_artworkBottomMargin}) {
+        margin->setRange(0, 999);
+        margin->setSuffix(u" px"_s);
+    }
+
+    auto* gapsLayout = new QGridLayout();
+    gapsLayout->addWidget(new QLabel(tr("Horizontal") + u":"_s, artworkMode), 0, 0);
+    gapsLayout->addWidget(m_iconHorizontalGap, 0, 1);
+    gapsLayout->addWidget(new QLabel(tr("Vertical") + u":"_s, artworkMode), 0, 2);
+    gapsLayout->addWidget(m_iconVerticalGap, 0, 3);
+    gapsLayout->setColumnStretch(4, 1);
+
+    auto* marginsLayout = new QGridLayout();
+    marginsLayout->addWidget(new QLabel(tr("Left") + u":"_s, artworkMode), 0, 0);
+    marginsLayout->addWidget(m_artworkLeftMargin, 0, 1);
+    marginsLayout->addWidget(new QLabel(tr("Right") + u":"_s, artworkMode), 0, 2);
+    marginsLayout->addWidget(m_artworkRightMargin, 0, 3);
+    marginsLayout->addWidget(new QLabel(tr("Top") + u":"_s, artworkMode), 1, 0);
+    marginsLayout->addWidget(m_artworkTopMargin, 1, 1);
+    marginsLayout->addWidget(new QLabel(tr("Bottom") + u":"_s, artworkMode), 1, 2);
+    marginsLayout->addWidget(m_artworkBottomMargin, 1, 3);
+    marginsLayout->setColumnStretch(4, 1);
+
     auto* iconSizeHint = new HintLabel(tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this);
 
     row = 0;
@@ -468,18 +492,17 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     artworkLayout->addWidget(m_coverType, row++, 1, 1, 3);
     artworkLayout->addWidget(new QLabel(tr("Artwork source") + u":"_s, artworkMode), row, 0);
     artworkLayout->addWidget(m_coverSource, row++, 1, 1, 3);
-    artworkLayout->addWidget(m_alignCaptionsToArtwork, row++, 0, 1, 5);
     artworkLayout->addWidget(new QLabel(tr("Width") + u":"_s, this), row, 0);
     artworkLayout->addWidget(m_iconWidth, row++, 1);
     artworkLayout->addWidget(new QLabel(tr("Height") + u":"_s, this), row, 0);
     artworkLayout->addWidget(m_iconHeight, row++, 1);
     artworkLayout->addWidget(iconSizeHint, row++, 0, 1, 5);
-    artworkLayout->addWidget(new QLabel(tr("Horizontal gap") + u":"_s, this), row, 0);
-    artworkLayout->addWidget(m_iconHorizontalGap, row++, 1);
-    artworkLayout->addWidget(new QLabel(tr("Vertical gap") + u":"_s, this), row, 0);
-    artworkLayout->addWidget(m_iconVerticalGap, row++, 1);
     artworkLayout->addWidget(new QLabel(tr("Corner radius") + u":"_s, this), row, 0);
     artworkLayout->addWidget(m_artworkCornerRadius, row++, 1);
+    artworkLayout->addWidget(Gui::createSectionHeader(tr("Gaps"), artworkMode), row++, 0, 1, 5);
+    artworkLayout->addLayout(gapsLayout, row++, 0, 1, 5);
+    artworkLayout->addWidget(Gui::createSectionHeader(tr("Margins"), artworkMode), row++, 0, 1, 5);
+    artworkLayout->addLayout(marginsLayout, row++, 0, 1, 5);
     artworkLayout->setColumnStretch(4, 1);
 
     auto* playlistSourceHint
@@ -512,12 +535,11 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
 
     auto* appearanceTabLayout = new QGridLayout(appearanceTab);
 
-    appearanceTabLayout->addWidget(displayMode, 0, 0, Qt::AlignTop);
-    appearanceTabLayout->addWidget(appearance, 1, 0, Qt::AlignTop);
-    appearanceTabLayout->addWidget(artworkMode, 0, 1, 2, 1, Qt::AlignTop);
+    appearanceTabLayout->addWidget(appearance, 0, 0, Qt::AlignTop);
+    appearanceTabLayout->addWidget(artworkMode, 0, 1, Qt::AlignTop);
     appearanceTabLayout->setColumnStretch(0, 1);
     appearanceTabLayout->setColumnStretch(1, 1);
-    appearanceTabLayout->setRowStretch(2, 1);
+    appearanceTabLayout->setRowStretch(1, 1);
 
     auto* mainLayout{contentLayout()};
     mainLayout->addWidget(tabs, 0, 0);
@@ -592,20 +614,21 @@ FilterWidget::ConfigData FilterConfigDialog::config() const
         .coverType      = static_cast<Track::Cover>(m_coverType->currentData().toInt()),
         .coverSource
         = coverSource < 0 ? std::nullopt : std::optional{static_cast<ArtworkSourcePreference>(coverSource)},
-        .showSummary                       = m_showSummary->isChecked(),
-        .showHeader                        = m_showHeader->isChecked(),
-        .showScrollbar                     = m_showScrollbar->isChecked(),
-        .alternatingRows                   = m_alternatingRows->isChecked(),
-        .rowHeight                         = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
-        .iconSize                          = {m_iconWidth->value(), m_iconHeight->value()},
-        .iconHorizontalGap                 = m_iconHorizontalGap->value(),
-        .iconVerticalGap                   = m_iconVerticalGap->value(),
-        .artworkCornerRadius               = m_artworkCornerRadius->value(),
-        .alignCaptionsToArtwork            = m_alignCaptionsToArtwork->isChecked(),
-        .background                        = m_background->config(),
-        .expandGroups                      = m_expandGroups->isChecked(),
-        .expansionAnimated                 = m_expansionAnimated->isChecked(),
-        .expandedArtwork                   = m_expandedArtwork->isChecked(),
+        .showSummary         = m_showSummary->isChecked(),
+        .showHeader          = m_showHeader->isChecked(),
+        .showScrollbar       = m_showScrollbar->isChecked(),
+        .alternatingRows     = m_alternatingRows->isChecked(),
+        .rowHeight           = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
+        .iconSize            = {m_iconWidth->value(), m_iconHeight->value()},
+        .iconHorizontalGap   = m_iconHorizontalGap->value(),
+        .iconVerticalGap     = m_iconVerticalGap->value(),
+        .artworkCornerRadius = m_artworkCornerRadius->value(),
+        .artworkMargins    = {m_artworkLeftMargin->value(), m_artworkTopMargin->value(), m_artworkRightMargin->value(),
+                              m_artworkBottomMargin->value()},
+        .background        = m_background->config(),
+        .expandGroups      = m_expandGroups->isChecked(),
+        .expansionAnimated = m_expansionAnimated->isChecked(),
+        .expandedArtwork   = m_expandedArtwork->isChecked(),
         .expansionMinimumRows              = m_expansionMinimumRows->value(),
         .expansionMaximumColumns           = m_expansionMaximumColumns->value(),
         .expansionStretchColumns           = m_expansionColumnSizing->currentData().toBool(),
@@ -671,7 +694,10 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     m_iconHorizontalGap->setValue(config.iconHorizontalGap);
     m_iconVerticalGap->setValue(config.iconVerticalGap);
     m_artworkCornerRadius->setValue(config.artworkCornerRadius);
-    m_alignCaptionsToArtwork->setChecked(config.alignCaptionsToArtwork);
+    m_artworkLeftMargin->setValue(config.artworkMargins.left());
+    m_artworkTopMargin->setValue(config.artworkMargins.top());
+    m_artworkRightMargin->setValue(config.artworkMargins.right());
+    m_artworkBottomMargin->setValue(config.artworkMargins.bottom());
     m_background->setConfig(config.background);
     m_expansionBackground->setConfig(config.expansionBackground);
 
@@ -727,7 +753,7 @@ void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& pre
         &FilterWidget::ConfigData::alternatingRows, &FilterWidget::ConfigData::rowHeight,
         &FilterWidget::ConfigData::iconSize, &FilterWidget::ConfigData::iconHorizontalGap,
         &FilterWidget::ConfigData::iconVerticalGap, &FilterWidget::ConfigData::artworkCornerRadius,
-        &FilterWidget::ConfigData::alignCaptionsToArtwork, &FilterWidget::ConfigData::expandGroups,
+        &FilterWidget::ConfigData::artworkMargins, &FilterWidget::ConfigData::expandGroups,
         &FilterWidget::ConfigData::expansionAnimated, &FilterWidget::ConfigData::expandedArtwork,
         &FilterWidget::ConfigData::expansionMinimumRows, &FilterWidget::ConfigData::expansionMaximumColumns,
         &FilterWidget::ConfigData::expansionArtworkOnLeft, &FilterWidget::ConfigData::expansionStretchColumns,

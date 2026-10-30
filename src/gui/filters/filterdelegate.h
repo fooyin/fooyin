@@ -23,11 +23,10 @@
 
 #include "filteritem.h"
 
+#include <QMargins>
 #include <QStyledItemDelegate>
 
 namespace Fooyin::Filters {
-struct IconItemLayoutMetrics;
-
 class FYGUI_EXPORT FilterDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -37,8 +36,9 @@ public:
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
-    void setAlignCaptionsToArtwork(bool align);
+
     void setArtworkCornerRadius(int radius);
+    void setArtworkMargins(const QMargins& margins);
 
 private:
     static RichText recolourRichText(RichText richText, const QColor& colour);
@@ -52,8 +52,6 @@ private:
     [[nodiscard]] static RichText fallbackRichText(const QStyleOptionViewItem& option, const QModelIndex& index);
     [[nodiscard]] QSize richTextSize(const QStyleOptionViewItem& option, const QModelIndex& index) const;
     [[nodiscard]] QSize iconItemSize(const QStyleOptionViewItem& option, const QModelIndex& index) const;
-    [[nodiscard]] static QSize iconItemSizeForText(const QStyleOptionViewItem& option,
-                                                   const IconItemLayoutMetrics& metrics, const QSize& textSize);
 
     void initLayoutOnlyOption(QStyleOptionViewItem* option, const QModelIndex& index) const;
     static void setupFilterOption(QStyleOptionViewItem* option, const QModelIndex& index);
@@ -62,7 +60,7 @@ private:
     static void drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
                                const std::vector<RichTextBlock>& blocks);
 
-    bool m_alignCaptionsToArtwork{true};
     int m_artworkCornerRadius{0};
+    QMargins m_artworkMargins;
 };
 } // namespace Fooyin::Filters

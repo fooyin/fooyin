@@ -157,7 +157,7 @@ public:
         int iconHorizontalGap{-1};
         int iconVerticalGap{10};
         int artworkCornerRadius{0};
-        bool alignCaptionsToArtwork{true};
+        QMargins artworkMargins;
         BackgroundConfig background;
         bool expandGroups{false};
         bool expansionAnimated{true};

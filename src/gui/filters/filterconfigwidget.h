@@ -117,7 +117,10 @@ private:
     QSpinBox* m_iconHorizontalGap;
     QSpinBox* m_iconVerticalGap;
     QSpinBox* m_artworkCornerRadius;
-    QCheckBox* m_alignCaptionsToArtwork;
+    QSpinBox* m_artworkLeftMargin;
+    QSpinBox* m_artworkTopMargin;
+    QSpinBox* m_artworkRightMargin;
+    QSpinBox* m_artworkBottomMargin;
     BackgroundConfigWidget* m_background;
     BackgroundConfigWidget* m_expansionBackground;
     ColourButton* m_expansionBackgroundColour;
