@@ -376,9 +376,13 @@ public:
     virtual void doItemLayout()                                           = 0;
     virtual void drawView(QPainter* painter, const QRegion& region) const = 0;
 
-    [[nodiscard]] virtual QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const    = 0;
-    [[nodiscard]] virtual ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const                    = 0;
-    [[nodiscard]] virtual QModelIndex findIndexAt(const QPoint& point, bool incSpans, bool incPadding) const      = 0;
+    [[nodiscard]] virtual QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const = 0;
+    [[nodiscard]] virtual ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const                 = 0;
+    [[nodiscard]] virtual QModelIndex findIndexAt(const QPoint& point, bool incSpans, bool incPadding) const   = 0;
+    [[nodiscard]] virtual QModelIndex nearestSelectionIndex(const QPoint& /*point*/) const
+    {
+        return {};
+    }
     [[nodiscard]] virtual QModelIndexList visibleIndexes(int margin) const                                        = 0;
     virtual void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles) = 0;
     [[nodiscard]] virtual int sizeHintForColumn(int column) const                                                 = 0;
@@ -2756,6 +2760,7 @@ public:
     QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const override;
     ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const override;
     QModelIndex findIndexAt(const QPoint& point, bool incSpans, bool incPadding) const override;
+    QModelIndex nearestSelectionIndex(const QPoint& point) const override;
     QModelIndexList visibleIndexes(int margin) const override;
     void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles) override;
     int sizeHintForColumn(int column) const override;
@@ -2952,6 +2957,31 @@ QModelIndex FlowView::findIndexAt(const QPoint& point, bool /*incSpans*/, bool /
 {
     const int item = itemAtCoordinate(point + QPoint{m_view->horizontalOffset(), m_view->verticalOffset()}, false);
     return item >= 0 ? viewItem(item).index : QModelIndex{};
+}
+
+QModelIndex FlowView::nearestSelectionIndex(const QPoint& point) const
+{
+    QModelIndex nearest;
+    std::pair nearestDistance{std::numeric_limits<int>::max(), std::numeric_limits<int>::max()};
+
+    const int count = itemCount();
+    for(int i{0}; i < count; ++i) {
+        const auto& item = viewItem(i);
+        const QRect rect = mapToViewport(item.rect());
+        if(!rect.isValid() || m_p->isItemDisabled(i) || (m_view->selectIgnoreParents() && item.hasChildren)) {
+            continue;
+        }
+
+        // Prefer the same flow column before choosing the nearest row
+        const std::pair distance{std::max({rect.left() - point.x(), 0, point.x() - rect.right()}),
+                                 std::max({rect.top() - point.y(), 0, point.y() - rect.bottom()})};
+        if(distance < nearestDistance) {
+            nearestDistance = distance;
+            nearest         = item.index;
+        }
+    }
+
+    return nearest;
 }
 
 QModelIndexList FlowView::visibleIndexes(int margin) const
@@ -5295,6 +5325,12 @@ void ExpandedTreeView::setSelection(const QRect& rect, QItemSelectionModel::Sele
             selectionModel()->clear();
         }
         return;
+    }
+    if(!topLeft.isValid()) {
+        topLeft = p->m_view->nearestSelectionIndex(tl);
+    }
+    if(!bottomRight.isValid()) {
+        bottomRight = p->m_view->nearestSelectionIndex(br);
     }
     if(!topLeft.isValid() && !p->m_viewItems.empty()) {
         topLeft = p->m_viewItems.front().index;
