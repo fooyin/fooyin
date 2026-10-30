@@ -1523,6 +1523,10 @@ void FilterWidget::applyExpansionContent(const ExpansionResult& result)
     const bool changed = m_displayedKey != result.key;
     if(result.rebuild) {
         if(changed) {
+            if(m_pendingScrollPosition < 0) {
+                // Reveal clipped icons before the expansion starts
+                m_view->scrollTo(index, QAbstractItemView::EnsureVisible);
+            }
             m_view->prepareExpansionChange();
         }
         {
