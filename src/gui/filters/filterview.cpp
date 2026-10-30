@@ -30,12 +30,13 @@ namespace Fooyin::Filters {
 FilterView::FilterView(QWidget* parent)
     : ExpandedTreeView{parent}
     , m_background{new WidgetBackground(viewport(), this)}
+    , m_delayCollapse{false}
 {
     viewport()->setAutoFillBackground(false);
 
     QObject::connect(this, &ExpandedTreeView::clicked, this, [this](const QModelIndex& index) {
         if(m_collapseIndex.isValid() && index.siblingAtColumn(0) == m_collapseIndex) {
-            m_collapseTimer.start(QApplication::doubleClickInterval(), Qt::PreciseTimer, this);
+            m_collapseTimer.start(m_delayCollapse ? QApplication::doubleClickInterval() : 0, Qt::PreciseTimer, this);
         }
     });
 }
@@ -44,6 +45,12 @@ void FilterView::cancelPendingCollapse()
 {
     m_collapseTimer.stop();
     m_collapseIndex = QModelIndex{};
+}
+
+void FilterView::setCollapseDelayEnabled(bool enabled)
+{
+    cancelPendingCollapse();
+    m_delayCollapse = enabled;
 }
 
 void FilterView::setBackgroundConfig(const BackgroundConfig& config)

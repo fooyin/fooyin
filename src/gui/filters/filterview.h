@@ -37,6 +37,8 @@ public:
     explicit FilterView(QWidget* parent);
 
     void cancelPendingCollapse();
+
+    void setCollapseDelayEnabled(bool enabled);
     void setBackgroundConfig(const BackgroundConfig& config);
     void setBackgroundPixmap(const QPixmap& pixmap);
 
@@ -54,6 +56,7 @@ protected:
 
 private:
     WidgetBackground* m_background;
+    bool m_delayCollapse;
     QBasicTimer m_collapseTimer;
     QPersistentModelIndex m_collapseIndex;
 };

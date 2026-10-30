@@ -895,6 +895,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
     m_model->setCoverSource(m_config.coverSource);
     m_model->setShowSummary(m_config.showSummary);
     m_header->setCollapsed(!m_config.showHeader);
+    m_view->setCollapseDelayEnabled(doubleClickAction() != TrackAction::None);
     m_view->setBackgroundConfig(m_config.background);
     m_backgroundSource->setConfig(m_config.background);
     updateAppearance();
