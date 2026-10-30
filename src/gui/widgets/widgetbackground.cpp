@@ -21,12 +21,18 @@
 
 #include "pixmapfadecontroller.h"
 
+#include <utils/async.h>
+
 #include <QBasicTimer>
 #include <QEvent>
+#include <QImage>
 #include <QPainter>
 #include <QPixmap>
 #include <QTimerEvent>
 #include <QWidget>
+
+#include <cstdint>
+#include <optional>
 
 QT_BEGIN_NAMESPACE
 // Exported by qimageeffects.cpp
@@ -34,15 +40,22 @@ void qt_blurImage(QImage& blurImage, qreal radius, bool quality, int transposed 
 QT_END_NAMESPACE
 
 namespace {
-QPixmap blurredPixmap(const QPixmap& pixmap, qreal radius)
+QImage prepareBackground(QImage image, const QSize& targetSize, qreal radius, qreal dpr)
 {
-    if(pixmap.isNull() || radius <= 0) {
-        return pixmap;
+    const int blurScale = radius >= 16.0 ? 4 : radius >= 4.0 ? 2 : 1;
+    const QSize blurSize{std::max(1, targetSize.width() / blurScale), std::max(1, targetSize.height() / blurScale)};
+
+    image = image.scaled(blurSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    if(radius > 0 && !image.isNull()) {
+        image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+        qt_blurImage(image, radius / blurScale, true);
+    }
+    if(blurSize != targetSize) {
+        image = image.scaled(targetSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     }
 
-    QImage blurred = pixmap.toImage().convertToFormat(QImage::Format_ARGB32_Premultiplied);
-    qt_blurImage(blurred, radius, true);
-    return QPixmap::fromImage(blurred);
+    image.setDevicePixelRatio(dpr);
+    return image;
 }
 } // namespace
 
@@ -52,29 +65,51 @@ class WidgetBackgroundPrivate
 public:
     WidgetBackgroundPrivate(WidgetBackground* self, QWidget* viewport);
 
-    struct PixmapCache
+    struct PreparationKey
     {
         qint64 sourceKey{0};
-        QSize viewportSize;
+        QSize size;
         qreal dpr{1.0};
+        int blur{0};
+
+        bool operator==(const PreparationKey& other) const = default;
+    };
+
+    struct PreparationRequest
+    {
+        PreparationKey key;
+        QImage image;
+        uint64_t generation{0};
+    };
+
+    struct PixmapCache
+    {
+        PreparationKey key;
+        PreparationKey requestedKey;
         QPixmap pixmap;
+        uint64_t generation{0};
+        std::optional<PreparationRequest> pending;
     };
 
     void invalidateScaledBackground();
-    [[nodiscard]] QPixmap preparedBackgroundPixmap(const QPixmap& source, PixmapCache& cache) const;
+    void startPreparation();
+    QPixmap preparedBackgroundPixmap(const QPixmap& source, PixmapCache& cache);
     [[nodiscard]] QPoint backgroundPixmapPosition(const QSize& pixmapSize) const;
     void drawBackgroundPixmap(QPainter& painter, const QPixmap& pixmap);
 
+    WidgetBackground* m_self;
     QWidget* m_viewport;
     BackgroundConfig m_config;
     PixmapFadeController* m_bgFadeController;
     QBasicTimer m_bgResizeTimer;
-    mutable PixmapCache m_cachedBg;
-    mutable PixmapCache m_cachedPreviousBg;
+    PixmapCache m_cachedBg;
+    PixmapCache m_cachedPreviousBg;
+    bool m_preparing{false};
 };
 
 WidgetBackgroundPrivate::WidgetBackgroundPrivate(WidgetBackground* self, QWidget* viewport)
-    : m_viewport{viewport}
+    : m_self{self}
+    , m_viewport{viewport}
     , m_bgFadeController{new PixmapFadeController(self)}
 {
     m_bgFadeController->setUpdateCallback([this] { m_viewport->update(); });
@@ -82,11 +117,47 @@ WidgetBackgroundPrivate::WidgetBackgroundPrivate(WidgetBackground* self, QWidget
 
 void WidgetBackgroundPrivate::invalidateScaledBackground()
 {
-    m_cachedBg         = {};
-    m_cachedPreviousBg = {};
+    for(auto* cache : {&m_cachedBg, &m_cachedPreviousBg}) {
+        ++cache->generation;
+        cache->requestedKey = {};
+        cache->pending.reset();
+    }
 }
 
-QPixmap WidgetBackgroundPrivate::preparedBackgroundPixmap(const QPixmap& source, PixmapCache& cache) const
+void WidgetBackgroundPrivate::startPreparation()
+{
+    if(m_preparing) {
+        return;
+    }
+
+    auto* cache = m_cachedBg.pending ? &m_cachedBg : m_cachedPreviousBg.pending ? &m_cachedPreviousBg : nullptr;
+    if(!cache) {
+        return;
+    }
+
+    auto request = std::move(*cache->pending);
+    cache->pending.reset();
+    m_preparing = true;
+    const auto key{request.key};
+    const auto generation{request.generation};
+
+    Utils::asyncExec([request = std::move(request)]() mutable {
+        return prepareBackground(std::move(request.image), request.key.size, request.key.blur * request.key.dpr,
+                                 request.key.dpr);
+    }).then(m_self, [this, cache, key, generation](QImage image) {
+        if(cache->generation == generation && qFuzzyCompare(key.dpr, m_viewport->devicePixelRatioF())
+           && !image.isNull()) {
+            cache->key    = key;
+            cache->pixmap = QPixmap::fromImage(std::move(image));
+        }
+
+        m_preparing = false;
+        startPreparation();
+        m_viewport->update();
+    });
+}
+
+QPixmap WidgetBackgroundPrivate::preparedBackgroundPixmap(const QPixmap& source, PixmapCache& cache)
 {
     const QSize viewportSize = m_viewport->size();
     const qreal dpr          = m_viewport->devicePixelRatioF();
@@ -94,11 +165,9 @@ QPixmap WidgetBackgroundPrivate::preparedBackgroundPixmap(const QPixmap& source,
         return {};
     }
 
-    // Keep using the cache during an interactive resize
-    const bool useCache = m_config.scaling == static_cast<int>(BackgroundImageScaling::OriginalSize)
-                       || cache.viewportSize == viewportSize;
-    if(cache.sourceKey == source.cacheKey() && (useCache || m_bgResizeTimer.isActive()) && qFuzzyCompare(cache.dpr, dpr)
-       && !cache.pixmap.isNull()) {
+    // Keep displaying the prepared image until an interactive resize settles
+    if(m_bgResizeTimer.isActive() && cache.key.sourceKey == source.cacheKey() && cache.key.blur == m_config.blur
+       && qFuzzyCompare(cache.key.dpr, dpr) && !cache.pixmap.isNull()) {
         return cache.pixmap;
     }
 
@@ -131,12 +200,16 @@ QPixmap WidgetBackgroundPrivate::preparedBackgroundPixmap(const QPixmap& source,
     targetSize = {static_cast<int>(std::ceil(static_cast<qreal>(targetSize.width()) * dpr)),
                   static_cast<int>(std::ceil(static_cast<qreal>(targetSize.height()) * dpr))};
 
-    cache.sourceKey    = source.cacheKey();
-    cache.viewportSize = viewportSize;
-    cache.dpr          = dpr;
-    cache.pixmap       = source.scaled(targetSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    cache.pixmap.setDevicePixelRatio(dpr);
-    cache.pixmap = blurredPixmap(cache.pixmap, m_config.blur * dpr);
+    const PreparationKey key{source.cacheKey(), targetSize, dpr, m_config.blur};
+    if(key == cache.key && !cache.pixmap.isNull()) {
+        return cache.pixmap;
+    }
+
+    if(key != cache.requestedKey) {
+        cache.requestedKey = key;
+        cache.pending      = PreparationRequest{key, source.toImage(), ++cache.generation};
+        startPreparation();
+    }
 
     return cache.pixmap;
 }
@@ -195,7 +268,7 @@ void WidgetBackgroundPrivate::drawBackgroundPixmap(QPainter& painter, const QPix
 {
     QSize pixmapSize = pixmap.deviceIndependentSize().toSize();
 
-    if(m_bgResizeTimer.isActive() && m_config.scaling != static_cast<int>(BackgroundImageScaling::OriginalSize)) {
+    if(m_config.scaling != static_cast<int>(BackgroundImageScaling::OriginalSize)) {
         const QSize viewportSize = m_viewport->size();
 
         if(m_config.scaling == static_cast<int>(BackgroundImageScaling::Scaled)) {
@@ -242,44 +315,25 @@ void WidgetBackground::setConfig(const BackgroundConfig& config)
 
 void WidgetBackground::setPixmap(const QPixmap& pixmap)
 {
-    p->invalidateScaledBackground();
-    p->m_bgFadeController->setPixmap(pixmap);
-}
-
-bool WidgetBackground::hasImage() const
-{
-    return p->m_config.imageMode != static_cast<int>(BackgroundImageMode::None) && p->m_config.opacity > 0
-        && !p->m_bgFadeController->pixmap().isNull();
-}
-
-bool WidgetBackground::eventFilter(QObject* watched, QEvent* event)
-{
-    if(watched == p->m_viewport && event->type() == QEvent::Resize) {
-        const auto& config = p->m_config;
-
-        const bool resizeBackground = config.imageMode != static_cast<int>(BackgroundImageMode::None)
-                                   && config.scaling != static_cast<int>(BackgroundImageScaling::OriginalSize)
-                                   && config.opacity > 0 && !p->m_bgFadeController->pixmap().isNull();
-        if(!resizeBackground) {
-            p->m_bgResizeTimer.stop();
-        }
-        else {
-            p->m_bgResizeTimer.start(100, this);
-        }
-    }
-
-    return QObject::eventFilter(watched, event);
-}
-
-void WidgetBackground::timerEvent(QTimerEvent* event)
-{
-    if(event->timerId() == p->m_bgResizeTimer.timerId()) {
-        p->m_bgResizeTimer.stop();
-        p->invalidateScaledBackground();
-        p->m_viewport->update();
+    if(p->m_bgFadeController->pixmap().cacheKey() == pixmap.cacheKey()) {
         return;
     }
-    QObject::timerEvent(event);
+
+    if(p->m_bgFadeController->enabled()) {
+        p->m_cachedPreviousBg.key    = p->m_cachedBg.key;
+        p->m_cachedPreviousBg.pixmap = p->m_cachedBg.pixmap;
+    }
+    else {
+        p->m_cachedPreviousBg.key    = {};
+        p->m_cachedPreviousBg.pixmap = {};
+    }
+
+    if(pixmap.isNull()) {
+        p->m_cachedBg.pixmap         = {};
+        p->m_cachedPreviousBg.pixmap = {};
+    }
+    p->invalidateScaledBackground();
+    p->m_bgFadeController->setPixmap(pixmap);
 }
 
 void WidgetBackground::draw(QPainter& painter)
@@ -316,5 +370,41 @@ void WidgetBackground::draw(QPainter& painter)
     p->drawBackgroundPixmap(painter, pixmap);
 
     painter.restore();
+}
+
+bool WidgetBackground::hasImage() const
+{
+    return p->m_config.imageMode != static_cast<int>(BackgroundImageMode::None) && p->m_config.opacity > 0
+        && !p->m_bgFadeController->pixmap().isNull();
+}
+
+bool WidgetBackground::eventFilter(QObject* watched, QEvent* event)
+{
+    if(watched == p->m_viewport && event->type() == QEvent::Resize) {
+        p->invalidateScaledBackground();
+        const auto& config = p->m_config;
+
+        const bool resizeBackground = config.imageMode != static_cast<int>(BackgroundImageMode::None)
+                                   && config.scaling != static_cast<int>(BackgroundImageScaling::OriginalSize)
+                                   && config.opacity > 0 && !p->m_bgFadeController->pixmap().isNull();
+        if(!resizeBackground) {
+            p->m_bgResizeTimer.stop();
+        }
+        else {
+            p->m_bgResizeTimer.start(100, this);
+        }
+    }
+
+    return QObject::eventFilter(watched, event);
+}
+
+void WidgetBackground::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == p->m_bgResizeTimer.timerId()) {
+        p->m_bgResizeTimer.stop();
+        p->m_viewport->update();
+        return;
+    }
+    QObject::timerEvent(event);
 }
 } // namespace Fooyin

@@ -770,6 +770,13 @@ void TreeView::invalidate()
     m_p->m_itemOffsetsDirty = true;
 }
 
+void TreeView::doItemLayout()
+{
+    invalidate();
+    layout(-1);
+    recalculatePadding();
+}
+
 void TreeView::drawView(QPainter* painter, const QRegion& region) const
 {
     QStyleOptionViewItem opt;
@@ -836,13 +843,6 @@ void TreeView::drawView(QPainter* painter, const QRegion& region) const
             y += itemHeight(i) + item.padding;
         }
     }
-}
-
-void TreeView::doItemLayout()
-{
-    invalidate();
-    layout(-1);
-    recalculatePadding();
 }
 
 QRect TreeView::visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const
@@ -1958,7 +1958,10 @@ public:
     void invalidate() override;
 
     void doItemLayout() override;
+    void doItemLayout(bool reuseMeasurements);
     void drawView(QPainter* painter, const QRegion& region) const override;
+
+    [[nodiscard]] bool canReuseMeasurements() const;
 
     [[nodiscard]] QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const override;
     [[nodiscard]] ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const override;
@@ -1984,6 +1987,7 @@ public:
     void updateScrollBars() override;
 
 private:
+    void resetGrid();
     void prepareItemLayout();
     void drawItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
     void drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
@@ -2008,69 +2012,29 @@ private:
     mutable int m_uniformRowHeight{0};
 };
 
-void IconView::drawView(QPainter* painter, const QRegion& region) const
-{
-    QStyleOptionViewItem opt;
-    m_view->initViewItemOption(&opt);
-
-    if(m_p->m_viewItems.empty() || header()->count() == 0) {
-        return;
-    }
-
-    const QRect area       = region.boundingRect();
-    m_leftAndRight         = startAndEndColumns(area);
-    const int firstVisible = firstVisibleItem();
-    if(firstVisible < 0) {
-        return;
-    }
-
-    for(int rowStart{firstVisible}; rowStart < itemCount(); rowStart += m_segmentSize) {
-        const auto& item = viewItem(rowStart);
-        const int y      = item.y - verticalScrollBar()->value();
-        if(y > area.bottom()) {
-            break;
-        }
-        if(y + rowHeight(rowStart) < area.top()) {
-            continue;
-        }
-        for(const auto& rowItem : itemsOnRow(item.y, area.left())) {
-            drawItem(painter, opt, rowItem.index);
-        }
-    }
-}
-
-QRect IconView::visualRect(const QModelIndex& index, RectRule /*rule*/, bool /*includePadding*/) const
-{
-    if(!isIndexValid(index)) {
-        return {};
-    }
-
-    m_p->layoutItems();
-
-    const int viewIndex = m_p->viewIndex(index);
-    if(viewIndex < 0) {
-        return {};
-    }
-
-    return mapToViewport(viewItem(viewIndex).rect());
-}
-
 void IconView::invalidate()
 {
-    m_uniformRowWidth                   = 0;
-    m_uniformRowHeight                  = 0;
-    m_segmentSize                       = 0;
-    const bool useConfiguredGridSpacing = useIconGaps();
-    m_itemSpacing
-        = useConfiguredGridSpacing && m_p->m_iconHorizontalGap >= 0 ? m_p->m_iconHorizontalGap : MinItemSpacing;
-    m_rowSpacing = useConfiguredGridSpacing ? m_p->m_iconVerticalGap : 0;
+    m_uniformRowWidth  = 0;
+    m_uniformRowHeight = 0;
+    resetGrid();
 }
 
 void IconView::doItemLayout()
 {
+    doItemLayout(false);
+}
+
+void IconView::doItemLayout(bool reuseMeasurements)
+{
     m_p->m_expansionRect = {};
-    invalidate();
-    layout(-1);
+    if(reuseMeasurements) {
+        resetGrid();
+        viewItem(0).width = m_uniformRowWidth;
+    }
+    else {
+        invalidate();
+        layout(-1);
+    }
 
     if(empty()) {
         return;
@@ -2183,6 +2147,58 @@ void IconView::doItemLayout()
     m_contentsSize.rheight() += m_rowSpacing;
 }
 
+void IconView::drawView(QPainter* painter, const QRegion& region) const
+{
+    QStyleOptionViewItem opt;
+    m_view->initViewItemOption(&opt);
+
+    if(m_p->m_viewItems.empty() || header()->count() == 0) {
+        return;
+    }
+
+    const QRect area       = region.boundingRect();
+    m_leftAndRight         = startAndEndColumns(area);
+    const int firstVisible = firstVisibleItem();
+    if(firstVisible < 0) {
+        return;
+    }
+
+    for(int rowStart{firstVisible}; rowStart < itemCount(); rowStart += m_segmentSize) {
+        const auto& item = viewItem(rowStart);
+        const int y      = item.y - verticalScrollBar()->value();
+        if(y > area.bottom()) {
+            break;
+        }
+        if(y + rowHeight(rowStart) < area.top()) {
+            continue;
+        }
+        for(const auto& rowItem : itemsOnRow(item.y, area.left())) {
+            drawItem(painter, opt, rowItem.index);
+        }
+    }
+}
+
+bool IconView::canReuseMeasurements() const
+{
+    return !empty() && m_uniformRowWidth > 0 && m_layoutBounds.width() == viewport()->width();
+}
+
+QRect IconView::visualRect(const QModelIndex& index, RectRule /*rule*/, bool /*includePadding*/) const
+{
+    if(!isIndexValid(index)) {
+        return {};
+    }
+
+    m_p->layoutItems();
+
+    const int viewIndex = m_p->viewIndex(index);
+    if(viewIndex < 0) {
+        return {};
+    }
+
+    return mapToViewport(viewItem(viewIndex).rect());
+}
+
 ExpandedTreeViewItem IconView::indexToViewItem(const QModelIndex& index) const
 {
     if(index.isValid() && index.row() < itemCount()) {
@@ -2250,257 +2266,15 @@ QModelIndexList IconView::visibleIndexes(int margin) const
 
 void IconView::dataChanged(const QModelIndex& /*topLeft*/, const QModelIndex& /*bottomRight*/,
                            const QList<int>& /*roles*/)
-{ }
+{
+    // Keep the current geometry, but rebuild measurements on the next expansion refresh
+    m_uniformRowWidth  = 0;
+    m_uniformRowHeight = 0;
+}
 
 int IconView::sizeHintForColumn(int /*column*/) const
 {
     return -1;
-}
-
-void IconView::updateScrollBars()
-{
-    if(empty()) {
-        return;
-    }
-
-    verticalScrollBar()->setSingleStep(itemHeight(0) / 4);
-    verticalScrollBar()->setPageStep(viewport()->height());
-    horizontalScrollBar()->setSingleStep(itemWidth(0) / 4);
-    horizontalScrollBar()->setPageStep(viewport()->width());
-
-    const bool bothScrollBarsAuto = m_view->verticalScrollBarPolicy() == Qt::ScrollBarAsNeeded
-                                 && m_view->horizontalScrollBarPolicy() == Qt::ScrollBarAsNeeded;
-
-    const QSize vpSize = viewportSize();
-
-    const bool horizontalWantsToShow = m_contentsSize.width() > vpSize.width();
-    bool verticalWantsToShow{false};
-
-    if(horizontalWantsToShow) {
-        verticalWantsToShow = m_contentsSize.height() > vpSize.height() - m_view->horizontalScrollBar()->height();
-    }
-    else {
-        verticalWantsToShow = m_contentsSize.height() > vpSize.height();
-    }
-
-    if(bothScrollBarsAuto && !verticalWantsToShow) {
-        verticalScrollBar()->setRange(0, 0);
-    }
-    else {
-        verticalScrollBar()->setRange(0, m_contentsSize.height() - viewport()->height());
-    }
-
-    if(bothScrollBarsAuto && !horizontalWantsToShow) {
-        horizontalScrollBar()->setRange(0, 0);
-    }
-    else {
-        horizontalScrollBar()->setRange(0, m_contentsSize.width() - viewport()->width());
-    }
-}
-
-QSize IconView::indexSizeHint(const QModelIndex& index) const
-{
-    if(!m_p->isIndexValid(index) || !m_view->itemDelegate()) {
-        return {};
-    }
-
-    const QModelIndex iconIndex = iconItemIndex(index);
-    if(!iconIndex.isValid()) {
-        return {};
-    }
-
-    QStyleOptionViewItem opt;
-    m_view->initViewItemOption(&opt);
-    opt.showDecorationSelected = true;
-    setupDecorationProps(&opt);
-    opt.decorationSize = iconSize();
-
-    QSize size = delegate(iconIndex)->sizeHint(opt, iconIndex);
-
-    if(m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Bottom) {
-        size.rwidth() = std::max(size.width(), iconSize().width() + (2 * MinItemSpacing));
-    }
-    else if(m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Right) {
-        size.rwidth() = iconSize().width() + (2 * MinItemSpacing) + RightCaptionWidth;
-    }
-    else {
-        size.rheight() = iconSize().height();
-    }
-
-    return size;
-}
-
-int IconView::itemWidth(int item) const
-{
-    if(empty()) {
-        return 0;
-    }
-
-    const QModelIndex& index = viewItem(item).index;
-    if(!index.isValid()) {
-        return 0;
-    }
-
-    int width = viewItem(item).width;
-
-    if(width <= 0) {
-        if(m_uniformRowWidth == 0) {
-            const QSize hint  = indexSizeHint(index);
-            m_uniformRowWidth = hint.width();
-        }
-        width                = m_uniformRowWidth;
-        viewItem(item).width = width;
-    }
-
-    return std::max(width, 0);
-}
-
-int IconView::rowHeight(int rowStart) const
-{
-    int height{0};
-    const int rowEnd = std::min(rowStart + m_segmentSize, itemCount());
-    for(int item{rowStart}; item < rowEnd; ++item) {
-        height = std::max(height, itemHeight(item));
-    }
-
-    return height;
-}
-
-int IconView::spacing() const
-{
-    return m_rowSpacing;
-}
-
-QSize IconView::iconSize() const
-{
-    return m_view->iconSize();
-}
-
-bool IconView::haveSideCaptions() const
-{
-    return m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Right;
-}
-
-bool IconView::haveBottomCaptions() const
-{
-    return m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Bottom;
-}
-
-bool IconView::useIconGaps() const
-{
-    return haveBottomCaptions() || !haveSideCaptions() || m_p->m_useIconGapsForSideCaptions;
-}
-
-void IconView::prepareItemLayout()
-{
-    // Layout in content coordinates using the actual visible viewport. Scrollbars are already
-    // excluded from the viewport geometry, which avoids style-specific drift after resize.
-    m_layoutBounds = QRect{{}, viewport()->size()};
-}
-
-void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-    if(!index.isValid()) {
-        return;
-    }
-
-    const QModelIndex iconIndex = iconItemIndex(index);
-    if(!iconIndex.isValid()) {
-        return;
-    }
-
-    QStyleOptionViewItem opt{option};
-
-    const QModelIndex hover = m_p->m_hoverIndex;
-    const bool hoverRow     = index.parent() == hover.parent() && index.row() == hover.row();
-    const bool rowFocused   = m_view->hasFocus();
-
-    opt.state.setFlag(QStyle::State_MouseOver, hoverRow);
-
-    if(m_view->alternatingRowColors()
-       && (m_p->m_viewMode == ExpandedTreeView::ViewMode::Tree
-           || m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Right)) {
-        opt.features.setFlag(QStyleOptionViewItem::Alternate, index.row() & 1);
-    }
-
-    const QModelIndex current = m_view->currentIndex();
-
-    bool currentRowHasFocus{false};
-
-    if(m_view->selectionModel()->isSelected(index)) {
-        opt.state |= QStyle::State_Selected;
-        opt.features.setFlag(QStyleOptionViewItem::Alternate, false);
-    }
-    if(rowFocused && current.parent() == index.parent() && current.row() == index.row()) {
-        currentRowHasFocus = true;
-    }
-
-    if(opt.state & QStyle::State_Enabled) {
-        QPalette::ColorGroup cg;
-        if((model()->flags(index) & Qt::ItemIsEnabled) == 0) {
-            opt.state &= ~QStyle::State_Enabled;
-            cg = QPalette::Disabled;
-        }
-        else if(opt.state & QStyle::State_Active) {
-            cg = QPalette::Active;
-        }
-        else {
-            cg = QPalette::Inactive;
-        }
-        opt.palette.setCurrentColorGroup(cg);
-    }
-
-    opt.rect = mapToViewport(indexToViewItem(index).rect());
-
-    QStyleOptionViewItem mainOpt{opt};
-    mainOpt.decorationSize         = iconSize();
-    mainOpt.showDecorationSelected = true;
-    setupDecorationProps(&mainOpt);
-
-    m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
-    m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
-    delegate(iconIndex)->paint(painter, mainOpt, iconIndex);
-
-    if(currentRowHasFocus) {
-        drawFocus(painter, opt, index);
-    }
-}
-
-void IconView::drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-    QStyleOptionFocusRect focusOpt;
-    focusOpt.QStyleOption::operator=(option);
-    focusOpt.state |= QStyle::State_KeyboardFocusChange;
-    const QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled) ? QPalette::Normal : QPalette::Disabled;
-    focusOpt.backgroundColor      = option.palette.color(
-        cg, m_view->selectionModel()->isSelected(index) ? QPalette::Highlight : QPalette::Window);
-
-    const auto item  = indexToViewItem(index);
-    const auto& rect = mapToViewport(item.rect());
-
-    if(rect.width() > 0) {
-        focusOpt.rect = QStyle::visualRect(m_view->layoutDirection(), viewport()->rect(), rect);
-        m_view->style()->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOpt, painter);
-    }
-}
-
-void IconView::setupDecorationProps(QStyleOptionViewItem* opt) const
-{
-    if(!opt) {
-        return;
-    }
-
-    switch(m_p->m_captionDisplay) {
-        case ExpandedTreeView::CaptionDisplay::Right:
-            opt->decorationPosition = QStyleOptionViewItem::Left;
-            opt->displayAlignment   = Qt::AlignLeft;
-            break;
-        case ExpandedTreeView::CaptionDisplay::None:
-        case ExpandedTreeView::CaptionDisplay::Bottom:
-            opt->decorationPosition = QStyleOptionViewItem::Top;
-            opt->displayAlignment   = Qt::AlignCenter;
-            break;
-    }
 }
 
 int IconView::itemHeight(int item) const
@@ -2690,9 +2464,172 @@ void IconView::renderToPixmap(QPainter* painter, const ItemViewPaintPairs& paint
     }
 }
 
+void IconView::updateScrollBars()
+{
+    if(empty()) {
+        return;
+    }
+
+    verticalScrollBar()->setSingleStep(itemHeight(0) / 4);
+    verticalScrollBar()->setPageStep(viewport()->height());
+    horizontalScrollBar()->setSingleStep(itemWidth(0) / 4);
+    horizontalScrollBar()->setPageStep(viewport()->width());
+
+    const bool bothScrollBarsAuto = m_view->verticalScrollBarPolicy() == Qt::ScrollBarAsNeeded
+                                 && m_view->horizontalScrollBarPolicy() == Qt::ScrollBarAsNeeded;
+
+    const QSize vpSize = viewportSize();
+
+    const bool horizontalWantsToShow = m_contentsSize.width() > vpSize.width();
+    bool verticalWantsToShow{false};
+
+    if(horizontalWantsToShow) {
+        verticalWantsToShow = m_contentsSize.height() > vpSize.height() - m_view->horizontalScrollBar()->height();
+    }
+    else {
+        verticalWantsToShow = m_contentsSize.height() > vpSize.height();
+    }
+
+    if(bothScrollBarsAuto && !verticalWantsToShow) {
+        verticalScrollBar()->setRange(0, 0);
+    }
+    else {
+        verticalScrollBar()->setRange(0, m_contentsSize.height() - viewport()->height());
+    }
+
+    if(bothScrollBarsAuto && !horizontalWantsToShow) {
+        horizontalScrollBar()->setRange(0, 0);
+    }
+    else {
+        horizontalScrollBar()->setRange(0, m_contentsSize.width() - viewport()->width());
+    }
+}
+
+void IconView::resetGrid()
+{
+    m_segmentSize = 0;
+
+    const bool useConfiguredGridSpacing = useIconGaps();
+    m_itemSpacing
+        = useConfiguredGridSpacing && m_p->m_iconHorizontalGap >= 0 ? m_p->m_iconHorizontalGap : MinItemSpacing;
+    m_rowSpacing = useConfiguredGridSpacing ? m_p->m_iconVerticalGap : 0;
+}
+
+void IconView::prepareItemLayout()
+{
+    // Layout in content coordinates using the actual visible viewport. Scrollbars are already
+    // excluded from the viewport geometry, which avoids style-specific drift after resize.
+    m_layoutBounds = QRect{{}, viewport()->size()};
+}
+
+void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    if(!index.isValid()) {
+        return;
+    }
+
+    const QModelIndex iconIndex = iconItemIndex(index);
+    if(!iconIndex.isValid()) {
+        return;
+    }
+
+    QStyleOptionViewItem opt{option};
+
+    const QModelIndex hover = m_p->m_hoverIndex;
+    const bool hoverRow     = index.parent() == hover.parent() && index.row() == hover.row();
+    const bool rowFocused   = m_view->hasFocus();
+
+    opt.state.setFlag(QStyle::State_MouseOver, hoverRow);
+
+    if(m_view->alternatingRowColors()
+       && (m_p->m_viewMode == ExpandedTreeView::ViewMode::Tree
+           || m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Right)) {
+        opt.features.setFlag(QStyleOptionViewItem::Alternate, index.row() & 1);
+    }
+
+    const QModelIndex current = m_view->currentIndex();
+
+    bool currentRowHasFocus{false};
+
+    if(m_view->selectionModel()->isSelected(index)) {
+        opt.state |= QStyle::State_Selected;
+        opt.features.setFlag(QStyleOptionViewItem::Alternate, false);
+    }
+    if(rowFocused && current.parent() == index.parent() && current.row() == index.row()) {
+        currentRowHasFocus = true;
+    }
+
+    if(opt.state & QStyle::State_Enabled) {
+        QPalette::ColorGroup cg;
+        if((model()->flags(index) & Qt::ItemIsEnabled) == 0) {
+            opt.state &= ~QStyle::State_Enabled;
+            cg = QPalette::Disabled;
+        }
+        else if(opt.state & QStyle::State_Active) {
+            cg = QPalette::Active;
+        }
+        else {
+            cg = QPalette::Inactive;
+        }
+        opt.palette.setCurrentColorGroup(cg);
+    }
+
+    opt.rect = mapToViewport(indexToViewItem(index).rect());
+
+    QStyleOptionViewItem mainOpt{opt};
+    mainOpt.decorationSize         = iconSize();
+    mainOpt.showDecorationSelected = true;
+    setupDecorationProps(&mainOpt);
+
+    m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
+    m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
+    delegate(iconIndex)->paint(painter, mainOpt, iconIndex);
+
+    if(currentRowHasFocus) {
+        drawFocus(painter, opt, index);
+    }
+}
+
+void IconView::drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    QStyleOptionFocusRect focusOpt;
+    focusOpt.QStyleOption::operator=(option);
+    focusOpt.state |= QStyle::State_KeyboardFocusChange;
+    const QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled) ? QPalette::Normal : QPalette::Disabled;
+    focusOpt.backgroundColor      = option.palette.color(
+        cg, m_view->selectionModel()->isSelected(index) ? QPalette::Highlight : QPalette::Window);
+
+    const auto item  = indexToViewItem(index);
+    const auto& rect = mapToViewport(item.rect());
+
+    if(rect.width() > 0) {
+        focusOpt.rect = QStyle::visualRect(m_view->layoutDirection(), viewport()->rect(), rect);
+        m_view->style()->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOpt, painter);
+    }
+}
+
 QModelIndex IconView::iconItemIndex(const QModelIndex& index) const
 {
     return m_p->iconItemIndex(index);
+}
+
+void IconView::setupDecorationProps(QStyleOptionViewItem* opt) const
+{
+    if(!opt) {
+        return;
+    }
+
+    switch(m_p->m_captionDisplay) {
+        case ExpandedTreeView::CaptionDisplay::Right:
+            opt->decorationPosition = QStyleOptionViewItem::Left;
+            opt->displayAlignment   = Qt::AlignLeft;
+            break;
+        case ExpandedTreeView::CaptionDisplay::None:
+        case ExpandedTreeView::CaptionDisplay::Bottom:
+            opt->decorationPosition = QStyleOptionViewItem::Top;
+            opt->displayAlignment   = Qt::AlignCenter;
+            break;
+    }
 }
 
 std::vector<ExpandedTreeViewItem> IconView::itemsOnRow(int y, int x) const
@@ -2711,6 +2648,99 @@ std::vector<ExpandedTreeViewItem> IconView::itemsOnRow(int y, int x) const
     }
 
     return result;
+}
+
+QSize IconView::indexSizeHint(const QModelIndex& index) const
+{
+    if(!m_p->isIndexValid(index) || !m_view->itemDelegate()) {
+        return {};
+    }
+
+    const QModelIndex iconIndex = iconItemIndex(index);
+    if(!iconIndex.isValid()) {
+        return {};
+    }
+
+    QStyleOptionViewItem opt;
+    m_view->initViewItemOption(&opt);
+    opt.showDecorationSelected = true;
+    setupDecorationProps(&opt);
+    opt.decorationSize = iconSize();
+
+    QSize size = delegate(iconIndex)->sizeHint(opt, iconIndex);
+
+    if(m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Bottom) {
+        size.rwidth() = std::max(size.width(), iconSize().width() + (2 * MinItemSpacing));
+    }
+    else if(m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Right) {
+        size.rwidth() = iconSize().width() + (2 * MinItemSpacing) + RightCaptionWidth;
+    }
+    else {
+        size.rheight() = iconSize().height();
+    }
+
+    return size;
+}
+
+int IconView::itemWidth(int item) const
+{
+    if(empty()) {
+        return 0;
+    }
+
+    const QModelIndex& index = viewItem(item).index;
+    if(!index.isValid()) {
+        return 0;
+    }
+
+    int width = viewItem(item).width;
+
+    if(width <= 0) {
+        if(m_uniformRowWidth == 0) {
+            const QSize hint  = indexSizeHint(index);
+            m_uniformRowWidth = hint.width();
+        }
+        width                = m_uniformRowWidth;
+        viewItem(item).width = width;
+    }
+
+    return std::max(width, 0);
+}
+
+int IconView::rowHeight(int rowStart) const
+{
+    int height{0};
+    const int rowEnd = std::min(rowStart + m_segmentSize, itemCount());
+    for(int item{rowStart}; item < rowEnd; ++item) {
+        height = std::max(height, itemHeight(item));
+    }
+
+    return height;
+}
+
+int IconView::spacing() const
+{
+    return m_rowSpacing;
+}
+
+QSize IconView::iconSize() const
+{
+    return m_view->iconSize();
+}
+
+bool IconView::haveSideCaptions() const
+{
+    return m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Right;
+}
+
+bool IconView::haveBottomCaptions() const
+{
+    return m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Bottom;
+}
+
+bool IconView::useIconGaps() const
+{
+    return haveBottomCaptions() || !haveSideCaptions() || m_p->m_useIconGapsForSideCaptions;
 }
 
 class FlowView : public BaseView
@@ -4234,13 +4264,17 @@ void ExpandedTreeView::setExpansionWidget(QWidget* widget)
         widget->hide();
     }
 
-    refreshExpansion();
+    if(p->m_expandedIndex.isValid() || p->m_expansionRect.isValid()) {
+        refreshExpansion();
+    }
 }
 
 void ExpandedTreeView::refreshExpansion()
 {
+    executeDelayedItemsLayout();
+    const bool reuseMeasurements = !p->m_delayedPendingLayout;
     p->interruptDelayedItemsLayout();
-    doItemsLayout();
+    p->doItemsLayout(reuseMeasurements);
     viewport()->update();
 }
 
@@ -4420,41 +4454,54 @@ QModelIndex ExpandedTreeView::indexBelow(const QModelIndex& index) const
 
 void ExpandedTreeView::doItemsLayout()
 {
-    if(p->m_layingOutItems) {
+    p->doItemsLayout(false);
+}
+
+void ExpandedTreeViewPrivate::doItemsLayout(bool reuseIconMeasurements)
+{
+    if(m_layingOutItems) {
         return;
     }
 
-    const auto anchor = std::exchange(p->m_preserveLayoutPosition, false) ? p->viewportAnchor() : ViewportAnchor{};
-    const QSize previousSize = p->m_view->m_contentsSize;
-    p->m_layingOutItems      = true;
-    p->clearViewItems();
+    auto* iconView        = m_viewMode == ViewMode::Icon ? static_cast<IconView*>(m_view.get()) : nullptr;
+    reuseIconMeasurements = reuseIconMeasurements && iconView && iconView->canReuseMeasurements();
 
-    if(p->m_model && p->m_model->hasChildren(rootIndex())) {
-        p->m_view->doItemLayout();
+    const auto anchor        = std::exchange(m_preserveLayoutPosition, false) ? viewportAnchor() : ViewportAnchor{};
+    const QSize previousSize = m_view->m_contentsSize;
+    m_layingOutItems         = true;
+    if(!reuseIconMeasurements) {
+        clearViewItems();
+    }
+
+    if(reuseIconMeasurements) {
+        iconView->doItemLayout(true);
+    }
+    else if(m_model && m_model->hasChildren(m_self->rootIndex())) {
+        m_view->doItemLayout();
     }
     else {
-        p->m_view->m_contentsSize = {};
+        m_view->m_contentsSize = {};
     }
 
-    QAbstractItemView::doItemsLayout();
+    m_self->QAbstractItemView::doItemsLayout();
 
-    p->m_header->doItemsLayout();
-    p->m_layingOutItems = false;
+    m_header->doItemsLayout();
+    m_layingOutItems = false;
 
     if(anchor.index.isValid()) {
-        const int item = p->viewIndex(anchor.index);
+        const int item = viewIndex(anchor.index);
         if(item >= 0) {
-            const int top = anchor.expansion && p->m_expandedIndex == anchor.index && p->m_expansionRect.isValid()
-                              ? p->m_expansionRect.top()
-                              : p->m_viewItems.at(item).y;
-            verticalScrollBar()->setValue(top - anchor.top);
+            const int top = anchor.expansion && m_expandedIndex == anchor.index && m_expansionRect.isValid()
+                              ? m_expansionRect.top()
+                              : m_viewItems.at(item).y;
+            m_self->verticalScrollBar()->setValue(top - anchor.top);
         }
     }
 
-    p->updateExpansionGeometry();
+    updateExpansionGeometry();
 
-    if(previousSize != p->m_view->m_contentsSize) {
-        Q_EMIT contentSizeChanged();
+    if(previousSize != m_view->m_contentsSize) {
+        Q_EMIT m_self->contentSizeChanged();
     }
 }
 

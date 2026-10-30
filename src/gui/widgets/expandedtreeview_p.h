@@ -108,6 +108,7 @@ public:
     void doDelayedItemsLayout(int delay = 0) const;
     void interruptDelayedItemsLayout() const;
     void layoutItems() const;
+    void doItemsLayout(bool reuseIconMeasurements);
 
     ViewportAnchor viewportAnchor() const;
     ExpandedTreeViewItem indexToListViewItem(const QModelIndex& index) const;
