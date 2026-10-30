@@ -26,7 +26,9 @@
 #include <QObject>
 
 class QPainter;
+class QPalette;
 class QPixmap;
+class QStyleOptionViewItem;
 class QWidget;
 
 namespace Fooyin {
@@ -36,6 +38,7 @@ class FYGUI_EXPORT WidgetBackground : public QObject
 {
 public:
     explicit WidgetBackground(QWidget* viewport);
+    WidgetBackground(QWidget* viewport, QWidget* rowView);
     ~WidgetBackground() override;
 
     void setConfig(const BackgroundConfig& config);
@@ -44,6 +47,11 @@ public:
     void draw(QPainter& painter);
 
     [[nodiscard]] bool hasImage() const;
+
+    static bool hasTransparentRows(const QWidget* view);
+    static void makeRowPaletteTransparent(QPalette& palette);
+    //! Keep the background already painted by the view, preserving selection and explicit row colours
+    static void clearDelegateBackground(QStyleOptionViewItem& option);
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 

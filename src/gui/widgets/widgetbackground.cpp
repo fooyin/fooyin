@@ -28,6 +28,8 @@
 #include <QImage>
 #include <QPainter>
 #include <QPixmap>
+#include <QPointer>
+#include <QStyleOptionViewItem>
 #include <QTimerEvent>
 #include <QWidget>
 
@@ -38,6 +40,9 @@ QT_BEGIN_NAMESPACE
 // Exported by qimageeffects.cpp
 void qt_blurImage(QImage& blurImage, qreal radius, bool quality, int transposed = 0);
 QT_END_NAMESPACE
+
+constexpr auto OpaqueAltAlphaThreshold = 185;
+constexpr auto TransparentAltAlpha     = 80;
 
 namespace {
 QImage prepareBackground(QImage image, const QSize& targetSize, qreal radius, qreal dpr)
@@ -92,6 +97,7 @@ public:
     };
 
     void invalidateScaledBackground();
+    void updateRowTransparency();
     void startPreparation();
     QPixmap preparedBackgroundPixmap(const QPixmap& source, PixmapCache& cache);
     [[nodiscard]] QPoint backgroundPixmapPosition(const QSize& pixmapSize) const;
@@ -99,6 +105,7 @@ public:
 
     WidgetBackground* m_self;
     QWidget* m_viewport;
+    QPointer<QWidget> m_rowView;
     BackgroundConfig m_config;
     PixmapFadeController* m_bgFadeController;
     QBasicTimer m_bgResizeTimer;
@@ -121,6 +128,13 @@ void WidgetBackgroundPrivate::invalidateScaledBackground()
         ++cache->generation;
         cache->requestedKey = {};
         cache->pending.reset();
+    }
+}
+
+void WidgetBackgroundPrivate::updateRowTransparency()
+{
+    if(m_rowView) {
+        m_rowView->setProperty("transparent_base_rows", m_self->hasImage());
     }
 }
 
@@ -296,6 +310,13 @@ WidgetBackground::WidgetBackground(QWidget* viewport)
     p->m_viewport->installEventFilter(this);
 }
 
+WidgetBackground::WidgetBackground(QWidget* viewport, QWidget* rowView)
+    : WidgetBackground{viewport}
+{
+    p->m_rowView = rowView;
+    p->updateRowTransparency();
+}
+
 WidgetBackground::~WidgetBackground() = default;
 
 void WidgetBackground::setConfig(const BackgroundConfig& config)
@@ -310,6 +331,7 @@ void WidgetBackground::setConfig(const BackgroundConfig& config)
     p->m_bgFadeController->setEnabled(p->m_config.fadeDuration > 0);
 
     p->invalidateScaledBackground();
+    p->updateRowTransparency();
     p->m_viewport->update();
 }
 
@@ -334,6 +356,7 @@ void WidgetBackground::setPixmap(const QPixmap& pixmap)
     }
     p->invalidateScaledBackground();
     p->m_bgFadeController->setPixmap(pixmap);
+    p->updateRowTransparency();
 }
 
 void WidgetBackground::draw(QPainter& painter)
@@ -376,6 +399,33 @@ bool WidgetBackground::hasImage() const
 {
     return p->m_config.imageMode != static_cast<int>(BackgroundImageMode::None) && p->m_config.opacity > 0
         && !p->m_bgFadeController->pixmap().isNull();
+}
+
+bool WidgetBackground::hasTransparentRows(const QWidget* view)
+{
+    return view && view->property("transparent_base_rows").toBool();
+}
+
+void WidgetBackground::makeRowPaletteTransparent(QPalette& palette)
+{
+    for(const auto group : {QPalette::Active, QPalette::Inactive, QPalette::Disabled}) {
+        QColor base = palette.color(group, QPalette::Base);
+        base.setAlpha(base.alpha() >= OpaqueAltAlphaThreshold ? 0 : base.alpha());
+        palette.setColor(group, QPalette::Base, base);
+
+        QColor alternate = palette.color(group, QPalette::AlternateBase);
+        alternate.setAlpha(alternate.alpha() >= OpaqueAltAlphaThreshold ? TransparentAltAlpha : alternate.alpha());
+        palette.setColor(group, QPalette::AlternateBase, alternate);
+    }
+}
+
+void WidgetBackground::clearDelegateBackground(QStyleOptionViewItem& option)
+{
+    if(hasTransparentRows(option.widget) && !option.state.testFlag(QStyle::State_Selected)
+       && option.backgroundBrush.style() == Qt::NoBrush) {
+        option.palette.setBrush(QPalette::Base, Qt::NoBrush);
+        option.features.setFlag(QStyleOptionViewItem::Alternate, false);
+    }
 }
 
 bool WidgetBackground::eventFilter(QObject* watched, QEvent* event)

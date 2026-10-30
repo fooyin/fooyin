@@ -25,6 +25,7 @@
 #include <gui/scripting/richtext.h>
 #include <gui/scripting/richtextutils.h>
 #include <gui/widgets/expandedtreeview.h>
+#include <gui/widgets/widgetbackground.h>
 
 #include <QApplication>
 #include <QPainter>
@@ -153,10 +154,8 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     const bool hasArtwork   = view && view->viewMode() == ExpandedTreeView::ViewMode::Icon && !opt.icon.isNull();
     const QIcon artworkIcon = hasArtwork ? opt.icon : QIcon{};
 
-    if(view && view->viewMode() != ExpandedTreeView::ViewMode::Flow && view->property("transparent_base_rows").toBool()
-       && !opt.state.testFlag(QStyle::State_Selected) && opt.backgroundBrush.style() == Qt::NoBrush) {
-        opt.palette.setBrush(QPalette::Base, Qt::NoBrush);
-        opt.features.setFlag(QStyleOptionViewItem::Alternate, false);
+    if(view && view->viewMode() != ExpandedTreeView::ViewMode::Flow) {
+        WidgetBackground::clearDelegateBackground(opt);
     }
 
     const auto drawArtwork = [&]() {

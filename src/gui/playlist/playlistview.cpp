@@ -75,7 +75,7 @@ PlaylistView::PlaylistView(QWidget* parent)
     , m_ratingColumn{-1}
     , m_heartDelegate{new HeartDelegate(this)}
     , m_lovedColumn{-1}
-    , m_background{new WidgetBackground(viewport())}
+    , m_background{new WidgetBackground(viewport(), this)}
     , m_bulkEditor{nullptr}
     , m_inlineEditDelayMs{600}
     , m_bulkEditColumnIndex{-1}
@@ -223,13 +223,11 @@ void PlaylistView::setTrackStatsEditable(bool editable)
 void PlaylistView::setBackgroundConfig(const BackgroundConfig& config)
 {
     m_background->setConfig(config);
-    updateBackgroundTransparency();
 }
 
 void PlaylistView::setBackgroundPixmap(const QPixmap& pixmap)
 {
     m_background->setPixmap(pixmap);
-    updateBackgroundTransparency();
 }
 
 void PlaylistView::playlistAboutToBeReset()
@@ -1433,10 +1431,6 @@ void PlaylistView::drawBackground(QPainter& painter)
     m_background->draw(painter);
 }
 
-void PlaylistView::updateBackgroundTransparency()
-{
-    setProperty("transparent_base_rows", m_background->hasImage());
-}
 } // namespace Fooyin
 
 #include "moc_playlistview.cpp"

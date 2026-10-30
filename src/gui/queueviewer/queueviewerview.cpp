@@ -28,14 +28,14 @@
 namespace Fooyin {
 QueueViewerView::QueueViewerView(QWidget* parent)
     : ExpandedTreeView{parent}
-    , m_background{new WidgetBackground(viewport())}
+    , m_background{new WidgetBackground(viewport(), this)}
 {
-    setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
-    setSelectionBehavior(QAbstractItemView::SelectRows);
-    setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setVerticalScrollMode(ScrollPerItem);
+    setSelectionBehavior(SelectRows);
+    setSelectionMode(ExtendedSelection);
     setTextElideMode(Qt::ElideRight);
     setDragEnabled(true);
-    setDragDropMode(QAbstractItemView::DragDrop);
+    setDragDropMode(DragDrop);
     setDefaultDropAction(Qt::MoveAction);
     setDropIndicatorShown(true);
     setUniformRowHeights(true);
@@ -46,13 +46,11 @@ QueueViewerView::QueueViewerView(QWidget* parent)
 void QueueViewerView::setBackgroundConfig(const BackgroundConfig& config)
 {
     m_background->setConfig(config);
-    setProperty("transparent_base_rows", m_background->hasImage());
 }
 
 void QueueViewerView::setBackgroundPixmap(const QPixmap& pixmap)
 {
     m_background->setPixmap(pixmap);
-    setProperty("transparent_base_rows", m_background->hasImage());
 }
 
 void QueueViewerView::paintEvent(QPaintEvent* event)

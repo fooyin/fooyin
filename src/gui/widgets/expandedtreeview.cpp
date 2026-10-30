@@ -22,6 +22,7 @@
 #include "expandedtreeview_p.h"
 
 #include <gui/contextmenuutils.h>
+#include <gui/widgets/widgetbackground.h>
 #include <utils/scopeguard.h>
 #include <utils/treemodel.h>
 #include <utils/utils.h>
@@ -46,26 +47,11 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto MinItemSpacing          = 10;
-constexpr auto IconRowSpacing          = 10;
-constexpr auto RightCaptionWidth       = 180;
-constexpr auto OpaqueAltAlphaThreshold = 185;
-constexpr auto TransparentAltAlpha     = 80;
+constexpr auto MinItemSpacing    = 10;
+constexpr auto IconRowSpacing    = 10;
+constexpr auto RightCaptionWidth = 180;
 
 namespace {
-void makeBaseRowTransparent(QStyleOptionViewItem& option)
-{
-    QColor base = option.palette.color(QPalette::Base);
-    base.setAlpha(base.alpha() >= OpaqueAltAlphaThreshold ? 0 : base.alpha());
-    option.palette.setColor(QPalette::Base, base);
-
-    if(option.features.testFlag(QStyleOptionViewItem::Alternate)) {
-        QColor alternate = option.palette.color(QPalette::AlternateBase);
-        alternate.setAlpha(alternate.alpha() >= OpaqueAltAlphaThreshold ? TransparentAltAlpha : alternate.alpha());
-        option.palette.setColor(QPalette::AlternateBase, alternate);
-    }
-}
-
 void selectChildren(QAbstractItemModel* model, const QModelIndex& parentIndex, QItemSelection& selection)
 {
     if(model->hasChildren(parentIndex)) {
@@ -1470,9 +1456,9 @@ void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, co
         opt.rect.setWidth(header()->length());
 
         const auto bg = index.data(Qt::BackgroundRole).value<QBrush>();
-        if(m_view->property("transparent_base_rows").toBool() && !opt.state.testFlag(QStyle::State_Selected)
+        if(WidgetBackground::hasTransparentRows(m_view) && !opt.state.testFlag(QStyle::State_Selected)
            && bg.style() == Qt::NoBrush) {
-            makeBaseRowTransparent(opt);
+            WidgetBackground::makeRowPaletteTransparent(opt.palette);
         }
 
         m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
@@ -1584,7 +1570,7 @@ void TreeView::drawRowBackground(QPainter* painter, const QStyleOptionViewItem& 
                                  int y) const
 {
     const auto bg                      = index.data(Qt::BackgroundRole).value<QBrush>();
-    const bool transparentBase         = m_view->property("transparent_base_rows").toBool();
+    const bool transparentBase         = WidgetBackground::hasTransparentRows(m_view);
     const bool preserveStyleBackground = option.state.testFlag(QStyle::State_Selected) || bg.style() != Qt::NoBrush;
 
     const auto paintRects = m_p->rectsToPaint(index, option, y);
@@ -1594,7 +1580,7 @@ void TreeView::drawRowBackground(QPainter* painter, const QStyleOptionViewItem& 
             opt.rect = rect;
 
             if(transparentBase && !preserveStyleBackground) {
-                makeBaseRowTransparent(opt);
+                WidgetBackground::makeRowPaletteTransparent(opt.palette);
             }
 
             m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
@@ -2581,9 +2567,9 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
     opt.rect = mapToViewport(indexToViewItem(index).rect());
 
     const auto bg = iconIndex.data(Qt::BackgroundRole).value<QBrush>();
-    if(m_view->property("transparent_base_rows").toBool() && !opt.state.testFlag(QStyle::State_Selected)
+    if(WidgetBackground::hasTransparentRows(m_view) && !opt.state.testFlag(QStyle::State_Selected)
        && bg.style() == Qt::NoBrush) {
-        makeBaseRowTransparent(opt);
+        WidgetBackground::makeRowPaletteTransparent(opt.palette);
     }
 
     QStyleOptionViewItem mainOpt{opt};

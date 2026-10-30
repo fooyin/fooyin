@@ -25,6 +25,7 @@
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/scripting/richtext.h>
+#include <gui/widgets/widgetbackground.h>
 
 #include <QApplication>
 #include <QPainter>
@@ -40,11 +41,7 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     opt.showDecorationSelected = true;
     opt.text.clear();
 
-    if(option.widget && option.widget->property("transparent_base_rows").toBool()
-       && !opt.state.testFlag(QStyle::State_Selected) && opt.backgroundBrush.style() == Qt::NoBrush) {
-        opt.palette.setBrush(QPalette::Base, Qt::NoBrush);
-        opt.features.setFlag(QStyleOptionViewItem::Alternate, false);
-    }
+    WidgetBackground::clearDelegateBackground(opt);
 
     const QStyle* style  = opt.widget ? opt.widget->style() : QApplication::style();
     const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) + 1;

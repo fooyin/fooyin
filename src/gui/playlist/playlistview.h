@@ -140,7 +140,6 @@ private:
     void snapScrollToStickyHeader(int delta);
 
     void drawBackground(QPainter& painter);
-    void updateBackgroundTransparency();
 
     QString m_emptyText;
     QString m_loadingText;

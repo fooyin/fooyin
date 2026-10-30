@@ -29,7 +29,7 @@
 namespace Fooyin::Filters {
 FilterView::FilterView(QWidget* parent)
     : ExpandedTreeView{parent}
-    , m_background{new WidgetBackground(viewport())}
+    , m_background{new WidgetBackground(viewport(), this)}
 {
     viewport()->setAutoFillBackground(false);
 
@@ -49,13 +49,11 @@ void FilterView::cancelPendingCollapse()
 void FilterView::setBackgroundConfig(const BackgroundConfig& config)
 {
     m_background->setConfig(config);
-    setProperty("transparent_base_rows", m_background->hasImage());
 }
 
 void FilterView::setBackgroundPixmap(const QPixmap& pixmap)
 {
     m_background->setPixmap(pixmap);
-    setProperty("transparent_base_rows", m_background->hasImage());
 }
 
 void FilterView::mousePressEvent(QMouseEvent* event)
