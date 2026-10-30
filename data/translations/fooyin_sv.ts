@@ -1746,7 +1746,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="223"/>
         <source>No artwork sources enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Inga konstverkskällor påsatta</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="235"/>
@@ -2321,7 +2321,7 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="91"/>
         <source>Show preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa förhandsvisning</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="101"/>
@@ -2404,13 +2404,13 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="378"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="428"/>
         <source>Updating…</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppdaterar…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="404"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="470"/>
         <source>No matching tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Inga matchande spår</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="404"/>
@@ -3722,7 +3722,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="43"/>
         <source>CD sector conversion overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-sektor-konversions-överfyllning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="89"/>
@@ -9223,7 +9223,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1092"/>
         <source>Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Autospellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1093"/>
@@ -9317,17 +9317,17 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1271"/>
         <source>Look up metadata by disc TOC…</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök upp metadata efter skiv-innehållsförteckning…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1272"/>
         <source>Look up metadata using the selected tracks’ disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök upp metadata med de valda spårens skiv-innehållsförteckning</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1276"/>
         <source>Look up metadata by disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök upp metadata efter skiv-innehållsförteckning</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1279"/>
@@ -10017,27 +10017,27 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="218"/>
         <source>Crossfade</source>
-        <translation type="unfinished"></translation>
+        <translation>Korstona</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="219"/>
         <source>Fade through background</source>
-        <translation type="unfinished"></translation>
+        <translation>Tona genom bakgrund</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="221"/>
         <source>Scale &amp; fade</source>
-        <translation type="unfinished"></translation>
+        <translation>Skala och tona</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="222"/>
         <source>Slide &amp; fade</source>
-        <translation type="unfinished"></translation>
+        <translation>Glid och tona</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="224"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisk</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="225"/>
@@ -10062,22 +10062,22 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="229"/>
         <source>Automatic follows the interface’s reading direction.</source>
-        <translation type="unfinished"></translation>
+        <translation>Följer automatiskt gränssnittets läsriktning.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="231"/>
         <source>Grow</source>
-        <translation type="unfinished"></translation>
+        <translation>Väx</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="232"/>
         <source>Shrink</source>
-        <translation type="unfinished"></translation>
+        <translation>Krymp</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="241"/>
         <source>Effect</source>
-        <translation type="unfinished"></translation>
+        <translation>Effekt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="243"/>
@@ -10478,7 +10478,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="168"/>
         <source>Love Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Älskredigerade</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="173"/>
@@ -13798,7 +13798,7 @@ Local lyrics will still be loaded.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1036"/>
         <source>Clear existing tags?</source>
-        <translation type="unfinished"></translation>
+        <translation>Rensa existerande taggar?</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1041"/>
@@ -13813,7 +13813,7 @@ Local lyrics will still be loaded.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="475"/>
         <source>Clear writable tags, then apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Rensa skrivbara taggar, applicera sedan</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="616"/>
@@ -16703,7 +16703,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="276"/>
         <source>Include column layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Inkludera kolumnlayout</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="278"/>
@@ -16801,9 +16801,9 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message numerus="yes">
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="585"/>
         <source>Used by %Ln playlist(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Används av %Ln spellista</numerusform>
+            <numerusform>Används av %Ln spellistor</numerusform>
         </translation>
     </message>
     <message>
@@ -17804,22 +17804,22 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="152"/>
         <source>Restart required</source>
-        <translation type="unfinished"></translation>
+        <translation>Omstart krävs</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="154"/>
         <source>Pending removal</source>
-        <translation type="unfinished"></translation>
+        <translation>Väntar borttagning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="156"/>
         <source>Removal failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Borttagning misslyckades</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="290"/>
         <source>This plugin is marked for removal at the next restart.</source>
-        <translation type="unfinished"></translation>
+        <translation>Det här tillägget är markerat för borttagning vid nästa omstart.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="368"/>
@@ -22631,7 +22631,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="178"/>
         <source>Enable system shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätt på systemgenvägar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="179"/>
@@ -26852,12 +26852,13 @@ Set to 0 to disable compression. Changes take effect after restarting fooyin.</s
         <location filename="../../src/gui/widgets.cpp" line="817"/>
         <source>Higher levels may reduce memory use at the cost of slower metadata loading and updates.
 Changes take effect after restarting fooyin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Högre nivåer kan minska minnesanvändning men ökar tiden för inläsning och uppdatering av metadata.
+Ändringar träder i kraft efter att ha startat om fooyin.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="838"/>
         <source>Extra tags to compress below the threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrataggar att komprimera under gränsen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="839"/>
@@ -27076,12 +27077,12 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="996"/>
         <source>Column headers</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolumnrubriker</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="999"/>
         <source>Playlist column headers</source>
-        <translation type="unfinished"></translation>
+        <translation>Spellistskolumnrubriker</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="1001"/>
@@ -27452,7 +27453,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="396"/>
         <source>Unable to parse command line options.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan inte tolka kommandotolksalternativ.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="415"/>
@@ -27498,43 +27499,43 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="672"/>
         <source>Expected ‘WITH’ after ‘%1’</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade ”WITH” efter ”%1”</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="715"/>
         <source>Expected ‘(’ after ‘%1’</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade ”(” efter ”%1”</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="725"/>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="731"/>
         <source>Expected a value in ‘%1’ list</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade ett värde i ”%1”-listan</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="741"/>
         <source>Expected ‘)’ at end of ‘%1’ list</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade ”)” vid slutet av ”%1”-listan</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="879"/>
         <source>Expected a date in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade ett datum i ”BETWEEN”-intervallet</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="886"/>
         <source>Invalid date in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogiltigt datum i ”BETWEEN”-intervallet</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="893"/>
         <source>Expected ‘AND’ between dates in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade ”AND” mellan datum i ”BETWEEN”-intervallet</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="902"/>
         <source>The start date must not be after the end date in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>Startdatumet får inte vara efter slutdatumet i ”BETWEEN”-intervallet</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="928"/>
