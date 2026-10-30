@@ -17,10 +17,13 @@
  *
  */
 
-#include "playlistheaderlayout.h"
+#include "richtextlayout.h"
+
+#include <gui/iconloader.h>
 
 #include <QFontMetrics>
 #include <QPainter>
+#include <QStringList>
 #include <QStyleOptionViewItem>
 
 constexpr auto TextGap    = 20;
@@ -45,6 +48,12 @@ ElidedHeaderText elideText(const RichText& text, const QFont& baseFont, int avai
         }
 
         const QFontMetrics fm{resolvedRichTextFont(block.format, baseFont)};
+        if(block.type == RichTextBlock::Type::PlayingIcon) {
+            const int width = std::min(fm.height(), remaining);
+            result.width += width;
+            result.text.blocks.push_back(std::move(block));
+            continue;
+        }
         const auto original{block.text};
 
         block.text = fm.elidedText(original, Qt::ElideRight, remaining);
@@ -59,7 +68,8 @@ ElidedHeaderText elideText(const RichText& text, const QFont& baseFont, int avai
     return result;
 }
 
-void drawText(QPainter* painter, const QStyleOptionViewItem& option, const RichText& text, int x, int baseline)
+void drawText(QPainter* painter, const QStyleOptionViewItem& option, const RichText& text, int x, int baseline,
+              const QIcon& playingIcon)
 {
     const bool selected = option.state & QStyle::State_Selected;
 
@@ -69,19 +79,27 @@ void drawText(QPainter* painter, const QStyleOptionViewItem& option, const RichT
         painter->setPen(selected ? option.palette.color(QPalette::HighlightedText)
                                  : resolvedRichTextColour(block.format, option.palette.color(QPalette::Text),
                                                           option.palette.color(QPalette::Link)));
-        painter->drawText(QPoint{x, baseline}, block.text);
-        x += QFontMetrics{font}.horizontalAdvance(block.text);
+        const QFontMetrics metrics{font};
+        if(block.type == RichTextBlock::Type::PlayingIcon) {
+            const int extent = metrics.height();
+            Gui::drawItemViewIcon(painter, option, playingIcon, {x, baseline - metrics.ascent(), extent, extent});
+            x += extent;
+        }
+        else {
+            painter->drawText(QPoint{x, baseline}, block.text);
+            x += metrics.horizontalAdvance(block.text);
+        }
     }
 }
 } // namespace
 
-PlaylistHeaderLayout preparePlaylistHeader(const RichText& text, const QFont& baseFont, bool measureWidth)
+RichTextLayout prepareRichTextLayout(const RichText& text, const QFont& baseFont, bool measureWidth)
 {
-    PlaylistHeaderLayout layout;
+    RichTextLayout layout;
 
     const auto lines = splitRichTextLines(text);
     for(const auto& richLine : lines) {
-        PlaylistHeaderLine line;
+        RichTextLine line;
         line.baseline      = textBaselineMetrics(baseFont);
         line.leftBaseline  = line.baseline;
         line.rightBaseline = line.baseline;
@@ -99,14 +117,18 @@ PlaylistHeaderLayout preparePlaylistHeader(const RichText& text, const QFont& ba
                 line.rightBaseline.expand(fm);
                 line.right.blocks.push_back(block);
                 if(measureWidth) {
-                    line.rightWidth += fm.horizontalAdvance(block.text);
+                    line.rightWidth
+                        += (block.type == RichTextBlock::Type::PlayingIcon ? fm.height()
+                                                                           : fm.horizontalAdvance(block.text));
                 }
             }
             else {
                 line.leftBaseline.expand(fm);
                 line.left.blocks.push_back(block);
                 if(measureWidth) {
-                    line.leftWidth += fm.horizontalAdvance(block.text);
+                    line.leftWidth
+                        += (block.type == RichTextBlock::Type::PlayingIcon ? fm.height()
+                                                                           : fm.horizontalAdvance(block.text));
                 }
             }
         }
@@ -124,8 +146,23 @@ PlaylistHeaderLayout preparePlaylistHeader(const RichText& text, const QFont& ba
     return layout;
 }
 
-void drawPlaylistHeader(QPainter* painter, const QStyleOptionViewItem& option, const QRect& rect,
-                        const PlaylistHeaderLayout& layout)
+QString richTextLayoutPlainText(const RichTextLayout& layout)
+{
+    QStringList lines;
+    for(const auto& line : layout.lines) {
+        auto text        = line.left.joinedText();
+        const auto right = line.right.joinedText();
+        if(!text.isEmpty() && !right.isEmpty() && !text.back().isSpace() && !right.front().isSpace()) {
+            text += u' ';
+        }
+        text += right;
+        lines.push_back(std::move(text));
+    }
+    return lines.join(u'\n');
+}
+
+void drawRichTextLayout(QPainter* painter, const QStyleOptionViewItem& option, const QRect& rect,
+                        const RichTextLayout& layout, const QIcon& playingIcon)
 {
     painter->save();
     painter->setClipRect(rect, Qt::IntersectClip);
@@ -139,8 +176,8 @@ void drawPlaylistHeader(QPainter* painter, const QStyleOptionViewItem& option, c
         const int leftBaseline  = y + ((line.height - line.leftBaseline.height()) / 2) + line.leftBaseline.ascent;
         const int rightBaseline = y + ((line.height - line.rightBaseline.height()) / 2) + line.rightBaseline.ascent;
 
-        drawText(painter, option, left.text, rect.left(), leftBaseline);
-        drawText(painter, option, right.text, rect.right() - right.width + 1, rightBaseline);
+        drawText(painter, option, left.text, rect.left(), leftBaseline, playingIcon);
+        drawText(painter, option, right.text, rect.right() - right.width + 1, rightBaseline, playingIcon);
 
         if(line.rule) {
             QColor colour = option.palette.color(QPalette::Text);

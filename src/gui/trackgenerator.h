@@ -21,6 +21,7 @@
 
 #include <core/track.h>
 
+#include <QPixmap>
 #include <QString>
 
 namespace Fooyin {
@@ -38,5 +39,7 @@ public:
     static Track generateTrack(const QString& basePath = {});
     static TrackList generateTracks();
     static TrackList generateTracks(const Options& options);
+
+    static QPixmap generateArtwork();
 };
 } // namespace Fooyin

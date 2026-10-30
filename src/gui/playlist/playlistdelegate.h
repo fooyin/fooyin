@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "artwork/artworkreflection.h"
+
 #include <QStyledItemDelegate>
 
 namespace Fooyin {
@@ -27,13 +29,7 @@ class PlaylistDelegate : public QStyledItemDelegate
     Q_OBJECT
 
 public:
-    struct ReflectionOptions
-    {
-        bool enabled{false};
-        int height{33};
-        int opacity{35};
-        int gap{3};
-    };
+    using ReflectionOptions = Gui::ArtworkReflectionOptions;
 
     using QStyledItemDelegate::QStyledItemDelegate;
 

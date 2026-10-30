@@ -25,6 +25,8 @@
 
 #include <QPixmap>
 
+#include <optional>
+
 namespace Fooyin {
 class BackgroundImageSourcePrivate
 {
@@ -35,6 +37,9 @@ public:
         , m_coverProvider{coverProvider}
         , m_playerController{playerController}
         , m_selectionController{selectionController}
+        , m_track{playerController ? std::nullopt : std::optional{Track{}}}
+        , m_requestId{0}
+        , m_reloadPending{false}
     { }
 
     void scheduleCoverReload()
@@ -65,27 +70,28 @@ public:
         }
 
         const int requestId{++m_requestId};
-        const auto source = preferredTrackSource(m_config.trackPreference, m_playerController->playState(),
-                                                 m_playerController->playbackStarted());
-        if(source == PreferredTrackSource::None) {
-            m_coverTrack = {};
-            Q_EMIT m_self->pixmapChanged({});
-            return;
-        }
-
-        const Track playingTrack = m_playerController->currentTrack();
-        const Track selectedTrack
-            = m_selectionController->hasDisplayTracks() ? m_selectionController->displayTrack() : Track{};
-
         Track coverTrack;
-        if(source == PreferredTrackSource::Selected) {
-            coverTrack = selectedTrack.isValid() ? selectedTrack : playingTrack;
+        if(m_track) {
+            coverTrack = *m_track;
         }
-        else {
-            coverTrack = playingTrack.isValid() ? playingTrack : selectedTrack;
+        else if(m_playerController) {
+            const auto source = preferredTrackSource(m_config.trackPreference, m_playerController->playState(),
+                                                     m_playerController->playbackStarted());
+            if(source == PreferredTrackSource::None) {
+                coverTrack = {};
+            }
+            else {
+                const Track playingTrack  = m_playerController->currentTrack();
+                const Track selectedTrack = m_selectionController && m_selectionController->hasDisplayTracks()
+                                              ? m_selectionController->displayTrack()
+                                              : Track{};
+                coverTrack                = source == PreferredTrackSource::Selected
+                                              ? (selectedTrack.isValid() ? selectedTrack : playingTrack)
+                                              : (playingTrack.isValid() ? playingTrack : selectedTrack);
+            }
         }
 
-        if(!coverTrack.isValid()) {
+        if(!coverTrack.isValid() || !m_coverProvider) {
             m_coverTrack = {};
             Q_EMIT m_self->pixmapChanged({});
             return;
@@ -106,9 +112,14 @@ public:
     TrackSelectionController* m_selectionController;
     BackgroundConfig m_config;
     Track m_coverTrack;
-    int m_requestId{0};
-    bool m_reloadPending{false};
+    std::optional<Track> m_track;
+    int m_requestId;
+    bool m_reloadPending;
 };
+
+BackgroundImageSource::BackgroundImageSource(CoverProvider* coverProvider, QObject* parent)
+    : BackgroundImageSource{coverProvider, nullptr, nullptr, parent}
+{ }
 
 BackgroundImageSource::BackgroundImageSource(CoverProvider* coverProvider, PlayerController* playerController,
                                              TrackSelectionController* selectionController, QObject* parent)
@@ -119,16 +130,22 @@ BackgroundImageSource::BackgroundImageSource(CoverProvider* coverProvider, Playe
         p->reloadCover();
     };
 
-    QObject::connect(p->m_playerController, &PlayerController::currentTrackChanged, this, reloadCover);
-    QObject::connect(p->m_playerController, &PlayerController::currentTrackUpdated, this, reloadCover);
-    QObject::connect(p->m_playerController, &PlayerController::playStateChanged, this, reloadCover);
-    QObject::connect(p->m_selectionController, &TrackSelectionController::displaySelectionChanged, this,
-                     [this]() { p->scheduleCoverReload(); });
-    QObject::connect(p->m_coverProvider, &CoverProvider::coverAdded, this, [this, reloadCover](const Track& track) {
-        if(p->m_coverTrack.isValid() && p->m_coverTrack.sameIdentityAs(track)) {
-            reloadCover();
-        }
-    });
+    if(p->m_playerController) {
+        QObject::connect(p->m_playerController, &PlayerController::currentTrackChanged, this, reloadCover);
+        QObject::connect(p->m_playerController, &PlayerController::currentTrackUpdated, this, reloadCover);
+        QObject::connect(p->m_playerController, &PlayerController::playStateChanged, this, reloadCover);
+    }
+    if(p->m_selectionController) {
+        QObject::connect(p->m_selectionController, &TrackSelectionController::displaySelectionChanged, this,
+                         [this]() { p->scheduleCoverReload(); });
+    }
+    if(p->m_coverProvider) {
+        QObject::connect(p->m_coverProvider, &CoverProvider::coverAdded, this, [this, reloadCover](const Track& track) {
+            if(p->m_coverTrack.isValid() && p->m_coverTrack.sameIdentityAs(track)) {
+                reloadCover();
+            }
+        });
+    }
 }
 
 BackgroundImageSource::~BackgroundImageSource() = default;
@@ -163,6 +180,15 @@ void BackgroundImageSource::setConfig(const BackgroundConfig& config)
             }
             break;
     }
+}
+
+void BackgroundImageSource::setTrack(const Track& track)
+{
+    if(!p->m_track || (p->m_track->isValid() && p->m_track->sameIdentityAs(track))) {
+        return;
+    }
+    p->m_track = track;
+    p->reloadCover();
 }
 } // namespace Fooyin
 

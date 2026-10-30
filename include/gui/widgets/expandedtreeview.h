@@ -38,7 +38,8 @@ public:
     enum class ViewMode : uint8_t
     {
         Tree = 0,
-        Icon
+        Icon,
+        Flow,
     };
     Q_ENUM(ViewMode)
 
@@ -73,6 +74,14 @@ public:
     [[nodiscard]] ViewMode viewMode() const;
     void setViewMode(ViewMode mode);
 
+    void setFlowColumnGap(int gap);
+    void setFlowMinimumRows(int rows);
+    void setFlowMaximumColumns(int columns);
+    void setFlowMinimumColumnWidth(int width);
+    void setFlowStretchColumns(bool stretch);
+
+    [[nodiscard]] QSize contentSizeForWidth(int width) const;
+
     [[nodiscard]] CaptionDisplay captionDisplay() const;
     void setCaptionDisplay(CaptionDisplay display);
 
@@ -105,6 +114,11 @@ public:
 
     void changeIconSize(const QSize& size);
 
+    [[nodiscard]] QModelIndex expandedIndex() const;
+    void setExpandedIndex(const QModelIndex& index);
+    void setExpansionWidget(QWidget* widget);
+    void refreshExpansion();
+
     [[nodiscard]] QRect visualRect(const QModelIndex& index) const override;
     [[nodiscard]] int sizeHintForColumn(int column) const override;
     void scrollTo(const QModelIndex& index, ScrollHint hint) override;
@@ -123,16 +137,19 @@ public:
 Q_SIGNALS:
     void viewModeChanged(Fooyin::ExpandedTreeView::ViewMode mode);
     void middleClicked(const QModelIndex& index);
+    void contentSizeChanged();
 
 protected:
     friend class ExpandedTreeViewPrivate;
     friend class BaseView;
     friend class TreeView;
     friend class IconView;
+    friend class FlowView;
 
     void updateGeometries() override;
     void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles) override;
 
+    void changeEvent(QEvent* event) override;
     bool viewportEvent(QEvent* event) override;
     void dragMoveEvent(QDragMoveEvent* event) override;
     void dragLeaveEvent(QDragLeaveEvent* event) override;

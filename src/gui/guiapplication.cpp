@@ -29,6 +29,7 @@
 #include "conversion/convertersettingsstore.h"
 #include "dialog/saveplaylistsdialog.h"
 #include "dialog/searchdialog.h"
+#include "filters/filterscripting.h"
 #include "internalguisettings.h"
 #include "mainwindow.h"
 #include "menubar/editmenu.h"
@@ -720,6 +721,8 @@ void GuiApplication::timerEvent(QTimerEvent* event)
 void GuiApplication::initialise()
 {
     qApp->installEventFilter(this);
+
+    Filters::registerScriptFunctions();
 
     setupConnections();
     registerActions();

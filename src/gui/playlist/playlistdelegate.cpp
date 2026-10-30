@@ -19,9 +19,9 @@
 
 #include "playlistdelegate.h"
 
-#include "playlistheaderlayout.h"
 #include "playlistitem.h"
 #include "playlistview.h"
+#include "scripting/richtextlayout.h"
 
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
@@ -33,9 +33,7 @@
 #include <QApplication>
 #include <QHeaderView>
 #include <QLineEdit>
-#include <QLinearGradient>
 #include <QPainter>
-#include <QPixmapCache>
 
 constexpr auto EditorInitialisedProperty = "fy_editor_initialised";
 
@@ -219,7 +217,7 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
     const QRect textRect{contentLeft, rect.top() + 4, std::max(0, rect.right() - offset - contentLeft + 1),
                          std::max(0, rect.height() - 8)};
 
-    drawPlaylistHeader(painter, opt, textRect, preparePlaylistHeader(text, opt.font));
+    drawRichTextLayout(painter, opt, textRect, prepareRichTextLayout(text, opt.font));
 
     if(drawCover) {
         QPen coverPen     = painter->pen();
@@ -244,48 +242,7 @@ void paintSubheader(QPainter* painter, const QStyleOptionViewItem& opt, const QM
 {
     const auto text  = index.data(PlaylistItem::Role::Title).value<RichText>();
     const QRect rect = PlaylistDelegate::subheaderContentRect(opt, index, 5);
-    drawPlaylistHeader(painter, opt, rect, preparePlaylistHeader(text, opt.font));
-}
-
-void drawArtworkReflection(QPainter& painter, const QPixmap& source, const QPixmap& scaledImage,
-                           const QRect& artworkRect, int cornerRadiusPercent,
-                           const PlaylistDelegate::ReflectionOptions& options)
-{
-    const auto height      = std::max(1.0, std::round(artworkRect.height() * options.height / 100.0));
-    const qreal dpr        = scaledImage.devicePixelRatio();
-    const QString cacheKey = QStringLiteral("fy_playlist_reflection|%1|%2|%3|%4|%5|%6|%7")
-                                 .arg(source.cacheKey())
-                                 .arg(scaledImage.width())
-                                 .arg(scaledImage.height())
-                                 .arg(dpr)
-                                 .arg(height)
-                                 .arg(cornerRadiusPercent)
-                                 .arg(options.opacity);
-
-    QPixmap reflection;
-    if(!QPixmapCache::find(cacheKey, &reflection)) {
-        reflection = QPixmap{scaledImage.width(), static_cast<int>(std::ceil(height * dpr))};
-        reflection.setDevicePixelRatio(dpr);
-        reflection.fill(Qt::transparent);
-
-        QPainter reflectionPainter{&reflection};
-        reflectionPainter.translate(0, artworkRect.height());
-        reflectionPainter.scale(1, -1);
-        Gui::drawRoundedPixmap(reflectionPainter, {0, 0, artworkRect.width(), artworkRect.height()},
-                               Qt::AlignLeft | Qt::AlignTop, scaledImage, cornerRadiusPercent);
-        reflectionPainter.resetTransform();
-        reflectionPainter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-
-        QLinearGradient fade{0, 0, 0, height};
-        fade.setColorAt(0, QColor{0, 0, 0, qRound(options.opacity * 255.0 / 100)});
-        fade.setColorAt(1, Qt::transparent);
-        reflectionPainter.fillRect(QRectF{QPointF{}, reflection.deviceIndependentSize()}, fade);
-        reflectionPainter.end();
-
-        QPixmapCache::insert(cacheKey, reflection);
-    }
-
-    painter.drawPixmap(artworkRect.left(), artworkRect.bottom() + 1 + options.gap, reflection);
+    drawRichTextLayout(painter, opt, rect, prepareRichTextLayout(text, opt.font));
 }
 
 void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index,
@@ -330,8 +287,8 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
                         const QRect artworkRect
                             = QStyle::alignedRect(Qt::LeftToRight, Qt::AlignHCenter | Qt::AlignTop,
                                                   scaledImage.deviceIndependentSize().toSize(), opt.rect);
-                        drawArtworkReflection(*painter, image, scaledImage, artworkRect, cornerRadiusPercent,
-                                              reflectionOptions);
+                        Gui::drawArtworkReflection(*painter, image, scaledImage, artworkRect, cornerRadiusPercent,
+                                                   reflectionOptions);
                     }
                 }
             }
@@ -450,8 +407,7 @@ int PlaylistDelegate::artworkSpanHeight(int width, const QModelIndex& index) con
         return width;
     }
 
-    const auto reflectionHeight
-        = static_cast<int>(std::max(1.0, std::round(coverHeight * m_reflectionOptions.height / 100.0)));
+    const int reflectionHeight = Gui::artworkReflectionHeight(coverHeight, m_reflectionOptions);
     return std::max(width, topPadding + coverHeight + m_reflectionOptions.gap + reflectionHeight);
 }
 

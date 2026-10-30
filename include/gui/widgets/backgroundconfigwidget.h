@@ -33,13 +33,28 @@ class FYGUI_EXPORT BackgroundConfigWidget : public QWidget
     Q_OBJECT
 
 public:
+    enum Option : uint8_t
+    {
+        None            = 0,
+        TrackPreference = 1 << 0,
+        FadeDuration    = 1 << 1,
+    };
+    Q_DECLARE_FLAGS(Options, Option)
+
     explicit BackgroundConfigWidget(QWidget* parent = nullptr);
     ~BackgroundConfigWidget() override;
 
     [[nodiscard]] BackgroundConfig config() const;
     void setConfig(const BackgroundConfig& config);
 
+    void setOptions(Options options);
+
+Q_SIGNALS:
+    void configChanged();
+
 private:
     std::unique_ptr<BackgroundConfigWidgetPrivate> p;
 };
 } // namespace Fooyin
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::BackgroundConfigWidget::Options)

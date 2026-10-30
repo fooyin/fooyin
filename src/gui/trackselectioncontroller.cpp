@@ -949,8 +949,8 @@ bool TrackSelectionControllerPrivate::contextHasFocus(WidgetContext* context) co
 
     QWidget* focusedWidget = QApplication::focusWidget();
     while(focusedWidget) {
-        if(contextObject(focusedWidget) == context) {
-            return true;
+        if(auto* focusedContext = contextObject(focusedWidget)) {
+            return focusedContext == context;
         }
         focusedWidget = focusedWidget->parentWidget();
     }

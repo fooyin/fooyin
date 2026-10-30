@@ -19,7 +19,7 @@
 
 #include "playlistitemmodels.h"
 
-#include "playlistheaderlayout.h"
+#include "scripting/richtextlayout.h"
 
 #include <gui/scripting/richtextutils.h>
 
@@ -179,12 +179,12 @@ QSize PlaylistContainerItem::calculateSize(bool measureWidth) const
     }
 
     if(m_layoutKind == LayoutKind::Header) {
-        const auto layout = preparePlaylistHeader(m_title, {}, measureWidth);
+        const auto layout = prepareRichTextLayout(m_title, {}, measureWidth);
         return {measureWidth ? layout.width : 0,
                 std::max(m_showCover ? 50 : 0, layout.height + ContainerVerticalPadding)};
     }
 
-    const auto layout      = preparePlaylistHeader(m_title, {}, measureWidth);
+    const auto layout      = prepareRichTextLayout(m_title, {}, measureWidth);
     const bool hasLeftText = std::ranges::any_of(
         m_title.blocks, [](const auto& block) { return block.format.alignment != RichAlignment::Right; });
     const int padding = ContainerVerticalPadding + (hasLeftText ? 4 : 0);
