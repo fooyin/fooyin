@@ -61,9 +61,11 @@ void PresetRegistry::loadDefaults()
 
     preset.name = tr("Albums grouped by disc");
 
+    preset.header.grouping    = u"%albumartist%|%album%"_s;
     preset.header.text.script = albumHeaderScript(u"$if2(%album%,Unknown Album)"_s);
 
     SubheaderRow subheader;
+    subheader.grouping    = u"%disc%"_s;
     subheader.text.script = u"$ifgreater(%disctotal%,1,Disc #%disc%)\n<hr/>\n"
                             "<right>\n"
                             "$ifgreater(%disctotal%,1,%playtime%)"_s;
@@ -75,6 +77,7 @@ void PresetRegistry::loadDefaults()
 
     preset.name = tr("Albums with disc headers");
 
+    preset.header.grouping = u"%albumartist%|%album%|%disc%"_s;
     preset.header.text.script
         = albumHeaderScript(u"$if2(%album%,Unknown Album)$ifgreater(%disctotal%,1, ▪ Disc #%disc%)"_s);
 
@@ -82,6 +85,7 @@ void PresetRegistry::loadDefaults()
 
     preset.name = tr("Compact album headers");
 
+    preset.header.grouping  = u"%albumartist%|%album%"_s;
     preset.header.showCover = false;
     preset.header.text.script
         = u"<b><sized=2>$if2(%albumartist%,Unknown Artist) ▪ $if2(%album%,Unknown Album)</sized></b>\n"
