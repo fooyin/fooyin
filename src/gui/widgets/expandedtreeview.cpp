@@ -2580,6 +2580,12 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
 
     opt.rect = mapToViewport(indexToViewItem(index).rect());
 
+    const auto bg = iconIndex.data(Qt::BackgroundRole).value<QBrush>();
+    if(m_view->property("transparent_base_rows").toBool() && !opt.state.testFlag(QStyle::State_Selected)
+       && bg.style() == Qt::NoBrush) {
+        makeBaseRowTransparent(opt);
+    }
+
     QStyleOptionViewItem mainOpt{opt};
     mainOpt.decorationSize         = iconSize();
     mainOpt.showDecorationSelected = true;

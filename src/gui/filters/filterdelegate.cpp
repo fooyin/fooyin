@@ -153,6 +153,12 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     const bool hasArtwork   = view && view->viewMode() == ExpandedTreeView::ViewMode::Icon && !opt.icon.isNull();
     const QIcon artworkIcon = hasArtwork ? opt.icon : QIcon{};
 
+    if(view && view->viewMode() != ExpandedTreeView::ViewMode::Flow && view->property("transparent_base_rows").toBool()
+       && !opt.state.testFlag(QStyle::State_Selected) && opt.backgroundBrush.style() == Qt::NoBrush) {
+        opt.palette.setBrush(QPalette::Base, Qt::NoBrush);
+        opt.features.setFlag(QStyleOptionViewItem::Alternate, false);
+    }
+
     const auto drawArtwork = [&]() {
         if(hasArtwork) {
             const QRect decorationRect  = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
