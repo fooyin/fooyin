@@ -25,6 +25,7 @@
 
 #include <core/track.h>
 #include <gui/fywidget.h>
+#include <gui/widgets/backgroundconfig.h>
 #include <utils/crypto.h>
 
 #include <QByteArray>
@@ -47,6 +48,7 @@ class QVBoxLayout;
 namespace Fooyin {
 class ActionManager;
 class Application;
+class BackgroundImageSource;
 class CoverRepository;
 class LibraryManager;
 class LibraryTreeController;
@@ -119,6 +121,7 @@ public:
         int rowHeight{0};
         QSize iconSize{36, 36};
         int artworkCornerRadius{0};
+        BackgroundConfig background;
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -195,6 +198,7 @@ private:
     SettingsManager* m_settings;
     GuiStyleProvider* m_styleProvider;
     bool m_styleInitialised;
+    BackgroundImageSource* m_backgroundSource;
 
     SignalThrottler* m_resetThrottler;
     LibraryTreeGrouping m_grouping;

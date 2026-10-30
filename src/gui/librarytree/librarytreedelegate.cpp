@@ -25,6 +25,7 @@
 #include <gui/iconloader.h>
 #include <gui/scripting/richtext.h>
 #include <gui/scripting/richtextutils.h>
+#include <gui/widgets/widgetbackground.h>
 
 #include <QApplication>
 #include <QPainter>
@@ -213,6 +214,9 @@ void LibraryTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
 {
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
+
+    WidgetBackground::clearDelegateBackground(opt);
+
     const bool isPlaying = index.data(LibraryTreeItem::IsPlaying).toBool();
     opt.decorationSize = isPlaying ? QSize{opt.fontMetrics.height(), opt.fontMetrics.height()} : option.decorationSize;
 

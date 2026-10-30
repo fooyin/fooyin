@@ -23,6 +23,7 @@
 #include "librarytreescriptcontext.h"
 
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/backgroundconfigwidget.h>
 #include <gui/widgets/hintlabel.h>
 
 #include <QCheckBox>
@@ -34,6 +35,7 @@
 #include <QPushButton>
 #include <QSpinBox>
 #include <QTabWidget>
+#include <QVBoxLayout>
 
 using namespace Qt::StringLiterals;
 
@@ -65,15 +67,18 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     , m_iconWidth{new QSpinBox(this)}
     , m_iconHeight{new QSpinBox(this)}
     , m_artworkCornerRadius{new QSpinBox(this)}
+    , m_background{new BackgroundConfigWidget(this)}
     , m_manageGroupings{new QPushButton(tr("Manage groupings…"), this)}
 {
     auto* tabs = new QTabWidget(this);
 
-    auto* generalTab = new QWidget(tabs);
-    auto* styleTab   = new QWidget(tabs);
+    auto* generalTab    = new QWidget(tabs);
+    auto* styleTab      = new QWidget(tabs);
+    auto* backgroundTab = new QWidget(tabs);
 
     tabs->addTab(generalTab, tr("General"));
     tabs->addTab(styleTab, tr("Appearance"));
+    tabs->addTab(backgroundTab, tr("Background"));
 
     m_playbackOnSend->setToolTip(
         tr(R"(For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately.)"));
@@ -203,6 +208,10 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     styleLayout->setColumnStretch(0, 1);
     styleLayout->setRowStretch(1, 1);
 
+    auto* backgroundLayout = new QVBoxLayout(backgroundTab);
+    backgroundLayout->addWidget(m_background);
+    backgroundLayout->addStretch();
+
     auto* mainLayout{contentLayout()};
     row = 0;
     mainLayout->addWidget(tabs, row++, 0);
@@ -258,6 +267,7 @@ LibraryTreeWidget::ConfigData LibraryTreeConfigDialog::config() const
         .rowHeight                   = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
         .iconSize                    = {m_iconWidth->value(), m_iconHeight->value()},
         .artworkCornerRadius         = m_artworkCornerRadius->value(),
+        .background                  = m_background->config(),
     };
 }
 
@@ -293,6 +303,8 @@ void LibraryTreeConfigDialog::setConfig(const LibraryTreeWidget::ConfigData& con
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
     m_preservePlaybackPlaylist->setEnabled(m_playlistEnabled->isChecked());
+
+    m_background->setConfig(config.background);
 }
 
 void LibraryTreeConfigDialog::mergeExternalConfig(const LibraryTreeWidget::ConfigData& previous,
@@ -309,6 +321,7 @@ void LibraryTreeConfigDialog::mergeExternalConfig(const LibraryTreeWidget::Confi
         &LibraryTreeWidget::ConfigData::showHeader, &LibraryTreeWidget::ConfigData::showScrollbar,
         &LibraryTreeWidget::ConfigData::alternatingRows, &LibraryTreeWidget::ConfigData::showSummaryNode,
         &LibraryTreeWidget::ConfigData::summaryNodeTitle, &LibraryTreeWidget::ConfigData::rowHeight,
-        &LibraryTreeWidget::ConfigData::iconSize, &LibraryTreeWidget::ConfigData::artworkCornerRadius);
+        &LibraryTreeWidget::ConfigData::iconSize, &LibraryTreeWidget::ConfigData::artworkCornerRadius,
+        &LibraryTreeWidget::ConfigData::background);
 }
 } // namespace Fooyin

@@ -21,10 +21,14 @@
 
 #include <QEvent>
 #include <QObject>
+#include <QPalette>
 #include <QPersistentModelIndex>
 #include <QTreeView>
 
 namespace Fooyin {
+class WidgetBackground;
+struct BackgroundConfig;
+
 class LibraryTreeView : public QTreeView
 {
     Q_OBJECT
@@ -34,6 +38,9 @@ public:
 
     void setLoading(bool isLoading);
     void setExpandsOnSingleClick(bool enabled);
+    void setBackgroundConfig(const BackgroundConfig& config);
+    void setBackgroundPixmap(const QPixmap& pixmap);
+    void setViewPalette(const QPalette& palette);
 
 Q_SIGNALS:
     void middleClicked(const QModelIndex& index);
@@ -41,6 +48,7 @@ Q_SIGNALS:
     void displayChanged();
 
 protected:
+    void initViewItemOption(QStyleOptionViewItem* option) const override;
     void changeEvent(QEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
@@ -50,6 +58,11 @@ protected:
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;
 
 private:
+    void updateBackgroundPalette();
+
+    WidgetBackground* m_background;
+    QPalette m_backgroundPalette;
+    bool m_updatingBackgroundPalette;
     bool m_isLoading;
     bool m_expandsOnSingleClick;
     QPersistentModelIndex m_singleClickToggleIndex;

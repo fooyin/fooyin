@@ -42,12 +42,14 @@
 #include <core/scripting/trackqueryfilter.h>
 #include <gui/configdialog.h>
 #include <gui/contextmenuutils.h>
+#include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/backgroundimagesource.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
@@ -100,6 +102,7 @@ constexpr auto LibTreeHeaderKey                = u"LibraryTree/Header";
 constexpr auto LibTreeShowSummaryNodeKey       = u"LibraryTree/ShowSummaryNode";
 constexpr auto LibTreeSummaryNodeTitleKey      = u"LibraryTree/SummaryNodeTitle";
 constexpr auto LibTreeArtworkRadiusKey         = u"LibraryTree/ArtworkCornerRadius";
+constexpr auto LibTreeBackgroundKey            = u"LibraryTree/Background";
 
 namespace Fooyin {
 using namespace Settings::Gui::Internal;
@@ -209,6 +212,8 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
     , m_settings{core->settingsManager()}
     , m_styleProvider{styleProvider}
     , m_styleInitialised{false}
+    , m_backgroundSource{new BackgroundImageSource(new CoverProvider(coverRepository, this), m_playerController,
+                                                   m_trackSelection, this)}
     , m_resetThrottler{new SignalThrottler(this)}
     , m_layout{new QVBoxLayout(this)}
     , m_controlsLayout{nullptr}
@@ -242,7 +247,10 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
     m_libraryTree->setModel(m_sortProxy);
     m_libraryTree->setItemDelegate(m_delegate);
     m_libraryTree->viewport()->installEventFilter(new ToolTipFilter(this));
+
     QObject::connect(m_libraryTree, &LibraryTreeView::displayChanged, m_model, &LibraryTreeModel::resetPalette);
+    QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_libraryTree,
+                     &LibraryTreeView::setBackgroundPixmap);
 
     if(const auto initialGroup = m_groupsRegistry->itemByIndex(0)) {
         changeGrouping(initialGroup.value());
@@ -558,6 +566,7 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::defaultConfig() const
     config.rowHeight           = m_settings->fileValue(LibTreeRowHeightKey, config.rowHeight).toInt();
     config.iconSize            = m_settings->value<LibTreeIconSize>().toSize();
     config.artworkCornerRadius = m_settings->fileValue(LibTreeArtworkRadiusKey, config.artworkCornerRadius).toInt();
+    config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(LibTreeBackgroundKey).toMap()));
 
     return config;
 }
@@ -590,6 +599,10 @@ void LibraryTreeWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(LibTreeRowHeightKey, config.rowHeight);
     m_settings->set<LibTreeIconSize>(config.iconSize);
     m_settings->fileSet(LibTreeArtworkRadiusKey, config.artworkCornerRadius);
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    m_settings->fileSet(LibTreeBackgroundKey, background.toVariantMap());
 }
 
 void LibraryTreeWidget::clearSavedDefaults() const
@@ -615,11 +628,13 @@ void LibraryTreeWidget::clearSavedDefaults() const
     m_settings->fileRemove(LibTreeRowHeightKey);
     m_settings->reset<LibTreeIconSize>();
     m_settings->fileRemove(LibTreeArtworkRadiusKey);
+    m_settings->fileRemove(LibTreeBackgroundKey);
 }
 
 void LibraryTreeWidget::applyConfig(const ConfigData& config)
 {
     m_config = config;
+    m_config.background.normalise();
 
     if(!m_config.iconSize.isValid()) {
         m_config.iconSize = factoryConfig().iconSize;
@@ -653,6 +668,8 @@ void LibraryTreeWidget::applyConfig(const ConfigData& config)
     m_model->setSummaryNodeConfig(m_config.showSummaryNode, m_config.summaryNodeTitle);
     m_libraryTree->setIconSize(m_config.iconSize);
     m_delegate->setArtworkCornerRadius(m_config.artworkCornerRadius);
+    m_libraryTree->setBackgroundConfig(m_config.background);
+    m_backgroundSource->setConfig(m_config.background);
     m_libraryTree->viewport()->update();
 
     QMetaObject::invokeMethod(m_libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
@@ -717,6 +734,7 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObj
     }
 
     config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt(config.artworkCornerRadius);
+    config.background.loadLayout(layout.value("Background"_L1).toObject());
 
     if(!config.iconSize.isValid()) {
         config.iconSize = factoryConfig().iconSize;
@@ -757,6 +775,10 @@ void LibraryTreeWidget::saveConfigToLayout(const ConfigData& config, QJsonObject
     layout["IconWidth"_L1]                   = config.iconSize.width();
     layout["IconHeight"_L1]                  = config.iconSize.height();
     layout["ArtworkCornerRadius"_L1]         = config.artworkCornerRadius;
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    layout["Background"_L1] = background;
 }
 
 void LibraryTreeWidget::openConfigDialog()
@@ -856,7 +878,7 @@ void LibraryTreeWidget::setupConnections()
 
     m_styleProvider->subscribe(this, [this](const ResolvedAppStyle& resolvedStyle) {
         const bool initialStyle = !std::exchange(m_styleInitialised, true);
-        Gui::refreshItemViewPalette(m_libraryTree, resolvedStyle.palette);
+        m_libraryTree->setViewPalette(resolvedStyle.palette);
         m_model->resetPalette();
         if(initialStyle) {
             reset();

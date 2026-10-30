@@ -20,19 +20,27 @@
 #include "librarytreeview.h"
 
 #include <gui/contextmenuutils.h>
+#include <gui/guiutils.h>
+#include <gui/widgets/widgetbackground.h>
 
 #include <QHeaderView>
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QScopedValueRollback>
 #include <QWheelEvent>
 
 namespace Fooyin {
 LibraryTreeView::LibraryTreeView(QWidget* parent)
     : QTreeView{parent}
+    , m_background{new WidgetBackground(viewport(), this)}
+    , m_backgroundPalette{palette()}
+    , m_updatingBackgroundPalette{false}
     , m_isLoading{false}
     , m_expandsOnSingleClick{false}
 {
+    viewport()->setAutoFillBackground(false);
+
     setUniformRowHeights(false);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setHeaderHidden(true);
@@ -58,8 +66,42 @@ void LibraryTreeView::setExpandsOnSingleClick(bool enabled)
     m_expandsOnSingleClick = enabled;
 }
 
+void LibraryTreeView::setBackgroundConfig(const BackgroundConfig& config)
+{
+    const QScopedValueRollback guard{m_updatingBackgroundPalette, true};
+    m_background->setConfig(config);
+    updateBackgroundPalette();
+}
+
+void LibraryTreeView::setBackgroundPixmap(const QPixmap& pixmap)
+{
+    const QScopedValueRollback guard{m_updatingBackgroundPalette, true};
+    m_background->setPixmap(pixmap);
+    updateBackgroundPalette();
+}
+
+void LibraryTreeView::setViewPalette(const QPalette& palette)
+{
+    m_backgroundPalette = palette;
+    updateBackgroundPalette();
+}
+
+void LibraryTreeView::initViewItemOption(QStyleOptionViewItem* option) const
+{
+    QTreeView::initViewItemOption(option);
+
+    if(m_background->hasImage()) {
+        WidgetBackground::makeRowPaletteTransparent(option->palette);
+    }
+}
+
 void LibraryTreeView::changeEvent(QEvent* event)
 {
+    if(m_updatingBackgroundPalette && event->type() == QEvent::PaletteChange) {
+        QTreeView::changeEvent(event);
+        return;
+    }
+
     switch(event->type()) {
         case QEvent::FontChange:
         case QEvent::PaletteChange:
@@ -171,6 +213,12 @@ void LibraryTreeView::wheelEvent(QWheelEvent* event)
 
 void LibraryTreeView::paintEvent(QPaintEvent* event)
 {
+    {
+        QPainter painter{viewport()};
+        painter.fillRect(viewport()->rect(), m_backgroundPalette.brush(QPalette::Base));
+        m_background->draw(painter);
+    }
+
     if(m_isLoading) {
         QPainter painter{viewport()};
 
@@ -201,6 +249,18 @@ QModelIndex LibraryTreeView::moveCursor(CursorAction cursorAction, Qt::KeyboardM
     }
 
     return QTreeView::moveCursor(cursorAction, modifiers);
+}
+
+void LibraryTreeView::updateBackgroundPalette()
+{
+    const bool hasImage = m_background->hasImage();
+
+    QPalette viewPalette{m_backgroundPalette};
+    if(hasImage) {
+        // QTreeView fills its animation buffers with the view's base brush
+        viewPalette.setBrush(QPalette::Base, Qt::NoBrush);
+    }
+    Gui::refreshItemViewPalette(this, viewPalette);
 }
 } // namespace Fooyin
 
