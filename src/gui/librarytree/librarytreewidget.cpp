@@ -656,7 +656,7 @@ void LibraryTreeWidget::applyConfig(const ConfigData& config)
 
     m_libraryTree->setExpandsOnDoubleClick(m_doubleClickAction == TrackAction::None
                                            || m_doubleClickAction == TrackAction::Play);
-    m_libraryTree->setExpandsOnSingleClick(m_config.expandOnSingleClick);
+    m_libraryTree->setExpandsOnSingleClick(m_config.expandOnSingleClick, m_doubleClickAction != TrackAction::None);
     setControlsVisible(m_config.showControls);
     setControlsPosition(m_config.controlsPosition);
     m_trackSelection->changePlaybackOnSend(m_widgetContext, m_config.sendPlayback);
@@ -1446,7 +1446,12 @@ void LibraryTreeWidget::handleDoubleClick(const QModelIndex& index)
     }
 
     if(m_doubleClickAction == TrackAction::Play) {
-        handlePlayTrack(index);
+        if(m_config.expandOnSingleClick && m_sortProxy->hasChildren(index)) {
+            handlePlayback({index});
+        }
+        else {
+            handlePlayTrack(index);
+        }
         return;
     }
 

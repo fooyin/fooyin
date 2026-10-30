@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <QBasicTimer>
 #include <QEvent>
 #include <QObject>
 #include <QPalette>
@@ -37,7 +38,7 @@ public:
     explicit LibraryTreeView(QWidget* parent = nullptr);
 
     void setLoading(bool isLoading);
-    void setExpandsOnSingleClick(bool enabled);
+    void setExpandsOnSingleClick(bool enabled, bool delayCollapse);
     void setBackgroundConfig(const BackgroundConfig& config);
     void setBackgroundPixmap(const QPixmap& pixmap);
     void setViewPalette(const QPalette& palette);
@@ -53,11 +54,13 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
     void mouseDoubleClickEvent(QMouseEvent* event) override;
+    void timerEvent(QTimerEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;
 
 private:
+    void cancelPendingCollapse();
     void updateBackgroundPalette();
 
     WidgetBackground* m_background;
@@ -65,6 +68,9 @@ private:
     bool m_updatingBackgroundPalette;
     bool m_isLoading;
     bool m_expandsOnSingleClick;
+    bool m_delayCollapse;
     QPersistentModelIndex m_singleClickToggleIndex;
+    QBasicTimer m_collapseTimer;
+    QPersistentModelIndex m_collapseIndex;
 };
 } // namespace Fooyin
