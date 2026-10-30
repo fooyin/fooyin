@@ -109,6 +109,10 @@ public:
     [[nodiscard]] int iconVerticalGap() const;
     void setIconVerticalGap(int gap);
 
+    [[nodiscard]] bool autoFitArtwork() const;
+    void setAutoFitArtwork(bool enabled);
+    [[nodiscard]] QSize effectiveIconSize() const;
+
     [[nodiscard]] bool useIconGapsForSideCaptions() const;
     void setUseIconGapsForSideCaptions(bool enabled);
 
@@ -140,6 +144,7 @@ Q_SIGNALS:
     void viewModeChanged(Fooyin::ExpandedTreeView::ViewMode mode);
     void middleClicked(const QModelIndex& index);
     void contentSizeChanged();
+    void effectiveIconSizeChanged(const QSize& size);
 
 protected:
     friend class ExpandedTreeViewPrivate;

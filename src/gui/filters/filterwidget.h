@@ -154,6 +154,7 @@ public:
         bool alternatingRows{false};
         int rowHeight{0};
         QSize iconSize{100, 100};
+        bool autoFitArtwork{false};
         int iconHorizontalGap{-1};
         int iconVerticalGap{10};
         int artworkCornerRadius{0};
@@ -161,6 +162,7 @@ public:
         BackgroundConfig background;
         bool expandGroups{false};
         bool expansionAnimated{true};
+        bool expansionAlternatingRows{false};
         bool expandedArtwork{true};
         int expansionMinimumRows{4};
         int expansionMaximumColumns{0};

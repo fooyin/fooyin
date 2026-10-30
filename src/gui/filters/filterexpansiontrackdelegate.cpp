@@ -21,6 +21,8 @@
 
 #include "filterexpansionmodel.h"
 
+#include <gui/widgets/widgetbackground.h>
+
 #include <QApplication>
 #include <QIcon>
 #include <QPainter>
@@ -32,6 +34,7 @@ void ExpansionTrackDelegate::paint(QPainter* painter, const QStyleOptionViewItem
     QStyleOptionViewItem opt{option};
     initStyleOption(&opt, index);
     opt.text.clear();
+    WidgetBackground::clearDelegateBackground(opt);
 
     const auto* style = opt.widget ? opt.widget->style() : QApplication::style();
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);

@@ -114,6 +114,7 @@ private:
     QSpinBox* m_rowHeight;
     QSpinBox* m_iconWidth;
     QSpinBox* m_iconHeight;
+    QCheckBox* m_autoFitArtwork;
     QSpinBox* m_iconHorizontalGap;
     QSpinBox* m_iconVerticalGap;
     QSpinBox* m_artworkCornerRadius;
@@ -126,6 +127,7 @@ private:
     ColourButton* m_expansionBackgroundColour;
     QCheckBox* m_expandGroups;
     QCheckBox* m_expansionAnimated;
+    QCheckBox* m_expansionAlternatingRows;
     QCheckBox* m_expandedArtwork;
     QCheckBox* m_expansionCloseButton;
     QCheckBox* m_expansionArtworkReflection;

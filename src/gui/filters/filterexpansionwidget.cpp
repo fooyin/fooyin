@@ -378,6 +378,11 @@ void FilterExpansionWidget::setBackground(const BackgroundConfig& config, const 
     updatePalette();
 }
 
+void FilterExpansionWidget::setAlternatingRowColors(bool enabled)
+{
+    m_tracks->setAlternatingRowColors(enabled);
+}
+
 void FilterExpansionWidget::setMinimumColumnRows(int rows)
 {
     rows = std::max(1, rows);

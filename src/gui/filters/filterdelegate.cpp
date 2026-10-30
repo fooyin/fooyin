@@ -32,6 +32,7 @@
 
 constexpr auto IconCaptionMargin     = 20;
 constexpr auto RightCaptionTextWidth = 180;
+constexpr auto RightCaptionInset     = 0;
 
 namespace {
 struct PreparedTextBlock
@@ -156,14 +157,26 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
         if(hasArtwork) {
             QStyleOptionViewItem artworkOpt{opt};
             artworkOpt.rect = opt.rect.marginsRemoved(m_artworkMargins);
+            if(view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Right) {
+                artworkOpt.rect.adjust(RightCaptionInset, 0, -RightCaptionInset, 0);
+            }
             const QRect decorationRect
                 = view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Right
                     ? style->subElementRect(QStyle::SE_ItemViewItemDecoration, &artworkOpt, opt.widget)
                     : QStyle::alignedRect(opt.direction, Qt::AlignTop | Qt::AlignHCenter, opt.decorationSize,
                                           artworkOpt.rect);
-            const double dpr            = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
-            const QPixmap scaledArtwork = artworkIcon.pixmap(decorationRect.size(), dpr, Gui::itemViewIconMode(opt));
+            const double dpr = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
+            const bool autoFit
+                = view->autoFitArtwork() && view->captionDisplay() != ExpandedTreeView::CaptionDisplay::Right;
+            const QSize artworkSize     = autoFit ? view->effectiveIconSize() : decorationRect.size();
+            const QPixmap scaledArtwork = artworkIcon.pixmap(artworkSize, dpr, Gui::itemViewIconMode(opt));
+
+            painter->save();
+            if(autoFit) {
+                painter->setClipRect(decorationRect, Qt::IntersectClip);
+            }
             Gui::drawRoundedPixmap(*painter, decorationRect, Qt::AlignCenter, scaledArtwork, m_artworkCornerRadius);
+            painter->restore();
         }
     };
 
@@ -303,6 +316,7 @@ QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option) const
     switch(view->captionDisplay()) {
         case ExpandedTreeView::CaptionDisplay::Right: {
             QStyleOptionViewItem textOpt{option};
+            textOpt.rect.adjust(RightCaptionInset, 0, -RightCaptionInset, 0);
             const int artworkMargin = m_artworkMargins.left() + m_artworkMargins.right();
             if(option.direction == Qt::RightToLeft) {
                 textOpt.rect.adjust(0, 0, -artworkMargin, 0);
@@ -488,9 +502,9 @@ QSize FilterDelegate::iconItemSize(const QStyleOptionViewItem& option, const QMo
         }
         case ExpandedTreeView::CaptionDisplay::Right: {
             const QSize styleSize = style->sizeFromContents(QStyle::CT_ItemViewItem, &option, textSize, option.widget);
-            const int itemWidth   = option.rect.width() > 0
-                                      ? option.rect.width()
-                                      : artworkSize.width() + IconCaptionMargin + RightCaptionTextWidth;
+            const int itemWidth   = option.rect.width() > 0 ? option.rect.width()
+                                                            : artworkSize.width() + IconCaptionMargin
+                                                                  + RightCaptionTextWidth + (2 * RightCaptionInset);
             const int itemHeight  = std::max(
                 {styleSize.height(), artworkSize.height() + verticalPadding, textSize.height() + verticalPadding});
             return {itemWidth, itemHeight};

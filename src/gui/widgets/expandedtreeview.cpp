@@ -381,6 +381,14 @@ public:
     {
         return 0;
     }
+    [[nodiscard]] virtual QSize effectiveIconSize() const
+    {
+        return m_view->iconSize();
+    }
+    virtual bool resizeIcons(int /*steps*/)
+    {
+        return false;
+    }
 
     [[nodiscard]] virtual int itemHeight(int item) const                                     = 0;
     [[nodiscard]] virtual int firstVisibleItem(int* offset) const                            = 0;
@@ -1953,6 +1961,8 @@ public:
 
     [[nodiscard]] bool canReuseMeasurements() const;
     [[nodiscard]] int spacing() const override;
+    [[nodiscard]] QSize effectiveIconSize() const override;
+    bool resizeIcons(int steps) override;
 
     [[nodiscard]] QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const override;
     [[nodiscard]] ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const override;
@@ -1978,18 +1988,27 @@ public:
     void updateScrollBars() override;
 
 private:
+    struct FittedMeasurements
+    {
+        int width{-1};
+        std::vector<int> heights;
+    };
+
+    void invalidateMeasurements();
+    void layoutGrid(int width, FittedMeasurements& measurements);
     void resetGrid();
-    void prepareItemLayout();
     void drawItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
     void drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
     [[nodiscard]] QModelIndex iconItemIndex(const QModelIndex& index) const;
 
     void setupDecorationProps(QStyleOptionViewItem* opt) const;
     [[nodiscard]] std::vector<ExpandedTreeViewItem> itemsOnRow(int y, int x) const;
-    [[nodiscard]] QSize indexSizeHint(const QModelIndex& index) const;
+    [[nodiscard]] QSize indexSizeHint(const QModelIndex& index, const QSize& decorationSize) const;
     [[nodiscard]] int itemWidth(int item) const;
     [[nodiscard]] int rowHeight(int rowStart) const;
-    [[nodiscard]] QSize iconSize() const;
+    [[nodiscard]] QSize iconSize(int item = -1) const;
+    [[nodiscard]] QSize iconSizeForWidth(int width) const;
+    [[nodiscard]] bool useAutoFitArtwork() const;
     [[nodiscard]] bool haveSideCaptions() const;
     [[nodiscard]] bool haveBottomCaptions() const;
     [[nodiscard]] bool useIconGaps() const;
@@ -1998,14 +2017,18 @@ private:
     int m_segmentSize{0};
     int m_itemSpacing{MinItemSpacing};
     int m_rowSpacing{IconRowSpacing};
+    int m_horizontalInset{0};
+    bool m_needsVerticalScrollBar{false};
+    QSize m_fittedIconSize;
+    FittedMeasurements m_fullWidthMeasurements;
+    FittedMeasurements m_viewportMeasurements;
     mutable int m_uniformRowWidth{0};
     mutable int m_uniformRowHeight{0};
 };
 
 void IconView::invalidate()
 {
-    m_uniformRowWidth  = 0;
-    m_uniformRowHeight = 0;
+    invalidateMeasurements();
     resetGrid();
 }
 
@@ -2027,122 +2050,21 @@ void IconView::doItemLayout(bool reuseMeasurements)
     }
 
     if(empty()) {
+        m_fittedIconSize = {};
         return;
     }
 
-    prepareItemLayout();
-
-    const QPoint topLeft{m_layoutBounds.x(), m_layoutBounds.y() + m_rowSpacing};
-
-    int segStartPosition{m_layoutBounds.left()};
-    int segEndPosition{m_layoutBounds.right() + 1};
-
-    int deltaSegPosition{0};
-    int segPosition{topLeft.y()};
-
-    const bool useConfiguredGridSpacing = useIconGaps();
-    const bool fixedGridSpacing         = useConfiguredGridSpacing && m_p->m_iconHorizontalGap >= 0;
-
-    if(useConfiguredGridSpacing && !fixedGridSpacing) {
-        segStartPosition += m_itemSpacing;
-        segEndPosition -= m_itemSpacing;
-    }
-
-    // Determine the number of items per row
-    const int count = itemCount();
-    for(int i{1}; i <= count; ++i) {
-        const int spacingCount  = fixedGridSpacing ? std::max(0, i - 1) : i - 1;
-        const int requiredWidth = (i * itemWidth(0)) + (spacingCount * m_itemSpacing);
-        if(requiredWidth > (segEndPosition - segStartPosition)) {
-            m_segmentSize = (i == 1) ? 1 : i - 1;
-            break;
+    m_needsVerticalScrollBar = false;
+    if(useAutoFitArtwork() && verticalScrollBarPolicy() == Qt::ScrollBarAsNeeded) {
+        const QSize maximumViewport = m_view->maximumViewportSize();
+        layoutGrid(maximumViewport.width(), m_fullWidthMeasurements);
+        m_needsVerticalScrollBar = m_contentsSize.height() > maximumViewport.height();
+        if(maximumViewport.width() == viewport()->width()) {
+            return;
         }
     }
 
-    double maxPaddingRatio{1.0};
-
-    if(m_segmentSize == 0) {
-        m_segmentSize   = std::max(count, 1);
-        maxPaddingRatio = 0.13;
-    }
-
-    const int totalWidthAvailable = segEndPosition - segStartPosition;
-    const int totalItemWidth      = m_segmentSize * itemWidth(0);
-    const int itmWidth            = useConfiguredGridSpacing ? itemWidth(0) : totalWidthAvailable / m_segmentSize;
-    const int maxPadding          = static_cast<int>(totalWidthAvailable * maxPaddingRatio);
-
-    int gridStartPosition{segStartPosition};
-    if(fixedGridSpacing) {
-        const int nextRowWidth = ((m_segmentSize + 1) * itmWidth) + (m_segmentSize * m_itemSpacing);
-        if(nextRowWidth > totalWidthAvailable) {
-            const int gridWidth      = (m_segmentSize * itmWidth) + (std::max(0, m_segmentSize - 1) * m_itemSpacing);
-            const int remainingWidth = totalWidthAvailable - gridWidth;
-            gridStartPosition += std::max(0, remainingWidth / 2);
-        }
-        else {
-            gridStartPosition += MinItemSpacing;
-        }
-    }
-
-    if(!fixedGridSpacing) {
-        const int totalPadding = totalWidthAvailable - totalItemWidth;
-        m_itemSpacing          = std::max(0, totalPadding / (m_segmentSize + 1));
-
-        if(maxPadding > 0 && m_itemSpacing > maxPadding) {
-            m_itemSpacing = MinItemSpacing;
-        }
-    }
-
-    QRect rect{{}, topLeft};
-    const bool animating   = m_p->m_expansionAnimationHeight >= 0;
-    const auto expanded    = animating ? m_p->m_expansionAnimationIndex : m_p->m_expandedIndex;
-    const int expandedItem = m_p->m_expansionWidget ? m_p->viewIndex(expanded) : -1;
-    const int expandedRow  = expandedItem >= 0 ? expandedItem / m_segmentSize : -1;
-
-    for(int i{0}; i < count; ++i) {
-        auto& item = viewItem(i);
-
-        const int segColumn = i % m_segmentSize;
-        if(segColumn == 0 && i > 0) {
-            segPosition += deltaSegPosition;
-            deltaSegPosition = 0;
-        }
-
-        if(!useConfiguredGridSpacing) {
-            item.x = segStartPosition + (segColumn * itmWidth);
-        }
-        else if(fixedGridSpacing) {
-            item.x = gridStartPosition + (segColumn * (itmWidth + m_itemSpacing));
-        }
-        else {
-            item.x = segStartPosition + m_itemSpacing + (segColumn * (itmWidth + m_itemSpacing));
-        }
-
-        item.y     = segPosition;
-        item.width = itmWidth;
-
-        deltaSegPosition = std::max(deltaSegPosition, itemHeight(i) + spacing());
-        rect |= item.rect();
-
-        if(i / m_segmentSize == expandedRow && (segColumn == m_segmentSize - 1 || i == count - 1)) {
-            const int expansionWidth = viewport()->width();
-            const int height     = animating ? m_p->m_expansionAnimationHeight
-                                             : std::max(1, m_p->m_expansionWidget->hasHeightForWidth()
-                                                               ? m_p->m_expansionWidget->heightForWidth(expansionWidth)
-                                                               : m_p->m_expansionWidget->sizeHint().height());
-            m_p->m_expansionRect = {0, segPosition + deltaSegPosition, viewport()->width(), height};
-            int gap              = std::max(spacing(), IconRowSpacing);
-            if(animating) {
-                const int fullHeight = std::max(1, m_p->animationSnapshot().deviceIndependentSize().toSize().height());
-                gap                  = static_cast<int>(std::lround(static_cast<double>(gap) * height / fullHeight));
-            }
-            deltaSegPosition += height + gap;
-            rect |= m_p->m_expansionRect;
-        }
-    }
-
-    m_contentsSize = rect.size();
-    m_contentsSize.rheight() += m_rowSpacing;
+    layoutGrid(viewport()->width(), m_viewportMeasurements);
 }
 
 void IconView::drawView(QPainter* painter, const QRegion& region) const
@@ -2179,6 +2101,33 @@ void IconView::drawView(QPainter* painter, const QRegion& region) const
 bool IconView::canReuseMeasurements() const
 {
     return !empty() && m_uniformRowWidth > 0 && m_layoutBounds.width() == viewport()->width();
+}
+
+int IconView::spacing() const
+{
+    return m_rowSpacing;
+}
+
+QSize IconView::effectiveIconSize() const
+{
+    return useAutoFitArtwork() && m_fittedIconSize.isValid() ? m_fittedIconSize : iconSize();
+}
+
+bool IconView::resizeIcons(int steps)
+{
+    if(!useAutoFitArtwork() || empty() || m_segmentSize <= 0) {
+        return false;
+    }
+
+    const int padding    = std::max(0, indexSizeHint(viewItem(0).index, iconSize()).width() - iconSize().width());
+    const int width      = viewport()->width() - (2 * m_horizontalInset) + m_itemSpacing;
+    const int maxColumns = std::max(1, width / (16 + padding + m_itemSpacing));
+    const int columns    = std::clamp(m_segmentSize - steps, 1, maxColumns);
+    if(columns != m_segmentSize) {
+        const int pitch = steps > 0 ? (width / (columns + 1)) + 1 : width / columns;
+        m_view->changeIconSize(iconSizeForWidth(std::max(16, pitch - m_itemSpacing - padding)));
+    }
+    return true;
 }
 
 QRect IconView::visualRect(const QModelIndex& index, RectRule /*rule*/, bool /*includePadding*/) const
@@ -2266,8 +2215,7 @@ void IconView::dataChanged(const QModelIndex& /*topLeft*/, const QModelIndex& /*
                            const QList<int>& /*roles*/)
 {
     // Keep the current geometry, but rebuild measurements on the next expansion refresh
-    m_uniformRowWidth  = 0;
-    m_uniformRowHeight = 0;
+    invalidateMeasurements();
 }
 
 int IconView::sizeHintForColumn(int /*column*/) const
@@ -2289,15 +2237,15 @@ int IconView::itemHeight(int item) const
     int height = viewItem(item).height;
 
     if(height <= 0) {
-        if(m_p->m_uniformRowHeights) {
+        if(m_p->m_uniformRowHeights && !useAutoFitArtwork()) {
             if(m_uniformRowHeight == 0) {
-                const QSize hint   = indexSizeHint(index);
+                const QSize hint   = indexSizeHint(index, iconSize(item));
                 m_uniformRowHeight = hint.height();
             }
             height = m_uniformRowHeight;
         }
         else {
-            const QSize hint = indexSizeHint(index);
+            const QSize hint = indexSizeHint(index, iconSize(item));
             height           = hint.height();
         }
 
@@ -2450,7 +2398,7 @@ void IconView::renderToPixmap(QPainter* painter, const ItemViewPaintPairs& paint
         }
 
         QStyleOptionViewItem paintOpt{opt};
-        paintOpt.decorationSize         = iconSize();
+        paintOpt.decorationSize         = iconSize(m_p->viewIndex(iconIndex));
         paintOpt.showDecorationSelected = true;
         setupDecorationProps(&paintOpt);
 
@@ -2493,6 +2441,10 @@ void IconView::updateScrollBars()
         verticalScrollBar()->setRange(
             0, std::max(m_p->m_expansionAnimationScrollMax, m_contentsSize.height() - viewport()->height()));
     }
+    else if(useAutoFitArtwork() && verticalScrollBarPolicy() == Qt::ScrollBarAsNeeded) {
+        verticalScrollBar()->setRange(
+            0, m_needsVerticalScrollBar ? std::max(1, m_contentsSize.height() - viewport()->height()) : 0);
+    }
     else if(bothScrollBarsAuto && !verticalWantsToShow) {
         verticalScrollBar()->setRange(0, 0);
     }
@@ -2508,6 +2460,175 @@ void IconView::updateScrollBars()
     }
 }
 
+void IconView::invalidateMeasurements()
+{
+    m_uniformRowWidth             = 0;
+    m_uniformRowHeight            = 0;
+    m_fullWidthMeasurements.width = -1;
+    m_viewportMeasurements.width  = -1;
+}
+
+void IconView::layoutGrid(int width, FittedMeasurements& measurements)
+{
+    m_p->m_expansionRect = {};
+    resetGrid();
+    if(m_uniformRowWidth > 0) {
+        viewItem(0).width = m_uniformRowWidth;
+    }
+
+    // Use the full width first to decide whether a scrollbar is needed
+    m_layoutBounds = QRect{{}, QSize{width, viewport()->height()}};
+
+    const QPoint topLeft{m_layoutBounds.x(), m_layoutBounds.y() + m_rowSpacing};
+
+    int segStartPosition{m_layoutBounds.left()};
+    int segEndPosition{m_layoutBounds.right() + 1};
+
+    int deltaSegPosition{0};
+    int segPosition{topLeft.y()};
+
+    const bool useConfiguredGridSpacing = useIconGaps();
+    const bool autoFit                  = useAutoFitArtwork();
+    const bool fixedGridSpacing         = useConfiguredGridSpacing && (autoFit || m_p->m_iconHorizontalGap >= 0);
+
+    m_horizontalInset
+        = haveSideCaptions() ? 0 : std::min(MinItemSpacing, std::max(0, (m_layoutBounds.width() - 1) / 2));
+    segStartPosition += m_horizontalInset;
+    segEndPosition -= m_horizontalInset;
+
+    if(useConfiguredGridSpacing && !fixedGridSpacing) {
+        segStartPosition += m_itemSpacing;
+        segEndPosition -= m_itemSpacing;
+    }
+
+    // Determine the number of items per row
+    const int count = itemCount();
+    if(autoFit) {
+        if(measurements.width != width || measurements.heights.size() != static_cast<size_t>(count)) {
+            measurements.width = width;
+            measurements.heights.assign(count, 0);
+        }
+        m_segmentSize
+            = std::max(1, (segEndPosition - segStartPosition + m_itemSpacing) / (itemWidth(0) + m_itemSpacing));
+    }
+    else {
+        for(int i{1}; i <= count; ++i) {
+            const int spacingCount  = fixedGridSpacing ? std::max(0, i - 1) : i - 1;
+            const int requiredWidth = (i * itemWidth(0)) + (spacingCount * m_itemSpacing);
+            if(requiredWidth > (segEndPosition - segStartPosition)) {
+                m_segmentSize = (i == 1) ? 1 : i - 1;
+                break;
+            }
+        }
+    }
+
+    double maxPaddingRatio{1.0};
+
+    if(m_segmentSize == 0) {
+        m_segmentSize   = std::max(count, 1);
+        maxPaddingRatio = 0.13;
+    }
+
+    const int totalWidthAvailable = segEndPosition - segStartPosition;
+    const int totalItemWidth      = m_segmentSize * itemWidth(0);
+    const int itmWidth            = useConfiguredGridSpacing ? itemWidth(0) : totalWidthAvailable / m_segmentSize;
+    const int maxPadding          = static_cast<int>(totalWidthAvailable * maxPaddingRatio);
+
+    int gridStartPosition{segStartPosition};
+    if(fixedGridSpacing && !autoFit) {
+        const int nextRowWidth = ((m_segmentSize + 1) * itmWidth) + (m_segmentSize * m_itemSpacing);
+        if(nextRowWidth > totalWidthAvailable) {
+            const int gridWidth      = (m_segmentSize * itmWidth) + (std::max(0, m_segmentSize - 1) * m_itemSpacing);
+            const int remainingWidth = totalWidthAvailable - gridWidth;
+            gridStartPosition += std::max(0, remainingWidth / 2);
+        }
+        else {
+            gridStartPosition += MinItemSpacing;
+        }
+    }
+
+    if(!fixedGridSpacing) {
+        const int totalPadding = totalWidthAvailable - totalItemWidth;
+        m_itemSpacing          = std::max(0, totalPadding / (m_segmentSize + 1));
+
+        if(maxPadding > 0 && m_itemSpacing > maxPadding) {
+            m_itemSpacing = MinItemSpacing;
+        }
+    }
+
+    const int fittedWidth    = totalWidthAvailable - ((m_segmentSize - 1) * m_itemSpacing);
+    const int artworkPadding = std::max(0, m_uniformRowWidth - iconSize().width());
+    m_fittedIconSize
+        = autoFit ? iconSizeForWidth(((fittedWidth + m_segmentSize - 1) / m_segmentSize) - artworkPadding) : QSize{};
+
+    QRect rect{{}, topLeft};
+    const bool animating   = m_p->m_expansionAnimationHeight >= 0;
+    const auto expanded    = animating ? m_p->m_expansionAnimationIndex : m_p->m_expandedIndex;
+    const int expandedItem = m_p->m_expansionWidget ? m_p->viewIndex(expanded) : -1;
+    const int expandedRow  = expandedItem >= 0 ? expandedItem / m_segmentSize : -1;
+
+    for(int i{0}; i < count; ++i) {
+        auto& item = viewItem(i);
+
+        const int segColumn = i % m_segmentSize;
+        if(segColumn == 0 && i > 0) {
+            segPosition += deltaSegPosition;
+            deltaSegPosition = 0;
+        }
+
+        if(autoFit) {
+            const int left  = segColumn * fittedWidth / m_segmentSize;
+            const int right = (segColumn + 1) * fittedWidth / m_segmentSize;
+
+            item.x     = segStartPosition + left + (segColumn * m_itemSpacing);
+            item.width = right - left;
+
+            item.decorationSize = {std::max(1, item.width - artworkPadding), m_fittedIconSize.height()};
+            item.height         = measurements.heights[i];
+        }
+        else if(!useConfiguredGridSpacing) {
+            item.x = segStartPosition + (segColumn * itmWidth);
+        }
+        else if(fixedGridSpacing) {
+            item.x = gridStartPosition + (segColumn * (itmWidth + m_itemSpacing));
+        }
+        else {
+            item.x = segStartPosition + m_itemSpacing + (segColumn * (itmWidth + m_itemSpacing));
+        }
+
+        item.y = segPosition;
+        if(!autoFit) {
+            item.width = itmWidth;
+        }
+
+        const int currentHeight = itemHeight(i);
+        if(autoFit) {
+            measurements.heights[i] = currentHeight;
+        }
+        deltaSegPosition = std::max(deltaSegPosition, currentHeight + spacing());
+        rect |= item.rect();
+
+        if(i / m_segmentSize == expandedRow && (segColumn == m_segmentSize - 1 || i == count - 1)) {
+            const int expansionWidth = viewport()->width();
+            const int height     = animating ? m_p->m_expansionAnimationHeight
+                                             : std::max(1, m_p->m_expansionWidget->hasHeightForWidth()
+                                                               ? m_p->m_expansionWidget->heightForWidth(expansionWidth)
+                                                               : m_p->m_expansionWidget->sizeHint().height());
+            m_p->m_expansionRect = {0, segPosition + deltaSegPosition, viewport()->width(), height};
+            int gap              = std::max(spacing(), IconRowSpacing);
+            if(animating) {
+                const int fullHeight = std::max(1, m_p->animationSnapshot().deviceIndependentSize().toSize().height());
+                gap                  = static_cast<int>(std::lround(static_cast<double>(gap) * height / fullHeight));
+            }
+            deltaSegPosition += height + gap;
+            rect |= m_p->m_expansionRect;
+        }
+    }
+
+    m_contentsSize = rect.size();
+    m_contentsSize.rheight() += m_rowSpacing;
+}
+
 void IconView::resetGrid()
 {
     m_segmentSize = 0;
@@ -2515,14 +2636,10 @@ void IconView::resetGrid()
     const bool useConfiguredGridSpacing = useIconGaps();
     m_itemSpacing
         = useConfiguredGridSpacing && m_p->m_iconHorizontalGap >= 0 ? m_p->m_iconHorizontalGap : MinItemSpacing;
+    if(useAutoFitArtwork() && m_p->m_iconHorizontalGap < 0) {
+        m_itemSpacing = 0;
+    }
     m_rowSpacing = useConfiguredGridSpacing ? m_p->m_iconVerticalGap : 0;
-}
-
-void IconView::prepareItemLayout()
-{
-    // Layout in content coordinates using the actual visible viewport. Scrollbars are already
-    // excluded from the viewport geometry, which avoids style-specific drift after resize.
-    m_layoutBounds = QRect{{}, viewport()->size()};
 }
 
 void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
@@ -2544,10 +2661,9 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
 
     opt.state.setFlag(QStyle::State_MouseOver, hoverRow);
 
-    if(m_view->alternatingRowColors()
-       && (m_p->m_viewMode == ExpandedTreeView::ViewMode::Tree
-           || m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Right)) {
-        opt.features.setFlag(QStyleOptionViewItem::Alternate, index.row() & 1);
+    if(m_view->alternatingRowColors() && haveSideCaptions()) {
+        const int visualRow = m_p->viewIndex(index) / m_segmentSize;
+        opt.features.setFlag(QStyleOptionViewItem::Alternate, visualRow & 1);
     }
 
     const QModelIndex current = m_view->currentIndex();
@@ -2586,7 +2702,7 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
     }
 
     QStyleOptionViewItem mainOpt{opt};
-    mainOpt.decorationSize         = iconSize();
+    mainOpt.decorationSize         = iconSize(m_p->viewIndex(iconIndex));
     mainOpt.showDecorationSelected = true;
     setupDecorationProps(&mainOpt);
 
@@ -2659,7 +2775,7 @@ std::vector<ExpandedTreeViewItem> IconView::itemsOnRow(int y, int x) const
     return result;
 }
 
-QSize IconView::indexSizeHint(const QModelIndex& index) const
+QSize IconView::indexSizeHint(const QModelIndex& index, const QSize& decorationSize) const
 {
     if(!m_p->isIndexValid(index) || !m_view->itemDelegate()) {
         return {};
@@ -2674,18 +2790,18 @@ QSize IconView::indexSizeHint(const QModelIndex& index) const
     m_view->initViewItemOption(&opt);
     opt.showDecorationSelected = true;
     setupDecorationProps(&opt);
-    opt.decorationSize = iconSize();
+    opt.decorationSize = decorationSize;
 
     QSize size = delegate(iconIndex)->sizeHint(opt, iconIndex);
 
     if(m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Bottom) {
-        size.rwidth() = std::max(size.width(), iconSize().width());
+        size.rwidth() = std::max(size.width(), decorationSize.width());
     }
     else if(m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Right) {
-        size.rwidth() = std::max(size.width(), iconSize().width() + (2 * MinItemSpacing) + RightCaptionWidth);
+        size.rwidth() = std::max(size.width(), decorationSize.width() + (2 * MinItemSpacing) + RightCaptionWidth);
     }
     else {
-        size.rheight() = std::max(size.height(), iconSize().height());
+        size.rheight() = std::max(size.height(), decorationSize.height());
     }
 
     return size;
@@ -2706,7 +2822,7 @@ int IconView::itemWidth(int item) const
 
     if(width <= 0) {
         if(m_uniformRowWidth == 0) {
-            const QSize hint  = indexSizeHint(index);
+            const QSize hint  = indexSizeHint(index, iconSize());
             m_uniformRowWidth = hint.width();
         }
         width                = m_uniformRowWidth;
@@ -2727,14 +2843,26 @@ int IconView::rowHeight(int rowStart) const
     return height;
 }
 
-int IconView::spacing() const
+QSize IconView::iconSize(int item) const
 {
-    return m_rowSpacing;
+    if(item >= 0 && item < itemCount() && viewItem(item).decorationSize.isValid()) {
+        return viewItem(item).decorationSize;
+    }
+    return m_view->iconSize();
 }
 
-QSize IconView::iconSize() const
+QSize IconView::iconSizeForWidth(int width) const
 {
-    return m_view->iconSize();
+    const QSize preferred{iconSize()};
+    width            = std::max(1, width);
+    const int height = std::max(1, static_cast<int>(std::llround(static_cast<double>(width) * preferred.height()
+                                                                 / std::max(1, preferred.width()))));
+    return {width, height};
+}
+
+bool IconView::useAutoFitArtwork() const
+{
+    return m_p->m_autoFitArtwork && !haveSideCaptions();
 }
 
 bool IconView::haveSideCaptions() const
@@ -3010,19 +3138,33 @@ void FlowView::drawItem(QPainter* painter, QStyleOptionViewItem option, const QM
 {
     option.rect                   = rect;
     option.showDecorationSelected = true;
+    const bool currentHasFocus    = m_view->hasFocus() && index == m_view->currentIndex();
 
     option.state.setFlag(QStyle::State_Selected, m_view->selectionModel()->isSelected(index));
     option.state.setFlag(QStyle::State_MouseOver, index == m_p->m_hoverIndex);
-    option.state.setFlag(QStyle::State_HasFocus, m_view->hasFocus() && index == m_view->currentIndex());
+    option.state.setFlag(QStyle::State_HasFocus, false);
     option.state.setFlag(QStyle::State_Enabled, m_view->isEnabled() && (index.flags() & Qt::ItemIsEnabled));
 
-    option.features.setFlag(QStyleOptionViewItem::Alternate, m_view->alternatingRowColors() && index.row() % 2);
+    const bool alternateRow = index.parent().isValid() ? index.row() % 2 == 0 : index.row() % 2 != 0;
+    option.features.setFlag(QStyleOptionViewItem::Alternate, m_view->alternatingRowColors()
+                                                                 && !option.state.testFlag(QStyle::State_Selected)
+                                                                 && !model()->hasChildren(index) && alternateRow);
 
     option.palette.setCurrentColorGroup(!(option.state & QStyle::State_Enabled) ? QPalette::Disabled
                                         : option.state & QStyle::State_Active   ? QPalette::Active
                                                                                 : QPalette::Inactive);
 
+    const auto background = index.data(Qt::BackgroundRole).value<QBrush>();
+    if(WidgetBackground::hasTransparentRows(m_view) && !option.state.testFlag(QStyle::State_Selected)
+       && background.style() == Qt::NoBrush) {
+        WidgetBackground::makeRowPaletteTransparent(option.palette);
+    }
+
+    m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &option, painter, m_view);
     delegate(index)->paint(painter, option, index);
+    if(currentHasFocus) {
+        m_view->drawFocus(painter, option, index, rect.top());
+    }
 }
 
 void FlowView::drawView(QPainter* painter, const QRegion& region) const
@@ -4318,6 +4460,26 @@ void ExpandedTreeView::setIconVerticalGap(int gap)
     viewport()->update();
 }
 
+bool ExpandedTreeView::autoFitArtwork() const
+{
+    return p->m_autoFitArtwork;
+}
+
+void ExpandedTreeView::setAutoFitArtwork(bool enabled)
+{
+    if(std::exchange(p->m_autoFitArtwork, enabled) == enabled) {
+        return;
+    }
+    p->m_preserveLayoutPosition = true;
+    p->doDelayedItemsLayout();
+    viewport()->update();
+}
+
+QSize ExpandedTreeView::effectiveIconSize() const
+{
+    return p->m_view->effectiveIconSize();
+}
+
 bool ExpandedTreeView::useIconGapsForSideCaptions() const
 {
     return p->m_useIconGapsForSideCaptions;
@@ -4700,6 +4862,11 @@ void ExpandedTreeViewPrivate::doItemsLayout(bool reuseIconMeasurements)
     if(previousSize != m_view->m_contentsSize) {
         Q_EMIT m_self->contentSizeChanged();
     }
+
+    const QSize effectiveSize = m_view->effectiveIconSize();
+    if(std::exchange(m_effectiveIconSize, effectiveSize) != effectiveSize) {
+        Q_EMIT m_self->effectiveIconSizeChanged(effectiveSize);
+    }
 }
 
 void ExpandedTreeView::reset()
@@ -4823,7 +4990,7 @@ void ExpandedTreeView::dataChanged(const QModelIndex& topLeft, const QModelIndex
 void ExpandedTreeView::changeEvent(QEvent* event)
 {
     QAbstractItemView::changeEvent(event);
-    if(p->m_viewMode == ViewMode::Flow
+    if((p->m_viewMode == ViewMode::Flow || p->m_viewMode == ViewMode::Icon)
        && (event->type() == QEvent::LayoutDirectionChange || event->type() == QEvent::FontChange
            || event->type() == QEvent::StyleChange)) {
         p->m_view->invalidate();
@@ -5065,10 +5232,21 @@ void ExpandedTreeView::wheelEvent(QWheelEvent* event)
         return;
     }
 
-    const int delta     = event->angleDelta().y();
+    const int delta = event->angleDelta().y();
+    if(delta == 0) {
+        event->ignore();
+        return;
+    }
+
     const int increment = (delta > 0) ? 1 : -1;
-    int newSize         = iconSize().width() + (increment * 2);
-    newSize             = std::clamp(newSize, 16, 1024);
+    p->layoutItems();
+    if(p->m_view->resizeIcons(increment)) {
+        event->accept();
+        return;
+    }
+
+    int newSize = iconSize().width() + (increment * 2);
+    newSize     = std::clamp(newSize, 16, 1024);
     changeIconSize({newSize, newSize});
 
     event->accept();
@@ -5371,11 +5549,12 @@ void ExpandedTreeView::drawFocus(QPainter* painter, const QStyleOptionViewItem& 
     focusOpt.backgroundColor
         = option.palette.color(cg, selectionModel()->isSelected(index) ? QPalette::Highlight : QPalette::Window);
 
-    const auto paintRects = p->rectsToPaint(index, option, y);
+    const bool flow       = p->m_viewMode == ViewMode::Flow;
+    const auto paintRects = flow ? std::vector{option.rect} : p->rectsToPaint(index, option, y);
 
     for(const auto& rect : paintRects) {
         if(rect.width() > 0) {
-            focusOpt.rect = QStyle::visualRect(layoutDirection(), viewport()->rect(), rect);
+            focusOpt.rect = flow ? rect : QStyle::visualRect(layoutDirection(), viewport()->rect(), rect);
             style()->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOpt, painter);
         }
     }

@@ -57,6 +57,7 @@ struct ExpandedTreeViewItem
     int x{-1};
     int y{-1};
     int width{-1};
+    QSize decorationSize;
 
     constexpr bool operator==(const ExpandedTreeViewItem& other) const
     {
@@ -168,6 +169,8 @@ public:
     int m_iconItemColumn{-1};
     int m_iconHorizontalGap{-1};
     int m_iconVerticalGap{10};
+    bool m_autoFitArtwork{false};
+    QSize m_effectiveIconSize;
     bool m_useIconGapsForSideCaptions{false};
     bool m_uniformRowHeights{false};
     bool m_selectBeforeDrag{false};
