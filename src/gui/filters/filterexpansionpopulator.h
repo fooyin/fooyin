@@ -39,13 +39,8 @@ struct ExpansionScripts
 {
     QString header{QStringLiteral("<sized=1><b>%filter_columns%</b></sized>")};
     QString groupBy;
-    QString subheader{QStringLiteral("$ifgreater(%disctotal%,1,\n"
-                                     "Disc #%disc%\n"
-                                     "<hr/>\n"
-                                     "<right>%playtime%</right>\n"
-                                     ")")};
-    QString track{QStringLiteral(
-        "$if2(%playingicon%,$if(%tracknumber%,$num(%tracknumber%,2),))  %title%<right>%length%</right>")};
+    QString subheader;
+    QString track{QStringLiteral("[$if2(%playingicon%,[$num(%tracknumber%,2)])  ]%title%<right>%length%</right>")};
     QString footer;
 
     bool operator==(const ExpansionScripts& other) const = default;
