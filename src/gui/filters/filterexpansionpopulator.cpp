@@ -138,8 +138,12 @@ ExpansionResult FilterExpansionPopulator::evaluate(ExpansionRequest request, std
     return std::move(m_result);
 }
 
-void FilterExpansionPopulator::addErrors(const QString& section, const ErrorList& errors)
+void FilterExpansionPopulator::addErrors(const QString& section, const ErrorList& errors, uint8_t sections)
 {
+    if(!errors.empty()) {
+        m_result.errorSections |= sections;
+    }
+
     for(const auto& error : errors) {
         const QString message = section + u": "_s + error.message;
         if(!m_result.errors.contains(message)) {
@@ -148,10 +152,10 @@ void FilterExpansionPopulator::addErrors(const QString& section, const ErrorList
     }
 }
 
-RichText FilterExpansionPopulator::formatted(const QString& text, const QString& section)
+RichText FilterExpansionPopulator::formatted(const QString& text, const QString& section, uint8_t sections)
 {
     auto rich = m_formatter.evaluate(text);
-    addErrors(section, m_formatter.errors());
+    addErrors(section, m_formatter.errors(), sections);
     return rich;
 }
 
@@ -191,15 +195,15 @@ void FilterExpansionPopulator::prepareScripts()
     m_result.dependencies.track.merge(
         {.sources = {ScriptSources::PlaybackTrack, ScriptSources::PlaybackState}, .unclassified = false});
 
-    addErrors(tr("Header"), m_header.errors);
-    addErrors(tr("Track"), m_track.errors);
-    addErrors(tr("Footer"), m_footer.errors);
+    addErrors(tr("Header"), m_header.errors, ExpansionHeader);
+    addErrors(tr("Track"), m_track.errors, ExpansionTracks);
+    addErrors(tr("Footer"), m_footer.errors, ExpansionFooter);
 
     if(groupingEnabled && !m_request.scripts.groupBy.isEmpty()) {
-        addErrors(tr("Group by"), m_grouping.errors);
+        addErrors(tr("Group by"), m_grouping.errors, ExpansionGrouping);
     }
     if(groupingEnabled) {
-        addErrors(tr("Subheader"), m_subheader.errors);
+        addErrors(tr("Subheader"), m_subheader.errors, ExpansionSubheaders);
     }
 }
 
@@ -252,11 +256,11 @@ void FilterExpansionPopulator::evaluateHeaderFooter()
 {
     if(m_request.sections & ExpansionHeader) {
         const auto text = m_parser.evaluate(m_header, *m_request.tracks, groupContext(), m_request.options);
-        m_result.header = prepareRichTextLayout(formatted(text, tr("Header")), m_request.font);
+        m_result.header = prepareRichTextLayout(formatted(text, tr("Header"), ExpansionHeader), m_request.font);
     }
     if(m_request.sections & ExpansionFooter) {
         const auto text = m_parser.evaluate(m_footer, *m_request.tracks, groupContext(), m_request.options);
-        m_result.footer = prepareRichTextLayout(formatted(text, tr("Footer")), m_request.font);
+        m_result.footer = prepareRichTextLayout(formatted(text, tr("Footer"), ExpansionFooter), m_request.font);
     }
 }
 
@@ -338,7 +342,7 @@ bool FilterExpansionPopulator::evaluateSubheaders(std::stop_token stop)
             context.playlistData = &data;
 
             const auto text = m_parser.evaluate(m_subheader, *group.tracks, context, m_request.options);
-            const auto rich = formatted(text, tr("Subheader"));
+            const auto rich = formatted(text, tr("Subheader"), ExpansionSubheaders);
 
             ExpansionSubheader header;
             header.firstTrack     = group.firstTrack;
@@ -367,7 +371,7 @@ void FilterExpansionPopulator::evaluateTracks(std::stop_token stop)
             m_formatter.setBaseFont(font);
 
             const auto text = m_parser.evaluate(m_track, track, groupContext(), m_request.options);
-            const auto rich = formatted(text, tr("Track"));
+            const auto rich = formatted(text, tr("Track"), ExpansionTracks);
 
             ExpansionRow resultRow;
             resultRow.layout      = prepareRichTextLayout(rich, font);

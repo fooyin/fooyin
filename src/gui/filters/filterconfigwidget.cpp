@@ -96,7 +96,6 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_footerScript{new ScriptTextEdit(this)}
     , m_groupByScript{new ScriptTextEdit(this)}
     , m_subheaderScript{new ScriptTextEdit(this)}
-    , m_scriptErrors{new QLabel(this)}
     , m_preview{new FilterExpansionWidget(nullptr, nullptr, this)}
     , m_previewTracks{std::make_shared<const TrackList>(TrackGenerator::generateTracks({.albumCount = 1}))}
     , m_previewSubscription{nullptr}
@@ -232,10 +231,6 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     m_preview->setPreviewMode();
     m_preview->hide();
 
-    m_scriptErrors->setTextFormat(Qt::PlainText);
-    m_scriptErrors->setWordWrap(true);
-    m_scriptErrors->hide();
-
     auto* syntaxHint = new HintLabel(tr("Use <b>&lt;left&gt;</b> and <b>&lt;right&gt;</b> for alignment, "
                                         "and <b>&lt;hr/&gt;</b> for rules."),
                                      scriptsPage);
@@ -248,7 +243,6 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
 
     scriptLayout->addWidget(syntaxHint);
     scriptLayout->addWidget(columnsHint);
-    scriptLayout->addWidget(m_scriptErrors);
 
     auto* scriptsLayout = new QHBoxLayout(m_scriptsTab);
     auto* previewLayout = new QVBoxLayout();
@@ -986,8 +980,11 @@ void FilterConfigDialog::applyPreview(const ExpansionResult& result)
         return;
     }
 
-    m_scriptErrors->setText(result.errors.join(u"\n"_s));
-    m_scriptErrors->setVisible(!result.errors.empty());
+    m_headerScript->setError(result.errorSections & ExpansionHeader);
+    m_trackScript->setError(result.errorSections & ExpansionTracks);
+    m_footerScript->setError(result.errorSections & ExpansionFooter);
+    m_groupByScript->setError(result.errorSections & ExpansionGrouping);
+    m_subheaderScript->setError(result.errorSections & ExpansionSubheaders);
 
     if(m_previewSubscription) {
         m_previewSubscription->setDependencies(m_scriptsTab->isVisible() ? result.dependencies.combined()

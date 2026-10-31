@@ -21,21 +21,57 @@
 
 #include "gui/scripting/scripteditor.h"
 
+#include <core/scripting/scriptparser.h>
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
 #include <utils/utils.h>
 
 #include <QAction>
+#include <QBasicTimer>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QIcon>
 #include <QMenu>
 #include <QResizeEvent>
 #include <QScrollBar>
+#include <QTimerEvent>
 #include <QToolButton>
 #include <QToolTip>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
+class ScriptTextEditPrivate
+{
+public:
+    explicit ScriptTextEditPrivate(ScriptTextEdit* self)
+        : m_self{self}
+        , m_openEditor{new QAction(ScriptTextEdit::tr("Open in script editor"), self)}
+        , m_toolArea{new QWidget(self)}
+        , m_toolAreaLayout{new QHBoxLayout(m_toolArea)}
+        , m_error{new QAction(ScriptTextEdit::tr("Script error"), self)}
+    { }
+
+    void validate()
+    {
+        const auto parsed = m_queryMode ? m_parser.parseQuery(m_self->text()) : m_parser.parse(m_self->text());
+        m_syntaxError     = !parsed.errors.empty();
+        m_error->setVisible(m_syntaxError || m_evaluationError);
+    }
+
+    ScriptTextEdit* m_self;
+    QAction* m_openEditor;
+    QWidget* m_toolArea;
+    QHBoxLayout* m_toolAreaLayout;
+    QAction* m_error;
+    QToolButton* m_errorButton{nullptr};
+    ScriptParser m_parser;
+    QBasicTimer m_timer;
+    bool m_queryMode{false};
+    bool m_syntaxError{false};
+    bool m_evaluationError{false};
+};
+
 ScriptLineEdit::ScriptLineEdit(QWidget* parent)
     : ScriptLineEdit{{}, {}, parent}
 { }
@@ -83,12 +119,10 @@ ScriptTextEdit::ScriptTextEdit(const QString& script, QWidget* parent)
 
 ScriptTextEdit::ScriptTextEdit(const QString& script, const Track& track, QWidget* parent)
     : QPlainTextEdit{script, parent}
-    , m_openEditor{new QAction(tr("Open in script editor"), this)}
-    , m_toolArea{new QWidget(this)}
-    , m_toolAreaLayout{new QHBoxLayout(m_toolArea)}
+    , p{std::make_unique<ScriptTextEditPrivate>(this)}
 {
-    Gui::setThemeIcon(m_openEditor, Constants::Icons::ScriptEditor);
-    QObject::connect(m_openEditor, &QAction::triggered, this, [this, track]() {
+    Gui::setThemeIcon(p->m_openEditor, Constants::Icons::ScriptEditor);
+    QObject::connect(p->m_openEditor, &QAction::triggered, this, [this, track]() {
         ScriptEditor::openEditor(
             text(),
             [this, track](const QString& editedScript) {
@@ -99,13 +133,26 @@ ScriptTextEdit::ScriptTextEdit(const QString& script, const Track& track, QWidge
             track, this);
     });
 
-    m_toolAreaLayout->setContentsMargins(4, 0, 4, 0);
-    m_toolAreaLayout->addStretch();
+    p->m_toolAreaLayout->setContentsMargins(4, 0, 4, 0);
+    p->m_toolAreaLayout->addStretch();
 
-    m_toolArea->setAutoFillBackground(true);
-    m_toolArea->setBackgroundRole(QPalette::AlternateBase);
-    addToolAction(m_openEditor);
+    p->m_toolArea->setAutoFillBackground(true);
+    p->m_toolArea->setBackgroundRole(QPalette::AlternateBase);
+    addToolAction(p->m_openEditor);
+
+    Gui::setThemeIcon(p->m_error, Constants::Icons::Warning);
+    p->m_error->setToolTip(tr("Open in the Script Editor for details"));
+    addToolAction(p->m_error, Qt::AlignRight);
+    QObject::connect(p->m_error, &QAction::triggered, p->m_openEditor, &QAction::trigger);
+    QObject::connect(this, &QPlainTextEdit::textChanged, this, [this]() {
+        p->m_evaluationError = false;
+        p->m_timer.start(150, this);
+    });
+
+    p->validate();
 }
+
+ScriptTextEdit::~ScriptTextEdit() = default;
 
 QString ScriptTextEdit::text() const
 {
@@ -117,25 +164,60 @@ void ScriptTextEdit::setText(const QString& text)
     setPlainText(text);
 }
 
+void ScriptTextEdit::setError(bool error)
+{
+    p->m_evaluationError = error;
+    p->m_error->setVisible(p->m_syntaxError || p->m_evaluationError);
+}
+
+void ScriptTextEdit::setQueryMode(bool enabled)
+{
+    if(p->m_queryMode != enabled) {
+        p->m_queryMode = enabled;
+        p->validate();
+    }
+}
+
 void ScriptTextEdit::addToolAction(QAction* action)
 {
-    auto* button = new QToolButton(m_toolArea);
+    addToolAction(action, Qt::AlignLeft);
+}
+
+void ScriptTextEdit::addToolAction(QAction* action, Qt::Alignment alignment)
+{
+    auto* button = new QToolButton(p->m_toolArea);
     button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     button->setDefaultAction(action);
     button->setAutoRaise(true);
 
-    int index{0};
-    while(index < m_toolAreaLayout->count() && !m_toolAreaLayout->itemAt(index)->spacerItem()) {
-        ++index;
+    if(alignment & Qt::AlignRight) {
+        // Keep other actions before the error indicator
+        const int index = p->m_errorButton ? p->m_toolAreaLayout->indexOf(p->m_errorButton) : -1;
+        p->m_toolAreaLayout->insertWidget(index, button);
     }
-    m_toolAreaLayout->insertWidget(index, button);
-    m_toolArea->setFixedHeight(m_toolArea->sizeHint().height());
-    setViewportMargins(0, 0, 0, m_toolArea->height());
+    else {
+        int index{0};
+        while(index < p->m_toolAreaLayout->count() && !p->m_toolAreaLayout->itemAt(index)->spacerItem()) {
+            ++index;
+        }
+        p->m_toolAreaLayout->insertWidget(index, button);
+    }
+
+    if(action == p->m_error) {
+        p->m_errorButton = button;
+    }
+
+    p->m_toolArea->setFixedHeight(p->m_toolArea->sizeHint().height());
+    setViewportMargins(0, 0, 0, p->m_toolArea->height());
+
+    button->setVisible(action->isVisible());
+    QObject::connect(action, &QAction::visibleChanged, button,
+                     [action, button]() { button->setVisible(action->isVisible()); });
 }
 
 void ScriptTextEdit::addHint(const QString& hint)
 {
-    auto* button = new QToolButton(m_toolArea);
+    auto* button = new QToolButton(p->m_toolArea);
     button->setText(tr("Script help"));
     button->setToolButtonStyle(Qt::ToolButtonIconOnly);
     button->setAutoRaise(true);
@@ -145,16 +227,16 @@ void ScriptTextEdit::addHint(const QString& hint)
         QToolTip::showText(button->mapToGlobal(QPoint{0, button->height()}), button->toolTip(), button);
     });
 
-    m_toolAreaLayout->addWidget(button);
-    m_toolArea->setFixedHeight(m_toolArea->sizeHint().height());
-    setViewportMargins(0, 0, 0, m_toolArea->height());
+    p->m_toolAreaLayout->addWidget(button);
+    p->m_toolArea->setFixedHeight(p->m_toolArea->sizeHint().height());
+    setViewportMargins(0, 0, 0, p->m_toolArea->height());
 }
 
 QSize ScriptTextEdit::sizeHint() const
 {
     QSize hint = QPlainTextEdit::sizeHint();
     hint.setHeight((3 * fontMetrics().lineSpacing()) + (2 * frameWidth()) + viewportMargins().bottom()
-                   + m_toolArea->height());
+                   + p->m_toolArea->height());
     return hint;
 }
 
@@ -162,7 +244,7 @@ QSize ScriptTextEdit::minimumSizeHint() const
 {
     QSize hint = QPlainTextEdit::minimumSizeHint();
     hint.setHeight((3 * fontMetrics().lineSpacing()) + (2 * frameWidth()) + viewportMargins().bottom()
-                   + m_toolArea->height());
+                   + p->m_toolArea->height());
     return hint;
 }
 
@@ -171,7 +253,7 @@ void ScriptTextEdit::changeEvent(QEvent* event)
     QPlainTextEdit::changeEvent(event);
 
     if(event->type() == QEvent::ReadOnlyChange) {
-        m_openEditor->setDisabled(isReadOnly());
+        p->m_openEditor->setDisabled(isReadOnly());
     }
 }
 
@@ -180,10 +262,10 @@ void ScriptTextEdit::contextMenuEvent(QContextMenuEvent* event)
     QMenu* menu = createStandardContextMenu(event->pos());
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    m_openEditor->setDisabled(isReadOnly());
+    p->m_openEditor->setDisabled(isReadOnly());
 
     menu->addSeparator();
-    menu->addAction(m_openEditor);
+    menu->addAction(p->m_openEditor);
 
     menu->popup(event->globalPos());
 }
@@ -194,8 +276,18 @@ void ScriptTextEdit::resizeEvent(QResizeEvent* event)
 
     const QRect rect          = contentsRect();
     const int scrollbarHeight = horizontalScrollBar()->isVisible() ? horizontalScrollBar()->height() : 0;
-    m_toolArea->setGeometry(rect.x(), rect.bottom() + 1 - m_toolArea->height() - scrollbarHeight, rect.width(),
-                            m_toolArea->height());
+    p->m_toolArea->setGeometry(rect.x(), rect.bottom() + 1 - p->m_toolArea->height() - scrollbarHeight, rect.width(),
+                               p->m_toolArea->height());
+}
+
+void ScriptTextEdit::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == p->m_timer.timerId()) {
+        p->m_timer.stop();
+        p->validate();
+        return;
+    }
+    QPlainTextEdit::timerEvent(event);
 }
 
 ScriptComboBox::ScriptComboBox(QWidget* parent)

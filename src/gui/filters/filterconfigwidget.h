@@ -28,7 +28,6 @@
 class QCheckBox;
 class QComboBox;
 class QLineEdit;
-class QLabel;
 class QTimerEvent;
 class QPushButton;
 class QSpinBox;
@@ -79,7 +78,6 @@ private:
     ScriptTextEdit* m_footerScript;
     ScriptTextEdit* m_groupByScript;
     ScriptTextEdit* m_subheaderScript;
-    QLabel* m_scriptErrors;
     FilterExpansionWidget* m_preview;
     std::shared_ptr<const TrackList> m_previewTracks;
     ScriptSubscription* m_previewSubscription;

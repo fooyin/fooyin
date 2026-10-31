@@ -26,6 +26,7 @@
 #include <gui/guiconstants.h>
 #include <gui/scripting/scripteditor.h>
 #include <gui/widgets/checkboxdelegate.h>
+#include <gui/widgets/multilinedelegate.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
 

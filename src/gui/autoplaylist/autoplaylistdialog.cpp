@@ -149,6 +149,7 @@ AutoPlaylistDialog::AutoPlaylistDialog(ActionManager* actionManager, MusicLibrar
     headerLayout->addWidget(presetGroup, 0);
 
     m_sortQueryEdit->setPlaceholderText(u"SORT BY %artist%"_s);
+    m_queryEdit->setQueryMode(true);
 
     m_modeLabel->setWordWrap(true);
     m_modeLabel->setTextFormat(Qt::PlainText);

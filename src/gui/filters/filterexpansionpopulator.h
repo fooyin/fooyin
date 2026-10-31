@@ -125,6 +125,7 @@ struct ExpansionResult
     std::vector<std::pair<int, ExpansionRow>> rows;
     std::vector<ExpansionSubheader> subheaders;
     QStringList errors;
+    uint8_t errorSections{0};
     bool rebuild{true};
     bool cancelled{false};
     uint8_t sections{ExpansionAll};
@@ -147,8 +148,8 @@ Q_SIGNALS:
 private:
     ExpansionResult evaluate(ExpansionRequest request, std::stop_token stop);
 
-    void addErrors(const QString& section, const ErrorList& errors);
-    RichText formatted(const QString& text, const QString& section);
+    void addErrors(const QString& section, const ErrorList& errors, uint8_t sections = 0);
+    RichText formatted(const QString& text, const QString& section, uint8_t sections = 0);
     [[nodiscard]] ScriptContext groupContext() const;
 
     void prepareScripts();
