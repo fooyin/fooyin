@@ -25,6 +25,7 @@
 #include <gui/guisettings.h>
 #include <utils/datastream.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <gui/widgets/expandedtreeview.h>
 
@@ -276,6 +277,14 @@ RatingStarColours ratingStarColours(const SettingsManager& settings)
         settings.value<Settings::Gui::RatingFourStarColour>().value<QColor>(),
         settings.value<Settings::Gui::RatingFiveStarColour>().value<QColor>(),
     };
+}
+
+QColor defaultPlayingRowColour()
+{
+    QColor colour = QApplication::palette().color(QPalette::Inactive, QPalette::Highlight);
+    colour        = Utils::isDarkMode() ? colour.lighter(150) : colour.darker(150);
+    colour.setAlpha(110);
+    return colour;
 }
 
 QMap<PaletteKey, QColor> coloursFromPalette()

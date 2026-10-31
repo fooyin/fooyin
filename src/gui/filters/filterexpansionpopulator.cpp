@@ -188,6 +188,8 @@ void FilterExpansionPopulator::prepareScripts()
     }
 
     m_result.dependencies = m_dependencies;
+    m_result.dependencies.track.merge(
+        {.sources = {ScriptSources::PlaybackTrack, ScriptSources::PlaybackState}, .unclassified = false});
 
     addErrors(tr("Header"), m_header.errors);
     addErrors(tr("Track"), m_track.errors);
@@ -359,15 +361,23 @@ void FilterExpansionPopulator::evaluateTracks(std::stop_token stop)
             const Track& track = m_request.tracks->at(row);
             setRowContext(row);
 
-            const auto& data = m_request.context.playlistData;
-            const auto text  = m_parser.evaluate(m_track, track, groupContext(), m_request.options);
-            const auto rich  = formatted(text, tr("Track"));
+            const auto& data   = m_request.context.playlistData;
+            const bool playing = data.playingIcon != ScriptPlayingIcon::None;
+            const auto& font   = playing && m_request.playingRowFont ? *m_request.playingRowFont : m_request.font;
+            m_formatter.setBaseFont(font);
+
+            const auto text = m_parser.evaluate(m_track, track, groupContext(), m_request.options);
+            const auto rich = formatted(text, tr("Track"));
 
             ExpansionRow resultRow;
-            resultRow.layout      = prepareRichTextLayout(rich, m_request.font);
+            resultRow.layout      = prepareRichTextLayout(rich, font);
             resultRow.text        = richTextLayoutPlainText(resultRow.layout);
-            resultRow.height      = std::max(QFontMetrics{m_request.font}.height(), resultRow.layout.height) + 5;
+            resultRow.height      = std::max(QFontMetrics{font}.height(), resultRow.layout.height) + 5;
             resultRow.playingIcon = data.playingIcon;
+            if(playing) {
+                resultRow.font       = m_request.playingRowFont;
+                resultRow.background = m_request.playingRowColour;
+            }
 
             m_result.rows.emplace_back(row, std::move(resultRow));
         };

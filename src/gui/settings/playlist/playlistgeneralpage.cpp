@@ -24,12 +24,12 @@
 #include <core/coresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/fontbutton.h>
 #include <gui/widgets/hintlabel.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
 
 #include <QApplication>
 #include <QCheckBox>
@@ -42,16 +42,6 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
-namespace {
-QColor defaultPlayingRowColour()
-{
-    QColor colour = QApplication::palette().color(QPalette::Inactive, QPalette::Highlight);
-    colour        = Utils::isDarkMode() ? colour.lighter(150) : colour.darker(150);
-    colour.setAlpha(110);
-    return colour;
-}
-} // namespace
-
 class PlaylistGeneralPageWidget : public SettingsPageWidget
 {
     Q_OBJECT
@@ -163,7 +153,7 @@ void PlaylistGeneralPageWidget::load()
     m_inlineTagEditing->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistInlineTagEditing>());
     const QVariant playingRowColour = m_settings->value<Settings::Gui::Internal::PlaylistPlayingRowColour>();
     m_playingRowColour->setChecked(!playingRowColour.isNull());
-    m_playingRowColour->setColour(playingRowColour.isNull() ? defaultPlayingRowColour()
+    m_playingRowColour->setColour(playingRowColour.isNull() ? Gui::defaultPlayingRowColour()
                                                             : playingRowColour.value<QColor>());
     const QVariant playingRowFont = m_settings->value<Settings::Gui::Internal::PlaylistPlayingRowFont>();
     m_playingRowFont->setChecked(!playingRowFont.isNull());

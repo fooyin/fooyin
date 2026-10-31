@@ -79,6 +79,7 @@ FYGUI_EXPORT QColor loveHeartColour(const SettingsManager& settings);
 FYGUI_EXPORT QColor unlovedHeartColour(const SettingsManager& settings);
 FYGUI_EXPORT QColor unratedStarColour(const SettingsManager& settings);
 FYGUI_EXPORT RatingStarColours ratingStarColours(const SettingsManager& settings);
+FYGUI_EXPORT QColor defaultPlayingRowColour();
 
 FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromPalette();
 FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromStylePalette();

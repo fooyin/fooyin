@@ -28,9 +28,11 @@
 #include <gui/scripting/scriptformatter.h>
 #include <utils/worker.h>
 
+#include <QColor>
 #include <QJsonObject>
 
 #include <memory>
+#include <optional>
 #include <stop_token>
 #include <unordered_map>
 
@@ -77,6 +79,8 @@ struct ExpansionRow
     RichTextLayout layout;
     ScriptPlayingIcon playingIcon{ScriptPlayingIcon::None};
     int height{0};
+    std::optional<QFont> font{};
+    QColor background{};
 };
 
 struct ExpansionSubheader
@@ -100,6 +104,8 @@ struct ExpansionRequest
     LibraryInfoMap libraries;
     QueueTracks queue;
     QFont font;
+    std::optional<QFont> playingRowFont;
+    QColor playingRowColour;
     bool rebuild{true};
     uint8_t sections{ExpansionAll};
     //! Empty means all rows when ExpansionTracks is requested

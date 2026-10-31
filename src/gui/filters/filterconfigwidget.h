@@ -38,6 +38,7 @@ namespace Fooyin {
 class ScriptTextEdit;
 class BackgroundConfigWidget;
 class ColourButton;
+class FontButton;
 
 namespace Filters {
 class FilterColumnRegistry;
@@ -125,6 +126,8 @@ private:
     BackgroundConfigWidget* m_background;
     BackgroundConfigWidget* m_expansionBackground;
     ColourButton* m_expansionBackgroundColour;
+    FontButton* m_expansionPlayingRowFont;
+    ColourButton* m_expansionPlayingRowColour;
     QCheckBox* m_expandGroups;
     QCheckBox* m_expansionAnimated;
     QCheckBox* m_expansionAlternatingRows;

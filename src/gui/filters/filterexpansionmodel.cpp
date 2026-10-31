@@ -45,6 +45,10 @@ QVariant ExpansionTrackModel::data(const QModelIndex& index, int role) const
             return row.text;
         case Qt::SizeHintRole:
             return rowSize(row);
+        case Qt::FontRole:
+            return row.font ? QVariant::fromValue(*row.font) : QVariant{};
+        case Qt::BackgroundRole:
+            return row.background.isValid() ? QVariant::fromValue(row.background) : QVariant{};
         case LayoutRole:
             return QVariant::fromValue(row.layout);
         case PlayingIconRole:
@@ -263,7 +267,8 @@ bool ExpansionTrackModel::updateRow(ExpansionRow& previous, const ExpansionRow& 
           });
 
     if(previous.text == row.text && previous.playingIcon == row.playingIcon && previous.height == row.height
-       && sameLayout && rowSize(previous) == rowSize(row)) {
+       && previous.font == row.font && previous.background == row.background && sameLayout
+       && rowSize(previous) == rowSize(row)) {
         return false;
     }
 
@@ -273,7 +278,8 @@ bool ExpansionTrackModel::updateRow(ExpansionRow& previous, const ExpansionRow& 
     previous = row;
 
     if(index.isValid()) {
-        QList<int> roles{Qt::DisplayRole, Qt::ToolTipRole, LayoutRole, PlayingIconRole};
+        QList<int> roles{Qt::DisplayRole,    Qt::ToolTipRole, Qt::FontRole,
+                         Qt::BackgroundRole, LayoutRole,      PlayingIconRole};
         if(sizeChanged) {
             roles.push_back(Qt::SizeHintRole);
         }

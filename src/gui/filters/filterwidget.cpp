@@ -103,6 +103,8 @@ constexpr auto FilterExpansionMinimumRowsKey        = u"Filters/ExpansionMinimum
 constexpr auto FilterExpansionStretchColumnsKey     = u"Filters/ExpansionStretchColumns";
 constexpr auto FilterExpansionMinimumColumnWidthKey = u"Filters/ExpansionMinimumColumnWidth";
 constexpr auto FilterExpansionScriptsKey            = u"Filters/ExpansionScripts";
+constexpr auto FilterExpansionPlayingRowFontKey     = u"Filters/ExpansionPlayingRowFont";
+constexpr auto FilterExpansionPlayingRowColourKey   = u"Filters/ExpansionPlayingRowColour";
 
 constexpr auto FilterBackgroundKey                = u"Filters/Background";
 constexpr auto FilterExpansionBackgroundKey       = u"Filters/ExpansionBackground";
@@ -665,6 +667,10 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
         m_settings->fileValue(FilterExpansionMinimumColumnWidthKey, config.expansionMinimumColumnWidth).toInt(), 25,
         300);
     config.expansionScripts.load(QJsonObject::fromVariantMap(m_settings->fileValue(FilterExpansionScriptsKey).toMap()));
+    config.expansionPlayingRowFont
+        = m_settings->fileValue(FilterExpansionPlayingRowFontKey, config.expansionPlayingRowFont).toString();
+    config.expansionPlayingRowColour
+        = m_settings->fileValue(FilterExpansionPlayingRowColourKey, config.expansionPlayingRowColour).toString();
 
     config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(FilterBackgroundKey).toMap()));
     config.expansionBackground.loadLayout(
@@ -735,6 +741,8 @@ void FilterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(FilterExpansionStretchColumnsKey, config.expansionStretchColumns);
     m_settings->fileSet(FilterExpansionMinimumColumnWidthKey, config.expansionMinimumColumnWidth);
     m_settings->fileSet(FilterExpansionScriptsKey, config.expansionScripts.toJson().toVariantMap());
+    m_settings->fileSet(FilterExpansionPlayingRowFontKey, config.expansionPlayingRowFont);
+    m_settings->fileSet(FilterExpansionPlayingRowColourKey, config.expansionPlayingRowColour);
 
     QJsonObject background;
     config.background.saveLayout(background);
@@ -793,6 +801,8 @@ void FilterWidget::clearSavedDefaults() const
     m_settings->fileRemove(FilterExpansionStretchColumnsKey);
     m_settings->fileRemove(FilterExpansionMinimumColumnWidthKey);
     m_settings->fileRemove(FilterExpansionScriptsKey);
+    m_settings->fileRemove(FilterExpansionPlayingRowFontKey);
+    m_settings->fileRemove(FilterExpansionPlayingRowColourKey);
     m_settings->fileRemove(FilterBackgroundKey);
     m_settings->fileRemove(FilterExpansionBackgroundKey);
     m_settings->fileRemove(FilterExpansionBackgroundColourKey);
@@ -814,6 +824,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
     validated.expansionBackground.normalise();
     validated.expansionBackground.fadeDuration = 0;
     validated.expansionBackgroundColour        = normaliseColour(validated.expansionBackgroundColour);
+    validated.expansionPlayingRowColour        = normaliseColour(validated.expansionPlayingRowColour);
 
     if(validated.source != FilterSource::Library && validated.source != FilterSource::CurrentPlaylist) {
         validated.source = FilterSource::Library;
@@ -894,7 +905,9 @@ void FilterWidget::applyConfig(const ConfigData& config)
        || m_config.artworkMargins != validated.artworkMargins || m_config.expandGroups != validated.expandGroups
        || m_config.expansionAnimated != validated.expansionAnimated
        || m_config.expandedArtwork != validated.expandedArtwork
-       || m_config.expansionScripts != validated.expansionScripts;
+       || m_config.expansionScripts != validated.expansionScripts
+       || m_config.expansionPlayingRowFont != validated.expansionPlayingRowFont
+       || m_config.expansionPlayingRowColour != validated.expansionPlayingRowColour;
 
     if(hasConfigChanged) {
         ++m_expansionRequest;
@@ -1184,6 +1197,7 @@ void FilterWidget::setupConnections()
     m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
         const auto resolvedStyle = var.value<ResolvedAppStyle>();
         Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
+        scheduleExpansionUpdate();
     });
 
     const auto refreshRatingStars = [this]() {
@@ -1471,6 +1485,17 @@ ExpansionRequest FilterWidget::expansionRequest(std::shared_ptr<const TrackList>
     request.context.playlistData            = {};
     request.context.playlistData.trackCount = static_cast<int>(request.tracks->size());
     request.context.freeze();
+
+    if(!m_config.expansionPlayingRowFont.isEmpty()) {
+        QFont font;
+        if(font.fromString(m_config.expansionPlayingRowFont)) {
+            request.playingRowFont = font;
+        }
+    }
+    request.playingRowColour = QColor{m_config.expansionPlayingRowColour};
+    if(!request.playingRowColour.isValid()) {
+        request.playingRowColour = Gui::defaultPlayingRowColour();
+    }
 
     if(m_player) {
         request.queue = m_player->playbackQueue().tracks();
@@ -1982,6 +2007,10 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
     config.expansionMinimumColumnWidth
         = std::clamp(layout.value("ExpansionMinimumColumnWidth"_L1).toInt(config.expansionMinimumColumnWidth), 25, 300);
     config.expansionScripts.load(layout.value("ExpansionScripts"_L1).toObject());
+    config.expansionPlayingRowFont
+        = layout.value("ExpansionPlayingRowFont"_L1).toString(config.expansionPlayingRowFont);
+    config.expansionPlayingRowColour
+        = layout.value("ExpansionPlayingRowColour"_L1).toString(config.expansionPlayingRowColour);
     config.expandGroups        = layout.value("ExpandGroups"_L1).toBool(config.expandGroups);
     config.expansionAnimated   = layout.value("ExpansionAnimated"_L1).toBool(config.expansionAnimated);
     config.expandedArtwork     = layout.value("ExpandedArtwork"_L1).toBool(config.expandedArtwork);
@@ -2055,6 +2084,8 @@ void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["ExpansionStretchColumns"_L1]           = config.expansionStretchColumns;
     layout["ExpansionMinimumColumnWidth"_L1]       = config.expansionMinimumColumnWidth;
     layout["ExpansionScripts"_L1]                  = config.expansionScripts.toJson();
+    layout["ExpansionPlayingRowFont"_L1]           = config.expansionPlayingRowFont;
+    layout["ExpansionPlayingRowColour"_L1]         = config.expansionPlayingRowColour;
     QJsonObject background;
     config.background.saveLayout(background);
     layout["Background"_L1] = background;

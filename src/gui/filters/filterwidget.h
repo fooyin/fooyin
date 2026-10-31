@@ -180,6 +180,8 @@ public:
         ExpansionScripts expansionScripts;
         BackgroundConfig expansionBackground;
         QString expansionBackgroundColour;
+        QString expansionPlayingRowFont;
+        QString expansionPlayingRowColour;
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;

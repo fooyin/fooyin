@@ -587,18 +587,10 @@ std::optional<QModelIndexList> restoreIndexes(QAbstractItemModel* model, QByteAr
     return result;
 }
 
-QColor defaultPlayingRowColour()
-{
-    QColor colour = QApplication::palette().color(QPalette::Inactive, QPalette::Highlight);
-    colour        = Utils::isDarkMode() ? colour.lighter(150) : colour.darker(150);
-    colour.setAlpha(110);
-    return colour;
-}
-
 QColor playingRowColour(const SettingsManager& settings)
 {
     const QVariant configured = settings.value<Settings::Gui::Internal::PlaylistPlayingRowColour>();
-    return configured.isNull() ? defaultPlayingRowColour() : configured.value<QColor>();
+    return configured.isNull() ? Gui::defaultPlayingRowColour() : configured.value<QColor>();
 }
 
 QColor disabledRowColor()
