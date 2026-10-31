@@ -301,6 +301,19 @@ TEST_F(ScriptParserTest, StringTest)
     EXPECT_EQ(u"FFFF", m_parser.evaluate(u"$hex(65535,2)"_s));
 }
 
+TEST_F(ScriptParserTest, CapsTest)
+{
+    EXPECT_EQ(u"She's A Lady", m_parser.evaluate(uR"($caps("She's a Lady"))"_s));
+    EXPECT_EQ(u"She’s A Lady", m_parser.evaluate(u"$caps(She’s a Lady)"_s));
+    EXPECT_EQ(u"Tabla Beat Science", m_parser.evaluate(u"$caps(TABLA BEAT SCIENCE)"_s));
+    EXPECT_EQ(u"Tabla Beat Science", m_parser.evaluate(u"$caps(tAbLa bEaT ScIeNcE)"_s));
+    EXPECT_EQ(u"L'amour Fou", m_parser.evaluate(uR"($caps("l'amour FOU"))"_s));
+    EXPECT_EQ(u"Mother-In-Law", m_parser.evaluate(u"$caps(mother-in-law)"_s));
+    EXPECT_EQ(u"ǲungle", m_parser.evaluate(u"$caps(ǳUNGLE)"_s));
+    EXPECT_TRUE(m_parser.evaluate(u"$caps()"_s).isEmpty());
+    EXPECT_TRUE(m_parser.evaluate(uR"($caps(""))"_s).isEmpty());
+}
+
 TEST_F(ScriptParserTest, ApplicationLinkTest)
 {
     EXPECT_EQ(uR"(<a href="fooyin://application/run?application=player">Player</a>)",

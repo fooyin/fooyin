@@ -26,10 +26,15 @@
 #include <QStringDecoder>
 
 #include <algorithm>
+#include <limits>
+#include <memory>
 #include <vector>
 
+#include <unicode/brkiter.h>
+#include <unicode/locid.h>
 #include <unicode/ucnv.h>
 #include <unicode/ucsdet.h>
+#include <unicode/unistr.h>
 
 using namespace Qt::StringLiterals;
 
@@ -102,19 +107,28 @@ QString elideTextWithBreaks(const QString& text, const QFontMetrics& fontMetrics
 
 QString capitalise(const QString& str)
 {
-    QString capitalised{str.toLower()};
-    bool capitaliseNext{true};
-
-    for(auto& character : capitalised) {
-        if(capitaliseNext && character.isLetter()) {
-            character      = character.toUpper();
-            capitaliseNext = false;
-            continue;
-        }
-        capitaliseNext = character.isSpace() || character.isPunct();
+    if(str.isEmpty() || str.size() > std::numeric_limits<int32_t>::max()) {
+        return str;
     }
 
-    return capitalised;
+    thread_local const auto wordIterator = [] {
+        UErrorCode status{U_ZERO_ERROR};
+        std::unique_ptr<icu::BreakIterator> iterator{
+            icu::BreakIterator::createWordInstance(icu::Locale::getRoot(), status)};
+        if(U_FAILURE(status)) {
+            iterator.reset();
+        }
+        return iterator;
+    }();
+
+    if(!wordIterator) {
+        return str;
+    }
+
+    icu::UnicodeString capitalised{reinterpret_cast<const char16_t*>(str.utf16()), static_cast<int32_t>(str.size())};
+    capitalised.toTitle(wordIterator.get(), icu::Locale::getRoot());
+
+    return capitalised.isBogus() ? str : QString::fromUtf16(capitalised.getBuffer(), capitalised.length());
 }
 
 QByteArray detectEncoding(const QByteArray& content, const DetectEncodingOptions& options)
