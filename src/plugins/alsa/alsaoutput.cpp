@@ -344,7 +344,8 @@ OutputDevices AlsaOutput::getAllDevices(bool /*isCurrentOutput*/)
 
 int AlsaOutput::write(const std::span<const std::byte> data, const int frameCount)
 {
-    if(!m_pcmHandle || !recoverState()) {
+    OutputState state;
+    if(!m_pcmHandle || !recoverState(&state)) {
         return 0;
     }
 
@@ -354,44 +355,21 @@ int AlsaOutput::write(const std::span<const std::byte> data, const int frameCoun
     }
 
     const size_t availableFrames = data.size() / static_cast<size_t>(bytesPerFrame);
-    const int framesToWrite      = std::min(frameCount, static_cast<int>(availableFrames));
+    const int framesToWrite      = std::min({frameCount, static_cast<int>(availableFrames), state.freeFrames});
     if(framesToWrite <= 0) {
         return 0;
     }
 
-    int framesRemaining = framesToWrite;
-    int framesWritten   = 0;
-    int eagainRetries   = 0;
-
-    while(framesRemaining > 0) {
-        const auto* ptr             = data.data() + static_cast<size_t>(framesWritten * bytesPerFrame);
-        const snd_pcm_sframes_t err = snd_pcm_writei(m_pcmHandle.get(), ptr, framesRemaining);
-
-        if(err == -EAGAIN) {
-            if(eagainRetries++ > 4) {
-                break;
-            }
-            snd_pcm_wait(m_pcmHandle.get(), 10);
-            continue;
-        }
-
-        if(checkError(static_cast<int>(err), "Write error")) {
-            return framesWritten;
-        }
-
-        if(err <= 0) {
-            break;
-        }
-
-        framesWritten += static_cast<int>(err);
-        framesRemaining -= static_cast<int>(err);
+    const snd_pcm_sframes_t writtenFrames = snd_pcm_writei(m_pcmHandle.get(), data.data(), framesToWrite);
+    if(writtenFrames == -EAGAIN) {
+        return 0;
     }
 
-    if(framesWritten != framesToWrite) {
-        qCDebug(ALSA) << "Partial write:" << framesWritten << "/" << framesToWrite;
+    if(checkError(static_cast<int>(writtenFrames), "Write error")) {
+        return 0;
     }
 
-    return framesWritten;
+    return static_cast<int>(writtenFrames);
 }
 
 void AlsaOutput::setPaused(bool pause)
