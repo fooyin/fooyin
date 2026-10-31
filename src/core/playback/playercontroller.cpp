@@ -559,6 +559,10 @@ void PlayerControllerPrivate::requestTrackChange(const Player::TrackChangeReques
     m_self->clearABRepeat();
     const auto requestWithId
         = m_session.requestTrackChange(m_session.withPlaybackItemId(request, nextPlaybackItemId()));
+    if(m_playState == Player::PlayState::Stopped && !m_session.currentTrack().sameOccurrenceAs(requestWithId.track)) {
+        // The stopped track is only a resume target, so it shouldn't appear while another occurrence is loading
+        m_session.resetCurrentTrackState();
+    }
     Q_EMIT m_self->trackChangeRequested(requestWithId);
 }
 
