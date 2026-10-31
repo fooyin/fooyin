@@ -1589,12 +1589,12 @@ void TreeView::drawRowBackground(QPainter* painter, const QStyleOptionViewItem& 
 
             if(transparentBase && !selected) {
                 WidgetBackground::makeRowPaletteTransparent(opt.palette);
-                if(bg.style() != Qt::NoBrush) {
-                    opt.features.setFlag(QStyleOptionViewItem::Alternate, false);
-                }
             }
 
             m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
+            if(bg.style() != Qt::NoBrush) {
+                opt.features.setFlag(QStyleOptionViewItem::Alternate, false);
+            }
             opt.backgroundBrush  = bg;
             opt.viewItemPosition = QStyleOptionViewItem::OnlyOne;
             WidgetBackground::drawItemBackground(painter, opt);
@@ -3160,8 +3160,7 @@ void FlowView::drawItem(QPainter* painter, QStyleOptionViewItem option, const QM
                                                                                 : QPalette::Inactive);
 
     const auto background = index.data(Qt::BackgroundRole).value<QBrush>();
-    if(WidgetBackground::hasTransparentRows(m_view) && !option.state.testFlag(QStyle::State_Selected)
-       && background.style() == Qt::NoBrush) {
+    if(WidgetBackground::hasTransparentRows(m_view) && !option.state.testFlag(QStyle::State_Selected)) {
         WidgetBackground::makeRowPaletteTransparent(option.palette);
     }
 
@@ -3169,7 +3168,12 @@ void FlowView::drawItem(QPainter* painter, QStyleOptionViewItem option, const QM
     rowOption.state.setFlag(QStyle::State_Selected, false);
     rowOption.state.setFlag(QStyle::State_MouseOver, false);
     m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &rowOption, painter, m_view);
+
+    if(background.style() != Qt::NoBrush) {
+        option.features.setFlag(QStyleOptionViewItem::Alternate, false);
+    }
     delegate(index)->paint(painter, option, index);
+
     if(currentHasFocus) {
         m_view->drawFocus(painter, option, index, rect.top());
     }
