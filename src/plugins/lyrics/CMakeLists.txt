@@ -57,6 +57,8 @@ create_fooyin_plugin_internal(
         sources/lrcliblyrics.h
         sources/lyricsource.cpp
         sources/lyricsource.h
+        sources/lyricsovhlyrics.cpp
+        sources/lyricsovhlyrics.h
         sources/neteaselyrics.cpp
         sources/neteaselyrics.h
         sources/qqlyrics.cpp
