@@ -85,6 +85,7 @@ public:
 
     [[nodiscard]] QColor defaultBackgroundColour() const;
     [[nodiscard]] QSize sizeHint() const override;
+    [[nodiscard]] bool hasHeightForWidth() const override;
     [[nodiscard]] int heightForWidth(int width) const override;
     bool eventFilter(QObject* watched, QEvent* event) override;
 

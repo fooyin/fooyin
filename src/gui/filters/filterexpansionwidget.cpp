@@ -546,6 +546,11 @@ QSize FilterExpansionWidget::sizeHint() const
     return {320, heightForWidth(width())};
 }
 
+bool FilterExpansionWidget::hasHeightForWidth() const
+{
+    return true;
+}
+
 int FilterExpansionWidget::heightForWidth(int width) const
 {
     return layoutMetrics(width).height;
