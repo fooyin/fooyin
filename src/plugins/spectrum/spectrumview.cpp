@@ -26,6 +26,7 @@
 #include <utils/timeconstants.h>
 
 #include <QContextMenuEvent>
+#include <QEvent>
 #include <QFont>
 #include <QMouseEvent>
 #include <QPainter>
@@ -226,14 +227,27 @@ void SpectrumView::refreshStyleColours()
     update();
 }
 
+bool SpectrumView::event(QEvent* event)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+    if(event->type() == QEvent::DevicePixelRatioChange) {
+        updateBarGeometry();
+        invalidateStaticLayer();
+        update();
+    }
+#endif
+    return QWidget::event(event);
+}
+
 void SpectrumView::paintEvent(QPaintEvent* /*event*/)
 {
-    // TODO: Use QEvent::DevicePixelRatioChange when we bump min Qt version to >= 6.6
+#if QT_VERSION < QT_VERSION_CHECK(6, 6, 0)
     const qreal dpr = devicePixelRatioF();
     if(!qFuzzyCompare(m_geometryDpr, dpr)) {
         updateBarGeometry();
         invalidateStaticLayer();
     }
+#endif
 
     QPainter painter{this};
     painter.fillRect(rect(), colours().colour(Colours::Type::Background, palette()));

@@ -59,6 +59,7 @@ Q_SIGNALS:
     void contextMenuRequested(const QPoint& pos);
 
 protected:
+    bool event(QEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
