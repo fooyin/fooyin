@@ -30,6 +30,7 @@
 
 #include <QCoreApplication>
 #include <QPointer>
+#include <QSignalSpy>
 #include <QTemporaryDir>
 #include <QVariant>
 
@@ -78,6 +79,7 @@ struct OutputStats
     std::atomic<int> setDeviceCalls{0};
     std::atomic<int> setPausedCalls{0};
     std::atomic<int> disconnectSignals{0};
+    std::atomic<bool> failInit{false};
     std::atomic<int> freeFrames{256};
     std::atomic<int> queuedFrames{0};
     std::atomic<int> delayMs{0};
@@ -400,7 +402,7 @@ public:
     {
         ++m_stats->initCalls;
         m_format      = format;
-        m_initialised = format.isValid();
+        m_initialised = format.isValid() && !m_stats->failInit.load();
         return m_initialised;
     }
 
@@ -1254,6 +1256,54 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, DisconnectedOutputReinitialis
     harness.engine.play();
 
     ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Playing; }));
+
+    for(const bool pauseBeforeDisconnect : {false, true}) {
+        SCOPED_TRACE(pauseBeforeDisconnect);
+        harness.engine.seek(5000);
+        if(pauseBeforeDisconnect) {
+            harness.engine.pause();
+            ASSERT_TRUE(pumpUntil(
+                [&harness]() { return harness.engine.playbackState() == Engine::PlaybackState::Paused; }, 3000ms));
+        }
+
+        const int initCallsBeforeFailure = harness.outputStats->initCalls.load();
+        const int decoderInitCalls       = harness.decoderStats->initCalls.load();
+        harness.outputStats->failInit    = true;
+        harness.outputStats->emitDisconnect();
+
+        ASSERT_TRUE(pumpUntil([&harness, initCallsBeforeFailure]() {
+            return harness.outputStats->initCalls.load() > initCallsBeforeFailure;
+        }));
+        ASSERT_EQ(harness.engine.playbackState(), Engine::PlaybackState::Paused);
+        ASSERT_NE(harness.engine.trackStatus(), Engine::TrackStatus::Invalid);
+
+        const uint64_t pausedPosition = harness.engine.position();
+        EXPECT_GE(pausedPosition, 5000);
+        EXPECT_FALSE(
+            pumpUntil([&harness, pausedPosition]() { return harness.engine.position() != pausedPosition; }, 100ms));
+
+        for(int retry{0}; retry < 2; ++retry) {
+            const int initCallsBeforeRetry = harness.outputStats->initCalls.load();
+            QSignalSpy stateSpy{&harness.engine, &AudioEngine::stateChanged};
+            harness.engine.play();
+            EXPECT_EQ(harness.outputStats->initCalls.load(), initCallsBeforeRetry + 1);
+            EXPECT_EQ(harness.engine.playbackState(), Engine::PlaybackState::Paused);
+            EXPECT_EQ(harness.engine.position(), pausedPosition);
+            ASSERT_FALSE(stateSpy.empty());
+            EXPECT_EQ(stateSpy.back().front().value<Engine::PlaybackState>(), Engine::PlaybackState::Paused);
+        }
+
+        const int writesBeforeReconnect = harness.outputStats->writeCalls.load();
+        harness.outputStats->failInit   = false;
+        harness.engine.play();
+
+        ASSERT_TRUE(pumpUntil([&harness, writesBeforeReconnect]() {
+            return harness.engine.playbackState() == Engine::PlaybackState::Playing
+                && harness.outputStats->writeCalls.load() > writesBeforeReconnect;
+        }));
+        EXPECT_GE(harness.engine.position(), pausedPosition);
+        EXPECT_EQ(harness.decoderStats->initCalls.load(), decoderInitCalls);
+    }
 }
 
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, SeekDiscontinuityPublishesNearTargetQuickly)

@@ -1129,6 +1129,14 @@ void AudioEngine::play()
         }
     }
 
+    if(!m_pipeline.hasOutput()) {
+        reinitOutputForCurrentFormat();
+        if(!m_pipeline.hasOutput()) {
+            Q_EMIT stateChanged(playbackState());
+            return;
+        }
+    }
+
     const bool hasActiveTransportFade = m_fadeController.hasPendingFade() || m_pipeline.faderIsFading();
     if(!hasActiveTransportFade && m_fadeController.fadeOnNext()) {
         m_fadeController.setFadeOnNext(false);
@@ -2449,7 +2457,16 @@ void AudioEngine::reinitOutputForCurrentFormat()
 
     m_outputController.uninitOutput();
     if(!m_outputController.initOutput(m_format, m_volume)) {
-        updateTrackStatus(Engine::TrackStatus::Invalid);
+        // An unavailable output shouldn't invalidate the decoded track
+        clearPendingAudiblePause();
+        clearTransportTransition();
+        clearInputBufferingState(false);
+        m_pipeline.pause();
+        m_audioClock.setPaused();
+        m_audioClock.stop();
+        if(wasPlaying || wasPaused) {
+            updatePlaybackState(Engine::PlaybackState::Paused);
+        }
         return;
     }
     publishPlaybackOutputInfo();
