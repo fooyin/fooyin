@@ -45,7 +45,9 @@ void VuMeterPlugin::initialise(const CorePluginContext& context)
 
 void VuMeterPlugin::initialise(const GuiPluginContext& context)
 {
-    m_widgetProvider = context.widgetProvider;
+    m_coverRepository = context.coverRepository;
+    m_trackSelection  = context.trackSelection;
+    m_widgetProvider  = context.widgetProvider;
 
     qRegisterMetaType<Colours>("Fooyin::VuMeter::Colours");
 
@@ -58,7 +60,7 @@ void VuMeterPlugin::initialise(const GuiPluginContext& context)
         command->setCategories({tr("View"), tr("Visualisations")});
         actionManager->actionContainer(Constants::Menus::Visualisations)->addAction(command);
         QObject::connect(action, &QAction::triggered, this, [this, type, title, stateKey]() {
-            auto* window = new VuMeterWidget(type, m_playerController, m_settings);
+            auto* window = new VuMeterWidget(type, m_playerController, m_coverRepository, m_trackSelection, m_settings);
             QObject::connect(m_engine, &EngineController::levelReady, window, &VuMeterWidget::renderLevel);
             window->showStandaloneWindow(title, stateKey, true);
         });
@@ -72,7 +74,8 @@ void VuMeterPlugin::initialise(const GuiPluginContext& context)
     m_widgetProvider->registerWidget(
         u"VUMeter"_s,
         [this]() {
-            auto* meter = new VuMeterWidget(VuMeterWidget::Type::Rms, m_playerController, m_settings);
+            auto* meter = new VuMeterWidget(VuMeterWidget::Type::Rms, m_playerController, m_coverRepository,
+                                            m_trackSelection, m_settings);
             QObject::connect(m_engine, &EngineController::levelReady, meter, &VuMeterWidget::renderLevel);
             return meter;
         },
@@ -82,7 +85,8 @@ void VuMeterPlugin::initialise(const GuiPluginContext& context)
     m_widgetProvider->registerWidget(
         u"PeakMeter"_s,
         [this]() {
-            auto* meter = new VuMeterWidget(VuMeterWidget::Type::Peak, m_playerController, m_settings);
+            auto* meter = new VuMeterWidget(VuMeterWidget::Type::Peak, m_playerController, m_coverRepository,
+                                            m_trackSelection, m_settings);
             QObject::connect(m_engine, &EngineController::levelReady, meter, &VuMeterWidget::renderLevel);
             return meter;
         },

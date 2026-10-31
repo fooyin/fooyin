@@ -26,9 +26,11 @@
 #include "waveseekbar.h"
 
 #include <core/player/playercontroller.h>
+#include <gui/coverprovider.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/abrepeatcontrols.h>
+#include <gui/widgets/backgroundimagesource.h>
 #include <gui/widgets/seekcontainer.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/signalthrottler.h>
@@ -68,6 +70,7 @@ constexpr auto MaxScaleKey            = u"WaveBar/MaxScale";
 constexpr auto CentreGapKey           = u"WaveBar/CentreGap";
 constexpr auto ChannelScaleKey        = u"WaveBar/ChannelScale";
 constexpr auto ColoursKey             = u"WaveBar/Colours";
+constexpr auto BackgroundKey          = u"WaveBar/Background";
 
 namespace Fooyin::WaveBar {
 namespace {
@@ -79,12 +82,15 @@ int normaliseSupersampleFactor(int factor)
 
 WaveBarWidget::WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnectionPoolPtr dbPool,
                              ActionManager* actionManager, PlayerController* playerController,
-                             TrackSelectionController* trackSelection, SettingsManager* settings, QWidget* parent)
+                             TrackSelectionController* trackSelection, CoverRepository* coverRepository,
+                             SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_playerController{playerController}
     , m_trackSelection{trackSelection}
     , m_settings{settings}
+    , m_backgroundSource{new BackgroundImageSource(new CoverProvider(coverRepository, this), playerController,
+                                                   trackSelection, this)}
     , m_container{new SeekContainer(m_playerController, this)}
     , m_seekbar{new WaveSeekBar(playerController, settings, this)}
     , m_builder{std::make_unique<WaveformBuilder>(std::move(audioLoader), std::move(dbPool), settings, this)}
@@ -132,6 +138,9 @@ WaveBarWidget::WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnect
         config.showRemainingTime = m_container->showRemainingTime();
         applyConfig(config);
     });
+
+    QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_seekbar,
+                     &WaveSeekBar::setBackgroundPixmap);
 
     auto* throttler = new SignalThrottler(this);
     throttler->setTimeout(150ms);
@@ -222,6 +231,7 @@ WaveBarWidget::ConfigData WaveBarWidget::defaultConfig() const
     config.centreGap           = m_settings->fileValue(CentreGapKey, config.centreGap).toInt();
     config.channelScale        = m_settings->fileValue(ChannelScaleKey, config.channelScale).toDouble();
     config.colourOptions       = m_settings->fileValue(ColoursKey, config.colourOptions);
+    config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(BackgroundKey).toMap()));
 
     return config;
 }
@@ -234,6 +244,7 @@ const WaveBarWidget::ConfigData& WaveBarWidget::currentConfig() const
 void WaveBarWidget::saveDefaults(const ConfigData& config) const
 {
     auto validated{config};
+    validated.background.normalise();
 
     validated.cursorWidth = std::clamp(validated.cursorWidth, 1, 20);
     validated.trackPreference
@@ -275,6 +286,10 @@ void WaveBarWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(CentreGapKey, validated.centreGap);
     m_settings->fileSet(ChannelScaleKey, validated.channelScale);
     m_settings->fileSet(ColoursKey, validated.colourOptions);
+
+    QJsonObject background;
+    validated.background.saveLayout(background);
+    m_settings->fileSet(BackgroundKey, background.toVariantMap());
 }
 
 void WaveBarWidget::clearSavedDefaults() const
@@ -299,11 +314,13 @@ void WaveBarWidget::clearSavedDefaults() const
     m_settings->fileRemove(ChannelScaleKey);
     m_settings->fileRemove(ColoursKey);
     m_settings->reset<Settings::WaveBar::NumSamples>();
+    m_settings->fileRemove(BackgroundKey);
 }
 
 void WaveBarWidget::applyConfig(const ConfigData& config)
 {
     auto validated{config};
+    validated.background.normalise();
 
     validated.cursorWidth = std::clamp(validated.cursorWidth, 1, 20);
     validated.trackPreference
@@ -326,7 +343,9 @@ void WaveBarWidget::applyConfig(const ConfigData& config)
         validated.colourOptions = QVariant{};
     }
 
-    m_config = validated;
+    m_config = std::move(validated);
+    m_seekbar->setBackgroundConfig(m_config.background);
+    m_backgroundSource->setConfig(m_config.background);
 
     m_container->setShowRemainingTime(m_config.showRemainingTime);
 
@@ -630,6 +649,7 @@ WaveBarWidget::ConfigData WaveBarWidget::configFromLayout(const QJsonObject& lay
     config.maxScale            = layout.value("MaxScale"_L1).toDouble(config.maxScale);
     config.centreGap           = layout.value("CentreGap"_L1).toInt(config.centreGap);
     config.channelScale        = layout.value("ChannelScale"_L1).toDouble(config.channelScale);
+    config.background.loadLayout(layout.value("Background"_L1).toObject());
 
     if(layout.contains("UseCustomColours"_L1)) {
         if(layout.value("UseCustomColours"_L1).toBool()) {
@@ -696,6 +716,10 @@ void WaveBarWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& la
     layout["MaxScale"_L1]          = config.maxScale;
     layout["CentreGap"_L1]         = config.centreGap;
     layout["ChannelScale"_L1]      = config.channelScale;
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    layout["Background"_L1] = background;
 
     const bool customColours      = config.colourOptions.isValid() && config.colourOptions.canConvert<Colours>()
                                  && !config.colourOptions.value<Colours>().isEmpty();

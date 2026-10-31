@@ -23,6 +23,7 @@
 #include <core/player/playerdefs.h>
 #include <gui/frametimer.h>
 #include <gui/fywidget.h>
+#include <gui/widgets/backgroundconfig.h>
 
 #include <QElapsedTimer>
 #include <QVariant>
@@ -35,9 +36,13 @@ class QPalette;
 class QResizeEvent;
 
 namespace Fooyin {
+class BackgroundImageSource;
+class CoverRepository;
 class EngineController;
 class PlayerController;
 class SettingsManager;
+class TrackSelectionController;
+class WidgetBackground;
 
 namespace Oscilloscope {
 class Colours;
@@ -71,10 +76,12 @@ public:
         DownmixMode downmixMode{DownmixMode::Stereo};
         bool showZeroLine{false};
         QVariant colours;
+        BackgroundConfig background;
     };
 
-    explicit OscilloscopeWidget(EngineController* engine, PlayerController* playerController, SettingsManager* settings,
-                                QWidget* parent = nullptr);
+    explicit OscilloscopeWidget(EngineController* engine, PlayerController* playerController,
+                                CoverRepository* coverRepository, TrackSelectionController* selectionController,
+                                SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -126,6 +133,8 @@ private:
     void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
 
     SettingsManager* m_settings;
+    BackgroundImageSource* m_backgroundSource;
+    WidgetBackground* m_background;
     VisualisationSessionPtr m_session;
     ConfigData m_config;
     Qt::Orientation m_orientation;

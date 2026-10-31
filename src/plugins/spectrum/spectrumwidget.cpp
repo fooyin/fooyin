@@ -23,7 +23,9 @@
 #include "spectrumconfigwidget.h"
 #include "spectrumview.h"
 
+#include <gui/coverprovider.h>
 #include <gui/guisettings.h>
+#include <gui/widgets/backgroundimagesource.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
@@ -79,6 +81,7 @@ constexpr auto FillSpectrumKey        = u"Spectrum/FillSpectrum";
 constexpr auto InterpolateKey         = u"Spectrum/Interpolate";
 constexpr auto AxisFontKey            = u"Spectrum/AxisFont";
 constexpr auto ColoursKey             = u"Spectrum/Colours";
+constexpr auto BackgroundKey          = u"Spectrum/Background";
 
 namespace Fooyin::Spectrum {
 namespace {
@@ -97,9 +100,13 @@ int normaliseFftSize(int fftSize)
 }
 } // namespace
 
-SpectrumWidget::SpectrumWidget(EngineController* engine, SettingsManager* settings, QWidget* parent)
+SpectrumWidget::SpectrumWidget(EngineController* engine, PlayerController* playerController,
+                               CoverRepository* coverRepository, TrackSelectionController* selectionController,
+                               SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_settings{settings}
+    , m_backgroundSource{new BackgroundImageSource(new CoverProvider(coverRepository, this), playerController,
+                                                   selectionController, this)}
     , m_view{new SpectrumView(engine, this)}
 {
     auto* layout = new QVBoxLayout(this);
@@ -107,6 +114,8 @@ SpectrumWidget::SpectrumWidget(EngineController* engine, SettingsManager* settin
     layout->addWidget(m_view);
 
     QObject::connect(m_view, &SpectrumView::contextMenuRequested, this, &SpectrumWidget::showContextMenu);
+    QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_view,
+                     &SpectrumView::setBackgroundPixmap);
 
     m_config = defaultConfig();
     applyConfig(m_config);
@@ -406,6 +415,7 @@ SpectrumWidget::ConfigData SpectrumWidget::defaultConfig() const
     config.interpolate        = m_settings->fileValue(InterpolateKey, config.interpolate).toBool();
     config.axisFont           = m_settings->fileValue(AxisFontKey, config.axisFont).toString();
     config.colours            = m_settings->fileValue(ColoursKey, config.colours);
+    config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(BackgroundKey).toMap()));
 
     return config;
 }
@@ -418,6 +428,7 @@ const SpectrumWidget::ConfigData& SpectrumWidget::currentConfig() const
 void SpectrumWidget::saveDefaults(const ConfigData& config) const
 {
     auto validated{config};
+    validated.background.normalise();
     validated.bandCount      = std::clamp(validated.bandCount, MinBandCount, MaxBandCount);
     validated.barSpacing     = std::clamp(validated.barSpacing, MinBarSpacing, MaxBarSpacing);
     validated.barSections    = std::clamp(validated.barSections, MinBarSections, MaxBarSections);
@@ -492,6 +503,10 @@ void SpectrumWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(InterpolateKey, validated.interpolate);
     m_settings->fileSet(AxisFontKey, validated.axisFont);
     m_settings->fileSet(ColoursKey, validated.colours);
+
+    QJsonObject background;
+    validated.background.saveLayout(background);
+    m_settings->fileSet(BackgroundKey, background.toVariantMap());
 }
 
 void SpectrumWidget::clearSavedDefaults() const
@@ -538,11 +553,13 @@ void SpectrumWidget::clearSavedDefaults() const
     m_settings->fileRemove(InterpolateKey);
     m_settings->fileRemove(AxisFontKey);
     m_settings->fileRemove(ColoursKey);
+    m_settings->fileRemove(BackgroundKey);
 }
 
 void SpectrumWidget::applyConfig(const ConfigData& config)
 {
     auto validated{config};
+    validated.background.normalise();
     validated.bandCount      = std::clamp(validated.bandCount, MinBandCount, MaxBandCount);
     validated.barSpacing     = std::clamp(validated.barSpacing, MinBarSpacing, MaxBarSpacing);
     validated.barSections    = std::clamp(validated.barSections, MinBarSections, MaxBarSections);
@@ -576,7 +593,9 @@ void SpectrumWidget::applyConfig(const ConfigData& config)
         validated.colours = QVariant{};
     }
 
-    m_config = validated;
+    m_config = std::move(validated);
+    m_view->setBackgroundConfig(m_config.background);
+    m_backgroundSource->setConfig(m_config.background);
     m_view->setConfig(m_config);
 
     Q_EMIT configChanged();
@@ -653,6 +672,7 @@ SpectrumWidget::ConfigData SpectrumWidget::configFromLayout(const QJsonObject& l
     config.fillSpectrum       = layout.value("FillSpectrum"_L1).toBool(config.fillSpectrum);
     config.interpolate        = layout.value("Interpolate"_L1).toBool(config.interpolate);
     config.axisFont           = layout.value("AxisFont"_L1).toString(config.axisFont);
+    config.background.loadLayout(layout.value("Background"_L1).toObject());
 
     if(layout.contains("UseCustomColours"_L1)) {
         if(layout.value("UseCustomColours"_L1).toBool()) {
@@ -754,6 +774,10 @@ void SpectrumWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& l
     layout["FillSpectrum"_L1]        = config.fillSpectrum;
     layout["Interpolate"_L1]         = config.interpolate;
     layout["AxisFont"_L1]            = config.axisFont;
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    layout["Background"_L1] = background;
 
     const bool customColours      = config.colours.isValid() && config.colours.canConvert<Colours>()
                                  && !config.colours.value<Colours>().isEmpty();

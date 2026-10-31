@@ -33,6 +33,8 @@
 #include <optional>
 
 namespace Fooyin {
+class WidgetBackground;
+struct BackgroundConfig;
 class ABRepeatControls;
 class PlayerController;
 class SettingsManager;
@@ -44,6 +46,9 @@ class WaveSeekBar : public QWidget
 
 public:
     WaveSeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
+
+    void setBackgroundConfig(const BackgroundConfig& config);
+    void setBackgroundPixmap(const QPixmap& pixmap);
 
     [[nodiscard]] ABRepeatControls* repeatControls() const;
 
@@ -113,6 +118,7 @@ private:
 
     void invalidate();
 
+    WidgetBackground* m_background;
     ABRepeatControls* m_repeatControls;
     Player::PlayState m_playState;
     bool m_seekable;

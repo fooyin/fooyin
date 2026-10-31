@@ -20,6 +20,7 @@
 #include "waveseekbar.h"
 
 #include <gui/widgets/abrepeatcontrols.h>
+#include <gui/widgets/widgetbackground.h>
 #include <utils/stringutils.h>
 
 #include <QApplication>
@@ -68,6 +69,7 @@ void setupPainter(QPainter& painter, bool isInProgress, bool isPlayed, int barWi
 namespace Fooyin::WaveBar {
 WaveSeekBar::WaveSeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
+    , m_background{new WidgetBackground(this)}
     , m_repeatControls{new ABRepeatControls(playerController, settings, this)}
     , m_playState{Player::PlayState::Stopped}
     , m_seekable{false}
@@ -88,6 +90,16 @@ WaveSeekBar::WaveSeekBar(PlayerController* playerController, SettingsManager* se
     , m_waveformCacheDirty{true}
 {
     setFocusPolicy(Qt::TabFocus);
+}
+
+void WaveSeekBar::setBackgroundConfig(const BackgroundConfig& config)
+{
+    m_background->setConfig(config);
+}
+
+void WaveSeekBar::setBackgroundPixmap(const QPixmap& pixmap)
+{
+    m_background->setPixmap(pixmap);
 }
 
 ABRepeatControls* WaveSeekBar::repeatControls() const
@@ -266,6 +278,25 @@ bool WaveSeekBar::event(QEvent* event)
 void WaveSeekBar::paintEvent(QPaintEvent* event)
 {
     QPainter painter{this};
+
+    if(!m_data.empty()) {
+        painter.fillRect(event->rect(), m_colours.colour(Colours::Type::BgUnplayed, palette()));
+        const double posX   = positionFromValue(static_cast<double>(m_position), width());
+        const QColor played = m_colours.colour(Colours::Type::BgPlayed, palette());
+        const double radius = std::max(2.0, static_cast<double>(m_barWidth) * 2.0);
+
+        QColor transparentPlayed{played};
+        transparentPlayed.setAlpha(0);
+
+        QLinearGradient gradient{QPointF{posX - radius, 0.0}, QPointF{posX + radius, 0.0}};
+        gradient.setColorAt(0.0, played);
+        gradient.setColorAt(1.0, transparentPlayed);
+
+        painter.fillRect(event->rect(), gradient);
+    }
+
+    m_background->draw(painter);
+
     if(m_data.empty() || m_supersampleFactor <= 1) {
         paintWaveform(painter, event->rect(), width());
     }
@@ -521,10 +552,13 @@ void WaveSeekBar::drawCachedWaveform(QPainter& painter, const QRect& dirtyRect)
     const QRectF targetRect{0.0, 0.0, static_cast<double>(width()), static_cast<double>(height())};
     const double positionX = positionFromValue(static_cast<double>(m_position));
 
-    painter.drawImage(targetRect, m_unplayedWaveformCache);
-
     const double radius    = std::max(2.0, static_cast<double>(m_barWidth) * 2.0);
     const double playedEnd = std::max(0.0, positionX - radius);
+
+    painter.save();
+    painter.setClipRect(QRectF{playedEnd, 0.0, width() - playedEnd, static_cast<double>(height())}, Qt::IntersectClip);
+    painter.drawImage(targetRect, m_unplayedWaveformCache);
+    painter.restore();
 
     if(playedEnd > 0.0) {
         painter.save();
@@ -650,26 +684,6 @@ void WaveSeekBar::paintWaveform(QPainter& painter, const QRect& rect, double ren
     const double lastSample  = static_cast<double>(rect.right() + 1) / static_cast<double>(std::max(1, m_sampleWidth));
     const int first          = std::max(0, static_cast<int>(std::floor(firstSample)));
     const int last           = std::max(first, static_cast<int>(std::ceil(lastSample)));
-    const double firstX      = first * m_sampleWidth;
-
-    double posX{0.0};
-    switch(colourMode) {
-        case PlaybackColourMode::Unplayed:
-            posX = 0.0;
-            break;
-        case PlaybackColourMode::Played:
-            posX = renderWidth;
-            break;
-        case PlaybackColourMode::Position:
-            posX = positionFromValue(static_cast<double>(m_position), renderWidth);
-            break;
-    }
-
-    painter.fillRect(waveformRect, m_colours.colour(Colours::Type::BgUnplayed, palette()));
-    const double playedWidth = std::max(0.0, posX - firstX);
-    painter.fillRect(QRectF{firstX, 0.0, playedWidth, static_cast<double>(height())},
-                     m_colours.colour(Colours::Type::BgPlayed, palette()));
-
     const int channelHeight     = height() / channels;
     const double waveformHeight = (channelHeight - m_centreGap) * m_channelScale;
 

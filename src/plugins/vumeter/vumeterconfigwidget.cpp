@@ -22,6 +22,7 @@
 #include "vumetercolours.h"
 
 #include <gui/framerate.h>
+#include <gui/widgets/backgroundconfigwidget.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/gradienteditor.h>
 
@@ -67,6 +68,7 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
     , m_legendColour{new ColourButton(tr("Legend colour") + ":"_L1, true, this)}
     , m_gridlinesColour{new ColourButton(tr("Gridlines") + ":"_L1, true, this)}
     , m_barGradient{new GradientEditor(this)}
+    , m_background{new BackgroundConfigWidget(this)}
 {
     m_peakHold->setRange(0, 5000);
     m_peakHold->setSingleStep(100);
@@ -184,6 +186,7 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
     auto* tabs = new QTabWidget(this);
     tabs->addTab(generalPage, tr("General"));
     tabs->addTab(coloursPage, tr("Colours"));
+    tabs->addTab(m_background, tr("Background"));
 
     auto* layout = contentLayout();
     layout->addWidget(tabs, 0, 0);
@@ -216,6 +219,7 @@ VuMeterWidget::ConfigData VuMeterConfigDialog::config() const
         .barSections           = m_barSections->value(),
         .sectionSpacing        = m_sectionSpacing->value(),
         .meterColours          = QVariant{},
+        .background            = m_background->config(),
     };
 
     Colours colours;
@@ -243,6 +247,7 @@ VuMeterWidget::ConfigData VuMeterConfigDialog::config() const
 
 void VuMeterConfigDialog::setConfig(const VuMeterWidget::ConfigData& config)
 {
+    m_background->setConfig(config.background);
     m_peakHold->setValue(config.peakHoldTimeMs);
     m_falloff->setValue(config.falloffTime);
     m_peakFalloff->setValue(config.peakFalloffTime);
@@ -295,6 +300,6 @@ void VuMeterConfigDialog::mergeExternalConfig(const VuMeterWidget::ConfigData& p
                         &VuMeterWidget::ConfigData::updateFps, &VuMeterWidget::ConfigData::channelSpacing,
                         &VuMeterWidget::ConfigData::barSize, &VuMeterWidget::ConfigData::barSpacing,
                         &VuMeterWidget::ConfigData::barSections, &VuMeterWidget::ConfigData::sectionSpacing,
-                        &VuMeterWidget::ConfigData::meterColours);
+                        &VuMeterWidget::ConfigData::meterColours, &VuMeterWidget::ConfigData::background);
 }
 } // namespace Fooyin::VuMeter

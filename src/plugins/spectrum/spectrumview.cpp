@@ -22,6 +22,7 @@
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <gui/widgets/gradienteditor.h>
+#include <gui/widgets/widgetbackground.h>
 #include <utils/timeconstants.h>
 
 #include <QContextMenuEvent>
@@ -151,6 +152,7 @@ void drawBarOutline(QPainter& painter, const QRectF& barRect, int barHeight, con
 
 SpectrumView::SpectrumView(EngineController* engine, QWidget* parent)
     : QWidget(parent)
+    , m_background{new WidgetBackground(this)}
     , m_session{engine->visualisationService()->createSession()}
     , m_geometryDpr{1.0}
     , m_paused{false}
@@ -172,6 +174,16 @@ SpectrumView::SpectrumView(EngineController* engine, QWidget* parent)
 
     engineStateChanged(engine->engineState());
     QObject::connect(engine, &EngineController::engineStateChanged, this, &SpectrumView::engineStateChanged);
+}
+
+void SpectrumView::setBackgroundConfig(const BackgroundConfig& config)
+{
+    m_background->setConfig(config);
+}
+
+void SpectrumView::setBackgroundPixmap(const QPixmap& pixmap)
+{
+    m_background->setPixmap(pixmap);
 }
 
 void SpectrumView::setConfig(const SpectrumWidget::ConfigData& config)
@@ -224,6 +236,8 @@ void SpectrumView::paintEvent(QPaintEvent* /*event*/)
     }
 
     QPainter painter{this};
+    painter.fillRect(rect(), colours().colour(Colours::Type::Background, palette()));
+    m_background->draw(painter);
     painter.setRenderHint(QPainter::Antialiasing, false);
     paint(painter, rect(), palette());
 }

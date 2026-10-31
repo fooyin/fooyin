@@ -23,9 +23,12 @@
 
 #include <core/player/playercontroller.h>
 #include <gui/configdialog.h>
+#include <gui/coverprovider.h>
 #include <gui/frametimer.h>
 #include <gui/guisettings.h>
+#include <gui/widgets/backgroundimagesource.h>
 #include <gui/widgets/gradienteditor.h>
+#include <gui/widgets/widgetbackground.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/timeconstants.h>
 
@@ -71,6 +74,7 @@ constexpr auto BarSpacingKey            = u"BarSpacing";
 constexpr auto BarSectionsKey           = u"BarSections";
 constexpr auto SectionSpacingKey        = u"SectionSpacing";
 constexpr auto MeterColoursKey          = u"Colours";
+constexpr auto BackgroundKey            = u"Background";
 
 namespace {
 float dbScale(float db)
@@ -507,7 +511,7 @@ void VuMeterWidgetPrivate::ensureStaticLayer()
                             static_cast<int>(std::ceil(static_cast<qreal>(targetSize.height()) * targetDpr))};
 
     m_staticLayer.setDevicePixelRatio(targetDpr);
-    m_staticLayer.fill(m_colours.colour(Colours::Type::Background, m_self->palette()));
+    m_staticLayer.fill(Qt::transparent);
 
     QPainter staticPainter{&m_staticLayer};
     drawLegend(staticPainter);
@@ -813,14 +817,21 @@ void VuMeterWidgetPrivate::playStateChanged(Player::PlayState state)
     }
 }
 
-VuMeterWidget::VuMeterWidget(Type type, PlayerController* playerController, SettingsManager* settings, QWidget* parent)
+VuMeterWidget::VuMeterWidget(Type type, PlayerController* playerController, CoverRepository* coverRepository,
+                             TrackSelectionController* selectionController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_settings{settings}
+    , m_backgroundSource{new BackgroundImageSource(new CoverProvider(coverRepository, this), playerController,
+                                                   selectionController, this)}
+    , m_background{new WidgetBackground(this)}
     , p{std::make_unique<VuMeterWidgetPrivate>(this, type, playerController)}
 {
     setObjectName(VuMeterWidget::name());
     m_config = defaultConfig();
     applyConfig(m_config);
+
+    QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_background,
+                     &WidgetBackground::setPixmap);
 
     auto updateThemeColours = [this]() {
         if(m_config.meterColours.isValid() && m_config.meterColours.canConvert<Colours>()
@@ -1090,6 +1101,8 @@ VuMeterWidget::ConfigData VuMeterWidget::defaultConfig() const
     config.barSections    = m_settings->fileValue(settingsKey(BarSectionsKey), config.barSections).toInt();
     config.sectionSpacing = m_settings->fileValue(settingsKey(SectionSpacingKey), config.sectionSpacing).toInt();
     config.meterColours   = m_settings->fileValue(settingsKey(MeterColoursKey), config.meterColours);
+    config.background.loadLayout(
+        QJsonObject::fromVariantMap(m_settings->fileValue(settingsKey(BackgroundKey)).toMap()));
 
     return config;
 }
@@ -1102,6 +1115,7 @@ const VuMeterWidget::ConfigData& VuMeterWidget::currentConfig() const
 void VuMeterWidget::saveDefaults(const ConfigData& config) const
 {
     auto validated{config};
+    validated.background.normalise();
 
     validated.peakHoldTimeMs  = std::clamp(validated.peakHoldTimeMs, 0, 5000);
     validated.falloffTime     = std::clamp(validated.falloffTime, 0, 500);
@@ -1135,6 +1149,10 @@ void VuMeterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(settingsKey(BarSectionsKey), validated.barSections);
     m_settings->fileSet(settingsKey(SectionSpacingKey), validated.sectionSpacing);
     m_settings->fileSet(settingsKey(MeterColoursKey), validated.meterColours);
+
+    QJsonObject background;
+    validated.background.saveLayout(background);
+    m_settings->fileSet(settingsKey(BackgroundKey), background.toVariantMap());
 }
 
 void VuMeterWidget::clearSavedDefaults() const
@@ -1157,11 +1175,13 @@ void VuMeterWidget::clearSavedDefaults() const
     m_settings->fileRemove(settingsKey(BarSectionsKey));
     m_settings->fileRemove(settingsKey(SectionSpacingKey));
     m_settings->fileRemove(settingsKey(MeterColoursKey));
+    m_settings->fileRemove(settingsKey(BackgroundKey));
 }
 
 void VuMeterWidget::applyConfig(const ConfigData& config)
 {
     auto validated{config};
+    validated.background.normalise();
 
     validated.peakHoldTimeMs  = std::clamp(validated.peakHoldTimeMs, 0, 5000);
     validated.falloffTime     = std::clamp(validated.falloffTime, 0, 500);
@@ -1178,7 +1198,9 @@ void VuMeterWidget::applyConfig(const ConfigData& config)
         validated.meterColours = QVariant{};
     }
 
-    m_config = validated;
+    m_config = std::move(validated);
+    m_background->setConfig(m_config.background);
+    m_backgroundSource->setConfig(m_config.background);
 
     p->m_peakHoldTimeMs = m_config.peakHoldTimeMs;
     p->m_falloffPerMs   = static_cast<float>(m_config.falloffTime) / DbRange / static_cast<float>(Time::MsPerSecond);
@@ -1228,6 +1250,8 @@ void VuMeterWidget::timerEvent(QTimerEvent* event)
 void VuMeterWidget::paintEvent(QPaintEvent* event)
 {
     QPainter painter{this};
+    painter.fillRect(rect(), p->m_colours.colour(Colours::Type::Background, palette()));
+    m_background->draw(painter);
     p->ensureStaticLayer();
 
     const QRect dirty = event->rect();
@@ -1236,7 +1260,6 @@ void VuMeterWidget::paintEvent(QPaintEvent* event)
         painter.drawPixmap(QRectF{dirty}, p->m_staticLayer, p->staticLayerSourceRect(dirty));
     }
     else {
-        painter.fillRect(0, 0, width(), height(), p->m_colours.colour(Colours::Type::Background, palette()));
         p->drawLegend(painter);
     }
 
@@ -1286,7 +1309,7 @@ QString VuMeterWidget::settingsKey(QStringView key) const
 
 VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& layout) const
 {
-    ConfigData config = defaultConfig();
+    ConfigData config{defaultConfig()};
 
     if(layout.contains("PeakHoldTimeMs"_L1)) {
         config.peakHoldTimeMs = layout.value("PeakHoldTimeMs"_L1).toInt();
@@ -1322,6 +1345,7 @@ VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& lay
     config.barSpacing     = layout.value("BarSpacing"_L1).toInt(config.barSpacing);
     config.barSections    = layout.value("BarSections"_L1).toInt(config.barSections);
     config.sectionSpacing = layout.value("SectionSpacing"_L1).toInt(config.sectionSpacing);
+    config.background.loadLayout(layout.value("Background"_L1).toObject());
 
     if(layout.contains("UseCustomColours"_L1)) {
         if(layout.value("UseCustomColours"_L1).toBool()) {
@@ -1397,6 +1421,10 @@ void VuMeterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& la
     layout["BarSpacing"_L1]     = config.barSpacing;
     layout["BarSections"_L1]    = config.barSections;
     layout["SectionSpacing"_L1] = config.sectionSpacing;
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    layout["Background"_L1] = background;
 
     const bool customColours      = config.meterColours.isValid() && config.meterColours.canConvert<Colours>()
                                  && !config.meterColours.value<Colours>().isEmpty();

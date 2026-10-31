@@ -22,6 +22,7 @@
 #include "oscilloscopecolours.h"
 
 #include <gui/framerate.h>
+#include <gui/widgets/backgroundconfigwidget.h>
 #include <gui/widgets/colourbutton.h>
 
 #include <QCheckBox>
@@ -31,6 +32,7 @@
 #include <QIntValidator>
 #include <QLabel>
 #include <QLineEdit>
+#include <QTabWidget>
 
 using namespace Qt::StringLiterals;
 
@@ -46,6 +48,7 @@ OscilloscopeConfigDialog::OscilloscopeConfigDialog(OscilloscopeWidget* oscillosc
     , m_backgroundColour{new ColourButton(tr("Background colour") + ":"_L1, true, this)}
     , m_waveformColour{new ColourButton(tr("Waveform colour") + ":"_L1, true, this)}
     , m_zeroLineColour{new ColourButton(tr("Zero line colour") + ":"_L1, true, this)}
+    , m_background{new BackgroundConfigWidget(this)}
 {
     auto* generalGroup  = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(generalGroup);
@@ -103,10 +106,17 @@ OscilloscopeConfigDialog::OscilloscopeConfigDialog(OscilloscopeWidget* oscillosc
     coloursLayout->addWidget(m_zeroLineColour, row++, 0, 1, 2);
     coloursLayout->setColumnStretch(1, 1);
 
-    auto* layout{contentLayout()};
-    layout->addWidget(generalGroup, 0, 0);
-    layout->addWidget(m_colourGroup, 0, 1);
-    layout->setRowStretch(layout->rowCount(), 1);
+    auto* generalPage       = new QWidget(this);
+    auto* generalPageLayout = new QGridLayout(generalPage);
+
+    generalPageLayout->addWidget(generalGroup, 0, 0);
+    generalPageLayout->addWidget(m_colourGroup, 0, 1);
+    generalPageLayout->setRowStretch(1, 1);
+
+    auto* tabs = new QTabWidget(this);
+    tabs->addTab(generalPage, tr("General"));
+    tabs->addTab(m_background, tr("Background"));
+    contentLayout()->addWidget(tabs, 0, 0);
 
     QObject::connect(oscilloscope, &OscilloscopeWidget::configChanged, this,
                      &OscilloscopeConfigDialog::syncCurrentConfig);
@@ -126,6 +136,7 @@ OscilloscopeWidget::ConfigData OscilloscopeConfigDialog::config() const
         .downmixMode     = static_cast<OscilloscopeWidget::DownmixMode>(m_downmixMode->currentData().toInt()),
         .showZeroLine    = m_showZeroLine->isChecked(),
         .colours         = QVariant{},
+        .background      = m_background->config(),
     };
 
     Colours colours;
@@ -147,6 +158,7 @@ OscilloscopeWidget::ConfigData OscilloscopeConfigDialog::config() const
 
 void OscilloscopeConfigDialog::setConfig(const OscilloscopeWidget::ConfigData& config)
 {
+    m_background->setConfig(config.background);
     const int durationIndex = m_curveDurationMs->findData(config.curveDurationMs);
     if(durationIndex >= 0) {
         m_curveDurationMs->setCurrentIndex(durationIndex);
@@ -195,7 +207,7 @@ void OscilloscopeConfigDialog::mergeExternalConfig(const OscilloscopeWidget::Con
     mergeExternalFields(previous, current, &OscilloscopeWidget::ConfigData::curveDurationMs,
                         &OscilloscopeWidget::ConfigData::zoomPercent, &OscilloscopeWidget::ConfigData::updateFps,
                         &OscilloscopeWidget::ConfigData::downmixMode, &OscilloscopeWidget::ConfigData::showZeroLine,
-                        &OscilloscopeWidget::ConfigData::colours);
+                        &OscilloscopeWidget::ConfigData::colours, &OscilloscopeWidget::ConfigData::background);
 }
 } // namespace Fooyin::Oscilloscope
 

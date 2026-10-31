@@ -43,6 +43,8 @@ private:
     PlayerController* m_playerController;
     EngineController* m_engine;
     SettingsManager* m_settings;
+    CoverRepository* m_coverRepository;
+    TrackSelectionController* m_trackSelection;
     WidgetProvider* m_widgetProvider;
 };
 } // namespace Fooyin::VuMeter

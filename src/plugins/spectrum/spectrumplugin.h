@@ -39,7 +39,10 @@ public:
 
 private:
     EngineController* m_engine;
+    PlayerController* m_playerController;
     SettingsManager* m_settings;
+    CoverRepository* m_coverRepository;
+    TrackSelectionController* m_trackSelection;
     WidgetProvider* m_widgetProvider;
 };
 } // namespace Fooyin::Spectrum

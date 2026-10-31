@@ -25,6 +25,7 @@
 
 #include <gui/framerate.h>
 #include <gui/guiutils.h>
+#include <gui/widgets/backgroundconfigwidget.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/fontbutton.h>
 #include <gui/widgets/gradienteditor.h>
@@ -190,6 +191,7 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     , m_octaveGridColour{new ColourButton(tr("Octave gridlines") + ":"_L1, true, this)}
     , m_whiteKeyColour{new ColourButton(tr("White keys") + ":"_L1, true, this)}
     , m_blackKeyColour{new ColourButton(tr("Black keys") + ":"_L1, true, this)}
+    , m_background{new BackgroundConfigWidget(this)}
 {
     auto* spectrumGroup    = new QGroupBox(tr("Scale"), this);
     auto* spectrumLayout   = new QGridLayout(spectrumGroup);
@@ -505,6 +507,7 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     tabs->addTab(spectrumPage, tr("General"));
     tabs->addTab(appearancePage, tr("Display"));
     tabs->addTab(coloursPage, tr("Colours"));
+    tabs->addTab(m_background, tr("Background"));
 
     auto* layout{contentLayout()};
     layout->addWidget(tabs, 0, 0);
@@ -561,6 +564,7 @@ SpectrumWidget::ConfigData SpectrumConfigDialog::config() const
         .interpolate         = m_interpolate->isChecked(),
         .axisFont            = m_axisFont->isChecked() ? m_axisFont->buttonFont().toString() : QString{},
         .colours             = QVariant{},
+        .background          = m_background->config(),
     };
 
     Colours colours;
@@ -591,6 +595,7 @@ SpectrumWidget::ConfigData SpectrumConfigDialog::config() const
 
 void SpectrumConfigDialog::setConfig(const SpectrumWidget::ConfigData& config)
 {
+    m_background->setConfig(config.background);
     m_bandCount->setValue(config.bandCount);
     m_barSpacing->setValue(config.barSpacing);
     m_barSections->setValue(config.barSections);
@@ -717,7 +722,8 @@ void SpectrumConfigDialog::mergeExternalConfig(const SpectrumWidget::ConfigData&
                         &SpectrumWidget::ConfigData::showVerticalGrid, &SpectrumWidget::ConfigData::showWhiteKeys,
                         &SpectrumWidget::ConfigData::showBlackKeys, &SpectrumWidget::ConfigData::showTooltip,
                         &SpectrumWidget::ConfigData::fillSpectrum, &SpectrumWidget::ConfigData::interpolate,
-                        &SpectrumWidget::ConfigData::axisFont, &SpectrumWidget::ConfigData::colours);
+                        &SpectrumWidget::ConfigData::axisFont, &SpectrumWidget::ConfigData::colours,
+                        &SpectrumWidget::ConfigData::background);
 }
 } // namespace Fooyin::Spectrum
 

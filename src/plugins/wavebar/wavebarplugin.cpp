@@ -94,9 +94,10 @@ void WaveBarPlugin::initialise(const CorePluginContext& context)
 
 void WaveBarPlugin::initialise(const GuiPluginContext& context)
 {
-    m_actionManager  = context.actionManager;
-    m_trackSelection = context.trackSelection;
-    m_widgetProvider = context.widgetProvider;
+    m_coverRepository = context.coverRepository;
+    m_actionManager   = context.actionManager;
+    m_trackSelection  = context.trackSelection;
+    m_widgetProvider  = context.widgetProvider;
 
     m_waveBarSettings = std::make_unique<WaveBarSettings>(m_settings);
 
@@ -146,8 +147,8 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
 
 FyWidget* WaveBarPlugin::createWavebar()
 {
-    auto* wavebar
-        = new WaveBarWidget(m_audioLoader, m_dbPool, m_actionManager, m_playerController, m_trackSelection, m_settings);
+    auto* wavebar = new WaveBarWidget(m_audioLoader, m_dbPool, m_actionManager, m_playerController, m_trackSelection,
+                                      m_coverRepository, m_settings);
 
     registerWaveBar(wavebar);
 
