@@ -89,6 +89,7 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     auto* searchGroupLayout = new QGridLayout(searchGroup);
 
     m_autosearchDelay->setRange(0, 3);
+    m_autosearchDelay->setPageStep(1);
     m_autosearchDelay->addSpecialValue(0, tr("Very fast"));
     m_autosearchDelay->addSpecialValue(1, tr("Fast"));
     m_autosearchDelay->addSpecialValue(2, tr("Medium"));
