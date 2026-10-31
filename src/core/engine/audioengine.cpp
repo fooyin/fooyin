@@ -60,11 +60,7 @@
 
 Q_LOGGING_CATEGORY(ENGINE, "fy.engine")
 
-namespace {
-bool isBoundedSegmentTrack(const Fooyin::Track& track)
-{
-    return track.isBoundedSegment();
-}
+using namespace Qt::StringLiterals;
 
 constexpr auto BasePrefillDecodeFrames      = 4096;
 constexpr auto MaxPrefillDecodeFrames       = 262144;
@@ -91,15 +87,42 @@ constexpr auto RemotePrebufferMaxMs         = 5000;
 constexpr auto InputRebufferFloorMs         = 100;
 constexpr auto RemoteCrossfadePrefillMaxMs  = 1500;
 
-bool outputReinitRequired(const Fooyin::AudioFormat& currentOutput, const Fooyin::AudioFormat& desiredOutput)
+namespace Fooyin {
+namespace {
+bool isBoundedSegmentTrack(const Track& track)
+{
+    return track.isBoundedSegment();
+}
+
+void logConfiguredDspChains(const Engine::DspChains& chains)
+{
+    const auto describeChain = [](const Engine::DspChain& chain) {
+        QString description;
+        for(const auto& entry : chain) {
+            if(!description.isEmpty()) {
+                description += u" → ";
+            }
+            description += entry.name.isEmpty() ? entry.id : entry.name;
+            if(!entry.enabled) {
+                description += u" (disabled)";
+            }
+        }
+        return description.isEmpty() ? u"(empty)"_s : description;
+    };
+
+    qCDebug(ENGINE) << "Configured DSP chains:" << "perTrack=" << describeChain(chains.perTrackChain)
+                    << "master=" << describeChain(chains.masterChain);
+}
+
+bool outputReinitRequired(const AudioFormat& currentOutput, const AudioFormat& desiredOutput)
 {
     if(!currentOutput.isValid() || !desiredOutput.isValid()) {
         return false;
     }
 
-    const auto normalisedCurrent = Fooyin::normaliseChannelLayout(currentOutput);
-    const auto normalisedDesired = Fooyin::normaliseChannelLayout(desiredOutput);
-    return !Fooyin::Audio::outputFormatsMatch(normalisedCurrent, normalisedDesired);
+    const auto normalisedCurrent = normaliseChannelLayout(currentOutput);
+    const auto normalisedDesired = normaliseChannelLayout(desiredOutput);
+    return !Audio::outputFormatsMatch(normalisedCurrent, normalisedDesired);
 }
 
 std::pair<double, double> sanitiseWatermarkRatios(double lowRatio, double highRatio)
@@ -140,8 +163,7 @@ std::pair<int, int> decodeWatermarksForBufferMs(int bufferLengthMs, double lowRa
     return {lowMs, highMs};
 }
 
-int startupPrefillFromOutputQueueMs(const Fooyin::AudioPipeline::OutputQueueSnapshot& snapshot,
-                                    const Fooyin::AudioFormat& outputFormat)
+int startupPrefillFromOutputQueueMs(const AudioPipeline::OutputQueueSnapshot& snapshot, const AudioFormat& outputFormat)
 {
     if(!snapshot.valid || !outputFormat.isValid() || outputFormat.sampleRate() <= 0) {
         return 0;
@@ -155,7 +177,7 @@ int startupPrefillFromOutputQueueMs(const Fooyin::AudioPipeline::OutputQueueSnap
         }
 
         const auto scaledMs
-            = std::llround((static_cast<long double>(safeFrames) * static_cast<long double>(Fooyin::Time::MsPerSecond))
+            = std::llround((static_cast<long double>(safeFrames) * static_cast<long double>(Time::MsPerSecond))
                            / static_cast<long double>(outputSampleRate));
         return static_cast<int>(std::clamp<long double>(scaledMs, 0.0L, std::numeric_limits<int>::max()));
     };
@@ -167,7 +189,7 @@ int startupPrefillFromOutputQueueMs(const Fooyin::AudioPipeline::OutputQueueSnap
 
     const int queueDemandFrames = std::max({freeFrames, bufferFrames, queuedFrames});
     const int delayDemandMs
-        = std::max(0, static_cast<int>(std::llround(delaySeconds * static_cast<double>(Fooyin::Time::MsPerSecond))));
+        = std::max(0, static_cast<int>(std::llround(delaySeconds * static_cast<double>(Time::MsPerSecond))));
 
     return std::max(framesToMs(queueDemandFrames), delayDemandMs);
 }
@@ -178,12 +200,11 @@ int gaplessBoundaryWatchdogDelayMs(int playbackBufferLengthMs)
     return std::clamp(safeBufferMs / 2, GaplessBoundaryWatchdogMinMs, GaplessBoundaryWatchdogMaxMs);
 }
 
-Fooyin::AudioDecoder::PlaybackHints decoderPlaybackHintsForPlayMode(Fooyin::Playlist::PlayModes playMode)
+AudioDecoder::PlaybackHints decoderPlaybackHintsForPlayMode(Playlist::PlayModes playMode)
 {
-    Fooyin::AudioDecoder::PlaybackHints hints{Fooyin::AudioDecoder::NoHints};
+    AudioDecoder::PlaybackHints hints{AudioDecoder::NoHints};
 
-    hints.setFlag(Fooyin::AudioDecoder::PlaybackHint::RepeatTrackEnabled,
-                  (playMode & Fooyin::Playlist::PlayMode::RepeatTrack) != 0);
+    hints.setFlag(AudioDecoder::PlaybackHint::RepeatTrackEnabled, (playMode & Playlist::PlayMode::RepeatTrack) != 0);
 
     return hints;
 }
@@ -194,8 +215,8 @@ size_t prefillFramesPerChunk(int sampleRate)
         return BasePrefillDecodeFrames;
     }
 
-    const uint64_t desiredFrames = (static_cast<uint64_t>(sampleRate) * static_cast<uint64_t>(PrefillChunkDurationMs))
-                                 / Fooyin::Time::MsPerSecond;
+    const uint64_t desiredFrames
+        = (static_cast<uint64_t>(sampleRate) * static_cast<uint64_t>(PrefillChunkDurationMs)) / Time::MsPerSecond;
 
     return std::clamp<uint64_t>(desiredFrames, BasePrefillDecodeFrames, MaxPrefillDecodeFrames);
 }
@@ -213,8 +234,7 @@ uint64_t scaledDelayMs(uint64_t delay, double scale)
         std::clamp<long double>(scaledDelay, 0.0, static_cast<long double>(std::numeric_limits<uint64_t>::max())));
 }
 
-bool audiblePauseDrainComplete(const Fooyin::AudioPipeline::OutputQueueSnapshot& snapshot,
-                               const Fooyin::AudioFormat& outputFormat)
+bool audiblePauseDrainComplete(const AudioPipeline::OutputQueueSnapshot& snapshot, const AudioFormat& outputFormat)
 {
     if(!snapshot.valid) {
         return true;
@@ -226,27 +246,27 @@ bool audiblePauseDrainComplete(const Fooyin::AudioPipeline::OutputQueueSnapshot&
 
     if(outputRate <= 0) {
         return queuedFrames == 0
-            && delaySeconds <= (static_cast<double>(AudiblePauseWatchdogMarginMs)
-                                / static_cast<double>(Fooyin::Time::MsPerSecond));
+            && delaySeconds
+                   <= (static_cast<double>(AudiblePauseWatchdogMarginMs) / static_cast<double>(Time::MsPerSecond));
     }
 
     const int delayFrames = std::max(0, static_cast<int>(std::llround(delaySeconds * outputRate)));
     const int thresholdFrames
         = std::max(1, static_cast<int>((static_cast<int64_t>(outputRate) * AudiblePauseWatchdogMarginMs)
-                                       / static_cast<int64_t>(Fooyin::Time::MsPerSecond)));
+                                       / static_cast<int64_t>(Time::MsPerSecond)));
 
     return std::max(queuedFrames, delayFrames) <= thresholdFrames;
 }
 
-int audiblePauseWatchdogMs(int playbackBufferLengthMs, const Fooyin::AudioPipeline::OutputQueueSnapshot& snapshot,
-                           const Fooyin::AudioFormat& outputFormat)
+int audiblePauseWatchdogMs(int playbackBufferLengthMs, const AudioPipeline::OutputQueueSnapshot& snapshot,
+                           const AudioFormat& outputFormat)
 {
     int initialDelayMs{0};
     if(snapshot.valid) {
         if(std::isfinite(snapshot.state.delay) && snapshot.state.delay > 0.0) {
             initialDelayMs = std::max(
                 initialDelayMs,
-                static_cast<int>(std::llround(snapshot.state.delay * static_cast<double>(Fooyin::Time::MsPerSecond))));
+                static_cast<int>(std::llround(snapshot.state.delay * static_cast<double>(Time::MsPerSecond))));
         }
 
         if(outputFormat.isValid() && outputFormat.sampleRate() > 0) {
@@ -259,18 +279,18 @@ int audiblePauseWatchdogMs(int playbackBufferLengthMs, const Fooyin::AudioPipeli
     return std::clamp(requestedMs, AudiblePauseWatchdogMinMs, AudiblePauseWatchdogMaxMs);
 }
 
-bool samePlaybackItem(const Fooyin::Engine::PlaybackItem& lhs, const Fooyin::Engine::PlaybackItem& rhs)
+bool samePlaybackItem(const Engine::PlaybackItem& lhs, const Engine::PlaybackItem& rhs)
 {
     if(lhs.itemId != 0 && rhs.itemId != 0) {
         return lhs.itemId == rhs.itemId;
     }
-    return Fooyin::sameTrackIdentity(lhs.track, rhs.track);
+    return sameTrackIdentity(lhs.track, rhs.track);
 }
 
-bool gaplessFormatsMatch(const Fooyin::AudioFormat& currentMixFormat, const Fooyin::AudioFormat& nextMixFormat)
+bool gaplessFormatsMatch(const AudioFormat& currentMixFormat, const AudioFormat& nextMixFormat)
 {
     return currentMixFormat.isValid() && nextMixFormat.isValid()
-        && Fooyin::Audio::inputFormatsMatch(currentMixFormat, nextMixFormat);
+        && Audio::inputFormatsMatch(currentMixFormat, nextMixFormat);
 }
 
 bool isFormatMismatchReadinessReason(const char* readinessReason)
@@ -291,7 +311,6 @@ QEvent::Type pipelineWakeEventType()
 }
 } // namespace
 
-namespace Fooyin {
 using EngineTaskType = EngineTaskQueue::TaskType;
 
 AudioEngine::AudioEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings, DspRegistry* dspRegistry,
@@ -496,6 +515,7 @@ void AudioEngine::publishPlaybackOutputInfo()
 
 void AudioEngine::setDspChain(const Engine::DspChains& chain, const QString& preset)
 {
+    logConfiguredDspChains(chain);
     m_activeDspNames.clear();
 
     for(const auto& entry : chain.perTrackChain) {
@@ -1489,6 +1509,7 @@ void AudioEngine::applyOutputProfile(const OutputCreator& output, const QString&
 {
     qCDebug(ENGINE) << "Applying output profile:" << "device=" << device << "bitdepth=" << static_cast<int>(bitdepth)
                     << "dither=" << dither;
+    logConfiguredDspChains(chain);
 
     const bool wasPlaying = m_playbackState.load(std::memory_order_relaxed) == Engine::PlaybackState::Playing;
 
@@ -4498,10 +4519,9 @@ void AudioEngine::setPhase(const Playback::Phase phase, const PhaseChangeReason 
     const QString nextPhaseName     = Utils::Enum::toString(phase);
     const QString reasonName        = Utils::Enum::toString(reason);
 
-    qCDebug(ENGINE) << "Playback phase changed:"
-                    << (previousPhaseName.isEmpty() ? QStringLiteral("Unknown") : previousPhaseName) << "->"
-                    << (nextPhaseName.isEmpty() ? QStringLiteral("Unknown") : nextPhaseName)
-                    << "reason=" << (reasonName.isEmpty() ? QStringLiteral("Unknown") : reasonName);
+    qCDebug(ENGINE) << "Playback phase changed:" << (previousPhaseName.isEmpty() ? u"Unknown"_s : previousPhaseName)
+                    << "->" << (nextPhaseName.isEmpty() ? u"Unknown"_s : nextPhaseName)
+                    << "reason=" << (reasonName.isEmpty() ? u"Unknown"_s : reasonName);
     m_phase = phase;
 }
 
