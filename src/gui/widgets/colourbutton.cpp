@@ -200,8 +200,9 @@ void ColourButton::setToolTip(const QString& text)
 
 void ColourButton::pickColour()
 {
-    const QColor chosenColour
-        = QColorDialog::getColor(colour(), this, tr("Select Colour"), QColorDialog::ShowAlphaChannel);
+    // TODO: Implement our own colour dialog
+    const QColor chosenColour = QColorDialog::getColor(
+        colour(), this, tr("Select Colour"), QColorDialog::ShowAlphaChannel | QColorDialog::DontUseNativeDialog);
     if(chosenColour.isValid() && chosenColour != colour()) {
         setColour(chosenColour);
         m_changed = true;
