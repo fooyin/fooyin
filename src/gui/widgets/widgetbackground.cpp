@@ -23,6 +23,7 @@
 
 #include <utils/async.h>
 
+#include <QApplication>
 #include <QBasicTimer>
 #include <QEvent>
 #include <QImage>
@@ -425,6 +426,28 @@ void WidgetBackground::clearDelegateBackground(QStyleOptionViewItem& option)
        && option.backgroundBrush.style() == Qt::NoBrush) {
         option.palette.setBrush(QPalette::Base, Qt::NoBrush);
         option.features.setFlag(QStyleOptionViewItem::Alternate, false);
+    }
+}
+
+void WidgetBackground::drawItemBackground(QPainter* painter, const QStyleOptionViewItem& option)
+{
+    const auto* style      = option.widget ? option.widget->style() : QApplication::style();
+    const bool hoverColour = option.backgroundBrush.style() != Qt::NoBrush
+                          && option.state.testFlag(QStyle::State_MouseOver)
+                          && !option.state.testFlag(QStyle::State_Selected);
+
+    QStyleOptionViewItem background{option};
+    if(hoverColour) {
+        background.state.setFlag(QStyle::State_MouseOver, false);
+    }
+    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &background, painter, option.widget);
+
+    if(hoverColour) {
+        background.state           = option.state;
+        background.backgroundBrush = Qt::NoBrush;
+        background.palette.setBrush(QPalette::Base, Qt::NoBrush);
+        background.features.setFlag(QStyleOptionViewItem::Alternate, false);
+        style->drawPrimitive(QStyle::PE_PanelItemViewItem, &background, painter, option.widget);
     }
 }
 

@@ -1577,9 +1577,9 @@ void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, co
 void TreeView::drawRowBackground(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index,
                                  int y) const
 {
-    const auto bg                      = index.data(Qt::BackgroundRole).value<QBrush>();
-    const bool transparentBase         = WidgetBackground::hasTransparentRows(m_view);
-    const bool preserveStyleBackground = option.state.testFlag(QStyle::State_Selected) || bg.style() != Qt::NoBrush;
+    const auto bg              = index.data(Qt::BackgroundRole).value<QBrush>();
+    const bool transparentBase = WidgetBackground::hasTransparentRows(m_view);
+    const bool selected        = option.state.testFlag(QStyle::State_Selected);
 
     const auto paintRects = m_p->rectsToPaint(index, option, y);
     for(const auto& rect : paintRects) {
@@ -1587,13 +1587,17 @@ void TreeView::drawRowBackground(QPainter* painter, const QStyleOptionViewItem& 
             QStyleOptionViewItem opt{option};
             opt.rect = rect;
 
-            if(transparentBase && !preserveStyleBackground) {
+            if(transparentBase && !selected) {
                 WidgetBackground::makeRowPaletteTransparent(opt.palette);
+                if(bg.style() != Qt::NoBrush) {
+                    opt.features.setFlag(QStyleOptionViewItem::Alternate, false);
+                }
             }
 
             m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
-            m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
-            painter->fillRect(opt.rect, bg);
+            opt.backgroundBrush  = bg;
+            opt.viewItemPosition = QStyleOptionViewItem::OnlyOne;
+            WidgetBackground::drawItemBackground(painter, opt);
         }
     }
 }
@@ -3138,6 +3142,7 @@ void FlowView::drawItem(QPainter* painter, QStyleOptionViewItem option, const QM
 {
     option.rect                   = rect;
     option.showDecorationSelected = true;
+    option.viewItemPosition       = QStyleOptionViewItem::OnlyOne;
     const bool currentHasFocus    = m_view->hasFocus() && index == m_view->currentIndex();
 
     option.state.setFlag(QStyle::State_Selected, m_view->selectionModel()->isSelected(index));
@@ -3160,7 +3165,10 @@ void FlowView::drawItem(QPainter* painter, QStyleOptionViewItem option, const QM
         WidgetBackground::makeRowPaletteTransparent(option.palette);
     }
 
-    m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &option, painter, m_view);
+    QStyleOptionViewItem rowOption{option};
+    rowOption.state.setFlag(QStyle::State_Selected, false);
+    rowOption.state.setFlag(QStyle::State_MouseOver, false);
+    m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &rowOption, painter, m_view);
     delegate(index)->paint(painter, option, index);
     if(currentHasFocus) {
         m_view->drawFocus(painter, option, index, rect.top());

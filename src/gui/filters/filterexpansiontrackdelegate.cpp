@@ -23,7 +23,6 @@
 
 #include <gui/widgets/widgetbackground.h>
 
-#include <QApplication>
 #include <QIcon>
 #include <QPainter>
 
@@ -36,8 +35,7 @@ void ExpansionTrackDelegate::paint(QPainter* painter, const QStyleOptionViewItem
     opt.text.clear();
     WidgetBackground::clearDelegateBackground(opt);
 
-    const auto* style = opt.widget ? opt.widget->style() : QApplication::style();
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+    WidgetBackground::drawItemBackground(painter, opt);
 
     if(index.data(Filters::ExpansionTrackModel::SubheaderRole).toBool()
        || index.data(Filters::ExpansionTrackModel::HeaderRole).toBool()) {

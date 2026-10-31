@@ -52,6 +52,8 @@ public:
     static void makeRowPaletteTransparent(QPalette& palette);
     //! Keep the background already painted by the view, preserving selection and explicit row colours
     static void clearDelegateBackground(QStyleOptionViewItem& option);
+    //! Paint the native item background, retaining hover feedback over explicit row colours
+    static void drawItemBackground(QPainter* painter, const QStyleOptionViewItem& option);
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
