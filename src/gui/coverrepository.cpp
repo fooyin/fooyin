@@ -776,7 +776,8 @@ QPixmap CoverRepositoryPrivate::loadNoCover(Track::Cover type, const ThumbnailSi
         }
     }
 
-    const QIcon icon = Gui::iconFromTheme(Constants::Icons::NoCover);
+    const QIcon icon
+        = Gui::iconFromTheme(type == Track::Cover::Artist ? Constants::Icons::NoArtist : Constants::Icons::NoCover);
     const QSize requestedSize{coverSize, coverSize};
 
     auto* cover = new CachedCover{.cover = icon.pixmap(requestedSize, Utils::windowDpr()), .pendingCoverRevision = {}};

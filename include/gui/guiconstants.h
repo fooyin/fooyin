@@ -36,6 +36,7 @@ namespace Icons {
 constexpr auto Fooyin       = "fooyin";
 constexpr auto FooyinWindow = "org.fooyin.fooyin";
 constexpr auto NoCover      = "nocover";
+constexpr auto NoArtist     = "view-media-artist";
 constexpr auto Play         = "media-playback-start";
 constexpr auto Pause        = "media-playback-pause";
 constexpr auto Stop         = "media-playback-stop";

@@ -72,6 +72,7 @@
         <file>icons/dark/scalable/actions/user-bookmarks.svg</file>
         <file>icons/dark/scalable/actions/view-filter.svg</file>
         <file>icons/dark/scalable/actions/view-log.svg</file>
+        <file>icons/dark/scalable/actions/view-media-artist.svg</file>
         <file>icons/dark/scalable/actions/view-process-users.svg</file>
         <file>icons/dark/scalable/actions/view-refresh.svg</file>
         <file>icons/dark/scalable/actions/view-scripteditor.svg</file>
@@ -134,6 +135,7 @@
         <file>icons/light/scalable/actions/user-bookmarks.svg</file>
         <file>icons/light/scalable/actions/view-filter.svg</file>
         <file>icons/light/scalable/actions/view-log.svg</file>
+        <file>icons/light/scalable/actions/view-media-artist.svg</file>
         <file>icons/light/scalable/actions/view-process-users.svg</file>
         <file>icons/light/scalable/actions/view-refresh.svg</file>
         <file>icons/light/scalable/actions/view-scripteditor.svg</file>
