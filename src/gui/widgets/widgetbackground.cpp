@@ -19,296 +19,97 @@
 
 #include <gui/widgets/widgetbackground.h>
 
-#include "pixmapfadecontroller.h"
-
-#include <utils/async.h>
+#include "backgroundrenderer.h"
+#include "globalbackgroundcontroller.h"
 
 #include <QApplication>
-#include <QBasicTimer>
 #include <QEvent>
-#include <QImage>
 #include <QPainter>
-#include <QPixmap>
 #include <QPointer>
 #include <QStyleOptionViewItem>
-#include <QTimerEvent>
 #include <QWidget>
 
-#include <cstdint>
-#include <optional>
-
-QT_BEGIN_NAMESPACE
-// Exported by qimageeffects.cpp
-void qt_blurImage(QImage& blurImage, qreal radius, bool quality, int transposed = 0);
-QT_END_NAMESPACE
+#include <vector>
 
 constexpr auto OpaqueAltAlphaThreshold = 185;
 constexpr auto TransparentAltAlpha     = 80;
-
-namespace {
-QImage prepareBackground(QImage image, const QSize& targetSize, qreal radius, qreal dpr)
-{
-    const int blurScale = radius >= 16.0 ? 4 : radius >= 4.0 ? 2 : 1;
-    const QSize blurSize{std::max(1, targetSize.width() / blurScale), std::max(1, targetSize.height() / blurScale)};
-
-    image = image.scaled(blurSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    if(radius > 0 && !image.isNull()) {
-        image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
-        qt_blurImage(image, radius / blurScale, true);
-    }
-    if(blurSize != targetSize) {
-        image = image.scaled(targetSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    }
-
-    image.setDevicePixelRatio(dpr);
-    return image;
-}
-} // namespace
 
 namespace Fooyin {
 class WidgetBackgroundPrivate
 {
 public:
-    WidgetBackgroundPrivate(WidgetBackground* self, QWidget* viewport);
+    WidgetBackgroundPrivate(WidgetBackground* self, QWidget* viewport)
+        : m_self{self}
+        , m_viewport{viewport}
+        , m_renderer{new BackgroundRenderer(self)}
+    { }
 
-    struct PreparationKey
+    void watchAncestors()
     {
-        qint64 sourceKey{0};
-        QSize size;
-        qreal dpr{1.0};
-        int blur{0};
+        for(const auto& ancestor : m_ancestors) {
+            if(ancestor) {
+                ancestor->removeEventFilter(m_self);
+            }
+        }
+        m_ancestors.clear();
 
-        bool operator==(const PreparationKey& other) const = default;
-    };
+        if(m_config.imageMode != static_cast<int>(BackgroundImageMode::Global)) {
+            return;
+        }
 
-    struct PreparationRequest
+        auto* ancestor{m_viewport};
+        while(!ancestor->isWindow() && (ancestor = ancestor->parentWidget())) {
+            ancestor->installEventFilter(m_self);
+            m_ancestors.emplace_back(ancestor);
+        }
+    }
+
+    void updateRowTransparency()
     {
-        PreparationKey key;
-        QImage image;
-        uint64_t generation{0};
-    };
+        if(m_rowView) {
+            m_rowView->setProperty("transparent_base_rows", m_self->hasImage());
+        }
+    }
 
-    struct PixmapCache
+    void updateGlobalController()
     {
-        PreparationKey key;
-        PreparationKey requestedKey;
-        QPixmap pixmap;
-        uint64_t generation{0};
-        std::optional<PreparationRequest> pending;
-    };
+        auto* controller = m_config.imageMode == static_cast<int>(BackgroundImageMode::Global)
+                             ? GlobalBackgroundController::forWidget(m_viewport)
+                             : nullptr;
+        if(m_global == controller) {
+            return;
+        }
 
-    void invalidateScaledBackground();
-    void updateRowTransparency();
-    void startPreparation();
-    QPixmap preparedBackgroundPixmap(const QPixmap& source, PixmapCache& cache);
-    [[nodiscard]] QPoint backgroundPixmapPosition(const QSize& pixmapSize) const;
-    void drawBackgroundPixmap(QPainter& painter, const QPixmap& pixmap);
+        QObject::disconnect(m_globalChanged);
+        m_global = controller;
+        if(m_global) {
+            m_globalChanged = QObject::connect(m_global, &GlobalBackgroundController::changed, m_self, [this] {
+                updateRowTransparency();
+                m_viewport->update();
+            });
+        }
+    }
 
     WidgetBackground* m_self;
     QWidget* m_viewport;
     QPointer<QWidget> m_rowView;
     BackgroundConfig m_config;
-    PixmapFadeController* m_bgFadeController;
-    QBasicTimer m_bgResizeTimer;
-    PixmapCache m_cachedBg;
-    PixmapCache m_cachedPreviousBg;
-    bool m_preparing{false};
+    BackgroundRenderer* m_renderer;
+    QPointer<GlobalBackgroundController> m_global;
+    QMetaObject::Connection m_globalChanged;
+    std::vector<QPointer<QWidget>> m_ancestors;
 };
-
-WidgetBackgroundPrivate::WidgetBackgroundPrivate(WidgetBackground* self, QWidget* viewport)
-    : m_self{self}
-    , m_viewport{viewport}
-    , m_bgFadeController{new PixmapFadeController(self)}
-{
-    m_bgFadeController->setUpdateCallback([this] { m_viewport->update(); });
-}
-
-void WidgetBackgroundPrivate::invalidateScaledBackground()
-{
-    for(auto* cache : {&m_cachedBg, &m_cachedPreviousBg}) {
-        ++cache->generation;
-        cache->requestedKey = {};
-        cache->pending.reset();
-    }
-}
-
-void WidgetBackgroundPrivate::updateRowTransparency()
-{
-    if(m_rowView) {
-        m_rowView->setProperty("transparent_base_rows", m_self->hasImage());
-    }
-}
-
-void WidgetBackgroundPrivate::startPreparation()
-{
-    if(m_preparing) {
-        return;
-    }
-
-    auto* cache = m_cachedBg.pending ? &m_cachedBg : m_cachedPreviousBg.pending ? &m_cachedPreviousBg : nullptr;
-    if(!cache) {
-        return;
-    }
-
-    auto request = std::move(*cache->pending);
-    cache->pending.reset();
-    m_preparing = true;
-    const auto key{request.key};
-    const auto generation{request.generation};
-
-    Utils::asyncExec([request = std::move(request)]() mutable {
-        return prepareBackground(std::move(request.image), request.key.size, request.key.blur * request.key.dpr,
-                                 request.key.dpr);
-    }).then(m_self, [this, cache, key, generation](QImage image) {
-        if(cache->generation == generation && qFuzzyCompare(key.dpr, m_viewport->devicePixelRatioF())
-           && !image.isNull()) {
-            cache->key    = key;
-            cache->pixmap = QPixmap::fromImage(std::move(image));
-        }
-
-        m_preparing = false;
-        startPreparation();
-        m_viewport->update();
-    });
-}
-
-QPixmap WidgetBackgroundPrivate::preparedBackgroundPixmap(const QPixmap& source, PixmapCache& cache)
-{
-    const QSize viewportSize = m_viewport->size();
-    const qreal dpr          = m_viewport->devicePixelRatioF();
-    if(viewportSize.isEmpty() || source.isNull()) {
-        return {};
-    }
-
-    // Keep displaying the prepared image until an interactive resize settles
-    if(m_bgResizeTimer.isActive() && cache.key.sourceKey == source.cacheKey() && cache.key.blur == m_config.blur
-       && qFuzzyCompare(cache.key.dpr, dpr) && !cache.pixmap.isNull()) {
-        return cache.pixmap;
-    }
-
-    QSize targetSize = source.size();
-
-    switch(static_cast<BackgroundImageScaling>(m_config.scaling)) {
-        case BackgroundImageScaling::ScaledAndCropped:
-            targetSize.scale(viewportSize, Qt::KeepAspectRatioByExpanding);
-            break;
-        case BackgroundImageScaling::Scaled:
-            targetSize = viewportSize;
-            break;
-        case BackgroundImageScaling::ScaledKeepProportions:
-            targetSize.scale(viewportSize, Qt::KeepAspectRatio);
-            break;
-        case BackgroundImageScaling::OriginalSize:
-            if(m_config.maxSize > 0) {
-                const QSize maxSize{m_config.maxSize, m_config.maxSize};
-                if(targetSize.width() > maxSize.width() || targetSize.height() > maxSize.height()) {
-                    targetSize.scale(maxSize, Qt::KeepAspectRatio);
-                }
-            }
-            break;
-    }
-
-    if(targetSize.isEmpty()) {
-        return {};
-    }
-
-    targetSize = {static_cast<int>(std::ceil(static_cast<qreal>(targetSize.width()) * dpr)),
-                  static_cast<int>(std::ceil(static_cast<qreal>(targetSize.height()) * dpr))};
-
-    const PreparationKey key{source.cacheKey(), targetSize, dpr, m_config.blur};
-    if(key == cache.key && !cache.pixmap.isNull()) {
-        return cache.pixmap;
-    }
-
-    if(key != cache.requestedKey) {
-        cache.requestedKey = key;
-        cache.pending      = PreparationRequest{key, source.toImage(), ++cache.generation};
-        startPreparation();
-    }
-
-    return cache.pixmap;
-}
-
-QPoint WidgetBackgroundPrivate::backgroundPixmapPosition(const QSize& pixmapSize) const
-{
-    const QSize viewportSize = m_viewport->size();
-
-    if(m_config.scaling != static_cast<int>(BackgroundImageScaling::OriginalSize)) {
-        return {(viewportSize.width() - pixmapSize.width()) / 2, (viewportSize.height() - pixmapSize.height()) / 2};
-    }
-
-    int x{0};
-    int y{0};
-
-    switch(static_cast<BackgroundImagePosition>(m_config.position)) {
-        case BackgroundImagePosition::TopLeft:
-        case BackgroundImagePosition::Left:
-        case BackgroundImagePosition::BottomLeft:
-            x = 0;
-            break;
-        case BackgroundImagePosition::Top:
-        case BackgroundImagePosition::Middle:
-        case BackgroundImagePosition::Bottom:
-            x = (viewportSize.width() - pixmapSize.width()) / 2;
-            break;
-        case BackgroundImagePosition::TopRight:
-        case BackgroundImagePosition::Right:
-        case BackgroundImagePosition::BottomRight:
-            x = viewportSize.width() - pixmapSize.width();
-            break;
-    }
-
-    switch(static_cast<BackgroundImagePosition>(m_config.position)) {
-        case BackgroundImagePosition::TopLeft:
-        case BackgroundImagePosition::Top:
-        case BackgroundImagePosition::TopRight:
-            y = 0;
-            break;
-        case BackgroundImagePosition::Left:
-        case BackgroundImagePosition::Middle:
-        case BackgroundImagePosition::Right:
-            y = (viewportSize.height() - pixmapSize.height()) / 2;
-            break;
-        case BackgroundImagePosition::BottomLeft:
-        case BackgroundImagePosition::Bottom:
-        case BackgroundImagePosition::BottomRight:
-            y = viewportSize.height() - pixmapSize.height();
-            break;
-    }
-
-    return {x, y};
-}
-
-void WidgetBackgroundPrivate::drawBackgroundPixmap(QPainter& painter, const QPixmap& pixmap)
-{
-    QSize pixmapSize = pixmap.deviceIndependentSize().toSize();
-
-    if(m_config.scaling != static_cast<int>(BackgroundImageScaling::OriginalSize)) {
-        const QSize viewportSize = m_viewport->size();
-
-        if(m_config.scaling == static_cast<int>(BackgroundImageScaling::Scaled)) {
-            pixmapSize = viewportSize;
-        }
-        else {
-            const Qt::AspectRatioMode aspectRatioMode
-                = m_config.scaling == static_cast<int>(BackgroundImageScaling::ScaledAndCropped)
-                    ? Qt::KeepAspectRatioByExpanding
-                    : Qt::KeepAspectRatio;
-            pixmapSize.scale(viewportSize, aspectRatioMode);
-        }
-
-        painter.drawPixmap(QRect{backgroundPixmapPosition(pixmapSize), pixmapSize}, pixmap);
-        return;
-    }
-
-    painter.drawPixmap(backgroundPixmapPosition(pixmapSize), pixmap);
-}
 
 WidgetBackground::WidgetBackground(QWidget* viewport)
     : QObject{viewport}
     , p{std::make_unique<WidgetBackgroundPrivate>(this, viewport)}
 {
-    p->m_viewport->installEventFilter(this);
+    viewport->installEventFilter(this);
+
+    QObject::connect(p->m_renderer, &BackgroundRenderer::changed, this, [this] {
+        p->updateRowTransparency();
+        p->m_viewport->update();
+    });
 }
 
 WidgetBackground::WidgetBackground(QWidget* viewport, QWidget* rowView)
@@ -324,82 +125,40 @@ void WidgetBackground::setConfig(const BackgroundConfig& config)
 {
     auto validated{config};
     validated.normalise();
-    if(p->m_config == validated) {
-        return;
-    }
     p->m_config = std::move(validated);
-    p->m_bgFadeController->setDurationMs(p->m_config.fadeDuration);
-    p->m_bgFadeController->setEnabled(p->m_config.fadeDuration > 0);
-
-    p->invalidateScaledBackground();
+    p->watchAncestors();
+    p->updateGlobalController();
+    p->m_renderer->setConfig(p->m_config);
     p->updateRowTransparency();
     p->m_viewport->update();
 }
 
 void WidgetBackground::setPixmap(const QPixmap& pixmap)
 {
-    if(p->m_bgFadeController->pixmap().cacheKey() == pixmap.cacheKey()) {
-        return;
-    }
-
-    if(p->m_bgFadeController->enabled()) {
-        p->m_cachedPreviousBg.key    = p->m_cachedBg.key;
-        p->m_cachedPreviousBg.pixmap = p->m_cachedBg.pixmap;
-    }
-    else {
-        p->m_cachedPreviousBg.key    = {};
-        p->m_cachedPreviousBg.pixmap = {};
-    }
-
-    if(pixmap.isNull()) {
-        p->m_cachedBg.pixmap         = {};
-        p->m_cachedPreviousBg.pixmap = {};
-    }
-    p->invalidateScaledBackground();
-    p->m_bgFadeController->setPixmap(pixmap);
-    p->updateRowTransparency();
+    p->m_renderer->setPixmap(pixmap);
 }
 
 void WidgetBackground::draw(QPainter& painter)
 {
-    const QPixmap& currentPixmap = p->m_bgFadeController->pixmap();
-    if(p->m_config.imageMode == static_cast<int>(BackgroundImageMode::None) || currentPixmap.isNull()
-       || p->m_config.opacity <= 0) {
-        return;
-    }
-
-    const QPixmap pixmap = p->preparedBackgroundPixmap(currentPixmap, p->m_cachedBg);
-    if(pixmap.isNull()) {
-        return;
-    }
-
-    painter.save();
-
-    const double opacity = std::clamp(p->m_config.opacity, 0, 100) / 100.0;
-
-    if(p->m_bgFadeController->progress() < 1.0) {
-        const QPixmap& prevPixmap = p->m_bgFadeController->previousPixmap();
-        const QPixmap prev        = p->preparedBackgroundPixmap(prevPixmap, p->m_cachedPreviousBg);
-
-        if(!prev.isNull()) {
-            painter.setOpacity(opacity * (1.0 - p->m_bgFadeController->progress()));
-            p->drawBackgroundPixmap(painter, prev);
+    p->updateGlobalController();
+    p->updateRowTransparency();
+    if(p->m_config.imageMode == static_cast<int>(BackgroundImageMode::Global)) {
+        if(p->m_global) {
+            p->m_global->draw(painter, p->m_viewport);
         }
-        painter.setOpacity(opacity * p->m_bgFadeController->progress());
+        return;
     }
-    else {
-        painter.setOpacity(opacity);
-    }
-
-    p->drawBackgroundPixmap(painter, pixmap);
-
-    painter.restore();
+    p->m_renderer->setCanvas(p->m_viewport->size(), p->m_viewport->devicePixelRatioF());
+    p->m_renderer->draw(painter);
 }
 
 bool WidgetBackground::hasImage() const
 {
-    return p->m_config.imageMode != static_cast<int>(BackgroundImageMode::None) && p->m_config.opacity > 0
-        && !p->m_bgFadeController->pixmap().isNull();
+    p->updateGlobalController();
+    if(p->m_config.imageMode == static_cast<int>(BackgroundImageMode::Global)) {
+        return p->m_global && p->m_global->hasImage();
+    }
+    return p->m_renderer->hasImage();
 }
 
 bool WidgetBackground::hasTransparentRows(const QWidget* view)
@@ -453,31 +212,31 @@ void WidgetBackground::drawItemBackground(QPainter* painter, const QStyleOptionV
 
 bool WidgetBackground::eventFilter(QObject* watched, QEvent* event)
 {
-    if(watched == p->m_viewport && event->type() == QEvent::Resize) {
-        p->invalidateScaledBackground();
-        const auto& config = p->m_config;
-
-        const bool resizeBackground = config.imageMode != static_cast<int>(BackgroundImageMode::None)
-                                   && config.scaling != static_cast<int>(BackgroundImageScaling::OriginalSize)
-                                   && config.opacity > 0 && !p->m_bgFadeController->pixmap().isNull();
-        if(!resizeBackground) {
-            p->m_bgResizeTimer.stop();
-        }
-        else {
-            p->m_bgResizeTimer.start(100, this);
+    if(watched == p->m_viewport) {
+        switch(event->type()) {
+            case QEvent::Resize:
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+            case QEvent::DevicePixelRatioChange:
+#endif
+                p->m_renderer->setCanvas(p->m_viewport->size(), p->m_viewport->devicePixelRatioF());
+                break;
+            default:
+                break;
         }
     }
-
+    if(event->type() == QEvent::ParentChange || event->type() == QEvent::Show || event->type() == QEvent::Move) {
+        if(event->type() != QEvent::Move) {
+            p->watchAncestors();
+        }
+        p->updateGlobalController();
+        p->updateRowTransparency();
+        p->m_viewport->update();
+    }
     return QObject::eventFilter(watched, event);
 }
 
 void WidgetBackground::timerEvent(QTimerEvent* event)
 {
-    if(event->timerId() == p->m_bgResizeTimer.timerId()) {
-        p->m_bgResizeTimer.stop();
-        p->m_viewport->update();
-        return;
-    }
     QObject::timerEvent(event);
 }
 } // namespace Fooyin

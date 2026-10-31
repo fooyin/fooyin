@@ -25,6 +25,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/slidereditor.h>
 
 #include <QAction>
@@ -56,6 +57,10 @@ public:
     explicit BackgroundConfigWidgetPrivate(BackgroundConfigWidget* self)
         : m_self{self}
         , m_backgroundImage{new QComboBox(self)}
+        , m_globalHint{new HintLabel(
+              BackgroundConfigWidget::tr("Uses the image and appearance settings from Interface → "
+                                         "Background, aligned across the main window."),
+              self)}
         , m_backgroundCoverTypeLabel{new QLabel(BackgroundConfigWidget::tr("Artwork type") + u":"_s, self)}
         , m_backgroundCoverType{new QComboBox(self)}
         , m_backgroundTrackPreferenceLabel{new QLabel(BackgroundConfigWidget::tr("Preferred track") + u":"_s, self)}
@@ -86,12 +91,14 @@ public:
     void updateBackgroundControls() const
     {
         const auto imageMode    = static_cast<BackgroundImageMode>(m_backgroundImage->currentData().toInt());
-        const bool hasImage     = imageMode != BackgroundImageMode::None;
+        const bool globalImage  = imageMode == BackgroundImageMode::Global;
+        const bool hasImage     = imageMode != BackgroundImageMode::None && !globalImage;
         const bool customImage  = imageMode == BackgroundImageMode::Custom;
         const bool albumCover   = imageMode == BackgroundImageMode::AlbumCover;
         const bool originalSize = static_cast<BackgroundImageScaling>(m_backgroundScaling->currentData().toInt())
                                == BackgroundImageScaling::OriginalSize;
 
+        m_globalHint->setVisible(globalImage);
         m_backgroundCoverTypeLabel->setVisible(albumCover);
         m_backgroundCoverType->setVisible(albumCover);
 
@@ -112,6 +119,7 @@ public:
 
     BackgroundConfigWidget* m_self;
     QComboBox* m_backgroundImage;
+    QLabel* m_globalHint;
     QLabel* m_backgroundCoverTypeLabel;
     QComboBox* m_backgroundCoverType;
     QLabel* m_backgroundTrackPreferenceLabel;
@@ -136,11 +144,15 @@ BackgroundConfigWidget::BackgroundConfigWidget(QWidget* parent)
     browseAction->setToolTip(tr("Choose a custom background image file"));
     p->m_customImage->addAction(browseAction, QLineEdit::TrailingPosition);
 
+    p->m_globalHint->setWordWrap(true);
+
     addComboItem(p->m_backgroundImage, tr("No background image"), static_cast<int>(BackgroundImageMode::None));
     addComboItem(p->m_backgroundImage, tr("Track artwork"), static_cast<int>(BackgroundImageMode::AlbumCover),
                  tr("Use track artwork as the background"));
     addComboItem(p->m_backgroundImage, tr("Custom image"), static_cast<int>(BackgroundImageMode::Custom),
                  tr("Use the selected image file as the background"));
+    addComboItem(p->m_backgroundImage, tr("Global background"), static_cast<int>(BackgroundImageMode::Global),
+                 tr("Use the shared main window background"));
 
     addComboItem(p->m_backgroundCoverType, tr("Front"), static_cast<int>(Track::Cover::Front),
                  tr("Use the front cover for current track artwork"));
@@ -210,6 +222,7 @@ BackgroundConfigWidget::BackgroundConfigWidget(QWidget* parent)
     backgroundLayout->addWidget(Gui::createSectionHeader(tr("Image source"), this), row++, 0, 1, 2);
     backgroundLayout->addWidget(new QLabel(tr("Source") + u":"_s, this), row, 0);
     backgroundLayout->addWidget(p->m_backgroundImage, row++, 1);
+    backgroundLayout->addWidget(p->m_globalHint, row++, 0, 1, 2);
     backgroundLayout->addWidget(p->m_backgroundCoverTypeLabel, row, 0);
     backgroundLayout->addWidget(p->m_backgroundCoverType, row++, 1);
     backgroundLayout->addWidget(p->m_backgroundTrackPreferenceLabel, row, 0);
@@ -270,7 +283,7 @@ void BackgroundConfigWidget::setConfig(const BackgroundConfig& config)
 {
     const QSignalBlocker blocker{this};
 
-    p->m_backgroundImage->setCurrentIndex(p->m_backgroundImage->findData(config.imageMode));
+    p->m_backgroundImage->setCurrentIndex(std::max(0, p->m_backgroundImage->findData(config.imageMode)));
     p->m_customImage->setText(config.customImage);
     p->m_backgroundCoverType->setCurrentIndex(p->m_backgroundCoverType->findData(config.coverType));
     p->m_backgroundTrackPreference->setCurrentIndex(
@@ -288,6 +301,14 @@ void BackgroundConfigWidget::setConfig(const BackgroundConfig& config)
 void BackgroundConfigWidget::setOptions(Options options)
 {
     if(std::exchange(p->m_options, options) != options) {
+        const int globalIndex = p->m_backgroundImage->findData(static_cast<int>(BackgroundImageMode::Global));
+        if(options.testFlag(NoGlobalSource) && globalIndex >= 0) {
+            p->m_backgroundImage->removeItem(globalIndex);
+        }
+        else if(!options.testFlag(NoGlobalSource) && globalIndex < 0) {
+            addComboItem(p->m_backgroundImage, tr("Global background"), static_cast<int>(BackgroundImageMode::Global),
+                         tr("Use the shared main window background"));
+        }
         p->updateBackgroundControls();
     }
 }

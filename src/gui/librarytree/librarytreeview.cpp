@@ -24,6 +24,7 @@
 #include <gui/widgets/widgetbackground.h>
 
 #include <QApplication>
+#include <QDynamicPropertyChangeEvent>
 #include <QHeaderView>
 #include <QMouseEvent>
 #include <QPaintEvent>
@@ -45,10 +46,10 @@ LibraryTreeView::LibraryTreeView(QWidget* parent)
     viewport()->setAutoFillBackground(false);
 
     setUniformRowHeights(false);
-    setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setSelectionMode(ExtendedSelection);
     setHeaderHidden(true);
     setDragEnabled(true);
-    setDragDropMode(QAbstractItemView::DragOnly);
+    setDragDropMode(DragOnly);
     setSortingEnabled(true);
 
     header()->setSortIndicatorShown(false);
@@ -56,6 +57,21 @@ LibraryTreeView::LibraryTreeView(QWidget* parent)
     header()->setSortIndicator(0, Qt::AscendingOrder);
     header()->setContextMenuPolicy(Qt::CustomContextMenu);
     setTextElideMode(Qt::ElideRight);
+}
+
+bool LibraryTreeView::event(QEvent* event)
+{
+    if(event->type() == QEvent::DynamicPropertyChange
+       && static_cast<QDynamicPropertyChangeEvent*>(event)->propertyName() == "transparent_base_rows") {
+        QMetaObject::invokeMethod(
+            this,
+            [this] {
+                const QScopedValueRollback guard{m_updatingBackgroundPalette, true};
+                updateBackgroundPalette();
+            },
+            Qt::QueuedConnection);
+    }
+    return QTreeView::event(event);
 }
 
 void LibraryTreeView::setLoading(bool isLoading)

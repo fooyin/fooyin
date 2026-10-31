@@ -32,7 +32,8 @@ enum class BackgroundImageMode : uint8_t
 {
     None = 0,
     AlbumCover,
-    Custom
+    Custom,
+    Global
 };
 
 enum class BackgroundImagePosition : uint8_t

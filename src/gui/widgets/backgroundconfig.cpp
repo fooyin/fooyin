@@ -38,7 +38,7 @@ void BackgroundConfig::normalise()
     fadeDuration = std::clamp(fadeDuration, 0, PixmapFadeController::MaxDurationMs);
 
     if(imageMode < static_cast<int>(BackgroundImageMode::None)
-       || imageMode > static_cast<int>(BackgroundImageMode::Custom)) {
+       || imageMode > static_cast<int>(BackgroundImageMode::Global)) {
         imageMode = defaults.imageMode;
     }
     if(coverType < static_cast<int>(Track::Cover::Front) || coverType > static_cast<int>(Track::Cover::Other)) {

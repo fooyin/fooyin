@@ -49,6 +49,7 @@ Q_SIGNALS:
     void displayChanged();
 
 protected:
+    bool event(QEvent* event) override;
     void initViewItemOption(QStyleOptionViewItem* option) const override;
     void changeEvent(QEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;

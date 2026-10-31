@@ -247,6 +247,7 @@ enum GuiInternalSettings : uint32_t
     ContextMenuQueueViewerDisabledSections   = 55 | Type::StringList,
     ContextMenuQueueViewerLayout             = 56 | Type::StringList,
     PlaylistInlineEditDelayMs                = 57 | Type::Int,
+    GlobalBackground                         = 58 | Type::Variant,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

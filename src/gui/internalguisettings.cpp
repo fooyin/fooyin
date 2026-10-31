@@ -167,6 +167,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<LoveEditorOnlyOnHover>(false, u"Playlist/LoveEditorOnlyOnHover"_s);
     m_settings->createSetting<ConfirmPlaylistRemoval>(true, u"Playlist/ConfirmRemoval"_s);
 
+    m_settings->createSetting<Internal::GlobalBackground>(QVariantMap{}, u"Interface/Background"_s);
     m_settings->createSetting<Internal::EditingMenuLevels>(2, u"Interface/EditingMenuLevels"_s);
     m_settings->createSetting<Internal::StatusShowIcon>(false, u"StatusWidget/ShowIcon"_s);
     m_settings->createSetting<Internal::StatusShowSelection>(false, u"StatusWidget/ShowSelection"_s);

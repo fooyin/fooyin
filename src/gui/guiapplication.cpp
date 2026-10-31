@@ -53,6 +53,7 @@
 #include "systemtrayicon.h"
 #include "verification/verificationcontroller.h"
 #include "widgets.h"
+#include "widgets/globalbackgroundcontroller.h"
 #include <gui/playlist/playlistinteractor.h>
 
 #include <core/application.h>
@@ -316,6 +317,9 @@ GuiApplication::GuiApplication(Application* core)
     , m_applyingTheme{false}
     , m_resolvedAppStyleRevision{0}
 {
+    new GlobalBackgroundController(m_mainWindow.get(), &m_coverProvider, m_playerController,
+                                   m_selectionController.get(), m_settings);
+
     updateApplicationIcon();
 
     const FyStateSettings stateSettings;

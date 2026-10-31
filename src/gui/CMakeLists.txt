@@ -522,6 +522,8 @@ set(SOURCES
     settings/context/trackcontextmenupage.h
     settings/generalpage.cpp
     settings/generalpage.h
+    settings/guibackgroundpage.cpp
+    settings/guibackgroundpage.h
     settings/guigeneralpage.cpp
     settings/guigeneralpage.h
     settings/guilayoutpage.cpp
@@ -645,6 +647,8 @@ set(SOURCES
     widgets/backgroundconfig.cpp
     widgets/backgroundconfigwidget.cpp
     widgets/backgroundimagesource.cpp
+    widgets/backgroundrenderer.cpp
+    widgets/backgroundrenderer.h
     widgets/checkboxdelegate.cpp
     widgets/clickablelabel.cpp
     widgets/colourbutton.cpp
@@ -666,6 +670,8 @@ set(SOURCES
     widgets/expandingcombobox.cpp
     widgets/extendabletableview.cpp
     widgets/fontbutton.cpp
+    widgets/globalbackgroundcontroller.cpp
+    widgets/globalbackgroundcontroller.h
     widgets/gradienteditor.cpp
     widgets/hintlabel.cpp
     widgets/hovermenu.cpp

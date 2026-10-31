@@ -38,6 +38,7 @@ public:
         None            = 0,
         TrackPreference = 1 << 0,
         FadeDuration    = 1 << 1,
+        NoGlobalSource  = 1 << 2,
     };
     Q_DECLARE_FLAGS(Options, Option)
 

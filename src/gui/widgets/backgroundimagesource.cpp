@@ -172,6 +172,7 @@ void BackgroundImageSource::setConfig(const BackgroundConfig& config)
                 Q_EMIT pixmapChanged(QPixmap{p->m_config.customImage});
             }
             break;
+        case BackgroundImageMode::Global:
         case BackgroundImageMode::None:
             if(modeChanged) {
                 ++p->m_requestId;
