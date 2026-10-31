@@ -3545,7 +3545,6 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
     const bool preparedGaplessRenderedSafe
         = preparedGaplessRendered && audibleOutputStreamId == m_preparedGaplessTransition.streamId;
     const bool currentStreamFullyDrained   = stream && stream->endOfInput() && stream->bufferEmpty();
-    const bool preparedGaplessStageReady   = currentStreamFullyDrained && preparedGaplessRendered;
     const bool preparedGaplessReleaseReady = preparedGaplessRenderedSafe;
     const bool deferPreparedGaplessCommit  = gaplessBoundaryMode && preparedGaplessActive && !preparedGaplessRendered;
     const bool deferRenderedGaplessCommit
@@ -3553,7 +3552,9 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
     const bool releasePreparedGaplessCommit = gaplessBoundaryMode && preparedGaplessActive
                                            && m_autoAdvanceState.boundaryAnchorSeen && preparedGaplessReleaseReady;
 
-    if(preparedGaplessActive && preparedGaplessStageReady && !m_preparedGaplessTransition.decoderAdopted) {
+    // DSPs may consume the prepared reserve without producing output.
+    // Adopt the decoder so they can receive more input before the audible handoff.
+    if(preparedGaplessActive && currentStreamFullyDrained && !m_preparedGaplessTransition.decoderAdopted) {
         if(!stagePreparedGaplessDecoder(preparedGaplessTargetItem())) {
             return;
         }
