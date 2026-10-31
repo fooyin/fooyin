@@ -684,7 +684,7 @@ void WaveSeekBar::paintWaveform(QPainter& painter, const QRect& rect, double ren
     const double lastSample  = static_cast<double>(rect.right() + 1) / static_cast<double>(std::max(1, m_sampleWidth));
     const int first          = std::max(0, static_cast<int>(std::floor(firstSample)));
     const int last           = std::max(first, static_cast<int>(std::ceil(lastSample)));
-    const int channelHeight     = height() / channels;
+    const int channelHeight  = height() / channels;
     const double waveformHeight = (channelHeight - m_centreGap) * m_channelScale;
 
     int y = static_cast<int>((channelHeight - waveformHeight) / 2);
