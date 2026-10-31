@@ -1,17 +1,31 @@
 # Changelog
 
-## [Unreleased]
+## Unreleased
+
+### New Features
+
+- **Interface**
+  - Add configurable inline track expansion to Library Filter ([#1841](https://github.com/fooyin/fooyin/pull/1841))
+  - Add configurable animations when switching layouts
+  - Add a shared global background for supported widgets
 
 ### Improvements
 
 - **Interface** 
-  - Add configurable animations when switching layouts
   - Allow dialog actions in separate scopes to share shortcuts
+  - Add a separate themed placeholder for artist artwork
+  - Add configurable backgrounds to Library Tree and most visualisations
   - Increase the default Settings dialog size
+  - Improve the Interface settings page layout
   - Require Shift to split widgets during layout editing and show native modifier key names in hints
   - Make the Properties selection sidebar resizable
   - Improve wording in line with the KDE HIG ([#1810](https://github.com/fooyin/fooyin/pull/1810))
   - Separate Library Tree grouping from display scripts and redesign the grouping preset editor
+  - Show a script error indicator in Script Editor toolbars
+- **Filters**
+  - Add an automatic artwork fitting option
+  - Add artwork margin and playing track appearance settings
+  - Keep the current selection in view when resizing icons or the window
 - **Playlists**
   - Add a live track preview and matching track count to the autoplaylist editor
   - Support custom sorting scripts in autoplaylist rules ([#1806](https://github.com/fooyin/fooyin/issues/1806))
@@ -21,14 +35,24 @@
 
 - **Audio Conversion:** Limit sample format options to those supported by the selected encoder ([#1824](https://github.com/fooyin/fooyin/issues/1824))
 - **Global Shortcuts:** Fix keypad shortcuts and native key translation across platforms ([#1813](https://github.com/fooyin/fooyin/issues/1813))
+- **Filters:** Preserve group order across rebuilds and incremental updates ([#1829](https://github.com/fooyin/fooyin/issues/1829))
 - **Interface**
+  - Fix alpha selection in colour dialogs
+  - Fix the autosearch delay slider skipping values when scrolling ([#1837](https://github.com/fooyin/fooyin/issues/1837))
+  - Fix playing row colour blending with alternating row colours
+  - Fix Properties selection sidebar text alignment and improve performance ([#1848](https://github.com/fooyin/fooyin/issues/1848))
+  - Preserve Library Tree double-click actions when single-click expansion is enabled
   - Fix Shift selection across wrapped rows ([#1808](https://github.com/fooyin/fooyin/issues/1808))
   - Refresh table actions after settings models reset, preventing crashes from stale actions ([#1827](https://github.com/fooyin/fooyin/issues/1827))
-- **Library & Metadata**
-  - Fix numeric Library Tree count expressions ([#1774](https://github.com/fooyin/fooyin/issues/1774), [#1816](https://github.com/fooyin/fooyin/issues/1816))
-  - Preserve Filter group order across rebuilds and incremental updates ([#1829](https://github.com/fooyin/fooyin/issues/1829))
+- **Playback**
+  - Recover playback after output initialisation fails ([#1843](https://github.com/fooyin/fooyin/issues/1843))
+  - Prevent DSP buffering from delaying gapless decoder adoption ([#1845](https://github.com/fooyin/fooyin/issues/1845))
+  - Keep ALSA writes non-blocking and within the available device capacity
+  - Fix stale playing indicators after stopping and starting another track
 - **Playlists:** Fix dragging selected tracks from sorted autoplaylists ([#1821](https://github.com/fooyin/fooyin/issues/1821))
 - **Scripting**
+  - Fix numeric Library Tree count expressions ([#1774](https://github.com/fooyin/fooyin/issues/1774), [#1816](https://github.com/fooyin/fooyin/issues/1816))
+  - Fix word capitalisation around apostrophes using ICU ([#1847](https://github.com/fooyin/fooyin/issues/1847))
   - Fix tag expansion with tree levels inside function arguments ([#1828](https://github.com/fooyin/fooyin/issues/1828))
   - Fix a `$swapprefix` crash with standalone articles
 - **Verification:** Fix CUE sample rate handling and chapter boundary rounding
