@@ -239,7 +239,8 @@ BackgroundConfigWidget::BackgroundConfigWidget(QWidget* parent)
     backgroundLayout->addWidget(Gui::createSectionHeader(tr("Effects"), this), row++, 0, 1, 2);
     backgroundLayout->addWidget(p->m_backgroundBlur, row++, 0, 1, 2);
     backgroundLayout->addWidget(p->m_backgroundOpacity, row++, 0, 1, 2);
-    backgroundLayout->addWidget(p->m_backgroundFadeDuration, row, 0, 1, 2);
+    backgroundLayout->addWidget(p->m_backgroundFadeDuration, row++, 0, 1, 2);
+    backgroundLayout->setRowStretch(row, 1);
     backgroundLayout->setColumnStretch(1, 1);
 
     QObject::connect(browseAction, &QAction::triggered, this, [this]() { p->browseBackgroundImage(); });
