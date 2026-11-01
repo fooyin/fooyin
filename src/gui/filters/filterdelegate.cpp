@@ -681,6 +681,14 @@ void FilterDelegate::drawRichTextLines(QPainter* painter, const QStyleOptionView
         backgroundColour.setAlpha(selected ? 230 : 180);
 
         painter->fillRect(background, backgroundColour);
+        if(!selected && option.state & QStyle::State_MouseOver) {
+            QStyleOptionViewItem hoverOpt{option};
+            hoverOpt.rect            = background;
+            hoverOpt.backgroundBrush = Qt::NoBrush;
+            hoverOpt.palette.setBrush(QPalette::Base, Qt::NoBrush);
+            hoverOpt.features.setFlag(QStyleOptionViewItem::Alternate, false);
+            style->drawPrimitive(QStyle::PE_PanelItemViewItem, &hoverOpt, painter, option.widget);
+        }
         rect.setTop(background.top() + padding);
         rect.setBottom(background.bottom() - padding);
         painter->setClipRect(rect, Qt::IntersectClip);
