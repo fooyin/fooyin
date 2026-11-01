@@ -405,6 +405,7 @@ void TrackSelectionControllerPrivate::setupBuiltInMenus()
     m_openFolder->setStatusTip(tr("Open the directory containing the selected tracks"));
     auto* openFolderCmd = m_actionManager->registerAction(m_openFolder, Constants::Actions::OpenFolder);
     openFolderCmd->setCategories(tracksCategory);
+    openFolderCmd->setSupportsShortcutTarget(ShortcutTarget::NowPlaying, true);
     QObject::connect(m_openFolder, &QAction::triggered, m_self, [this]() {
         if(const auto* selection = m_self->selectedSelection()) {
             openFolder(*selection);
@@ -416,6 +417,7 @@ void TrackSelectionControllerPrivate::setupBuiltInMenus()
     m_copyLocation->setStatusTip(tr("Copy the file paths of the selected tracks"));
     auto* copyLocationCmd = m_actionManager->registerAction(m_copyLocation, Constants::Actions::CopyLocation);
     copyLocationCmd->setCategories(tracksCategory);
+    copyLocationCmd->setSupportsShortcutTarget(ShortcutTarget::NowPlaying, true);
     QObject::connect(m_copyLocation, &QAction::triggered, m_self, [this]() {
         if(const auto* selection = m_self->selectedSelection()) {
             copyLocation(*selection);
@@ -429,6 +431,7 @@ void TrackSelectionControllerPrivate::setupBuiltInMenus()
     auto* copyDirectoryPathCmd
         = m_actionManager->registerAction(m_copyDirectoryPath, Constants::Actions::CopyDirectoryPath);
     copyDirectoryPathCmd->setCategories(tracksCategory);
+    copyDirectoryPathCmd->setSupportsShortcutTarget(ShortcutTarget::NowPlaying, true);
     QObject::connect(m_copyDirectoryPath, &QAction::triggered, m_self, [this]() {
         if(const auto* selection = m_self->selectedSelection()) {
             copyDirectoryPath(*selection);
@@ -532,6 +535,7 @@ void TrackSelectionControllerPrivate::setupBuiltInMenus()
     m_openProperties->setStatusTip(tr("Open the properties dialog"));
     auto* openPropsCmd = m_actionManager->registerAction(m_openProperties, Constants::Actions::OpenProperties);
     openPropsCmd->setCategories(tracksCategory);
+    openPropsCmd->setSupportsShortcutTarget(ShortcutTarget::NowPlaying, true);
     QObject::connect(m_openProperties, &QAction::triggered, m_self, [this]() {
         if(const auto* selection = m_self->selectedSelection()) {
             openProperties(*selection);
