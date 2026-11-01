@@ -61,6 +61,7 @@ private:
     QCheckBox* m_autoFitArtwork;
     QSpinBox* m_iconHorizontalGap;
     QSpinBox* m_iconVerticalGap;
+    QCheckBox* m_useIconGapsForSideCaptions;
     QSpinBox* m_iconLeftMargin;
     QSpinBox* m_iconTopMargin;
     QSpinBox* m_iconRightMargin;

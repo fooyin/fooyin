@@ -173,6 +173,7 @@ public:
     QMargins m_iconItemArtworkMargins;
     bool m_autoFitArtwork{false};
     QSize m_effectiveIconSize;
+    bool m_useIconGapsForSideCaptions{false};
     bool m_uniformRowHeights{false};
     bool m_selectBeforeDrag{false};
     bool m_selectIgnoreParents{false};

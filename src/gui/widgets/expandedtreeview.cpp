@@ -2016,6 +2016,7 @@ private:
     [[nodiscard]] bool useAutoFitArtwork() const;
     [[nodiscard]] bool haveSideCaptions() const;
     [[nodiscard]] bool haveBottomCaptions() const;
+    [[nodiscard]] bool useIconGaps() const;
 
     QRect m_layoutBounds;
     int m_segmentSize{0};
@@ -2489,15 +2490,16 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
     int deltaSegPosition{0};
     int segPosition{topLeft.y()};
 
-    const bool autoFit          = useAutoFitArtwork();
-    const bool fixedGridSpacing = autoFit || m_p->m_iconHorizontalGap >= 0;
+    const bool useConfiguredGridSpacing = useIconGaps();
+    const bool autoFit                  = useAutoFitArtwork();
+    const bool fixedGridSpacing         = useConfiguredGridSpacing && (autoFit || m_p->m_iconHorizontalGap >= 0);
 
     m_horizontalInset
         = haveSideCaptions() ? 0 : std::min(MinItemSpacing, std::max(0, (m_layoutBounds.width() - 1) / 2));
     segStartPosition += m_horizontalInset;
     segEndPosition -= m_horizontalInset;
 
-    if(!fixedGridSpacing) {
+    if(useConfiguredGridSpacing && !fixedGridSpacing) {
         segStartPosition += m_itemSpacing;
         segEndPosition -= m_itemSpacing;
     }
@@ -2531,7 +2533,7 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
 
     const int totalWidthAvailable = segEndPosition - segStartPosition;
     const int totalItemWidth      = m_segmentSize * itemWidth(0);
-    const int itmWidth            = itemWidth(0);
+    const int itmWidth            = useConfiguredGridSpacing ? itemWidth(0) : totalWidthAvailable / m_segmentSize;
     const int maxPadding          = static_cast<int>(totalWidthAvailable * maxPaddingRatio);
 
     int gridStartPosition{segStartPosition};
@@ -2588,6 +2590,9 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
                 = haveSideCaptions() ? iconSizeForWidth(artworkWidth) : QSize{artworkWidth, m_fittedIconSize.height()};
             item.height = measurements.heights[i];
         }
+        else if(!useConfiguredGridSpacing) {
+            item.x = segStartPosition + (segColumn * itmWidth);
+        }
         else if(fixedGridSpacing) {
             item.x = gridStartPosition + (segColumn * (itmWidth + m_itemSpacing));
         }
@@ -2632,11 +2637,13 @@ void IconView::resetGrid()
 {
     m_segmentSize = 0;
 
-    m_itemSpacing = m_p->m_iconHorizontalGap >= 0 ? m_p->m_iconHorizontalGap : MinItemSpacing;
+    const bool useConfiguredGridSpacing = useIconGaps();
+    m_itemSpacing
+        = useConfiguredGridSpacing && m_p->m_iconHorizontalGap >= 0 ? m_p->m_iconHorizontalGap : MinItemSpacing;
     if(useAutoFitArtwork() && m_p->m_iconHorizontalGap < 0) {
         m_itemSpacing = 0;
     }
-    m_rowSpacing = m_p->m_iconVerticalGap;
+    m_rowSpacing = useConfiguredGridSpacing ? m_p->m_iconVerticalGap : 0;
 }
 
 void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
@@ -2877,6 +2884,11 @@ bool IconView::haveSideCaptions() const
 bool IconView::haveBottomCaptions() const
 {
     return m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Bottom;
+}
+
+bool IconView::useIconGaps() const
+{
+    return useAutoFitArtwork() || !haveSideCaptions() || m_p->m_useIconGapsForSideCaptions;
 }
 
 class FlowView : public BaseView
@@ -4525,6 +4537,21 @@ void ExpandedTreeView::setAutoFitArtwork(bool enabled)
 QSize ExpandedTreeView::effectiveIconSize() const
 {
     return p->m_view->effectiveIconSize();
+}
+
+bool ExpandedTreeView::useIconGapsForSideCaptions() const
+{
+    return p->m_useIconGapsForSideCaptions;
+}
+
+void ExpandedTreeView::setUseIconGapsForSideCaptions(bool enabled)
+{
+    if(std::exchange(p->m_useIconGapsForSideCaptions, enabled) == enabled) {
+        return;
+    }
+
+    p->doDelayedItemsLayout();
+    viewport()->update();
 }
 
 void ExpandedTreeView::changeIconSize(const QSize& size)

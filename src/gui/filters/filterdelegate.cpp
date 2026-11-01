@@ -551,7 +551,7 @@ QSize FilterDelegate::iconItemSize(const QStyleOptionViewItem& option, const QMo
             const int itemWidth  = option.rect.width() > 0
                                      ? option.rect.width()
                                      : artworkSize.width() + IconCaptionMargin + RightCaptionTextWidth;
-            const int itemHeight = std::max(artworkSize.height(), textSize.height() + verticalPadding);
+            const int itemHeight = std::max(artworkSize.height(), textSize.height()) + verticalPadding;
             return {itemWidth, itemHeight};
         }
         case ExpandedTreeView::CaptionDisplay::None:

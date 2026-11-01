@@ -51,6 +51,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     , m_autoFitArtwork{new QCheckBox(tr("Fit icons to available width"), this)}
     , m_iconHorizontalGap{new QSpinBox(this)}
     , m_iconVerticalGap{new QSpinBox(this)}
+    , m_useIconGapsForSideCaptions{new QCheckBox(tr("Use grid spacing with right captions"), this)}
     , m_iconLeftMargin{new QSpinBox(this)}
     , m_iconTopMargin{new QSpinBox(this)}
     , m_iconRightMargin{new QSpinBox(this)}
@@ -110,6 +111,11 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     m_iconVerticalGap->setRange(0, 256);
     m_iconVerticalGap->setSuffix(u" px"_s);
     m_iconVerticalGap->setToolTip(tr("Vertical spacing between stations in icon display mode."));
+
+    m_useIconGapsForSideCaptions->setToolTip(
+        tr("Apply horizontal and vertical gaps when captions are displayed to the right of icons. "
+           "When disabled, columns stretch to fill the available width without gaps between stations. "
+           "Artwork margins still apply. Auto-fit artwork always uses grid spacing."));
 
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
@@ -176,6 +182,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
                           3);
     iconLayout->addWidget(Gui::createSectionHeader(tr("Gap"), this), row++, 0);
     iconLayout->addLayout(gapLayout, row++, 0, 1, 3);
+    iconLayout->addWidget(m_useIconGapsForSideCaptions, row++, 0, 1, 3);
     iconLayout->addWidget(Gui::createSectionHeader(tr("Margins"), this), row++, 0);
     iconLayout->addLayout(marginsLayout, row++, 0, 1, 3);
     iconLayout->setColumnStretch(2, 1);
@@ -199,6 +206,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     contentLayout()->addWidget(tabs);
 
     QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);
+    QObject::connect(m_autoFitArtwork, &QCheckBox::toggled, m_useIconGapsForSideCaptions, &QWidget::setDisabled);
 
     m_sendClicks->setChecked(radioBrowser->sendClicks());
     QObject::connect(radioBrowser, &RadioBrowserWidget::configChanged, this,
@@ -232,6 +240,7 @@ RadioBrowserWidget::ConfigData RadioBrowserConfigDialog::config() const
     config.view.autoFitArtwork                 = m_autoFitArtwork->isChecked();
     config.view.iconHorizontalGap              = m_iconHorizontalGap->value();
     config.view.iconVerticalGap                = m_iconVerticalGap->value();
+    config.view.useIconGapsForSideCaptions     = m_useIconGapsForSideCaptions->isChecked();
     config.view.iconMargins         = {m_iconLeftMargin->value(), m_iconTopMargin->value(), m_iconRightMargin->value(),
                                        m_iconBottomMargin->value()};
     config.view.iconCornerRadius    = m_iconCornerRadius->value();
@@ -259,6 +268,8 @@ void RadioBrowserConfigDialog::setConfig(const RadioBrowserWidget::ConfigData& c
     m_autoFitArtwork->setEnabled(config.view.viewMode == ExpandedTreeView::ViewMode::Icon);
     m_iconHorizontalGap->setValue(config.view.iconHorizontalGap);
     m_iconVerticalGap->setValue(config.view.iconVerticalGap);
+    m_useIconGapsForSideCaptions->setChecked(config.view.useIconGapsForSideCaptions);
+    m_useIconGapsForSideCaptions->setEnabled(!config.view.autoFitArtwork);
     m_iconLeftMargin->setValue(config.view.iconMargins.left());
     m_iconTopMargin->setValue(config.view.iconMargins.top());
     m_iconRightMargin->setValue(config.view.iconMargins.right());
@@ -288,6 +299,7 @@ void RadioBrowserConfigDialog::mergeExternalConfig(const RadioBrowserWidget::Con
         &RadioBrowserWidget::ConfigData::ViewConfig::autoFitArtwork,
         &RadioBrowserWidget::ConfigData::ViewConfig::iconHorizontalGap,
         &RadioBrowserWidget::ConfigData::ViewConfig::iconVerticalGap,
+        &RadioBrowserWidget::ConfigData::ViewConfig::useIconGapsForSideCaptions,
         &RadioBrowserWidget::ConfigData::ViewConfig::iconMargins,
         &RadioBrowserWidget::ConfigData::ViewConfig::iconCornerRadius,
         &RadioBrowserWidget::ConfigData::ViewConfig::uniformStationIcons);

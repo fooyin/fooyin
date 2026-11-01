@@ -120,6 +120,10 @@ public:
     void setAutoFitArtwork(bool enabled);
     [[nodiscard]] QSize effectiveIconSize() const;
 
+    //! Use grid spacing for side captions. Auto-fit artwork always uses grid spacing.
+    [[nodiscard]] bool useIconGapsForSideCaptions() const;
+    void setUseIconGapsForSideCaptions(bool enabled);
+
     void changeIconSize(const QSize& size);
 
     [[nodiscard]] QModelIndex expandedIndex() const;

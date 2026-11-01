@@ -102,6 +102,7 @@ public:
             bool autoFitArtwork{false};
             int iconHorizontalGap{-1};
             int iconVerticalGap{8};
+            bool useIconGapsForSideCaptions{false};
             QMargins iconMargins{8, 8, 8, 8};
             int iconCornerRadius{20};
             bool uniformStationIcons{true};
