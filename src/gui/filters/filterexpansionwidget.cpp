@@ -344,6 +344,27 @@ void FilterExpansionWidget::updateContent(const ExpansionResult& content)
     }
 }
 
+void FilterExpansionWidget::startPlayback(const QModelIndex& index)
+{
+    const int currentTrack = m_model->firstTrack(index);
+    if(!m_selection || m_previewMode || currentTrack < 0) {
+        return;
+    }
+
+    const auto selectedTracks = m_model->selectedTracks(m_tracks->selectionModel()->selectedIndexes());
+    if(selectedTracks.size() > 1) {
+        TrackList tracks;
+        tracks.reserve(selectedTracks.size());
+        for(const int track : selectedTracks) {
+            tracks.push_back(m_model->tracks().at(track));
+        }
+        m_selection->startPlayback(tracks);
+    }
+    else {
+        m_selection->startPlayback(m_model->tracks(), currentTrack);
+    }
+}
+
 void FilterExpansionWidget::setPreviewMode()
 {
     m_previewMode = true;

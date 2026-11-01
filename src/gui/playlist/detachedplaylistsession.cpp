@@ -232,6 +232,21 @@ void DetachedTrackListSession::startPlayback(PlaylistWidgetSessionHost& host) co
         return;
     }
 
+    if(host.playerController()->playbackQueueMode() == PlaybackQueueMode::PlaylistWithOverrides) {
+        auto selectedIndexes = selectedPlaylistIndexes(host);
+        if(selectedIndexes.size() > 1) {
+            std::ranges::sort(selectedIndexes);
+
+            TrackList tracks;
+            tracks.reserve(selectedIndexes.size());
+            for(const int index : selectedIndexes) {
+                tracks.push_back(playlistTracks.at(index).track);
+            }
+            host.selectionController()->startPlayback(tracks);
+            return;
+        }
+    }
+
     int trackIndex{0};
     QModelIndex playbackIndex = host.playlistView()->currentIndex();
     if(playbackIndex.isValid() && playbackIndex.data(PlaylistItem::Type).toInt() != PlaylistItem::Track) {

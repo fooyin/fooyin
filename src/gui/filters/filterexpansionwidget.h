@@ -64,6 +64,8 @@ public:
     void setContent(const ExpansionResult& content, bool preserveSelection = true);
     void updateContent(const ExpansionResult& content);
 
+    void startPlayback(const QModelIndex& index);
+
     void setPreviewMode();
     void setPreviewArtwork(const QPixmap& artwork, bool show);
     void setBackground(const BackgroundConfig& config, const QString& colour);

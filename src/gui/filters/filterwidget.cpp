@@ -1445,18 +1445,31 @@ void FilterWidget::submitExpansion(ExpansionRequest request)
                          &ExpandedTreeView::refreshExpansion);
         QObject::connect(m_expansion, &FilterExpansionWidget::requestContextMenu, this,
                          &FilterWidget::requestContextMenu);
-        QObject::connect(m_expansion, &FilterExpansionWidget::doubleClicked, this, [this]() {
-            const auto action = m_config.expansionDoubleClickAction < 0
-                                  ? doubleClickAction()
-                                  : static_cast<TrackAction>(m_config.expansionDoubleClickAction);
-            Q_EMIT actionRequested(action);
-        });
-        QObject::connect(m_expansion, &FilterExpansionWidget::middleClicked, this, [this]() {
-            const auto action = m_config.expansionMiddleClickAction < 0
-                                  ? middleClickAction()
-                                  : static_cast<TrackAction>(m_config.expansionMiddleClickAction);
-            Q_EMIT actionRequested(action);
-        });
+
+        const auto execExpansionAction = [this](TrackAction action, const QModelIndex& index) {
+            if(action == TrackAction::Play && m_player
+               && m_player->playbackQueueMode() == PlaybackQueueMode::PlaylistWithOverrides) {
+                m_expansion->startPlayback(index);
+            }
+            else {
+                Q_EMIT actionRequested(action);
+            }
+        };
+        QObject::connect(m_expansion, &FilterExpansionWidget::doubleClicked, this,
+                         [this, execExpansionAction](const QModelIndex& index) {
+                             const auto action = m_config.expansionDoubleClickAction < 0
+                                                   ? doubleClickAction()
+                                                   : static_cast<TrackAction>(m_config.expansionDoubleClickAction);
+                             execExpansionAction(action, index);
+                         });
+        QObject::connect(m_expansion, &FilterExpansionWidget::middleClicked, this,
+                         [this, execExpansionAction](const QModelIndex& index) {
+                             const auto action = m_config.expansionMiddleClickAction < 0
+                                                   ? middleClickAction()
+                                                   : static_cast<TrackAction>(m_config.expansionMiddleClickAction);
+                             execExpansionAction(action, index);
+                         });
+
         QObject::connect(m_expansion, &FilterExpansionWidget::scrollAdjustmentRequested, this, [this](int delta) {
             auto* bar = m_view->verticalScrollBar();
             bar->setValue(bar->value() + delta);
