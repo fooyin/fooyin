@@ -27,6 +27,7 @@
 #include "sources/locallyrics.h"
 #include "sources/lrcliblyrics.h"
 #include "sources/lyricsource.h"
+#include "sources/lyricsovhlyrics.h"
 #include "sources/neteaselyrics.h"
 #include "sources/qqlyrics.h"
 #include "sources/taglyrics.h"
@@ -202,7 +203,8 @@ void LyricsFinder::loadDefaults()
                  new NeteaseLyrics(m_networkManager.get(), m_settings, 3, true, this),
                  new QQLyrics(m_networkManager.get(), m_settings, 4, true, this),
                  new KugouLyrics(m_networkManager.get(), m_settings, 5, true, this),
-                 new DarkLyrics(m_networkManager.get(), m_settings, 6, false, this)};
+                 new LyricsOvhLyrics(m_networkManager.get(), m_settings, 6, true, this),
+                 new DarkLyrics(m_networkManager.get(), m_settings, 7, false, this)};
 }
 
 void LyricsFinder::startLyricsSearch(const Track& track)
