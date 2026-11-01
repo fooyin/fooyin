@@ -386,8 +386,7 @@ void FilterModel::setShowSummary(bool show)
         p->updateSummary();
         endInsertRows();
     }
-    else {
-        const int row = p->m_summaryNode.row();
+    else if(const int row = p->m_summaryNode.row(); row >= 0) {
         beginRemoveRows({}, row, row);
         p->removeSummary();
         endRemoveRows();
