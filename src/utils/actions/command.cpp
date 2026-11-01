@@ -51,6 +51,7 @@ public:
 
     void setActive(bool state);
     void updateActiveState();
+    void updateShortcutKeys();
 
     bool removeOverrideAction(QAction* actionToRemove);
 
@@ -59,6 +60,10 @@ public:
     Id m_id;
     Context m_context;
     ShortcutList m_defaultKeys;
+    ShortcutList m_keys;
+    std::map<QKeySequence, ShortcutTarget> m_shortcutTargets;
+    ShortcutTarget m_globalTarget{ShortcutTarget::FocusedWidget};
+    bool m_supportsNowPlaying{false};
     ShortcutList m_globalKeys;
     QString m_defaultText;
     QString m_globalShortcutDescription;
@@ -97,6 +102,17 @@ void CommandPrivate::setActive(bool state)
 void CommandPrivate::updateActiveState()
 {
     setActive(m_action->isEnabled() && m_action->isVisible() && !m_action->isSeparator());
+}
+
+void CommandPrivate::updateShortcutKeys()
+{
+    ShortcutList keys;
+    for(const auto& key : std::as_const(m_keys)) {
+        if(m_self->shortcutTarget(key) == ShortcutTarget::FocusedWidget) {
+            keys.append(key);
+        }
+    }
+    m_action->setShortcuts(keys);
 }
 
 Command::Command(const Id& id)
@@ -156,7 +172,9 @@ bool Command::hasOverrideActions() const
 void Command::setShortcut(const ShortcutList& keys)
 {
     p->m_shortcutIsInitialised = true;
-    p->m_action->setShortcuts(keys);
+    p->m_keys                  = keys;
+    std::erase_if(p->m_shortcutTargets, [&keys](const auto& entry) { return !keys.contains(entry.first); });
+    p->updateShortcutKeys();
     Q_EMIT shortcutChanged();
 }
 
@@ -172,6 +190,62 @@ void Command::setGlobalShortcuts(const ShortcutList& keys)
     }
 
     Q_EMIT globalShortcutsChanged();
+}
+
+ShortcutTarget Command::shortcutTarget(const QKeySequence& key) const
+{
+    if(const auto it = p->m_shortcutTargets.find(key); it != p->m_shortcutTargets.end()) {
+        return it->second;
+    }
+    return ShortcutTarget::FocusedWidget;
+}
+
+void Command::setShortcutTarget(const QKeySequence& key, ShortcutTarget target)
+{
+    if(key.isEmpty() || shortcutTarget(key) == target) {
+        return;
+    }
+
+    if(target == ShortcutTarget::FocusedWidget) {
+        p->m_shortcutTargets.erase(key);
+    }
+    else if(target == ShortcutTarget::NowPlaying) {
+        p->m_shortcutTargets[key] = target;
+    }
+    else {
+        return;
+    }
+
+    p->updateShortcutKeys();
+    Q_EMIT shortcutTargetsChanged();
+}
+
+ShortcutTarget Command::globalShortcutTarget() const
+{
+    return p->m_globalTarget;
+}
+
+void Command::setGlobalShortcutTarget(ShortcutTarget target)
+{
+    if(target != ShortcutTarget::FocusedWidget && target != ShortcutTarget::NowPlaying) {
+        return;
+    }
+
+    if(std::exchange(p->m_globalTarget, target) != target) {
+        Q_EMIT shortcutTargetsChanged();
+    }
+}
+
+bool Command::supportsShortcutTarget(ShortcutTarget target) const
+{
+    return target == ShortcutTarget::FocusedWidget || (target == ShortcutTarget::NowPlaying && p->m_supportsNowPlaying);
+}
+
+void Command::setSupportsShortcutTarget(ShortcutTarget target, bool supported)
+{
+    if(target == ShortcutTarget::NowPlaying && std::exchange(p->m_supportsNowPlaying, supported) != supported) {
+        Q_EMIT shortcutTargetsChanged();
+    }
 }
 
 void Command::setGlobalShortcutRegistered(bool registered)
@@ -225,7 +299,7 @@ ShortcutList Command::defaultShortcuts() const
 
 ShortcutList Command::shortcuts() const
 {
-    return p->m_action->shortcuts();
+    return p->m_keys;
 }
 
 ShortcutList Command::globalShortcuts() const

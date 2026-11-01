@@ -209,10 +209,23 @@ void FileOpsPlugin::setupMenu()
 
     refreshPresetActions();
 
+    Context deleteContext{Constants::Context::TrackSelection};
+    deleteContext.append(Constants::Context::Global);
+
     auto* deleteAction = new QAction(tr("&Delete"), this);
-    auto* deleteCmd
-        = m_actionManager->registerAction(deleteAction, "FileOps.Delete", Context{Constants::Context::TrackSelection});
+    auto* deleteCmd    = m_actionManager->registerAction(deleteAction, "FileOps.Delete", deleteContext);
     deleteCmd->setCategories({tr("Tracks"), tr("File operations")});
+    deleteCmd->setSupportsShortcutTarget(ShortcutTarget::NowPlaying, true);
+
+    m_trackSelectionController->setSelectionActionValidator(
+        deleteAction, [](const TrackSelection& selection) { return canOperateOnTracks(selection.tracks); });
+
+    const auto updateDeleteAction = [this, deleteAction] {
+        deleteAction->setEnabled(canOperateOnTracks(m_trackSelectionController->selectedTracks()));
+    };
+    updateDeleteAction();
+    QObject::connect(m_trackSelectionController, &TrackSelectionController::selectionChanged, deleteAction,
+                     updateDeleteAction);
 
     QObject::connect(deleteAction, &QAction::triggered, deleteAction, [this]() {
         const auto* selection = m_trackSelectionController->selectedSelection();
@@ -220,7 +233,8 @@ void FileOpsPlugin::setupMenu()
             return;
         }
 
-        deleteTracks(selection->tracks);
+        const TrackList tracks = selection->tracks;
+        deleteTracks(tracks);
     });
 
     m_trackSelectionController->registerTrackContextAction(
@@ -234,8 +248,10 @@ void FileOpsPlugin::setupMenu()
             menu->addAction(deleteAction);
         });
 
-    auto* deletePlayingAction = new QAction(tr("Delete currently playing file"), this);
-    auto* deletePlayingCmd    = m_actionManager->registerAction(deletePlayingAction, "FileOps.DeletePlaying");
+    auto* deletePlayingAction = new QAction(tr("Delete currently playing file (deprecated)"), this);
+    deletePlayingAction->setStatusTip(tr("This action is deprecated and will be removed in a future release. "
+                                         "Use ‘Delete’ with the target set to ‘Playing track’ instead."));
+    auto* deletePlayingCmd = m_actionManager->registerAction(deletePlayingAction, "FileOps.DeletePlaying");
     deletePlayingCmd->setCategories({tr("Tracks"), tr("File operations")});
 
     const auto updateDeletePlayingAction = [deletePlayingAction](const Track& track) {

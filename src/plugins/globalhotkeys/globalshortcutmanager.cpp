@@ -227,13 +227,17 @@ void GlobalShortcutManager::registrationFailure(const Id& commandId, const QKeyS
         ShortcutList globalShortcuts = command->globalShortcuts();
         if(globalShortcuts.removeAll(shortcut) > 0) {
             ShortcutList appShortcuts = command->shortcuts();
-            if(!appShortcuts.contains(shortcut)) {
+            const bool haveAppBinding = appShortcuts.contains(shortcut);
+            if(!haveAppBinding) {
                 appShortcuts.append(shortcut);
             }
 
             command->setGlobalShortcuts(globalShortcuts);
             command->setGlobalShortcutRegistered(!globalShortcuts.empty());
             command->setShortcut(appShortcuts);
+            if(!haveAppBinding) {
+                command->setShortcutTarget(shortcut, command->globalShortcutTarget());
+            }
             scheduleSaveSettings();
         }
     }
@@ -258,14 +262,8 @@ void GlobalShortcutManager::scheduleSaveSettings()
 
 void GlobalShortcutManager::activate(const Id& commandId)
 {
-    if(!m_commands.contains(commandId)) {
-        return;
-    }
-
-    const Command* command = m_commands.at(commandId);
-    if(QAction* action = command->actionForContext(Constants::Context::Global);
-       action && action->isEnabled() && action->isVisible()) {
-        action->trigger();
+    if(m_commands.contains(commandId)) {
+        m_actionManager->activateGlobalShortcut(commandId);
     }
 }
 } // namespace Fooyin::GlobalHotkeys

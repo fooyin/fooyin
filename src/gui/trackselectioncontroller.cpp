@@ -210,6 +210,7 @@ public:
 
     std::unordered_map<QWidget*, WidgetContext*> m_contextWidgets;
     std::unordered_map<WidgetContext*, TrackSelection> m_contextSelection;
+    std::unordered_map<const QAction*, std::function<bool(const TrackSelection&)>> m_selectionActionValidators;
     WidgetContext* m_activeContext{nullptr};
     WidgetContext* m_displayContext{nullptr};
     TrackSelection m_displaySelection;
@@ -1688,12 +1689,31 @@ std::optional<TrackSelectionTarget> TrackSelectionController::playlistSelectionT
 std::optional<bool> TrackSelectionController::selectionActionEnabled(const QAction* action,
                                                                      const TrackSelection& selection) const
 {
+    if(const auto it = p->m_selectionActionValidators.find(action);
+       it != p->m_selectionActionValidators.cend() && it->second) {
+        return it->second(selection);
+    }
     return p->actionEnabled(action, p->actionState(&selection));
 }
 
 std::optional<bool> TrackSelectionController::selectionActionEnabled(const QAction* action) const
 {
-    return p->actionEnabled(action, p->actionState(p->ambientSelection()));
+    const auto* selection = p->ambientSelection();
+    return selectionActionEnabled(action, selection ? *selection : TrackSelection{});
+}
+
+void TrackSelectionController::setSelectionActionValidator(QAction* action,
+                                                           const std::function<bool(const TrackSelection&)>& validator)
+{
+    if(!action) {
+        return;
+    }
+
+    if(!p->m_selectionActionValidators.contains(action)) {
+        QObject::connect(action, &QObject::destroyed, this,
+                         [this, action] { p->m_selectionActionValidators.erase(action); });
+    }
+    p->m_selectionActionValidators[action] = validator;
 }
 
 void TrackSelectionController::changeSelectedTracks(WidgetContext* context, const TrackSelection& selection)

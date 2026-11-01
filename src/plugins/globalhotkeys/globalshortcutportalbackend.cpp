@@ -104,13 +104,13 @@ void GlobalShortcutPortalBackend::applyBindings(const GlobalShortcutDescriptorLi
     closeSession();
     m_bindings = bindings;
 
-    if(!m_available || m_bindings.empty()) {
-        return;
-    }
-
     m_portalShortcuts.clear();
     m_shortcutDescriptors.clear();
     m_boundShortcutIds.clear();
+
+    if(!m_available || m_bindings.empty()) {
+        return;
+    }
 
     for(const auto& binding : m_bindings) {
         const QString shortcutId = binding.commandId.name();
@@ -153,15 +153,21 @@ bool GlobalShortcutPortalBackend::configurationAvailable() const
 
 void GlobalShortcutPortalBackend::configure()
 {
-    if(!m_configurationAvailable || m_bindings.empty()) {
+    if(!m_configurationAvailable) {
         return;
     }
 
-    if(m_sessionPath.isEmpty() || m_requestStage != RequestStage::None) {
+    if(m_requestStage != RequestStage::None) {
         m_configurePending = true;
         return;
     }
+    if(m_sessionPath.isEmpty()) {
+        m_configurePending = true;
+        createSession();
+        return;
+    }
 
+    m_configurePending = false;
     m_portal->asyncCall(u"ConfigureShortcuts"_s, QVariant::fromValue(QDBusObjectPath{m_sessionPath}), QString{},
                         QVariantMap{});
 }
@@ -187,7 +193,14 @@ void GlobalShortcutPortalBackend::requestResponse(uint response, const QVariantM
 
         QDBusConnection::sessionBus().connect(PortalService, m_sessionPath, PortalSessionInterface, u"Closed"_s, this,
                                               SLOT(sessionClosed()));
-        bindShortcuts();
+        if(m_portalShortcuts.empty()) {
+            if(std::exchange(m_configurePending, false)) {
+                configure();
+            }
+        }
+        else {
+            bindShortcuts();
+        }
         return;
     }
 
@@ -364,6 +377,7 @@ void GlobalShortcutPortalBackend::failBindings(const QString& error)
 {
     qCWarning(GLOBAL_SHORTCUTS) << "Global shortcut registration failed:" << error;
 
+    m_configurePending = false;
     endRequest();
     closeSession();
 

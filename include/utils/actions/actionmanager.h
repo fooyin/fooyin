@@ -37,6 +37,7 @@ class ActionManagerPrivate;
 class Command;
 class SettingsManager;
 class ActionContainer;
+enum class ShortcutTarget : uint8_t;
 
 using CommandList = std::vector<Command*>;
 
@@ -85,6 +86,7 @@ public:
     [[nodiscard]] bool globalShortcutConfigurationAvailable() const;
     void setGlobalShortcutConfigurationAvailable(bool available);
     void configureGlobalShortcuts();
+    void activateGlobalShortcut(const Id& commandId);
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
@@ -94,6 +96,8 @@ Q_SIGNALS:
     void globalShortcutManagementChanged(Fooyin::GlobalShortcutManagement management);
     void globalShortcutConfigurationAvailabilityChanged(bool available);
     void globalShortcutConfigurationRequested();
+    //! Explicit shortcut targets are resolved by the command handler.
+    void shortcutActivated(const Fooyin::Id& commandId, Fooyin::ShortcutTarget target);
 
 private:
     std::unique_ptr<ActionManagerPrivate> p;

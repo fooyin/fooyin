@@ -22,6 +22,7 @@
 #include "menucontainer.h"
 
 #include <utils/actions/command.h>
+#include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
@@ -31,8 +32,11 @@
 #include <QMainWindow>
 #include <QMenuBar>
 #include <QMouseEvent>
+#include <QPointer>
+#include <QShortcut>
 
 #include <optional>
+#include <ranges>
 #include <set>
 
 using namespace Qt::StringLiterals;
@@ -41,6 +45,13 @@ namespace Fooyin {
 class ActionManagerPrivate
 {
 public:
+    struct TargetShortcuts
+    {
+        QPointer<QShortcut> shortcut;
+        QMetaObject::Connection stateConnection;
+        QMetaObject::Connection destroyedConnection;
+    };
+
     ActionManagerPrivate(ActionManager* self, SettingsManager* settingsManager)
         : m_self{self}
         , m_settingsManager{settingsManager}
@@ -48,6 +59,9 @@ public:
 
     Command* overridableAction(const Id& id);
     void loadSetting(const Id& id, Command* command) const;
+    void updateTargetShortcuts(Command* command);
+    void updateTargetShortcutState(Command* command);
+    void clearTargetShortcuts(Command* command);
     [[nodiscard]] std::optional<ShortcutList> loadShortcuts(const QString& key) const;
 
     void updateContainer();
@@ -78,6 +92,7 @@ public:
 
     std::unordered_map<Id, std::unique_ptr<Command>, Id::IdHash> m_idCmdMap;
     std::set<Id> m_declaredCommands;
+    std::unordered_map<Command*, TargetShortcuts> m_targetShortcuts;
     std::unordered_map<Id, std::unique_ptr<ActionContainer>, Id::IdHash> m_idContainerMap;
     std::unordered_map<QWidget*, WidgetContext*> m_contextWidgets;
     std::set<ActionContainer*> m_scheduledContainerUpdates;
@@ -107,7 +122,74 @@ Command* ActionManagerPrivate::overridableAction(const Id& id)
 
     command->setCurrentContext(m_currentContext);
 
+    const auto updateShortcuts = [this, command] {
+        updateTargetShortcuts(command);
+    };
+    QObject::connect(command, &Command::shortcutChanged, command, updateShortcuts);
+    QObject::connect(command, &Command::shortcutTargetsChanged, command, updateShortcuts);
+    updateShortcuts();
+
     return command;
+}
+
+void ActionManagerPrivate::updateTargetShortcuts(Command* command)
+{
+    ShortcutList keys;
+    for(const auto& key : command->shortcuts()) {
+        if(!key.isEmpty() && command->shortcutTarget(key) == ShortcutTarget::NowPlaying) {
+            keys.append(key);
+        }
+    }
+    if(keys.empty()) {
+        clearTargetShortcuts(command);
+        return;
+    }
+
+    const auto [it, inserted]                              = m_targetShortcuts.try_emplace(command);
+    auto& [shortcut, stateConnection, destroyedConnection] = it->second;
+    if(inserted) {
+        shortcut = new QShortcut(m_mainWindow);
+        shortcut->setContext(Qt::ApplicationShortcut);
+        QObject::connect(shortcut, &QShortcut::activated, command, [this, command] {
+            if(command->supportsShortcutTarget(ShortcutTarget::NowPlaying) && command->hasOverrideActions()) {
+                Q_EMIT m_self->shortcutActivated(command->id(), ShortcutTarget::NowPlaying);
+            }
+        });
+        stateConnection     = QObject::connect(command->action(), &QAction::changed, command,
+                                               [this, command] { updateTargetShortcutState(command); });
+        destroyedConnection = QObject::connect(command, &QObject::destroyed, m_self,
+                                               [this, command] { clearTargetShortcuts(command); });
+    }
+    if(shortcut->keys() != keys) {
+        shortcut->setKeys(keys);
+    }
+    updateTargetShortcutState(command);
+}
+
+void ActionManagerPrivate::updateTargetShortcutState(Command* command)
+{
+    const auto it = m_targetShortcuts.find(command);
+    if(it == m_targetShortcuts.end() || !it->second.shortcut) {
+        return;
+    }
+    it->second.shortcut->setEnabled(command->supportsShortcutTarget(ShortcutTarget::NowPlaying)
+                                    && command->hasOverrideActions());
+    it->second.shortcut->setAutoRepeat(command->action()->autoRepeat());
+}
+
+void ActionManagerPrivate::clearTargetShortcuts(Command* command)
+{
+    const auto it = m_targetShortcuts.find(command);
+    if(it == m_targetShortcuts.end()) {
+        return;
+    }
+    QObject::disconnect(it->second.stateConnection);
+    QObject::disconnect(it->second.destroyedConnection);
+    if(auto* shortcut = it->second.shortcut.data()) {
+        shortcut->setEnabled(false);
+        shortcut->deleteLater();
+    }
+    m_targetShortcuts.erase(it);
 }
 
 void ActionManagerPrivate::loadSetting(const Id& id, Command* command) const
@@ -117,6 +199,17 @@ void ActionManagerPrivate::loadSetting(const Id& id, Command* command) const
     }
     if(const auto shortcuts = loadShortcuts(u"GlobalShortcuts/"_s + id.name())) {
         command->setGlobalShortcuts(*shortcuts);
+    }
+
+    const auto targets = m_settingsManager->fileValue(u"KeyboardShortcutTargets/"_s + id.name()).toMap();
+    for(const auto& [key, value] : Utils::asRange(targets)) {
+        if(value.toString() == "nowPlaying"_L1) {
+            command->setShortcutTarget(QKeySequence::fromString(key, QKeySequence::PortableText),
+                                       ShortcutTarget::NowPlaying);
+        }
+    }
+    if(m_settingsManager->fileValue(u"GlobalShortcutTargets/"_s + id.name()).toString() == "nowPlaying"_L1) {
+        command->setGlobalShortcutTarget(ShortcutTarget::NowPlaying);
     }
 
     const QString registrationKey = u"GlobalShortcutRegistrations/"_s + id.name();
@@ -132,7 +225,7 @@ std::optional<ShortcutList> ActionManagerPrivate::loadShortcuts(const QString& k
 {
     if(m_settingsManager->fileContains(key)) {
         const QVariant var = m_settingsManager->fileValue(key);
-        if(QMetaType::Type(var.typeId()) == QMetaType::QStringList) {
+        if(static_cast<QMetaType::Type>(var.typeId()) == QMetaType::QStringList) {
             ShortcutList shortcuts;
             std::ranges::transform(var.toStringList(), std::back_inserter(shortcuts), [](const QString& keyText) {
                 return QKeySequence::fromString(keyText, QKeySequence::PortableText);
@@ -166,7 +259,7 @@ void ActionManagerPrivate::updateContextObject(const WidgetContextList& context)
     m_activeContext = context;
 
     Context uniqueContexts;
-    for(WidgetContext* ctx : m_activeContext) {
+    for(const WidgetContext* ctx : m_activeContext) {
         for(const Id& id : ctx->context()) {
             uniqueContexts.append(id);
         }
@@ -227,14 +320,14 @@ void ActionManagerPrivate::updateFocusWidget(QWidget* widget)
 void ActionManagerPrivate::setContext(const Context& updatedContext)
 {
     m_currentContext = updatedContext;
-    for(const auto& [_, command] : m_idCmdMap) {
+    for(const auto& command : m_idCmdMap | std::views::values) {
         command->setCurrentContext(m_currentContext);
     }
 }
 
 void ActionManagerPrivate::clear()
 {
-    for(const auto& [_, context] : m_contextWidgets) {
+    for(const auto& context : m_contextWidgets | std::views::values) {
         context->disconnect(m_self);
     }
 
@@ -242,7 +335,7 @@ void ActionManagerPrivate::clear()
     m_activeContext.clear();
     m_scheduledContainerUpdates.clear();
 
-    for(const auto& [_, container] : m_idContainerMap) {
+    for(const auto& container : m_idContainerMap | std::views::values) {
         container->disconnect(m_self);
     }
 
@@ -275,7 +368,7 @@ void ActionManager::setMainWindow(QMainWindow* mainWindow)
 
 void ActionManager::saveSettings()
 {
-    for(const auto& [_, command] : p->m_idCmdMap) {
+    for(const auto& command : p->m_idCmdMap | std::views::values) {
         const QString localKey        = u"KeyboardShortcuts/"_s + command->id().name();
         const QString globalKey       = u"GlobalShortcuts/"_s + command->id().name();
         const QString registrationKey = u"GlobalShortcutRegistrations/"_s + command->id().name();
@@ -302,6 +395,29 @@ void ActionManager::saveSettings()
         }
         else {
             p->m_settingsManager->fileRemove(globalKey);
+        }
+
+        QVariantMap targets;
+        for(const auto& key : commandShortcuts) {
+            if(command->shortcutTarget(key) == ShortcutTarget::NowPlaying) {
+                targets.insert(key.toString(QKeySequence::PortableText), u"nowPlaying"_s);
+            }
+        }
+
+        const QString targetsKey = u"KeyboardShortcutTargets/"_s + command->id().name();
+        if(targets.isEmpty()) {
+            p->m_settingsManager->fileRemove(targetsKey);
+        }
+        else {
+            p->m_settingsManager->fileSet(targetsKey, targets);
+        }
+
+        const QString globalTargetKey = u"GlobalShortcutTargets/"_s + command->id().name();
+        if(command->globalShortcutTarget() == ShortcutTarget::NowPlaying) {
+            p->m_settingsManager->fileSet(globalTargetKey, u"nowPlaying"_s);
+        }
+        else {
+            p->m_settingsManager->fileRemove(globalTargetKey);
         }
 
         if(command->isGlobalShortcutRegistered()) {
@@ -462,6 +578,7 @@ Command* ActionManager::registerAction(QAction* action, const Id& id, const Cont
     Command* command = p->overridableAction(id);
     if(command) {
         command->addOverrideAction(action, context, !p->m_contextOverride);
+        p->updateTargetShortcutState(command);
         Q_EMIT commandsChanged();
     }
     return command;
@@ -479,6 +596,7 @@ bool ActionManager::unregisterAction(QAction* action, const Id& id, const Contex
         return false;
     }
 
+    p->updateTargetShortcutState(command);
     if(!command->hasOverrideActions() && !p->m_declaredCommands.contains(id)) {
         if(QAction* commandAction = command->action()) {
             p->m_mainWindow->removeAction(commandAction);
@@ -536,6 +654,29 @@ void ActionManager::setGlobalShortcutConfigurationAvailable(bool available)
 {
     if(std::exchange(p->m_globalShortcutConfigurationAvailable, available) != available) {
         Q_EMIT globalShortcutConfigurationAvailabilityChanged(available);
+    }
+}
+
+void ActionManager::activateGlobalShortcut(const Id& commandId)
+{
+    const Command* cmd = command(commandId);
+    if(!cmd) {
+        return;
+    }
+
+    QAction* action = cmd->actionForContext(Constants::Context::Global);
+    if(!action || !action->isVisible()) {
+        return;
+    }
+
+    const ShortcutTarget target = cmd->globalShortcutTarget();
+    if(target == ShortcutTarget::FocusedWidget) {
+        if(action->isEnabled()) {
+            action->trigger();
+        }
+    }
+    else if(cmd->supportsShortcutTarget(target)) {
+        Q_EMIT shortcutActivated(commandId, target);
     }
 }
 

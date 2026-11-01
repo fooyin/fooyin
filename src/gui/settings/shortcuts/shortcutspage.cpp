@@ -28,6 +28,8 @@
 
 #include <QApplication>
 #include <QCheckBox>
+#include <QComboBox>
+#include <QFrame>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -40,8 +42,11 @@
 #include <QRegularExpression>
 #include <QSignalBlocker>
 #include <QSortFilterProxyModel>
+#include <QStandardItemModel>
 #include <QToolButton>
 #include <QTreeView>
+
+#include <initializer_list>
 
 using namespace Qt::StringLiterals;
 
@@ -127,9 +132,9 @@ public:
 private:
     struct ShortcutRow
     {
-        QWidget* widget;
         QKeySequenceEdit* input;
         QCheckBox* global;
+        QComboBox* target;
         QToolButton* removeButton;
     };
 
@@ -154,10 +159,16 @@ private:
     ShortcutsFilterModel* m_proxyModel;
     QGroupBox* m_shortcutBox;
     QWidget* m_shortcutRows;
-    QVBoxLayout* m_shortcutRowsLayout;
+    QGridLayout* m_shortcutRowsLayout;
+    QLabel* m_shortcutsLabel;
+    QLabel* m_targetLabel;
     QPushButton* m_resetShortcut;
     QPushButton* m_addShortcut;
+    QFrame* m_systemShortcutSeparator;
+    QWidget* m_systemShortcutRow;
     QCheckBox* m_globalShortcut;
+    QLabel* m_systemTargetLabel;
+    QComboBox* m_systemTarget;
     QPushButton* m_configureGlobalShortcuts;
     QLabel* m_conflictLabel;
     QPushButton* m_reassignButton;
@@ -172,11 +183,17 @@ ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
     , m_proxyModel{new ShortcutsFilterModel(this)}
     , m_shortcutBox{new QGroupBox(this)}
     , m_shortcutRows{new QWidget(this)}
-    , m_shortcutRowsLayout{new QVBoxLayout(m_shortcutRows)}
+    , m_shortcutRowsLayout{new QGridLayout(m_shortcutRows)}
+    , m_shortcutsLabel{new QLabel(this)}
+    , m_targetLabel{new QLabel(tr("Target"), this)}
     , m_resetShortcut{new QPushButton(tr("Reset to default"), this)}
     , m_addShortcut{new QPushButton(Gui::iconFromTheme(Constants::Icons::Add), tr("Add shortcut"), this)}
+    , m_systemShortcutSeparator{new QFrame(this)}
+    , m_systemShortcutRow{new QWidget(this)}
     , m_globalShortcut{new QCheckBox(tr("Enable system shortcuts"), this)}
-    , m_configureGlobalShortcuts{new QPushButton(tr("Configure global shortcuts…"), this)}
+    , m_systemTargetLabel{new QLabel(tr("Target") + u":"_s, this)}
+    , m_systemTarget{new QComboBox(this)}
+    , m_configureGlobalShortcuts{new QPushButton(tr("Configure…"), this)}
     , m_conflictLabel{new QLabel(this)}
     , m_reassignButton{new QPushButton(tr("Overwrite Shortcut"), this)}
 {
@@ -199,27 +216,41 @@ ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
 
     QObject::connect(m_model, &QAbstractItemModel::modelReset, m_shortcutTable, &QTreeView::expandAll);
 
-    auto* groupLayout = new QVBoxLayout(m_shortcutBox);
-
     auto* shortcutHeader = new QHBoxLayout();
     auto* shortcutLabel  = new QLabel(tr("Shortcuts"), this);
     shortcutHeader->addWidget(shortcutLabel);
     shortcutHeader->addStretch(1);
+    shortcutHeader->addWidget(m_resetShortcut);
 
     m_shortcutRowsLayout->setContentsMargins({});
+    m_shortcutRowsLayout->setColumnStretch(0, 1);
+    m_shortcutRowsLayout->addWidget(m_shortcutsLabel, 0, 0, 1, 2);
+    m_shortcutRowsLayout->addWidget(m_targetLabel, 0, 2);
+    m_shortcutRowsLayout->addWidget(m_addShortcut, MaxShortcuts + 1, 0, 1, 2, Qt::AlignLeft);
 
-    auto* shortcutActions = new QHBoxLayout();
-    shortcutActions->addWidget(m_addShortcut);
-    shortcutActions->addWidget(m_globalShortcut);
-    shortcutActions->addWidget(m_configureGlobalShortcuts);
-    shortcutActions->addStretch(1);
-    shortcutActions->addWidget(m_resetShortcut);
+    m_systemShortcutSeparator->setFrameShape(QFrame::HLine);
+    m_systemShortcutSeparator->setFrameShadow(QFrame::Sunken);
 
     m_globalShortcut->setToolTip(tr("Key combinations are managed in your system settings."));
+    m_configureGlobalShortcuts->setToolTip(tr("Open system shortcut settings."));
 
+    m_systemTarget->addItem(tr("Focused widget"), static_cast<int>(ShortcutTarget::FocusedWidget));
+    m_systemTarget->addItem(tr("Playing track"), static_cast<int>(ShortcutTarget::NowPlaying));
+    m_systemTarget->setToolTip(tr("Choose which tracks the system shortcut applies to."));
+
+    auto* systemShortcutLayout = new QHBoxLayout(m_systemShortcutRow);
+    systemShortcutLayout->setContentsMargins({});
+    systemShortcutLayout->addWidget(m_globalShortcut);
+    systemShortcutLayout->addStretch(1);
+    systemShortcutLayout->addWidget(m_systemTargetLabel);
+    systemShortcutLayout->addWidget(m_systemTarget);
+    systemShortcutLayout->addWidget(m_configureGlobalShortcuts);
+
+    auto* groupLayout = new QVBoxLayout(m_shortcutBox);
     groupLayout->addLayout(shortcutHeader);
     groupLayout->addWidget(m_shortcutRows);
-    groupLayout->addLayout(shortcutActions);
+    groupLayout->addWidget(m_systemShortcutSeparator);
+    groupLayout->addWidget(m_systemShortcutRow);
 
     m_conflictLabel->setWordWrap(true);
     m_conflictLabel->hide();
@@ -236,6 +267,12 @@ ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
         if(Command* command = selectedCommand()) {
             m_model->globalShortcutRegistrationChanged(command, checked);
             updateShortcutButtons();
+        }
+    });
+    QObject::connect(m_systemTarget, &QComboBox::currentIndexChanged, this, [this] {
+        if(Command* command = selectedCommand()) {
+            m_model->globalShortcutTargetChanged(command,
+                                                 static_cast<ShortcutTarget>(m_systemTarget->currentData().toInt()));
         }
     });
     QObject::connect(m_configureGlobalShortcuts, &QAbstractButton::clicked, m_actionManager,
@@ -289,6 +326,12 @@ void ShortcutsPageWidget::reset()
     const auto commands = m_actionManager->commands();
     for(Command* command : commands) {
         command->setShortcut(command->defaultShortcuts());
+
+        const auto shortcuts = command->shortcuts();
+        for(const auto& key : shortcuts) {
+            command->setShortcutTarget(key, ShortcutTarget::FocusedWidget);
+        }
+        command->setGlobalShortcutTarget(ShortcutTarget::FocusedWidget);
         command->setGlobalShortcuts({});
         command->setGlobalShortcutRegistered(false);
     }
@@ -335,29 +378,32 @@ void ShortcutsPageWidget::addShortcutInput(const ShortcutBinding& binding, const
         return;
     }
 
-    auto* rowWidget = new QWidget(m_shortcutRows);
-    auto* rowLayout = new QHBoxLayout(rowWidget);
-    rowLayout->setContentsMargins(0, 0, 0, 0);
-
-    auto* input = new QKeySequenceEdit(rowWidget);
+    auto* input = new QKeySequenceEdit(m_shortcutRows);
     input->setClearButtonEnabled(true);
     input->setKeySequence(binding.shortcut);
 
-    auto* global = new QCheckBox(tr("Global"), rowWidget);
+    auto* global = new QCheckBox(tr("Global"), m_shortcutRows);
     global->setChecked(binding.scope == ShortcutScope::Global);
 
-    auto* removeButton = new QToolButton(rowWidget);
+    auto* target = new QComboBox(m_shortcutRows);
+    target->addItem(tr("Focused widget"), static_cast<int>(ShortcutTarget::FocusedWidget));
+    target->addItem(tr("Playing track"), static_cast<int>(ShortcutTarget::NowPlaying));
+    target->setCurrentIndex(target->findData(static_cast<int>(binding.target)));
+    target->setToolTip(tr("Choose which tracks this shortcut applies to."));
+
+    auto* removeButton = new QToolButton(m_shortcutRows);
     removeButton->setIcon(Gui::iconFromTheme(Constants::Icons::Remove));
     removeButton->setToolTip(tr("Remove shortcut"));
 
-    rowLayout->addWidget(input);
-    rowLayout->addWidget(global);
-    rowLayout->addWidget(removeButton);
-
-    m_shortcutRowsLayout->addWidget(rowWidget);
-    m_shortcutRowsData.emplace_back(rowWidget, input, global, removeButton);
+    const int rowIndex = static_cast<int>(m_shortcutRowsData.size()) + 1;
+    m_shortcutRowsLayout->addWidget(input, rowIndex, 0);
+    m_shortcutRowsLayout->addWidget(global, rowIndex, 1);
+    m_shortcutRowsLayout->addWidget(target, rowIndex, 2);
+    m_shortcutRowsLayout->addWidget(removeButton, rowIndex, 3);
+    m_shortcutRowsData.emplace_back(input, global, target, removeButton);
 
     QObject::connect(input, &QKeySequenceEdit::keySequenceChanged, this, &ShortcutsPageWidget::shortcutChanged);
+    QObject::connect(target, &QComboBox::currentIndexChanged, this, &ShortcutsPageWidget::shortcutChanged);
     QObject::connect(global, &QCheckBox::toggled, this, [this, global](bool checked) {
         if(checked) {
             for(const auto& row : m_shortcutRowsData) {
@@ -387,7 +433,8 @@ void ShortcutsPageWidget::removeShortcutInput(QKeySequenceEdit* input)
         }
         const ShortcutBinding binding{.shortcut = row.input->keySequence(),
                                       .scope
-                                      = row.global->isChecked() ? ShortcutScope::Global : ShortcutScope::Application};
+                                      = row.global->isChecked() ? ShortcutScope::Global : ShortcutScope::Application,
+                                      .target = static_cast<ShortcutTarget>(row.target->currentData().toInt())};
         if(std::ranges::find(bindings, binding) == bindings.cend()) {
             bindings.push_back(binding);
         }
@@ -400,9 +447,11 @@ void ShortcutsPageWidget::removeShortcutInput(QKeySequenceEdit* input)
 void ShortcutsPageWidget::clearShortcutInputs()
 {
     for(const auto& row : m_shortcutRowsData) {
-        m_shortcutRowsLayout->removeWidget(row.widget);
-        row.widget->hide();
-        row.widget->deleteLater();
+        for(auto* widget : std::initializer_list<QWidget*>{row.input, row.global, row.target, row.removeButton}) {
+            m_shortcutRowsLayout->removeWidget(widget);
+            widget->hide();
+            widget->deleteLater();
+        }
     }
 
     m_shortcutRowsData.clear();
@@ -421,13 +470,26 @@ void ShortcutsPageWidget::updateShortcutButtons()
     const bool allRowsHaveShortcuts
         = std::ranges::all_of(m_shortcutRowsData, [](const auto& row) { return !row.input->keySequence().isEmpty(); });
 
-    m_addShortcut->setEnabled(allRowsHaveShortcuts && std::cmp_less(m_shortcutRowsData.size(), MaxShortcuts));
+    m_addShortcut->setEnabled(command && allRowsHaveShortcuts
+                              && std::cmp_less(m_shortcutRowsData.size(), MaxShortcuts));
+    m_resetShortcut->setEnabled(command != nullptr);
 
+    bool showTarget      = command && command->supportsShortcutTarget(ShortcutTarget::NowPlaying);
     const bool canRemove = m_shortcutRowsData.size() > 1;
     for(const auto& row : m_shortcutRowsData) {
         row.global->setVisible(!systemManaged);
         row.global->setEnabled(available && eligible);
-        row.input->setEnabled(true);
+        row.input->setEnabled(command != nullptr);
+
+        const bool supportsTarget = command && command->supportsShortcutTarget(ShortcutTarget::NowPlaying);
+        row.target->setVisible(supportsTarget
+                               || row.target->currentData().toInt() == static_cast<int>(ShortcutTarget::NowPlaying));
+        showTarget |= !row.target->isHidden();
+        row.target->setEnabled(command != nullptr);
+
+        if(auto* targetModel = qobject_cast<QStandardItemModel*>(row.target->model())) {
+            targetModel->item(1)->setEnabled(supportsTarget);
+        }
 
         if(!available) {
             row.global->setToolTip(tr("Global shortcuts are not available on this platform"));
@@ -440,7 +502,27 @@ void ShortcutsPageWidget::updateShortcutButtons()
         }
         row.input->setToolTip({});
 
-        row.removeButton->setEnabled(canRemove);
+        row.removeButton->setEnabled(command && canRemove);
+    }
+
+    const bool showSystemTarget = systemManaged && command
+                               && (command->supportsShortcutTarget(ShortcutTarget::NowPlaying)
+                                   || m_model->globalShortcutTarget(command) == ShortcutTarget::NowPlaying);
+    m_shortcutsLabel->setText(systemManaged ? tr("Application shortcuts") : tr("Shortcut"));
+    m_shortcutsLabel->setVisible(systemManaged || showTarget);
+    m_targetLabel->setVisible(showTarget || showSystemTarget);
+    m_systemTargetLabel->setVisible(showSystemTarget);
+    m_systemTargetLabel->setEnabled(eligible && globalShortcutRegistered);
+    m_systemTarget->setVisible(showSystemTarget);
+    m_systemTarget->setEnabled(eligible && globalShortcutRegistered);
+
+    if(auto* targetModel = qobject_cast<QStandardItemModel*>(m_systemTarget->model())) {
+        targetModel->item(1)->setEnabled(command && command->supportsShortcutTarget(ShortcutTarget::NowPlaying));
+    }
+    {
+        const QSignalBlocker blocker{m_systemTarget};
+        m_systemTarget->setCurrentIndex(
+            m_systemTarget->findData(static_cast<int>(m_model->globalShortcutTarget(command))));
     }
 
     m_globalShortcut->setVisible(systemManaged);
@@ -451,8 +533,10 @@ void ShortcutsPageWidget::updateShortcutButtons()
         m_globalShortcut->setChecked(globalShortcutRegistered);
     }
 
-    m_configureGlobalShortcuts->setVisible(systemManaged && configurationAvailable && globalShortcutRegistered);
-    m_configureGlobalShortcuts->setEnabled(command && command->isGlobalShortcutRegistered());
+    m_systemShortcutSeparator->setVisible(systemManaged);
+    m_systemShortcutRow->setVisible(systemManaged);
+    m_configureGlobalShortcuts->setVisible(configurationAvailable);
+    m_configureGlobalShortcuts->setEnabled(systemManaged && configurationAvailable);
 }
 
 void ShortcutsPageWidget::updateConflictState()
@@ -480,7 +564,8 @@ void ShortcutsPageWidget::selectionChanged()
 {
     Command* command = selectedCommand();
     if(!command) {
-        m_shortcutBox->setDisabled(true);
+        m_shortcutBox->setEnabled(m_actionManager->globalShortcutManagement() == GlobalShortcutManagement::SystemManaged
+                                  && m_actionManager->globalShortcutConfigurationAvailable());
         updateShortcutButtons();
         updateConflictState();
         return;
@@ -508,7 +593,8 @@ void ShortcutsPageWidget::shortcutChanged()
         if(!shortcut.isEmpty() && !usedShortcuts.contains(shortcut)) {
             usedShortcuts.append(shortcut);
             bindings.push_back({.shortcut = shortcut,
-                                .scope = row.global->isChecked() ? ShortcutScope::Global : ShortcutScope::Application});
+                                .scope  = row.global->isChecked() ? ShortcutScope::Global : ShortcutScope::Application,
+                                .target = static_cast<ShortcutTarget>(row.target->currentData().toInt())});
         }
     }
 
@@ -531,6 +617,7 @@ void ShortcutsPageWidget::resetCurrentShortcut()
     m_model->bindingsChanged(command, bindings);
     if(m_actionManager->globalShortcutManagement() == GlobalShortcutManagement::SystemManaged) {
         m_model->globalShortcutRegistrationChanged(command, false);
+        m_model->globalShortcutTargetChanged(command, ShortcutTarget::FocusedWidget);
     }
     updateCurrentBindings(bindings);
     updateConflictState();

@@ -40,6 +40,7 @@ struct ShortcutBinding
 {
     QKeySequence shortcut;
     ShortcutScope scope{ShortcutScope::Application};
+    ShortcutTarget target{ShortcutTarget::FocusedWidget};
 
     bool operator==(const ShortcutBinding&) const = default;
 };
@@ -71,6 +72,7 @@ public:
     [[nodiscard]] QString shortcut() const;
     [[nodiscard]] ShortcutBindingList bindings() const;
     [[nodiscard]] bool isGlobalShortcutRegistered() const;
+    [[nodiscard]] ShortcutTarget globalShortcutTarget() const;
 
     [[nodiscard]] Command* command() const;
 
@@ -78,12 +80,14 @@ public:
 
     void updateBindings(const ShortcutBindingList& bindings);
     void updateGlobalShortcutRegistration(bool registered);
+    void updateGlobalShortcutTarget(ShortcutTarget target);
 
 private:
     QString m_title;
     QString m_shortcut;
     ShortcutBindingList m_bindings;
     bool m_globalShortcutRegistered{false};
+    ShortcutTarget m_globalShortcutTarget;
     Command* m_command;
 };
 
@@ -97,11 +101,13 @@ public:
     void populate(ActionManager* actionManager);
     void bindingsChanged(Command* command, const ShortcutBindingList& bindings);
     void globalShortcutRegistrationChanged(Command* command, bool registered);
+    void globalShortcutTargetChanged(Command* command, ShortcutTarget target);
     void processQueue();
     void reassignConflicts(Command* command);
 
     [[nodiscard]] ShortcutBindingList bindings(Command* command) const;
     [[nodiscard]] bool isGlobalShortcutRegistered(Command* command) const;
+    [[nodiscard]] ShortcutTarget globalShortcutTarget(Command* command) const;
     [[nodiscard]] ShortcutConflictList conflicts(Command* command) const;
     [[nodiscard]] QString conflictDescription(Command* command) const;
     [[nodiscard]] QString firstConflictError() const;

@@ -34,6 +34,12 @@ class Id;
 
 using ShortcutList = QList<QKeySequence>;
 
+enum class ShortcutTarget : uint8_t
+{
+    FocusedWidget = 0,
+    NowPlaying,
+};
+
 class FYUTILS_EXPORT Command : public QObject
 {
     Q_OBJECT
@@ -58,6 +64,17 @@ public:
 
     void setShortcut(const ShortcutList& keys);
     void setGlobalShortcuts(const ShortcutList& keys);
+
+    //! Targets affect shortcut invocation only; menu actions retain their normal selection.
+    [[nodiscard]] ShortcutTarget shortcutTarget(const QKeySequence& key) const;
+    void setShortcutTarget(const QKeySequence& key, ShortcutTarget target);
+    [[nodiscard]] ShortcutTarget globalShortcutTarget() const;
+    void setGlobalShortcutTarget(ShortcutTarget target);
+
+    //! Explicit targets require an action which honours the supplied command selection.
+    [[nodiscard]] bool supportsShortcutTarget(ShortcutTarget target) const;
+    void setSupportsShortcutTarget(ShortcutTarget target, bool supported);
+
     void setGlobalShortcutRegistered(bool registered);
     void setGlobalShortcutDescription(const QString& description);
     [[nodiscard]] QString stringWithShortcut(const QString& str) const;
@@ -100,6 +117,7 @@ Q_SIGNALS:
     void globalShortcutRegistrationChanged();
     void globalShortcutDescriptionChanged();
     void activeStateChanged();
+    void shortcutTargetsChanged();
 
 private:
     std::unique_ptr<CommandPrivate> p;
