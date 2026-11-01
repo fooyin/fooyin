@@ -224,7 +224,11 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     const auto drawArtwork = [&]() {
         if(hasArtwork) {
             painter->save();
-            Gui::drawRoundedPixmap(*painter, decorationRect, Qt::AlignCenter, scaledArtwork, m_artworkCornerRadius);
+            const Qt::Alignment alignment
+                = iconMode && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Bottom
+                    ? Qt::AlignHCenter | Qt::AlignBottom
+                    : Qt::AlignCenter;
+            Gui::drawRoundedPixmap(*painter, decorationRect, alignment, scaledArtwork, m_artworkCornerRadius);
             painter->restore();
         }
     };
@@ -631,7 +635,7 @@ void FilterDelegate::drawOverlayItem(QPainter* painter, QStyleOptionViewItem opt
     const QRect decorationRect = artworkRect(option);
     const QRectF imageRect     = artwork.isNull()
                                    ? decorationRect
-                                   : QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter,
+                                   : QStyle::alignedRect(Qt::LeftToRight, Qt::AlignHCenter | Qt::AlignBottom,
                                                          artwork.deviceIndependentSize().toSize(), decorationRect);
 
     const qreal dpr = option.widget ? option.widget->devicePixelRatioF() : 1.0;
