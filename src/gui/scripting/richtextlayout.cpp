@@ -19,6 +19,7 @@
 
 #include "richtextlayout.h"
 
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 
 #include <QFontMetrics>
@@ -76,7 +77,7 @@ void drawText(QPainter* painter, const QStyleOptionViewItem& option, const RichT
     for(const auto& block : text.blocks) {
         const QFont font = resolvedRichTextFont(block.format, option.font);
         painter->setFont(font);
-        painter->setPen(selected ? option.palette.color(QPalette::HighlightedText)
+        painter->setPen(selected ? option.palette.color(Gui::itemViewSelectionTextRole(option))
                                  : resolvedRichTextColour(block.format, option.palette.color(QPalette::Text),
                                                           option.palette.color(QPalette::Link)));
         const QFontMetrics metrics{font};

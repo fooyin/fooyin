@@ -21,6 +21,8 @@
 
 #include "advancedsettingsmodel.h"
 
+#include <gui/guiutils.h>
+
 #include <QApplication>
 #include <QDoubleSpinBox>
 #include <QMouseEvent>
@@ -121,7 +123,7 @@ void AdvancedItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& 
     textRect.setLeft(radioOption.rect.right()
                      + style->pixelMetric(QStyle::PM_CheckBoxLabelSpacing, nullptr, opt.widget));
 
-    const auto textRole = opt.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::Text;
+    const auto textRole = opt.state & QStyle::State_Selected ? Gui::itemViewSelectionTextRole(opt) : QPalette::Text;
     style->drawItemText(painter, textRect, static_cast<int>(opt.displayAlignment), opt.palette, true,
                         index.data().toString(), textRole);
 }

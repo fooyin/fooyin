@@ -315,8 +315,8 @@ void drawElidedText(QPainter* painter, const QStyleOptionViewItem& option, const
 
     const QFontMetrics metrics{font};
     const QString elided = metrics.elidedText(text, Qt::ElideRight, rect.width());
-    const QColor colour  = (option.state & QStyle::State_Selected) ? option.palette.color(QPalette::HighlightedText)
-                                                                   : option.palette.color(role);
+    const QColor colour
+        = option.palette.color((option.state & QStyle::State_Selected) ? Gui::itemViewSelectionTextRole(option) : role);
 
     painter->setFont(font);
     painter->setPen(colour);

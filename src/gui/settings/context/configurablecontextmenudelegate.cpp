@@ -21,6 +21,8 @@
 
 #include "configurablecontextmenumodel.h"
 
+#include <gui/guiutils.h>
+
 #include <QApplication>
 #include <QPainter>
 #include <QSize>
@@ -47,7 +49,7 @@ void ConfigurableContextMenuDelegate::paint(QPainter* painter, const QStyleOptio
     const QRect lineRect = opt.rect.adjusted(horizontalMargin, 0, -horizontalMargin, 0);
     const int y          = lineRect.center().y();
 
-    QColor lineColour = (opt.state & QStyle::State_Selected) ? opt.palette.color(QPalette::HighlightedText)
+    QColor lineColour = (opt.state & QStyle::State_Selected) ? opt.palette.color(Gui::itemViewSelectionTextRole(opt))
                                                              : opt.palette.color(QPalette::Text);
     lineColour.setAlphaF(0.4);
 

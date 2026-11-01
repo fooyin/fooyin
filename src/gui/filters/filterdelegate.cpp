@@ -35,6 +35,7 @@
 constexpr auto IconCaptionMargin     = 20;
 constexpr auto RightCaptionTextWidth = 180;
 
+namespace Fooyin::Filters {
 namespace {
 struct PreparedTextBlock
 {
@@ -48,11 +49,11 @@ struct PreparedTextLine
 {
     std::vector<PreparedTextBlock> blocks;
     int totalWidth{0};
-    Fooyin::TextBaselineMetrics baseline;
+    TextBaselineMetrics baseline;
     int maxHeight{0};
 };
 
-using RichTextLineList = std::vector<Fooyin::RichText>;
+using RichTextLineList = std::vector<RichText>;
 
 int alignedLineX(const QRect& rect, int lineWidth, Qt::Alignment alignment)
 {
@@ -68,13 +69,23 @@ int alignedLineX(const QRect& rect, int lineWidth, Qt::Alignment alignment)
     return rect.x();
 }
 
+QColor selectionTextColour(const QStyleOptionViewItem& option)
+{
+    const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
+    if(view && view->viewMode() == ExpandedTreeView::ViewMode::Icon
+       && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Overlay) {
+        return QApplication::palette().color(option.palette.currentColorGroup(), QPalette::HighlightedText);
+    }
+    return option.palette.color(Gui::itemViewSelectionTextRole(option));
+}
+
 PreparedTextLine prepareTextBlocks(const QStyleOptionViewItem& option, int maxWidth,
-                                   const std::vector<Fooyin::RichTextBlock>& blocks)
+                                   const std::vector<RichTextBlock>& blocks)
 {
     PreparedTextLine result;
-    result.baseline = Fooyin::textBaselineMetrics(option.font);
+    result.baseline = textBaselineMetrics(option.font);
 
-    const auto selectedColour = option.palette.color(QPalette::HighlightedText);
+    const auto selectedColour = selectionTextColour(option);
     const auto defaultColour  = option.palette.color(QPalette::Text);
     const auto linkColour     = option.palette.color(QPalette::Link);
     int remainingWidth        = maxWidth;
@@ -84,8 +95,8 @@ PreparedTextLine prepareTextBlocks(const QStyleOptionViewItem& option, int maxWi
             continue;
         }
 
-        const QFont font = Fooyin::resolvedRichTextFont(block.format, option.font);
-        QColor colour    = Fooyin::resolvedRichTextColour(block.format, defaultColour, linkColour);
+        const QFont font = resolvedRichTextFont(block.format, option.font);
+        QColor colour    = resolvedRichTextColour(block.format, defaultColour, linkColour);
         if(option.state & QStyle::State_Selected) {
             colour = selectedColour;
         }
@@ -134,7 +145,7 @@ void drawPreparedTextLine(QPainter* painter, QRect rect, Qt::Alignment alignment
     }
 }
 
-QSize richLineSize(const QStyleOptionViewItem& option, int maxWidth, const Fooyin::RichText& richText)
+QSize richLineSize(const QStyleOptionViewItem& option, int maxWidth, const RichText& richText)
 {
     QSize size{0, 0};
     const auto lines = splitRichTextLines(richText);
@@ -148,14 +159,13 @@ QSize richLineSize(const QStyleOptionViewItem& option, int maxWidth, const Fooyi
     return size;
 }
 
-QSize richTextNaturalSize(const QStyleOptionViewItem& option, const Fooyin::RichText& richText)
+QSize richTextNaturalSize(const QStyleOptionViewItem& option, const RichText& richText)
 {
-    const auto metrics = Fooyin::measureRichText(richText, option.font);
+    const auto metrics = measureRichText(richText, option.font);
     return {metrics.width, metrics.firstLineHeight + metrics.extraLineHeight};
 }
 } // namespace
 
-namespace Fooyin::Filters {
 void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     QStyleOptionViewItem opt{option};
@@ -432,7 +442,7 @@ IconCaptionLineList FilterDelegate::iconRichLines(const QModelIndex& index, cons
     IconCaptionLineList lines;
     lines.reserve(captionLines.size());
 
-    const QColor selectedColour = option.palette.color(QPalette::HighlightedText);
+    const QColor selectedColour = selectionTextColour(option);
     const bool isSelected       = option.state & QStyle::State_Selected;
 
     for(const auto& captionLine : captionLines) {

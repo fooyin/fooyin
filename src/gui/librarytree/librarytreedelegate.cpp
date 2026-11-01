@@ -111,7 +111,7 @@ void paintTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRec
                      const std::vector<RichTextBlock>& blocks)
 {
     const auto defaultColour  = option.palette.color(QPalette::Text);
-    const auto selectedColour = option.palette.color(QPalette::HighlightedText);
+    const auto selectedColour = option.palette.color(Gui::itemViewSelectionTextRole(option));
     const auto linkColour     = option.palette.color(QPalette::Link);
 
     int x = rect.x();

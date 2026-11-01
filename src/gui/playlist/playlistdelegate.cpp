@@ -89,7 +89,7 @@ DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& opt
 
     const auto selected         = option.state & QStyle::State_Selected;
     const QColor defaultColour  = option.palette.color(QPalette::Text);
-    const QColor selectedColour = option.palette.color(QPalette::HighlightedText);
+    const QColor selectedColour = option.palette.color(Gui::itemViewSelectionTextRole(option));
     const QColor linkColour     = option.palette.color(QPalette::Link);
 
     const RichText richText{.blocks = blocks};
