@@ -27,7 +27,10 @@ class QCheckBox;
 class QComboBox;
 class QSpinBox;
 
-namespace Fooyin::RadioBrowser {
+namespace Fooyin {
+class BackgroundConfigWidget;
+
+namespace RadioBrowser {
 class RadioBrowserConfigDialog : public WidgetConfigDialog<RadioBrowserWidget, RadioBrowserWidget::ConfigData>
 {
     Q_OBJECT
@@ -60,5 +63,7 @@ private:
     QCheckBox* m_useIconGapsForSideCaptions;
     QSpinBox* m_iconItemBorder;
     QCheckBox* m_uniformStationIcons;
+    BackgroundConfigWidget* m_background;
 };
-} // namespace Fooyin::RadioBrowser
+} // namespace RadioBrowser
+} // namespace Fooyin

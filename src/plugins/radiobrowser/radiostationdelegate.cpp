@@ -24,6 +24,7 @@
 #include <gui/guiconstants.h>
 #include <gui/iconloader.h>
 #include <gui/widgets/expandedtreeview.h>
+#include <gui/widgets/widgetbackground.h>
 
 #include <QApplication>
 #include <QIcon>
@@ -149,7 +150,7 @@ void drawIconItemBackground(QPainter* painter, QStyleOptionViewItem* option, int
 
     painter->setPen(borderWidth > 0 ? QPen{option->palette.color(QPalette::Mid), static_cast<qreal>(borderWidth)}
                                     : Qt::NoPen);
-    painter->setBrush(option->backgroundBrush.style() == Qt::NoBrush ? option->palette.color(QPalette::Base)
+    painter->setBrush(option->backgroundBrush.style() == Qt::NoBrush ? option->palette.brush(QPalette::Base)
                                                                      : option->backgroundBrush);
     const qreal inset = std::max<qreal>(1.0, static_cast<qreal>(borderWidth) / 2.0);
     painter->drawRoundedRect(QRectF{option->rect}.adjusted(inset, inset, -inset, -inset), 5, 5);
@@ -475,6 +476,7 @@ void RadioStationDelegate::paint(QPainter* painter, const QStyleOptionViewItem& 
     initStyleOption(&opt, index);
     // initStyleOption can replace the configured decoration size with the icon's actual size
     opt.decorationSize = option.decorationSize;
+    WidgetBackground::clearDelegateBackground(opt);
 
     const auto* iconView = iconModeView(option);
     const auto icon      = index.data(Qt::DecorationRole).value<QIcon>();

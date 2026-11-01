@@ -21,6 +21,7 @@
 
 #include <gui/guiutils.h>
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/backgroundconfigwidget.h>
 #include <gui/widgets/hintlabel.h>
 
 #include <QCheckBox>
@@ -29,6 +30,7 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QSpinBox>
+#include <QTabWidget>
 
 using namespace Qt::StringLiterals;
 
@@ -51,6 +53,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     , m_useIconGapsForSideCaptions{new QCheckBox(tr("Apply icon gaps with right captions"), this)}
     , m_iconItemBorder{new QSpinBox(this)}
     , m_uniformStationIcons{new QCheckBox(tr("Use uniform station icon frames"), this)}
+    , m_background{new BackgroundConfigWidget(this)}
 {
     TrackSelectionController::addAction(m_doubleClick, tr("None"), TrackAction::None);
     TrackSelectionController::addAction(m_doubleClick, tr("Play now"), TrackAction::Play);
@@ -107,6 +110,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     clickBehaviourLayout->addWidget(m_middleClick, row++, 1);
     clickBehaviourLayout->addWidget(m_playbackOnSend, row++, 0, 1, 2);
     clickBehaviourLayout->setColumnStretch(2, 1);
+    clickBehaviourLayout->setRowStretch(row, 1);
 
     auto* search       = new QGroupBox(tr("Search"), this);
     auto* searchLayout = new QGridLayout(search);
@@ -115,6 +119,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     searchLayout->addWidget(m_hideBroken, row++, 0, 1, 2);
     searchLayout->addWidget(m_sendClicks, row++, 0, 1, 2);
     searchLayout->setColumnStretch(2, 1);
+    searchLayout->setRowStretch(row, 1);
 
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);
@@ -127,6 +132,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     appearanceLayout->addWidget(m_separateSavedStationsViewState, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_uniformStationIcons, row++, 0, 1, 2);
     appearanceLayout->setColumnStretch(2, 1);
+    appearanceLayout->setRowStretch(row, 1);
 
     auto* iconMode   = new QGroupBox(tr("Icon Mode"), this);
     auto* iconLayout = new QGridLayout(iconMode);
@@ -150,16 +156,24 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     iconLayout->addLayout(gapLayout, row++, 0, 1, 3);
     iconLayout->addWidget(m_useIconGapsForSideCaptions, row++, 0, 1, 3);
     iconLayout->setColumnStretch(2, 1);
+    iconLayout->setRowStretch(row, 1);
 
-    auto* layout{contentLayout()};
+    auto* generalPage = new QWidget(this);
+    auto* layout      = new QGridLayout(generalPage);
 
     row = 0;
-    layout->addWidget(clickBehaviour, row++, 0);
-    layout->addWidget(search, row++, 0);
-    layout->addWidget(appearance, row++, 0);
-    layout->addWidget(iconMode, row++, 0);
+    layout->addWidget(clickBehaviour, row, 0);
+    layout->addWidget(search, row++, 1);
+    layout->addWidget(appearance, row, 0);
+    layout->addWidget(iconMode, row++, 1);
     layout->setColumnStretch(0, 1);
-    layout->setRowStretch(row, 1);
+    layout->setColumnStretch(1, 1);
+    layout->setRowStretch(2, 1);
+
+    auto* tabs = new QTabWidget(this);
+    tabs->addTab(generalPage, tr("General"));
+    tabs->addTab(m_background, tr("Background"));
+    contentLayout()->addWidget(tabs);
 
     QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);
 
@@ -186,6 +200,7 @@ RadioBrowserWidget::ConfigData RadioBrowserConfigDialog::config() const
     config.middleClickAction                   = m_middleClick->currentData().toInt();
     config.playbackOnSend                      = m_playbackOnSend->isChecked();
     config.hideBroken                          = m_hideBroken->isChecked();
+    config.background                          = m_background->config();
     config.view.rowHeight                      = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0;
     config.view.showSavedStationIcons          = m_showSavedStationIcons->isChecked();
     config.view.showToolTips                   = m_showToolTips->isChecked();
@@ -206,6 +221,7 @@ void RadioBrowserConfigDialog::setConfig(const RadioBrowserWidget::ConfigData& c
 
     m_playbackOnSend->setChecked(config.playbackOnSend);
     m_hideBroken->setChecked(config.hideBroken);
+    m_background->setConfig(config.background);
     m_rowHeight->setEnabled(config.view.rowHeight > 0);
     m_overrideRowHeight->setChecked(config.view.rowHeight > 0);
     m_rowHeight->setValue(config.view.rowHeight);
@@ -228,7 +244,7 @@ void RadioBrowserConfigDialog::mergeExternalConfig(const RadioBrowserWidget::Con
     mergeExternalFieldValues(previous, current, draft, &RadioBrowserWidget::ConfigData::doubleClickAction,
                              &RadioBrowserWidget::ConfigData::middleClickAction,
                              &RadioBrowserWidget::ConfigData::playbackOnSend,
-                             &RadioBrowserWidget::ConfigData::hideBroken);
+                             &RadioBrowserWidget::ConfigData::hideBroken, &RadioBrowserWidget::ConfigData::background);
     mergeExternalFieldValues(
         previous.view, current.view, draft.view, &RadioBrowserWidget::ConfigData::ViewConfig::viewMode,
         &RadioBrowserWidget::ConfigData::ViewConfig::captions, &RadioBrowserWidget::ConfigData::ViewConfig::showHeader,

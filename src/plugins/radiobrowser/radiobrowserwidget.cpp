@@ -56,11 +56,13 @@
 
 #include <gui/configdialog.h>
 #include <gui/contextmenuutils.h>
+#include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/iconloader.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/autoheaderview.h>
+#include <gui/widgets/backgroundimagesource.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
@@ -90,6 +92,7 @@ constexpr auto UniformIconsKey               = "RadioBrowser/UniformIcons";
 constexpr auto ShowIconsKey                  = "RadioBrowser/ShowIcons";
 constexpr auto ShowSavedIconsKey             = "RadioBrowser/ShowSavedIcons";
 constexpr auto ShowToolTipsKey               = "RadioBrowser/ShowToolTips";
+constexpr auto BackgroundKey                 = "RadioBrowser/Background";
 
 namespace Fooyin::RadioBrowser {
 namespace {
@@ -186,6 +189,7 @@ QUrl radioBrowserStationUrl(const RadioStation& station)
 
 RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, ActionManager* actionManager,
                                        TrackSelectionController* trackSelection, SettingsManager* settings,
+                                       PlayerController* playerController, CoverRepository* coverRepository,
                                        bool applyInitialSearch, QWidget* parent)
     : RadioWidget{parent}
     , m_controller{controller}
@@ -204,6 +208,8 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
     , m_resultsView{new RadioStationView(this)}
     , m_delegate{new RadioStationDelegate(this)}
     , m_model{new RadioBrowserModel(this)}
+    , m_backgroundSource{new BackgroundImageSource(new CoverProvider(coverRepository, this), playerController,
+                                                   trackSelection, this)}
     , m_doubleClickAction{5}
     , m_middleClickAction{0}
     , m_playbackOnSend{true}
@@ -326,6 +332,9 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
     QObject::connect(m_controller, &RadioBrowserController::currentStationChanged, m_model,
                      &RadioBrowserModel::setCurrentStation);
 
+    QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_resultsView,
+                     &RadioStationView::setBackgroundPixmap);
+
     const auto handleThemeChange = [this]() {
         refreshThemeIcons();
         m_model->updateColours();
@@ -396,6 +405,10 @@ void RadioBrowserWidget::saveLayoutData(QJsonObject& layout)
     layout["State"_L1]                      = encodeHeaderState(m_browseViewState.headerState);
     layout["SavedState"_L1]                 = encodeHeaderState(m_savedStationsViewState.headerState);
 
+    QJsonObject background;
+    m_config.background.saveLayout(background);
+    layout["Background"_L1] = background;
+
     layout.insert(u"ShowFilterBar"_s, m_toggleFilterBarAction->isChecked());
 }
 
@@ -454,8 +467,14 @@ void RadioBrowserWidget::loadLayoutData(const QJsonObject& layout)
     m_hideBroken        = layout.value("HideBroken"_L1).toBool(m_hideBroken);
     m_controller->setHideBroken(m_hideBroken);
 
+    auto background{m_config.background};
+    background.loadLayout(layout.value("Background"_L1).toObject());
+    m_resultsView->setBackgroundConfig(background);
+    m_backgroundSource->setConfig(background);
+
     m_config = {
         .view              = m_viewConfig,
+        .background        = background,
         .doubleClickAction = m_doubleClickAction,
         .middleClickAction = m_middleClickAction,
         .playbackOnSend    = m_playbackOnSend,
@@ -623,6 +642,8 @@ RadioBrowserWidget::ConfigData RadioBrowserWidget::defaultConfig() const
         = m_settings->fileValue(ShowSavedIconsKey, config.view.showSavedStationIcons).toBool();
     config.view.showToolTips = m_settings->fileValue(ShowToolTipsKey, config.view.showToolTips).toBool();
 
+    config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(BackgroundKey).toMap()));
+
     if(!config.view.iconSize.isValid()) {
         config.view.iconSize = factoryConfig().view.iconSize;
     }
@@ -651,6 +672,10 @@ void RadioBrowserWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(ShowIconsKey, config.view.showIcons);
     m_settings->fileSet(ShowSavedIconsKey, config.view.showSavedStationIcons);
     m_settings->fileSet(ShowToolTipsKey, config.view.showToolTips);
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    m_settings->fileSet(BackgroundKey, background.toVariantMap());
 }
 
 void RadioBrowserWidget::clearSavedDefaults() const
@@ -669,6 +694,7 @@ void RadioBrowserWidget::clearSavedDefaults() const
     m_settings->fileRemove(ShowIconsKey);
     m_settings->fileRemove(ShowSavedIconsKey);
     m_settings->fileRemove(ShowToolTipsKey);
+    m_settings->fileRemove(BackgroundKey);
 }
 
 void RadioBrowserWidget::applyConfig(const ConfigData& config)
@@ -688,6 +714,11 @@ void RadioBrowserWidget::applyConfig(const ConfigData& config)
 
     m_controller->setHideBroken(m_hideBroken);
     setViewConfig(config.view, false);
+
+    m_config.background = config.background;
+    m_config.background.normalise();
+    m_resultsView->setBackgroundConfig(m_config.background);
+    m_backgroundSource->setConfig(m_config.background);
 
     if(searchConfigChanged && !m_loadingLayout) {
         applyFilterSearch();

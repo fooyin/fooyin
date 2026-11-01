@@ -27,6 +27,7 @@ class QTabWidget;
 
 namespace Fooyin {
 class ActionManager;
+class CoverRepository;
 class NetworkAccessManager;
 class PlayerController;
 class PlaylistLoader;
@@ -47,7 +48,7 @@ public:
     RadioBrowserDialog(std::shared_ptr<NetworkAccessManager> network, std::shared_ptr<PlaylistLoader> playlistLoader,
                        SettingsManager* settings, PlayerController* playerController, RadioStationStore* store,
                        ActionManager* actionManager, TrackSelectionController* trackSelection,
-                       QWidget* parent = nullptr);
+                       CoverRepository* coverRepository, QWidget* parent = nullptr);
 
     [[nodiscard]] QSize sizeHint() const override;
 

@@ -28,6 +28,7 @@
 
 namespace Fooyin {
 class ActionManager;
+class CoverRepository;
 class EditableLayout;
 class NetworkAccessManager;
 class PlaylistLoader;
@@ -62,6 +63,7 @@ private:
     std::shared_ptr<PlaylistLoader> m_playlistLoader;
     DbConnectionPoolPtr m_dbPool;
     PlayerController* m_playerController;
+    CoverRepository* m_coverRepository;
     SettingsManager* m_settings;
     WidgetProvider* m_widgetProvider;
     EditableLayout* m_editableLayout;

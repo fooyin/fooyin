@@ -74,10 +74,11 @@ void RadioBrowserPlugin::initialise(const CorePluginContext& context)
 
 void RadioBrowserPlugin::initialise(const GuiPluginContext& context)
 {
-    m_widgetProvider = context.widgetProvider;
-    m_editableLayout = context.editableLayout;
-    m_actionManager  = context.actionManager;
-    m_trackSelection = context.trackSelection;
+    m_widgetProvider  = context.widgetProvider;
+    m_editableLayout  = context.editableLayout;
+    m_actionManager   = context.actionManager;
+    m_trackSelection  = context.trackSelection;
+    m_coverRepository = context.coverRepository;
 
     new StaticContextMenuPage(
         m_settings,
@@ -110,7 +111,7 @@ void RadioBrowserPlugin::initialise(const GuiPluginContext& context)
         [this, actionManager = context.actionManager, trackSelection = context.trackSelection]() {
             const bool guideOwnsInitialBrowse = !m_editableLayout->findWidgetsByType<RadioGuideWidget>().empty();
             auto* browser = new RadioBrowserWidget(m_controller, actionManager, trackSelection, m_settings,
-                                                   !guideOwnsInitialBrowse);
+                                                   m_playerController, m_coverRepository, !guideOwnsInitialBrowse);
             QObject::connect(browser, &QObject::destroyed, this, &RadioBrowserPlugin::scheduleRelinkRadioWidgets);
             scheduleRelinkRadioWidgets();
             return browser;
@@ -190,8 +191,9 @@ void RadioBrowserPlugin::showRadioBrowserDialog()
         return;
     }
 
-    m_radioBrowserDialog = new RadioBrowserDialog(m_network, m_playlistLoader, m_settings, m_playerController, m_store,
-                                                  m_actionManager, m_trackSelection, Utils::getMainWindow());
+    m_radioBrowserDialog
+        = new RadioBrowserDialog(m_network, m_playlistLoader, m_settings, m_playerController, m_store, m_actionManager,
+                                 m_trackSelection, m_coverRepository, Utils::getMainWindow());
     m_radioBrowserDialog->setAttribute(Qt::WA_DeleteOnClose);
     m_radioBrowserDialog->show();
 }

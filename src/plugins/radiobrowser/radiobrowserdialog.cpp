@@ -43,7 +43,7 @@ RadioBrowserDialog::RadioBrowserDialog(std::shared_ptr<NetworkAccessManager> net
                                        std::shared_ptr<PlaylistLoader> playlistLoader, SettingsManager* settings,
                                        PlayerController* playerController, RadioStationStore* store,
                                        ActionManager* actionManager, TrackSelectionController* trackSelection,
-                                       QWidget* parent)
+                                       CoverRepository* coverRepository, QWidget* parent)
     : QDialog{parent}
     , m_settings{settings}
     , m_tabs{new QTabWidget(this)}
@@ -51,9 +51,10 @@ RadioBrowserDialog::RadioBrowserDialog(std::shared_ptr<NetworkAccessManager> net
     , m_searchController{new RadioBrowserController(network, settings, playerController, playlistLoader, store, this)}
     , m_savedStationsController{new RadioBrowserController(std::move(network), settings, playerController,
                                                            std::move(playlistLoader), store, this)}
-    , m_searchWidget{new RadioBrowserWidget(m_searchController, actionManager, trackSelection, settings, true, this)}
-    , m_savedStationsWidget{
-          new RadioBrowserWidget(m_savedStationsController, actionManager, trackSelection, settings, false, this)}
+    , m_searchWidget{new RadioBrowserWidget(m_searchController, actionManager, trackSelection, settings,
+                                            playerController, coverRepository, true, this)}
+    , m_savedStationsWidget{new RadioBrowserWidget(m_savedStationsController, actionManager, trackSelection, settings,
+                                                   playerController, coverRepository, false, this)}
 {
     setWindowTitle(tr("Radio Browser"));
 

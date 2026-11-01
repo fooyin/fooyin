@@ -22,6 +22,7 @@
 #include "radiostation.h"
 
 #include <gui/widgets/autoheaderview.h>
+#include <gui/widgets/widgetbackground.h>
 
 #include <QPaintEvent>
 #include <QPainter>
@@ -33,11 +34,14 @@ using namespace Qt::StringLiterals;
 namespace Fooyin::RadioBrowser {
 RadioStationView::RadioStationView(QWidget* parent)
     : ExpandedTreeView{parent}
+    , m_background{new WidgetBackground(viewport(), this)}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
     , m_retryButton{new QPushButton(tr("Retry"), viewport())}
     , m_loading{false}
     , m_failed{false}
 {
+    viewport()->setAutoFillBackground(false);
+
     setHeader(m_header);
     setIconItemColumn(Station);
     setUniformRowHeights(true);
@@ -111,6 +115,16 @@ void RadioStationView::setLoadingText(const QString& text)
     viewport()->update();
 }
 
+void RadioStationView::setBackgroundConfig(const BackgroundConfig& config)
+{
+    m_background->setConfig(config);
+}
+
+void RadioStationView::setBackgroundPixmap(const QPixmap& pixmap)
+{
+    m_background->setPixmap(pixmap);
+}
+
 void RadioStationView::changeEvent(QEvent* event)
 {
     ExpandedTreeView::changeEvent(event);
@@ -127,16 +141,20 @@ void RadioStationView::changeEvent(QEvent* event)
 
 void RadioStationView::paintEvent(QPaintEvent* event)
 {
-    if(model() && model()->rowCount(rootIndex()) > 0) {
-        updateRetryButton();
-        ExpandedTreeView::paintEvent(event);
-        return;
+    {
+        QPainter painter{viewport()};
+        painter.fillRect(viewport()->rect(), palette().brush(QPalette::Base));
+        m_background->draw(painter);
     }
 
     updateRetryButton();
 
+    if(model() && model()->rowCount(rootIndex()) > 0) {
+        ExpandedTreeView::paintEvent(event);
+        return;
+    }
+
     QPainter painter{viewport()};
-    painter.fillRect(viewport()->rect(), palette().brush(QPalette::Base));
 
     const QString text = m_loading ? m_loadingText : m_failed ? m_failureText : m_emptyText;
     if(text.isEmpty()) {
