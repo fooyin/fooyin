@@ -841,6 +841,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
     }
     if(validated.captionDisplay != ExpandedTreeView::CaptionDisplay::None
        && validated.captionDisplay != ExpandedTreeView::CaptionDisplay::Bottom
+       && validated.captionDisplay != ExpandedTreeView::CaptionDisplay::Overlay
        && validated.captionDisplay != ExpandedTreeView::CaptionDisplay::Right) {
         validated.captionDisplay = ExpandedTreeView::CaptionDisplay::Bottom;
     }
@@ -1737,20 +1738,22 @@ void FilterWidget::addDisplayMenu(QMenu* menu)
     auto* coverGroup   = new QActionGroup(displayMenu);
     auto* sourceGroup  = new QActionGroup(displayMenu);
 
-    auto* displayList      = new QAction(FilterWidget::tr("Columns"), displayGroup);
-    auto* displayArtBottom = new QAction(FilterWidget::tr("Artwork (bottom labels)"), displayGroup);
-    auto* displayArtLeft   = new QAction(FilterWidget::tr("Artwork (right labels)"), displayGroup);
-    auto* displayArtNone   = new QAction(FilterWidget::tr("Artwork (no labels)"), displayGroup);
-    auto* coverFront       = new QAction(FilterWidget::tr("Front cover"), coverGroup);
-    auto* coverBack        = new QAction(FilterWidget::tr("Back cover"), coverGroup);
-    auto* coverArtist      = new QAction(FilterWidget::tr("Artist"), coverGroup);
-    auto* sourceEmbedded   = new QAction(FilterWidget::tr("Use embedded covers"), sourceGroup);
-    auto* sourceDirectory  = new QAction(FilterWidget::tr("Use directory covers"), sourceGroup);
-    auto* sourceDefault    = new QAction(FilterWidget::tr("Use default source"), sourceGroup);
+    auto* displayList       = new QAction(FilterWidget::tr("Columns"), displayGroup);
+    auto* displayArtBottom  = new QAction(FilterWidget::tr("Artwork (bottom labels)"), displayGroup);
+    auto* displayArtLeft    = new QAction(FilterWidget::tr("Artwork (right labels)"), displayGroup);
+    auto* displayArtOverlay = new QAction(FilterWidget::tr("Artwork (overlay labels)"), displayGroup);
+    auto* displayArtNone    = new QAction(FilterWidget::tr("Artwork (no labels)"), displayGroup);
+    auto* coverFront        = new QAction(FilterWidget::tr("Front cover"), coverGroup);
+    auto* coverBack         = new QAction(FilterWidget::tr("Back cover"), coverGroup);
+    auto* coverArtist       = new QAction(FilterWidget::tr("Artist"), coverGroup);
+    auto* sourceEmbedded    = new QAction(FilterWidget::tr("Use embedded covers"), sourceGroup);
+    auto* sourceDirectory   = new QAction(FilterWidget::tr("Use directory covers"), sourceGroup);
+    auto* sourceDefault     = new QAction(FilterWidget::tr("Use default source"), sourceGroup);
 
     displayList->setCheckable(true);
     displayArtBottom->setCheckable(true);
     displayArtLeft->setCheckable(true);
+    displayArtOverlay->setCheckable(true);
     displayArtNone->setCheckable(true);
     coverFront->setCheckable(true);
     coverBack->setCheckable(true);
@@ -1775,6 +1778,9 @@ void FilterWidget::addDisplayMenu(QMenu* menu)
     }
     else if(currentCaptions == CaptionDisplay::Right) {
         displayArtLeft->setChecked(true);
+    }
+    else if(currentCaptions == CaptionDisplay::Overlay) {
+        displayArtOverlay->setChecked(true);
     }
     else {
         displayArtNone->setChecked(true);
@@ -1816,6 +1822,12 @@ void FilterWidget::addDisplayMenu(QMenu* menu)
         auto config{m_config};
         config.viewMode       = ViewMode::Icon;
         config.captionDisplay = CaptionDisplay::Right;
+        applyConfig(config);
+    });
+    QObject::connect(displayArtOverlay, &QAction::triggered, this, [this]() {
+        auto config{m_config};
+        config.viewMode       = ViewMode::Icon;
+        config.captionDisplay = CaptionDisplay::Overlay;
         applyConfig(config);
     });
     QObject::connect(displayArtNone, &QAction::triggered, this, [this]() {

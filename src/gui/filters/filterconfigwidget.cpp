@@ -115,6 +115,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_columnsMode{new QRadioButton(tr("Columns"), this)}
     , m_artworkBottomMode{new QRadioButton(tr("Artwork (bottom labels)"), this)}
     , m_artworkRightMode{new QRadioButton(tr("Artwork (right labels)"), this)}
+    , m_artworkOverlayMode{new QRadioButton(tr("Artwork (overlay labels)"), this)}
     , m_artworkNoLabelsMode{new QRadioButton(tr("Artwork (no labels)"), this)}
     , m_coverType{new QComboBox(this)}
     , m_coverSource{new QComboBox(this)}
@@ -425,7 +426,8 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     updateSourceMode();
 
     auto* displayModeGroup = new QButtonGroup(this);
-    for(auto* button : {m_columnsMode, m_artworkBottomMode, m_artworkRightMode, m_artworkNoLabelsMode}) {
+    for(auto* button :
+        {m_columnsMode, m_artworkBottomMode, m_artworkRightMode, m_artworkOverlayMode, m_artworkNoLabelsMode}) {
         displayModeGroup->addButton(button);
     }
 
@@ -433,6 +435,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     displayModeLayout->addWidget(m_columnsMode);
     displayModeLayout->addWidget(m_artworkBottomMode);
     displayModeLayout->addWidget(m_artworkRightMode);
+    displayModeLayout->addWidget(m_artworkOverlayMode);
     displayModeLayout->addWidget(m_artworkNoLabelsMode);
 
     m_coverType->addItem(tr("Front cover"), static_cast<int>(Track::Cover::Front));
@@ -622,6 +625,7 @@ FilterWidget::ConfigData FilterConfigDialog::config() const
     expansionBackground.fadeDuration = 0;
 
     const auto captions   = m_artworkRightMode->isChecked()    ? ExpandedTreeView::CaptionDisplay::Right
+                          : m_artworkOverlayMode->isChecked()  ? ExpandedTreeView::CaptionDisplay::Overlay
                           : m_artworkNoLabelsMode->isChecked() ? ExpandedTreeView::CaptionDisplay::None
                                                                : ExpandedTreeView::CaptionDisplay::Bottom;
     const int coverSource = m_coverSource->currentData().toInt();
@@ -707,6 +711,9 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     }
     else if(config.captionDisplay == ExpandedTreeView::CaptionDisplay::Right) {
         m_artworkRightMode->setChecked(true);
+    }
+    else if(config.captionDisplay == ExpandedTreeView::CaptionDisplay::Overlay) {
+        m_artworkOverlayMode->setChecked(true);
     }
     else if(config.captionDisplay == ExpandedTreeView::CaptionDisplay::None) {
         m_artworkNoLabelsMode->setChecked(true);
@@ -825,11 +832,13 @@ void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& pre
 void FilterConfigDialog::setupConnections()
 {
     const auto updateAutoFitArtwork = [this]() {
-        m_autoFitArtwork->setEnabled(m_artworkBottomMode->isChecked() || m_artworkNoLabelsMode->isChecked());
+        m_autoFitArtwork->setEnabled(m_artworkBottomMode->isChecked() || m_artworkOverlayMode->isChecked()
+                                     || m_artworkNoLabelsMode->isChecked());
     };
 
     updateAutoFitArtwork();
     QObject::connect(m_artworkBottomMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
+    QObject::connect(m_artworkOverlayMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
     QObject::connect(m_artworkNoLabelsMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
 
     QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);

@@ -43,20 +43,20 @@ public:
 private:
     static RichText recolourRichText(RichText richText, const QColor& colour);
 
+    [[nodiscard]] QRect artworkRect(const QStyleOptionViewItem& option) const;
     [[nodiscard]] QRect iconTextRect(const QStyleOptionViewItem& option) const;
     [[nodiscard]] int iconTextWidth(const QStyleOptionViewItem& option) const;
 
     [[nodiscard]] static IconCaptionLineList iconRichLines(const QModelIndex& index,
                                                            const QStyleOptionViewItem& option);
-    [[nodiscard]] QSize richLineSize(const QStyleOptionViewItem& option, int maxWidth, const RichText& richText) const;
     [[nodiscard]] static RichText fallbackRichText(const QStyleOptionViewItem& option, const QModelIndex& index);
     [[nodiscard]] QSize richTextSize(const QStyleOptionViewItem& option, const QModelIndex& index) const;
     [[nodiscard]] QSize iconItemSize(const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
     void initLayoutOnlyOption(QStyleOptionViewItem* option, const QModelIndex& index) const;
     static void setupFilterOption(QStyleOptionViewItem* option, const QModelIndex& index);
-    static void drawRichTextLines(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
-                                  const IconCaptionLineList& lines);
+    void drawRichTextLines(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
+                           const IconCaptionLineList& lines, const QRect& artwork) const;
     static void drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
                                const std::vector<RichTextBlock>& blocks);
 

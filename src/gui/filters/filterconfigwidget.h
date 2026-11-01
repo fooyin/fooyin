@@ -102,6 +102,7 @@ private:
     QRadioButton* m_columnsMode;
     QRadioButton* m_artworkBottomMode;
     QRadioButton* m_artworkRightMode;
+    QRadioButton* m_artworkOverlayMode;
     QRadioButton* m_artworkNoLabelsMode;
     QComboBox* m_coverType;
     QComboBox* m_coverSource;

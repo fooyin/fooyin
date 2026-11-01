@@ -84,6 +84,7 @@ QRect iconRect(const QStyleOptionViewItem& option, ExpandedTreeView::CaptionDisp
             break;
         case ExpandedTreeView::CaptionDisplay::Bottom:
         case ExpandedTreeView::CaptionDisplay::None:
+        case ExpandedTreeView::CaptionDisplay::Overlay:
             rect.moveLeft(option.rect.left() + std::max(0, (option.rect.width() - iconSize.width()) / 2));
             rect.moveTop(option.rect.top()
                          + (captions == ExpandedTreeView::CaptionDisplay::Bottom ? BottomIconPadding : 0));
@@ -132,6 +133,7 @@ QRect iconTextRect(const QStyleOptionViewItem& option, ExpandedTreeView::Caption
             rect.adjust(margin, 0, -margin, 0);
             break;
         case ExpandedTreeView::CaptionDisplay::None:
+        case ExpandedTreeView::CaptionDisplay::Overlay:
             rect = {};
             break;
     }
@@ -389,6 +391,7 @@ QSize iconItemSize(const QStyleOptionViewItem& option, ExpandedTreeView::Caption
             return {std::max(iconSize.width() + (2 * IconPadding), RightCaptionWidth),
                     BottomIconPadding + iconSize.height() + textHeight + (2 * IconPadding) + IconPadding};
         case ExpandedTreeView::CaptionDisplay::None:
+        case ExpandedTreeView::CaptionDisplay::Overlay:
             return {iconSize.width() + (2 * IconPadding), iconSize.height() + (2 * IconPadding)};
     }
 

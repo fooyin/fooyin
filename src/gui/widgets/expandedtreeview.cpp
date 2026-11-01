@@ -2755,6 +2755,7 @@ void IconView::setupDecorationProps(QStyleOptionViewItem* opt) const
             break;
         case ExpandedTreeView::CaptionDisplay::None:
         case ExpandedTreeView::CaptionDisplay::Bottom:
+        case ExpandedTreeView::CaptionDisplay::Overlay:
             opt->decorationPosition = QStyleOptionViewItem::Top;
             opt->displayAlignment   = Qt::AlignCenter;
             break;

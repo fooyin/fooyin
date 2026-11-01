@@ -47,7 +47,8 @@ public:
     {
         None = 0,
         Bottom,
-        Right
+        Right,
+        Overlay
     };
     Q_ENUM(CaptionDisplay)
 

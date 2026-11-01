@@ -29,6 +29,9 @@
 
 #include <QApplication>
 #include <QPainter>
+#include <QPainterPath>
+
+#include <cmath>
 
 constexpr auto IconCaptionMargin     = 20;
 constexpr auto RightCaptionTextWidth = 180;
@@ -132,6 +135,20 @@ void drawPreparedTextLine(QPainter* painter, QRect rect, Qt::Alignment alignment
         x += block.width;
     }
 }
+
+QSize richLineSize(const QStyleOptionViewItem& option, int maxWidth, const Fooyin::RichText& richText)
+{
+    QSize size{0, 0};
+    const auto lines = splitRichTextLines(richText);
+
+    for(const auto& line : lines) {
+        const PreparedTextLine preparedLine = prepareTextBlocks(option, maxWidth, line.blocks);
+        size.setWidth(std::max(size.width(), preparedLine.totalWidth));
+        size.rheight() += preparedLine.maxHeight;
+    }
+
+    return size;
+}
 } // namespace
 
 namespace Fooyin::Filters {
@@ -145,31 +162,30 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     opt.decorationSize  = option.decorationSize;
     const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
 
-    const auto* view        = qobject_cast<const ExpandedTreeView*>(opt.widget);
-    const bool hasArtwork   = view && view->viewMode() == ExpandedTreeView::ViewMode::Icon && !opt.icon.isNull();
-    const QIcon artworkIcon = hasArtwork ? opt.icon : QIcon{};
+    const auto* view          = qobject_cast<const ExpandedTreeView*>(opt.widget);
+    const bool hasArtwork     = view && view->viewMode() == ExpandedTreeView::ViewMode::Icon && !opt.icon.isNull();
+    const bool overlayCaption = view && view->viewMode() == ExpandedTreeView::ViewMode::Icon
+                             && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Overlay;
+    const QIcon artworkIcon   = hasArtwork ? opt.icon : QIcon{};
 
     if(view && view->viewMode() != ExpandedTreeView::ViewMode::Flow) {
         WidgetBackground::clearDelegateBackground(opt);
     }
 
+    QRect captionArtwork = overlayCaption ? artworkRect(opt) : QRect{};
+
     const auto drawArtwork = [&]() {
         if(hasArtwork) {
-            QStyleOptionViewItem artworkOpt{opt};
-            artworkOpt.rect = opt.rect.marginsRemoved(m_artworkMargins);
-            if(view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Right) {
-                artworkOpt.rect.adjust(RightCaptionInset, 0, -RightCaptionInset, 0);
-            }
-            const QRect decorationRect
-                = view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Right
-                    ? style->subElementRect(QStyle::SE_ItemViewItemDecoration, &artworkOpt, opt.widget)
-                    : QStyle::alignedRect(opt.direction, Qt::AlignTop | Qt::AlignHCenter, opt.decorationSize,
-                                          artworkOpt.rect);
-            const double dpr = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
+            const QRect decorationRect = artworkRect(opt);
+            const double dpr           = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
             const bool autoFit
                 = view->autoFitArtwork() && view->captionDisplay() != ExpandedTreeView::CaptionDisplay::Right;
             const QSize artworkSize     = autoFit ? view->effectiveIconSize() : decorationRect.size();
             const QPixmap scaledArtwork = artworkIcon.pixmap(artworkSize, dpr, Gui::itemViewIconMode(opt));
+            if(overlayCaption && !scaledArtwork.isNull()) {
+                captionArtwork = QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter,
+                                                     scaledArtwork.deviceIndependentSize().toSize(), decorationRect);
+            }
 
             painter->save();
             if(autoFit) {
@@ -235,8 +251,12 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
         style->drawControl(QStyle::CE_ItemViewItem, &backgroundOpt, painter, backgroundOpt.widget);
         drawArtwork();
 
-        const QRect textRect = iconTextRect(opt);
-        drawRichTextLines(painter, opt, textRect, richLines);
+        QRect textRect = iconTextRect(opt);
+        if(overlayCaption) {
+            const int margin = std::max(4, Gui::itemViewTextMargin(opt.widget, &opt));
+            textRect         = captionArtwork.adjusted(margin, 0, -margin, 0);
+        }
+        drawRichTextLines(painter, opt, textRect, richLines, captionArtwork);
 
         painter->restore();
         return;
@@ -279,6 +299,16 @@ QSize FilterDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelI
     return size;
 }
 
+void FilterDelegate::setArtworkCornerRadius(int radius)
+{
+    m_artworkCornerRadius = std::clamp(radius, 0, 100);
+}
+
+void FilterDelegate::setArtworkMargins(const QMargins& margins)
+{
+    m_artworkMargins = margins;
+}
+
 RichText FilterDelegate::recolourRichText(RichText richText, const QColor& colour)
 {
     if(!colour.isValid()) {
@@ -292,14 +322,22 @@ RichText FilterDelegate::recolourRichText(RichText richText, const QColor& colou
     return richText;
 }
 
-void FilterDelegate::setArtworkCornerRadius(int radius)
+QRect FilterDelegate::artworkRect(const QStyleOptionViewItem& option) const
 {
-    m_artworkCornerRadius = std::clamp(radius, 0, 100);
-}
+    const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
 
-void FilterDelegate::setArtworkMargins(const QMargins& margins)
-{
-    m_artworkMargins = margins;
+    QStyleOptionViewItem artworkOpt{option};
+    artworkOpt.rect = option.rect.marginsRemoved(m_artworkMargins);
+
+    if(view && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Right) {
+        artworkOpt.rect.adjust(RightCaptionInset, 0, -RightCaptionInset, 0);
+
+        const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
+        return style->subElementRect(QStyle::SE_ItemViewItemDecoration, &artworkOpt, option.widget);
+    }
+
+    return QStyle::alignedRect(option.direction, Qt::AlignTop | Qt::AlignHCenter, option.decorationSize,
+                               artworkOpt.rect);
 }
 
 QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option) const
@@ -338,6 +376,9 @@ QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option) const
             rect.adjust(horizontalMargin, 0, -horizontalMargin, 0);
             break;
         }
+        case ExpandedTreeView::CaptionDisplay::Overlay:
+            rect = artworkRect(option).adjusted(std::max(4, margin), 0, -std::max(4, margin), 0);
+            break;
         case ExpandedTreeView::CaptionDisplay::None:
             break;
     }
@@ -357,7 +398,8 @@ int FilterDelegate::iconTextWidth(const QStyleOptionViewItem& option) const
             const int width = iconTextRect(option).width();
             return width > 0 ? width : RightCaptionTextWidth;
         }
-        case ExpandedTreeView::CaptionDisplay::Bottom: {
+        case ExpandedTreeView::CaptionDisplay::Bottom:
+        case ExpandedTreeView::CaptionDisplay::Overlay: {
             const int width = iconTextRect(option).width();
             return width > 0 ? width : -1;
         }
@@ -399,20 +441,6 @@ IconCaptionLineList FilterDelegate::iconRichLines(const QModelIndex& index, cons
     }
 
     return lines;
-}
-
-QSize FilterDelegate::richLineSize(const QStyleOptionViewItem& option, int maxWidth, const RichText& richText) const
-{
-    QSize size{0, 0};
-    const auto lines = splitRichTextLines(richText);
-
-    for(const auto& line : lines) {
-        const PreparedTextLine preparedLine = prepareTextBlocks(option, maxWidth, line.blocks);
-        size.setWidth(std::max(size.width(), preparedLine.totalWidth));
-        size.rheight() += preparedLine.maxHeight;
-    }
-
-    return size;
 }
 
 QSize richTextNaturalSize(const QStyleOptionViewItem& option, const RichText& richText)
@@ -510,6 +538,7 @@ QSize FilterDelegate::iconItemSize(const QStyleOptionViewItem& option, const QMo
             return {itemWidth, itemHeight};
         }
         case ExpandedTreeView::CaptionDisplay::None:
+        case ExpandedTreeView::CaptionDisplay::Overlay:
             return artworkSize;
     }
 
@@ -584,34 +613,72 @@ void FilterDelegate::setupFilterOption(QStyleOptionViewItem* option, const QMode
 }
 
 void FilterDelegate::drawRichTextLines(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
-                                       const IconCaptionLineList& lines)
+                                       const IconCaptionLineList& lines, const QRect& artwork) const
 {
     if(lines.empty() || rect.width() <= 0 || rect.height() <= 0) {
         return;
     }
 
-    const auto* view   = qobject_cast<const ExpandedTreeView*>(option.widget);
+    const auto* view          = qobject_cast<const ExpandedTreeView*>(option.widget);
+    const bool overlayCaption = view && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Overlay;
+    const qreal radius
+        = overlayCaption ? std::min(artwork.width(), artwork.height()) * m_artworkCornerRadius / 200.0 : 0.0;
     const int maxWidth = rect.width();
 
+    struct CaptionLine
+    {
+        PreparedTextLine prepared;
+        Qt::Alignment alignment;
+        RichText text;
+    };
+
     int totalHeight{0};
-    std::vector<std::pair<PreparedTextLine, Qt::Alignment>> preparedLines;
+    std::vector<CaptionLine> preparedLines;
 
     for(const auto& line : lines) {
-        const auto logicalLines = splitRichTextLines(line.text);
+        auto logicalLines = splitRichTextLines(line.text);
         if(logicalLines.empty()) {
             PreparedTextLine prepared;
             prepared.baseline  = textBaselineMetrics(option.font);
             prepared.maxHeight = prepared.baseline.height();
             totalHeight += prepared.maxHeight;
-            preparedLines.emplace_back(std::move(prepared), line.alignment);
+            preparedLines.push_back({.prepared = std::move(prepared), .alignment = line.alignment, .text = {}});
             continue;
         }
 
-        for(const auto& logicalLine : logicalLines) {
+        for(auto& logicalLine : logicalLines) {
             auto prepared = prepareTextBlocks(option, maxWidth, logicalLine.blocks);
             totalHeight += prepared.maxHeight;
-            preparedLines.emplace_back(std::move(prepared), line.alignment);
+            preparedLines.push_back(
+                {.prepared = std::move(prepared), .alignment = line.alignment, .text = std::move(logicalLine)});
         }
+    }
+
+    painter->save();
+
+    if(overlayCaption) {
+        const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
+
+        const int padding = std::max(2, style->pixelMetric(QStyle::PM_FocusFrameVMargin, &option, option.widget));
+        const QRect visibleArtwork = artwork.intersected(artworkRect(option));
+        const int height           = std::min(visibleArtwork.height(), totalHeight + (2 * padding));
+
+        const QRect background{visibleArtwork.left(), visibleArtwork.bottom() - height + 1, visibleArtwork.width(),
+                               height};
+        QPainterPath clipPath;
+        clipPath.addRoundedRect(artwork, radius, radius);
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setClipRect(visibleArtwork, Qt::IntersectClip);
+        painter->setClipPath(clipPath, Qt::IntersectClip);
+
+        const bool selected     = option.state & QStyle::State_Selected;
+        QColor backgroundColour = selected ? option.palette.color(QPalette::Highlight) : QColor{Qt::black};
+        backgroundColour.setAlpha(selected ? 230 : 180);
+
+        painter->fillRect(background, backgroundColour);
+        rect.setTop(background.top() + padding);
+        rect.setBottom(background.bottom() - padding);
+        painter->setClipRect(rect, Qt::IntersectClip);
     }
 
     int y = rect.y();
@@ -619,15 +686,35 @@ void FilterDelegate::drawRichTextLines(QPainter* painter, const QStyleOptionView
         y += (rect.height() - totalHeight) / 2;
     }
 
-    for(const auto& [prepared, alignment] : preparedLines) {
+    for(const auto& [prepared, alignment, text] : preparedLines) {
         if(y > rect.bottom()) {
             break;
         }
 
-        const QRect lineRect{rect.x(), y, rect.width(), prepared.maxHeight};
-        drawPreparedTextLine(painter, lineRect, alignment, prepared);
+        QRect lineRect{rect.x(), y, rect.width(), prepared.maxHeight};
+        if(radius > 0.0) {
+            // Elide against the narrowest part of the curve spanned by this line
+            // TODO: Add option to adjust height of inline captions? Otherwise, text at the bottom won't be usable
+            //       with circular icons configured
+            const qreal distance
+                = std::clamp(std::max(artwork.top() + radius - lineRect.top(),
+                                      lineRect.bottom() + 1 - (artwork.y() + artwork.height() - radius)),
+                             0.0, radius);
+            const auto inset
+                = static_cast<int>(std::ceil(radius - std::sqrt((radius * radius) - (distance * distance))));
+            lineRect.adjust(inset, 0, -inset, 0);
+
+            auto fittedLine     = prepareTextBlocks(option, lineRect.width(), text.blocks);
+            fittedLine.baseline = prepared.baseline;
+            drawPreparedTextLine(painter, lineRect, alignment, fittedLine);
+        }
+        else {
+            drawPreparedTextLine(painter, lineRect, alignment, prepared);
+        }
         y += prepared.maxHeight;
     }
+
+    painter->restore();
 }
 
 void FilterDelegate::drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
