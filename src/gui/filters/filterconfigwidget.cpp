@@ -141,6 +141,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_expansionPlayingRowColour{new ColourButton(tr("Background colour") + u":"_s, true, this)}
     , m_expandGroups{new QCheckBox(tr("Expand selected group"), this)}
     , m_expansionAnimated{new QCheckBox(tr("Animate expansion and collapse"), this)}
+    , m_expansionAnimationDuration{new QSpinBox(this)}
     , m_expansionAlternatingRows{new QCheckBox(tr("Alternating row colours"), this)}
     , m_expandedArtwork{new QCheckBox(tr("Show artwork in expanded groups"), this)}
     , m_expansionCloseButton{new QCheckBox(tr("Show close button"), this)}
@@ -341,11 +342,17 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
         tr("Use a custom background colour for the currently playing row; transparency is supported"));
     m_expansionPlayingRowFont->setToolTip(tr("Use a custom font for the currently playing row"));
 
+    m_expansionAnimationDuration->setRange(50, 2000);
+    m_expansionAnimationDuration->setSingleStep(50);
+    m_expansionAnimationDuration->setSuffix(u" ms"_s);
+
     auto* expansionBehaviourLayout = new QGridLayout(expansionBehaviour);
 
     row = 0;
     expansionBehaviourLayout->addWidget(m_expandGroups, row++, 0, 1, 3);
     expansionBehaviourLayout->addWidget(m_expansionAnimated, row++, 0, 1, 3);
+    expansionBehaviourLayout->addWidget(new QLabel(tr("Animation duration") + u":"_s, expansionBehaviour), row, 0);
+    expansionBehaviourLayout->addWidget(m_expansionAnimationDuration, row++, 1);
     expansionBehaviourLayout->addWidget(m_expansionCloseButton, row++, 0, 1, 3);
     expansionBehaviourLayout->addWidget(m_expansionAlternatingRows, row++, 0, 1, 3);
     expansionBehaviourLayout->addWidget(new QLabel(tr("Maximum number of columns") + u":"_s, expansionBehaviour), row,
@@ -650,6 +657,7 @@ FilterWidget::ConfigData FilterConfigDialog::config() const
         .background        = m_background->config(),
         .expandGroups      = m_expandGroups->isChecked(),
         .expansionAnimated = m_expansionAnimated->isChecked(),
+        .expansionAnimationDuration        = m_expansionAnimationDuration->value(),
         .expansionAlternatingRows          = m_expansionAlternatingRows->isChecked(),
         .expandedArtwork                   = m_expandedArtwork->isChecked(),
         .expansionMinimumRows              = m_expansionMinimumRows->value(),
@@ -750,6 +758,7 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
 
     m_expandGroups->setChecked(config.expandGroups);
     m_expansionAnimated->setChecked(config.expansionAnimated);
+    m_expansionAnimationDuration->setValue(config.expansionAnimationDuration);
     m_expansionAlternatingRows->setChecked(config.expansionAlternatingRows);
     m_expansionArtworkAutoMargins->setChecked(config.expansionArtworkAutoMargins);
     m_expansionArtworkLeftMargin->setValue(config.expansionArtworkMargins.left());
@@ -798,11 +807,12 @@ void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& pre
         &FilterWidget::ConfigData::autoFitArtwork, &FilterWidget::ConfigData::iconVerticalGap,
         &FilterWidget::ConfigData::artworkCornerRadius, &FilterWidget::ConfigData::artworkMargins,
         &FilterWidget::ConfigData::expandGroups, &FilterWidget::ConfigData::expansionAnimated,
-        &FilterWidget::ConfigData::expansionAlternatingRows, &FilterWidget::ConfigData::expandedArtwork,
-        &FilterWidget::ConfigData::expansionMinimumRows, &FilterWidget::ConfigData::expansionMaximumColumns,
-        &FilterWidget::ConfigData::expansionArtworkOnLeft, &FilterWidget::ConfigData::expansionStretchColumns,
-        &FilterWidget::ConfigData::expansionMinimumColumnWidth, &FilterWidget::ConfigData::expansionArtworkSize,
-        &FilterWidget::ConfigData::expansionShowCloseButton, &FilterWidget::ConfigData::expansionArtworkReflection,
+        &FilterWidget::ConfigData::expansionAnimationDuration, &FilterWidget::ConfigData::expansionAlternatingRows,
+        &FilterWidget::ConfigData::expandedArtwork, &FilterWidget::ConfigData::expansionMinimumRows,
+        &FilterWidget::ConfigData::expansionMaximumColumns, &FilterWidget::ConfigData::expansionArtworkOnLeft,
+        &FilterWidget::ConfigData::expansionStretchColumns, &FilterWidget::ConfigData::expansionMinimumColumnWidth,
+        &FilterWidget::ConfigData::expansionArtworkSize, &FilterWidget::ConfigData::expansionShowCloseButton,
+        &FilterWidget::ConfigData::expansionArtworkReflection,
         &FilterWidget::ConfigData::expansionArtworkReflectionHeight,
         &FilterWidget::ConfigData::expansionArtworkReflectionOpacity,
         &FilterWidget::ConfigData::expansionArtworkReflectionGap,
@@ -834,6 +844,7 @@ void FilterConfigDialog::setupConnections()
     }
 
     QObject::connect(m_expandGroups, &QCheckBox::toggled, this, &FilterConfigDialog::updateExpansionControls);
+    QObject::connect(m_expansionAnimated, &QCheckBox::toggled, this, &FilterConfigDialog::updateExpansionControls);
     QObject::connect(m_expandedArtwork, &QCheckBox::toggled, this, &FilterConfigDialog::updateExpansionControls);
     QObject::connect(m_expansionMaximumColumns, &QSpinBox::valueChanged, this,
                      &FilterConfigDialog::updateExpansionControls);
@@ -904,6 +915,7 @@ void FilterConfigDialog::updateExpansionControls()
 {
     const bool enabled = m_expandGroups->isChecked();
     m_expansionAnimated->setEnabled(enabled);
+    m_expansionAnimationDuration->setEnabled(enabled && m_expansionAnimated->isChecked());
     m_expansionAlternatingRows->setEnabled(enabled);
     m_expansionDoubleClick->setEnabled(enabled);
     m_expansionMiddleClick->setEnabled(enabled);

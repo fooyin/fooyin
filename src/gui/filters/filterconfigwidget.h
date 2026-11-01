@@ -128,6 +128,7 @@ private:
     ColourButton* m_expansionPlayingRowColour;
     QCheckBox* m_expandGroups;
     QCheckBox* m_expansionAnimated;
+    QSpinBox* m_expansionAnimationDuration;
     QCheckBox* m_expansionAlternatingRows;
     QCheckBox* m_expandedArtwork;
     QCheckBox* m_expansionCloseButton;

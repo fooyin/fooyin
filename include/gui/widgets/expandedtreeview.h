@@ -123,6 +123,7 @@ public:
     void setExpandedIndex(const QModelIndex& index);
     void setExpansionWidget(QWidget* widget);
     void setExpansionAnimated(bool enabled);
+    void setExpansionAnimationDuration(int duration);
     void refreshExpansion();
 
     [[nodiscard]] QRect visualRect(const QModelIndex& index) const override;

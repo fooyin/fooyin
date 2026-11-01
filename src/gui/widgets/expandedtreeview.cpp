@@ -4547,11 +4547,11 @@ void ExpandedTreeView::setExpandedIndex(const QModelIndex& index)
     const bool closing         = !expanded.isValid() && previous.isValid() && previousHeight > 0;
     const bool relocating      = expanded.isValid() && p->m_expandedIndex.isValid() && anchor.isValid()
                               && visualRect(p->m_expandedIndex).top() != anchor.top();
-    const int duration = std::clamp(style()->styleHint(QStyle::SH_Widget_Animation_Duration, nullptr, this), 0, 200);
-    const bool animate = p->m_expansionAnimated && isVisible() && p->m_viewMode == ViewMode::Icon
-                      && p->m_expansionWidget && duration > 0
-                      && style()->styleHint(QStyle::SH_Widget_Animate, nullptr, this)
-                      && (opening || closing || relocating);
+    const int duration         = style()->styleHint(QStyle::SH_Widget_Animation_Duration, nullptr, this);
+    const bool animate         = p->m_expansionAnimated && isVisible() && p->m_viewMode == ViewMode::Icon
+                              && p->m_expansionWidget && duration > 0
+                              && style()->styleHint(QStyle::SH_Widget_Animate, nullptr, this)
+                              && (opening || closing || relocating);
 
     QPixmap snapshot;
     QPixmap previousSnapshot;
@@ -4585,10 +4585,7 @@ void ExpandedTreeView::setExpandedIndex(const QModelIndex& index)
 
         {
             const QSignalBlocker blocker{&p->m_expansionAnimation};
-            p->m_expansionAnimation.setDuration(duration);
-            p->m_expansionAnimation.setEasingCurve(relocating           ? QEasingCurve::InOutCubic
-                                                   : expanded.isValid() ? QEasingCurve::OutCubic
-                                                                        : QEasingCurve::InCubic);
+            p->m_expansionAnimation.setEasingCurve(QEasingCurve::InOutQuad);
             p->m_expansionAnimation.setKeyValues({{0.0, p->m_expansionAnimationHeight}, {1.0, targetHeight}});
             if(relocating) {
                 p->m_expansionAnimation.setKeyValueAt(0.5, 0);
@@ -4635,6 +4632,11 @@ void ExpandedTreeView::setExpansionAnimated(bool enabled)
         p->stopExpansionAnimation();
         refreshExpansion();
     }
+}
+
+void ExpandedTreeView::setExpansionAnimationDuration(int duration)
+{
+    p->m_expansionAnimation.setDuration(std::clamp(duration, 50, 2000));
 }
 
 void ExpandedTreeView::refreshExpansion()

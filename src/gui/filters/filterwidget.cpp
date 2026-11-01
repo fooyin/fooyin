@@ -85,6 +85,7 @@ constexpr auto FilterArtworkMarginsKey    = u"Filters/ArtworkMargins";
 
 constexpr auto FilterExpandGroupsKey                = u"Filters/ExpandGroups";
 constexpr auto FilterExpansionAnimatedKey           = u"Filters/ExpansionAnimated";
+constexpr auto FilterExpansionAnimationDurationKey  = u"Filters/ExpansionAnimationDuration";
 constexpr auto FilterExpansionAlternatingRowsKey    = u"Filters/ExpansionAlternatingRows";
 constexpr auto FilterExpandedArtworkKey             = u"Filters/ExpandedArtwork";
 constexpr auto FilterExpansionDoubleClickKey        = u"Filters/ExpansionDoubleClickBehaviour";
@@ -634,6 +635,9 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
         QJsonObject::fromVariantMap(m_settings->fileValue(FilterArtworkMarginsKey).toMap()), config.artworkMargins);
     config.expandGroups      = m_settings->fileValue(FilterExpandGroupsKey, config.expandGroups).toBool();
     config.expansionAnimated = m_settings->fileValue(FilterExpansionAnimatedKey, config.expansionAnimated).toBool();
+    config.expansionAnimationDuration = std::clamp(
+        m_settings->fileValue(FilterExpansionAnimationDurationKey, config.expansionAnimationDuration).toInt(), 50,
+        2000);
     config.expansionAlternatingRows
         = m_settings->fileValue(FilterExpansionAlternatingRowsKey, config.expansionAlternatingRows).toBool();
     config.expandedArtwork         = m_settings->fileValue(FilterExpandedArtworkKey, config.expandedArtwork).toBool();
@@ -724,6 +728,7 @@ void FilterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(FilterArtworkMarginsKey, artworkMarginsToJson(config.artworkMargins).toVariantMap());
     m_settings->fileSet(FilterExpandGroupsKey, config.expandGroups);
     m_settings->fileSet(FilterExpansionAnimatedKey, config.expansionAnimated);
+    m_settings->fileSet(FilterExpansionAnimationDurationKey, config.expansionAnimationDuration);
     m_settings->fileSet(FilterExpansionAlternatingRowsKey, config.expansionAlternatingRows);
     m_settings->fileSet(FilterExpandedArtworkKey, config.expandedArtwork);
     m_settings->fileSet(FilterExpansionArtworkMarginsKey,
@@ -785,6 +790,7 @@ void FilterWidget::clearSavedDefaults() const
     m_settings->fileRemove(FilterArtworkMarginsKey);
     m_settings->fileRemove(FilterExpandGroupsKey);
     m_settings->fileRemove(FilterExpansionAnimatedKey);
+    m_settings->fileRemove(FilterExpansionAnimationDurationKey);
     m_settings->fileRemove(FilterExpansionAlternatingRowsKey);
     m_settings->fileRemove(FilterExpandedArtworkKey);
     m_settings->fileRemove(FilterExpansionArtworkMarginsKey);
@@ -857,6 +863,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
         validated.iconSize = factoryConfig().iconSize;
     }
 
+    validated.expansionAnimationDuration        = std::clamp(validated.expansionAnimationDuration, 50, 2000);
     validated.expansionArtworkMargins           = artworkMarginsFromJson({}, validated.expansionArtworkMargins);
     validated.expansionArtworkSize              = std::clamp(validated.expansionArtworkSize, 50, 200);
     validated.expansionArtworkReflectionHeight  = std::clamp(validated.expansionArtworkReflectionHeight, 1, 100);
@@ -904,6 +911,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
        || m_config.artworkCornerRadius != validated.artworkCornerRadius
        || m_config.artworkMargins != validated.artworkMargins || m_config.expandGroups != validated.expandGroups
        || m_config.expansionAnimated != validated.expansionAnimated
+       || m_config.expansionAnimationDuration != validated.expansionAnimationDuration
        || m_config.expandedArtwork != validated.expandedArtwork
        || m_config.expansionScripts != validated.expansionScripts
        || m_config.expansionPlayingRowFont != validated.expansionPlayingRowFont
@@ -927,6 +935,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
     m_header->setCollapsed(!m_config.showHeader);
     m_view->setCollapseDelayEnabled(doubleClickAction() != TrackAction::None);
     m_view->setExpansionAnimated(m_config.expansionAnimated);
+    m_view->setExpansionAnimationDuration(m_config.expansionAnimationDuration);
     m_view->setBackgroundConfig(m_config.background);
     m_backgroundSource->setConfig(m_config.background);
     updateAppearance();
@@ -2011,8 +2020,10 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
         = layout.value("ExpansionPlayingRowFont"_L1).toString(config.expansionPlayingRowFont);
     config.expansionPlayingRowColour
         = layout.value("ExpansionPlayingRowColour"_L1).toString(config.expansionPlayingRowColour);
-    config.expandGroups        = layout.value("ExpandGroups"_L1).toBool(config.expandGroups);
-    config.expansionAnimated   = layout.value("ExpansionAnimated"_L1).toBool(config.expansionAnimated);
+    config.expandGroups      = layout.value("ExpandGroups"_L1).toBool(config.expandGroups);
+    config.expansionAnimated = layout.value("ExpansionAnimated"_L1).toBool(config.expansionAnimated);
+    config.expansionAnimationDuration
+        = std::clamp(layout.value("ExpansionAnimationDuration"_L1).toInt(config.expansionAnimationDuration), 50, 2000);
     config.expandedArtwork     = layout.value("ExpandedArtwork"_L1).toBool(config.expandedArtwork);
     config.rowHeight           = std::max(config.rowHeight, 0);
     config.iconHorizontalGap   = std::max(config.iconHorizontalGap, -1);
@@ -2068,6 +2079,7 @@ void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["ArtworkMargins"_L1]                    = artworkMarginsToJson(config.artworkMargins);
     layout["ExpandGroups"_L1]                      = config.expandGroups;
     layout["ExpansionAnimated"_L1]                 = config.expansionAnimated;
+    layout["ExpansionAnimationDuration"_L1]        = config.expansionAnimationDuration;
     layout["ExpansionAlternatingRows"_L1]          = config.expansionAlternatingRows;
     layout["ExpandedArtwork"_L1]                   = config.expandedArtwork;
     layout["ExpansionArtworkMargins"_L1]           = artworkMarginsToJson(config.expansionArtworkMargins);

@@ -162,6 +162,7 @@ public:
         BackgroundConfig background;
         bool expandGroups{false};
         bool expansionAnimated{true};
+        int expansionAnimationDuration{250};
         bool expansionAlternatingRows{false};
         bool expandedArtwork{true};
         int expansionMinimumRows{4};
