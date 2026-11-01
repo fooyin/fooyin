@@ -32,7 +32,6 @@
 #include <QFont>
 
 namespace Fooyin {
-class LibraryManager;
 struct ScriptSearchOptions;
 
 namespace Filters {
@@ -56,23 +55,12 @@ struct FYGUI_EXPORT FilterRowBuildContext
     bool useVarious{false};
 };
 
-FYGUI_EXPORT FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumnList& columns,
-                                           const TrackList& tracks, const FilterRowBuildContext& context);
 FYGUI_EXPORT FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColumnList& columns,
                                            const TrackList& tracks, const FilterRowBuildContext& context);
-FYGUI_EXPORT FilterRowList patchFilterRows(LibraryManager* libraryManager, const FilterColumnList& columns,
-                                           const FilterRowList& previousRows, const TrackList& previousTracks,
-                                           const TrackList& tracks, const TrackIds& changedTrackIds,
-                                           const FilterRowBuildContext& context);
 FYGUI_EXPORT FilterRowList patchFilterRows(const LibraryInfoMap& libraries, const FilterColumnList& columns,
                                            const FilterRowList& previousRows, const TrackList& previousTracks,
                                            const TrackList& tracks, const TrackIds& changedTrackIds,
                                            const FilterRowBuildContext& context);
-FYGUI_EXPORT TrackList filterTracksBySearch(const QString& search, const TrackList& tracks);
-FYGUI_EXPORT FilterRowList filterRowsBySearch(const QString& search, const FilterRowList& rows,
-                                              const TrackList& tracks);
-FYGUI_EXPORT FilterRowList filterRowsBySearch(const QString& search, const FilterRowList& rows, const TrackList& tracks,
-                                              const ScriptSearchOptions& searchOptions);
 FYGUI_EXPORT FilterRowList filterRowsBySearch(const QString& search, const FilterRowList& rows, const TrackList& tracks,
                                               const ScriptSearchOptions& searchOptions, const LibraryInfoMap& libraries,
                                               const FilterColumnList& columns, const FilterRowBuildContext& context);

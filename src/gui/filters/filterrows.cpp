@@ -20,7 +20,6 @@
 #include "filterrows.h"
 
 #include <core/constants.h>
-#include <core/library/librarymanager.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scripttypes.h>
 #include <core/scripting/trackqueryfilter.h>
@@ -117,13 +116,6 @@ std::vector<QStringList> splitColumnValues(const QString& evaluated)
     return values;
 }
 } // namespace
-
-FilterRowList buildFilterRows(LibraryManager* libraryManager, const FilterColumnList& columns, const TrackList& tracks,
-                              const FilterRowBuildContext& context)
-{
-    return buildFilterRows(libraryManager ? libraryManager->allLibraries() : LibraryInfoMap{}, columns, tracks,
-                           context);
-}
 
 FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColumnList& columns, const TrackList& tracks,
                               const FilterRowBuildContext& context)
@@ -323,15 +315,6 @@ FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColum
     return rows;
 }
 
-FilterRowList patchFilterRows(LibraryManager* libraryManager, const FilterColumnList& columns,
-                              const FilterRowList& previousRows, const TrackList& previousTracks,
-                              const TrackList& tracks, const TrackIds& changedTrackIds,
-                              const FilterRowBuildContext& context)
-{
-    return patchFilterRows(libraryManager ? libraryManager->allLibraries() : LibraryInfoMap{}, columns, previousRows,
-                           previousTracks, tracks, changedTrackIds, context);
-}
-
 FilterRowList patchFilterRows(const LibraryInfoMap& libraries, const FilterColumnList& columns,
                               const FilterRowList& previousRows, const TrackList& previousTracks,
                               const TrackList& tracks, const TrackIds& changedTrackIds,
@@ -470,27 +453,6 @@ FilterRowList patchFilterRows(const LibraryInfoMap& libraries, const FilterColum
     }
 
     return rows;
-}
-
-TrackList filterTracksBySearch(const QString& search, const TrackList& tracks)
-{
-    if(search.isEmpty() || tracks.empty()) {
-        return tracks;
-    }
-
-    TrackQueryFilter filter;
-    return filter.filter(search, tracks);
-}
-
-FilterRowList filterRowsBySearch(const QString& search, const FilterRowList& rows, const TrackList& tracks)
-{
-    return filterRowsBySearch(search, rows, tracks, TrackQueryFilter::defaultSearchOptions());
-}
-
-FilterRowList filterRowsBySearch(const QString& search, const FilterRowList& rows, const TrackList& tracks,
-                                 const ScriptSearchOptions& searchOptions)
-{
-    return filterRowsBySearch(search, rows, tracks, searchOptions, {}, {}, {});
 }
 
 FilterRowList filterRowsBySearch(const QString& search, const FilterRowList& rows, const TrackList& tracks,

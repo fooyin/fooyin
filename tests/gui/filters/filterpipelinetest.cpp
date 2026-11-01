@@ -195,8 +195,8 @@ TEST(FilterPipelineTest, FilterRowsBySearchNarrowsMatchingTracksWithoutRebuildin
     singleRow.columns = {u"Single Label"_s};
     singleRow.tracks  = {inputTracks.at(2)};
 
-    const Filters::FilterRowList filteredRows
-        = Filters::filterRowsBySearch(u"one"_s, {groupedRow, singleRow}, inputTracks);
+    const Filters::FilterRowList filteredRows = Filters::filterRowsBySearch(
+        u"one"_s, {groupedRow, singleRow}, inputTracks, TrackQueryFilter::defaultSearchOptions(), {}, {}, {});
 
     ASSERT_EQ(1, filteredRows.size());
     EXPECT_EQ(groupedRow.key, filteredRows.at(0).key);
@@ -217,7 +217,8 @@ TEST(FilterPipelineTest, FilterRowsBySearchKeepsCanonicalRowsWhenEveryTrackMatch
         makeRow(keyFor(u"B"_s), {2}),
     };
 
-    const Filters::FilterRowList filteredRows = Filters::filterRowsBySearch(u"music"_s, rows, inputTracks);
+    const Filters::FilterRowList filteredRows = Filters::filterRowsBySearch(
+        u"music"_s, rows, inputTracks, TrackQueryFilter::defaultSearchOptions(), {}, {}, {});
 
     ASSERT_EQ(rows.size(), filteredRows.size());
     EXPECT_EQ(rows.at(0).key, filteredRows.at(0).key);
@@ -242,7 +243,7 @@ TEST(FilterPipelineTest, SplitFunctionCreatesRowsFromSingleTagValue)
         .useVarious    = false,
     };
 
-    const Filters::FilterRowList rows = Filters::buildFilterRows(nullptr, columns, {track}, context);
+    const Filters::FilterRowList rows = Filters::buildFilterRows({}, columns, {track}, context);
 
     ASSERT_EQ(2, rows.size());
     EXPECT_EQ(QStringList{u"B"_s}, rows.at(0).columns);
@@ -282,12 +283,12 @@ TEST(FilterPipelineTest, PatchFilterRowsMovesUpdatedTrackBetweenBucketsAndPrunes
         .useVarious    = false,
     };
 
-    const Filters::FilterRowList previousRows = Filters::buildFilterRows(nullptr, columns, {oldRock, oldJazz}, context);
+    const Filters::FilterRowList previousRows = Filters::buildFilterRows({}, columns, {oldRock, oldJazz}, context);
     ASSERT_EQ(2, previousRows.size());
     EXPECT_NE(previousRows.at(0).key, previousRows.at(1).key);
     EXPECT_EQ(previousRows.at(0).columns, previousRows.at(1).columns);
-    const Filters::FilterRowList patchedRows = Filters::patchFilterRows(
-        nullptr, columns, previousRows, {oldRock, oldJazz}, {newJazz, oldJazz}, {1}, context);
+    const Filters::FilterRowList patchedRows
+        = Filters::patchFilterRows({}, columns, previousRows, {oldRock, oldJazz}, {newJazz, oldJazz}, {1}, context);
 
     ASSERT_EQ(1, patchedRows.size());
     EXPECT_EQ(previousRows.at(1).key, patchedRows.at(0).key);
@@ -322,9 +323,9 @@ TEST(FilterPipelineTest, PatchFilterRowsRefreshesTrackMetadataWithinExistingBuck
         .useVarious    = false,
     };
 
-    const Filters::FilterRowList previousRows = Filters::buildFilterRows(nullptr, columns, {oldTrack}, context);
+    const Filters::FilterRowList previousRows = Filters::buildFilterRows({}, columns, {oldTrack}, context);
     const Filters::FilterRowList patchedRows
-        = Filters::patchFilterRows(nullptr, columns, previousRows, {oldTrack}, {updatedTrack}, {1}, context);
+        = Filters::patchFilterRows({}, columns, previousRows, {oldTrack}, {updatedTrack}, {1}, context);
 
     ASSERT_EQ(1, patchedRows.size());
     EXPECT_EQ(previousRows.front().key, patchedRows.front().key);
@@ -364,9 +365,9 @@ TEST(FilterPipelineTest, PatchFilterRowsAddsNewTrackIntoExistingBucketInCurrentO
         .useVarious    = false,
     };
 
-    const Filters::FilterRowList previousRows = Filters::buildFilterRows(nullptr, columns, {oldRock}, context);
+    const Filters::FilterRowList previousRows = Filters::buildFilterRows({}, columns, {oldRock}, context);
     const Filters::FilterRowList patchedRows
-        = Filters::patchFilterRows(nullptr, columns, previousRows, {oldRock}, {newRock, oldRock}, {2}, context);
+        = Filters::patchFilterRows({}, columns, previousRows, {oldRock}, {newRock, oldRock}, {2}, context);
 
     ASSERT_EQ(2, patchedRows.size());
     EXPECT_EQ(QStringList{u"JAZZ"_s}, patchedRows.at(0).columns);
@@ -408,7 +409,7 @@ TEST(FilterPipelineTest, FilterRowsBySearchUpdatesCountsAndKeepsOrder)
          .groupingField = u"1"_s},
     };
     const Filters::FilterRowBuildContext context;
-    const auto rows = Filters::buildFilterRows(nullptr, columns, libraryTracks, context);
+    const auto rows = Filters::buildFilterRows({}, columns, libraryTracks, context);
     ASSERT_EQ(3, rows.size());
     EXPECT_EQ((QStringList{u"Rock (2)"_s, u"00:05"_s}), rows.at(0).columns);
 
@@ -440,7 +441,7 @@ TEST(FilterPipelineTest, UpdatingTracksUpdatesCountsWithoutCategories)
         .useVarious    = false,
     };
 
-    const Filters::FilterRowList rows = Filters::buildFilterRows(nullptr, columns, {track}, context);
+    const Filters::FilterRowList rows = Filters::buildFilterRows({}, columns, {track}, context);
 
     ASSERT_EQ(2, rows.size());
     EXPECT_EQ(QStringList{u"B (1)"_s}, rows.at(0).columns);
@@ -449,8 +450,7 @@ TEST(FilterPipelineTest, UpdatingTracksUpdatesCountsWithoutCategories)
     Track secondTrack = makeTrack(2, u"/music/two.flac"_s);
     secondTrack.setLibraryId(1);
     secondTrack.addExtraTag(u"TEST"_s, u"A; B"_s);
-    const auto patchedRows
-        = Filters::patchFilterRows(nullptr, columns, rows, {track}, {secondTrack, track}, {2}, context);
+    const auto patchedRows = Filters::patchFilterRows({}, columns, rows, {track}, {secondTrack, track}, {2}, context);
     ASSERT_EQ(2, patchedRows.size());
     EXPECT_EQ(rows.at(1).key, patchedRows.at(0).key);
     EXPECT_EQ(rows.at(0).key, patchedRows.at(1).key);
@@ -496,12 +496,12 @@ TEST(FilterPipelineTest, MovingTracksBetweenGroupsUpdatesCounts)
         .useVarious    = false,
     };
 
-    const Filters::FilterRowList previousRows = Filters::buildFilterRows(nullptr, columns, {oldRock, oldJazz}, context);
+    const Filters::FilterRowList previousRows = Filters::buildFilterRows({}, columns, {oldRock, oldJazz}, context);
     ASSERT_EQ(2, previousRows.size());
     EXPECT_NE(previousRows.at(0).key, previousRows.at(1).key);
     EXPECT_EQ(previousRows.at(0).columns, previousRows.at(1).columns);
-    const Filters::FilterRowList patchedRows = Filters::patchFilterRows(
-        nullptr, columns, previousRows, {oldRock, oldJazz}, {newJazz, oldJazz}, {1}, context);
+    const Filters::FilterRowList patchedRows
+        = Filters::patchFilterRows({}, columns, previousRows, {oldRock, oldJazz}, {newJazz, oldJazz}, {1}, context);
 
     ASSERT_EQ(1, patchedRows.size());
     EXPECT_EQ(previousRows.at(1).key, patchedRows.at(0).key);
@@ -538,9 +538,9 @@ TEST(FilterPipelineTest, EditingTrackDetailsRefreshesCalculations)
         .useVarious    = false,
     };
 
-    const Filters::FilterRowList previousRows = Filters::buildFilterRows(nullptr, columns, {oldTrack}, context);
+    const Filters::FilterRowList previousRows = Filters::buildFilterRows({}, columns, {oldTrack}, context);
     const Filters::FilterRowList patchedRows
-        = Filters::patchFilterRows(nullptr, columns, previousRows, {oldTrack}, {updatedTrack}, {1}, context);
+        = Filters::patchFilterRows({}, columns, previousRows, {oldTrack}, {updatedTrack}, {1}, context);
 
     ASSERT_EQ(1, patchedRows.size());
     EXPECT_EQ(previousRows.front().key, patchedRows.front().key);
@@ -589,9 +589,9 @@ TEST(FilterPipelineTest, AddingAndRemovingTracksUpdatesMultiCategoryCounts)
         .useVarious    = false,
     };
 
-    const Filters::FilterRowList previousRows = Filters::buildFilterRows(nullptr, columns, {oldRock}, context);
+    const Filters::FilterRowList previousRows = Filters::buildFilterRows({}, columns, {oldRock}, context);
     const Filters::FilterRowList patchedRows
-        = Filters::patchFilterRows(nullptr, columns, previousRows, {oldRock}, {newRock, oldRock}, {2}, context);
+        = Filters::patchFilterRows({}, columns, previousRows, {oldRock}, {newRock, oldRock}, {2}, context);
 
     ASSERT_EQ(2, patchedRows.size());
     EXPECT_EQ((QStringList{u"JAZZ (2 tracks)"_s, u"00:05 | 160"_s}), patchedRows.at(0).columns);
@@ -605,7 +605,7 @@ TEST(FilterPipelineTest, AddingAndRemovingTracksUpdatesMultiCategoryCounts)
     }
 
     const auto removedRows
-        = Filters::patchFilterRows(nullptr, columns, patchedRows, {newRock, oldRock}, {oldRock}, {}, context);
+        = Filters::patchFilterRows({}, columns, patchedRows, {newRock, oldRock}, {oldRock}, {}, context);
     ASSERT_EQ(2, removedRows.size());
     EXPECT_EQ(previousRows.at(0).key, removedRows.at(0).key);
     EXPECT_EQ((QStringList{u"ROCK (1 track)"_s, u"00:02 | 100"_s}), removedRows.at(0).columns);
