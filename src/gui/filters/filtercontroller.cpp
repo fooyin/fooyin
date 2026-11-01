@@ -155,7 +155,8 @@ FilterPatchResult calculateGroupPatch(FilterPatchResult snapshot, TrackList trac
         stage.inputTracks = std::move(currentTracks);
 
         if(!stage.searchText.isEmpty()) {
-            stage.searchedRows = filterRowsBySearch(stage.searchText, stage.rows, stage.inputTracks, searchOptions);
+            stage.searchedRows = filterRowsBySearch(stage.searchText, stage.rows, stage.inputTracks, searchOptions,
+                                                    libraries, stage.columns, context);
         }
 
         const auto& rows = stage.searchedRows ? *stage.searchedRows : stage.rows;
@@ -1213,12 +1214,16 @@ void FilterControllerPrivate::refreshStageSearch(const Id& groupId, int stageInd
         return;
     }
 
-    const QString searchText = stage.searchText;
-    const auto searchOptions = TrackQueryFilter::defaultSearchOptions();
+    const QString searchText       = stage.searchText;
+    const auto searchOptions       = TrackQueryFilter::defaultSearchOptions();
+    const auto libraries           = m_libraryManager ? m_libraryManager->allLibraries() : LibraryInfoMap{};
+    const FilterColumnList columns = stage.widget ? stage.widget->columns() : FilterColumnList{};
+    const auto context             = rowBuildContext();
 
-    Utils::asyncExec([rows = stage.rows, tracks = stage.inputTracks, searchText, searchOptions]() {
-        return filterRowsBySearch(searchText, rows, tracks, searchOptions);
-    })
+    Utils::asyncExec(
+        [rows = stage.rows, tracks = stage.inputTracks, searchText, searchOptions, libraries, columns, context]() {
+            return filterRowsBySearch(searchText, rows, tracks, searchOptions, libraries, columns, context);
+        })
         .then(m_self,
               [this, groupId, stageIndex, revision, searchRevision, searchText](const FilterRowList& searchedRows) {
                   if(!m_groups.contains(groupId)) {

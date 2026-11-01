@@ -73,5 +73,8 @@ FYGUI_EXPORT FilterRowList filterRowsBySearch(const QString& search, const Filte
                                               const TrackList& tracks);
 FYGUI_EXPORT FilterRowList filterRowsBySearch(const QString& search, const FilterRowList& rows, const TrackList& tracks,
                                               const ScriptSearchOptions& searchOptions);
+FYGUI_EXPORT FilterRowList filterRowsBySearch(const QString& search, const FilterRowList& rows, const TrackList& tracks,
+                                              const ScriptSearchOptions& searchOptions, const LibraryInfoMap& libraries,
+                                              const FilterColumnList& columns, const FilterRowBuildContext& context);
 } // namespace Filters
 } // namespace Fooyin
