@@ -7,6 +7,7 @@
 - **Interface**
   - Add configurable inline track expansion to Library Filter ([#1841](https://github.com/fooyin/fooyin/pull/1841))
   - Add configurable animations when switching layouts
+  - Add configurable focused-widget and playing-track targets for supported shortcuts, including Rating ([#1363](https://github.com/fooyin/fooyin/issues/1363), [#1849](https://github.com/fooyin/fooyin/issues/1849))
   - Add a shared global background for supported widgets
 
 ### Improvements
@@ -14,9 +15,10 @@
 - **Interface** 
   - Allow dialog actions in separate scopes to share shortcuts
   - Add a separate themed placeholder for artist artwork
-  - Add configurable backgrounds to Library Tree and most visualisations
+  - Add configurable backgrounds to Library Tree, Radio Browser, and most visualisations
   - Increase the default Settings dialog size
   - Improve the Interface settings page layout
+  - Rename the Shortcuts settings page to Keyboard Shortcuts
   - Require Shift to split widgets during layout editing and show native modifier key names in hints
   - Make the Properties selection sidebar resizable
   - Improve wording in line with the KDE HIG ([#1810](https://github.com/fooyin/fooyin/pull/1810))
@@ -24,16 +26,24 @@
   - Show a script error indicator in Script Editor toolbars
 - **Filters**
   - Add an automatic artwork fitting option
+  - Add separate grouping scripts for columns
   - Add artwork margin and playing track appearance settings
+  - Add overlay artwork captions
+  - Add rounded hover, selection, and focus highlights when no margins are configured
   - Keep the current selection in view when resizing icons or the window
+  - Support track counts and other totals in column scripts
 - **Playlists**
   - Add a live track preview and matching track count to the autoplaylist editor
   - Support custom sorting scripts in autoplaylist rules ([#1806](https://github.com/fooyin/fooyin/issues/1806))
-- **Radio Browser:** Load and prepare tag filters without blocking the interface
+- **Radio Browser**
+  - Load and prepare tag filters without blocking the interface
+  - Add sizing and spacing controls with automatic icon/row fitting
+  - Improve artwork, selection, hover, and focus rendering
 
 ### Fixes
 
 - **Audio Conversion:** Limit sample format options to those supported by the selected encoder ([#1824](https://github.com/fooyin/fooyin/issues/1824))
+- **Discord:** Fix cover artwork tooltips for short album names ([#1842](https://github.com/fooyin/fooyin/pull/1842))
 - **Global Shortcuts:** Fix keypad shortcuts and native key translation across platforms ([#1813](https://github.com/fooyin/fooyin/issues/1813))
 - **Filters:** Preserve group order across rebuilds and incremental updates ([#1829](https://github.com/fooyin/fooyin/issues/1829))
 - **Interface**
@@ -48,6 +58,7 @@
   - Recover playback after output initialisation fails ([#1843](https://github.com/fooyin/fooyin/issues/1843))
   - Prevent DSP buffering from delaying gapless decoder adoption ([#1845](https://github.com/fooyin/fooyin/issues/1845))
   - Keep ALSA writes non-blocking and within the available device capacity
+  - Fix playlist-led playback from detached Track Viewer windows
   - Fix stale playing indicators after stopping and starting another track
 - **Playlists:** Fix dragging selected tracks from sorted autoplaylists ([#1821](https://github.com/fooyin/fooyin/issues/1821))
 - **Scripting**
