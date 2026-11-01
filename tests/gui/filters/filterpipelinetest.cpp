@@ -274,7 +274,7 @@ TEST(FilterPipelineTest, PatchFilterRowsMovesUpdatedTrackBetweenBucketsAndPrunes
     }();
 
     const Filters::FilterColumnList columns{
-        {.id = 0, .name = u"Genre"_s, .field = u"%<genre>%"_s, .sortField = {}},
+        {.id = 0, .name = u"Genre"_s, .field = u"Shared label"_s, .sortField = {}, .groupingField = u"%<genre>%"_s},
     };
     const Filters::FilterRowBuildContext context{
         .font          = {},
@@ -283,11 +283,16 @@ TEST(FilterPipelineTest, PatchFilterRowsMovesUpdatedTrackBetweenBucketsAndPrunes
     };
 
     const Filters::FilterRowList previousRows = Filters::buildFilterRows(nullptr, columns, {oldRock, oldJazz}, context);
-    const Filters::FilterRowList patchedRows  = Filters::patchFilterRows(
+    ASSERT_EQ(2, previousRows.size());
+    EXPECT_NE(previousRows.at(0).key, previousRows.at(1).key);
+    EXPECT_EQ(previousRows.at(0).columns, previousRows.at(1).columns);
+    const Filters::FilterRowList patchedRows = Filters::patchFilterRows(
         nullptr, columns, previousRows, {oldRock, oldJazz}, {newJazz, oldJazz}, {1}, context);
 
     ASSERT_EQ(1, patchedRows.size());
-    EXPECT_EQ(QStringList{u"Jazz"_s}, patchedRows.at(0).columns);
+    EXPECT_EQ(previousRows.at(1).key, patchedRows.at(0).key);
+    EXPECT_EQ(QStringList{u"Shared label"_s}, patchedRows.at(0).columns);
+    EXPECT_EQ(QStringList{u"Jazz"_s}, patchedRows.at(0).sortColumns);
     ASSERT_EQ(2, patchedRows.at(0).tracks.size());
     EXPECT_EQ(1, patchedRows.at(0).tracks.at(0).id());
     EXPECT_EQ(2, patchedRows.at(0).tracks.at(1).id());
@@ -305,7 +310,11 @@ TEST(FilterPipelineTest, PatchFilterRowsRefreshesTrackMetadataWithinExistingBuck
     updatedTrack.setTitle(u"Updated title"_s);
 
     const Filters::FilterColumnList columns{
-        {.id = 0, .name = u"Genre"_s, .field = u"%<genre>%"_s, .sortField = {}},
+        {.id            = 0,
+         .name          = u"Genre"_s,
+         .field         = u"%title%"_s,
+         .sortField     = u"%title%"_s,
+         .groupingField = u"%<genre>%"_s},
     };
     const Filters::FilterRowBuildContext context{
         .font          = {},
@@ -318,6 +327,9 @@ TEST(FilterPipelineTest, PatchFilterRowsRefreshesTrackMetadataWithinExistingBuck
         = Filters::patchFilterRows(nullptr, columns, previousRows, {oldTrack}, {updatedTrack}, {1}, context);
 
     ASSERT_EQ(1, patchedRows.size());
+    EXPECT_EQ(previousRows.front().key, patchedRows.front().key);
+    EXPECT_EQ(QStringList{u"Updated title"_s}, patchedRows.front().columns);
+    EXPECT_EQ(QStringList{u"Updated title"_s}, patchedRows.front().sortColumns);
     ASSERT_EQ(1, patchedRows.front().tracks.size());
     EXPECT_EQ(u"Updated title"_s, patchedRows.front().tracks.front().title());
 }
@@ -340,7 +352,11 @@ TEST(FilterPipelineTest, PatchFilterRowsAddsNewTrackIntoExistingBucketInCurrentO
     }();
 
     const Filters::FilterColumnList columns{
-        {.id = 0, .name = u"Genre"_s, .field = u"%<genre>%"_s, .sortField = {}},
+        {.id            = 0,
+         .name          = u"Genre"_s,
+         .field         = u"$upper(%<genre>%)"_s,
+         .sortField     = {},
+         .groupingField = u"%<genre>%"_s},
     };
     const Filters::FilterRowBuildContext context{
         .font          = {},
@@ -353,8 +369,10 @@ TEST(FilterPipelineTest, PatchFilterRowsAddsNewTrackIntoExistingBucketInCurrentO
         = Filters::patchFilterRows(nullptr, columns, previousRows, {oldRock}, {newRock, oldRock}, {2}, context);
 
     ASSERT_EQ(2, patchedRows.size());
-    EXPECT_EQ(QStringList{u"Jazz"_s}, patchedRows.at(0).columns);
-    EXPECT_EQ(QStringList{u"Rock"_s}, patchedRows.at(1).columns);
+    EXPECT_EQ(QStringList{u"JAZZ"_s}, patchedRows.at(0).columns);
+    EXPECT_EQ(QStringList{u"ROCK"_s}, patchedRows.at(1).columns);
+    EXPECT_EQ(QStringList{u"Jazz"_s}, patchedRows.at(0).sortColumns);
+    EXPECT_EQ(QStringList{u"Rock"_s}, patchedRows.at(1).sortColumns);
     for(const auto& row : patchedRows) {
         ASSERT_EQ(2, row.tracks.size());
         EXPECT_EQ(2, row.tracks.at(0).id());

@@ -168,8 +168,10 @@ QVariant FiltersColumnModel::headerData(int section, Qt::Orientation orientation
         case 2:
             return tr("Name");
         case 3:
-            return tr("Display Script");
+            return tr("Grouping Script");
         case 4:
+            return tr("Display Script");
+        case 5:
             return tr("Sort Script");
         default:
             break;
@@ -204,7 +206,9 @@ QVariant FiltersColumnModel::data(const QModelIndex& index, int role) const
 
     const FilterColumn& columnData = item->column();
 
-    if(role == Qt::ForegroundRole && index.column() == 4 && columnData.sortField.isEmpty()) {
+    if(role == Qt::ForegroundRole
+       && ((index.column() == 3 && columnData.groupingField.isEmpty())
+           || (index.column() == 5 && columnData.sortField.isEmpty()))) {
         return QApplication::palette().color(QPalette::PlaceholderText);
     }
 
@@ -212,13 +216,13 @@ QVariant FiltersColumnModel::data(const QModelIndex& index, int role) const
         switch(index.column()) {
             case 1:
                 return columnData.index;
-            case 2: {
+            case 2:
                 return columnData.name;
-            }
-            case 3: {
-                return columnData.field;
-            }
+            case 3:
+                return columnData.groupingField;
             case 4:
+                return columnData.field;
+            case 5:
                 return columnData.sortField;
             default:
                 break;
@@ -234,12 +238,16 @@ QVariant FiltersColumnModel::data(const QModelIndex& index, int role) const
                 return !name.isEmpty() ? name : u"<enter name here>"_s;
             }
             case 3: {
+                const QString& groupingField = columnData.groupingField;
+                return !groupingField.isEmpty() ? groupingField : tr("Use display script");
+            }
+            case 4: {
                 const QString& field = columnData.field;
                 return !field.isEmpty() ? field : u"<enter field here>"_s;
             }
-            case 4: {
+            case 5: {
                 const QString& sortField = columnData.sortField;
-                return !sortField.isEmpty() ? sortField : tr("Use display script");
+                return !sortField.isEmpty() ? sortField : tr("Use grouping script");
             }
             default:
                 break;
@@ -282,13 +290,20 @@ bool FiltersColumnModel::setData(const QModelIndex& index, const QVariant& value
                 break;
             }
             case 3: {
+                if(column.groupingField == value.toString()) {
+                    return false;
+                }
+                column.groupingField = value.toString();
+                break;
+            }
+            case 4: {
                 if(column.field == value.toString()) {
                     return false;
                 }
                 column.field = value.toString();
                 break;
             }
-            case 4: {
+            case 5: {
                 if(column.sortField == value.toString()) {
                     return false;
                 }
@@ -308,7 +323,8 @@ bool FiltersColumnModel::setData(const QModelIndex& index, const QVariant& value
     }
 
     item->changeColumn(column);
-    Q_EMIT dataChanged(index, index, {Qt::FontRole, Qt::DisplayRole, Qt::CheckStateRole, Qt::UserRole});
+    Q_EMIT dataChanged(index, index,
+                       {Qt::FontRole, Qt::DisplayRole, Qt::ForegroundRole, Qt::CheckStateRole, Qt::UserRole});
 
     return true;
 }
@@ -331,7 +347,7 @@ int FiltersColumnModel::rowCount(const QModelIndex& /*parent*/) const
 
 int FiltersColumnModel::columnCount(const QModelIndex& /*parent*/) const
 {
-    return 5;
+    return 6;
 }
 
 bool FiltersColumnModel::removeRows(int row, int count, const QModelIndex& /*parent*/)

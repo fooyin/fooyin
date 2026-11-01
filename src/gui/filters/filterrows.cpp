@@ -112,6 +112,16 @@ FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColum
     std::ranges::transform(columns, std::back_inserter(fields),
                            [](const FilterColumn& column) { return column.field; });
 
+    const bool hasCustomGroupingField
+        = std::ranges::any_of(columns, [](const FilterColumn& column) { return !column.groupingField.isEmpty(); });
+    QStringList groupingFields;
+    if(hasCustomGroupingField) {
+        groupingFields.reserve(static_cast<qsizetype>(columns.size()));
+        std::ranges::transform(columns, std::back_inserter(groupingFields), [](const FilterColumn& column) {
+            return column.groupingField.isEmpty() ? column.field : column.groupingField;
+        });
+    }
+
     const bool hasCustomSortField
         = std::ranges::any_of(columns, [](const FilterColumn& column) { return !column.sortField.isEmpty(); });
 
@@ -120,7 +130,10 @@ FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColum
     if(hasCustomSortField) {
         sortFields.reserve(static_cast<qsizetype>(columns.size()));
         std::ranges::transform(columns, std::back_inserter(sortFields), [](const FilterColumn& column) {
-            return column.sortField.isEmpty() ? column.field : column.sortField;
+            if(!column.sortField.isEmpty()) {
+                return column.sortField;
+            }
+            return column.groupingField.isEmpty() ? column.field : column.groupingField;
         });
     }
 
@@ -129,10 +142,23 @@ FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColum
     formatter.setBaseFont(context.font);
 
     const ParsedScript script = parser.parse(fields.join(QLatin1StringView{Constants::RecordSeparator}));
+    const ParsedScript groupingScript
+        = hasCustomGroupingField ? parser.parse(groupingFields.join(QLatin1StringView{Constants::RecordSeparator}))
+                                 : script;
     const ScriptContext scriptContext{.libraries = &libraries};
 
     std::unordered_map<RowKey, size_t> rowIndexes;
     std::unordered_map<QString, CachedColumnData> columnDataCache;
+
+    const auto cachedColumnData = [&columnDataCache, &formatter](const QStringList& values) -> const CachedColumnData& {
+        const QString cacheKey = values.join(QLatin1StringView{Constants::RecordSeparator});
+        auto [it, inserted]    = columnDataCache.try_emplace(cacheKey);
+        if(inserted) {
+            it->second.columns = buildColumnData(values, formatter);
+            it->second.key     = Utils::generateMd5Hash(it->second.columns.plainColumns.join(QString{}));
+        }
+        return it->second;
+    };
 
     const ParsedScript sortScript = hasCustomSortField
                                       ? parser.parse(sortFields.join(QLatin1StringView{Constants::RecordSeparator}))
@@ -153,27 +179,24 @@ FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColum
 
         const QString evaluated                     = parser.evaluate(script, track, scriptContext, displayOptions);
         const std::vector<QStringList> columnValues = splitColumnValues(evaluated);
+        const auto groupingValues
+            = hasCustomGroupingField
+                ? splitColumnValues(parser.evaluate(groupingScript, track, scriptContext, displayOptions))
+                : columnValues;
 
         std::vector<QStringList> sortValues;
         if(hasCustomSortField) {
             sortValues = splitColumnValues(parser.evaluate(sortScript, track, scriptContext, sortOptions));
         }
 
-        auto addColumns = [&columns, &hasCustomSortField, &rows, &rowIndexes, &formatter, &columnDataCache,
-                           &track](const QStringList& rowColumnValues, const QStringList& sortColumnValues) {
-            const QString cacheKey             = rowColumnValues.join(QLatin1StringView{Constants::RecordSeparator});
-            auto [columnDataIt, cacheInserted] = columnDataCache.try_emplace(cacheKey);
-            if(cacheInserted) {
-                columnDataIt->second.columns = buildColumnData(rowColumnValues, formatter);
-                columnDataIt->second.key
-                    = Utils::generateMd5Hash(columnDataIt->second.columns.plainColumns.join(QString{}));
-            }
-
-            const ColumnData& columnData = columnDataIt->second.columns;
-            if(std::ranges::all_of(columnData.plainColumns, [](const QString& column) { return column.isEmpty(); })) {
+        auto addColumns = [&](const QStringList& rowGroupingValues, const QStringList& rowColumnValues,
+                              const QStringList& sortColumnValues) {
+            const auto& groupingData = cachedColumnData(rowGroupingValues);
+            if(std::ranges::all_of(groupingData.columns.plainColumns,
+                                   [](const QString& column) { return column.isEmpty(); })) {
                 return;
             }
-            const RowKey& key = columnDataIt->second.key;
+            const RowKey& key = groupingData.key;
 
             auto [it, inserted] = rowIndexes.try_emplace(key, rows.size());
             if(inserted) {
@@ -182,17 +205,18 @@ FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColum
             FilterRow& row = rows.at(it->second);
 
             if(inserted) {
-                row.key         = key;
-                row.columns     = columnData.plainColumns;
-                row.richColumns = columnData.richColumns;
+                const ColumnData& columnData = cachedColumnData(rowColumnValues).columns;
+                row.key                      = key;
+                row.columns                  = columnData.plainColumns;
+                row.richColumns              = columnData.richColumns;
 
-                if(hasCustomSortField) {
+                if(hasCustomSortField || hasCustomGroupingField) {
                     const bool pairSortColumns = sortColumnValues.size() == rowColumnValues.size();
                     row.sortColumns.reserve(columnData.plainColumns.size());
                     for(int column{0}; column < columnData.plainColumns.size(); ++column) {
                         if(!pairSortColumns || std::cmp_greater_equal(column, columns.size())
                            || columns.at(column).sortField.isEmpty()) {
-                            row.sortColumns.push_back(columnData.plainColumns.value(column));
+                            row.sortColumns.push_back(groupingData.columns.plainColumns.value(column));
                         }
                         else {
                             row.sortColumns.push_back(sortColumnText(sortColumnValues.value(column), formatter));
@@ -204,13 +228,14 @@ FilterRowList buildFilterRows(const LibraryInfoMap& libraries, const FilterColum
             row.tracks.push_back(track);
         };
 
-        const bool pairSortRows = hasCustomSortField && columnValues.size() == sortValues.size();
-        for(int index{0}; std::cmp_less(index, columnValues.size()); ++index) {
+        const bool pairDisplayRows = columnValues.size() == groupingValues.size();
+        const bool pairSortRows    = hasCustomSortField && groupingValues.size() == sortValues.size();
+        for(int index{0}; std::cmp_less(index, groupingValues.size()); ++index) {
             QStringList rowSortValues;
             if(pairSortRows) {
                 rowSortValues = sortValues.at(index);
             }
-            addColumns(columnValues.at(index), rowSortValues);
+            addColumns(groupingValues.at(index), columnValues.at(pairDisplayRows ? index : 0), rowSortValues);
         }
     }
 
@@ -243,9 +268,10 @@ FilterRowList patchFilterRows(const LibraryInfoMap& libraries, const FilterColum
         return previousRows;
     }
 
-    const bool hasCustomSortField
-        = std::ranges::any_of(columns, [](const FilterColumn& column) { return !column.sortField.isEmpty(); });
-    if(hasCustomSortField) {
+    const bool hasCustomScripts = std::ranges::any_of(columns, [](const FilterColumn& column) {
+        return !column.sortField.isEmpty() || !column.groupingField.isEmpty();
+    });
+    if(hasCustomScripts) {
         return buildFilterRows(libraries, columns, tracks, context);
     }
 

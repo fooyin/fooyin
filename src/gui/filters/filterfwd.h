@@ -28,7 +28,7 @@ namespace Fooyin::Filters {
 struct FilterColumn
 {
     static constexpr qint32 Magic   = -0x46434F4C;
-    static constexpr qint32 Version = 3;
+    static constexpr qint32 Version = 4;
 
     int id{-1};
     int index{-1};
@@ -37,6 +37,7 @@ struct FilterColumn
     QString field;
     QString sortField;
     bool isEnabled{true};
+    QString groupingField{};
 
     bool operator==(const FilterColumn& other) const = default;
 
@@ -55,6 +56,7 @@ struct FilterColumn
         stream << column.field;
         stream << column.sortField;
         stream << column.isEnabled;
+        stream << column.groupingField;
         return stream;
     }
 
@@ -78,6 +80,9 @@ struct FilterColumn
             }
             if(version >= 3) {
                 stream >> column.isEnabled;
+            }
+            if(version >= 4) {
+                stream >> column.groupingField;
             }
         }
         else {
