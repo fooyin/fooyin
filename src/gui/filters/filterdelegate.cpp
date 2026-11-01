@@ -253,6 +253,11 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
 
         QRect textRect = iconTextRect(opt);
         if(overlayCaption) {
+            for(const auto role : {QPalette::Text, QPalette::Link}) {
+                if(opt.palette.color(role).lightness() < 128) {
+                    opt.palette.setColor(role, Qt::white);
+                }
+            }
             const int margin = std::max(4, Gui::itemViewTextMargin(opt.widget, &opt));
             textRect         = captionArtwork.adjusted(margin, 0, -margin, 0);
         }
