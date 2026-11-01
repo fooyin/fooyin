@@ -638,8 +638,8 @@ ShortcutsPage::ShortcutsPage(ActionManager* actionManager, SettingsManager* sett
     : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::Shortcuts);
-    setName(tr("Shortcuts"));
-    setCategory({tr("Shortcuts")});
+    setName(tr("Keyboard Shortcuts"));
+    setCategory({tr("Keyboard Shortcuts")});
     setRelativePosition(SettingsPageRelativePosition::After, ::Fooyin::Constants::Page::PlaylistGeneral);
     setWidgetCreator([actionManager] { return new ShortcutsPageWidget(actionManager); });
 }
