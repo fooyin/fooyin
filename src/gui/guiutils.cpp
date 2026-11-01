@@ -47,10 +47,39 @@
 #include <QTreeView>
 #include <QUrl>
 
+#include <cmath>
+
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Gui {
 namespace {
+void drawRoundedStyleElement(QPainter* painter, const QStyleOption& option, int radiusPercent, Qt::Edges squareEdges,
+                             auto&& draw)
+{
+    radiusPercent = std::clamp(radiusPercent, 0, 100);
+    if(radiusPercent == 0 || option.rect.isEmpty()) {
+        draw(painter);
+        return;
+    }
+
+    const qreal dpr = painter->device()->devicePixelRatioF();
+    QPixmap layer{QSize{static_cast<int>(std::ceil(option.rect.width() * dpr)),
+                        static_cast<int>(std::ceil(option.rect.height() * dpr))}};
+    layer.setDevicePixelRatio(dpr);
+    layer.fill(Qt::transparent);
+    {
+        QPainter layerPainter{&layer};
+        layerPainter.setRenderHints(painter->renderHints());
+        layerPainter.translate(-option.rect.topLeft());
+        draw(&layerPainter);
+    }
+
+    painter->save();
+    clipRoundedRect(*painter, option.rect, radiusPercent, squareEdges);
+    painter->drawPixmap(option.rect.topLeft(), layer);
+    painter->restore();
+}
+
 void updateContentsMargins(auto* target, Qt::Edges edges, int margin)
 {
     auto margins = target->contentsMargins();
@@ -89,6 +118,22 @@ void setContentsMargins(QLayout* layout, Qt::Edges edges, int margin)
 void setContentsMargins(QWidget* widget, Qt::Edges edges, int margin)
 {
     updateContentsMargins(widget, edges, margin);
+}
+
+QMargins marginsFromJson(const QJsonObject& object, const QMargins& fallback)
+{
+    return {std::clamp(object.value("Left"_L1).toInt(fallback.left()), 0, 999),
+            std::clamp(object.value("Top"_L1).toInt(fallback.top()), 0, 999),
+            std::clamp(object.value("Right"_L1).toInt(fallback.right()), 0, 999),
+            std::clamp(object.value("Bottom"_L1).toInt(fallback.bottom()), 0, 999)};
+}
+
+QJsonObject marginsToJson(const QMargins& margins)
+{
+    return {{"Left"_L1, margins.left()},
+            {"Top"_L1, margins.top()},
+            {"Right"_L1, margins.right()},
+            {"Bottom"_L1, margins.bottom()}};
 }
 
 void addOrientationMenu(QMenu* menu, QObject* context, const OrientationMenuLabels& labels, bool automatic,
@@ -427,6 +472,49 @@ int itemViewTextMargin(const QWidget* widget, const QStyleOption* option)
     return style->pixelMetric(QStyle::PM_FocusFrameHMargin, option, widget) + 1;
 }
 
+void clipRoundedRect(QPainter& painter, const QRectF& rect, int radiusPercent)
+{
+    clipRoundedRect(painter, rect, radiusPercent, Qt::Edges{});
+}
+
+void clipRoundedRect(QPainter& painter, const QRectF& rect, int radiusPercent, Qt::Edges squareEdges)
+{
+    QPainterPath clipPath;
+
+    const qreal radius = std::min(rect.width(), rect.height()) * std::clamp(radiusPercent, 0, 100) / 200.0;
+    clipPath.addRoundedRect(rect, radius, radius);
+    clipPath.setFillRule(Qt::WindingFill);
+
+    if(squareEdges.testFlag(Qt::BottomEdge)) {
+        clipPath.addRect(QRectF{rect.left(), rect.center().y(), rect.width(), rect.height() / 2});
+    }
+    if(squareEdges.testFlag(Qt::TopEdge)) {
+        clipPath.addRect(QRectF{rect.topLeft(), QSizeF{rect.width(), rect.height() / 2}});
+    }
+    if(squareEdges.testFlag(Qt::RightEdge)) {
+        clipPath.addRect(QRectF{rect.center().x(), rect.top(), rect.width() / 2, rect.height()});
+    }
+    if(squareEdges.testFlag(Qt::LeftEdge)) {
+        clipPath.addRect(QRectF{rect.topLeft(), QSizeF{rect.width() / 2, rect.height()}});
+    }
+
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setClipPath(clipPath, Qt::IntersectClip);
+}
+
+void drawRoundedPixmap(QPainter& painter, const QRectF& maskRect, const QPointF& position, const QPixmap& pixmap,
+                       int radiusPercent)
+{
+    if(pixmap.isNull() || maskRect.isEmpty()) {
+        return;
+    }
+
+    painter.save();
+    clipRoundedRect(painter, maskRect, radiusPercent);
+    painter.drawPixmap(position, pixmap);
+    painter.restore();
+}
+
 void drawRoundedPixmap(QPainter& painter, const QRect& rect, Qt::Alignment alignment, const QPixmap& pixmap,
                        int radiusPercent)
 {
@@ -436,17 +524,35 @@ void drawRoundedPixmap(QPainter& painter, const QRect& rect, Qt::Alignment align
 
     const QSize pixmapSize = pixmap.deviceIndependentSize().toSize();
     const QRect pixmapRect = QStyle::alignedRect(Qt::LeftToRight, alignment, pixmapSize, rect);
+    drawRoundedPixmap(painter, pixmapRect, pixmapRect.topLeft(), pixmap, radiusPercent);
+}
 
-    painter.save();
-    painter.setRenderHint(QPainter::Antialiasing);
+void drawRoundedStylePrimitive(QPainter* painter, QStyle::PrimitiveElement element, const QStyleOption& option,
+                               const QWidget* widget, int radiusPercent)
+{
+    drawRoundedStylePrimitive(painter, element, option, widget, radiusPercent, Qt::Edges{});
+}
 
-    const qreal radius = std::min(pixmapRect.width(), pixmapRect.height()) * std::clamp(radiusPercent, 0, 100) / 200.0;
-    QPainterPath clipPath;
-    clipPath.addRoundedRect(pixmapRect, radius, radius);
-    painter.setClipPath(clipPath, Qt::IntersectClip);
-    painter.drawPixmap(pixmapRect.topLeft(), pixmap);
+void drawRoundedStylePrimitive(QPainter* painter, QStyle::PrimitiveElement element, const QStyleOption& option,
+                               const QWidget* widget, int radiusPercent, Qt::Edges squareEdges)
+{
+    const auto* style = widget ? widget->style() : QApplication::style();
+    drawRoundedStyleElement(painter, option, radiusPercent, squareEdges,
+                            [&](QPainter* target) { style->drawPrimitive(element, &option, target, widget); });
+}
 
-    painter.restore();
+void drawRoundedStyleControl(QPainter* painter, QStyle::ControlElement element, const QStyleOption& option,
+                             const QWidget* widget, int radiusPercent)
+{
+    drawRoundedStyleControl(painter, element, option, widget, radiusPercent, Qt::Edges{});
+}
+
+void drawRoundedStyleControl(QPainter* painter, QStyle::ControlElement element, const QStyleOption& option,
+                             const QWidget* widget, int radiusPercent, Qt::Edges squareEdges)
+{
+    const auto* style = widget ? widget->style() : QApplication::style();
+    drawRoundedStyleElement(painter, option, radiusPercent, squareEdges,
+                            [&](QPainter* target) { style->drawControl(element, &option, target, widget); });
 }
 
 void refreshItemViewPalette(QAbstractItemView* view)

@@ -55,8 +55,10 @@ private:
 
     void initLayoutOnlyOption(QStyleOptionViewItem* option, const QModelIndex& index) const;
     static void setupFilterOption(QStyleOptionViewItem* option, const QModelIndex& index);
+    void drawOverlayItem(QPainter* painter, QStyleOptionViewItem option, const QPixmap& artwork,
+                         const IconCaptionLineList& lines) const;
     void drawRichTextLines(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
-                           const IconCaptionLineList& lines, const QRect& artwork) const;
+                           const IconCaptionLineList& lines, const QRectF& artwork) const;
     static void drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
                                const std::vector<RichTextBlock>& blocks);
 

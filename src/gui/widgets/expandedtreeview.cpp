@@ -22,6 +22,7 @@
 #include "expandedtreeview_p.h"
 
 #include <gui/contextmenuutils.h>
+#include <gui/guiutils.h>
 #include <gui/widgets/widgetbackground.h>
 #include <utils/scopeguard.h>
 #include <utils/treemodel.h>
@@ -2015,7 +2016,6 @@ private:
     [[nodiscard]] bool useAutoFitArtwork() const;
     [[nodiscard]] bool haveSideCaptions() const;
     [[nodiscard]] bool haveBottomCaptions() const;
-    [[nodiscard]] bool useIconGaps() const;
 
     QRect m_layoutBounds;
     int m_segmentSize{0};
@@ -2408,8 +2408,6 @@ void IconView::renderToPixmap(QPainter* painter, const ItemViewPaintPairs& paint
 
         paintOpt.rect = paintRect.translated(-rect.topLeft());
 
-        m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &paintOpt, painter, m_view);
-        m_view->style()->drawControl(QStyle::CE_ItemViewItem, &paintOpt, painter, m_view);
         delegate(iconIndex)->paint(painter, paintOpt, iconIndex);
     }
 }
@@ -2491,16 +2489,15 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
     int deltaSegPosition{0};
     int segPosition{topLeft.y()};
 
-    const bool useConfiguredGridSpacing = useIconGaps();
-    const bool autoFit                  = useAutoFitArtwork();
-    const bool fixedGridSpacing         = useConfiguredGridSpacing && (autoFit || m_p->m_iconHorizontalGap >= 0);
+    const bool autoFit          = useAutoFitArtwork();
+    const bool fixedGridSpacing = autoFit || m_p->m_iconHorizontalGap >= 0;
 
     m_horizontalInset
         = haveSideCaptions() ? 0 : std::min(MinItemSpacing, std::max(0, (m_layoutBounds.width() - 1) / 2));
     segStartPosition += m_horizontalInset;
     segEndPosition -= m_horizontalInset;
 
-    if(useConfiguredGridSpacing && !fixedGridSpacing) {
+    if(!fixedGridSpacing) {
         segStartPosition += m_itemSpacing;
         segEndPosition -= m_itemSpacing;
     }
@@ -2517,8 +2514,7 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
     }
     else {
         for(int i{1}; i <= count; ++i) {
-            const int spacingCount  = fixedGridSpacing ? std::max(0, i - 1) : i - 1;
-            const int requiredWidth = (i * itemWidth(0)) + (spacingCount * m_itemSpacing);
+            const int requiredWidth = (i * itemWidth(0)) + ((i - 1) * m_itemSpacing);
             if(requiredWidth > (segEndPosition - segStartPosition)) {
                 m_segmentSize = (i == 1) ? 1 : i - 1;
                 break;
@@ -2535,7 +2531,7 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
 
     const int totalWidthAvailable = segEndPosition - segStartPosition;
     const int totalItemWidth      = m_segmentSize * itemWidth(0);
-    const int itmWidth            = useConfiguredGridSpacing ? itemWidth(0) : totalWidthAvailable / m_segmentSize;
+    const int itmWidth            = itemWidth(0);
     const int maxPadding          = static_cast<int>(totalWidthAvailable * maxPaddingRatio);
 
     int gridStartPosition{segStartPosition};
@@ -2587,11 +2583,10 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
             item.x     = segStartPosition + left + (segColumn * m_itemSpacing);
             item.width = right - left;
 
-            item.decorationSize = {std::max(1, item.width - artworkPadding), m_fittedIconSize.height()};
-            item.height         = measurements.heights[i];
-        }
-        else if(!useConfiguredGridSpacing) {
-            item.x = segStartPosition + (segColumn * itmWidth);
+            const int artworkWidth = std::max(1, item.width - artworkPadding);
+            item.decorationSize
+                = haveSideCaptions() ? iconSizeForWidth(artworkWidth) : QSize{artworkWidth, m_fittedIconSize.height()};
+            item.height = measurements.heights[i];
         }
         else if(fixedGridSpacing) {
             item.x = gridStartPosition + (segColumn * (itmWidth + m_itemSpacing));
@@ -2637,13 +2632,11 @@ void IconView::resetGrid()
 {
     m_segmentSize = 0;
 
-    const bool useConfiguredGridSpacing = useIconGaps();
-    m_itemSpacing
-        = useConfiguredGridSpacing && m_p->m_iconHorizontalGap >= 0 ? m_p->m_iconHorizontalGap : MinItemSpacing;
+    m_itemSpacing = m_p->m_iconHorizontalGap >= 0 ? m_p->m_iconHorizontalGap : MinItemSpacing;
     if(useAutoFitArtwork() && m_p->m_iconHorizontalGap < 0) {
         m_itemSpacing = 0;
     }
-    m_rowSpacing = useConfiguredGridSpacing ? m_p->m_iconVerticalGap : 0;
+    m_rowSpacing = m_p->m_iconVerticalGap;
 }
 
 void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
@@ -2710,8 +2703,7 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
     mainOpt.showDecorationSelected = true;
     setupDecorationProps(&mainOpt);
 
-    m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
-    m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
+    // The delegate paints the item background along with its contents
     delegate(iconIndex)->paint(painter, mainOpt, iconIndex);
 
     if(currentRowHasFocus) {
@@ -2733,7 +2725,14 @@ void IconView::drawFocus(QPainter* painter, const QStyleOptionViewItem& option, 
 
     if(rect.width() > 0) {
         focusOpt.rect = QStyle::visualRect(m_view->layoutDirection(), viewport()->rect(), rect);
-        m_view->style()->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOpt, painter);
+        // Some styles fill the focus rectangle as well as drawing its outline
+        const Qt::Edges squareEdges
+            = haveBottomCaptions() ? Qt::Edges{Qt::BottomEdge}
+            : haveSideCaptions()
+                ? Qt::Edges{m_view->layoutDirection() == Qt::RightToLeft ? Qt::LeftEdge : Qt::RightEdge}
+                : Qt::Edges{};
+        Gui::drawRoundedStylePrimitive(painter, QStyle::PE_FrameFocusRect, focusOpt, m_view,
+                                       m_view->iconItemCornerRadius(), squareEdges);
     }
 }
 
@@ -2867,7 +2866,7 @@ QSize IconView::iconSizeForWidth(int width) const
 
 bool IconView::useAutoFitArtwork() const
 {
-    return m_p->m_autoFitArtwork && !haveSideCaptions();
+    return m_p->m_autoFitArtwork;
 }
 
 bool IconView::haveSideCaptions() const
@@ -2878,11 +2877,6 @@ bool IconView::haveSideCaptions() const
 bool IconView::haveBottomCaptions() const
 {
     return m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Bottom;
-}
-
-bool IconView::useIconGaps() const
-{
-    return haveBottomCaptions() || !haveSideCaptions() || m_p->m_useIconGapsForSideCaptions;
 }
 
 class FlowView : public BaseView
@@ -4473,6 +4467,46 @@ void ExpandedTreeView::setIconVerticalGap(int gap)
     viewport()->update();
 }
 
+int ExpandedTreeView::iconItemCornerRadius() const
+{
+    const auto& margins = p->m_iconItemArtworkMargins;
+    switch(p->m_captionDisplay) {
+        case CaptionDisplay::Bottom:
+            if(margins.top() != 0 || margins.left() != 0 || margins.right() != 0) {
+                return 0;
+            }
+            break;
+        case CaptionDisplay::Right:
+            if(margins.top() != 0 || margins.bottom() != 0
+               || (layoutDirection() == Qt::RightToLeft ? margins.right() : margins.left()) != 0) {
+                return 0;
+            }
+            break;
+        case CaptionDisplay::Overlay:
+        case CaptionDisplay::None:
+            if(!margins.isNull()) {
+                return 0;
+            }
+            break;
+    }
+    return p->m_iconItemCornerRadius;
+}
+
+void ExpandedTreeView::setIconItemCornerRadius(int radius)
+{
+    setIconItemCornerRadius(radius, {});
+}
+
+void ExpandedTreeView::setIconItemCornerRadius(int radius, const QMargins& artworkMargins)
+{
+    radius = std::clamp(radius, 0, 100);
+    if(p->m_iconItemCornerRadius != radius || p->m_iconItemArtworkMargins != artworkMargins) {
+        p->m_iconItemCornerRadius   = radius;
+        p->m_iconItemArtworkMargins = artworkMargins;
+        viewport()->update();
+    }
+}
+
 bool ExpandedTreeView::autoFitArtwork() const
 {
     return p->m_autoFitArtwork;
@@ -4491,21 +4525,6 @@ void ExpandedTreeView::setAutoFitArtwork(bool enabled)
 QSize ExpandedTreeView::effectiveIconSize() const
 {
     return p->m_view->effectiveIconSize();
-}
-
-bool ExpandedTreeView::useIconGapsForSideCaptions() const
-{
-    return p->m_useIconGapsForSideCaptions;
-}
-
-void ExpandedTreeView::setUseIconGapsForSideCaptions(bool enabled)
-{
-    if(std::exchange(p->m_useIconGapsForSideCaptions, enabled) == enabled) {
-        return;
-    }
-
-    p->doDelayedItemsLayout();
-    viewport()->update();
 }
 
 void ExpandedTreeView::changeIconSize(const QSize& size)

@@ -110,12 +110,15 @@ public:
     [[nodiscard]] int iconVerticalGap() const;
     void setIconVerticalGap(int gap);
 
+    //! Corner radius of icon item backgrounds, as a percentage from 0 to 100.
+    [[nodiscard]] int iconItemCornerRadius() const;
+    void setIconItemCornerRadius(int radius);
+    //! Applies rounding only when artwork margins are zero along the rounded edges.
+    void setIconItemCornerRadius(int radius, const QMargins& artworkMargins);
+
     [[nodiscard]] bool autoFitArtwork() const;
     void setAutoFitArtwork(bool enabled);
     [[nodiscard]] QSize effectiveIconSize() const;
-
-    [[nodiscard]] bool useIconGapsForSideCaptions() const;
-    void setUseIconGapsForSideCaptions(bool enabled);
 
     void changeIconSize(const QSize& size);
 

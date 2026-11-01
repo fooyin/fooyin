@@ -27,6 +27,7 @@
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/backgroundconfig.h>
 
+#include <QMargins>
 #include <QPointer>
 
 #include <optional>
@@ -98,10 +99,11 @@ public:
             bool separateSavedStationsViewState{false};
             int rowHeight{0};
             QSize iconSize{36, 36};
+            bool autoFitArtwork{false};
             int iconHorizontalGap{-1};
             int iconVerticalGap{8};
-            bool useIconGapsForSideCaptions{true};
-            int iconItemBorderWidth{2};
+            QMargins iconMargins{8, 8, 8, 8};
+            int iconCornerRadius{20};
             bool uniformStationIcons{true};
 
             bool operator==(const ViewConfig&) const = default;

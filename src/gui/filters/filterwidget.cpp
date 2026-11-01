@@ -129,22 +129,6 @@ QString normaliseColour(const QString& value)
     const QColor colour{value};
     return colour.isValid() ? colour.name(QColor::HexArgb) : QString{};
 }
-
-QMargins artworkMarginsFromJson(const QJsonObject& object, const QMargins& fallback)
-{
-    return {std::clamp(object.value("Left"_L1).toInt(fallback.left()), 0, 999),
-            std::clamp(object.value("Top"_L1).toInt(fallback.top()), 0, 999),
-            std::clamp(object.value("Right"_L1).toInt(fallback.right()), 0, 999),
-            std::clamp(object.value("Bottom"_L1).toInt(fallback.bottom()), 0, 999)};
-}
-
-QJsonObject artworkMarginsToJson(const QMargins& margins)
-{
-    return {{"Left"_L1, margins.left()},
-            {"Top"_L1, margins.top()},
-            {"Right"_L1, margins.right()},
-            {"Bottom"_L1, margins.bottom()}};
-}
 } // namespace
 
 FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* columnRegistry,
@@ -631,7 +615,7 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
     config.iconHorizontalGap   = m_settings->fileValue(FilterIconHorizontalGapKey, config.iconHorizontalGap).toInt();
     config.iconVerticalGap     = m_settings->fileValue(FilterIconVerticalGapKey, config.iconVerticalGap).toInt();
     config.artworkCornerRadius = m_settings->fileValue(FilterArtworkRadiusKey, config.artworkCornerRadius).toInt();
-    config.artworkMargins      = artworkMarginsFromJson(
+    config.artworkMargins      = Gui::marginsFromJson(
         QJsonObject::fromVariantMap(m_settings->fileValue(FilterArtworkMarginsKey).toMap()), config.artworkMargins);
     config.expandGroups      = m_settings->fileValue(FilterExpandGroupsKey, config.expandGroups).toBool();
     config.expansionAnimated = m_settings->fileValue(FilterExpansionAnimatedKey, config.expansionAnimated).toBool();
@@ -641,7 +625,7 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
     config.expansionAlternatingRows
         = m_settings->fileValue(FilterExpansionAlternatingRowsKey, config.expansionAlternatingRows).toBool();
     config.expandedArtwork         = m_settings->fileValue(FilterExpandedArtworkKey, config.expandedArtwork).toBool();
-    config.expansionArtworkMargins = artworkMarginsFromJson(
+    config.expansionArtworkMargins = Gui::marginsFromJson(
         QJsonObject::fromVariantMap(m_settings->fileValue(FilterExpansionArtworkMarginsKey).toMap()), {10, 10, 10, 10});
     config.expansionArtworkAutoMargins
         = m_settings->fileValue(FilterExpansionArtworkAutoMarginsKey, config.expansionArtworkAutoMargins).toBool();
@@ -725,14 +709,14 @@ void FilterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(FilterIconHorizontalGapKey, config.iconHorizontalGap);
     m_settings->fileSet(FilterIconVerticalGapKey, config.iconVerticalGap);
     m_settings->fileSet(FilterArtworkRadiusKey, config.artworkCornerRadius);
-    m_settings->fileSet(FilterArtworkMarginsKey, artworkMarginsToJson(config.artworkMargins).toVariantMap());
+    m_settings->fileSet(FilterArtworkMarginsKey, Gui::marginsToJson(config.artworkMargins).toVariantMap());
     m_settings->fileSet(FilterExpandGroupsKey, config.expandGroups);
     m_settings->fileSet(FilterExpansionAnimatedKey, config.expansionAnimated);
     m_settings->fileSet(FilterExpansionAnimationDurationKey, config.expansionAnimationDuration);
     m_settings->fileSet(FilterExpansionAlternatingRowsKey, config.expansionAlternatingRows);
     m_settings->fileSet(FilterExpandedArtworkKey, config.expandedArtwork);
     m_settings->fileSet(FilterExpansionArtworkMarginsKey,
-                        artworkMarginsToJson(config.expansionArtworkMargins).toVariantMap());
+                        Gui::marginsToJson(config.expansionArtworkMargins).toVariantMap());
     m_settings->fileSet(FilterExpansionArtworkAutoMarginsKey, config.expansionArtworkAutoMargins);
     m_settings->fileSet(FilterExpansionReflectionKey, config.expansionArtworkReflection);
     m_settings->fileSet(FilterExpansionReflectionHeightKey, config.expansionArtworkReflectionHeight);
@@ -858,14 +842,14 @@ void FilterWidget::applyConfig(const ConfigData& config)
     validated.iconHorizontalGap   = std::max(validated.iconHorizontalGap, -1);
     validated.iconVerticalGap     = std::max(validated.iconVerticalGap, 0);
     validated.artworkCornerRadius = std::clamp(validated.artworkCornerRadius, 0, 100);
-    validated.artworkMargins      = artworkMarginsFromJson({}, validated.artworkMargins);
+    validated.artworkMargins      = Gui::marginsFromJson({}, validated.artworkMargins);
 
     if(!validated.iconSize.isValid()) {
         validated.iconSize = factoryConfig().iconSize;
     }
 
     validated.expansionAnimationDuration        = std::clamp(validated.expansionAnimationDuration, 50, 2000);
-    validated.expansionArtworkMargins           = artworkMarginsFromJson({}, validated.expansionArtworkMargins);
+    validated.expansionArtworkMargins           = Gui::marginsFromJson({}, validated.expansionArtworkMargins);
     validated.expansionArtworkSize              = std::clamp(validated.expansionArtworkSize, 50, 200);
     validated.expansionArtworkReflectionHeight  = std::clamp(validated.expansionArtworkReflectionHeight, 1, 100);
     validated.expansionArtworkReflectionOpacity = std::clamp(validated.expansionArtworkReflectionOpacity, 0, 100);
@@ -951,6 +935,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
     m_view->setIconHorizontalGap(m_config.iconHorizontalGap);
     m_view->setIconVerticalGap(m_config.iconVerticalGap);
     m_delegate->setArtworkCornerRadius(m_config.artworkCornerRadius);
+    m_view->setIconItemCornerRadius(m_config.artworkCornerRadius, m_config.artworkMargins);
     m_delegate->setArtworkMargins(m_config.artworkMargins);
     m_view->changeIconSize(m_config.iconSize);
     m_model->setIconSize(m_view->effectiveIconSize());
@@ -1606,10 +1591,7 @@ void FilterWidget::applyExpansionContent(const ExpansionResult& result)
             const QRect iconRect     = m_view->visualRect(index);
             const int viewportHeight = m_view->viewport()->height();
             const int bottom         = m_expansion->y() + m_expansion->height();
-            const int spacing        = m_view->captionDisplay() != ExpandedTreeView::CaptionDisplay::Right
-                                            || m_view->useIconGapsForSideCaptions()
-                                         ? m_view->iconVerticalGap()
-                                         : 0;
+            const int spacing        = m_view->iconVerticalGap();
             // Keep the selected icon and its top spacing visible while showing the expansion
             const int scroll = std::clamp(bottom - viewportHeight, 0, std::max(0, iconRect.top() - spacing));
             if(scroll > 0) {
@@ -2013,9 +1995,9 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
     config.autoFitArtwork      = layout.value("AutoFitArtwork"_L1).toBool(config.autoFitArtwork);
     config.iconVerticalGap     = layout.value("IconVerticalGap"_L1).toInt(config.iconVerticalGap);
     config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt(config.artworkCornerRadius);
-    config.artworkMargins = artworkMarginsFromJson(layout.value("ArtworkMargins"_L1).toObject(), config.artworkMargins);
+    config.artworkMargins = Gui::marginsFromJson(layout.value("ArtworkMargins"_L1).toObject(), config.artworkMargins);
     config.expansionArtworkMargins
-        = artworkMarginsFromJson(layout.value("ExpansionArtworkMargins"_L1).toObject(), {10, 10, 10, 10});
+        = Gui::marginsFromJson(layout.value("ExpansionArtworkMargins"_L1).toObject(), {10, 10, 10, 10});
     config.expansionArtworkAutoMargins
         = layout.value("ExpansionArtworkAutoMargins"_L1).toBool(config.expansionArtworkAutoMargins);
     config.expansionArtworkReflection
@@ -2101,13 +2083,13 @@ void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["AutoFitArtwork"_L1]                    = config.autoFitArtwork;
     layout["IconVerticalGap"_L1]                   = config.iconVerticalGap;
     layout["ArtworkCornerRadius"_L1]               = config.artworkCornerRadius;
-    layout["ArtworkMargins"_L1]                    = artworkMarginsToJson(config.artworkMargins);
+    layout["ArtworkMargins"_L1]                    = Gui::marginsToJson(config.artworkMargins);
     layout["ExpandGroups"_L1]                      = config.expandGroups;
     layout["ExpansionAnimated"_L1]                 = config.expansionAnimated;
     layout["ExpansionAnimationDuration"_L1]        = config.expansionAnimationDuration;
     layout["ExpansionAlternatingRows"_L1]          = config.expansionAlternatingRows;
     layout["ExpandedArtwork"_L1]                   = config.expandedArtwork;
-    layout["ExpansionArtworkMargins"_L1]           = artworkMarginsToJson(config.expansionArtworkMargins);
+    layout["ExpansionArtworkMargins"_L1]           = Gui::marginsToJson(config.expansionArtworkMargins);
     layout["ExpansionArtworkAutoMargins"_L1]       = config.expansionArtworkAutoMargins;
     layout["ExpansionArtworkReflection"_L1]        = config.expansionArtworkReflection;
     layout["ExpansionArtworkReflectionHeight"_L1]  = config.expansionArtworkReflectionHeight;

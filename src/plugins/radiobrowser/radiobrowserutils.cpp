@@ -61,13 +61,10 @@ QIcon placeholderIcon(const RadioStation& station, int size)
     const QColor background = QColor::fromHsv(hue, 180, 220);
 
     QPixmap pixmap{iconSize, iconSize};
-    pixmap.fill(Qt::transparent);
+    pixmap.fill(background);
 
     QPainter painter{&pixmap};
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(background);
-    painter.drawRoundedRect(pixmap.rect().adjusted(4, 4, -4, -4), iconSize / 12, iconSize / 12);
 
     const QString initials = stationInitials(station.name);
 

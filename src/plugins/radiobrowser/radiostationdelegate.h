@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <QMargins>
 #include <QStyledItemDelegate>
 
 namespace Fooyin::RadioBrowser {
@@ -32,14 +33,15 @@ public:
 
     [[nodiscard]] bool uniformStationIcons() const;
     void setUniformStationIcons(bool enabled);
-    [[nodiscard]] int iconItemBorderWidth() const;
-    void setIconItemBorderWidth(int width);
+    void setIconCornerRadius(int radius);
+    void setIconMargins(const QMargins& margins);
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
 private:
     bool m_uniformStationIcons{true};
-    int m_iconItemBorderWidth{2};
+    int m_iconCornerRadius{20};
+    QMargins m_iconMargins{8, 8, 8, 8};
 };
 } // namespace Fooyin::RadioBrowser

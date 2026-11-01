@@ -832,12 +832,13 @@ void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& pre
 void FilterConfigDialog::setupConnections()
 {
     const auto updateAutoFitArtwork = [this]() {
-        m_autoFitArtwork->setEnabled(m_artworkBottomMode->isChecked() || m_artworkOverlayMode->isChecked()
-                                     || m_artworkNoLabelsMode->isChecked());
+        m_autoFitArtwork->setEnabled(m_artworkBottomMode->isChecked() || m_artworkRightMode->isChecked()
+                                     || m_artworkOverlayMode->isChecked() || m_artworkNoLabelsMode->isChecked());
     };
 
     updateAutoFitArtwork();
     QObject::connect(m_artworkBottomMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
+    QObject::connect(m_artworkRightMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
     QObject::connect(m_artworkOverlayMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
     QObject::connect(m_artworkNoLabelsMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
 

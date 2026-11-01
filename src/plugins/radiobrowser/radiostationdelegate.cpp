@@ -22,6 +22,7 @@
 #include "radiobrowsermodel.h"
 
 #include <gui/guiconstants.h>
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/widgets/expandedtreeview.h>
 #include <gui/widgets/widgetbackground.h>
@@ -35,8 +36,7 @@
 
 constexpr auto LineSpacing           = 2;
 constexpr auto RightCaptionWidth     = 190;
-constexpr auto IconPadding           = 8;
-constexpr auto BottomIconPadding     = 12;
+constexpr auto CaptionPadding        = 8;
 constexpr auto ColumnIconPadding     = 4;
 constexpr auto DefaultColumnIconSize = 36;
 constexpr auto SavedBadgeMinSize     = 7;
@@ -73,26 +73,21 @@ QRect columnIconRect(const QStyleOptionViewItem& option)
     return rect;
 }
 
-QRect iconRect(const QStyleOptionViewItem& option, ExpandedTreeView::CaptionDisplay captions)
+QRect iconRect(const QStyleOptionViewItem& option, ExpandedTreeView::CaptionDisplay captions, const QMargins& margins)
 {
     const QSize iconSize = iconDecorationSize(option);
-    QRect rect{{}, iconSize};
+    const QRect rect     = option.rect.marginsRemoved(margins);
 
     switch(captions) {
         case ExpandedTreeView::CaptionDisplay::Right:
-            rect.moveLeft(option.rect.left() + IconPadding);
-            rect.moveTop(option.rect.top() + std::max(0, (option.rect.height() - iconSize.height()) / 2));
-            break;
+            return QStyle::alignedRect(option.direction, Qt::AlignLeft | Qt::AlignVCenter, iconSize, rect);
         case ExpandedTreeView::CaptionDisplay::Bottom:
         case ExpandedTreeView::CaptionDisplay::None:
         case ExpandedTreeView::CaptionDisplay::Overlay:
-            rect.moveLeft(option.rect.left() + std::max(0, (option.rect.width() - iconSize.width()) / 2));
-            rect.moveTop(option.rect.top()
-                         + (captions == ExpandedTreeView::CaptionDisplay::Bottom ? BottomIconPadding : 0));
-            break;
+            return QStyle::alignedRect(option.direction, Qt::AlignTop | Qt::AlignHCenter, iconSize, rect);
     }
 
-    return rect;
+    return {};
 }
 
 int captionTextHeight(const QStyleOptionViewItem& option, const int lineCount)
@@ -106,32 +101,29 @@ int captionTextHeight(const QStyleOptionViewItem& option, const int lineCount)
     return QFontMetrics{titleFont}.height() + ((lineCount - 1) * (option.fontMetrics.height() + LineSpacing));
 }
 
-QRect iconTextRect(const QStyleOptionViewItem& option, ExpandedTreeView::CaptionDisplay captions, bool hasIcon)
+QRect iconTextRect(const QStyleOptionViewItem& option, ExpandedTreeView::CaptionDisplay captions,
+                   const QMargins& margins)
 {
     QRect rect{option.rect};
 
-    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
-    const int margin    = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &option, option.widget);
+    const QStyle* style         = option.widget ? option.widget->style() : QApplication::style();
+    const int horizontalPadding = std::max(4, style->pixelMetric(QStyle::PM_FocusFrameHMargin, &option, option.widget));
+    const int verticalPadding   = std::max(2, style->pixelMetric(QStyle::PM_FocusFrameVMargin, &option, option.widget));
 
     switch(captions) {
         case ExpandedTreeView::CaptionDisplay::Right:
-            rect = style->subElementRect(QStyle::SE_ItemViewItemText, &option, option.widget);
-            if(hasIcon) {
-                rect.setLeft(std::max(rect.left(), iconRect(option, captions).right() + IconPadding));
+            rect.adjust(CaptionPadding, CaptionPadding, -CaptionPadding, -CaptionPadding);
+            if(option.direction == Qt::RightToLeft) {
+                rect.setRight(iconRect(option, captions, margins).left() - margins.left() - CaptionPadding - 1);
             }
             else {
-                rect.setLeft(rect.left() + (2 * IconPadding));
+                rect.setLeft(iconRect(option, captions, margins).right() + margins.right() + CaptionPadding + 1);
             }
-            rect.adjust(margin, 0, -margin, 0);
             break;
         case ExpandedTreeView::CaptionDisplay::Bottom:
-            if(hasIcon) {
-                rect.setTop(rect.top() + BottomIconPadding + iconDecorationSize(option).height() + IconPadding);
-            }
-            else {
-                rect.setTop(rect.top() + BottomIconPadding + (iconDecorationSize(option).height() / 2));
-            }
-            rect.adjust(margin, 0, -margin, 0);
+            rect.setTop(rect.top() + margins.top() + iconDecorationSize(option).height() + margins.bottom()
+                        + verticalPadding);
+            rect.adjust(horizontalPadding, 0, -horizontalPadding, -verticalPadding);
             break;
         case ExpandedTreeView::CaptionDisplay::None:
         case ExpandedTreeView::CaptionDisplay::Overlay:
@@ -140,21 +132,6 @@ QRect iconTextRect(const QStyleOptionViewItem& option, ExpandedTreeView::Caption
     }
 
     return rect;
-}
-
-void drawIconItemBackground(QPainter* painter, QStyleOptionViewItem* option, int borderWidth)
-{
-    if(option->state & QStyle::State_Selected) {
-        return;
-    }
-
-    painter->setPen(borderWidth > 0 ? QPen{option->palette.color(QPalette::Mid), static_cast<qreal>(borderWidth)}
-                                    : Qt::NoPen);
-    painter->setBrush(option->backgroundBrush.style() == Qt::NoBrush ? option->palette.brush(QPalette::Base)
-                                                                     : option->backgroundBrush);
-    const qreal inset = std::max<qreal>(1.0, static_cast<qreal>(borderWidth) / 2.0);
-    painter->drawRoundedRect(QRectF{option->rect}.adjusted(inset, inset, -inset, -inset), 5, 5);
-    option->backgroundBrush = Qt::NoBrush;
 }
 
 struct PixmapStats
@@ -210,48 +187,42 @@ QColor iconBackdropColor(const QStyleOptionViewItem& option, const PixmapStats& 
     return colour;
 }
 
-void drawIconInRect(QPainter* painter, const QStyleOptionViewItem& option, const QIcon& icon, const QRect& target)
+void drawIconInRect(QPainter* painter, const QStyleOptionViewItem& option, const QIcon& icon, const QRect& target,
+                    int iconRadius, bool uniformSize)
 {
     if(target.isEmpty()) {
         return;
     }
 
-    QIcon::Mode mode{QIcon::Normal};
-    if(!(option.state & QStyle::State_Enabled)) {
-        mode = QIcon::Disabled;
+    QIcon::Mode mode = Gui::itemViewIconMode(option);
+    if(uniformSize) {
+        mode = option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled;
     }
 
-    const qreal dpr = option.widget ? option.widget->devicePixelRatioF() : qApp->devicePixelRatio();
-    QPixmap pixmap  = icon.pixmap(target.size() * dpr, dpr, mode);
+    const qreal dpr  = option.widget ? option.widget->devicePixelRatioF() : qApp->devicePixelRatio();
+    const auto state = option.state & QStyle::State_Open ? QIcon::On : QIcon::Off;
+    QPixmap pixmap   = icon.pixmap(target.size(), dpr, mode, state);
     if(pixmap.isNull()) {
         return;
     }
 
-    pixmap = pixmap.scaled(target.size() * dpr, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    pixmap.setDevicePixelRatio(dpr);
+    if(uniformSize) {
+        pixmap = pixmap.scaled(target.size() * dpr, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        pixmap.setDevicePixelRatio(dpr);
 
-    const QSize pixmapSize = pixmap.deviceIndependentSize().toSize();
-    const QRect pixmapRect{target.topLeft()
-                               + QPoint{std::max(0, (target.width() - pixmapSize.width()) / 2),
-                                        std::max(0, (target.height() - pixmapSize.height()) / 2)},
-                           pixmapSize};
-
-    const auto stats = pixmapStats(pixmap);
-    if(stats.transparentRatio > 0.2) {
-        painter->save();
-        painter->setPen(Qt::NoPen);
-        painter->setBrush(iconBackdropColor(option, stats));
-        painter->drawRoundedRect(target, 4, 4);
-        painter->restore();
+        const auto stats = pixmapStats(pixmap);
+        if(stats.transparentRatio > 0.2) {
+            painter->save();
+            painter->setRenderHint(QPainter::Antialiasing);
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(iconBackdropColor(option, stats));
+            const qreal radius = std::min(target.width(), target.height()) * iconRadius / 200.0;
+            painter->drawRoundedRect(target, radius, radius);
+            painter->restore();
+        }
     }
 
-    painter->drawPixmap(pixmapRect, pixmap);
-}
-
-void drawIcon(QPainter* painter, const QStyleOptionViewItem& option, const QIcon& icon,
-              ExpandedTreeView::CaptionDisplay captions)
-{
-    drawIconInRect(painter, option, icon, iconRect(option, captions));
+    Gui::drawRoundedPixmap(*painter, target, Qt::AlignCenter, pixmap, iconRadius);
 }
 
 QRect savedBadgeRect(const QRect& anchor)
@@ -289,9 +260,13 @@ QRect savedBadgeRectForColumn(const QStyleOptionViewItem& option, bool hasIcon)
 }
 
 QRect savedBadgeRectForIconItem(const QStyleOptionViewItem& option, ExpandedTreeView::CaptionDisplay captions,
-                                bool hasIcon)
+                                bool hasIcon, const QMargins& margins)
 {
-    const int size = savedBadgeSizeForAnchor(hasIcon ? iconRect(option, captions) : option.rect);
+    if(hasIcon && captions == ExpandedTreeView::CaptionDisplay::Bottom) {
+        return savedBadgeRect(iconRect(option, captions, margins));
+    }
+
+    const int size = savedBadgeSizeForAnchor(hasIcon ? iconRect(option, captions, margins) : option.rect);
     if(size <= 0 || option.rect.isEmpty()) {
         return {};
     }
@@ -378,22 +353,26 @@ void drawCaptionLines(QPainter* painter, const QStyleOptionViewItem& option, QRe
     }
 }
 
-QSize iconItemSize(const QStyleOptionViewItem& option, ExpandedTreeView::CaptionDisplay captions, int captionLines)
+QSize iconItemSize(const QStyleOptionViewItem& option, ExpandedTreeView::CaptionDisplay captions, int captionLines,
+                   const QMargins& margins)
 {
-    const QSize iconSize = iconDecorationSize(option);
+    const QSize artworkSize
+        = iconDecorationSize(option) + QSize{margins.left() + margins.right(), margins.top() + margins.bottom()};
     const int textLines  = captions == ExpandedTreeView::CaptionDisplay::None ? 0 : std::max(1, captionLines);
     const int textHeight = captionTextHeight(option, textLines);
 
+    const QStyle* style       = option.widget ? option.widget->style() : QApplication::style();
+    const int verticalPadding = std::max(2, style->pixelMetric(QStyle::PM_FocusFrameVMargin, &option, option.widget));
+
     switch(captions) {
         case ExpandedTreeView::CaptionDisplay::Right:
-            return {iconSize.width() + RightCaptionWidth + (3 * IconPadding),
-                    std::max(iconSize.height() + (2 * IconPadding), textHeight + (2 * IconPadding))};
+            return {artworkSize.width() + RightCaptionWidth + (2 * CaptionPadding),
+                    std::max(artworkSize.height(), textHeight + (2 * CaptionPadding))};
         case ExpandedTreeView::CaptionDisplay::Bottom:
-            return {std::max(iconSize.width() + (2 * IconPadding), RightCaptionWidth),
-                    BottomIconPadding + iconSize.height() + textHeight + (2 * IconPadding) + IconPadding};
+            return {artworkSize.width(), artworkSize.height() + textHeight + (2 * verticalPadding)};
         case ExpandedTreeView::CaptionDisplay::None:
         case ExpandedTreeView::CaptionDisplay::Overlay:
-            return {iconSize.width() + (2 * IconPadding), iconSize.height() + (2 * IconPadding)};
+            return artworkSize;
     }
 
     return {};
@@ -416,7 +395,8 @@ QRect columnTextRect(const QStyleOptionViewItem& option, bool hasIcon, bool hasS
     return rect;
 }
 
-void drawColumnItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, const QIcon& icon)
+void drawColumnItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, const QIcon& icon,
+                    int iconRadius)
 {
     QStyleOptionViewItem opt{option};
     opt.text.clear();
@@ -436,7 +416,7 @@ void drawColumnItem(QPainter* painter, const QStyleOptionViewItem& option, const
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
     if(hasIcon) {
-        drawIconInRect(painter, opt, icon, columnIconRect(opt));
+        drawIconInRect(painter, opt, icon, columnIconRect(opt), iconRadius, true);
     }
 
     const QString text = index.data(Qt::DisplayRole).toString();
@@ -460,14 +440,14 @@ void RadioStationDelegate::setUniformStationIcons(bool enabled)
     m_uniformStationIcons = enabled;
 }
 
-int RadioStationDelegate::iconItemBorderWidth() const
+void RadioStationDelegate::setIconCornerRadius(int radius)
 {
-    return m_iconItemBorderWidth;
+    m_iconCornerRadius = std::clamp(radius, 0, 100);
 }
 
-void RadioStationDelegate::setIconItemBorderWidth(const int width)
+void RadioStationDelegate::setIconMargins(const QMargins& margins)
 {
-    m_iconItemBorderWidth = std::max(0, width);
+    m_iconMargins = margins;
 }
 
 void RadioStationDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
@@ -483,12 +463,16 @@ void RadioStationDelegate::paint(QPainter* painter, const QStyleOptionViewItem& 
     const bool hasIcon   = !icon.isNull();
 
     if(!iconView) {
-        drawColumnItem(painter, opt, index, icon);
+        drawColumnItem(painter, opt, index, icon, m_iconCornerRadius);
         return;
     }
 
     const auto captions           = iconView->captionDisplay();
-    const QRect textRect          = iconTextRect(opt, captions, hasIcon);
+    const Qt::Edges squareEdges   = captions == ExpandedTreeView::CaptionDisplay::Bottom ? Qt::Edges{Qt::BottomEdge}
+                                  : captions == ExpandedTreeView::CaptionDisplay::Right
+                                      ? Qt::Edges{opt.direction == Qt::RightToLeft ? Qt::LeftEdge : Qt::RightEdge}
+                                      : Qt::Edges{};
+    QRect textRect                = iconTextRect(opt, captions, m_iconMargins);
     const QVariant iconBackground = index.data(RadioBrowserModel::IconBackgroundRole);
     const bool hasSavedBadge      = index.data(RadioBrowserModel::SavedStationRole).toBool();
 
@@ -501,26 +485,32 @@ void RadioStationDelegate::paint(QPainter* painter, const QStyleOptionViewItem& 
         }
     }
 
-    if(hasIcon && m_uniformStationIcons) {
-        opt.icon = {};
-    }
-
+    opt.icon = {};
     opt.text.clear();
 
     painter->save();
 
-    if(hasIcon) {
-        drawIconItemBackground(painter, &opt, m_iconItemBorderWidth);
+    if(!(opt.state & QStyle::State_Selected) && opt.backgroundBrush.style() != Qt::NoBrush) {
+        painter->save();
+        Gui::clipRoundedRect(*painter, opt.rect, iconView->iconItemCornerRadius(), squareEdges);
+        painter->fillRect(opt.rect, opt.backgroundBrush);
+        painter->restore();
+        opt.backgroundBrush = Qt::NoBrush;
     }
 
-    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+    Gui::drawRoundedStyleControl(painter, QStyle::CE_ItemViewItem, opt, opt.widget, iconView->iconItemCornerRadius(),
+                                 squareEdges);
 
-    if(hasIcon && m_uniformStationIcons) {
-        drawIcon(painter, opt, icon, captions);
+    if(hasIcon) {
+        drawIconInRect(painter, opt, icon, iconRect(opt, captions, m_iconMargins), m_iconCornerRadius,
+                       m_uniformStationIcons);
     }
     if(hasSavedBadge) {
-        drawSavedBadge(painter, opt, savedBadgeRectForIconItem(opt, captions, hasIcon));
+        const QRect badgeRect = savedBadgeRectForIconItem(opt, captions, hasIcon, m_iconMargins);
+        drawSavedBadge(painter, opt, badgeRect);
+        if(textRect.intersects(badgeRect)) {
+            textRect.setRight(badgeRect.left() - SavedBadgeMargin);
+        }
     }
 
     drawCaptionLines(painter, opt, textRect, captions,
@@ -552,6 +542,6 @@ QSize RadioStationDelegate::sizeHint(const QStyleOptionViewItem& option, const Q
     const int captionLines
         = std::max(static_cast<int>(index.data(RadioBrowserModel::IconCaptionLinesRole).toStringList().size()),
                    index.data(RadioBrowserModel::IconCaptionLineCountRole).toInt());
-    return applyHeightOverride(iconItemSize(option, iconView->captionDisplay(), captionLines));
+    return applyHeightOverride(iconItemSize(option, iconView->captionDisplay(), captionLines, m_iconMargins));
 }
 } // namespace Fooyin::RadioBrowser

@@ -29,13 +29,11 @@
 
 #include <QApplication>
 #include <QPainter>
-#include <QPainterPath>
 
 #include <cmath>
 
 constexpr auto IconCaptionMargin     = 20;
 constexpr auto RightCaptionTextWidth = 180;
-constexpr auto RightCaptionInset     = 0;
 
 namespace {
 struct PreparedTextBlock
@@ -149,6 +147,12 @@ QSize richLineSize(const QStyleOptionViewItem& option, int maxWidth, const Fooyi
 
     return size;
 }
+
+QSize richTextNaturalSize(const QStyleOptionViewItem& option, const Fooyin::RichText& richText)
+{
+    const auto metrics = Fooyin::measureRichText(richText, option.font);
+    return {metrics.width, metrics.firstLineHeight + metrics.extraLineHeight};
+}
 } // namespace
 
 namespace Fooyin::Filters {
@@ -163,34 +167,53 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
 
     const auto* view          = qobject_cast<const ExpandedTreeView*>(opt.widget);
-    const bool hasArtwork     = view && view->viewMode() == ExpandedTreeView::ViewMode::Icon && !opt.icon.isNull();
-    const bool overlayCaption = view && view->viewMode() == ExpandedTreeView::ViewMode::Icon
-                             && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Overlay;
+    const bool iconMode       = view && view->viewMode() == ExpandedTreeView::ViewMode::Icon;
+    const bool hasArtwork     = iconMode && !opt.icon.isNull();
+    const bool overlayCaption = iconMode && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Overlay;
     const QIcon artworkIcon   = hasArtwork ? opt.icon : QIcon{};
 
     if(view && view->viewMode() != ExpandedTreeView::ViewMode::Flow) {
         WidgetBackground::clearDelegateBackground(opt);
     }
 
-    QRect captionArtwork = overlayCaption ? artworkRect(opt) : QRect{};
+    Qt::Edges squareEdges;
+    if(iconMode) {
+        if(view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Bottom) {
+            squareEdges = Qt::BottomEdge;
+        }
+        else if(view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Right) {
+            squareEdges = opt.direction == Qt::RightToLeft ? Qt::LeftEdge : Qt::RightEdge;
+        }
+    }
+
+    const int backgroundRadius = iconMode ? view->iconItemCornerRadius() : 0;
+
+    const auto drawBackground = [&](QStyleOptionViewItem backgroundOpt) {
+        painter->save();
+
+        if(backgroundRadius > 0) {
+            Gui::clipRoundedRect(*painter, backgroundOpt.rect, backgroundRadius, squareEdges);
+        }
+        if(!(backgroundOpt.state & QStyle::State_Selected) && backgroundOpt.backgroundBrush.style() != Qt::NoBrush) {
+            painter->fillRect(backgroundOpt.rect, backgroundOpt.backgroundBrush);
+            backgroundOpt.backgroundBrush = Qt::NoBrush;
+        }
+        Gui::drawRoundedStyleControl(painter, QStyle::CE_ItemViewItem, backgroundOpt, backgroundOpt.widget,
+                                     backgroundRadius, squareEdges);
+
+        painter->restore();
+    };
+
+    const QRect decorationRect = hasArtwork ? artworkRect(opt) : QRect{};
+    QPixmap scaledArtwork;
+    if(hasArtwork) {
+        const double dpr = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
+        scaledArtwork    = artworkIcon.pixmap(decorationRect.size(), dpr, Gui::itemViewIconMode(opt));
+    }
 
     const auto drawArtwork = [&]() {
         if(hasArtwork) {
-            const QRect decorationRect = artworkRect(opt);
-            const double dpr           = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
-            const bool autoFit
-                = view->autoFitArtwork() && view->captionDisplay() != ExpandedTreeView::CaptionDisplay::Right;
-            const QSize artworkSize     = autoFit ? view->effectiveIconSize() : decorationRect.size();
-            const QPixmap scaledArtwork = artworkIcon.pixmap(artworkSize, dpr, Gui::itemViewIconMode(opt));
-            if(overlayCaption && !scaledArtwork.isNull()) {
-                captionArtwork = QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter,
-                                                     scaledArtwork.deviceIndependentSize().toSize(), decorationRect);
-            }
-
             painter->save();
-            if(autoFit) {
-                painter->setClipRect(decorationRect, Qt::IntersectClip);
-            }
             Gui::drawRoundedPixmap(*painter, decorationRect, Qt::AlignCenter, scaledArtwork, m_artworkCornerRadius);
             painter->restore();
         }
@@ -212,16 +235,13 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
             backgroundOpt.state &= ~QStyle::State_Selected;
             backgroundOpt.backgroundBrush = Qt::NoBrush;
         }
-        else if(opt.backgroundBrush.style() != Qt::NoBrush) {
-            painter->fillRect(option.rect, opt.backgroundBrush);
-            backgroundOpt.backgroundBrush = Qt::NoBrush;
-        }
 
         backgroundOpt.text.clear();
         if(hasArtwork) {
             backgroundOpt.icon = {};
         }
-        style->drawControl(QStyle::CE_ItemViewItem, &backgroundOpt, painter, backgroundOpt.widget);
+
+        drawBackground(backgroundOpt);
         drawArtwork();
 
         const QRect textRect = Gui::itemViewTextRect(opt);
@@ -235,33 +255,19 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
         painter->save();
 
         QStyleOptionViewItem backgroundOpt{opt};
-        if(opt.state & QStyle::State_Selected) {
-            backgroundOpt.state &= ~QStyle::State_Selected;
-            backgroundOpt.backgroundBrush = Qt::NoBrush;
-        }
-        else if(opt.backgroundBrush.style() != Qt::NoBrush) {
-            painter->fillRect(option.rect, opt.backgroundBrush);
-            backgroundOpt.backgroundBrush = Qt::NoBrush;
-        }
-
         backgroundOpt.text.clear();
         if(hasArtwork) {
             backgroundOpt.icon = {};
         }
-        style->drawControl(QStyle::CE_ItemViewItem, &backgroundOpt, painter, backgroundOpt.widget);
-        drawArtwork();
+        drawBackground(backgroundOpt);
 
-        QRect textRect = iconTextRect(opt);
         if(overlayCaption) {
-            for(const auto role : {QPalette::Text, QPalette::Link}) {
-                if(opt.palette.color(role).lightness() < 128) {
-                    opt.palette.setColor(role, Qt::white);
-                }
-            }
-            const int margin = std::max(4, Gui::itemViewTextMargin(opt.widget, &opt));
-            textRect         = captionArtwork.adjusted(margin, 0, -margin, 0);
+            drawOverlayItem(painter, opt, scaledArtwork, richLines);
         }
-        drawRichTextLines(painter, opt, textRect, richLines, captionArtwork);
+        else {
+            drawArtwork();
+            drawRichTextLines(painter, opt, iconTextRect(opt), richLines, {});
+        }
 
         painter->restore();
         return;
@@ -270,7 +276,12 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     if(hasArtwork) {
         opt.icon = {};
     }
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+    if(iconMode) {
+        drawBackground(opt);
+    }
+    else {
+        style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+    }
     drawArtwork();
 }
 
@@ -335,10 +346,8 @@ QRect FilterDelegate::artworkRect(const QStyleOptionViewItem& option) const
     artworkOpt.rect = option.rect.marginsRemoved(m_artworkMargins);
 
     if(view && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Right) {
-        artworkOpt.rect.adjust(RightCaptionInset, 0, -RightCaptionInset, 0);
-
-        const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
-        return style->subElementRect(QStyle::SE_ItemViewItemDecoration, &artworkOpt, option.widget);
+        return QStyle::alignedRect(option.direction, Qt::AlignLeft | Qt::AlignVCenter, option.decorationSize,
+                                   artworkOpt.rect);
     }
 
     return QStyle::alignedRect(option.direction, Qt::AlignTop | Qt::AlignHCenter, option.decorationSize,
@@ -358,17 +367,14 @@ QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option) const
 
     switch(view->captionDisplay()) {
         case ExpandedTreeView::CaptionDisplay::Right: {
-            QStyleOptionViewItem textOpt{option};
-            textOpt.rect.adjust(RightCaptionInset, 0, -RightCaptionInset, 0);
-            const int artworkMargin = m_artworkMargins.left() + m_artworkMargins.right();
+            rect.adjust(margin, 0, -margin, 0);
+            const QRect artwork = artworkRect(option);
             if(option.direction == Qt::RightToLeft) {
-                textOpt.rect.adjust(0, 0, -artworkMargin, 0);
+                rect.setRight(artwork.left() - m_artworkMargins.left() - margin - 1);
             }
             else {
-                textOpt.rect.adjust(artworkMargin, 0, 0, 0);
+                rect.setLeft(artwork.right() + m_artworkMargins.right() + margin + 1);
             }
-            rect = style->subElementRect(QStyle::SE_ItemViewItemText, &textOpt, option.widget);
-            rect.adjust(margin, 0, -margin, 0);
             break;
         }
         case ExpandedTreeView::CaptionDisplay::Bottom: {
@@ -446,12 +452,6 @@ IconCaptionLineList FilterDelegate::iconRichLines(const QModelIndex& index, cons
     }
 
     return lines;
-}
-
-QSize richTextNaturalSize(const QStyleOptionViewItem& option, const RichText& richText)
-{
-    const auto metrics = measureRichText(richText, option.font);
-    return {metrics.width, metrics.firstLineHeight + metrics.extraLineHeight};
 }
 
 RichText FilterDelegate::fallbackRichText(const QStyleOptionViewItem& option, const QModelIndex& index)
@@ -534,12 +534,10 @@ QSize FilterDelegate::iconItemSize(const QStyleOptionViewItem& option, const QMo
             return {artworkSize.width(), artworkSize.height() + textSize.height() + verticalPadding};
         }
         case ExpandedTreeView::CaptionDisplay::Right: {
-            const QSize styleSize = style->sizeFromContents(QStyle::CT_ItemViewItem, &option, textSize, option.widget);
-            const int itemWidth   = option.rect.width() > 0 ? option.rect.width()
-                                                            : artworkSize.width() + IconCaptionMargin
-                                                                  + RightCaptionTextWidth + (2 * RightCaptionInset);
-            const int itemHeight  = std::max(
-                {styleSize.height(), artworkSize.height() + verticalPadding, textSize.height() + verticalPadding});
+            const int itemWidth  = option.rect.width() > 0
+                                     ? option.rect.width()
+                                     : artworkSize.width() + IconCaptionMargin + RightCaptionTextWidth;
+            const int itemHeight = std::max(artworkSize.height(), textSize.height() + verticalPadding);
             return {itemWidth, itemHeight};
         }
         case ExpandedTreeView::CaptionDisplay::None:
@@ -617,8 +615,42 @@ void FilterDelegate::setupFilterOption(QStyleOptionViewItem* option, const QMode
     }
 }
 
+void FilterDelegate::drawOverlayItem(QPainter* painter, QStyleOptionViewItem option, const QPixmap& artwork,
+                                     const IconCaptionLineList& lines) const
+{
+    const QRect decorationRect = artworkRect(option);
+    const QRectF imageRect     = artwork.isNull()
+                                   ? decorationRect
+                                   : QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter,
+                                                         artwork.deviceIndependentSize().toSize(), decorationRect);
+
+    const qreal dpr = option.widget ? option.widget->devicePixelRatioF() : 1.0;
+    QPixmap layer{QSize{static_cast<int>(std::ceil(option.rect.width() * dpr)),
+                        static_cast<int>(std::ceil(option.rect.height() * dpr))}};
+    layer.setDevicePixelRatio(dpr);
+    layer.fill(Qt::transparent);
+    {
+        QPainter layerPainter{&layer};
+        layerPainter.setRenderHints(painter->renderHints());
+        layerPainter.translate(-option.rect.topLeft());
+        layerPainter.drawPixmap(imageRect.topLeft(), artwork);
+
+        for(const auto role : {QPalette::Text, QPalette::Link}) {
+            if(option.palette.color(role).lightness() < 128) {
+                option.palette.setColor(role, Qt::white);
+            }
+        }
+        const int margin     = std::max(4, Gui::itemViewTextMargin(option.widget, &option));
+        const QRect textRect = imageRect.adjusted(margin, 0, -margin, 0).toAlignedRect();
+        drawRichTextLines(&layerPainter, option, textRect, lines, imageRect);
+    }
+
+    // Mask artwork and captions together
+    Gui::drawRoundedPixmap(*painter, imageRect, option.rect.topLeft(), layer, m_artworkCornerRadius);
+}
+
 void FilterDelegate::drawRichTextLines(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
-                                       const IconCaptionLineList& lines, const QRect& artwork) const
+                                       const IconCaptionLineList& lines, const QRectF& artwork) const
 {
     if(lines.empty() || rect.width() <= 0 || rect.height() <= 0) {
         return;
@@ -665,16 +697,13 @@ void FilterDelegate::drawRichTextLines(QPainter* painter, const QStyleOptionView
         const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
 
         const int padding = std::max(2, style->pixelMetric(QStyle::PM_FocusFrameVMargin, &option, option.widget));
-        const QRect visibleArtwork = artwork.intersected(artworkRect(option));
-        const int height           = std::min(visibleArtwork.height(), totalHeight + (2 * padding));
+        const QRectF visibleArtwork = artwork.intersected(QRectF{artworkRect(option)});
+        const qreal height = std::min(visibleArtwork.height(), static_cast<qreal>(totalHeight + (2 * padding)));
 
-        const QRect background{visibleArtwork.left(), visibleArtwork.bottom() - height + 1, visibleArtwork.width(),
-                               height};
-        QPainterPath clipPath;
-        clipPath.addRoundedRect(artwork, radius, radius);
+        const QRectF background{visibleArtwork.left(), visibleArtwork.bottom() - height, visibleArtwork.width(),
+                                height};
         painter->setRenderHint(QPainter::Antialiasing);
         painter->setClipRect(visibleArtwork, Qt::IntersectClip);
-        painter->setClipPath(clipPath, Qt::IntersectClip);
 
         const bool selected     = option.state & QStyle::State_Selected;
         QColor backgroundColour = selected ? option.palette.color(QPalette::Highlight) : QColor{Qt::black};
@@ -683,14 +712,14 @@ void FilterDelegate::drawRichTextLines(QPainter* painter, const QStyleOptionView
         painter->fillRect(background, backgroundColour);
         if(!selected && option.state & QStyle::State_MouseOver) {
             QStyleOptionViewItem hoverOpt{option};
-            hoverOpt.rect            = background;
+            hoverOpt.rect            = background.toAlignedRect();
             hoverOpt.backgroundBrush = Qt::NoBrush;
             hoverOpt.palette.setBrush(QPalette::Base, Qt::NoBrush);
             hoverOpt.features.setFlag(QStyleOptionViewItem::Alternate, false);
             style->drawPrimitive(QStyle::PE_PanelItemViewItem, &hoverOpt, painter, option.widget);
         }
-        rect.setTop(background.top() + padding);
-        rect.setBottom(background.bottom() - padding);
+        rect.setTop(static_cast<int>(std::ceil(background.top() + padding)));
+        rect.setBottom(static_cast<int>(std::ceil(background.bottom() - padding)) - 1);
         painter->setClipRect(rect, Qt::IntersectClip);
     }
 
