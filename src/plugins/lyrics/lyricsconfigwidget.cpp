@@ -20,6 +20,7 @@
 #include "lyricsconfigwidget.h"
 
 #include "lyricscolours.h"
+#include "lyricsfonts.h"
 
 #include <gui/guiutils.h>
 #include <gui/widgets/backgroundconfigwidget.h>
@@ -35,6 +36,7 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QRadioButton>
+#include <QSignalBlocker>
 #include <QSpinBox>
 #include <QTabWidget>
 #include <QVBoxLayout>
@@ -266,6 +268,11 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
 
     QObject::connect(lyricsWidget, &LyricsWidget::configChanged, this, &LyricsConfigDialog::syncCurrentConfig);
 
+    for(auto* button : {m_baseFontBtn, m_lineFontBtn, m_wordLineFontBtn, m_wordFontBtn}) {
+        QObject::connect(button, &FontButton::fontUpdated, this, &LyricsConfigDialog::updateInheritedFonts);
+        QObject::connect(button, &FontButton::toggled, this, &LyricsConfigDialog::updateInheritedFonts);
+    }
+
     loadCurrentConfig();
 }
 
@@ -372,20 +379,39 @@ void LyricsConfigDialog::setConfig(const LyricsWidget::ConfigData& config)
     loadColour(m_wordLineColourBtn, Colours::Type::WordLineSynced);
     loadColour(m_wordColourBtn, Colours::Type::WordSynced);
 
-    const auto loadFont = [](FontButton* button, const QString& fontStr, const QFont& fallback) {
-        QFont font{fallback};
-        bool custom = false;
-        if(!fontStr.isEmpty() && font.fromString(fontStr)) {
-            custom = true;
-        }
-        button->setChecked(custom);
-        button->setButtonFont(font);
+    const auto loadFont = [](FontButton* button, const QString& fontStr, const QFont& resolved) {
+        const QSignalBlocker blocker{button};
+        QFont parsed;
+        button->setChecked(!fontStr.isEmpty() && parsed.fromString(fontStr));
+        button->setButtonFont(resolved);
     };
 
-    loadFont(m_baseFontBtn, config.baseFont, Lyrics::defaultFont(*m_styleProvider));
-    loadFont(m_lineFontBtn, config.lineFont, Lyrics::defaultLineFont(*m_styleProvider));
-    loadFont(m_wordLineFontBtn, config.wordLineFont, Lyrics::defaultWordLineFont(*m_styleProvider));
-    loadFont(m_wordFontBtn, config.wordFont, Lyrics::defaultWordFont(*m_styleProvider));
+    const auto fonts = resolveLyricsFonts(Lyrics::defaultFont(*m_styleProvider), config.baseFont, config.lineFont,
+                                          config.wordLineFont, config.wordFont);
+    loadFont(m_baseFontBtn, config.baseFont, fonts.base);
+    loadFont(m_lineFontBtn, config.lineFont, fonts.line);
+    loadFont(m_wordLineFontBtn, config.wordLineFont, fonts.wordLine);
+    loadFont(m_wordFontBtn, config.wordFont, fonts.word);
+}
+
+void LyricsConfigDialog::updateInheritedFonts()
+{
+    const auto selectedFont = [](const FontButton* button) {
+        return button->isChecked() ? button->buttonFont().toString() : QString{};
+    };
+    const auto fonts = resolveLyricsFonts(Lyrics::defaultFont(*m_styleProvider), selectedFont(m_baseFontBtn),
+                                          selectedFont(m_lineFontBtn), selectedFont(m_wordLineFontBtn),
+                                          selectedFont(m_wordFontBtn));
+    const auto update = [](FontButton* button, const QFont& font) {
+        if(!button->isChecked()) {
+            const QSignalBlocker blocker{button};
+            button->setButtonFont(font);
+        }
+    };
+    update(m_baseFontBtn, fonts.base);
+    update(m_lineFontBtn, fonts.line);
+    update(m_wordLineFontBtn, fonts.wordLine);
+    update(m_wordFontBtn, fonts.word);
 }
 
 void LyricsConfigDialog::mergeExternalConfig(const LyricsWidget::ConfigData& previous,
