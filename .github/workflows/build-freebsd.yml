@@ -45,7 +45,7 @@ jobs:
             freebsd-${{ env.FREEBSD_VERSION }}-ccache-
 
       - name: Start FreeBSD VM
-        uses: cross-platform-actions/action@v1.6.0
+        uses: cross-platform-actions/action@v1.7.0
         with:
           operating_system: freebsd
           architecture: x86-64
