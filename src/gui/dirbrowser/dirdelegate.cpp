@@ -22,6 +22,7 @@
 #include "dirproxymodel.h"
 
 #include <gui/iconloader.h>
+#include <gui/widgets/widgetbackground.h>
 
 #include <QApplication>
 #include <QPainter>
@@ -40,8 +41,11 @@ void DirDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, c
 
     painter->save();
 
-    if(opt.backgroundBrush.style() != Qt::NoBrush) {
-        painter->fillRect(option.rect, opt.backgroundBrush);
+    if(opt.backgroundBrush.style() != Qt::NoBrush && opt.state.testFlag(QStyle::State_MouseOver)
+       && !opt.state.testFlag(QStyle::State_Selected)) {
+        QStyleOptionViewItem background{opt};
+        background.state.setFlag(QStyle::State_MouseOver, false);
+        WidgetBackground::drawItemBackground(painter, background);
         opt.backgroundBrush = Qt::NoBrush;
     }
 
