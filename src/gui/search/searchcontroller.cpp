@@ -357,6 +357,10 @@ SearchController::~SearchController() = default;
 void SearchController::loadWidgets()
 {
     p->retrieveWidgets();
+    // Search bars may have been shown before their replacement targets were discovered
+    for(const auto& sourceId : p->m_connections | std::views::keys) {
+        Q_EMIT connectionChanged(sourceId);
+    }
 }
 
 void SearchController::setupWidgetConnections(const Id& id)
