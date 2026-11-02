@@ -141,6 +141,16 @@ Player::TrackChangeRequest PlaybackSession::requestTrackChange(Player::TrackChan
     return request;
 }
 
+bool PlaybackSession::rejectPendingRequest(uint64_t itemId)
+{
+    if(itemId == 0 || !m_pendingRequest || m_pendingRequest->itemId != itemId) {
+        return false;
+    }
+
+    clearPendingRequest();
+    return true;
+}
+
 PlaybackSession::CommitResult PlaybackSession::commitRequest(const Player::TrackChangeRequest& request)
 {
     Player::TrackChangeContext context{request.context};

@@ -139,6 +139,7 @@ public:
     void commitCurrentTrack(const Track& track);
     void commitCurrentTrack(const PlaylistTrack& track,
                             const Player::TrackChangeContext& context = Player::TrackChangeContext{});
+    bool rejectTrackChange(uint64_t itemId);
     void updateCurrentTrack(const Track& track);
 
     void scheduleNextTrack(const PlaylistTrack& track);

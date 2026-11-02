@@ -62,6 +62,7 @@ public:
     [[nodiscard]] Player::TrackChangeRequest withPlaybackItemId(Player::TrackChangeRequest request,
                                                                 uint64_t nextItemId) const;
     Player::TrackChangeRequest requestTrackChange(Player::TrackChangeRequest request);
+    bool rejectPendingRequest(uint64_t itemId);
 
     struct CommitResult
     {

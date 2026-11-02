@@ -1829,6 +1829,16 @@ void PlayerController::commitCurrentTrack(const PlaylistTrack& track, const Play
     });
 }
 
+bool PlayerController::rejectTrackChange(uint64_t itemId)
+{
+    if(!p->m_session.rejectPendingRequest(itemId)) {
+        return false;
+    }
+
+    p->emitUpcomingTrackChangedIfNeeded();
+    return true;
+}
+
 void PlayerController::updateCurrentTrack(const Track& track)
 {
     if(p->m_session.updateCurrentTrack(track)) {

@@ -211,6 +211,7 @@ Q_SIGNALS:
     void trackReadyToSwitch(const Fooyin::Track& track, uint64_t generation);
     void trackBoundaryReached(const Fooyin::Track& track, uint64_t generation, uint64_t remainingOutputMs,
                               bool engineOwnsTransition);
+    void trackChangeRejected(const Fooyin::Engine::PlaybackItem& item);
     void nextTrackReadiness(const Fooyin::Engine::PlaybackItem& item, bool ready, uint64_t requestId);
 
     void finished();

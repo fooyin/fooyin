@@ -5246,6 +5246,7 @@ void AudioEngine::handleManualRemoteCrossfadePreparationResult(uint64_t requestI
                           << "preparedStream=" << preparedStreamAvailable << "preparedBufferedMs=" << preparedBufferedMs
                           << "targetMs=" << remoteTargetMs;
         clearPreparedNextTrack();
+        Q_EMIT trackChangeRejected(item);
         return;
     }
 
@@ -5280,6 +5281,7 @@ void AudioEngine::handleManualRemoteCrossfadePreparationResult(uint64_t requestI
                           << "targetTrackId=" << item.track.id() << "targetItemId=" << item.itemId
                           << "target=" << item.track.filenameExt();
         clearPreparedNextTrack();
+        Q_EMIT trackChangeRejected(item);
         return;
     }
 
