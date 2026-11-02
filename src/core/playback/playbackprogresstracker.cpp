@@ -54,14 +54,19 @@ void PlaybackProgressTracker::reset()
 void PlaybackProgressTracker::onTrackCommitted(uint64_t totalDurationMs, double playedThresholdFraction,
                                                uint64_t playedThresholdTimeMs)
 {
-    m_totalDuration   = totalDurationMs;
-    m_position        = 0;
-    m_timeListened    = 0;
-    m_playedThreshold = 0;
-    m_trackingActive  = true;
-    m_seeking         = false;
-    m_counted         = false;
+    updateDuration(totalDurationMs, playedThresholdFraction, playedThresholdTimeMs);
+    m_position       = 0;
+    m_timeListened   = 0;
+    m_trackingActive = true;
+    m_seeking        = false;
+    m_counted        = false;
+}
 
+void PlaybackProgressTracker::updateDuration(uint64_t totalDurationMs, double playedThresholdFraction,
+                                             uint64_t playedThresholdTimeMs)
+{
+    m_totalDuration   = totalDurationMs;
+    m_playedThreshold = 0;
     if(m_totalDuration > 200) {
         const auto playedThresholdFractionMs
             = static_cast<uint64_t>(static_cast<double>(m_totalDuration - 200) * playedThresholdFraction);

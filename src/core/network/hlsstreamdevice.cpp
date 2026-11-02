@@ -21,7 +21,7 @@
 
 #include "streamdeviceutils.h"
 
-#include <core/engine/input/id3utils.h>
+#include <core/engine/input/metadata/id3.h>
 #include <core/network/networkutils.h>
 
 #include <QMetaObject>
@@ -175,7 +175,7 @@ std::optional<NetworkStreamMetadata> parseEmsgMetadata(QByteArrayView box)
         return {};
     }
 
-    const auto id3 = Id3Utils::parseTimedMetadata(payload.sliced(offset));
+    const auto id3 = Metadata::parseTimedId3Metadata(payload.sliced(offset));
     if(!id3) {
         return {};
     }
@@ -598,6 +598,11 @@ bool HlsStreamDevice::isSequential() const
     return true;
 }
 
+qint64 HlsStreamDevice::size() const
+{
+    return -1;
+}
+
 bool HlsStreamDevice::readWouldBlock() const
 {
     const std::scoped_lock lock{m_state->mutex};
@@ -649,7 +654,7 @@ bool HlsStreamDevice::open(OpenMode mode)
     }
 
     if(!m_url.isValid() || !(mode & ReadOnly)) {
-        setErrorString(tr("Invalid HLS stream."));
+        setErrorString(u"Invalid HLS stream."_s);
         return false;
     }
 
@@ -700,7 +705,7 @@ qint64 HlsStreamDevice::readData(char* data, qint64 maxSize)
     }
 
     if(QThread::currentThread() == m_network->thread()) {
-        setErrorString(tr("HLS stream cannot be read from the network thread."));
+        setErrorString(u"HLS stream cannot be read from the network thread."_s);
         return -1;
     }
 

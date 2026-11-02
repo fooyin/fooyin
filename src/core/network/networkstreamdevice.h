@@ -33,7 +33,8 @@ namespace Fooyin {
 struct NetworkStreamDeviceState;
 
 class FYCORE_EXPORT NetworkStreamDevice : public QIODevice,
-                                          public RemoteStreamDevice
+                                          public RemoteStreamDevice,
+                                          public RemoteFileDevice
 {
     Q_OBJECT
 
@@ -43,16 +44,22 @@ public:
     ~NetworkStreamDevice() override;
 
     [[nodiscard]] bool isSequential() const override;
+    [[nodiscard]] qint64 size() const override;
     [[nodiscard]] bool readWouldBlock() const override;
     [[nodiscard]] qsizetype bufferedByteCount() const override;
     [[nodiscard]] NetworkStreamMetadata metadata() const;
     [[nodiscard]] std::optional<NetworkStreamMetadata> remoteStreamMetadata() const override;
+    [[nodiscard]] RemoteFileInfo remoteFileInfo() const override;
+
     void setNonBlockingReadsEnabled(bool enabled) override;
     void setReconnectOnFinishedEnabled(bool enabled) override;
     void setReadCancellationToken(std::stop_token token) override;
+    void setOpenTimeout(std::chrono::milliseconds timeout);
 
     bool open(OpenMode mode) override;
     void close() override;
+    bool seek(qint64 pos) override;
+    bool waitForReadyRead(int msecs) override;
 
 protected:
     qint64 readData(char* data, qint64 maxSize) override;

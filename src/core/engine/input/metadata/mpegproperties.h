@@ -22,22 +22,12 @@
 #include "fycore_export.h"
 
 #include <QByteArrayView>
-#include <QString>
-#include <QStringList>
 
-#include <optional>
+namespace Fooyin {
+class Track;
 
-namespace Fooyin::Id3Utils {
-struct TimedMetadata
-{
-    QString title;
-    QString artist;
-    QString station;
-};
-
-[[nodiscard]] FYCORE_EXPORT std::optional<TimedMetadata> parseTimedMetadata(QByteArrayView data);
-[[nodiscard]] QStringList splitStandardField(const QString& field, const QStringList& values,
-                                             bool splitSemicolonSeparated);
-[[nodiscard]] QStringList splitExtraField(const QString& field, const QStringList& values,
-                                          bool splitSemicolonSeparated);
-} // namespace Fooyin::Id3Utils
+namespace Metadata {
+//! Read MPEG and Xing/LAME properties from the first audio frame.
+FYCORE_EXPORT void readMpegProperties(QByteArrayView data, Track& track);
+} // namespace Metadata
+} // namespace Fooyin

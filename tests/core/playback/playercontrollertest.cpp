@@ -372,6 +372,36 @@ TEST(PlayerControllerTest, StoppedTrackRemainsSeekable)
     EXPECT_FALSE(controller.currentTrackSeekable());
 }
 
+TEST(PlayerControllerTest, RuntimeDurationEnablesSeekingWithoutResettingProgress)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_remote_seek_test.ini"_s};
+    registerControllerSettings(settings);
+    PlayerController controller{&settings, nullptr};
+
+    Track track = makeTrack(u"https://example.com/track.mp3"_s, 24, 0);
+    controller.commitCurrentTrack(track);
+    controller.setCurrentTrackSeekable(true);
+    controller.syncPlayStateFromEngine(Player::PlayState::Playing);
+    controller.setCurrentPosition(1000);
+
+    const QSignalSpy positionMovedSpy{&controller, &PlayerController::positionMoved};
+    const QSignalSpy snapshotSpy{&controller, &PlayerController::playbackSnapshotChanged};
+    controller.seek(180000);
+    EXPECT_EQ(positionMovedSpy.count(), 0);
+
+    track.setDuration(398000);
+    controller.updateCurrentTrack(track);
+    EXPECT_EQ(controller.currentPosition(), 1000);
+    EXPECT_EQ(controller.currentTimeListened(), 1000);
+    EXPECT_EQ(controller.playbackSnapshot().durationMs, 398000);
+    EXPECT_EQ(snapshotSpy.count(), 1);
+
+    controller.seek(180000);
+    ASSERT_EQ(positionMovedSpy.count(), 1);
+    EXPECT_EQ(positionMovedSpy.constFirst().constFirst().toULongLong(), 180000);
+}
+
 TEST(PlayerControllerTest, RestartingCurrentTrackWithPendingRequestCountsListenedTime)
 {
     ensureCoreApplication();

@@ -491,6 +491,7 @@ SeekBar::SeekBar(ActionManager* actionManager, PlayerController* playerControlle
 
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &SeekBar::stateChanged);
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &SeekBar::trackChanged);
+    QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, &SeekBar::trackUpdated);
     QObject::connect(m_playerController, &PlayerController::currentTrackSeekableChanged, this,
                      &SeekBar::updateSeekEnabled);
     QObject::connect(m_playerController, &PlayerController::positionChanged, this, &SeekBar::setCurrentPosition);
@@ -661,6 +662,20 @@ void SeekBar::trackChanged(const Track& track)
         reset();
     }
 
+    updatePlayedMarker();
+    updateSeekEnabled();
+}
+
+void SeekBar::trackUpdated(const Track& track)
+{
+    m_slider->repeatControls()->setTrack(track);
+    if(m_max == track.duration()) {
+        return;
+    }
+
+    m_max = track.duration();
+    m_slider->updateMaximum(m_max);
+    m_slider->updateCurrentValue(m_playerController->currentPosition());
     updatePlayedMarker();
     updateSeekEnabled();
 }

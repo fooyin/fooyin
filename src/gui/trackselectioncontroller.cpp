@@ -1977,15 +1977,16 @@ void TrackSelectionController::startPlayback(const TrackList& tracks, int trackI
 
 void TrackSelectionController::tracksUpdated(const TrackList& tracks)
 {
-    const TrackSelection previousDisplay{p->m_displaySelection};
     for(auto& selection : p->m_contextSelection | std::views::values) {
         Utils::updateCommonTracks(selection.tracks, tracks, Utils::CommonOperation::Update);
     }
-    Utils::updateCommonTracks(p->m_displaySelection.tracks, tracks, Utils::CommonOperation::Update);
+    const bool displayChanged
+        = !Utils::updateCommonTracks(p->m_displaySelection.tracks, tracks, Utils::CommonOperation::UpdateChanged)
+               .empty();
 
     p->updateActionState();
     Q_EMIT selectionChanged();
-    if(previousDisplay != p->m_displaySelection) {
+    if(displayChanged) {
         Q_EMIT displaySelectionChanged();
     }
 }

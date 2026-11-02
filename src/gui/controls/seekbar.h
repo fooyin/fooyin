@@ -53,6 +53,7 @@ private:
     void reset();
     void updateSeekEnabled() const;
     void trackChanged(const Track& track);
+    void trackUpdated(const Track& track);
     void setCurrentPosition(uint64_t pos);
     void updatePlayedMarker();
     void stateChanged(Player::PlayState state);

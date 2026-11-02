@@ -185,6 +185,11 @@ Application::Application(QObject* parent)
     QObject::connect(m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, m_playlistHandler,
                      &PlaylistHandler::savePlaylists);
     QObject::connect(m_engine.get(), &EngineHandler::trackChanged, this, [this](const Track& track) {
+        // Decoder metadata can arrive before the new playback item is committed
+        if(track.isRemote() && track.id() >= 0 && track.fileSize() > 0) {
+            m_library->updateTrackMetadata({track});
+        }
+
         auto currentTrack = m_playerController->currentPlaylistTrack();
         if(!sameTrackIdentity(track, currentTrack.track)) {
             return;

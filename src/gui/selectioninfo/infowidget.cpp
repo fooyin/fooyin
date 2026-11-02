@@ -238,6 +238,7 @@ InfoPanel::InfoPanel(Application* app, ActionManager* actionManager, TrackSelect
     QObject::connect(app->library(), &MusicLibrary::tracksUpdated, this, startResetTimer);
     QObject::connect(selectionController, &TrackSelectionController::displaySelectionChanged, this, startResetTimer);
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, startResetTimer);
+    QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, startResetTimer);
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, startResetTimer);
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() { queueViewReset(); });
 

@@ -17,7 +17,7 @@
  *
  */
 
-#include "id3utils.h"
+#include "id3.h"
 
 #include <core/engine/tagdefs.h>
 
@@ -29,7 +29,7 @@
 
 using namespace Qt::StringLiterals;
 
-namespace Fooyin::Id3Utils {
+namespace Fooyin::Metadata {
 namespace {
 enum class Id3Version : uchar
 {
@@ -133,7 +133,7 @@ bool isLyricsField(const QString& field)
 }
 } // namespace
 
-std::optional<TimedMetadata> parseTimedMetadata(QByteArrayView data)
+std::optional<TimedId3Metadata> parseTimedId3Metadata(QByteArrayView data)
 {
     if(data.size() < 10 || data.first(3) != "ID3") {
         if(data.size() < 5) {
@@ -148,7 +148,7 @@ std::optional<TimedMetadata> parseTimedMetadata(QByteArrayView data)
             reconstructed.append(version);
             reconstructed.append(char{0});
             reconstructed.append(data);
-            if(auto metadata = parseTimedMetadata(reconstructed)) {
+            if(auto metadata = parseTimedId3Metadata(reconstructed)) {
                 return metadata;
             }
         }
@@ -163,7 +163,7 @@ std::optional<TimedMetadata> parseTimedMetadata(QByteArrayView data)
 
     const qsizetype tagEnd = std::min<qsizetype>(data.size(), 10 + syncSafeUint32(data, 6));
     qsizetype offset{10};
-    TimedMetadata metadata;
+    TimedId3Metadata metadata;
 
     while(offset + 10 <= tagEnd) {
         const QByteArrayView frameId = data.sliced(offset, 4);
@@ -197,7 +197,7 @@ std::optional<TimedMetadata> parseTimedMetadata(QByteArrayView data)
     return metadata;
 }
 
-QStringList splitStandardField(const QString& field, const QStringList& values, bool splitSemicolonSeparated)
+QStringList splitId3StandardField(const QString& field, const QStringList& values, bool splitSemicolonSeparated)
 {
     const QString upperField = field.toUpper();
 
@@ -212,7 +212,7 @@ QStringList splitStandardField(const QString& field, const QStringList& values, 
     return values;
 }
 
-QStringList splitExtraField(const QString& field, const QStringList& values, bool splitSemicolonSeparated)
+QStringList splitId3ExtraField(const QString& field, const QStringList& values, bool splitSemicolonSeparated)
 {
     const QString upperField = field.toUpper();
 
@@ -226,4 +226,4 @@ QStringList splitExtraField(const QString& field, const QStringList& values, boo
 
     return splitSemicolonSeparated ? splitValues(values, u';') : values;
 }
-} // namespace Fooyin::Id3Utils
+} // namespace Fooyin::Metadata

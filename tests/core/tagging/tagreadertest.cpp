@@ -504,6 +504,10 @@ TEST_F(TagReaderTest, Mp3Read)
     ASSERT_TRUE(m_parser.readTrack(source, track));
 
     EXPECT_EQ(track.codec(), u"MP3"_s);
+    EXPECT_EQ(track.codecProfile(), u"CBR"_s);
+    EXPECT_EQ(track.tool(), u"Lavc60.3"_s);
+    EXPECT_EQ(track.extraProperties().value(u"ENC_DELAY"_s), u"576"_s);
+    EXPECT_EQ(track.extraProperties().value(u"ENC_PADDING"_s), u"1216"_s);
     EXPECT_EQ(track.title(), u"MP3 Test"_s);
     EXPECT_EQ(track.album(), u"Fooyin Audio Tests"_s);
     EXPECT_EQ(track.albumArtist(), u"Fooyin"_s);
@@ -1252,5 +1256,4 @@ TEST_F(FFmpegTagReaderTest, TtaRead)
     EXPECT_EQ(track.date(), u"2026"_s);
     EXPECT_GT(track.duration(), 0);
 }
-
 } // namespace Fooyin::Testing

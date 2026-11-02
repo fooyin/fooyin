@@ -174,8 +174,10 @@ set(SOURCES
     engine/input/ffmpeg/ffmpegstream.h
     engine/input/ffmpeg/ffmpegutils.cpp
     engine/input/ffmpeg/ffmpegutils.h
-    engine/input/id3utils.cpp
-    engine/input/id3utils.h
+    engine/input/metadata/id3.cpp
+    engine/input/metadata/id3.h
+    engine/input/metadata/mpegproperties.cpp
+    engine/input/metadata/mpegproperties.h
     engine/input/playcounttagpolicy.cpp
     engine/input/playcounttagpolicy.h
     engine/input/ratingtagpolicy.cpp

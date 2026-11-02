@@ -19,7 +19,10 @@
 
 #include "networktestutils.h"
 
-#include <core/engine/input/id3utils.h>
+#include "testutils.h"
+
+#include <core/engine/input/ffmpeg/ffmpeginput.h>
+#include <core/engine/input/metadata/id3.h>
 #include <core/network/hlsstreamdevice.h>
 #include <core/network/networkstreamdevice.h>
 #include <core/network/networkutils.h>
@@ -27,10 +30,14 @@
 #include <gtest/gtest.h>
 
 #include <QCoreApplication>
+#include <QDateTime>
+#include <QFile>
 #include <QPointer>
 #include <QStandardPaths>
+#include <QTimeZone>
 #include <QtEndian>
 
+#include <array>
 #include <chrono>
 #include <future>
 #include <stop_token>
@@ -55,6 +62,70 @@ QCoreApplication* ensureCoreApplication()
     static auto* const app = new QCoreApplication{argc, argv};
     QCoreApplication::setApplicationName(QString::fromLatin1(appName));
     return app;
+}
+
+template <typename T>
+T finishNetworkOperation(std::future<T>& operation, std::stop_source& abortSource)
+{
+    using namespace std::chrono_literals;
+
+    const auto deadline = std::chrono::steady_clock::now() + 2s;
+    while(operation.wait_for(0ms) != std::future_status::ready && std::chrono::steady_clock::now() < deadline) {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+    }
+    if(operation.wait_for(0ms) != std::future_status::ready) {
+        ADD_FAILURE() << "Network operation timed out";
+        abortSource.request_stop();
+    }
+    return operation.get();
+}
+
+void serveHttpFile(Fooyin::Testing::FakeNetworkReply* reply, const QByteArray& data)
+{
+    const QByteArray range = reply->request().rawHeader("Range");
+    qint64 offset{0};
+    if(!range.isEmpty()) {
+        offset = range.sliced(6).chopped(1).toLongLong();
+        reply->setResponseStatus(206);
+        reply->setResponseHeader("Content-Range", "bytes " + QByteArray::number(offset) + '-'
+                                                      + QByteArray::number(data.size() - 1) + '/'
+                                                      + QByteArray::number(data.size()));
+    }
+    reply->setResponseHeader("Content-Length", QByteArray::number(data.size() - offset));
+    reply->setResponseHeader("Accept-Ranges", "bytes");
+    reply->finish(data.sliced(offset));
+}
+
+QByteArray makeHttpWave()
+{
+    QByteArray wave;
+    const auto append16 = [&wave](quint16 value) {
+        char data[2];
+        qToLittleEndian(value, data);
+        wave.append(data, 2);
+    };
+    const auto append32 = [&wave](quint32 value) {
+        char data[4];
+        qToLittleEndian(value, data);
+        wave.append(data, 4);
+    };
+
+    wave.append("RIFF");
+    append32(36 + 88'200);
+    wave.append("WAVEfmt ");
+    append32(16);
+    append16(1);
+    append16(1);
+    append32(44'100);
+    append32(88'200);
+    append16(2);
+    append16(16);
+    wave.append("data");
+    append32(88'200);
+    for(int sample{0}; sample < 44'100; ++sample) {
+        append16(sample < 22'050 ? 1234 : 4321);
+    }
+    return wave;
 }
 
 QByteArray icyStreamData(QByteArrayView audio, QByteArray metadata)
@@ -152,7 +223,7 @@ protected:
 
 TEST_F(NetworkStreamDeviceTest, SendsStreamRequestHeaders)
 {
-    auto network = makeFakeNetworkAccessManager();
+    const auto network = makeFakeNetworkAccessManager();
     NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
 
     ASSERT_TRUE(device.open(QIODevice::ReadOnly));
@@ -167,7 +238,7 @@ TEST_F(NetworkStreamDeviceTest, ParsesMpegTsTimedId3Payload)
         "49443303000000000035544954320000000fc00003436c6f73652054686520446f6f725450453100000012c0000354656464"
         "792050656e6465726772617373");
 
-    const auto metadata = Id3Utils::parseTimedMetadata(payload);
+    const auto metadata = Metadata::parseTimedId3Metadata(payload);
 
     ASSERT_TRUE(metadata.has_value());
     EXPECT_EQ(metadata->title, u"Close The Door"_s);
@@ -181,7 +252,7 @@ TEST_F(NetworkStreamDeviceTest, ParsesMpegTsTimedId3PayloadStrippedByFfmpeg5)
         "49443303000000000035544954320000000fc00003436c6f73652054686520446f6f725450453100000012c0000354656464"
         "792050656e6465726772617373");
 
-    const auto metadata = Id3Utils::parseTimedMetadata(QByteArrayView{payload}.sliced(5));
+    const auto metadata = Metadata::parseTimedId3Metadata(QByteArrayView{payload}.sliced(5));
 
     ASSERT_TRUE(metadata.has_value());
     EXPECT_EQ(metadata->title, u"Close The Door"_s);
@@ -190,7 +261,7 @@ TEST_F(NetworkStreamDeviceTest, ParsesMpegTsTimedId3PayloadStrippedByFfmpeg5)
 
 TEST_F(NetworkStreamDeviceTest, PreservesApostrophesInIcyMetadataFields)
 {
-    auto network = makeFakeNetworkAccessManager();
+    const auto network = makeFakeNetworkAccessManager();
     NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
 
     ASSERT_TRUE(device.open(QIODevice::ReadOnly));
@@ -208,7 +279,7 @@ TEST_F(NetworkStreamDeviceTest, PreservesApostrophesInIcyMetadataFields)
 
 TEST_F(NetworkStreamDeviceTest, UnescapesApostrophesInIcyMetadataFields)
 {
-    auto network = makeFakeNetworkAccessManager();
+    const auto network = makeFakeNetworkAccessManager();
     NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
 
     ASSERT_TRUE(device.open(QIODevice::ReadOnly));
@@ -223,7 +294,7 @@ TEST_F(NetworkStreamDeviceTest, UnescapesApostrophesInIcyMetadataFields)
 
 TEST_F(NetworkStreamDeviceTest, MatchesIcyMetadataKeysOnlyAtFieldBoundaries)
 {
-    auto network = makeFakeNetworkAccessManager();
+    const auto network = makeFakeNetworkAccessManager();
     NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
 
     ASSERT_TRUE(device.open(QIODevice::ReadOnly));
@@ -238,7 +309,7 @@ TEST_F(NetworkStreamDeviceTest, MatchesIcyMetadataKeysOnlyAtFieldBoundaries)
 
 TEST_F(NetworkStreamDeviceTest, RejectsUnterminatedIcyMetadataFields)
 {
-    auto network = makeFakeNetworkAccessManager();
+    const auto network = makeFakeNetworkAccessManager();
     NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
 
     ASSERT_TRUE(device.open(QIODevice::ReadOnly));
@@ -253,7 +324,7 @@ TEST_F(NetworkStreamDeviceTest, RejectsUnterminatedIcyMetadataFields)
 
 TEST_F(NetworkStreamDeviceTest, FailsReadsOnNetworkThread)
 {
-    auto network = makeFakeNetworkAccessManager();
+    const auto network = makeFakeNetworkAccessManager();
     NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
 
     ASSERT_TRUE(device.open(QIODevice::ReadOnly));
@@ -267,7 +338,7 @@ TEST_F(NetworkStreamDeviceTest, CancellationTokenWakesBlockingRead)
 {
     using namespace std::chrono_literals;
 
-    auto network = makeFakeNetworkAccessManager();
+    const auto network = makeFakeNetworkAccessManager();
     NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
     std::stop_source abortSource;
 
@@ -290,7 +361,7 @@ TEST_F(NetworkStreamDeviceTest, CancellationTokenWakesBlockingRead)
 
 TEST_F(NetworkStreamDeviceTest, LateReplySignalsAfterDeviceDestructionDoNotUseDestroyedDevice)
 {
-    auto network = makeFakeNetworkAccessManager();
+    const auto network = makeFakeNetworkAccessManager();
     QPointer<FakeNetworkReply> reply;
 
     {
@@ -311,13 +382,161 @@ TEST_F(NetworkStreamDeviceTest, LateReplySignalsAfterDeviceDestructionDoNotUseDe
     EXPECT_TRUE(reply.isNull());
 }
 
+TEST_F(NetworkStreamDeviceTest, DetectsFiniteHttpFileCapabilities)
+{
+    struct Response
+    {
+        QByteArray length;
+        QByteArray ranges;
+        QByteArray icyInterval;
+        QByteArray encoding;
+        qint64 expectedSize;
+        bool sequential;
+    };
+    static const std::array responses{
+        Response{"100", "bytes", {}, {}, 100, false},   Response{"100", {}, {}, {}, 100, true},
+        Response{{}, "bytes", {}, {}, -1, true},        Response{"100", "bytes", "4", {}, -1, true},
+        Response{"100", "bytes", {}, "gzip", -1, true}, Response{"invalid", "bytes", {}, {}, -1, true},
+    };
+
+    for(const auto& response : responses) {
+        const auto network = makeFakeNetworkAccessManager();
+        NetworkStreamDevice device{network, QUrl{u"https://example.com/track.mp3"_s}, 64 * 1024};
+        ASSERT_TRUE(device.open(QIODevice::ReadOnly));
+
+        auto* reply = network->lastReply.data();
+        ASSERT_NE(reply, nullptr);
+        reply->setResponseHeader("Content-Length", response.length);
+        reply->setResponseHeader("Accept-Ranges", response.ranges);
+        reply->setResponseHeader("icy-metaint", response.icyInterval);
+        reply->setResponseHeader("Content-Encoding", response.encoding);
+        reply->emitMetadataChanged();
+
+        EXPECT_EQ(device.size(), response.expectedSize);
+        EXPECT_EQ(device.isSequential(), response.sequential);
+        EXPECT_EQ(network->lastRequest.rawHeader("Accept-Encoding"), "identity");
+    }
+}
+
+TEST_F(NetworkStreamDeviceTest, SeeksUsingValidatedHttpRanges)
+{
+    const QByteArray audio{"abcdefghijklmnopqrstuvwxyz"};
+    const auto network = makeFakeNetworkAccessManager(true);
+    network->onRequest = [&audio](FakeNetworkReply* reply) {
+        serveHttpFile(reply, audio);
+    };
+    NetworkStreamDevice device{network, QUrl{u"https://example.com/track.mp3"_s}, 64 * 1024};
+    std::stop_source abortSource;
+    ASSERT_TRUE(device.open(QIODevice::ReadOnly));
+    device.setReadCancellationToken(abortSource.get_token());
+
+    auto operation = std::async(std::launch::async, [&device, &audio]() {
+        ASSERT_TRUE(device.waitForReadyRead(1000));
+        EXPECT_FALSE(device.isSequential());
+        EXPECT_EQ(device.read(4), "abcd");
+        EXPECT_EQ(device.pos(), 4);
+        ASSERT_TRUE(device.seek(8));
+        EXPECT_EQ(device.pos(), 8);
+        EXPECT_EQ(device.size(), audio.size());
+        EXPECT_EQ(device.read(3), "ijk");
+        ASSERT_TRUE(device.seek(0));
+        EXPECT_EQ(device.read(3), "abc");
+        ASSERT_TRUE(device.seek(audio.size()));
+        char data{0};
+        EXPECT_EQ(device.read(&data, 1), 0);
+        ASSERT_TRUE(device.seek(5));
+        EXPECT_EQ(device.read(3), "fgh");
+        EXPECT_FALSE(device.seek(-1));
+        EXPECT_FALSE(device.seek(audio.size() + 1));
+    });
+    finishNetworkOperation(operation, abortSource);
+    EXPECT_EQ(network->lastRequest.rawHeader("Range"), "bytes=5-");
+    EXPECT_EQ(network->requestCount, 4);
+}
+
+TEST_F(NetworkStreamDeviceTest, ReadsDurationAndSeeksInFiniteHttpAudio)
+{
+    using namespace std::chrono_literals;
+
+    const QByteArray wave = makeHttpWave();
+    const auto network    = makeFakeNetworkAccessManager(true);
+    const QDateTime modifiedTime{QDate{2020, 11, 24}, QTime{10, 3, 40}, QTimeZone::utc()};
+    network->onRequest = [&wave](FakeNetworkReply* reply) {
+        reply->setResponseHeader("Last-Modified", "Tue, 24 Nov 2020 10:03:40 GMT");
+        serveHttpFile(reply, wave);
+    };
+
+    NetworkStreamDevice device{network, QUrl{u"https://example.com/track.wav"_s}, 64 * 1024};
+    device.setOpenTimeout(1s);
+    ASSERT_TRUE(device.open(QIODevice::ReadOnly));
+
+    const Track track{u"https://example.com/track.wav"_s};
+    const AudioSource source{
+        .filepath = track.filepath(), .device = &device, .remoteStreamDevice = &device, .remoteOpenTimeout = 1s};
+    std::stop_source abortSource;
+    FFmpegDecoder decoder;
+    std::stop_callback abortDecoder{abortSource.get_token(), [&decoder]() { decoder.requestAbort(); }};
+
+    auto operation = std::async(std::launch::async, [&]() {
+        {
+            FFmpegReader reader;
+            ASSERT_TRUE(reader.init(source));
+            Track metadataTrack{track};
+            ASSERT_TRUE(reader.readTrack(source, metadataTrack));
+            EXPECT_EQ(metadataTrack.duration(), 1000);
+            EXPECT_EQ(metadataTrack.fileSize(), wave.size());
+            EXPECT_EQ(metadataTrack.modifiedTime(), modifiedTime.toMSecsSinceEpoch());
+        }
+
+        ASSERT_TRUE(device.seek(0));
+        ASSERT_TRUE(decoder.init(source, track, AudioDecoder::UpdateTracks).has_value());
+        EXPECT_TRUE(decoder.isSeekable());
+        EXPECT_TRUE(decoder.trackHasChanged());
+        EXPECT_EQ(decoder.changedTrack().duration(), 1000);
+        EXPECT_EQ(decoder.changedTrack().fileSize(), wave.size());
+        EXPECT_EQ(decoder.changedTrack().modifiedTime(), modifiedTime.toMSecsSinceEpoch());
+
+        decoder.start();
+        decoder.seek(500);
+        auto result = decoder.readAudio(4096);
+        ASSERT_EQ(result.status, AudioDecoder::ReadStatus::DecodedAudio);
+        EXPECT_EQ(result.buffer.startTime(), 500);
+
+        qint16 sample{0};
+        std::memcpy(&sample, result.buffer.constData().data(), sizeof(sample));
+        EXPECT_EQ(sample, 4321);
+
+        decoder.seek(100);
+        result = decoder.readAudio(4096);
+        ASSERT_EQ(result.status, AudioDecoder::ReadStatus::DecodedAudio);
+        EXPECT_EQ(result.buffer.startTime(), 100);
+
+        std::memcpy(&sample, result.buffer.constData().data(), sizeof(sample));
+        EXPECT_EQ(sample, 1234);
+
+        for(int attempt{0}; attempt < 100; ++attempt) {
+            result = decoder.readAudio(4096);
+            if(result.status != AudioDecoder::ReadStatus::DecodedAudio) {
+                break;
+            }
+        }
+        EXPECT_EQ(result.status, AudioDecoder::ReadStatus::EndOfStream);
+        decoder.stop();
+    });
+
+    finishNetworkOperation(operation, abortSource);
+    const int requests = network->requestCount;
+    QCoreApplication::processEvents();
+    EXPECT_EQ(network->requestCount, requests);
+}
+
 TEST_F(NetworkStreamDeviceTest, DrainsFinishedReplyBeforeReturningEOS)
 {
     using namespace std::chrono_literals;
 
     static constexpr qsizetype BufferBytes = 64 * 1024UL;
 
-    auto network = makeFakeNetworkAccessManager();
+    const auto network = makeFakeNetworkAccessManager();
     NetworkStreamDevice device{network, QUrl{u"https://example.com/track.mp3"_s}, BufferBytes};
     std::stop_source abortSource;
 
@@ -368,7 +587,7 @@ TEST_F(NetworkStreamDeviceTest, ReconnectsAfterCleanFinishWhenEnabled)
 {
     using namespace std::chrono_literals;
 
-    auto network = makeFakeNetworkAccessManager();
+    const auto network = makeFakeNetworkAccessManager();
     NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
     std::stop_source abortSource;
 
@@ -415,7 +634,7 @@ TEST_F(NetworkStreamDeviceTest, ReconnectsAfterCleanFinishWhenEnabled)
 
 TEST_F(NetworkStreamDeviceTest, StopsReconnectLoopAfterRepeatedEmptyCleanFinishes)
 {
-    auto network = makeFakeNetworkAccessManager();
+    const auto network = makeFakeNetworkAccessManager();
     NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
 
     ASSERT_TRUE(device.open(QIODevice::ReadOnly));

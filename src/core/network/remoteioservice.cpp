@@ -104,6 +104,7 @@ RemoteStreamSource RemoteIoService::createStreamSource(const QUrl& url) const
     }
 
     auto device = std::make_unique<NetworkStreamDevice>(m_networkManager, url, maxBufferedBytes);
+    device->setOpenTimeout(std::chrono::milliseconds{openTimeoutMs});
 
     RemoteStreamSource source;
     source.remoteDevice = device.get();

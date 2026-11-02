@@ -57,6 +57,7 @@ public:
     [[nodiscard]] bool hasLiveDuration() const;
 
     void trackChanged(const Track& track);
+    void trackUpdated(const Track& track);
     void stateChanged(Player::PlayState state);
     void updateLabels(uint64_t time) const;
 
@@ -143,15 +144,26 @@ void SeekContainerPrivate::trackChanged(const Track& track)
     }
 }
 
+void SeekContainerPrivate::trackUpdated(const Track& track)
+{
+    if(!track.isValid() || m_max == track.duration()) {
+        return;
+    }
+
+    m_max = track.duration();
+    updateLabels(m_playerController->currentPosition());
+    updateLabelWidths();
+}
+
 void SeekContainerPrivate::stateChanged(Player::PlayState state)
 {
     switch(state) {
-        case(Player::PlayState::Paused):
+        case Player::PlayState::Paused:
             break;
-        case(Player::PlayState::Stopped):
+        case Player::PlayState::Stopped:
             reset();
             break;
-        case(Player::PlayState::Playing): {
+        case Player::PlayState::Playing: {
             if(m_max == 0) {
                 trackChanged(m_playerController->currentTrack());
             }
@@ -192,6 +204,8 @@ SeekContainer::SeekContainer(PlayerController* playerController, QWidget* parent
                      [this](Player::PlayState state) { p->stateChanged(state); });
     QObject::connect(p->m_playerController, &PlayerController::currentTrackChanged, this,
                      [this](const Track& track) { p->trackChanged(track); });
+    QObject::connect(p->m_playerController, &PlayerController::currentTrackUpdated, this,
+                     [this](const Track& track) { p->trackUpdated(track); });
     QObject::connect(p->m_playerController, &PlayerController::currentTrackSeekableChanged, this, [this]() {
         p->updateLabels(p->m_playerController->currentPosition());
         p->updateLabelWidths();

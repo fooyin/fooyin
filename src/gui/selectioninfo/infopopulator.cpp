@@ -227,15 +227,15 @@ void InfoPopulatorPrivate::addTrackLocation(int total, const Track& track)
         }
     }
 
-    if(isLocalFile) {
+    if(isLocalFile || (isRemote && track.fileSize() > 0)) {
         checkAddEntryNode(
             u"FileSize"_s, total > 1 ? InfoPopulator::tr("Total Size") : InfoPopulator::tr("File Size"),
             ItemParent::Location, fileSize(track), InfoItem::Total,
             InfoItem::FormatUIntFunc{[](uint64_t size) -> QString { return Utils::formatFileSize(size, true); }});
-        if(track.modifiedTime() > 0) {
-            checkAddEntryNode(u"LastModified"_s, InfoPopulator::tr("Last Modified"), ItemParent::Location,
-                              track.modifiedTime(), InfoItem::Max, InfoItem::FormatUIntFunc{Utils::formatTimeMs});
-        }
+    }
+    if((isLocalFile || isRemote) && track.modifiedTime() > 0) {
+        checkAddEntryNode(u"LastModified"_s, InfoPopulator::tr("Last Modified"), ItemParent::Location,
+                          track.modifiedTime(), InfoItem::Max, InfoItem::FormatUIntFunc{Utils::formatTimeMs});
     }
 
     if(track.isInLibrary()) {
