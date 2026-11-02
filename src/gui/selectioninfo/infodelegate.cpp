@@ -19,6 +19,8 @@
 
 #include "infodelegate.h"
 
+#include <gui/guiutils.h>
+
 #include <QApplication>
 #include <QPainter>
 
@@ -48,11 +50,29 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& opt, const QMode
     }
 }
 
-void paintEntry(QPainter* painter, const QStyleOptionViewItem& opt, const QModelIndex& /*index*/)
+void paintEntry(QPainter* painter, QStyleOptionViewItem opt, const QModelIndex& /*index*/)
 {
-    QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
+    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
+    const QString text  = std::exchange(opt.text, {});
 
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+
+    const QRect textRect = Fooyin::Gui::itemViewTextRect(opt);
+    const auto textRole
+        = opt.state.testFlag(QStyle::State_Selected) ? Fooyin::Gui::itemViewSelectionTextRole(opt) : QPalette::Text;
+    const bool enabled = opt.state.testFlag(QStyle::State_Enabled);
+
+    opt.palette.setCurrentColorGroup(!enabled                                   ? QPalette::Disabled
+                                     : opt.state.testFlag(QStyle::State_Active) ? QPalette::Active
+                                                                                : QPalette::Inactive);
+
+    painter->save();
+    painter->setClipRect(opt.rect, Qt::IntersectClip);
+    painter->setFont(opt.font);
+    style->drawItemText(painter, textRect,
+                        QStyle::visualAlignment(opt.direction, opt.displayAlignment) | Qt::TextSingleLine, opt.palette,
+                        enabled, opt.fontMetrics.elidedText(text, opt.textElideMode, textRect.width()), textRole);
+    painter->restore();
 }
 } // namespace
 
