@@ -311,7 +311,11 @@ void LibraryTreeView::updateBackgroundPalette()
     QPalette viewPalette{m_backgroundPalette};
     if(hasImage) {
         // QTreeView fills its animation buffers with the view's base brush
-        viewPalette.setBrush(QPalette::Base, Qt::NoBrush);
+        for(const auto group : {QPalette::Active, QPalette::Inactive, QPalette::Disabled}) {
+            QBrush base = viewPalette.brush(group, QPalette::Base);
+            base.setStyle(Qt::NoBrush);
+            viewPalette.setBrush(group, QPalette::Base, base);
+        }
     }
     Gui::refreshItemViewPalette(this, viewPalette);
 }
