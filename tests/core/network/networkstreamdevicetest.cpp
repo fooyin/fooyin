@@ -269,7 +269,7 @@ TEST_F(NetworkStreamDeviceTest, CancellationTokenWakesBlockingRead)
 
     auto network = makeFakeNetworkAccessManager();
     NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
-    const std::stop_source abortSource;
+    std::stop_source abortSource;
 
     ASSERT_TRUE(device.open(QIODevice::ReadOnly));
     device.setReadCancellationToken(abortSource.get_token());
@@ -319,7 +319,7 @@ TEST_F(NetworkStreamDeviceTest, DrainsFinishedReplyBeforeReturningEOS)
 
     auto network = makeFakeNetworkAccessManager();
     NetworkStreamDevice device{network, QUrl{u"https://example.com/track.mp3"_s}, BufferBytes};
-    const std::stop_source abortSource;
+    std::stop_source abortSource;
 
     ASSERT_TRUE(device.open(QIODevice::ReadOnly));
     device.setReadCancellationToken(abortSource.get_token());
@@ -370,7 +370,7 @@ TEST_F(NetworkStreamDeviceTest, ReconnectsAfterCleanFinishWhenEnabled)
 
     auto network = makeFakeNetworkAccessManager();
     NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
-    const std::stop_source abortSource;
+    std::stop_source abortSource;
 
     ASSERT_TRUE(device.open(QIODevice::ReadOnly));
     device.setReadCancellationToken(abortSource.get_token());
