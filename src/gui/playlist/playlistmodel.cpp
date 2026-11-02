@@ -1094,6 +1094,10 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
         return true;
     }
 
+    if(m_currentPlaylist && (m_currentPlaylist->isAutoPlaylist() || m_currentPlaylist->isLocked())) {
+        return false;
+    }
+
     TrackList tracks;
 
     if(const auto mimeTracks = TrackMimeData::tracksFrom(data)) {
