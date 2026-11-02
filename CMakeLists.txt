@@ -409,6 +409,7 @@ set(SOURCES
 
 qt_add_resources(SOURCES data/data.qrc)
 qt_add_resources(SOURCES data/icons.qrc)
+qt_add_resources(SOURCES data/layouts.qrc)
 
 qt_add_executable(fooyin WIN32 MACOSX_BUNDLE ${SOURCES} ${TRANSLATIONS})
 if(APPLE)

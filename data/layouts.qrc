@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="layouts/01-simple.fyl">layouts/simple.fyl</file>
+        <file alias="layouts/02-vision.fyl">layouts/vision.fyl</file>
+        <file alias="layouts/03-browser.fyl">layouts/browser.fyl</file>
+        <file alias="layouts/04-obsidian.fyl">layouts/obsidian.fyl</file>
+        <file alias="layouts/05-ember.fyl">layouts/ember.fyl</file>
+        <file alias="layouts/06-gallery.fyl">layouts/gallery.fyl</file>
+    </qresource>
+</RCC>

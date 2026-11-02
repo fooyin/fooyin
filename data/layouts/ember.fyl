@@ -1,0 +1,126 @@
+{
+    "Name": "Ember",
+    "Widgets": [
+        {
+            "SplitterVertical": {
+                "Locked": [
+                    true,
+                    true,
+                    false,
+                    true
+                ],
+                "State": "AAAA/wAAAAEAAAAEAAAA2QAAABoAAALGAAAAFgD/////AQAAAAIA",
+                "Widgets": [
+                    {
+                        "SplitterHorizontal": {
+                            "State": "AAAA/wAAAAEAAAAEAAABAAAAAQAAAAEAAAABAAD/////AQAAAAEA",
+                            "Widgets": [
+                                {
+                                    "LibraryFilter": {
+                                        "Columns": "0",
+                                        "Group": "Default",
+                                        "ID": "955f29805de446d7a9b6195a94bfd817",
+                                        "Index": 0
+                                    }
+                                },
+                                {
+                                    "LibraryFilter": {
+                                        "Columns": "1",
+                                        "Group": "Default",
+                                        "ID": "4fee1a754b3e47ff86f4c711fbf0f0eb",
+                                        "Index": 1
+                                    }
+                                },
+                                {
+                                    "LibraryFilter": {
+                                        "Columns": "2",
+                                        "Group": "Default",
+                                        "ID": "3b20c1db282d4bfe9a95c776e6723608",
+                                        "Index": 2
+                                    }
+                                },
+                                {
+                                    "LibraryFilter": {
+                                        "Columns": "3",
+                                        "Group": "Default",
+                                        "ID": "34777508a4ae4ec5939620f235e8ec1a",
+                                        "Index": 3
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "SplitterHorizontal": {
+                            "Locked": [
+                                true,
+                                false,
+                                false,
+                                false,
+                                true
+                            ],
+                            "State": "AAAA/wAAAAEAAAAFAAAAcgAABRoAAAA2AAAAGAAAAWQA/////wEAAAABAA==",
+                            "Widgets": [
+                                {
+                                    "PlayerControls": {}
+                                },
+                                {
+                                    "SeekBar": {}
+                                },
+                                {
+                                    "PlaylistControls": {}
+                                },
+                                {
+                                    "VolumeControls": {}
+                                },
+                                {
+                                    "SearchBar": {
+                                        "Widgets": "955f29805de446d7a9b6195a94bfd817|34777508a4ae4ec5939620f235e8ec1a|4fee1a754b3e47ff86f4c711fbf0f0eb|3b20c1db282d4bfe9a95c776e6723608"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "SplitterHorizontal": {
+                            "Locked": [
+                                true,
+                                false,
+                                true
+                            ],
+                            "State": "AAAA/wAAAAEAAAADAAABQwAAA0IAAAFgAP////8BAAAAAQA=",
+                            "Widgets": [
+                                {
+                                    "SplitterVertical": {
+                                        "Locked": [
+                                            true,
+                                            false
+                                        ],
+                                        "State": "AAAA/wAAAAEAAAACAAABQwAAAVEA/////wEAAAACAA==",
+                                        "Widgets": [
+                                            {
+                                                "ArtworkPanel": {}
+                                            },
+                                            {
+                                                "SelectionInfo": {}
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "Playlist": {}
+                                },
+                                {
+                                    "PlaylistOrganiser": {}
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "StatusBar": {}
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -1,0 +1,77 @@
+{
+    "Name": "Vision",
+    "Widgets": [
+        {
+            "SplitterVertical": {
+                "Locked": [
+                    true,
+                    false,
+                    true
+                ],
+                "State": "AAAA/wAAAAEAAAADAAAAHAAAA6EAAAAWAP////8BAAAAAgA=",
+                "Widgets": [
+                    {
+                        "SplitterHorizontal": {
+                            "Locked": [
+                                true,
+                                false,
+                                false,
+                                false
+                            ],
+                            "State": "AAAA/wAAAAEAAAAEAAAAiQAABk8AAABHAAAAIwD/////AQAAAAEA",
+                            "Widgets": [
+                                {
+                                    "PlayerControls": {}
+                                },
+                                {
+                                    "SeekBar": {}
+                                },
+                                {
+                                    "PlaylistControls": {}
+                                },
+                                {
+                                    "VolumeControls": {}
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "SplitterHorizontal": {
+                            "State": "AAAA/wAAAAEAAAACAAADuwAAA48A/////wEAAAABAA==",
+                            "Widgets": [
+                                {
+                                    "TabStack": {
+                                        "Position": "West",
+                                        "State": "Artwork\u001fInfo\u001fLibrary Tree\u001fPlaylist Organiser",
+                                        "Widgets": [
+                                            {
+                                                "ArtworkPanel": {}
+                                            },
+                                            {
+                                                "SelectionInfo": {}
+                                            },
+                                            {
+                                                "LibraryTree": {
+                                                    "Grouping": "Artist/Album"
+                                                }
+                                            },
+                                            {
+                                                "PlaylistOrganiser": {}
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "Playlist": {}
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "StatusBar": {}
+                    }
+                ]
+            }
+        }
+    ]
+}
