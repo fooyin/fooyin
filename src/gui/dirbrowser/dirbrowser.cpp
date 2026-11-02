@@ -32,6 +32,7 @@
 #include <core/track.h>
 #include <gui/contextmenuids.h>
 #include <gui/contextmenuutils.h>
+#include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/guiutils.h>
@@ -39,6 +40,7 @@
 #include <gui/playlist/playlistinteractor.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/autoheaderview.h>
+#include <gui/widgets/backgroundimagesource.h>
 #include <gui/widgets/toolbutton.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
@@ -82,6 +84,7 @@ constexpr auto DirBrowserShowHiddenKey   = u"DirectoryBrowser/Hidden";
 constexpr auto DirBrowserSendPlaybackKey = u"DirectoryBrowser/StartPlaybackOnSend";
 constexpr auto DirBrowserShowHeaderKey   = u"DirectoryBrowser/ShowHeader";
 constexpr auto DirBrowserRestoreSortKey  = u"DirectoryBrowser/RestoreSort";
+constexpr auto DirBrowserBackgroundKey   = u"DirectoryBrowser/Background";
 
 namespace {
 class DirChange : public QUndoCommand
@@ -174,7 +177,8 @@ private:
 
 namespace Fooyin {
 DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* actionManager,
-                       PlaylistInteractor* playlistInteractor, SettingsManager* settings, QWidget* parent)
+                       PlaylistInteractor* playlistInteractor, TrackSelectionController* selection,
+                       CoverRepository* coverRepository, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_supportedExtensions{Utils::extensionsToWildcards(supportedExtensions)}
     , m_actionManager{actionManager}
@@ -188,6 +192,8 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
     , m_dirTree{new DirTree(this)}
     , m_model{new QFileSystemModel(this)}
     , m_proxyModel{new DirProxyModel(true, this)}
+    , m_backgroundSource{new BackgroundImageSource(new CoverProvider(coverRepository, this),
+                                                   m_playlistInteractor->playerController(), selection, this)}
     , m_defaultFilters{QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot}
     , m_showSymLinks{false}
     , m_showHidden{false}
@@ -340,6 +346,9 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
         }
     });
 
+    QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_dirTree,
+                     &DirTree::setBackgroundPixmap);
+
     QObject::connect(m_model, &QAbstractItemModel::layoutChanged, this, [this]() { handleModelUpdated(); });
     QObject::connect(
         m_proxyModel, &QAbstractItemModel::modelReset, this, [this]() { handleModelReset(); }, Qt::QueuedConnection);
@@ -446,6 +455,7 @@ DirBrowser::ConfigData DirBrowser::defaultConfig() const
     config.showLocation = m_settings->fileValue(DirBrowserLocationKey, config.showLocation).toBool();
     config.showSymLinks = m_settings->fileValue(DirBrowserShowSymLinksKey, config.showSymLinks).toBool();
     config.showHidden   = m_settings->fileValue(DirBrowserShowHiddenKey, config.showHidden).toBool();
+    config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(DirBrowserBackgroundKey).toMap()));
 
     return config;
 }
@@ -470,6 +480,10 @@ void DirBrowser::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(DirBrowserLocationKey, config.showLocation);
     m_settings->fileSet(DirBrowserShowSymLinksKey, config.showSymLinks);
     m_settings->fileSet(DirBrowserShowHiddenKey, config.showHidden);
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    m_settings->fileSet(DirBrowserBackgroundKey, background.toVariantMap());
 }
 
 void DirBrowser::clearSavedDefaults() const
@@ -487,11 +501,13 @@ void DirBrowser::clearSavedDefaults() const
     m_settings->fileRemove(DirBrowserLocationKey);
     m_settings->fileRemove(DirBrowserShowSymLinksKey);
     m_settings->fileRemove(DirBrowserShowHiddenKey);
+    m_settings->fileRemove(DirBrowserBackgroundKey);
 }
 
 void DirBrowser::applyConfig(const ConfigData& config)
 {
     m_config = config;
+    m_config.background.normalise();
 
     setDoubleClickAction(m_config.doubleClickAction);
     setMiddleClickAction(m_config.middleClickAction);
@@ -507,6 +523,8 @@ void DirBrowser::applyConfig(const ConfigData& config)
     setShowSymLinksEnabled(m_config.showSymLinks);
     setShowHidden(m_config.showHidden);
     setRootPath(m_config.rootPath);
+    m_dirTree->setBackgroundConfig(m_config.background);
+    m_backgroundSource->setConfig(m_config.background);
     updateControlState();
 
     Q_EMIT configChanged();
@@ -1226,6 +1244,10 @@ void DirBrowser::saveConfigToLayout(const ConfigData& config, QJsonObject& layou
     layout["ShowSymLinks"_L1]      = config.showSymLinks;
     layout["ShowHidden"_L1]        = config.showHidden;
     layout["RootPath"_L1]          = config.rootPath;
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    layout["Background"_L1] = background;
 }
 
 DirBrowser::ConfigData DirBrowser::configFromLayout(const QJsonObject& layout) const
@@ -1258,6 +1280,7 @@ DirBrowser::ConfigData DirBrowser::configFromLayout(const QJsonObject& layout) c
     config.showSymLinks = layout.value("ShowSymLinks"_L1).toBool(config.showSymLinks);
     config.showHidden   = layout.value("ShowHidden"_L1).toBool(config.showHidden);
     config.rootPath     = layout.value("RootPath"_L1).toString(config.rootPath);
+    config.background.loadLayout(layout.value("Background"_L1).toObject());
 
     if(config.rootPath.isEmpty()) {
         config.rootPath = QDir::homePath();

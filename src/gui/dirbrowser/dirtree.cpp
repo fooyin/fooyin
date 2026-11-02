@@ -21,11 +21,13 @@
 
 #include <gui/contextmenuutils.h>
 #include <gui/widgets/autoheaderview.h>
+#include <gui/widgets/widgetbackground.h>
 
 #include <QAction>
 #include <QHeaderView>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QPainter>
 #include <QScrollBar>
 
 #include <map>
@@ -34,8 +36,11 @@ namespace Fooyin {
 DirTree::DirTree(QWidget* parent)
     : QTreeView{parent}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
+    , m_background{new WidgetBackground(viewport(), this)}
     , m_restoreSort{false}
 {
+    viewport()->setAutoFillBackground(false);
+
     setHeader(m_header);
     setUniformRowHeights(true);
     setSelectionBehavior(SelectRows);
@@ -71,6 +76,16 @@ void DirTree::setModel(QAbstractItemModel* model)
     }
 
     QTreeView::setModel(model);
+}
+
+void DirTree::setBackgroundConfig(const BackgroundConfig& config)
+{
+    m_background->setConfig(config);
+}
+
+void DirTree::setBackgroundPixmap(const QPixmap& pixmap)
+{
+    m_background->setPixmap(pixmap);
 }
 
 void DirTree::initialiseHeader()
@@ -219,6 +234,25 @@ void DirTree::showHeaderContextMenu(const QPoint& pos)
     m_header->addHeaderAlignmentMenu(menu, m_header->mapToGlobal(pos));
 
     menu->popup(header()->mapToGlobal(pos));
+}
+
+void DirTree::initViewItemOption(QStyleOptionViewItem* option) const
+{
+    QTreeView::initViewItemOption(option);
+
+    if(m_background->hasImage()) {
+        WidgetBackground::makeRowPaletteTransparent(option->palette);
+    }
+}
+
+void DirTree::paintEvent(QPaintEvent* event)
+{
+    {
+        QPainter painter{viewport()};
+        painter.fillRect(viewport()->rect(), palette().brush(QPalette::Base));
+        m_background->draw(painter);
+    }
+    QTreeView::paintEvent(event);
 }
 
 void DirTree::resizeEvent(QResizeEvent* event)

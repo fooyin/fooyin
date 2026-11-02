@@ -24,6 +24,8 @@
 
 namespace Fooyin {
 class AutoHeaderView;
+class WidgetBackground;
+struct BackgroundConfig;
 
 class DirTree : public QTreeView
 {
@@ -33,6 +35,8 @@ public:
     explicit DirTree(QWidget* parent = nullptr);
 
     void setModel(QAbstractItemModel* model) override;
+    void setBackgroundConfig(const BackgroundConfig& config);
+    void setBackgroundPixmap(const QPixmap& pixmap);
 
     void initialiseHeader();
     void resizeView();
@@ -52,6 +56,8 @@ Q_SIGNALS:
     void middleClicked();
 
 protected:
+    void initViewItemOption(QStyleOptionViewItem* option) const override;
+    void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseDoubleClickEvent(QMouseEvent* event) override;
@@ -62,6 +68,7 @@ private:
     void showHeaderContextMenu(const QPoint& pos);
 
     AutoHeaderView* m_header;
+    WidgetBackground* m_background;
     QByteArray m_pendingHeaderState;
     bool m_restoreSort;
 };

@@ -32,8 +32,9 @@ void DirDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, c
 {
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
+    WidgetBackground::clearDelegateBackground(opt);
 
-    QStyle* style           = option.widget ? option.widget->style() : QApplication::style();
+    const QStyle* style     = option.widget ? option.widget->style() : QApplication::style();
     const bool isPlaying    = index.data(DirProxyModel::IsPlaying).toBool();
     const QIcon playingIcon = isPlaying ? opt.icon : QIcon{};
     const QRect iconRect

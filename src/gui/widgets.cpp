@@ -1052,8 +1052,9 @@ void Widgets::refreshCoverWidgets()
 
 FyWidget* Widgets::createDirBrowser()
 {
-    auto* browser = new DirBrowser(m_core->audioLoader()->supportedFileExtensions(), m_gui->actionManager(),
-                                   m_playlistInteractor, m_settings, m_window);
+    auto* browser
+        = new DirBrowser(m_core->audioLoader()->supportedFileExtensions(), m_gui->actionManager(), m_playlistInteractor,
+                         m_gui->trackSelection(), m_coverRepository, m_settings, m_window);
 
     browser->playstateChanged(m_core->playerController()->playState());
     browser->activePlaylistChanged(m_core->playlistHandler()->activePlaylist());
