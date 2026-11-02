@@ -46,7 +46,7 @@ public:
         m_aborted = true;
         if(m_finishOnAbort) {
             setError(OperationCanceledError, QStringLiteral("aborted"));
-            Q_EMIT finished();
+            emitFinished();
         }
     }
 
@@ -82,6 +82,7 @@ public:
 
     void emitFinished()
     {
+        setFinished(true);
         Q_EMIT finished();
     }
 
@@ -89,7 +90,7 @@ public:
     {
         m_data = std::move(data);
         Q_EMIT readyRead();
-        Q_EMIT finished();
+        emitFinished();
     }
 
 protected:

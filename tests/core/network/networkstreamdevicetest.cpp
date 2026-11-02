@@ -269,7 +269,7 @@ TEST_F(NetworkStreamDeviceTest, CancellationTokenWakesBlockingRead)
 
     auto network = makeFakeNetworkAccessManager();
     NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
-    std::stop_source abortSource;
+    const std::stop_source abortSource;
 
     ASSERT_TRUE(device.open(QIODevice::ReadOnly));
     device.setReadCancellationToken(abortSource.get_token());
@@ -311,24 +311,106 @@ TEST_F(NetworkStreamDeviceTest, LateReplySignalsAfterDeviceDestructionDoNotUseDe
     EXPECT_TRUE(reply.isNull());
 }
 
-TEST_F(NetworkStreamDeviceTest, ReconnectsAfterCleanFinishWhenEnabled)
+TEST_F(NetworkStreamDeviceTest, DrainsFinishedReplyBeforeReturningEOS)
 {
+    using namespace std::chrono_literals;
+
+    static constexpr qsizetype BufferBytes = 64 * 1024UL;
+
     auto network = makeFakeNetworkAccessManager();
-    NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
+    NetworkStreamDevice device{network, QUrl{u"https://example.com/track.mp3"_s}, BufferBytes};
+    const std::stop_source abortSource;
 
     ASSERT_TRUE(device.open(QIODevice::ReadOnly));
-    device.setNonBlockingReadsEnabled(true);
+    device.setReadCancellationToken(abortSource.get_token());
+
+    const QPointer<FakeNetworkReply> reply = network->lastReply;
+    ASSERT_FALSE(reply.isNull());
+
+    QByteArray audio(BufferBytes, 'a');
+    audio.append(QByteArray(BufferBytes, 'b'));
+    audio.append(QByteArray(BufferBytes + 17, 'c'));
+    reply->finish(audio);
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+
+    EXPECT_FALSE(reply.isNull());
+    EXPECT_EQ(device.bufferedByteCount(), BufferBytes);
+
+    auto read = std::async(std::launch::async, [&device]() {
+        QByteArray received;
+        char buffer[4096];
+        while(true) {
+            const qint64 sizeRead = device.read(buffer, sizeof(buffer));
+            if(sizeRead <= 0) {
+                return std::pair{received, sizeRead};
+            }
+            received.append(buffer, sizeRead);
+        }
+    });
+
+    const auto deadline = std::chrono::steady_clock::now() + 1s;
+    while(read.wait_for(0ms) != std::future_status::ready && std::chrono::steady_clock::now() < deadline) {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+    }
+    EXPECT_EQ(read.wait_for(0ms), std::future_status::ready);
+    abortSource.request_stop();
+
+    const auto [received, lastRead] = read.get();
+    EXPECT_EQ(received, audio);
+    EXPECT_EQ(lastRead, 0);
+
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    EXPECT_TRUE(reply.isNull());
+    EXPECT_EQ(network->requestCount, 1);
+}
+
+TEST_F(NetworkStreamDeviceTest, ReconnectsAfterCleanFinishWhenEnabled)
+{
+    using namespace std::chrono_literals;
+
+    auto network = makeFakeNetworkAccessManager();
+    NetworkStreamDevice device{network, QUrl{u"https://radio.example.com/live"_s}, 2048};
+    const std::stop_source abortSource;
+
+    ASSERT_TRUE(device.open(QIODevice::ReadOnly));
+    device.setReadCancellationToken(abortSource.get_token());
     device.setReconnectOnFinishedEnabled(true);
 
-    QPointer<FakeNetworkReply> firstReply = network->lastReply;
+    const QPointer<FakeNetworkReply> firstReply = network->lastReply;
     ASSERT_FALSE(firstReply.isNull());
 
-    firstReply->emitFinished();
+    const QByteArray audio((192 * 1024) + 17, 'a');
+    firstReply->finish(audio);
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
     QCoreApplication::processEvents();
 
-    QPointer<FakeNetworkReply> secondReply = network->lastReply;
+    EXPECT_FALSE(firstReply.isNull());
+    EXPECT_EQ(network->requestCount, 1);
+
+    auto read = std::async(std::launch::async, [&device, &audio]() {
+        QByteArray received;
+        while(received.size() < audio.size()) {
+            const QByteArray data = device.read(4096);
+            if(data.isEmpty()) {
+                break;
+            }
+            received.append(data);
+        }
+        return received;
+    });
+
+    const auto deadline = std::chrono::steady_clock::now() + 1s;
+    while(read.wait_for(0ms) != std::future_status::ready && std::chrono::steady_clock::now() < deadline) {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+    }
+    abortSource.request_stop();
+    EXPECT_EQ(read.get(), audio);
+    QCoreApplication::processEvents();
+
+    const QPointer<FakeNetworkReply> secondReply = network->lastReply;
     ASSERT_FALSE(secondReply.isNull());
     EXPECT_NE(firstReply, secondReply);
+    EXPECT_EQ(network->requestCount, 2);
 }
 
 TEST_F(NetworkStreamDeviceTest, StopsReconnectLoopAfterRepeatedEmptyCleanFinishes)
@@ -344,7 +426,7 @@ TEST_F(NetworkStreamDeviceTest, StopsReconnectLoopAfterRepeatedEmptyCleanFinishe
     ASSERT_EQ(network->requestCount, 1);
 
     for(int i{0}; i < MaxReconnects; ++i) {
-        QPointer<FakeNetworkReply> reply = network->lastReply;
+        const QPointer<FakeNetworkReply> reply = network->lastReply;
         ASSERT_FALSE(reply.isNull());
 
         reply->emitFinished();
@@ -355,7 +437,7 @@ TEST_F(NetworkStreamDeviceTest, StopsReconnectLoopAfterRepeatedEmptyCleanFinishe
         EXPECT_NE(reply, network->lastReply);
     }
 
-    QPointer<FakeNetworkReply> finalReply = network->lastReply;
+    const QPointer<FakeNetworkReply> finalReply = network->lastReply;
     ASSERT_FALSE(finalReply.isNull());
     finalReply->emitFinished();
     QCoreApplication::processEvents();
@@ -370,7 +452,7 @@ TEST_F(NetworkStreamDeviceTest, HlsReadsTimedId3MetadataFromEmsg)
 
     ASSERT_TRUE(device.open(QIODevice::ReadOnly));
 
-    QPointer<FakeNetworkReply> playlistReply = network->lastReply;
+    const QPointer<FakeNetworkReply> playlistReply = network->lastReply;
     ASSERT_FALSE(playlistReply.isNull());
     playlistReply->appendData("#EXTM3U\n"
                               "#EXTINF:3,\n"
@@ -381,7 +463,7 @@ TEST_F(NetworkStreamDeviceTest, HlsReadsTimedId3MetadataFromEmsg)
     playlistReply->emitFinished();
     QCoreApplication::processEvents();
 
-    QPointer<FakeNetworkReply> segmentReply = network->lastReply;
+    const QPointer<FakeNetworkReply> segmentReply = network->lastReply;
     ASSERT_FALSE(segmentReply.isNull());
     const QByteArray firstMetadata = timedId3Emsg("Paul Carrack", "Don't Shed a Tear", "LG73");
     segmentReply->appendData(firstMetadata.first(17));
@@ -408,7 +490,7 @@ TEST_F(NetworkStreamDeviceTest, HlsReadsTimedId3MetadataFromEmsg)
     segmentReply->emitFinished();
     QCoreApplication::processEvents();
 
-    QPointer<FakeNetworkReply> nextSegmentReply = network->lastReply;
+    const QPointer<FakeNetworkReply> nextSegmentReply = network->lastReply;
     ASSERT_FALSE(nextSegmentReply.isNull());
     ASSERT_NE(nextSegmentReply, segmentReply);
     nextSegmentReply->appendData(timedId3Emsg("The Police", "Message In A Bottle", "LG73"));

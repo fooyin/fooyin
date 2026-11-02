@@ -343,6 +343,63 @@ void appendReplyData(NetworkStreamDeviceState& state, QNetworkReply* reply)
     }
 }
 
+void readNetworkStreamReply(const std::shared_ptr<QNetworkAccessManager>& network, const QUrl& url,
+                            const std::shared_ptr<NetworkStreamDeviceState>& state, QNetworkReply* reply)
+{
+    bool finished{false};
+    bool reconnect{false};
+    {
+        const std::scoped_lock lock{state->mutex};
+        if(reply != state->reply) {
+            return;
+        }
+
+        appendReplyData(*state, reply);
+
+        // A finished download may still hold bytes that don't fit in the read-ahead buffer
+        finished = reply->isFinished()
+                && (reply->bytesAvailable() == 0 || reply->error() != QNetworkReply::NoError || state->aborted);
+        if(finished) {
+            const bool receivedBytes
+                = state->streamBuffer.bytesReceived > state->streamBuffer.requestStartBytesReceived;
+            if(reply->error() != QNetworkReply::NoError && state->error.isEmpty() && !state->aborted) {
+                state->error = reply->errorString();
+            }
+
+            if(receivedBytes) {
+                state->reconnect.cleanFinishReconnectAttempts = 0;
+            }
+            else if(reply->error() == QNetworkReply::NoError && state->reconnect.reconnectOnFinished && !state->aborted
+                    && state->error.isEmpty()) {
+                ++state->reconnect.cleanFinishReconnectAttempts;
+            }
+
+            reconnect
+                = reply->error() == QNetworkReply::NoError && state->reconnect.reconnectOnFinished && !state->aborted
+               && state->error.isEmpty()
+               && (receivedBytes || state->reconnect.cleanFinishReconnectAttempts <= MaxCleanFinishReconnectAttempts);
+            state->reply.clear();
+            if(reconnect) {
+                state->readMode.readWouldBlock = state->readMode.nonBlockingReadsEnabled;
+            }
+            else {
+                state->finished = true;
+            }
+        }
+    }
+    state->ready.notify_all();
+
+    if(!finished) {
+        return;
+    }
+
+    reply->deleteLater();
+    if(reconnect) {
+        QMetaObject::invokeMethod(network.get(),
+                                  [network, url, state]() { startNetworkStreamRequest(network, url, state); });
+    }
+}
+
 void startNetworkStreamRequestOnNetworkThread(const std::shared_ptr<QNetworkAccessManager>& network, const QUrl& url,
                                               const std::shared_ptr<NetworkStreamDeviceState>& state)
 {
@@ -392,48 +449,8 @@ void startNetworkStreamRequestOnNetworkThread(const std::shared_ptr<QNetworkAcce
         }
         state->ready.notify_all();
     });
-    QObject::connect(reply, &QNetworkReply::finished, reply, [network, url, state, reply]() {
-        bool reconnect{false};
-        {
-            const std::scoped_lock lock{state->mutex};
-            if(reply == state->reply) {
-                appendReplyData(*state, reply);
-
-                const bool receivedBytes
-                    = state->streamBuffer.bytesReceived > state->streamBuffer.requestStartBytesReceived;
-                if(reply->error() != QNetworkReply::NoError && state->error.isEmpty() && !state->aborted) {
-                    state->error = reply->errorString();
-                }
-
-                if(receivedBytes) {
-                    state->reconnect.cleanFinishReconnectAttempts = 0;
-                }
-                else if(reply->error() == QNetworkReply::NoError && state->reconnect.reconnectOnFinished
-                        && !state->aborted && state->error.isEmpty()) {
-                    ++state->reconnect.cleanFinishReconnectAttempts;
-                }
-
-                reconnect = reply->error() == QNetworkReply::NoError && state->reconnect.reconnectOnFinished
-                         && !state->aborted && state->error.isEmpty()
-                         && (receivedBytes
-                             || state->reconnect.cleanFinishReconnectAttempts <= MaxCleanFinishReconnectAttempts);
-                if(reconnect) {
-                    state->reply.clear();
-                    state->readMode.readWouldBlock = state->readMode.nonBlockingReadsEnabled;
-                }
-                else {
-                    state->finished = true;
-                }
-            }
-        }
-        state->ready.notify_all();
-        reply->deleteLater();
-
-        if(reconnect) {
-            QMetaObject::invokeMethod(network.get(),
-                                      [network, url, state]() { startNetworkStreamRequest(network, url, state); });
-        }
-    });
+    QObject::connect(reply, &QNetworkReply::finished, reply,
+                     [network, url, state, reply]() { readNetworkStreamReply(network, url, state, reply); });
     QObject::connect(reply, &QNetworkReply::errorOccurred, reply, [state, reply](QNetworkReply::NetworkError) {
         {
             const std::scoped_lock lock{state->mutex};
@@ -655,15 +672,10 @@ qint64 NetworkStreamDevice::readData(char* data, qint64 maxSize)
     if(reply && std::cmp_less(m_state->streamBuffer.data.size(), m_state->streamBuffer.maxBytes)) {
         QMetaObject::invokeMethod(
             m_network.get(),
-            [state = m_state, reply]() {
-                if(!reply) {
-                    return;
+            [network = m_network, url = m_url, state = m_state, reply]() {
+                if(reply) {
+                    readNetworkStreamReply(network, url, state, reply);
                 }
-                {
-                    const std::scoped_lock appendLock{state->mutex};
-                    appendReplyData(*state, reply);
-                }
-                state->ready.notify_all();
             },
             Qt::QueuedConnection);
     }
