@@ -36,7 +36,9 @@
 
 #include <QDateTime>
 #include <QLoggingCategory>
+#include <QPointer>
 
+#include <iterator>
 #include <ranges>
 
 Q_DECLARE_LOGGING_CATEGORY(LIB_SCANNER)
@@ -80,6 +82,117 @@ std::set<QString> physicalPathsForTracks(const Fooyin::TrackList& tracks)
 } // namespace
 
 namespace Fooyin {
+class LibraryScanSession::PlaylistScanOperation
+{
+public:
+    PlaylistScanOperation(LibraryScanSession* session, QList<QUrl> urls, QObject* context,
+                          std::function<void(bool, TrackList)> callback)
+        : m_session{session}
+        , m_urls{std::move(urls)}
+        , m_context{context}
+        , m_callback{std::move(callback)}
+        , m_resolver{std::make_unique<LibraryTrackResolver>(session->makeResolver())}
+        , m_deliveryContext{std::make_unique<QObject>()}
+    { }
+
+    ~PlaylistScanOperation()
+    {
+        m_stopCallback.reset();
+        m_deliveryContext.reset();
+        if(m_download) {
+            m_download->cancel();
+        }
+    }
+
+    void start(std::stop_token token)
+    {
+        m_stopCallback = std::make_unique<StopCallback>(token, [this] {
+            QMetaObject::invokeMethod(m_deliveryContext.get(), [this] { complete(false); }, Qt::QueuedConnection);
+        });
+        QMetaObject::invokeMethod(m_deliveryContext.get(), [this] { advance(); }, Qt::QueuedConnection);
+    }
+
+private:
+    using StopCallback = std::stop_callback<std::function<void()>>;
+
+    void advance()
+    {
+        while(m_session->m_state.mayRun() && m_index < m_urls.size()) {
+            const QUrl url = m_urls.at(m_index++);
+            if(Track::isRemotePath(url.toString())) {
+                m_session->m_state.reportProgress(url.toString());
+                m_download = m_resolver->readPlaylistAsync(
+                    url, m_deliveryContext.get(), [this](bool completed, TrackList tracks) {
+                        QMetaObject::invokeMethod(
+                            m_deliveryContext.get(),
+                            [this, completed, tracks = std::move(tracks)]() mutable {
+                                m_download.reset();
+                                if(!completed || !m_session->m_state.mayRun()) {
+                                    complete(false);
+                                    return;
+                                }
+                                m_result.insert(m_result.end(), std::make_move_iterator(tracks.begin()),
+                                                std::make_move_iterator(tracks.end()));
+                                advance();
+                            },
+                            Qt::QueuedConnection);
+                    });
+                return;
+            }
+
+            const auto count = m_resolver->countPlaylistTracks(url);
+            m_session->m_state.setProgressPhase(m_session->m_phase, m_session->m_state.progressCount() + count);
+            m_session->m_state.reportProgress(url.toString());
+
+            auto tracks = m_resolver->readPlaylist(url);
+            m_result.insert(m_result.end(), std::make_move_iterator(tracks.begin()),
+                            std::make_move_iterator(tracks.end()));
+        }
+
+        complete(m_session->flushWriter(true));
+    }
+
+    void complete(bool completed)
+    {
+        if(std::exchange(m_finished, true)) {
+            return;
+        }
+
+        m_stopCallback.reset();
+        // Invalidate queued work before releasing the resolver or aborting the reply
+        m_deliveryContext.reset();
+        auto download = std::move(m_download);
+        if(download) {
+            download->cancel();
+        }
+        m_resolver.reset();
+        m_urls.clear();
+
+        auto callback = std::move(m_callback);
+        auto tracks   = std::move(m_result);
+        if(m_context) {
+            QMetaObject::invokeMethod(
+                m_context,
+                [callback = std::move(callback), completed, tracks = std::move(tracks)]() mutable {
+                    callback(completed, std::move(tracks));
+                },
+                Qt::QueuedConnection);
+        }
+    }
+
+    LibraryScanSession* m_session;
+    QList<QUrl> m_urls;
+    QPointer<QObject> m_context;
+    std::function<void(bool, TrackList)> m_callback;
+    std::unique_ptr<LibraryTrackResolver> m_resolver;
+    std::unique_ptr<QObject> m_deliveryContext;
+    std::shared_ptr<RemoteDownloadHandle> m_download;
+    TrackList m_result;
+    qsizetype m_index{0};
+    bool m_finished{false};
+    std::unique_ptr<StopCallback> m_stopCallback;
+};
+
 LibraryScanSession::LibraryScanSession(TrackDatabase* trackDatabase, PlaylistLoader* playlistLoader,
                                        AudioLoader* audioLoader, std::shared_ptr<RemoteIoService> remoteIo,
                                        std::shared_ptr<TrackMetadataStore> metadataStore, LibraryScanConfig config,
@@ -109,12 +222,241 @@ LibraryScanSession::LibraryScanSession(TrackDatabase* trackDatabase, PlaylistLoa
 
 LibraryScanSession::~LibraryScanSession() = default;
 
+bool LibraryScanSession::scanLibrary(const LibraryInfo& library, const TrackList& tracks, const bool onlyModified)
+{
+    reset(library);
+
+    QStringList restrictExtensions      = m_config.libraryRestrictExt;
+    const QStringList excludeExtensions = m_config.libraryExcludeExt;
+
+    if(restrictExtensions.empty()) {
+        restrictExtensions = normaliseExtensions(m_audioLoader->supportedFileExtensions());
+    }
+    if(!excludeExtensions.contains(u"cue"_s)) {
+        restrictExtensions.append(u"cue"_s);
+    }
+
+    for(const auto& extension : excludeExtensions) {
+        restrictExtensions.removeAll(extension);
+    }
+
+    m_state.populateExistingTracks(tracks, {library.path}, true);
+    m_state.setReportEnumeratingProgress(!onlyModified);
+    m_phase = onlyModified ? ScanProgress::Phase::ReadingMetadata : ScanProgress::Phase::Enumerating;
+    m_state.setProgressPhase(m_phase, 0);
+    m_state.reportProgress({});
+
+    auto resolver  = makeResolver();
+    m_resolver     = &resolver;
+    m_onlyModified = onlyModified;
+
+    LibraryFileEnumerator enumerator{&m_state, [this](const QFileInfo& info, const EnumeratedFileType type) {
+                                         return handleEnumeratedFile(info, type);
+                                     }};
+
+    const bool completed = enumerator.enumerateFiles({library.path}, restrictExtensions, {});
+    m_resolver           = nullptr;
+
+    if(completed && m_state.mayRun()) {
+        finaliseUnseenTracks();
+        flushWriter(true);
+    }
+
+    return completed && m_state.mayRun();
+}
+
+bool LibraryScanSession::scanDirectories(const LibraryInfo& library, const QStringList& dirs, const TrackList& tracks)
+{
+    reset(library);
+
+    QStringList restrictExtensions      = m_config.libraryRestrictExt;
+    const QStringList excludeExtensions = m_config.libraryExcludeExt;
+
+    if(restrictExtensions.empty()) {
+        restrictExtensions = normaliseExtensions(m_audioLoader->supportedFileExtensions());
+    }
+    if(!excludeExtensions.contains(u"cue"_s)) {
+        restrictExtensions.append(u"cue"_s);
+    }
+
+    for(const auto& extension : excludeExtensions) {
+        restrictExtensions.removeAll(extension);
+    }
+
+    m_state.populateExistingTracks(tracks, dirs, true);
+    m_state.setReportEnumeratingProgress(false);
+    m_phase = ScanProgress::Phase::ReadingMetadata;
+    m_state.setProgressPhase(m_phase, 0);
+    m_state.reportProgress({});
+
+    auto resolver  = makeResolver();
+    m_resolver     = &resolver;
+    m_onlyModified = true;
+
+    LibraryFileEnumerator enumerator{&m_state, [this](const QFileInfo& info, const EnumeratedFileType type) {
+                                         return handleEnumeratedFile(info, type);
+                                     }};
+
+    const bool completed = enumerator.enumerateFiles(dirs, restrictExtensions, {});
+    m_resolver           = nullptr;
+
+    if(completed && m_state.mayRun()) {
+        finaliseUnseenTracks();
+        flushWriter(true);
+    }
+
+    return completed && m_state.mayRun();
+}
+
+bool LibraryScanSession::scanFiles(const TrackList& libraryTracks, const QList<QUrl>& urls,
+                                   LibraryScanFilesResult& result)
+{
+    reset({});
+    m_state.populateExistingTracks(libraryTracks, {}, false);
+
+    QStringList restrictExtensions      = m_config.externalRestrictExt;
+    const QStringList excludeExtensions = m_config.externalExcludeExt;
+    QStringList playlistExtensions      = normaliseExtensions(Playlist::supportedPlaylistExtensions());
+
+    if(restrictExtensions.empty()) {
+        restrictExtensions = normaliseExtensions(m_audioLoader->supportedFileExtensions());
+    }
+    if(!excludeExtensions.contains(u"cue"_s)) {
+        restrictExtensions.append(u"cue"_s);
+    }
+
+    for(const auto& extension : excludeExtensions) {
+        restrictExtensions.removeAll(extension);
+        playlistExtensions.removeAll(extension);
+    }
+
+    QStringList paths;
+    std::ranges::transform(urls, std::back_inserter(paths), [](const QUrl& url) { return url.toLocalFile(); });
+
+    m_externalExplicitPaths.clear();
+    m_externalExplicitDirs.clear();
+    m_externalCueCoveredPaths.clear();
+
+    for(const auto& path : std::as_const(paths)) {
+        const QString normalisedPath = normalisePath(path);
+        m_externalExplicitPaths.emplace(normalisedPath);
+        if(QFileInfo{path}.isDir()) {
+            m_externalExplicitDirs.emplace(normalisedPath);
+        }
+    }
+
+    m_phase = ScanProgress::Phase::Enumerating;
+    m_state.setReportEnumeratingProgress(true);
+    m_state.setProgressPhase(m_phase, 0);
+    m_state.reportProgress({});
+
+    auto resolver     = makeResolver();
+    m_resolver        = &resolver;
+    m_fileScanResult  = &result;
+    m_enumerationMode = EnumerationMode::External;
+
+    LibraryFileEnumerator enumerator{&m_state, [this](const QFileInfo& info, const EnumeratedFileType type) {
+                                         return handleEnumeratedFile(info, type);
+                                     }};
+
+    const bool completed = enumerator.enumerateFiles(paths, restrictExtensions, playlistExtensions);
+
+    if(completed && m_state.mayRun()) {
+        flushWriter(true);
+    }
+
+    m_fileScanResult  = nullptr;
+    m_resolver        = nullptr;
+    m_enumerationMode = EnumerationMode::Library;
+
+    m_externalExplicitPaths.clear();
+    m_externalExplicitDirs.clear();
+    m_externalCueCoveredPaths.clear();
+
+    return completed && m_state.mayRun();
+}
+
+bool LibraryScanSession::scanPlaylist(const TrackList& libraryTracks, const QList<QUrl>& urls, TrackList& result)
+{
+    reset({});
+    m_state.populateExistingTracks(libraryTracks, {}, false);
+    m_state.setReportEnumeratingProgress(true);
+    m_phase = ScanProgress::Phase::ReadingMetadata;
+
+    auto resolver = makeResolver();
+    size_t totalEntries{0};
+    for(const auto& url : urls) {
+        if(!m_state.mayRun()) {
+            return false;
+        }
+
+        totalEntries += resolver.countPlaylistTracks(url);
+    }
+
+    m_state.setProgressPhase(m_phase, totalEntries);
+    m_state.reportProgress({});
+
+    for(const auto& url : urls) {
+        if(!m_state.mayRun()) {
+            return false;
+        }
+
+        const TrackList playlistTracks = resolver.readPlaylist(url);
+        result.insert(result.end(), playlistTracks.cbegin(), playlistTracks.cend());
+    }
+
+    return flushWriter(true);
+}
+
+void LibraryScanSession::scanPlaylistAsync(const TrackList& libraryTracks, const QList<QUrl>& urls, QObject* context,
+                                           std::function<void(bool completed, TrackList tracks)> callback,
+                                           std::stop_token token)
+{
+    reset({});
+
+    m_state.populateExistingTracks(libraryTracks, {}, false);
+    m_state.setReportEnumeratingProgress(true);
+    m_phase = ScanProgress::Phase::ReadingMetadata;
+
+    m_playlistScan = std::make_unique<PlaylistScanOperation>(this, urls, context, std::move(callback));
+    m_playlistScan->start(token);
+}
+
+void LibraryScanSession::finish()
+{
+    m_phase = ScanProgress::Phase::Finished;
+    m_state.setProgressPhase(m_phase, m_state.progressCount());
+    m_state.reportProgress({});
+}
+
+void LibraryScanSession::fail(QString error)
+{
+    m_state.fail(std::move(error));
+}
+
+QString LibraryScanSession::error() const
+{
+    return m_state.error();
+}
+
+size_t LibraryScanSession::filesScanned() const
+{
+    return m_state.filesScannedCount();
+}
+
+size_t LibraryScanSession::progressCount() const
+{
+    return m_state.progressCount();
+}
+
+size_t LibraryScanSession::discoveredFiles() const
+{
+    return m_state.discoveredFiles();
+}
+
 void LibraryScanSession::reset(const LibraryInfo& library)
 {
-    if(m_remotePlaylistDownload) {
-        m_remotePlaylistDownload->cancel();
-        m_remotePlaylistDownload.reset();
-    }
+    m_playlistScan.reset();
 
     m_currentLibrary = library;
     m_state.reset();
@@ -128,10 +470,13 @@ void LibraryScanSession::reset(const LibraryInfo& library)
     m_enumerationMode = EnumerationMode::Library;
 }
 
-void LibraryScanSession::flushWriter(const bool finalFlush)
+bool LibraryScanSession::flushWriter(const bool finalFlush)
 {
+    if(!m_state.mayRun()) {
+        return false;
+    }
     if(m_writer.empty()) {
-        return;
+        return true;
     }
 
     if(finalFlush) {
@@ -139,7 +484,11 @@ void LibraryScanSession::flushWriter(const bool finalFlush)
         m_state.reportProgress({});
     }
 
-    m_writer.flush();
+    if(auto result = m_writer.flush(); !result) {
+        fail(std::move(result.error()));
+        return false;
+    }
+    return true;
 }
 
 void LibraryScanSession::maybeFlushWriter()
@@ -286,6 +635,9 @@ void LibraryScanSession::finaliseUnseenTracks()
     m_state.reportProgress({});
 
     for(const auto& track : m_state.scopedTracks()) {
+        if(!m_state.mayRun()) {
+            return;
+        }
         if(m_state.trackWasSeen(track)) {
             continue;
         }
@@ -301,278 +653,5 @@ void LibraryScanSession::finaliseUnseenTracks()
         disabledTrack.setIsEnabled(false);
         m_writer.updateTrack(disabledTrack);
     }
-}
-
-bool LibraryScanSession::scanLibrary(const LibraryInfo& library, const TrackList& tracks, const bool onlyModified)
-{
-    reset(library);
-
-    QStringList restrictExtensions      = m_config.libraryRestrictExt;
-    const QStringList excludeExtensions = m_config.libraryExcludeExt;
-
-    if(restrictExtensions.empty()) {
-        restrictExtensions = normaliseExtensions(m_audioLoader->supportedFileExtensions());
-    }
-    if(!excludeExtensions.contains(u"cue"_s)) {
-        restrictExtensions.append(u"cue"_s);
-    }
-
-    for(const auto& extension : excludeExtensions) {
-        restrictExtensions.removeAll(extension);
-    }
-
-    m_state.populateExistingTracks(tracks, {library.path}, true);
-    m_state.setReportEnumeratingProgress(!onlyModified);
-    m_phase = onlyModified ? ScanProgress::Phase::ReadingMetadata : ScanProgress::Phase::Enumerating;
-    m_state.setProgressPhase(m_phase, 0);
-    m_state.reportProgress({});
-
-    auto resolver  = makeResolver();
-    m_resolver     = &resolver;
-    m_onlyModified = onlyModified;
-
-    LibraryFileEnumerator enumerator{&m_state, [this](const QFileInfo& info, const EnumeratedFileType type) {
-                                         return handleEnumeratedFile(info, type);
-                                     }};
-
-    const bool completed = enumerator.enumerateFiles({library.path}, restrictExtensions, {});
-    m_resolver           = nullptr;
-
-    if(completed && m_state.mayRun()) {
-        finaliseUnseenTracks();
-        flushWriter(true);
-    }
-
-    return completed;
-}
-
-bool LibraryScanSession::scanDirectories(const LibraryInfo& library, const QStringList& dirs, const TrackList& tracks)
-{
-    reset(library);
-
-    QStringList restrictExtensions      = m_config.libraryRestrictExt;
-    const QStringList excludeExtensions = m_config.libraryExcludeExt;
-
-    if(restrictExtensions.empty()) {
-        restrictExtensions = normaliseExtensions(m_audioLoader->supportedFileExtensions());
-    }
-    if(!excludeExtensions.contains(u"cue"_s)) {
-        restrictExtensions.append(u"cue"_s);
-    }
-
-    for(const auto& extension : excludeExtensions) {
-        restrictExtensions.removeAll(extension);
-    }
-
-    m_state.populateExistingTracks(tracks, dirs, true);
-    m_state.setReportEnumeratingProgress(false);
-    m_phase = ScanProgress::Phase::ReadingMetadata;
-    m_state.setProgressPhase(m_phase, 0);
-    m_state.reportProgress({});
-
-    auto resolver  = makeResolver();
-    m_resolver     = &resolver;
-    m_onlyModified = true;
-
-    LibraryFileEnumerator enumerator{&m_state, [this](const QFileInfo& info, const EnumeratedFileType type) {
-                                         return handleEnumeratedFile(info, type);
-                                     }};
-
-    const bool completed = enumerator.enumerateFiles(dirs, restrictExtensions, {});
-    m_resolver           = nullptr;
-
-    if(completed && m_state.mayRun()) {
-        finaliseUnseenTracks();
-        flushWriter(true);
-    }
-
-    return completed;
-}
-
-bool LibraryScanSession::scanFiles(const TrackList& libraryTracks, const QList<QUrl>& urls,
-                                   LibraryScanFilesResult& result)
-{
-    reset({});
-    m_state.populateExistingTracks(libraryTracks, {}, false);
-
-    QStringList restrictExtensions      = m_config.externalRestrictExt;
-    const QStringList excludeExtensions = m_config.externalExcludeExt;
-    QStringList playlistExtensions      = normaliseExtensions(Playlist::supportedPlaylistExtensions());
-
-    if(restrictExtensions.empty()) {
-        restrictExtensions = normaliseExtensions(m_audioLoader->supportedFileExtensions());
-    }
-    if(!excludeExtensions.contains(u"cue"_s)) {
-        restrictExtensions.append(u"cue"_s);
-    }
-
-    for(const auto& extension : excludeExtensions) {
-        restrictExtensions.removeAll(extension);
-        playlistExtensions.removeAll(extension);
-    }
-
-    QStringList paths;
-    std::ranges::transform(urls, std::back_inserter(paths), [](const QUrl& url) { return url.toLocalFile(); });
-
-    m_externalExplicitPaths.clear();
-    m_externalExplicitDirs.clear();
-    m_externalCueCoveredPaths.clear();
-
-    for(const auto& path : std::as_const(paths)) {
-        const QString normalisedPath = normalisePath(path);
-        m_externalExplicitPaths.emplace(normalisedPath);
-        if(QFileInfo{path}.isDir()) {
-            m_externalExplicitDirs.emplace(normalisedPath);
-        }
-    }
-
-    m_phase = ScanProgress::Phase::Enumerating;
-    m_state.setReportEnumeratingProgress(true);
-    m_state.setProgressPhase(m_phase, 0);
-    m_state.reportProgress({});
-
-    auto resolver     = makeResolver();
-    m_resolver        = &resolver;
-    m_fileScanResult  = &result;
-    m_enumerationMode = EnumerationMode::External;
-
-    LibraryFileEnumerator enumerator{&m_state, [this](const QFileInfo& info, const EnumeratedFileType type) {
-                                         return handleEnumeratedFile(info, type);
-                                     }};
-
-    const bool completed = enumerator.enumerateFiles(paths, restrictExtensions, playlistExtensions);
-
-    if(completed && m_state.mayRun()) {
-        flushWriter(true);
-    }
-
-    m_fileScanResult  = nullptr;
-    m_resolver        = nullptr;
-    m_enumerationMode = EnumerationMode::Library;
-
-    m_externalExplicitPaths.clear();
-    m_externalExplicitDirs.clear();
-    m_externalCueCoveredPaths.clear();
-
-    return completed;
-}
-
-bool LibraryScanSession::scanPlaylist(const TrackList& libraryTracks, const QList<QUrl>& urls, TrackList& result)
-{
-    reset({});
-    m_state.populateExistingTracks(libraryTracks, {}, false);
-    m_state.setReportEnumeratingProgress(true);
-    m_phase = ScanProgress::Phase::ReadingMetadata;
-
-    auto resolver = makeResolver();
-    size_t totalEntries{0};
-    for(const auto& url : urls) {
-        if(!m_state.mayRun()) {
-            return false;
-        }
-
-        totalEntries += resolver.countPlaylistTracks(url);
-    }
-
-    m_state.setProgressPhase(m_phase, totalEntries);
-    m_state.reportProgress({});
-
-    for(const auto& url : urls) {
-        if(!m_state.mayRun()) {
-            return false;
-        }
-
-        const TrackList playlistTracks = resolver.readPlaylist(url);
-        result.insert(result.end(), playlistTracks.cbegin(), playlistTracks.cend());
-    }
-
-    if(m_state.mayRun()) {
-        flushWriter(true);
-    }
-
-    return true;
-}
-
-void LibraryScanSession::scanPlaylistAsync(const TrackList& libraryTracks, const QList<QUrl>& urls, QObject* context,
-                                           std::function<void(bool completed, TrackList tracks)> callback)
-{
-    reset({});
-
-    m_state.populateExistingTracks(libraryTracks, {}, false);
-    m_state.setReportEnumeratingProgress(true);
-    m_phase = ScanProgress::Phase::ReadingMetadata;
-
-    auto resolver = std::make_shared<LibraryTrackResolver>(makeResolver());
-    auto result   = std::make_shared<TrackList>();
-    auto index    = std::make_shared<qsizetype>(0);
-
-    auto processNext = std::make_shared<std::function<void()>>();
-    *processNext     = [this, urls, context, callback = std::move(callback), resolver, result, index,
-                        processNext]() mutable {
-        if(!m_state.mayRun()) {
-            callback(false, std::move(*result));
-            return;
-        }
-
-        if(*index >= urls.size()) {
-            if(m_state.mayRun()) {
-                flushWriter(true);
-            }
-            callback(m_state.mayRun(), std::move(*result));
-            return;
-        }
-
-        const QUrl& url = urls.at(*index);
-        ++(*index);
-
-        if(Track::isRemotePath(url.toString())) {
-            m_state.reportProgress(url.toString());
-            m_remotePlaylistDownload = resolver->readPlaylistAsync(
-                url, context,
-                [this, callback, resolver, result, processNext](const bool completed, const TrackList& tracks) mutable {
-                    m_remotePlaylistDownload.reset();
-                    if(!completed) {
-                        callback(false, std::move(*result));
-                        return;
-                    }
-
-                    result->insert(result->end(), tracks.cbegin(), tracks.cend());
-                    (*processNext)();
-                });
-            return;
-        }
-
-        const size_t playlistTrackCount = resolver->countPlaylistTracks(url);
-        m_state.setProgressPhase(m_phase, m_state.progressCount() + playlistTrackCount);
-        m_state.reportProgress(url.toString());
-
-        const TrackList playlistTracks = resolver->readPlaylist(url);
-        result->insert(result->end(), playlistTracks.cbegin(), playlistTracks.cend());
-        (*processNext)();
-    };
-
-    (*processNext)();
-}
-
-void LibraryScanSession::finish()
-{
-    m_phase = ScanProgress::Phase::Finished;
-    m_state.setProgressPhase(m_phase, m_state.progressCount());
-    m_state.reportProgress({});
-}
-
-size_t LibraryScanSession::filesScanned() const
-{
-    return m_state.filesScannedCount();
-}
-
-size_t LibraryScanSession::progressCount() const
-{
-    return m_state.progressCount();
-}
-
-size_t LibraryScanSession::discoveredFiles() const
-{
-    return m_state.discoveredFiles();
 }
 } // namespace Fooyin

@@ -24,6 +24,9 @@
 #include <core/track.h>
 #include <utils/database/dbmodule.h>
 
+#include <QCoreApplication>
+
+#include <expected>
 #include <memory>
 #include <set>
 
@@ -32,11 +35,14 @@ class TrackMetadataStore;
 
 class FYCORE_EXPORT TrackDatabase : public DbModule
 {
+    Q_DECLARE_TR_FUNCTIONS(Fooyin::TrackDatabase)
+
 public:
     void setMetadataStore(std::shared_ptr<TrackMetadataStore> store);
 
     bool storeTracks(TrackList& tracks);
     bool updateTracks(TrackList& tracks);
+    std::expected<void, QString> writeScanBatch(TrackList& tracksToStore, TrackList& tracksToUpdate);
 
     bool reloadTrack(Track& track) const;
     bool reloadTracks(TrackList& tracks) const;

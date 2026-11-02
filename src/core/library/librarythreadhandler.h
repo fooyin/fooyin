@@ -88,6 +88,7 @@ Q_SIGNALS:
     void scannedTracks(int id, const Fooyin::TrackList& tracks);
     void playlistLoaded(int id, const Fooyin::TrackList& tracks);
     void scanFinished(int id, Fooyin::ScanRequest::Type type, bool cancelled);
+    void scanFailed(int id, Fooyin::ScanRequest::Type type, const QString& error);
     void statusChanged(const Fooyin::LibraryInfo& library);
     void scanUpdate(int id, Fooyin::ScanRequest::Type type, const Fooyin::ScanResult& result);
     void tracksUpdated(const Fooyin::TrackList& tracks);

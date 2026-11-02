@@ -250,7 +250,7 @@ Q_SIGNALS:
     void scanApplyCompleted(int id);
     /** Emitted when a scan request has applied its added, updated, and removed track changes. */
     void scanSummary(int id, Fooyin::ScanRequest::Type type, Fooyin::ScanSummaryCounts summary);
-    /** Emitted exactly once when a scan request completes or is cancelled. */
+    /** Emitted exactly once when a scan request completes, fails, or is cancelled. */
     void scanFinished(int id, Fooyin::ScanRequest::Type type, bool cancelled);
 
     void tracksLoaded(const Fooyin::TrackList& tracks);
@@ -264,6 +264,9 @@ Q_SIGNALS:
 
     void activeLibraryFiltersChanged();
     void visibleLibraryTracksChanged();
+
+    /** Emitted before scanFinished() when a scan fails; previously committed batches remain applied. */
+    void scanFailed(int id, Fooyin::ScanRequest::Type type, const QString& error);
 
 private:
     std::unique_ptr<MusicLibraryPrivate> p;

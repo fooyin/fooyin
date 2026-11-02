@@ -43,47 +43,6 @@
 Q_LOGGING_CATEGORY(LIB_SCANNER, "fy.scanner")
 
 namespace Fooyin {
-ScanProgress LibraryScanner::makeProgress(const int current, const QString& file, const int total,
-                                          const ScanProgress::Phase phase, const int discovered) const
-{
-    return {
-        .type         = ScanRequest::Library,
-        .info         = {},
-        .id           = m_requestId,
-        .total        = total,
-        .current      = current,
-        .discovered   = discovered,
-        .onlyModified = m_progressOnlyModified,
-        .phase        = phase,
-        .file         = file,
-    };
-}
-
-void LibraryScanner::changeLibraryStatus(const LibraryInfo::Status status)
-{
-    m_currentLibrary.status = status;
-    Q_EMIT statusChanged(m_currentLibrary);
-}
-
-void LibraryScanner::startSession(const LibraryScanConfig& config, const LibraryInfo& library)
-{
-    m_currentLibrary = library;
-    m_session = std::make_unique<LibraryScanSession>(&m_trackDatabase, m_playlistLoader.get(), m_audioLoader.get(),
-                                                     m_remoteIo, m_metadataStore, config, this);
-}
-
-void LibraryScanner::finishSession()
-{
-    if(m_session) {
-        m_session->finish();
-    }
-}
-
-void LibraryScanner::clearSession()
-{
-    m_session.reset();
-}
-
 LibraryScanner::LibraryScanner(DbConnectionPoolPtr dbPool, std::shared_ptr<PlaylistLoader> playlistLoader,
                                std::shared_ptr<TrackMetadataStore> metadataStore,
                                std::shared_ptr<AudioLoader> audioLoader, std::shared_ptr<RemoteIoService> remoteIo,
@@ -145,7 +104,7 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
         m_session->scanLibrary(library, tracks, onlyModified);
     }
 
-    if(state() == Paused) {
+    if(state() == Paused && m_session->error().isEmpty()) {
         changeLibraryStatus(LibraryInfo::Status::Pending);
     }
     else {
@@ -177,7 +136,7 @@ void LibraryScanner::scanLibraryDirectoies(const LibraryInfo& library, const QSt
 
     m_session->scanDirectories(library, dirs, tracks);
 
-    if(state() == Paused) {
+    if(state() == Paused && m_session->error().isEmpty()) {
         changeLibraryStatus(LibraryInfo::Status::Pending);
     }
     else {
@@ -312,24 +271,28 @@ void LibraryScanner::scanTracks(const TrackList& tracks, const bool onlyModified
     tracksToUpdate.insert(tracksToUpdate.end(), std::make_move_iterator(cueResult.updatedTracks.begin()),
                           std::make_move_iterator(cueResult.updatedTracks.end()));
 
-    if(!tracksToAdd.empty()) {
+    QString error;
+    if(!tracksToAdd.empty() || !tracksToUpdate.empty()) {
         Q_EMIT progressChanged(makeProgress(processedTracks, {}, static_cast<int>(tracks.size()),
                                             ScanProgress::Phase::WritingDatabase, 0));
-        m_trackDatabase.storeTracks(tracksToAdd);
-        Q_EMIT scannedTracks(m_requestId, tracksToAdd);
-    }
-
-    if(!tracksToUpdate.empty()) {
-        Q_EMIT progressChanged(makeProgress(processedTracks, {}, static_cast<int>(tracks.size()),
-                                            ScanProgress::Phase::WritingDatabase, 0));
-        m_trackDatabase.updateTracks(tracksToUpdate);
-        m_trackDatabase.updateTrackStats(tracksToUpdate);
-        Q_EMIT scanUpdate(m_requestId, {.addedTracks = {}, .updatedTracks = tracksToUpdate});
+        if(auto result = m_trackDatabase.writeScanBatch(tracksToAdd, tracksToUpdate); result) {
+            if(!tracksToAdd.empty()) {
+                Q_EMIT scannedTracks(m_requestId, tracksToAdd);
+            }
+            if(!tracksToUpdate.empty()) {
+                Q_EMIT scanUpdate(m_requestId, {.addedTracks = {}, .updatedTracks = tracksToUpdate});
+            }
+        }
+        else {
+            error = std::move(result.error());
+            qCWarning(LIB_SCANNER) << "Scan failed:" << error;
+            Q_EMIT scanFailed(m_requestId, error);
+        }
     }
 
     Q_EMIT progressChanged(makeProgress(processedTracks, {}, processedTracks, ScanProgress::Phase::Finished, 0));
 
-    if(state() != Paused) {
+    if(state() != Paused || !error.isEmpty()) {
         setState(Idle);
         Q_EMIT scanFinished(m_requestId);
     }
@@ -353,22 +316,25 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
 
     LibraryScanFilesResult result;
 
-    const bool completed = m_session->scanFiles(libraryTracks, urls, result);
+    bool completed = m_session->scanFiles(libraryTracks, urls, result);
 
     if(completed && !result.playlistTracksScanned.empty()) {
         Q_EMIT progressChanged(
             makeProgress(static_cast<int>(m_session->progressCount()), {}, static_cast<int>(m_session->progressCount()),
                          ScanProgress::Phase::WritingDatabase, static_cast<int>(m_session->discoveredFiles())));
-        m_trackDatabase.storeTracks(result.playlistTracksScanned);
-        Q_EMIT playlistLoaded(m_requestId, result.playlistTracksScanned);
+        completed = storeScannedTracks(result.playlistTracksScanned);
+        if(completed) {
+            Q_EMIT playlistLoaded(m_requestId, result.playlistTracksScanned);
+        }
     }
 
     if(completed && !result.tracksScanned.empty()) {
         Q_EMIT progressChanged(
             makeProgress(static_cast<int>(m_session->progressCount()), {}, static_cast<int>(m_session->progressCount()),
                          ScanProgress::Phase::WritingDatabase, static_cast<int>(m_session->discoveredFiles())));
-        m_trackDatabase.storeTracks(result.tracksScanned);
-        Q_EMIT scannedTracks(m_requestId, result.tracksScanned);
+        if(storeScannedTracks(result.tracksScanned)) {
+            Q_EMIT scannedTracks(m_requestId, result.tracksScanned);
+        }
     }
 
     const int scannedFiles = static_cast<int>(m_session->filesScanned());
@@ -396,13 +362,20 @@ void LibraryScanner::scanPlaylist(const TrackList& libraryTracks, const QList<QU
 
     auto timer = std::make_shared<Timer>();
 
-    const auto finishPlaylistScan = [this, timer](bool completed, TrackList tracksScanned) {
-        if(completed && !tracksScanned.empty()) {
+    const auto finishPlaylistScan = [this, timer, requestId](bool completed, TrackList tracksScanned) {
+        if(m_requestId != requestId || !m_session) {
+            return;
+        }
+        if(!completed && !stopRequested() && m_session->error().isEmpty()) {
+            m_session->fail(tr("Could not load the playlist."));
+        }
+        if(completed && !stopRequested() && !tracksScanned.empty()) {
             Q_EMIT progressChanged(makeProgress(
                 static_cast<int>(m_session->progressCount()), {}, static_cast<int>(m_session->progressCount()),
                 ScanProgress::Phase::WritingDatabase, static_cast<int>(m_session->discoveredFiles())));
-            m_trackDatabase.storeTracks(tracksScanned);
-            Q_EMIT playlistLoaded(m_requestId, tracksScanned);
+            if(storeScannedTracks(tracksScanned)) {
+                Q_EMIT playlistLoaded(m_requestId, tracksScanned);
+            }
         }
 
         finishSession();
@@ -423,7 +396,62 @@ void LibraryScanner::scanPlaylist(const TrackList& libraryTracks, const QList<QU
         return;
     }
 
-    m_session->scanPlaylistAsync(libraryTracks, urls, this, finishPlaylistScan);
+    m_session->scanPlaylistAsync(libraryTracks, urls, this, finishPlaylistScan, token);
+}
+
+ScanProgress LibraryScanner::makeProgress(const int current, const QString& file, const int total,
+                                          const ScanProgress::Phase phase, const int discovered) const
+{
+    return {
+        .type         = ScanRequest::Library,
+        .info         = {},
+        .id           = m_requestId,
+        .total        = total,
+        .current      = current,
+        .discovered   = discovered,
+        .onlyModified = m_progressOnlyModified,
+        .phase        = phase,
+        .file         = file,
+    };
+}
+
+void LibraryScanner::changeLibraryStatus(const LibraryInfo::Status status)
+{
+    m_currentLibrary.status = status;
+    Q_EMIT statusChanged(m_currentLibrary);
+}
+
+void LibraryScanner::startSession(const LibraryScanConfig& config, const LibraryInfo& library)
+{
+    m_currentLibrary = library;
+    m_session = std::make_unique<LibraryScanSession>(&m_trackDatabase, m_playlistLoader.get(), m_audioLoader.get(),
+                                                     m_remoteIo, m_metadataStore, config, this);
+}
+
+void LibraryScanner::finishSession()
+{
+    if(m_session) {
+        m_session->finish();
+        if(const auto error = m_session->error(); !error.isEmpty()) {
+            qCWarning(LIB_SCANNER) << "Scan failed:" << error;
+            Q_EMIT scanFailed(m_requestId, error);
+        }
+    }
+}
+
+void LibraryScanner::clearSession()
+{
+    m_session.reset();
+}
+
+bool LibraryScanner::storeScannedTracks(TrackList& tracks)
+{
+    TrackList updates;
+    if(auto result = m_trackDatabase.writeScanBatch(tracks, updates); !result) {
+        m_session->fail(std::move(result.error()));
+        return false;
+    }
+    return true;
 }
 } // namespace Fooyin
 

@@ -199,42 +199,10 @@ LibraryTrackResolver::readPlaylistAsync(const QUrl& url, QObject* context,
         return {};
     }
 
-    auto readEntry       = std::make_shared<PlaylistParser::ReadPlaylistEntry>();
-    readEntry->readTrack = [this, readEntry](const Track& playlistTrack) {
-        if(!m_state->mayRun()) {
-            readEntry->cancel = true;
-            return playlistTrack;
-        }
-
-        Track readTrack{playlistTrack};
-        readTrack.setMetadataStore(m_metadataStore);
-
-        if(playlistTrack.isRemote()) {
-            return readTrack;
-        }
-
-        readFileProperties(readTrack);
-
-        if(!m_audioLoader->readTrackMetadata(readTrack)) {
-            return playlistTrack;
-        }
-
-        readTrack.generateHash();
-        m_state->progressScanned(readTrack.prettyFilepath());
-
-        return readTrack;
-    };
-    readEntry->canLoadTrack = [this](const Track& playlistTrack) {
-        if(playlistTrack.isRemote()) {
-            return true;
-        }
-        return static_cast<bool>(m_audioLoader->loadDecoderForTrack(playlistTrack).decoder);
-    };
-
     return m_remoteIo->download(
         url, context,
-        [this, parser, url, readEntry, callback = std::move(callback)](std::optional<QByteArray> data,
-                                                                       const QString& error) mutable {
+        [this, parser, url, callback = std::move(callback)](std::optional<QByteArray> data,
+                                                            const QString& error) mutable {
             if(!data) {
                 qCInfo(LIB_SCANNER) << "Could not download playlist" << url << "for reading:" << error;
                 callback(false, {});
@@ -247,8 +215,40 @@ LibraryTrackResolver::readPlaylistAsync(const QUrl& url, QObject* context,
                 return;
             }
 
-            TrackList parsedTracks
-                = parser->readPlaylist(&buffer, url.toString(), {}, *readEntry, m_playlistSkipMissing);
+            PlaylistParser::ReadPlaylistEntry readEntry;
+            readEntry.readTrack = [this, &readEntry](const Track& playlistTrack) {
+                if(!m_state->mayRun()) {
+                    readEntry.cancel = true;
+                    return playlistTrack;
+                }
+
+                auto readTrack{playlistTrack};
+                readTrack.setMetadataStore(m_metadataStore);
+
+                if(playlistTrack.isRemote()) {
+                    return readTrack;
+                }
+
+                readFileProperties(readTrack);
+
+                if(!m_audioLoader->readTrackMetadata(readTrack)) {
+                    return playlistTrack;
+                }
+
+                readTrack.generateHash();
+                m_state->progressScanned(readTrack.prettyFilepath());
+
+                return readTrack;
+            };
+            readEntry.canLoadTrack = [this](const Track& playlistTrack) {
+                if(playlistTrack.isRemote()) {
+                    return true;
+                }
+                return static_cast<bool>(m_audioLoader->loadDecoderForTrack(playlistTrack).decoder);
+            };
+
+            const TrackList parsedTracks
+                = parser->readPlaylist(&buffer, url.toString(), {}, readEntry, m_playlistSkipMissing);
             TrackList tracks;
             tracks.reserve(parsedTracks.size());
 
@@ -472,6 +472,9 @@ void LibraryTrackResolver::readCue(const QFileInfo& info, const bool onlyModifie
     }
 
     for(Track track : cueTracks) {
+        if(!m_state->mayRun()) {
+            return;
+        }
         const QString filepath = normalisePath(track.filepath());
 
         if(existingCueTracksByPath.contains(track.uniqueFilepath())) {
@@ -546,6 +549,9 @@ void LibraryTrackResolver::readFile(const QFileInfo& info, const bool onlyModifi
         }
 
         for(Track track : tracks) {
+            if(!m_state->mayRun()) {
+                return;
+            }
             if(existingByPath.contains(track.uniqueFilepath())) {
                 const auto& existingTrack = existingByPath.at(track.uniqueFilepath());
                 applyExistingTrackIdentity(track, existingTrack);
@@ -590,6 +596,9 @@ void LibraryTrackResolver::readFile(const QFileInfo& info, const bool onlyModifi
         }
 
         for(Track track : tracks) {
+            if(!m_state->mayRun()) {
+                return;
+            }
             if(existingByPath.contains(track.uniqueFilepath())) {
                 const auto& existingTrack = existingByPath.at(track.uniqueFilepath());
                 applyExistingTrackIdentity(track, existingTrack);

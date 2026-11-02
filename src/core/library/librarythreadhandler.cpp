@@ -120,6 +120,7 @@ struct LibraryScanRequest
     bool scannerFinished{false};
     int pendingLibraryCompletions{0};
     bool cancelled{false};
+    QString error;
 };
 } // namespace
 
@@ -556,6 +557,11 @@ void LibraryThreadHandlerPrivate::flushPendingProgress()
 void LibraryThreadHandlerPrivate::finishScanRequest(int id)
 {
     if(id != m_currentRequestId) {
+        // A higher priority request can become current while the previous scan is returning from a failed write
+        if(auto* previousRequest = request(id); previousRequest && !previousRequest->error.isEmpty()) {
+            previousRequest->scannerFinished = true;
+            maybeCompleteScanRequest(id);
+        }
         return;
     }
 
@@ -594,13 +600,16 @@ void LibraryThreadHandlerPrivate::completeScanRequest(const int id)
     }
 
     const bool wasCurrent = m_currentRequestId == id;
-    Q_EMIT m_self->scanFinished(requestIt->id, requestIt->type, requestIt->cancelled);
-
+    auto completedRequest = std::move(*requestIt);
     m_scanRequests.erase(requestIt);
-
     if(wasCurrent) {
         m_currentRequestId = -1;
     }
+
+    if(!completedRequest.error.isEmpty()) {
+        Q_EMIT m_self->scanFailed(completedRequest.id, completedRequest.type, completedRequest.error);
+    }
+    Q_EMIT m_self->scanFinished(completedRequest.id, completedRequest.type, completedRequest.cancelled);
 
     if(m_currentRequestId < 0) {
         execNextRequest();
@@ -1057,6 +1066,11 @@ LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibr
                      [this](int operationId, const TrackList& tracks, int failed, bool cancelled) {
                          p->finishWriteOperation(operationId, static_cast<int>(tracks.size()), failed, cancelled);
                      });
+    QObject::connect(&p->m_scanner, &LibraryScanner::scanFailed, this, [this](int id, const QString& error) {
+        if(auto* request = p->request(id); request && request->error.isEmpty()) {
+            request->error = error;
+        }
+    });
     QObject::connect(&p->m_scanner, &LibraryScanner::scanFinished, this, [this](int id) { p->finishScanRequest(id); });
     QObject::connect(&p->m_scanner, &LibraryScanner::progressChanged, this,
                      [this](const ScanProgress& progress) { p->updateProgress(progress); });

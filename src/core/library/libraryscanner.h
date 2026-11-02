@@ -65,6 +65,7 @@ public:
 
 Q_SIGNALS:
     void scanFinished(int requestId);
+    void scanFailed(int requestId, const QString& error);
     void progressChanged(const Fooyin::ScanProgress& progress);
     void statusChanged(const Fooyin::LibraryInfo& library);
     void scanUpdate(int requestId, const Fooyin::ScanResult& result);
@@ -91,6 +92,7 @@ private:
     void startSession(const LibraryScanConfig& config, const LibraryInfo& library = {});
     void finishSession();
     void clearSession();
+    bool storeScannedTracks(TrackList& tracks);
 
     DbConnectionPoolPtr m_dbPool;
     std::shared_ptr<PlaylistLoader> m_playlistLoader;

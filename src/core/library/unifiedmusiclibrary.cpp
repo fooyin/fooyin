@@ -286,6 +286,7 @@ public:
     std::deque<CommitOperation> m_commitQueue;
     std::optional<QCoro::Task<>> m_activeCommitTask;
     std::unordered_map<int, ScanSummaryCounts> m_scanSummaries;
+    std::unordered_set<int> m_failedScans;
 };
 
 UnifiedMusicLibraryPrivate::UnifiedMusicLibraryPrivate(UnifiedMusicLibrary* self, LibraryManager* libraryManager,
@@ -842,8 +843,9 @@ void UnifiedMusicLibraryPrivate::handleScanFinished(int id, const ScanRequest::T
 {
     const auto summary = m_scanSummaries.contains(id) ? m_scanSummaries.at(id) : ScanSummaryCounts{};
     m_scanSummaries.erase(id);
+    const bool failed = m_failedScans.erase(id) > 0;
 
-    if(!cancelled) {
+    if(!cancelled && !failed) {
         logScanSummary(id, type, summary);
         Q_EMIT m_self->scanSummary(id, type, summary);
     }
@@ -936,6 +938,11 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
 
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::progressChanged, this,
                      &UnifiedMusicLibrary::scanProgress);
+    QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::scanFailed, this,
+                     [this](int id, ScanRequest::Type type, const QString& error) {
+                         p->m_failedScans.emplace(id);
+                         Q_EMIT scanFailed(id, type, error);
+                     });
     QObject::connect(
         &p->m_threadHandler, &LibraryThreadHandler::scanFinished, this,
         [this](int id, const ScanRequest::Type type, bool cancelled) { p->handleScanFinished(id, type, cancelled); });

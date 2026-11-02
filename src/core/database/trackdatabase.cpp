@@ -229,13 +229,45 @@ bool TrackDatabase::updateTracks(TrackList& tracks)
         return false;
     }
 
-    for(auto& track : tracks) {
+    for(const auto& track : tracks) {
         if(track.id() >= 0 && !updateTrack(track)) {
             return false;
         }
     }
 
     return transaction.commit();
+}
+
+std::expected<void, QString> TrackDatabase::writeScanBatch(TrackList& tracksToStore, TrackList& tracksToUpdate)
+{
+    if(tracksToStore.empty() && tracksToUpdate.empty()) {
+        return {};
+    }
+
+    DbTransaction transaction{db()};
+    if(!transaction) {
+        return std::unexpected{tr("Could not start the scan database transaction.")};
+    }
+
+    auto storedTracks{tracksToStore};
+    auto updatedTracks{tracksToUpdate};
+
+    if(!storeTracks(storedTracks)) {
+        return std::unexpected{tr("Could not store scanned tracks.")};
+    }
+    if(!updateTracks(updatedTracks)) {
+        return std::unexpected{tr("Could not update scanned tracks.")};
+    }
+    if(!updateTrackStats(updatedTracks)) {
+        return std::unexpected{tr("Could not update scanned track statistics.")};
+    }
+    if(!transaction.commit()) {
+        return std::unexpected{tr("Could not commit scanned tracks.")};
+    }
+
+    tracksToStore  = std::move(storedTracks);
+    tracksToUpdate = std::move(updatedTracks);
+    return {};
 }
 
 bool TrackDatabase::reloadTrack(Track& track) const
@@ -702,30 +734,24 @@ bool TrackDatabase::insertOrUpdateStats(const Track& track, StoredTrackStats* me
     const float trackRating         = normaliseTrackRating(track.rating());
     const bool trackLoved           = track.isLoved();
 
-    if(trackAdded != added) {
-        if(added == 0 || (trackAdded > 0 && trackAdded < added)) {
-            added         = trackAdded;
+    if((trackAdded != added) && (added == 0 || (trackAdded > 0 && trackAdded < added))) {
+        added         = trackAdded;
+        dbNeedsUpdate = true;
+    }
+
+    if(updatedStats.testFlag(Track::Stat::Playcount)) {
+        if((trackFirstPlayed != firstPlayed)
+           && (firstPlayed == 0 || (trackFirstPlayed > 0 && trackFirstPlayed < firstPlayed))) {
+            firstPlayed   = trackFirstPlayed;
             dbNeedsUpdate = true;
         }
-    }
-    if(updatedStats.testFlag(Track::Stat::Playcount)) {
-        if(trackFirstPlayed != firstPlayed) {
-            if(firstPlayed == 0 || (trackFirstPlayed > 0 && trackFirstPlayed < firstPlayed)) {
-                firstPlayed   = trackFirstPlayed;
-                dbNeedsUpdate = true;
-            }
+        if((trackLastPlayed != lastPlayed) && (trackLastPlayed > lastPlayed)) {
+            lastPlayed    = trackLastPlayed;
+            dbNeedsUpdate = true;
         }
-        if(trackLastPlayed != lastPlayed) {
-            if(trackLastPlayed > lastPlayed) {
-                lastPlayed    = trackLastPlayed;
-                dbNeedsUpdate = true;
-            }
-        }
-        if(trackPlayCount != playCount) {
-            if(trackPlayCount > playCount) {
-                playCount     = trackPlayCount;
-                dbNeedsUpdate = true;
-            }
+        if((trackPlayCount != playCount) && (trackPlayCount > playCount)) {
+            playCount     = trackPlayCount;
+            dbNeedsUpdate = true;
         }
     }
     if(updatedStats.testFlag(Track::Stat::Rating) && trackRating != rating) {
