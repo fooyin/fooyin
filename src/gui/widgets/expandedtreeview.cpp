@@ -3393,7 +3393,16 @@ void ExpandedTreeViewPrivate::select(const QModelIndex& topIndex, const QModelIn
     const int top    = viewIndex(topIndex);
     const int bottom = viewIndex(bottomIndex);
 
-    const auto colRanges = columnRanges(topIndex, bottomIndex);
+    const bool fullRows = command.testFlag(QItemSelectionModel::Rows);
+    command.setFlag(QItemSelectionModel::Rows, false);
+
+    std::vector<std::pair<int, int>> colRanges;
+    if(fullRows) {
+        colRanges = {{0, m_header->count() - 1}};
+    }
+    else {
+        colRanges = columnRanges(topIndex, bottomIndex);
+    }
 
     for(const auto& [left, right] : colRanges) {
         QModelIndex previous;
