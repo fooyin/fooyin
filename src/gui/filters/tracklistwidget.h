@@ -50,6 +50,7 @@ Q_SIGNALS:
     void groupChanged();
     void viewerDeleted();
     void requestEditConnections();
+    void requestInitialGroup();
 
 protected:
     void openConfigDialog() override;
@@ -59,6 +60,7 @@ private:
 
     PlaylistWidget* m_playlistWidget;
     Id m_group;
+    bool m_initialGroupPending;
     int m_sourceTrackCount;
     bool m_haveResult;
 };

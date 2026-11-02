@@ -20,6 +20,8 @@
 #include "gui/filters/filtercontroller.h"
 #include "gui/filters/filtermodel.h"
 #include "gui/filters/filterwidget.h"
+#include "gui/splitters/splitterwidget.h"
+#include "gui/splitters/tabstackwidget.h"
 #include "testutils.h"
 
 #include <core/coresettings.h>
@@ -56,6 +58,13 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin::Testing {
 namespace {
+class TestSplitterWidget : public SplitterWidget
+{
+public:
+    using SplitterWidget::SplitterWidget;
+    using WidgetContainer::setIndependentChildren;
+};
+
 class TestCurrentPlaylistController : public CurrentPlaylistController
 {
 public:
@@ -204,11 +213,26 @@ protected:
         }
     }
 
-    [[nodiscard]] Filters::FilterGroup defaultGroup() const
+    [[nodiscard]] Filters::FilterGroup filterGroup(const Id& id) const
     {
-        const auto group = m_controller->groupById(Id{"Default"});
+        const auto group = m_controller->groupById(id);
         EXPECT_TRUE(group.has_value());
         return group.value_or(Filters::FilterGroup{});
+    }
+
+    void setLayoutRoot(FyWidget* widget)
+    {
+        auto* root = qobject_cast<WidgetContainer*>(m_editableLayout->root());
+        ASSERT_NE(nullptr, root);
+        root->insertWidget(0, widget);
+    }
+
+    Filters::FilterWidget* addFilter(WidgetContainer* container)
+    {
+        auto* filter = m_controller->createFilter();
+        container->addWidget(filter);
+        filter->finalise();
+        return filter;
     }
 
     QTemporaryDir m_settingsDir;
@@ -238,8 +262,14 @@ TEST_F(FilterControllerTest, RegroupingMovesWidgetsBetweenGroupedAndUngroupedCol
     ASSERT_NE(nullptr, first);
     ASSERT_NE(nullptr, second);
 
+    const Id groupId{"TestGroup"};
+    ASSERT_TRUE(m_controller->removeFilter(first));
+    m_controller->addFilterToGroup(first, groupId);
+    ASSERT_TRUE(m_controller->removeFilter(second));
+    m_controller->addFilterToGroup(second, groupId);
+
     {
-        const auto group = defaultGroup();
+        const auto group = filterGroup(groupId);
         ASSERT_EQ(2, group.filters.size());
         EXPECT_EQ(first, group.filters.at(0));
         EXPECT_EQ(second, group.filters.at(1));
@@ -254,23 +284,234 @@ TEST_F(FilterControllerTest, RegroupingMovesWidgetsBetweenGroupedAndUngroupedCol
     EXPECT_EQ(second, m_controller->ungroupedFilters().at(second->id()));
 
     {
-        const auto group = defaultGroup();
+        const auto group = filterGroup(groupId);
         ASSERT_EQ(1, group.filters.size());
         EXPECT_EQ(first, group.filters.front());
     }
 
-    m_controller->addFilterToGroup(second, Id{"Default"});
+    ASSERT_TRUE(m_controller->removeFilter(second));
+    m_controller->addFilterToGroup(second, groupId);
 
     EXPECT_FALSE(m_controller->haveUngroupedFilters());
     EXPECT_FALSE(m_controller->filterIsUngrouped(second->id()));
     EXPECT_TRUE(m_controller->ungroupedFilters().empty());
 
-    const auto regrouped = defaultGroup();
+    const auto regrouped = filterGroup(groupId);
     ASSERT_EQ(2, regrouped.filters.size());
     EXPECT_EQ(first, regrouped.filters.at(0));
     EXPECT_EQ(second, regrouped.filters.at(1));
     EXPECT_EQ(0, first->index());
     EXPECT_EQ(1, second->index());
+}
+
+TEST_F(FilterControllerTest, IndependentChildScopesCanBeConfiguredPerContainer)
+{
+    TestSplitterWidget first{&m_widgetProvider, m_settings.get()};
+    TestSplitterWidget second{&m_widgetProvider, m_settings.get()};
+    const WidgetContainer& container = first;
+
+    EXPECT_FALSE(container.hasIndependentChildren());
+    first.setIndependentChildren(true);
+    EXPECT_TRUE(container.hasIndependentChildren());
+    EXPECT_FALSE(second.hasIndependentChildren());
+    first.setIndependentChildren(false);
+    EXPECT_FALSE(container.hasIndependentChildren());
+}
+
+TEST_F(FilterControllerTest, NewFilterChoosesGroupOnlyAfterInsertionAndFinalisation)
+{
+    auto* page = new SplitterWidget(&m_widgetProvider, m_settings.get());
+    setLayoutRoot(page);
+
+    auto* filter = m_controller->createFilter();
+    EXPECT_FALSE(filter->group().isValid());
+    EXPECT_TRUE(m_controller->filterIsUngrouped(filter->id()));
+
+    page->addWidget(filter);
+    EXPECT_FALSE(filter->group().isValid());
+    filter->finalise();
+
+    EXPECT_TRUE(filter->group().isValid());
+    EXPECT_FALSE(m_controller->filterIsUngrouped(filter->id()));
+    const auto group = filterGroup(filter->group());
+    ASSERT_EQ(1, group.filters.size());
+    EXPECT_EQ(filter, group.filters.front());
+}
+
+TEST_F(FilterControllerTest, NewFilterAppendsToSoleGroupWithoutTabs)
+{
+    auto* page = new SplitterWidget(&m_widgetProvider, m_settings.get());
+    setLayoutRoot(page);
+    const auto* first  = addFilter(page);
+    const auto* second = addFilter(page);
+
+    ASSERT_TRUE(first->group().isValid());
+    EXPECT_EQ(first->group(), second->group());
+    const auto group = filterGroup(first->group());
+    ASSERT_EQ(2, group.filters.size());
+    EXPECT_EQ(first, group.filters.at(0));
+    EXPECT_EQ(second, group.filters.at(1));
+    EXPECT_EQ(0, first->index());
+    EXPECT_EQ(1, second->index());
+}
+
+TEST_F(FilterControllerTest, NewFilterSharesGroupAcrossNestedSplitters)
+{
+    auto* page     = new SplitterWidget(&m_widgetProvider, m_settings.get());
+    auto* splitter = new SplitterWidget(&m_widgetProvider, m_settings.get());
+    setLayoutRoot(page);
+    page->addWidget(splitter);
+
+    const auto* first  = addFilter(splitter);
+    const auto* second = addFilter(page);
+
+    ASSERT_TRUE(first->group().isValid());
+    EXPECT_EQ(first->group(), second->group());
+}
+
+TEST_F(FilterControllerTest, NewFiltersInDifferentTabsHaveIndependentGroups)
+{
+    auto* tabs = new TabStackWidget(&m_widgetProvider, m_settings.get());
+    setLayoutRoot(tabs);
+    EXPECT_TRUE(tabs->hasIndependentChildren());
+
+    const auto* first  = addFilter(tabs);
+    const auto* second = addFilter(tabs);
+
+    EXPECT_TRUE(first->group().isValid());
+    EXPECT_TRUE(second->group().isValid());
+    EXPECT_NE(first->group(), second->group());
+}
+
+TEST_F(FilterControllerTest, IndependentChildScopesAreRespectedForNonTabContainers)
+{
+    auto* container = new TestSplitterWidget(&m_widgetProvider, m_settings.get());
+    container->setIndependentChildren(true);
+    setLayoutRoot(container);
+
+    const auto* first  = addFilter(container);
+    const auto* second = addFilter(container);
+
+    EXPECT_TRUE(first->group().isValid());
+    EXPECT_TRUE(second->group().isValid());
+    EXPECT_NE(first->group(), second->group());
+}
+
+TEST_F(FilterControllerTest, NestedTabGroupsDoNotAffectOuterPageGrouping)
+{
+    auto* page       = new SplitterWidget(&m_widgetProvider, m_settings.get());
+    auto* tabs       = new TabStackWidget(&m_widgetProvider, m_settings.get());
+    auto* nestedPage = new SplitterWidget(&m_widgetProvider, m_settings.get());
+    setLayoutRoot(page);
+    page->addWidget(tabs);
+    tabs->addWidget(nestedPage);
+
+    const auto* outerFirst   = addFilter(page);
+    const auto* nestedFirst  = addFilter(nestedPage);
+    const auto* outerSecond  = addFilter(page);
+    const auto* nestedSecond = addFilter(nestedPage);
+
+    ASSERT_TRUE(outerFirst->group().isValid());
+    ASSERT_TRUE(nestedFirst->group().isValid());
+    EXPECT_NE(outerFirst->group(), nestedFirst->group());
+    EXPECT_EQ(outerFirst->group(), outerSecond->group());
+    EXPECT_EQ(nestedFirst->group(), nestedSecond->group());
+}
+
+TEST_F(FilterControllerTest, NewFilterRemainsUngroupedWhenScopeContainsMultipleGroups)
+{
+    auto* page = new SplitterWidget(&m_widgetProvider, m_settings.get());
+    setLayoutRoot(page);
+    const auto* first = addFilter(page);
+    auto* second      = addFilter(page);
+    ASSERT_TRUE(first->group().isValid());
+    ASSERT_EQ(first->group(), second->group());
+    ASSERT_TRUE(m_controller->removeFilter(second));
+    m_controller->addFilterToGroup(second, Id{"OtherGroup"});
+
+    auto* ambiguous = addFilter(page);
+    EXPECT_FALSE(ambiguous->group().isValid());
+    EXPECT_TRUE(m_controller->filterIsUngrouped(ambiguous->id()));
+}
+
+TEST_F(FilterControllerTest, NewFilterIgnoresDetachedGroupMembers)
+{
+    auto* page = new SplitterWidget(&m_widgetProvider, m_settings.get());
+    setLayoutRoot(page);
+    const auto* first = addFilter(page);
+    auto* detached    = addFilter(page);
+    ASSERT_TRUE(first->group().isValid());
+    ASSERT_EQ(first->group(), detached->group());
+    ASSERT_TRUE(m_controller->removeFilter(detached));
+    m_controller->addFilterToGroup(detached, Id{"DetachedGroup"});
+
+    ASSERT_EQ(detached, page->takeWidget(page->widgetIndex(detached->id())));
+
+    const auto* appended = addFilter(page);
+    EXPECT_EQ(first->group(), appended->group());
+    EXPECT_EQ(Id{"DetachedGroup"}, detached->group());
+}
+
+TEST_F(FilterControllerTest, MovingFilterToAnotherTabPreservesItsGroup)
+{
+    auto* tabs       = new TabStackWidget(&m_widgetProvider, m_settings.get());
+    auto* firstPage  = new SplitterWidget(&m_widgetProvider, m_settings.get());
+    auto* secondPage = new SplitterWidget(&m_widgetProvider, m_settings.get());
+    setLayoutRoot(tabs);
+    tabs->addWidget(firstPage);
+    tabs->addWidget(secondPage);
+
+    auto* moved        = addFilter(firstPage);
+    const auto* second = addFilter(secondPage);
+    const Id groupId   = moved->group();
+    ASSERT_TRUE(groupId.isValid());
+    ASSERT_TRUE(second->group().isValid());
+    ASSERT_NE(groupId, second->group());
+
+    ASSERT_EQ(moved, firstPage->takeWidget(firstPage->widgetIndex(moved->id())));
+    secondPage->addWidget(moved);
+    moved->finalise();
+
+    EXPECT_EQ(groupId, moved->group());
+    EXPECT_NE(second->group(), moved->group());
+}
+
+TEST_F(FilterControllerTest, FinalisationPreservesExplicitlyUngroupedFilters)
+{
+    auto* page = new SplitterWidget(&m_widgetProvider, m_settings.get());
+    setLayoutRoot(page);
+    ASSERT_TRUE(addFilter(page)->group().isValid());
+    auto* ungrouped = m_controller->createFilter();
+    ASSERT_TRUE(m_controller->removeFilter(ungrouped));
+    m_controller->addFilterToGroup(ungrouped, {});
+    page->addWidget(ungrouped);
+    ungrouped->finalise();
+
+    EXPECT_FALSE(ungrouped->group().isValid());
+    EXPECT_TRUE(m_controller->filterIsUngrouped(ungrouped->id()));
+}
+
+TEST_F(FilterControllerTest, RepeatedFinalisationDoesNotRegroupAmbiguousFilters)
+{
+    auto* page = new SplitterWidget(&m_widgetProvider, m_settings.get());
+    setLayoutRoot(page);
+    const auto* first = addFilter(page);
+    auto* second      = addFilter(page);
+    ASSERT_TRUE(first->group().isValid());
+    ASSERT_EQ(first->group(), second->group());
+    ASSERT_TRUE(m_controller->removeFilter(second));
+    m_controller->addFilterToGroup(second, Id{"OtherGroup"});
+    auto* ambiguous = addFilter(page);
+    ASSERT_FALSE(ambiguous->group().isValid());
+
+    ASSERT_EQ(second, page->takeWidget(page->widgetIndex(second->id())));
+    second->finalise();
+    ambiguous->finalise();
+
+    EXPECT_EQ(Id{"OtherGroup"}, second->group());
+    EXPECT_FALSE(ambiguous->group().isValid());
+    EXPECT_TRUE(m_controller->filterIsUngrouped(ambiguous->id()));
+    EXPECT_EQ(first->group(), addFilter(page)->group());
 }
 
 TEST_F(FilterControllerTest, LoadingGroupedWidgetWithReplacementIdDoesNotDuplicateMembership)
@@ -281,14 +522,19 @@ TEST_F(FilterControllerTest, LoadingGroupedWidgetWithReplacementIdDoesNotDuplica
     ASSERT_NE(nullptr, first);
     ASSERT_NE(nullptr, second);
 
+    first->loadLayoutData({{"Group"_L1, u"Default"_s}});
+    second->loadLayoutData({{"Group"_L1, u"Default"_s}});
+
     QJsonObject layout = savedWidgetLayout(*first);
     layout["ID"_L1]    = u"Grouped.Restored.Filter"_s;
 
     first->loadLayout(layout);
+    first->finalise();
+    second->finalise();
 
     EXPECT_EQ(Id{u"Grouped.Restored.Filter"_s}, first->id());
 
-    const auto group = defaultGroup();
+    const auto group = filterGroup(Id{"Default"});
     ASSERT_EQ(2, group.filters.size());
     EXPECT_EQ(first, group.filters.at(0));
     EXPECT_EQ(second, group.filters.at(1));
@@ -306,6 +552,7 @@ TEST_F(FilterControllerTest, LoadingUngroupedWidgetWithReplacementIdPreservesUng
     layout["ID"_L1]    = u"Ungrouped.Restored.Filter"_s;
 
     filter->loadLayout(layout);
+    filter->finalise();
 
     EXPECT_EQ(Id{u"Ungrouped.Restored.Filter"_s}, filter->id());
     EXPECT_TRUE(m_controller->haveUngroupedFilters());

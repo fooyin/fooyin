@@ -75,6 +75,9 @@ public:
     /*! Returns all immediate layout children in index order, including placeholders and hidden tabs. */
     [[nodiscard]] virtual WidgetList widgets() const = 0;
 
+    /*! Returns whether each immediate child defines an independent layout scope. False by default. */
+    [[nodiscard]] bool hasIndependentChildren() const;
+
     /*! Returns the child arrangement direction. Defaults to Qt::Horizontal for containers without a split axis. */
     [[nodiscard]] virtual Qt::Orientation orientation() const;
 
@@ -145,6 +148,9 @@ public:
     void loadWidgets(const QJsonArray& widgets);
 
 protected:
+    /*! Marks children as independent layout scopes, for example pages in a tab container. */
+    void setIndependentChildren(bool independent);
+
     virtual FyWidget* exchangeWidgetImpl(int index, FyWidget* newWidget) = 0;
 
 private:

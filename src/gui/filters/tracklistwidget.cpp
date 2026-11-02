@@ -34,6 +34,8 @@ namespace Fooyin::Filters {
 TrackListWidget::TrackListWidget(FilterController* controller, PlaylistWidget* playlistWidget, QWidget* parent)
     : FyWidget{parent}
     , m_playlistWidget{playlistWidget}
+    , m_group{}
+    , m_initialGroupPending{true}
     , m_sourceTrackCount{0}
     , m_haveResult{false}
 {
@@ -81,6 +83,7 @@ Id TrackListWidget::group() const
 
 void TrackListWidget::setGroup(const Id& group)
 {
+    m_initialGroupPending = false;
     if(std::exchange(m_group, group) != group) {
         m_sourceTrackCount = 0;
         m_haveResult       = false;
@@ -140,11 +143,17 @@ void TrackListWidget::loadLayoutData(const QJsonObject& layout)
     if(layout.contains("Group"_L1)) {
         setGroup(Id{layout.value("Group"_L1).toString()});
     }
+    else if(m_initialGroupPending) {
+        setGroup(Id{"Default"});
+    }
 }
 
 void TrackListWidget::finalise()
 {
     m_playlistWidget->finalise();
+    if(std::exchange(m_initialGroupPending, false)) {
+        Q_EMIT requestInitialGroup();
+    }
 }
 
 void TrackListWidget::searchEvent(const SearchRequest& request)

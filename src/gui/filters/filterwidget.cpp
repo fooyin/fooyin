@@ -145,6 +145,8 @@ FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* c
     , m_model{new FilterModel(core.library, new CoverProvider(coverRepository, this), m_settings, this)}
     , m_sortProxy{new FilterSortModel(this)}
     , m_backgroundSource{new BackgroundImageSource(m_model->coverProvider(), core.playerController, selection, this)}
+    , m_group{}
+    , m_initialGroupPending{true}
     , m_index{-1}
     , m_multipleColumns{false}
     , m_widgetContext{new WidgetContext(
@@ -328,7 +330,8 @@ bool FilterWidget::hasSelection() const
 
 void FilterWidget::setGroup(const Id& group)
 {
-    m_group = group;
+    m_initialGroupPending = false;
+    m_group               = group;
 }
 
 void FilterWidget::setIndex(int index)
@@ -526,7 +529,10 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
     }
 
     if(layout.contains("Group"_L1)) {
-        m_group = Id{layout.value("Group"_L1).toString()};
+        setGroup(Id{layout.value("Group"_L1).toString()});
+    }
+    else if(m_initialGroupPending) {
+        setGroup(Id{"Default"});
     }
 
     m_index       = layout.value("Index"_L1).toInt(m_index);
@@ -574,6 +580,9 @@ void FilterWidget::finalise()
     }
 
     updateAppearance();
+    if(std::exchange(m_initialGroupPending, false)) {
+        Q_EMIT requestInitialGroup();
+    }
 }
 
 void FilterWidget::searchEvent(const SearchRequest& request)

@@ -43,10 +43,12 @@
 #include <gui/layout/editablelayout.h>
 #include <gui/playlist/currentplaylistcontroller.h>
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgetcontainer.h>
 #include <gui/widgets/autoheaderview.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/async.h>
+#include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
@@ -108,6 +110,20 @@ Id makeUngroupedGroupId(const FyWidget* widget)
 bool isUngroupedGroupId(const Id& groupId)
 {
     return groupId.name().startsWith(QStringLiteral("Fooyin.Filters.Ungrouped."));
+}
+
+FyWidget* groupingScope(FyWidget* widget, const FyWidget* root)
+{
+    auto* current = widget;
+    while(current && current != root) {
+        auto* parent = current->findParent();
+        if(const auto* container = qobject_cast<WidgetContainer*>(parent);
+           container && container->hasIndependentChildren()) {
+            return current;
+        }
+        current = parent;
+    }
+    return current;
 }
 
 bool containsSummaryKey(const std::vector<RowKey>& keys)
@@ -286,6 +302,8 @@ public:
     void handleFilterUpdated(FilterWidget* widget);
     void handleConfigChanged(FilterWidget* widget);
 
+    [[nodiscard]] Id initialGroup(FyWidget* widget) const;
+
     void attachWidget(FilterWidget* widget, const Id& publicGroupId);
     std::optional<Id> detachWidget(FilterWidget* widget);
     void attachViewer(TrackListWidget* widget, const Id& publicGroupId);
@@ -314,7 +332,6 @@ public:
     FilterManager* m_manager;
     FilterColumnRegistry* m_columnRegistry;
 
-    Id m_defaultId{"Default"};
     std::unordered_map<Id, FilterGroupState, Id::IdHash> m_groups;
     std::unordered_map<FilterWidget*, WidgetLocation> m_widgetLocations;
     std::unordered_set<FilterWidget*> m_ungrouped;
@@ -1366,6 +1383,40 @@ void FilterControllerPrivate::handleConfigChanged(FilterWidget* widget)
     scheduleRecompute(*groupId, FilterScrollPolicy::ResetIfChanged);
 }
 
+Id FilterControllerPrivate::initialGroup(FyWidget* widget) const
+{
+    std::optional<Id> group;
+
+    const auto* root  = m_editableLayout->root();
+    const auto* scope = groupingScope(widget, root);
+    if(scope) {
+        const auto allWidgets = m_editableLayout->allWidgets();
+        for(auto* other : allWidgets) {
+            if(other == widget || groupingScope(other, root) != scope) {
+                continue;
+            }
+
+            Id candidate{};
+            if(const auto* filter = qobject_cast<FilterWidget*>(other)) {
+                candidate = filter->group();
+            }
+            else if(const auto* viewer = qobject_cast<TrackListWidget*>(other)) {
+                candidate = viewer->group();
+            }
+
+            if(!candidate.isValid()) {
+                continue;
+            }
+            if(group && *group != candidate) {
+                return {};
+            }
+            group = candidate;
+        }
+    }
+
+    return group ? *group : Id{Utils::generateUniqueHash()};
+}
+
 void FilterControllerPrivate::attachWidget(FilterWidget* widget, const Id& publicGroupId)
 {
     if(!widget) {
@@ -1400,12 +1451,15 @@ void FilterControllerPrivate::attachWidget(FilterWidget* widget, const Id& publi
         widget->applyConfig(config);
     }
 
-    if(publicGroupId.isValid()) {
+    // Initial registration as ungrouped should leave auto assignment pending
+    if(widget->group() != publicGroupId) {
         widget->setGroup(publicGroupId);
+    }
+
+    if(publicGroupId.isValid()) {
         sortGroupedFilters(group);
     }
     else {
-        widget->setGroup({});
         widget->setIndex(-1);
     }
 
@@ -1635,9 +1689,13 @@ FilterWidget* FilterController::createFilter()
 {
     auto* widget = new FilterWidget(p->m_actionManager, p->m_columnRegistry, p->m_coreContext, p->m_coverRepository,
                                     p->m_trackSelection);
-    widget->setGroup(p->m_defaultId);
-    p->attachWidget(widget, p->m_defaultId);
+    p->attachWidget(widget, {});
 
+    QObject::connect(widget, &FilterWidget::requestInitialGroup, this, [this, widget]() {
+        const Id group = p->initialGroup(widget);
+        removeFilter(widget);
+        addFilterToGroup(widget, group);
+    });
     QObject::connect(widget, &FilterWidget::doubleClicked, this,
                      [this, widget]() { p->handleAction(widget, widget->doubleClickAction()); });
     QObject::connect(widget, &FilterWidget::middleClicked, this,
@@ -1675,9 +1733,10 @@ FilterWidget* FilterController::createFilter()
 TrackListWidget* FilterController::createTrackList(PlaylistWidget* playlistWidget)
 {
     auto* widget = new TrackListWidget(this, playlistWidget);
-    widget->setGroup(p->m_defaultId);
-    p->attachViewer(widget, p->m_defaultId);
+    p->attachViewer(widget, {});
 
+    QObject::connect(widget, &TrackListWidget::requestInitialGroup, this,
+                     [this, widget]() { addViewerToGroup(widget, p->initialGroup(widget)); });
     QObject::connect(widget, &TrackListWidget::groupChanged, this, [this, widget]() {
         const auto oldGroup = p->detachViewer(widget);
         p->attachViewer(widget, widget->group());
@@ -1754,9 +1813,7 @@ void FilterController::addFilterToGroup(FilterWidget* widget, const Id& groupId)
 {
     p->attachWidget(widget, groupId);
 
-    if(groupId.isValid()) {
-        widget->setGroup(groupId);
-    }
+    widget->setGroup(groupId);
     if(const auto group = p->widgetGroupId(widget)) {
         p->scheduleRecompute(group.value(), FilterScrollPolicy::ResetIfChanged);
     }
@@ -1777,8 +1834,9 @@ bool FilterController::removeFilter(FilterWidget* widget)
 
 void FilterController::addViewerToGroup(TrackListWidget* widget, const Id& groupId)
 {
-    if(widget->group() != groupId) {
-        widget->setGroup(groupId);
+    const Id previousGroup = widget->group();
+    widget->setGroup(groupId);
+    if(previousGroup != groupId) {
         return;
     }
 

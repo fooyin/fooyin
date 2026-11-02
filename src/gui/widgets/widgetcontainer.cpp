@@ -25,10 +25,14 @@
 
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QVariant>
 
 #include <vector>
 
 using namespace Qt::StringLiterals;
+
+// TODO: Move into a private member for 1.0.
+constexpr auto IndependentChildrenProperty = "Fooyin.Layout.IndependentChildren";
 
 namespace Fooyin {
 WidgetContainer::WidgetContainer(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent)
@@ -54,6 +58,11 @@ QRect WidgetContainer::widgetGeometry(FyWidget* widget) const
 int WidgetContainer::fullWidgetCount() const
 {
     return widgetCount();
+}
+
+bool WidgetContainer::hasIndependentChildren() const
+{
+    return property(IndependentChildrenProperty).toBool();
 }
 
 Qt::Orientation WidgetContainer::orientation() const
@@ -152,6 +161,11 @@ void WidgetContainer::saveCopyLayoutData(QJsonObject& layout, LayoutCopyContext&
     }
 
     layout["Widgets"_L1] = children;
+}
+
+void WidgetContainer::setIndependentChildren(bool independent)
+{
+    setProperty(IndependentChildrenProperty, independent);
 }
 
 void WidgetContainer::loadWidgets(const QJsonArray& widgets)

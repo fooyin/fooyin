@@ -43,7 +43,8 @@ TabStackWidget::TabStackWidget(WidgetProvider* widgetProvider, SettingsManager* 
     , m_tabs{new EditableTabWidget(this)}
     , m_rememberLast{true}
 {
-    QObject::setObjectName(TabStackWidget::name());
+    setObjectName(TabStackWidget::name());
+    setIndependentChildren(true);
 
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins({});

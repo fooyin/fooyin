@@ -209,6 +209,7 @@ Q_SIGNALS:
     void requestHeaderMenu(Fooyin::AutoHeaderView* header, const QPoint& pos);
     void requestContextMenu(const QPoint& pos, Fooyin::WidgetContext* context, bool hasSelection);
     void requestEditConnections();
+    void requestInitialGroup();
     void searchTextChanged(const QString& search);
 
 protected:
@@ -261,6 +262,7 @@ private:
     BackgroundImageSource* m_backgroundSource;
 
     Id m_group;
+    bool m_initialGroupPending;
     int m_index;
     FilterColumnList m_columns;
     bool m_multipleColumns;
