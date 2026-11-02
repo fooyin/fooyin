@@ -112,6 +112,11 @@ LibraryTrackResolver::LibraryTrackResolver(LibraryInfo currentLibrary, PlaylistL
                            std::move(flushWrites)}
 { }
 
+void LibraryTrackResolver::setReadCancellationToken(std::stop_token token)
+{
+    m_readCancellationToken = std::move(token);
+}
+
 TrackList LibraryTrackResolver::readTracks(const QString& filepath)
 {
     if(m_audioLoader->isArchive(filepath)) {
@@ -153,6 +158,27 @@ TrackList LibraryTrackResolver::readTracks(const QString& filepath)
     }
 
     return tracks;
+}
+
+Track LibraryTrackResolver::readUrlTrack(const Track& track)
+{
+    const QString key = track.uniqueFilepath();
+    if(const auto it = m_remoteTracks.find(key); it != m_remoteTracks.end()) {
+        return it->second;
+    }
+
+    Track readTrack{track};
+    readTrack.setMetadataStore(m_metadataStore);
+    if(m_state->mayRun()) {
+        // An unavailable server shouldn't prevent a URL from being added
+        if(!m_audioLoader->readTrackMetadata(readTrack, m_readCancellationToken)) {
+            qCDebug(LIB_SCANNER) << "Could not read metadata from URL:" << key;
+        }
+    }
+    readTrack.generateHash();
+    m_remoteTracks.emplace(key, readTrack);
+    m_state->progressScanned(readTrack.prettyFilepath());
+    return readTrack;
 }
 
 TrackList LibraryTrackResolver::readPlaylist(const QString& filepath)
@@ -226,7 +252,7 @@ LibraryTrackResolver::readPlaylistAsync(const QUrl& url, QObject* context,
                 readTrack.setMetadataStore(m_metadataStore);
 
                 if(playlistTrack.isRemote()) {
-                    return readTrack;
+                    return readUrlTrack(readTrack);
                 }
 
                 readFileProperties(readTrack);
@@ -335,7 +361,7 @@ TrackList LibraryTrackResolver::readPlaylistTracks(const QUrl& url)
         readTrack.setMetadataStore(m_metadataStore);
 
         if(playlistTrack.isRemote()) {
-            return readTrack;
+            return readUrlTrack(readTrack);
         }
 
         readFileProperties(readTrack);

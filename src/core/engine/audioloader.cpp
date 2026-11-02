@@ -24,6 +24,7 @@
 #include <core/coresettings.h>
 #include <core/internalcoresettings.h>
 #include <core/network/remotesourceprovider.h>
+#include <core/network/remotestreamdevice.h>
 #include <core/track.h>
 #include <utils/helpers.h>
 
@@ -32,8 +33,12 @@
 #include <QUrl>
 
 #include <algorithm>
+#include <chrono>
+#include <condition_variable>
+#include <functional>
 #include <mutex>
 #include <shared_mutex>
+#include <thread>
 
 Q_LOGGING_CATEGORY(AUD_LDR, "fy.audioloader")
 
@@ -44,6 +49,33 @@ constexpr auto ReaderState  = "Engine/ReaderState";
 
 namespace Fooyin {
 namespace {
+class MetadataReadCancellation
+{
+public:
+    MetadataReadCancellation(std::stop_token token, std::chrono::milliseconds timeout)
+        : m_parentCancellation{token, [source = m_source]() mutable { source.request_stop(); }}
+        , m_timeoutThread{[source = m_source, timeout](std::stop_token stop) mutable {
+            std::mutex mutex;
+            std::condition_variable_any ready;
+            std::unique_lock lock{mutex};
+            ready.wait_for(lock, stop, timeout, []() { return false; });
+            if(!stop.stop_requested()) {
+                source.request_stop();
+            }
+        }}
+    { }
+
+    [[nodiscard]] std::stop_token token() const
+    {
+        return m_source.get_token();
+    }
+
+private:
+    std::stop_source m_source{};
+    std::stop_callback<std::function<void()>> m_parentCancellation;
+    std::jthread m_timeoutThread;
+};
+
 QStringList normaliseExtensions(QStringList extensions)
 {
     for(QString& extension : extensions) {
@@ -762,16 +794,25 @@ std::unique_ptr<ArchiveReader> AudioLoader::archiveReaderForFile(const QString& 
 
 bool AudioLoader::readTrackMetadata(Track& track) const
 {
+    return readTrackMetadata(track, {});
+}
+
+bool AudioLoader::readTrackMetadata(Track& track, std::stop_token token) const
+{
     const Track originalTrack{track};
 
     const auto readers = readersForTrack(track);
     std::shared_ptr<RemoteSourceProvider> remoteSourceProvider;
+    std::unique_ptr<MetadataReadCancellation> remoteCancellation;
     if(track.isRemote()) {
         const std::shared_lock lock{p->m_mutex};
         remoteSourceProvider = p->m_remoteSourceProvider;
     }
 
     for(const auto& reader : readers) {
+        if(token.stop_requested() || (remoteCancellation && remoteCancellation->token().stop_requested())) {
+            return false;
+        }
         LoadedSource loadedSource;
         AudioSource source;
         source.filepath = track.filepath();
@@ -782,6 +823,13 @@ bool AudioLoader::readTrackMetadata(Track& track) const
                 return false;
             }
             source = loadedSource.source;
+            if(source.remoteStreamDevice && !remoteCancellation) {
+                const auto timeout
+                    = source.remoteOpenTimeout > std::chrono::milliseconds{0}
+                        ? source.remoteOpenTimeout
+                        : std::chrono::milliseconds{Settings::Core::Internal::DefaultRemoteOpenTimeoutMs};
+                remoteCancellation = std::make_unique<MetadataReadCancellation>(token, timeout);
+            }
         }
         else if(!sourceScheme(track.filepath()).isEmpty()) {
             source.device = nullptr;
@@ -794,12 +842,22 @@ bool AudioLoader::readTrackMetadata(Track& track) const
             source.device = &file;
         }
 
-        if(!reader->init(source)) {
+        const auto readToken = remoteCancellation ? remoteCancellation->token() : token;
+        if(readToken.stop_requested()) {
+            return false;
+        }
+        if(source.remoteStreamDevice) {
+            source.remoteStreamDevice->setReadCancellationToken(readToken);
+        }
+        if(auto* cancellable = dynamic_cast<CancellableReader*>(reader.get())) {
+            cancellable->setReadCancellationToken(readToken);
+        }
+        if(!reader->init(source) || readToken.stop_requested()) {
             continue;
         }
 
         Track readTrack{originalTrack};
-        if(reader->readTrack(source, readTrack)) {
+        if(reader->readTrack(source, readTrack) && !readToken.stop_requested()) {
             readTrack.setMetadataWasRead(true);
             track = readTrack;
             return true;

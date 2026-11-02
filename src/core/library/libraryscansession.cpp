@@ -331,7 +331,11 @@ bool LibraryScanSession::scanFiles(const TrackList& libraryTracks, const QList<Q
     }
 
     QStringList paths;
-    std::ranges::transform(urls, std::back_inserter(paths), [](const QUrl& url) { return url.toLocalFile(); });
+    for(const auto& url : urls) {
+        if(url.isLocalFile()) {
+            paths.push_back(url.toLocalFile());
+        }
+    }
 
     m_externalExplicitPaths.clear();
     m_externalExplicitDirs.clear();
@@ -360,6 +364,18 @@ bool LibraryScanSession::scanFiles(const TrackList& libraryTracks, const QList<Q
                                      }};
 
     const bool completed = enumerator.enumerateFiles(paths, restrictExtensions, playlistExtensions);
+
+    if(completed) {
+        for(const auto& url : urls) {
+            if(!m_state.mayRun()) {
+                break;
+            }
+            if(!url.isLocalFile() && url.isValid() && !url.isEmpty()) {
+                m_state.fileDiscovered(url.toString());
+                result.tracksScanned.push_back(resolver.readUrlTrack(Track{url.toString(), m_metadataStore}));
+            }
+        }
+    }
 
     if(completed && m_state.mayRun()) {
         flushWriter(true);
@@ -414,6 +430,7 @@ void LibraryScanSession::scanPlaylistAsync(const TrackList& libraryTracks, const
 {
     reset({});
 
+    m_config.readCancellationToken = token;
     m_state.populateExistingTracks(libraryTracks, {}, false);
     m_state.setReportEnumeratingProgress(true);
     m_phase = ScanProgress::Phase::ReadingMetadata;
@@ -506,18 +523,20 @@ LibraryTrackResolver LibraryScanSession::makeResolver()
         flushTrackResolverWrites();
     };
 
-    return LibraryTrackResolver{m_currentLibrary,
-                                m_playlistLoader,
-                                m_audioLoader,
-                                m_config.playlistSkipMissing,
-                                m_remoteIo,
-                                m_metadataStore,
-                                m_trackDatabase,
-                                &m_state,
-                                &m_writer,
-                                {.overwriteRatingOnReload    = m_config.overwriteRatingOnReload,
-                                 .overwritePlaycountOnReload = m_config.overwritePlaycountOnReload},
-                                flushWrites};
+    LibraryTrackResolver resolver{m_currentLibrary,
+                                  m_playlistLoader,
+                                  m_audioLoader,
+                                  m_config.playlistSkipMissing,
+                                  m_remoteIo,
+                                  m_metadataStore,
+                                  m_trackDatabase,
+                                  &m_state,
+                                  &m_writer,
+                                  {.overwriteRatingOnReload    = m_config.overwriteRatingOnReload,
+                                   .overwritePlaycountOnReload = m_config.overwritePlaycountOnReload},
+                                  flushWrites};
+    resolver.setReadCancellationToken(m_config.readCancellationToken);
+    return resolver;
 }
 
 bool LibraryScanSession::handleEnumeratedFile(const QFileInfo& info, const EnumeratedFileType type)

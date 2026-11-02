@@ -66,11 +66,14 @@ private:
     std::unique_ptr<FFmpegInputPrivate> p;
 };
 
-class FYCORE_EXPORT FFmpegReader : public AudioReader
+class FYCORE_EXPORT FFmpegReader : public AudioReader,
+                                   public CancellableReader
 {
 public:
     FFmpegReader();
     ~FFmpegReader() override;
+
+    void setReadCancellationToken(std::stop_token token) override;
 
     [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool supportsRemoteSources() const override;

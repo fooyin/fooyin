@@ -82,7 +82,7 @@ PlaylistTrack PlaylistNavigator::populateTrackMetadata(Playlist* playlist, Track
         return {};
     }
 
-    if(!track.metadataWasRead() && m_audioLoader && m_audioLoader->readTrackMetadata(track)) {
+    if(!track.isRemote() && !track.metadataWasRead() && m_audioLoader && m_audioLoader->readTrackMetadata(track)) {
         track.generateHash();
         playlist->updateTrackAtIndex(index, track);
     }

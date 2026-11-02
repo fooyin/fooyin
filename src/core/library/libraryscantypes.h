@@ -24,6 +24,8 @@
 #include <core/library/libraryinfo.h>
 #include <core/track.h>
 
+#include <stop_token>
+
 namespace Fooyin {
 struct ScanResult;
 
@@ -47,6 +49,7 @@ struct FYCORE_EXPORT LibraryScanConfig
     bool addFoldersIgnorePlaylists{false};
     bool overwriteRatingOnReload{false};
     bool overwritePlaycountOnReload{false};
+    std::stop_token readCancellationToken{};
 };
 
 struct FYCORE_EXPORT LibraryScanFilesResult

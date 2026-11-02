@@ -192,7 +192,7 @@ void LibraryScanner::scanTracks(const TrackList& tracks, const bool onlyModified
             continue;
         }
 
-        if(onlyModified) {
+        if(onlyModified && !track.isRemote()) {
             const QFileInfo info{physicalTrackPath(track)};
             const QDateTime lastModifiedTime{info.lastModified()};
             const uint64_t lastModified
@@ -206,9 +206,8 @@ void LibraryScanner::scanTracks(const TrackList& tracks, const bool onlyModified
             }
         }
 
-        Track updatedTrack{track.filepath(), track.subsong(), track.metadataStore()};
-
-        if(m_audioLoader->readTrackMetadata(updatedTrack)) {
+        Track updatedTrack = track.isRemote() ? track : Track{track.filepath(), track.subsong(), track.metadataStore()};
+        if(m_audioLoader->readTrackMetadata(updatedTrack, token)) {
             updatedTrack.setLibraryId(track.libraryId());
             updatedTrack.setAddedTime(track.addedTime());
             updatedTrack.setIsEnabled(track.isEnabled());
@@ -225,7 +224,7 @@ void LibraryScanner::scanTracks(const TrackList& tracks, const bool onlyModified
                 const QDateTime modifiedTime = fileInfo.lastModified();
                 updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
             }
-            if(updatedTrack.fileSize() == 0) {
+            if(!updatedTrack.isRemote() && updatedTrack.fileSize() == 0) {
                 updatedTrack.setFileSize(fileInfo.size());
             }
 
@@ -239,13 +238,17 @@ void LibraryScanner::scanTracks(const TrackList& tracks, const bool onlyModified
                 tracksToAdd.push_back(updatedTrack);
             }
         }
+        else if(track.isRemote() && !track.isInDatabase() && shouldContinue()) {
+            updatedTrack.generateHash();
+            tracksToAdd.push_back(updatedTrack);
+        }
 
         ++processedTracks;
         Q_EMIT progressChanged(makeProgress(processedTracks, track.filepath(), static_cast<int>(tracks.size()),
                                             ScanProgress::Phase::ReadingMetadata, 0));
     }
 
-    CueTrackReloader cueReloader{m_audioLoader.get(), m_metadataStore};
+    const CueTrackReloader cueReloader{m_audioLoader.get(), m_metadataStore};
     CueTrackReloadResult cueResult = cueReloader.reload(
         cueTracksToReload, onlyModified,
         {.overwriteRatingOnReload    = config.overwriteRatingOnReload,
@@ -257,7 +260,7 @@ void LibraryScanner::scanTracks(const TrackList& tracks, const bool onlyModified
                 makeProgress(processedTracks, source, total, ScanProgress::Phase::ReadingMetadata, 0));
         });
 
-    if(cueResult.cancelled) {
+    if(cueResult.cancelled || !shouldContinue()) {
         Q_EMIT progressChanged(makeProgress(processedTracks, {}, processedTracks, ScanProgress::Phase::Finished, 0));
         if(state() != Paused) {
             setState(Idle);
@@ -424,8 +427,10 @@ void LibraryScanner::changeLibraryStatus(const LibraryInfo::Status status)
 void LibraryScanner::startSession(const LibraryScanConfig& config, const LibraryInfo& library)
 {
     m_currentLibrary = library;
+    LibraryScanConfig scanConfig{config};
+    scanConfig.readCancellationToken = stopToken();
     m_session = std::make_unique<LibraryScanSession>(&m_trackDatabase, m_playlistLoader.get(), m_audioLoader.get(),
-                                                     m_remoteIo, m_metadataStore, config, this);
+                                                     m_remoteIo, m_metadataStore, std::move(scanConfig), this);
 }
 
 void LibraryScanner::finishSession()

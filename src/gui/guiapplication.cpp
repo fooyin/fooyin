@@ -2343,52 +2343,15 @@ void GuiApplication::addStreamUrl()
         return;
     }
 
-    m_playlistInteractor.tracksToCurrentPlaylist({Track{url.toString()}});
+    m_playlistInteractor.filesToCurrentPlaylist({url});
 }
 
 void GuiApplication::openFilesNow(const QList<QUrl>& urls)
 {
-    QList<QUrl> localFiles;
-    TrackList remoteTracks;
-
-    for(const QUrl& url : urls) {
-        if(url.isLocalFile()) {
-            localFiles.push_back(url);
-        }
-        else {
-            remoteTracks.emplace_back(url.toString());
-        }
-    }
-
     const QString playlistName = m_settings->value<Settings::Core::OpenFilesPlaylist>();
     const bool replacePlaylist = m_settings->value<Settings::Core::OpenFilesSendTo>();
 
-    if(!remoteTracks.empty()) {
-        const auto openTracks = [this, playlistName, replacePlaylist,
-                                 remoteTracks = std::move(remoteTracks)](const TrackList& scannedTracks) {
-            TrackList tracks;
-            tracks.reserve(scannedTracks.size() + remoteTracks.size());
-            tracks.insert(tracks.end(), scannedTracks.cbegin(), scannedTracks.cend());
-            tracks.insert(tracks.end(), remoteTracks.cbegin(), remoteTracks.cend());
-
-            if(replacePlaylist) {
-                m_playlistInteractor.tracksToNewPlaylistReplace(playlistName, tracks, true);
-            }
-            else {
-                m_playlistInteractor.tracksToNewPlaylist(playlistName, tracks, true);
-            }
-        };
-
-        if(localFiles.empty()) {
-            openTracks({});
-        }
-        else {
-            m_playlistInteractor.filesToTracks(localFiles, openTracks);
-        }
-        return;
-    }
-
-    QList<QUrl> files{urls};
+    QList files{urls};
     QUrl fileToPlay;
 
     if(m_settings->value<Settings::Core::OpenFileAddDirectory>() && urls.size() == 1) {

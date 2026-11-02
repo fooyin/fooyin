@@ -335,6 +335,15 @@ private:
 };
 using DecoderCreator = std::function<std::unique_ptr<AudioDecoder>()>;
 
+//! Optional cancellation support
+// TODO: Add to AudioReader for 1.0
+class FYCORE_EXPORT CancellableReader
+{
+public:
+    virtual ~CancellableReader()                                 = default;
+    virtual void setReadCancellationToken(std::stop_token token) = 0;
+};
+
 /*!
  * Metadata/tag reader/writer interface.
  */

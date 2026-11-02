@@ -25,6 +25,7 @@
 #include <core/engine/inputplugin.h>
 
 #include <memory>
+#include <stop_token>
 
 namespace Fooyin {
 class AudioLoaderPrivate;
@@ -171,6 +172,7 @@ public:
 
     //! Read and apply metadata tags to `track`.
     [[nodiscard]] bool readTrackMetadata(Track& track) const;
+    [[nodiscard]] bool readTrackMetadata(Track& track, std::stop_token token) const;
     //! Read cover image from `track` source.
     [[nodiscard]] QByteArray readTrackCover(const Track& track, Track::Cover cover) const;
     //! Persist updated metadata tags for `track`.

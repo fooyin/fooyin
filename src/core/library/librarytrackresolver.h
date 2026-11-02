@@ -28,6 +28,8 @@
 
 #include <functional>
 #include <memory>
+#include <stop_token>
+#include <unordered_map>
 
 class QFileInfo;
 class QObject;
@@ -58,7 +60,10 @@ public:
                          TrackDatabase* trackDatabase, LibraryScanState* state, LibraryScanWriter* writer,
                          TrackReloadOptions reloadOptions, FlushWritesHandler flushWrites);
 
+    void setReadCancellationToken(std::stop_token token);
+
     [[nodiscard]] TrackList readTracks(const QString& filepath);
+    Track readUrlTrack(const Track& track);
     [[nodiscard]] TrackList readPlaylist(const QString& filepath);
     [[nodiscard]] TrackList readPlaylist(const QUrl& url);
     [[nodiscard]] TrackList readPlaylistTracks(const QString& path);
@@ -95,6 +100,8 @@ private:
     TrackReloadOptions m_reloadOptions;
 
     FlushWritesHandler m_flushWrites;
+    std::stop_token m_readCancellationToken;
+    std::unordered_map<QString, Track> m_remoteTracks;
 
     bool m_playlistSkipMissing;
 };

@@ -1957,7 +1957,7 @@ public:
     {
         reset();
 
-        FormatContext context = createAVFormatContext(source);
+        FormatContext context = createAVFormatContext(source, m_readCancellationToken);
         m_context             = std::move(context.formatContext);
         m_ioContext           = std::move(context.ioContext);
         m_ioContextData       = std::move(context.ioContextData);
@@ -1983,6 +1983,7 @@ public:
     FormatContextPtr m_context;
     Stream m_stream;
     int m_chapterCount{0};
+    std::stop_token m_readCancellationToken;
 };
 
 FFmpegReader::FFmpegReader()
@@ -1990,6 +1991,11 @@ FFmpegReader::FFmpegReader()
 { }
 
 FFmpegReader::~FFmpegReader() = default;
+
+void FFmpegReader::setReadCancellationToken(std::stop_token token)
+{
+    p->m_readCancellationToken = std::move(token);
+}
 
 QStringList FFmpegReader::extensions() const
 {
