@@ -35,6 +35,8 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
+#include <unordered_map>
+
 using namespace Qt::StringLiterals;
 
 constexpr auto DontAskAgain = "TagEditor/DontAskAgain";
@@ -192,10 +194,25 @@ void TagEditorPanel::updateForTracks(const TrackList& tracks)
 {
     m_currentTracks = tracks;
 
+    std::unordered_map<QString, bool> writableByExtension;
+    writableByExtension.reserve(8);
+
     const bool hasTracks = !tracks.empty();
-    const bool canWrite  = hasTracks && std::ranges::all_of(tracks, [this](const Track& track) {
-                              return track.isMetadataEditable(m_audioLoader->canWriteMetadata(track));
-                           });
+    const bool canWrite
+        = hasTracks && std::ranges::all_of(tracks, [this, &writableByExtension](const Track& track) {
+              if(track.hasCue() || track.isInArchive() || track.isDatabaseOnlyMetadata()) {
+                  return track.isMetadataEditable(false);
+              }
+
+              const QString extension = track.extension();
+              if(const auto it = writableByExtension.find(extension); it != writableByExtension.cend()) {
+                  return it->second;
+              }
+
+              const bool writable = m_audioLoader->canWriteMetadata(track);
+              writableByExtension.emplace(extension, writable);
+              return writable;
+          });
     m_applyButton->setEnabled(canWrite);
     m_editor->setReadOnly(!canWrite);
     m_editor->setTracks(tracks);
