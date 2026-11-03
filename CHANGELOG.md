@@ -15,7 +15,7 @@
 - **Interface** 
   - Allow dialog actions in separate scopes to share shortcuts
   - Add a separate themed placeholder for artist artwork
-  - Add configurable backgrounds to Library Tree, Radio Browser, and most visualisations
+  - Add configurable backgrounds to Directory Browser, Library Tree, Radio Browser, and most visualisations
   - Increase the default Settings dialog size
   - Improve the Interface settings page layout
   - Rename the Shortcuts settings page to Keyboard Shortcuts
@@ -24,6 +24,8 @@
   - Improve wording in line with the KDE HIG ([#1810](https://github.com/fooyin/fooyin/pull/1810))
   - Separate Library Tree grouping from display scripts and redesign the grouping preset editor
   - Show a script error indicator in Script Editor toolbars
+  - Update the Gallery layout to use inline Filter track expansion
+- **Playback:** Add seeking support and import file properties for finite HTTP files
 - **Filters**
   - Add an automatic artwork fitting option
   - Add separate grouping scripts for columns
@@ -47,20 +49,29 @@
 - **Global Shortcuts:** Fix keypad shortcuts and native key translation across platforms ([#1813](https://github.com/fooyin/fooyin/issues/1813))
 - **Filters:** Preserve group order across rebuilds and incremental updates ([#1829](https://github.com/fooyin/fooyin/issues/1829))
 - **Interface**
+  - Avoid rebuilding the Log view when appending messages ([#1852](https://github.com/fooyin/fooyin/issues/1852))
   - Fix alpha selection in colour dialogs
   - Fix the autosearch delay slider skipping values when scrolling ([#1837](https://github.com/fooyin/fooyin/issues/1837))
+  - Fix Directory Browser playing row highlights
   - Fix playing row colour blending with alternating row colours
   - Fix Properties selection sidebar text alignment and improve performance ([#1848](https://github.com/fooyin/fooyin/issues/1848))
+  - Fix Search connections after resetting layouts
+  - Fix Selection Info text alignment and hide empty section headers
+  - Fix selection text colours in custom item views on Windows
   - Preserve Library Tree double-click actions when single-click expansion is enabled
   - Fix Shift selection across wrapped rows ([#1808](https://github.com/fooyin/fooyin/issues/1808))
   - Refresh table actions after settings models reset, preventing crashes from stale actions ([#1827](https://github.com/fooyin/fooyin/issues/1827))
 - **Playback**
   - Recover playback after output initialisation fails ([#1843](https://github.com/fooyin/fooyin/issues/1843))
+  - Recover from failed track changes
+  - Fix premature EOF handling for HTTP sources ([#1854](https://github.com/fooyin/fooyin/issues/1854))
   - Prevent DSP buffering from delaying gapless decoder adoption ([#1845](https://github.com/fooyin/fooyin/issues/1845))
   - Keep ALSA writes non-blocking and within the available device capacity
   - Fix playlist-led playback from detached Track Viewer windows
   - Fix stale playing indicators after stopping and starting another track
-- **Playlists:** Fix dragging selected tracks from sorted autoplaylists ([#1821](https://github.com/fooyin/fooyin/issues/1821))
+- **Playlists**
+  - Fix dragging selected tracks from sorted autoplaylists ([#1821](https://github.com/fooyin/fooyin/issues/1821))
+  - Fix asynchronous scan lifetimes and persist imported batches atomically
 - **Scripting**
   - Fix numeric Library Tree count expressions ([#1774](https://github.com/fooyin/fooyin/issues/1774), [#1816](https://github.com/fooyin/fooyin/issues/1816))
   - Fix word capitalisation around apostrophes using ICU ([#1847](https://github.com/fooyin/fooyin/issues/1847))
