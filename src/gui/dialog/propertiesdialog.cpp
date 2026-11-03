@@ -1340,9 +1340,9 @@ void PropertiesDialog::show(const TrackList& tracks)
 
     QObject::connect(dialog, &QDialog::finished, dialog, &PropertiesDialogWidget::saveState);
 
-    dialog->show();
-
+    dialog->adjustSize();
     dialog->restoreState();
+    dialog->show();
 }
 } // namespace Fooyin
 

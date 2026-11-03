@@ -632,8 +632,8 @@ void LyricsWidget::openEditor(const Lyrics& lyrics)
                          changeLyrics(updatedLyrics, &editingTrack);
                      });
 
-    dlg->show();
     dlg->restoreState();
+    dlg->show();
 }
 
 void LyricsWidget::openSearchDialog()

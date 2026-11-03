@@ -220,8 +220,8 @@ void LyricsPlugin::openLyricsDialog(const Track& track, const Lyrics& lyrics)
     auto* dialog = new LyricsEditorDialog(track, lyrics, m_playerController, m_lyricsSaver, Utils::getMainWindow());
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     QObject::connect(dialog, &QDialog::finished, dialog, &LyricsEditorDialog::saveState);
-    dialog->show();
     dialog->restoreState();
+    dialog->show();
 }
 
 void LyricsPlugin::loadTrackLyricsAndOpenDialog(const Track& track)
