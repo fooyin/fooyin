@@ -52,7 +52,7 @@ sudo apt install \
     libx11-dev libx11-xcb-dev libxcb1-dev libasound2-dev libtag1-dev libicu-dev libpipewire-0.3-dev libpulse-dev \
     qt6-base-dev libqt6sql6-sqlite libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
     libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev libswresample-dev \
-    libflac-dev libmpg123-dev libopusfile-dev libvorbis-dev libsndfile1-dev libopenmpt-dev libgme-dev libarchive-dev 
+    libflac-dev libmpg123-dev libopusfile-dev libvorbis-dev libsndfile1-dev libopenmpt-dev libgme-dev libarchive-dev \
     libebur128-dev libcdio-dev libcdio-paranoia-dev libsoundtouch-dev libsoxr-dev
 ```
 
