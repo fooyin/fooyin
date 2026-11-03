@@ -31,6 +31,7 @@
 #include <QAbstractItemDelegate>
 #include <QApplication>
 #include <QHeaderView>
+#include <QItemSelectionModel>
 #include <QKeyEvent>
 #include <QLineEdit>
 #include <QMouseEvent>
@@ -49,6 +50,13 @@ namespace {
 bool sameRow(const QModelIndex& lhs, const QModelIndex& rhs)
 {
     return lhs.isValid() && rhs.isValid() && lhs.row() == rhs.row() && lhs.parent() == rhs.parent();
+}
+
+bool isOnlySelectedRow(const QItemSelection& selection, const QModelIndex& index)
+{
+    return !selection.empty() && std::ranges::all_of(selection, [&index](const QItemSelectionRange& range) {
+        return range.top() == index.row() && range.bottom() == index.row() && range.parent() == index.parent();
+    });
 }
 
 QString normaliseBulkEditorValue(QString value)
@@ -403,7 +411,8 @@ void PlaylistView::mousePressEvent(QMouseEvent* event)
     const int column = index.column();
 
     if(editTriggers() != NoEditTriggers && index.isValid() && column != m_ratingColumn && column != m_lovedColumn
-       && (index.flags() & Qt::ItemIsEditable) != 0 && selectionModel() && selectionModel()->isSelected(index)) {
+       && (index.flags() & Qt::ItemIsEditable) != 0 && event->modifiers() == Qt::NoModifier && selectionModel()
+       && selectionModel()->isSelected(index) && isOnlySelectedRow(selectionModel()->selection(), index)) {
         m_pressedSelectedIndex = index;
     }
 

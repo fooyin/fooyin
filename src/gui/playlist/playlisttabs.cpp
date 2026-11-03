@@ -891,8 +891,6 @@ void PlaylistTabs::playlistChanged(Playlist* oldPlaylist, Playlist* playlist)
         return;
     }
 
-    setAcceptDrops(!playlist->isAutoPlaylist() && !playlist->isLocked());
-
     const int count = m_tabs->tabBar()->count();
     const UId id    = playlist->id();
 
@@ -938,7 +936,6 @@ void PlaylistTabs::playlistUpdated(const Playlist* playlist)
     refreshTabTitle(playlist);
 
     if(playlist->id() == m_playlistController->currentPlaylistId()) {
-        setAcceptDrops(!playlist->isAutoPlaylist() && !playlist->isLocked());
         if(!m_contextMenuPlaylist.isValid()) {
             m_savePlaylistAction->setEnabled(playlist->trackCount() > 0);
         }
