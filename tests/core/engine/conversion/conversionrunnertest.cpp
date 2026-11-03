@@ -667,11 +667,12 @@ TEST(ConversionRunnerTest, CancelsAtTrackBoundary)
 
     int cancellationChecks{0};
     ConversionRunner::Request request;
-    request.audioLoader     = &loader;
-    request.encoderRegistry = &encoderRegistry;
-    request.job.tracks      = {first, second};
-    request.job.preset      = preset;
-    request.cancelCallback  = [&cancellationChecks] {
+    request.audioLoader            = &loader;
+    request.encoderRegistry        = &encoderRegistry;
+    request.job.tracks             = {first, second};
+    request.job.preset             = preset;
+    request.maxParallelConversions = 1;
+    request.cancelCallback         = [&cancellationChecks] {
         return cancellationChecks++ > 0;
     };
 
@@ -821,10 +822,11 @@ TEST(ConversionRunnerTest, ResolvesLossySourceDitherPerTrack)
     preset.destination.existingFileMode  = ExistingFileMode::Overwrite;
 
     ConversionRunner::Request request;
-    request.audioLoader     = &loader;
-    request.encoderRegistry = &encoderRegistry;
-    request.job.tracks      = {lossyTrack, losslessTrack};
-    request.job.preset      = preset;
+    request.audioLoader            = &loader;
+    request.encoderRegistry        = &encoderRegistry;
+    request.job.tracks             = {lossyTrack, losslessTrack};
+    request.job.preset             = preset;
+    request.maxParallelConversions = 1;
 
     const auto results = ConversionRunner::run(request);
     ASSERT_EQ(results.size(), 2);
