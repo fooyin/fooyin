@@ -77,10 +77,6 @@ set(SOURCES
     id.cpp
     itemregistry.cpp
     jsonutils.cpp
-    logging/logmodel.cpp
-    logging/logmodel.h
-    logging/logwidget.cpp
-    logging/logwidget.h
     logging/messagehandler.cpp
     modelutils.cpp
     settings/advancedsettingsregistry.cpp

@@ -22,13 +22,10 @@
 #include "fyutils_export.h"
 
 #include <QObject>
-#include <QWidget>
 
 #include <atomic>
 
 namespace Fooyin {
-class LogWidget;
-
 class FYUTILS_EXPORT MessageHandler : public QObject
 {
     Q_OBJECT
@@ -47,17 +44,18 @@ public:
 
     explicit MessageHandler(QObject* parent = nullptr);
 
-    static void install(LogWidget* widget);
+    static void install();
     static void handler(QtMsgType type, const QMessageLogContext&, const QString& msg);
 
     static Level level();
     static void setLevel(Level level);
 
+    static MessageHandler* instance();
+
 Q_SIGNALS:
     void showMessage(QString msg, QtMsgType type);
 
 private:
-    static MessageHandler* instance();
     std::atomic<Level> m_level;
 };
 } // namespace Fooyin

@@ -31,6 +31,7 @@
 #include "dialog/searchdialog.h"
 #include "filters/filterscripting.h"
 #include "internalguisettings.h"
+#include "logging/logwidget.h"
 #include "mainwindow.h"
 #include "menubar/editmenu.h"
 #include "menubar/filemenu.h"
@@ -104,7 +105,6 @@
 #include <utils/actions/widgetcontext.h>
 #include <utils/audioutils.h>
 #include <utils/fileutils.h>
-#include <utils/logging/logwidget.h>
 #include <utils/settings/advancedsettingsregistry.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>

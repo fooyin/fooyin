@@ -256,7 +256,7 @@ int main(int argc, char** argv)
     }
 
     const QApplication app{argc, argv};
-    Fooyin::MessageHandler::install(nullptr);
+    Fooyin::MessageHandler::install();
 
     KDSingleApplication instance{QCoreApplication::applicationName(),
                                  KDSingleApplication::Option::IncludeUsernameInSocketName};

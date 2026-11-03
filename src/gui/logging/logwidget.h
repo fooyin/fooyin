@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "fyutils_export.h"
-
 #include "logmodel.h"
 
 #include <QBasicTimer>
@@ -31,14 +29,14 @@
 class QCheckBox;
 class QComboBox;
 class QSettings;
-class QTreeView;
 
 namespace Fooyin {
 class LogModel;
+class ExpandedTreeView;
 class SettingsManager;
 class SignalThrottler;
 
-class FYUTILS_EXPORT LogWidget : public QWidget
+class LogWidget : public QWidget
 {
     Q_OBJECT
 
@@ -64,7 +62,7 @@ private:
 
     SettingsManager* m_settings;
 
-    QTreeView* m_view;
+    ExpandedTreeView* m_view;
     LogModel* m_model;
     QComboBox* m_level;
     QCheckBox* m_wordWrap;

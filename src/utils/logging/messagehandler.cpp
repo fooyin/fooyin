@@ -19,8 +19,6 @@
 
 #include "utils/logging/messagehandler.h"
 
-#include "logging/logwidget.h"
-
 #include <QLoggingCategory>
 
 #include <iostream>
@@ -80,14 +78,10 @@ MessageHandler::MessageHandler(QObject* parent)
     qRegisterMetaType<QtMsgType>();
 }
 
-void MessageHandler::install(LogWidget* widget)
+void MessageHandler::install()
 {
-    const auto* self = instance();
+    instance();
     qInstallMessageHandler(handler);
-
-    if(widget) {
-        connect(self, &MessageHandler::showMessage, widget, &LogWidget::addEntry, Qt::QueuedConnection);
-    }
 }
 
 void MessageHandler::handler(QtMsgType type, const QMessageLogContext& context, const QString& message)

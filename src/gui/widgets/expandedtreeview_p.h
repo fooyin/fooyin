@@ -118,6 +118,7 @@ public:
     int viewIndex(const QModelIndex& index) const;
     void clearViewItems();
     void insertViewItems(int pos, int count, const ExpandedTreeViewItem& viewItem);
+    bool appendTreeRows(const QModelIndex& parent, int first, int last);
     bool hasVisibleChildren(const QModelIndex& parent) const;
     bool isIndexEnabled(const QModelIndex& index) const;
     bool isItemDisabled(int i) const;
@@ -175,6 +176,7 @@ public:
     QSize m_effectiveIconSize;
     bool m_useIconGapsForSideCaptions{false};
     bool m_uniformRowHeights{false};
+    bool m_wordWrap{false};
     bool m_selectBeforeDrag{false};
     bool m_selectIgnoreParents{false};
     bool m_sortingEnabled{false};

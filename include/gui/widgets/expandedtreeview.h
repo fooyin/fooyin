@@ -92,6 +92,9 @@ public:
     [[nodiscard]] bool uniformRowHeights() const;
     void setUniformRowHeights(bool enabled);
 
+    [[nodiscard]] bool wordWrap() const;
+    void setWordWrap(bool enabled);
+
     [[nodiscard]] int uniformHeightRole() const;
     void setUniformHeightRole(int role);
 
@@ -163,6 +166,7 @@ protected:
     friend class FlowView;
 
     void updateGeometries() override;
+    void initViewItemOption(QStyleOptionViewItem* option) const override;
     void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles) override;
 
     void changeEvent(QEvent* event) override;

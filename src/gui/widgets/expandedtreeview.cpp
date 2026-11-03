@@ -1344,10 +1344,7 @@ void TreeView::updateScrollBars()
         verticalBar->setSingleStep(1);
     }
     else {
-        int contentsHeight{0};
-        for(int i{0}; i < count; ++i) {
-            contentsHeight += itemHeight(i) + itemPadding(i);
-        }
+        const int contentsHeight = itemOffset(count);
 
         const int vMax = m_view->adjustVerticalScrollMaximum(std::max(0, contentsHeight - viewportHeight));
         if(verticalBar->isVisible() && vMax <= 0) {
@@ -1662,6 +1659,9 @@ int TreeView::indexRowSizeHint(const QModelIndex& index) const
 
         const QModelIndex colIndex = model()->index(indexRow, logical, parent);
         if(colIndex.isValid()) {
+            if(m_p->m_wordWrap) {
+                opt.rect.setSize({header()->sectionSize(logical), opt.fontMetrics.height()});
+            }
             const int hint = delegate(colIndex)->sizeHint(opt, colIndex).height();
             height         = std::max(height, hint);
         }
@@ -1712,6 +1712,9 @@ int TreeView::indexSizeHint(const QModelIndex& index, bool span) const
     }
 
     opt.rect.setWidth(header()->sectionSize(column));
+    if(m_p->m_wordWrap) {
+        opt.rect.setHeight(opt.fontMetrics.height());
+    }
     const int hint = delegate(index)->sizeHint(opt, index).height();
     height         = std::max(height, hint);
 
@@ -1729,10 +1732,11 @@ void TreeView::ensureItemOffsetCache() const
         return;
     }
 
+    const int first = m_p->m_itemOffsetsDirty ? 0 : static_cast<int>(m_p->m_itemOffsets.size()) - 1;
     m_p->m_itemOffsets.resize(count + 1);
     m_p->m_itemOffsets[0] = 0;
 
-    for(int i{0}; i < count; ++i) {
+    for(int i = std::max(0, first); i < count; ++i) {
         m_p->m_itemOffsets[i + 1] = m_p->m_itemOffsets[i] + itemHeight(i) + itemPadding(i);
     }
 
@@ -3501,7 +3505,11 @@ void ExpandedTreeViewPrivate::columnResized(int logical, int oldSize, int newSiz
         return;
     }
 
-    if(m_viewMode == ExpandedTreeView::ViewMode::Tree) {
+    if(m_viewMode == ViewMode::Tree) {
+        if(m_wordWrap && oldSize != newSize) {
+            doDelayedItemsLayout();
+            return;
+        }
         if(m_spans.contains(logical)) {
             m_view->updateColumns();
         }
@@ -3528,9 +3536,62 @@ void ExpandedTreeViewPrivate::interruptDelayedItemsLayout() const
 
 void ExpandedTreeViewPrivate::layoutItems() const
 {
-    if(m_delayedPendingLayout) {
+    if(m_delayedPendingLayout && !m_layingOutItems) {
         interruptDelayedItemsLayout();
         m_self->doItemsLayout();
+    }
+}
+
+void ExpandedTreeViewPrivate::doItemsLayout(bool reuseIconMeasurements)
+{
+    if(m_layingOutItems) {
+        return;
+    }
+
+    auto* iconView        = m_viewMode == ViewMode::Icon ? static_cast<IconView*>(m_view.get()) : nullptr;
+    reuseIconMeasurements = reuseIconMeasurements && iconView && iconView->canReuseMeasurements();
+
+    const auto anchor        = std::exchange(m_preserveLayoutPosition, false) ? viewportAnchor() : ViewportAnchor{};
+    const QSize previousSize = m_view->m_contentsSize;
+    m_layingOutItems         = true;
+    if(!reuseIconMeasurements) {
+        clearViewItems();
+    }
+
+    if(reuseIconMeasurements) {
+        iconView->doItemLayout(true);
+    }
+    else if(m_model && m_model->hasChildren(m_self->rootIndex())) {
+        m_view->doItemLayout();
+    }
+    else {
+        m_view->m_contentsSize = {};
+    }
+
+    m_self->QAbstractItemView::doItemsLayout();
+
+    m_header->doItemsLayout();
+    m_layingOutItems = false;
+
+    if(anchor.index.isValid()) {
+        const int item = viewIndex(anchor.index);
+        if(item >= 0) {
+            const int top = anchor.expansion && m_expandedIndex == anchor.index && m_expansionRect.isValid()
+                              ? m_expansionRect.top()
+                              : m_viewItems.at(item).y;
+            m_self->verticalScrollBar()->setValue(top - anchor.top);
+        }
+    }
+
+    updateExpansionGeometry();
+
+    if(previousSize != m_view->m_contentsSize) {
+        Q_EMIT m_self->contentSizeChanged();
+    }
+
+    const QSize effectiveSize = m_view->effectiveIconSize();
+    if(std::exchange(m_effectiveIconSize, effectiveSize) != effectiveSize) {
+        Q_EMIT m_self->effectiveIconSizeChanged(effectiveSize);
     }
 }
 
@@ -3611,6 +3672,34 @@ void ExpandedTreeViewPrivate::insertViewItems(int pos, int count, const Expanded
             m_viewItems.at(i).parentItem += count;
         }
     }
+}
+
+bool ExpandedTreeViewPrivate::appendTreeRows(const QModelIndex& parent, int first, int last)
+{
+    // Flat appends leave existing indexes, measurements and row offsets intact
+    if(m_viewMode != ViewMode::Tree || parent != m_self->rootIndex() || m_viewItems.empty() || first != itemCount()
+       || m_model->rowCount(parent) != last + 1 || !m_spans.empty() || m_expandedIndex.isValid()) {
+        return false;
+    }
+
+    for(int row{first}; row <= last; ++row) {
+        if(m_model->hasChildren(m_model->index(row, 0, parent))) {
+            return false;
+        }
+    }
+
+    const int columns = Utils::visibleSectionCount(m_header);
+    for(int row{first}; row <= last; ++row) {
+        m_viewItems.back().hasMoreSiblings = true;
+        const QModelIndex index            = m_model->index(row, 0, parent);
+        m_viewIndexes.emplace(index, row);
+        ExpandedTreeViewItem item;
+        item.index       = index;
+        item.columnCount = columns;
+        m_viewItems.push_back(item);
+    }
+
+    return true;
 }
 
 bool ExpandedTreeViewPrivate::hasVisibleChildren(const QModelIndex& parent) const
@@ -4120,17 +4209,6 @@ void ExpandedTreeViewPrivate::stopExpansionAnimation()
     m_expansionAnimationHeight    = -1;
 }
 
-QPoint ExpandedTreeViewPrivate::offset() const
-{
-    return {m_self->isRightToLeft() ? -m_self->horizontalOffset() : m_self->horizontalOffset(),
-            m_self->verticalOffset()};
-}
-
-bool ExpandedTreeViewPrivate::isIndexValid(const QModelIndex& index) const
-{
-    return (index.row() >= 0) && (index.column() >= 0) && (index.model() == m_model);
-}
-
 ExpandedTreeView::ExpandedTreeView(QWidget* parent)
     : QAbstractItemView{parent}
     , p{std::make_unique<ExpandedTreeViewPrivate>(this)}
@@ -4395,7 +4473,22 @@ bool ExpandedTreeView::uniformRowHeights() const
 
 void ExpandedTreeView::setUniformRowHeights(bool enabled)
 {
-    p->m_uniformRowHeights = enabled;
+    if(std::exchange(p->m_uniformRowHeights, enabled) != enabled) {
+        p->doDelayedItemsLayout();
+        viewport()->update();
+    }
+}
+
+bool ExpandedTreeView::wordWrap() const
+{
+    return p->m_wordWrap;
+}
+
+void ExpandedTreeView::setWordWrap(bool enabled)
+{
+    if(std::exchange(p->m_wordWrap, enabled) != enabled) {
+        p->doDelayedItemsLayout();
+    }
 }
 
 int ExpandedTreeView::uniformHeightRole() const
@@ -4877,57 +4970,10 @@ void ExpandedTreeView::doItemsLayout()
     p->doItemsLayout(false);
 }
 
-void ExpandedTreeViewPrivate::doItemsLayout(bool reuseIconMeasurements)
+QPoint ExpandedTreeViewPrivate::offset() const
 {
-    if(m_layingOutItems) {
-        return;
-    }
-
-    auto* iconView        = m_viewMode == ViewMode::Icon ? static_cast<IconView*>(m_view.get()) : nullptr;
-    reuseIconMeasurements = reuseIconMeasurements && iconView && iconView->canReuseMeasurements();
-
-    const auto anchor        = std::exchange(m_preserveLayoutPosition, false) ? viewportAnchor() : ViewportAnchor{};
-    const QSize previousSize = m_view->m_contentsSize;
-    m_layingOutItems         = true;
-    if(!reuseIconMeasurements) {
-        clearViewItems();
-    }
-
-    if(reuseIconMeasurements) {
-        iconView->doItemLayout(true);
-    }
-    else if(m_model && m_model->hasChildren(m_self->rootIndex())) {
-        m_view->doItemLayout();
-    }
-    else {
-        m_view->m_contentsSize = {};
-    }
-
-    m_self->QAbstractItemView::doItemsLayout();
-
-    m_header->doItemsLayout();
-    m_layingOutItems = false;
-
-    if(anchor.index.isValid()) {
-        const int item = viewIndex(anchor.index);
-        if(item >= 0) {
-            const int top = anchor.expansion && m_expandedIndex == anchor.index && m_expansionRect.isValid()
-                              ? m_expansionRect.top()
-                              : m_viewItems.at(item).y;
-            m_self->verticalScrollBar()->setValue(top - anchor.top);
-        }
-    }
-
-    updateExpansionGeometry();
-
-    if(previousSize != m_view->m_contentsSize) {
-        Q_EMIT m_self->contentSizeChanged();
-    }
-
-    const QSize effectiveSize = m_view->effectiveIconSize();
-    if(std::exchange(m_effectiveIconSize, effectiveSize) != effectiveSize) {
-        Q_EMIT m_self->effectiveIconSizeChanged(effectiveSize);
-    }
+    return {m_self->isRightToLeft() ? -m_self->horizontalOffset() : m_self->horizontalOffset(),
+            m_self->verticalOffset()};
 }
 
 void ExpandedTreeView::reset()
@@ -5003,6 +5049,15 @@ void ExpandedTreeView::updateGeometries()
     p->updateExpansionGeometry();
 }
 
+void ExpandedTreeView::initViewItemOption(QStyleOptionViewItem* option) const
+{
+    QAbstractItemView::initViewItemOption(option);
+    option->features.setFlag(QStyleOptionViewItem::WrapText, p->m_wordWrap);
+    if(p->m_wordWrap) {
+        option->textElideMode = Qt::ElideNone;
+    }
+}
+
 void ExpandedTreeView::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles)
 {
     p->m_view->dataChanged(topLeft, bottomRight, roles);
@@ -5051,7 +5106,7 @@ void ExpandedTreeView::dataChanged(const QModelIndex& topLeft, const QModelIndex
 void ExpandedTreeView::changeEvent(QEvent* event)
 {
     QAbstractItemView::changeEvent(event);
-    if((p->m_viewMode == ViewMode::Flow || p->m_viewMode == ViewMode::Icon)
+    if((p->m_viewMode == ViewMode::Flow || p->m_viewMode == ViewMode::Icon || p->m_wordWrap)
        && (event->type() == QEvent::LayoutDirectionChange || event->type() == QEvent::FontChange
            || event->type() == QEvent::StyleChange)) {
         p->m_view->invalidate();
@@ -5458,6 +5513,13 @@ void ExpandedTreeView::rowsInserted(const QModelIndex& parent, int start, int en
         return;
     }
 
+    if(p->appendTreeRows(parent, start, end)) {
+        QAbstractItemView::rowsInserted(parent, start, end);
+        updateGeometries();
+        viewport()->update();
+        return;
+    }
+
     const int parentRowCount = model()->rowCount(parent);
     const int delta          = end - start + 1;
     const int parentItem     = p->viewIndex(parent);
@@ -5471,6 +5533,11 @@ void ExpandedTreeView::rowsInserted(const QModelIndex& parent, int start, int en
     }
 
     QAbstractItemView::rowsInserted(parent, start, end);
+}
+
+bool ExpandedTreeViewPrivate::isIndexValid(const QModelIndex& index) const
+{
+    return (index.row() >= 0) && (index.column() >= 0) && (index.model() == m_model);
 }
 
 void ExpandedTreeView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int end)

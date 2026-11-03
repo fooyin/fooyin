@@ -19,6 +19,7 @@
 
 #include "logwidget.h"
 
+#include <gui/widgets/expandedtreeview.h>
 #include <utils/logging/messagehandler.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/signalthrottler.h>
@@ -39,9 +40,7 @@
 #include <QPushButton>
 #include <QScrollBar>
 #include <QSettings>
-#include <QStyledItemDelegate>
 #include <QTimerEvent>
-#include <QTreeView>
 
 #include <algorithm>
 
@@ -55,27 +54,6 @@ constexpr auto ScrollInterval   = 200;
 constexpr auto WordWrap         = "Log/WordWrap";
 
 namespace {
-class LogMessageDelegate : public QStyledItemDelegate
-{
-public:
-    explicit LogMessageDelegate(QTreeView* view)
-        : QStyledItemDelegate{view}
-        , m_view{view}
-    { }
-
-    [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override
-    {
-        QStyleOptionViewItem opt{option};
-        if(m_view->wordWrap()) {
-            opt.rect.setSize({m_view->columnWidth(index.column()), option.fontMetrics.height()});
-        }
-        return QStyledItemDelegate::sizeHint(opt, index);
-    }
-
-private:
-    QTreeView* m_view;
-};
-
 QModelIndexList allRowIndexes(const QAbstractItemModel* model)
 {
     QModelIndexList indexes;
@@ -101,7 +79,7 @@ namespace Fooyin {
 LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
     , m_settings{settings}
-    , m_view{new QTreeView(this)}
+    , m_view{new ExpandedTreeView(this)}
     , m_model{new LogModel(this)}
     , m_level{new QComboBox(this)}
     , m_wordWrap{new QCheckBox(tr("Word wrap"), this)}
@@ -138,8 +116,6 @@ LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
     layout->setColumnStretch(1, 1);
 
     m_view->setModel(m_model);
-    m_view->setItemDelegateForColumn(LogModel::Message, new LogMessageDelegate(m_view));
-    m_view->setRootIsDecorated(false);
     m_view->setUniformRowHeights(true);
     m_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_view->header()->setStretchLastSection(false);
@@ -192,16 +168,8 @@ LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
         m_view->setWordWrap(enabled);
         m_view->setVerticalScrollMode(enabled ? QAbstractItemView::ScrollPerPixel : QAbstractItemView::ScrollPerItem);
     });
-    QObject::connect(
-        m_view->header(), &QHeaderView::sectionResized, this,
-        [this](int column) {
-            if(column == LogModel::Message && m_view->wordWrap()) {
-                m_view->doItemsLayout();
-            }
-        },
-        Qt::QueuedConnection);
-
-    MessageHandler::install(this);
+    QObject::connect(MessageHandler::instance(), &MessageHandler::showMessage, this, &LogWidget::addEntry,
+                     Qt::QueuedConnection);
 }
 
 void LogWidget::addEntry(const QString& message, QtMsgType type)

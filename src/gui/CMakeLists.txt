@@ -309,6 +309,10 @@ set(SOURCES
     librarytree/librarytreeview.h
     librarytree/librarytreewidget.cpp
     librarytree/librarytreewidget.h
+    logging/logmodel.cpp
+    logging/logmodel.h
+    logging/logwidget.cpp
+    logging/logwidget.h
     mainwindow.cpp
     mainwindow.h
     menubar/editmenu.cpp
