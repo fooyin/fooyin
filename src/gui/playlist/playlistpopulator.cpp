@@ -364,11 +364,10 @@ void PlaylistPopulatorPrivate::iterateHeader(const Track& track, PlaylistItem*& 
     }
 
     const auto& context = makeContext(index, m_trackDepth);
-    const auto script   = m_parser.evaluate(m_parsedHeader.text, track, context, m_request.scriptOptions);
-    const auto baseKey  = !m_request.preset.header.grouping.isEmpty()
-                            ? Utils::generateMd5Hash(
-                                  m_parser.evaluate(m_parsedHeader.grouping, track, context, m_request.scriptOptions))
-                            : Utils::generateMd5Hash(script);
+    const auto& groupingScript
+        = m_request.preset.header.grouping.isEmpty() ? m_parsedHeader.text : m_parsedHeader.grouping;
+    const auto baseKey
+        = Utils::generateMd5Hash(m_parser.evaluate(groupingScript, track, context, m_request.scriptOptions));
 
     UId key;
     if(m_prevHeaderKey.isValid() && m_prevBaseHeaderKey == baseKey && index == m_prevIndex + 1) {
