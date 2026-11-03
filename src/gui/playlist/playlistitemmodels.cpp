@@ -19,6 +19,7 @@
 
 #include "playlistitemmodels.h"
 
+#include "scripting/inlinetrackeditors.h"
 #include "scripting/richtextlayout.h"
 
 #include <gui/scripting/richtextutils.h>
@@ -280,6 +281,28 @@ QSize PlaylistTrackItem::size(int column) const
     return m_sizes.front();
 }
 
+QSize PlaylistTrackItem::sizeWithInlineEditors(int loveSize, int ratingSize) const
+{
+    if(!m_columns.empty() || m_rowHeight > 0) {
+        return size();
+    }
+
+    if(m_inlineEditorSize && m_inlineEditorSize->loveSize == loveSize && m_inlineEditorSize->ratingSize == ratingSize) {
+        return m_inlineEditorSize->size;
+    }
+
+    QSize trackSize{size()};
+    if(hasInlineTrackEditors(m_left) || hasInlineTrackEditors(m_right)) {
+        const int textHeight   = std::max(richTextHeight(m_left), richTextHeight(m_right));
+        const int editorHeight = std::max(inlineTrackEditorTextHeight(m_left, loveSize, ratingSize),
+                                          inlineTrackEditorTextHeight(m_right, loveSize, ratingSize));
+        trackSize.rheight() += editorHeight - textHeight;
+    }
+
+    m_inlineEditorSize = InlineEditorSize{.size = trackSize, .loveSize = loveSize, .ratingSize = ratingSize};
+    return trackSize;
+}
+
 bool PlaylistTrackItem::sameDataAs(const PlaylistTrackItem& other) const
 {
     return m_columns == other.m_columns && m_left == other.m_left && m_right == other.m_right
@@ -294,6 +317,7 @@ void PlaylistTrackItem::setColumns(const std::vector<RichText>& columns)
         return;
     }
     m_sizes.clear();
+    m_inlineEditorSize.reset();
 }
 
 void PlaylistTrackItem::setLeftRight(const RichText& left, const RichText& right)
@@ -302,6 +326,7 @@ void PlaylistTrackItem::setLeftRight(const RichText& left, const RichText& right
         return;
     }
     m_sizes.clear();
+    m_inlineEditorSize.reset();
 }
 
 void PlaylistTrackItem::setTrack(const PlaylistTrack& track)
@@ -325,6 +350,7 @@ void PlaylistTrackItem::setRowHeight(int height)
         return;
     }
     m_sizes.clear();
+    m_inlineEditorSize.reset();
 }
 
 void PlaylistTrackItem::setDepth(int depth)
@@ -340,11 +366,13 @@ void PlaylistTrackItem::removeColumn(int column)
 
     m_columns.erase(m_columns.cbegin() + column);
     m_sizes.clear();
+    m_inlineEditorSize.reset();
 }
 
 void PlaylistTrackItem::calculateHeight() const
 {
     m_sizes.clear();
+    m_inlineEditorSize.reset();
 
     if(!m_columns.empty()) {
         int calculatedHeight{m_rowHeight};
@@ -370,6 +398,7 @@ void PlaylistTrackItem::calculateHeight() const
 void PlaylistTrackItem::calculateSize() const
 {
     m_sizes.clear();
+    m_inlineEditorSize.reset();
 
     if(!m_columns.empty()) {
         int calculatedHeight{0};

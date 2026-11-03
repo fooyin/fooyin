@@ -49,6 +49,8 @@ QVariant ExpansionTrackModel::data(const QModelIndex& index, int role) const
             return row.font ? QVariant::fromValue(*row.font) : QVariant{};
         case Qt::BackgroundRole:
             return row.background.isValid() ? QVariant::fromValue(row.background) : QVariant{};
+        case InlineEditorsRole:
+            return QVariant::fromValue(row.inlineEditors);
         case LayoutRole:
             return QVariant::fromValue(row.layout);
         case PlayingIconRole:
@@ -150,6 +152,36 @@ bool ExpansionTrackModel::changesStructure(const ExpansionResult& result) const
            });
 }
 
+TrackList ExpansionTrackModel::editTrackStat(const QModelIndex& index, const QModelIndexList& selected,
+                                             const QVariant& value, InlineTrackEditor type)
+{
+    const auto rows = selected.contains(index) ? selectedTracks(selected) : std::set{trackIndex(index)};
+
+    TrackList tracks;
+    tracks.reserve(rows.size());
+
+    for(const int row : rows) {
+        if(row < 0 || std::cmp_greater_equal(row, m_tracks.size())) {
+            continue;
+        }
+
+        auto& track = m_tracks[row];
+        if(type == InlineTrackEditor::Love) {
+            track.setLoved(value.value<HeartValue>().loved());
+        }
+        else if(type == InlineTrackEditor::Rating) {
+            track.setRating(value.value<StarRating>().rating());
+        }
+
+        m_rows[row].inlineEditors.setTrack(track);
+        tracks.push_back(track);
+        const QModelIndex changed = indexForTrack(row);
+        Q_EMIT dataChanged(changed, changed, {InlineEditorsRole});
+    }
+
+    return tracks;
+}
+
 void ExpansionTrackModel::setContent(const ExpansionResult& result)
 {
     beginResetModel();
@@ -170,6 +202,10 @@ void ExpansionTrackModel::setContent(const ExpansionResult& result)
 
 bool ExpansionTrackModel::updateContent(const ExpansionResult& result)
 {
+    if(result.tracks) {
+        m_tracks = *result.tracks;
+    }
+
     if(changesStructure(result)) {
         beginResetModel();
 
@@ -266,9 +302,9 @@ bool ExpansionTrackModel::updateRow(ExpansionRow& previous, const ExpansionRow& 
                   && left.height == right.height;
           });
 
-    if(previous.text == row.text && previous.playingIcon == row.playingIcon && previous.height == row.height
-       && previous.font == row.font && previous.background == row.background && sameLayout
-       && rowSize(previous) == rowSize(row)) {
+    if(!hasInlineTrackEditors(row.layout) && previous.text == row.text && previous.playingIcon == row.playingIcon
+       && previous.height == row.height && previous.font == row.font && previous.background == row.background
+       && sameLayout && rowSize(previous) == rowSize(row)) {
         return false;
     }
 
@@ -278,8 +314,8 @@ bool ExpansionTrackModel::updateRow(ExpansionRow& previous, const ExpansionRow& 
     previous = row;
 
     if(index.isValid()) {
-        QList<int> roles{Qt::DisplayRole,    Qt::ToolTipRole, Qt::FontRole,
-                         Qt::BackgroundRole, LayoutRole,      PlayingIconRole};
+        QList<int> roles{Qt::DisplayRole, Qt::ToolTipRole, Qt::FontRole,     Qt::BackgroundRole,
+                         LayoutRole,      PlayingIconRole, InlineEditorsRole};
         if(sizeChanged) {
             roles.push_back(Qt::SizeHintRole);
         }
@@ -302,7 +338,9 @@ QSize ExpansionTrackModel::rowSize(const ExpansionRow& row)
 
 ExpansionRow ExpansionTrackModel::headerRow(const RichTextLayout& layout)
 {
-    return {
-        .text = richTextLayoutPlainText(layout), .layout = layout, .height = layout.height > 0 ? layout.height + 2 : 0};
+    return {.text          = richTextLayoutPlainText(layout),
+            .layout        = layout,
+            .height        = layout.height > 0 ? layout.height + 2 : 0,
+            .inlineEditors = {}};
 }
 } // namespace Fooyin::Filters

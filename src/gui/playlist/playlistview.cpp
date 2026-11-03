@@ -102,6 +102,7 @@ PlaylistView::PlaylistView(QWidget* parent)
     setDefaultDropAction(Qt::MoveAction);
     setDropIndicatorShown(true);
     setTextElideMode(Qt::ElideRight);
+    setMouseTracking(true);
     setSelectBeforeDrag(true);
     setUniformHeightRole(PlaylistItem::UniformHeightKey);
     viewport()->setAcceptDrops(true);
@@ -177,8 +178,6 @@ void PlaylistView::setRatingColumn(int column)
     if(m_ratingColumn >= 0) {
         setItemDelegateForColumn(m_ratingColumn, m_starDelegate);
     }
-
-    setMouseTracking(m_ratingColumn >= 0 || m_lovedColumn >= 0);
 }
 
 void PlaylistView::setLovedColumn(int column)
@@ -201,7 +200,7 @@ void PlaylistView::setLovedColumn(int column)
         setItemDelegateForColumn(m_lovedColumn, m_heartDelegate);
     }
 
-    setMouseTracking(m_ratingColumn >= 0 || m_lovedColumn >= 0);
+    clearInlineEditorHover();
 }
 
 void PlaylistView::setRatingEditorOnlyOnHover(bool enabled)
@@ -223,6 +222,7 @@ void PlaylistView::setTrackStatsEditable(bool editable)
     }
 
     if(!editable) {
+        clearInlineEditorHover();
         ratingHoverOut();
         loveHoverOut();
     }
@@ -240,6 +240,7 @@ void PlaylistView::setBackgroundPixmap(const QPixmap& pixmap)
 
 void PlaylistView::playlistAboutToBeReset()
 {
+    clearInlineEditorHover();
     m_playlistLoaded = false;
     cancelPendingEditor();
     endBulkEditSession(false);
@@ -260,6 +261,20 @@ bool PlaylistView::playlistLoaded() const
 bool PlaylistView::stickyArtworkIntersects(const QRect& rect) const
 {
     return m_stickyArtworkRegion.intersects(rect);
+}
+
+InlineTrackEditors PlaylistView::inlineEditors(const QModelIndex& index) const
+{
+    auto editors   = index.data(PlaylistItem::Role::InlineEditors).value<InlineTrackEditors>();
+    editors.active = sameRow(m_hoveredRow, index) || selectionModel()->isSelected(index);
+
+    if(m_inlineEditorHover.index.isValid()
+       && (m_inlineEditorHover.index == index
+           || (selectionModel()->isSelected(m_inlineEditorHover.index) && selectionModel()->isSelected(index)))) {
+        m_inlineEditorHover.apply(editors);
+    }
+
+    return editors;
 }
 
 bool PlaylistView::hasActiveInlineEditor() const
@@ -333,6 +348,11 @@ void PlaylistView::mouseMoveEvent(QMouseEvent* event)
     const QModelIndex index = indexAt(event->pos());
     updateHoveredRow(index);
 
+    const auto inlineHit = m_trackStatsEditable ? inlineEditorAt(index, event->pos()) : InlineTrackEditorHit{};
+    if(inlineHit.type == InlineTrackEditor::None) {
+        clearInlineEditorHover();
+    }
+
     if(m_starDelegate) {
         if(index.isValid() && index.column() == m_ratingColumn) {
             ratingHoverIn(index, event->pos());
@@ -349,6 +369,13 @@ void PlaylistView::mouseMoveEvent(QMouseEvent* event)
         else if(m_heartDelegate->hoveredIndex().isValid()) {
             loveHoverOut();
         }
+    }
+
+    if(inlineHit.type != InlineTrackEditor::None) {
+        m_inlineEditorHover.update(index, inlineHit, event->pos(),
+                                   index.data(PlaylistItem::Role::InlineEditors).value<InlineTrackEditors>());
+        viewport()->update();
+        setCursor(Qt::PointingHandCursor);
     }
 
     ExpandedTreeView::mouseMoveEvent(event);
@@ -409,6 +436,17 @@ void PlaylistView::mousePressEvent(QMouseEvent* event)
     }
 
     const int column = index.column();
+
+    const auto inlineHit = m_trackStatsEditable ? inlineEditorAt(index, event->pos()) : InlineTrackEditorHit{};
+    if(inlineHit.type != InlineTrackEditor::None) {
+        const auto editors = index.data(PlaylistItem::Role::InlineEditors).value<InlineTrackEditors>();
+        const auto value   = inlineTrackEditorValue(inlineHit, event->pos(), editors);
+        m_inlineEditorHover.update(index, inlineHit, event->pos(), editors);
+        editTrackStat(index, value,
+                      inlineHit.type == InlineTrackEditor::Love ? Track::Stat::Loved : Track::Stat::Rating);
+        ExpandedTreeView::mousePressEvent(event);
+        return;
+    }
 
     if(editTriggers() != NoEditTriggers && index.isValid() && column != m_ratingColumn && column != m_lovedColumn
        && (index.flags() & Qt::ItemIsEditable) != 0 && event->modifiers() == Qt::NoModifier && selectionModel()
@@ -506,6 +544,7 @@ void PlaylistView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHi
 
 void PlaylistView::leaveEvent(QEvent* event)
 {
+    clearInlineEditorHover();
     updateHoveredRow({});
 
     if(m_starDelegate && m_starDelegate->hoveredIndex().isValid()) {
@@ -1257,10 +1296,40 @@ void PlaylistView::updateHoveredRow(const QModelIndex& index)
         if(m_lovedColumn >= 0) {
             update(row.siblingAtColumn(m_lovedColumn));
         }
+        if(row.data(PlaylistItem::Role::SingleColumnMode).toBool()) {
+            update(row);
+        }
     };
 
     updateEditorCells(previousRow);
     updateEditorCells(hoveredRow);
+}
+
+InlineTrackEditorHit PlaylistView::inlineEditorAt(const QModelIndex& index, const QPoint& pos) const
+{
+    if(!index.isValid()) {
+        return {};
+    }
+
+    const auto* delegate = qobject_cast<const PlaylistDelegate*>(itemDelegate());
+    if(!delegate) {
+        return {};
+    }
+
+    QStyleOptionViewItem option;
+    initViewItemOption(&option);
+    option.rect = visualRect(index);
+    return delegate->inlineEditorAt(option, index, pos);
+}
+
+void PlaylistView::clearInlineEditorHover()
+{
+    const bool hovered = m_inlineEditorHover.index.isValid();
+    m_inlineEditorHover.clear();
+    unsetCursor();
+    if(hovered) {
+        viewport()->update();
+    }
 }
 
 QModelIndex PlaylistView::stickyHeaderIndex(int scrollOffset) const

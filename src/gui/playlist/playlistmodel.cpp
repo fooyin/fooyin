@@ -23,6 +23,7 @@
 #include "playlistitem.h"
 #include "playlistpopulator.h"
 #include "playlistpreset.h"
+#include "scripting/inlinetrackeditors.h"
 #include <core/constants.h>
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
@@ -625,6 +626,8 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     , m_pixmapPaddingTop{0}
     , m_starRatingSize{settings->value<Settings::Gui::StarRatingSize>()}
     , m_loveHeartSize{settings->value<Settings::Gui::LoveHeartSize>()}
+    , m_ratingEditorOnlyOnHover{settings->value<Settings::Gui::RatingEditorOnlyOnHover>()}
+    , m_loveEditorOnlyOnHover{settings->value<Settings::Gui::LoveEditorOnlyOnHover>()}
     , m_ratingStarColours{Gui::ratingStarColours(*settings)}
     , m_unratedStarColour{Gui::unratedStarColour(*settings)}
     , m_loveHeartColour{Gui::loveHeartColour(*settings)}
@@ -644,6 +647,14 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     m_settings->subscribe<Settings::Gui::StarRatingSize>(this, [this](int size) {
         m_starRatingSize = size;
         invalidateData();
+    });
+    m_settings->subscribe<Settings::Gui::RatingEditorOnlyOnHover>(this, [this](bool enabled) {
+        m_ratingEditorOnlyOnHover = enabled;
+        notifyDataChangedForSubtree({}, {PlaylistItem::Role::InlineEditors});
+    });
+    m_settings->subscribe<Settings::Gui::LoveEditorOnlyOnHover>(this, [this](bool enabled) {
+        m_loveEditorOnlyOnHover = enabled;
+        notifyDataChangedForSubtree({}, {PlaylistItem::Role::InlineEditors});
     });
     const auto updateRatingColours = [this](const QVariant&) {
         m_ratingStarColours = Gui::ratingStarColours(*m_settings);
@@ -2601,7 +2612,9 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
             return isRatingWriteField(writeField) ? QVariant{} : writeField;
         }
         case PlaylistItem::Role::UniformHeightKey:
-            return uniformHeightKey(PlaylistItem::Track, trackItem.size().height(), trackItem.rowHeight() <= 0);
+            return uniformHeightKey(PlaylistItem::Track,
+                                    trackItem.sizeWithInlineEditors(m_loveHeartSize, m_starRatingSize).height(),
+                                    trackItem.rowHeight() <= 0);
         case PlaylistItem::Role::UsesStyleBaseHeight:
             return trackItem.rowHeight() <= 0;
         case Qt::BackgroundRole: {
@@ -2639,10 +2652,20 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
         }
         case Qt::SizeHintRole: {
             if(m_columns.empty()) {
-                return trackItem.size();
+                return trackItem.sizeWithInlineEditors(m_loveHeartSize, m_starRatingSize);
             }
             return trackItem.size(column);
         }
+        case PlaylistItem::Role::InlineEditors:
+            if(!singleColumnMode
+               || (!hasInlineTrackEditors(trackItem.left()) && !hasInlineTrackEditors(trackItem.right()))) {
+                return {};
+            }
+            return QVariant::fromValue(InlineTrackEditors{
+                .love   = HeartValue{track.isLoved(), m_loveHeartSize, m_loveHeartColour, m_unlovedHeartColour},
+                .rating = StarRating{track.rating(), 5, m_starRatingSize, m_ratingStarColours, m_unratedStarColour},
+                .hideEmptyLove   = m_loveEditorOnlyOnHover,
+                .hideEmptyRating = m_ratingEditorOnlyOnHover});
         case PlaylistItem::Role::PlayingIcon: {
             switch(trackItem.playingIcon()) {
                 case ScriptPlayingIcon::Play:

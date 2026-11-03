@@ -21,7 +21,7 @@
 
 #include "filterexpansionmodel.h"
 #include "filterexpansionpopulator.h"
-#include "filterexpansiontrackdelegate.h"
+#include "filterexpansiontrackview.h"
 
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
@@ -31,13 +31,9 @@
 #include <gui/widgets/expandedtreeview.h>
 #include <gui/widgets/widgetbackground.h>
 #include <utils/actions/widgetcontext.h>
-#include <utils/tooltipfilter.h>
 #include <utils/utils.h>
 
 #include <QApplication>
-#include <QContextMenuEvent>
-#include <QHeaderView>
-#include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
@@ -71,12 +67,6 @@ QColor expansionBackground(const QPalette& palette, QPalette::ColorGroup group)
                             (base.greenF() * (1.0 - Tint)) + (highlight.greenF() * Tint),
                             (base.blueF() * (1.0 - Tint)) + (highlight.blueF() * Tint));
 }
-
-class ExpansionTrackView : public ExpandedTreeView
-{
-public:
-    using ExpandedTreeView::ExpandedTreeView;
-};
 } // namespace
 
 class ExpansionFooterWidget : public QWidget
@@ -157,33 +147,7 @@ FilterExpansionWidget::FilterExpansionWidget(TrackSelectionController* selection
     setSizePolicy(policy);
 
     m_tracks->setModel(m_model);
-    m_tracks->setViewMode(ExpandedTreeView::ViewMode::Flow);
-
-    m_tracks->setItemDelegate(new ExpansionTrackDelegate(m_tracks));
-    m_tracks->setFrameShape(QFrame::NoFrame);
-    m_tracks->setAutoFillBackground(false);
-    m_tracks->viewport()->setAutoFillBackground(false);
-    m_tracks->setProperty("transparent_base_rows", true);
-    m_tracks->setHeaderHidden(true);
-    m_tracks->header()->setSectionResizeMode(QHeaderView::Stretch);
-    m_tracks->setIndentation(0);
-    m_tracks->setFlowMinimumRows(4);
-    m_tracks->setFlowStretchColumns(m_stretchColumns);
-    m_tracks->setUniformRowHeights(false);
-    m_tracks->setSelectIgnoreParents(true);
-    m_tracks->setSelectionBehavior(QAbstractItemView::SelectRows);
-    m_tracks->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    m_tracks->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_tracks->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_tracks->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    m_tracks->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    m_tracks->setDragEnabled(true);
-    m_tracks->setDragDropMode(QAbstractItemView::DragOnly);
-    m_tracks->setDefaultDropAction(Qt::CopyAction);
-    m_tracks->setMouseTracking(true);
-    m_tracks->installEventFilter(this);
     m_tracks->viewport()->installEventFilter(this);
-    m_tracks->viewport()->installEventFilter(new ToolTipFilter(this));
 
     m_close->setAutoRaise(true);
     Gui::setThemeIcon(m_close, Constants::Icons::Close);
@@ -213,24 +177,35 @@ FilterExpansionWidget::FilterExpansionWidget(TrackSelectionController* selection
                      });
     QObject::connect(m_tracks, &ExpandedTreeView::contentSizeChanged, this,
                      &FilterExpansionWidget::scheduleLayoutUpdate);
+    QObject::connect(
+        m_tracks, &ExpansionTrackView::editorClicked, this,
+        [this](const QModelIndex& index, const InlineTrackEditorHit& hit, const QPoint& pos) {
+            const auto editors = index.data(ExpansionTrackModel::InlineEditorsRole).value<InlineTrackEditors>();
+            const auto value   = inlineTrackEditorValue(hit, pos, editors);
+            const auto changed
+                = m_model->editTrackStat(index, m_tracks->selectionModel()->selectedIndexes(), value, hit.type);
+            if(!changed.empty()) {
+                Q_EMIT trackStatsChanged(changed, hit.type == InlineTrackEditor::Love ? Track::Stat::Loved
+                                                                                      : Track::Stat::Rating);
+            }
+        });
     QObject::connect(m_close, &QToolButton::clicked, this, &FilterExpansionWidget::closeRequested);
-    QObject::connect(m_tracks, &ExpandedTreeView::doubleClicked, this, &FilterExpansionWidget::activate);
-    QObject::connect(m_tracks, &ExpandedTreeView::middleClicked, this, [this](const QModelIndex& index) {
-        if(index.isValid() && !m_previewMode) {
+    QObject::connect(m_tracks, &ExpansionTrackView::closeRequested, this, &FilterExpansionWidget::closeRequested);
+    QObject::connect(m_tracks, &ExpansionTrackView::trackActivated, this, [this](const QModelIndex& index) {
+        if(m_model->firstTrack(index) >= 0) {
             updateSelection();
-            Q_EMIT middleClicked(index);
+            Q_EMIT doubleClicked(index);
         }
     });
-    QObject::connect(m_tracks->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-                     &FilterExpansionWidget::updateSelection);
-    QObject::connect(m_tracks->selectionModel(), &QItemSelectionModel::currentChanged, this,
-                     [this](const QModelIndex& index) {
-                         if(index.isValid() && m_tracks->hasFocus()) {
-                             QRect trackRect = m_tracks->visualRect(index);
-                             trackRect.moveTopLeft(m_tracks->viewport()->mapTo(this, trackRect.topLeft()));
-                             Q_EMIT trackFocused(trackRect);
-                         }
-                     });
+    QObject::connect(m_tracks, &ExpansionTrackView::trackMiddleClicked, this, &FilterExpansionWidget::middleClicked);
+    QObject::connect(m_tracks, &ExpansionTrackView::selectionUpdated, this, &FilterExpansionWidget::updateSelection);
+    QObject::connect(m_tracks, &ExpansionTrackView::trackFocused, this, [this](QRect rect) {
+        rect.moveTopLeft(m_tracks->viewport()->mapTo(this, rect.topLeft()));
+        Q_EMIT trackFocused(rect);
+    });
+    QObject::connect(
+        m_tracks, &ExpansionTrackView::requestContextMenu, this,
+        [this](const QPoint& pos, bool hasSelection) { Q_EMIT requestContextMenu(pos, m_context, hasSelection); });
 
     QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_background,
                      &WidgetBackground::setPixmap);
@@ -370,9 +345,7 @@ void FilterExpansionWidget::setPreviewMode()
     m_previewMode = true;
     m_showArtwork = false;
     m_close->setVisible(m_showCloseButton);
-    m_tracks->setDragEnabled(false);
-    m_tracks->setSelectionMode(QAbstractItemView::NoSelection);
-    m_tracks->setFocusPolicy(Qt::NoFocus);
+    m_tracks->setPreviewMode();
     updateLayout();
 }
 
@@ -556,6 +529,11 @@ void FilterExpansionWidget::clear()
     updateSelection();
 }
 
+const TrackList& FilterExpansionWidget::tracks() const
+{
+    return m_model->tracks();
+}
+
 QColor FilterExpansionWidget::defaultBackgroundColour() const
 {
     const auto group = !isEnabled() ? QPalette::Disabled : isActiveWindow() ? QPalette::Active : QPalette::Inactive;
@@ -579,18 +557,6 @@ int FilterExpansionWidget::heightForWidth(int width) const
 
 bool FilterExpansionWidget::eventFilter(QObject* watched, QEvent* event)
 {
-    if(event->type() == QEvent::KeyPress && !m_previewMode) {
-        const auto* key = static_cast<QKeyEvent*>(event);
-        if(key->key() == Qt::Key_Escape) {
-            Q_EMIT closeRequested();
-            return true;
-        }
-        if(key->key() == Qt::Key_Return || key->key() == Qt::Key_Enter) {
-            activate(m_tracks->currentIndex().isValid() ? m_tracks->currentIndex() : m_model->index(0, 0, {}));
-            return true;
-        }
-    }
-
     if(watched == m_tracks->viewport()) {
         if(event->type() == QEvent::Wheel) {
             const auto* wheel      = static_cast<QWheelEvent*>(event);
@@ -601,11 +567,6 @@ bool FilterExpansionWidget::eventFilter(QObject* watched, QEvent* event)
             forwarded.setTimestamp(wheel->timestamp());
             QApplication::sendEvent(parentWidget(), &forwarded);
             event->accept();
-            return true;
-        }
-        if(event->type() == QEvent::ContextMenu && !m_previewMode) {
-            const auto* context = static_cast<QContextMenuEvent*>(event);
-            Q_EMIT requestContextMenu(context->globalPos(), m_context, m_tracks->selectionModel()->hasSelection());
             return true;
         }
     }
@@ -761,7 +722,7 @@ void FilterExpansionWidget::updateSelection()
         return;
     }
 
-    const auto tracks = m_model->tracks();
+    const auto& tracks = m_model->tracks();
 
     TrackSelection selection;
     const auto selectedTracks = m_model->selectedTracks(m_tracks->selectionModel()->selectedIndexes());
@@ -790,14 +751,6 @@ void FilterExpansionWidget::updateSelection()
     }
 
     m_selection->changeSelectedTracks(m_context, selection);
-}
-
-void FilterExpansionWidget::activate(const QModelIndex& index)
-{
-    if(m_model->firstTrack(index) >= 0 && !m_previewMode) {
-        updateSelection();
-        Q_EMIT doubleClicked(index);
-    }
 }
 
 void FilterExpansionWidget::updateArtwork()

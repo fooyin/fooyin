@@ -214,6 +214,16 @@ set(SOURCES
     dsp/resamplersettingswidget.h
     dsp/skipsilencesettingswidget.cpp
     dsp/skipsilencesettingswidget.h
+    filters/expansion/filterexpansionmodel.cpp
+    filters/expansion/filterexpansionmodel.h
+    filters/expansion/filterexpansionpopulator.cpp
+    filters/expansion/filterexpansionpopulator.h
+    filters/expansion/filterexpansiontrackdelegate.cpp
+    filters/expansion/filterexpansiontrackdelegate.h
+    filters/expansion/filterexpansiontrackview.cpp
+    filters/expansion/filterexpansiontrackview.h
+    filters/expansion/filterexpansionwidget.cpp
+    filters/expansion/filterexpansionwidget.h
     filters/filtercolumneditordialog.cpp
     filters/filtercolumneditordialog.h
     filters/filtercolumnregistry.cpp
@@ -226,14 +236,6 @@ set(SOURCES
     filters/filtercontroller.h
     filters/filterdelegate.cpp
     filters/filterdelegate.h
-    filters/filterexpansionmodel.cpp
-    filters/filterexpansionmodel.h
-    filters/filterexpansionpopulator.cpp
-    filters/filterexpansionpopulator.h
-    filters/filterexpansiontrackdelegate.cpp
-    filters/filterexpansiontrackdelegate.h
-    filters/filterexpansionwidget.cpp
-    filters/filterexpansionwidget.h
     filters/filterfwd.h
     filters/filteritem.cpp
     filters/filteritem.h
@@ -460,6 +462,8 @@ set(SOURCES
     scriptdisplay/scriptdisplayconfigdialog.h
     scripting/expressiontreemodel.cpp
     scripting/expressiontreemodel.h
+    scripting/inlinetrackeditors.cpp
+    scripting/inlinetrackeditors.h
     scripting/richtextdelegateutils.cpp
     scripting/richtextdelegateutils.h
     scripting/richtextlayout.cpp

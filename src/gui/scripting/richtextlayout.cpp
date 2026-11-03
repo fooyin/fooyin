@@ -94,7 +94,8 @@ void drawText(QPainter* painter, const QStyleOptionViewItem& option, const RichT
 }
 } // namespace
 
-RichTextLayout prepareRichTextLayout(const RichText& text, const QFont& baseFont, bool measureWidth)
+RichTextLayout prepareRichTextLayout(const RichText& text, const QFont& baseFont, bool measureWidth,
+                                     const InlineTrackEditors* editors)
 {
     RichTextLayout layout;
 
@@ -105,6 +106,9 @@ RichTextLayout prepareRichTextLayout(const RichText& text, const QFont& baseFont
         line.leftBaseline  = line.baseline;
         line.rightBaseline = line.baseline;
 
+        int leftEditorHeight{0};
+        int rightEditorHeight{0};
+
         for(const auto& block : richLine.blocks) {
             if(block.type == RichTextBlock::Type::Line) {
                 line.rule = block.format;
@@ -114,25 +118,35 @@ RichTextLayout prepareRichTextLayout(const RichText& text, const QFont& baseFont
             const QFontMetrics fm{resolvedRichTextFont(block.format, baseFont)};
             line.baseline.expand(fm);
 
+            const auto editor      = editors ? inlineTrackEditorType(block) : InlineTrackEditor::None;
+            const bool hasEditor   = editor != InlineTrackEditor::None;
+            const QSize editorSize = hasEditor ? editors->size(editor) : QSize{};
+            const int width        = hasEditor                                      ? editorSize.width()
+                                   : block.type == RichTextBlock::Type::PlayingIcon ? fm.height()
+                                                                                    : fm.horizontalAdvance(block.text);
+
             if(block.format.alignment == RichAlignment::Right) {
                 line.rightBaseline.expand(fm);
                 line.right.blocks.push_back(block);
                 if(measureWidth) {
-                    line.rightWidth
-                        += (block.type == RichTextBlock::Type::PlayingIcon ? fm.height()
-                                                                           : fm.horizontalAdvance(block.text));
+                    line.rightWidth += width;
                 }
+                rightEditorHeight = std::max(rightEditorHeight, editorSize.height());
             }
             else {
                 line.leftBaseline.expand(fm);
                 line.left.blocks.push_back(block);
                 if(measureWidth) {
-                    line.leftWidth
-                        += (block.type == RichTextBlock::Type::PlayingIcon ? fm.height()
-                                                                           : fm.horizontalAdvance(block.text));
+                    line.leftWidth += width;
                 }
+                leftEditorHeight = std::max(leftEditorHeight, editorSize.height());
             }
         }
+
+        line.leftBaseline.ascent  = std::max(line.leftBaseline.ascent, leftEditorHeight - line.leftBaseline.descent);
+        line.rightBaseline.ascent = std::max(line.rightBaseline.ascent, rightEditorHeight - line.rightBaseline.descent);
+        line.baseline.ascent
+            = std::max(line.baseline.ascent, std::max(leftEditorHeight, rightEditorHeight) - line.baseline.descent);
 
         const bool hasText = !line.left.empty() || !line.right.empty();
         line.height        = !hasText && line.rule ? RuleHeight : line.baseline.height();
@@ -151,8 +165,8 @@ QString richTextLayoutPlainText(const RichTextLayout& layout)
 {
     QStringList lines;
     for(const auto& line : layout.lines) {
-        auto text        = line.left.joinedText();
-        const auto right = line.right.joinedText();
+        auto text        = inlineTrackEditorPlainText(line.left);
+        const auto right = inlineTrackEditorPlainText(line.right);
         if(!text.isEmpty() && !right.isEmpty() && !text.back().isSpace() && !right.front().isSpace()) {
             text += u' ';
         }
@@ -162,32 +176,64 @@ QString richTextLayoutPlainText(const RichTextLayout& layout)
     return lines.join(u'\n');
 }
 
-void drawRichTextLayout(QPainter* painter, const QStyleOptionViewItem& option, const QRect& rect,
-                        const RichTextLayout& layout, const QIcon& playingIcon)
+bool hasInlineTrackEditors(const RichTextLayout& layout)
 {
-    painter->save();
-    painter->setClipRect(rect, Qt::IntersectClip);
+    return std::ranges::any_of(layout.lines, [](const RichTextLine& line) {
+        return hasInlineTrackEditors(line.left) || hasInlineTrackEditors(line.right);
+    });
+}
+
+std::vector<InlineTrackEditorHit> drawRichTextLayout(QPainter* painter, const QStyleOptionViewItem& option,
+                                                     const QRect& rect, const RichTextLayout& layout,
+                                                     const QIcon& playingIcon, const InlineTrackEditors* editors)
+{
+    if(painter) {
+        painter->save();
+        painter->setClipRect(rect, Qt::IntersectClip);
+    }
+
+    std::vector<InlineTrackEditorHit> hits;
 
     int y = rect.top() + std::max(0, (rect.height() - layout.height) / 2);
     for(const auto& line : layout.lines) {
-        const int rightWidth    = line.left.empty() ? rect.width() : rect.width() / 2;
-        const auto right        = elideText(line.right, option.font, rightWidth);
-        const int gap           = !line.left.empty() && !line.right.empty() ? TextGap : 0;
-        const auto left         = elideText(line.left, option.font, std::max(0, rect.width() - right.width - gap));
-        const int leftBaseline  = y + ((line.height - line.leftBaseline.height()) / 2) + line.leftBaseline.ascent;
-        const int rightBaseline = y + ((line.height - line.rightBaseline.height()) / 2) + line.rightBaseline.ascent;
+        const int rightWidth = line.left.empty() ? rect.width() : rect.width() / 2;
+        const int gap        = !line.left.empty() && !line.right.empty() ? TextGap : 0;
 
-        drawText(painter, option, left.text, rect.left(), leftBaseline, playingIcon);
-        drawText(painter, option, right.text, rect.right() - right.width + 1, rightBaseline, playingIcon);
+        int leftWidth{0};
+        int drawnRightWidth{0};
+        if(editors) {
+            const QRect rightRect{rect.right() - rightWidth + 1, y, rightWidth, line.height};
+            auto right = drawTrackTextBlocks(painter, option, rightRect, line.right.blocks,
+                                             Qt::AlignVCenter | Qt::AlignRight, playingIcon, editors);
+            const QRect leftRect{rect.left(), y, std::max(0, rect.width() - right.totalWidth - gap), line.height};
+            auto left       = drawTrackTextBlocks(painter, option, leftRect, line.left.blocks,
+                                                  Qt::AlignVCenter | Qt::AlignLeft, playingIcon, editors);
+            leftWidth       = left.totalWidth;
+            drawnRightWidth = right.totalWidth;
+            hits.insert(hits.end(), left.editors.begin(), left.editors.end());
+            hits.insert(hits.end(), right.editors.begin(), right.editors.end());
+        }
+        else {
+            const auto right        = elideText(line.right, option.font, rightWidth);
+            const auto left         = elideText(line.left, option.font, std::max(0, rect.width() - right.width - gap));
+            const int leftBaseline  = y + ((line.height - line.leftBaseline.height()) / 2) + line.leftBaseline.ascent;
+            const int rightBaseline = y + ((line.height - line.rightBaseline.height()) / 2) + line.rightBaseline.ascent;
+            if(painter) {
+                drawText(painter, option, left.text, rect.left(), leftBaseline, playingIcon);
+                drawText(painter, option, right.text, rect.right() - right.width + 1, rightBaseline, playingIcon);
+            }
+            leftWidth       = left.width;
+            drawnRightWidth = right.width;
+        }
 
-        if(line.rule) {
+        if(line.rule && painter) {
             QColor colour = option.palette.color(QPalette::Text);
             colour.setAlpha(40);
             colour = resolvedRichTextColour(*line.rule, colour, option.palette.color(QPalette::Link));
             painter->setPen(QPen{colour, 1});
 
-            const int start = rect.left() + left.width + (left.width > 0 ? TextGap / 2 : 0);
-            const int end   = rect.right() - right.width - (right.width > 0 ? TextGap / 2 : 0);
+            const int start = rect.left() + leftWidth + (leftWidth > 0 ? TextGap / 2 : 0);
+            const int end   = rect.right() - drawnRightWidth - (drawnRightWidth > 0 ? TextGap / 2 : 0);
             if(end > start) {
                 painter->drawLine(start, y + (line.height / 2), end, y + (line.height / 2));
             }
@@ -196,6 +242,14 @@ void drawRichTextLayout(QPainter* painter, const QStyleOptionViewItem& option, c
         y += line.height;
     }
 
-    painter->restore();
+    if(painter) {
+        painter->restore();
+    }
+
+    for(auto& hit : hits) {
+        hit.rect = hit.rect.intersected(rect);
+    }
+    std::erase_if(hits, [](const InlineTrackEditorHit& hit) { return hit.rect.isEmpty(); });
+    return hits;
 }
 } // namespace Fooyin

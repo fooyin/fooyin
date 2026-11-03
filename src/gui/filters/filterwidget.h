@@ -21,8 +21,8 @@
 
 #include "fygui_export.h"
 
+#include "expansion/filterexpansionpopulator.h"
 #include "filtercontroller.h"
-#include "filterexpansionpopulator.h"
 #include "filterfwd.h"
 #include "filterrows.h"
 
@@ -211,6 +211,7 @@ Q_SIGNALS:
     void requestEditConnections();
     void requestInitialGroup();
     void searchTextChanged(const QString& search);
+    void trackStatsChanged(const Fooyin::TrackList& tracks, Fooyin::Track::Stat stat);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
@@ -252,6 +253,7 @@ private:
     ActionManager* m_actionManager;
     FilterColumnRegistry* m_columnRegistry;
     LibraryManager* m_libraryManager;
+    MusicLibrary* m_library;
     SettingsManager* m_settings;
 
     FilterView* m_view;

@@ -343,6 +343,8 @@ private:
     int m_pixmapPaddingTop;
     int m_starRatingSize;
     int m_loveHeartSize;
+    bool m_ratingEditorOnlyOnHover;
+    bool m_loveEditorOnlyOnHover;
     std::array<QColor, 5> m_ratingStarColours;
     QColor m_unratedStarColour;
     QColor m_loveHeartColour;

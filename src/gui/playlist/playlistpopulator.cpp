@@ -21,6 +21,7 @@
 
 #include "playlistitemmodels.h"
 #include "playlistpreset.h"
+#include "scripting/inlinetrackeditors.h"
 
 #include <core/scripting/scripttypes.h>
 #include <gui/scripting/richtextutils.h>
@@ -193,11 +194,7 @@ PlaylistItem* PlaylistPopulatorPrivate::getOrInsertItem(const UId& key, Playlist
 RichText PlaylistPopulatorPrivate::evaluateTrackScript(const ParsedScript& parsedScript, const Track& track,
                                                        const ScriptContext& context)
 {
-    const auto evalScript = m_parser.evaluate(parsedScript, track, context, m_request.scriptOptions);
-    if(evalScript.isEmpty()) {
-        return {};
-    }
-    return m_formatter.evaluate(evalScript);
+    return evaluateInlineTrackScript(m_parser, m_formatter, parsedScript, track, context, m_request.scriptOptions);
 }
 
 RichText PlaylistPopulatorPrivate::evaluateGroupScript(const ParsedScript& parsedScript, const TrackList& tracks,

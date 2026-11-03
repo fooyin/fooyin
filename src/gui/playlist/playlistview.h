@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "scripting/inlinetrackeditors.h"
+
 #include <core/library/musiclibrary.h>
 #include <core/track.h>
 #include <gui/widgets/expandedtreeview.h>
@@ -66,6 +68,7 @@ public:
     [[nodiscard]] bool playlistLoaded() const;
 
     [[nodiscard]] bool stickyArtworkIntersects(const QRect& rect) const;
+    [[nodiscard]] InlineTrackEditors inlineEditors(const QModelIndex& index) const;
 
     [[nodiscard]] bool hasActiveInlineEditor() const;
     void setSingleWriteInProgress(bool inProgress);
@@ -125,6 +128,9 @@ private:
     void loveHoverOut();
     void updateHoveredRow(const QModelIndex& index);
 
+    [[nodiscard]] InlineTrackEditorHit inlineEditorAt(const QModelIndex& index, const QPoint& pos) const;
+    void clearInlineEditorHover();
+
     struct StickyHeader
     {
         QModelIndex index;
@@ -157,6 +163,7 @@ private:
     HeartDelegate* m_heartDelegate;
     int m_lovedColumn;
     QPersistentModelIndex m_hoveredRow;
+    InlineTrackEditorHover m_inlineEditorHover;
 
     WidgetBackground* m_background;
 

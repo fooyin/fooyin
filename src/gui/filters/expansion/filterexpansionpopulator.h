@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "filterrows.h"
+#include "gui/filters/filterrows.h"
 
 #include "gui/scripting/richtextlayout.h"
 
@@ -79,6 +79,7 @@ struct ExpansionRow
     RichTextLayout layout;
     ScriptPlayingIcon playingIcon{ScriptPlayingIcon::None};
     int height{0};
+    InlineTrackEditors inlineEditors;
     std::optional<QFont> font{};
     QColor background{};
 };
@@ -101,6 +102,7 @@ struct ExpansionRequest
     QString sortScript;
     ScriptContextData context;
     ScriptEvaluationOptions options;
+    InlineTrackEditors inlineEditors;
     LibraryInfoMap libraries;
     QueueTracks queue;
     QFont font;

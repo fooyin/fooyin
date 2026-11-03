@@ -19,17 +19,18 @@
 
 #include "filterwidget.h"
 
+#include "expansion/filterexpansionwidget.h"
 #include "filtercolumneditordialog.h"
 #include "filtercolumnregistry.h"
 #include "filterconfigwidget.h"
 #include "filterdelegate.h"
-#include "filterexpansionwidget.h"
 #include "filteritem.h"
 #include "filtermodel.h"
 #include "filterview.h"
 
 #include <core/coresettings.h>
 #include <core/library/librarymanager.h>
+#include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/plugins/coreplugincontext.h>
 #include <gui/coverprovider.h>
@@ -138,6 +139,7 @@ FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* c
     , m_actionManager{actionManager}
     , m_columnRegistry{columnRegistry}
     , m_libraryManager{core.libraryManager}
+    , m_library{core.library}
     , m_settings{core.settingsManager}
     , m_view{new FilterView(this)}
     , m_delegate{new FilterDelegate(this)}
@@ -1198,11 +1200,36 @@ void FilterWidget::setupConnections()
     QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_view,
                      &FilterView::setBackgroundPixmap);
 
+    QObject::connect(this, &FilterWidget::trackStatsChanged, m_library,
+                     [this](const TrackList& tracks, Track::Stat stat) {
+                         if(m_expansion) {
+                             m_expansionTracks = std::make_shared<const TrackList>(m_expansion->tracks());
+                         }
+                         m_library->updateTrackStats(tracks, stat);
+                         refreshExpansionScripts({});
+                     });
+
     m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
         const auto resolvedStyle = var.value<ResolvedAppStyle>();
         Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
         scheduleExpansionUpdate();
     });
+
+    const auto refreshEditors = [this]() {
+        refreshExpansionScripts({});
+    };
+    m_settings->subscribe<Settings::Gui::LoveHeartSize>(this, refreshEditors);
+    m_settings->subscribe<Settings::Gui::StarRatingSize>(this, refreshEditors);
+    m_settings->subscribe<Settings::Gui::LoveHeartColour>(this, refreshEditors);
+    m_settings->subscribe<Settings::Gui::UnlovedHeartColour>(this, refreshEditors);
+    m_settings->subscribe<Settings::Gui::RatingOneStarColour>(this, refreshEditors);
+    m_settings->subscribe<Settings::Gui::RatingTwoStarColour>(this, refreshEditors);
+    m_settings->subscribe<Settings::Gui::RatingThreeStarColour>(this, refreshEditors);
+    m_settings->subscribe<Settings::Gui::RatingFourStarColour>(this, refreshEditors);
+    m_settings->subscribe<Settings::Gui::RatingFiveStarColour>(this, refreshEditors);
+    m_settings->subscribe<Settings::Gui::UnratedStarColour>(this, refreshEditors);
+    m_settings->subscribe<Settings::Gui::LoveEditorOnlyOnHover>(this, refreshEditors);
+    m_settings->subscribe<Settings::Gui::RatingEditorOnlyOnHover>(this, refreshEditors);
 
     const auto refreshRatingStars = [this]() {
         scheduleExpansionUpdate();
@@ -1433,6 +1460,8 @@ void FilterWidget::submitExpansion(ExpansionRequest request)
         m_expansion = new FilterExpansionWidget(m_trackSelection, m_model->coverProvider()->repository());
         m_view->setExpansionWidget(m_expansion);
 
+        QObject::connect(m_expansion, &FilterExpansionWidget::trackStatsChanged, this,
+                         &FilterWidget::trackStatsChanged);
         QObject::connect(m_expansion, &FilterExpansionWidget::populated, this, &FilterWidget::applyExpansionContent);
         QObject::connect(m_expansion, &FilterExpansionWidget::closeRequested, this, [this]() { closeExpansion(true); });
         QObject::connect(m_expansion, &FilterExpansionWidget::contentChanged, m_view,
@@ -1493,6 +1522,7 @@ ExpansionRequest FilterWidget::expansionRequest(std::shared_ptr<const TrackList>
     request.tracks                          = std::move(tracks);
     request.columnValues                    = m_expansionColumnValues;
     request.font                            = m_view->font();
+    request.inlineEditors                   = inlineTrackEditors(*m_settings);
     request.libraries                       = m_libraryManager ? m_libraryManager->allLibraries() : LibraryInfoMap{};
     request.context                         = m_scriptContext ? m_scriptContext->playbackContext()
                                             : m_player        ? makePlaybackScriptData(m_player)

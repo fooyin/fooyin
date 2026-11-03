@@ -370,11 +370,14 @@ void FilterExpansionPopulator::evaluateTracks(std::stop_token stop)
             const auto& font   = playing && m_request.playingRowFont ? *m_request.playingRowFont : m_request.font;
             m_formatter.setBaseFont(font);
 
-            const auto text = m_parser.evaluate(m_track, track, groupContext(), m_request.options);
-            const auto rich = formatted(text, tr("Track"), ExpansionTracks);
+            const auto rich
+                = evaluateInlineTrackScript(m_parser, m_formatter, m_track, track, groupContext(), m_request.options);
+            addErrors(tr("Track"), m_formatter.errors(), ExpansionTracks);
 
             ExpansionRow resultRow;
-            resultRow.layout      = prepareRichTextLayout(rich, font);
+            resultRow.inlineEditors = m_request.inlineEditors;
+            resultRow.inlineEditors.setTrack(track);
+            resultRow.layout      = prepareRichTextLayout(rich, font, true, &resultRow.inlineEditors);
             resultRow.text        = richTextLayoutPlainText(resultRow.layout);
             resultRow.height      = std::max(QFontMetrics{font}.height(), resultRow.layout.height) + 5;
             resultRow.playingIcon = data.playingIcon;

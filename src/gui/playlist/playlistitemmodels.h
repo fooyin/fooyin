@@ -95,6 +95,7 @@ public:
     [[nodiscard]] int rowHeight() const;
     [[nodiscard]] int depth() const;
     [[nodiscard]] QSize size(int column = 0) const;
+    [[nodiscard]] QSize sizeWithInlineEditors(int loveSize, int ratingSize) const;
 
     [[nodiscard]] bool sameDataAs(const PlaylistTrackItem& other) const;
 
@@ -112,6 +113,13 @@ public:
     void calculateSize() const;
 
 private:
+    struct InlineEditorSize
+    {
+        QSize size;
+        int loveSize;
+        int ratingSize;
+    };
+
     std::vector<RichText> m_columns;
     RichText m_left;
     RichText m_right;
@@ -119,6 +127,7 @@ private:
     PlaylistTrack m_track;
     ScriptPlayingIcon m_playingIcon{ScriptPlayingIcon::None};
     mutable std::vector<QSize> m_sizes;
+    mutable std::optional<InlineEditorSize> m_inlineEditorSize;
     int m_rowHeight;
     int m_depth;
 };

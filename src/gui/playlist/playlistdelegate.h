@@ -20,6 +20,7 @@
 #pragma once
 
 #include "artwork/artworkreflection.h"
+#include "scripting/inlinetrackeditors.h"
 
 #include <QStyledItemDelegate>
 
@@ -43,6 +44,8 @@ public:
     void setArtworkReflection(const ReflectionOptions& options);
 
     [[nodiscard]] int artworkSpanHeight(int width, const QModelIndex& index) const;
+    [[nodiscard]] InlineTrackEditorHit inlineEditorAt(const QStyleOptionViewItem& option, const QModelIndex& index,
+                                                      const QPoint& pos) const;
 
     static QRect subheaderContentRect(const QStyleOptionViewItem& option, const QModelIndex& index, int offset = 0);
 

@@ -19,8 +19,8 @@
 
 #include "filterconfigwidget.h"
 
+#include "expansion/filterexpansionwidget.h"
 #include "filtercolumneditordialog.h"
-#include "filterexpansionwidget.h"
 #include "trackgenerator.h"
 
 #include <gui/guiutils.h>

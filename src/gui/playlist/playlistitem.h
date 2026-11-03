@@ -63,7 +63,8 @@ public:
         UniformHeightKey,
         UsesStyleBaseHeight,
         EditableWriteField,
-        CoverKey
+        CoverKey,
+        InlineEditors,
     };
 
     enum class State

@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "inlinetrackeditors.h"
+
 #include <gui/scripting/richtextutils.h>
 
 #include <QIcon>
@@ -49,10 +51,14 @@ struct RichTextLayout
     int height{0};
 };
 
-RichTextLayout prepareRichTextLayout(const RichText& text, const QFont& baseFont = {}, bool measureWidth = true);
+RichTextLayout prepareRichTextLayout(const RichText& text, const QFont& baseFont = {}, bool measureWidth = true,
+                                     const InlineTrackEditors* editors = nullptr);
 QString richTextLayoutPlainText(const RichTextLayout& layout);
-void drawRichTextLayout(QPainter* painter, const QStyleOptionViewItem& option, const QRect& rect,
-                        const RichTextLayout& layout, const QIcon& playingIcon = {});
+bool hasInlineTrackEditors(const RichTextLayout& layout);
+std::vector<InlineTrackEditorHit> drawRichTextLayout(QPainter* painter, const QStyleOptionViewItem& option,
+                                                     const QRect& rect, const RichTextLayout& layout,
+                                                     const QIcon& playingIcon          = {},
+                                                     const InlineTrackEditors* editors = nullptr);
 } // namespace Fooyin
 
 Q_DECLARE_METATYPE(Fooyin::RichTextLayout)

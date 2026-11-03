@@ -59,137 +59,22 @@ QWidget* PlaylistDelegate::createEditor(QWidget* parent, const QStyleOptionViewI
     return editor;
 }
 
-struct DrawTextResult
+std::vector<InlineTrackEditorHit> drawSingleColumnTrack(QPainter* painter, const QStyleOptionViewItem& option,
+                                                        const QModelIndex& index, const InlineTrackEditors* editors)
 {
-    QRect bound;
-    int totalWidth{0};
-};
+    const QIcon playingIcon{index.data(PlaylistItem::Role::PlayingIcon).value<QPixmap>()};
+    const auto leftSide  = index.data(PlaylistItem::Role::Left).value<RichText>().blocks;
+    const auto rightSide = index.data(PlaylistItem::Role::Right).value<RichText>().blocks;
+    const QRect textRect = Gui::itemViewTextRect(option);
 
-struct PreparedTextBlock
-{
-    QString text;
-    QFont font;
-    QColor colour;
-    int width{0};
-    bool playingIcon{false};
-};
-
-struct PreparedTextLine
-{
-    std::vector<PreparedTextBlock> blocks;
-    TextBaselineMetrics baseline;
-    int width{0};
-};
-
-DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
-                              const std::vector<RichTextBlock>& blocks, Qt::Alignment alignment,
-                              const QIcon& playingIcon = {})
-{
-    DrawTextResult result;
-
-    const auto selected         = option.state & QStyle::State_Selected;
-    const QColor defaultColour  = option.palette.color(QPalette::Text);
-    const QColor selectedColour = option.palette.color(Gui::itemViewSelectionTextRole(option));
-    const QColor linkColour     = option.palette.color(QPalette::Link);
-
-    const RichText richText{.blocks = blocks};
-    const auto logicalLines = splitRichTextLines(richText);
-    std::vector<PreparedTextLine> preparedLines;
-    preparedLines.reserve(logicalLines.size());
-
-    int totalHeight{0};
-    for(const auto& logicalLine : logicalLines) {
-        PreparedTextLine line;
-        line.baseline      = textBaselineMetrics(option.font);
-        int remainingWidth = rect.width();
-
-        for(const auto& block : logicalLine.blocks) {
-            const bool isIcon = block.type == RichTextBlock::Type::PlayingIcon;
-            if((block.text.isEmpty() && !isIcon) || remainingWidth <= 0 || (isIcon && playingIcon.isNull())) {
-                continue;
-            }
-
-            const QFont font = resolvedRichTextFont(block.format, option.font);
-            const QFontMetrics metrics{font};
-
-            if(isIcon) {
-                const int width = std::min(metrics.height(), remainingWidth);
-                line.blocks.push_back({.text = {}, .font = font, .colour = {}, .width = width, .playingIcon = true});
-                line.baseline.expand(metrics);
-                line.width += width;
-                remainingWidth -= width;
-                continue;
-            }
-
-            const QString text = metrics.elidedText(block.text, Qt::ElideRight, remainingWidth);
-            if(text.isEmpty()) {
-                continue;
-            }
-
-            QColor blockColour = resolvedRichTextColour(block.format, defaultColour, linkColour);
-            if(selected) {
-                blockColour = selectedColour;
-            }
-
-            const int width = metrics.horizontalAdvance(text);
-            line.blocks.push_back({.text = text, .font = font, .colour = blockColour, .width = width});
-            line.baseline.expand(metrics);
-            line.width += width;
-            remainingWidth -= width;
-
-            if(text != block.text) {
-                break;
-            }
-        }
-
-        result.totalWidth = std::max(result.totalWidth, line.width);
-        totalHeight += line.baseline.height();
-        preparedLines.push_back(std::move(line));
-    }
-
-    int y = rect.y();
-    if(alignment & Qt::AlignBottom) {
-        y = rect.bottom() - totalHeight + 1;
-    }
-    else if(alignment & Qt::AlignVCenter) {
-        y += std::max(0, (rect.height() - totalHeight) / 2);
-    }
-
-    int boundX = rect.x();
-    if(alignment & Qt::AlignRight) {
-        boundX = rect.right() - result.totalWidth + 1;
-    }
-    else if(alignment & Qt::AlignHCenter) {
-        boundX += std::max(0, (rect.width() - result.totalWidth) / 2);
-    }
-    result.bound = {boundX, y, result.totalWidth, totalHeight};
-
-    for(const auto& line : preparedLines) {
-        int x = rect.x();
-        if(alignment & Qt::AlignRight) {
-            x = rect.right() - line.width + 1;
-        }
-        else if(alignment & Qt::AlignHCenter) {
-            x += std::max(0, (rect.width() - line.width) / 2);
-        }
-
-        for(const auto& block : line.blocks) {
-            if(block.playingIcon) {
-                const QRect iconRect{x, y + ((line.baseline.height() - block.width) / 2), block.width, block.width};
-                Gui::drawItemViewIcon(painter, option, playingIcon, iconRect, Qt::AlignCenter);
-            }
-            else {
-                painter->setFont(block.font);
-                painter->setPen(block.colour);
-                painter->drawText(QPoint{x, y + line.baseline.ascent}, block.text);
-            }
-            x += block.width;
-        }
-
-        y += line.baseline.height();
-    }
-
-    return result;
+    const QRect rightRect = textRect.adjusted(textRect.center().x() - textRect.left(), 0, 0, 0);
+    auto right           = drawTrackTextBlocks(painter, option, rightRect, rightSide, Qt::AlignVCenter | Qt::AlignRight,
+                                               playingIcon, editors);
+    const QRect leftRect = textRect.adjusted(0, 0, -right.totalWidth, 0);
+    auto left = drawTrackTextBlocks(painter, option, leftRect, leftSide, Qt::AlignVCenter | Qt::AlignLeft, playingIcon,
+                                    editors);
+    left.editors.insert(left.editors.end(), right.editors.begin(), right.editors.end());
+    return left.editors;
 }
 
 void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, int cornerRadius)
@@ -254,17 +139,15 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
     const QIcon playingIcon{index.data(PlaylistItem::Role::PlayingIcon).value<QPixmap>()};
 
     if(singleColumn) {
-        const QRect textRect = Gui::itemViewTextRect(opt);
-
-        const auto leftSide  = index.data(PlaylistItem::Role::Left).value<RichText>().blocks;
-        const auto rightSide = index.data(PlaylistItem::Role::Right).value<RichText>().blocks;
-
-        const QRect rightRect = textRect.adjusted(textRect.center().x() - textRect.left(), 0, 0, 0);
-        auto [_, totalRightWidth]
-            = drawTextBlocks(painter, opt, rightRect, rightSide, Qt::AlignVCenter | Qt::AlignRight, playingIcon);
-
-        const QRect leftRect = textRect.adjusted(0, 0, -totalRightWidth, 0);
-        drawTextBlocks(painter, opt, leftRect, leftSide, Qt::AlignVCenter | Qt::AlignLeft, playingIcon);
+        const auto editorData = index.data(PlaylistItem::Role::InlineEditors);
+        if(editorData.isValid()) {
+            const auto* view   = qobject_cast<const PlaylistView*>(opt.widget);
+            const auto editors = view ? view->inlineEditors(index) : editorData.value<InlineTrackEditors>();
+            drawSingleColumnTrack(painter, opt, index, &editors);
+        }
+        else {
+            drawSingleColumnTrack(painter, opt, index, nullptr);
+        }
     }
     else {
         if(index.data(PlaylistItem::Role::Column).canConvert<QPixmap>()) {
@@ -298,7 +181,8 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
             const auto columnText = index.data(PlaylistItem::Role::Column).value<RichText>().blocks;
 
-            drawTextBlocks(painter, opt, textRect, columnText, Qt::AlignVCenter | opt.displayAlignment, playingIcon);
+            drawTrackTextBlocks(painter, opt, textRect, columnText, Qt::AlignVCenter | opt.displayAlignment,
+                                playingIcon);
         }
     }
 }
@@ -392,6 +276,25 @@ void PlaylistDelegate::setArtworkCornerRadius(int radius)
 void PlaylistDelegate::setArtworkReflection(const ReflectionOptions& options)
 {
     m_reflectionOptions = options;
+}
+
+InlineTrackEditorHit PlaylistDelegate::inlineEditorAt(const QStyleOptionViewItem& option, const QModelIndex& index,
+                                                      const QPoint& pos) const
+{
+    if(index.data(PlaylistItem::Type).toInt() != PlaylistItem::Track
+       || !index.data(PlaylistItem::Role::SingleColumnMode).toBool()) {
+        return {};
+    }
+
+    const auto editorData = index.data(PlaylistItem::Role::InlineEditors);
+    if(!editorData.isValid()) {
+        return {};
+    }
+
+    QStyleOptionViewItem opt{option};
+    initStyleOption(&opt, index);
+    const auto editors = editorData.value<InlineTrackEditors>();
+    return inlineTrackEditorAt(drawSingleColumnTrack(nullptr, opt, index, &editors), pos);
 }
 
 int PlaylistDelegate::artworkSpanHeight(int width, const QModelIndex& index) const

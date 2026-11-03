@@ -45,6 +45,7 @@ public:
         SubheaderRole,
         TrackIndexRole,
         HeaderRole,
+        InlineEditorsRole,
     };
 
     using TreeModel::TreeModel;
@@ -61,6 +62,8 @@ public:
     [[nodiscard]] std::set<int> selectedTracks(const QModelIndexList& indexes) const;
     [[nodiscard]] bool changesStructure(const ExpansionResult& result) const;
 
+    TrackList editTrackStat(const QModelIndex& index, const QModelIndexList& selected, const QVariant& value,
+                            InlineTrackEditor type);
     void setContent(const ExpansionResult& result);
     bool updateContent(const ExpansionResult& result);
 

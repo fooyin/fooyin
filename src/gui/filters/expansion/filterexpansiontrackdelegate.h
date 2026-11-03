@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "scripting/inlinetrackeditors.h"
+
 #include <QStyledItemDelegate>
 
 namespace Fooyin {
@@ -29,6 +31,18 @@ public:
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
+    void setHover(const QModelIndex& index, const InlineTrackEditorHit& hit, const QPoint& pos);
+    void clearHover();
+    void setHoveredRow(const QModelIndex& index);
+    [[nodiscard]] InlineTrackEditorHit inlineEditorAt(const QStyleOptionViewItem& option, const QModelIndex& index,
+                                                      const QPoint& pos) const;
+
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+
+private:
+    [[nodiscard]] InlineTrackEditors inlineEditors(const QStyleOptionViewItem& option, const QModelIndex& index) const;
+
+    InlineTrackEditorHover m_hover;
+    QPersistentModelIndex m_hoveredRow;
 };
 } // namespace Fooyin
