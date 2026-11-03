@@ -50,6 +50,7 @@
 #include <taglib/id3v1tag.h>
 #include <taglib/id3v2framefactory.h>
 #include <taglib/id3v2tag.h>
+#include <taglib/infotag.h>
 #include <taglib/mp4file.h>
 #include <taglib/mp4tag.h>
 #include <taglib/mpcfile.h>
@@ -80,6 +81,7 @@
 #include <cmath>
 #include <cstring>
 #include <limits>
+#include <mutex>
 #include <optional>
 #include <ranges>
 #include <set>
@@ -96,6 +98,40 @@ constexpr auto BufferSize = 1024;
 
 namespace Fooyin {
 namespace {
+void initialiseTagLib()
+{
+#if TAGLIB_MAJOR_VERSION < 2                                                                                           \
+    || (TAGLIB_MAJOR_VERSION == 2                                                                                      \
+        && (TAGLIB_MINOR_VERSION < 3 || (TAGLIB_MINOR_VERSION == 3 && TAGLIB_PATCH_VERSION < 2)))
+    static std::once_flag initialised;
+    std::call_once(initialised, [] {
+        // TagLib versions before 2.3.2 can race when first populating these maps.
+        // Populate them once before concurrent access.
+        TagLib::ID3v2::TextIdentificationFrame::involvedPeopleMap();
+
+        TagLib::PropertyMap properties;
+        properties.insert("TITLE", TagLib::StringList{"fooyin"});
+        TagLib::RIFF::Info::Tag wav;
+        wav.setProperties(properties);
+        TagLib::ASF::Tag asf;
+        asf.setProperties(properties);
+        TagLib::MP4::Tag mp4;
+        mp4.setProperties(properties);
+        mp4.properties();
+
+        TagLib::ID3v2::Tag legacy;
+        legacy.header()->setMajorVersion(3);
+        auto* people = new TagLib::ID3v2::TextIdentificationFrame("TIPL");
+        TagLib::StringList peopleFields;
+        peopleFields.append("ENGINEER");
+        peopleFields.append("fooyin");
+        people->setText(peopleFields);
+        legacy.addFrame(people);
+        TagLib::ID3v2::FrameFactory::instance()->rebuildAggregateFrames(&legacy);
+    });
+#endif
+}
+
 class IODeviceStream : public TagLib::IOStream
 {
 public:
@@ -3049,6 +3085,8 @@ void checkXingHeader(TagLib::MPEG::File* file, Track& track)
 
 bool TagLibReader::readTrack(const AudioSource& source, Track& track)
 {
+    initialiseTagLib();
+
     IODeviceStream stream{source.device, track.filename()};
     if(!stream.isOpen()) {
         qCWarning(TAGLIB) << "Unable to open file readonly:" << source.filepath;
@@ -3449,6 +3487,8 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
 
 QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track, Track::Cover cover)
 {
+    initialiseTagLib();
+
     IODeviceStream stream{source.device, track.filename()};
     if(!stream.isOpen()) {
         qCWarning(TAGLIB) << "Unable to open file readonly:" << track.filepath();
@@ -3576,6 +3616,8 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
     if(!(options & (Metadata | Rating | Playcount))) {
         return true;
     }
+
+    initialiseTagLib();
 
     IODeviceStream stream{source.device, track.filepath()};
     if(!stream.isOpen() || stream.readOnly()) {
@@ -3855,6 +3897,8 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Wri
 bool TagLibReader::writeCover(const AudioSource& source, const Track& track, const TrackCovers& covers,
                               WriteOptions options)
 {
+    initialiseTagLib();
+
     IODeviceStream stream{source.device, track.filepath()};
     if(!stream.isOpen() || stream.readOnly()) {
         return false;
