@@ -117,6 +117,7 @@ ConverterSetupDialog::ConverterSetupDialog(AudioEncoderRegistry* registry, DspCh
     , m_availableDspDelegate{new DspDelegate(m_availableDspList, this, DspDelegate::Mode::Available)}
     , m_generatePreview{new QCheckBox(tr("Generate short previews instead of converting entire tracks"), this)}
     , m_previewPercentage{new QSpinBox(this)}
+    , m_maxParallelConversions{new QSpinBox(this)}
     , m_showReport{new QCheckBox(tr("Show full status report"), this)}
     , m_showOutputFiles{new QCheckBox(tr("Show converted files when finished"), this)}
     , m_copyFilesPattern{new QLineEdit(this)}
@@ -162,6 +163,7 @@ ConverterSetupDialog::ConverterSetupDialog(AudioEncoderRegistry* registry, DspCh
     }
 
     QObject::connect(this, &QDialog::finished, this, [this] {
+        ConverterSettings::setMaxParallelConversions(m_maxParallelConversions->value());
         ConverterSettings::setCurrentConversionPreset({
             .name            = u"[current]"_s,
             .preset          = job().preset,
@@ -555,6 +557,20 @@ QWidget* ConverterSetupDialog::createOtherPage()
     previewLayout->addWidget(m_previewPercentage, row++, 1);
     previewLayout->setColumnStretch(1, 1);
 
+    m_maxParallelConversions->setRange(0, 32);
+    m_maxParallelConversions->setSpecialValueText(tr("Automatic"));
+    m_maxParallelConversions->setValue(ConverterSettings::maxParallelConversions());
+    m_maxParallelConversions->setToolTip(tr("Maximum number of files to convert at the same time.\n"
+                                            "Automatic uses the available processor threads."));
+
+    auto* performanceBox    = new QGroupBox(tr("Performance"), this);
+    auto* performanceLayout = new QGridLayout(performanceBox);
+
+    row = 0;
+    performanceLayout->addWidget(new QLabel(tr("Maximum simultaneous conversions") + ":"_L1, performanceBox), row, 0);
+    performanceLayout->addWidget(m_maxParallelConversions, row++, 1);
+    performanceLayout->setColumnStretch(1, 1);
+
     auto* whenDoneBox    = new QGroupBox(tr("When done"), this);
     auto* whenDoneLayout = new QVBoxLayout(whenDoneBox);
     whenDoneLayout->addWidget(m_showReport);
@@ -568,6 +584,7 @@ QWidget* ConverterSetupDialog::createOtherPage()
     auto* page   = new QWidget(this);
     auto* layout = new QVBoxLayout(page);
     layout->addWidget(previewBox);
+    layout->addWidget(performanceBox);
     layout->addWidget(whenDoneBox);
     layout->addWidget(copyFilesBox);
     layout->addStretch();

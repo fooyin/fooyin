@@ -21,23 +21,24 @@
 
 #include <utils/stringcollator.h>
 
+#include <mutex>
+#include <shared_mutex>
+
 namespace Fooyin {
-void AudioEncoderRegistry::addEncoderBackend(const QString& id, const QString& name, EncoderCreator creator,
-                                             BackendPriority priority)
+namespace {
+struct Backend
 {
-    if(id.isEmpty() || !creator) {
-        return;
-    }
+    QString id;
+    QString name;
+    EncoderCreator creator;
+    AudioEncoderRegistry::BackendPriority priority{AudioEncoderRegistry::BackendPriority::Normal};
+};
 
-    std::erase_if(m_backends, [&id](const Backend& backend) { return backend.id == id; });
-    m_backends.emplace_back(id, name, std::move(creator), priority);
-}
-
-std::vector<AudioEncoderInfo> AudioEncoderRegistry::availableEncoders() const
+std::vector<AudioEncoderInfo> collectEncoderInfos(const std::vector<Backend>& backends)
 {
     std::vector<AudioEncoderInfo> encoders;
 
-    for(const Backend& backend : m_backends) {
+    for(const auto& backend : backends) {
         const auto encoder = backend.creator();
         if(!encoder) {
             continue;
@@ -69,6 +70,73 @@ std::vector<AudioEncoderInfo> AudioEncoderRegistry::availableEncoders() const
     return encoders;
 }
 
+std::optional<AudioEncoderInfo> findEncoderInfo(const std::vector<Backend>& backends, const QString& encoderId)
+{
+    if(encoderId.isEmpty()) {
+        return {};
+    }
+
+    const std::vector<AudioEncoderInfo> encoders = collectEncoderInfos(backends);
+
+    if(const auto exact = std::ranges::find_if(
+           encoders,
+           [&encoderId](const AudioEncoderInfo& info) { return info.id == encoderId || info.profile.id == encoderId; });
+       exact != encoders.end()) {
+        return *exact;
+    }
+
+    std::optional<AudioEncoderInfo> preferred;
+    for(const AudioEncoderInfo& info : encoders) {
+        if(info.profile.formatId == encoderId && (!preferred || info.backendPriority > preferred->backendPriority)) {
+            preferred = info;
+        }
+    }
+
+    if(preferred) {
+        preferred->id         = encoderId;
+        preferred->profile.id = encoderId;
+    }
+    return preferred;
+}
+} // namespace
+
+class AudioEncoderRegistryPrivate
+{
+public:
+    [[nodiscard]] std::vector<Backend> backendSnapshot() const
+    {
+        const std::shared_lock lock{m_mutex};
+        return m_backends;
+    }
+
+    std::vector<Backend> m_backends;
+    mutable std::shared_mutex m_mutex;
+};
+
+AudioEncoderRegistry::AudioEncoderRegistry()
+    : p{std::make_unique<AudioEncoderRegistryPrivate>()}
+{ }
+
+AudioEncoderRegistry::~AudioEncoderRegistry() = default;
+
+void AudioEncoderRegistry::addEncoderBackend(const QString& id, const QString& name, EncoderCreator creator,
+                                             BackendPriority priority)
+{
+    if(id.isEmpty() || !creator) {
+        return;
+    }
+
+    const std::unique_lock lock{p->m_mutex};
+
+    std::erase_if(p->m_backends, [&id](const Backend& backend) { return backend.id == id; });
+    p->m_backends.emplace_back(id, name, std::move(creator), priority);
+}
+
+std::vector<AudioEncoderInfo> AudioEncoderRegistry::availableEncoders() const
+{
+    return collectEncoderInfos(p->backendSnapshot());
+}
+
 std::vector<AudioEncoderInfo> AudioEncoderRegistry::preferredEncoders() const
 {
     std::vector<AudioEncoderInfo> preferred;
@@ -98,38 +166,23 @@ std::optional<AudioEncoderInfo> AudioEncoderRegistry::encoderInfo(const QString&
     if(encoderId.isEmpty()) {
         return {};
     }
-
-    const auto encoders = availableEncoders();
-    if(const auto exact = std::ranges::find_if(
-           encoders,
-           [&encoderId](const AudioEncoderInfo& info) { return info.id == encoderId || info.profile.id == encoderId; });
-       exact != encoders.end()) {
-        return *exact;
-    }
-
-    std::optional<AudioEncoderInfo> preferred;
-    for(const AudioEncoderInfo& info : encoders) {
-        if(info.profile.formatId == encoderId && (!preferred || info.backendPriority > preferred->backendPriority)) {
-            preferred = info;
-        }
-    }
-
-    if(preferred) {
-        preferred->id         = encoderId;
-        preferred->profile.id = encoderId;
-    }
-    return preferred;
+    return findEncoderInfo(p->backendSnapshot(), encoderId);
 }
 
 std::unique_ptr<AudioEncoder> AudioEncoderRegistry::createEncoder(const QString& encoderId) const
 {
-    const auto info = encoderInfo(encoderId);
+    if(encoderId.isEmpty()) {
+        return {};
+    }
+
+    const auto backends = p->backendSnapshot();
+    const auto info     = findEncoderInfo(backends, encoderId);
     if(!info) {
         return {};
     }
 
-    const auto backend = std::ranges::find(m_backends, info->backendId, &Backend::id);
-    if(backend != m_backends.end()) {
+    const auto backend = std::ranges::find(backends, info->backendId, &Backend::id);
+    if(backend != backends.end()) {
         return backend->creator();
     }
     return {};
@@ -137,6 +190,7 @@ std::unique_ptr<AudioEncoder> AudioEncoderRegistry::createEncoder(const QString&
 
 void AudioEncoderRegistry::reset()
 {
-    m_backends.clear();
+    const std::unique_lock lock{p->m_mutex};
+    p->m_backends.clear();
 }
 } // namespace Fooyin

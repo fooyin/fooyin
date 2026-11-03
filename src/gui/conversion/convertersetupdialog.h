@@ -156,6 +156,7 @@ private:
     DspDelegate* m_availableDspDelegate;
     QCheckBox* m_generatePreview;
     QSpinBox* m_previewPercentage;
+    QSpinBox* m_maxParallelConversions;
     QCheckBox* m_showReport;
     QCheckBox* m_showOutputFiles;
     QLineEdit* m_copyFilesPattern;

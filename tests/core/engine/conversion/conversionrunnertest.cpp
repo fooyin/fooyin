@@ -37,9 +37,14 @@ extern "C"
 #include <libavformat/avformat.h>
 }
 
+#include <atomic>
+#include <chrono>
 #include <cmath>
+#include <condition_variable>
 #include <cstring>
+#include <mutex>
 #include <optional>
+#include <thread>
 #include <vector>
 
 using namespace Qt::StringLiterals;
@@ -279,6 +284,91 @@ private:
     bool m_warningPending{false};
 };
 
+struct ParallelDecoderState
+{
+    std::mutex mutex;
+    std::condition_variable ready;
+    int active{0};
+    int peakActive{0};
+    bool waitForPeers{true};
+    std::vector<std::pair<QString, QString>> startedTracks;
+};
+
+class ParallelDecoder : public FFmpegDecoder
+{
+public:
+    explicit ParallelDecoder(std::shared_ptr<ParallelDecoderState> state)
+        : m_state{std::move(state)}
+    { }
+
+    ~ParallelDecoder() override
+    {
+        if(m_opened) {
+            const std::scoped_lock lock{m_state->mutex};
+            --m_state->active;
+        }
+    }
+
+    std::optional<AudioFormat> init(const AudioSource& source, const Track& track, DecoderOptions options) override
+    {
+        const auto format = FFmpegDecoder::init(source, track, options);
+        if(format) {
+            std::unique_lock lock{m_state->mutex};
+            m_state->startedTracks.emplace_back(track.album(), track.title());
+            m_opened            = true;
+            m_state->peakActive = std::max(m_state->peakActive, ++m_state->active);
+            m_state->ready.notify_all();
+            if(m_state->waitForPeers && m_state->peakActive < 2) {
+                m_state->ready.wait_for(lock, std::chrono::seconds{2}, [this] { return m_state->peakActive >= 2; });
+            }
+        }
+        return format;
+    }
+
+private:
+    std::shared_ptr<ParallelDecoderState> m_state;
+    bool m_opened{false};
+};
+
+class ThreadCheckingObserver : public ConversionInputObserver
+{
+public:
+    explicit ThreadCheckingObserver(std::thread::id expectedThread)
+        : tracksStarted{0}
+        , wrongThread{false}
+        , m_expectedThread{expectedThread}
+    { }
+
+    void trackStarted(const Track& /*track*/, const AudioFormat& /*format*/) override
+    {
+        checkThread();
+        ++tracksStarted;
+    }
+
+    void sourceAudio(const Track& /*track*/, const AudioBuffer& /*buffer*/) override
+    {
+        checkThread();
+    }
+
+    void trackFinished(const Track& /*track*/, bool /*complete*/) override
+    {
+        checkThread();
+    }
+
+    std::atomic_int tracksStarted;
+    std::atomic_bool wrongThread;
+
+private:
+    void checkThread()
+    {
+        if(std::this_thread::get_id() != m_expectedThread) {
+            wrongThread.store(true);
+        }
+    }
+
+    std::thread::id m_expectedThread;
+};
+
 class CountingDsp : public DspNode
 {
 public:
@@ -380,6 +470,80 @@ TEST(ConversionRunnerTest, ConvertsTrackToFlac)
     ASSERT_TRUE(loader.readTrackMetadata(convertedWithoutMetadata));
     EXPECT_FLOAT_EQ(convertedWithoutMetadata.rating(), 0.8F);
     EXPECT_EQ(convertedWithoutMetadata.playCount(), 12);
+}
+
+TEST(ConversionRunnerTest, BoundsParallelConversionsAndPreservesResultOrder)
+{
+    const auto profile = profileById(FFmpegEncoder{}.availableEncoders(), u"ffmpeg-flac"_s);
+    if(!profile) {
+        GTEST_SKIP() << "Runtime FFmpeg FLAC encoder is unavailable";
+    }
+
+    const QTemporaryDir outputDir;
+    ASSERT_TRUE(outputDir.isValid());
+
+    const auto state = std::make_shared<ParallelDecoderState>();
+    AudioLoader loader;
+    loader.addDecoder(u"Parallel"_s, [state] { return std::make_unique<ParallelDecoder>(state); });
+    loader.addReader(u"TagLib"_s, [] { return std::make_unique<TagLibReader>(); });
+    AudioEncoderRegistry registry;
+    registry.addEncoderBackend(u"ffmpeg"_s, u"FFmpeg"_s, [] { return std::make_unique<FFmpegEncoder>(); });
+
+    ConversionRunner::Request request;
+    request.audioLoader                             = &loader;
+    request.encoderRegistry                         = &registry;
+    request.maxParallelConversions                  = 2;
+    request.job.preset.encoder.profile              = profile->profile;
+    request.job.preset.destination.mode             = DestinationMode::FixedFolder;
+    request.job.preset.destination.fixedFolder      = outputDir.path();
+    request.job.preset.destination.filenamePattern  = u"%title%"_s;
+    request.job.preset.destination.existingFileMode = ExistingFileMode::Overwrite;
+    request.job.preset.other.verifyOutput           = true;
+    const QString fixture = QDir{QString::fromLatin1(FOOYIN_TEST_SOURCE_DIR)}.filePath(u"data/audio/audiotest.wav"_s);
+    for(const QString& title : {u"First"_s, u"Second"_s, u"Third"_s}) {
+        Track track{fixture};
+        track.setTitle(title);
+        request.job.tracks.push_back(std::move(track));
+    }
+
+    std::vector<bool> finished(request.job.tracks.size());
+    request.progressCallback = [&](const ConversionProgress& progress) {
+        ASSERT_GE(progress.trackIndex, 0);
+        const auto i = static_cast<size_t>(progress.trackIndex);
+        ASSERT_LT(i, finished.size());
+        EXPECT_FALSE(finished[i]);
+        if(progress.finished) {
+            finished[i] = true;
+            EXPECT_TRUE(QFileInfo::exists(progress.outputPath));
+        }
+    };
+
+    const auto results = ConversionRunner::run(request);
+    ASSERT_EQ(results.size(), 3);
+    EXPECT_EQ(state->peakActive, 2);
+    EXPECT_EQ(state->active, 0);
+    for(size_t i{0}; i < results.size(); ++i) {
+        EXPECT_TRUE(finished[i]);
+        ASSERT_EQ(results[i].status, ConversionResultStatus::Succeeded) << results[i].error.toStdString();
+        EXPECT_EQ(results[i].sourceTrack.title(), request.job.tracks[i].title());
+        EXPECT_EQ(outputTitle(results[i].outputPath), request.job.tracks[i].title());
+        EXPECT_NEAR(static_cast<double>(audioDurationMs(results[i].outputPath)), 1834.0, 5.0);
+    }
+
+    const auto observer      = std::make_shared<ThreadCheckingObserver>(std::this_thread::get_id());
+    request.sourceObserver   = observer;
+    request.progressCallback = {};
+    state->waitForPeers      = false;
+    state->peakActive        = 0;
+
+    const auto observedResults = ConversionRunner::run(request);
+    ASSERT_EQ(observedResults.size(), 3);
+    for(const auto& result : observedResults) {
+        EXPECT_EQ(result.status, ConversionResultStatus::Succeeded) << result.error.toStdString();
+    }
+    EXPECT_EQ(state->peakActive, 1);
+    EXPECT_EQ(observer->tracksStarted.load(), 3);
+    EXPECT_FALSE(observer->wrongThread.load());
 }
 
 TEST(ConversionRunnerTest, ReportsFailedDecode)
@@ -799,6 +963,9 @@ TEST(ConversionRunnerTest, CopiesMatchingSidecarFiles)
 
     Track track{sourcePath};
     track.setTitle(u"Converted"_s);
+    Track second{track};
+    second.setTitle(u"Second"_s);
+
     ConversionPreset preset;
     preset.encoder.profile              = wavProfile->profile;
     preset.encoder.outputSampleFormat   = SampleFormat::S16;
@@ -810,17 +977,20 @@ TEST(ConversionRunnerTest, CopiesMatchingSidecarFiles)
     preset.other.verifyOutput           = true;
 
     ConversionRunner::Request request;
-    request.audioLoader     = &loader;
-    request.encoderRegistry = &encoderRegistry;
-    request.job.tracks      = {track};
-    request.job.preset      = preset;
+    request.audioLoader            = &loader;
+    request.encoderRegistry        = &encoderRegistry;
+    request.job.tracks             = {track, second};
+    request.job.preset             = preset;
+    request.maxParallelConversions = 2;
 
     const auto results = ConversionRunner::run(request);
-    ASSERT_EQ(results.size(), 1);
+    ASSERT_EQ(results.size(), 2);
     ASSERT_EQ(results.front().status, ConversionResultStatus::Succeeded) << results.front().error.toStdString();
     EXPECT_TRUE(QFileInfo::exists(root.filePath(u"output/cover.jpg"_s)));
     EXPECT_FALSE(QFileInfo::exists(root.filePath(u"output/notes.txt"_s)));
     EXPECT_TRUE(results.front().warnings.isEmpty());
+    EXPECT_EQ(results.back().status, ConversionResultStatus::Succeeded) << results.back().error.toStdString();
+    EXPECT_TRUE(results.back().warnings.isEmpty());
 }
 
 TEST(ConversionRunnerTest, GeneratesGroupedMultiTrackOutputs)
@@ -865,10 +1035,11 @@ TEST(ConversionRunnerTest, GeneratesGroupedMultiTrackOutputs)
     preset.processing.transferPlaycount = true;
 
     ConversionRunner::Request request;
-    request.audioLoader     = &loader;
-    request.encoderRegistry = &encoderRegistry;
-    request.job.tracks      = {first, second, third};
-    request.job.preset      = preset;
+    request.audioLoader            = &loader;
+    request.encoderRegistry        = &encoderRegistry;
+    request.job.tracks             = {first, second, third};
+    request.job.preset             = preset;
+    request.maxParallelConversions = 2;
 
     const auto results = ConversionRunner::run(request);
     ASSERT_EQ(results.size(), 3);
@@ -889,6 +1060,158 @@ TEST(ConversionRunnerTest, GeneratesGroupedMultiTrackOutputs)
     ASSERT_TRUE(loader.readTrackMetadata(groupedTrack));
     EXPECT_LT(groupedTrack.rating(), 0.0F);
     EXPECT_EQ(groupedTrack.playCount(), 0);
+}
+
+TEST(ConversionRunnerTest, ConvertsIndependentGroupsInParallelAndKeepsMergedOutputSequential)
+{
+    const auto profile = profileById(FFmpegEncoder{}.availableEncoders(), u"ffmpeg-flac"_s);
+    if(!profile) {
+        GTEST_SKIP() << "Runtime FFmpeg FLAC encoder is unavailable";
+    }
+
+    const QTemporaryDir tempDir;
+    ASSERT_TRUE(tempDir.isValid());
+    const QDir root{tempDir.path()};
+    ASSERT_TRUE(root.mkpath(u"source"_s));
+    const QString fixture = QDir{QString::fromLatin1(FOOYIN_TEST_SOURCE_DIR)}.filePath(u"data/audio/audiotest.wav"_s);
+    const QString sourcePath = root.filePath(u"source/input.wav"_s);
+    ASSERT_TRUE(QFile::copy(fixture, sourcePath));
+    QFile cover{root.filePath(u"source/cover.jpg"_s)};
+    ASSERT_TRUE(cover.open(QIODevice::WriteOnly));
+    ASSERT_EQ(cover.write("cover"), 5);
+    cover.close();
+
+    const auto state = std::make_shared<ParallelDecoderState>();
+    AudioLoader loader;
+    loader.addDecoder(u"Parallel"_s, [state] { return std::make_unique<ParallelDecoder>(state); });
+    loader.addReader(u"TagLib"_s, [] { return std::make_unique<TagLibReader>(); });
+    AudioEncoderRegistry registry;
+    registry.addEncoderBackend(u"ffmpeg"_s, u"FFmpeg"_s, [] { return std::make_unique<FFmpegEncoder>(); });
+    std::atomic_int dspInstances{0};
+    DspRegistry dspRegistry;
+    dspRegistry.registerDsp({.id = u"test.dsp.counting"_s, .name = u"Counting DSP"_s, .factory = [&dspInstances] {
+                                 ++dspInstances;
+                                 return std::make_unique<CountingDsp>();
+                             }});
+
+    ConversionRunner::Request request;
+    request.audioLoader                             = &loader;
+    request.encoderRegistry                         = &registry;
+    request.dspRegistry                             = &dspRegistry;
+    request.maxParallelConversions                  = 2;
+    auto& preset                                    = request.job.preset;
+    preset.encoder.profile                          = profile->profile;
+    preset.encoder.outputSampleFormat               = SampleFormat::S16;
+    preset.destination.mode                         = DestinationMode::FixedFolder;
+    preset.destination.fixedFolder                  = root.filePath(u"output"_s);
+    preset.destination.filenamePattern              = u"%album%"_s;
+    preset.destination.existingFileMode             = ExistingFileMode::Overwrite;
+    preset.destination.outputStyle                  = OutputStyle::MultiTrackFiles;
+    preset.processing.preserveDspStateBetweenTracks = true;
+    preset.processing.dspChain                      = {{.id          = u"test.dsp.counting"_s,
+                                                        .name        = u"Counting DSP"_s,
+                                                        .hasSettings = false,
+                                                        .enabled     = true,
+                                                        .instanceId  = 1,
+                                                        .settings    = {}}};
+    preset.other.verifyOutput                       = true;
+    preset.other.copyFilesPattern                   = u"*.jpg"_s;
+    for(const auto& [album, title] : std::vector<std::pair<QString, QString>>{{u"Album A"_s, u"A1"_s},
+                                                                              {u"Album B"_s, u"B1"_s},
+                                                                              {u"Album A"_s, u"A2"_s},
+                                                                              {u"Album C"_s, u"C1"_s},
+                                                                              {u"Album B"_s, u"B2"_s}}) {
+        Track track{sourcePath};
+        track.setAlbum(album);
+        track.setTitle(title);
+        request.job.tracks.push_back(std::move(track));
+    }
+
+    const std::vector expectedTitles{u"A1"_s, u"A2"_s, u"B1"_s, u"B2"_s, u"C1"_s};
+    const std::vector expectedAlbums{u"Album A"_s, u"Album A"_s, u"Album B"_s, u"Album B"_s, u"Album C"_s};
+    std::vector<bool> finished(expectedTitles.size());
+    request.progressCallback = [&](const ConversionProgress& progress) {
+        ASSERT_GE(progress.trackIndex, 0);
+        const auto i = static_cast<size_t>(progress.trackIndex);
+        ASSERT_LT(i, finished.size());
+        EXPECT_FALSE(finished[i]);
+        EXPECT_EQ(QFileInfo{progress.outputPath}.completeBaseName(), expectedAlbums[i]);
+        if(progress.finished) {
+            finished[i] = true;
+            EXPECT_TRUE(QFileInfo::exists(progress.outputPath));
+        }
+    };
+
+    const auto results = ConversionRunner::run(request);
+    ASSERT_EQ(results.size(), expectedTitles.size());
+    EXPECT_EQ(state->peakActive, 2);
+    EXPECT_EQ(state->active, 0);
+    EXPECT_EQ(dspInstances.load(), 3);
+    for(size_t i{0}; i < results.size(); ++i) {
+        EXPECT_TRUE(finished[i]);
+        ASSERT_EQ(results[i].status, ConversionResultStatus::Succeeded) << results[i].error.toStdString();
+        EXPECT_EQ(results[i].sourceTrack.title(), expectedTitles[i]);
+        EXPECT_TRUE(results[i].warnings.isEmpty());
+        EXPECT_EQ(outputTitle(results[i].outputPath), i < 2 ? u"A1"_s : i < 4 ? u"B1"_s : u"C1"_s);
+        EXPECT_NEAR(static_cast<double>(audioDurationMs(results[i].outputPath)), i < 4 ? 3669.0 : 1834.0, 5.0);
+    }
+    for(const QString& album : {u"Album A"_s, u"Album B"_s, u"Album C"_s}) {
+        std::vector<QString> titles;
+        for(const auto& [startedAlbum, title] : state->startedTracks) {
+            if(startedAlbum == album) {
+                titles.push_back(title);
+            }
+        }
+        if(album == u"Album A"_s) {
+            EXPECT_EQ(titles, (std::vector{u"A1"_s, u"A2"_s}));
+        }
+        else if(album == u"Album B"_s) {
+            EXPECT_EQ(titles, (std::vector{u"B1"_s, u"B2"_s}));
+        }
+        else {
+            EXPECT_EQ(titles, (std::vector{u"C1"_s}));
+        }
+    }
+    EXPECT_TRUE(QFileInfo::exists(root.filePath(u"output/cover.jpg"_s)));
+
+    state->waitForPeers        = false;
+    state->peakActive          = 0;
+    request.progressCallback   = {};
+    request.sourceObserver     = std::make_shared<ThreadCheckingObserver>(std::this_thread::get_id());
+    const auto observedResults = ConversionRunner::run(request);
+    for(const auto& result : observedResults) {
+        EXPECT_EQ(result.status, ConversionResultStatus::Succeeded) << result.error.toStdString();
+    }
+    EXPECT_EQ(state->peakActive, 1);
+    const auto observer = std::static_pointer_cast<ThreadCheckingObserver>(request.sourceObserver);
+    EXPECT_FALSE(observer->wrongThread.load());
+    EXPECT_EQ(observer->tracksStarted.load(), 5);
+
+    state->peakActive = 0;
+    state->startedTracks.clear();
+    dspInstances.store(0);
+    request.sourceObserver.reset();
+    preset.destination.outputStyle = OutputStyle::MergeTracks;
+    const auto mergedResults       = ConversionRunner::run(request);
+    ASSERT_EQ(mergedResults.size(), 5);
+    EXPECT_EQ(state->peakActive, 1);
+    EXPECT_EQ(dspInstances.load(), 1);
+    for(const auto& result : mergedResults) {
+        EXPECT_EQ(result.status, ConversionResultStatus::Succeeded) << result.error.toStdString();
+        EXPECT_EQ(result.outputPath, mergedResults.front().outputPath);
+    }
+    EXPECT_NEAR(static_cast<double>(audioDurationMs(mergedResults.front().outputPath)), 9173.0, 5.0);
+    std::vector<QString> mergedTitles;
+    for(const auto& [album, title] : state->startedTracks) {
+        if(!album.isEmpty()) {
+            mergedTitles.push_back(title);
+        }
+    }
+    std::vector<QString> inputTitles;
+    for(const auto& track : request.job.tracks) {
+        inputTitles.push_back(track.title());
+    }
+    EXPECT_EQ(mergedTitles, inputTitles);
 }
 
 TEST(ConversionRunnerTest, PreservesDspStateAcrossCombinedOutputWhenRequested)

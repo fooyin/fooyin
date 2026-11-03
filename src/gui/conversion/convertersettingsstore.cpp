@@ -28,11 +28,12 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto EncoderProfilesKey   = "Converter/EncoderProfiles";
-constexpr auto ConversionPresetsKey = "Converter/Presets";
-constexpr auto CurrentPresetKey     = "Converter/CurrentPreset";
-constexpr auto LastUsedPresetKey    = "Converter/LastUsedPreset";
-constexpr auto DataVersion          = 1;
+constexpr auto EncoderProfilesKey        = "Converter/EncoderProfiles";
+constexpr auto ConversionPresetsKey      = "Converter/Presets";
+constexpr auto CurrentPresetKey          = "Converter/CurrentPreset";
+constexpr auto LastUsedPresetKey         = "Converter/LastUsedPreset";
+constexpr auto MaxParallelConversionsKey = "Converter/MaxParallelConversions";
+constexpr auto DataVersion               = 1;
 
 namespace Fooyin {
 namespace {
@@ -228,6 +229,18 @@ QJsonArray entriesFromData(const QByteArray& data)
 } // namespace
 
 namespace ConverterSettings {
+int maxParallelConversions()
+{
+    const FySettings settings;
+    return std::clamp(settings.value(MaxParallelConversionsKey, 0).toInt(), 0, 32);
+}
+
+void setMaxParallelConversions(int count)
+{
+    FySettings settings;
+    settings.setValue(MaxParallelConversionsKey, std::clamp(count, 0, 32));
+}
+
 EncoderProfile applyStoredEncoderProfile(EncoderProfile profile, const StoredEncoderProfile& stored)
 {
     profile.name             = stored.profile.name;
