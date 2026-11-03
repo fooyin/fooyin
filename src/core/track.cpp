@@ -52,9 +52,17 @@ constexpr auto ChapterValue    = "1"_L1;
 
 namespace Fooyin {
 namespace {
+bool isWindowsAbsolutePath(const QString& path)
+{
+    return (path.size() >= 3 && path.at(0).isLetter() && path.at(1) == u':'
+            && (path.at(2) == u'/' || path.at(2) == u'\\'))
+        || path.startsWith(uR"(\\)"_s) || path.startsWith("//"_L1);
+}
+
 bool isRemoteTrackPath(const QString& path)
 {
-    if(path.isEmpty() || Track::isArchivePath(path)) {
+    if(path.isEmpty() || path.startsWith(u'/') || !path.contains(u':') || isWindowsAbsolutePath(path)
+       || Track::isArchivePath(path)) {
         return false;
     }
 
@@ -67,16 +75,10 @@ bool isRemoteTrackPath(const QString& path)
     return scheme == "http"_L1 || scheme == "https"_L1;
 }
 
-bool isWindowsAbsolutePath(const QString& path)
-{
-    return (path.size() >= 3 && path.at(0).isLetter() && path.at(1) == u':'
-            && (path.at(2) == u'/' || path.at(2) == u'\\'))
-        || path.startsWith(uR"(\\)"_s) || path.startsWith("//"_L1);
-}
-
 bool isVirtualTrackPath(const QString& path)
 {
-    if(path.isEmpty() || Track::isArchivePath(path) || isRemoteTrackPath(path) || isWindowsAbsolutePath(path)) {
+    if(path.isEmpty() || path.startsWith(u'/') || !path.contains(u':') || isWindowsAbsolutePath(path)
+       || Track::isArchivePath(path) || isRemoteTrackPath(path)) {
         return false;
     }
 
