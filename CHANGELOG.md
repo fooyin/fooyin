@@ -12,6 +12,7 @@
 
 ### Improvements
 
+- **Audio Conversion:** Add support for parallel conversion
 - **Interface** 
   - Allow dialog actions in separate scopes to share shortcuts
   - Add a separate themed placeholder for artist artwork
@@ -25,6 +26,8 @@
   - Separate Library Tree grouping from display scripts and redesign the grouping preset editor
   - Show a script error indicator in Script Editor toolbars
   - Update the Gallery layout to use inline Filter track expansion
+  - Add support for inline love and rating editors to single-column Playlist and Filter Expansion scripts ([#1859](https://github.com/fooyin/fooyin/issues/1859))
+  - Add optional custom symbols for love and rating editors ([#1685](https://github.com/fooyin/fooyin/issues/1685), [#1746](https://github.com/fooyin/fooyin/pull/1746))
 - **Playback:** Add seeking support and import file properties for finite HTTP files
 - **Filters**
   - Add an automatic artwork fitting option
@@ -55,6 +58,7 @@
   - Fix Directory Browser playing row highlights
   - Fix playing row colour blending with alternating row colours
   - Fix Properties selection sidebar text alignment and improve performance ([#1848](https://github.com/fooyin/fooyin/issues/1848))
+  - Restore saved Properties and Lyrics dialog state before showing them ([#1860](https://github.com/fooyin/fooyin/issues/1860))
   - Fix Search connections after resetting layouts
   - Fix Selection Info text alignment and hide empty section headers
   - Fix selection text colours in custom item views on Windows
@@ -71,6 +75,7 @@
   - Fix stale playing indicators after stopping and starting another track
 - **Playlists**
   - Fix dragging selected tracks from sorted autoplaylists ([#1821](https://github.com/fooyin/fooyin/issues/1821))
+  - Fix drag-and-drop, large grouped selections, and inline editing during modified selections ([#1853](https://github.com/fooyin/fooyin/pull/1853))
   - Fix asynchronous scan lifetimes and persist imported batches atomically
 - **Scripting**
   - Fix numeric Library Tree count expressions ([#1774](https://github.com/fooyin/fooyin/issues/1774), [#1816](https://github.com/fooyin/fooyin/issues/1816))
