@@ -144,6 +144,7 @@ void registerMinimalGuiSettings(SettingsManager& settings)
 
     settings.createTempSetting<Settings::Gui::LayoutEditing>(false);
     settings.createTempSetting<Settings::Gui::ResolvedAppStyle>(QVariant::fromValue(style));
+    settings.createTempSetting<Settings::Gui::TrackEditorAppearance>(QVariant::fromValue(TrackEditorAppearance{}));
     settings.createSetting<Settings::Gui::IconTheme>(0, u"Theme/IconTheme"_s);
     settings.createSetting<Settings::Gui::UseCustomRatingSymbols>(false, u"Interface/UseCustomRatingSymbols"_s);
     settings.createSetting<Settings::Gui::RatingSymbolFont>(QVariant{}, u"Interface/RatingSymbolFont"_s);

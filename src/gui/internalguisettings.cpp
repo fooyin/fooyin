@@ -27,6 +27,7 @@
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <utils/ratingsymbols.h>
 #include <utils/settings/settingsdialogcontroller.h>
@@ -37,6 +38,7 @@
 #include <QImageReader>
 #include <QPalette>
 #include <QStyle>
+#include <QTimerEvent>
 
 using namespace Qt::StringLiterals;
 
@@ -99,6 +101,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     qRegisterMetaType<FyTheme>("FyTheme");
     qRegisterMetaType<ArtworkSaveMethods>("ArtworkSaveMethods");
     qRegisterMetaType<Fooyin::ResolvedAppStyle>("ResolvedAppStyle");
+    qRegisterMetaType<Fooyin::TrackEditorAppearance>("TrackEditorAppearance");
 
     m_settings->createTempSetting<LayoutEditing>(false);
     m_settings->createSetting<DockWidgetPalette>(false, u"Interface/DockWidgetPalette"_s);
@@ -279,5 +282,58 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->fileRemove(u"Interface/ScriptEditor/Font"_s);
     m_settings->fileRemove(u"Interface/ScriptEditor/FontFamily"_s);
     m_settings->fileRemove(u"Interface/ScriptEditor/FontSize"_s);
+
+    m_settings->createTempSetting<Settings::Gui::TrackEditorAppearance>(QVariant::fromValue(trackEditorAppearance()));
+
+    m_settings->subscribe<LoveHeartSize>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<StarRatingSize>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<UseCustomRatingSymbols>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<RatingSymbolFont>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<LoveHeartColour>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<UnlovedHeartColour>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<RatingOneStarColour>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<RatingTwoStarColour>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<RatingThreeStarColour>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<RatingFourStarColour>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<RatingFiveStarColour>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<UnratedStarColour>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<LoveEditorOnlyOnHover>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<RatingEditorOnlyOnHover>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<RatingFullStarSymbol>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<RatingHalfStarSymbol>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<RatingEmptyStarSymbol>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+}
+
+void GuiSettings::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_editorAppearanceTimer.timerId()) {
+        m_editorAppearanceTimer.stop();
+        m_settings->set<Settings::Gui::TrackEditorAppearance>(QVariant::fromValue(trackEditorAppearance()));
+        return;
+    }
+    QObject::timerEvent(event);
+}
+
+void GuiSettings::scheduleTrackEditorAppearanceUpdate()
+{
+    if(!m_editorAppearanceTimer.isActive()) {
+        m_editorAppearanceTimer.start(10, this);
+    }
+}
+
+TrackEditorAppearance GuiSettings::trackEditorAppearance() const
+{
+    auto symbols    = Gui::ratingEditorSymbols(*m_settings);
+    auto symbolFont = symbols ? m_settings->value<Settings::Gui::RatingSymbolFont>().value<QFont>() : QFont{};
+    return {.loveHeartSize           = m_settings->value<Settings::Gui::LoveHeartSize>(),
+            .starRatingSize          = m_settings->value<Settings::Gui::StarRatingSize>(),
+            .loveHeartColour         = Gui::loveHeartColour(*m_settings),
+            .unlovedHeartColour      = Gui::unlovedHeartColour(*m_settings),
+            .ratingStarColours       = Gui::ratingStarColours(*m_settings),
+            .unratedStarColour       = Gui::unratedStarColour(*m_settings),
+            .ratingSymbols           = std::move(symbols),
+            .ratingSymbolFont        = std::move(symbolFont),
+            .loveEditorOnlyOnHover   = m_settings->value<Settings::Gui::LoveEditorOnlyOnHover>(),
+            .ratingEditorOnlyOnHover = m_settings->value<Settings::Gui::RatingEditorOnlyOnHover>()};
 }
 } // namespace Fooyin

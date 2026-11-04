@@ -87,18 +87,19 @@ void InlineTrackEditorHover::clear()
 
 InlineTrackEditors inlineTrackEditors(const SettingsManager& settings, const Track& track)
 {
+    const auto appearance = settings.value<Settings::Gui::TrackEditorAppearance>().value<TrackEditorAppearance>();
     StarRating rating{track.rating(),
                       5,
-                      settings.value<Settings::Gui::StarRatingSize>(),
-                      Gui::ratingStarColours(settings),
-                      Gui::unratedStarColour(settings),
-                      Gui::ratingEditorSymbols(settings)};
-    rating.setSymbolFont(settings.value<Settings::Gui::RatingSymbolFont>().value<QFont>());
-    return {.love            = HeartValue{track.isLoved(), settings.value<Settings::Gui::LoveHeartSize>(),
-                                          Gui::loveHeartColour(settings), Gui::unlovedHeartColour(settings)},
+                      appearance.starRatingSize,
+                      appearance.ratingStarColours,
+                      appearance.unratedStarColour,
+                      appearance.ratingSymbols};
+    rating.setSymbolFont(appearance.ratingSymbolFont);
+    return {.love            = HeartValue{track.isLoved(), appearance.loveHeartSize, appearance.loveHeartColour,
+                                          appearance.unlovedHeartColour},
             .rating          = std::move(rating),
-            .hideEmptyLove   = settings.value<Settings::Gui::LoveEditorOnlyOnHover>(),
-            .hideEmptyRating = settings.value<Settings::Gui::RatingEditorOnlyOnHover>()};
+            .hideEmptyLove   = appearance.loveEditorOnlyOnHover,
+            .hideEmptyRating = appearance.ratingEditorOnlyOnHover};
 }
 
 InlineTrackEditor inlineTrackEditorType(const RichTextBlock& block)

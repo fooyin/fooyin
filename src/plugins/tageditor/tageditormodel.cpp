@@ -257,11 +257,7 @@ TagEditorModel::TagEditorModel(SettingsManager* settings, QObject* parent)
     : ExtendableTableModel{parent}
     , p{std::make_unique<TagEditorModelPrivate>(this, settings)}
 {
-    settings->subscribe<Settings::Gui::UseCustomRatingSymbols>(this, [this]() { invalidateData(); });
-    settings->subscribe<Settings::Gui::RatingSymbolFont>(this, [this]() { invalidateData(); });
-    settings->subscribe<Settings::Gui::RatingFullStarSymbol>(this, [this]() { invalidateData(); });
-    settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(this, [this]() { invalidateData(); });
-    settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, [this]() { invalidateData(); });
+    settings->subscribe<Settings::Gui::TrackEditorAppearance>(this, [this]() { invalidateData(); });
 }
 
 TagEditorModel::~TagEditorModel() = default;
@@ -650,21 +646,24 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
         }
 
         if(index.row() == p->m_loveRow) {
+            const auto appearance
+                = p->m_settings->value<Settings::Gui::TrackEditorAppearance>().value<TrackEditorAppearance>();
             return QVariant::fromValue(
                 HeartValue{(item->valueChanged() ? item->changedValue() : item->value()).toInt() != 0,
-                           p->m_settings->value<Settings::Gui::LoveHeartSize>(), Gui::loveHeartColour(*p->m_settings),
-                           Gui::unlovedHeartColour(*p->m_settings)});
+                           appearance.loveHeartSize, appearance.loveHeartColour, appearance.unlovedHeartColour});
         }
         if(index.row() == p->m_ratingRow) {
+            const auto appearance
+                = p->m_settings->value<Settings::Gui::TrackEditorAppearance>().value<TrackEditorAppearance>();
             const bool mixedValues = index.data(StarDelegate::Role::MixedValues).toBool();
             StarRating rating{
                 mixedValues ? 0.0F : (item->valueChanged() ? item->changedValue().toFloat() : item->value().toFloat()),
                 5,
-                p->m_settings->value<Settings::Gui::StarRatingSize>(),
-                Gui::ratingStarColours(*p->m_settings),
-                Gui::unratedStarColour(*p->m_settings),
-                Gui::ratingEditorSymbols(*p->m_settings)};
-            rating.setSymbolFont(p->m_settings->value<Settings::Gui::RatingSymbolFont>().value<QFont>());
+                appearance.starRatingSize,
+                appearance.ratingStarColours,
+                appearance.unratedStarColour,
+                appearance.ratingSymbols};
+            rating.setSymbolFont(appearance.ratingSymbolFont);
             return QVariant::fromValue(std::move(rating));
         }
 

@@ -247,18 +247,7 @@ RatingControl::RatingControl(PlayerController* playerController, SettingsManager
     updateToolButtonOptions(m_settings->value<Settings::Gui::ToolButtonStyle>());
     m_settings->subscribe<Settings::Gui::ToolButtonStyle>(this, updateToolButtonOptions);
 
-    m_settings->subscribe<Settings::Gui::RatingOneStarColour>(this, &RatingControl::updateAppearance);
-    m_settings->subscribe<Settings::Gui::RatingTwoStarColour>(this, &RatingControl::updateAppearance);
-    m_settings->subscribe<Settings::Gui::RatingThreeStarColour>(this, &RatingControl::updateAppearance);
-    m_settings->subscribe<Settings::Gui::RatingFourStarColour>(this, &RatingControl::updateAppearance);
-    m_settings->subscribe<Settings::Gui::RatingFiveStarColour>(this, &RatingControl::updateAppearance);
-    m_settings->subscribe<Settings::Gui::UnratedStarColour>(this, &RatingControl::updateAppearance);
-    m_settings->subscribe<Settings::Gui::StarRatingSize>(this, &RatingControl::updateAppearance);
-    m_settings->subscribe<Settings::Gui::UseCustomRatingSymbols>(this, &RatingControl::updateAppearance);
-    m_settings->subscribe<Settings::Gui::RatingSymbolFont>(this, &RatingControl::updateAppearance);
-    m_settings->subscribe<Settings::Gui::RatingFullStarSymbol>(this, &RatingControl::updateAppearance);
-    m_settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(this, &RatingControl::updateAppearance);
-    m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, &RatingControl::updateAppearance);
+    m_settings->subscribe<Settings::Gui::TrackEditorAppearance>(this, &RatingControl::updateAppearance);
 
     updateTrack(m_playerController->currentTrack());
 }
@@ -337,14 +326,15 @@ void RatingControl::updateOrientation()
 
 void RatingControl::updateTrack(const Track& track)
 {
-    const float rating = track.isValid() ? std::max(0.0F, track.rating()) : 0.0F;
+    const float rating    = track.isValid() ? std::max(0.0F, track.rating()) : 0.0F;
+    const auto appearance = m_settings->value<Settings::Gui::TrackEditorAppearance>().value<TrackEditorAppearance>();
     StarRating starRating{rating,
                           5,
-                          m_settings->value<Settings::Gui::StarRatingSize>(),
-                          Gui::ratingStarColours(*m_settings),
-                          Gui::unratedStarColour(*m_settings),
-                          Gui::ratingEditorSymbols(*m_settings)};
-    starRating.setSymbolFont(m_settings->value<Settings::Gui::RatingSymbolFont>().value<QFont>());
+                          appearance.starRatingSize,
+                          appearance.ratingStarColours,
+                          appearance.unratedStarColour,
+                          appearance.ratingSymbols};
+    starRating.setSymbolFont(appearance.ratingSymbolFont);
     m_editor->setRating(starRating);
     m_editor->setInteractive(track.isValid() && m_playerController->playState() != Player::PlayState::Stopped);
     updateOrientation();

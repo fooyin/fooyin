@@ -220,9 +220,7 @@ LoveControl::LoveControl(PlayerController* playerController, SettingsManager* se
     updateToolButtonOptions(m_settings->value<Settings::Gui::ToolButtonStyle>());
     m_settings->subscribe<Settings::Gui::ToolButtonStyle>(this, updateToolButtonOptions);
 
-    m_settings->subscribe<Settings::Gui::LoveHeartColour>(this, &LoveControl::updateAppearance);
-    m_settings->subscribe<Settings::Gui::UnlovedHeartColour>(this, &LoveControl::updateAppearance);
-    m_settings->subscribe<Settings::Gui::LoveHeartSize>(this, &LoveControl::updateAppearance);
+    m_settings->subscribe<Settings::Gui::TrackEditorAppearance>(this, &LoveControl::updateAppearance);
 
     updateTrack(m_playerController->currentTrack());
 }
@@ -239,8 +237,9 @@ QString LoveControl::layoutName() const
 
 void LoveControl::updateTrack(const Track& track)
 {
-    m_editor->setValue({track.isValid() && track.isLoved(), m_settings->value<Settings::Gui::LoveHeartSize>(),
-                        Gui::loveHeartColour(*m_settings), Gui::unlovedHeartColour(*m_settings)});
+    const auto appearance = m_settings->value<Settings::Gui::TrackEditorAppearance>().value<TrackEditorAppearance>();
+    m_editor->setValue({track.isValid() && track.isLoved(), appearance.loveHeartSize, appearance.loveHeartColour,
+                        appearance.unlovedHeartColour});
     m_editor->setInteractive(track.isValid() && m_playerController->playState() != Player::PlayState::Stopped);
     setMinimumSize(m_editor->sizeHint());
 }

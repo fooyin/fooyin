@@ -1125,12 +1125,13 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor*
     m_playlistView->setInlineEditDelay(m_settings->value<PlaylistInlineEditDelayMs>());
     m_settings->subscribe<PlaylistInlineEditDelayMs>(m_playlistView, &PlaylistView::setInlineEditDelay);
 
-    m_playlistView->setRatingEditorOnlyOnHover(m_settings->value<Settings::Gui::RatingEditorOnlyOnHover>());
-    m_playlistView->setLoveEditorOnlyOnHover(m_settings->value<Settings::Gui::LoveEditorOnlyOnHover>());
-    m_settings->subscribe<Settings::Gui::RatingEditorOnlyOnHover>(m_playlistView,
-                                                                  &PlaylistView::setRatingEditorOnlyOnHover);
-    m_settings->subscribe<Settings::Gui::LoveEditorOnlyOnHover>(m_playlistView,
-                                                                &PlaylistView::setLoveEditorOnlyOnHover);
+    const auto updateEditorVisibility = [view = m_playlistView](const QVariant& value) {
+        const auto appearance = value.value<TrackEditorAppearance>();
+        view->setRatingEditorOnlyOnHover(appearance.ratingEditorOnlyOnHover);
+        view->setLoveEditorOnlyOnHover(appearance.loveEditorOnlyOnHover);
+    };
+    updateEditorVisibility(m_settings->value<Settings::Gui::TrackEditorAppearance>());
+    m_settings->subscribe<Settings::Gui::TrackEditorAppearance>(m_playlistView, updateEditorVisibility);
 
     QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_playlistView,
                      &PlaylistView::setBackgroundPixmap);

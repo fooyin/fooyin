@@ -1215,23 +1215,7 @@ void FilterWidget::setupConnections()
         scheduleExpansionUpdate();
     });
 
-    const auto refreshEditors = [this]() {
-        refreshExpansionScripts({});
-    };
-    m_settings->subscribe<Settings::Gui::LoveHeartSize>(this, refreshEditors);
-    m_settings->subscribe<Settings::Gui::StarRatingSize>(this, refreshEditors);
-    m_settings->subscribe<Settings::Gui::UseCustomRatingSymbols>(this, refreshEditors);
-    m_settings->subscribe<Settings::Gui::RatingSymbolFont>(this, refreshEditors);
-    m_settings->subscribe<Settings::Gui::LoveHeartColour>(this, refreshEditors);
-    m_settings->subscribe<Settings::Gui::UnlovedHeartColour>(this, refreshEditors);
-    m_settings->subscribe<Settings::Gui::RatingOneStarColour>(this, refreshEditors);
-    m_settings->subscribe<Settings::Gui::RatingTwoStarColour>(this, refreshEditors);
-    m_settings->subscribe<Settings::Gui::RatingThreeStarColour>(this, refreshEditors);
-    m_settings->subscribe<Settings::Gui::RatingFourStarColour>(this, refreshEditors);
-    m_settings->subscribe<Settings::Gui::RatingFiveStarColour>(this, refreshEditors);
-    m_settings->subscribe<Settings::Gui::UnratedStarColour>(this, refreshEditors);
-    m_settings->subscribe<Settings::Gui::LoveEditorOnlyOnHover>(this, refreshEditors);
-    m_settings->subscribe<Settings::Gui::RatingEditorOnlyOnHover>(this, refreshEditors);
+    m_settings->subscribe<Settings::Gui::TrackEditorAppearance>(this, [this]() { refreshExpansionScripts({}); });
 
     const auto refreshRatingStars = [this]() {
         scheduleExpansionUpdate();

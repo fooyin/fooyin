@@ -27,6 +27,8 @@ struct RatingStarSymbols
     QString fullStarSymbol;
     QString halfStarSymbol;
     QString emptyStarSymbol;
+
+    friend bool operator==(const RatingStarSymbols&, const RatingStarSymbols&) = default;
 };
 
 [[nodiscard]] inline const RatingStarSymbols& defaultRatingStarSymbols()

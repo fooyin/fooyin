@@ -25,8 +25,14 @@
 #include <gui/theme/fytheme.h>
 #include <utils/settings/settingsentry.h>
 
+#include <QBasicTimer>
+#include <QObject>
+
+class QTimerEvent;
+
 namespace Fooyin {
 class SettingsManager;
+struct TrackEditorAppearance;
 
 enum class LayoutTransitionType : uint8_t
 {
@@ -252,13 +258,20 @@ enum GuiInternalSettings : uint32_t
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal
 
-class FYGUI_EXPORT GuiSettings
+class FYGUI_EXPORT GuiSettings : public QObject
 {
 public:
     explicit GuiSettings(SettingsManager* settingsManager);
 
+protected:
+    void timerEvent(QTimerEvent* event) override;
+
 private:
+    void scheduleTrackEditorAppearanceUpdate();
+    [[nodiscard]] TrackEditorAppearance trackEditorAppearance() const;
+
     SettingsManager* m_settings;
+    QBasicTimer m_editorAppearanceTimer;
 };
 } // namespace Fooyin
 
