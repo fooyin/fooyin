@@ -29,7 +29,6 @@
 #include <core/internalcoresettings.h>
 #include <core/player/playercontroller.h>
 #include <core/plugins/coreplugincontext.h>
-#include <core/ratingsymbols.h>
 #include <core/scripting/scriptcontextservice.h>
 #include <gui/coverprovider.h>
 #include <gui/coverrepository.h>
@@ -41,6 +40,7 @@
 #include <gui/playlist/currentplaylistcontroller.h>
 #include <gui/widgetprovider.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/ratingsymbols.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAbstractItemView>
@@ -145,6 +145,8 @@ void registerMinimalGuiSettings(SettingsManager& settings)
     settings.createTempSetting<Settings::Gui::LayoutEditing>(false);
     settings.createTempSetting<Settings::Gui::ResolvedAppStyle>(QVariant::fromValue(style));
     settings.createSetting<Settings::Gui::IconTheme>(0, u"Theme/IconTheme"_s);
+    settings.createSetting<Settings::Gui::UseCustomRatingSymbols>(false, u"Interface/UseCustomRatingSymbols"_s);
+    settings.createSetting<Settings::Gui::RatingSymbolFont>(QVariant{}, u"Interface/RatingSymbolFont"_s);
     settings.createSetting<Settings::Gui::RatingFullStarSymbol>(defaultRatingFullStarSymbol(),
                                                                 u"Interface/RatingFullStarSymbol"_s);
     settings.createSetting<Settings::Gui::RatingHalfStarSymbol>(defaultRatingHalfStarSymbol(),

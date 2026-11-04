@@ -93,7 +93,7 @@ QSize StarEditor::sizeHint() const
 void StarEditor::paintEvent(QPaintEvent* /*event*/)
 {
     QPainter painter{this};
-    m_rating.paint(&painter, rect(), StarRating::EditMode::Editable);
+    m_rating.paint(&painter, rect(), palette(), StarRating::EditMode::Editable, m_align);
 }
 
 void StarEditor::contextMenuEvent(QContextMenuEvent* event)

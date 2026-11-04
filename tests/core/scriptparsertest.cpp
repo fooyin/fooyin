@@ -18,13 +18,13 @@
  */
 
 #include <core/constants.h>
-#include <core/ratingsymbols.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
 #include <core/scripting/scriptscanner.h>
 #include <core/scripting/scripttrackwriter.h>
 #include <core/scripting/trackqueryfilter.h>
 #include <core/track.h>
+#include <utils/ratingsymbols.h>
 
 #include <QDateTime>
 #include <QDir>

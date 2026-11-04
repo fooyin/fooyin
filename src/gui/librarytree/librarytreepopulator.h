@@ -23,8 +23,8 @@
 #include "librarytreeitem.h"
 
 #include <core/library/libraryinfo.h>
-#include <core/ratingsymbols.h>
 #include <utils/crypto.h>
+#include <utils/ratingsymbols.h>
 #include <utils/worker.h>
 
 #include <QFont>

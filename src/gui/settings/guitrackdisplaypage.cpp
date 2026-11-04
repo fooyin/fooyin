@@ -21,12 +21,13 @@
 
 #include "internalguisettings.h"
 
-#include <core/ratingsymbols.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/guiutils.h>
 #include <gui/widgets/colourbutton.h>
+#include <gui/widgets/fontbutton.h>
 #include <gui/widgets/scriptlineedit.h>
+#include <utils/ratingsymbols.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -66,6 +67,8 @@ private:
 
     QSpinBox* m_starRatingSize;
     QCheckBox* m_ratingEditorOnlyOnHover;
+    QCheckBox* m_useCustomRatingSymbols;
+    FontButton* m_ratingSymbolFont;
     QSpinBox* m_loveHeartSize;
     QCheckBox* m_loveEditorOnlyOnHover;
     QLineEdit* m_fullStarSymbol;
@@ -84,6 +87,8 @@ GuiTrackDisplayPageWidget::GuiTrackDisplayPageWidget(SettingsManager* settings)
     , m_propertiesSidebarTrackScript{new ScriptLineEdit(this)}
     , m_starRatingSize{new QSpinBox(this)}
     , m_ratingEditorOnlyOnHover{new QCheckBox(tr("Only show unrated stars on hovered\nor selected rows"), this)}
+    , m_useCustomRatingSymbols{new QCheckBox(tr("Use custom rating symbols"), this)}
+    , m_ratingSymbolFont{new FontButton(tr("Symbol font") + u":"_s, true, this)}
     , m_loveHeartSize{new QSpinBox(this)}
     , m_loveEditorOnlyOnHover{new QCheckBox(tr("Only show unloved hearts on hovered\nor selected rows"), this)}
     , m_fullStarSymbol{new QLineEdit(this)}
@@ -123,15 +128,20 @@ GuiTrackDisplayPageWidget::GuiTrackDisplayPageWidget(SettingsManager* settings)
     m_starRatingSize->setRange(5, 30);
     m_starRatingSize->setSuffix(u" px"_s);
 
-    m_starRatingSize->setToolTip(tr("Controls the star size used by the rating editor widget"));
-    m_fullStarSymbol->setToolTip(tr("Used for the filled portion of %rating_stars% and %rating_stars_padded%"));
-    m_halfStarSymbol->setToolTip(tr(
-        "Used for the half-step portion of %rating_stars% and %rating_stars_padded%.\n"
-        "If the default half-star does not render correctly with your system font, choose a different symbol here."));
-    m_emptyStarSymbol->setToolTip(tr("Used for the trailing empty portion of %rating_stars_padded%"));
-    m_ratingPreview->setToolTip(tr("Preview of %rating_stars_padded% using the current font."));
+    m_useCustomRatingSymbols->setToolTip(tr("Use the configured full, half and empty symbols in rating editors.\n"
+                                            "When disabled, rating editors use the default star shapes."));
+    m_ratingSymbolFont->setToolTip(tr("Font used for custom symbols in rating editors. "
+                                      "Star size controls the symbol size."));
+    m_starRatingSize->setToolTip(tr("Size of each star or custom symbol in rating editors"));
+    m_fullStarSymbol->setToolTip(tr("Symbol used for full stars in %rating_stars% and %rating_stars_padded%.\n"
+                                    "Also used in rating editors when ‘Use custom rating symbols’ is enabled."));
+    m_halfStarSymbol->setToolTip(tr("Symbol used for half stars in %rating_stars% and %rating_stars_padded%.\n"
+                                    "Also used in rating editors when ‘Use custom rating symbols’ is enabled."));
+    m_emptyStarSymbol->setToolTip(tr("Symbol used for empty stars in %rating_stars_padded%.\n"
+                                     "Also used in rating editors when ‘Use custom rating symbols’ is enabled."));
+    m_ratingPreview->setToolTip(tr("Preview of %rating_stars_padded% using the current font"));
 
-    auto* ratingScriptsGroupBox = new QGroupBox(tr("Rating Script Variables"), this);
+    auto* ratingScriptsGroupBox = new QGroupBox(tr("Rating Symbols"), this);
     auto* ratingScriptsLayout   = new QGridLayout(ratingScriptsGroupBox);
 
     row = 0;
@@ -149,6 +159,8 @@ GuiTrackDisplayPageWidget::GuiTrackDisplayPageWidget(SettingsManager* settings)
     auto* ratingsLayout   = new QGridLayout(ratingsGroupBox);
 
     row = 0;
+    ratingsLayout->addWidget(m_useCustomRatingSymbols, row++, 0, 1, 2);
+    ratingsLayout->addWidget(m_ratingSymbolFont, row++, 0, 1, 2);
     ratingsLayout->addWidget(m_ratingEditorOnlyOnHover, row++, 0, 1, 2);
     ratingsLayout->addWidget(new QLabel(tr("Star size") + u":"_s, this), row, 0);
     ratingsLayout->addWidget(m_starRatingSize, row++, 1);
@@ -190,6 +202,13 @@ GuiTrackDisplayPageWidget::GuiTrackDisplayPageWidget(SettingsManager* settings)
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
+    m_ratingSymbolFont->setEnabled(m_useCustomRatingSymbols->isChecked());
+    QObject::connect(m_useCustomRatingSymbols, &QCheckBox::toggled, m_ratingSymbolFont, &QWidget::setEnabled);
+    QObject::connect(m_ratingSymbolFont, &FontButton::toggled, this, [this](bool checked) {
+        if(!checked) {
+            m_ratingSymbolFont->setButtonFont(font());
+        }
+    });
     QObject::connect(m_fullStarSymbol, &QLineEdit::textChanged, this, [this]() { updateRatingPreview(); });
     QObject::connect(m_halfStarSymbol, &QLineEdit::textChanged, this, [this]() { updateRatingPreview(); });
     QObject::connect(m_emptyStarSymbol, &QLineEdit::textChanged, this, [this]() { updateRatingPreview(); });
@@ -214,6 +233,10 @@ void GuiTrackDisplayPageWidget::load()
     m_propertiesSidebarTrackScript->setScript(m_settings->value<PropertiesSidebarTrackScript>());
 
     m_starRatingSize->setValue(m_settings->value<StarRatingSize>());
+    m_useCustomRatingSymbols->setChecked(m_settings->value<UseCustomRatingSymbols>());
+    const QVariant symbolFont = m_settings->value<RatingSymbolFont>();
+    m_ratingSymbolFont->setChecked(!symbolFont.isNull());
+    m_ratingSymbolFont->setButtonFont(symbolFont.isNull() ? font() : symbolFont.value<QFont>());
     m_ratingEditorOnlyOnHover->setChecked(m_settings->value<RatingEditorOnlyOnHover>());
     m_loveHeartSize->setValue(m_settings->value<LoveHeartSize>());
     m_loveEditorOnlyOnHover->setChecked(m_settings->value<LoveEditorOnlyOnHover>());
@@ -253,6 +276,13 @@ void GuiTrackDisplayPageWidget::apply()
     m_settings->set<WindowTitleTrackScript>(m_titleScript->text());
     m_settings->set<PropertiesSidebarTrackScript>(m_propertiesSidebarTrackScript->text());
 
+    m_settings->set<UseCustomRatingSymbols>(m_useCustomRatingSymbols->isChecked());
+    if(m_ratingSymbolFont->isChecked()) {
+        m_settings->set<RatingSymbolFont>(m_ratingSymbolFont->buttonFont());
+    }
+    else {
+        m_settings->reset<RatingSymbolFont>();
+    }
     m_settings->set<RatingEditorOnlyOnHover>(m_ratingEditorOnlyOnHover->isChecked());
     m_settings->set<LoveEditorOnlyOnHover>(m_loveEditorOnlyOnHover->isChecked());
 
@@ -288,6 +318,8 @@ void GuiTrackDisplayPageWidget::reset()
 {
     m_settings->reset<WindowTitleTrackScript>();
     m_settings->reset<PropertiesSidebarTrackScript>();
+    m_settings->reset<UseCustomRatingSymbols>();
+    m_settings->reset<RatingSymbolFont>();
     m_settings->reset<RatingEditorOnlyOnHover>();
     m_settings->reset<LoveEditorOnlyOnHover>();
     m_settings->reset<StarRatingSize>();

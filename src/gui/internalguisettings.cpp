@@ -24,11 +24,11 @@
 #include "search/searchwidget.h"
 #include "widgets/statuswidget.h"
 
-#include <core/ratingsymbols.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/iconloader.h>
+#include <utils/ratingsymbols.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -114,6 +114,8 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<PlaybackFollowsCursor>(false, u"Playlist/PlaybackFollowsCursor"_s);
     m_settings->createSetting<ToolButtonStyle>(static_cast<int>(Stretch), u"Interface/ToolButtonStyle"_s);
     m_settings->createSetting<StarRatingSize>(17, u"Interface/StarRatingSize"_s);
+    m_settings->createSetting<UseCustomRatingSymbols>(false, u"Interface/UseCustomRatingSymbols"_s);
+    m_settings->createSetting<RatingSymbolFont>(QVariant{}, u"Interface/RatingSymbolFont"_s);
     m_settings->createSetting<Style>(QString{}, u"Interface/Style"_s);
     m_settings->createTempSetting<MainWindowPixelRatio>(1.0);
     m_settings->createSetting<SeekStepSmall>(4000, u"Interface/SeekIncrement"_s);

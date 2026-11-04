@@ -22,9 +22,9 @@
 #include "fygui_export.h"
 
 #include <core/player/playbackqueue.h>
-#include <core/ratingsymbols.h>
 #include <core/track.h>
 #include <gui/theme/fytheme.h>
+#include <utils/ratingsymbols.h>
 #include <utils/starrating.h>
 
 #include <QByteArray>
@@ -81,6 +81,7 @@ FYGUI_EXPORT TrackIds sortTrackIdsForLibraryViewerPlaylist(MusicLibrary* library
 FYGUI_EXPORT QByteArray queueTracksToMimeData(const QueueTracks& tracks);
 FYGUI_EXPORT QueueTracks queueTracksFromMimeData(MusicLibrary* library, QByteArray data);
 FYGUI_EXPORT RatingStarSymbols ratingStarSymbols(const SettingsManager& settings);
+FYGUI_EXPORT std::optional<RatingStarSymbols> ratingEditorSymbols(const SettingsManager& settings);
 FYGUI_EXPORT QColor loveHeartColour(const SettingsManager& settings);
 FYGUI_EXPORT QColor unlovedHeartColour(const SettingsManager& settings);
 FYGUI_EXPORT QColor unratedStarColour(const SettingsManager& settings);

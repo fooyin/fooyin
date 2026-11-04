@@ -24,12 +24,12 @@
 #include <core/library/libraryinfo.h>
 #include <core/player/playbackqueue.h>
 #include <core/player/playerdefs.h>
-#include <core/ratingsymbols.h>
 #include <core/scripting/expression.h>
 #include <core/scripting/scriptdependencies.h>
 #include <core/scripting/scriptvalue.h>
 #include <core/track.h>
 #include <utils/id.h>
+#include <utils/ratingsymbols.h>
 
 #include <span>
 #include <variant>

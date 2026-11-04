@@ -87,10 +87,16 @@ void InlineTrackEditorHover::clear()
 
 InlineTrackEditors inlineTrackEditors(const SettingsManager& settings, const Track& track)
 {
+    StarRating rating{track.rating(),
+                      5,
+                      settings.value<Settings::Gui::StarRatingSize>(),
+                      Gui::ratingStarColours(settings),
+                      Gui::unratedStarColour(settings),
+                      Gui::ratingEditorSymbols(settings)};
+    rating.setSymbolFont(settings.value<Settings::Gui::RatingSymbolFont>().value<QFont>());
     return {.love            = HeartValue{track.isLoved(), settings.value<Settings::Gui::LoveHeartSize>(),
                                           Gui::loveHeartColour(settings), Gui::unlovedHeartColour(settings)},
-            .rating          = StarRating{track.rating(), 5, settings.value<Settings::Gui::StarRatingSize>(),
-                                          Gui::ratingStarColours(settings), Gui::unratedStarColour(settings)},
+            .rating          = std::move(rating),
             .hideEmptyLove   = settings.value<Settings::Gui::LoveEditorOnlyOnHover>(),
             .hideEmptyRating = settings.value<Settings::Gui::RatingEditorOnlyOnHover>()};
 }
@@ -372,6 +378,7 @@ DrawTrackTextResult drawTrackTextBlocks(QPainter* painter, const QStyleOptionVie
                     }
                     else if(block.editor == InlineTrackEditor::Rating
                             && (!editors->hideEmptyRating || editors->rating.rating() >= 0.1F || editors->active)) {
+                        painter->setFont(block.font);
                         editors->rating.paint(painter, editorRect, option.palette, StarRating::EditMode::ReadOnly,
                                               Qt::AlignCenter, selected);
                     }

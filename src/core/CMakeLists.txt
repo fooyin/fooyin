@@ -52,7 +52,6 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/plugins/coreplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/plugins/coreplugincontext.h
     ${CMAKE_SOURCE_DIR}/include/core/plugins/plugin.h
-    ${CMAKE_SOURCE_DIR}/include/core/ratingsymbols.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/expression.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptcontextservice.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptdefs.h

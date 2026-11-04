@@ -629,6 +629,8 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     , m_ratingEditorOnlyOnHover{settings->value<Settings::Gui::RatingEditorOnlyOnHover>()}
     , m_loveEditorOnlyOnHover{settings->value<Settings::Gui::LoveEditorOnlyOnHover>()}
     , m_ratingStarColours{Gui::ratingStarColours(*settings)}
+    , m_ratingEditorSymbols{Gui::ratingEditorSymbols(*settings)}
+    , m_ratingSymbolFont{settings->value<Settings::Gui::RatingSymbolFont>().value<QFont>()}
     , m_unratedStarColour{Gui::unratedStarColour(*settings)}
     , m_loveHeartColour{Gui::loveHeartColour(*settings)}
     , m_unlovedHeartColour{Gui::unlovedHeartColour(*settings)}
@@ -646,6 +648,10 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
     });
     m_settings->subscribe<Settings::Gui::StarRatingSize>(this, [this](int size) {
         m_starRatingSize = size;
+        invalidateData();
+    });
+    m_settings->subscribe<Settings::Gui::RatingSymbolFont>(this, [this](const QVariant& font) {
+        m_ratingSymbolFont = font.value<QFont>();
         invalidateData();
     });
     m_settings->subscribe<Settings::Gui::RatingEditorOnlyOnHover>(this, [this](bool enabled) {
@@ -677,11 +683,13 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader
         m_unlovedHeartColour = colour.value<QColor>();
         invalidateData();
     });
-    auto refreshRatingStars = [this](const QString&) {
+    auto refreshRatingStars = [this]() {
+        m_ratingEditorSymbols = Gui::ratingEditorSymbols(*m_settings);
         if(m_currentPlaylist) {
             reset(m_currentPlaylist->playlistTracks());
         }
     };
+    m_settings->subscribe<Settings::Gui::UseCustomRatingSymbols>(this, refreshRatingStars);
     m_settings->subscribe<Settings::Gui::RatingFullStarSymbol>(this, refreshRatingStars);
     m_settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(this, refreshRatingStars);
     m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, refreshRatingStars);
@@ -2479,6 +2487,13 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
     const bool singleColumnMode = m_columns.empty();
     const bool isPlaying        = trackIsPlaying(playlistTrack, item->index());
 
+    const auto ratingForTrack = [this, &track]() {
+        StarRating rating{track.rating(),       5, m_starRatingSize, m_ratingStarColours, m_unratedStarColour,
+                          m_ratingEditorSymbols};
+        rating.setSymbolFont(m_ratingSymbolFont);
+        return rating;
+    };
+
     const auto getCoverData = [this, &index, column]() -> std::optional<std::pair<const Track*, QSize>> {
         if(std::cmp_greater_equal(column, m_columnSizes.size())) {
             return {};
@@ -2535,8 +2550,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
         }
         if(isRatingWriteField(writeField)) {
             if(playlistColumn.field == QLatin1StringView{Constants::RatingEditor}) {
-                return QVariant::fromValue(
-                    StarRating{track.rating(), 5, m_starRatingSize, m_ratingStarColours, m_unratedStarColour});
+                return QVariant::fromValue(ratingForTrack());
             }
             if(writeField.compare(QLatin1StringView{Constants::MetaData::RatingEditor}, Qt::CaseInsensitive) == 0) {
                 return track.rating() > 0 ? QString::number(track.rating()) : QString{};
@@ -2549,7 +2563,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
 
     if(role == Qt::DisplayRole && !m_columns.empty()) {
         if(m_columns.at(column).field == QLatin1StringView{Constants::RatingEditor}) {
-            return StarRating{track.rating(), 5, m_starRatingSize, m_ratingStarColours, m_unratedStarColour};
+            return ratingForTrack();
         }
         if(m_columns.at(column).field == QLatin1StringView{Constants::LoveEditor}) {
             return QVariant::fromValue(
@@ -2662,9 +2676,9 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
                 return {};
             }
             return QVariant::fromValue(InlineTrackEditors{
-                .love   = HeartValue{track.isLoved(), m_loveHeartSize, m_loveHeartColour, m_unlovedHeartColour},
-                .rating = StarRating{track.rating(), 5, m_starRatingSize, m_ratingStarColours, m_unratedStarColour},
-                .hideEmptyLove   = m_loveEditorOnlyOnHover,
+                .love          = HeartValue{track.isLoved(), m_loveHeartSize, m_loveHeartColour, m_unlovedHeartColour},
+                .rating        = ratingForTrack(),
+                .hideEmptyLove = m_loveEditorOnlyOnHover,
                 .hideEmptyRating = m_ratingEditorOnlyOnHover});
         case PlaylistItem::Role::PlayingIcon: {
             switch(trackItem.playingIcon()) {

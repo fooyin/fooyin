@@ -27,6 +27,7 @@
 #include <core/player/playerdefs.h>
 #include <core/playlist/playlist.h>
 #include <core/scripting/scriptcontextservice.h>
+#include <utils/ratingsymbols.h>
 #include <utils/treemodel.h>
 
 #include <QColor>
@@ -36,6 +37,7 @@
 
 #include <array>
 #include <expected>
+#include <optional>
 #include <unordered_map>
 
 namespace Fooyin {
@@ -346,6 +348,8 @@ private:
     bool m_ratingEditorOnlyOnHover;
     bool m_loveEditorOnlyOnHover;
     std::array<QColor, 5> m_ratingStarColours;
+    std::optional<RatingStarSymbols> m_ratingEditorSymbols;
+    QFont m_ratingSymbolFont;
     QColor m_unratedStarColour;
     QColor m_loveHeartColour;
     QColor m_unlovedHeartColour;
