@@ -2889,7 +2889,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="476"/>
         <source>Values (one per line)</source>
-        <translation type="unfinished"></translation>
+        <translation>Värden (en per rad)</translation>
     </message>
 </context>
 <context>
@@ -9887,12 +9887,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="139"/>
         <source>Light</source>
-        <translation>Ljust</translation>
+        <translation>Ljusa</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="140"/>
         <source>Dark</source>
-        <translation>Mörkt</translation>
+        <translation>Mörka</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="141"/>
@@ -9922,17 +9922,17 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="150"/>
         <source>Enter from</source>
-        <translation type="unfinished"></translation>
+        <translation>Gå in från</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="152"/>
         <source>Scale direction</source>
-        <translation type="unfinished"></translation>
+        <translation>Skalningsriktning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="154"/>
         <source>Scale amount</source>
-        <translation type="unfinished"></translation>
+        <translation>Skalningsmängd</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="159"/>
@@ -23935,7 +23935,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="1071"/>
         <source>Split and move widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Splitta och flytta widget</translation>
     </message>
 </context>
 <context>
@@ -26825,7 +26825,7 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
         <location filename="../../src/gui/widgets.cpp" line="837"/>
         <location filename="../../src/gui/widgets.cpp" line="847"/>
         <source>Metadata Compression</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadatakomprimering</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="802"/>
@@ -26841,7 +26841,7 @@ Set to 0 to disable compression. Changes take effect after restarting fooyin.</s
     <message>
         <location filename="../../src/gui/widgets.cpp" line="808"/>
         <source> bytes</source>
-        <translation type="unfinished"></translation>
+        <translation> byte</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="816"/>
