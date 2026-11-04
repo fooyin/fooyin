@@ -39,6 +39,7 @@ namespace {
 QNetworkRequest setupRequest(const char* url)
 {
     QNetworkRequest req = makeNetworkRequest(QString::fromLatin1(url));
+    req.setTransferTimeout(QNetworkRequest::DefaultTransferTimeoutConstant);
     req.setRawHeader("Referer", "https://y.qq.com/portal/player.html");
     return req;
 }

@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2024, Luke Taylor <luket@pm.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +88,8 @@ void LyricsOvhLyrics::timerEvent(QTimerEvent* event)
 
 void LyricsOvhLyrics::sendRequest()
 {
-    const QNetworkRequest req = makeNetworkRequest(m_requestUrl);
+    QNetworkRequest req = makeNetworkRequest(m_requestUrl);
+    req.setTransferTimeout(QNetworkRequest::DefaultTransferTimeoutConstant);
 
     qCDebug(LYRICS) << "Sending request" << m_requestUrl.toString();
 

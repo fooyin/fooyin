@@ -79,7 +79,8 @@ void DarkLyrics::search(const SearchParams& params)
 
     qCInfo(LYRICS) << "Sending request" << url.toString();
 
-    const QNetworkRequest req = makeNetworkRequest(url);
+    QNetworkRequest req = makeNetworkRequest(url);
+    req.setTransferTimeout(QNetworkRequest::DefaultTransferTimeoutConstant);
     setReply(network()->get(req));
     QObject::connect(reply(), &QNetworkReply::finished, this, &DarkLyrics::handleLyricReply);
 }

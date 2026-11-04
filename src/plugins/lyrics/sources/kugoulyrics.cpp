@@ -196,7 +196,8 @@ void KugouLyrics::search(const SearchParams& params)
     q.addQueryItem(u"hash"_s, u""_s);
     url.setQuery(q);
 
-    const QNetworkRequest req = makeNetworkRequest(url);
+    QNetworkRequest req = makeNetworkRequest(url);
+    req.setTransferTimeout(QNetworkRequest::DefaultTransferTimeoutConstant);
 
     qCDebug(LYRICS) << u"Sending request: %1"_s.arg(url.toString());
 
@@ -274,7 +275,8 @@ void KugouLyrics::makeLyricRequest()
     q.addQueryItem(u"var"_s, u"1"_s);
     url.setQuery(q);
 
-    const QNetworkRequest req = makeNetworkRequest(url);
+    QNetworkRequest req = makeNetworkRequest(url);
+    req.setTransferTimeout(QNetworkRequest::DefaultTransferTimeoutConstant);
 
     qCDebug(LYRICS) << u"Sending request: %1"_s.arg(url.toString());
 

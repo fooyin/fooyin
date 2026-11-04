@@ -78,7 +78,8 @@ void LrcLibLyrics::timerEvent(QTimerEvent* event)
 
 void LrcLibLyrics::sendRequest()
 {
-    const QNetworkRequest req = makeNetworkRequest(m_requestUrl);
+    QNetworkRequest req = makeNetworkRequest(m_requestUrl);
+    req.setTransferTimeout(QNetworkRequest::DefaultTransferTimeoutConstant);
 
     qCDebug(LYRICS) << "Sending request" << m_requestUrl.toString();
 

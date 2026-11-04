@@ -44,6 +44,7 @@ namespace {
 QNetworkRequest setupRequest(const char* url)
 {
     QNetworkRequest req = makeNetworkRequest(QString::fromLatin1(url));
+    req.setTransferTimeout(QNetworkRequest::DefaultTransferTimeoutConstant);
     req.setHeader(QNetworkRequest::ContentTypeHeader, u"application/x-www-form-urlencoded"_s);
     return req;
 }
