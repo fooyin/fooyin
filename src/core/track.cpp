@@ -21,10 +21,10 @@
 #include "internalcoresettings.h"
 
 #include <core/coresettings.h>
-#include <core/ratingsymbols.h>
 #include <core/stringpool.h>
 #include <core/track.h>
 #include <core/trackmetadatastore.h>
+#include <utils/ratingsymbols.h>
 
 #include <utils/crypto.h>
 #include <utils/stringutils.h>

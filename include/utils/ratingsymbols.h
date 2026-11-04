@@ -32,9 +32,9 @@ struct RatingStarSymbols
 [[nodiscard]] inline const RatingStarSymbols& defaultRatingStarSymbols()
 {
     static const RatingStarSymbols Symbols{
-        QString{QChar{u'\u2605'}},
-        QString{QChar{u'\u2BEA'}},
-        QString{QChar{u'\u2606'}},
+        .fullStarSymbol  = QString{QChar{u'\u2605'}},
+        .halfStarSymbol  = QString{QChar{u'\u2BEA'}},
+        .emptyStarSymbol = QString{QChar{u'\u2606'}},
     };
     return Symbols;
 }

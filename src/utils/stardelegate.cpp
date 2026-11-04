@@ -99,7 +99,10 @@ void StarDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
         starRating.setRating(StarEditor::ratingAtPosition(m_hoverPos, opt.rect, starRating, opt.displayAlignment));
     }
 
+    painter->save();
+    painter->setFont(opt.font);
     starRating.paint(painter, opt.rect, opt.palette, StarRating::EditMode::ReadOnly, opt.displayAlignment, selected);
+    painter->restore();
 
     if(mixedValues && !hover) {
         painter->save();

@@ -121,6 +121,8 @@ enum GuiSettings : uint32_t
     ABRepeatSeekOnAChange      = 62 | Type::Bool,
     VolumeControlStepSmall     = 63 | Type::Double,
     VolumeControlStepLarge     = 64 | Type::Double,
+    UseCustomRatingSymbols     = 65 | Type::Bool,
+    RatingSymbolFont           = 66 | Type::Variant,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Settings::Gui

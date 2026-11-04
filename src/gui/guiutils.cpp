@@ -298,6 +298,14 @@ RatingStarSymbols ratingStarSymbols(const SettingsManager& settings)
     };
 }
 
+std::optional<RatingStarSymbols> ratingEditorSymbols(const SettingsManager& settings)
+{
+    if(settings.value<Settings::Gui::UseCustomRatingSymbols>()) {
+        return ratingStarSymbols(settings);
+    }
+    return {};
+}
+
 QColor loveHeartColour(const SettingsManager& settings)
 {
     return settings.value<Settings::Gui::LoveHeartColour>().value<QColor>();

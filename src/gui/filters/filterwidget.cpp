@@ -1220,6 +1220,8 @@ void FilterWidget::setupConnections()
     };
     m_settings->subscribe<Settings::Gui::LoveHeartSize>(this, refreshEditors);
     m_settings->subscribe<Settings::Gui::StarRatingSize>(this, refreshEditors);
+    m_settings->subscribe<Settings::Gui::UseCustomRatingSymbols>(this, refreshEditors);
+    m_settings->subscribe<Settings::Gui::RatingSymbolFont>(this, refreshEditors);
     m_settings->subscribe<Settings::Gui::LoveHeartColour>(this, refreshEditors);
     m_settings->subscribe<Settings::Gui::UnlovedHeartColour>(this, refreshEditors);
     m_settings->subscribe<Settings::Gui::RatingOneStarColour>(this, refreshEditors);
