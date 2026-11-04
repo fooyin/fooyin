@@ -20,6 +20,7 @@
 #include <core/playlist/playlist.h>
 
 #include "playback/playbackorder.h"
+#include "playback/trackplaybacksettings.h"
 
 #include <core/coresettings.h>
 #include <core/library/libraryutils.h>
@@ -215,6 +216,8 @@ public:
     int handlePreviousAlbum(Playlist::PlayModes mode, int albumShuffleIndex, AlbumTracks& currentAlbum, int& nextIndex);
 
     int getNextIndex(int delta, Playlist::PlayModes mode, bool onlyCheck);
+    int getUnfilteredNextIndex(int delta, Playlist::PlayModes mode, bool onlyCheck);
+    bool isExcluded(int index, Playlist::PlayModes mode) const;
     int getNextIndexFrom(int currentIndex, int delta, Playlist::PlayModes mode, bool onlyCheck);
     [[nodiscard]] std::optional<Track> getTrack(int index) const;
     [[nodiscard]] std::optional<PlaylistTrack> getPlaylistTrack(int index) const;
@@ -629,6 +632,40 @@ int PlaylistPrivate::handlePreviousAlbum(Playlist::PlayModes mode, int albumShuf
 
 int PlaylistPrivate::getNextIndex(int delta, Playlist::PlayModes mode, bool onlyCheck)
 {
+    int index = getUnfilteredNextIndex(delta, mode, onlyCheck);
+    if(!isExcluded(index, mode)) {
+        return index;
+    }
+
+    const int originalIndex{m_currentTrackIndex};
+    std::optional<NavigationState> previewState;
+    if(onlyCheck) {
+        previewState        = navigationState();
+        m_currentTrackIndex = index;
+        syncShuffleStateToCurrentTrack();
+    }
+
+    size_t skipped{0};
+    while(isExcluded(index, mode) && skipped < m_tracks.size()) {
+        m_currentTrackIndex = index;
+        index               = getUnfilteredNextIndex(delta < 0 ? -1 : 1, mode, false);
+        ++skipped;
+    }
+    if(isExcluded(index, mode)) {
+        index = -1;
+    }
+
+    if(previewState) {
+        restoreNavigationState(std::move(*previewState));
+    }
+    else {
+        m_currentTrackIndex = originalIndex;
+    }
+    return index;
+}
+
+int PlaylistPrivate::getUnfilteredNextIndex(int delta, Playlist::PlayModes mode, bool onlyCheck)
+{
     if(m_tracks.empty()) {
         return -1;
     }
@@ -637,8 +674,9 @@ int PlaylistPrivate::getNextIndex(int delta, Playlist::PlayModes mode, bool only
         return m_currentTrackIndex;
     }
 
-    const auto getRandomIndexInAlbum = [this]() {
-        const AlbumTracks albumTracks = getAlbumTracks(m_currentTrackIndex);
+    const auto getRandomIndexInAlbum = [this, mode]() {
+        AlbumTracks albumTracks = getAlbumTracks(m_currentTrackIndex);
+        std::erase_if(albumTracks, [this, mode](int index) { return isExcluded(index, mode); });
         if(!albumTracks.empty()) {
             std::mt19937 gen(std::random_device{}());
             std::uniform_int_distribution<int> dist(0, static_cast<int>(albumTracks.size()) - 1);
@@ -665,9 +703,20 @@ int PlaylistPrivate::getNextIndex(int delta, Playlist::PlayModes mode, bool only
             return getRandomIndexInAlbum();
         }
 
+        std::vector<int> candidates;
+        candidates.reserve(m_tracks.size());
+        for(int index{0}; index < count; ++index) {
+            if(!isExcluded(index, mode)) {
+                candidates.push_back(index);
+            }
+        }
+        if(candidates.empty()) {
+            return -1;
+        }
+
         std::mt19937 gen(std::random_device{}());
-        std::uniform_int_distribution<int> dist(0, count - 1);
-        return dist(gen);
+        std::uniform_int_distribution<size_t> dist(0, candidates.size() - 1);
+        return candidates[dist(gen)];
     }
 
     int nextIndex = m_currentTrackIndex;
@@ -707,6 +756,12 @@ int PlaylistPrivate::getNextIndex(int delta, Playlist::PlayModes mode, bool only
     }
 
     return nextIndex;
+}
+
+bool PlaylistPrivate::isExcluded(int index, Playlist::PlayModes mode) const
+{
+    const bool shuffling = mode & (Playlist::ShuffleTracks | Playlist::ShuffleAlbums | Playlist::Random);
+    return index >= 0 && std::cmp_less(index, m_tracks.size()) && TrackPlayback::isExcluded(m_tracks[index], shuffling);
 }
 
 int PlaylistPrivate::getNextIndexFrom(const int currentIndex, const int delta, const Playlist::PlayModes mode,
@@ -1098,6 +1153,12 @@ int Playlist::firstIndex(PlayModes mode)
 {
     assertMainThread();
 
+    const auto playableIndex = [this, mode](int index) {
+        auto nextMode{mode};
+        nextMode.setFlag(RepeatTrack, false);
+        return p->isExcluded(index, mode) ? p->getNextIndexFrom(index, 1, nextMode, true) : index;
+    };
+
     if(trackCount() <= 0) {
         return -1;
     }
@@ -1112,7 +1173,7 @@ int Playlist::firstIndex(PlayModes mode)
         }
 
         p->m_trackShuffleIndex = 0;
-        return p->m_trackShuffleOrder.front();
+        return playableIndex(p->m_trackShuffleOrder.front());
     }
 
     if(mode & ShuffleAlbums) {
@@ -1126,19 +1187,25 @@ int Playlist::firstIndex(PlayModes mode)
 
         p->m_albumShuffleIndex = 0;
         p->m_trackInAlbumIndex = 0;
-        return p->m_albumShuffleOrder.front().front();
+        return playableIndex(p->m_albumShuffleOrder.front().front());
     }
 
     if(mode & Random) {
         return p->getNextIndex(1, mode, true);
     }
 
-    return 0;
+    return playableIndex(0);
 }
 
 int Playlist::lastIndex(PlayModes mode)
 {
     assertMainThread();
+
+    const auto playableIndex = [this, mode](int index) {
+        auto nextMode{mode};
+        nextMode.setFlag(RepeatTrack, false);
+        return p->isExcluded(index, mode) ? p->getNextIndexFrom(index, -1, nextMode, true) : index;
+    };
 
     if(trackCount() <= 0) {
         return -1;
@@ -1154,7 +1221,7 @@ int Playlist::lastIndex(PlayModes mode)
         }
 
         p->m_trackShuffleIndex = static_cast<int>(p->m_trackShuffleOrder.size()) - 1;
-        return p->m_trackShuffleOrder.back();
+        return playableIndex(p->m_trackShuffleOrder.back());
     }
 
     if(mode & ShuffleAlbums) {
@@ -1168,14 +1235,14 @@ int Playlist::lastIndex(PlayModes mode)
 
         p->m_albumShuffleIndex = static_cast<int>(p->m_albumShuffleOrder.size()) - 1;
         p->m_trackInAlbumIndex = static_cast<int>(p->m_albumShuffleOrder.back().size()) - 1;
-        return p->m_albumShuffleOrder.back().back();
+        return playableIndex(p->m_albumShuffleOrder.back().back());
     }
 
     if(mode & Random) {
         return p->getNextIndex(-1, mode, true);
     }
 
-    return trackCount() - 1;
+    return playableIndex(trackCount() - 1);
 }
 
 int Playlist::randomTrackIndexFrom(const int currentIndex)

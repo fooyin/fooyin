@@ -183,6 +183,8 @@ set(SOURCES
     dialog/iconpickerdialog.h
     dialog/importlayoutdialog.cpp
     dialog/importlayoutdialog.h
+    dialog/playbackpropertiestab.cpp
+    dialog/playbackpropertiestab.h
     dialog/propertiesdialog.cpp
     dialog/saveplaylistsdialog.cpp
     dialog/saveplaylistsdialog.h

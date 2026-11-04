@@ -200,6 +200,12 @@ void readFileProperties(Track& track)
     }
 }
 
+void mergeReloadedTrack(Track& track, const Track& existingTrack, const TrackReloadOptions& options)
+{
+    track.mergePreservedExtraProperties(existingTrack);
+    mergeReloadedTrackStats(track, existingTrack, options);
+}
+
 void mergeReloadedTrackStats(Track& track, const Track& existingTrack, const TrackReloadOptions& options)
 {
     track.setLoved(existingTrack.isLoved());

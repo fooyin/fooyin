@@ -301,6 +301,7 @@ set(SOURCES
     playback/playercontroller.cpp
     playback/playlistnavigator.cpp
     playback/playlistnavigator.h
+    playback/trackplaybacksettings.h
     playlist/parsers/cueparser.cpp
     playlist/parsers/cueparser.h
     playlist/parsers/m3uparser.cpp

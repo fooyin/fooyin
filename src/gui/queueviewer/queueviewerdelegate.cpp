@@ -66,18 +66,19 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     const auto leftLines  = Utils::prepareTextLines(opt, leftRect.width(), leftRichText);
     const auto rightLines = Utils::prepareTextLines(opt, rightRect.width(), rightRichText);
 
-    const bool isPlaybackIcon = index.data(QueueViewerItem::IsPlaybackIcon).toBool();
-    const bool hasArtwork     = !isPlaybackIcon && !opt.icon.isNull();
-    const QIcon itemIcon      = (isPlaybackIcon || hasArtwork) ? opt.icon : QIcon{};
+    const bool isStatusIcon
+        = index.data(QueueViewerItem::IsPlaybackIcon).toBool() || index.data(QueueViewerItem::IsExcluded).toBool();
+    const bool hasArtwork = !isStatusIcon && !opt.icon.isNull();
+    const QIcon itemIcon  = (isStatusIcon || hasArtwork) ? opt.icon : QIcon{};
     const QRect itemIconRect
         = !itemIcon.isNull() ? style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget) : QRect{};
-    if(isPlaybackIcon || hasArtwork) {
+    if(isStatusIcon || hasArtwork) {
         opt.icon = {};
     }
 
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
 
-    if(isPlaybackIcon) {
+    if(isStatusIcon) {
         Gui::drawItemViewIcon(painter, opt, itemIcon, itemIconRect, opt.decorationAlignment);
     }
     else if(hasArtwork) {

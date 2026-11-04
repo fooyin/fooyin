@@ -194,7 +194,7 @@ TrackList LibraryTrackResolver::readPlaylist(const QUrl& url)
     for(Track playlistTrack : playlistTracks) {
         if(const auto existingTrack = m_state->findExistingTrackByUniqueFilepath(playlistTrack)) {
             applyExistingTrackIdentity(playlistTrack, existingTrack.value());
-            mergeReloadedTrackStats(playlistTrack, existingTrack.value(), m_reloadOptions);
+            mergeReloadedTrack(playlistTrack, existingTrack.value(), m_reloadOptions);
         }
 
         playlistTrack.generateHash();
@@ -281,7 +281,7 @@ LibraryTrackResolver::readPlaylistAsync(const QUrl& url, QObject* context,
             for(Track playlistTrack : parsedTracks) {
                 if(const auto existingTrack = m_state->findExistingTrackByUniqueFilepath(playlistTrack)) {
                     applyExistingTrackIdentity(playlistTrack, existingTrack.value());
-                    mergeReloadedTrackStats(playlistTrack, existingTrack.value(), m_reloadOptions);
+                    mergeReloadedTrack(playlistTrack, existingTrack.value(), m_reloadOptions);
                 }
 
                 playlistTrack.generateHash();
@@ -506,12 +506,12 @@ void LibraryTrackResolver::readCue(const QFileInfo& info, const bool onlyModifie
         if(existingCueTracksByPath.contains(track.uniqueFilepath())) {
             const auto& existingTrack = existingCueTracksByPath.at(track.uniqueFilepath());
             applyExistingTrackIdentity(track, existingTrack);
-            mergeReloadedTrackStats(track, existingTrack, m_reloadOptions);
+            mergeReloadedTrack(track, existingTrack, m_reloadOptions);
             updateExistingTrack(track, filepath);
         }
         else if(const auto existingTrack = m_state->findExistingTrackByUniqueFilepath(track)) {
             applyExistingTrackIdentity(track, *existingTrack);
-            mergeReloadedTrackStats(track, *existingTrack, m_reloadOptions);
+            mergeReloadedTrack(track, *existingTrack, m_reloadOptions);
             updateExistingTrack(track, filepath);
         }
         else if(const int existingTrackId = m_trackDatabase->idForTrack(track); existingTrackId >= 0) {
@@ -581,7 +581,7 @@ void LibraryTrackResolver::readFile(const QFileInfo& info, const bool onlyModifi
             if(existingByPath.contains(track.uniqueFilepath())) {
                 const auto& existingTrack = existingByPath.at(track.uniqueFilepath());
                 applyExistingTrackIdentity(track, existingTrack);
-                mergeReloadedTrackStats(track, existingTrack, m_reloadOptions);
+                mergeReloadedTrack(track, existingTrack, m_reloadOptions);
             }
 
             const QDateTime createdTime{info.birthTime()};
@@ -628,7 +628,7 @@ void LibraryTrackResolver::readFile(const QFileInfo& info, const bool onlyModifi
             if(existingByPath.contains(track.uniqueFilepath())) {
                 const auto& existingTrack = existingByPath.at(track.uniqueFilepath());
                 applyExistingTrackIdentity(track, existingTrack);
-                mergeReloadedTrackStats(track, existingTrack, m_reloadOptions);
+                mergeReloadedTrack(track, existingTrack, m_reloadOptions);
             }
 
             updateExistingTrack(track, track.filepath());
@@ -790,12 +790,12 @@ void LibraryTrackResolver::updateExistingTrack(Track& track, const QString& file
         for(Track cueTrack : cueTracks) {
             if(const auto existingCueTrack = m_state->findExistingTrackByUniqueFilepath(cueTrack)) {
                 applyExistingTrackIdentity(cueTrack, *existingCueTrack);
-                mergeReloadedTrackStats(cueTrack, *existingCueTrack, m_reloadOptions);
+                mergeReloadedTrack(cueTrack, *existingCueTrack, m_reloadOptions);
             }
             else if(const Track movedCueTrack = m_state->matchRelocatedTrack(cueTrack);
                     movedCueTrack.isInLibrary() || movedCueTrack.isInDatabase()) {
                 applyExistingTrackIdentity(cueTrack, movedCueTrack);
-                mergeReloadedTrackStats(cueTrack, movedCueTrack, m_reloadOptions);
+                mergeReloadedTrack(cueTrack, movedCueTrack, m_reloadOptions);
             }
 
             setTrackProps(cueTrack, file);
@@ -833,7 +833,7 @@ void LibraryTrackResolver::readNewTrack(const QString& file)
         if(const Track refoundTrack = m_state->matchRelocatedTrack(track);
            refoundTrack.isInLibrary() || refoundTrack.isInDatabase()) {
             applyExistingTrackIdentity(track, refoundTrack);
-            mergeReloadedTrackStats(track, refoundTrack, m_reloadOptions);
+            mergeReloadedTrack(track, refoundTrack, m_reloadOptions);
             updateExistingTrack(track, file);
             continue;
         }
@@ -847,7 +847,7 @@ void LibraryTrackResolver::readNewTrack(const QString& file)
                 if(const Track refoundCueTrack = m_state->matchRelocatedTrack(cueTrack);
                    refoundCueTrack.isInLibrary() || refoundCueTrack.isInDatabase()) {
                     applyExistingTrackIdentity(cueTrack, refoundCueTrack);
-                    mergeReloadedTrackStats(cueTrack, refoundCueTrack, m_reloadOptions);
+                    mergeReloadedTrack(cueTrack, refoundCueTrack, m_reloadOptions);
                     updateExistingTrack(cueTrack, file);
                 }
                 else {

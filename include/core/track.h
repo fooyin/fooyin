@@ -81,14 +81,22 @@ public:
         Front = 0,
         Back,
         Artist,
-        Other
+        Other,
     };
 
     enum class SegmentType : uint8_t
     {
         None = 0,
         Cue,
-        Chapter
+        Chapter,
+    };
+
+    enum class ExtraPropertyReloadPolicy : uint8_t
+    {
+        //! Refresh the property from the source when metadata is reloaded.
+        Replace,
+        //! Retain the existing value when metadata is reloaded.
+        Preserve,
     };
 
     using ExtraTags       = FlatStringMap<QStringList>;
@@ -287,6 +295,8 @@ public:
      * These properties can be displayed in the track info UI unless their key starts with "_".
      */
     [[nodiscard]] ExtraProperties extraProperties() const;
+    //! Returns Replace for properties without an explicit preservation policy, including absent properties.
+    [[nodiscard]] ExtraPropertyReloadPolicy extraPropertyReloadPolicy(const QString& prop) const;
     //! Serialises extraProperties(), omitting normalised-away internal defaults such as zero Opus header gain.
     [[nodiscard]] QByteArray serialiseExtraProperties() const;
 
@@ -402,9 +412,14 @@ public:
      * Sets a non-tag property used for technical details or internal state.
      *
      * Empty values remove the property. Properties whose names start with "_" are treated as internal and are not shown
-     * in the track info UI.
+     * in the track info UI. Updating a property retains its reload policy; new properties default to Replace.
      */
     void setExtraProperty(const QString& prop, const QString& value);
+    //! Sets the value and reload policy. Empty values remove both the property and its policy.
+    void setExtraProperty(const QString& prop, const QString& value, ExtraPropertyReloadPolicy policy);
+    //! Copies preserved properties from an existing track, overriding matching values and retaining their policies.
+    void mergePreservedExtraProperties(const Track& existingTrack);
+    //! Removes both the property and its reload policy.
     void removeExtraProperty(const QString& prop);
     //! Removes internal extra properties whose value is equivalent to the default state.
     void normaliseExtraProperties();

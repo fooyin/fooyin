@@ -38,6 +38,7 @@ public:
         IsPlaybackIcon,
         Track,
         QueueItemId,
+        IsExcluded,
     };
 
     QueueViewerItem() = default;

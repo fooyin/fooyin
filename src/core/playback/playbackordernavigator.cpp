@@ -20,6 +20,7 @@
 #include "playbackordernavigator.h"
 
 #include "playbackorder.h"
+#include "trackplaybacksettings.h"
 
 #include <core/coresettings.h>
 #include <core/player/playbackqueue.h>
@@ -139,7 +140,17 @@ const PlaybackQueueItem* PlaybackOrderNavigator::sequenceRelativeItem(int delta)
     if(target < 0) {
         target += count;
     }
-    return generatedItems.at(currentGroup->at(target));
+
+    const bool shuffling = mode & (Playlist::ShuffleTracks | Playlist::ShuffleAlbums | Playlist::Random);
+    for(int checked{0}; checked < count; ++checked) {
+        const auto* candidate = generatedItems.at(currentGroup->at(target));
+        if(!TrackPlayback::isExcluded(candidate->track.track, shuffling)) {
+            return candidate;
+        }
+        target = (target + (delta < 0 ? count - 1 : 1)) % count;
+    }
+
+    return nullptr;
 }
 
 PlaylistTrack PlaybackOrderNavigator::previewPlaybackRelativeTrack(int delta) const
@@ -205,10 +216,12 @@ PlaylistTrack PlaybackOrderNavigator::restartPlaylistFromBeginning()
     }
 
     const int restartIndex = playlist->firstIndex(*m_state.playMode);
-    const int startIndex   = restartIndex >= 0 ? restartIndex : 0;
+    if(restartIndex < 0) {
+        return {};
+    }
 
-    playlist->changeCurrentIndex(startIndex);
-    return playlist->playlistTrack(startIndex).value_or(PlaylistTrack{});
+    playlist->changeCurrentIndex(restartIndex);
+    return playlist->playlistTrack(restartIndex).value_or(PlaylistTrack{});
 }
 
 PlaylistTrack PlaybackOrderNavigator::restartPlaylistFromEnd()
@@ -228,10 +241,12 @@ PlaylistTrack PlaybackOrderNavigator::restartPlaylistFromEnd()
     }
 
     const int restartIndex = playlist->lastIndex(*m_state.playMode);
-    const int endIndex     = restartIndex >= 0 ? restartIndex : std::max(playlist->trackCount() - 1, 0);
+    if(restartIndex < 0) {
+        return {};
+    }
 
-    playlist->changeCurrentIndex(endIndex);
-    return playlist->playlistTrack(endIndex).value_or(PlaylistTrack{});
+    playlist->changeCurrentIndex(restartIndex);
+    return playlist->playlistTrack(restartIndex).value_or(PlaylistTrack{});
 }
 
 PlaylistTrack PlaybackOrderNavigator::restartPlaylist(RestartTarget target)
@@ -367,8 +382,9 @@ PlaybackOrderNavigator::selectPlayFromIdleState(bool preferScheduledTrack)
     }
 
     if(!m_queue->empty()) {
-        const auto* item
-            = queueIsPlaybackSource() && m_queue->currentItem() ? m_queue->currentItem() : m_queue->nextItem();
+        const auto* item = queueIsPlaybackSource()
+                             ? (m_queue->currentItem() ? m_queue->currentItem() : sequenceRelativeItem(1))
+                             : m_queue->nextItem();
         return RequestedTrack{
             .track        = item ? item->track : PlaylistTrack{},
             .isQueueTrack = true,

@@ -227,7 +227,7 @@ CueTrackReloadResult CueTrackReloader::reload(const TrackList& tracks, const boo
             reloadedTrack.setLibraryId(existing.libraryId());
             reloadedTrack.setAddedTime(existing.addedTime());
             reloadedTrack.setIsEnabled(existing.isEnabled());
-            mergeReloadedTrackStats(reloadedTrack, existing, options);
+            mergeReloadedTrack(reloadedTrack, existing, options);
             reloadedTrack.generateHash();
 
             if(existing.isInDatabase()) {

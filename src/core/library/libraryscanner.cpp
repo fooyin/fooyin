@@ -211,9 +211,9 @@ void LibraryScanner::scanTracks(const TrackList& tracks, const bool onlyModified
             updatedTrack.setLibraryId(track.libraryId());
             updatedTrack.setAddedTime(track.addedTime());
             updatedTrack.setIsEnabled(track.isEnabled());
-            mergeReloadedTrackStats(updatedTrack, track,
-                                    {.overwriteRatingOnReload    = config.overwriteRatingOnReload,
-                                     .overwritePlaycountOnReload = config.overwritePlaycountOnReload});
+            mergeReloadedTrack(updatedTrack, track,
+                               {.overwriteRatingOnReload    = config.overwriteRatingOnReload,
+                                .overwritePlaycountOnReload = config.overwritePlaycountOnReload});
 
             const QFileInfo fileInfo{physicalTrackPath(updatedTrack)};
             if(updatedTrack.createdTime() == 0) {

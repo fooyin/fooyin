@@ -43,12 +43,13 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto MaxStarCount    = 10;
-constexpr auto YearRegex       = R"lit(\b\d{4}\b)lit";
-constexpr auto YearMonthRegex  = R"lit(\b(\d{4})-(\d{2})\b)lit";
-constexpr auto FullDateRegex   = R"lit(\b(\d{4})-(\d{2})-(\d{2})\b)lit";
-constexpr auto ChapterProperty = "_CHAPTER"_L1;
-constexpr auto ChapterValue    = "1"_L1;
+constexpr auto MaxStarCount                     = 10;
+constexpr auto YearRegex                        = R"lit(\b\d{4}\b)lit";
+constexpr auto YearMonthRegex                   = R"lit(\b(\d{4})-(\d{2})\b)lit";
+constexpr auto FullDateRegex                    = R"lit(\b(\d{4})-(\d{2})-(\d{2})\b)lit";
+constexpr auto ChapterProperty                  = "_CHAPTER"_L1;
+constexpr auto ChapterValue                     = "1"_L1;
+constexpr auto PreservedExtraPropertiesProperty = "_FY_PRESERVED_EXTRA_PROPERTIES"_L1;
 
 namespace Fooyin {
 namespace {
@@ -286,6 +287,44 @@ float opusHeaderLinearGain(const Track& track)
     return std::pow(10.0F, opusHeaderGainDbValue(track) / 20.0F);
 }
 
+std::set<QString> preservedExtraPropertyNames(const Track::ExtraProperties& props)
+{
+    const QString* encodedNames = props.find(PreservedExtraPropertiesProperty);
+    if(!encodedNames) {
+        return {};
+    }
+
+    const QByteArray bytes = QByteArray::fromBase64(encodedNames->toLatin1(), QByteArray::AbortOnBase64DecodingErrors);
+    QDataStream stream{bytes};
+    stream.setVersion(QDataStream::Qt_6_0);
+
+    std::set<QString> names;
+    DataStream::readContainer(stream, names);
+    if(stream.status() != QDataStream::Ok || !stream.atEnd()) {
+        return {};
+    }
+
+    std::erase_if(names, [&props](const QString& name) {
+        return name == PreservedExtraPropertiesProperty || !props.contains(name);
+    });
+    return names;
+}
+
+void storePreservedExtraPropertyNames(Track::ExtraProperties& props, const std::set<QString>& names)
+{
+    if(names.empty()) {
+        props.erase(PreservedExtraPropertiesProperty);
+        return;
+    }
+
+    QByteArray bytes;
+    QDataStream stream{&bytes, QIODevice::WriteOnly};
+    stream.setVersion(QDataStream::Qt_6_0);
+    DataStream::writeContainer(stream, names);
+
+    props.insertOrAssign(QString::fromLatin1(PreservedExtraPropertiesProperty), QString::fromLatin1(bytes.toBase64()));
+}
+
 void normaliseExtraTrackProperties(Track::ExtraProperties& props)
 {
     if(const QString* opusHeader = props.find(QString::fromLatin1(Constants::OpusHeaderGainQ78))) {
@@ -299,6 +338,10 @@ void normaliseExtraTrackProperties(Track::ExtraProperties& props)
         if(*chapter != ChapterValue) {
             props.erase(ChapterProperty);
         }
+    }
+
+    if(props.contains(PreservedExtraPropertiesProperty)) {
+        storePreservedExtraPropertyNames(props, preservedExtraPropertyNames(props));
     }
 }
 
@@ -1570,6 +1613,12 @@ Track::ExtraProperties Track::extraProperties() const
     return p->extraProps;
 }
 
+Track::ExtraPropertyReloadPolicy Track::extraPropertyReloadPolicy(const QString& prop) const
+{
+    return preservedExtraPropertyNames(p->extraProps).contains(prop) ? ExtraPropertyReloadPolicy::Preserve
+                                                                     : ExtraPropertyReloadPolicy::Replace;
+}
+
 QByteArray Track::serialiseExtraProperties() const
 {
     if(p->extraProps.empty()) {
@@ -2321,6 +2370,9 @@ void Track::storeExtraTags(const QByteArray& tags)
 
 void Track::setExtraProperty(const QString& prop, const QString& value)
 {
+    if(prop == PreservedExtraPropertiesProperty) {
+        return;
+    }
     if(value.isEmpty()) {
         removeExtraProperty(prop);
         return;
@@ -2329,9 +2381,53 @@ void Track::setExtraProperty(const QString& prop, const QString& value)
     p->extraProps.insertOrAssign(prop, value);
 }
 
+void Track::setExtraProperty(const QString& prop, const QString& value, ExtraPropertyReloadPolicy policy)
+{
+    if(prop == PreservedExtraPropertiesProperty) {
+        return;
+    }
+    if(value.isEmpty()) {
+        removeExtraProperty(prop);
+        return;
+    }
+
+    p->extraProps.insertOrAssign(prop, value);
+    auto names = preservedExtraPropertyNames(p->extraProps);
+    if(policy == ExtraPropertyReloadPolicy::Preserve) {
+        names.insert(prop);
+    }
+    else {
+        names.erase(prop);
+    }
+    storePreservedExtraPropertyNames(p->extraProps, names);
+}
+
+void Track::mergePreservedExtraProperties(const Track& existingTrack)
+{
+    const auto& existingProps = existingTrack.p->extraProps;
+    const auto existingNames  = preservedExtraPropertyNames(existingProps);
+    if(existingNames.empty()) {
+        return;
+    }
+
+    auto names = preservedExtraPropertyNames(p->extraProps);
+    for(const auto& name : existingNames) {
+        p->extraProps.insertOrAssign(name, existingProps.value(name));
+        names.insert(name);
+    }
+    storePreservedExtraPropertyNames(p->extraProps, names);
+}
+
 void Track::removeExtraProperty(const QString& prop)
 {
+    if(prop == PreservedExtraPropertiesProperty) {
+        return;
+    }
+
     p->extraProps.erase(prop);
+    if(p->extraProps.contains(PreservedExtraPropertiesProperty)) {
+        storePreservedExtraPropertyNames(p->extraProps, preservedExtraPropertyNames(p->extraProps));
+    }
 }
 
 void Track::normaliseExtraProperties()

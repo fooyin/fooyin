@@ -571,6 +571,8 @@ void QueueViewer::setupConnections()
         }
     });
     QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, &QueueViewer::resetModel);
+    QObject::connect(m_playerController, &PlayerController::playModeChanged, this,
+                     [resetQueueModel]() { resetQueueModel(false); });
     QObject::connect(m_playerController, &PlayerController::playbackQueuePositionChanged, this, [this]() {
         if(!m_updatesPausedForTrackChange) {
             if(!m_model->updatePlaybackPosition(m_playerController->playbackQueue())) {
@@ -1152,10 +1154,13 @@ std::vector<int> QueueViewer::queueIndexesToSort(SortScope scope) const
 
     indexes.clear();
 
-    const auto itemCount = m_playerController->playbackQueue().items().size();
+    const int itemCount = m_model->rowCount({});
     indexes.reserve(itemCount);
-    for(size_t i{static_cast<size_t>(std::max(firstIndex, 0))}; i < itemCount; ++i) {
-        indexes.push_back(static_cast<int>(i));
+    for(int row{0}; row < itemCount; ++row) {
+        const int queueIndex = m_model->queueIndex(m_model->index(row, 0, {}));
+        if(queueIndex >= firstIndex) {
+            indexes.push_back(queueIndex);
+        }
     }
 
     return indexes;

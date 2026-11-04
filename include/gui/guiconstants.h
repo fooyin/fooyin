@@ -40,6 +40,7 @@ constexpr auto NoArtist     = "view-media-artist";
 constexpr auto Play         = "media-playback-start";
 constexpr auto Pause        = "media-playback-pause";
 constexpr auto Stop         = "media-playback-stop";
+constexpr auto Excluded     = "media-playback-excluded";
 constexpr auto Prev         = "media-skip-backward";
 constexpr auto Next         = "media-skip-forward";
 constexpr auto Repeat       = "media-playlist-repeat";

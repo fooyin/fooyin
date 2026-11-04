@@ -19,6 +19,8 @@
 
 #include <core/player/playbackqueue.h>
 
+#include "trackplaybacksettings.h"
+
 #include <core/track.h>
 
 #include <iterator>
@@ -239,20 +241,32 @@ const PlaybackQueueItem* PlaybackQueue::relativeItem(int delta, Playlist::PlayMo
     }
 
     int target{currentIndex()};
-    if(mode & Playlist::RepeatTrack) {
-        return item(target);
+    if(!(mode & Playlist::RepeatTrack)) {
+        target += delta;
     }
 
-    target += delta;
-    if(mode & Playlist::RepeatPlaylist) {
-        const int count = trackCount();
-        target %= count;
-        if(target < 0) {
-            target += count;
+    const bool shuffling = mode & (Playlist::ShuffleTracks | Playlist::ShuffleAlbums | Playlist::Random);
+    const int count      = trackCount();
+    for(int checked{0}; checked < count; ++checked) {
+        if(mode & Playlist::RepeatPlaylist) {
+            target %= count;
+            if(target < 0) {
+                target += count;
+            }
         }
+
+        const auto* candidate = item(target);
+        if(!candidate || candidate->origin == PlaybackQueueItemOrigin::Manual
+           || !TrackPlayback::isExcluded(candidate->track.track, shuffling)) {
+            return candidate;
+        }
+        if(mode & Playlist::RepeatTrack) {
+            return nullptr;
+        }
+        target += delta < 0 ? -1 : 1;
     }
 
-    return item(target);
+    return nullptr;
 }
 
 PlaylistTrack PlaybackQueue::nextTrackChange()

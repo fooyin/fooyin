@@ -26,6 +26,7 @@
 #include "playbackprogresstracker.h"
 #include "playbacksession.h"
 #include "playbackstatestore.h"
+#include "trackplaybacksettings.h"
 
 #include <core/coresettings.h>
 #include <core/library/libraryutils.h>
@@ -544,7 +545,9 @@ void PlayerControllerPrivate::emitUpcomingTrackChangedIfNeeded()
 
     const bool upcomingChanged
         = m_lastUpcomingTrack.track != upcoming.track || m_lastUpcomingTrack.isQueueTrack != upcoming.isQueueTrack
-       || m_lastUpcomingTrack.queueItemId != upcoming.queueItemId || m_lastUpcomingTrack.itemId != upcoming.itemId;
+       || m_lastUpcomingTrack.queueItemId != upcoming.queueItemId || m_lastUpcomingTrack.itemId != upcoming.itemId
+       || TrackPlayback::crossfadingDisabled(m_lastUpcomingTrack.track.track)
+              != TrackPlayback::crossfadingDisabled(upcoming.track.track);
 
     if(!upcomingChanged) {
         return;

@@ -220,6 +220,60 @@ TEST(TrackTest, DeserialisesExtraPropertiesFromLegacyPayload)
     EXPECT_EQ(extraProps.value(u"mod_channels"_s), u"8"_s);
 }
 
+TEST(TrackTest, PreservesExtraPropertyReloadPolicies)
+{
+    Track source;
+    source.setExtraProperty(u"BitDepth"_s, u"24"_s);
+    source.setExtraProperty(u"mod_channels"_s, u"8"_s);
+    const QByteArray blob = source.serialiseExtraProperties();
+
+    using Policy = Track::ExtraPropertyReloadPolicy;
+    EXPECT_EQ(source.extraPropertyReloadPolicy(u"BitDepth"_s), Policy::Replace);
+
+    const QString preservedName = u"_plugin/\"example\"\n设置"_s;
+    source.setExtraProperty(preservedName, u"original"_s, Policy::Preserve);
+    source.setExtraProperty(preservedName, u"updated"_s);
+
+    Track restored;
+    restored.storeExtraProperties(source.serialiseExtraProperties());
+    EXPECT_EQ(restored.extraProperties().value(preservedName), u"updated"_s);
+    EXPECT_EQ(restored.extraPropertyReloadPolicy(preservedName), Policy::Preserve);
+
+    Track reloaded;
+    reloaded.setExtraProperty(preservedName, u"from file"_s);
+    reloaded.setExtraProperty(u"BitDepth"_s, u"16"_s);
+    reloaded.setExtraProperty(u"_other"_s, u"retained"_s, Policy::Preserve);
+    reloaded.mergePreservedExtraProperties(restored);
+    EXPECT_EQ(reloaded.extraProperties().value(preservedName), u"updated"_s);
+    EXPECT_EQ(reloaded.extraPropertyReloadPolicy(preservedName), Policy::Preserve);
+    EXPECT_EQ(reloaded.extraProperties().value(u"BitDepth"_s), u"16"_s);
+    EXPECT_FALSE(reloaded.hasExtraProperty(u"mod_channels"_s));
+    EXPECT_EQ(reloaded.extraPropertyReloadPolicy(u"_other"_s), Policy::Preserve);
+
+    Track copy{restored};
+    copy.setExtraProperty(preservedName, u"replaceable"_s, Policy::Replace);
+    EXPECT_EQ(copy.extraPropertyReloadPolicy(preservedName), Policy::Replace);
+    EXPECT_EQ(restored.extraPropertyReloadPolicy(preservedName), Policy::Preserve);
+    EXPECT_EQ(copy.extraProperties().size(), 3);
+
+    restored.removeExtraProperty(preservedName);
+    restored.setExtraProperty(preservedName, u"new value"_s);
+    EXPECT_EQ(restored.extraPropertyReloadPolicy(preservedName), Policy::Replace);
+
+    copy.setExtraProperty(preservedName, u"preserved again"_s, Policy::Preserve);
+    copy.setExtraProperty(preservedName, {});
+    EXPECT_EQ(copy.extraPropertyReloadPolicy(preservedName), Policy::Replace);
+    EXPECT_EQ(copy.serialiseExtraProperties(), blob);
+
+    copy.setExtraProperty(preservedName, u"preserved again"_s, Policy::Preserve);
+    copy.setExtraProperty(preservedName, {}, Policy::Replace);
+    EXPECT_EQ(copy.serialiseExtraProperties(), blob);
+
+    reloaded.clearExtraProperties();
+    EXPECT_TRUE(reloaded.serialiseExtraProperties().isEmpty());
+    EXPECT_EQ(reloaded.extraPropertyReloadPolicy(u"_other"_s), Policy::Replace);
+}
+
 TEST(TrackTest, DeserialisesEmptyExtraPropertyValueFromLegacyPayload)
 {
     const QMap<QString, QString> props{{u"EmptyValue"_s, {}}, {u"Present"_s, u"value"_s}};

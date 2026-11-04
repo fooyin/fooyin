@@ -45,6 +45,7 @@
         <file>icons/dark/scalable/actions/list-add.svg</file>
         <file>icons/dark/scalable/actions/list-remove.svg</file>
         <file>icons/dark/scalable/actions/love.svg</file>
+        <file>icons/dark/scalable/actions/media-playback-excluded.svg</file>
         <file>icons/dark/scalable/actions/media-playback-pause.svg</file>
         <file>icons/dark/scalable/actions/media-playback-start.svg</file>
         <file>icons/dark/scalable/actions/media-playback-stop.svg</file>
@@ -108,6 +109,7 @@
         <file>icons/light/scalable/actions/list-add.svg</file>
         <file>icons/light/scalable/actions/list-remove.svg</file>
         <file>icons/light/scalable/actions/love.svg</file>
+        <file>icons/light/scalable/actions/media-playback-excluded.svg</file>
         <file>icons/light/scalable/actions/media-playback-pause.svg</file>
         <file>icons/light/scalable/actions/media-playback-start.svg</file>
         <file>icons/light/scalable/actions/media-playback-stop.svg</file>

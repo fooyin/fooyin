@@ -43,5 +43,6 @@ FYCORE_EXPORT bool trackIsInRoots(const Track& track, const QStringList& roots);
 FYCORE_EXPORT std::optional<QFileInfo> findMatchingCue(const QFileInfo& file, const QFileInfoList& cueFiles);
 FYCORE_EXPORT std::optional<QFileInfo> findMatchingCue(const QFileInfo& file);
 FYCORE_EXPORT void readFileProperties(Track& track);
+FYCORE_EXPORT void mergeReloadedTrack(Track& track, const Track& existingTrack, const TrackReloadOptions& options);
 FYCORE_EXPORT void mergeReloadedTrackStats(Track& track, const Track& existingTrack, const TrackReloadOptions& options);
 } // namespace Fooyin

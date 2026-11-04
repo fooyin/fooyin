@@ -82,11 +82,13 @@ Q_SIGNALS:
 private:
     std::unique_ptr<QueueViewerItem> makeCurrentTrackItem();
     void regenerateTitles(const ScriptChanges& changes = {});
-    void removeLeadingItems(int count);
+    void removeLeadingItems(int count, std::vector<int> visibleIndexes);
     [[nodiscard]] bool shouldShowCurrentRow() const;
     void updateShowCurrent();
     [[nodiscard]] int insertionQueueIndex(int row) const;
     [[nodiscard]] bool showsUpcomingTracks() const;
+    [[nodiscard]] bool isExcluded(const PlaybackQueueItem& item) const;
+    [[nodiscard]] std::vector<int> visibleQueueIndexes(const PlaybackQueue& queue) const;
 
     PlayerController* m_playerController;
     ScriptContextService* m_scriptContext;
@@ -98,6 +100,7 @@ private:
     ScriptFormatter m_scriptFormatter;
 
     std::vector<std::unique_ptr<QueueViewerItem>> m_trackItems;
+    std::vector<int> m_visibleQueueIndexes;
     std::unordered_map<QString, std::vector<QueueViewerItem*>> m_trackParents;
     std::unordered_map<PlaybackQueueItemId, QueueViewerItem*> m_itemsById;
     std::unordered_map<PlaylistTrack, std::vector<int>, PlaylistTrack::PlaylistTrackHash> m_queueIndexes;
@@ -107,7 +110,6 @@ private:
     bool m_showCurrent;
     bool m_showUpcomingTracks;
     bool m_showIcon;
-    int m_firstQueueIndex;
     PlaybackQueueItemId m_currentQueueItemId;
     ThumbnailSize m_iconSize;
 

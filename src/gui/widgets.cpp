@@ -34,6 +34,7 @@
 #include "controls/replaygainmodeselector.h"
 #include "controls/seekbar.h"
 #include "controls/volumecontrol.h"
+#include "dialog/playbackpropertiestab.h"
 #include "dirbrowser/dirbrowser.h"
 #include "dsp/dsppresetregistry.h"
 #include "dsp/dspsettingscontroller.h"
@@ -986,6 +987,9 @@ void Widgets::registerPropertiesTabs()
         });
         return new ArtworkProperties(m_core->audioLoader().get(), m_core->library(), m_coverRepository, m_settings,
                                      tracks, !canWrite, m_window);
+    });
+    m_gui->propertiesDialog()->addTab(tr("Playback"), [this](const TrackList& tracks) {
+        return new PlaybackPropertiesTab(m_core->library(), tracks, m_window);
     });
 }
 
