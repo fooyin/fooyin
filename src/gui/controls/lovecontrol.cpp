@@ -238,8 +238,10 @@ QString LoveControl::layoutName() const
 void LoveControl::updateTrack(const Track& track)
 {
     const auto appearance = m_settings->value<Settings::Gui::TrackEditorAppearance>().value<TrackEditorAppearance>();
-    m_editor->setValue({track.isValid() && track.isLoved(), appearance.loveHeartSize, appearance.loveHeartColour,
-                        appearance.unlovedHeartColour});
+    HeartValue love{track.isValid() && track.isLoved(), appearance.loveHeartSize, appearance.loveHeartColour,
+                    appearance.unlovedHeartColour, appearance.loveSymbols};
+    love.setSymbolFont(appearance.loveSymbolFont);
+    m_editor->setValue(love);
     m_editor->setInteractive(track.isValid() && m_playerController->playState() != Player::PlayState::Stopped);
     setMinimumSize(m_editor->sizeHint());
 }

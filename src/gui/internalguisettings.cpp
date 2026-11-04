@@ -158,6 +158,10 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<ABRepeatMarkerColourB>(QVariant{}, u"Interface/ABRepeatMarkerColourB"_s);
     m_settings->createSetting<ABRepeatSeekOnAChange>(true, u"Playback/ABRepeatSeekOnAChange"_s);
     m_settings->createSetting<LoveHeartSize>(15, u"Interface/LoveHeartSize"_s);
+    m_settings->createSetting<UseCustomLoveSymbols>(false, u"Interface/UseCustomLoveSymbols"_s);
+    m_settings->createSetting<LovedSymbol>(defaultLoveSymbols().lovedSymbol, u"Interface/LovedSymbol"_s);
+    m_settings->createSetting<UnlovedSymbol>(defaultLoveSymbols().unlovedSymbol, u"Interface/UnlovedSymbol"_s);
+    m_settings->createSetting<LoveSymbolFont>(QVariant{}, u"Interface/LoveSymbolFont"_s);
     m_settings->createSetting<LoveHeartColour>(QVariant{}, u"Interface/LoveHeartColour"_s);
     m_settings->createSetting<RatingOneStarColour>(QVariant{}, u"Interface/RatingOneStarColour"_s);
     m_settings->createSetting<RatingTwoStarColour>(QVariant{}, u"Interface/RatingTwoStarColour"_s);
@@ -302,6 +306,10 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->subscribe<RatingFullStarSymbol>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
     m_settings->subscribe<RatingHalfStarSymbol>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
     m_settings->subscribe<RatingEmptyStarSymbol>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<UseCustomLoveSymbols>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<LovedSymbol>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<UnlovedSymbol>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
+    m_settings->subscribe<LoveSymbolFont>(this, &GuiSettings::scheduleTrackEditorAppearanceUpdate);
 }
 
 void GuiSettings::timerEvent(QTimerEvent* event)
@@ -325,6 +333,12 @@ TrackEditorAppearance GuiSettings::trackEditorAppearance() const
 {
     auto symbols    = Gui::ratingEditorSymbols(*m_settings);
     auto symbolFont = symbols ? m_settings->value<Settings::Gui::RatingSymbolFont>().value<QFont>() : QFont{};
+    std::optional<LoveSymbols> loveSymbols;
+    if(m_settings->value<Settings::Gui::UseCustomLoveSymbols>()) {
+        loveSymbols = LoveSymbols{.lovedSymbol   = m_settings->value<Settings::Gui::LovedSymbol>(),
+                                  .unlovedSymbol = m_settings->value<Settings::Gui::UnlovedSymbol>()};
+    }
+    auto loveFont = loveSymbols ? m_settings->value<Settings::Gui::LoveSymbolFont>().value<QFont>() : QFont{};
     return {.loveHeartSize           = m_settings->value<Settings::Gui::LoveHeartSize>(),
             .starRatingSize          = m_settings->value<Settings::Gui::StarRatingSize>(),
             .loveHeartColour         = Gui::loveHeartColour(*m_settings),
@@ -334,6 +348,8 @@ TrackEditorAppearance GuiSettings::trackEditorAppearance() const
             .ratingSymbols           = std::move(symbols),
             .ratingSymbolFont        = std::move(symbolFont),
             .loveEditorOnlyOnHover   = m_settings->value<Settings::Gui::LoveEditorOnlyOnHover>(),
-            .ratingEditorOnlyOnHover = m_settings->value<Settings::Gui::RatingEditorOnlyOnHover>()};
+            .ratingEditorOnlyOnHover = m_settings->value<Settings::Gui::RatingEditorOnlyOnHover>(),
+            .loveSymbols             = std::move(loveSymbols),
+            .loveSymbolFont          = std::move(loveFont)};
 }
 } // namespace Fooyin

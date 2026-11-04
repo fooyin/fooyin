@@ -30,6 +30,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/jsonutils.h
     ${CMAKE_SOURCE_DIR}/include/utils/lockfreeringbuffer.h
     ${CMAKE_SOURCE_DIR}/include/utils/logging/messagehandler.h
+    ${CMAKE_SOURCE_DIR}/include/utils/lovesymbols.h
     ${CMAKE_SOURCE_DIR}/include/utils/modelutils.h
     ${CMAKE_SOURCE_DIR}/include/utils/ratingsymbols.h
     ${CMAKE_SOURCE_DIR}/include/utils/scopeguard.h

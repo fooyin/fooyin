@@ -21,6 +21,7 @@
 
 #include "fygui_export.h"
 
+#include <utils/lovesymbols.h>
 #include <utils/ratingsymbols.h>
 #include <utils/settings/settingsentry.h>
 
@@ -45,6 +46,8 @@ struct TrackEditorAppearance
     QFont ratingSymbolFont;
     bool loveEditorOnlyOnHover{false};
     bool ratingEditorOnlyOnHover{false};
+    std::optional<LoveSymbols> loveSymbols;
+    QFont loveSymbolFont;
 
     friend bool operator==(const TrackEditorAppearance&, const TrackEditorAppearance&) = default;
 };
@@ -143,7 +146,11 @@ enum GuiSettings : uint32_t
     VolumeControlStepLarge     = 64 | Type::Double,
     UseCustomRatingSymbols     = 65 | Type::Bool,
     RatingSymbolFont           = 66 | Type::Variant,
-    TrackEditorAppearance      = 67 | Type::Variant,
+    UseCustomLoveSymbols       = 67 | Type::Bool,
+    LovedSymbol                = 68 | Type::String,
+    UnlovedSymbol              = 69 | Type::String,
+    LoveSymbolFont             = 70 | Type::Variant,
+    TrackEditorAppearance      = 71 | Type::Variant,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Settings::Gui

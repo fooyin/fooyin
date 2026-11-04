@@ -92,7 +92,10 @@ void HeartDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option,
         heartValue.setLoved(m_hoverLoved);
     }
 
+    painter->save();
+    painter->setFont(opt.font);
     heartValue.paint(painter, opt.rect, opt.palette, HeartValue::EditMode::ReadOnly, opt.displayAlignment, selected);
+    painter->restore();
 
     if(mixedValues && !hover) {
         painter->save();

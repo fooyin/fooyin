@@ -648,9 +648,11 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
         if(index.row() == p->m_loveRow) {
             const auto appearance
                 = p->m_settings->value<Settings::Gui::TrackEditorAppearance>().value<TrackEditorAppearance>();
-            return QVariant::fromValue(
-                HeartValue{(item->valueChanged() ? item->changedValue() : item->value()).toInt() != 0,
-                           appearance.loveHeartSize, appearance.loveHeartColour, appearance.unlovedHeartColour});
+            HeartValue love{(item->valueChanged() ? item->changedValue() : item->value()).toInt() != 0,
+                            appearance.loveHeartSize, appearance.loveHeartColour, appearance.unlovedHeartColour,
+                            appearance.loveSymbols};
+            love.setSymbolFont(appearance.loveSymbolFont);
+            return QVariant::fromValue(std::move(love));
         }
         if(index.row() == p->m_ratingRow) {
             const auto appearance

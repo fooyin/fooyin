@@ -2449,6 +2449,12 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
         rating.setSymbolFont(m_editorAppearance.ratingSymbolFont);
         return rating;
     };
+    const auto loveForTrack = [this, &track]() {
+        HeartValue love{track.isLoved(), m_editorAppearance.loveHeartSize, m_editorAppearance.loveHeartColour,
+                        m_editorAppearance.unlovedHeartColour, m_editorAppearance.loveSymbols};
+        love.setSymbolFont(m_editorAppearance.loveSymbolFont);
+        return love;
+    };
 
     const auto getCoverData = [this, &index, column]() -> std::optional<std::pair<const Track*, QSize>> {
         if(std::cmp_greater_equal(column, m_columnSizes.size())) {
@@ -2501,9 +2507,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
 
         const QString writeField = normaliseWriteField(playlistColumn.writeField);
         if(isLoveWriteField(writeField)) {
-            return QVariant::fromValue(HeartValue{track.isLoved(), m_editorAppearance.loveHeartSize,
-                                                  m_editorAppearance.loveHeartColour,
-                                                  m_editorAppearance.unlovedHeartColour});
+            return QVariant::fromValue(loveForTrack());
         }
         if(isRatingWriteField(writeField)) {
             if(playlistColumn.field == QLatin1StringView{Constants::RatingEditor}) {
@@ -2523,9 +2527,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
             return ratingForTrack();
         }
         if(m_columns.at(column).field == QLatin1StringView{Constants::LoveEditor}) {
-            return QVariant::fromValue(HeartValue{track.isLoved(), m_editorAppearance.loveHeartSize,
-                                                  m_editorAppearance.loveHeartColour,
-                                                  m_editorAppearance.unlovedHeartColour});
+            return QVariant::fromValue(loveForTrack());
         }
     }
 
@@ -2636,12 +2638,11 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
                || (!hasInlineTrackEditors(trackItem.left()) && !hasInlineTrackEditors(trackItem.right()))) {
                 return {};
             }
-            return QVariant::fromValue(InlineTrackEditors{
-                .love          = HeartValue{track.isLoved(), m_editorAppearance.loveHeartSize,
-                                            m_editorAppearance.loveHeartColour, m_editorAppearance.unlovedHeartColour},
-                .rating        = ratingForTrack(),
-                .hideEmptyLove = m_editorAppearance.loveEditorOnlyOnHover,
-                .hideEmptyRating = m_editorAppearance.ratingEditorOnlyOnHover});
+            return QVariant::fromValue(
+                InlineTrackEditors{.love            = loveForTrack(),
+                                   .rating          = ratingForTrack(),
+                                   .hideEmptyLove   = m_editorAppearance.loveEditorOnlyOnHover,
+                                   .hideEmptyRating = m_editorAppearance.ratingEditorOnlyOnHover});
         case PlaylistItem::Role::PlayingIcon: {
             switch(trackItem.playingIcon()) {
                 case ScriptPlayingIcon::Play:

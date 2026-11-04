@@ -88,6 +88,9 @@ void InlineTrackEditorHover::clear()
 InlineTrackEditors inlineTrackEditors(const SettingsManager& settings, const Track& track)
 {
     const auto appearance = settings.value<Settings::Gui::TrackEditorAppearance>().value<TrackEditorAppearance>();
+    HeartValue love{track.isLoved(), appearance.loveHeartSize, appearance.loveHeartColour,
+                    appearance.unlovedHeartColour, appearance.loveSymbols};
+    love.setSymbolFont(appearance.loveSymbolFont);
     StarRating rating{track.rating(),
                       5,
                       appearance.starRatingSize,
@@ -95,8 +98,7 @@ InlineTrackEditors inlineTrackEditors(const SettingsManager& settings, const Tra
                       appearance.unratedStarColour,
                       appearance.ratingSymbols};
     rating.setSymbolFont(appearance.ratingSymbolFont);
-    return {.love            = HeartValue{track.isLoved(), appearance.loveHeartSize, appearance.loveHeartColour,
-                                          appearance.unlovedHeartColour},
+    return {.love            = std::move(love),
             .rating          = std::move(rating),
             .hideEmptyLove   = appearance.loveEditorOnlyOnHover,
             .hideEmptyRating = appearance.ratingEditorOnlyOnHover};
@@ -374,6 +376,7 @@ DrawTrackTextResult drawTrackTextBlocks(QPainter* painter, const QStyleOptionVie
                 if(painter) {
                     if(block.editor == InlineTrackEditor::Love
                        && (!editors->hideEmptyLove || editors->love.loved() || editors->active)) {
+                        painter->setFont(block.font);
                         editors->love.paint(painter, editorRect, option.palette, HeartValue::EditMode::ReadOnly,
                                             Qt::AlignCenter, selected);
                     }

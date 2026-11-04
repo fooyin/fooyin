@@ -21,11 +21,19 @@
 
 #include "fyutils_export.h"
 
+#include <utils/lovesymbols.h>
+
 #include <QColor>
-#include <QPainterPath>
+#include <QSharedDataPointer>
 #include <QWidget>
 
+#include <optional>
+
+class QFont;
+
 namespace Fooyin {
+class HeartValuePrivate;
+
 class FYUTILS_EXPORT HeartValue
 {
 public:
@@ -39,13 +47,21 @@ public:
     explicit HeartValue(bool loved);
     HeartValue(bool loved, int scale);
     HeartValue(bool loved, int scale, const QColor& colour);
-    HeartValue(bool loved, int scale, const QColor& lovedColour, const QColor& unlovedColour);
+    HeartValue(bool loved, int scale, const QColor& lovedColour, const QColor& unlovedColour,
+               std::optional<LoveSymbols> symbols = {});
+    ~HeartValue();
+
+    HeartValue(const HeartValue& other);
+    HeartValue& operator=(const HeartValue& other);
+    HeartValue(HeartValue&& other) noexcept;
+    HeartValue& operator=(HeartValue&& other) noexcept;
 
     [[nodiscard]] bool loved() const;
     [[nodiscard]] int scale() const;
 
     void setLoved(bool loved);
     void setScale(int scale);
+    void setSymbolFont(const QFont& font);
 
     void paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode,
                Qt::Alignment alignment = Qt::AlignLeft, bool selected = false) const;
@@ -57,11 +73,7 @@ public:
     }
 
 private:
-    QPainterPath m_heart;
-    bool m_loved;
-    int m_scale;
-    QColor m_lovedColour;
-    QColor m_unlovedColour;
+    QSharedDataPointer<HeartValuePrivate> p;
 };
 
 class FYUTILS_EXPORT HeartEditor : public QWidget
