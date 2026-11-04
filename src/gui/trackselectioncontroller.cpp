@@ -210,6 +210,7 @@ public:
 
     std::unordered_map<QWidget*, WidgetContext*> m_contextWidgets;
     std::unordered_map<WidgetContext*, TrackSelection> m_contextSelection;
+    std::unordered_map<const QAction*, std::function<bool(const TrackSelection&)>> m_selectionActionValidators;
     WidgetContext* m_activeContext{nullptr};
     WidgetContext* m_displayContext{nullptr};
     TrackSelection m_displaySelection;
@@ -404,6 +405,7 @@ void TrackSelectionControllerPrivate::setupBuiltInMenus()
     m_openFolder->setStatusTip(tr("Open the directory containing the selected tracks"));
     auto* openFolderCmd = m_actionManager->registerAction(m_openFolder, Constants::Actions::OpenFolder);
     openFolderCmd->setCategories(tracksCategory);
+    openFolderCmd->setSupportsShortcutTarget(ShortcutTarget::NowPlaying, true);
     QObject::connect(m_openFolder, &QAction::triggered, m_self, [this]() {
         if(const auto* selection = m_self->selectedSelection()) {
             openFolder(*selection);
@@ -415,6 +417,7 @@ void TrackSelectionControllerPrivate::setupBuiltInMenus()
     m_copyLocation->setStatusTip(tr("Copy the file paths of the selected tracks"));
     auto* copyLocationCmd = m_actionManager->registerAction(m_copyLocation, Constants::Actions::CopyLocation);
     copyLocationCmd->setCategories(tracksCategory);
+    copyLocationCmd->setSupportsShortcutTarget(ShortcutTarget::NowPlaying, true);
     QObject::connect(m_copyLocation, &QAction::triggered, m_self, [this]() {
         if(const auto* selection = m_self->selectedSelection()) {
             copyLocation(*selection);
@@ -428,6 +431,7 @@ void TrackSelectionControllerPrivate::setupBuiltInMenus()
     auto* copyDirectoryPathCmd
         = m_actionManager->registerAction(m_copyDirectoryPath, Constants::Actions::CopyDirectoryPath);
     copyDirectoryPathCmd->setCategories(tracksCategory);
+    copyDirectoryPathCmd->setSupportsShortcutTarget(ShortcutTarget::NowPlaying, true);
     QObject::connect(m_copyDirectoryPath, &QAction::triggered, m_self, [this]() {
         if(const auto* selection = m_self->selectedSelection()) {
             copyDirectoryPath(*selection);
@@ -531,6 +535,7 @@ void TrackSelectionControllerPrivate::setupBuiltInMenus()
     m_openProperties->setStatusTip(tr("Open the properties dialog"));
     auto* openPropsCmd = m_actionManager->registerAction(m_openProperties, Constants::Actions::OpenProperties);
     openPropsCmd->setCategories(tracksCategory);
+    openPropsCmd->setSupportsShortcutTarget(ShortcutTarget::NowPlaying, true);
     QObject::connect(m_openProperties, &QAction::triggered, m_self, [this]() {
         if(const auto* selection = m_self->selectedSelection()) {
             openProperties(*selection);
@@ -949,8 +954,8 @@ bool TrackSelectionControllerPrivate::contextHasFocus(WidgetContext* context) co
 
     QWidget* focusedWidget = QApplication::focusWidget();
     while(focusedWidget) {
-        if(contextObject(focusedWidget) == context) {
-            return true;
+        if(auto* focusedContext = contextObject(focusedWidget)) {
+            return focusedContext == context;
         }
         focusedWidget = focusedWidget->parentWidget();
     }
@@ -1688,12 +1693,31 @@ std::optional<TrackSelectionTarget> TrackSelectionController::playlistSelectionT
 std::optional<bool> TrackSelectionController::selectionActionEnabled(const QAction* action,
                                                                      const TrackSelection& selection) const
 {
+    if(const auto it = p->m_selectionActionValidators.find(action);
+       it != p->m_selectionActionValidators.cend() && it->second) {
+        return it->second(selection);
+    }
     return p->actionEnabled(action, p->actionState(&selection));
 }
 
 std::optional<bool> TrackSelectionController::selectionActionEnabled(const QAction* action) const
 {
-    return p->actionEnabled(action, p->actionState(p->ambientSelection()));
+    const auto* selection = p->ambientSelection();
+    return selectionActionEnabled(action, selection ? *selection : TrackSelection{});
+}
+
+void TrackSelectionController::setSelectionActionValidator(QAction* action,
+                                                           const std::function<bool(const TrackSelection&)>& validator)
+{
+    if(!action) {
+        return;
+    }
+
+    if(!p->m_selectionActionValidators.contains(action)) {
+        QObject::connect(action, &QObject::destroyed, this,
+                         [this, action] { p->m_selectionActionValidators.erase(action); });
+    }
+    p->m_selectionActionValidators[action] = validator;
 }
 
 void TrackSelectionController::changeSelectedTracks(WidgetContext* context, const TrackSelection& selection)
@@ -1953,15 +1977,16 @@ void TrackSelectionController::startPlayback(const TrackList& tracks, int trackI
 
 void TrackSelectionController::tracksUpdated(const TrackList& tracks)
 {
-    const TrackSelection previousDisplay{p->m_displaySelection};
     for(auto& selection : p->m_contextSelection | std::views::values) {
         Utils::updateCommonTracks(selection.tracks, tracks, Utils::CommonOperation::Update);
     }
-    Utils::updateCommonTracks(p->m_displaySelection.tracks, tracks, Utils::CommonOperation::Update);
+    const bool displayChanged
+        = !Utils::updateCommonTracks(p->m_displaySelection.tracks, tracks, Utils::CommonOperation::UpdateChanged)
+               .empty();
 
     p->updateActionState();
     Q_EMIT selectionChanged();
-    if(previousDisplay != p->m_displaySelection) {
+    if(displayChanged) {
         Q_EMIT displaySelectionChanged();
     }
 }

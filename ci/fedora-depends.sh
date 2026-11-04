@@ -21,6 +21,7 @@ dnf -y install --skip-broken \
      libxkbcommon-devel \
      zlib-ng-compat-devel \
      alsa-lib-devel \
+     jack-audio-connection-kit-devel \
      qt6-qtbase-devel \
      qt6-qtsvg-devel \
      qt6-qttools-devel \

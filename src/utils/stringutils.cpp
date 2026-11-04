@@ -23,12 +23,18 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QKeySequence>
+#include <QStringDecoder>
 
 #include <algorithm>
+#include <limits>
+#include <memory>
 #include <vector>
 
+#include <unicode/brkiter.h>
+#include <unicode/locid.h>
 #include <unicode/ucnv.h>
 #include <unicode/ucsdet.h>
+#include <unicode/unistr.h>
 
 using namespace Qt::StringLiterals;
 
@@ -101,19 +107,28 @@ QString elideTextWithBreaks(const QString& text, const QFontMetrics& fontMetrics
 
 QString capitalise(const QString& str)
 {
-    QString capitalised{str};
-    bool capitaliseNext{true};
-
-    for(auto& character : capitalised) {
-        if(capitaliseNext && character.isLetter()) {
-            character      = character.toUpper();
-            capitaliseNext = false;
-            continue;
-        }
-        capitaliseNext = character.isSpace();
+    if(str.isEmpty() || str.size() > std::numeric_limits<int32_t>::max()) {
+        return str;
     }
 
-    return capitalised;
+    thread_local const auto wordIterator = [] {
+        UErrorCode status{U_ZERO_ERROR};
+        std::unique_ptr<icu::BreakIterator> iterator{
+            icu::BreakIterator::createWordInstance(icu::Locale::getRoot(), status)};
+        if(U_FAILURE(status)) {
+            iterator.reset();
+        }
+        return iterator;
+    }();
+
+    if(!wordIterator) {
+        return str;
+    }
+
+    icu::UnicodeString capitalised{reinterpret_cast<const char16_t*>(str.utf16()), static_cast<int32_t>(str.size())};
+    capitalised.toTitle(wordIterator.get(), icu::Locale::getRoot());
+
+    return capitalised.isBogus() ? str : QString::fromUtf16(capitalised.getBuffer(), capitalised.length());
 }
 
 QByteArray detectEncoding(const QByteArray& content, const DetectEncodingOptions& options)
@@ -200,6 +215,44 @@ std::optional<QString> decodeText(const QByteArray& content, const QByteArray& e
     return QString::fromUtf16(decoded.data(), decodedSize);
 }
 
+QString decodeTextWithDetection(const QByteArray& content, const DetectEncodingOptions& options)
+{
+    if(content.isEmpty()) {
+        return {};
+    }
+
+    QStringDecoder toUtf16;
+
+    auto encoding = QStringConverter::encodingForData(content);
+    if(encoding) {
+        toUtf16 = QStringDecoder{encoding.value()};
+    }
+    else {
+        const auto encodingName = detectEncoding(content, options);
+        if(encodingName.isEmpty()) {
+            return {};
+        }
+
+        encoding = QStringConverter::encodingForName(encodingName.constData());
+        if(encoding) {
+            toUtf16 = QStringDecoder{encoding.value()};
+        }
+        else {
+            toUtf16 = QStringDecoder{encodingName.constData()};
+        }
+    }
+
+    if(!toUtf16.isValid()) {
+        toUtf16 = QStringDecoder{QStringConverter::Utf8};
+    }
+
+    QString string = toUtf16(content);
+    string.replace("\n\n"_L1, "\n"_L1);
+    string.replace('\r'_L1, '\n'_L1);
+
+    return string;
+}
+
 QString foldForSearch(QStringView text)
 {
     const QString normalised = text.toString().normalized(QString::NormalizationForm_D);
@@ -220,6 +273,34 @@ QString foldForSearch(QStringView text)
     }
 
     return folded.toCaseFolded();
+}
+
+bool containsWord(QStringView text, QStringView word)
+{
+    if(word.isEmpty()) {
+        return false;
+    }
+
+    const auto isWordCharacter = [text](qsizetype index) {
+        const QChar character = text.at(index);
+        char32_t codePoint    = character.unicode();
+        // The boundary may touch either half of a UTF-16 pair, so classify the full code point
+        if(character.isHighSurrogate() && index + 1 < text.size() && text.at(index + 1).isLowSurrogate()) {
+            codePoint = QChar::surrogateToUcs4(character, text.at(index + 1));
+        }
+        else if(character.isLowSurrogate() && index > 0 && text.at(index - 1).isHighSurrogate()) {
+            codePoint = QChar::surrogateToUcs4(text.at(index - 1), character);
+        }
+        return QChar::isLetterOrNumber(codePoint);
+    };
+
+    for(qsizetype position = text.indexOf(word); position >= 0; position = text.indexOf(word, position + 1)) {
+        const qsizetype end = position + word.size();
+        if((position == 0 || !isWordCharacter(position - 1)) && (end == text.size() || !isWordCharacter(end))) {
+            return true;
+        }
+    }
+    return false;
 }
 
 QString msToString(std::chrono::milliseconds ms, bool includeMs)

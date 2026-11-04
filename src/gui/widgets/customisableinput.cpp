@@ -91,8 +91,9 @@ void CustomisableInputPrivate::showFontDialog()
 
 void CustomisableInputPrivate::showColourDialog()
 {
-    const QColor chosenColour = QColorDialog::getColor(m_colour, m_self, CustomisableInput::tr("Select Colour"),
-                                                       QColorDialog::ShowAlphaChannel);
+    const QColor chosenColour
+        = QColorDialog::getColor(m_colour, m_self, CustomisableInput::tr("Select Colour"),
+                                 QColorDialog::ShowAlphaChannel | QColorDialog::DontUseNativeDialog);
     if(chosenColour.isValid() && chosenColour != m_colour) {
         m_self->setColour(chosenColour);
         m_state |= CustomisableInput::ColourChanged;

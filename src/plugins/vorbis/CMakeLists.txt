@@ -7,10 +7,12 @@ endif()
 
 create_fooyin_plugin_internal(
     vorbis
-    DEPENDS Fooyin::Core
-            Vorbis::VorbisFile
-    SOURCES vorbisdecoder.cpp
-            vorbisdecoder.h
-            vorbisplugin.cpp
-            vorbisplugin.h
+    DEPENDS #
+        Fooyin::Core
+        Vorbis::VorbisFile
+    SOURCES #
+        vorbisdecoder.cpp
+        vorbisdecoder.h
+        vorbisplugin.cpp
+        vorbisplugin.h
 )

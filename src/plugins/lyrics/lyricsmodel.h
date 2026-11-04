@@ -82,7 +82,6 @@ private:
 
     [[nodiscard]] bool isLineHighlighted(const ParsedLine& line) const;
     [[nodiscard]] RichText textForLine(const ParsedLine& line) const;
-    [[nodiscard]] std::vector<ParsedLine>::const_iterator lineForTimestamp(uint64_t timestamp) const;
     [[nodiscard]] std::vector<ParsedWord>::const_iterator wordForTimestamp(const ParsedLine& line,
                                                                            uint64_t timestamp) const;
     [[nodiscard]] bool shouldFillLineProgress() const;

@@ -26,6 +26,8 @@
 #include <QFile>
 #include <QLoggingCategory>
 
+#include <vector>
+
 #ifdef FOOYIN_UTILS_DBUS
 #include <QDBusInterface>
 #include <QDBusReply>

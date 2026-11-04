@@ -188,6 +188,9 @@ bool ProxyAction::shortcutVisibleInToolTip() const
 void ProxyAction::setAction(QAction* action)
 {
     if(p->m_action == action) {
+        if(!action) {
+            p->updateState();
+        }
         return;
     }
 

@@ -69,7 +69,7 @@ public:
     void setupConnections(PlaylistWidgetSessionHost& host) override;
 };
 
-class DetachedTrackListSession final : public DetachedSearchSession
+class DetachedTrackListSession : public DetachedSearchSession
 {
 public:
     explicit DetachedTrackListSession(const TrackList& tracks);
@@ -91,5 +91,16 @@ private:
     [[nodiscard]] PlaylistTrack playingTrackForView(const PlaylistTrack& track) const;
 
     PlaylistTrackList m_tracks;
+};
+
+class PlaylistPreviewSession final : public DetachedTrackListSession
+{
+public:
+    using DetachedTrackListSession::DetachedTrackListSession;
+
+    [[nodiscard]] PlaylistWidget::ModeCapabilities capabilities() const override;
+    void selectionChanged(PlaylistWidgetSessionHost& host) override;
+    void startPlayback(PlaylistWidgetSessionHost& host) const override;
+    void setupConnections(PlaylistWidgetSessionHost& host) override;
 };
 } // namespace Fooyin

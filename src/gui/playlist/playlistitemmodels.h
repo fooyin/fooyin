@@ -20,6 +20,7 @@
 #pragma once
 
 #include <core/playlist/playlist.h>
+#include <core/scripting/scripttypes.h>
 #include <core/track.h>
 #include <gui/scripting/scriptformatter.h>
 
@@ -36,7 +37,6 @@ public:
     enum class LayoutKind : uint8_t
     {
         Header = 0,
-        SimpleHeader,
         Subheader,
     };
 
@@ -44,8 +44,6 @@ public:
 
     [[nodiscard]] const RichText& title() const;
     [[nodiscard]] const RichText& subtitle() const;
-    [[nodiscard]] const RichText& sideText() const;
-    [[nodiscard]] const RichText& info() const;
     [[nodiscard]] LayoutKind layoutKind() const;
     [[nodiscard]] int rowHeight() const;
     [[nodiscard]] QSize size() const;
@@ -53,10 +51,11 @@ public:
     [[nodiscard]] int scriptIndex() const;
     [[nodiscard]] const std::optional<Track>& coverTrack() const;
 
+    [[nodiscard]] bool sameDataAs(const PlaylistContainerItem& other) const;
+
     void setTitle(const RichText& title);
     void setSubtitle(const RichText& subtitle);
-    void setSideText(const RichText& text);
-    void setInfo(const RichText& info);
+    void setShowCover(bool showCover);
     void setRowHeight(int height);
     void setScriptIndex(int index);
     void setCoverTrack(const Track& track);
@@ -69,13 +68,12 @@ private:
 
     RichText m_title;
     RichText m_subtitle;
-    RichText m_sideText;
-    RichText m_info;
 
     LayoutKind m_layoutKind;
     mutable QSize m_size;
     mutable bool m_widthCalculated{false};
     int m_rowHeight;
+    bool m_showCover{false};
     int m_scriptIndex{-1};
     std::optional<Track> m_coverTrack;
 };
@@ -92,14 +90,19 @@ public:
     [[nodiscard]] const RichText& left() const;
     [[nodiscard]] const RichText& right() const;
     [[nodiscard]] const PlaylistTrack& track() const;
+    [[nodiscard]] ScriptPlayingIcon playingIcon() const;
     [[nodiscard]] int index() const;
     [[nodiscard]] int rowHeight() const;
     [[nodiscard]] int depth() const;
     [[nodiscard]] QSize size(int column = 0) const;
+    [[nodiscard]] QSize sizeWithInlineEditors(int loveSize, int ratingSize) const;
+
+    [[nodiscard]] bool sameDataAs(const PlaylistTrackItem& other) const;
 
     void setColumns(const std::vector<RichText>& columns);
     void setLeftRight(const RichText& left, const RichText& right);
     void setTrack(const PlaylistTrack& track);
+    void setPlayingIcon(ScriptPlayingIcon icon);
     void setIndex(int index);
 
     void setRowHeight(int height);
@@ -110,12 +113,21 @@ public:
     void calculateSize() const;
 
 private:
+    struct InlineEditorSize
+    {
+        QSize size;
+        int loveSize;
+        int ratingSize;
+    };
+
     std::vector<RichText> m_columns;
     RichText m_left;
     RichText m_right;
 
     PlaylistTrack m_track;
+    ScriptPlayingIcon m_playingIcon{ScriptPlayingIcon::None};
     mutable std::vector<QSize> m_sizes;
+    mutable std::optional<InlineEditorSize> m_inlineEditorSize;
     int m_rowHeight;
     int m_depth;
 };

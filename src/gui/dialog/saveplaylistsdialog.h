@@ -25,7 +25,6 @@ class QComboBox;
 
 namespace Fooyin {
 class Application;
-class SettingsManager;
 
 class SavePlaylistsDialog : public QDialog
 {
@@ -38,7 +37,6 @@ public:
 
 private:
     Application* m_core;
-    SettingsManager* m_settings;
     QComboBox* m_formats;
 };
 } // namespace Fooyin

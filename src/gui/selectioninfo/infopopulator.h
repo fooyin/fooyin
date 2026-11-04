@@ -22,18 +22,20 @@
 #include "infoitem.h"
 #include "selectioninfofield.h"
 
+#include <core/library/libraryinfo.h>
 #include <core/track.h>
 #include <utils/worker.h>
 
 #include <memory>
+#include <stop_token>
 #include <vector>
 
 namespace Fooyin {
 class InfoPopulatorPrivate;
-class LibraryManager;
 
 struct InfoData
 {
+    uint64_t generation{0};
     std::unordered_map<QString, std::vector<QString>> parents;
     std::unordered_map<QString, InfoItem> nodes;
 
@@ -51,10 +53,11 @@ class InfoPopulator : public Worker
     Q_OBJECT
 
 public:
-    explicit InfoPopulator(LibraryManager* libraryManager, QObject* parent = nullptr);
+    explicit InfoPopulator(QObject* parent = nullptr);
     ~InfoPopulator() override;
 
-    void run(InfoItem::Options options, const TrackList& tracks, const std::vector<SelectionInfoField>& fields);
+    void run(InfoItem::Options options, const TrackList& tracks, const std::vector<SelectionInfoField>& fields,
+             LibraryInfoMap libraries, uint64_t generation, std::stop_token stopToken);
 
 Q_SIGNALS:
     void populated(Fooyin::InfoDataPtr data);

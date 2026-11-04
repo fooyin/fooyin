@@ -96,6 +96,26 @@ TEST(LyricsParserTest, ParsesRepeatedStandardLrcTimestamps)
     EXPECT_EQ(lyrics.lines.at(1).joinedWords(), u"Repeat me "_s);
 }
 
+TEST(LyricsParserTest, PreservesBracketsInMetadataAndLyrics)
+{
+    const auto lyrics = Lyrics::parse(u"[ti:飒飒飒 [斯丹曼簇]]\n"
+                                      "[ar:斯丹曼簇]\n[al:飒飒飒]\n"
+                                      "[00:00.33]<00:00.33>飒<00:00.97>飒<00:07.24>飒 - "
+                                      "<00:10.22>斯<00:10.72>丹<00:15.33>曼<00:15.63>簇 [飒飒飒]\n"
+                                      "[00:16.07]<00:16.07>སྒྲོལ་<00:16.42>མ།"_s);
+
+    ASSERT_EQ(lyrics.type, Lyrics::Lyrics::Type::SyncedWords);
+    EXPECT_EQ(lyrics.metadata.title, u"飒飒飒 [斯丹曼簇]"_s);
+    EXPECT_EQ(lyrics.metadata.artist, u"斯丹曼簇"_s);
+    EXPECT_EQ(lyrics.metadata.album, u"飒飒飒"_s);
+    ASSERT_EQ(lyrics.lines.size(), 2);
+    EXPECT_EQ(lyrics.lines.at(0).timestamp, 330);
+    EXPECT_EQ(wordsForLine(lyrics.lines.at(0)),
+              QStringList({u"飒"_s, u"飒"_s, u"飒 - "_s, u"斯"_s, u"丹"_s, u"曼"_s, u"簇 "_s, u"[飒飒飒] "_s}));
+    EXPECT_EQ(lyrics.lines.at(1).timestamp, 16070);
+    EXPECT_EQ(wordsForLine(lyrics.lines.at(1)), QStringList({u"སྒྲོལ་"_s, u"མ། "_s}));
+}
+
 TEST(LyricsParserTest, SortsStandardLrcLinesByTimestamp)
 {
     const auto lyrics = Lyrics::parse(u"[00:03.00]Second\n[00:01.00]First"_s);

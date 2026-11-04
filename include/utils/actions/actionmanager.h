@@ -37,6 +37,7 @@ class ActionManagerPrivate;
 class Command;
 class SettingsManager;
 class ActionContainer;
+enum class ShortcutTarget : uint8_t;
 
 using CommandList = std::vector<Command*>;
 
@@ -62,12 +63,16 @@ public:
     [[nodiscard]] WidgetContext* currentContextObject() const;
     [[nodiscard]] QWidget* currentContextWidget() const;
     [[nodiscard]] WidgetContext* contextObject(QWidget* widget) const;
+
     void addContextObject(WidgetContext* context);
     void overrideContext(WidgetContext* context, bool override);
     void removeContextObject(WidgetContext* context);
 
     ActionContainer* createMenu(const Id& id);
     ActionContainer* createMenuBar(const Id& id);
+
+    /** Declares a command without an action, retaining it when its action bindings are removed. */
+    Command* registerCommand(const Id& id);
     Command* registerAction(QAction* action, const Id& id,
                             const Context& context = Context{Constants::Context::Global});
     bool unregisterAction(QAction* action, const Id& id, const Context& context = Context{Constants::Context::Global});
@@ -81,6 +86,7 @@ public:
     [[nodiscard]] bool globalShortcutConfigurationAvailable() const;
     void setGlobalShortcutConfigurationAvailable(bool available);
     void configureGlobalShortcuts();
+    void activateGlobalShortcut(const Id& commandId);
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
@@ -90,6 +96,8 @@ Q_SIGNALS:
     void globalShortcutManagementChanged(Fooyin::GlobalShortcutManagement management);
     void globalShortcutConfigurationAvailabilityChanged(bool available);
     void globalShortcutConfigurationRequested();
+    //! Explicit shortcut targets are resolved by the command handler.
+    void shortcutActivated(const Fooyin::Id& commandId, Fooyin::ShortcutTarget target);
 
 private:
     std::unique_ptr<ActionManagerPrivate> p;

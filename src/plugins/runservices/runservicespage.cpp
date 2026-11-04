@@ -22,6 +22,7 @@
 #include "runservices.h"
 #include "runservicesconstants.h"
 
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/fypaths.h>
 #include <utils/helpers.h>
@@ -133,12 +134,12 @@ RunServicesPageWidget::RunServicesPageWidget(SettingsManager* settings)
             messageBox.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
             messageBox.setText(
                 tr("<p>The Flatpak sandbox cannot directly launch applications installed on the host. "
-                   "To allow fooyin to launch host applications, add <code>org.freedesktop.Flatpak</code> to fooyin's "
-                   "Session Bus \"talk\" permissions in Flatseal, or run:</p>"
+                   "To allow fooyin to launch host applications, add <code>org.freedesktop.Flatpak</code> to fooyin’s "
+                   "Session Bus ‘talk’ permissions in Flatseal, or run:</p>"
                    "<pre>flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin</pre>"
                    "<p>Then prefix each service command with <code>flatpak-spawn --host</code>. For example:</p>"
                    "<pre>flatpak-spawn --host spek \\\"%filepath%\\\"</pre>"
-                   "<p>This permission allows fooyin to execute arbitrary commands outside the sandbox. Only enable "
+                   "<p>This permission allows fooyin to run arbitrary commands outside the sandbox. Only enable "
                    "it if you trust your configured services.</p>"));
             messageBox.exec();
         });
@@ -162,7 +163,7 @@ RunServicesPageWidget::RunServicesPageWidget(SettingsManager* settings)
     row = 0;
     layout->addWidget(m_serviceList, row, 0);
     layout->addLayout(buttons, row++, 1);
-    layout->addWidget(new QLabel(u"🛈 "_s + tr("Checked services are shown in the Run menu.")), row++, 0, 1, 2);
+    layout->addWidget(new HintLabel(tr("Checked services are shown in the Run menu.")), row++, 0, 1, 2);
     layout->addWidget(m_properties, row++, 0, 1, 2);
 
     QObject::connect(m_serviceList, &QListWidget::currentRowChanged, this, &RunServicesPageWidget::setCurrentService);
@@ -179,7 +180,7 @@ RunServicesPageWidget::RunServicesPageWidget(SettingsManager* settings)
     QObject::connect(m_browse, &QPushButton::clicked, this, [this] {
         const QString filepath = QFileDialog::getOpenFileName(this, tr("Select application"));
         if(!filepath.isEmpty()) {
-            m_path->setText(quotedScriptPath(filepath));
+            m_path->setScript(quotedScriptPath(filepath));
         }
     });
 
@@ -261,8 +262,8 @@ void RunServicesPageWidget::setCurrentService(int row)
     }
 
     const RunService& service = m_services.at(row);
-    m_name->setText(service.name);
-    m_path->setText(service.path);
+    m_name->setScript(service.name);
+    m_path->setScript(service.path);
     m_simultaneousRuns->setValue(service.simultaneousRuns);
 }
 

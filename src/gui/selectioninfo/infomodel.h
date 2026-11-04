@@ -68,6 +68,8 @@ public:
 private:
     void populate(InfoDataPtr data);
 
+    LibraryManager* m_libraryManager;
+    uint64_t m_generation;
     QThread m_populatorThread;
     InfoPopulator m_populator;
     SelectionInfoFieldRegistry* m_fieldRegistry;

@@ -91,7 +91,7 @@ QString socketErrorToString(QLocalSocket::LocalSocketError error)
     }
 }
 
-#if !defined(Q_OS_WIN) && !defined(Q_OS_MAC)
+#if !defined(Q_OS_WIN) && !defined(Q_OS_MACOS)
 void addUniquePath(QStringList& paths, const QString& path)
 {
     if(path.isEmpty()) {
@@ -154,7 +154,7 @@ QStringList pipeLocations()
     for(int index{0}; index < MaxPipeCount; ++index) {
         locations.emplace_back(uR"(\\.\pipe\discord-ipc-%1)"_s.arg(index));
     }
-#elifdef Q_OS_MAC
+#elifdef Q_OS_MACOS
     for(int index{0}; index < MaxPipeCount; ++index) {
         locations.emplace_back(QDir::homePath() + u"/Library/Application Support/discord-ipc-%1"_s.arg(index));
     }

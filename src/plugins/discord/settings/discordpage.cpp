@@ -159,9 +159,9 @@ void DiscordPageWidget::load()
     m_showPlayState->setChecked(m_settings->value<Settings::Discord::ShowStateIcon>());
     m_clearOnPause->setChecked(m_settings->value<Settings::Discord::ClearOnPause>());
     m_clientId->setText(m_settings->value<Settings::Discord::ClientId>());
-    m_titleField->setText(m_settings->value<Settings::Discord::TitleField>());
-    m_artistField->setText(m_settings->value<Settings::Discord::ArtistField>());
-    m_albumField->setText(m_settings->value<Settings::Discord::AlbumField>());
+    m_titleField->setScript(m_settings->value<Settings::Discord::TitleField>());
+    m_artistField->setScript(m_settings->value<Settings::Discord::ArtistField>());
+    m_albumField->setScript(m_settings->value<Settings::Discord::AlbumField>());
     m_artworkEnabled->setChecked(m_settings->value<Settings::Discord::ArtworkEnabled>());
 
     const int source = m_settings->value<Settings::Discord::ArtworkSource>();

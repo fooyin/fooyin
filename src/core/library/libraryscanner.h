@@ -58,29 +58,32 @@ public:
     ~LibraryScanner() override;
 
     void initialiseThread() override;
-    void stopThread() override;
     [[nodiscard]] bool stopRequested() const override;
 
     void reportProgress(int current, const QString& file, int total, int phase, int discovered) override;
     void reportScanUpdate(const ScanResult& result) override;
 
 Q_SIGNALS:
+    void scanFinished(int requestId);
+    void scanFailed(int requestId, const QString& error);
     void progressChanged(const Fooyin::ScanProgress& progress);
     void statusChanged(const Fooyin::LibraryInfo& library);
-    void scanUpdate(const Fooyin::ScanResult& result);
-    void scannedTracks(const Fooyin::TrackList& tracks);
-    void playlistLoaded(const Fooyin::TrackList& tracks);
+    void scanUpdate(int requestId, const Fooyin::ScanResult& result);
+    void scannedTracks(int requestId, const Fooyin::TrackList& tracks);
+    void playlistLoaded(int requestId, const Fooyin::TrackList& tracks);
 
 public Q_SLOTS:
     void scanLibrary(const Fooyin::LibraryInfo& library, const Fooyin::TrackList& tracks, bool onlyModified,
-                     const Fooyin::LibraryScanConfig& config);
+                     const Fooyin::LibraryScanConfig& config, std::stop_token token, int requestId);
     void scanLibraryDirectoies(const Fooyin::LibraryInfo& library, const QStringList& dirs,
-                               const Fooyin::TrackList& tracks, const Fooyin::LibraryScanConfig& config);
-    void scanTracks(const Fooyin::TrackList& tracks, bool onlyModified, const Fooyin::LibraryScanConfig& config);
+                               const Fooyin::TrackList& tracks, const Fooyin::LibraryScanConfig& config,
+                               std::stop_token token, int requestId);
+    void scanTracks(const Fooyin::TrackList& tracks, bool onlyModified, const Fooyin::LibraryScanConfig& config,
+                    std::stop_token token, int requestId);
     void scanFiles(const Fooyin::TrackList& libraryTracks, const QList<QUrl>& urls,
-                   const Fooyin::LibraryScanConfig& config);
+                   const Fooyin::LibraryScanConfig& config, std::stop_token token, int requestId);
     void scanPlaylist(const Fooyin::TrackList& libraryTracks, const QList<QUrl>& urls,
-                      const Fooyin::LibraryScanConfig& config);
+                      const Fooyin::LibraryScanConfig& config, std::stop_token token, int requestId);
 
 private:
     [[nodiscard]] ScanProgress makeProgress(int current, const QString& file, int total, ScanProgress::Phase phase,
@@ -89,6 +92,7 @@ private:
     void startSession(const LibraryScanConfig& config, const LibraryInfo& library = {});
     void finishSession();
     void clearSession();
+    bool storeScannedTracks(TrackList& tracks);
 
     DbConnectionPoolPtr m_dbPool;
     std::shared_ptr<PlaylistLoader> m_playlistLoader;
@@ -98,6 +102,7 @@ private:
 
     std::unique_ptr<DbConnectionHandler> m_dbHandler;
 
+    int m_requestId;
     bool m_progressOnlyModified;
     LibraryInfo m_currentLibrary;
     TrackDatabase m_trackDatabase;

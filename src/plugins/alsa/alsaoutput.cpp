@@ -21,6 +21,8 @@
 
 #include "alsasettings.h"
 
+#include <utils/timeconstants.h>
+
 #include <alsa/asoundlib.h>
 
 #include <QDebug>
@@ -342,7 +344,8 @@ OutputDevices AlsaOutput::getAllDevices(bool /*isCurrentOutput*/)
 
 int AlsaOutput::write(const std::span<const std::byte> data, const int frameCount)
 {
-    if(!m_pcmHandle || !recoverState()) {
+    OutputState state;
+    if(!m_pcmHandle || !recoverState(&state)) {
         return 0;
     }
 
@@ -352,44 +355,21 @@ int AlsaOutput::write(const std::span<const std::byte> data, const int frameCoun
     }
 
     const size_t availableFrames = data.size() / static_cast<size_t>(bytesPerFrame);
-    const int framesToWrite      = std::min(frameCount, static_cast<int>(availableFrames));
+    const int framesToWrite      = std::min({frameCount, static_cast<int>(availableFrames), state.freeFrames});
     if(framesToWrite <= 0) {
         return 0;
     }
 
-    int framesRemaining = framesToWrite;
-    int framesWritten   = 0;
-    int eagainRetries   = 0;
-
-    while(framesRemaining > 0) {
-        const auto* ptr             = data.data() + static_cast<size_t>(framesWritten * bytesPerFrame);
-        const snd_pcm_sframes_t err = snd_pcm_writei(m_pcmHandle.get(), ptr, framesRemaining);
-
-        if(err == -EAGAIN) {
-            if(eagainRetries++ > 4) {
-                break;
-            }
-            snd_pcm_wait(m_pcmHandle.get(), 10);
-            continue;
-        }
-
-        if(checkError(static_cast<int>(err), "Write error")) {
-            return framesWritten;
-        }
-
-        if(err <= 0) {
-            break;
-        }
-
-        framesWritten += static_cast<int>(err);
-        framesRemaining -= static_cast<int>(err);
+    const snd_pcm_sframes_t writtenFrames = snd_pcm_writei(m_pcmHandle.get(), data.data(), framesToWrite);
+    if(writtenFrames == -EAGAIN) {
+        return 0;
     }
 
-    if(framesWritten != framesToWrite) {
-        qCDebug(ALSA) << "Partial write:" << framesWritten << "/" << framesToWrite;
+    if(checkError(static_cast<int>(writtenFrames), "Write error")) {
+        return 0;
     }
 
-    return framesWritten;
+    return static_cast<int>(writtenFrames);
 }
 
 void AlsaOutput::setPaused(bool pause)
@@ -580,25 +560,38 @@ bool AlsaOutput::initAlsa()
         return false;
     }
 
-    uint32_t bufferTime
-        = std::min<uint32_t>(m_settings.value(BufferLengthSetting, DefaultBufferLength).toUInt() * 1000, maxBufferTime);
-    err = snd_pcm_hw_params_set_buffer_time_near(handle, hwParams, &bufferTime, nullptr);
+    uint32_t bufferTime = std::min<uint32_t>(m_settings.value(BufferLengthSetting, DefaultBufferLength).toUInt()
+                                                 * static_cast<uint32_t>(Time::UsPerMs),
+                                             maxBufferTime);
+    err                 = snd_pcm_hw_params_set_buffer_time_near(handle, hwParams, &bufferTime, nullptr);
     if(checkError(err, "Unable to set buffer time")) {
         return false;
     }
-    uint32_t periodTime
-        = std::min<uint32_t>(m_settings.value(PeriodLengthSetting, DefaultPeriodLength).toUInt() * 1000, maxPeriodTime);
-    err = snd_pcm_hw_params_set_period_time_near(handle, hwParams, &periodTime, nullptr);
+    uint32_t periodTime = std::min<uint32_t>(m_settings.value(PeriodLengthSetting, DefaultPeriodLength).toUInt()
+                                                 * static_cast<uint32_t>(Time::UsPerMs),
+                                             maxPeriodTime);
+    err                 = snd_pcm_hw_params_set_period_time_near(handle, hwParams, &periodTime, nullptr);
     if(checkError(err, "Unable to set period time")) {
         return false;
     }
 
-    m_bufferSize = m_format.framesForDuration(bufferTime / 1000);
-    m_periodSize = m_format.framesForDuration(periodTime / 1000);
+    m_bufferSize = m_format.framesForDuration(bufferTime / static_cast<uint32_t>(Time::UsPerMs));
+    m_periodSize = m_format.framesForDuration(periodTime / static_cast<uint32_t>(Time::UsPerMs));
 
     err = snd_pcm_hw_params(handle, hwParams);
     if(checkError(err, "Failed to apply hardware parameters")) {
         return false;
+    }
+
+    if(ALSA().isDebugEnabled()) {
+        snd_pcm_uframes_t bufferFrames{0};
+        snd_pcm_uframes_t periodFrames{0};
+        if(snd_pcm_get_params(handle, &bufferFrames, &periodFrames) >= 0) {
+            qCDebug(ALSA) << "Negotiated ALSA output:" << "device=" << m_device
+                          << "pcmType=" << snd_pcm_type_name(snd_pcm_type(handle))
+                          << "sampleRate=" << m_format.sampleRate() << "channels=" << m_format.channelCount()
+                          << "bufferFrames=" << bufferFrames << "periodFrames=" << periodFrames;
+        }
     }
 
     snd_pcm_sw_params_t* swParams;

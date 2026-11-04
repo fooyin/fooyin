@@ -30,6 +30,7 @@ class QPushButton;
 class QSpinBox;
 
 namespace Fooyin {
+class BackgroundConfigWidget;
 class LibraryTreeGroupRegistry;
 
 class LibraryTreeConfigDialog : public WidgetConfigDialog<LibraryTreeWidget, LibraryTreeWidget::ConfigData>
@@ -75,6 +76,7 @@ private:
     QSpinBox* m_iconWidth;
     QSpinBox* m_iconHeight;
     QSpinBox* m_artworkCornerRadius;
+    BackgroundConfigWidget* m_background;
     QPushButton* m_manageGroupings;
 };
 } // namespace Fooyin

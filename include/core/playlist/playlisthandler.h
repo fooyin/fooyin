@@ -146,6 +146,8 @@ public:
 
     void savePlaylists();
     void savePlaylist(const UId& id);
+    /** Completes pending autoplaylist updates and stops scheduling workers before shutdown. */
+    void finishPendingUpdates();
 
 Q_SIGNALS:
     void playlistItemEnsureVisible(Fooyin::Playlist* playlist, int index);

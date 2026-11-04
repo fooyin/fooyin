@@ -13,6 +13,8 @@ finish-args:
   - --filesystem=xdg-run/pipewire-0:ro
   - --filesystem=xdg-run/discord-ipc-0 # Needed for Discord RPC
   - --filesystem=xdg-run/app/com.discordapp.Discord:create # Needed for Discord Flatpak RPC
+  - --filesystem=/mnt
+  - --filesystem=/media
   - --filesystem=/run/media
   - --own-name=org.mpris.MediaPlayer2.fooyin
   - --share=ipc

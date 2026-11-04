@@ -25,14 +25,18 @@
 #include "dspmodel.h"
 #include "widgets/titletooltipgroupbox.h"
 
+#include <core/coresettings.h>
 #include <core/engine/dsp/dspchainstore.h>
 #include <core/engine/dsp/dspnode.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QComboBox>
 #include <QGroupBox>
 #include <QHeaderView>
+#include <QInputDialog>
+#include <QLineEdit>
 #include <QListWidget>
 #include <QMenu>
 #include <QMessageBox>
@@ -456,7 +460,10 @@ DspManagerPageWidget::DspManagerPageWidget(DspChainStore* chainStore, DspPresetR
     setupList(m_masterList);
     setupList(m_availableList, false);
 
-    m_presetBox->setEditable(true);
+    const FySettings guiSettings;
+    m_presetBox->setEditable(guiSettings.value(Settings::Gui::PresetComboBoxModeKey, true).toBool());
+    m_presetBox->setInsertPolicy(QComboBox::NoInsert);
+    m_savePreset->setText(m_presetBox->isEditable() ? tr("Save") : tr("Save…"));
 
     QObject::connect(m_loadPreset, &QPushButton::clicked, this, [this]() { loadPreset(); });
     QObject::connect(m_savePreset, &QPushButton::clicked, this, [this]() { savePreset(); });
@@ -528,7 +535,7 @@ void DspManagerPageWidget::load()
 
     const int presetIndex = m_presetBox->findText(m_loadedPresetName);
     m_presetBox->setCurrentIndex(presetIndex);
-    if(presetIndex < 0) {
+    if(presetIndex < 0 && m_presetBox->isEditable()) {
         m_presetBox->clearEditText();
     }
 }
@@ -652,9 +659,9 @@ void DspManagerPageWidget::refreshPresets()
     }
 
     if(!currentText.isEmpty()) {
-        const int idx = m_presetBox->findText(currentText);
-        if(idx >= 0) {
-            m_presetBox->setCurrentIndex(idx);
+        const int index = m_presetBox->findText(currentText);
+        if(index >= 0 || !m_presetBox->isEditable()) {
+            m_presetBox->setCurrentIndex(index);
         }
         else {
             m_presetBox->setEditText(currentText);
@@ -673,14 +680,12 @@ void DspManagerPageWidget::updatePresetButtons()
 
     if(canLoad) {
         const int id = m_presetBox->itemData(index).toInt();
-        if(const auto presetOpt = m_presetRegistry->itemById(id)) {
-            canDelete = !presetOpt->isDefault;
-        }
+        canDelete    = m_presetRegistry->itemById(id).has_value();
     }
 
     m_loadPreset->setEnabled(canLoad);
     m_deletePreset->setEnabled(canDelete);
-    m_savePreset->setEnabled(!name.isEmpty());
+    m_savePreset->setEnabled(!m_presetBox->isEditable() || !name.isEmpty());
 }
 
 void DspManagerPageWidget::configureActiveDsp(DspModel* model, const QModelIndex& index)
@@ -717,8 +722,7 @@ void DspManagerPageWidget::configureActiveDsp(DspModel* model, const QModelIndex
 
     auto* settingsDialog = provider->createSettingsWidget(this);
     if(!settingsDialog) {
-        QMessageBox::warning(this, tr("DSP Settings"),
-                             tr("Unable to open settings for DSP \"%1\".").arg(dspEntry.name));
+        QMessageBox::warning(this, tr("DSP Settings"), tr("Unable to open settings for DSP ‘%1’.").arg(dspEntry.name));
         return;
     }
     settingsDialog->setWindowTitle(dspEntry.name);
@@ -1230,21 +1234,29 @@ void DspManagerPageWidget::loadPreset()
 
 void DspManagerPageWidget::savePreset()
 {
+    QString name = m_presetBox->currentText();
+    if(!m_presetBox->isEditable()) {
+        bool accepted{false};
+        name = QInputDialog::getText(this, tr("Save Preset"), tr("Preset name:"), QLineEdit::Normal, name, &accepted);
+        if(!accepted) {
+            return;
+        }
+    }
+    name = name.trimmed();
+    if(name.isEmpty()) {
+        return;
+    }
+
     syncChainFromActiveList();
 
     auto presetChain{m_chain};
     removeEntriesFromChain(presetChain.perTrackChain, m_pendingRemovedPerTrack);
     removeEntriesFromChain(presetChain.masterChain, m_pendingRemovedMaster);
 
-    const QString name = m_presetBox->currentText().trimmed();
-    if(name.isEmpty()) {
-        return;
-    }
-
     auto existing = m_presetRegistry->itemByName(name);
     if(existing) {
         QMessageBox msg{QMessageBox::Question, tr("Preset already exists"),
-                        tr("Preset \"%1\" already exists. Overwrite?").arg(name), QMessageBox::Yes | QMessageBox::No};
+                        tr("Preset ‘%1’ already exists. Overwrite?").arg(name), QMessageBox::Yes | QMessageBox::No};
         if(msg.exec() != QMessageBox::Yes) {
             return;
         }
@@ -1288,13 +1300,11 @@ void DspManagerPageWidget::deletePreset()
         return;
     }
 
-    const int id         = m_presetBox->itemData(index).toInt();
-    const auto presetOpt = m_presetRegistry->itemById(id);
-    if(!presetOpt || presetOpt->isDefault) {
+    const int id = m_presetBox->itemData(index).toInt();
+    if(!m_presetRegistry->removeById(id)) {
         return;
     }
 
-    m_presetRegistry->removeById(id);
     refreshPresets();
     updatePresetButtons();
 }

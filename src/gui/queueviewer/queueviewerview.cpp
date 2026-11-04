@@ -19,6 +19,8 @@
 
 #include "queueviewerview.h"
 
+#include <gui/widgets/widgetbackground.h>
+
 #include <QHeaderView>
 #include <QMouseEvent>
 #include <QPainter>
@@ -26,13 +28,14 @@
 namespace Fooyin {
 QueueViewerView::QueueViewerView(QWidget* parent)
     : ExpandedTreeView{parent}
+    , m_background{new WidgetBackground(viewport(), this)}
 {
-    setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
-    setSelectionBehavior(QAbstractItemView::SelectRows);
-    setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setVerticalScrollMode(ScrollPerItem);
+    setSelectionBehavior(SelectRows);
+    setSelectionMode(ExtendedSelection);
     setTextElideMode(Qt::ElideRight);
     setDragEnabled(true);
-    setDragDropMode(QAbstractItemView::DragDrop);
+    setDragDropMode(DragDrop);
     setDefaultDropAction(Qt::MoveAction);
     setDropIndicatorShown(true);
     setUniformRowHeights(true);
@@ -40,21 +43,31 @@ QueueViewerView::QueueViewerView(QWidget* parent)
     header()->setStretchLastSection(true);
 }
 
+void QueueViewerView::setBackgroundConfig(const BackgroundConfig& config)
+{
+    m_background->setConfig(config);
+}
+
+void QueueViewerView::setBackgroundPixmap(const QPixmap& pixmap)
+{
+    m_background->setPixmap(pixmap);
+}
+
 void QueueViewerView::paintEvent(QPaintEvent* event)
 {
     QPainter painter{viewport()};
+    painter.fillRect(viewport()->rect(), palette().brush(QPalette::Base));
+    m_background->draw(painter);
 
-    auto drawCentreText = [this, &painter](const QString& text) {
-        QRect textRect = painter.fontMetrics().boundingRect(text);
+    if(!model() || model()->rowCount({}) <= 0) {
+        const QString text = tr("Empty Queue");
+        QRect textRect     = painter.fontMetrics().boundingRect(text);
         textRect.moveCenter(viewport()->rect().center());
         painter.drawText(textRect, Qt::AlignCenter, text);
-    };
-
-    if(model()->rowCount({}) <= 0) {
-        drawCentreText(tr("Empty Queue"));
         return;
     }
 
+    painter.end();
     ExpandedTreeView::paintEvent(event);
 }
 } // namespace Fooyin

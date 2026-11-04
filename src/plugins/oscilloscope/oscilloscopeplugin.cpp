@@ -44,6 +44,8 @@ void OscilloscopePlugin::initialise(const CorePluginContext& context)
 
 void OscilloscopePlugin::initialise(const GuiPluginContext& context)
 {
+    m_coverRepository = context.coverRepository;
+    m_trackSelection  = context.trackSelection;
     qRegisterMetaType<Colours>("Fooyin::Oscilloscope::Colours");
 
     auto* showOscilloscope = new QAction(tr("&Oscilloscope"), this);
@@ -52,12 +54,17 @@ void OscilloscopePlugin::initialise(const GuiPluginContext& context)
     showOscilloscopeCmd->setCategories({tr("View"), tr("Visualisations")});
     context.actionManager->actionContainer(Constants::Menus::Visualisations)->addAction(showOscilloscopeCmd);
     QObject::connect(showOscilloscope, &QAction::triggered, this, [this]() {
-        auto* window = new OscilloscopeWidget(m_engine, m_playerController, m_settings);
+        auto* window
+            = new OscilloscopeWidget(m_engine, m_playerController, m_coverRepository, m_trackSelection, m_settings);
         window->showStandaloneWindow(tr("Oscilloscope"), u"Oscilloscope/WindowState"_s, true);
     });
 
     context.widgetProvider->registerWidget(
-        u"Oscilloscope"_s, [this]() { return new OscilloscopeWidget(m_engine, m_playerController, m_settings); },
+        u"Oscilloscope"_s,
+        [this]() {
+            return new OscilloscopeWidget(m_engine, m_playerController, m_coverRepository, m_trackSelection,
+                                          m_settings);
+        },
         tr("Oscilloscope"), {.supportsToolbar = true, .toolbarAreas = Qt::AllToolBarAreas});
     context.widgetProvider->setSubMenus(u"Oscilloscope"_s, {tr("Visualisations")});
 }

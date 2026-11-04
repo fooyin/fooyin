@@ -49,6 +49,9 @@ struct StoredConversionPreset
 };
 
 namespace ConverterSettings {
+int maxParallelConversions();
+void setMaxParallelConversions(int count);
+
 constexpr std::array DefaultEncoderProfileIds{"flac", "ffmpeg-flac", "ffmpeg-wav"};
 
 template <typename Range, typename Projection>
@@ -71,6 +74,9 @@ void setEncoderProfiles(const std::vector<StoredEncoderProfile>& profiles);
 
 std::vector<StoredConversionPreset> conversionPresets();
 void setConversionPresets(const std::vector<StoredConversionPreset>& presets);
+
+std::optional<StoredConversionPreset> currentConversionPreset();
+void setCurrentConversionPreset(const StoredConversionPreset& preset);
 
 std::optional<StoredConversionPreset> lastUsedConversionPreset();
 void setLastUsedConversionPreset(const StoredConversionPreset& preset);

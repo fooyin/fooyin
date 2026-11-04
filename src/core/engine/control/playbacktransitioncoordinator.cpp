@@ -19,10 +19,7 @@
 
 #include "playbacktransitioncoordinator.h"
 
-#include "core/engine/enginehelpers.h"
-
-#include <algorithm>
-#include <utility>
+#include "enginehelpers.h"
 
 namespace Fooyin {
 PlaybackTransitionCoordinator::PlaybackTransitionCoordinator()
@@ -31,11 +28,6 @@ PlaybackTransitionCoordinator::PlaybackTransitionCoordinator()
     , m_switchReady{false}
     , m_boundaryReached{false}
     , m_seekInProgress{false}
-    , m_pendingSeekActive{false}
-    , m_pendingInitialSeekActive{false}
-    , m_pendingInitialSeekPositionMs{0}
-    , m_pendingInitialSeekRequestId{0}
-    , m_pendingInitialSeekTrackId{-1}
 { }
 
 PlaybackTransitionCoordinator::TrackEndingResult
@@ -93,6 +85,15 @@ bool PlaybackTransitionCoordinator::inTimelineWindow(const TrackEndingInput& inp
     return input.positionMs >= triggerPos;
 }
 
+bool PlaybackTransitionCoordinator::inTransitionWindow(const TrackEndingInput& input, uint64_t leadMs,
+                                                       bool timelineEnabled)
+{
+    const uint64_t windowMs    = saturatingAdd(leadMs, input.timelineDelayMs);
+    const bool readyByTimeline = timelineEnabled && inTimelineWindow(input, windowMs);
+    const bool readyByDrain    = input.endOfInput && input.remainingOutputMs <= windowMs;
+    return readyByTimeline || readyByDrain;
+}
+
 bool PlaybackTransitionCoordinator::shouldSignalTrackEnding(const TrackEndingInput& input)
 {
     if(input.endOfInput && input.bufferEmpty) {
@@ -106,29 +107,21 @@ bool PlaybackTransitionCoordinator::shouldSignalTrackEnding(const TrackEndingInp
 
     bool crossfadeReady = false;
     if(input.autoCrossfadeEnabled) {
-        const uint64_t fadeOutWindowMs  = static_cast<uint64_t>(std::max(0, input.autoFadeOutMs));
-        const uint64_t timelineWindowMs = saturatingAdd(fadeOutWindowMs, input.timelineDelayMs);
-        const bool readyByTimeline      = timelineWindowEligible && inTimelineWindow(input, timelineWindowMs);
-        const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
-        crossfadeReady                  = readyByTimeline || readyByDrain;
+        const uint64_t fadeOutWindowMs = static_cast<uint64_t>(std::max(0, input.autoFadeOutMs));
+        crossfadeReady                 = inTransitionWindow(input, fadeOutWindowMs, timelineWindowEligible);
     }
 
     bool boundaryFadeReady = false;
     if(input.boundaryFadeEnabled) {
-        const uint64_t fadeOutWindowMs  = static_cast<uint64_t>(std::max(0, input.boundaryFadeOutMs));
-        const uint64_t prepareWindowMs  = std::max(fadeOutWindowMs, input.gaplessPrepareWindowMs);
-        const uint64_t timelineWindowMs = saturatingAdd(prepareWindowMs, input.timelineDelayMs);
-        const bool readyByTimeline      = inTimelineWindow(input, timelineWindowMs);
-        const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
-        boundaryFadeReady               = readyByTimeline || readyByDrain;
+        const uint64_t fadeOutWindowMs = static_cast<uint64_t>(std::max(0, input.boundaryFadeOutMs));
+        const uint64_t prepareWindowMs = std::max(fadeOutWindowMs, input.gaplessPrepareWindowMs);
+        boundaryFadeReady              = inTransitionWindow(input, prepareWindowMs, true);
     }
 
     bool gaplessReady = false;
     if(input.gaplessEnabled) {
-        const uint64_t timelineWindowMs = saturatingAdd(input.gaplessPrepareWindowMs, input.timelineDelayMs);
-        const bool readyByTimeline      = timelineWindowEligible && inTimelineWindow(input, timelineWindowMs);
-        const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
-        gaplessReady                    = input.endOfInput || readyByTimeline || readyByDrain;
+        gaplessReady
+            = input.endOfInput || inTransitionWindow(input, input.gaplessPrepareWindowMs, timelineWindowEligible);
     }
 
     const bool crossfadeConfigured = input.autoCrossfadeEnabled;
@@ -168,63 +161,19 @@ bool PlaybackTransitionCoordinator::shouldSignalReadyToSwitch(const TrackEndingI
 {
     switch(m_autoTransitionMode) {
         case AutoTransitionMode::Crossfade: {
-            const uint64_t fadeOutWindowMs  = static_cast<uint64_t>(std::max(0, input.autoFadeOutMs));
-            const uint64_t fadeInWindowMs   = static_cast<uint64_t>(std::max(0, input.autoFadeInMs));
-            const uint64_t overlapWindowMs  = std::min(fadeOutWindowMs, fadeInWindowMs);
-            const uint64_t timelineWindowMs = saturatingAdd(overlapWindowMs, input.timelineDelayMs);
-            const bool readyByTimeline      = inTimelineWindow(input, timelineWindowMs);
-            const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
-            return readyByTimeline || readyByDrain;
+            const uint64_t fadeOutWindowMs = static_cast<uint64_t>(std::max(0, input.autoFadeOutMs));
+            const uint64_t fadeInWindowMs  = static_cast<uint64_t>(std::max(0, input.autoFadeInMs));
+            const uint64_t overlapWindowMs = std::min(fadeOutWindowMs, fadeInWindowMs);
+            return inTransitionWindow(input, overlapWindowMs, true);
         }
-        case AutoTransitionMode::Gapless: {
-            const uint64_t switchLeadMs     = input.gaplessPrepareWindowMs;
-            const uint64_t timelineWindowMs = saturatingAdd(switchLeadMs, input.timelineDelayMs);
-            const bool readyByTimeline      = inTimelineWindow(input, timelineWindowMs);
-            const bool readyByDrain         = input.endOfInput && input.remainingOutputMs <= timelineWindowMs;
-            return readyByTimeline || readyByDrain;
-        }
+        case AutoTransitionMode::Gapless:
+            return inTransitionWindow(input, input.gaplessPrepareWindowMs, true);
         case AutoTransitionMode::BoundaryFade:
-            return false;
         case AutoTransitionMode::None:
             return false;
     }
 
     return false;
-}
-
-void PlaybackTransitionCoordinator::beginPendingSeek(uint64_t positionMs, int fadeOutDurationMs, int fadeInDurationMs,
-                                                     uint64_t transitionId)
-{
-    clearAutoTransitionReadiness();
-    m_crossfadeParams.seekPositionMs    = positionMs;
-    m_crossfadeParams.fadeOutDurationMs = fadeOutDurationMs;
-    m_crossfadeParams.fadeInDurationMs  = fadeInDurationMs;
-    m_crossfadeParams.transitionId      = transitionId;
-    m_pendingSeekActive                 = true;
-}
-
-void PlaybackTransitionCoordinator::cancelPendingSeek()
-{
-    m_pendingSeekActive = false;
-}
-
-bool PlaybackTransitionCoordinator::hasPendingSeek() const
-{
-    return m_pendingSeekActive;
-}
-
-std::optional<PlaybackTransitionCoordinator::CrossfadeParams>
-PlaybackTransitionCoordinator::pendingSeekIfBuffered(uint64_t bufferedMs) const
-{
-    if(!m_pendingSeekActive) {
-        return {};
-    }
-
-    if(std::cmp_less(bufferedMs, m_crossfadeParams.fadeOutDurationMs)) {
-        return {};
-    }
-
-    return m_crossfadeParams;
 }
 
 bool PlaybackTransitionCoordinator::isReadyForAutoTransition() const
@@ -255,13 +204,11 @@ bool PlaybackTransitionCoordinator::isReadyForGaplessHandoff() const
 
 void PlaybackTransitionCoordinator::clearForStop()
 {
-    m_pendingSeekActive = false;
     clearAutoTransitionReadiness();
-    m_trackEnding                 = false;
-    m_switchReady                 = false;
-    m_boundaryReached             = false;
-    m_pendingInitialSeekActive    = false;
-    m_pendingInitialSeekRequestId = 0;
+    m_trackEnding     = false;
+    m_switchReady     = false;
+    m_boundaryReached = false;
+    m_pendingInitialSeek.reset();
 }
 
 void PlaybackTransitionCoordinator::clearTrackEnding()
@@ -284,40 +231,25 @@ void PlaybackTransitionCoordinator::setSeekInProgress(bool inProgress)
 
 void PlaybackTransitionCoordinator::queueInitialSeek(uint64_t positionMs, int trackId, uint64_t requestId)
 {
-    m_pendingInitialSeekActive     = true;
-    m_pendingInitialSeekPositionMs = positionMs;
-    m_pendingInitialSeekRequestId  = requestId;
-    m_pendingInitialSeekTrackId    = trackId;
+    m_pendingInitialSeek = PendingInitialSeek{
+        .request = {.positionMs = positionMs, .requestId = requestId},
+        .trackId = trackId,
+    };
 }
 
 bool PlaybackTransitionCoordinator::hasPendingInitialSeekForTrack(int trackId) const
 {
-    if(!m_pendingInitialSeekActive) {
-        return false;
-    }
-    return m_pendingInitialSeekTrackId == -1 || m_pendingInitialSeekTrackId == trackId;
+    return m_pendingInitialSeek && (m_pendingInitialSeek->trackId == -1 || m_pendingInitialSeek->trackId == trackId);
 }
 
 std::optional<PlaybackTransitionCoordinator::InitialSeekRequest>
 PlaybackTransitionCoordinator::takePendingInitialSeekForTrack(int trackId)
 {
-    if(!m_pendingInitialSeekActive) {
+    const auto pending = std::exchange(m_pendingInitialSeek, std::nullopt);
+    if(!pending || (pending->trackId != -1 && pending->trackId != trackId)) {
         return {};
     }
 
-    const bool applies            = m_pendingInitialSeekTrackId == -1 || m_pendingInitialSeekTrackId == trackId;
-    const auto positionMs         = m_pendingInitialSeekPositionMs;
-    const auto requestId          = m_pendingInitialSeekRequestId;
-    m_pendingInitialSeekActive    = false;
-    m_pendingInitialSeekRequestId = 0;
-
-    if(!applies) {
-        return {};
-    }
-
-    return InitialSeekRequest{
-        .positionMs = positionMs,
-        .requestId  = requestId,
-    };
+    return pending->request;
 }
 } // namespace Fooyin

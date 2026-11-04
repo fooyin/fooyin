@@ -68,7 +68,7 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
 
     const auto total = static_cast<int>(tracksToScan.size());
     auto* progress
-        = new ElapsedProgressDialog(tr("Scanning tracks…"), tr("Abort"), 0, total + 1, Utils::getMainWindow());
+        = new ElapsedProgressDialog(tr("Scanning tracks…"), tr("Stop"), 0, total + 1, Utils::getMainWindow());
     progress->setAttribute(Qt::WA_DeleteOnClose);
     progress->setValue(0);
     progress->setWindowTitle(tr("ReplayGain Scan Progress"));
@@ -227,7 +227,7 @@ QDialog* RGScannerPlugin::createRemoveDialog()
     label->setAlignment(Qt::AlignCenter);
 
     auto* buttonBox = new QDialogButtonBox(QDialogButtonBox::Cancel, removeDialog);
-    buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Abort"));
+    buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Stop"));
     QObject::connect(buttonBox, &QDialogButtonBox::rejected, removeDialog, &QDialog::reject);
 
     auto* layout = new QVBoxLayout(removeDialog);

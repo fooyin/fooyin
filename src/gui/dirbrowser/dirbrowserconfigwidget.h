@@ -28,6 +28,8 @@ class QComboBox;
 class QRadioButton;
 
 namespace Fooyin {
+class BackgroundConfigWidget;
+
 class DirBrowserConfigDialog : public WidgetConfigDialog<DirBrowser, DirBrowser::ConfigData>
 {
     Q_OBJECT
@@ -57,5 +59,6 @@ private:
     QComboBox* m_doubleClick;
     QComboBox* m_middleClick;
     QCheckBox* m_playbackOnSend;
+    BackgroundConfigWidget* m_background;
 };
 } // namespace Fooyin

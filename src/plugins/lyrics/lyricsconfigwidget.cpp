@@ -22,8 +22,10 @@
 #include "lyricscolours.h"
 
 #include <gui/guiutils.h>
+#include <gui/widgets/backgroundconfigwidget.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/fontbutton.h>
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <gui/widgets/slidereditor.h>
 
@@ -44,6 +46,7 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
     : WidgetConfigDialog{lyricsWidget, LyricsWidget::tr("Lyrics Settings"), parent}
     , m_styleProvider{styleProvider}
     , m_tabs{new QTabWidget(this)}
+    , m_background{new BackgroundConfigWidget(this)}
     , m_seekOnClick{new QCheckBox(tr("Seek on click"), this)}
     , m_noLyricsScript{new ScriptLineEdit(this)}
     , m_scrollDuration{new SliderEditor(tr("Synced scroll duration"), this)}
@@ -79,9 +82,9 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
     auto* generalGroup  = new QGroupBox(tr("General"), generalPage);
     auto* generalLayout = new QGridLayout(generalGroup);
 
-    auto* seekHint     = new QLabel(u"🛈 "_s + tr("This will only function with synced lyrics."), generalPage);
-    auto* noLyricsHint = new QLabel(
-        u"🛈 "_s + tr("This will be displayed if lyrics for the current track can't be found."), generalPage);
+    auto* seekHint = new HintLabel(tr("This will only function with synced lyrics."), generalPage);
+    auto* noLyricsHint
+        = new HintLabel(tr("This will be displayed if lyrics for the current track can’t be found."), generalPage);
 
     int row = 0;
     generalLayout->addWidget(m_seekOnClick, row++, 0, 1, 2);
@@ -154,10 +157,9 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
     marginsLayout->addWidget(m_topMargin, row, 1);
     marginsLayout->addWidget(new QLabel(tr("Bottom") + u":"_s, layoutPage), row, 2);
     marginsLayout->addWidget(m_bottomMargin, row++, 3);
-    marginsLayout->addWidget(new QLabel(u"🛈 "_s
-                                            + tr("Top and bottom margins apply to lyrics that are not centred at "
-                                                 "that edge."),
-                                        layoutPage),
+    marginsLayout->addWidget(new HintLabel(tr("Top and bottom margins apply to lyrics that are not centred at "
+                                              "that edge."),
+                                           layoutPage),
                              row++, 0, 1, 5);
     marginsLayout->setColumnStretch(4, 1);
 
@@ -165,8 +167,8 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
     centringLayout->addWidget(m_centreFirstLine, row++, 0, 1, 2);
     centringLayout->addWidget(m_centreLastLine, row++, 0, 1, 2);
     centringLayout->addWidget(
-        new QLabel(u"🛈 "_s + tr("These options apply to synced lyrics and automatically scrolling unsynced lyrics."),
-                   layoutPage),
+        new HintLabel(tr("These options apply to synced lyrics and automatically scrolling unsynced lyrics."),
+                      layoutPage),
         row++, 0, 1, 2);
     centringLayout->setColumnStretch(1, 1);
 
@@ -251,6 +253,7 @@ LyricsConfigDialog::LyricsConfigDialog(LyricsWidget* lyricsWidget, GuiStyleProvi
 
     m_tabs->addTab(layoutPage, tr("Layout"));
     m_tabs->addTab(stylePage, tr("Style"));
+    m_tabs->addTab(m_background, tr("Background"));
     m_tabs->addTab(generalPage, tr("General"));
 
     auto* layout = contentLayout();
@@ -287,6 +290,7 @@ LyricsWidget::ConfigData LyricsConfigDialog::config() const
         .lineFont     = m_lineFontBtn->isChecked() ? m_lineFontBtn->buttonFont().toString() : QString{},
         .wordLineFont = m_wordLineFontBtn->isChecked() ? m_wordLineFontBtn->buttonFont().toString() : QString{},
         .wordFont     = m_wordFontBtn->isChecked() ? m_wordFontBtn->buttonFont().toString() : QString{},
+        .background   = m_background->config(),
     };
 
     Colours colours;
@@ -314,8 +318,9 @@ LyricsWidget::ConfigData LyricsConfigDialog::config() const
 
 void LyricsConfigDialog::setConfig(const LyricsWidget::ConfigData& config)
 {
+    m_background->setConfig(config.background);
     m_seekOnClick->setChecked(config.seekOnClick);
-    m_noLyricsScript->setText(config.noLyricsScript);
+    m_noLyricsScript->setScript(config.noLyricsScript);
     m_scrollDuration->setValue(config.scrollDuration);
 
     int fadeModeIdx = m_edgeFadeMode->findData(config.edgeFadeMode);
@@ -395,7 +400,7 @@ void LyricsConfigDialog::mergeExternalConfig(const LyricsWidget::ConfigData& pre
                         &LyricsWidget::ConfigData::progressMode, &LyricsWidget::ConfigData::margins,
                         &LyricsWidget::ConfigData::colours, &LyricsWidget::ConfigData::baseFont,
                         &LyricsWidget::ConfigData::lineFont, &LyricsWidget::ConfigData::wordLineFont,
-                        &LyricsWidget::ConfigData::wordFont);
+                        &LyricsWidget::ConfigData::wordFont, &LyricsWidget::ConfigData::background);
 }
 
 ScrollMode LyricsConfigDialog::scrollMode() const

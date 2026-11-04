@@ -56,26 +56,20 @@ bool LibraryScanWriter::shouldFlush() const
     return m_tracksToStore.size() >= BatchSize || m_tracksToUpdate.size() >= BatchSize;
 }
 
-void LibraryScanWriter::flush()
+std::expected<void, QString> LibraryScanWriter::flush()
 {
     if(empty()) {
-        return;
+        return {};
     }
 
-    if(!m_tracksToStore.empty()) {
-        m_trackDatabase->storeTracks(m_tracksToStore);
-    }
-    if(!m_tracksToUpdate.empty()) {
-        m_trackDatabase->updateTracks(m_tracksToUpdate);
-        m_trackDatabase->updateTrackStats(m_tracksToUpdate);
+    if(auto result = m_trackDatabase->writeScanBatch(m_tracksToStore, m_tracksToUpdate); !result) {
+        return result;
     }
 
     ScanResult result;
-    result.addedTracks   = m_tracksToStore;
-    result.updatedTracks = m_tracksToUpdate;
+    result.addedTracks.swap(m_tracksToStore);
+    result.updatedTracks.swap(m_tracksToUpdate);
     m_flushHandler(result);
-
-    m_tracksToStore.clear();
-    m_tracksToUpdate.clear();
+    return {};
 }
 } // namespace Fooyin

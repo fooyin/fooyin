@@ -96,6 +96,7 @@ constexpr auto Sort               = "Fooyin.Context.Playlist.Sort";
 constexpr auto Clipboard          = "Fooyin.Context.Playlist.Clipboard";
 constexpr auto ClipboardSeparator = "Fooyin.Context.Playlist.Clipboard.Separator";
 constexpr auto Presets            = "Fooyin.Context.Playlist.Presets";
+constexpr auto Configure          = "Fooyin.Context.Playlist.Configure";
 constexpr auto PresetsSeparator   = "Fooyin.Context.Playlist.Presets.Separator";
 constexpr auto Queue              = "Fooyin.Context.Playlist.Queue";
 constexpr auto TrackSeparator     = "Fooyin.Context.Playlist.Track.Separator";
@@ -125,6 +126,9 @@ constexpr auto DefaultItems = std::to_array<Item>({
     {.id = ClipboardSeparator, .title = {}, .isSeparator = true},
     {.id          = Presets,
      .title       = {.context = "PlaylistWidget", .sourceText = QT_TRANSLATE_NOOP("PlaylistWidget", "Presets")},
+     .isSeparator = false},
+    {.id          = Configure,
+     .title       = {.context = "PlaylistWidget", .sourceText = QT_TRANSLATE_NOOP("PlaylistWidget", "Configure")},
      .isSeparator = false},
     {.id = PresetsSeparator, .title = {}, .isSeparator = true},
     {.id = Constants::Actions::AddToPlaylist,

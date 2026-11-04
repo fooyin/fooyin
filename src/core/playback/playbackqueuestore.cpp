@@ -70,6 +70,7 @@ PlaybackQueueStore::PlaybackQueueStore(DbConnectionPoolPtr dbPool, MusicLibrary*
 void PlaybackQueueStore::save(const PlaybackQueue& queue) const
 {
     const auto& queueItems = queue.items();
+    const int currentIndex = queue.currentIndex();
 
     std::vector<PlaybackQueueInfo> items;
     items.reserve(queueItems.size());
@@ -85,7 +86,7 @@ void PlaybackQueueStore::save(const PlaybackQueue& queue) const
         item.trackId     = track.track.id();
         item.origin      = static_cast<int>(queueItem.origin);
         item.sourceOrder = queueItem.sourceOrder;
-        item.isCurrent   = queueIndex == queue.currentIndex();
+        item.isCurrent   = queueIndex == currentIndex;
 
         if(track.playlistId.isValid()) {
             if(auto* playlist = m_playlistHandler->playlistById(track.playlistId);

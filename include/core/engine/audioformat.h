@@ -26,6 +26,7 @@
 #include <array>
 #include <cstdint>
 #include <span>
+#include <vector>
 
 namespace Fooyin {
 /*!

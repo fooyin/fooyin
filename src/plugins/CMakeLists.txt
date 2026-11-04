@@ -9,6 +9,7 @@ set(FOOYIN_KNOWN_PLUGINS
     flac
     gme
     globalhotkeys
+    jack
     libarchive
     lyrics
     mediacontrol
@@ -83,9 +84,9 @@ endif()
 
 if(UNIX AND NOT APPLE)
     list(
-        APPEND
-        FOOYIN_DEFAULT_PLUGINS
+        APPEND FOOYIN_DEFAULT_PLUGINS
         cdda
+        jack
         mpris
         notify
         pulseaudio
@@ -93,13 +94,7 @@ if(UNIX AND NOT APPLE)
 endif()
 
 if(WIN32)
-    list(
-        APPEND
-        FOOYIN_DEFAULT_PLUGINS
-        wasapi
-        mediacontrol
-        thumbnailtoolbar
-    )
+    list(APPEND FOOYIN_DEFAULT_PLUGINS wasapi mediacontrol thumbnailtoolbar)
 endif()
 
 if(APPLE)
@@ -107,14 +102,10 @@ if(APPLE)
 endif()
 
 fooyin_resolve_plugin_selection(
-    OUT_VAR
-    FOOYIN_RESOLVED_PLUGINS
-    SELECTION
-    "${PLUGIN_SELECTION}"
-    KNOWN
-    ${FOOYIN_KNOWN_PLUGINS}
-    DEFAULT
-    ${FOOYIN_DEFAULT_PLUGINS}
+    OUT_VAR FOOYIN_RESOLVED_PLUGINS
+    SELECTION "${PLUGIN_SELECTION}"
+    KNOWN ${FOOYIN_KNOWN_PLUGINS}
+    DEFAULT ${FOOYIN_DEFAULT_PLUGINS}
 )
 
 if(BUILD_ALSA)
@@ -125,11 +116,15 @@ endif()
 
 if(UNIX AND NOT APPLE)
     fooyin_add_selected_plugin(cdda)
+    fooyin_add_selected_plugin(jack)
     fooyin_add_selected_plugin(mpris)
     fooyin_add_selected_plugin(notify)
 else()
     if("cdda" IN_LIST FOOYIN_RESOLVED_PLUGINS)
         message(STATUS "cdda plugin is only available on Unix platforms other than macOS; skipping.")
+    endif()
+    if("jack" IN_LIST FOOYIN_RESOLVED_PLUGINS)
+        message(STATUS "jack plugin is only available on Unix platforms other than macOS; skipping.")
     endif()
     if("mpris" IN_LIST FOOYIN_RESOLVED_PLUGINS)
         message(STATUS "mpris plugin is only available on Unix platforms other than macOS; skipping.")

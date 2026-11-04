@@ -45,6 +45,8 @@ struct ResolvedAppStyle
 namespace Settings::Gui {
 Q_NAMESPACE_EXPORT(FYGUI_EXPORT)
 
+constexpr auto PresetComboBoxModeKey = "Interface/PresetComboBoxMode";
+
 enum ToolButtonOption : uint8_t
 {
     None    = 0,
@@ -111,6 +113,14 @@ enum GuiSettings : uint32_t
     CustomApplicationIcon      = 54 | Type::String,
     MenuBarMovable             = 55 | Type::Bool,
     ToolbarsLocked             = 56 | Type::Bool,
+    DockWidgetPalette          = 57 | Type::Bool,
+    SettingsSearchBarPosition  = 58 | Type::Int,
+    ABRepeatMarkerWidth        = 59 | Type::Double,
+    ABRepeatMarkerColourA      = 60 | Type::Variant,
+    ABRepeatMarkerColourB      = 61 | Type::Variant,
+    ABRepeatSeekOnAChange      = 62 | Type::Bool,
+    VolumeControlStepSmall     = 63 | Type::Double,
+    VolumeControlStepLarge     = 64 | Type::Double,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Settings::Gui

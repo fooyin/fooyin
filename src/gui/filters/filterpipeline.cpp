@@ -60,11 +60,6 @@ FilterSelectionResolution resolveFilterSelection(const FilterRowList& rows, cons
 
     for(const RowKey& key : resolution.selectedKeys) {
         if(key.isEmpty()) {
-            if(rows.empty()) {
-                resolution.selectedTracks = inputTracks;
-                return resolution;
-            }
-
             std::unordered_set<int> selectedTrackIds;
             selectedTrackIds.reserve(inputTracks.size());
 

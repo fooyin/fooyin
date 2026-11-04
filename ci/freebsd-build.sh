@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -eu
+
 export FOOYIN_DIR=$PWD
 export CC=clang
 export CXX=clang++

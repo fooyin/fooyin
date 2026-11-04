@@ -22,14 +22,18 @@
 #include "playback/playbackorder.h"
 
 #include <core/coresettings.h>
+#include <core/library/libraryutils.h>
+#include <core/playlist/playlistchangeset.h>
 #include <core/scripting/trackqueryfilter.h>
 #include <core/track.h>
 #include <utils/crypto.h>
 #include <utils/datastream.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QCoreApplication>
 #include <QDataStream>
 #include <QIODevice>
+#include <QThread>
 
 #include <random>
 #include <ranges>
@@ -44,6 +48,11 @@ namespace Fooyin {
 using AlbumTracks = std::vector<int>;
 
 namespace {
+void assertMainThread()
+{
+    Q_ASSERT(!QCoreApplication::instance() || QThread::currentThread() == qApp->thread());
+}
+
 bool readExtraProperties(QDataStream& stream, Playlist::ExtraProperties& out)
 {
     out.clear();
@@ -104,6 +113,7 @@ bool PlaylistTrack::hasEntryId() const
 PlaylistTrackList PlaylistTrack::fromTracks(const TrackList& tracks, const UId& playlistId)
 {
     PlaylistTrackList playlistTracks;
+    playlistTracks.reserve(tracks.size());
 
     for(int i{0}; const Track& track : tracks) {
         playlistTracks.emplace_back(track, playlistId, UId::create(), i++);
@@ -115,11 +125,8 @@ PlaylistTrackList PlaylistTrack::fromTracks(const TrackList& tracks, const UId& 
 TrackList PlaylistTrack::toTracks(const PlaylistTrackList& playlistTracks)
 {
     TrackList tracks;
-
-    for(const PlaylistTrack& track : playlistTracks) {
-        tracks.emplace_back(track.track);
-    }
-
+    tracks.reserve(playlistTracks.size());
+    std::ranges::transform(playlistTracks, std::back_inserter(tracks), &PlaylistTrack::track);
     return tracks;
 }
 
@@ -187,9 +194,6 @@ public:
 
     PlaylistPrivate(int dbId, QString name, int index, SettingsManager* settings);
 
-    [[nodiscard]] TrackList filteredAutoTracks(const TrackList& tracks);
-    [[nodiscard]] TrackList updatedAutoTracks(const TrackList& tracks);
-
     [[nodiscard]] NavigationState navigationState() const;
     void restoreNavigationState(NavigationState state);
 
@@ -223,6 +227,7 @@ public:
     int m_index{-1};
     TrackList m_tracks;
     std::vector<UId> m_trackEntryIds;
+    mutable std::optional<std::unordered_map<UId, int, UId::UIdHash>> m_trackEntryIndexes;
 
     SettingsManager* m_settings;
     int m_currentTrackIndex{-1};
@@ -238,6 +243,7 @@ public:
     bool m_isTemporary{false};
     bool m_modified{false};
     bool m_tracksModified{false};
+    uint64_t m_contentRevision{0};
 
     bool m_isAutoPlaylist{false};
     QString m_query;
@@ -253,62 +259,6 @@ PlaylistPrivate::PlaylistPrivate(int dbId, QString name, int index, SettingsMana
     , m_index{index}
     , m_settings{settings}
 { }
-
-TrackList PlaylistPrivate::filteredAutoTracks(const TrackList& tracks)
-{
-    QString query{m_query};
-    if(!m_sortQuery.isEmpty()) {
-        if(!query.isEmpty()) {
-            query.append(u' ');
-        }
-        query.append(m_sortQuery);
-    }
-
-    TrackQueryFilter filter;
-    return filter.filter(query, tracks);
-}
-
-TrackList PlaylistPrivate::updatedAutoTracks(const TrackList& tracks)
-{
-    TrackList filteredTracks = filteredAutoTracks(tracks);
-
-    if(m_forceSorted) {
-        return filteredTracks;
-    }
-
-    std::unordered_map<QString, std::vector<int>> filteredIndexes;
-    filteredIndexes.reserve(filteredTracks.size());
-
-    for(int i{0}; std::cmp_less(i, filteredTracks.size()); ++i) {
-        filteredIndexes[filteredTracks[i].identityKey()].push_back(i);
-    }
-
-    std::vector<char> used(filteredTracks.size(), false);
-
-    TrackList updatedTracks;
-    updatedTracks.reserve(filteredTracks.size());
-
-    for(const auto& track : m_tracks) {
-        const auto it = filteredIndexes.find(track.identityKey());
-        if(it == filteredIndexes.end()) {
-            continue;
-        }
-
-        const auto available = std::ranges::find_if(it->second, [&used](int index) { return !used[index]; });
-        if(available != it->second.cend()) {
-            updatedTracks.emplace_back(filteredTracks[*available]);
-            used[*available] = true;
-        }
-    }
-
-    for(size_t i{0}; i < filteredTracks.size(); ++i) {
-        if(!used[i]) {
-            updatedTracks.emplace_back(filteredTracks[i]);
-        }
-    }
-
-    return updatedTracks;
-}
 
 PlaylistPrivate::NavigationState PlaylistPrivate::navigationState() const
 {
@@ -815,18 +765,23 @@ int PlaylistPrivate::indexOfTrackEntry(const UId& entryId) const
         return -1;
     }
 
-    const auto it = std::ranges::find(m_trackEntryIds, entryId);
-    if(it == m_trackEntryIds.cend()) {
-        return -1;
+    if(!m_trackEntryIndexes) {
+        auto& indexes = m_trackEntryIndexes.emplace();
+        indexes.reserve(m_trackEntryIds.size());
+        for(int index{0}; const auto& id : m_trackEntryIds) {
+            indexes.try_emplace(id, index++);
+        }
     }
 
-    return static_cast<int>(std::distance(m_trackEntryIds.cbegin(), it));
+    const auto it = m_trackEntryIndexes->find(entryId);
+    return it != m_trackEntryIndexes->cend() ? it->second : -1;
 }
 
 void PlaylistPrivate::replacePlaylistTracks(const PlaylistTrackList& tracks)
 {
     m_tracks.clear();
     m_trackEntryIds.clear();
+    m_trackEntryIndexes.reset();
     m_tracks.reserve(tracks.size());
     m_trackEntryIds.reserve(tracks.size());
 
@@ -838,37 +793,54 @@ void PlaylistPrivate::replacePlaylistTracks(const PlaylistTrackList& tracks)
 
 Playlist::Playlist(PrivateKey /*key*/, int dbId, QString name, int index, SettingsManager* settings)
     : p{std::make_unique<PlaylistPrivate>(dbId, std::move(name), index, settings)}
-{ }
+{
+    assertMainThread();
+}
 
-Playlist::~Playlist() = default;
+Playlist::~Playlist()
+{
+    assertMainThread();
+}
 
 UId Playlist::id() const
 {
+    assertMainThread();
+
     return p->m_id;
 }
 
 int Playlist::dbId() const
 {
+    assertMainThread();
+
     return p->m_dbId;
 }
 
 QString Playlist::name() const
 {
+    assertMainThread();
+
     return p->m_name;
 }
 
 int Playlist::index() const
 {
+    assertMainThread();
+
     return p->m_index;
 }
 
 const TrackList& Playlist::tracks() const
 {
+    assertMainThread();
+
     return p->m_tracks;
 }
 
 PlaylistTrackList Playlist::playlistTracks() const
 {
+    assertMainThread();
+
     PlaylistTrackList tracks;
     for(int i{0}; const auto& track : p->m_tracks) {
         const UId entryId = std::cmp_less(i, p->m_trackEntryIds.size()) ? p->m_trackEntryIds.at(i) : UId{};
@@ -879,36 +851,50 @@ PlaylistTrackList Playlist::playlistTracks() const
 
 std::optional<Track> Playlist::track(int index) const
 {
+    assertMainThread();
+
     return p->getTrack(index);
 }
 
 std::optional<PlaylistTrack> Playlist::playlistTrack(int index) const
 {
+    assertMainThread();
+
     return p->getPlaylistTrack(index);
 }
 
 std::optional<PlaylistTrack> Playlist::playlistTrack(const UId& entryId) const
 {
+    assertMainThread();
+
     return playlistTrack(indexOfTrackEntry(entryId));
 }
 
 int Playlist::trackCount() const
 {
+    assertMainThread();
+
     return static_cast<int>(p->m_tracks.size());
 }
 
 int Playlist::indexOfTrackEntry(const UId& entryId) const
 {
+    assertMainThread();
+
     return p->indexOfTrackEntry(entryId);
 }
 
 int Playlist::currentTrackIndex() const
 {
+    assertMainThread();
+
     return p->m_currentTrackIndex;
 }
 
 Track Playlist::currentTrack() const
 {
+    assertMainThread();
+
     if(p->m_currentTrackIndex >= 0 && p->m_currentTrackIndex < trackCount()) {
         return p->m_tracks.at(p->m_currentTrackIndex);
     }
@@ -918,75 +904,90 @@ Track Playlist::currentTrack() const
 
 bool Playlist::modified() const
 {
+    assertMainThread();
+
     return p->m_modified;
 }
 
 bool Playlist::tracksModified() const
 {
+    assertMainThread();
+
     return p->m_tracksModified;
 }
 
 bool Playlist::isTemporary() const
 {
+    assertMainThread();
+
     return p->m_isTemporary;
 }
 
 bool Playlist::isAutoPlaylist() const
 {
+    assertMainThread();
+
     return p->m_isAutoPlaylist;
 }
 
 bool Playlist::isLocked() const
 {
-    return p->m_extraProps.value(PlaylistLockedProperty) == "1"_L1;
-}
+    assertMainThread();
 
-void Playlist::setLocked(bool locked)
-{
-    if(locked) {
-        setExtraProperty(PlaylistLockedProperty, u"1"_s);
-    }
-    else {
-        removeExtraProperty(PlaylistLockedProperty);
-    }
+    return p->m_extraProps.value(PlaylistLockedProperty) == "1"_L1;
 }
 
 QString Playlist::query() const
 {
+    assertMainThread();
+
     return p->m_query;
 }
 
 QString Playlist::sortQuery() const
 {
+    assertMainThread();
+
     return p->m_sortQuery;
 }
 
 bool Playlist::forceSorted() const
 {
+    assertMainThread();
+
     return p->m_forceSorted;
 }
 
 TrackList Playlist::autoPlaylistTracks(const TrackList& tracks) const
 {
+    assertMainThread();
+
     if(!isAutoPlaylist()) {
         return p->m_tracks;
     }
 
-    return p->updatedAutoTracks(tracks);
+    return calculateAutoPlaylistTracks(tracks, p->m_tracks, p->m_query, p->m_sortQuery, p->m_forceSorted,
+                                       TrackQueryFilter::defaultSearchOptions());
 }
 
 bool Playlist::hasExtraProperty(const QString& prop) const
 {
+    assertMainThread();
+
     return p->m_extraProps.contains(prop);
 }
 
 Playlist::ExtraProperties Playlist::extraProperties() const
 {
+    assertMainThread();
+
     return p->m_extraProps;
 }
 
 void Playlist::setExtraProperty(const QString& prop, const QString& value)
 {
+    assertMainThread();
+
     if(prop.isEmpty()) {
         return;
     }
@@ -1007,6 +1008,8 @@ void Playlist::setExtraProperty(const QString& prop, const QString& value)
 
 void Playlist::removeExtraProperty(const QString& prop)
 {
+    assertMainThread();
+
     if(p->m_extraProps.erase(prop)) {
         p->m_modified = true;
     }
@@ -1014,6 +1017,8 @@ void Playlist::removeExtraProperty(const QString& prop)
 
 void Playlist::clearExtraProperties()
 {
+    assertMainThread();
+
     if(!p->m_extraProps.empty()) {
         p->m_extraProps.clear();
         p->m_modified = true;
@@ -1022,6 +1027,8 @@ void Playlist::clearExtraProperties()
 
 QByteArray Playlist::serialiseExtraProperties() const
 {
+    assertMainThread();
+
     if(p->m_extraProps.empty()) {
         return {};
     }
@@ -1037,6 +1044,8 @@ QByteArray Playlist::serialiseExtraProperties() const
 
 void Playlist::storeExtraProperties(const QByteArray& props)
 {
+    assertMainThread();
+
     p->m_extraProps.clear();
 
     if(props.isEmpty()) {
@@ -1055,6 +1064,8 @@ void Playlist::storeExtraProperties(const QByteArray& props)
 
 bool Playlist::regenerateTracks(const TrackList& tracks)
 {
+    assertMainThread();
+
     if(!isAutoPlaylist()) {
         return false;
     }
@@ -1071,16 +1082,22 @@ bool Playlist::regenerateTracks(const TrackList& tracks)
 
 int Playlist::nextIndex(int delta, PlayModes mode)
 {
+    assertMainThread();
+
     return p->getNextIndex(delta, mode, true);
 }
 
 int Playlist::nextIndexFrom(int currentIndex, int delta, PlayModes mode)
 {
+    assertMainThread();
+
     return p->getNextIndexFrom(currentIndex, delta, mode, true);
 }
 
 int Playlist::firstIndex(PlayModes mode)
 {
+    assertMainThread();
+
     if(trackCount() <= 0) {
         return -1;
     }
@@ -1121,6 +1138,8 @@ int Playlist::firstIndex(PlayModes mode)
 
 int Playlist::lastIndex(PlayModes mode)
 {
+    assertMainThread();
+
     if(trackCount() <= 0) {
         return -1;
     }
@@ -1161,26 +1180,36 @@ int Playlist::lastIndex(PlayModes mode)
 
 int Playlist::randomTrackIndexFrom(const int currentIndex)
 {
+    assertMainThread();
+
     return p->randomTrackIndexFrom(currentIndex);
 }
 
 int Playlist::randomAlbumIndexFrom(const int currentIndex)
 {
+    assertMainThread();
+
     return p->randomAlbumIndexFrom(currentIndex);
 }
 
 int Playlist::previousAlbumIndexFrom(const int currentIndex, const PlayModes mode)
 {
+    assertMainThread();
+
     return p->adjacentAlbumIndexFrom(currentIndex, -1, mode);
 }
 
 int Playlist::nextAlbumIndexFrom(const int currentIndex, const PlayModes mode)
 {
+    assertMainThread();
+
     return p->adjacentAlbumIndexFrom(currentIndex, 1, mode);
 }
 
 Track Playlist::nextTrack(int delta, PlayModes mode)
 {
+    assertMainThread();
+
     const int index = p->getNextIndex(delta, mode, true);
 
     if(index < 0 || index >= trackCount()) {
@@ -1192,6 +1221,8 @@ Track Playlist::nextTrack(int delta, PlayModes mode)
 
 Track Playlist::nextTrackFrom(int currentIndex, int delta, PlayModes mode)
 {
+    assertMainThread();
+
     const int index = p->getNextIndexFrom(currentIndex, delta, mode, true);
 
     if(index < 0 || index >= trackCount()) {
@@ -1203,6 +1234,8 @@ Track Playlist::nextTrackFrom(int currentIndex, int delta, PlayModes mode)
 
 Track Playlist::nextTrackChangeFrom(int currentIndex, int delta, PlayModes mode)
 {
+    assertMainThread();
+
     p->m_currentTrackIndex = currentIndex;
     p->syncShuffleStateToCurrentTrack();
 
@@ -1220,6 +1253,8 @@ Track Playlist::nextTrackChangeFrom(int currentIndex, int delta, PlayModes mode)
 
 Track Playlist::nextTrackChange(int delta, PlayModes mode)
 {
+    assertMainThread();
+
     const int index = p->getNextIndex(delta, mode, false);
 
     if(index < 0 || index >= trackCount()) {
@@ -1234,12 +1269,16 @@ Track Playlist::nextTrackChange(int delta, PlayModes mode)
 
 void Playlist::changeCurrentIndex(int index)
 {
+    assertMainThread();
+
     p->m_currentTrackIndex = index;
     p->syncShuffleStateToCurrentTrack();
 }
 
 void Playlist::reset()
 {
+    assertMainThread();
+
     p->m_trackShuffleOrder.clear();
     p->m_trackShuffleIndex = -1;
 
@@ -1251,6 +1290,8 @@ void Playlist::reset()
 
 void Playlist::resetFlags()
 {
+    assertMainThread();
+
     p->m_modified       = false;
     p->m_tracksModified = false;
 }
@@ -1286,6 +1327,8 @@ std::unique_ptr<Playlist> Playlist::createAuto(int dbId, const QString& name, in
 
 void Playlist::setName(const QString& name)
 {
+    assertMainThread();
+
     if(std::exchange(p->m_name, name) != name) {
         p->m_modified = true;
     }
@@ -1293,11 +1336,17 @@ void Playlist::setName(const QString& name)
 
 void Playlist::setDbId(int id)
 {
-    p->m_dbId = id;
+    assertMainThread();
+
+    if(std::exchange(p->m_dbId, id) != id) {
+        ++p->m_contentRevision;
+    }
 }
 
 void Playlist::setIndex(int index)
 {
+    assertMainThread();
+
     if(std::exchange(p->m_index, index) != index) {
         p->m_modified = true;
     }
@@ -1305,42 +1354,131 @@ void Playlist::setIndex(int index)
 
 void Playlist::setQuery(const QString& query)
 {
+    assertMainThread();
+
     if(std::exchange(p->m_query, query) != query) {
+        ++p->m_contentRevision;
         p->m_modified = true;
     }
 }
 
 void Playlist::setSortQuery(const QString& query)
 {
+    assertMainThread();
+
     if(std::exchange(p->m_sortQuery, query) != query) {
+        ++p->m_contentRevision;
         p->m_modified = true;
     }
 }
 
 void Playlist::setForceSorted(bool forceSorted)
 {
+    assertMainThread();
+
     if(std::exchange(p->m_forceSorted, forceSorted) != forceSorted) {
+        ++p->m_contentRevision;
         p->m_modified = true;
+    }
+}
+
+void Playlist::setLocked(bool locked)
+{
+    assertMainThread();
+
+    if(locked) {
+        setExtraProperty(PlaylistLockedProperty, u"1"_s);
+    }
+    else {
+        removeExtraProperty(PlaylistLockedProperty);
     }
 }
 
 void Playlist::setModified(bool modified)
 {
+    assertMainThread();
+
     p->m_modified = modified;
 }
 
 void Playlist::setTracksModified(bool modified)
 {
+    assertMainThread();
+
     p->m_tracksModified = modified;
+}
+
+uint64_t Playlist::contentRevision() const
+{
+    assertMainThread();
+
+    return p->m_contentRevision;
+}
+
+TrackList Playlist::calculateAutoPlaylistTracks(const TrackList& libraryTracks, const TrackList& previousTracks,
+                                                const QString& query, const QString& sortQuery, bool forceSorted,
+                                                const ScriptSearchOptions& searchOptions)
+{
+    QString fullQuery{query};
+    if(!sortQuery.isEmpty()) {
+        if(!fullQuery.isEmpty()) {
+            fullQuery.append(u' ');
+        }
+        fullQuery.append(sortQuery);
+    }
+
+    TrackQueryFilter filter{searchOptions};
+    TrackList filteredTracks = filter.filter(fullQuery, libraryTracks);
+
+    if(forceSorted) {
+        return filteredTracks;
+    }
+
+    std::unordered_map<QString, std::vector<int>> filteredIndexes;
+    filteredIndexes.reserve(filteredTracks.size());
+
+    for(int i{0}; std::cmp_less(i, filteredTracks.size()); ++i) {
+        filteredIndexes[filteredTracks[i].identityKey()].push_back(i);
+    }
+
+    std::vector<char> used(filteredTracks.size(), false);
+
+    TrackList updatedTracks;
+    updatedTracks.reserve(filteredTracks.size());
+
+    for(const auto& track : previousTracks) {
+        const auto it = filteredIndexes.find(track.identityKey());
+        if(it == filteredIndexes.end()) {
+            continue;
+        }
+
+        const auto available = std::ranges::find_if(it->second, [&used](int index) { return !used[index]; });
+        if(available != it->second.cend()) {
+            updatedTracks.emplace_back(filteredTracks[*available]);
+            used[*available] = true;
+        }
+    }
+
+    for(size_t i{0}; i < filteredTracks.size(); ++i) {
+        if(!used[i]) {
+            updatedTracks.emplace_back(filteredTracks[i]);
+        }
+    }
+
+    return updatedTracks;
 }
 
 void Playlist::replaceTracks(const TrackList& tracks)
 {
+    assertMainThread();
+
     replaceTracks(PlaylistTrack::fromTracks(tracks, p->m_id));
 }
 
 void Playlist::replaceTracks(const PlaylistTrackList& tracks)
 {
+    assertMainThread();
+
     const PlaylistTrackList updatedTracks = PlaylistTrack::updateIndexes(tracks);
     const PlaylistTrackList currentTracks{playlistTracks()};
 
@@ -1354,35 +1492,98 @@ void Playlist::replaceTracks(const PlaylistTrackList& tracks)
                                                    });
 
     if(tracksChanged) {
-        const int previousCurrentIndex = currentTrackIndex();
-        const UId previousCurrentEntry
-            = playlistTrack(previousCurrentIndex).has_value() ? playlistTrack(previousCurrentIndex)->entryId : UId{};
+        replaceTracksUnchecked(updatedTracks);
+    }
+}
 
-        p->replacePlaylistTracks(updatedTracks);
-        p->m_tracksModified = true;
-        p->m_trackShuffleOrder.clear();
-        p->m_albumGroupOrder.clear();
-        p->m_albumShuffleOrder.clear();
+void Playlist::replaceTracksUnchecked(const PlaylistTrackList& tracks)
+{
+    assertMainThread();
 
-        if(previousCurrentEntry.isValid()) {
-            changeCurrentIndex(indexOfTrackEntry(previousCurrentEntry));
-        }
-        else if(trackCount() == 0 || previousCurrentIndex < 0) {
-            changeCurrentIndex(-1);
-        }
-        else {
-            changeCurrentIndex(std::min(previousCurrentIndex, trackCount() - 1));
+    const int previousCurrentIndex = currentTrackIndex();
+    const UId previousCurrentEntry
+        = playlistTrack(previousCurrentIndex).has_value() ? playlistTrack(previousCurrentIndex)->entryId : UId{};
+
+    p->replacePlaylistTracks(tracks);
+    ++p->m_contentRevision;
+    p->m_tracksModified = true;
+    p->m_trackShuffleOrder.clear();
+    p->m_albumGroupOrder.clear();
+    p->m_albumShuffleOrder.clear();
+
+    if(previousCurrentEntry.isValid()) {
+        changeCurrentIndex(indexOfTrackEntry(previousCurrentEntry));
+    }
+    else if(trackCount() == 0 || previousCurrentIndex < 0) {
+        changeCurrentIndex(-1);
+    }
+    else {
+        changeCurrentIndex(std::min(previousCurrentIndex, trackCount() - 1));
+    }
+}
+
+void Playlist::applyTrackChanges(const PlaylistTrackList& tracks, const PlaylistChangeset& changeSet)
+{
+    assertMainThread();
+
+    if(changeSet.isEmpty()) {
+        return;
+    }
+
+    // A model reset can also represent a large metadata update
+    if(!std::ranges::equal(p->m_trackEntryIds, tracks, {}, std::identity{}, &PlaylistTrack::entryId)) {
+        replaceTracksUnchecked(tracks);
+        return;
+    }
+
+    if(changeSet.updatedEntries.empty()) {
+        return;
+    }
+
+    const TrackEntryIdSet updatedEntries{changeSet.updatedEntries.cbegin(), changeSet.updatedEntries.cend()};
+    bool metadataChanged{false};
+    for(size_t i{0}; i < tracks.size(); ++i) {
+        const auto& track = tracks.at(i);
+        if(updatedEntries.contains(track.entryId) && !p->m_tracks.at(i).sameDataAs(track.track)) {
+            p->m_tracks[i]  = track.track;
+            metadataChanged = true;
         }
     }
+
+    if(metadataChanged) {
+        ++p->m_contentRevision;
+        p->m_tracksModified = true;
+        p->m_albumGroupOrder.clear();
+        p->m_albumShuffleOrder.clear();
+    }
+}
+
+std::vector<int> Playlist::updateTrackMetadata(const TrackList& tracks)
+{
+    assertMainThread();
+
+    auto indexes = Utils::updateCommonTracks(p->m_tracks, tracks, Utils::CommonOperation::UpdateChanged);
+    if(!indexes.empty()) {
+        ++p->m_contentRevision;
+        p->m_albumGroupOrder.clear();
+        p->m_albumShuffleOrder.clear();
+        if(p->m_isAutoPlaylist) {
+            p->m_tracksModified = true;
+        }
+    }
+    return indexes;
 }
 
 void Playlist::appendTracks(const TrackList& tracks)
 {
+    assertMainThread();
+
     if(tracks.empty()) {
         return;
     }
 
     const PlaylistTrackList playlistTracks = PlaylistTrack::fromTracks(tracks, p->m_id);
+    p->m_trackEntryIndexes.reset();
     p->m_tracks.reserve(p->m_tracks.size() + playlistTracks.size());
     p->m_trackEntryIds.reserve(p->m_trackEntryIds.size() + playlistTracks.size());
 
@@ -1391,6 +1592,7 @@ void Playlist::appendTracks(const TrackList& tracks)
         p->m_trackEntryIds.emplace_back(playlistTrack.entryId);
     }
 
+    ++p->m_contentRevision;
     p->m_tracksModified = true;
     p->m_trackShuffleOrder.clear();
     p->m_albumGroupOrder.clear();
@@ -1399,17 +1601,22 @@ void Playlist::appendTracks(const TrackList& tracks)
 
 void Playlist::updateTrackAtIndex(int index, const Track& track)
 {
+    assertMainThread();
+
     if(index < 0 || std::cmp_greater_equal(index, p->m_tracks.size())) {
         return;
     }
 
-    if(p->m_tracks.at(index).sameIdentityAs(track)) {
+    if(p->m_tracks.at(index).sameIdentityAs(track) && !p->m_tracks.at(index).sameDataAs(track)) {
         p->m_tracks[index] = track;
+        ++p->m_contentRevision;
     }
 }
 
 std::vector<int> Playlist::removeTracks(const std::vector<int>& indexes)
 {
+    assertMainThread();
+
     if(indexes.empty()) {
         return {};
     }
@@ -1467,6 +1674,7 @@ std::vector<int> Playlist::removeTracks(const std::vector<int>& indexes)
         p->m_tracks.erase(p->m_tracks.begin() + index);
         if(std::cmp_less(index, p->m_trackEntryIds.size())) {
             p->m_trackEntryIds.erase(p->m_trackEntryIds.begin() + index);
+            p->m_trackEntryIndexes.reset();
         }
         removedIndexes.emplace_back(index);
 
@@ -1483,6 +1691,9 @@ std::vector<int> Playlist::removeTracks(const std::vector<int>& indexes)
     std::erase_if(p->m_trackShuffleOrder, [](int num) { return num < 0; });
 
     changeCurrentIndex(adjustedTrackIndex);
+    if(!removedIndexes.empty()) {
+        ++p->m_contentRevision;
+    }
     p->m_tracksModified = true;
     p->m_albumGroupOrder.clear();
 

@@ -24,6 +24,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/colourbutton.h>
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <gui/widgets/slidereditor.h>
 #include <utils/settings/settingsmanager.h>
@@ -88,6 +89,7 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     auto* searchGroupLayout = new QGridLayout(searchGroup);
 
     m_autosearchDelay->setRange(0, 3);
+    m_autosearchDelay->setPageStep(1);
     m_autosearchDelay->addSpecialValue(0, tr("Very fast"));
     m_autosearchDelay->addSpecialValue(1, tr("Fast"));
     m_autosearchDelay->addSpecialValue(2, tr("Medium"));
@@ -102,15 +104,14 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     matchingGroupLayout->addWidget(new QLabel(tr("Search script") + ":"_L1, this), row, 0);
     matchingGroupLayout->addWidget(m_searchScript, row++, 1, 1, 2);
     matchingGroupLayout->addWidget(
-        new QLabel(u"🛈 "_s + tr("These settings are used for plain text searches, not query expressions."), this),
-        row++, 0, 1, 3);
+        new HintLabel(tr("These settings are used for plain text searches, not query expressions."), this), row++, 0, 1,
+        3);
     matchingGroupLayout->setColumnStretch(2, 1);
 
     row = 0;
     searchGroupLayout->addWidget(m_clearOnSuccess, row++, 0, 1, 2);
     searchGroupLayout->addWidget(m_closeOnSuccess, row++, 0, 1, 2);
-    searchGroupLayout->addWidget(new QLabel(u"🛈 "_s + tr("Only applies when autosearch is disabled."), this), row++, 0,
-                                 1, 2);
+    searchGroupLayout->addWidget(new HintLabel(tr("Only applies when autosearch is disabled."), this), row++, 0, 1, 2);
     searchGroupLayout->addWidget(m_autosearchDelay, row++, 0, 1, 2);
     ColourButton::alignLabels({m_failBgColour, m_failFgColour});
     searchGroupLayout->addWidget(m_failBgColour, row++, 0, 1, 2);
@@ -142,7 +143,7 @@ void SearchPageWidget::load()
     m_autosearchDelay->setValue(m_settings->value<Settings::Gui::SearchAutoDelay>());
     m_searchMode->setCurrentIndex(m_searchMode->findData(
         m_settings->fileValue(Settings::Core::SearchModeKey, TrackQueryFilter::DefaultSearchMode).toInt()));
-    m_searchScript->setText(
+    m_searchScript->setScript(
         m_settings
             ->fileValue(Settings::Core::SearchScriptKey, QString::fromLatin1(TrackQueryFilter::DefaultSearchScript))
             .toString());

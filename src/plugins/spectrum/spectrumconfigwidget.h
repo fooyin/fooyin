@@ -29,6 +29,7 @@ class QGroupBox;
 class QSpinBox;
 
 namespace Fooyin {
+class BackgroundConfigWidget;
 class ColourButton;
 class FontButton;
 class GradientEditor;
@@ -96,6 +97,7 @@ private:
     ColourButton* m_octaveGridColour;
     ColourButton* m_whiteKeyColour;
     ColourButton* m_blackKeyColour;
+    BackgroundConfigWidget* m_background;
 };
 } // namespace Spectrum
 } // namespace Fooyin

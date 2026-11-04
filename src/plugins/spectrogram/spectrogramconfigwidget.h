@@ -28,10 +28,11 @@ class QComboBox;
 class QSpinBox;
 
 namespace Fooyin {
+class ColourButton;
 class GradientEditor;
 
 namespace Spectrogram {
-class SpectrogramConfigDialog : public WidgetConfigDialog<SpectrogramWidget, SpectrogramWidget::ConfigData>
+class SpectrogramConfigDialog : public WidgetConfigDialog<SpectrogramWidget, SpectrogramConfig>
 {
     Q_OBJECT
 
@@ -39,22 +40,33 @@ public:
     explicit SpectrogramConfigDialog(SpectrogramWidget* widget, QWidget* parent = nullptr);
 
 protected:
-    [[nodiscard]] SpectrogramWidget::ConfigData config() const override;
-    void setConfig(const SpectrogramWidget::ConfigData& config) override;
-    void mergeExternalConfig(const SpectrogramWidget::ConfigData& previous,
-                             const SpectrogramWidget::ConfigData& current) override;
+    [[nodiscard]] SpectrogramConfig config() const override;
+    void setConfig(const SpectrogramConfig& config) override;
+    void mergeExternalConfig(const SpectrogramConfig& previous, const SpectrogramConfig& current) override;
 
 private:
     QCheckBox* m_logFrequency;
     QCheckBox* m_clearOnTrackChange;
     QComboBox* m_channelMode;
     QComboBox* m_presentationMode;
+    QComboBox* m_trackPreference;
+    QCheckBox* m_showTopLabels;
+    QCheckBox* m_showBottomLabels;
+    QCheckBox* m_showLeftLabels;
+    QCheckBox* m_showRightLabels;
+    QCheckBox* m_showCursor;
+    QSpinBox* m_cursorWidth;
     QSpinBox* m_channelSpacing;
     QComboBox* m_fftSize;
+    QComboBox* m_timeColumns;
     QComboBox* m_windowFunction;
     QSpinBox* m_minDb;
     QSpinBox* m_maxDb;
     GradientEditor* m_colours;
+    ColourButton* m_cursorColour;
+    ColourButton* m_seekingCursorColour;
+    ColourButton* m_playedOverlayColour;
+    ColourButton* m_unplayedOverlayColour;
 };
 } // namespace Spectrogram
 } // namespace Fooyin

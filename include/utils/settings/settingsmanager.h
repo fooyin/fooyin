@@ -26,13 +26,14 @@
 #include <QLoggingCategory>
 #include <QMetaEnum>
 
+#include <deque>
+#include <memory>
 #include <mutex>
 #include <shared_mutex>
 
 Q_DECLARE_LOGGING_CATEGORY(SETTINGS)
 
 class QMainWindow;
-class QSettings;
 
 namespace Fooyin {
 class SettingsEntry;
@@ -74,25 +75,37 @@ concept ValidValueType
    || IsString<key, Value> || IsStringList<key, Value> || IsByteArray<key, Value>;
 
 /*!
- * Manages all settings in the application.
- * Settings can be used in one of three ways:
+ * Manages application settings, their default values and change notifications.
  *
- * - Unregistered: Use fileSet, fileValue to read/write to the settings file directly.
- * - Registered (string key): Use createSetting to register, and value/set with the same key.
- * - Registered (enum value key): Use createSetting<key> to register, and value<key>/set<key> with the same key.
+ * Settings can be accessed in three ways:
  *
- * Settings which are registered can be 'subscribed' to using @fn subscribe, after which the passed in function
- * will be called when the setting value changes. The changed value will be passed to the function as a QVariant
- * if the setting was registered using a string key, or it will be cast to the associated type in the enum value
- * (if set).
+ * - String keys: register a setting with @c createSetting(), then use @c value() and @c set() with its key.
+ *   Values are stored and delivered to subscribers as QVariant.
+ * - Enum keys: register a setting with @c createSetting<key>(), then use @c value<key>() and @c set<key>().
+ *   Enum keys can encode a Settings::Type to enable compile-time value checks and typed subscriber arguments.
+ * - Direct file access: use @c fileValue(), @c fileSet(), @c fileContains() and @c fileRemove() without registration.
+ *   These methods bypass registered values and do not notify subscribers.
  *
- * In order to create a setting using an enum value, the enum should use uint32_t as it's underlying type, and
- * Q_ENUM (or Q_ENUM_NS) should be used (so the enum name can be found). Values can be associated with a type to support
- * compile-time checking of values, and for subscribers to receive the value cast to the correct type.
+ * Register a setting before reading, changing or subscribing to it. Registration loads its saved value, if present,
+ * or uses the supplied default. @c set() changes the value in memory; @c storeSettings() saves changed settings and
+ * @c storeAllSettings() saves all registered settings. Settings registered with @c createTempSetting() are neither
+ * loaded from nor saved to the file.
  *
- * @see CoreSettings
+ * Enum keys must use uint32_t as their underlying type and be exposed through Q_ENUM or Q_ENUM_NS. Combine each
+ * enumerator with a Settings::Type value to specify its value type; untyped keys use QVariant.
+ *
+ * Use @c subscribe() with a receiver object and callback to receive changes. The receiver controls the connection's
+ * lifetime and callback thread through Qt's automatic connection semantics. Notifications contain a snapshot of the
+ * changed value, so a subsequent read may return a newer value.
+ *
+ * Registration, value access, persistence and subscription methods support concurrent calls. Notifications are emitted
+ * in change order on the manager's thread, after releasing the settings lock, so callbacks can safely read or change
+ * settings.
+ *
+ * Settings dialog creation, access and use are restricted to the main thread.
+ *
+ * @see Settings::Core::CoreSettings
  * @see Settings::Type
- *
  */
 class FYUTILS_EXPORT SettingsManager : public QObject
 {
@@ -101,12 +114,18 @@ class FYUTILS_EXPORT SettingsManager : public QObject
 public:
     explicit SettingsManager(const QString& settingsPath, QObject* parent = nullptr);
 
+    /*!
+     * Creates the settings dialog controller using @p mainWindow as the parent window.
+     * @note this method must only be called on the main thread. The controller is available through @c
+     * settingsDialog().
+     */
     void createSettingsDialog(QMainWindow* mainWindow);
 
     /*!
      * Returns the settings dialog controller which can be used to open a specific settings page.
      * @note this will return a nullptr before the GuiApplication is initialised, so plugins should
      * only call this in the GuiPlugin @fn initialise method at the earliest.
+     * This accessor and the returned controller must only be used on the main thread.
      */
     [[nodiscard]] SettingsDialogController* settingsDialog() const;
 
@@ -216,12 +235,12 @@ public:
     {
         const auto mapKey = getMapKey(key);
 
-        const std::shared_lock lock(m_lock);
+        const std::shared_lock lock{m_lock};
 
         QVariant settingValue;
 
         if(m_settings.contains(mapKey)) {
-            if(auto* setting = m_settings.at(mapKey)) {
+            if(auto* setting = m_settings.at(mapKey).get()) {
                 settingValue = setting->value();
             }
         }
@@ -262,14 +281,12 @@ public:
     QString settingKey() const
     {
         const auto mapKey = getMapKey(key);
-
         const std::shared_lock lock{m_lock};
-
         if(!m_settings.contains(mapKey)) {
             return {};
         }
 
-        const SettingsEntry* setting = m_settings.at(mapKey);
+        const SettingsEntry* setting = m_settings.at(mapKey).get();
         return setting ? setting->key() : QString{};
     }
 
@@ -281,14 +298,12 @@ public:
     QVariant defaultValue() const
     {
         const auto mapKey = getMapKey(key);
-
         const std::shared_lock lock{m_lock};
-
         if(!m_settings.contains(mapKey)) {
             return {};
         }
 
-        const SettingsEntry* setting = m_settings.at(mapKey);
+        const SettingsEntry* setting = m_settings.at(mapKey).get();
         return setting ? setting->defaultValue() : QVariant{};
     }
 
@@ -304,24 +319,21 @@ public:
     bool set(Value value)
     {
         const QString mapKey = getMapKey(key);
-
-        std::unique_lock lock(m_lock);
-
-        if(!m_settings.contains(mapKey)) {
+        std::unique_lock lock{m_lock};
+        const auto it = m_settings.find(mapKey);
+        if(it == m_settings.end()) {
             return false;
         }
 
-        SettingsEntry* setting = m_settings.at(mapKey);
-
-        const bool success = setting && setting->setValue(value);
-
-        lock.unlock();
-
-        if(success) {
-            setting->notifySubscribers();
+        SettingsEntry* setting = it->second.get();
+        if(!setting->setValue(value)) {
+            return false;
         }
 
-        return success;
+        m_notifications.emplace_back(setting, setting->value());
+        lock.unlock();
+        notifySubscribers();
+        return true;
     }
 
     /*!
@@ -335,14 +347,12 @@ public:
     bool setSilently(Value value)
     {
         const QString mapKey = getMapKey(key);
-
-        const std::unique_lock lock(m_lock);
-
+        const std::unique_lock lock{m_lock};
         if(!m_settings.contains(mapKey)) {
             return false;
         }
 
-        SettingsEntry* setting = m_settings.at(mapKey);
+        SettingsEntry* setting = m_settings.at(mapKey).get();
         return setting && setting->setValue(value);
     }
 
@@ -356,26 +366,19 @@ public:
     bool reset()
     {
         const auto mapKey = getMapKey(key);
-
-        std::unique_lock lock(m_lock);
-
-        if(!m_settings.contains(mapKey)) {
-            m_lock.unlock();
+        std::unique_lock lock{m_lock};
+        const auto it = m_settings.find(mapKey);
+        if(it == m_settings.end() || !it->second->reset()) {
             return false;
         }
 
-        SettingsEntry* setting = m_settings.at(mapKey);
+        SettingsEntry* setting = it->second.get();
+        fileRemove(setting->key());
 
-        const bool success = setting && setting->reset();
-
+        m_notifications.emplace_back(setting, setting->value());
         lock.unlock();
-
-        if(success) {
-            fileRemove(setting->key());
-            setting->notifySubscribers();
-        }
-
-        return success;
+        notifySubscribers();
+        return true;
     }
 
     /*!
@@ -387,23 +390,18 @@ public:
     bool refresh()
     {
         const auto mapKey = getMapKey(key);
-
-        std::shared_lock lock{m_lock};
-
-        if(!m_settings.contains(mapKey)) {
+        std::unique_lock lock{m_lock};
+        const auto it = m_settings.find(mapKey);
+        if(it == m_settings.end()) {
             return false;
         }
 
-        SettingsEntry* setting = m_settings.at(mapKey);
+        SettingsEntry* setting = it->second.get();
 
+        m_notifications.emplace_back(setting, setting->value());
         lock.unlock();
-
-        if(setting) {
-            setting->notifySubscribers();
-            return true;
-        }
-
-        return false;
+        notifySubscribers();
+        return true;
     }
 
     /*!
@@ -416,11 +414,12 @@ public:
     template <typename Obj, typename Func>
     void subscribe(QAnyStringView key, const Obj* obj, Func&& func)
     {
-        const std::shared_lock lock(m_lock);
+        const std::shared_lock lock{m_lock};
 
-        auto settingIt = settingEntry(key);
+        const auto settingIt = settingEntry(key);
         if(settingIt != m_settings.cend()) {
-            QObject::connect(settingIt->second, &SettingsEntry::settingChangedVariant, obj, std::forward<Func>(func));
+            QObject::connect(settingIt->second.get(), &SettingsEntry::settingChangedVariant, obj,
+                             std::forward<Func>(func));
         }
     }
 
@@ -437,43 +436,43 @@ public:
         const auto mapKey = getMapKey(key);
         const auto type   = findType<key>();
 
-        const std::shared_lock lock(m_lock);
+        const std::shared_lock lock{m_lock};
 
         if(m_settings.contains(mapKey)) {
             if constexpr(type == Settings::Variant) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, obj,
+                QObject::connect(m_settings.at(mapKey).get(), &SettingsEntry::settingChangedVariant, obj,
                                  std::forward<Func>(func));
             }
             else if constexpr(type == Settings::Bool) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedBool, obj,
+                QObject::connect(m_settings.at(mapKey).get(), &SettingsEntry::settingChangedBool, obj,
                                  std::forward<Func>(func));
             }
             else if constexpr(type == Settings::Float) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedFloat, obj,
+                QObject::connect(m_settings.at(mapKey).get(), &SettingsEntry::settingChangedFloat, obj,
                                  std::forward<Func>(func));
             }
             else if constexpr(type == Settings::Double) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedDouble, obj,
+                QObject::connect(m_settings.at(mapKey).get(), &SettingsEntry::settingChangedDouble, obj,
                                  std::forward<Func>(func));
             }
             else if constexpr(type == Settings::Int) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedInt, obj,
+                QObject::connect(m_settings.at(mapKey).get(), &SettingsEntry::settingChangedInt, obj,
                                  std::forward<Func>(func));
             }
             else if constexpr(type == Settings::String) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedString, obj,
+                QObject::connect(m_settings.at(mapKey).get(), &SettingsEntry::settingChangedString, obj,
                                  std::forward<Func>(func));
             }
             else if constexpr(type == Settings::StringList) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedStringList, obj,
+                QObject::connect(m_settings.at(mapKey).get(), &SettingsEntry::settingChangedStringList, obj,
                                  std::forward<Func>(func));
             }
             else if constexpr(type == Settings::ByteArray) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedByteArray, obj,
+                QObject::connect(m_settings.at(mapKey).get(), &SettingsEntry::settingChangedByteArray, obj,
                                  std::forward<Func>(func));
             }
             else {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, obj,
+                QObject::connect(m_settings.at(mapKey).get(), &SettingsEntry::settingChangedVariant, obj,
                                  std::forward<Func>(func));
             }
         }
@@ -488,11 +487,11 @@ public:
     template <typename Obj>
     void unsubscribe(QAnyStringView key, const Obj* obj)
     {
-        const std::shared_lock lock(m_lock);
+        const std::shared_lock lock{m_lock};
 
-        auto settingIt = settingEntry(key);
+        const auto settingIt = settingEntry(key);
         if(settingIt != m_settings.cend()) {
-            QObject::disconnect(settingIt->second, nullptr, obj, nullptr);
+            QObject::disconnect(settingIt->second.get(), nullptr, obj, nullptr);
         }
     }
 
@@ -507,10 +506,10 @@ public:
     {
         const auto mapKey = getMapKey(key);
 
-        const std::shared_lock lock(m_lock);
+        const std::shared_lock lock{m_lock};
 
         if(m_settings.contains(mapKey)) {
-            QObject::disconnect(m_settings.at(mapKey), nullptr, obj, nullptr);
+            QObject::disconnect(m_settings.at(mapKey).get(), nullptr, obj, nullptr);
         }
     }
 
@@ -526,7 +525,7 @@ private:
         const auto keyString = QString::fromLatin1(meta.valueToKey(key));
         const auto mapKey    = enumName + keyString;
 
-        const std::unique_lock lock(m_lock);
+        const std::unique_lock lock{m_lock};
 
         if(m_settings.contains(mapKey) || settingExists(settingKey)) {
             QLoggingCategory log{"Settings"};
@@ -534,16 +533,7 @@ private:
             return;
         }
 
-        m_settings.emplace(mapKey, new SettingsEntry(settingKey, value, type, this));
-
-        if(auto* setting = m_settings.at(mapKey)) {
-            if(isTemporary) {
-                setting->setIsTemporary(isTemporary);
-            }
-            else {
-                checkLoadSetting(setting);
-            }
-        }
+        addSetting(mapKey, settingKey, value, type, isTemporary);
     }
 
     template <typename Enum>
@@ -557,16 +547,31 @@ private:
         return QString::fromUtf8(mapKey.toUtf8());
     }
 
-    using SettingsMap = std::map<QString, SettingsEntry*>;
+    using SettingsMap = std::map<QString, std::unique_ptr<SettingsEntry>>;
 
     SettingsMap::const_iterator settingEntry(QAnyStringView key) const;
     bool settingExists(QAnyStringView key) const;
     void checkLoadSetting(SettingsEntry* setting) const;
     void saveSettings(bool onlyChanged);
 
-    QSettings* m_settingsFile;
+    void addSetting(const QString& mapKey, const QString& key, const QVariant& value, Settings::Type type,
+                    bool isTemporary);
+    void notifySubscribers();
+    void dispatchNotifications();
+
+    const QString m_settingsPath;
     SettingsMap m_settings;
     mutable std::shared_mutex m_lock;
+
+    struct Notification
+    {
+        SettingsEntry* setting;
+        QVariant value;
+    };
+
+    std::deque<Notification> m_notifications;
+    bool m_notifying;
+    bool m_notificationScheduled;
 
     SettingsDialogController* m_settingsDialog;
 };

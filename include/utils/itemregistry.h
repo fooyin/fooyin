@@ -36,7 +36,6 @@ concept ValidRegistry = requires(T t) {
     { t.id } -> std::convertible_to<int>;
     { t.name } -> std::convertible_to<QString>;
     { t.index } -> std::convertible_to<int>;
-    { t.isDefault } -> std::convertible_to<bool>;
 };
 
 namespace Fooyin {
@@ -56,7 +55,8 @@ Q_SIGNALS:
 /*!
  * Represents a registry of items ordered by index.
  * Items are saved and loaded to/from a QByteArray which is stored in the passed settingKey.
- * @tparam Item A struct or class with public members: int id, int index, QString name.
+ * @tparam Item A struct or class with public members: int id, int index, QString name,
+ * and optionally bool isDefault and bool isEnabled. Items without isDefault are treated as custom items.
  */
 template <typename Item>
     requires ValidRegistry<Item>
@@ -162,14 +162,16 @@ public:
         }
 
         Item changedItem{item};
-        if(itemIt->isDefault) {
+        if(isDefaultItem(*itemIt)) {
             if(m_defaultOverrideKey.isEmpty()) {
                 return false;
             }
 
-            changedItem.id        = itemIt->id;
-            changedItem.index     = itemIt->index;
-            changedItem.isDefault = true;
+            changedItem.id    = itemIt->id;
+            changedItem.index = itemIt->index;
+            if constexpr(requires { changedItem.isDefault = true; }) {
+                changedItem.isDefault = true;
+            }
 
             if(itemIt->name != changedItem.name) {
                 changedItem.name = findUniqueName(changedItem.name);
@@ -248,7 +250,7 @@ public:
 
     bool removeById(int id)
     {
-        if(std::erase_if(m_items, [id](const auto& item) { return !item.isDefault && item.id == id; }) == 0) {
+        if(std::erase_if(m_items, [id](const auto& item) { return !isDefaultItem(item) && item.id == id; }) == 0) {
             return false;
         }
 
@@ -270,10 +272,12 @@ public:
         QDataStream stream(&byteArray, QIODevice::WriteOnly);
         stream.setVersion(QDataStream::Qt_6_0);
 
-        const int customCount = std::ranges::count_if(m_items, [](const auto& regItem) { return !regItem.isDefault; });
+        const int customCount
+            = std::ranges::count_if(m_items, [](const auto& regItem) { return !isDefaultItem(regItem); });
         stream << customCount;
 
-        for(const auto& item : m_items | std::views::filter([](const auto& regItem) { return !regItem.isDefault; })) {
+        for(const auto& item :
+            m_items | std::views::filter([](const auto& regItem) { return !isDefaultItem(regItem); })) {
             stream << item;
         }
 
@@ -338,10 +342,15 @@ public:
 protected:
     virtual void loadDefaults() { }
 
-    void addDefaultItem(const Item& item, bool isEditable = false)
+    void addDefaultItem(const Item& item, bool isEditable = false, bool isEnabled = true)
     {
         Item defaultItem{item};
-        defaultItem.isDefault = !isEditable;
+        if constexpr(requires { defaultItem.isDefault = !isEditable; }) {
+            defaultItem.isDefault = !isEditable;
+        }
+        if constexpr(requires { defaultItem.isEnabled = isEnabled; }) {
+            defaultItem.isEnabled = isEnabled;
+        }
 
         if(defaultItem.name.isEmpty()) {
             defaultItem.name = findUniqueName(defaultItem.name);
@@ -357,6 +366,16 @@ protected:
     }
 
 private:
+    static bool isDefaultItem(const Item& item)
+    {
+        if constexpr(requires { item.isDefault; }) {
+            return item.isDefault;
+        }
+        else {
+            return false;
+        }
+    }
+
     void loadDefaultOverrides()
     {
         m_defaultOverrides.clear();
@@ -393,15 +412,17 @@ private:
     {
         for(const auto& [id, item] : m_defaultOverrides) {
             const auto itemIt = std::ranges::find_if(
-                m_items, [id](const auto& regItem) { return regItem.isDefault && regItem.id == id; });
+                m_items, [id](const auto& regItem) { return isDefaultItem(regItem) && regItem.id == id; });
             if(itemIt == m_items.end()) {
                 continue;
             }
 
             Item updatedItem{item};
-            updatedItem.id        = itemIt->id;
-            updatedItem.index     = itemIt->index;
-            updatedItem.isDefault = true;
+            updatedItem.id    = itemIt->id;
+            updatedItem.index = itemIt->index;
+            if constexpr(requires { updatedItem.isDefault = true; }) {
+                updatedItem.isDefault = true;
+            }
 
             if(itemIt->name != updatedItem.name) {
                 updatedItem.name = findUniqueName(updatedItem.name);

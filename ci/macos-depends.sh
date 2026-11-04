@@ -9,6 +9,7 @@ brew install \
     bison \
     flex \
     cmake \
+    ccache \
     ninja \
     glm \
     qt \

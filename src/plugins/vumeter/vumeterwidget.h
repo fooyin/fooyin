@@ -22,14 +22,19 @@
 #include <core/engine/audioformat.h>
 #include <core/engine/levelframe.h>
 #include <gui/fywidget.h>
+#include <gui/widgets/backgroundconfig.h>
 
 #include <QVariant>
 
 class QJsonObject;
 
 namespace Fooyin {
+class BackgroundImageSource;
+class CoverRepository;
 class PlayerController;
 class SettingsManager;
+class TrackSelectionController;
+class WidgetBackground;
 
 namespace VuMeter {
 class VuMeterWidgetPrivate;
@@ -45,7 +50,8 @@ public:
         Rms
     };
 
-    explicit VuMeterWidget(Type type, PlayerController* playerController, SettingsManager* settings,
+    explicit VuMeterWidget(Type type, PlayerController* playerController, CoverRepository* coverRepository,
+                           TrackSelectionController* selectionController, SettingsManager* settings,
                            QWidget* parent = nullptr);
     ~VuMeterWidget() override;
 
@@ -87,6 +93,7 @@ public:
         int barSections{1};
         int sectionSpacing{1};
         QVariant meterColours;
+        BackgroundConfig background;
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -108,12 +115,13 @@ protected:
     void openConfigDialog() override;
 
 private:
-    [[nodiscard]] Qt::Orientation automaticOrientation() const;
     [[nodiscard]] QString settingsKey(QStringView key) const;
     [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
     void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
 
     SettingsManager* m_settings;
+    BackgroundImageSource* m_backgroundSource;
+    WidgetBackground* m_background;
     ConfigData m_config;
 
     std::unique_ptr<VuMeterWidgetPrivate> p;

@@ -1,0 +1,82 @@
+{
+    "Name": "Simple",
+    "Widgets": [
+        {
+            "SplitterVertical": {
+                "Locked": [
+                    true,
+                    false,
+                    true
+                ],
+                "State": "AAAA/wAAAAEAAAADAAAAHAAAAn0AAAAXAP////8BAAAAAgA=",
+                "Widgets": [
+                    {
+                        "SplitterHorizontal": {
+                            "Locked": [
+                                true,
+                                false,
+                                false,
+                                false
+                            ],
+                            "State": "AAAA/wAAAAEAAAAEAAAAggAABqEAAAA+AAAAHAD/////AQAAAAEA",
+                            "Widgets": [
+                                {
+                                    "PlayerControls": {}
+                                },
+                                {
+                                    "SeekBar": {}
+                                },
+                                {
+                                    "PlaylistControls": {}
+                                },
+                                {
+                                    "VolumeControls": {}
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "SplitterHorizontal": {
+                            "Locked": [
+                                true,
+                                false
+                            ],
+                            "State": "AAAA/wAAAAEAAAACAAAA9QAABAoA/////wEAAAABAA==",
+                            "Widgets": [
+                                {
+                                    "SplitterVertical": {
+                                        "Locked": [
+                                            false,
+                                            true
+                                        ],
+                                        "State": "AAAA/wAAAAEAAAACAAABfQAAAPEA/////wEAAAACAA==",
+                                        "Widgets": [
+                                            {
+                                                "LibraryTree": {}
+                                            },
+                                            {
+                                                "ArtworkPanel": {}
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "PlaylistTabs": {
+                                        "Widgets": [
+                                            {
+                                                "Playlist": {}
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "StatusBar": {}
+                    }
+                ]
+            }
+        }
+    ]
+}

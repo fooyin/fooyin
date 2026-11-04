@@ -30,10 +30,7 @@ Context::Context(const IdList& ids)
     std::ranges::for_each(ids, [this](const Id& id) { append(id); });
 }
 
-bool Context::operator==(const Context& context) const
-{
-    return m_ids == context.m_ids;
-}
+bool Context::operator==(const Context& context) const = default;
 
 int Context::size() const
 {

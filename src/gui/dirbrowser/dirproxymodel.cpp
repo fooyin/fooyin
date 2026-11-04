@@ -20,16 +20,15 @@
 #include "dirproxymodel.h"
 
 #include <gui/guiconstants.h>
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/widgets/autoheaderview.h>
 #include <utils/modelutils.h>
 #include <utils/utils.h>
 
 #include <QAbstractFileIconProvider>
-#include <QApplication>
 #include <QFileInfo>
 #include <QFileSystemModel>
-#include <QPalette>
 #include <QPixmap>
 #include <algorithm>
 
@@ -41,10 +40,9 @@ DirProxyModel::DirProxyModel(bool flat, QObject* parent)
     , m_flat{flat}
     , m_playingState{Player::PlayState::Stopped}
     , m_showIcons{true}
-    , m_playingColour{QApplication::palette().highlight().color()}
+    , m_playingColour{Gui::defaultPlayingRowColour()}
     , m_columnAlignments{Qt::AlignLeft, Qt::AlignRight, Qt::AlignLeft, Qt::AlignLeft}
 {
-    m_playingColour.setAlpha(90);
     setRecursiveFilteringEnabled(true);
 }
 
@@ -72,8 +70,7 @@ void DirProxyModel::reset(const QModelIndex& root)
 
 void DirProxyModel::resetPalette()
 {
-    m_playingColour = QApplication::palette().highlight().color();
-    m_playingColour.setAlpha(90);
+    m_playingColour = Gui::defaultPlayingRowColour();
     Utils::recursiveDataChanged(this, {}, {Qt::BackgroundRole});
 }
 
@@ -240,11 +237,7 @@ QModelIndex DirProxyModel::sibling(int row, int column, const QModelIndex& index
         return {};
     }
 
-    if(row < 0 || std::cmp_greater_equal(row, m_nodes.size())) {
-        return {};
-    }
-
-    return createIndex(row, column, m_nodes.at(row).get());
+    return this->index(row, column);
 }
 
 bool DirProxyModel::hasChildren(const QModelIndex& parent) const

@@ -1,0 +1,76 @@
+/*
+ * Fooyin
+ * Copyright © 2024, Luke Taylor <luket@pm.me>
+ *
+ * Fooyin is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fooyin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#pragma once
+
+#include "fygui_export.h"
+
+#include <QJsonObject>
+
+#include <vector>
+
+namespace Fooyin {
+struct FyTheme;
+
+class FYGUI_EXPORT FyLayout
+{
+    Q_GADGET
+
+public:
+    FyLayout() = default;
+    FyLayout(QString name, QJsonObject json);
+    explicit FyLayout(const QByteArray& file);
+
+    [[nodiscard]] bool isValid() const;
+
+    [[nodiscard]] QString name() const;
+    [[nodiscard]] QJsonObject json() const;
+
+    [[nodiscard]] bool isShownInMenu() const;
+    void setShownInMenu(bool shown);
+
+    [[nodiscard]] bool appliesWindowSize() const;
+    void setAppliesWindowSize(bool enabled);
+    void saveWindowSize();
+    void removeWindowSize();
+    void loadWindowSize() const;
+
+    enum ThemeOption : uint8_t
+    {
+        SaveColours = 1 << 0,
+        SaveFonts   = 1 << 1,
+        All         = SaveColours | SaveFonts
+    };
+    Q_DECLARE_FLAGS(ThemeOptions, ThemeOption)
+    Q_FLAG(ThemeOptions)
+
+    [[nodiscard]] bool appliesTheme() const;
+    void setAppliesTheme(bool enabled);
+    [[nodiscard]] ThemeOptions themeOptions() const;
+    void setThemeOptions(ThemeOptions options);
+    void saveTheme(const FyTheme& theme, ThemeOptions options = All);
+    void removeTheme();
+    [[nodiscard]] FyTheme loadTheme() const;
+
+private:
+    QString m_name;
+    QJsonObject m_json;
+};
+using LayoutList = std::vector<FyLayout>;
+} // namespace Fooyin

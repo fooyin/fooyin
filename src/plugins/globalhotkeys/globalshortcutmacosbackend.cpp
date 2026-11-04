@@ -19,125 +19,34 @@
 
 #include "globalshortcutmacosbackend.h"
 
+#include <utils/scopeguard.h>
+
+#include <QCoreApplication>
+#include <QLoggingCategory>
+
+#include <array>
 #include <climits>
+#include <set>
+#include <vector>
+
+Q_LOGGING_CATEGORY(MACOS_SHORTCUTS, "fy.globalshortcuts.macos")
 
 constexpr OSType HotKeySignature = (static_cast<OSType>('F') << 24) | (static_cast<OSType>('y') << 16)
                                  | (static_cast<OSType>('H') << 8) | static_cast<OSType>('K');
 
 namespace Fooyin::GlobalHotkeys {
 namespace {
+using NativeShortcutSet = std::set<std::pair<std::uint32_t, std::uint32_t>>;
+
 std::uint32_t nativeKey(Qt::Key key)
 {
     switch(key) {
-        case Qt::Key_A:
-            return kVK_ANSI_A;
-        case Qt::Key_B:
-            return kVK_ANSI_B;
-        case Qt::Key_C:
-            return kVK_ANSI_C;
-        case Qt::Key_D:
-            return kVK_ANSI_D;
-        case Qt::Key_E:
-            return kVK_ANSI_E;
-        case Qt::Key_F:
-            return kVK_ANSI_F;
-        case Qt::Key_G:
-            return kVK_ANSI_G;
-        case Qt::Key_H:
-            return kVK_ANSI_H;
-        case Qt::Key_I:
-            return kVK_ANSI_I;
-        case Qt::Key_J:
-            return kVK_ANSI_J;
-        case Qt::Key_K:
-            return kVK_ANSI_K;
-        case Qt::Key_L:
-            return kVK_ANSI_L;
-        case Qt::Key_M:
-            return kVK_ANSI_M;
-        case Qt::Key_N:
-            return kVK_ANSI_N;
-        case Qt::Key_O:
-            return kVK_ANSI_O;
-        case Qt::Key_P:
-            return kVK_ANSI_P;
-        case Qt::Key_Q:
-            return kVK_ANSI_Q;
-        case Qt::Key_R:
-            return kVK_ANSI_R;
-        case Qt::Key_S:
-            return kVK_ANSI_S;
-        case Qt::Key_T:
-            return kVK_ANSI_T;
-        case Qt::Key_U:
-            return kVK_ANSI_U;
-        case Qt::Key_V:
-            return kVK_ANSI_V;
-        case Qt::Key_W:
-            return kVK_ANSI_W;
-        case Qt::Key_X:
-            return kVK_ANSI_X;
-        case Qt::Key_Y:
-            return kVK_ANSI_Y;
-        case Qt::Key_Z:
-            return kVK_ANSI_Z;
-        case Qt::Key_0:
-            return kVK_ANSI_0;
-        case Qt::Key_1:
-            return kVK_ANSI_1;
-        case Qt::Key_2:
-            return kVK_ANSI_2;
-        case Qt::Key_3:
-            return kVK_ANSI_3;
-        case Qt::Key_4:
-            return kVK_ANSI_4;
-        case Qt::Key_5:
-            return kVK_ANSI_5;
-        case Qt::Key_6:
-            return kVK_ANSI_6;
-        case Qt::Key_7:
-            return kVK_ANSI_7;
-        case Qt::Key_8:
-            return kVK_ANSI_8;
-        case Qt::Key_9:
-            return kVK_ANSI_9;
-        case Qt::Key_Equal:
-        case Qt::Key_Plus:
-            return kVK_ANSI_Equal;
-        case Qt::Key_Minus:
-        case Qt::Key_Underscore:
-            return kVK_ANSI_Minus;
-        case Qt::Key_BracketLeft:
-        case Qt::Key_BraceLeft:
-            return kVK_ANSI_LeftBracket;
-        case Qt::Key_BracketRight:
-        case Qt::Key_BraceRight:
-            return kVK_ANSI_RightBracket;
-        case Qt::Key_Apostrophe:
-        case Qt::Key_QuoteDbl:
-            return kVK_ANSI_Quote;
-        case Qt::Key_Semicolon:
-        case Qt::Key_Colon:
-            return kVK_ANSI_Semicolon;
-        case Qt::Key_Backslash:
-        case Qt::Key_Bar:
-            return kVK_ANSI_Backslash;
-        case Qt::Key_Comma:
-        case Qt::Key_Less:
-            return kVK_ANSI_Comma;
-        case Qt::Key_Slash:
-        case Qt::Key_Question:
-            return kVK_ANSI_Slash;
-        case Qt::Key_Period:
-        case Qt::Key_Greater:
-            return kVK_ANSI_Period;
-        case Qt::Key_QuoteLeft:
-        case Qt::Key_AsciiTilde:
-            return kVK_ANSI_Grave;
         case Qt::Key_Return:
             return kVK_Return;
         case Qt::Key_Enter:
             return kVK_ANSI_KeypadEnter;
+        case Qt::Key_Clear:
+            return kVK_ANSI_KeypadClear;
         case Qt::Key_Tab:
         case Qt::Key_Backtab:
             return kVK_Tab;
@@ -148,13 +57,13 @@ std::uint32_t nativeKey(Qt::Key key)
         case Qt::Key_Escape:
             return kVK_Escape;
         case Qt::Key_Meta:
-            return kVK_Command;
+            return QCoreApplication::testAttribute(Qt::AA_MacDontSwapCtrlAndMeta) ? kVK_Command : kVK_Control;
         case Qt::Key_Shift:
             return kVK_Shift;
         case Qt::Key_Alt:
             return kVK_Option;
         case Qt::Key_Control:
-            return kVK_Control;
+            return QCoreApplication::testAttribute(Qt::AA_MacDontSwapCtrlAndMeta) ? kVK_Control : kVK_Command;
         case Qt::Key_F1:
             return kVK_F1;
         case Qt::Key_F2:
@@ -220,20 +129,103 @@ std::uint32_t nativeKey(Qt::Key key)
 
 std::uint32_t nativeModifiers(Qt::KeyboardModifiers modifiers)
 {
+    const bool dontSwap = QCoreApplication::testAttribute(Qt::AA_MacDontSwapCtrlAndMeta);
     std::uint32_t native{0};
     if(modifiers.testFlag(Qt::ShiftModifier)) {
         native |= shiftKey;
     }
     if(modifiers.testFlag(Qt::ControlModifier)) {
-        native |= controlKey;
+        native |= dontSwap ? controlKey : cmdKey;
     }
     if(modifiers.testFlag(Qt::AltModifier)) {
         native |= optionKey;
     }
     if(modifiers.testFlag(Qt::MetaModifier)) {
-        native |= cmdKey;
+        native |= dontSwap ? cmdKey : controlKey;
     }
     return native;
+}
+
+bool isKeypadKey(std::uint32_t key)
+{
+    switch(key) {
+        case kVK_ANSI_Keypad0:
+        case kVK_ANSI_Keypad1:
+        case kVK_ANSI_Keypad2:
+        case kVK_ANSI_Keypad3:
+        case kVK_ANSI_Keypad4:
+        case kVK_ANSI_Keypad5:
+        case kVK_ANSI_Keypad6:
+        case kVK_ANSI_Keypad7:
+        case kVK_ANSI_Keypad8:
+        case kVK_ANSI_Keypad9:
+        case kVK_ANSI_KeypadDecimal:
+        case kVK_ANSI_KeypadMultiply:
+        case kVK_ANSI_KeypadPlus:
+        case kVK_ANSI_KeypadDivide:
+        case kVK_ANSI_KeypadMinus:
+        case kVK_ANSI_KeypadEquals:
+        case kVK_ANSI_KeypadClear:
+        case kVK_ANSI_KeypadEnter:
+        case kVK_JIS_KeypadComma:
+        // Qt also marks navigation keys as keypad keys on macOS
+        case kVK_Home:
+        case kVK_End:
+        case kVK_PageUp:
+        case kVK_PageDown:
+        case kVK_LeftArrow:
+        case kVK_RightArrow:
+        case kVK_UpArrow:
+        case kVK_DownArrow:
+        case kVK_ForwardDelete:
+            return true;
+        default:
+            return false;
+    }
+}
+
+NativeShortcutSet nativeShortcuts(QKeyCombination combination, const UCKeyboardLayout* layout)
+{
+    NativeShortcutSet shortcuts;
+
+    const auto key        = combination.key();
+    const auto modifiers  = nativeModifiers(combination.keyboardModifiers());
+    const bool keypadOnly = combination.keyboardModifiers().testFlag(Qt::KeypadModifier);
+    if(key <= Qt::Key_Space || key > 0xFFFF) {
+        const auto code = nativeKey(key);
+        if(code != UINT_MAX && (!keypadOnly || isKeypadKey(code))) {
+            shortcuts.emplace(code, modifiers);
+        }
+        return shortcuts;
+    }
+
+    if(!layout) {
+        return shortcuts;
+    }
+
+    const std::array<std::uint32_t, 4> characterModifiers{0, shiftKey, optionKey, shiftKey | optionKey};
+    const auto keyboardType = LMGetKbdType();
+    for(UInt16 code{0}; code < 128; ++code) {
+        if(keypadOnly && !isKeypadKey(code)) {
+            continue;
+        }
+
+        for(const auto characterModifier : characterModifiers) {
+            std::array<UniChar, 4> characters{};
+            UniCharCount length{0};
+            UInt32 deadKeyState{0};
+            const auto lookupModifiers = ((characterModifier | (modifiers & cmdKey)) >> 8) & 0xFF;
+            const OSStatus status      = UCKeyTranslate(layout, code, kUCKeyActionDown, lookupModifiers, keyboardType,
+                                                        kUCKeyTranslateNoDeadKeysMask, &deadKeyState, characters.size(),
+                                                        &length, characters.data());
+            if(status == noErr && length == 1 && QChar{characters.front()}.toUpper().unicode() == key) {
+                shortcuts.emplace(code, modifiers | characterModifier);
+                break;
+            }
+        }
+    }
+
+    return shortcuts;
 }
 } // namespace
 
@@ -249,10 +241,20 @@ GlobalShortcutMacosBackend::GlobalShortcutMacosBackend(QObject* parent)
         {kEventClassKeyboard, kEventHotKeyReleased},
     };
     InstallApplicationEventHandler(&GlobalShortcutMacosBackend::handleEvent, 2, eventTypes, this, &m_eventHandler);
+
+    CFNotificationCenterAddObserver(
+        CFNotificationCenterGetDistributedCenter(), this,
+        [](CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef) {
+            auto* self = static_cast<GlobalShortcutMacosBackend*>(observer);
+            QMetaObject::invokeMethod(self, [self] { self->registerBindings(false); }, Qt::QueuedConnection);
+        },
+        kTISNotifySelectedKeyboardInputSourceChanged, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
 }
 
 GlobalShortcutMacosBackend::~GlobalShortcutMacosBackend()
 {
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDistributedCenter(), this,
+                                       kTISNotifySelectedKeyboardInputSourceChanged, nullptr);
     clearBindings();
 
     if(m_eventHandler) {
@@ -267,52 +269,14 @@ GlobalShortcutAvailability GlobalShortcutMacosBackend::availability() const
 
 void GlobalShortcutMacosBackend::applyBindings(const GlobalShortcutDescriptorList& bindings)
 {
-    clearBindings();
-
-    if(!m_eventHandler) {
-        return;
-    }
-
-    for(const auto& binding : bindings) {
-        if(binding.shortcut.count() != 1) {
-            Q_EMIT registrationFailed(binding.commandId, binding.shortcut,
-                                      tr("macOS global shortcuts must contain one key combination"));
-            continue;
-        }
-
-        const QKeyCombination combination = binding.shortcut[0];
-        const std::uint32_t key           = nativeKey(combination.key());
-        if(key == UINT_MAX) {
-            Q_EMIT registrationFailed(binding.commandId, binding.shortcut,
-                                      tr("The shortcut cannot be represented on macOS"));
-            continue;
-        }
-
-        const std::uint32_t nativeId = m_nextNativeId++;
-        const EventHotKeyID hotKeyId{HotKeySignature, nativeId};
-        EventHotKeyRef hotKey{nullptr};
-
-        const OSStatus status = RegisterEventHotKey(key, nativeModifiers(combination.keyboardModifiers()), hotKeyId,
-                                                    GetApplicationEventTarget(), 0, &hotKey);
-        if(status != noErr) {
-            Q_EMIT registrationFailed(binding.commandId, binding.shortcut,
-                                      tr("macOS rejected this shortcut (error %1)").arg(status));
-            continue;
-        }
-
-        m_hotKeys.emplace(nativeId, hotKey);
-        m_bindings.emplace(nativeId, binding);
-    }
+    m_requestedBindings = bindings;
+    registerBindings(true);
 }
 
 void GlobalShortcutMacosBackend::clearBindings()
 {
-    for(const auto& hotKey : m_hotKeys) {
-        UnregisterEventHotKey(hotKey.second);
-    }
-    m_hotKeys.clear();
-    m_bindings.clear();
-    m_repeater.clear();
+    m_requestedBindings.clear();
+    clearRegistrations();
 }
 
 OSStatus GlobalShortcutMacosBackend::handleEvent(EventHandlerCallRef nextHandler, EventRef event, void* context)
@@ -335,5 +299,107 @@ OSStatus GlobalShortcutMacosBackend::handleEvent(EventHandlerCallRef nextHandler
     }
 
     return CallNextEventHandler(nextHandler, event);
+}
+
+void GlobalShortcutMacosBackend::registerBindings(bool reportFailures)
+{
+    clearRegistrations();
+
+    if(!m_eventHandler || m_requestedBindings.empty()) {
+        return;
+    }
+
+    TISInputSourceRef source = TISCopyInputMethodKeyboardLayoutOverride();
+    if(!source) {
+        source = TISCopyCurrentKeyboardLayoutInputSource();
+    }
+
+    const auto releaseSource = qScopeGuard([&source] {
+        if(source) {
+            CFRelease(source);
+        }
+    });
+    auto layoutData = source
+                        ? static_cast<CFDataRef>(TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData))
+                        : nullptr;
+    if(!layoutData) {
+        if(source) {
+            CFRelease(source);
+        }
+        source     = TISCopyCurrentASCIICapableKeyboardLayoutInputSource();
+        layoutData = source
+                       ? static_cast<CFDataRef>(TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData))
+                       : nullptr;
+    }
+    const auto* layout = layoutData ? reinterpret_cast<const UCKeyboardLayout*>(CFDataGetBytePtr(layoutData)) : nullptr;
+
+    const auto fail = [this, reportFailures](const GlobalShortcutDescriptor& binding, const QString& error) {
+        if(reportFailures) {
+            Q_EMIT registrationFailed(binding.commandId, binding.shortcut, error);
+        }
+        else {
+            qCWarning(MACOS_SHORTCUTS) << "Failed to refresh" << binding.shortcut.toString() << ':' << error;
+        }
+    };
+
+    NativeShortcutSet registeredShortcuts;
+    for(const auto& binding : m_requestedBindings) {
+        if(binding.shortcut.count() != 1) {
+            fail(binding, tr("macOS global shortcuts must contain one key combination"));
+            continue;
+        }
+
+        const auto shortcuts = nativeShortcuts(binding.shortcut[0], layout);
+        if(shortcuts.empty()) {
+            fail(binding, tr("The shortcut cannot be represented on macOS"));
+            continue;
+        }
+
+        if(std::ranges::any_of(shortcuts, [&registeredShortcuts](const auto& shortcut) {
+               return registeredShortcuts.contains(shortcut);
+           })) {
+            fail(binding, tr("The shortcut is already registered"));
+            continue;
+        }
+
+        std::vector<std::pair<std::uint32_t, EventHotKeyRef>> hotKeys;
+        hotKeys.reserve(shortcuts.size());
+
+        OSStatus status{noErr};
+        for(const auto& [key, modifiers] : shortcuts) {
+            const std::uint32_t nativeId = m_nextNativeId++;
+            const EventHotKeyID hotKeyId{HotKeySignature, nativeId};
+            EventHotKeyRef hotKey{nullptr};
+
+            status = RegisterEventHotKey(key, modifiers, hotKeyId, GetApplicationEventTarget(), 0, &hotKey);
+            if(status != noErr) {
+                break;
+            }
+            hotKeys.emplace_back(nativeId, hotKey);
+        }
+        if(status != noErr) {
+            for(const auto& [nativeId, hotKey] : hotKeys) {
+                UnregisterEventHotKey(hotKey);
+            }
+            fail(binding, tr("macOS rejected this shortcut (error %1)").arg(status));
+            continue;
+        }
+
+        registeredShortcuts.insert(shortcuts.begin(), shortcuts.end());
+        for(const auto& [nativeId, hotKey] : hotKeys) {
+            m_hotKeys.emplace(nativeId, hotKey);
+            m_bindings.emplace(nativeId, binding);
+        }
+    }
+}
+
+void GlobalShortcutMacosBackend::clearRegistrations()
+{
+    for(const auto& hotKey : m_hotKeys) {
+        UnregisterEventHotKey(hotKey.second);
+    }
+    m_hotKeys.clear();
+    m_bindings.clear();
+    m_repeater.clear();
 }
 } // namespace Fooyin::GlobalHotkeys

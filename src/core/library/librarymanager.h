@@ -32,6 +32,7 @@ namespace Fooyin {
 class LibraryManagerPrivate;
 class SettingsManager;
 
+// Owned by the main thread
 class FYCORE_EXPORT LibraryManager : public QObject
 {
     Q_OBJECT
@@ -56,6 +57,7 @@ public:
     [[nodiscard]] std::optional<LibraryInfo> libraryInfo(int id) const;
 
 Q_SIGNALS:
+    void librariesChanged();
     void libraryAdded(const Fooyin::LibraryInfo& library);
     void libraryAboutToBeRemoved(const Fooyin::LibraryInfo& library);
     void libraryRemoved(const Fooyin::LibraryInfo& library, const std::set<int>& tracksRemoved);

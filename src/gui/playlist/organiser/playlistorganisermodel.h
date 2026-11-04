@@ -49,18 +49,17 @@ public:
 
     explicit PlaylistOrganiserModel(PlaylistHandler* playlistHandler, PlayerController* playerController);
 
-    [[nodiscard]] static QString defaultLeftDisplayScript();
-    [[nodiscard]] static QString defaultRightDisplayScript();
+    [[nodiscard]] static QString defaultDisplayScript();
+    [[nodiscard]] QString displayScript() const;
 
     void populate();
     void populateMissing();
+
     QByteArray saveModel();
     bool restoreModel(QByteArray data);
-    void setDisplayScripts(const QString& leftScript, const QString& rightScript);
-    void setColours(const QColor& playingTextColour, const QColor& playingBackgroundColour);
 
-    [[nodiscard]] QString leftDisplayScript() const;
-    [[nodiscard]] QString rightDisplayScript() const;
+    void setDisplayScript(const QString& displayScript);
+    void setColours(const QColor& playingTextColour, const QColor& playingBackgroundColour);
 
     QModelIndex createGroup(const QModelIndex& parent);
     QModelIndex createPlaylist(Playlist* playlist, const QModelIndex& parent);
@@ -107,8 +106,6 @@ private:
 
     [[nodiscard]] QString evaluateScript(const ParsedScript& script, const PlaylistOrganiserItem* item) const;
     [[nodiscard]] RichText evaluateRichScript(const ParsedScript& script, const PlaylistOrganiserItem* item) const;
-    [[nodiscard]] RichText leftRichText(const PlaylistOrganiserItem* item) const;
-    [[nodiscard]] RichText rightRichText(const PlaylistOrganiserItem* item) const;
 
     QByteArray saveIndexes(const QModelIndexList& indexes) const;
     QModelIndexList restoreIndexes(QByteArray data);
@@ -132,9 +129,7 @@ private:
 
     mutable ScriptParser m_scriptParser;
     mutable ScriptFormatter m_scriptFormatter;
-    QString m_leftScriptText;
-    QString m_rightScriptText;
-    ParsedScript m_leftScript;
-    ParsedScript m_rightScript;
+    QString m_displayScriptText;
+    ParsedScript m_displayScript;
 };
 } // namespace Fooyin

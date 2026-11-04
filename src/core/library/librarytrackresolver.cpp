@@ -24,7 +24,6 @@
 #include "libraryscanutils.h"
 #include "libraryscanwriter.h"
 
-#include <core/coresettings.h>
 #include <core/engine/audioloader.h>
 #include <core/internalcoresettings.h>
 #include <core/network/remoteioservice.h>
@@ -40,7 +39,6 @@
 #include <QUrl>
 
 #include <optional>
-#include <utility>
 
 Q_DECLARE_LOGGING_CATEGORY(LIB_SCANNER)
 
@@ -50,34 +48,6 @@ constexpr auto ArchivePath = R"(unpack://%1|%2|file://%3!)";
 
 namespace Fooyin {
 namespace {
-QStringList normaliseExtensions(QStringList extensions)
-{
-    for(QString& extension : extensions) {
-        extension = extension.trimmed().toLower();
-    }
-
-    extensions.removeAll(QString{});
-    std::ranges::sort(extensions);
-    extensions.removeDuplicates();
-
-    return extensions;
-}
-
-bool shouldProbeAllReadersForFile(const QString& file)
-{
-    const QString ext = QFileInfo{file}.suffix().toLower();
-    if(ext.isEmpty()) {
-        return false;
-    }
-
-    const FySettings settings;
-    const QVariant value = settings.contains(Settings::Core::Internal::ReaderProbeAllExtensions)
-                             ? settings.value(Settings::Core::Internal::ReaderProbeAllExtensions)
-                             : settings.value(Settings::Core::Internal::FFmpegPriorityExtensions,
-                                              Settings::Core::Internal::defaultReaderProbeAllExtensions());
-    return normaliseExtensions(value.toStringList()).contains(ext);
-}
-
 void applyExistingTrackIdentity(Track& track, const Track& existingTrack)
 {
     track.setId(existingTrack.id());
@@ -142,6 +112,11 @@ LibraryTrackResolver::LibraryTrackResolver(LibraryInfo currentLibrary, PlaylistL
                            std::move(flushWrites)}
 { }
 
+void LibraryTrackResolver::setReadCancellationToken(std::stop_token token)
+{
+    m_readCancellationToken = std::move(token);
+}
+
 TrackList LibraryTrackResolver::readTracks(const QString& filepath)
 {
     if(m_audioLoader->isArchive(filepath)) {
@@ -183,6 +158,27 @@ TrackList LibraryTrackResolver::readTracks(const QString& filepath)
     }
 
     return tracks;
+}
+
+Track LibraryTrackResolver::readUrlTrack(const Track& track)
+{
+    const QString key = track.uniqueFilepath();
+    if(const auto it = m_remoteTracks.find(key); it != m_remoteTracks.end()) {
+        return it->second;
+    }
+
+    Track readTrack{track};
+    readTrack.setMetadataStore(m_metadataStore);
+    if(m_state->mayRun()) {
+        // An unavailable server shouldn't prevent a URL from being added
+        if(!m_audioLoader->readTrackMetadata(readTrack, m_readCancellationToken)) {
+            qCDebug(LIB_SCANNER) << "Could not read metadata from URL:" << key;
+        }
+    }
+    readTrack.generateHash();
+    m_remoteTracks.emplace(key, readTrack);
+    m_state->progressScanned(readTrack.prettyFilepath());
+    return readTrack;
 }
 
 TrackList LibraryTrackResolver::readPlaylist(const QString& filepath)
@@ -229,42 +225,10 @@ LibraryTrackResolver::readPlaylistAsync(const QUrl& url, QObject* context,
         return {};
     }
 
-    auto readEntry       = std::make_shared<PlaylistParser::ReadPlaylistEntry>();
-    readEntry->readTrack = [this, readEntry](const Track& playlistTrack) {
-        if(!m_state->mayRun()) {
-            readEntry->cancel = true;
-            return playlistTrack;
-        }
-
-        Track readTrack{playlistTrack};
-        readTrack.setMetadataStore(m_metadataStore);
-
-        if(playlistTrack.isRemote()) {
-            return readTrack;
-        }
-
-        readFileProperties(readTrack);
-
-        if(!m_audioLoader->readTrackMetadata(readTrack)) {
-            return playlistTrack;
-        }
-
-        readTrack.generateHash();
-        m_state->progressScanned(readTrack.prettyFilepath());
-
-        return readTrack;
-    };
-    readEntry->canLoadTrack = [this](const Track& playlistTrack) {
-        if(playlistTrack.isRemote()) {
-            return true;
-        }
-        return static_cast<bool>(m_audioLoader->loadDecoderForTrack(playlistTrack).decoder);
-    };
-
     return m_remoteIo->download(
         url, context,
-        [this, parser, url, readEntry, callback = std::move(callback)](std::optional<QByteArray> data,
-                                                                       const QString& error) mutable {
+        [this, parser, url, callback = std::move(callback)](std::optional<QByteArray> data,
+                                                            const QString& error) mutable {
             if(!data) {
                 qCInfo(LIB_SCANNER) << "Could not download playlist" << url << "for reading:" << error;
                 callback(false, {});
@@ -277,8 +241,40 @@ LibraryTrackResolver::readPlaylistAsync(const QUrl& url, QObject* context,
                 return;
             }
 
-            TrackList parsedTracks
-                = parser->readPlaylist(&buffer, url.toString(), {}, *readEntry, m_playlistSkipMissing);
+            PlaylistParser::ReadPlaylistEntry readEntry;
+            readEntry.readTrack = [this, &readEntry](const Track& playlistTrack) {
+                if(!m_state->mayRun()) {
+                    readEntry.cancel = true;
+                    return playlistTrack;
+                }
+
+                auto readTrack{playlistTrack};
+                readTrack.setMetadataStore(m_metadataStore);
+
+                if(playlistTrack.isRemote()) {
+                    return readUrlTrack(readTrack);
+                }
+
+                readFileProperties(readTrack);
+
+                if(!m_audioLoader->readTrackMetadata(readTrack)) {
+                    return playlistTrack;
+                }
+
+                readTrack.generateHash();
+                m_state->progressScanned(readTrack.prettyFilepath());
+
+                return readTrack;
+            };
+            readEntry.canLoadTrack = [this](const Track& playlistTrack) {
+                if(playlistTrack.isRemote()) {
+                    return true;
+                }
+                return static_cast<bool>(m_audioLoader->loadDecoderForTrack(playlistTrack).decoder);
+            };
+
+            const TrackList parsedTracks
+                = parser->readPlaylist(&buffer, url.toString(), {}, readEntry, m_playlistSkipMissing);
             TrackList tracks;
             tracks.reserve(parsedTracks.size());
 
@@ -365,7 +361,7 @@ TrackList LibraryTrackResolver::readPlaylistTracks(const QUrl& url)
         readTrack.setMetadataStore(m_metadataStore);
 
         if(playlistTrack.isRemote()) {
-            return readTrack;
+            return readUrlTrack(readTrack);
         }
 
         readFileProperties(readTrack);
@@ -502,6 +498,9 @@ void LibraryTrackResolver::readCue(const QFileInfo& info, const bool onlyModifie
     }
 
     for(Track track : cueTracks) {
+        if(!m_state->mayRun()) {
+            return;
+        }
         const QString filepath = normalisePath(track.filepath());
 
         if(existingCueTracksByPath.contains(track.uniqueFilepath())) {
@@ -576,6 +575,9 @@ void LibraryTrackResolver::readFile(const QFileInfo& info, const bool onlyModifi
         }
 
         for(Track track : tracks) {
+            if(!m_state->mayRun()) {
+                return;
+            }
             if(existingByPath.contains(track.uniqueFilepath())) {
                 const auto& existingTrack = existingByPath.at(track.uniqueFilepath());
                 applyExistingTrackIdentity(track, existingTrack);
@@ -620,6 +622,9 @@ void LibraryTrackResolver::readFile(const QFileInfo& info, const bool onlyModifi
         }
 
         for(Track track : tracks) {
+            if(!m_state->mayRun()) {
+                return;
+            }
             if(existingByPath.contains(track.uniqueFilepath())) {
                 const auto& existingTrack = existingByPath.at(track.uniqueFilepath());
                 applyExistingTrackIdentity(track, existingTrack);
@@ -659,7 +664,7 @@ TrackList LibraryTrackResolver::readArchiveTracks(const QString& filepath)
         QIODevice* device    = entryData.device.get();
 
         bool readersFound{false};
-        const bool probeAllReaders = shouldProbeAllReadersForFile(entry);
+        const bool probeAllReaders = Settings::Core::Internal::shouldProbeAllReadersForFile(entry);
         std::unique_ptr<AudioReader> selectedReader;
         AudioSource selectedSource;
         int selectedSubsongCount{0};

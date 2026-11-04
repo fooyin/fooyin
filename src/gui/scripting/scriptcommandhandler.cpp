@@ -116,7 +116,8 @@ std::optional<TrackSelectionTarget> resolveTarget(ScriptCommandTarget target, co
 
     if(target == ScriptCommandTarget::NowPlaying) {
         TrackSelection selection;
-        if(const Track track = playerController.currentTrack(); track.isValid()) {
+        if(const Track track = playerController.currentTrack();
+           playerController.playState() != Player::PlayState::Stopped && track.isValid()) {
             selection.tracks.emplace_back(track);
         }
         return TrackSelectionTarget{.selection = std::move(selection)};
@@ -208,7 +209,24 @@ ScriptCommandHandler::ScriptCommandHandler(ActionManager* actionManager, PlayerC
     , m_propertiesDialog{propertiesDialog}
     , m_selectionController{selectionController}
     , m_currentPlaylistController{currentPlaylistController}
-{ }
+{
+    m_shortcutConnection = QObject::connect(
+        m_actionManager, &ActionManager::shortcutActivated, m_selectionController,
+        [this](const Id& commandId, ShortcutTarget target) {
+            const auto* command = m_actionManager->command(commandId);
+            if(target == ShortcutTarget::NowPlaying && command && command->supportsShortcutTarget(target)) {
+                if(const auto* action = command->actionForContext(Constants::Context::Global);
+                   action && action->isVisible()) {
+                    execute(commandId.name(), ScriptCommandTarget::NowPlaying);
+                }
+            }
+        });
+}
+
+ScriptCommandHandler::~ScriptCommandHandler()
+{
+    QObject::disconnect(m_shortcutConnection);
+}
 
 const ScriptCommandAliasList& ScriptCommandHandler::scriptCommandAliases()
 {
@@ -506,6 +524,9 @@ bool ScriptCommandHandler::canExecute(const QString& commandId, ScriptCommandTar
     if(auto* command = m_actionManager->command(Id{resolved->id})) {
         const auto selectionTarget
             = resolveTarget(target, *m_playerController, *m_selectionController, *m_currentPlaylistController);
+        if(target == ScriptCommandTarget::NowPlaying && selectionTarget->selection.tracks.empty()) {
+            return false;
+        }
         const QAction* action = actionForTarget(*command, selectionTarget);
         return actionEnabled(action, selectionTarget, *m_selectionController);
     }
@@ -558,6 +579,9 @@ bool ScriptCommandHandler::execute(const QString& commandId, ScriptCommandTarget
     if(auto* command = m_actionManager->command(Id{resolved->id})) {
         const auto selectionTarget
             = resolveTarget(target, *m_playerController, *m_selectionController, *m_currentPlaylistController);
+        if(target == ScriptCommandTarget::NowPlaying && selectionTarget->selection.tracks.empty()) {
+            return false;
+        }
         QAction* action = actionForTarget(*command, selectionTarget);
         if(!actionEnabled(action, selectionTarget, *m_selectionController)) {
             return false;

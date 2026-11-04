@@ -26,6 +26,8 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
+#include <core/library/librarymanager.h>
+#include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
 #include <gui/plugins/guiplugincontext.h>
@@ -207,10 +209,23 @@ void FileOpsPlugin::setupMenu()
 
     refreshPresetActions();
 
+    Context deleteContext{Constants::Context::TrackSelection};
+    deleteContext.append(Constants::Context::Global);
+
     auto* deleteAction = new QAction(tr("&Delete"), this);
-    auto* deleteCmd
-        = m_actionManager->registerAction(deleteAction, "FileOps.Delete", Context{Constants::Context::TrackSelection});
+    auto* deleteCmd    = m_actionManager->registerAction(deleteAction, "FileOps.Delete", deleteContext);
     deleteCmd->setCategories({tr("Tracks"), tr("File operations")});
+    deleteCmd->setSupportsShortcutTarget(ShortcutTarget::NowPlaying, true);
+
+    m_trackSelectionController->setSelectionActionValidator(
+        deleteAction, [](const TrackSelection& selection) { return canOperateOnTracks(selection.tracks); });
+
+    const auto updateDeleteAction = [this, deleteAction] {
+        deleteAction->setEnabled(canOperateOnTracks(m_trackSelectionController->selectedTracks()));
+    };
+    updateDeleteAction();
+    QObject::connect(m_trackSelectionController, &TrackSelectionController::selectionChanged, deleteAction,
+                     updateDeleteAction);
 
     QObject::connect(deleteAction, &QAction::triggered, deleteAction, [this]() {
         const auto* selection = m_trackSelectionController->selectedSelection();
@@ -218,7 +233,8 @@ void FileOpsPlugin::setupMenu()
             return;
         }
 
-        deleteTracks(selection->tracks);
+        const TrackList tracks = selection->tracks;
+        deleteTracks(tracks);
     });
 
     m_trackSelectionController->registerTrackContextAction(
@@ -232,8 +248,10 @@ void FileOpsPlugin::setupMenu()
             menu->addAction(deleteAction);
         });
 
-    auto* deletePlayingAction = new QAction(tr("Delete currently playing file"), this);
-    auto* deletePlayingCmd    = m_actionManager->registerAction(deletePlayingAction, "FileOps.DeletePlaying");
+    auto* deletePlayingAction = new QAction(tr("Delete currently playing file (deprecated)"), this);
+    deletePlayingAction->setStatusTip(tr("This action is deprecated and will be removed in a future release. "
+                                         "Use ‘Delete’ with the target set to ‘Playing track’ instead."));
+    auto* deletePlayingCmd = m_actionManager->registerAction(deletePlayingAction, "FileOps.DeletePlaying");
     deletePlayingCmd->setCategories({tr("Tracks"), tr("File operations")});
 
     const auto updateDeletePlayingAction = [deletePlayingAction](const Track& track) {
@@ -270,6 +288,7 @@ void FileOpsPlugin::runDelete(const TrackList& tracks, bool forceImmediateDelete
 {
     auto* worker = new FileOpsWorker(m_library, m_audioLoader, tracks, m_settings);
     auto* thread = new QThread(this);
+    worker->setLibraryData(m_libraryManager->allLibraries(), m_library->tracks());
     worker->moveToThread(thread);
 
     QObject::connect(
@@ -285,7 +304,7 @@ void FileOpsPlugin::runDelete(const TrackList& tracks, bool forceImmediateDelete
             }
 
             const QString message = failedTrashTracks.size() == 1
-                                      ? tr("Could not move \"%1\" to the trash. Delete it permanently?")
+                                      ? tr("Could not move ‘%1’ to the trash. Delete it permanently?")
                                             .arg(failedTrashTracks.front().filepath())
                                       : tr("Could not move %Ln file(s) to the trash. Delete them permanently?", nullptr,
                                            static_cast<int>(failedTrashTracks.size()));
@@ -306,7 +325,9 @@ void FileOpsPlugin::runDelete(const TrackList& tracks, bool forceImmediateDelete
     QObject::connect(thread, &QThread::finished, thread, &QObject::deleteLater);
 
     thread->start();
-    QMetaObject::invokeMethod(worker, [worker, forceImmediateDelete]() { worker->deleteFiles(forceImmediateDelete); });
+    QMetaObject::invokeMethod(worker, [worker, forceImmediateDelete, token = worker->prepareWork()]() {
+        worker->deleteFiles(forceImmediateDelete, token);
+    });
 }
 
 void FileOpsPlugin::openDialog(const TrackSelection& selection, Operation operation, const QString& presetName)

@@ -28,34 +28,43 @@
 #include "tracklistwidget.h"
 
 #include <core/coresettings.h>
+#include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/plugins/coreplugincontext.h>
+#include <core/scripting/trackqueryfilter.h>
 #include <gui/contextmenuutils.h>
 #include <gui/coverprovider.h>
 #include <gui/coverrepository.h>
-#include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
+#include <gui/layout/editablelayout.h>
 #include <gui/playlist/currentplaylistcontroller.h>
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgetcontainer.h>
 #include <gui/widgets/autoheaderview.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/async.h>
+#include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
+#include <QFuture>
+#include <QLoggingCategory>
 #include <QMenu>
 #include <QPointer>
 #include <QScopedValueRollback>
 
 #include <ranges>
+#include <stop_token>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+
+Q_LOGGING_CATEGORY(FILTER_CONTROLLER_TRACE, "fy.trace.filters.controller", QtInfoMsg)
 
 using namespace Qt::StringLiterals;
 
@@ -103,9 +112,93 @@ bool isUngroupedGroupId(const Id& groupId)
     return groupId.name().startsWith(QStringLiteral("Fooyin.Filters.Ungrouped."));
 }
 
+FyWidget* groupingScope(FyWidget* widget, const FyWidget* root)
+{
+    auto* current = widget;
+    while(current && current != root) {
+        auto* parent = current->findParent();
+        if(const auto* container = qobject_cast<WidgetContainer*>(parent);
+           container && container->hasIndependentChildren()) {
+            return current;
+        }
+        current = parent;
+    }
+    return current;
+}
+
 bool containsSummaryKey(const std::vector<RowKey>& keys)
 {
     return std::ranges::any_of(keys, [](const RowKey& key) { return key.isEmpty(); });
+}
+
+struct FilterPatchStage
+{
+    Id widgetId;
+    FilterColumnList columns;
+    TrackList inputTracks;
+    FilterRowList rows;
+    std::optional<FilterRowList> searchedRows;
+    FilterRowLookup rowLookup;
+    std::vector<RowKey> selectedKeys;
+    TrackList selectedTracks;
+    QString searchText;
+    bool selectionRestorePending{false};
+    bool isActive{false};
+};
+
+struct FilterPatchResult
+{
+    std::vector<FilterPatchStage> stages;
+    TrackList filteredTracks;
+    bool hasActiveStages{false};
+    bool cancelled{false};
+};
+
+FilterPatchResult calculateGroupPatch(FilterPatchResult snapshot, TrackList tracks, const TrackIds& changedTrackIds,
+                                      const LibraryInfoMap& libraries, const FilterRowBuildContext& context,
+                                      const ScriptSearchOptions& searchOptions, std::stop_token token)
+{
+    TrackList currentTracks = std::move(tracks);
+
+    for(auto& stage : snapshot.stages) {
+        if(token.stop_requested()) {
+            snapshot.cancelled = true;
+            break;
+        }
+
+        stage.rows        = patchFilterRows(libraries, stage.columns, stage.rows, stage.inputTracks, currentTracks,
+                                            changedTrackIds, context);
+        stage.inputTracks = std::move(currentTracks);
+
+        if(!stage.searchText.isEmpty()) {
+            stage.searchedRows = filterRowsBySearch(stage.searchText, stage.rows, stage.inputTracks, searchOptions,
+                                                    libraries, stage.columns, context);
+        }
+
+        const auto& rows = stage.searchedRows ? *stage.searchedRows : stage.rows;
+        stage.rowLookup.rebuildRows(rows);
+
+        if(stage.selectionRestorePending && stage.inputTracks.empty()) {
+            stage.isActive = !stage.selectedKeys.empty();
+        }
+        else {
+            auto selection       = resolveFilterSelection(rows, stage.inputTracks, stage.selectedKeys, stage.rowLookup);
+            stage.selectedKeys   = std::move(selection.selectedKeys);
+            stage.selectedTracks = std::move(selection.selectedTracks);
+            stage.isActive       = selection.isActive;
+            stage.selectionRestorePending = false;
+        }
+
+        currentTracks            = stage.isActive ? stage.selectedTracks : stage.inputTracks;
+        snapshot.hasActiveStages = snapshot.hasActiveStages || stage.isActive;
+    }
+
+    snapshot.cancelled = snapshot.cancelled || token.stop_requested();
+    if(snapshot.hasActiveStages && !snapshot.cancelled) {
+        snapshot.filteredTracks = std::move(currentTracks);
+    }
+
+    return snapshot;
 }
 } // namespace
 
@@ -135,6 +228,7 @@ public:
 
         bool isActive{false};
         bool selectionRestorePending{false};
+        FilterScrollPolicy scrollPolicy{FilterScrollPolicy::Preserve};
         uint64_t revision{0};
         uint64_t searchRevision{0};
     };
@@ -151,6 +245,13 @@ public:
         bool hasActiveStages{false};
         uint64_t revision{0};
         bool recomputePending{false};
+        bool recomputing{false};
+        bool patchPending{false};
+        bool patchRunning{false};
+        uint64_t patchToken{0};
+        std::unordered_set<int> pendingPatchIds;
+        std::stop_source patchStop;
+        QFuture<FilterPatchResult> patchFuture;
     };
 
     explicit FilterControllerPrivate(FilterController* self, ActionManager* actionManager,
@@ -159,8 +260,9 @@ public:
                                      CoverRepository* coverRepository, SettingsManager* settings,
                                      GuiStyleProvider* styleProvider);
 
-    void handleAction(FilterWidget* filter, const TrackAction& action) const;
-    void filterContextMenu(FilterWidget* widget, const QPoint& pos) const;
+    void handleAction(FilterWidget* filter, const TrackAction& action,
+                      PlaylistAction::ActionOptions options = {}) const;
+    void filterContextMenu(FilterWidget* widget, const QPoint& pos, WidgetContext* context, bool hasSelection) const;
 
     [[nodiscard]] FilterRowBuildContext rowBuildContext() const;
     [[nodiscard]] std::optional<WidgetLocation> widgetLocation(FilterWidget* widget) const;
@@ -173,21 +275,24 @@ public:
     void updateWidgetSelection(FilterStageState& stage) const;
     static const FilterRowList& rowsForSelection(const FilterStageState& stage);
     static void markStagesCurrent(FilterGroupState& group, int lastStageIndex);
+    static void requestScrollReset(FilterGroupState& group, int firstStageIndex);
     void handleSelectionChanged(FilterWidget* filter, const std::vector<RowKey>& keys);
     void handleSearchChanged(FilterWidget* filter, const QString& search);
 
     void syncStages(FilterGroupState& group);
     void rebuildWidgetLocations(const FilterGroupState& group);
     void sortGroupedFilters(FilterGroupState& group);
-    void scheduleRecompute(const Id& groupId);
+    void scheduleRecompute(const Id& groupId, FilterScrollPolicy scrollPolicy = FilterScrollPolicy::Preserve);
     void scheduleAllRecomputes();
-    void schedulePlaylistRecomputes();
+    void schedulePlaylistRecomputes(FilterScrollPolicy scrollPolicy = FilterScrollPolicy::Preserve);
     [[nodiscard]] bool usesCurrentPlaylist(const FilterGroupState& group) const;
     [[nodiscard]] TrackList sourceTracks(const FilterGroupState& group) const;
     void publishCurrentPlaylistSelection(const FilterGroupState& group) const;
     void publishGroupResult(const Id& groupId) const;
     void handleLibraryTracksPatched(const TrackList& changedTracks);
     bool patchGroup(const Id& groupId, const TrackList& sourceTracks, const TrackIds& changedTrackIds);
+    void startGroupPatch(const Id& groupId);
+    void applyGroupPatch(const Id& groupId, uint64_t revision, FilterPatchResult result);
     void recomputeGroup(const Id& groupId);
     void recomputeStage(const Id& groupId, int stageIndex, uint64_t revision, TrackList currentTracks,
                         bool constrained);
@@ -196,6 +301,8 @@ public:
 
     void handleFilterUpdated(FilterWidget* widget);
     void handleConfigChanged(FilterWidget* widget);
+
+    [[nodiscard]] Id initialGroup(FyWidget* widget) const;
 
     void attachWidget(FilterWidget* widget, const Id& publicGroupId);
     std::optional<Id> detachWidget(FilterWidget* widget);
@@ -209,6 +316,8 @@ public:
     FilterController* m_self;
 
     ActionManager* m_actionManager;
+    CorePluginContext m_coreContext;
+    PlayerController* m_player;
     MusicLibrary* m_library;
     LibraryManager* m_libraryManager;
     PlaylistHandler* m_playlistHandler;
@@ -223,7 +332,6 @@ public:
     FilterManager* m_manager;
     FilterColumnRegistry* m_columnRegistry;
 
-    Id m_defaultId{"Default"};
     std::unordered_map<Id, FilterGroupState, Id::IdHash> m_groups;
     std::unordered_map<FilterWidget*, WidgetLocation> m_widgetLocations;
     std::unordered_set<FilterWidget*> m_ungrouped;
@@ -232,6 +340,7 @@ public:
     std::optional<Id> m_playlistSelectionGroup;
     bool m_selectPlaylistMatches{false};
     bool m_syncingSource{false};
+    uint64_t m_nextPatchToken{0};
 };
 
 FilterControllerPrivate::FilterControllerPrivate(FilterController* self, ActionManager* actionManager,
@@ -242,6 +351,8 @@ FilterControllerPrivate::FilterControllerPrivate(FilterController* self, ActionM
                                                  SettingsManager* settings, GuiStyleProvider* styleProvider)
     : m_self{self}
     , m_actionManager{actionManager}
+    , m_coreContext{core}
+    , m_player{core.playerController}
     , m_library{core.library}
     , m_libraryManager{core.libraryManager}
     , m_playlistHandler{core.playlistHandler}
@@ -257,15 +368,19 @@ FilterControllerPrivate::FilterControllerPrivate(FilterController* self, ActionM
 {
     m_settings->subscribe<Settings::Core::UseVariousForCompilations>(m_self, [this]() { scheduleAllRecomputes(); });
     m_styleProvider->subscribe(m_self, [this]() { scheduleAllRecomputes(); });
+
+    if(m_libraryManager) {
+        QObject::connect(m_libraryManager, &LibraryManager::librariesChanged, m_self,
+                         [this]() { scheduleAllRecomputes(); });
+    }
 }
 
-void FilterControllerPrivate::handleAction(FilterWidget* filter, const TrackAction& action) const
+void FilterControllerPrivate::handleAction(FilterWidget* filter, const TrackAction& action,
+                                           PlaylistAction::ActionOptions options) const
 {
     if(!filter || action == TrackAction::None || !m_trackSelection) {
         return;
     }
-
-    PlaylistAction::ActionOptions options;
 
     if(filter->autoSwitch()) {
         options |= PlaylistAction::Switch;
@@ -280,12 +395,15 @@ void FilterControllerPrivate::handleAction(FilterWidget* filter, const TrackActi
     m_trackSelection->executeAction(action, options);
 }
 
-void FilterControllerPrivate::filterContextMenu(FilterWidget* widget, const QPoint& pos) const
+void FilterControllerPrivate::filterContextMenu(FilterWidget* widget, const QPoint& pos, WidgetContext* context,
+                                                bool hasSelection) const
 {
     auto* menu = new QMenu(widget);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    const bool hasSelection = widget->hasSelection();
+    if(m_trackSelection) {
+        m_trackSelection->changePlaybackOnSend(context, widget->sendPlayback());
+    }
 
     ContextMenuUtils::renderStaticContextMenu(
         menu, FilterContextMenu::DefaultItems,
@@ -336,7 +454,7 @@ void FilterControllerPrivate::filterContextMenu(FilterWidget* widget, const QPoi
             if(id == QLatin1StringView{Constants::Actions::AddToPlaylist}) {
                 if(hasSelection && m_trackSelection && sectionEnabled(Constants::Actions::AddToPlaylist)) {
                     auto* playlistMenu = new QMenu(FilterWidget::tr("Add to playlist"), targetMenu);
-                    m_trackSelection->addTrackAddToPlaylistContextMenu(playlistMenu, widget->widgetContext());
+                    m_trackSelection->addTrackAddToPlaylistContextMenu(playlistMenu, context);
                     targetMenu->addMenu(playlistMenu);
                 }
                 return;
@@ -390,7 +508,7 @@ void FilterControllerPrivate::filterContextMenu(FilterWidget* widget, const QPoi
             }
             if(id == QLatin1StringView{FilterContextMenu::TrackActions}) {
                 if(hasSelection && m_trackSelection && sectionEnabled(FilterContextMenu::TrackActions)) {
-                    m_trackSelection->addTrackContextMenu(targetMenu, widget->widgetContext());
+                    m_trackSelection->addTrackContextMenu(targetMenu, context);
                 }
             }
         });
@@ -525,6 +643,14 @@ void FilterControllerPrivate::markStagesCurrent(FilterGroupState& group, int las
     }
 }
 
+void FilterControllerPrivate::requestScrollReset(FilterGroupState& group, int firstStageIndex)
+{
+    // Keep requests until publication so queued refreshes and async work can't discard them
+    for(auto& stage : group.stages | std::views::drop(firstStageIndex)) {
+        stage.scrollPolicy = FilterScrollPolicy::ResetIfChanged;
+    }
+}
+
 void FilterControllerPrivate::handleSelectionChanged(FilterWidget* filter, const std::vector<RowKey>& keys)
 {
     const auto location = widgetLocation(filter);
@@ -541,6 +667,12 @@ void FilterControllerPrivate::handleSelectionChanged(FilterWidget* filter, const
     stage->isActive                = selection.isActive;
     stage->selectionRestorePending = false;
     updateWidgetSelection(*stage);
+
+    qCDebug(FILTER_CONTROLLER_TRACE) << "Filter selection changed:" << "group=" << group->id.name()
+                                     << "filter=" << stage->widgetId.name() << "stage=" << location->stageIndex
+                                     << "revisionBefore=" << group->revision
+                                     << "selectedKeys=" << stage->selectedKeys.size()
+                                     << "selectedTracks=" << stage->selectedTracks.size();
 
     if(filter->source() == FilterSource::Library && filter->playlistEnabled() && m_trackSelection) {
         PlaylistAction::ActionOptions options{PlaylistAction::None};
@@ -571,9 +703,16 @@ void FilterControllerPrivate::handleSelectionChanged(FilterWidget* filter, const
     ++group->revision;
     markStagesCurrent(*group, stageIndex);
 
+    if(group->patchRunning || group->patchPending) {
+        requestScrollReset(*group, stageIndex + 1);
+        scheduleRecompute(group->id);
+        return;
+    }
+
     const TrackList nextTracks = stage->isActive ? stage->selectedTracks : stage->inputTracks;
     const bool nextConstrained = hasPriorActive || stage->isActive;
 
+    requestScrollReset(*group, stageIndex + 1);
     recomputeStage(group->id, stageIndex + 1, group->revision, nextTracks, nextConstrained);
 }
 
@@ -590,6 +729,17 @@ void FilterControllerPrivate::handleSearchChanged(FilterWidget* filter, const QS
         return;
     }
 
+    if(group->patchRunning || group->patchPending) {
+        stage->selectedKeys.clear();
+        stage->selectedTracks.clear();
+        stage->isActive                = false;
+        stage->selectionRestorePending = false;
+        updateWidgetSelection(*stage);
+        requestScrollReset(*group, location->stageIndex);
+        scheduleRecompute(group->id);
+        return;
+    }
+
     if(!stage->selectedKeys.empty()) {
         stage->selectedKeys.clear();
         stage->selectedTracks.clear();
@@ -601,9 +751,12 @@ void FilterControllerPrivate::handleSearchChanged(FilterWidget* filter, const QS
         markStagesCurrent(*group, location->stageIndex);
 
         publishStage(group->id, location->stageIndex);
+        requestScrollReset(*group, location->stageIndex);
         scheduleRecompute(group->id);
         return;
     }
+
+    stage->scrollPolicy = FilterScrollPolicy::ResetIfChanged;
 
     if(group->recomputePending) {
         return;
@@ -671,7 +824,7 @@ void FilterControllerPrivate::sortGroupedFilters(FilterGroupState& group)
     });
 }
 
-void FilterControllerPrivate::scheduleRecompute(const Id& groupId)
+void FilterControllerPrivate::scheduleRecompute(const Id& groupId, FilterScrollPolicy scrollPolicy)
 {
     if(!m_styleProvider->isResolved()) {
         return;
@@ -681,10 +834,18 @@ void FilterControllerPrivate::scheduleRecompute(const Id& groupId)
         return;
     }
 
-    auto& group = m_groups.at(groupId);
+    auto& group        = m_groups.at(groupId);
+    group.patchPending = false;
+    group.pendingPatchIds.clear();
+    group.patchStop.request_stop();
+
+    if(scrollPolicy == FilterScrollPolicy::ResetIfChanged) {
+        requestScrollReset(group, 0);
+    }
     if(std::exchange(group.recomputePending, true)) {
         return;
     }
+    ++group.revision;
 
     QMetaObject::invokeMethod(
         m_self,
@@ -693,7 +854,10 @@ void FilterControllerPrivate::scheduleRecompute(const Id& groupId)
                 return;
             }
 
-            auto& currentGroup            = m_groups.at(groupId);
+            auto& currentGroup = m_groups.at(groupId);
+            if(!currentGroup.recomputePending || currentGroup.patchRunning) {
+                return;
+            }
             currentGroup.recomputePending = false;
             recomputeGroup(groupId);
         },
@@ -707,11 +871,11 @@ void FilterControllerPrivate::scheduleAllRecomputes()
     }
 }
 
-void FilterControllerPrivate::schedulePlaylistRecomputes()
+void FilterControllerPrivate::schedulePlaylistRecomputes(FilterScrollPolicy scrollPolicy)
 {
     for(const auto& [groupId, group] : m_groups) {
         if(usesCurrentPlaylist(group)) {
-            scheduleRecompute(groupId);
+            scheduleRecompute(groupId, scrollPolicy);
         }
     }
 }
@@ -772,7 +936,11 @@ void FilterControllerPrivate::handleLibraryTracksPatched(const TrackList& change
     }
 
     for(const auto& groupId : m_groups | std::views::keys) {
-        if(usesCurrentPlaylist(m_groups.at(groupId))) {
+        const auto& group = m_groups.at(groupId);
+        if(usesCurrentPlaylist(group) || group.recomputePending || group.recomputing
+           || std::ranges::any_of(group.stages, [](const FilterStageState& stage) {
+                  return stage.scrollPolicy == FilterScrollPolicy::ResetIfChanged;
+              })) {
             scheduleRecompute(groupId);
             continue;
         }
@@ -792,50 +960,137 @@ bool FilterControllerPrivate::patchGroup(const Id& groupId, const TrackList& sou
     auto& group = m_groups.at(groupId);
     ++group.revision;
     group.sourceTracks = sourceTracks;
+    group.pendingPatchIds.insert(changedTrackIds.begin(), changedTrackIds.end());
+    group.patchPending = true;
+    group.patchStop.request_stop();
 
-    const auto context      = rowBuildContext();
-    TrackList currentTracks = group.sourceTracks;
-    bool constrained{false};
+    if(!group.patchRunning) {
+        QMetaObject::invokeMethod(m_self, [this, groupId]() { startGroupPatch(groupId); }, Qt::QueuedConnection);
+    }
+    return true;
+}
 
-    for(int stageIndex{0}; std::cmp_less(stageIndex, group.stages.size()); ++stageIndex) {
-        auto& stage                         = group.stages.at(stageIndex);
-        const TrackList previousInputTracks = stage.inputTracks;
-        const FilterColumnList columns      = stage.widget ? stage.widget->columns() : FilterColumnList{};
+void FilterControllerPrivate::startGroupPatch(const Id& groupId)
+{
+    if(!m_groups.contains(groupId)) {
+        return;
+    }
 
-        stage.inputTracks = currentTracks;
-        stage.rows     = patchFilterRows(m_libraryManager, columns, stage.rows, previousInputTracks, stage.inputTracks,
-                                         changedTrackIds, context);
-        stage.revision = group.revision;
-        stage.rowLookup.rebuildRows(stage.rows);
+    auto& group = m_groups.at(groupId);
+    if(!group.patchPending || group.patchRunning || group.recomputePending) {
+        return;
+    }
 
-        if(stage.selectionRestorePending && stage.inputTracks.empty()) {
-            stage.selectedTracks.clear();
-            stage.isActive = !stage.selectedKeys.empty();
-        }
-        else {
-            const FilterSelectionResolution selection
-                = resolveFilterSelection(stage.rows, stage.inputTracks, stage.selectedKeys, stage.rowLookup);
-            stage.selectedKeys            = selection.selectedKeys;
-            stage.selectedTracks          = selection.selectedTracks;
-            stage.isActive                = selection.isActive;
-            stage.selectionRestorePending = false;
-        }
+    FilterPatchResult snapshot;
+    snapshot.stages.reserve(group.stages.size());
 
-        refreshStageSearch(groupId, stageIndex, group.revision);
+    for(const auto& stage : group.stages) {
+        FilterPatchStage patch;
+        patch.widgetId                = stage.widgetId;
+        patch.columns                 = stage.widget ? stage.widget->columns() : FilterColumnList{};
+        patch.inputTracks             = stage.inputTracks;
+        patch.rows                    = stage.rows;
+        patch.selectedKeys            = stage.selectedKeys;
+        patch.searchText              = stage.searchText;
+        patch.selectionRestorePending = stage.selectionRestorePending;
+        snapshot.stages.push_back(std::move(patch));
+    }
 
-        if(stage.isActive) {
-            currentTracks = stage.selectedTracks;
-            constrained   = true;
-        }
-        else {
-            currentTracks = stage.inputTracks;
+    const auto revision      = group.revision;
+    const auto patchToken    = ++m_nextPatchToken;
+    const auto searchOptions = TrackQueryFilter::defaultSearchOptions();
+
+    group.patchToken   = patchToken;
+    group.patchStop    = std::stop_source{};
+    group.patchRunning = true;
+    group.patchPending = false;
+
+    group.patchFuture
+        = Utils::asyncExec([snapshot = std::move(snapshot), tracks = group.sourceTracks,
+                            changedTrackIds = TrackIds{group.pendingPatchIds.cbegin(), group.pendingPatchIds.cend()},
+                            libraries       = m_libraryManager ? m_libraryManager->allLibraries() : LibraryInfoMap{},
+                            context = rowBuildContext(), searchOptions, token = group.patchStop.get_token()]() mutable {
+              return calculateGroupPatch(std::move(snapshot), std::move(tracks), changedTrackIds, libraries, context,
+                                         searchOptions, token);
+          });
+
+    group.patchFuture.then(
+        m_self, [this, groupId, revision, patchToken, searchOptions](QFuture<FilterPatchResult> future) {
+            auto result = future.takeResult();
+            if(!m_groups.contains(groupId)) {
+                return;
+            }
+
+            auto& currentGroup = m_groups.at(groupId);
+            if(currentGroup.patchToken != patchToken) {
+                return;
+            }
+
+            currentGroup.patchRunning       = false;
+            const auto currentSearchOptions = TrackQueryFilter::defaultSearchOptions();
+            if(searchOptions.script != currentSearchOptions.script || searchOptions.mode != currentSearchOptions.mode) {
+                scheduleRecompute(groupId);
+            }
+            if(currentGroup.recomputePending) {
+                currentGroup.recomputePending = false;
+                recomputeGroup(groupId);
+                return;
+            }
+            if(currentGroup.revision != revision || result.cancelled) {
+                startGroupPatch(groupId);
+                return;
+            }
+            applyGroupPatch(groupId, revision, std::move(result));
+        });
+}
+
+void FilterControllerPrivate::applyGroupPatch(const Id& groupId, uint64_t revision, FilterPatchResult result)
+{
+    auto& currentGroup = m_groups.at(groupId);
+    if(result.stages.size() != currentGroup.stages.size()) {
+        scheduleRecompute(groupId);
+        return;
+    }
+
+    for(size_t i{0}; i < result.stages.size(); ++i) {
+        if(result.stages[i].widgetId != currentGroup.stages[i].widgetId) {
+            scheduleRecompute(groupId);
+            return;
         }
     }
 
-    group.finalFilteredTracks = constrained ? currentTracks : TrackList{};
-    group.hasActiveStages     = constrained;
-    publishGroupResult(group.id);
-    return true;
+    currentGroup.pendingPatchIds.clear();
+    for(size_t i{0}; i < result.stages.size(); ++i) {
+        auto& stage                   = currentGroup.stages[i];
+        auto& patch                   = result.stages[i];
+        stage.inputTracks             = std::move(patch.inputTracks);
+        stage.rows                    = std::move(patch.rows);
+        stage.searchedRows            = std::move(patch.searchedRows);
+        stage.rowLookup               = std::move(patch.rowLookup);
+        stage.selectedKeys            = std::move(patch.selectedKeys);
+        stage.selectedTracks          = std::move(patch.selectedTracks);
+        stage.selectionRestorePending = patch.selectionRestorePending;
+        stage.isActive                = patch.isActive;
+        stage.revision                = revision;
+        ++stage.searchRevision;
+    }
+
+    currentGroup.finalFilteredTracks = std::move(result.filteredTracks);
+    currentGroup.hasActiveStages     = result.hasActiveStages;
+
+    for(int i{0}; std::cmp_less(i, result.stages.size()); ++i) {
+        if(!m_groups.contains(groupId) || m_groups.at(groupId).revision != revision) {
+            return;
+        }
+        publishStage(groupId, i);
+    }
+
+    if(!m_groups.contains(groupId) || m_groups.at(groupId).revision != revision) {
+        return;
+    }
+
+    publishCurrentPlaylistSelection(m_groups.at(groupId));
+    publishGroupResult(groupId);
 }
 
 void FilterControllerPrivate::recomputeGroup(const Id& groupId)
@@ -845,6 +1100,7 @@ void FilterControllerPrivate::recomputeGroup(const Id& groupId)
     }
 
     auto& group        = m_groups.at(groupId);
+    group.recomputing  = true;
     group.sourceTracks = sourceTracks(group);
     group.finalFilteredTracks.clear();
     group.hasActiveStages = false;
@@ -867,6 +1123,7 @@ void FilterControllerPrivate::recomputeStage(const Id& groupId, int stageIndex, 
     }
 
     if(std::cmp_greater_equal(stageIndex, group.stages.size())) {
+        group.recomputing         = false;
         group.finalFilteredTracks = constrained ? std::move(currentTracks) : TrackList{};
         group.hasActiveStages     = constrained;
         publishCurrentPlaylistSelection(group);
@@ -875,6 +1132,7 @@ void FilterControllerPrivate::recomputeStage(const Id& groupId, int stageIndex, 
     }
 
     auto& stage                = group.stages.at(stageIndex);
+    group.recomputing          = true;
     const bool hadSearchedRows = stage.searchedRows.has_value();
 
     stage.inputTracks = currentTracks;
@@ -889,9 +1147,14 @@ void FilterControllerPrivate::recomputeStage(const Id& groupId, int stageIndex, 
     const FilterColumnList columns = stage.widget ? stage.widget->columns() : FilterColumnList{};
     const auto context             = rowBuildContext();
 
-    Utils::asyncExec([libraryManager = m_libraryManager, columns, tracks = stage.inputTracks, context]() {
-        return buildFilterRows(libraryManager, columns, tracks, context);
-    })
+    qCDebug(FILTER_CONTROLLER_TRACE) << "Building filter rows:" << "group=" << groupId.name()
+                                     << "filter=" << stage.widgetId.name() << "stage=" << stageIndex
+                                     << "revision=" << revision << "tracks=" << stage.inputTracks.size()
+                                     << "constrained=" << constrained;
+
+    Utils::asyncExec([libraries = m_libraryManager ? m_libraryManager->allLibraries() : LibraryInfoMap{}, columns,
+                      tracks    = stage.inputTracks,
+                      context]() { return buildFilterRows(libraries, columns, tracks, context); })
         .then(m_self, [this, groupId, stageIndex, revision, currentTracks = std::move(currentTracks),
                        constrained](const FilterRowList& rows) mutable {
             if(!m_groups.contains(groupId)) {
@@ -900,11 +1163,17 @@ void FilterControllerPrivate::recomputeStage(const Id& groupId, int stageIndex, 
 
             auto& currentGroup = m_groups.at(groupId);
             if(currentGroup.revision != revision || std::cmp_greater_equal(stageIndex, currentGroup.stages.size())) {
+                qCDebug(FILTER_CONTROLLER_TRACE)
+                    << "Discarding stale filter rows:" << "group=" << groupId.name() << "stage=" << stageIndex
+                    << "revision=" << revision << "currentRevision=" << currentGroup.revision;
                 return;
             }
 
             auto& currentStage = currentGroup.stages.at(stageIndex);
             if(currentStage.revision != revision) {
+                qCDebug(FILTER_CONTROLLER_TRACE)
+                    << "Discarding stale stage rows:" << "group=" << groupId.name() << "stage=" << stageIndex
+                    << "revision=" << revision << "currentRevision=" << currentStage.revision;
                 return;
             }
 
@@ -962,11 +1231,16 @@ void FilterControllerPrivate::refreshStageSearch(const Id& groupId, int stageInd
         return;
     }
 
-    const QString searchText = stage.searchText;
+    const QString searchText       = stage.searchText;
+    const auto searchOptions       = TrackQueryFilter::defaultSearchOptions();
+    const auto libraries           = m_libraryManager ? m_libraryManager->allLibraries() : LibraryInfoMap{};
+    const FilterColumnList columns = stage.widget ? stage.widget->columns() : FilterColumnList{};
+    const auto context             = rowBuildContext();
 
-    Utils::asyncExec([rows = stage.rows, tracks = stage.inputTracks, searchText]() {
-        return filterRowsBySearch(searchText, rows, tracks);
-    })
+    Utils::asyncExec(
+        [rows = stage.rows, tracks = stage.inputTracks, searchText, searchOptions, libraries, columns, context]() {
+            return filterRowsBySearch(searchText, rows, tracks, searchOptions, libraries, columns, context);
+        })
         .then(m_self,
               [this, groupId, stageIndex, revision, searchRevision, searchText](const FilterRowList& searchedRows) {
                   if(!m_groups.contains(groupId)) {
@@ -1002,6 +1276,9 @@ void FilterControllerPrivate::refreshStageSearch(const Id& groupId, int stageInd
                           = currentStage.isActive ? currentStage.selectedTracks : currentStage.inputTracks;
                       const bool nextConstrained = hasPriorActive || currentStage.isActive;
 
+                      if(currentStage.scrollPolicy == FilterScrollPolicy::ResetIfChanged) {
+                          requestScrollReset(currentGroup, stageIndex + 1);
+                      }
                       recomputeStage(groupId, stageIndex + 1, revision, nextTracks, nextConstrained);
                   }
 
@@ -1030,6 +1307,12 @@ void FilterControllerPrivate::publishStage(const Id& groupId, int stageIndex)
     viewState.selectedKeys            = stage.selectedKeys;
     viewState.searchText              = stage.searchText;
     viewState.selectionRestorePending = stage.selectionRestorePending;
+    viewState.scrollPolicy            = std::exchange(stage.scrollPolicy, FilterScrollPolicy::Preserve);
+
+    qCDebug(FILTER_CONTROLLER_TRACE) << "Publishing filter rows:" << "group=" << groupId.name()
+                                     << "filter=" << stage.widgetId.name() << "stage=" << stageIndex
+                                     << "revision=" << stage.revision << "rows=" << viewState.rows.size()
+                                     << "searchRevision=" << stage.searchRevision;
 
     stage.widget->setViewState(viewState);
     updateWidgetSelection(stage);
@@ -1048,7 +1331,7 @@ void FilterControllerPrivate::handleFilterUpdated(FilterWidget* widget)
                 widget->setIndex(static_cast<int>(group.filters.size()) - 1);
             }
             syncStages(group);
-            scheduleRecompute(newGroupId);
+            scheduleRecompute(newGroupId, FilterScrollPolicy::ResetIfChanged);
         }
         return;
     }
@@ -1057,9 +1340,9 @@ void FilterControllerPrivate::handleFilterUpdated(FilterWidget* widget)
     attachWidget(widget, newPublicGroup);
 
     if(removedGroupId) {
-        scheduleRecompute(removedGroupId.value());
+        scheduleRecompute(removedGroupId.value(), FilterScrollPolicy::ResetIfChanged);
     }
-    scheduleRecompute(newGroupId);
+    scheduleRecompute(newGroupId, FilterScrollPolicy::ResetIfChanged);
 }
 
 void FilterControllerPrivate::handleConfigChanged(FilterWidget* widget)
@@ -1097,7 +1380,41 @@ void FilterControllerPrivate::handleConfigChanged(FilterWidget* widget)
         m_selectPlaylistMatches = false;
     }
 
-    scheduleRecompute(*groupId);
+    scheduleRecompute(*groupId, FilterScrollPolicy::ResetIfChanged);
+}
+
+Id FilterControllerPrivate::initialGroup(FyWidget* widget) const
+{
+    std::optional<Id> group;
+
+    const auto* root  = m_editableLayout->root();
+    const auto* scope = groupingScope(widget, root);
+    if(scope) {
+        const auto allWidgets = m_editableLayout->allWidgets();
+        for(auto* other : allWidgets) {
+            if(other == widget || groupingScope(other, root) != scope) {
+                continue;
+            }
+
+            Id candidate{};
+            if(const auto* filter = qobject_cast<FilterWidget*>(other)) {
+                candidate = filter->group();
+            }
+            else if(const auto* viewer = qobject_cast<TrackListWidget*>(other)) {
+                candidate = viewer->group();
+            }
+
+            if(!candidate.isValid()) {
+                continue;
+            }
+            if(group && *group != candidate) {
+                return {};
+            }
+            group = candidate;
+        }
+    }
+
+    return group ? *group : Id{Utils::generateUniqueHash()};
 }
 
 void FilterControllerPrivate::attachWidget(FilterWidget* widget, const Id& publicGroupId)
@@ -1134,12 +1451,15 @@ void FilterControllerPrivate::attachWidget(FilterWidget* widget, const Id& publi
         widget->applyConfig(config);
     }
 
-    if(publicGroupId.isValid()) {
+    // Initial registration as ungrouped should leave auto assignment pending
+    if(widget->group() != publicGroupId) {
         widget->setGroup(publicGroupId);
+    }
+
+    if(publicGroupId.isValid()) {
         sortGroupedFilters(group);
     }
     else {
-        widget->setGroup({});
         widget->setIndex(-1);
     }
 
@@ -1165,6 +1485,7 @@ std::optional<Id> FilterControllerPrivate::detachWidget(FilterWidget* widget)
             m_selectPlaylistMatches = false;
         }
         if(group.viewers.empty()) {
+            group.patchStop.request_stop();
             m_groups.erase(groupId.value());
             Q_EMIT m_self->filterGroupRemoved(groupId.value());
             return groupId;
@@ -1220,6 +1541,7 @@ std::optional<Id> FilterControllerPrivate::detachViewer(TrackListWidget* widget)
     std::erase(group.viewers, widget);
 
     if(group.filters.empty() && group.viewers.empty()) {
+        group.patchStop.request_stop();
         m_groups.erase(groupId);
         Q_EMIT m_self->filterGroupRemoved(groupId);
     }
@@ -1327,7 +1649,7 @@ FilterController::FilterController(ActionManager* actionManager, const CorePlugi
         }
     });
     QObject::connect(p->m_playlistController, &CurrentPlaylistController::currentPlaylistChanged, this,
-                     [this]() { p->schedulePlaylistRecomputes(); });
+                     [this]() { p->schedulePlaylistRecomputes(FilterScrollPolicy::ResetIfChanged); });
 
     const auto currentPlaylistChanged = [this](const Playlist* playlist) {
         if(p->m_playlistController && playlist == p->m_playlistController->currentPlaylist()) {
@@ -1346,7 +1668,12 @@ FilterController::FilterController(ActionManager* actionManager, const CorePlugi
                      [currentPlaylistChanged](const Playlist* playlist) { currentPlaylistChanged(playlist); });
 }
 
-FilterController::~FilterController() = default;
+FilterController::~FilterController()
+{
+    for(auto& group : p->m_groups | std::views::values) {
+        group.patchStop.request_stop();
+    }
+}
 
 FilterColumnRegistry* FilterController::columnRegistry() const
 {
@@ -1360,22 +1687,32 @@ QString FilterController::defaultPlaylistName()
 
 FilterWidget* FilterController::createFilter()
 {
-    auto* widget
-        = new FilterWidget(p->m_actionManager, p->m_columnRegistry, p->m_library, p->m_coverRepository, p->m_settings);
-    widget->setGroup(p->m_defaultId);
-    p->attachWidget(widget, p->m_defaultId);
+    auto* widget = new FilterWidget(p->m_actionManager, p->m_columnRegistry, p->m_coreContext, p->m_coverRepository,
+                                    p->m_trackSelection);
+    p->attachWidget(widget, {});
 
+    QObject::connect(widget, &FilterWidget::requestInitialGroup, this, [this, widget]() {
+        const Id group = p->initialGroup(widget);
+        removeFilter(widget);
+        addFilterToGroup(widget, group);
+    });
     QObject::connect(widget, &FilterWidget::doubleClicked, this,
                      [this, widget]() { p->handleAction(widget, widget->doubleClickAction()); });
     QObject::connect(widget, &FilterWidget::middleClicked, this,
                      [this, widget]() { p->handleAction(widget, widget->middleClickAction()); });
+    QObject::connect(widget, &FilterWidget::actionRequested, this, [this, widget](TrackAction action) {
+        // The expansion is a detached track view regardless of the filter's source
+        p->handleAction(widget, action, PlaylistAction::TempPlaylist);
+    });
     QObject::connect(widget, &FilterWidget::searchTextChanged, this,
                      [this, widget](const QString& search) { p->handleSearchChanged(widget, search); });
     QObject::connect(
         widget, &FilterWidget::requestHeaderMenu, this,
         [widget](AutoHeaderView* header, const QPoint& pos) { filterHeaderContextMenu(widget, header, pos); });
     QObject::connect(widget, &FilterWidget::requestContextMenu, this,
-                     [this, widget](const QPoint& pos) { p->filterContextMenu(widget, pos); });
+                     [this, widget](const QPoint& pos, WidgetContext* context, bool hasSelection) {
+                         p->filterContextMenu(widget, pos, context, hasSelection);
+                     });
     QObject::connect(widget, &FilterWidget::selectionKeysChanged, this,
                      [this, widget](const std::vector<RowKey>& keys) { p->handleSelectionChanged(widget, keys); });
     QObject::connect(widget, &FilterWidget::filterUpdated, this, [this, widget]() { p->handleFilterUpdated(widget); });
@@ -1387,7 +1724,7 @@ FilterWidget* FilterController::createFilter()
     p->updateFilterPlaylistActions(widget);
 
     if(const auto group = p->widgetGroupId(widget)) {
-        p->scheduleRecompute(group.value());
+        p->scheduleRecompute(group.value(), FilterScrollPolicy::ResetIfChanged);
     }
 
     return widget;
@@ -1396,9 +1733,10 @@ FilterWidget* FilterController::createFilter()
 TrackListWidget* FilterController::createTrackList(PlaylistWidget* playlistWidget)
 {
     auto* widget = new TrackListWidget(this, playlistWidget);
-    widget->setGroup(p->m_defaultId);
-    p->attachViewer(widget, p->m_defaultId);
+    p->attachViewer(widget, {});
 
+    QObject::connect(widget, &TrackListWidget::requestInitialGroup, this,
+                     [this, widget]() { addViewerToGroup(widget, p->initialGroup(widget)); });
     QObject::connect(widget, &TrackListWidget::groupChanged, this, [this, widget]() {
         const auto oldGroup = p->detachViewer(widget);
         p->attachViewer(widget, widget->group());
@@ -1475,11 +1813,9 @@ void FilterController::addFilterToGroup(FilterWidget* widget, const Id& groupId)
 {
     p->attachWidget(widget, groupId);
 
-    if(groupId.isValid()) {
-        widget->setGroup(groupId);
-    }
+    widget->setGroup(groupId);
     if(const auto group = p->widgetGroupId(widget)) {
-        p->scheduleRecompute(group.value());
+        p->scheduleRecompute(group.value(), FilterScrollPolicy::ResetIfChanged);
     }
 }
 
@@ -1491,15 +1827,16 @@ bool FilterController::removeFilter(FilterWidget* widget)
     }
 
     if(p->m_groups.contains(groupId.value())) {
-        p->scheduleRecompute(groupId.value());
+        p->scheduleRecompute(groupId.value(), FilterScrollPolicy::ResetIfChanged);
     }
     return true;
 }
 
 void FilterController::addViewerToGroup(TrackListWidget* widget, const Id& groupId)
 {
-    if(widget->group() != groupId) {
-        widget->setGroup(groupId);
+    const Id previousGroup = widget->group();
+    widget->setGroup(groupId);
+    if(previousGroup != groupId) {
         return;
     }
 

@@ -22,11 +22,24 @@
 #include <gui/widgets/expandedtreeview.h>
 
 #include <QBasicTimer>
+#include <QPointer>
+#include <QVariantAnimation>
+
+#include <unordered_map>
+#include <vector>
 
 class QHeaderView;
 
 namespace Fooyin {
 class BaseView;
+
+struct ModelIndexHash
+{
+    size_t operator()(const QModelIndex& index) const noexcept
+    {
+        return qHash(index);
+    }
+};
 
 struct ExpandedTreeViewItem
 {
@@ -44,6 +57,7 @@ struct ExpandedTreeViewItem
     int x{-1};
     int y{-1};
     int width{-1};
+    QSize decorationSize;
 
     constexpr bool operator==(const ExpandedTreeViewItem& other) const
     {
@@ -64,6 +78,13 @@ struct ExpandedTreeViewItem
     {
         return {x, y, width, height};
     }
+};
+
+struct ViewportAnchor
+{
+    QPersistentModelIndex index;
+    int top{0};
+    bool expansion{false};
 };
 
 class ExpandedTreeViewPrivate : public QObject
@@ -89,11 +110,15 @@ public:
     void doDelayedItemsLayout(int delay = 0) const;
     void interruptDelayedItemsLayout() const;
     void layoutItems() const;
+    void doItemsLayout(bool reuseIconMeasurements);
 
+    ViewportAnchor viewportAnchor() const;
     ExpandedTreeViewItem indexToListViewItem(const QModelIndex& index) const;
 
     int viewIndex(const QModelIndex& index) const;
+    void clearViewItems();
     void insertViewItems(int pos, int count, const ExpandedTreeViewItem& viewItem);
+    bool appendTreeRows(const QModelIndex& parent, int first, int last);
     bool hasVisibleChildren(const QModelIndex& parent) const;
     bool isIndexEnabled(const QModelIndex& index) const;
     bool isItemDisabled(int i) const;
@@ -117,6 +142,12 @@ public:
     std::vector<std::pair<int, int>> columnRanges(const QModelIndex& topIndex, const QModelIndex& bottomIndex) const;
     std::vector<QRect> rectsToPaint(const QModelIndex& index, const QStyleOptionViewItem& option, int y) const;
 
+    void updateExpansionGeometry();
+    void updateExpansionAnimation(const QVariant& value);
+    QPixmap captureExpansion() const;
+    [[nodiscard]] const QPixmap& animationSnapshot() const;
+    void stopExpansionAnimation();
+
     QPoint offset() const;
     bool isIndexValid(const QModelIndex& index) const;
 
@@ -131,11 +162,21 @@ public:
 
     ViewMode m_viewMode{ViewMode::Tree};
     CaptionDisplay m_captionDisplay{CaptionDisplay::Bottom};
+    int m_flowColumnGap{16};
+    int m_flowMinimumRows{1};
+    int m_flowMaximumColumns{0};
+    int m_flowMinimumColumnWidth{0};
+    bool m_flowStretchColumns{true};
     int m_iconItemColumn{-1};
     int m_iconHorizontalGap{-1};
     int m_iconVerticalGap{10};
+    int m_iconItemCornerRadius{0};
+    QMargins m_iconItemArtworkMargins;
+    bool m_autoFitArtwork{false};
+    QSize m_effectiveIconSize;
     bool m_useIconGapsForSideCaptions{false};
     bool m_uniformRowHeights{false};
+    bool m_wordWrap{false};
     bool m_selectBeforeDrag{false};
     bool m_selectIgnoreParents{false};
     bool m_sortingEnabled{false};
@@ -144,11 +185,12 @@ public:
     bool m_updatingGeometry{false};
     int m_hidingScrollbar{0};
     bool m_layingOutItems{false};
+    bool m_preserveLayoutPosition{false};
 
     mutable std::vector<ExpandedTreeViewItem> m_viewItems;
+    std::unordered_map<QModelIndex, int, ModelIndexHash> m_viewIndexes;
     mutable std::vector<int> m_itemOffsets;
     mutable bool m_itemOffsetsDirty{true};
-    mutable int m_lastViewedItem{0};
     int m_defaultItemHeight{20};
     int m_indent{0};
     int m_uniformHeightRole{-1};
@@ -158,8 +200,21 @@ public:
 
     mutable QBasicTimer m_delayedLayout;
     QPoint m_pressedPos;
+    bool m_canStartDrag{true};
     QPersistentModelIndex m_hoverIndex;
     QPoint m_dragPos;
+    QPointer<QWidget> m_expansionWidget;
+    QPersistentModelIndex m_expandedIndex;
+    QRect m_expansionRect;
+    bool m_expansionAnimated{true};
+    QVariantAnimation m_expansionAnimation;
+    QPersistentModelIndex m_expansionAnimationIndex;
+    QPersistentModelIndex m_expansionAnimationNextIndex;
+    QPixmap m_expansionSnapshot;
+    QPixmap m_expansionPreviousSnapshot;
+    QSize m_expansionAnimationViewSize;
+    int m_expansionAnimationHeight{-1};
+    int m_expansionAnimationScrollMax{0};
     QRect m_dropIndicatorRect;
     ExpandedTreeView::DropIndicatorPosition m_dropIndicatorPos{ExpandedTreeView::OnViewport};
 

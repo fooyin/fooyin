@@ -73,6 +73,7 @@ private:
     TrackSelectionController* m_trackSelection;
     WidgetProvider* m_widgetProvider;
     SettingsManager* m_settings;
+    CoverRepository* m_coverRepository;
 
     Track m_playingTrack;
     DbConnectionPoolPtr m_dbPool;

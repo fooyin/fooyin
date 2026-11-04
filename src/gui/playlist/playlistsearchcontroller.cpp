@@ -22,11 +22,10 @@
 #include "playlistcontroller.h"
 #include "playlistmodel.h"
 #include "playlistview.h"
-#include "scripting/scriptvariableproviders.h"
 
 #include <core/playlist/playlist.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/scripttypes.h>
 #include <core/scripting/trackqueryfilter.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
@@ -61,8 +60,6 @@ struct MatchEvalRequest
 std::vector<int> evaluateMatches(const MatchEvalRequest& request)
 {
     ScriptParser parser;
-    parser.addProvider(playlistVariableProvider());
-    parser.addProvider(artworkMarkerVariableProvider());
 
     const auto parsedScript = parser.parse(request.script);
     if(!parsedScript.isValid()) {
@@ -71,17 +68,16 @@ std::vector<int> evaluateMatches(const MatchEvalRequest& request)
 
     const TrackList trackList = PlaylistTrack::toTracks(request.tracks);
 
-    PlaylistScriptEnvironment environment;
-    environment.setPlaylistData(nullptr, nullptr, &trackList);
-
-    ScriptContext context;
-    context.environment = &environment;
+    ScriptPlaylistData row;
+    const ScriptContext context{.tracks = &trackList, .playlistData = &row};
 
     std::vector<int> matches;
     matches.reserve(request.tracks.size());
 
     for(const PlaylistTrack& track : request.tracks) {
-        environment.setTrackState(track.indexInPlaylist, -1, -1, 0);
+        row.trackIndex = track.indexInPlaylist;
+        row.playlistId = track.playlistId;
+        row.entryId    = track.entryId;
 
         const QString matchText = parser.evaluate(parsedScript, track.track, context);
         if(TrackQueryFilter::matchesSearch(matchText, request.search, static_cast<ScriptSearchMode>(request.mode))) {

@@ -49,6 +49,7 @@ StarRating::StarRating(float rating, int maxStarCount, int scale, const RatingSt
     , m_scale{scale}
     , m_colours{colours}
     , m_unratedColour{unratedColour}
+    , m_orientation{Qt::Horizontal}
 { }
 
 float StarRating::rating() const
@@ -66,6 +67,11 @@ int StarRating::starScale() const
     return m_scale;
 }
 
+Qt::Orientation StarRating::orientation() const
+{
+    return m_orientation;
+}
+
 void StarRating::setRating(float rating)
 {
     m_rating = rating;
@@ -79,6 +85,11 @@ void StarRating::setMaxStarCount(int maxStarCount)
 void StarRating::setStarScale(int scale)
 {
     m_scale = scale;
+}
+
+void StarRating::setOrientation(Qt::Orientation orientation)
+{
+    m_orientation = orientation;
 }
 
 void StarRating::paint(QPainter* painter, const QRect& rect, EditMode mode, Qt::Alignment alignment) const
@@ -99,16 +110,16 @@ void StarRating::paint(QPainter* painter, const QRect& rect, EditMode mode, Qt::
                                        static_cast<int>(m_colours.size()) - 1);
     const QColor customColour = m_rating > 0 ? m_colours.at(colourIndex) : QColor{};
     const qreal dpr           = painter->device()->devicePixelRatioF();
-    const QString cacheKey    = u"StarRating:%1|%2|%3|%4|%5|%6"_s.arg(m_rating)
+    const QString cacheKey    = u"StarRating:%1|%2|%3|%4|%5|%6|%7"_s.arg(m_rating)
                                     .arg(m_scale)
+                                    .arg(m_orientation)
                                     .arg(m_maxCount)
                                     .arg(mode == EditMode::Editable ? 1 : 0)
                                     .arg(rect.width())
                                     .arg(rect.height())
-                              + u"|%1|%2|%3|%4|%5"_s.arg(alignment.toInt())
-                                    .arg(symbols.fullStarSymbol)
-                                    .arg(symbols.halfStarSymbol)
-                                    .arg(symbols.emptyStarSymbol)
+                              + u"|%1|%2|%3|%4"_s.arg(alignment.toInt())
+                                    .arg(brushes.filled.color().name(QColor::HexArgb))
+                                    .arg(brushes.faded.color().name(QColor::HexArgb))
                                     .arg(dpr);
 
     QPixmap pixmap;
@@ -122,16 +133,31 @@ void StarRating::paint(QPainter* painter, const QRect& rect, EditMode mode, Qt::
         pixmapPainter.setFont(QFont(QString{u"Arial"}, m_scale));
         pixmapPainter.setPen(customColour);
 
-        const int yOffset = (rect.height() - m_scale) * 0.5 + m_scale;
+        const bool vertical = m_orientation == Qt::Vertical;
+        const int yOffset   = (rect.height() - m_scale) * 0.5 + m_scale;
 
-        int xOffset{0};
-        const int totalWidth = m_maxCount * m_scale;
-        if(alignment & Qt::AlignHCenter) {
-            xOffset = (rect.width() - totalWidth) / 2;
+        const QSize starSize = sizeHint();
+        int xOffset          = (rect.width() - starSize.width()) / 2;
+        int yOffset          = (rect.height() - starSize.height()) / 2;
+        if(vertical) {
+            if(alignment & Qt::AlignTop) {
+                yOffset = 0;
+            }
+            else if(alignment & Qt::AlignBottom) {
+                yOffset = rect.height() - starSize.height();
+            }
         }
-        else if(alignment & Qt::AlignRight) {
-            xOffset = rect.width() - totalWidth;
+        else {
+            if(alignment & Qt::AlignLeft) {
+                xOffset = 0;
+            }
+            else if(alignment & Qt::AlignRight) {
+                xOffset = rect.width() - starSize.width();
+            }
         }
+
+        pixmapPainter.translate(xOffset, vertical ? yOffset + starSize.height() - m_scale : yOffset);
+        pixmapPainter.scale(m_scale, m_scale);
 
         const int fullStars     = std::floor(m_rating * static_cast<float>(m_maxCount));
         const float partialStar = (m_rating * static_cast<float>(m_maxCount)) - static_cast<float>(fullStars);
@@ -146,6 +172,14 @@ void StarRating::paint(QPainter* painter, const QRect& rect, EditMode mode, Qt::
             else {
                 pixmapPainter.drawText(QPointF(xOffset, yOffset), symbols.emptyStarSymbol);
             }
+
+            if(i == fullStars && partialStar >= 0.5) {
+                // Draw half star
+                pixmapPainter.setBrush(brushes.filled);
+                drawHalfPolygon(&pixmapPainter, m_starPolygon, true);
+            }
+
+            pixmapPainter.translate(vertical ? 0.0 : 1.0, vertical ? -1.0 : 0.0);
             xOffset = xOffset + m_scale;
         }
         pixmapPainter.end();
@@ -158,6 +192,6 @@ void StarRating::paint(QPainter* painter, const QRect& rect, EditMode mode, Qt::
 
 QSize StarRating::sizeHint() const
 {
-    return m_scale * QSize{m_maxCount, 1};
+    return m_scale * (m_orientation == Qt::Vertical ? QSize{1, m_maxCount} : QSize{m_maxCount, 1});
 }
 } // namespace Fooyin

@@ -21,8 +21,10 @@
 
 #include "internalguisettings.h"
 
+#include <core/application.h>
 #include <core/player/playercontroller.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/scripting/scriptcontextservice.h>
+#include <core/scripting/scripttypes.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
@@ -83,11 +85,11 @@ void trimOutputFile(const QString& path, int lineLimit)
 } // namespace
 
 namespace Fooyin {
-NowPlayingOutputService::NowPlayingOutputService(PlayerController* playerController, SettingsManager* settings,
-                                                 QObject* parent)
+NowPlayingOutputService::NowPlayingOutputService(Application* core, QObject* parent)
     : QObject{parent}
-    , m_playerController{playerController}
-    , m_settings{settings}
+    , m_playerController{core->playerController()}
+    , m_scriptContext{core->scriptContextService()}
+    , m_settings{core->settingsManager()}
     , m_enabled{m_settings->value<Settings::Gui::Internal::NowPlayingOutputEnabled>()}
     , m_events{m_settings->value<Settings::Gui::Internal::NowPlayingOutputUpdateEvents>()}
     , m_targets{m_settings->value<Settings::Gui::Internal::NowPlayingOutputTargets>()}
@@ -161,9 +163,9 @@ QString NowPlayingOutputService::formattedOutput()
         return {};
     }
 
-    auto playbackContext = makePlaybackScriptContext(m_playerController, nullptr, TrackListContextPolicy::Placeholder);
-    playbackContext.context.track = &track;
-    return m_scriptParser.evaluate(m_script, track, playbackContext.context);
+    const auto playbackContext = m_scriptContext->playbackContext();
+    return m_scriptParser.evaluate(m_script, track, playbackContext.context(),
+                                   {.trackListContextPolicy = TrackListContextPolicy::Placeholder});
 }
 
 void NowPlayingOutputService::writeOutput(const QString& output)

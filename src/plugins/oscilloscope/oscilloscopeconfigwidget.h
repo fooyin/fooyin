@@ -28,6 +28,7 @@ class QComboBox;
 class QGroupBox;
 
 namespace Fooyin {
+class BackgroundConfigWidget;
 class ColourButton;
 
 namespace Oscilloscope {
@@ -54,6 +55,7 @@ private:
     ColourButton* m_backgroundColour;
     ColourButton* m_waveformColour;
     ColourButton* m_zeroLineColour;
+    BackgroundConfigWidget* m_background;
 };
 } // namespace Oscilloscope
 } // namespace Fooyin

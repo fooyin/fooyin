@@ -22,24 +22,37 @@
 #include "librarytreegroup.h"
 #include "librarytreeitem.h"
 
+#include <core/library/libraryinfo.h>
+#include <core/ratingsymbols.h>
 #include <utils/crypto.h>
 #include <utils/worker.h>
 
 #include <QFont>
 
 #include <memory>
+#include <stop_token>
 
 namespace Fooyin {
-class LibraryManager;
 class LibraryTreePopulatorPrivate;
-class SettingsManager;
 
 using ItemKeyMap     = std::unordered_map<Md5Hash, LibraryTreeItem>;
 using NodeKeyMap     = std::unordered_map<Md5Hash, std::vector<Md5Hash>>;
 using TrackIdNodeMap = std::unordered_map<int, std::vector<Md5Hash>>;
 
+struct LibraryTreePopulationContext
+{
+    LibraryInfoMap libraries;
+    QFont font;
+    RatingStarSymbols ratingSymbols;
+    bool useVarious{false};
+    uint64_t generation{0};
+    uint64_t requestId{0};
+    std::stop_token stopToken;
+};
+
 struct PendingTreeData
 {
+    uint64_t generation{0};
     ItemKeyMap items;
     ItemKeyMap updatedItems;
     NodeKeyMap nodes;
@@ -67,17 +80,16 @@ public:
         Atomic
     };
 
-    explicit LibraryTreePopulator(LibraryManager* libraryManager, SettingsManager* settings, QObject* parent = nullptr);
+    explicit LibraryTreePopulator(QObject* parent = nullptr);
     ~LibraryTreePopulator() override;
 
-    void setFont(const QFont& font);
-
-    void run(const LibraryTreeGrouping& grouping, const TrackList& tracks, bool useVarious,
+    void run(const LibraryTreeGrouping& grouping, const TrackList& tracks, LibraryTreePopulationContext context,
              PopulationMode mode = PopulationMode::Incremental);
-    void updateItems(ItemKeyMap items, bool useVarious);
+    void updateItems(ItemKeyMap items, LibraryTreePopulationContext context);
 
 Q_SIGNALS:
     void populated(Fooyin::PendingTreeDataPtr data);
+    void populationFinished(uint64_t generation, uint64_t requestId);
 
 private:
     std::unique_ptr<LibraryTreePopulatorPrivate> p;

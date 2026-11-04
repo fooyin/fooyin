@@ -1,0 +1,90 @@
+{
+    "Name": "Gallery",
+    "Widgets": [
+        {
+            "SplitterVertical": {
+                "Locked": [
+                    true,
+                    false,
+                    true
+                ],
+                "State": "AAAA/wAAAAEAAAADAAAAGgAAA3EAAAAWAP////8BAAAAAgA=",
+                "Widgets": [
+                    {
+                        "SplitterHorizontal": {
+                            "Locked": [
+                                true,
+                                false,
+                                false,
+                                false,
+                                true
+                            ],
+                            "State": "AAAA/wAAAAEAAAAFAAAAcgAABRoAAAA2AAAAGAAAAWQA/////wEAAAABAA==",
+                            "Widgets": [
+                                {
+                                    "PlayerControls": {}
+                                },
+                                {
+                                    "SeekBar": {}
+                                },
+                                {
+                                    "PlaylistControls": {}
+                                },
+                                {
+                                    "VolumeControls": {}
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "SplitterHorizontal": {
+                            "Locked": [
+                                true,
+                                false
+                            ],
+                            "State": "AAAA/wAAAAEAAAACAAAAsgAABSoA/////wEAAAABAA==",
+                            "Widgets": [
+                                {
+                                    "LibraryFilter": {
+                                        "Columns": "1",
+                                        "Group": "Gallery",
+                                        "ID": "e7ace6eab284422f9b8d2e8708ef5912",
+                                        "Index": 0,
+                                        "PlaylistEnabled": false,
+                                        "State": "AAAAJXjaY2BgYGRgYNjAAKFBgNH+A5QBFWAAAChLAeQ="
+                                    }
+                                },
+                                {
+                                    "LibraryFilter": {
+                                        "Artwork": 0,
+                                        "Captions": 1,
+                                        "Columns": "3|1",
+                                        "Display": 1,
+                                        "DoubleClickAction": 5,
+                                        "ExpandGroups": true,
+                                        "ExpandedArtwork": true,
+                                        "ExpansionArtworkOnLeft": false,
+                                        "ExpansionShowCloseButton": false,
+                                        "Group": "Gallery",
+                                        "IconHeight": 160,
+                                        "IconHorizontalGap": -1,
+                                        "IconVerticalGap": 12,
+                                        "IconWidth": 160,
+                                        "ID": "c45beee32723428ab55dc73750f26321",
+                                        "Index": 1,
+                                        "PlaylistEnabled": false,
+                                        "ShowSummary": false,
+                                        "State": "AAAANXjaY2BgYGJgYJwLxEsYwGwwYASx7e9vb1T8XSFk/0DFPp/J+TsjTBIAucsIdg=="
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "StatusBar": {}
+                    }
+                ]
+            }
+        }
+    ]
+}

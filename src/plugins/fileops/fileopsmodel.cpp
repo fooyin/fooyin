@@ -19,6 +19,7 @@
 
 #include "fileopsmodel.h"
 
+#include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <utils/enum.h>
 
@@ -26,8 +27,10 @@
 
 namespace Fooyin::FileOps {
 FileOpsModel::FileOpsModel(MusicLibrary* library, std::shared_ptr<AudioLoader> audioLoader, TrackList tracks,
-                           SettingsManager* settings, QObject* parent)
+                           SettingsManager* settings, LibraryManager* libraryManager, QObject* parent)
     : QAbstractItemModel{parent}
+    , m_library{library}
+    , m_libraryManager{libraryManager}
     , m_worker{library, std::move(audioLoader), std::move(tracks), settings}
     , m_succeededCount{0}
 {
@@ -42,7 +45,7 @@ FileOpsModel::FileOpsModel(MusicLibrary* library, std::shared_ptr<AudioLoader> a
 
 FileOpsModel::~FileOpsModel()
 {
-    m_worker.stopThread();
+    m_worker.closeThread();
     m_workerThread.quit();
     m_workerThread.wait();
 }
@@ -51,14 +54,18 @@ void FileOpsModel::simulate(const FileOpPreset& preset)
 {
     m_worker.stopThread();
 
-    QMetaObject::invokeMethod(&m_worker, [this, preset]() { m_worker.simulate(preset); });
+    QMetaObject::invokeMethod(&m_worker, [worker = &m_worker, preset, libraries = m_libraryManager->allLibraries(),
+                                          tracks = m_library->tracks(), token = m_worker.prepareWork()]() mutable {
+        worker->setLibraryData(std::move(libraries), std::move(tracks));
+        worker->simulate(preset, token);
+    });
 }
 
 void FileOpsModel::run()
 {
     m_worker.stopThread();
 
-    QMetaObject::invokeMethod(&m_worker, &FileOpsWorker::run);
+    QMetaObject::invokeMethod(&m_worker, [worker = &m_worker, token = m_worker.prepareWork()] { worker->run(token); });
 }
 
 void FileOpsModel::stop()
@@ -194,8 +201,12 @@ int FileOpsModel::rowCount(const QModelIndex& /*parent*/) const
     return static_cast<int>(m_operations.size() + m_results.size());
 }
 
-void FileOpsModel::populate(const FileOperations& operations)
+void FileOpsModel::populate(const FileOperations& operations, std::stop_token token)
 {
+    if(token.stop_requested()) {
+        return;
+    }
+
     beginResetModel();
     m_operations = operations;
     m_results.clear();

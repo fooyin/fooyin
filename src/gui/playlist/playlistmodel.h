@@ -26,6 +26,7 @@
 
 #include <core/player/playerdefs.h>
 #include <core/playlist/playlist.h>
+#include <core/scripting/scriptcontextservice.h>
 #include <utils/treemodel.h>
 
 #include <QColor>
@@ -89,19 +90,9 @@ class PlaylistModel : public TreeModel<PlaylistItem>
     Q_OBJECT
 
 public:
-    enum PlaybackDependency : uint8_t
-    {
-        None          = 0,
-        Position      = 1 << 0,
-        Bitrate       = 1 << 1,
-        PlaybackState = 1 << 2,
-        All           = Position | Bitrate | PlaybackState,
-    };
-    Q_DECLARE_FLAGS(PlaybackDependencies, PlaybackDependency)
-    Q_FLAG(PlaybackDependencies)
-
     PlaylistModel(PlaylistInteractor* playlistInteractor, AudioLoader* audioLoader, CoverProvider* coverProvider,
-                  SettingsManager* settings, GuiStyleProvider* styleProvider, QObject* parent = nullptr);
+                  SettingsManager* settings, GuiStyleProvider* styleProvider, ScriptContextService* scriptContext,
+                  QObject* parent = nullptr);
     ~PlaylistModel() override;
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -153,6 +144,9 @@ public:
     void updateColours();
     void setMatchPlayingTrackByIdentity(bool enabled);
 
+    [[nodiscard]] QModelIndex imageColumnGroupIndex(const QModelIndex& index) const;
+    [[nodiscard]] QModelIndex firstImageColumnTrackIndex(const QModelIndex& index) const;
+
     void reset(const PlaylistTrackList& tracks);
     void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist,
                const PlaylistTrackList& tracks);
@@ -170,6 +164,7 @@ public:
     void updateTracks(const std::vector<int>& indexes);
     void refreshTracks(const std::vector<int>& indexes);
     void refreshTracks(const std::vector<int>& indexes, const std::set<int>& columns);
+    void refreshPlaylistRows(const UId& playlistId, const std::vector<UId>& entryIds);
     void removeTracks(const QModelIndexList& indexes);
     void removeTracks(const TrackGroups& groups);
 
@@ -201,9 +196,6 @@ public Q_SLOTS:
     void playingTrackChangeRequested(const Fooyin::PlaylistTrack& track);
     void playingTrackChanged(const Fooyin::PlaylistTrack& track);
     void playStateChanged(Fooyin::Player::PlayState state);
-    void refreshPlayingTrackPositionData();
-    void refreshPlayingTrackBitrateData();
-    void refreshPlayingTrackOutputData();
 
 private:
     struct PlayingTrackIndexResolution
@@ -230,6 +222,7 @@ private:
     [[nodiscard]] bool playingTrackMatchesPlaylistTrack(const PlaylistTrack& track, int index) const;
     [[nodiscard]] PlaylistTrackList tracksWithPlayingTrackOverlay(const PlaylistTrackList& tracks) const;
 
+    PlaylistPopulationRequest populationRequest();
     void populateModel(PendingData data);
     void populateTrackGroup(PendingData data);
     void updateModel(ItemKeyMap data);
@@ -246,35 +239,20 @@ private:
     QVariant headerData(PlaylistItem* item, int column, int role) const;
     QVariant subheaderData(PlaylistItem* item, int column, int role) const;
 
-    struct DropTargetResult
+    enum class MergeResult : uint8_t
     {
-        QModelIndex fullMergeTarget;
-        QModelIndex partMergeTarget;
-        QModelIndex target;
-
-        [[nodiscard]] QModelIndex dropTarget() const
-        {
-            if(fullMergeTarget.isValid()) {
-                return fullMergeTarget;
-            }
-            if(partMergeTarget.isValid()) {
-                return partMergeTarget;
-            }
-            return target;
-        }
+        None = 0,
+        Partial,
+        Full,
     };
 
-    bool prepareDrop(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent);
-    DropTargetResult findDropTarget(PlaylistItem* source, PlaylistItem* target, int& row);
-    DropTargetResult canBeMerged(PlaylistItem*& currTarget, int& targetRow, PlaylistItemList& sourceParents,
-                                 int targetOffset);
+    QModelIndex findDropTarget(PlaylistItem* source, PlaylistItem* target, int& row);
+    MergeResult canBeMerged(PlaylistItem*& currTarget, int& targetRow, PlaylistItemList& sourceParents,
+                            int targetOffset);
     void handleTrackGroup(PendingData& data);
 
     int dropInsertRows(const PlaylistItemList& rows, const QModelIndex& target, int row);
     int dropMoveRows(const QModelIndex& source, const PlaylistItemList& rows, const QModelIndex& target, int row);
-    int dropCopyRows(const QModelIndex& source, const PlaylistItemList& rows, const QModelIndex& target, int row);
-    int dropCopyRowsRecursive(const QModelIndex& source, const PlaylistItemList& rows, const QModelIndex& target,
-                              int row);
 
     bool insertPlaylistRows(const QModelIndex& target, int firstRow, int lastRow, const PlaylistItemList& children);
     bool movePlaylistRows(const QModelIndex& source, int firstRow, int lastRow, const QModelIndex& target, int row,
@@ -285,19 +263,19 @@ private:
     void cleanupHeaders();
     void removeEmptyHeaders();
     void mergeHeaders();
+    [[nodiscard]] TrackList collectHeaderTracks(PlaylistItem* header) const;
     void updateHeaders();
     void updateTrackIndexes(bool updateItems = true);
     void deleteNodes(PlaylistItem* node);
 
     [[nodiscard]] static QModelIndex topLevelContainerIndex(const QModelIndex& index);
     [[nodiscard]] QModelIndex firstLeafIndex(const QModelIndex& index) const;
-    [[nodiscard]] QModelIndex firstImageColumnTrackIndex(const QModelIndex& index) const;
     std::vector<int> pixmapColumns() const;
     std::set<int> columnsNeedUpdating() const;
-    void updateLivePlaybackDependencies();
-    void refreshPlayingTrackForDependency(PlaybackDependency dependency);
-    void refreshTracksForDependency(const std::vector<int>& indexes, PlaybackDependency dependency);
-    void refreshTracksForDependencies(const std::vector<int>& indexes, PlaybackDependencies dependencies);
+    void updateScriptDependencies();
+    void refreshScriptData(const ScriptChanges& changes);
+    void refreshPlaybackRows(const std::vector<int>& indexes, std::span<const ScriptDataSourceId> sources = {});
+    [[nodiscard]] std::set<int> scriptColumns(std::span<const ScriptDataSourceId> sources) const;
     void coverUpdated(const Track& track);
     [[nodiscard]] PlaylistTrack persistentTrackForIndex(const QModelIndex& index) const;
     [[nodiscard]] bool playbackTrackMatchesPlaylistIndex(const PlaylistTrack& track, int index) const;
@@ -331,6 +309,8 @@ private:
 
     AudioLoader* m_audioLoader;
     MusicLibrary* m_library;
+    PlayerController* m_playerController;
+    ScriptContextService* m_scriptContext;
     SettingsManager* m_settings;
     GuiStyleProvider* m_styleProvider;
     CoverProvider* m_coverProvider;
@@ -345,6 +325,7 @@ private:
 
     QThread m_populatorThread;
     PlaylistPopulator m_populator;
+    uint64_t m_populationGeneration;
 
     bool m_playlistLoaded;
     bool m_loadingTextPending;
@@ -362,17 +343,17 @@ private:
     int m_pixmapPaddingTop;
     int m_starRatingSize;
     int m_loveHeartSize;
+    bool m_ratingEditorOnlyOnHover;
+    bool m_loveEditorOnlyOnHover;
     std::array<QColor, 5> m_ratingStarColours;
     QColor m_unratedStarColour;
     QColor m_loveHeartColour;
     QColor m_unlovedHeartColour;
 
-    std::set<int> m_positionColumns;
-    std::set<int> m_bitrateColumns;
-    std::set<int> m_playbackStateColumns;
-    bool m_singleColumnHasPositionDependency;
-    bool m_singleColumnHasBitrateDependency;
-    bool m_singleColumnHasPlaybackStateDependency;
+    ScriptSubscription* m_scriptSubscription;
+    std::vector<ScriptDependencies> m_columnDependencies;
+    std::vector<ScriptDependencies> m_headerDependencies;
+    ScriptChanges m_pendingScriptChanges;
 
     Playlist* m_currentPlaylist;
     bool m_matchPlayingTrackByIdentity;
@@ -385,5 +366,3 @@ private:
     QModelIndexList m_indexesPendingRemoval;
 };
 } // namespace Fooyin
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::PlaylistModel::PlaybackDependencies)

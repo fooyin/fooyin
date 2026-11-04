@@ -24,6 +24,7 @@
 #include <core/track.h>
 #include <gui/fywidget.h>
 #include <gui/trackdisplay.h>
+#include <gui/widgets/backgroundconfig.h>
 #include <utils/database/dbconnectionpool.h>
 
 #include <QVariant>
@@ -31,7 +32,10 @@
 class QJsonObject;
 
 namespace Fooyin {
+class ActionManager;
 class AudioLoader;
+class BackgroundImageSource;
+class CoverRepository;
 class PlayerController;
 class SeekContainer;
 class SettingsManager;
@@ -46,9 +50,9 @@ class WaveBarWidget : public FyWidget
     Q_OBJECT
 
 public:
-    WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnectionPoolPtr dbPool,
+    WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnectionPoolPtr dbPool, ActionManager* actionManager,
                   PlayerController* playerController, TrackSelectionController* trackSelection,
-                  SettingsManager* settings, QWidget* parent = nullptr);
+                  CoverRepository* coverRepository, SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -78,6 +82,7 @@ public:
         int centreGap{0};
         double channelScale{0.9};
         QVariant colourOptions;
+        BackgroundConfig background;
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -114,9 +119,11 @@ private:
     void syncPlaybackState();
     void updatePlayedThresholdMarker();
 
+    ActionManager* m_actionManager;
     PlayerController* m_playerController;
     TrackSelectionController* m_trackSelection;
     SettingsManager* m_settings;
+    BackgroundImageSource* m_backgroundSource;
 
     SeekContainer* m_container;
     WaveSeekBar* m_seekbar;

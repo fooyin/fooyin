@@ -27,6 +27,7 @@ class QComboBox;
 class QTabWidget;
 
 namespace Fooyin {
+class BackgroundConfigWidget;
 class ColourButton;
 class FontButton;
 class ScriptTextEdit;
@@ -51,6 +52,7 @@ private:
     QTabWidget* m_tabs;
     QWidget* m_formatTab;
     QWidget* m_styleTab;
+    BackgroundConfigWidget* m_background;
 
     QComboBox* m_horizontalAlignment;
     QComboBox* m_verticalAlignment;

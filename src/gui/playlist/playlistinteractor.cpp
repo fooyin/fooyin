@@ -74,8 +74,7 @@ public:
         : QObject{parent}
         , m_request{std::move(request)}
         , m_callback{std::move(callback)}
-        , m_dialog{
-              new ElapsedProgressDialog(labelText, PlaylistInteractor::tr("Abort"), 0, 100, Utils::getMainWindow())}
+        , m_dialog{new ElapsedProgressDialog(labelText, PlaylistInteractor::tr("Stop"), 0, 100, Utils::getMainWindow())}
     {
         m_dialog->setAttribute(Qt::WA_DeleteOnClose);
         m_dialog->setModal(true);
@@ -375,6 +374,20 @@ MusicLibrary* PlaylistInteractor::library() const
 PlayerController* PlaylistInteractor::playerController() const
 {
     return p->m_controller->playerController();
+}
+
+void PlaylistInteractor::refreshPlaylist(const UId& playlistId)
+{
+    if(playlistId.isValid()) {
+        Q_EMIT playlistRefreshRequested(playlistId, {});
+    }
+}
+
+void PlaylistInteractor::refreshEntries(const UId& playlistId, std::span<const UId> entryIds)
+{
+    if(playlistId.isValid() && !entryIds.empty()) {
+        Q_EMIT playlistRefreshRequested(playlistId, {entryIds.begin(), entryIds.end()});
+    }
 }
 
 void PlaylistInteractor::filesToPlaylist(const QList<QUrl>& urls, const UId& id)

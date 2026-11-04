@@ -48,7 +48,6 @@ public:
         Info,
         Left,
         Right,
-        Simple,
         Path,
         ItemData,
         PersistentItemData,
@@ -59,12 +58,13 @@ public:
         Column,
         ImagePadding,
         ImagePaddingTop,
-        DecorationPosition,
+        PlayingIcon,
         InsetSubheadersToImageColumns,
         UniformHeightKey,
         UsesStyleBaseHeight,
         EditableWriteField,
-        CoverKey
+        CoverKey,
+        InlineEditors,
     };
 
     enum class State
@@ -91,6 +91,7 @@ public:
     void setBaseKey(const Md5Hash& key);
     void setKey(const UId& key);
     void setIndex(int index);
+    void setParent(PlaylistItem* parent);
 
     void removeColumn(int column);
 

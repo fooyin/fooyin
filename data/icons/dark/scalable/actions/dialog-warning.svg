@@ -1,0 +1,7 @@
+<svg height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" stroke="#bebebe" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
+        <path d="m24 6 20 35h-40z"/>
+        <path d="m24 19v9"/>
+    </g>
+    <circle cx="24" cy="34" fill="#bebebe" r="2"/>
+</svg>

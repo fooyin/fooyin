@@ -50,7 +50,13 @@ public:
     [[nodiscard]] State state() const;
     void setState(State state);
 
+    // Jobs share a cancellation batch until stopThread()/pauseThread()
+    [[nodiscard]] std::stop_token prepareWork();
+    // Call on the worker thread before entering a queued job
+    [[nodiscard]] bool startWork(std::stop_token token);
+
     [[nodiscard]] bool mayRun() const;
+    [[nodiscard]] bool mayRun(std::stop_token token) const;
     [[nodiscard]] bool closing() const;
     [[nodiscard]] std::stop_token stopToken() const;
     [[nodiscard]] bool stopRequested() const;
@@ -59,13 +65,13 @@ Q_SIGNALS:
     void finished();
 
 protected:
-    void resetStopSource();
-    void requestStop();
+    void requestStop(State state, bool close = false);
 
 private:
     std::atomic<State> m_state;
     std::atomic<bool> m_closing;
     mutable std::mutex m_stopSourceMutex;
     std::stop_source m_stopSource;
+    std::stop_token m_activeStopToken;
 };
 } // namespace Fooyin

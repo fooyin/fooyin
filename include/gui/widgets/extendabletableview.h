@@ -72,6 +72,7 @@ public:
 
     void setExtendableModel(ExtendableTableModel* model);
     void setExtendableColumn(int column);
+    void setEditOnAdd(bool enabled);
 
     [[nodiscard]] QAction* addRowAction() const;
     [[nodiscard]] QAction* removeRowAction() const;

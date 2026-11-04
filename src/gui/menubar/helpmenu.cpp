@@ -33,8 +33,6 @@
 #include <QMainWindow>
 #include <QUrl>
 
-using namespace Qt::StringLiterals;
-
 namespace Fooyin {
 HelpMenu::HelpMenu(ActionManager* actionManager, QObject* parent)
     : QObject{parent}
@@ -45,25 +43,23 @@ HelpMenu::HelpMenu(ActionManager* actionManager, QObject* parent)
 
     auto* quickStart = new QAction(tr("&Quick start"), this);
     quickStart->setStatusTip(tr("Open the quick start guide"));
-    QObject::connect(quickStart, &QAction::triggered, this, []() {
-        QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/quick-start/quick-start.html"_s);
-    });
+    QObject::connect(quickStart, &QAction::triggered, this,
+                     []() { QDesktopServices::openUrl(QString::fromLatin1(Constants::Urls::QuickStart)); });
 
     auto* scripting = new QAction(tr("&Scripting help"), this);
     scripting->setStatusTip(tr("Open the scripting documentation"));
     QObject::connect(scripting, &QAction::triggered, this,
-                     []() { QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/scripting/basics.html"_s); });
+                     []() { QDesktopServices::openUrl(QString::fromLatin1(Constants::Urls::Scripting)); });
 
     auto* searching = new QAction(tr("S&earching help"), this);
     searching->setStatusTip(tr("Open the search documentation"));
-    QObject::connect(searching, &QAction::triggered, this, []() {
-        QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/library/searching-library.html"_s);
-    });
+    QObject::connect(searching, &QAction::triggered, this,
+                     []() { QDesktopServices::openUrl(QString::fromLatin1(Constants::Urls::Searching)); });
 
     auto* faq = new QAction(tr("&Frequently asked questions"), this);
     faq->setStatusTip(tr("Open the FAQ"));
     QObject::connect(faq, &QAction::triggered, this,
-                     []() { QDesktopServices::openUrl(u"https://www.fooyin.org/faq"_s); });
+                     []() { QDesktopServices::openUrl(QString::fromLatin1(Constants::Urls::Faq)); });
 
     m_aboutAction->setIcon(Gui::applicationIcon());
     m_aboutAction->setStatusTip(tr("Open the about dialog"));

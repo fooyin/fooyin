@@ -23,6 +23,7 @@
 #include <gui/fywidget.h>
 
 namespace Fooyin {
+class ActionManager;
 class PlayerController;
 class SeekContainer;
 class SettingsManager;
@@ -34,7 +35,8 @@ class SeekBar : public FyWidget
     Q_OBJECT
 
 public:
-    SeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
+    SeekBar(ActionManager* actionManager, PlayerController* playerController, SettingsManager* settings,
+            QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -51,10 +53,12 @@ private:
     void reset();
     void updateSeekEnabled() const;
     void trackChanged(const Track& track);
+    void trackUpdated(const Track& track);
     void setCurrentPosition(uint64_t pos);
     void updatePlayedMarker();
     void stateChanged(Player::PlayState state);
 
+    ActionManager* m_actionManager;
     PlayerController* m_playerController;
     SettingsManager* m_settings;
 

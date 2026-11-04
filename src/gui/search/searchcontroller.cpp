@@ -19,8 +19,8 @@
 
 #include "searchcontroller.h"
 
-#include <gui/editablelayout.h>
 #include <gui/fywidget.h>
+#include <gui/layout/editablelayout.h>
 #include <gui/widgetfilter.h>
 #include <gui/widgets/overlaywidget.h>
 
@@ -357,6 +357,10 @@ SearchController::~SearchController() = default;
 void SearchController::loadWidgets()
 {
     p->retrieveWidgets();
+    // Search bars may have been shown before their replacement targets were discovered
+    for(const auto& sourceId : p->m_connections | std::views::keys) {
+        Q_EMIT connectionChanged(sourceId);
+    }
 }
 
 void SearchController::setupWidgetConnections(const Id& id)

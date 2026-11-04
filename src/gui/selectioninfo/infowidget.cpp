@@ -60,6 +60,7 @@ using namespace Qt::StringLiterals;
 constexpr auto PropertiesInfoState = "PropertiesDialog/SelectionInfo"_L1;
 
 namespace Fooyin {
+namespace {
 class InfoFilterModel : public QSortFilterProxyModel
 {
     Q_OBJECT
@@ -67,18 +68,18 @@ class InfoFilterModel : public QSortFilterProxyModel
 public:
     explicit InfoFilterModel(QObject* parent = nullptr)
         : QSortFilterProxyModel{parent}
-    { }
+    {
+        setRecursiveFilteringEnabled(true);
+    }
 
 protected:
     [[nodiscard]] bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override
     {
         const QModelIndex index = sourceModel()->index(sourceRow, 1, sourceParent);
-        if(sourceModel()->hasChildren(index)) {
-            return true;
-        }
         return !sourceModel()->data(index).toString().isEmpty();
     }
 };
+} // namespace
 
 class InfoPanel : public QWidget
 {
@@ -238,6 +239,7 @@ InfoPanel::InfoPanel(Application* app, ActionManager* actionManager, TrackSelect
     QObject::connect(app->library(), &MusicLibrary::tracksUpdated, this, startResetTimer);
     QObject::connect(selectionController, &TrackSelectionController::displaySelectionChanged, this, startResetTimer);
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, startResetTimer);
+    QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, startResetTimer);
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, startResetTimer);
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() { queueViewReset(); });
 
@@ -347,18 +349,12 @@ void InfoPanel::loadLayoutData(const QJsonObject& layout)
         const auto options = static_cast<InfoItem::Options>(layout.value("Options"_L1).toInt());
         m_model->setOptions(options);
     }
-    if(layout.contains("ShowHeader"_L1)) {
-        m_showHeader = layout.value("ShowHeader"_L1).toBool();
-    }
-    if(layout.contains("ShowVerticalScrollbar"_L1)) {
-        m_showVerticalScrollbar = layout.value("ShowVerticalScrollbar"_L1).toBool();
-    }
-    if(layout.contains("ShowHorizontalScrollbar"_L1)) {
-        m_showHorizontalScrollbar = layout.value("ShowHorizontalScrollbar"_L1).toBool();
-    }
-    if(layout.contains("AlternatingRows"_L1)) {
-        m_alternatingColours = layout.value("AlternatingRows"_L1).toBool();
-    }
+
+    m_showHeader              = layout.value("ShowHeader"_L1).toBool(m_showHeader);
+    m_showVerticalScrollbar   = layout.value("ShowVerticalScrollbar"_L1).toBool(m_showVerticalScrollbar);
+    m_showHorizontalScrollbar = layout.value("ShowHorizontalScrollbar"_L1).toBool(m_showHorizontalScrollbar);
+    m_alternatingColours      = layout.value("AlternatingRows"_L1).toBool(m_alternatingColours);
+
     if(layout.contains("State"_L1)) {
         const auto state = QByteArray::fromBase64(layout["State"_L1].toString().toUtf8());
         m_view->header()->restoreState(state);

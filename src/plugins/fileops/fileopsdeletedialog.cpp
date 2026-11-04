@@ -45,8 +45,8 @@ FileOpsDeleteDialog::FileOpsDeleteDialog(const TrackList& tracks, SettingsManage
     const int trackCount       = static_cast<int>(tracks.size());
     const QString message
         = trackCount == 1
-            ? (immediateDelete ? tr("Are you sure you want to permanently delete \"%1\"?")
-                               : tr("Are you sure you want to delete \"%1\"?"))
+            ? (immediateDelete ? tr("Are you sure you want to permanently delete ‘%1’?")
+                               : tr("Are you sure you want to delete ‘%1’?"))
                   .arg(tracks.front().effectiveTitle())
             : (immediateDelete ? tr("Are you sure you want to permanently delete %Ln track(s)?", nullptr, trackCount)
                                : tr("Are you sure you want to delete %Ln track(s)?", nullptr, trackCount));

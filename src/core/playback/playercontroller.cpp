@@ -28,6 +28,7 @@
 #include "playbackstatestore.h"
 
 #include <core/coresettings.h>
+#include <core/library/libraryutils.h>
 #include <core/player/playbackqueue.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
@@ -186,6 +187,8 @@ public:
     [[nodiscard]] uint64_t nextPlaybackItemId();
     bool updateBitrate(int bitrate);
 
+    void setABRepeatRange(const Player::ABRepeatRange& range);
+    void repeatFromStart();
     void setStopAfterCurrentArmed(bool armed);
     void setStopAfterQueueItem(PlaybackQueueItemId id);
     void validateStopAfterQueueItem();
@@ -246,6 +249,8 @@ public:
     bool m_playbackStarted{false};
     Playlist::PlayModes m_playMode;
 
+    Player::ABRepeatRange m_abRepeatRange;
+    bool m_repeatSeekPending{false};
     PlaybackSession m_session;
     PlaybackProgressTracker m_progressTracker;
     bool m_stopCurrentSkip{false};
@@ -309,9 +314,38 @@ bool PlayerControllerPrivate::updateBitrate(int bitrate)
     return false;
 }
 
+void PlayerControllerPrivate::setABRepeatRange(const Player::ABRepeatRange& range)
+{
+    if(m_abRepeatRange == range) {
+        return;
+    }
+
+    const bool autoTransitions = trackEndAutoTransitionsEnabled();
+    m_abRepeatRange            = range;
+    m_repeatSeekPending        = false;
+
+    if(autoTransitions != trackEndAutoTransitionsEnabled()) {
+        Q_EMIT m_self->trackEndAutoTransitionsEnabledChanged(trackEndAutoTransitionsEnabled());
+    }
+    Q_EMIT m_self->abRepeatRangeChanged();
+}
+
+void PlayerControllerPrivate::repeatFromStart()
+{
+    if(m_repeatSeekPending) {
+        return;
+    }
+    m_repeatSeekPending = true;
+    m_cursor.onSeek();
+    m_progressTracker.markSeekPosition(*m_abRepeatRange.start);
+    Q_EMIT m_self->positionMoved(*m_abRepeatRange.start);
+}
+
 void PlayerControllerPrivate::setStopAfterCurrentArmed(bool armed)
 {
-    if(std::exchange(m_stopAfterCurrentArmed, armed) != armed) {
+    const bool autoTransitions = trackEndAutoTransitionsEnabled();
+    m_stopAfterCurrentArmed    = armed;
+    if(autoTransitions != trackEndAutoTransitionsEnabled()) {
         Q_EMIT m_self->trackEndAutoTransitionsEnabledChanged(trackEndAutoTransitionsEnabled());
     }
 
@@ -358,7 +392,7 @@ void PlayerControllerPrivate::clearStopAfterCurrentForManualSkip()
 
 bool PlayerControllerPrivate::trackEndAutoTransitionsEnabled() const
 {
-    return !m_stopAfterCurrentArmed;
+    return !m_stopAfterCurrentArmed && !m_abRepeatRange.enabled;
 }
 
 bool PlayerControllerPrivate::canRewindCurrentTrack() const
@@ -522,8 +556,13 @@ void PlayerControllerPrivate::emitUpcomingTrackChangedIfNeeded()
 
 void PlayerControllerPrivate::requestTrackChange(const Player::TrackChangeRequest& request)
 {
+    m_self->clearABRepeat();
     const auto requestWithId
         = m_session.requestTrackChange(m_session.withPlaybackItemId(request, nextPlaybackItemId()));
+    if(m_playState == Player::PlayState::Stopped && !m_session.currentTrack().sameOccurrenceAs(requestWithId.track)) {
+        // The stopped track is only a resume target, so it shouldn't appear while another occurrence is loading
+        m_session.resetCurrentTrackState();
+    }
     Q_EMIT m_self->trackChangeRequested(requestWithId);
 }
 
@@ -588,6 +627,7 @@ void PlayerControllerPrivate::restoreRemoteCurrentTrackFromPlaylist()
 
 bool PlayerControllerPrivate::enterStoppedState(bool requestTransportStop)
 {
+    m_self->clearABRepeat();
     restoreRemoteCurrentTrackFromPlaylist();
 
     if(!updatePlaystate(Player::PlayState::Stopped)) {
@@ -721,13 +761,15 @@ void PlayerControllerPrivate::syncPlaylistTrackState(const UId& playlistId)
 
     bool queueChanged{false};
     auto queueTracks = m_queue.tracks();
-    for(auto& track : queueTracks) {
-        if(track.playlistId != playlistId) {
+    for(int i{0}; auto& track : queueTracks) {
+        const auto* item        = m_queue.item(i++);
+        const auto& sourceTrack = item && item->detachedPlaylistTrack ? *item->detachedPlaylistTrack : track;
+        if(sourceTrack.playlistId != playlistId) {
             continue;
         }
 
-        if(const auto remappedTrack = remapPlaylistTrackReference(m_playlistHandler, track)) {
-            if(track != *remappedTrack) {
+        if(const auto remappedTrack = remapPlaylistTrackReference(m_playlistHandler, sourceTrack)) {
+            if(track != *remappedTrack || !track.track.sameDataAs(remappedTrack->track)) {
                 track        = *remappedTrack;
                 queueChanged = true;
             }
@@ -1326,6 +1368,7 @@ PlayerController::PlayerController(SettingsManager* settings, PlaylistHandler* p
     settings->subscribe<Settings::Core::PlaybackQueueMode>(this, [this]() {
         const auto mode = static_cast<PlaybackQueueMode>(p->m_settings->value<Settings::Core::PlaybackQueueMode>());
         p->normalisePlaybackQueueMode(mode);
+        Q_EMIT playbackQueueModeChanged(mode);
     });
     settings->subscribe<Settings::Core::PlaybackQueueHistoryLimit>(this, [this]() { p->prunePlaybackQueueHistory(); });
     settings->subscribe<Settings::Core::StopAfterCurrent>(this, [this](bool enabled) {
@@ -1384,6 +1427,7 @@ PlayerController::~PlayerController() = default;
 
 void PlayerController::reset()
 {
+    clearABRepeat();
     p->m_session.resetCurrentTrackState();
     p->m_progressTracker.reset();
     p->m_cursor.reset();
@@ -1582,6 +1626,11 @@ void PlayerController::nextAlbum()
 
 void PlayerController::advance(Player::AdvanceReason reason)
 {
+    if(reason == Player::AdvanceReason::NaturalEnd && p->m_abRepeatRange.enabled) {
+        p->repeatFromStart();
+        return;
+    }
+
     const bool userInitiated
         = reason == Player::AdvanceReason::ManualNext || reason == Player::AdvanceReason::ManualPrevious;
     p->m_session.pendingChangeContext() = {.reason = reason, .userInitiated = userInitiated};
@@ -1650,6 +1699,15 @@ void PlayerController::setCurrentPosition(uint64_t ms)
     }
 
     p->emitPositionSignals(update);
+
+    if(p->m_abRepeatRange.enabled && p->m_playState == Player::PlayState::Playing) {
+        if(ms < *p->m_abRepeatRange.end) {
+            p->m_repeatSeekPending = false;
+        }
+        else {
+            p->repeatFromStart();
+        }
+    }
 }
 
 void PlayerController::restoreCurrentPosition(uint64_t ms)
@@ -1709,7 +1767,20 @@ void PlayerController::commitCurrentTrack(const Player::TrackChangeRequest& requ
         return;
     }
 
+    clearABRepeat();
     const auto result = p->m_session.commitRequest(requestWithId);
+    if(result.isQueueTrack) {
+        if(const auto* item = p->m_queue.item(result.queueItemId);
+           item && item->track.track.sameIdentityAs(p->m_session.currentTrack().track)) {
+            // A prepared request may predate a change to the source playlist
+            p->m_session.updateCurrentTrackPlaylist(item->track.playlistId);
+            p->m_session.updateCurrentTrackEntry(item->track.entryId);
+            p->m_session.updateCurrentTrackIndex(item->track.indexInPlaylist);
+            if(item->detachedPlaylistTrack) {
+                p->m_session.setDetachedCurrentPlaylistTrack(*item->detachedPlaylistTrack);
+            }
+        }
+    }
     if(result.queueItemId != 0 && result.queueItemId == p->m_stopAfterQueueItemId) {
         p->setStopAfterQueueItem(0);
         p->m_settings->set<Settings::Core::StopAfterCurrent>(true);
@@ -1758,11 +1829,34 @@ void PlayerController::commitCurrentTrack(const PlaylistTrack& track, const Play
     });
 }
 
+bool PlayerController::rejectTrackChange(uint64_t itemId)
+{
+    if(!p->m_session.rejectPendingRequest(itemId)) {
+        return false;
+    }
+
+    p->emitUpcomingTrackChangedIfNeeded();
+    return true;
+}
+
 void PlayerController::updateCurrentTrack(const Track& track)
 {
     if(p->m_session.updateCurrentTrack(track)) {
+        const bool durationChanged = p->m_progressTracker.totalDuration() != track.duration();
+        if(durationChanged) {
+            p->m_progressTracker.updateDuration(track.duration(),
+                                                p->m_settings->value<Settings::Core::PlayedThreshold>(),
+                                                p->m_settings->value<Settings::Core::PlayedThresholdTime>());
+        }
+        const auto range = p->m_abRepeatRange;
+        if((range.start && *range.start >= track.duration()) || (range.end && *range.end > track.duration())) {
+            clearABRepeat();
+        }
         Q_EMIT currentTrackUpdated(p->m_session.currentTrack().track);
         Q_EMIT playlistTrackUpdated(p->m_session.currentTrack());
+        if(durationChanged) {
+            Q_EMIT playbackSnapshotChanged(playbackSnapshot());
+        }
     }
 }
 
@@ -1877,15 +1971,85 @@ void PlayerController::setPlayMode(Playlist::PlayModes mode)
     p->m_settings->set<Settings::Core::PlayMode>(static_cast<int>(mode));
 }
 
+Player::ABRepeatRange PlayerController::abRepeatRange() const
+{
+    return p->m_abRepeatRange;
+}
+
+void PlayerController::setABRepeatStart(uint64_t ms, bool seekToStart)
+{
+    if(!currentTrackSeekable() || playState() == Player::PlayState::Stopped
+       || p->m_progressTracker.totalDuration() < 100 || ms >= p->m_progressTracker.totalDuration()) {
+        return;
+    }
+
+    auto range{p->m_abRepeatRange};
+    const bool startChanged = range.start != ms;
+    range.start             = ms;
+    if(range.end && ms >= *range.end) {
+        range.end.reset();
+        range.enabled = false;
+    }
+    p->setABRepeatRange(range);
+
+    if(range.enabled && ((seekToStart && startChanged) || currentPosition() < ms || currentPosition() >= *range.end)) {
+        p->repeatFromStart();
+    }
+}
+
+void PlayerController::setABRepeatEnd(uint64_t ms)
+{
+    auto range{p->m_abRepeatRange};
+
+    if(!currentTrackSeekable() || playState() == Player::PlayState::Stopped || !range.start || ms <= *range.start
+       || ms > p->m_progressTracker.totalDuration()) {
+        return;
+    }
+
+    range.end     = ms;
+    range.enabled = true;
+    p->setABRepeatRange(range);
+
+    if(currentPosition() < *range.start || currentPosition() >= ms) {
+        p->repeatFromStart();
+    }
+}
+
+void PlayerController::setABRepeatEnabled(bool enabled)
+{
+    auto range{p->m_abRepeatRange};
+    if(enabled
+       && (!range.start || !range.end || !currentTrackSeekable() || playState() == Player::PlayState::Stopped)) {
+        return;
+    }
+
+    range.enabled = enabled;
+    p->setABRepeatRange(range);
+
+    if(enabled && (currentPosition() < *range.start || currentPosition() >= *range.end)) {
+        p->repeatFromStart();
+    }
+}
+
+void PlayerController::clearABRepeat()
+{
+    p->setABRepeatRange({});
+}
+
 void PlayerController::seek(uint64_t ms)
 {
     if(!p->m_currentTrackSeekable || p->m_progressTracker.totalDuration() < 100) {
         return;
     }
 
+    if(p->m_abRepeatRange.enabled && (ms < *p->m_abRepeatRange.start || ms >= *p->m_abRepeatRange.end)) {
+        setABRepeatEnabled(false);
+    }
+
+    p->m_repeatSeekPending = false;
     p->m_cursor.onSeek();
 
-    if(ms >= p->m_progressTracker.totalDuration() - 100) {
+    if(ms >= p->m_progressTracker.totalDuration() - 100 && !p->m_abRepeatRange.enabled) {
         next();
         return;
     }
@@ -2101,6 +2265,9 @@ PlaylistTrack PlayerController::currentPlaylistTrack() const
 void PlayerController::setCurrentTrackSeekable(bool seekable)
 {
     if(std::exchange(p->m_currentTrackSeekable, seekable) != seekable) {
+        if(!seekable) {
+            setABRepeatEnabled(false);
+        }
         Q_EMIT currentTrackSeekableChanged(seekable);
     }
 }
@@ -2345,6 +2512,31 @@ void PlayerController::reorderQueueItems(const std::vector<PlaybackQueueItemId>&
     const QueueTracks tracks = p->m_queue.tracks();
     if(p->m_queue.reorderItems(ids)) {
         Q_EMIT trackQueueChanged(tracks, p->m_queue.tracks());
+        p->emitUpcomingTrackChangedIfNeeded();
+    }
+}
+
+void PlayerController::updateQueuedTrackMetadata(const TrackList& tracks)
+{
+    if(tracks.empty() || p->m_queue.empty()) {
+        return;
+    }
+
+    const auto oldTracks  = p->m_queue.tracks();
+    TrackList queueTracks = PlaylistTrack::toTracks(oldTracks);
+
+    const auto updatedIndexes = Utils::updateCommonTracks(queueTracks, tracks, Utils::CommonOperation::UpdateChanged);
+    if(updatedIndexes.empty()) {
+        return;
+    }
+
+    auto updatedTracks{oldTracks};
+    for(const int index : updatedIndexes) {
+        updatedTracks[index].track = queueTracks[index];
+    }
+
+    if(p->m_queue.updateTracks(updatedTracks)) {
+        Q_EMIT trackQueueChanged(oldTracks, updatedTracks);
         p->emitUpcomingTrackChangedIfNeeded();
     }
 }

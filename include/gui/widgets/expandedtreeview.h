@@ -38,7 +38,8 @@ public:
     enum class ViewMode : uint8_t
     {
         Tree = 0,
-        Icon
+        Icon,
+        Flow,
     };
     Q_ENUM(ViewMode)
 
@@ -46,7 +47,8 @@ public:
     {
         None = 0,
         Bottom,
-        Right
+        Right,
+        Overlay
     };
     Q_ENUM(CaptionDisplay)
 
@@ -73,6 +75,14 @@ public:
     [[nodiscard]] ViewMode viewMode() const;
     void setViewMode(ViewMode mode);
 
+    void setFlowColumnGap(int gap);
+    void setFlowMinimumRows(int rows);
+    void setFlowMaximumColumns(int columns);
+    void setFlowMinimumColumnWidth(int width);
+    void setFlowStretchColumns(bool stretch);
+
+    [[nodiscard]] QSize contentSizeForWidth(int width) const;
+
     [[nodiscard]] CaptionDisplay captionDisplay() const;
     void setCaptionDisplay(CaptionDisplay display);
 
@@ -81,6 +91,9 @@ public:
 
     [[nodiscard]] bool uniformRowHeights() const;
     void setUniformRowHeights(bool enabled);
+
+    [[nodiscard]] bool wordWrap() const;
+    void setWordWrap(bool enabled);
 
     [[nodiscard]] int uniformHeightRole() const;
     void setUniformHeightRole(int role);
@@ -100,10 +113,29 @@ public:
     [[nodiscard]] int iconVerticalGap() const;
     void setIconVerticalGap(int gap);
 
+    //! Corner radius of icon item backgrounds, as a percentage from 0 to 100.
+    [[nodiscard]] int iconItemCornerRadius() const;
+    void setIconItemCornerRadius(int radius);
+    //! Applies rounding only when artwork margins are zero along the rounded edges.
+    void setIconItemCornerRadius(int radius, const QMargins& artworkMargins);
+
+    [[nodiscard]] bool autoFitArtwork() const;
+    void setAutoFitArtwork(bool enabled);
+    [[nodiscard]] QSize effectiveIconSize() const;
+
+    //! Use grid spacing for side captions. Auto-fit artwork always uses grid spacing.
     [[nodiscard]] bool useIconGapsForSideCaptions() const;
     void setUseIconGapsForSideCaptions(bool enabled);
 
     void changeIconSize(const QSize& size);
+
+    [[nodiscard]] QModelIndex expandedIndex() const;
+    void prepareExpansionChange();
+    void setExpandedIndex(const QModelIndex& index);
+    void setExpansionWidget(QWidget* widget);
+    void setExpansionAnimated(bool enabled);
+    void setExpansionAnimationDuration(int duration);
+    void refreshExpansion();
 
     [[nodiscard]] QRect visualRect(const QModelIndex& index) const override;
     [[nodiscard]] int sizeHintForColumn(int column) const override;
@@ -123,21 +155,27 @@ public:
 Q_SIGNALS:
     void viewModeChanged(Fooyin::ExpandedTreeView::ViewMode mode);
     void middleClicked(const QModelIndex& index);
+    void contentSizeChanged();
+    void effectiveIconSizeChanged(const QSize& size);
 
 protected:
     friend class ExpandedTreeViewPrivate;
     friend class BaseView;
     friend class TreeView;
     friend class IconView;
+    friend class FlowView;
 
     void updateGeometries() override;
+    void initViewItemOption(QStyleOptionViewItem* option) const override;
     void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles) override;
 
+    void changeEvent(QEvent* event) override;
     bool viewportEvent(QEvent* event) override;
     void dragMoveEvent(QDragMoveEvent* event) override;
     void dragLeaveEvent(QDragLeaveEvent* event) override;
     void dropEvent(QDropEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
     void mouseDoubleClickEvent(QMouseEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
@@ -155,6 +193,10 @@ protected:
     [[nodiscard]] std::set<int> spans() const;
 
     void drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, int y) const;
+    virtual QRect drawSpan(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    [[nodiscard]] virtual int spanHeight(const QModelIndex& index) const;
+
+    [[nodiscard]] virtual int adjustVerticalScrollMaximum(int maximum) const;
 
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;
     [[nodiscard]] int horizontalOffset() const override;

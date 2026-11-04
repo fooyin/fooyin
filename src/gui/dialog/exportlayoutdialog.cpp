@@ -19,10 +19,10 @@
 
 #include "exportlayoutdialog.h"
 
-#include <gui/editablelayout.h>
 #include <gui/guipaths.h>
 #include <gui/guisettings.h>
-#include <gui/layoutprovider.h>
+#include <gui/layout/editablelayout.h>
+#include <gui/layout/layoutprovider.h>
 #include <gui/theme/fytheme.h>
 #include <utils/settings/settingsmanager.h>
 

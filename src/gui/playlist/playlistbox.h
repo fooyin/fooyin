@@ -23,6 +23,8 @@
 
 #include <QPointer>
 
+#include <functional>
+
 class QAction;
 class QComboBox;
 class QPoint;
@@ -62,6 +64,10 @@ public:
     void cancelRenameEditor();
 
     [[nodiscard]] Playlist* currentPlaylist() const;
+
+Q_SIGNALS:
+    void newAutoPlaylistRequested(std::function<void(Fooyin::Playlist*)> onFinished = {});
+    void editAutoPlaylistRequested(const Fooyin::UId& playlistId);
 
 private:
     void refreshPlaylistIcons() const;

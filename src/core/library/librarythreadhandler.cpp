@@ -120,6 +120,7 @@ struct LibraryScanRequest
     bool scannerFinished{false};
     int pendingLibraryCompletions{0};
     bool cancelled{false};
+    QString error;
 };
 } // namespace
 
@@ -151,13 +152,6 @@ public:
         Track track;
         TrackCovers covers;
         uint64_t revision{0};
-    };
-
-    struct TrackStatsBatch
-    {
-        TrackList tracks;
-        Track::Stats stats;
-        bool writeToFiles{false};
     };
 
     struct WriteOperation
@@ -202,7 +196,7 @@ public:
 
     void updateProgress(const ScanProgress& progress);
     void flushPendingProgress();
-    void finishScanRequest();
+    void finishScanRequest(int id);
     void maybeCompleteScanRequest(int id);
     void completeScanRequest(int id);
     void cancelScanRequest(int id);
@@ -287,38 +281,41 @@ LibraryThreadHandlerPrivate::LibraryThreadHandlerPrivate(LibraryThreadHandler* s
 void LibraryThreadHandlerPrivate::scanLibrary(const LibraryScanRequest& request)
 {
     const LibraryScanConfig config = currentScanConfig(m_settings);
-    QMetaObject::invokeMethod(&m_scanner, [this, request, config]() {
-        m_scanner.scanLibrary(request.library, request.libraryTracks, request.onlyModified, config);
+    QMetaObject::invokeMethod(&m_scanner, [this, request, config, token = m_scanner.prepareWork()]() {
+        m_scanner.scanLibrary(request.library, request.libraryTracks, request.onlyModified, config, token, request.id);
     });
 }
 
 void LibraryThreadHandlerPrivate::scanTracks(const LibraryScanRequest& request)
 {
     const LibraryScanConfig config = currentScanConfig(m_settings);
-    QMetaObject::invokeMethod(
-        &m_scanner, [this, request, config]() { m_scanner.scanTracks(request.tracks, request.onlyModified, config); });
+    QMetaObject::invokeMethod(&m_scanner, [this, request, config, token = m_scanner.prepareWork()]() {
+        m_scanner.scanTracks(request.tracks, request.onlyModified, config, token, request.id);
+    });
 }
 
 void LibraryThreadHandlerPrivate::scanFiles(const LibraryScanRequest& request)
 {
     const LibraryScanConfig config = currentScanConfig(m_settings);
-    QMetaObject::invokeMethod(
-        &m_scanner, [this, request, config]() { m_scanner.scanFiles(request.libraryTracks, request.files, config); });
+    QMetaObject::invokeMethod(&m_scanner, [this, request, config, token = m_scanner.prepareWork()]() {
+        m_scanner.scanFiles(request.libraryTracks, request.files, config, token, request.id);
+    });
 }
 
 void LibraryThreadHandlerPrivate::scanDirectory(const LibraryScanRequest& request)
 {
     const LibraryScanConfig config = currentScanConfig(m_settings);
-    QMetaObject::invokeMethod(&m_scanner, [this, request, config]() {
-        m_scanner.scanLibraryDirectoies(request.library, request.dirs, request.libraryTracks, config);
+    QMetaObject::invokeMethod(&m_scanner, [this, request, config, token = m_scanner.prepareWork()]() {
+        m_scanner.scanLibraryDirectoies(request.library, request.dirs, request.libraryTracks, config, token,
+                                        request.id);
     });
 }
 
 void LibraryThreadHandlerPrivate::scanPlaylist(const LibraryScanRequest& request)
 {
     const LibraryScanConfig config = currentScanConfig(m_settings);
-    QMetaObject::invokeMethod(&m_scanner, [this, request, config]() {
-        m_scanner.scanPlaylist(request.libraryTracks, request.files, config);
+    QMetaObject::invokeMethod(&m_scanner, [this, request, config, token = m_scanner.prepareWork()]() {
+        m_scanner.scanPlaylist(request.libraryTracks, request.files, config, token, request.id);
     });
 }
 
@@ -522,14 +519,14 @@ void LibraryThreadHandlerPrivate::execNextRequest()
 
 void LibraryThreadHandlerPrivate::updateProgress(const ScanProgress& scannerProgress)
 {
+    if(scannerProgress.id != m_currentRequestId) {
+        return;
+    }
+
     ScanProgress progress{scannerProgress};
-    progress.id = m_currentRequestId;
-
-    if(!m_scanRequests.empty()) {
-        const auto& request = m_scanRequests.front();
-
-        progress.type = request.type;
-        progress.info = request.library;
+    if(const auto* request = this->request(progress.id)) {
+        progress.type = request->type;
+        progress.info = request->library;
     }
 
     if(progress.phase == ScanProgress::Phase::Finished) {
@@ -557,8 +554,17 @@ void LibraryThreadHandlerPrivate::flushPendingProgress()
     m_progressTimer.stop();
 }
 
-void LibraryThreadHandlerPrivate::finishScanRequest()
+void LibraryThreadHandlerPrivate::finishScanRequest(int id)
 {
+    if(id != m_currentRequestId) {
+        // A higher priority request can become current while the previous scan is returning from a failed write
+        if(auto* previousRequest = request(id); previousRequest && !previousRequest->error.isEmpty()) {
+            previousRequest->scannerFinished = true;
+            maybeCompleteScanRequest(id);
+        }
+        return;
+    }
+
     auto* request = currentRequest();
     if(!request) {
         m_currentRequestId = -1;
@@ -594,13 +600,16 @@ void LibraryThreadHandlerPrivate::completeScanRequest(const int id)
     }
 
     const bool wasCurrent = m_currentRequestId == id;
-    Q_EMIT m_self->scanFinished(requestIt->id, requestIt->type, requestIt->cancelled);
-
+    auto completedRequest = std::move(*requestIt);
     m_scanRequests.erase(requestIt);
-
     if(wasCurrent) {
         m_currentRequestId = -1;
     }
+
+    if(!completedRequest.error.isEmpty()) {
+        Q_EMIT m_self->scanFailed(completedRequest.id, completedRequest.type, completedRequest.error);
+    }
+    Q_EMIT m_self->scanFinished(completedRequest.id, completedRequest.type, completedRequest.cancelled);
 
     if(m_currentRequestId < 0) {
         execNextRequest();
@@ -891,16 +900,17 @@ void LibraryThreadHandlerPrivate::flushPendingWritesForInactiveSources()
     for(const PendingFlush& pendingFlush : pendingFlushes) {
         const Track writeTrack = pendingFlush.writeTrack();
         if(writeTrack.isValid()) {
-            QMetaObject::invokeMethod(&m_trackDatabaseManager, [this, pendingFlush, writeTrack]() {
+            QMetaObject::invokeMethod(&m_trackDatabaseManager, [this, pendingFlush, writeTrack,
+                                                                workerToken = m_trackDatabaseManager.prepareWork()]() {
                 if(pendingFlush.metadataTrack.has_value()) {
-                    m_trackDatabaseManager.updateTracks({writeTrack}, true);
+                    m_trackDatabaseManager.updateTracks({writeTrack}, true, workerToken);
                 }
                 if(pendingFlush.stats != Track::Stats{}) {
-                    m_trackDatabaseManager.updateTrackStats({writeTrack}, pendingFlush.stats, true);
+                    m_trackDatabaseManager.updateTrackStats({writeTrack}, pendingFlush.stats, true, workerToken);
                 }
                 if(!pendingFlush.covers.empty()) {
                     m_trackDatabaseManager.writeCovers(
-                        TrackCoverData{.tracks = {writeTrack}, .coverData = pendingFlush.covers});
+                        TrackCoverData{.tracks = {writeTrack}, .coverData = pendingFlush.covers}, workerToken);
                     QMetaObject::invokeMethod(m_self, [this, sourceKey = pendingFlush.sourceKey]() {
                         {
                             const std::scoped_lock lock{m_deferredWritesMutex};
@@ -979,12 +989,13 @@ void LibraryThreadHandlerPrivate::flushTrackStatsUpdates()
 
     qCDebug(LIB_THREAD) << "Flushing pending track stats updates:" << m_pendingTrackStats.size();
 
-    std::vector<TrackStatsBatch> batches;
+    std::vector<TrackDatabaseManager::TrackStatsBatch> batches;
 
     const auto addToBatch = [&batches](const Track& track, Track::Stats stats, bool writeToFiles) {
-        const auto batch = std::ranges::find_if(batches, [stats, writeToFiles](const TrackStatsBatch& candidate) {
-            return candidate.stats == stats && candidate.writeToFiles == writeToFiles;
-        });
+        const auto batch = std::ranges::find_if(
+            batches, [stats, writeToFiles](const TrackDatabaseManager::TrackStatsBatch& candidate) {
+                return candidate.stats == stats && candidate.writeToFiles == writeToFiles;
+            });
         if(batch != batches.end()) {
             batch->tracks.push_back(track);
         }
@@ -1012,10 +1023,9 @@ void LibraryThreadHandlerPrivate::flushTrackStatsUpdates()
 
     m_pendingTrackStats.clear();
 
-    QMetaObject::invokeMethod(&m_trackDatabaseManager, [this, batches = std::move(batches)]() {
-        for(const auto& batch : batches) {
-            m_trackDatabaseManager.updateTrackStats(batch.tracks, batch.stats, batch.writeToFiles);
-        }
+    QMetaObject::invokeMethod(&m_trackDatabaseManager, [this, batches = std::move(batches),
+                                                        workerToken = m_trackDatabaseManager.prepareWork()]() {
+        m_trackDatabaseManager.updateTrackStats(batches, workerToken);
     });
 }
 
@@ -1056,23 +1066,28 @@ LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibr
                      [this](int operationId, const TrackList& tracks, int failed, bool cancelled) {
                          p->finishWriteOperation(operationId, static_cast<int>(tracks.size()), failed, cancelled);
                      });
-    QObject::connect(&p->m_scanner, &Worker::finished, this, [this]() { p->finishScanRequest(); });
+    QObject::connect(&p->m_scanner, &LibraryScanner::scanFailed, this, [this](int id, const QString& error) {
+        if(auto* request = p->request(id); request && request->error.isEmpty()) {
+            request->error = error;
+        }
+    });
+    QObject::connect(&p->m_scanner, &LibraryScanner::scanFinished, this, [this](int id) { p->finishScanRequest(id); });
     QObject::connect(&p->m_scanner, &LibraryScanner::progressChanged, this,
                      [this](const ScanProgress& progress) { p->updateProgress(progress); });
-    QObject::connect(&p->m_scanner, &LibraryScanner::scannedTracks, this, [this](const TrackList& tracks) {
-        p->incrementPendingLibraryCompletions(p->m_currentRequestId);
-        Q_EMIT scannedTracks(p->m_currentRequestId, tracks);
+    QObject::connect(&p->m_scanner, &LibraryScanner::scannedTracks, this, [this](int id, const TrackList& tracks) {
+        p->incrementPendingLibraryCompletions(id);
+        Q_EMIT scannedTracks(id, tracks);
     });
-    QObject::connect(&p->m_scanner, &LibraryScanner::playlistLoaded, this, [this](const TrackList& tracks) {
-        p->incrementPendingLibraryCompletions(p->m_currentRequestId);
-        Q_EMIT playlistLoaded(p->m_currentRequestId, tracks);
+    QObject::connect(&p->m_scanner, &LibraryScanner::playlistLoaded, this, [this](int id, const TrackList& tracks) {
+        p->incrementPendingLibraryCompletions(id);
+        Q_EMIT playlistLoaded(id, tracks);
     });
     QObject::connect(&p->m_scanner, &LibraryScanner::statusChanged, this, &LibraryThreadHandler::statusChanged);
-    QObject::connect(&p->m_scanner, &LibraryScanner::scanUpdate, this, [this](const ScanResult& result) {
-        const auto request = p->currentRequest();
+    QObject::connect(&p->m_scanner, &LibraryScanner::scanUpdate, this, [this](int id, const ScanResult& result) {
+        const auto request = p->request(id);
         const auto type    = request ? request->type : ScanRequest::Library;
-        p->incrementPendingLibraryCompletions(p->m_currentRequestId);
-        Q_EMIT scanUpdate(p->m_currentRequestId, type, result);
+        p->incrementPendingLibraryCompletions(id);
+        Q_EMIT scanUpdate(id, type, result);
     });
     QObject::connect(&p->m_monitor, &LibraryMonitor::statusChanged, this, &LibraryThreadHandler::statusChanged);
     QObject::connect(&p->m_monitor, &LibraryMonitor::setupFinished, this, [this]() {
@@ -1098,9 +1113,7 @@ LibraryThreadHandler::~LibraryThreadHandler()
     p->cancelWriteOperations();
 
     p->m_scanner.closeThread();
-    p->m_scanner.stopThread();
     p->m_trackDatabaseManager.closeThread();
-    p->m_trackDatabaseManager.stopThread();
 
     p->m_thread.quit();
     p->m_databaseThread.quit();
@@ -1112,7 +1125,9 @@ LibraryThreadHandler::~LibraryThreadHandler()
 
 void LibraryThreadHandler::getAllTracks()
 {
-    QMetaObject::invokeMethod(&p->m_trackDatabaseManager, &TrackDatabaseManager::getAllTracks);
+    QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, token = p->m_trackDatabaseManager.prepareWork()] {
+        p->m_trackDatabaseManager.getAllTracks(token);
+    });
 }
 
 void LibraryThreadHandler::setupWatchers(const LibraryInfoMap& libraries, bool monitorDirectories,
@@ -1171,7 +1186,9 @@ void LibraryThreadHandler::acknowledgeTracksScanned(const int id)
 void LibraryThreadHandler::saveUpdatedTracks(const TrackList& tracks)
 {
     QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                              [this, tracks]() { p->m_trackDatabaseManager.updateTracks(tracks, false); });
+                              [this, tracks, workerToken = p->m_trackDatabaseManager.prepareWork()]() {
+                                  p->m_trackDatabaseManager.updateTracks(tracks, false, workerToken);
+                              });
 }
 
 WriteRequest LibraryThreadHandler::writeUpdatedTracks(const TrackList& tracks)
@@ -1192,9 +1209,10 @@ WriteRequest LibraryThreadHandler::writeUpdatedTracks(const TrackList& tracks)
     }
 
     if(!activeTracks.empty()) {
-        QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, activeTracks]() {
-            p->m_trackDatabaseManager.updateTracks(activeTracks, false);
-        });
+        QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
+                                  [this, activeTracks, workerToken = p->m_trackDatabaseManager.prepareWork()]() {
+                                      p->m_trackDatabaseManager.updateTracks(activeTracks, false, workerToken);
+                                  });
     }
 
     if(inactiveTracks.empty()) {
@@ -1206,10 +1224,11 @@ WriteRequest LibraryThreadHandler::writeUpdatedTracks(const TrackList& tracks)
         operationIt->second.accepted = static_cast<int>(activeTracks.size());
     }
 
-    QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                              [this, inactiveTracks, operationId = operation.id, stopToken = operation.stopToken]() {
-                                  p->m_trackDatabaseManager.updateTracks(inactiveTracks, true, operationId, stopToken);
-                              });
+    QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, inactiveTracks, operationId = operation.id,
+                                                           stopToken   = operation.stopToken,
+                                                           workerToken = p->m_trackDatabaseManager.prepareWork()]() {
+        p->m_trackDatabaseManager.updateTracks(inactiveTracks, true, operationId, stopToken, workerToken);
+    });
 
     return operation.request;
 }
@@ -1231,10 +1250,11 @@ WriteRequest LibraryThreadHandler::writeTrackCovers(const TrackCoverData& tracks
         operationIt->second.accepted = static_cast<int>(activeWrites.tracks.size());
     }
 
-    QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                              [this, inactiveWrites, operationId = operation.id, stopToken = operation.stopToken]() {
-                                  p->m_trackDatabaseManager.writeCovers(inactiveWrites, operationId, stopToken);
-                              });
+    QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, inactiveWrites, operationId = operation.id,
+                                                           stopToken   = operation.stopToken,
+                                                           workerToken = p->m_trackDatabaseManager.prepareWork()]() {
+        p->m_trackDatabaseManager.writeCovers(inactiveWrites, operationId, stopToken, workerToken);
+    });
 
     return operation.request;
 }
@@ -1296,17 +1316,20 @@ void LibraryThreadHandler::saveUpdatedTrackStats(const TrackList& tracks, Track:
 void LibraryThreadHandler::checkTrackAvailability(const TrackList& tracks)
 {
     QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                              [this, tracks]() { p->m_trackDatabaseManager.checkTrackAvailability(tracks); });
+                              [this, tracks, workerToken = p->m_trackDatabaseManager.prepareWork()]() {
+                                  p->m_trackDatabaseManager.checkTrackAvailability(tracks, workerToken);
+                              });
 }
 
 WriteRequest LibraryThreadHandler::removeUnavailbleTracks(const TrackList& tracks)
 {
     const auto operation = p->addWriteOperation();
 
-    QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                              [this, tracks, operationId = operation.id, stopToken = operation.stopToken]() {
-                                  p->m_trackDatabaseManager.removeUnavailbleTracks(tracks, operationId, stopToken);
-                              });
+    QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, tracks, operationId = operation.id,
+                                                           stopToken   = operation.stopToken,
+                                                           workerToken = p->m_trackDatabaseManager.prepareWork()]() {
+        p->m_trackDatabaseManager.removeUnavailbleTracks(tracks, operationId, stopToken, workerToken);
+    });
 
     return operation.request;
 }
@@ -1316,8 +1339,9 @@ WriteRequest LibraryThreadHandler::deleteTracks(const TrackList& tracks)
     const auto operation = p->addWriteOperation();
 
     QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                              [this, tracks, operationId = operation.id, stopToken = operation.stopToken]() {
-                                  p->m_trackDatabaseManager.deleteTracks(tracks, operationId, stopToken);
+                              [this, tracks, operationId = operation.id, stopToken = operation.stopToken,
+                               workerToken = p->m_trackDatabaseManager.prepareWork()]() {
+                                  p->m_trackDatabaseManager.deleteTracks(tracks, operationId, stopToken, workerToken);
                               });
 
     return operation.request;
@@ -1325,7 +1349,9 @@ WriteRequest LibraryThreadHandler::deleteTracks(const TrackList& tracks)
 
 void LibraryThreadHandler::cleanupTracks()
 {
-    QMetaObject::invokeMethod(&p->m_trackDatabaseManager, &TrackDatabaseManager::cleanupTracks);
+    QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, token = p->m_trackDatabaseManager.prepareWork()] {
+        p->m_trackDatabaseManager.cleanupTracks(token);
+    });
 }
 
 void LibraryThreadHandler::libraryRemoved(int id)

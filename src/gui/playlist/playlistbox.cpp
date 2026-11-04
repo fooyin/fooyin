@@ -19,8 +19,8 @@
 
 #include "playlistbox.h"
 
-#include "dialog/autoplaylistdialog.h"
 #include "playlist/playlistcontroller.h"
+#include "playlist/presetregistry.h"
 
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
@@ -281,17 +281,7 @@ void PlaylistBox::setupActions()
     m_newAutoPlaylistCmd->setCategories(switcherCategory);
     QObject::connect(m_newAutoPlaylistAction, &QAction::triggered, this, [this]() {
         closeRenameEditor();
-
-        auto* autoDialog = new AutoPlaylistDialog(Utils::getMainWindow());
-        autoDialog->setAttribute(Qt::WA_DeleteOnClose);
-        QObject::connect(autoDialog, &AutoPlaylistDialog::playlistEdited, autoDialog,
-                         [this](const QString& name, const QString& query, const QString& sortQuery, bool forceSorted) {
-                             if(auto* playlist
-                                = m_playlistHandler->createNewAutoPlaylist(name, query, sortQuery, forceSorted)) {
-                                 m_playlistController->changeCurrentPlaylist(playlist);
-                             }
-                         });
-        autoDialog->show();
+        Q_EMIT newAutoPlaylistRequested();
     });
 }
 
@@ -356,6 +346,17 @@ void PlaylistBox::showContextMenu(const QPoint& pos)
 
         menu->addSeparator();
 
+        auto* presetsMenu  = menu->addMenu(tr("Apply preset"));
+        const auto presets = m_playlistController->presetRegistry()->items();
+        for(const auto& preset : presets) {
+            auto* action = presetsMenu->addAction(preset.name);
+            QObject::connect(action, &QAction::triggered, this, [this, presetId = preset.id, id = playlist->id()]() {
+                m_playlistController->applyPresetToPlaylists(presetId, {id});
+            });
+        }
+
+        menu->addSeparator();
+
         if(auto* savePlaylist = m_actionManager->command(Constants::Actions::SavePlaylist)) {
             menu->addAction(savePlaylist->action());
         }
@@ -375,10 +376,7 @@ void PlaylistBox::editCurrentAutoPlaylist()
     }
 
     closeRenameEditor();
-
-    auto* autoDialog = new AutoPlaylistDialog(m_playlistHandler, playlist, Utils::getMainWindow());
-    autoDialog->setAttribute(Qt::WA_DeleteOnClose);
-    autoDialog->show();
+    Q_EMIT editAutoPlaylistRequested(playlist->id());
 }
 
 void PlaylistBox::showRenameEditor()

@@ -20,6 +20,7 @@
 #include "testutils.h"
 
 #include "core/database/dbschema.h"
+#include "core/database/trackdatabase.h"
 #include "core/internalcoresettings.h"
 #include "core/library/librarymanager.h"
 #include "core/library/libraryscanner.h"
@@ -41,6 +42,7 @@
 
 #include <QBuffer>
 #include <QCoreApplication>
+#include <QDateTime>
 #include <QElapsedTimer>
 #include <QEventLoop>
 #include <QFile>
@@ -52,6 +54,7 @@
 #include <QStandardPaths>
 #include <QTemporaryDir>
 #include <QThread>
+#include <QTimeZone>
 
 #include <gtest/gtest.h>
 
@@ -995,6 +998,58 @@ TEST_F(UnifiedMusicLibraryTest, UnmanagedRatingWriteUpdatesPlaylistRawRatingTag)
         const Track& updatedTrack = playlist->tracks().front();
         return updatedTrack.rating() == 1.0F && updatedTrack.rawRatingTag(u"RATING"_s) == u"5"_s;
     }));
+}
+
+TEST_F(UnifiedMusicLibraryTest, RemoteFileMetadataUpdatesPlaylistAndDatabase)
+{
+    const QDateTime modifiedTime{QDate{2020, 11, 24}, QTime{10, 3, 40}, QTimeZone::utc()};
+    TrackDatabase database;
+    database.initialise(DbConnectionProvider{context().dbPool});
+    database.setMetadataStore(context().library.metadataStore());
+    TrackList tracks{Track{u"https://example.com/track.mp3"_s}};
+    tracks.front().generateHash();
+
+    ASSERT_TRUE(database.storeTracks(tracks));
+    ASSERT_GE(tracks.front().id(), 0);
+    auto* playlist = context().playlistHandler.createPlaylist(u"Remote file"_s, tracks);
+    ASSERT_NE(playlist, nullptr);
+    ASSERT_EQ(playlist->tracks().front().duration(), 0);
+
+    Track updatedTrack{tracks.front()};
+    updatedTrack.setDuration(398000);
+    updatedTrack.setFileSize(6368861);
+    updatedTrack.setModifiedTime(modifiedTime.toMSecsSinceEpoch());
+    updatedTrack.setSampleRate(44100);
+    updatedTrack.setCodec(u"MP3"_s);
+    updatedTrack.setCodecProfile(u"CBR"_s);
+    updatedTrack.setTool(u"LAME3.99r"_s);
+    updatedTrack.setExtraProperty(u"ENC_DELAY"_s, u"576"_s);
+    updatedTrack.setExtraProperty(u"ENC_PADDING"_s, u"648"_s);
+
+    const QSignalSpy playlistSpy{&context().playlistHandler, &PlaylistHandler::tracksChanged};
+    QSignalSpy metadataSpy{&context().library, &MusicLibrary::tracksMetadataChanged};
+    context().library.updateTrackMetadata({updatedTrack});
+    waitForSignal(metadataSpy);
+    ASSERT_FALSE(playlistSpy.isEmpty());
+
+    const Track playlistTrack = playlist->tracks().front();
+    EXPECT_EQ(playlistTrack.duration(), 398000);
+    EXPECT_EQ(playlistTrack.fileSize(), 6368861);
+    EXPECT_EQ(playlistTrack.modifiedTime(), modifiedTime.toMSecsSinceEpoch());
+    EXPECT_EQ(playlistTrack.codecProfile(), u"CBR"_s);
+    EXPECT_EQ(playlistTrack.tool(), u"LAME3.99r"_s);
+    EXPECT_EQ(playlistTrack.extraProperties().value(u"ENC_DELAY"_s), u"576"_s);
+    EXPECT_EQ(playlistTrack.extraProperties().value(u"ENC_PADDING"_s), u"648"_s);
+
+    Track restoredTrack{tracks.front()};
+    ASSERT_TRUE(database.reloadTrack(restoredTrack));
+    EXPECT_EQ(restoredTrack.duration(), playlistTrack.duration());
+    EXPECT_EQ(restoredTrack.fileSize(), playlistTrack.fileSize());
+    EXPECT_EQ(restoredTrack.modifiedTime(), playlistTrack.modifiedTime());
+    EXPECT_EQ(restoredTrack.tool(), playlistTrack.tool());
+    EXPECT_EQ(restoredTrack.extraProperties().value(u"ENC_DELAY"_s),
+              playlistTrack.extraProperties().value(u"ENC_DELAY"_s));
+    EXPECT_TRUE(context().readerState->writes().empty());
 }
 
 TEST_F(UnifiedMusicLibraryTest, OverlappingSortAndScanDoNotLoseNewTracks)

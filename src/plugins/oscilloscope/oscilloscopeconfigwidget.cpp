@@ -22,6 +22,7 @@
 #include "oscilloscopecolours.h"
 
 #include <gui/framerate.h>
+#include <gui/widgets/backgroundconfigwidget.h>
 #include <gui/widgets/colourbutton.h>
 
 #include <QCheckBox>
@@ -31,6 +32,7 @@
 #include <QIntValidator>
 #include <QLabel>
 #include <QLineEdit>
+#include <QTabWidget>
 
 using namespace Qt::StringLiterals;
 
@@ -46,6 +48,7 @@ OscilloscopeConfigDialog::OscilloscopeConfigDialog(OscilloscopeWidget* oscillosc
     , m_backgroundColour{new ColourButton(tr("Background colour") + ":"_L1, true, this)}
     , m_waveformColour{new ColourButton(tr("Waveform colour") + ":"_L1, true, this)}
     , m_zeroLineColour{new ColourButton(tr("Zero line colour") + ":"_L1, true, this)}
+    , m_background{new BackgroundConfigWidget(this)}
 {
     auto* generalGroup  = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(generalGroup);
@@ -68,9 +71,12 @@ OscilloscopeConfigDialog::OscilloscopeConfigDialog(OscilloscopeWidget* oscillosc
         new QIntValidator(OscilloscopeWidget::MinZoomPercent, OscilloscopeWidget::MaxZoomPercent, m_zoomPercent));
     m_zoomPercent->setToolTip(tr("Vertical amplitude scale; high values may overlap stereo channels"));
 
+    m_updateFps->setEditable(true);
+    m_updateFps->setValidator(new QIntValidator(Gui::FrameRate::minFps(), Gui::FrameRate::maxFps(), m_updateFps));
+
     for(const auto preset : Gui::FrameRate::Presets) {
         const int fps = Gui::FrameRate::toFps(preset);
-        m_updateFps->addItem(tr("%1 fps").arg(fps), fps);
+        m_updateFps->addItem(QString::number(fps), fps);
     }
     m_updateFps->setToolTip(tr("Maximum waveform refresh rate; lower values can reduce motion blending"));
 
@@ -100,10 +106,17 @@ OscilloscopeConfigDialog::OscilloscopeConfigDialog(OscilloscopeWidget* oscillosc
     coloursLayout->addWidget(m_zeroLineColour, row++, 0, 1, 2);
     coloursLayout->setColumnStretch(1, 1);
 
-    auto* layout{contentLayout()};
-    layout->addWidget(generalGroup, 0, 0);
-    layout->addWidget(m_colourGroup, 0, 1);
-    layout->setRowStretch(layout->rowCount(), 1);
+    auto* generalPage       = new QWidget(this);
+    auto* generalPageLayout = new QGridLayout(generalPage);
+
+    generalPageLayout->addWidget(generalGroup, 0, 0);
+    generalPageLayout->addWidget(m_colourGroup, 0, 1);
+    generalPageLayout->setRowStretch(1, 1);
+
+    auto* tabs = new QTabWidget(this);
+    tabs->addTab(generalPage, tr("General"));
+    tabs->addTab(m_background, tr("Background"));
+    contentLayout()->addWidget(tabs, 0, 0);
 
     QObject::connect(oscilloscope, &OscilloscopeWidget::configChanged, this,
                      &OscilloscopeConfigDialog::syncCurrentConfig);
@@ -113,13 +126,17 @@ OscilloscopeConfigDialog::OscilloscopeConfigDialog(OscilloscopeWidget* oscillosc
 
 OscilloscopeWidget::ConfigData OscilloscopeConfigDialog::config() const
 {
+    bool fpsValid{false};
+    const int fps = m_updateFps->currentText().toInt(&fpsValid);
+
     OscilloscopeWidget::ConfigData config{
         .curveDurationMs = m_curveDurationMs->currentText().toInt(),
         .zoomPercent     = m_zoomPercent->currentText().toInt(),
-        .updateFps       = m_updateFps->currentData().toInt(),
+        .updateFps       = fpsValid ? Gui::FrameRate::clampFps(fps) : OscilloscopeWidget::DefaultUpdateFps,
         .downmixMode     = static_cast<OscilloscopeWidget::DownmixMode>(m_downmixMode->currentData().toInt()),
         .showZeroLine    = m_showZeroLine->isChecked(),
         .colours         = QVariant{},
+        .background      = m_background->config(),
     };
 
     Colours colours;
@@ -141,6 +158,7 @@ OscilloscopeWidget::ConfigData OscilloscopeConfigDialog::config() const
 
 void OscilloscopeConfigDialog::setConfig(const OscilloscopeWidget::ConfigData& config)
 {
+    m_background->setConfig(config.background);
     const int durationIndex = m_curveDurationMs->findData(config.curveDurationMs);
     if(durationIndex >= 0) {
         m_curveDurationMs->setCurrentIndex(durationIndex);
@@ -157,12 +175,12 @@ void OscilloscopeConfigDialog::setConfig(const OscilloscopeWidget::ConfigData& c
         m_zoomPercent->setEditText(QString::number(config.zoomPercent));
     }
 
-    const int nearestFps = Gui::FrameRate::nearestPresetFps(config.updateFps);
-    int fpsIndex         = m_updateFps->findData(nearestFps);
-    if(fpsIndex < 0) {
-        fpsIndex = m_updateFps->findData(OscilloscopeWidget::DefaultUpdateFps);
-    }
+    const int fps      = Gui::FrameRate::clampFps(config.updateFps);
+    const int fpsIndex = m_updateFps->findData(fps);
     m_updateFps->setCurrentIndex(fpsIndex);
+    if(fpsIndex < 0) {
+        m_updateFps->setEditText(QString::number(fps));
+    }
 
     int downmixIndex = m_downmixMode->findData(static_cast<int>(config.downmixMode));
     if(downmixIndex < 0) {
@@ -189,7 +207,7 @@ void OscilloscopeConfigDialog::mergeExternalConfig(const OscilloscopeWidget::Con
     mergeExternalFields(previous, current, &OscilloscopeWidget::ConfigData::curveDurationMs,
                         &OscilloscopeWidget::ConfigData::zoomPercent, &OscilloscopeWidget::ConfigData::updateFps,
                         &OscilloscopeWidget::ConfigData::downmixMode, &OscilloscopeWidget::ConfigData::showZeroLine,
-                        &OscilloscopeWidget::ConfigData::colours);
+                        &OscilloscopeWidget::ConfigData::colours, &OscilloscopeWidget::ConfigData::background);
 }
 } // namespace Fooyin::Oscilloscope
 

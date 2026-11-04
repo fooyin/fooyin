@@ -239,9 +239,9 @@ void NeteaseLyrics::handleLyricReply()
             lyrics                = lrc.value("lyric"_L1).toString().trimmed();
         }
 
-        if(!lyrics.isEmpty() && lyrics != "暂无歌词"_L1) {
+        if(!lyrics.isEmpty() && !lyrics.contains("暂无歌词"_L1) && !lyrics.contains("纯音乐，请欣赏"_L1)) {
             LyricData& data = m_data.at(m_currentIndex);
-            data.data       = lyrics;
+            data.data       = std::move(lyrics);
         }
     }
 

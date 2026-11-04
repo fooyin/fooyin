@@ -52,30 +52,32 @@ float StarEditor::ratingAtPosition(int x) const
 
 float StarEditor::ratingAtPosition(const QPoint& pos, const QRect& rect, const StarRating& rating, Qt::Alignment align)
 {
-    const auto ratingWidth = static_cast<float>(rating.sizeHint().width());
-    const auto maxStars    = static_cast<float>(rating.maxStarCount());
-    const auto starWidth   = ratingWidth / maxStars;
+    const bool vertical     = rating.orientation() == Qt::Vertical;
+    const auto ratingLength = static_cast<float>(vertical ? rating.sizeHint().height() : rating.sizeHint().width());
+    const auto maxStars     = static_cast<float>(rating.maxStarCount());
+    const auto starLength   = ratingLength / maxStars;
 
-    const auto rectX     = static_cast<float>(rect.x());
-    const auto rectWidth = static_cast<float>(rect.width());
+    const auto rectStart  = static_cast<float>(vertical ? rect.y() : rect.x());
+    const auto rectLength = static_cast<float>(vertical ? rect.height() : rect.width());
 
-    auto x = static_cast<float>(pos.x());
+    auto position = static_cast<float>(vertical ? pos.y() : pos.x()) - rectStart;
 
-    if(align & Qt::AlignLeft) {
-        x -= rectX;
+    if(align & (vertical ? Qt::AlignVCenter : Qt::AlignHCenter)) {
+        position -= (rectLength - ratingLength) / 2.0F;
     }
-    else if(align & Qt::AlignHCenter) {
-        x -= rectX + (rectWidth - ratingWidth) / 2.0F;
-    }
-    else if(align & Qt::AlignRight) {
-        x -= rectX + (rectWidth - ratingWidth);
+    else if(align & (vertical ? Qt::AlignBottom : Qt::AlignRight)) {
+        position -= rectLength - ratingLength;
     }
 
-    if(x < 0) {
+    if(vertical) {
+        position = ratingLength - position;
+    }
+
+    if(position < 0) {
         return 0;
     }
 
-    float starIndex = x / starWidth;
+    float starIndex = position / starLength;
     starIndex       = std::clamp(starIndex, 0.0F, maxStars);
 
     const float halfStarRating = std::round(starIndex * 2) / 2;

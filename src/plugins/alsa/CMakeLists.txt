@@ -6,15 +6,17 @@ endif()
 
 create_fooyin_plugin_internal(
     alsa
-    DEPENDS Fooyin::Core
-            Fooyin::Gui
-            ${ALSA_LIBRARIES}
-    SOURCES alsaoutput.cpp
-            alsaoutput.h
-            alsaplugin.cpp
-            alsaplugin.h
-            alsasettings.cpp
-            alsasettings.h
+    DEPENDS #
+        Fooyin::Core
+        Fooyin::Gui
+        ${ALSA_LIBRARIES}
+    SOURCES #
+        alsaoutput.cpp
+        alsaoutput.h
+        alsaplugin.cpp
+        alsaplugin.h
+        alsasettings.cpp
+        alsasettings.h
 )
 
 target_include_directories(alsa PRIVATE ${ALSA_INCLUDE_DIRS})

@@ -1,0 +1,70 @@
+set(sdk_name "@FOOYIN_SDK_NAME@")
+set(sdk_output "@PROJECT_BINARY_DIR@/sdk")
+set(sdk_prefix "${sdk_output}/${sdk_name}")
+
+file(REMOVE_RECURSE "${sdk_prefix}")
+execute_process(
+    COMMAND
+        "@CMAKE_COMMAND@" --install "@PROJECT_BINARY_DIR@" --prefix "${sdk_prefix}" --component fooyin_development
+        --config "${SDK_CONFIG}"
+    COMMAND_ERROR_IS_FATAL ANY
+)
+
+if(SDK_RUNTIME_FILES)
+    file(COPY ${SDK_RUNTIME_FILES} DESTINATION "${sdk_prefix}/@BIN_INSTALL_DIR@")
+endif()
+
+file(COPY "@PROJECT_SOURCE_DIR@/COPYING" DESTINATION "${sdk_prefix}")
+file(COPY "@PROJECT_SOURCE_DIR@/3rdparty/pffft/src/LICENSE.txt" DESTINATION "${sdk_prefix}/licenses/pffft")
+
+file(READ "${sdk_prefix}/include/fooyin/core/plugins/plugin.h" sdk_plugin_header)
+string(REGEX MATCH "#define[ \t]+FOOYIN_PLUGIN_IID[ \t]+\"([^\"]+)\"" sdk_iid_definition "${sdk_plugin_header}")
+if(NOT sdk_iid_definition)
+    message(FATAL_ERROR "Cannot read FOOYIN_PLUGIN_IID from the installed plugin header")
+endif()
+set(sdk_plugin_iid "${CMAKE_MATCH_1}")
+
+set(sdk_distribution "@CMAKE_SYSTEM_NAME@")
+if("@CMAKE_SYSTEM_NAME@" STREQUAL "Linux" AND EXISTS "/etc/os-release")
+    file(STRINGS "/etc/os-release" sdk_distribution REGEX "^PRETTY_NAME=")
+    string(REGEX REPLACE "^PRETTY_NAME=\"(.*)\"$" "\\1" sdk_distribution "${sdk_distribution}")
+endif()
+
+string(
+    CONFIGURE
+        [=[
+{
+    "fooyin_version": "@FOOYIN_VERSION@",
+    "fooyin_commit": "@FOOYIN_SDK_COMMIT@",
+    "plugin_iid": "${sdk_plugin_iid}",
+    "qt_version": "@Qt6Core_VERSION@",
+    "system": "@CMAKE_SYSTEM_NAME@",
+    "distribution": "${sdk_distribution}",
+    "architecture": "@FOOYIN_PACKAGE_ARCH@",
+    "compiler": "@CMAKE_CXX_COMPILER_ID@",
+    "compiler_version": "@CMAKE_CXX_COMPILER_VERSION@",
+    "build_type": "${SDK_CONFIG}"
+}
+]=]
+    sdk_manifest
+)
+
+if("@CMAKE_SYSTEM_NAME@" STREQUAL "Windows")
+    file(READ "@PROJECT_SOURCE_DIR@/vcpkg.json" sdk_vcpkg_manifest)
+    string(JSON sdk_vcpkg_baseline GET "${sdk_vcpkg_manifest}" builtin-baseline)
+    string(JSON sdk_manifest SET "${sdk_manifest}" vcpkg_baseline "\"${sdk_vcpkg_baseline}\"")
+    string(APPEND sdk_manifest "\n")
+    set(sdk_archive "${sdk_output}/${sdk_name}.zip")
+    set(sdk_tar_options cf "${sdk_archive}" --format=zip)
+else()
+    set(sdk_archive "${sdk_output}/${sdk_name}.tar.xz")
+    set(sdk_tar_options cJf "${sdk_archive}")
+endif()
+file(WRITE "${sdk_prefix}/sdk-manifest.json" "${sdk_manifest}")
+
+execute_process(
+    COMMAND "@CMAKE_COMMAND@" -E tar ${sdk_tar_options} "${sdk_name}"
+    WORKING_DIRECTORY "${sdk_output}"
+    COMMAND_ERROR_IS_FATAL ANY
+)
+message(STATUS "Created ${sdk_archive}")

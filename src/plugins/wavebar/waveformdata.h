@@ -21,7 +21,6 @@
 
 #include <core/engine/audioformat.h>
 
-#include <tuple>
 #include <vector>
 
 namespace Fooyin::WaveBar {
@@ -47,29 +46,11 @@ struct WaveformData
         std::vector<T> min;
         std::vector<T> rms;
 
-        bool operator==(const ChannelData& other) const noexcept
-        {
-            return std::tie(max, min, rms) == std::tie(other.max, other.min, other.rms);
-        }
-
-        bool operator!=(const ChannelData& other) const noexcept
-        {
-            return !(*this == other);
-        }
+        bool operator==(const ChannelData& other) const noexcept = default;
     };
     std::vector<ChannelData> channelData;
 
-    bool operator==(const WaveformData<T>& other) const noexcept
-    {
-        return std::tie(format, duration, channels, complete, samplesPerChannel, channelData)
-            == std::tie(other.format, other.duration, other.channels, other.complete, other.samplesPerChannel,
-                        other.channelData);
-    }
-
-    bool operator!=(const WaveformData<T>& other) const noexcept
-    {
-        return !(*this == other);
-    }
+    bool operator==(const WaveformData<T>& other) const noexcept = default;
 
     [[nodiscard]] bool empty() const
     {

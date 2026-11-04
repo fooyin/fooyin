@@ -21,6 +21,7 @@
 
 #include "lyricseditordialog.h"
 #include "lyricsfinder.h"
+#include "lyricsplaybackservice.h"
 #include "lyricspropertiestab.h"
 #include "lyricssaver.h"
 #include "lyricssearchdialog.h"
@@ -53,7 +54,7 @@ namespace Fooyin::Lyrics {
 void LyricsPlugin::initialise(const CorePluginContext& context)
 {
     m_playerController = context.playerController;
-    m_playlistHandler  = context.playlistHandler;
+    m_coreContext      = &context;
     m_audioLoader      = context.audioLoader;
     m_networkAccess    = context.networkAccess;
     m_settings         = context.settingsManager;
@@ -61,6 +62,8 @@ void LyricsPlugin::initialise(const CorePluginContext& context)
     m_lyricsSettings = std::make_unique<LyricsSettings>();
     m_lyricsFinder   = new LyricsFinder(context.networkAccess, m_settings, this);
     m_lyricsSaver    = new LyricsSaver(context.library, m_settings, this);
+
+    m_lyricsService = new LyricsPlaybackService(context, m_lyricsFinder, m_lyricsSaver, this);
 }
 
 void LyricsPlugin::initialise(const GuiPluginContext& context)
@@ -69,10 +72,11 @@ void LyricsPlugin::initialise(const GuiPluginContext& context)
     m_trackSelection = context.trackSelection;
     m_widgetProvider = context.widgetProvider;
 
-    const auto createLyricsWidget = [this, styleProvider = context.styleProvider]() {
-        return new LyricsWidget(m_playerController, m_playlistHandler, m_lyricsFinder, m_lyricsSaver, m_settings,
-                                styleProvider);
-    };
+    const auto createLyricsWidget
+        = [this, styleProvider = context.styleProvider, coverRepository = context.coverRepository]() {
+              return new LyricsWidget(*m_coreContext, m_lyricsService, m_lyricsSaver, styleProvider, coverRepository,
+                                      m_trackSelection);
+          };
 
     auto* showLyrics = new QAction(tr("Ly&rics"), this);
     showLyrics->setStatusTip(tr("Open lyrics in a separate window"));
@@ -216,8 +220,8 @@ void LyricsPlugin::openLyricsDialog(const Track& track, const Lyrics& lyrics)
     auto* dialog = new LyricsEditorDialog(track, lyrics, m_playerController, m_lyricsSaver, Utils::getMainWindow());
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     QObject::connect(dialog, &QDialog::finished, dialog, &LyricsEditorDialog::saveState);
-    dialog->show();
     dialog->restoreState();
+    dialog->show();
 }
 
 void LyricsPlugin::loadTrackLyricsAndOpenDialog(const Track& track)

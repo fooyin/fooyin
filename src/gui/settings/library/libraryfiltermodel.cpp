@@ -54,7 +54,7 @@ QString LibraryFilterModel::validationError() const
 
         const QString expression = preset.expression.trimmed();
         if(expression.isEmpty() || !ScriptParser::canEvaluateAsQuery(parser.parseQuery(expression))) {
-            return tr("The expression for library filter \"%1\" is invalid.").arg(preset.name);
+            return tr("The expression for library filter ‘%1’ is invalid.").arg(preset.name);
         }
     }
     return {};
@@ -109,7 +109,7 @@ QVariant LibraryFilterModel::data(const QModelIndex& index, int role) const
     const LibraryFilter& preset = m_presets.at(index.row());
 
     if(role == Qt::CheckStateRole && index.column() == 0) {
-        return preset.enabled ? Qt::Checked : Qt::Unchecked;
+        return preset.isEnabled ? Qt::Checked : Qt::Unchecked;
     }
 
     if(role == Qt::ForegroundRole
@@ -153,10 +153,10 @@ bool LibraryFilterModel::setData(const QModelIndex& index, const QVariant& value
 
     if(role == Qt::CheckStateRole && index.column() == 0) {
         const bool enabled = value.toInt() == Qt::Checked;
-        if(preset.enabled == enabled) {
+        if(preset.isEnabled == enabled) {
             return false;
         }
-        preset.enabled = enabled;
+        preset.isEnabled = enabled;
         Q_EMIT dataChanged(index, index, {Qt::CheckStateRole});
         return true;
     }

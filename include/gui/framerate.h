@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <utils/timeconstants.h>
+
 #include <array>
 #include <cstdint>
 
@@ -91,6 +93,6 @@ constexpr int nearestPresetFps(int fps)
 constexpr int intervalMsForFps(int fps)
 {
     const int clamped = fps < 1 ? 1 : (fps > maxFps() ? maxFps() : fps);
-    return (1000 + (clamped / 2)) / clamped;
+    return (static_cast<int>(Time::MsPerSecond) + (clamped / 2)) / clamped;
 }
 } // namespace Fooyin::Gui::FrameRate

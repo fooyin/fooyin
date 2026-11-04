@@ -107,6 +107,15 @@ public:
     void reset();
 
     void setPlayMode(Playlist::PlayModes mode);
+
+    /** Returns the current track’s temporary A–B repeat range, in ms. */
+    [[nodiscard]] Player::ABRepeatRange abRepeatRange() const;
+    /** Optionally seek to the new start when an enabled repeat range is adjusted. */
+    void setABRepeatStart(uint64_t ms, bool seekToStart = false);
+    void setABRepeatEnd(uint64_t ms);
+    void setABRepeatEnabled(bool enabled);
+    void clearABRepeat();
+
     void seek(uint64_t ms);
     void seekForward(uint64_t delta);
     void seekBackward(uint64_t delta);
@@ -130,6 +139,7 @@ public:
     void commitCurrentTrack(const Track& track);
     void commitCurrentTrack(const PlaylistTrack& track,
                             const Player::TrackChangeContext& context = Player::TrackChangeContext{});
+    bool rejectTrackChange(uint64_t itemId);
     void updateCurrentTrack(const Track& track);
 
     void scheduleNextTrack(const PlaylistTrack& track);
@@ -172,6 +182,7 @@ public:
     void insertQueueTracks(int index, const QueueTracks& tracks);
     void moveQueueItems(int index, const std::vector<PlaybackQueueItemId>& ids);
     void reorderQueueItems(const std::vector<PlaybackQueueItemId>& ids);
+    void updateQueuedTrackMetadata(const TrackList& tracks);
 
     void replaceTracks(const TrackList& tracks);
     void replaceTracks(const QueueTracks& tracks);
@@ -190,6 +201,7 @@ Q_SIGNALS:
     void bitrateChanged(int bitrate);
     void playbackOutputInfoChanged(const Fooyin::Engine::PlaybackOutputInfo& info);
     void positionMoved(uint64_t ms);
+    void abRepeatRangeChanged();
 
     /*! Emitted when the actual playback track changes. */
     void currentTrackChanged(const Fooyin::Track& track);
@@ -214,6 +226,7 @@ Q_SIGNALS:
     void tracksDequeued(const Fooyin::QueueTracks& tracks);
     void trackIndexesDequeued(const Fooyin::PlaylistIndexes& indexes);
     void trackQueueChanged(const Fooyin::QueueTracks& removed, const Fooyin::QueueTracks& added);
+    void playbackQueueModeChanged(Fooyin::PlaybackQueueMode queueMode);
 
     void playbackSnapshotChanged(const Fooyin::Player::PlaybackSnapshot& snapshot);
     void playbackQueuePositionChanged(Fooyin::PlaybackQueueItemId currentItemId);

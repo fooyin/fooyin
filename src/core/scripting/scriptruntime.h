@@ -21,7 +21,7 @@
 
 #include "scriptbinder.h"
 #include "scriptcache.h"
-#include "scriptregistry.h"
+#include "scriptevaluator.h"
 
 #include <core/scripting/scriptscanner.h>
 #include <core/scripting/trackqueryfilter.h>
@@ -34,25 +34,22 @@
 #include <utility>
 
 namespace Fooyin {
-class ScriptFunctionProvider;
-class ScriptVariableProvider;
 
 class ScriptRuntime
 {
 public:
-    ScriptRuntime();
+    explicit ScriptRuntime(ScriptRegistry* registry = &ScriptRegistry::instance());
     ~ScriptRuntime();
-
-    void addProvider(const ScriptVariableProvider& provider);
-    void addProvider(const ScriptFunctionProvider& provider);
 
     ParsedScript parse(const QString& input,
                        ScriptScanner::WhitespaceMode whitespaceMode = ScriptScanner::WhitespaceMode::IgnoreLayout);
     ParsedScript parseQuery(const QString& input);
 
-    QString evaluate(const ParsedScript& input, const Track& track);
-    QString evaluate(const ParsedScript& input, const TrackList& tracks);
-    QString evaluate(const ParsedScript& input, const Playlist& playlist);
+    ScriptDependencies dependencies(const ParsedScript& input);
+
+    QString evaluate(const ParsedScript& input, const Track& track, const ScriptEvaluationOptions& options = {});
+    QString evaluate(const ParsedScript& input, const TrackList& tracks, const ScriptEvaluationOptions& options = {});
+    QString evaluate(const ParsedScript& input, const Playlist& playlist, const ScriptEvaluationOptions& options = {});
 
     [[nodiscard]] TrackList filterQuery(const QString& search, const TrackList& tracks,
                                         const ScriptSearchOptions& options, const ScriptContext& context = {},
@@ -68,7 +65,7 @@ public:
     template <typename Func>
     auto withContext(const ScriptContext& context, Func&& func)
     {
-        return m_registry->withContext(context, std::forward<Func>(func));
+        return m_evaluator.withContext(context, std::forward<Func>(func));
     }
 
     void setQueryMode(bool isQuery);
@@ -94,16 +91,21 @@ private:
     Expression notKeyword(const Expression& key);
     Expression logicalOperator(const Expression& key, Expr::Type type);
     Expression relationalOperator(const Expression& key, Expr::Type type, Expr::Type equalsType = Expr::Null);
+    Expression textBoundaryOperator(const Expression& key, Expr::Type type);
+    Expression containsOperator(const Expression& key);
+    Expression inKeyword(const Expression& key);
+    Expression listOperator(const Expression& key, Expr::Type type, const QString& keyword);
     Expression metadataKeyword(const Expression& key, Expr::Type type);
     Expression timeKeyword(const Expression& key, Expr::Type type);
     Expression duringKeyword(const Expression& key);
+    Expression betweenKeyword(const Expression& key);
     Expression sort();
     Expression limit();
 
     const BoundScript& bind(const ParsedScript& input);
 
     template <typename Tracks>
-    QString evaluateImpl(const ParsedScript& input, const Tracks& tracks);
+    QString evaluateImpl(const ParsedScript& input, const Tracks& tracks, const ScriptEvaluationOptions& options);
 
     ScriptResult evalExpression(const BoundExpression& exp, const auto& tracks);
     ScriptResult evalVariable(const BoundExpression& exp, const auto& tracks);
@@ -120,8 +122,7 @@ private:
     ScriptResult evalMissing(const BoundExpression& exp, const auto& tracks);
     ScriptResult evalPresent(const BoundExpression& exp, const auto& tracks);
     ScriptResult evalEquals(const BoundExpression& exp, const auto& tracks);
-    ScriptResult evalContains(const BoundExpression& exp, const auto& tracks);
-    ScriptResult evalContains(const BoundExpression& exp, const Track& track);
+    ScriptResult evalTextMatch(const BoundExpression& exp, const auto& tracks);
     ScriptResult evalLimit(const BoundExpression& exp);
     ScriptResult evalSort(const BoundExpression& exp);
 
@@ -142,7 +143,8 @@ private:
     void reset();
 
     ScriptScanner m_scanner;
-    std::unique_ptr<ScriptRegistry> m_registry;
+    ScriptRegistry* m_registry;
+    ScriptEvaluator m_evaluator;
 
     ScriptScanner::Token m_current;
     ScriptScanner::Token m_previous;
@@ -156,6 +158,7 @@ private:
     BoundScriptCache m_boundQueryCache;
     BoundScript m_currentBoundScript;
     QStringList m_currentResult;
+    QString m_missingVariableText;
 
     QString m_sortScript;
     Qt::SortOrder m_sortOrder;

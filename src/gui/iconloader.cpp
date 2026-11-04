@@ -21,6 +21,7 @@
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
 
+#include <QAbstractButton>
 #include <QAction>
 #include <QApplication>
 #include <QDir>
@@ -212,6 +213,21 @@ void setThemeIcon(QAction* action, const char* icon)
     setThemeIcon(action, QString::fromLatin1(icon));
 }
 
+void setThemeIcon(QAbstractButton* button, const QString& icon)
+{
+    if(!button) {
+        return;
+    }
+
+    button->setProperty(ThemeIconNameProperty, icon);
+    button->setIcon(iconFromTheme(icon));
+}
+
+void setThemeIcon(QAbstractButton* button, const char* icon)
+{
+    setThemeIcon(button, QString::fromLatin1(icon));
+}
+
 QString themeIconName(const QAction* action)
 {
     return action ? action->property(ThemeIconNameProperty).toString() : QString{};
@@ -244,6 +260,18 @@ void refreshThemeIcons(QObject* object)
 
     for(QAction* action : object->findChildren<QAction*>()) {
         refreshThemeIcon(action);
+    }
+
+    auto buttons = object->findChildren<QAbstractButton*>();
+    if(auto* button = qobject_cast<QAbstractButton*>(object)) {
+        buttons.prepend(button);
+    }
+
+    for(QAbstractButton* button : buttons) {
+        const QString iconName = button->property(ThemeIconNameProperty).toString();
+        if(!iconName.isEmpty()) {
+            button->setIcon(iconFromTheme(iconName));
+        }
     }
 }
 

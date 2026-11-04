@@ -26,6 +26,8 @@
         <file>icons/dark/scalable/actions/audio-volume-medium.svg</file>
         <file>icons/dark/scalable/actions/audio-volume-muted.svg</file>
         <file>icons/dark/scalable/actions/command.svg</file>
+        <file>icons/dark/scalable/actions/dialog-information.svg</file>
+        <file>icons/dark/scalable/actions/dialog-warning.svg</file>
         <file>icons/dark/scalable/actions/edit-clear.svg</file>
         <file>icons/dark/scalable/actions/edit-find.svg</file>
         <file>icons/dark/scalable/actions/emblem-readonly.svg</file>
@@ -38,6 +40,8 @@
         <file>icons/dark/scalable/actions/go-next.svg</file>
         <file>icons/dark/scalable/actions/go-previous.svg</file>
         <file>icons/dark/scalable/actions/go-up.svg</file>
+        <file>icons/dark/scalable/actions/grip-horizontal.svg</file>
+        <file>icons/dark/scalable/actions/grip-vertical.svg</file>
         <file>icons/dark/scalable/actions/list-add.svg</file>
         <file>icons/dark/scalable/actions/list-remove.svg</file>
         <file>icons/dark/scalable/actions/love.svg</file>
@@ -68,6 +72,7 @@
         <file>icons/dark/scalable/actions/user-bookmarks.svg</file>
         <file>icons/dark/scalable/actions/view-filter.svg</file>
         <file>icons/dark/scalable/actions/view-log.svg</file>
+        <file>icons/dark/scalable/actions/view-media-artist.svg</file>
         <file>icons/dark/scalable/actions/view-process-users.svg</file>
         <file>icons/dark/scalable/actions/view-refresh.svg</file>
         <file>icons/dark/scalable/actions/view-scripteditor.svg</file>
@@ -84,6 +89,8 @@
         <file>icons/light/scalable/actions/audio-volume-medium.svg</file>
         <file>icons/light/scalable/actions/audio-volume-muted.svg</file>
         <file>icons/light/scalable/actions/command.svg</file>
+        <file>icons/light/scalable/actions/dialog-information.svg</file>
+        <file>icons/light/scalable/actions/dialog-warning.svg</file>
         <file>icons/light/scalable/actions/edit-clear.svg</file>
         <file>icons/light/scalable/actions/edit-find.svg</file>
         <file>icons/light/scalable/actions/emblem-readonly.svg</file>
@@ -96,6 +103,8 @@
         <file>icons/light/scalable/actions/go-next.svg</file>
         <file>icons/light/scalable/actions/go-previous.svg</file>
         <file>icons/light/scalable/actions/go-up.svg</file>
+        <file>icons/light/scalable/actions/grip-horizontal.svg</file>
+        <file>icons/light/scalable/actions/grip-vertical.svg</file>
         <file>icons/light/scalable/actions/list-add.svg</file>
         <file>icons/light/scalable/actions/list-remove.svg</file>
         <file>icons/light/scalable/actions/love.svg</file>
@@ -126,6 +135,7 @@
         <file>icons/light/scalable/actions/user-bookmarks.svg</file>
         <file>icons/light/scalable/actions/view-filter.svg</file>
         <file>icons/light/scalable/actions/view-log.svg</file>
+        <file>icons/light/scalable/actions/view-media-artist.svg</file>
         <file>icons/light/scalable/actions/view-process-users.svg</file>
         <file>icons/light/scalable/actions/view-refresh.svg</file>
         <file>icons/light/scalable/actions/view-scripteditor.svg</file>

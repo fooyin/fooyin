@@ -97,28 +97,36 @@ protected:
 private:
     void setupActions();
     void updateActionState();
+
     void showContextMenu(const QPoint& globalPos);
     void showPresetDialog();
+
     void toggleFullScreen();
     void openDetachedWindow(bool fullScreen);
     void enterFullScreen();
     void leaveFullScreen();
+
     void saveSelectedPreset();
     void scanPresetLibrary();
     [[nodiscard]] QString presetIdentifier(const QString& path) const;
     [[nodiscard]] QStringList favouritePresetPaths() const;
+
     void toggleCurrentPresetFavourite(bool favourite);
     void updateFavouritePlaylist();
     void setCycleFavouritesOnly(bool enabled);
+
     void selectRandomPreset();
     void setRememberPreset(bool remember);
     void setPresetLocked(bool locked);
     void setShuffle(bool shuffle);
     void setPresetDuration(int seconds);
+
     void installSplitterEventFilters();
     void beginSplitterResize();
     void endSplitterResize();
-    void updateResizeSnapshotGeometry();
+
+    void updateSnapshot();
+    void updateSnapshotGeometry();
 
     ActionManager* m_actionManager;
     SettingsManager* m_settings;
@@ -127,7 +135,7 @@ private:
     ProjectMView* m_view;
     QWidget* m_viewContainer;
     QLabel* m_statusLabel;
-    QLabel* m_resizeSnapshot;
+    QLabel* m_snapshot;
     QPointer<QWidget> m_fullScreenWindow;
     WidgetContext* m_context;
 
@@ -160,6 +168,7 @@ private:
     bool m_cycleFavouritesOnly;
     bool m_detachedWindowFullScreen;
     bool m_splitterResizeActive;
+    bool m_snapshotActive;
 };
 } // namespace ProjectM
 } // namespace Fooyin

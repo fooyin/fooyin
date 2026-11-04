@@ -19,6 +19,9 @@
 
 #pragma once
 
+#include "artwork/artworkreflection.h"
+#include "scripting/inlinetrackeditors.h"
+
 #include <QStyledItemDelegate>
 
 namespace Fooyin {
@@ -27,6 +30,8 @@ class PlaylistDelegate : public QStyledItemDelegate
     Q_OBJECT
 
 public:
+    using ReflectionOptions = Gui::ArtworkReflectionOptions;
+
     using QStyledItemDelegate::QStyledItemDelegate;
 
     [[nodiscard]] QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
@@ -36,8 +41,16 @@ public:
     void setEditorData(QWidget* editor, const QModelIndex& index) const override;
 
     void setArtworkCornerRadius(int radius);
+    void setArtworkReflection(const ReflectionOptions& options);
+
+    [[nodiscard]] int artworkSpanHeight(int width, const QModelIndex& index) const;
+    [[nodiscard]] InlineTrackEditorHit inlineEditorAt(const QStyleOptionViewItem& option, const QModelIndex& index,
+                                                      const QPoint& pos) const;
+
+    static QRect subheaderContentRect(const QStyleOptionViewItem& option, const QModelIndex& index, int offset = 0);
 
 private:
     int m_artworkCornerRadius{0};
+    ReflectionOptions m_reflectionOptions;
 };
 } // namespace Fooyin

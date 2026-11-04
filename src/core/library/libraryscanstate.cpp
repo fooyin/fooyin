@@ -35,6 +35,7 @@ LibraryScanState::LibraryScanState(LibraryScanHost* host)
 
 void LibraryScanState::reset()
 {
+    m_error.clear();
     m_trackPaths.clear();
     m_existingArchives.clear();
     m_existingCueTracks.clear();
@@ -54,9 +55,21 @@ void LibraryScanState::reset()
     m_phase           = ScanProgress::Phase::ReadingMetadata;
 }
 
+void LibraryScanState::fail(QString error)
+{
+    if(m_error.isEmpty()) {
+        m_error = std::move(error);
+    }
+}
+
+QString LibraryScanState::error() const
+{
+    return m_error;
+}
+
 bool LibraryScanState::mayRun() const
 {
-    return !stopRequested();
+    return m_error.isEmpty() && !stopRequested();
 }
 
 bool LibraryScanState::stopRequested() const

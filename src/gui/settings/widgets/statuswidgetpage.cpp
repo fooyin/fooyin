@@ -24,6 +24,7 @@
 
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
@@ -104,8 +105,8 @@ StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     auto* scriptsGroup  = new QGroupBox(tr("Scripts"), this);
     auto* scriptsLayout = new QGridLayout(scriptsGroup);
 
-    auto* playlistHint = new QLabel(
-        u"🛈 "_s + tr("Shown in the status bar when no tracks are selected, or when selection info is disabled."), this);
+    auto* playlistHint = new HintLabel(
+        tr("Shown in the status bar when no tracks are selected, or when selection info is disabled."), this);
     playlistHint->setWordWrap(true);
 
     scriptsLayout->addWidget(new QLabel(tr("Playing track") + u":"_s, this), 0, 0);
@@ -136,9 +137,9 @@ void StatusWidgetPageWidget::load()
     m_showIcon->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
     m_showSelection->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowSelection>());
     m_showPlaylist->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowPlaylist>());
-    m_playingScript->setText(m_settings->value<Settings::Gui::Internal::StatusPlayingScript>());
-    m_selectionScript->setText(m_settings->value<Settings::Gui::Internal::StatusSelectionScript>());
-    m_playlistScript->setText(m_settings->value<Settings::Gui::Internal::StatusPlaylistScript>());
+    m_playingScript->setScript(m_settings->value<Settings::Gui::Internal::StatusPlayingScript>());
+    m_selectionScript->setScript(m_settings->value<Settings::Gui::Internal::StatusSelectionScript>());
+    m_playlistScript->setScript(m_settings->value<Settings::Gui::Internal::StatusPlaylistScript>());
     m_showStatusTips->setChecked(m_settings->value<Settings::Gui::ShowStatusTips>());
     m_doubleClick->setCurrentIndex(
         m_doubleClick->findData(m_settings->value<Settings::Gui::Internal::StatusDoubleClick>()));

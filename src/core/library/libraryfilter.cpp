@@ -36,7 +36,7 @@ QDataStream& operator<<(QDataStream& stream, const LibraryFilter& preset)
     stream << preset.index;
     stream << preset.name;
     stream << preset.expression;
-    stream << preset.enabled;
+    stream << preset.isEnabled;
 
     return stream;
 }
@@ -54,7 +54,7 @@ QDataStream& operator>>(QDataStream& stream, LibraryFilter& preset)
     stream >> preset.index;
     stream >> preset.name;
     stream >> preset.expression;
-    stream >> preset.enabled;
+    stream >> preset.isEnabled;
 
     return stream;
 }

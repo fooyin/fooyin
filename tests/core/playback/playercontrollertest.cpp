@@ -26,7 +26,7 @@
 #include <core/internalcoresettings.h>
 #include <core/player/playerdefs.h>
 #include <core/playlist/playlisthandler.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/scripting/scripttypes.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/database/dbconnectionpool.h>
@@ -372,6 +372,36 @@ TEST(PlayerControllerTest, StoppedTrackRemainsSeekable)
     EXPECT_FALSE(controller.currentTrackSeekable());
 }
 
+TEST(PlayerControllerTest, RuntimeDurationEnablesSeekingWithoutResettingProgress)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_remote_seek_test.ini"_s};
+    registerControllerSettings(settings);
+    PlayerController controller{&settings, nullptr};
+
+    Track track = makeTrack(u"https://example.com/track.mp3"_s, 24, 0);
+    controller.commitCurrentTrack(track);
+    controller.setCurrentTrackSeekable(true);
+    controller.syncPlayStateFromEngine(Player::PlayState::Playing);
+    controller.setCurrentPosition(1000);
+
+    const QSignalSpy positionMovedSpy{&controller, &PlayerController::positionMoved};
+    const QSignalSpy snapshotSpy{&controller, &PlayerController::playbackSnapshotChanged};
+    controller.seek(180000);
+    EXPECT_EQ(positionMovedSpy.count(), 0);
+
+    track.setDuration(398000);
+    controller.updateCurrentTrack(track);
+    EXPECT_EQ(controller.currentPosition(), 1000);
+    EXPECT_EQ(controller.currentTimeListened(), 1000);
+    EXPECT_EQ(controller.playbackSnapshot().durationMs, 398000);
+    EXPECT_EQ(snapshotSpy.count(), 1);
+
+    controller.seek(180000);
+    ASSERT_EQ(positionMovedSpy.count(), 1);
+    EXPECT_EQ(positionMovedSpy.constFirst().constFirst().toULongLong(), 180000);
+}
+
 TEST(PlayerControllerTest, RestartingCurrentTrackWithPendingRequestCountsListenedTime)
 {
     ensureCoreApplication();
@@ -419,6 +449,54 @@ TEST(PlayerControllerTest, PendingTrackChangeDoesNotRestartPreviousTrackProgress
     controller.setCurrentPosition(500);
 
     EXPECT_EQ(playedSpy.count(), 0);
+}
+
+TEST(PlayerControllerTest, StartingAnotherTrackAfterStoppingDoesNotReportPreviousTrackAsPlaying)
+{
+    ensureCoreApplication();
+    SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_stopped_track_indicator_test.ini"_s};
+    registerControllerSettings(settings);
+    PlayerController controller{&settings, nullptr};
+
+    const auto playlistId = UId::create();
+    const PlaylistTrack previousTrack{.track           = makeTrack(u"/tmp/previous-playing.flac"_s, 25, 1000),
+                                      .playlistId      = playlistId,
+                                      .entryId         = UId::create(),
+                                      .indexInPlaylist = 0};
+    const PlaylistTrack nextTrack{.track           = makeTrack(u"/tmp/next-playing.flac"_s, 26, 1000),
+                                  .playlistId      = playlistId,
+                                  .entryId         = UId::create(),
+                                  .indexInPlaylist = 1};
+    controller.commitCurrentTrack(previousTrack);
+    controller.syncPlayStateFromEngine(Player::PlayState::Playing);
+    controller.stop();
+
+    std::vector<Player::PlaybackSnapshot> playbackStarts;
+    ScriptContextData startContext;
+    QObject::connect(&controller, &PlayerController::playStateChanged, &controller,
+                     [&controller, &playbackStarts, &startContext](Player::PlayState state) {
+                         if(state == Player::PlayState::Playing) {
+                             playbackStarts.push_back(controller.playbackSnapshot());
+                             startContext = makePlaybackScriptData(&controller);
+                         }
+                     });
+    const QSignalSpy requestSpy{&controller, &PlayerController::trackChangeRequested};
+    controller.changeCurrentTrack(nextTrack, {.reason = Player::AdvanceReason::ManualSelection, .userInitiated = true});
+    controller.play();
+
+    ASSERT_EQ(playbackStarts.size(), 1);
+    EXPECT_EQ(playbackStarts.front().playState, Player::PlayState::Playing);
+    EXPECT_FALSE(playbackStarts.front().track.isValid());
+    EXPECT_FALSE(startContext.playback.track.isValid());
+
+    controller.syncPlayStateFromEngine(Player::PlayState::Playing);
+    EXPECT_FALSE(makePlaybackScriptData(&controller).playback.track.isValid());
+
+    ASSERT_EQ(requestSpy.count(), 1);
+    controller.commitCurrentTrack(requestSpy.constFirst().constFirst().value<Player::TrackChangeRequest>());
+    EXPECT_EQ(controller.currentPlaylistTrack(), nextTrack);
+    EXPECT_EQ(controller.playbackSnapshot().track, nextTrack.track);
+    EXPECT_EQ(makePlaybackScriptData(&controller).playback.track, nextTrack.track);
 }
 
 TEST(PlayerControllerTest, RestoringPastThresholdDoesNotEmitTrackPlayed)

@@ -21,6 +21,7 @@
 
 #include "fycore_export.h"
 
+#include <utils/database/dbconnectionpool.h>
 #include <utils/settings/settingsentry.h>
 
 #include <QStringList>
@@ -75,14 +76,23 @@ constexpr auto SplitId3v23SemicolonSeparatedTags = "Tagging/SplitId3v23Semicolon
 constexpr auto Id3v2WriteVersion                 = "Tagging/Id3v2WriteVersion";
 constexpr auto Mp3TagWritingScheme               = "Tagging/Mp3TagWritingScheme";
 
-constexpr auto DefaultRemoteReadAheadKb        = 2048;
-constexpr auto DefaultRemotePrebufferMs        = 0;
-constexpr auto DefaultRemoteOpenTimeoutMs      = 8000;
+constexpr auto ExtraTagCompressionMinSize       = "Library/ExtraTagCompressionMinSizeBytes";
+constexpr auto ExtraTagCompressionLevel         = "Library/ExtraTagCompressionLevel";
+constexpr auto ExtraTagCompressionAlways        = "Library/ExtraTagCompressionAlways";
+constexpr auto ExtraTagCompressionNever         = "Library/ExtraTagCompressionNever";
+constexpr int DefaultExtraTagCompressionMinSize = 256;
+constexpr int DefaultExtraTagCompressionLevel   = 1;
+
+constexpr auto DefaultRemoteReadAheadKb   = 2048;
+constexpr auto DefaultRemotePrebufferMs   = 0;
+constexpr auto DefaultRemoteOpenTimeoutMs = 8000;
+
 constexpr auto DefaultAutoCrossfadeAlbumScript = "$if(%album%,%albumartist%|%date%|%album%,)";
 
-[[nodiscard]] FYCORE_EXPORT QStringList defaultFFmpegPriorityExtensions();
-[[nodiscard]] FYCORE_EXPORT QStringList defaultReaderProbeAllExtensions();
-[[nodiscard]] FYCORE_EXPORT QStringList defaultOutputResamplerPreference();
+FYCORE_EXPORT QStringList defaultFFmpegPriorityExtensions();
+FYCORE_EXPORT QStringList defaultReaderProbeAllExtensions();
+FYCORE_EXPORT bool shouldProbeAllReadersForFile(const QString& file);
+FYCORE_EXPORT QStringList defaultOutputResamplerPreference();
 
 enum CoreInternalSettings : uint32_t
 {
@@ -124,7 +134,7 @@ Q_ENUM_NS(CoreInternalSettings)
 class FYCORE_EXPORT CoreSettings
 {
 public:
-    explicit CoreSettings(SettingsManager* settingsManager);
+    explicit CoreSettings(SettingsManager* settingsManager, DbConnectionPoolPtr dbPool = {});
     ~CoreSettings();
 
 private:

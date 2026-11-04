@@ -22,7 +22,7 @@
 
 Q_LOGGING_CATEGORY(SLEEPINHIBITOR, "fy.sleepinhibitor")
 
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
 #include "platforms/inhibitordbus.h"
 namespace Fooyin::SleepInhibitor {
 using InhibitorPlatform = InhibitorDbus;
@@ -36,7 +36,7 @@ using InhibitorPlatform = InhibitorWin32;
 }
 #endif
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 #include "platforms/inhibitormacos.h"
 namespace Fooyin::SleepInhibitor {
 using InhibitorPlatform = InhibitorMacOs;

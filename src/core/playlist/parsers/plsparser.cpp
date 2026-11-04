@@ -19,13 +19,15 @@
 
 #include "plsparser.h"
 
+#include "playlistparserutils.h"
+
 #include <core/track.h>
+#include <utils/timeconstants.h>
 
 #include <QBuffer>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
-#include <QRegularExpression>
 #include <QTextStream>
 #include <QUrl>
 
@@ -43,42 +45,6 @@ struct PlsEntry
     QString title;
     int durationSeconds{-1};
 };
-
-int endingSubsong(QString* filepath)
-{
-    static const QRegularExpression regex{uR"(#(\d+)$)"_s};
-    const QRegularExpressionMatch match = regex.match(*filepath);
-    if(!match.hasMatch()) {
-        return -1;
-    }
-
-    const int subsong = match.captured(1).toInt();
-    filepath->remove(match.capturedStart(), match.capturedLength());
-    return subsong;
-}
-
-QString resolvePlaylistEntryPath(const QString& playlistPath, const QString& entry, const QDir& dir)
-{
-    if(Track::isArchivePath(entry) || Track::isRemotePath(entry) || Track::isVirtualPath(entry)) {
-        return entry;
-    }
-
-    const QUrl playlistUrl{playlistPath};
-
-    if(Track::isRemotePath(playlistUrl.toString())) {
-        const QUrl resolved = playlistUrl.resolved(QUrl{entry});
-        if(resolved.isValid() && !resolved.scheme().isEmpty()) {
-            return resolved.toString();
-        }
-    }
-
-    const QString localEntry = QDir::fromNativeSeparators(entry);
-    if(dir.exists() && !QDir::isAbsolutePath(localEntry)) {
-        return QDir::cleanPath(dir.absoluteFilePath(localEntry));
-    }
-
-    return localEntry;
-}
 
 std::map<int, PlsEntry> parseEntries(QIODevice* device)
 {
@@ -192,8 +158,8 @@ TrackList PlsParser::readPlaylist(QIODevice* device, const QString& filepath, co
             continue;
         }
 
-        QString path      = resolvePlaylistEntryPath(filepath, entry.file, dir);
-        const int subsong = endingSubsong(&path);
+        QString path      = Utils::resolveEntryPath(filepath, entry.file, dir);
+        const int subsong = Utils::takeSubsongSuffix(path);
 
         Track track{path};
         if(subsong > 0) {
@@ -212,7 +178,7 @@ TrackList PlsParser::readPlaylist(QIODevice* device, const QString& filepath, co
                 track.setTitle(entry.title);
             }
             if(track.duration() == 0 && entry.durationSeconds > 0) {
-                track.setDuration(static_cast<uint64_t>(entry.durationSeconds) * 1000);
+                track.setDuration(static_cast<uint64_t>(entry.durationSeconds) * Time::MsPerSecond);
             }
             tracks.emplace_back(track);
         }
@@ -249,7 +215,7 @@ void PlsParser::savePlaylist(QIODevice* device, const QString& /*extension*/, co
                 stream << "Title" << entryIndex << "=" << title << "\n";
             }
             if(track.duration() > 0) {
-                stream << "Length" << entryIndex << "=" << (track.duration() / 1000) << "\n";
+                stream << "Length" << entryIndex << "=" << (track.duration() / Time::MsPerSecond) << "\n";
             }
         }
     }

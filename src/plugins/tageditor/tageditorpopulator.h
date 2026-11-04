@@ -61,7 +61,7 @@ public:
 
     void request(uint64_t requestId);
     void run(uint64_t requestId, const TrackList& tracks, const std::vector<TagEditorField>& fields,
-             const QStringList& multiValueSeparators);
+             const QStringList& multiValueSeparators, std::stop_token token);
 
 Q_SIGNALS:
     void populated(Fooyin::TagEditor::TagEditorDataPtr data);

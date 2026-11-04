@@ -27,41 +27,11 @@
 #include <QRegularExpression>
 
 #include <map>
-#include <set>
 
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 namespace {
-class ConversionScriptEnvironment : public ScriptEnvironment,
-                                    public ScriptEvaluationEnvironment
-{
-public:
-    [[nodiscard]] const ScriptEvaluationEnvironment* evaluationEnvironment() const override
-    {
-        return this;
-    }
-
-    [[nodiscard]] TrackListContextPolicy trackListContextPolicy() const override
-    {
-        return TrackListContextPolicy::Unresolved;
-    }
-
-    [[nodiscard]] QString trackListPlaceholder() const override
-    {
-        return {};
-    }
-
-    [[nodiscard]] bool escapeRichText() const override
-    {
-        return false;
-    }
-
-    [[nodiscard]] bool replacePathSeparators() const override
-    {
-        return true;
-    }
-};
 
 QString normaliseExtension(QString extension)
 {
@@ -161,31 +131,21 @@ std::vector<ConversionPathResult> ConversionPathResolver::resolve(const Request&
             .error      = {},
         });
     }
-    else if(request.destination.outputStyle == OutputStyle::MultiTrackFiles) {
-        std::map<QString, size_t> groupIndices;
+    else {
+        const bool groupTracks = request.destination.outputStyle == OutputStyle::MultiTrackFiles;
+
+        std::map<QString, size_t> outputIndices;
+        results.reserve(request.tracks.size());
+
         for(const Track& track : request.tracks) {
-            const QString outputPath = previewPath(track, request.destination, request.extension, request.askFolder);
-            const QString key        = Utils::File::cleanPath(outputPath).toCaseFolded();
-            if(const auto it = groupIndices.find(key); it != groupIndices.end()) {
+            const QString outputPath  = previewPath(track, request.destination, request.extension, request.askFolder);
+            const QString key         = Utils::File::cleanPath(outputPath).toCaseFolded();
+            const auto [it, inserted] = outputIndices.emplace(key, results.size());
+            if(!inserted && groupTracks) {
                 results[it->second].tracks.push_back(track);
                 continue;
             }
-            groupIndices.emplace(key, results.size());
-            results.push_back({
-                .track      = track,
-                .tracks     = {track},
-                .outputPath = outputPath,
-                .status     = ConversionPathStatus::Error,
-                .error      = {},
-            });
-        }
-    }
-    else {
-        std::set<QString> seenPaths;
-        results.reserve(request.tracks.size());
-        for(const Track& track : request.tracks) {
-            const QString outputPath = previewPath(track, request.destination, request.extension, request.askFolder);
-            const QString key        = Utils::File::cleanPath(outputPath).toCaseFolded();
+
             ConversionPathResult result{
                 .track      = track,
                 .tracks     = {track},
@@ -193,12 +153,9 @@ std::vector<ConversionPathResult> ConversionPathResolver::resolve(const Request&
                 .status     = ConversionPathStatus::Error,
                 .error      = {},
             };
-            if(seenPaths.contains(key)) {
-                result.status = ConversionPathStatus::Error;
-                result.error  = tr("Duplicate output path");
-            }
-            else {
-                seenPaths.emplace(key);
+
+            if(!inserted) {
+                result.error = tr("Duplicate output path");
             }
             results.push_back(std::move(result));
         }
@@ -244,9 +201,8 @@ QString ConversionPathResolver::previewPath(const Track& track, const Conversion
     }
 
     ScriptParser parser;
-    const ConversionScriptEnvironment environment;
-    const ScriptContext context{.environment = &environment};
-    QString filename = parser.evaluate(destination.filenamePattern, track, context).trimmed();
+    const ScriptEvaluationOptions options{.replacePathSeparators = true};
+    QString filename = parser.evaluate(destination.filenamePattern, track, {}, options).trimmed();
     filename         = sanitisePathSegment(filename);
     if(filename.isEmpty()) {
         filename = sanitisePathSegment(sanitiseMetadataValue(fallbackFilename(track)));

@@ -23,6 +23,7 @@
 
 #include "libraryscantypes.h"
 
+#include <expected>
 #include <functional>
 
 namespace Fooyin {
@@ -41,7 +42,7 @@ public:
 
     [[nodiscard]] bool empty() const;
     [[nodiscard]] bool shouldFlush() const;
-    void flush();
+    std::expected<void, QString> flush();
 
 private:
     TrackDatabase* m_trackDatabase;

@@ -48,6 +48,7 @@ struct EncoderCapabilities
     EncoderParameterRange bitrateKbps;
     EncoderParameterRange quality;
     EncoderParameterRange compressionLevel;
+    std::vector<SampleFormat> sampleFormats;
 };
 
 struct AudioEncoderInfo

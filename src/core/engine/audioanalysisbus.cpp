@@ -19,6 +19,8 @@
 
 #include "audioanalysisbus.h"
 
+#include <utils/timeconstants.h>
+
 #include <algorithm>
 #include <atomic>
 #include <cmath>
@@ -145,7 +147,7 @@ void AudioAnalysisBus::push(const std::span<const float> samples, AudioFormat fo
         }
 
         const uint64_t sampleOffsetFrames = sampleOffset / channels;
-        const uint64_t offsetMs           = (sampleOffsetFrames * 1000ULL) / static_cast<uint64_t>(sampleRate);
+        const uint64_t offsetMs = (sampleOffsetFrames * Time::MsPerSecond) / static_cast<uint64_t>(sampleRate);
 
         const auto reservation = writer.reserveOne();
         if(!reservation) {
@@ -286,7 +288,7 @@ void AudioAnalysisBus::processSlot(const AudioAnalysisSlot& slot)
     while(consumedFrames < slotFrames) {
         if(m_hopFrames == 0) {
             const uint64_t offsetMs
-                = (static_cast<uint64_t>(consumedFrames) * 1000ULL) / static_cast<uint64_t>(sampleRate);
+                = (static_cast<uint64_t>(consumedFrames) * Time::MsPerSecond) / static_cast<uint64_t>(sampleRate);
             m_hopChannels            = channelCount;
             m_hopSampleRate          = sampleRate;
             m_hopStreamTimeMs        = slot.streamTimeMs + offsetMs;

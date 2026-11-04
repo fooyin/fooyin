@@ -26,6 +26,8 @@ class QResizeEvent;
 
 namespace Fooyin {
 class AutoHeaderView;
+class WidgetBackground;
+struct BackgroundConfig;
 
 namespace RadioBrowser {
 class RadioStationView : public ExpandedTreeView
@@ -38,12 +40,13 @@ public:
     [[nodiscard]] AutoHeaderView* stationHeader() const;
 
     void clearSort();
-    void finaliseView(const QByteArray& headerState);
     void resetColumnsToDefault();
     void setEmptyText(const QString& text);
     void setFailureText(const QString& text);
     void setLoading(bool loading);
     void setLoadingText(const QString& text);
+    void setBackgroundConfig(const BackgroundConfig& config);
+    void setBackgroundPixmap(const QPixmap& pixmap);
 
 Q_SIGNALS:
     void displayChanged();
@@ -58,6 +61,7 @@ protected:
 private:
     void updateRetryButton();
 
+    WidgetBackground* m_background;
     AutoHeaderView* m_header;
     QPushButton* m_retryButton;
     QString m_emptyText;

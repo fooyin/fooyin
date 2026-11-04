@@ -53,6 +53,7 @@ public:
     bool renamePlaylist(int id, const QString& name);
 
 private:
+    bool writePlaylist(const Playlist& playlist);
     bool insertPlaylistTrack(int playlistId, int trackId, int index);
     bool insertPlaylistTracks(int playlistId, const TrackList& tracks);
     TrackList populatePlaylistTracks(const Playlist& playlist, const std::unordered_map<int, Track>& tracks);

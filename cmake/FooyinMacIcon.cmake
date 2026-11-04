@@ -12,12 +12,13 @@ function(fooyin_setup_macos_icon target)
             ${CMAKE_COMMAND} -DICONSET_DIR="${_fooyin_macos_iconset_dir}" -DOUTPUT_ICNS="${_fooyin_macos_icns}"
             -DSOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data/icons" -P
             "${CMAKE_CURRENT_SOURCE_DIR}/cmake/FooyinGenerateIcns.cmake"
-        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/data/icons/16-fooyin.png"
-                "${CMAKE_CURRENT_SOURCE_DIR}/data/icons/32-fooyin.png"
-                "${CMAKE_CURRENT_SOURCE_DIR}/data/icons/64-fooyin.png"
-                "${CMAKE_CURRENT_SOURCE_DIR}/data/icons/128-fooyin.png"
-                "${CMAKE_CURRENT_SOURCE_DIR}/data/icons/256-fooyin.png"
-                "${CMAKE_CURRENT_SOURCE_DIR}/data/icons/512-fooyin.png"
+        DEPENDS
+            "${CMAKE_CURRENT_SOURCE_DIR}/data/icons/16-fooyin.png"
+            "${CMAKE_CURRENT_SOURCE_DIR}/data/icons/32-fooyin.png"
+            "${CMAKE_CURRENT_SOURCE_DIR}/data/icons/64-fooyin.png"
+            "${CMAKE_CURRENT_SOURCE_DIR}/data/icons/128-fooyin.png"
+            "${CMAKE_CURRENT_SOURCE_DIR}/data/icons/256-fooyin.png"
+            "${CMAKE_CURRENT_SOURCE_DIR}/data/icons/512-fooyin.png"
     )
 
     add_custom_target(fooyin_macos_icon DEPENDS "${_fooyin_macos_icns}")

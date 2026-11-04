@@ -49,6 +49,8 @@ public:
     [[nodiscard]] int singleStep() const;
     void setSingleStep(int step);
 
+    void setPageStep(int step);
+
     void setTicksVisible(bool visible);
 
     void setRange(int min, int max);

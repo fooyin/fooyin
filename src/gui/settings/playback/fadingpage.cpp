@@ -110,7 +110,7 @@ FadingPageWidget::FadingPageWidget(SettingsManager* settings)
     , m_crossfadeAutoOut{new QSpinBox(this)}
     , m_crossfadeAutoSwitchPolicyLabel{new QLabel(tr("Auto switch policy") + u":"_s, this)}
     , m_crossfadeAutoSwitchPolicy{new QComboBox(this)}
-    , m_skipAutoCrossfadeSameAlbum{new QCheckBox(tr("Don't crossfade within the same album"), this)}
+    , m_skipAutoCrossfadeSameAlbum{new QCheckBox(tr("Don’t crossfade within the same album"), this)}
     , m_autoCrossfadeAlbumGroupingLabel{new QLabel(tr("Album matching pattern") + u":"_s, this)}
     , m_autoCrossfadeAlbumGroupingScript{new ScriptLineEdit(this)}
     , m_crossfadeSeekIn{new QSpinBox(this)}
@@ -384,7 +384,7 @@ void FadingPageWidget::load()
         = m_crossfadeAutoSwitchPolicy->findData(static_cast<int>(policy), Qt::UserRole, Qt::MatchExactly);
     m_crossfadeAutoSwitchPolicy->setCurrentIndex(policyIndex >= 0 ? policyIndex : 0);
     m_skipAutoCrossfadeSameAlbum->setChecked(m_settings->value<Settings::Core::Internal::SkipSameAlbumCrossfade>());
-    m_autoCrossfadeAlbumGroupingScript->setText(
+    m_autoCrossfadeAlbumGroupingScript->setScript(
         m_settings->value<Settings::Core::Internal::AutoCrossfadeAlbumScript>());
 
     if(m_crossfadeAutoEnabled->isChecked() && m_fadingBoundaryEnabled->isChecked()) {

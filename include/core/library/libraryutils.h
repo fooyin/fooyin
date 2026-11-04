@@ -33,7 +33,8 @@ namespace Fooyin::Utils {
 enum class FYCORE_EXPORT CommonOperation : uint8_t
 {
     Update = 0,
-    Remove
+    Remove,
+    UpdateChanged
 };
 
 FYCORE_EXPORT std::vector<int> updateCommonTracks(TrackList& tracks, const TrackList& updatedTracks,

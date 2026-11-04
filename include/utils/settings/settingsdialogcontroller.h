@@ -37,6 +37,13 @@ class FYUTILS_EXPORT SettingsDialogController : public QObject
     Q_OBJECT
 
 public:
+    enum class SearchBarPosition : uint8_t
+    {
+        Hidden = 0,
+        Top,
+        Bottom,
+    };
+
     SettingsDialogController(SettingsManager* settings, QMainWindow* mainWindow);
     ~SettingsDialogController() override;
 
@@ -49,6 +56,7 @@ public:
     void restoreState(const QSettings& settings);
 
     void setWindowIcon(const QIcon& icon);
+    void setSearchBarPosition(SearchBarPosition position);
 
 Q_SIGNALS:
     void opening();

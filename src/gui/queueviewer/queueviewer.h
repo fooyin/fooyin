@@ -22,6 +22,7 @@
 #include <core/player/playbackqueue.h>
 #include <core/playlist/playlist.h>
 #include <gui/fywidget.h>
+#include <gui/widgets/backgroundconfig.h>
 
 #include "sortactionhandler.h"
 
@@ -37,6 +38,8 @@ class QShowEvent;
 
 namespace Fooyin {
 class ActionManager;
+class Application;
+class BackgroundImageSource;
 class Command;
 class AudioLoader;
 class PlayerController;
@@ -61,9 +64,9 @@ public:
         UpcomingTracks,
     };
 
-    explicit QueueViewer(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
+    explicit QueueViewer(Application* core, ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
                          TrackSelectionController* selectionController, CoverRepository* coverRepository,
-                         SortingRegistry* sortingRegistry, SettingsManager* settings, QWidget* parent = nullptr);
+                         QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -76,8 +79,7 @@ public:
 
     struct ConfigData
     {
-        QString leftScript;
-        QString rightScript;
+        QString displayScript;
         bool showCurrent{true};
         bool showIcon{true};
         QSize iconSize{36, 36};
@@ -86,6 +88,7 @@ public:
         bool showScrollBar{true};
         bool alternatingRows{false};
         DisplayMode displayMode{DisplayMode::PlayingTracks};
+        BackgroundConfig background{};
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -186,6 +189,7 @@ private:
     SortingRegistry* m_sortingRegistry;
     SettingsManager* m_settings;
 
+    BackgroundImageSource* m_backgroundSource;
     QueueViewerView* m_view;
     QueueViewerDelegate* m_delegate;
     QueueViewerModel* m_model;

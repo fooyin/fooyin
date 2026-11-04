@@ -51,6 +51,8 @@ public:
     void finish() override;
     void reset() override;
 
+    void setSearchFilter(const QString& text) override;
+
     [[nodiscard]] QByteArray saveState() const override;
     void restoreState(const QByteArray& state) override;
 
@@ -65,6 +67,7 @@ private:
     QSortFilterProxyModel* m_proxyModel;
     QTreeView* m_tree;
     QStringList m_collapsedState;
+    QString m_globalFilter;
     bool m_hasCollapsedState{false};
 };
 
@@ -75,9 +78,11 @@ AdvancedPageWidget::AdvancedPageWidget(AdvancedSettingsRegistry* registry)
     , m_tree{new QTreeView(this)}
 {
     m_filter->setPlaceholderText(tr("Filter"));
+    m_filter->setClearButtonEnabled(true);
 
     m_proxyModel->setSourceModel(m_model);
     m_proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    m_proxyModel->setFilterRole(AdvancedSettingsModel::SearchText);
     m_proxyModel->setRecursiveFilteringEnabled(true);
     m_proxyModel->setAutoAcceptChildRows(true);
 
@@ -110,6 +115,10 @@ void AdvancedPageWidget::load()
     else {
         Utils::restoreCollapsedExpansionState(m_tree, m_collapsedState, keyForIndex);
     }
+
+    if(!m_globalFilter.isEmpty()) {
+        m_tree->expandAll();
+    }
 }
 
 void AdvancedPageWidget::apply()
@@ -119,6 +128,10 @@ void AdvancedPageWidget::apply()
 
 void AdvancedPageWidget::finish()
 {
+    if(!m_globalFilter.isEmpty()) {
+        return;
+    }
+
     m_collapsedState = Utils::updateCollapsedExpansionState(
         m_tree, m_collapsedState, [this](const QModelIndex& index) { return sourceIndexPath(index); });
     m_hasCollapsedState = true;
@@ -127,6 +140,35 @@ void AdvancedPageWidget::finish()
 void AdvancedPageWidget::reset()
 {
     m_model->reset();
+}
+
+void AdvancedPageWidget::setSearchFilter(const QString& text)
+{
+    if(m_globalFilter == text) {
+        return;
+    }
+
+    const auto keyForIndex = [this](const QModelIndex& index) {
+        return sourceIndexPath(index);
+    };
+
+    if(m_globalFilter.isEmpty()) {
+        m_collapsedState    = Utils::updateCollapsedExpansionState(m_tree, m_collapsedState, keyForIndex);
+        m_hasCollapsedState = true;
+    }
+
+    m_globalFilter = text;
+    m_filter->setVisible(text.isEmpty());
+
+    if(text.isEmpty()) {
+        m_proxyModel->setFilterFixedString(m_filter->text());
+        Utils::restoreCollapsedExpansionState(m_tree, m_collapsedState, keyForIndex);
+    }
+    else {
+        // Searching for the page itself should show all settings
+        m_proxyModel->setFilterFixedString(tr("Advanced").contains(text, Qt::CaseInsensitive) ? QString{} : text);
+        m_tree->expandAll();
+    }
 }
 
 QByteArray AdvancedPageWidget::saveState() const
@@ -206,12 +248,27 @@ QString AdvancedPageWidget::sourceIndexPath(const QModelIndex& index) const
 
 AdvancedPage::AdvancedPage(AdvancedSettingsRegistry* registry, SettingsDialogController* controller, QObject* parent)
     : SettingsPage{controller, parent}
+    , m_registry{registry}
 {
     setId(Constants::Page::Advanced);
     setName(tr("Advanced"));
     setCategory({tr("Advanced")});
     setPosition(SettingsPagePosition::Last);
     setWidgetCreator([registry] { return new AdvancedPageWidget(registry); });
+}
+
+bool AdvancedPage::matches(const QString& text)
+{
+    QStringList keywords;
+    const auto descriptors = m_registry->descriptors();
+    for(const auto& descriptor : descriptors) {
+        if(!descriptor.id.isEmpty() && descriptor.read && descriptor.write) {
+            keywords.append(AdvancedSettingsModel::searchText(descriptor));
+        }
+    }
+    setSearchKeywords(keywords);
+
+    return SettingsPage::matches(text);
 }
 } // namespace Fooyin
 

@@ -25,7 +25,9 @@
 #include "radiowidget.h"
 
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/backgroundconfig.h>
 
+#include <QMargins>
 #include <QPointer>
 
 #include <optional>
@@ -40,6 +42,9 @@ class QMenu;
 
 namespace Fooyin {
 class ActionManager;
+class BackgroundImageSource;
+class CoverRepository;
+class PlayerController;
 class Command;
 class SignalThrottler;
 class SettingsManager;
@@ -61,6 +66,7 @@ public:
 
     explicit RadioBrowserWidget(RadioBrowserController* controller, ActionManager* actionManager,
                                 TrackSelectionController* trackSelection, SettingsManager* settings,
+                                PlayerController* playerController, CoverRepository* coverRepository,
                                 bool applyInitialSearch = true, QWidget* parent = nullptr);
     ~RadioBrowserWidget() override;
 
@@ -93,16 +99,19 @@ public:
             bool separateSavedStationsViewState{false};
             int rowHeight{0};
             QSize iconSize{36, 36};
+            bool autoFitArtwork{false};
             int iconHorizontalGap{-1};
             int iconVerticalGap{8};
-            bool useIconGapsForSideCaptions{true};
-            int iconItemBorderWidth{2};
+            bool useIconGapsForSideCaptions{false};
+            QMargins iconMargins{8, 8, 8, 8};
+            int iconCornerRadius{20};
             bool uniformStationIcons{true};
 
             bool operator==(const ViewConfig&) const = default;
         };
 
         ViewConfig view;
+        BackgroundConfig background;
         int doubleClickAction{5};
         int middleClickAction{0};
         bool playbackOnSend{true};
@@ -249,6 +258,7 @@ private:
     RadioStationView* m_resultsView;
     RadioStationDelegate* m_delegate;
     RadioBrowserModel* m_model;
+    BackgroundImageSource* m_backgroundSource;
 
     ConfigData m_config;
     ConfigData::ViewConfig m_viewConfig;

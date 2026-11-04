@@ -22,6 +22,7 @@
 #include "vumetercolours.h"
 
 #include <gui/framerate.h>
+#include <gui/widgets/backgroundconfigwidget.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/gradienteditor.h>
 
@@ -29,6 +30,7 @@
 #include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QIntValidator>
 #include <QLabel>
 #include <QLocale>
 #include <QSizePolicy>
@@ -66,6 +68,7 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
     , m_legendColour{new ColourButton(tr("Legend colour") + ":"_L1, true, this)}
     , m_gridlinesColour{new ColourButton(tr("Gridlines") + ":"_L1, true, this)}
     , m_barGradient{new GradientEditor(this)}
+    , m_background{new BackgroundConfigWidget(this)}
 {
     m_peakHold->setRange(0, 5000);
     m_peakHold->setSingleStep(100);
@@ -79,10 +82,14 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
 
     m_barGradient->setOrientationControlVisible(false);
 
+    m_updateFps->setEditable(true);
+    m_updateFps->setValidator(new QIntValidator(Gui::FrameRate::minFps(), Gui::FrameRate::maxFps(), m_updateFps));
+
     for(const auto preset : Gui::FrameRate::Presets) {
         const int fps = Gui::FrameRate::toFps(preset);
-        m_updateFps->addItem(tr("%1 fps").arg(fps), fps);
+        m_updateFps->addItem(QString::number(fps), fps);
     }
+
     auto* displayGroup  = new QGroupBox(tr("Display"), this);
     auto* displayLayout = new QGridLayout(displayGroup);
 
@@ -179,6 +186,7 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
     auto* tabs = new QTabWidget(this);
     tabs->addTab(generalPage, tr("General"));
     tabs->addTab(coloursPage, tr("Colours"));
+    tabs->addTab(m_background, tr("Background"));
 
     auto* layout = contentLayout();
     layout->addWidget(tabs, 0, 0);
@@ -191,6 +199,9 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
 
 VuMeterWidget::ConfigData VuMeterConfigDialog::config() const
 {
+    bool fpsValid{false};
+    const int fps = m_updateFps->currentText().toInt(&fpsValid);
+
     VuMeterWidget::ConfigData config{
         .peakHoldTimeMs        = m_peakHold->value(),
         .falloffTime           = m_falloff->value(),
@@ -201,13 +212,14 @@ VuMeterWidget::ConfigData VuMeterConfigDialog::config() const
         .showLeftLabels        = m_showLeftLabels->isChecked(),
         .showRightLabels       = m_showRightLabels->isChecked(),
         .rightAlignScaleLabels = m_rightAlignScaleLabels->isChecked(),
-        .updateFps             = m_updateFps->currentData().toInt(),
+        .updateFps             = fpsValid ? Gui::FrameRate::clampFps(fps) : Gui::FrameRate::toFps(DefaultFps),
         .channelSpacing        = m_channelSpacing->value(),
         .barSize               = m_barSize->value(),
         .barSpacing            = m_barSpacing->value(),
         .barSections           = m_barSections->value(),
         .sectionSpacing        = m_sectionSpacing->value(),
         .meterColours          = QVariant{},
+        .background            = m_background->config(),
     };
 
     Colours colours;
@@ -235,6 +247,7 @@ VuMeterWidget::ConfigData VuMeterConfigDialog::config() const
 
 void VuMeterConfigDialog::setConfig(const VuMeterWidget::ConfigData& config)
 {
+    m_background->setConfig(config.background);
     m_peakHold->setValue(config.peakHoldTimeMs);
     m_falloff->setValue(config.falloffTime);
     m_peakFalloff->setValue(config.peakFalloffTime);
@@ -245,12 +258,12 @@ void VuMeterConfigDialog::setConfig(const VuMeterWidget::ConfigData& config)
     m_showRightLabels->setChecked(config.showRightLabels);
     m_rightAlignScaleLabels->setChecked(config.rightAlignScaleLabels);
 
-    const int nearest = Gui::FrameRate::nearestPresetFps(config.updateFps);
-    int fpsIndex      = m_updateFps->findData(nearest);
-    if(fpsIndex < 0) {
-        fpsIndex = m_updateFps->findData(Gui::FrameRate::toFps(DefaultFps));
-    }
+    const int fps      = Gui::FrameRate::clampFps(config.updateFps);
+    const int fpsIndex = m_updateFps->findData(fps);
     m_updateFps->setCurrentIndex(fpsIndex);
+    if(fpsIndex < 0) {
+        m_updateFps->setEditText(QString::number(fps));
+    }
 
     m_channelSpacing->setValue(config.channelSpacing);
     m_barSize->setValue(config.barSize);
@@ -287,6 +300,6 @@ void VuMeterConfigDialog::mergeExternalConfig(const VuMeterWidget::ConfigData& p
                         &VuMeterWidget::ConfigData::updateFps, &VuMeterWidget::ConfigData::channelSpacing,
                         &VuMeterWidget::ConfigData::barSize, &VuMeterWidget::ConfigData::barSpacing,
                         &VuMeterWidget::ConfigData::barSections, &VuMeterWidget::ConfigData::sectionSpacing,
-                        &VuMeterWidget::ConfigData::meterColours);
+                        &VuMeterWidget::ConfigData::meterColours, &VuMeterWidget::ConfigData::background);
 }
 } // namespace Fooyin::VuMeter

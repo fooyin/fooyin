@@ -222,7 +222,7 @@ ScriptScanner::Token ScriptScanner::scanNext(bool insideQuote)
             return makeToken(TokSlash);
         }
         case u':':
-            return makeToken(TokColon);
+            return makeToken(TokContains);
         case u'=':
             return makeToken(TokEquals);
         case u'!':
@@ -290,7 +290,17 @@ ScriptScanner::Token ScriptScanner::keyword()
                     case u'F':
                         return checkKeyword(2, "TER"_L1, TokAfter);
                     case u'N':
-                        return checkKeyword(2, "D"_L1, TokAnd);
+                        if(currentLength() > 2) {
+                            switch(m_start[2].unicode()) {
+                                case u'D':
+                                    return checkKeyword(3, ""_L1, TokAnd);
+                                case u'Y':
+                                    return checkKeyword(3, ""_L1, TokAny);
+                                default:
+                                    break;
+                            }
+                        }
+                        break;
                     case u'L':
                         return checkKeyword(2, "L"_L1, TokAll);
                     case u'S':
@@ -305,7 +315,17 @@ ScriptScanner::Token ScriptScanner::keyword()
             if(currentLength() > 1) {
                 switch(m_start[1].unicode()) {
                     case u'E':
-                        return checkKeyword(2, "FORE"_L1, TokBefore);
+                        if(currentLength() > 2) {
+                            switch(m_start[2].unicode()) {
+                                case u'F':
+                                    return checkKeyword(3, "ORE"_L1, TokBefore);
+                                case u'T':
+                                    return checkKeyword(3, "WEEN"_L1, TokBetween);
+                                default:
+                                    break;
+                            }
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -326,14 +346,24 @@ ScriptScanner::Token ScriptScanner::keyword()
             }
             break;
         case u'E':
-            return checkKeyword(1, "QUAL"_L1, TokEquals);
+            if(currentLength() > 1) {
+                switch(m_start[1].unicode()) {
+                    case u'N':
+                        return checkKeyword(2, "DS"_L1, TokEnds);
+                    case u'Q':
+                        return checkKeyword(2, "UAL"_L1, TokEquals);
+                    default:
+                        break;
+                }
+            }
+            break;
         case u'G':
             return checkKeyword(1, "REATER"_L1, TokRightAngle);
         case u'H':
             if(currentLength() > 1) {
                 switch(m_start[1].unicode()) {
                     case u'A':
-                        return checkKeyword(2, "S"_L1, TokColon);
+                        return checkKeyword(2, "S"_L1, TokContains);
                     case u'O':
                         return checkKeyword(2, isPlural(4) ? "URS"_L1 : "UR"_L1, TokHour);
                     default:
@@ -342,7 +372,17 @@ ScriptScanner::Token ScriptScanner::keyword()
             }
             break;
         case u'I':
-            return checkKeyword(1, "S"_L1, TokEquals);
+            if(currentLength() > 1) {
+                switch(m_start[1].unicode()) {
+                    case u'N':
+                        return checkKeyword(2, ""_L1, TokIn);
+                    case u'S':
+                        return checkKeyword(2, ""_L1, TokEquals);
+                    default:
+                        break;
+                }
+            }
+            break;
         case u'L':
             if(currentLength() > 1) {
                 switch(m_start[1].unicode()) {
@@ -394,13 +434,27 @@ ScriptScanner::Token ScriptScanner::keyword()
                         return checkKeyword(2, "NCE"_L1, TokSince);
                     case u'O':
                         return checkKeyword(2, "RT"_L1, TokSort);
+                    case u'T':
+                        return checkKeyword(2, "ARTS"_L1, TokStarts);
                     default:
                         break;
                 }
             }
             break;
         case u'W':
-            return checkKeyword(1, isPlural(4) ? "EEKS"_L1 : "EEK"_L1, TokWeek);
+            if(currentLength() > 1) {
+                switch(m_start[1].unicode()) {
+                    case u'E':
+                        return checkKeyword(2, isPlural(4) ? "EKS"_L1 : "EK"_L1, TokWeek);
+                    case u'I':
+                        return checkKeyword(2, "TH"_L1, TokWith);
+                    case u'O':
+                        return checkKeyword(2, "RD"_L1, TokWord);
+                    default:
+                        break;
+                }
+            }
+            break;
         case u'X':
             return checkKeyword(1, "OR"_L1, TokXOr);
         case u'Y':
@@ -414,6 +468,10 @@ ScriptScanner::Token ScriptScanner::keyword()
 
 ScriptScanner::Token ScriptScanner::checkKeyword(int start, QAnyStringView rest, TokenType type)
 {
+    if(currentLength() != start + rest.length()) {
+        return literal();
+    }
+
     const QAnyStringView keyword{m_start + start, rest.length()};
     if(keyword == rest) {
         return makeToken(type);

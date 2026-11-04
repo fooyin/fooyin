@@ -161,7 +161,7 @@ TEST(FilterPipelineTest, ResolveFilterSelectionUsesVisibleRowsForSummaryRow)
     EXPECT_TRUE(selection.selectedKeys.front().isEmpty());
 }
 
-TEST(FilterPipelineTest, ResolveFilterSelectionFallsBackToInputTracksForEmptySummaryRows)
+TEST(FilterPipelineTest, ResolveFilterSelectionKeepsEmptySummarySelectionActive)
 {
     const TrackList inputTracks{
         makeTrack(10, u"/music/all-a.flac"_s),
@@ -172,7 +172,7 @@ TEST(FilterPipelineTest, ResolveFilterSelectionFallsBackToInputTracksForEmptySum
         = Filters::resolveFilterSelection({}, inputTracks, {Filters::RowKey{}});
 
     EXPECT_TRUE(selection.isActive);
-    EXPECT_EQ(inputTracks, selection.selectedTracks);
+    EXPECT_TRUE(selection.selectedTracks.empty());
     ASSERT_EQ(1, selection.selectedKeys.size());
     EXPECT_TRUE(selection.selectedKeys.front().isEmpty());
 }
@@ -195,8 +195,8 @@ TEST(FilterPipelineTest, FilterRowsBySearchNarrowsMatchingTracksWithoutRebuildin
     singleRow.columns = {u"Single Label"_s};
     singleRow.tracks  = {inputTracks.at(2)};
 
-    const Filters::FilterRowList filteredRows
-        = Filters::filterRowsBySearch(u"one"_s, {groupedRow, singleRow}, inputTracks);
+    const Filters::FilterRowList filteredRows = Filters::filterRowsBySearch(
+        u"one"_s, {groupedRow, singleRow}, inputTracks, TrackQueryFilter::defaultSearchOptions(), {}, {}, {});
 
     ASSERT_EQ(1, filteredRows.size());
     EXPECT_EQ(groupedRow.key, filteredRows.at(0).key);
@@ -217,7 +217,8 @@ TEST(FilterPipelineTest, FilterRowsBySearchKeepsCanonicalRowsWhenEveryTrackMatch
         makeRow(keyFor(u"B"_s), {2}),
     };
 
-    const Filters::FilterRowList filteredRows = Filters::filterRowsBySearch(u"music"_s, rows, inputTracks);
+    const Filters::FilterRowList filteredRows = Filters::filterRowsBySearch(
+        u"music"_s, rows, inputTracks, TrackQueryFilter::defaultSearchOptions(), {}, {}, {});
 
     ASSERT_EQ(rows.size(), filteredRows.size());
     EXPECT_EQ(rows.at(0).key, filteredRows.at(0).key);
@@ -231,7 +232,7 @@ TEST(FilterPipelineTest, SplitFunctionCreatesRowsFromSingleTagValue)
     Track track{u"/music/one.flac"_s};
     track.setId(1);
     track.setLibraryId(1);
-    track.addExtraTag(u"TEST"_s, u"A; B"_s);
+    track.addExtraTag(u"TEST"_s, u"B; A"_s);
 
     const Filters::FilterColumnList columns{
         {.id = 0, .name = u"Test"_s, .field = u"$split(%test%,; )"_s, .sortField = {}},
@@ -242,13 +243,11 @@ TEST(FilterPipelineTest, SplitFunctionCreatesRowsFromSingleTagValue)
         .useVarious    = false,
     };
 
-    const Filters::FilterRowList rows = Filters::buildFilterRows(nullptr, columns, {track}, context);
+    const Filters::FilterRowList rows = Filters::buildFilterRows({}, columns, {track}, context);
 
     ASSERT_EQ(2, rows.size());
-    EXPECT_TRUE(
-        std::ranges::any_of(rows, [](const Filters::FilterRow& row) { return row.columns == QStringList{u"A"_s}; }));
-    EXPECT_TRUE(
-        std::ranges::any_of(rows, [](const Filters::FilterRow& row) { return row.columns == QStringList{u"B"_s}; }));
+    EXPECT_EQ(QStringList{u"B"_s}, rows.at(0).columns);
+    EXPECT_EQ(QStringList{u"A"_s}, rows.at(1).columns);
 }
 
 TEST(FilterPipelineTest, PatchFilterRowsMovesUpdatedTrackBetweenBucketsAndPrunesEmptyRows)
@@ -276,7 +275,7 @@ TEST(FilterPipelineTest, PatchFilterRowsMovesUpdatedTrackBetweenBucketsAndPrunes
     }();
 
     const Filters::FilterColumnList columns{
-        {.id = 0, .name = u"Genre"_s, .field = u"%<genre>%"_s, .sortField = {}},
+        {.id = 0, .name = u"Genre"_s, .field = u"Shared label"_s, .sortField = {}, .groupingField = u"%<genre>%"_s},
     };
     const Filters::FilterRowBuildContext context{
         .font          = {},
@@ -284,12 +283,17 @@ TEST(FilterPipelineTest, PatchFilterRowsMovesUpdatedTrackBetweenBucketsAndPrunes
         .useVarious    = false,
     };
 
-    const Filters::FilterRowList previousRows = Filters::buildFilterRows(nullptr, columns, {oldRock, oldJazz}, context);
-    const Filters::FilterRowList patchedRows  = Filters::patchFilterRows(
-        nullptr, columns, previousRows, {oldRock, oldJazz}, {newJazz, oldJazz}, {1}, context);
+    const Filters::FilterRowList previousRows = Filters::buildFilterRows({}, columns, {oldRock, oldJazz}, context);
+    ASSERT_EQ(2, previousRows.size());
+    EXPECT_NE(previousRows.at(0).key, previousRows.at(1).key);
+    EXPECT_EQ(previousRows.at(0).columns, previousRows.at(1).columns);
+    const Filters::FilterRowList patchedRows
+        = Filters::patchFilterRows({}, columns, previousRows, {oldRock, oldJazz}, {newJazz, oldJazz}, {1}, context);
 
     ASSERT_EQ(1, patchedRows.size());
-    EXPECT_EQ(QStringList{u"Jazz"_s}, patchedRows.at(0).columns);
+    EXPECT_EQ(previousRows.at(1).key, patchedRows.at(0).key);
+    EXPECT_EQ(QStringList{u"Shared label"_s}, patchedRows.at(0).columns);
+    EXPECT_EQ(QStringList{u"Jazz"_s}, patchedRows.at(0).sortColumns);
     ASSERT_EQ(2, patchedRows.at(0).tracks.size());
     EXPECT_EQ(1, patchedRows.at(0).tracks.at(0).id());
     EXPECT_EQ(2, patchedRows.at(0).tracks.at(1).id());
@@ -307,7 +311,11 @@ TEST(FilterPipelineTest, PatchFilterRowsRefreshesTrackMetadataWithinExistingBuck
     updatedTrack.setTitle(u"Updated title"_s);
 
     const Filters::FilterColumnList columns{
-        {.id = 0, .name = u"Genre"_s, .field = u"%<genre>%"_s, .sortField = {}},
+        {.id            = 0,
+         .name          = u"Genre"_s,
+         .field         = u"%title%"_s,
+         .sortField     = u"%title%"_s,
+         .groupingField = u"%<genre>%"_s},
     };
     const Filters::FilterRowBuildContext context{
         .font          = {},
@@ -315,11 +323,14 @@ TEST(FilterPipelineTest, PatchFilterRowsRefreshesTrackMetadataWithinExistingBuck
         .useVarious    = false,
     };
 
-    const Filters::FilterRowList previousRows = Filters::buildFilterRows(nullptr, columns, {oldTrack}, context);
+    const Filters::FilterRowList previousRows = Filters::buildFilterRows({}, columns, {oldTrack}, context);
     const Filters::FilterRowList patchedRows
-        = Filters::patchFilterRows(nullptr, columns, previousRows, {oldTrack}, {updatedTrack}, {1}, context);
+        = Filters::patchFilterRows({}, columns, previousRows, {oldTrack}, {updatedTrack}, {1}, context);
 
     ASSERT_EQ(1, patchedRows.size());
+    EXPECT_EQ(previousRows.front().key, patchedRows.front().key);
+    EXPECT_EQ(QStringList{u"Updated title"_s}, patchedRows.front().columns);
+    EXPECT_EQ(QStringList{u"Updated title"_s}, patchedRows.front().sortColumns);
     ASSERT_EQ(1, patchedRows.front().tracks.size());
     EXPECT_EQ(u"Updated title"_s, patchedRows.front().tracks.front().title());
 }
@@ -330,19 +341,23 @@ TEST(FilterPipelineTest, PatchFilterRowsAddsNewTrackIntoExistingBucketInCurrentO
         Track track{u"/music/one.flac"_s};
         track.setId(1);
         track.setLibraryId(1);
-        track.setGenres({u"Rock"_s});
+        track.setGenres({u"Rock"_s, u"Jazz"_s});
         return track;
     }();
     const Track newRock = [] {
         Track track{u"/music/two.flac"_s};
         track.setId(2);
         track.setLibraryId(1);
-        track.setGenres({u"Rock"_s});
+        track.setGenres({u"Jazz"_s, u"Rock"_s});
         return track;
     }();
 
     const Filters::FilterColumnList columns{
-        {.id = 0, .name = u"Genre"_s, .field = u"%<genre>%"_s, .sortField = {}},
+        {.id            = 0,
+         .name          = u"Genre"_s,
+         .field         = u"$upper(%<genre>%)"_s,
+         .sortField     = {},
+         .groupingField = u"%<genre>%"_s},
     };
     const Filters::FilterRowBuildContext context{
         .font          = {},
@@ -350,15 +365,251 @@ TEST(FilterPipelineTest, PatchFilterRowsAddsNewTrackIntoExistingBucketInCurrentO
         .useVarious    = false,
     };
 
-    const Filters::FilterRowList previousRows = Filters::buildFilterRows(nullptr, columns, {oldRock}, context);
+    const Filters::FilterRowList previousRows = Filters::buildFilterRows({}, columns, {oldRock}, context);
     const Filters::FilterRowList patchedRows
-        = Filters::patchFilterRows(nullptr, columns, previousRows, {oldRock}, {newRock, oldRock}, {2}, context);
+        = Filters::patchFilterRows({}, columns, previousRows, {oldRock}, {newRock, oldRock}, {2}, context);
+
+    ASSERT_EQ(2, patchedRows.size());
+    EXPECT_EQ(QStringList{u"JAZZ"_s}, patchedRows.at(0).columns);
+    EXPECT_EQ(QStringList{u"ROCK"_s}, patchedRows.at(1).columns);
+    EXPECT_EQ(QStringList{u"Jazz"_s}, patchedRows.at(0).sortColumns);
+    EXPECT_EQ(QStringList{u"Rock"_s}, patchedRows.at(1).sortColumns);
+    for(const auto& row : patchedRows) {
+        ASSERT_EQ(2, row.tracks.size());
+        EXPECT_EQ(2, row.tracks.at(0).id());
+        EXPECT_EQ(1, row.tracks.at(1).id());
+    }
+}
+
+TEST(FilterPipelineTest, FilterRowsBySearchUpdatesCountsAndKeepsOrder)
+{
+    TrackList libraryTracks{
+        makeTrack(1, u"/music/one.flac"_s),
+        makeTrack(2, u"/music/two.flac"_s),
+        makeTrack(3, u"/music/three.flac"_s),
+    };
+    for(auto& track : libraryTracks) {
+        track.setLibraryId(1);
+        track.setDuration(static_cast<uint64_t>(track.id() + 1) * 1000);
+    }
+    libraryTracks.at(0).setGenres({u"Rock"_s, u"Jazz"_s});
+    libraryTracks.at(1).setGenres({u"Jazz"_s, u"Rock"_s});
+    libraryTracks.at(2).setGenres({u"Blues"_s});
+
+    const Filters::FilterColumnList columns{
+        {.id            = 0,
+         .name          = u"Genre"_s,
+         .field         = u"%<genre>% (%trackcount%)"_s,
+         .sortField     = {},
+         .groupingField = u"%<genre>%"_s},
+        {.id            = 1,
+         .name          = u"Duration"_s,
+         .field         = u"%playtime%"_s,
+         .sortField     = u"$num(%trackcount%,3)"_s,
+         .groupingField = u"1"_s},
+    };
+    const Filters::FilterRowBuildContext context;
+    const auto rows = Filters::buildFilterRows({}, columns, libraryTracks, context);
+    ASSERT_EQ(3, rows.size());
+    EXPECT_EQ((QStringList{u"Rock (2)"_s, u"00:05"_s}), rows.at(0).columns);
+
+    const auto searchedRows = Filters::filterRowsBySearch(
+        u"two"_s, rows, libraryTracks, TrackQueryFilter::defaultSearchOptions(), {}, columns, context);
+    ASSERT_EQ(2, searchedRows.size());
+    EXPECT_EQ(rows.at(0).key, searchedRows.at(0).key);
+    EXPECT_EQ(rows.at(1).key, searchedRows.at(1).key);
+    EXPECT_EQ((QStringList{u"Rock (1)"_s, u"00:03"_s}), searchedRows.at(0).columns);
+    EXPECT_EQ((QStringList{u"Jazz (1)"_s, u"00:03"_s}), searchedRows.at(1).columns);
+    EXPECT_EQ((QStringList{u"Rock"_s, u"001"_s}), searchedRows.at(0).sortColumns);
+    EXPECT_EQ((QStringList{u"Jazz"_s, u"001"_s}), searchedRows.at(1).sortColumns);
+    EXPECT_EQ(u"Rock (1)"_s, searchedRows.at(0).richColumns.at(0).joinedText());
+}
+
+TEST(FilterPipelineTest, UpdatingTracksUpdatesCountsWithoutCategories)
+{
+    Track track{u"/music/one.flac"_s};
+    track.setId(1);
+    track.setLibraryId(1);
+    track.addExtraTag(u"TEST"_s, u"B; A"_s);
+
+    const Filters::FilterColumnList columns{
+        {.id = 0, .name = u"Test"_s, .field = u"$split(%test%,; ) (%trackcount%)"_s, .sortField = {}},
+    };
+    const Filters::FilterRowBuildContext context{
+        .font          = {},
+        .ratingSymbols = {u"*"_s, u"/"_s, u"-"_s},
+        .useVarious    = false,
+    };
+
+    const Filters::FilterRowList rows = Filters::buildFilterRows({}, columns, {track}, context);
+
+    ASSERT_EQ(2, rows.size());
+    EXPECT_EQ(QStringList{u"B (1)"_s}, rows.at(0).columns);
+    EXPECT_EQ(QStringList{u"A (1)"_s}, rows.at(1).columns);
+
+    Track secondTrack = makeTrack(2, u"/music/two.flac"_s);
+    secondTrack.setLibraryId(1);
+    secondTrack.addExtraTag(u"TEST"_s, u"A; B"_s);
+    const auto patchedRows = Filters::patchFilterRows({}, columns, rows, {track}, {secondTrack, track}, {2}, context);
+    ASSERT_EQ(2, patchedRows.size());
+    EXPECT_EQ(rows.at(1).key, patchedRows.at(0).key);
+    EXPECT_EQ(rows.at(0).key, patchedRows.at(1).key);
+    EXPECT_EQ(QStringList{u"A (2)"_s}, patchedRows.at(0).columns);
+    EXPECT_EQ(QStringList{u"B (2)"_s}, patchedRows.at(1).columns);
+    EXPECT_EQ(QStringList{u"A (2)"_s}, patchedRows.at(0).sortColumns);
+}
+
+TEST(FilterPipelineTest, MovingTracksBetweenGroupsUpdatesCounts)
+{
+    const Track oldRock = [] {
+        Track track{u"/music/one.flac"_s};
+        track.setId(1);
+        track.setLibraryId(1);
+        track.setGenres({u"Rock"_s});
+        return track;
+    }();
+    const Track oldJazz = [] {
+        Track track{u"/music/two.flac"_s};
+        track.setId(2);
+        track.setLibraryId(1);
+        track.setGenres({u"Jazz"_s});
+        return track;
+    }();
+    const Track newJazz = [] {
+        Track track{u"/music/one.flac"_s};
+        track.setId(1);
+        track.setLibraryId(1);
+        track.setGenres({u"Jazz"_s});
+        return track;
+    }();
+
+    const Filters::FilterColumnList columns{
+        {.id            = 0,
+         .name          = u"Genre"_s,
+         .field         = u"Shared label (%trackcount%)"_s,
+         .sortField     = {},
+         .groupingField = u"%<genre>%"_s},
+    };
+    const Filters::FilterRowBuildContext context{
+        .font          = {},
+        .ratingSymbols = {u"*"_s, u"/"_s, u"-"_s},
+        .useVarious    = false,
+    };
+
+    const Filters::FilterRowList previousRows = Filters::buildFilterRows({}, columns, {oldRock, oldJazz}, context);
+    ASSERT_EQ(2, previousRows.size());
+    EXPECT_NE(previousRows.at(0).key, previousRows.at(1).key);
+    EXPECT_EQ(previousRows.at(0).columns, previousRows.at(1).columns);
+    const Filters::FilterRowList patchedRows
+        = Filters::patchFilterRows({}, columns, previousRows, {oldRock, oldJazz}, {newJazz, oldJazz}, {1}, context);
 
     ASSERT_EQ(1, patchedRows.size());
-    EXPECT_EQ(QStringList{u"Rock"_s}, patchedRows.at(0).columns);
+    EXPECT_EQ(previousRows.at(1).key, patchedRows.at(0).key);
+    EXPECT_EQ(QStringList{u"Shared label (2)"_s}, patchedRows.at(0).columns);
+    EXPECT_EQ(QStringList{u"Jazz"_s}, patchedRows.at(0).sortColumns);
     ASSERT_EQ(2, patchedRows.at(0).tracks.size());
-    EXPECT_EQ(2, patchedRows.at(0).tracks.at(0).id());
-    EXPECT_EQ(1, patchedRows.at(0).tracks.at(1).id());
+    EXPECT_EQ(1, patchedRows.at(0).tracks.at(0).id());
+    EXPECT_EQ(2, patchedRows.at(0).tracks.at(1).id());
+}
+
+TEST(FilterPipelineTest, EditingTrackDetailsRefreshesCalculations)
+{
+    Track oldTrack{u"/music/one.flac"_s};
+    oldTrack.setId(1);
+    oldTrack.setLibraryId(1);
+    oldTrack.setGenres({u"Rock"_s});
+    oldTrack.setTitle(u"Old title"_s);
+    oldTrack.setDuration(2000);
+
+    Track updatedTrack = oldTrack;
+    updatedTrack.setTitle(u"Updated title"_s);
+    updatedTrack.setDuration(3000);
+
+    const Filters::FilterColumnList columns{
+        {.id            = 0,
+         .name          = u"Genre"_s,
+         .field         = u"%title% (%trackcount%) [%playtime%]"_s,
+         .sortField     = u"%playtime%"_s,
+         .groupingField = u"%<genre>%"_s},
+    };
+    const Filters::FilterRowBuildContext context{
+        .font          = {},
+        .ratingSymbols = {u"*"_s, u"/"_s, u"-"_s},
+        .useVarious    = false,
+    };
+
+    const Filters::FilterRowList previousRows = Filters::buildFilterRows({}, columns, {oldTrack}, context);
+    const Filters::FilterRowList patchedRows
+        = Filters::patchFilterRows({}, columns, previousRows, {oldTrack}, {updatedTrack}, {1}, context);
+
+    ASSERT_EQ(1, patchedRows.size());
+    EXPECT_EQ(previousRows.front().key, patchedRows.front().key);
+    EXPECT_EQ(QStringList{u"Updated title (1) 00:03"_s}, patchedRows.front().columns);
+    EXPECT_EQ(QStringList{u"00:03"_s}, patchedRows.front().sortColumns);
+    ASSERT_EQ(1, patchedRows.front().tracks.size());
+    EXPECT_EQ(u"Updated title"_s, patchedRows.front().tracks.front().title());
+}
+
+TEST(FilterPipelineTest, AddingAndRemovingTracksUpdatesMultiCategoryCounts)
+{
+    const Track oldRock = [] {
+        Track track{u"/music/one.flac"_s};
+        track.setId(1);
+        track.setLibraryId(1);
+        track.setGenres({u"Rock"_s, u"Jazz"_s});
+        track.setDuration(2000);
+        track.setBitrate(100);
+        return track;
+    }();
+    const Track newRock = [] {
+        Track track{u"/music/two.flac"_s};
+        track.setId(2);
+        track.setLibraryId(1);
+        track.setGenres({u"Jazz"_s, u"Rock"_s});
+        track.setDuration(3000);
+        track.setBitrate(200);
+        return track;
+    }();
+
+    const Filters::FilterColumnList columns{
+        {.id            = 0,
+         .name          = u"Genre"_s,
+         .field         = u"$upper(%<genre>%) (%trackcount% $ifequal(%trackcount%,1,track,tracks))"_s,
+         .sortField     = {},
+         .groupingField = u"%<genre>%"_s},
+        {.id            = 1,
+         .name          = u"Duration"_s,
+         .field         = u"%playtime% | %avgbitrate%"_s,
+         .sortField     = u"$num(%trackcount%,3)"_s,
+         .groupingField = u"1"_s},
+    };
+    const Filters::FilterRowBuildContext context{
+        .font          = {},
+        .ratingSymbols = {u"*"_s, u"/"_s, u"-"_s},
+        .useVarious    = false,
+    };
+
+    const Filters::FilterRowList previousRows = Filters::buildFilterRows({}, columns, {oldRock}, context);
+    const Filters::FilterRowList patchedRows
+        = Filters::patchFilterRows({}, columns, previousRows, {oldRock}, {newRock, oldRock}, {2}, context);
+
+    ASSERT_EQ(2, patchedRows.size());
+    EXPECT_EQ((QStringList{u"JAZZ (2 tracks)"_s, u"00:05 | 160"_s}), patchedRows.at(0).columns);
+    EXPECT_EQ((QStringList{u"ROCK (2 tracks)"_s, u"00:05 | 160"_s}), patchedRows.at(1).columns);
+    EXPECT_EQ((QStringList{u"Jazz"_s, u"002"_s}), patchedRows.at(0).sortColumns);
+    EXPECT_EQ((QStringList{u"Rock"_s, u"002"_s}), patchedRows.at(1).sortColumns);
+    for(const auto& row : patchedRows) {
+        ASSERT_EQ(2, row.tracks.size());
+        EXPECT_EQ(2, row.tracks.at(0).id());
+        EXPECT_EQ(1, row.tracks.at(1).id());
+    }
+
+    const auto removedRows
+        = Filters::patchFilterRows({}, columns, patchedRows, {newRock, oldRock}, {oldRock}, {}, context);
+    ASSERT_EQ(2, removedRows.size());
+    EXPECT_EQ(previousRows.at(0).key, removedRows.at(0).key);
+    EXPECT_EQ((QStringList{u"ROCK (1 track)"_s, u"00:02 | 100"_s}), removedRows.at(0).columns);
+    EXPECT_EQ((QStringList{u"Rock"_s, u"001"_s}), removedRows.at(0).sortColumns);
 }
 
 TEST(FilterPipelineTest, RunFilterPipelinePropagatesUpstreamSelectionToDownstreamInputs)

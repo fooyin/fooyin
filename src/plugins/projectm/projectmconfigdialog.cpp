@@ -150,7 +150,7 @@ ProjectMConfigDialog::ProjectMConfigDialog(ProjectMWidget* widget, QWidget* pare
     m_hardCutDuration->setToolTip(tr("Minimum time a preset must be shown before a beat can trigger a hard cut"));
     m_hardCutSensitivity->setToolTip(
         tr("Volume-change threshold for hard cuts; higher values require a stronger beat"));
-    m_beatSensitivity->setToolTip(tr("Sensitivity of projectM's beat detection"));
+    m_beatSensitivity->setToolTip(tr("Sensitivity of projectM’s beat detection"));
 
     for(auto* spin : {m_hardCutSensitivity, m_beatSensitivity}) {
         spin->setRange(0.0, 5.0);

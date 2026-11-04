@@ -21,6 +21,7 @@
 
 #include "fileopsdefs.h"
 
+#include <core/library/libraryinfo.h>
 #include <core/scripting/scriptparser.h>
 #include <utils/worker.h>
 
@@ -81,17 +82,19 @@ public:
     FileOpsWorker(MusicLibrary* library, std::shared_ptr<AudioLoader> audioLoader, TrackList tracks,
                   SettingsManager* settings, QObject* parent = nullptr);
 
-    void simulate(const FileOpPreset& preset);
-    void run();
-    void deleteFiles(bool forceImmediateDelete = false);
+    void setLibraryData(LibraryInfoMap libraries, TrackList tracks);
+
+    void simulate(const FileOpPreset& preset, std::stop_token token = {});
+    void run(std::stop_token token = {});
+    void deleteFiles(bool forceImmediateDelete = false, std::stop_token token = {});
 
 Q_SIGNALS:
-    void simulated(const Fooyin::FileOps::FileOperations& operations);
+    void simulated(const Fooyin::FileOps::FileOperations& operations, std::stop_token token);
     void deleteFinished(const Fooyin::TrackList& deletedTracks, const Fooyin::TrackList& failedTrashTracks);
     void operationCompleted(const Fooyin::FileOps::FileOpResult& result);
 
 private:
-    bool prepareOperations(const FileOpPreset& preset, bool emitSimulation);
+    bool prepareOperations(const FileOpPreset& preset, bool emitSimulation, std::stop_token token);
     bool populateTrackPaths();
 
     void simulateMove();
@@ -118,7 +121,11 @@ private:
     [[nodiscard]] QString libraryRootForDeletedPath(const QString& filePath, int libraryId) const;
     [[nodiscard]] int archiveLibraryId(const QString& archivePath) const;
 
+    [[nodiscard]] std::optional<LibraryInfo> libraryForPath(const QString& path) const;
+
     MusicLibrary* m_library;
+    LibraryInfoMap m_libraries;
+    TrackList m_libraryTracks;
     std::shared_ptr<AudioLoader> m_audioLoader;
     SettingsManager* m_settings;
     ScriptParser m_scriptParser;

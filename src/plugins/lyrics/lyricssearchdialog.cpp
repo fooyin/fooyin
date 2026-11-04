@@ -26,6 +26,7 @@
 
 #include <core/coresettings.h>
 #include <gui/widgets/lineediteditor.h>
+#include <utils/stringcollator.h>
 #include <utils/utils.h>
 
 #include <QDialogButtonBox>
@@ -37,7 +38,6 @@
 #include <QModelIndex>
 #include <QPlainTextEdit>
 #include <QPushButton>
-#include <QSortFilterProxyModel>
 #include <QSplitter>
 #include <QTreeView>
 
@@ -48,26 +48,6 @@ constexpr auto SearchDialogHeaderState = "Lyrics/SearchDialogHeaderState"_L1;
 constexpr auto SearchDialogSplitter    = "Lyrics/SearchDialogSplitter"_L1;
 
 namespace Fooyin::Lyrics {
-class LyricsSearchProxyModel : public QSortFilterProxyModel
-{
-public:
-    explicit LyricsSearchProxyModel(QObject* parent = nullptr)
-        : QSortFilterProxyModel{parent}
-    {
-        setSortCaseSensitivity(Qt::CaseInsensitive);
-        setDynamicSortFilter(true);
-    }
-
-protected:
-    [[nodiscard]] bool lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override
-    {
-        const QVariant left  = sourceModel()->data(sourceLeft, Qt::DisplayRole);
-        const QVariant right = sourceModel()->data(sourceRight, Qt::DisplayRole);
-
-        return QString::localeAwareCompare(left.toString(), right.toString()) < 0;
-    }
-};
-
 LyricsSearchDialog::LyricsSearchDialog(const Track& track, std::shared_ptr<NetworkAccessManager> networkAccess,
                                        LyricsSaver* lyricsSaver, SettingsManager* settings, QWidget* parent)
     : QDialog{parent}
@@ -81,7 +61,7 @@ LyricsSearchDialog::LyricsSearchDialog(const Track& track, std::shared_ptr<Netwo
     , m_statusLabel{new QLabel(this)}
     , m_resultsTable{new QTreeView(this)}
     , m_resultsModel{new LyricsSearchModel(this)}
-    , m_resultsProxyModel{new LyricsSearchProxyModel(this)}
+    , m_resultsProxyModel{new StringSortProxyModel(this)}
     , m_preview{new QPlainTextEdit(this)}
     , m_splitter{new QSplitter(Qt::Horizontal, this)}
     , m_okButton{nullptr}
@@ -113,6 +93,8 @@ LyricsSearchDialog::LyricsSearchDialog(const Track& track, std::shared_ptr<Netwo
     resultsLayout->addLayout(searchLayout);
 
     m_resultsProxyModel->setSourceModel(m_resultsModel);
+    m_resultsProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+    m_resultsProxyModel->setDynamicSortFilter(true);
     m_resultsTable->setModel(m_resultsProxyModel);
 
     m_resultsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);

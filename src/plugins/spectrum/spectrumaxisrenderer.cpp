@@ -264,7 +264,6 @@ void SpectrumAxisRenderer::paint(QPainter& painter, const SpectrumPlotGeometry& 
     const Colours customColours = m_config.colours.isValid() && m_config.colours.canConvert<Colours>()
                                     ? m_config.colours.value<Colours>()
                                     : Colours{};
-    painter.fillRect(QRect{QPoint{0, 0}, size}, customColours.colour(Colours::Type::Background, palette));
 
     if(geometry.spectrumRect.isEmpty() || geometry.plotRect.isEmpty()) {
         return;

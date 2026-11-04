@@ -19,6 +19,10 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
+#include <core/scripting/scriptregistry.h>
+
 #include <QString>
 
 #include <cstdint>
@@ -40,7 +44,9 @@ struct ScriptReferenceEntry
     QString category;
     QString description;
     int cursorOffset{0};
+    bool isAlias{false};
 };
 
-const std::vector<ScriptReferenceEntry>& scriptReferenceEntries();
+FYGUI_EXPORT std::vector<ScriptReferenceEntry> scriptReferenceEntries(const ScriptRegistry& registry
+                                                                      = ScriptRegistry::instance());
 } // namespace Fooyin

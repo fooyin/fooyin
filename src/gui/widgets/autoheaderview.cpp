@@ -78,6 +78,7 @@ public:
     int m_lastResizePos{-1};
     int m_firstPressed{-1};
     bool m_moving{false};
+    QByteArray m_pressedState;
 
     int m_pendingColumns{0};
     QByteArray m_pendingState;
@@ -537,7 +538,10 @@ void AutoHeaderView::addHeaderContextMenu(QMenu* menu, const QPoint& pos)
     auto* toggleStretch = new QAction(tr("Auto-size sections"), menu);
     toggleStretch->setCheckable(true);
     toggleStretch->setChecked(p->m_stretchEnabled);
-    QObject::connect(toggleStretch, &QAction::triggered, this, [this]() { setStretchEnabled(!p->m_stretchEnabled); });
+    QObject::connect(toggleStretch, &QAction::triggered, this, [this]() {
+        setStretchEnabled(!p->m_stretchEnabled);
+        Q_EMIT layoutEdited();
+    });
     menu->addAction(toggleStretch);
 
     menu->addSeparator();
@@ -553,7 +557,10 @@ void AutoHeaderView::addHeaderContextMenu(QMenu* menu, const QPoint& pos)
             auto* hideSection = new QAction(
                 tr("Hide %1").arg(R"(")"_L1 + model()->headerData(logical, orientation()).toString() + R"(")"_L1),
                 menu);
-            QObject::connect(hideSection, &QAction::triggered, this, [this, logical]() { hideHeaderSection(logical); });
+            QObject::connect(hideSection, &QAction::triggered, this, [this, logical]() {
+                hideHeaderSection(logical);
+                Q_EMIT layoutEdited();
+            });
             hideSection->setEnabled(sectionCount - hiddenCount > 1);
             menu->addAction(hideSection);
         }
@@ -563,7 +570,10 @@ void AutoHeaderView::addHeaderContextMenu(QMenu* menu, const QPoint& pos)
         const int logical = logicalIndex(section);
         if(isSectionHidden(logical)) {
             auto* showSection = new QAction(model()->headerData(logical, orientation()).toString(), showMenu);
-            QObject::connect(showSection, &QAction::triggered, this, [this, logical]() { showHeaderSection(logical); });
+            QObject::connect(showSection, &QAction::triggered, this, [this, logical]() {
+                showHeaderSection(logical);
+                Q_EMIT layoutEdited();
+            });
             showMenu->addAction(showSection);
         }
     }
@@ -607,6 +617,7 @@ void AutoHeaderView::addHeaderAlignmentMenu(QMenu* menu, const QPoint& pos)
 
     auto changeAlignment = [this, logical](Qt::Alignment alignment) {
         model()->setHeaderData(logical, orientation(), alignment.toInt(), SectionAlignment);
+        Q_EMIT layoutEdited();
     };
 
     QObject::connect(alignLeft, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignLeft); });
@@ -627,6 +638,11 @@ void AutoHeaderView::addHeaderAlignmentMenu(QMenu* menu, const QPoint& pos)
 
 QByteArray AutoHeaderView::saveHeaderState() const
 {
+    return saveHeaderState(true);
+}
+
+QByteArray AutoHeaderView::saveHeaderState(bool saveSort) const
+{
     QByteArray result;
     QDataStream stream(&result, QIODevice::WriteOnly);
     stream.setVersion(QDataStream::Qt_6_0);
@@ -636,12 +652,14 @@ QByteArray AutoHeaderView::saveHeaderState() const
     SectionIndexes logicalIndexes(sectionCount);
 
     for(int section{0}; section < sectionCount; ++section) {
-        pixelWidths[section]    = sectionSize(section);
+        // Stretched layouts use proportional widths, so viewport resizing shouldn't modify a saved layout
+        pixelWidths[section]    = !saveSort && p->m_stretchEnabled ? (isSectionHidden(section) ? 0 : MinSectionWidth)
+                                                                   : sectionSize(section);
         logicalIndexes[section] = logicalIndex(section);
     }
 
-    const auto sortOrder  = static_cast<int>(sortIndicatorOrder());
-    const int sortSection = sortIndicatorSection();
+    const auto sortOrder  = static_cast<int>(saveSort ? sortIndicatorOrder() : Qt::AscendingOrder);
+    const int sortSection = saveSort ? sortIndicatorSection() : -1;
 
     stream << pixelWidths;
     stream << logicalIndexes;
@@ -745,6 +763,8 @@ void AutoHeaderView::mousePressEvent(QMouseEvent* event)
         return;
     }
 
+    p->m_pressedState = saveHeaderState(false);
+
     const QPoint position = event->position().toPoint();
     const int pos         = orientation() == Qt::Horizontal ? position.x() : position.y();
     const int handleIndex = p->sectionHandleAt(pos);
@@ -837,6 +857,12 @@ void AutoHeaderView::mouseReleaseEvent(QMouseEvent* event)
     p->m_state           = SectionState::None;
 
     QHeaderView::mouseReleaseEvent(event);
+
+    if(!p->m_pressedState.isEmpty() && p->m_pressedState != saveHeaderState(false)) {
+        p->m_pressedState.clear();
+        Q_EMIT layoutEdited();
+    }
+    p->m_pressedState.clear();
 }
 
 void AutoHeaderView::mouseDoubleClickEvent(QMouseEvent* event)
@@ -848,9 +874,14 @@ void AutoHeaderView::mouseDoubleClickEvent(QMouseEvent* event)
 
     p->m_state = SectionState::Resizing;
 
+    const auto previousState = saveHeaderState(false);
     QHeaderView::mouseDoubleClickEvent(event);
 
     p->m_state = SectionState::None;
+
+    if(previousState != saveHeaderState(false)) {
+        Q_EMIT layoutEdited();
+    }
 }
 
 void AutoHeaderView::resizeEvent(QResizeEvent* event)

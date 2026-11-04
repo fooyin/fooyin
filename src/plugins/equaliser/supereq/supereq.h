@@ -27,6 +27,7 @@ Copyright © 2026, Luke Taylor <luket@pm.me>
 #include "supereq_compat.h"
 
 #include <cmath>
+#include <cstdlib>
 #include <cstring>
 
 #ifndef NOVTABLE
@@ -303,7 +304,7 @@ private:
                     p        = p->next->next;
                     continue;
                 }
-                abort();
+                std::abort();
             }
         }
     }

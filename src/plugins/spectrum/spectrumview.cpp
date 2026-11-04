@@ -22,8 +22,11 @@
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <gui/widgets/gradienteditor.h>
+#include <gui/widgets/widgetbackground.h>
+#include <utils/timeconstants.h>
 
 #include <QContextMenuEvent>
+#include <QEvent>
 #include <QFont>
 #include <QMouseEvent>
 #include <QPainter>
@@ -122,12 +125,6 @@ float interpolate(std::span<const float> values, size_t index, float t)
     return (a0 * y1) + (a1 * m0) + (a2 * m1) + (a3 * y2);
 }
 
-int updateIntervalFromFps(int fps)
-{
-    const int clampedFps = std::clamp(fps, MinUpdateFps, MaxUpdateFps);
-    return std::max(1, 1000 / clampedFps);
-}
-
 QFont fontFromString(const QString& fontString)
 {
     QFont font;
@@ -156,6 +153,7 @@ void drawBarOutline(QPainter& painter, const QRectF& barRect, int barHeight, con
 
 SpectrumView::SpectrumView(EngineController* engine, QWidget* parent)
     : QWidget(parent)
+    , m_background{new WidgetBackground(this)}
     , m_session{engine->visualisationService()->createSession()}
     , m_geometryDpr{1.0}
     , m_paused{false}
@@ -177,6 +175,16 @@ SpectrumView::SpectrumView(EngineController* engine, QWidget* parent)
 
     engineStateChanged(engine->engineState());
     QObject::connect(engine, &EngineController::engineStateChanged, this, &SpectrumView::engineStateChanged);
+}
+
+void SpectrumView::setBackgroundConfig(const BackgroundConfig& config)
+{
+    m_background->setConfig(config);
+}
+
+void SpectrumView::setBackgroundPixmap(const QPixmap& pixmap)
+{
+    m_background->setPixmap(pixmap);
 }
 
 void SpectrumView::setConfig(const SpectrumWidget::ConfigData& config)
@@ -219,16 +227,31 @@ void SpectrumView::refreshStyleColours()
     update();
 }
 
+bool SpectrumView::event(QEvent* event)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+    if(event->type() == QEvent::DevicePixelRatioChange) {
+        updateBarGeometry();
+        invalidateStaticLayer();
+        update();
+    }
+#endif
+    return QWidget::event(event);
+}
+
 void SpectrumView::paintEvent(QPaintEvent* /*event*/)
 {
-    // TODO: Use QEvent::DevicePixelRatioChange when we bump min Qt version to >= 6.6
+#if QT_VERSION < QT_VERSION_CHECK(6, 6, 0)
     const qreal dpr = devicePixelRatioF();
     if(!qFuzzyCompare(m_geometryDpr, dpr)) {
         updateBarGeometry();
         invalidateStaticLayer();
     }
+#endif
 
     QPainter painter{this};
+    painter.fillRect(rect(), colours().colour(Colours::Type::Background, palette()));
+    m_background->draw(painter);
     painter.setRenderHint(QPainter::Antialiasing, false);
     paint(painter, rect(), palette());
 }
@@ -245,6 +268,7 @@ void SpectrumView::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == m_updateTimer.timerId()) {
         tick();
+        m_updateTimer.scheduleNext(this);
         return;
     }
 
@@ -283,7 +307,7 @@ void SpectrumView::engineStateChanged(Engine::PlaybackState state)
 void SpectrumView::startUpdateTimer()
 {
     m_elapsedTimer.restart();
-    m_updateTimer.start(updateIntervalFromFps(m_config.updateFps), Qt::PreciseTimer, this);
+    m_updateTimer.start(m_config.updateFps, this);
 }
 
 void SpectrumView::clearLevels()
@@ -327,21 +351,24 @@ size_t SpectrumView::effectiveBandCount() const
 
 void SpectrumView::tick()
 {
-    const int elapsedMs          = std::max(1, static_cast<int>(m_elapsedTimer.restart()));
-    const float dbRange          = static_cast<float>(std::max(1, m_config.amplitudeMaxDb - m_config.amplitudeMinDb));
-    const float barFalloffPerMs  = static_cast<float>(std::max(0, m_config.amplitudeGravity)) / dbRange / 1000.0F;
-    const float peakFalloffPerMs = static_cast<float>(std::max(0, m_config.peakGravity)) / dbRange / 1000.0F;
+    const double elapsedMs = static_cast<double>(m_elapsedTimer.nsecsElapsed()) / static_cast<double>(Time::NsPerMs);
+    m_elapsedTimer.restart();
+    const float dbRange = static_cast<float>(std::max(1, m_config.amplitudeMaxDb - m_config.amplitudeMinDb));
+    const float barFalloffPerMs
+        = static_cast<float>(std::max(0, m_config.amplitudeGravity)) / dbRange / static_cast<float>(Time::MsPerSecond);
+    const float peakFalloffPerMs
+        = static_cast<float>(std::max(0, m_config.peakGravity)) / dbRange / static_cast<float>(Time::MsPerSecond);
 
     QRegion dirtyRegion;
     bool changed{false};
 
     for(size_t index{0}; index < m_levels.size(); ++index) {
-        float& current = m_levels[index];
-        int& barHoldMs = m_barHoldRemainingMs[index];
+        float& current    = m_levels[index];
+        double& barHoldMs = m_barHoldRemainingMs[index];
         float next{current};
 
         if(m_config.amplitudesEnabled && barHoldMs > 0) {
-            barHoldMs = std::max(0, barHoldMs - elapsedMs);
+            barHoldMs = std::max(0.0, barHoldMs - elapsedMs);
         }
         else if(m_config.amplitudesEnabled || m_paused) {
             next = std::max(0.0F, current - (barFalloffPerMs * static_cast<float>(elapsedMs)));
@@ -352,11 +379,11 @@ void SpectrumView::tick()
         }
 
         if(m_config.peaksEnabled && index < m_peakLevels.size()) {
-            float& peak = m_peakLevels[index];
-            int& holdMs = m_peakHoldRemainingMs[index];
+            float& peak    = m_peakLevels[index];
+            double& holdMs = m_peakHoldRemainingMs[index];
 
             if(holdMs > 0) {
-                holdMs = std::max(0, holdMs - elapsedMs);
+                holdMs = std::max(0.0, holdMs - elapsedMs);
             }
             else {
                 const float nextPeak = std::max(current, peak - (peakFalloffPerMs * static_cast<float>(elapsedMs)));
@@ -382,9 +409,9 @@ void SpectrumView::tick()
         const bool barsActive  = std::ranges::any_of(m_levels, [](float level) { return level > 0.0F; });
         const bool peaksActive = std::ranges::any_of(m_peakLevels, [](float level) { return level > 0.0F; });
         const bool barHoldsActive
-            = std::ranges::any_of(m_barHoldRemainingMs, [](int remainingMs) { return remainingMs > 0; });
+            = std::ranges::any_of(m_barHoldRemainingMs, [](double remainingMs) { return remainingMs > 0; });
         const bool peakHoldsActive
-            = std::ranges::any_of(m_peakHoldRemainingMs, [](int remainingMs) { return remainingMs > 0; });
+            = std::ranges::any_of(m_peakHoldRemainingMs, [](double remainingMs) { return remainingMs > 0; });
         if(!barsActive && !peaksActive && !barHoldsActive && !peakHoldsActive) {
             m_updateTimer.stop();
         }
@@ -394,15 +421,16 @@ void SpectrumView::tick()
 bool SpectrumView::renderLatestSpectrum()
 {
     VisualisationSession::SpectrumWindow spectrum;
-    const uint64_t endTimeMs = m_session->currentTimeMs();
+    const uint64_t currentTimeMs = m_session->currentTimeMs();
 
     bool gotSpectrum{false};
-    if(endTimeMs > 0) {
+    if(currentTimeMs > 0) {
         const auto windowFunction = toBackendWindowFunction(m_config.windowFunction);
+        // Centre the analysis on audible playback using audio already buffered for output
         gotSpectrum = m_config.fftSizingMode == FftSizingMode::Duration
-                        ? m_session->getSpectrumWindowEndingAtDuration(spectrum, endTimeMs, m_config.fftDurationMs,
-                                                                       windowFunction)
-                        : m_session->getSpectrumWindowEndingAt(spectrum, endTimeMs, m_config.fftSize, windowFunction);
+                        ? m_session->getSpectrumWindowForDuration(spectrum, currentTimeMs, m_config.fftDurationMs,
+                                                                  windowFunction)
+                        : m_session->getSpectrumWindow(spectrum, currentTimeMs, m_config.fftSize, windowFunction);
     }
 
     if(!gotSpectrum) {

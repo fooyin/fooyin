@@ -75,6 +75,7 @@ private:
     [[nodiscard]] EqualiserSliderState sliderState() const;
     void applySliderState(const EqualiserSliderState& state);
     void updateValueLabels();
+    void updatePresetButtons();
     void updatePresetSelection();
     void refreshPresets();
     void loadPreset(int index);
@@ -117,6 +118,7 @@ private:
     void applySliderState(const EqualiserSliderState& state);
     void refreshPresets();
     void updatePresetButtons();
+    void updatePresetSelection();
     void loadPreset();
     void savePreset();
     void deletePreset();

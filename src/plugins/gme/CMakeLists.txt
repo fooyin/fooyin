@@ -7,16 +7,18 @@ endif()
 
 create_fooyin_plugin_internal(
     gmeinput
-    DEPENDS Fooyin::Core
-            Fooyin::Gui
-            ${LIBGME_LIBRARIES}
-    SOURCES gmedefs.h
-            gmeinput.cpp
-            gmeinput.h
-            gmeplugin.cpp
-            gmeplugin.h
-            gmesettings.cpp
-            gmesettings.h
+    DEPENDS #
+        Fooyin::Core
+        Fooyin::Gui
+        ${LIBGME_LIBRARIES}
+    SOURCES #
+        gmedefs.h
+        gmeinput.cpp
+        gmeinput.h
+        gmeplugin.cpp
+        gmeplugin.h
+        gmesettings.cpp
+        gmesettings.h
 )
 
 target_include_directories(gmeinput PRIVATE ${LIBGME_INCLUDE_DIRS})

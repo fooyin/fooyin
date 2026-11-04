@@ -27,7 +27,7 @@
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
-#include <gui/layoutprovider.h>
+#include <gui/layout/layoutprovider.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <gui/widgets/elapsedprogressdialog.h>
@@ -94,9 +94,10 @@ void WaveBarPlugin::initialise(const CorePluginContext& context)
 
 void WaveBarPlugin::initialise(const GuiPluginContext& context)
 {
-    m_actionManager  = context.actionManager;
-    m_trackSelection = context.trackSelection;
-    m_widgetProvider = context.widgetProvider;
+    m_coverRepository = context.coverRepository;
+    m_actionManager   = context.actionManager;
+    m_trackSelection  = context.trackSelection;
+    m_widgetProvider  = context.widgetProvider;
 
     m_waveBarSettings = std::make_unique<WaveBarSettings>(m_settings);
 
@@ -146,7 +147,8 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
 
 FyWidget* WaveBarPlugin::createWavebar()
 {
-    auto* wavebar = new WaveBarWidget(m_audioLoader, m_dbPool, m_playerController, m_trackSelection, m_settings);
+    auto* wavebar = new WaveBarWidget(m_audioLoader, m_dbPool, m_actionManager, m_playerController, m_trackSelection,
+                                      m_coverRepository, m_settings);
 
     registerWaveBar(wavebar);
 
@@ -215,7 +217,7 @@ void WaveBarPlugin::regenerateSelection(bool onlyMissing)
 
     const auto total = static_cast<int>(selectedTracks.size());
     auto* dialog
-        = new ElapsedProgressDialog(tr("Generating waveform data…"), tr("Abort"), 0, total, Utils::getMainWindow());
+        = new ElapsedProgressDialog(tr("Generating waveform data…"), tr("Stop"), 0, total, Utils::getMainWindow());
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setMinimumDuration(500ms);
 

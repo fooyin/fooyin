@@ -65,6 +65,14 @@ LyricsFinder::LyricsFinder(std::shared_ptr<NetworkAccessManager> networkManager,
     restoreState();
 }
 
+void LyricsFinder::cancel()
+{
+    ++m_searchGeneration;
+    m_request        = {};
+    m_searchFinished = true;
+    cancelSearches();
+}
+
 void LyricsFinder::findLyrics(const LyricsSearchRequest& request)
 {
     m_request = request;
@@ -74,10 +82,14 @@ void LyricsFinder::findLyrics(const LyricsSearchRequest& request)
         return;
     }
 
+    m_searchScheduled = true;
     QMetaObject::invokeMethod(
         this,
         [this]() {
             m_searchScheduled = false;
+            if(!m_request.track.isValid()) {
+                return;
+            }
             startLyricsSearch(m_request.track);
         },
         Qt::QueuedConnection);

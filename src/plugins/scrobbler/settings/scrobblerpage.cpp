@@ -175,14 +175,14 @@ void ScrobblerPageWidget::load()
 
     m_syncPlaybackStats->setChecked(m_settings->value<Settings::Scrobbler::SyncPlaybackStats>());
 
-    m_titleParam->setText(m_settings->value<Settings::Scrobbler::TitleField>());
-    m_artistParam->setText(m_settings->value<Settings::Scrobbler::ArtistField>());
-    m_albumParam->setText(m_settings->value<Settings::Scrobbler::AlbumField>());
+    m_titleParam->setScript(m_settings->value<Settings::Scrobbler::TitleField>());
+    m_artistParam->setScript(m_settings->value<Settings::Scrobbler::ArtistField>());
+    m_albumParam->setScript(m_settings->value<Settings::Scrobbler::AlbumField>());
     m_sendAlbumArtist->setChecked(m_settings->value<Settings::Scrobbler::SendAlbumArtist>());
-    m_albumArtistParam->setText(m_settings->value<Settings::Scrobbler::AlbumArtistField>());
+    m_albumArtistParam->setScript(m_settings->value<Settings::Scrobbler::AlbumArtistField>());
 
     m_filterScrobbles->setChecked(m_settings->value<Settings::Scrobbler::EnableScrobbleFilter>());
-    m_scrobbleFilter->setText(m_settings->value<Settings::Scrobbler::ScrobbleFilter>());
+    m_scrobbleFilter->setScript(m_settings->value<Settings::Scrobbler::ScrobbleFilter>());
 
     updateWidgetState();
 }

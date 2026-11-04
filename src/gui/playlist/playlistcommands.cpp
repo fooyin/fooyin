@@ -126,90 +126,49 @@ Fooyin::PlaylistTrackList applyMoves(Fooyin::PlaylistTrackList tracks, const Foo
 } // namespace
 
 namespace Fooyin {
-PlaylistCommand::PlaylistCommand(PlaylistHandler* handler, const UId& playlistId)
+PlaylistCommand::PlaylistCommand(PlaylistHandler* handler, const UId& playlistId, PlaylistTrackList oldTracks)
     : QUndoCommand{nullptr}
+    , m_oldTracks{std::move(oldTracks)}
     , m_handler{handler}
     , m_playlistId{playlistId}
 { }
 
-InsertTracks::InsertTracks(PlaylistHandler* handler, const UId& playlistId, TrackGroups groups)
-    : PlaylistCommand{handler, playlistId}
-    , m_oldTracks{playlistTracksFor(handler, playlistId)}
-    , m_newTracks{applyInsertions(m_oldTracks, groups)}
-{ }
-
-void InsertTracks::undo()
+void PlaylistCommand::undo()
 {
     if(m_handler) {
         m_handler->replacePlaylistTracks(m_playlistId, m_oldTracks, PlaylistTrackChangeSource::History);
     }
 }
 
-void InsertTracks::redo()
+void PlaylistCommand::redo()
 {
     if(m_handler) {
         m_handler->replacePlaylistTracks(m_playlistId, m_newTracks, PlaylistTrackChangeSource::History);
     }
+}
+
+InsertTracks::InsertTracks(PlaylistHandler* handler, const UId& playlistId, TrackGroups groups)
+    : PlaylistCommand{handler, playlistId, playlistTracksFor(handler, playlistId)}
+{
+    m_newTracks = applyInsertions(m_oldTracks, groups);
 }
 
 RemoveTracks::RemoveTracks(PlaylistHandler* handler, const UId& playlistId, std::vector<int> indexes)
-    : PlaylistCommand{handler, playlistId}
-    , m_oldTracks{playlistTracksFor(handler, playlistId)}
-    , m_newTracks{applyRemovals(m_oldTracks, indexes)}
-{ }
-
-void RemoveTracks::undo()
+    : PlaylistCommand{handler, playlistId, playlistTracksFor(handler, playlistId)}
 {
-    if(m_handler) {
-        m_handler->replacePlaylistTracks(m_playlistId, m_oldTracks, PlaylistTrackChangeSource::History);
-    }
-}
-
-void RemoveTracks::redo()
-{
-    if(m_handler) {
-        m_handler->replacePlaylistTracks(m_playlistId, m_newTracks, PlaylistTrackChangeSource::History);
-    }
+    m_newTracks = applyRemovals(m_oldTracks, indexes);
 }
 
 MoveTracks::MoveTracks(PlaylistHandler* handler, const UId& playlistId, MoveOperation operation)
-    : PlaylistCommand{handler, playlistId}
-    , m_oldTracks{playlistTracksFor(handler, playlistId)}
-    , m_newTracks{applyMoves(m_oldTracks, operation)}
-{ }
-
-void MoveTracks::undo()
+    : PlaylistCommand{handler, playlistId, playlistTracksFor(handler, playlistId)}
 {
-    if(m_handler) {
-        m_handler->replacePlaylistTracks(m_playlistId, m_oldTracks, PlaylistTrackChangeSource::History);
-    }
-}
-
-void MoveTracks::redo()
-{
-    if(m_handler) {
-        m_handler->replacePlaylistTracks(m_playlistId, m_newTracks, PlaylistTrackChangeSource::History);
-    }
+    m_newTracks = applyMoves(m_oldTracks, operation);
 }
 
 ResetTracks::ResetTracks(PlaylistHandler* handler, const UId& playlistId, PlaylistTrackList oldTracks,
                          const PlaylistTrackList& newTracks)
-    : PlaylistCommand{handler, playlistId}
-    , m_oldTracks{PlaylistTrack::updateIndexes(oldTracks)}
-    , m_newTracks{PlaylistTrack::updateIndexes(newTracks)}
-{ }
-
-void ResetTracks::undo()
+    : PlaylistCommand{handler, playlistId, PlaylistTrack::updateIndexes(oldTracks)}
 {
-    if(m_handler) {
-        m_handler->replacePlaylistTracks(m_playlistId, m_oldTracks, PlaylistTrackChangeSource::History);
-    }
-}
-
-void ResetTracks::redo()
-{
-    if(m_handler) {
-        m_handler->replacePlaylistTracks(m_playlistId, m_newTracks, PlaylistTrackChangeSource::History);
-    }
+    m_newTracks = PlaylistTrack::updateIndexes(newTracks);
 }
 } // namespace Fooyin

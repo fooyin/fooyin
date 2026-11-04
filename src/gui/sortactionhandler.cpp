@@ -88,6 +88,10 @@ void SortActionHandler::refreshPresetActions(const QString& statusTip)
 
     const auto presets = m_sortingRegistry->items();
     for(const auto& preset : presets) {
+        if(!preset.isEnabled) {
+            continue;
+        }
+
         //: %1 refers to the name of a sorting preset e.g. "Sort by Album"
         const QString title = tr("Sort by %1").arg(preset.name);
         auto* presetAction  = new QAction(title, this);

@@ -139,7 +139,7 @@ void ArtworkPageWidget::load()
     }
 
     m_pixmapCache->setValue(m_settings->value<Settings::Gui::Internal::PixmapCacheSize>());
-    m_thumbnailGroupScript->setText(m_settings->value<Settings::Gui::Internal::TrackCoverThumbnailGroupScript>());
+    m_thumbnailGroupScript->setScript(m_settings->value<Settings::Gui::Internal::TrackCoverThumbnailGroupScript>());
     updateCacheSize();
 }
 

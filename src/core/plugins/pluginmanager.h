@@ -41,6 +41,7 @@ public:
 
     const PluginInfoMap& allPluginInfo() const;
     PluginInfo* pluginInfo(const QString& name) const;
+    [[nodiscard]] QString removalError(const QString& identifier) const;
 
     void findPlugins(const QStringList& pluginDirs);
     void loadPlugins();
@@ -56,14 +57,6 @@ public:
         }
     }
 
-    enum class InstallResult : uint8_t
-    {
-        Installed = 0,
-        AlreadyInstalled,
-        Failed,
-    };
-    static InstallResult installPlugin(const QString& filepath, bool overwrite = false);
-
     void unloadPlugins();
 
 private:
@@ -73,6 +66,7 @@ private:
 
     SettingsManager* m_settings;
     PluginInfoMap m_plugins;
+    std::unordered_map<QString, QString> m_removalErrors;
 #ifdef Q_OS_WIN
     std::unordered_set<QString> m_registeredPluginDirectories;
 #endif

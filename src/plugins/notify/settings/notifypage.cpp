@@ -157,7 +157,7 @@ NotifyPageWidget::NotifyPageWidget(SettingsManager* settings, NotifyPlugin* plug
             messageBox.setText(
                 tr("<p>The Flatpak notification portal does not support custom timeouts or album art. To use the "
                    "desktop notification service directly, add <code>org.freedesktop.Notifications</code> to "
-                   "fooyin's Session Bus ‘talk’ permissions in Flatseal, or run:</p>"
+                   "fooyin’s Session Bus ‘talk’ permissions in Flatseal, or run:</p>"
                    "<pre>flatpak override --user --talk-name=org.freedesktop.Notifications org.fooyin.fooyin</pre>"
                    "<p>Restart fooyin after changing its permissions.</p>"));
             messageBox.exec();
@@ -242,8 +242,8 @@ void NotifyPageWidget::load()
 {
     m_enable->setChecked(m_settings->value<Settings::Notify::Enabled>());
     m_notifyOnRepeat->setChecked(m_settings->value<Settings::Notify::NotifyOnRepeat>());
-    m_titleField->setText(m_settings->value<Settings::Notify::TitleField>());
-    m_bodyField->setText(m_settings->value<Settings::Notify::BodyField>());
+    m_titleField->setScript(m_settings->value<Settings::Notify::TitleField>());
+    m_bodyField->setScript(m_settings->value<Settings::Notify::BodyField>());
     m_showAlbumArt->setChecked(m_settings->value<Settings::Notify::ShowAlbumArt>());
     m_maxAlbumArtSize->setValue(m_settings->value<Settings::Notify::MaxAlbumArtSize>());
     setPlaybackControls(PlaybackControls::fromInt(m_settings->value<Settings::Notify::Controls>()));

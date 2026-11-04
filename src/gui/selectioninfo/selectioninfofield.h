@@ -30,10 +30,9 @@ struct SelectionInfoField
 
     int id{-1};
     int index{-1};
-    bool isDefault{false};
     QString name;
     QString scriptField;
-    bool enabled{true};
+    bool isEnabled{true};
 
     bool operator==(const SelectionInfoField& other) const = default;
 
@@ -45,7 +44,7 @@ struct SelectionInfoField
     friend QDataStream& operator<<(QDataStream& stream, const SelectionInfoField& field)
     {
         stream << Magic << Version;
-        stream << field.id << field.index << field.name << field.scriptField << field.enabled;
+        stream << field.id << field.index << field.name << field.scriptField << field.isEnabled;
         return stream;
     }
 
@@ -63,7 +62,7 @@ struct SelectionInfoField
             return stream;
         }
 
-        stream >> field.id >> field.index >> field.name >> field.scriptField >> field.enabled;
+        stream >> field.id >> field.index >> field.name >> field.scriptField >> field.isEnabled;
         return stream;
     }
 };

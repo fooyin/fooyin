@@ -25,6 +25,7 @@
 
 #include <gui/framerate.h>
 #include <gui/guiutils.h>
+#include <gui/widgets/backgroundconfigwidget.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/fontbutton.h>
 #include <gui/widgets/gradienteditor.h>
@@ -36,6 +37,7 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
+#include <QIntValidator>
 #include <QLabel>
 #include <QSizePolicy>
 #include <QSpinBox>
@@ -189,6 +191,7 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     , m_octaveGridColour{new ColourButton(tr("Octave gridlines") + ":"_L1, true, this)}
     , m_whiteKeyColour{new ColourButton(tr("White keys") + ":"_L1, true, this)}
     , m_blackKeyColour{new ColourButton(tr("Black keys") + ":"_L1, true, this)}
+    , m_background{new BackgroundConfigWidget(this)}
 {
     auto* spectrumGroup    = new QGroupBox(tr("Scale"), this);
     auto* spectrumLayout   = new QGridLayout(spectrumGroup);
@@ -239,9 +242,12 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     m_fftDuration->setRange(MinFftDurationMs, MaxFftDurationMs);
     m_fftDuration->setSuffix(u" ms"_s);
 
+    m_updateFps->setEditable(true);
+    m_updateFps->setValidator(new QIntValidator(Gui::FrameRate::minFps(), Gui::FrameRate::maxFps(), m_updateFps));
+
     for(const auto preset : Gui::FrameRate::Presets) {
         const int fps = Gui::FrameRate::toFps(preset);
-        m_updateFps->addItem(tr("%1 fps").arg(fps), fps);
+        m_updateFps->addItem(QString::number(fps), fps);
     }
 
     for(const int fftSize : {256, 512, 1024, 2048, 4096, 8192, 16384}) {
@@ -501,6 +507,7 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     tabs->addTab(spectrumPage, tr("General"));
     tabs->addTab(appearancePage, tr("Display"));
     tabs->addTab(coloursPage, tr("Colours"));
+    tabs->addTab(m_background, tr("Background"));
 
     auto* layout{contentLayout()};
     layout->addWidget(tabs, 0, 0);
@@ -513,6 +520,9 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
 
 SpectrumWidget::ConfigData SpectrumConfigDialog::config() const
 {
+    bool fpsValid{false};
+    const int fps = m_updateFps->currentText().toInt(&fpsValid);
+
     SpectrumWidget::ConfigData config{
         .bandCount           = m_bandCount->value(),
         .barSpacing          = m_barSpacing->value(),
@@ -532,7 +542,7 @@ SpectrumWidget::ConfigData SpectrumConfigDialog::config() const
         .peaksEnabled        = m_peaksGroup->isChecked(),
         .peakHoldTimeMs      = m_peakHoldTime->value(),
         .peakGravity         = m_peakGravity->value(),
-        .updateFps           = m_updateFps->currentData().toInt(),
+        .updateFps           = fpsValid ? Gui::FrameRate::clampFps(fps) : DefaultUpdateFps,
         .fftSize             = m_fftSize->currentData().toInt(),
         .fftDurationMs       = m_fftDuration->value(),
         .fftSizingMode       = static_cast<FftSizingMode>(m_fftSizingMode->currentData().toInt()),
@@ -554,6 +564,7 @@ SpectrumWidget::ConfigData SpectrumConfigDialog::config() const
         .interpolate         = m_interpolate->isChecked(),
         .axisFont            = m_axisFont->isChecked() ? m_axisFont->buttonFont().toString() : QString{},
         .colours             = QVariant{},
+        .background          = m_background->config(),
     };
 
     Colours colours;
@@ -584,6 +595,7 @@ SpectrumWidget::ConfigData SpectrumConfigDialog::config() const
 
 void SpectrumConfigDialog::setConfig(const SpectrumWidget::ConfigData& config)
 {
+    m_background->setConfig(config.background);
     m_bandCount->setValue(config.bandCount);
     m_barSpacing->setValue(config.barSpacing);
     m_barSections->setValue(config.barSections);
@@ -605,12 +617,12 @@ void SpectrumConfigDialog::setConfig(const SpectrumWidget::ConfigData& config)
     m_peakHoldTime->setValue(config.peakHoldTimeMs);
     m_peakGravity->setValue(config.peakGravity);
 
-    const int nearestFps = Gui::FrameRate::nearestPresetFps(config.updateFps);
-    int fpsIndex         = m_updateFps->findData(nearestFps);
-    if(fpsIndex < 0) {
-        fpsIndex = m_updateFps->findData(DefaultUpdateFps);
-    }
+    const int fps      = Gui::FrameRate::clampFps(config.updateFps);
+    const int fpsIndex = m_updateFps->findData(fps);
     m_updateFps->setCurrentIndex(fpsIndex);
+    if(fpsIndex < 0) {
+        m_updateFps->setEditText(QString::number(fps));
+    }
 
     int fftIndex = m_fftSize->findData(config.fftSize);
     if(fftIndex < 0) {
@@ -710,7 +722,8 @@ void SpectrumConfigDialog::mergeExternalConfig(const SpectrumWidget::ConfigData&
                         &SpectrumWidget::ConfigData::showVerticalGrid, &SpectrumWidget::ConfigData::showWhiteKeys,
                         &SpectrumWidget::ConfigData::showBlackKeys, &SpectrumWidget::ConfigData::showTooltip,
                         &SpectrumWidget::ConfigData::fillSpectrum, &SpectrumWidget::ConfigData::interpolate,
-                        &SpectrumWidget::ConfigData::axisFont, &SpectrumWidget::ConfigData::colours);
+                        &SpectrumWidget::ConfigData::axisFont, &SpectrumWidget::ConfigData::colours,
+                        &SpectrumWidget::ConfigData::background);
 }
 } // namespace Fooyin::Spectrum
 

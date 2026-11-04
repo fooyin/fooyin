@@ -107,10 +107,13 @@ WaveformRescaler::WaveformRescaler(QObject* parent)
 void WaveformRescaler::rescale()
 {
     if(m_width == 0) {
+        setState(Idle);
         return;
     }
 
-    setState(Running);
+    if(!startWork(stopToken())) {
+        return;
+    }
 
     WaveformData data{m_data};
     data.channelData.clear();
@@ -186,7 +189,7 @@ void WaveformRescaler::rescale()
     applyDecibelScale(data);
 
     setState(Idle);
-    Q_EMIT waveformRescaled(data);
+    Q_EMIT waveformRescaled(data, stopToken());
 }
 
 void WaveformRescaler::normaliseToPeak(WaveformData<float>& data) const
@@ -291,7 +294,8 @@ void WaveformRescaler::rescale(int width)
     m_width = width;
 
     if(m_data.empty()) {
-        Q_EMIT waveformRescaled(m_data);
+        setState(Idle);
+        Q_EMIT waveformRescaled(m_data, stopToken());
         return;
     }
 

@@ -23,12 +23,15 @@
 
 #include <core/library/musiclibrary.h>
 #include <core/track.h>
+#include <utils/id.h>
 
 #include <QList>
 #include <QObject>
 #include <QUrl>
 
 #include <functional>
+#include <span>
+#include <vector>
 
 namespace Fooyin {
 class PlayerController;
@@ -38,7 +41,6 @@ class PlaylistHandler;
 class PlaylistInteractorPrivate;
 class PlaylistWidget;
 class SettingsManager;
-class UId;
 
 class FYGUI_EXPORT PlaylistInteractor : public QObject
 {
@@ -53,6 +55,14 @@ public:
     [[nodiscard]] PlaylistController* playlistController() const;
     [[nodiscard]] MusicLibrary* library() const;
     [[nodiscard]] PlayerController* playerController() const;
+
+    /*!
+     * Re-evaluates rendered rows in every view displaying this playlist, without changing its contents or grouping.
+     * Call on the main thread after publishing updated state that script workers can safely read.
+     */
+    void refreshPlaylist(const UId& playlistId);
+    /*! Like refreshPlaylist(), but only for the specified entries. Missing entries and an empty span are ignored. */
+    void refreshEntries(const UId& playlistId, std::span<const UId> entryIds);
 
     void filesToPlaylist(const QList<QUrl>& urls, const UId& id);
     void filesToCurrentPlaylist(const QList<QUrl>& urls);
@@ -77,6 +87,10 @@ public:
     void playlistFilesToTracks(const QList<QUrl>& urls, std::function<void(const TrackList&)> func);
 
     void trackIdsToPlaylist(const QByteArray& data, const UId& id);
+
+Q_SIGNALS:
+    //! An empty entry list requests all rendered rows.
+    void playlistRefreshRequested(const Fooyin::UId& playlistId, const std::vector<Fooyin::UId>& entryIds);
 
 private:
     std::unique_ptr<PlaylistInteractorPrivate> p;

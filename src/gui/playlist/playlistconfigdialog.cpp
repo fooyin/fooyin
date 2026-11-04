@@ -19,61 +19,38 @@
 
 #include "playlistconfigdialog.h"
 
-#include "internalguisettings.h"
-#include "widgets/pixmapfadecontroller.h"
-
-#include <core/track.h>
-#include <gui/guiconstants.h>
 #include <gui/guiutils.h>
-#include <gui/iconloader.h>
 #include <gui/trackselectioncontroller.h>
-#include <gui/widgets/slidereditor.h>
+#include <gui/widgets/backgroundconfigwidget.h>
 
-#include <QAction>
 #include <QCheckBox>
 #include <QComboBox>
-#include <QDir>
-#include <QFileDialog>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
-#include <QLineEdit>
 #include <QSpinBox>
+#include <QTabWidget>
 
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
-namespace {
-void addComboItem(QComboBox* combo, const QString& text, int data, const QString& tooltip = {})
-{
-    combo->addItem(text, data);
-    if(!tooltip.isEmpty()) {
-        combo->setItemData(combo->count() - 1, tooltip, Qt::ToolTipRole);
-    }
-}
-} // namespace
-
-PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QString& title, QWidget* parent)
+PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QString& title, bool previewMode,
+                                           QWidget* parent)
     : WidgetConfigDialog{playlist, title, parent}
     , m_header{new QCheckBox(tr("Show header"), this)}
+    , m_stickyHeaders{new QCheckBox(tr("Keep group headers in view"), this)}
+    , m_stickySubheaders{new QCheckBox(tr("Keep subheaders in view"), this)}
+    , m_stickyArtwork{new QCheckBox(tr("Keep artwork in view"), this)}
     , m_scrollBar{new QCheckBox(tr("Show scrollbar"), this)}
     , m_alternatingRows{new QCheckBox(tr("Alternating row colours"), this)}
     , m_imagePadding{new QSpinBox(this)}
     , m_imagePaddingTop{new QSpinBox(this)}
     , m_artworkCornerRadius{new QSpinBox(this)}
-    , m_backgroundImage{new QComboBox(this)}
-    , m_backgroundCoverTypeLabel{new QLabel(tr("Artwork type") + u":"_s, this)}
-    , m_backgroundCoverType{new QComboBox(this)}
-    , m_backgroundTrackPreferenceLabel{new QLabel(tr("Preferred track") + u":"_s, this)}
-    , m_backgroundTrackPreference{new QComboBox(this)}
-    , m_customImageLabel{new QLabel(tr("File") + u":"_s, this)}
-    , m_customImage{new QLineEdit(this)}
-    , m_backgroundScaling{new QComboBox(this)}
-    , m_backgroundPosition{new QComboBox(this)}
-    , m_backgroundMaxSize{new QSpinBox(this)}
-    , m_backgroundBlur{new SliderEditor(tr("Blur"), this)}
-    , m_backgroundOpacity{new SliderEditor(tr("Opacity"), this)}
-    , m_backgroundFadeDuration{new SliderEditor(tr("Fade length"), this)}
+    , m_artworkReflection{new QCheckBox(tr("Show reflection"), this)}
+    , m_artworkReflectionHeight{new QSpinBox(this)}
+    , m_artworkReflectionOpacity{new QSpinBox(this)}
+    , m_artworkReflectionGap{new QSpinBox(this)}
+    , m_background{new BackgroundConfigWidget(this)}
     , m_doubleClick{new QComboBox(this)}
     , m_middleClick{new QComboBox(this)}
     , m_startPlaybackOnSend{new QCheckBox(tr("Start playback immediately"), this)}
@@ -86,22 +63,50 @@ PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QStri
     m_artworkCornerRadius->setSingleStep(5);
     m_artworkCornerRadius->setSuffix(u" %"_s);
     m_artworkCornerRadius->setSpecialValueText(tr("Square"));
+    m_artworkReflectionHeight->setRange(1, 100);
+    m_artworkReflectionHeight->setSuffix(u" %"_s);
+    m_artworkReflectionHeight->setToolTip(tr("Reflection height as a percentage of the artwork height"));
+    m_artworkReflectionOpacity->setRange(0, 100);
+    m_artworkReflectionOpacity->setSuffix(u" %"_s);
+    m_artworkReflectionOpacity->setToolTip(tr("Opacity at the top of the reflection, fading to transparent"));
+    m_artworkReflectionGap->setRange(0, 100);
+    m_artworkReflectionGap->setSuffix(u" px"_s);
+    m_artworkReflectionGap->setToolTip(tr("Space between the artwork and its reflection"));
 
-    auto* appearance       = new QGroupBox(tr("Appearance"), this);
+    auto* generalPage      = new QWidget(this);
+    auto* appearance       = new QGroupBox(tr("Appearance"), generalPage);
     auto* appearanceLayout = new QGridLayout(appearance);
 
     int row{0};
     appearanceLayout->addWidget(m_header, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_scrollBar, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_alternatingRows, row++, 0, 1, 2);
-    appearanceLayout->addWidget(Gui::createSectionHeader(tr("Artwork"), this), row++, 0, 1, 2);
-    appearanceLayout->addWidget(new QLabel(tr("Left/Right") + u":"_s, this), row, 0);
-    appearanceLayout->addWidget(m_imagePadding, row++, 1);
-    appearanceLayout->addWidget(new QLabel(tr("Top") + u":"_s, this), row, 0);
-    appearanceLayout->addWidget(m_imagePaddingTop, row++, 1);
-    appearanceLayout->addWidget(new QLabel(tr("Corner radius") + u":"_s, this), row, 0);
-    appearanceLayout->addWidget(m_artworkCornerRadius, row++, 1);
+    appearanceLayout->addWidget(Gui::createSectionHeader(tr("Scrolling"), this), row++, 0, 1, 2);
+    appearanceLayout->addWidget(m_stickyHeaders, row++, 0, 1, 2);
+    appearanceLayout->addWidget(m_stickySubheaders, row++, 0, 1, 2);
+    appearanceLayout->addWidget(m_stickyArtwork, row++, 0, 1, 2);
     appearanceLayout->setColumnStretch(1, 1);
+    appearanceLayout->setRowStretch(row, 1);
+
+    auto* artwork       = new QGroupBox(tr("Artwork"), generalPage);
+    auto* artworkLayout = new QGridLayout(artwork);
+
+    row = 0;
+    artworkLayout->addWidget(new QLabel(tr("Horizontal padding") + u":"_s, this), row, 0);
+    artworkLayout->addWidget(m_imagePadding, row++, 1);
+    artworkLayout->addWidget(new QLabel(tr("Top padding") + u":"_s, this), row, 0);
+    artworkLayout->addWidget(m_imagePaddingTop, row++, 1);
+    artworkLayout->addWidget(new QLabel(tr("Corner radius") + u":"_s, this), row, 0);
+    artworkLayout->addWidget(m_artworkCornerRadius, row++, 1);
+    artworkLayout->addWidget(Gui::createSectionHeader(tr("Artwork reflection"), this), row++, 0, 1, 2);
+    artworkLayout->addWidget(m_artworkReflection, row++, 0, 1, 2);
+    artworkLayout->addWidget(new QLabel(tr("Height") + u":"_s, this), row, 0);
+    artworkLayout->addWidget(m_artworkReflectionHeight, row++, 1);
+    artworkLayout->addWidget(new QLabel(tr("Opacity") + u":"_s, this), row, 0);
+    artworkLayout->addWidget(m_artworkReflectionOpacity, row++, 1);
+    artworkLayout->addWidget(new QLabel(tr("Gap below artwork") + u":"_s, this), row, 0);
+    artworkLayout->addWidget(m_artworkReflectionGap, row++, 1);
+    artworkLayout->setColumnStretch(1, 1);
 
     const auto addClickActions = [](QComboBox* combo) {
         TrackSelectionController::addAction(combo, tr("None"), TrackAction::None);
@@ -111,7 +116,7 @@ PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QStri
     addClickActions(m_doubleClick);
     addClickActions(m_middleClick);
 
-    auto* clicks       = new QGroupBox(tr("Click Behaviour"), this);
+    auto* clicks       = new QGroupBox(tr("Click Behaviour"), generalPage);
     auto* clicksLayout = new QGridLayout(clicks);
 
     row = 0;
@@ -122,115 +127,26 @@ PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QStri
     clicksLayout->addWidget(m_startPlaybackOnSend, row, 0, 1, 2);
     clicksLayout->setColumnStretch(1, 1);
 
-    auto* browseAction = new QAction(this);
-    Gui::setThemeIcon(browseAction, Constants::Icons::Options);
-    browseAction->setToolTip(tr("Choose a custom background image file"));
-    m_customImage->addAction(browseAction, QLineEdit::TrailingPosition);
-
-    addComboItem(m_backgroundImage, tr("No background image"), static_cast<int>(PlaylistBgImage::None));
-    addComboItem(m_backgroundImage, tr("Current track artwork"), static_cast<int>(PlaylistBgImage::AlbumCover),
-                 tr("Use the currently playing track's artwork as the playlist background"));
-    addComboItem(m_backgroundImage, tr("Custom image"), static_cast<int>(PlaylistBgImage::Custom),
-                 tr("Use the selected image file as the playlist background"));
-    addComboItem(m_backgroundCoverType, tr("Front"), static_cast<int>(Track::Cover::Front),
-                 tr("Use the front cover for current track artwork"));
-    addComboItem(m_backgroundCoverType, tr("Back"), static_cast<int>(Track::Cover::Back),
-                 tr("Use the back cover for current track artwork"));
-    addComboItem(m_backgroundCoverType, tr("Artist"), static_cast<int>(Track::Cover::Artist),
-                 tr("Use the artist picture for current track artwork"));
-    addComboItem(m_backgroundTrackPreference, tr("Playing track"),
-                 static_cast<int>(TrackDisplayPreference::PlayingTrack));
-    addComboItem(m_backgroundTrackPreference, tr("Selected track"),
-                 static_cast<int>(TrackDisplayPreference::SelectedTrack));
-    addComboItem(m_backgroundTrackPreference, tr("Playing (or selected when stopped)"),
-                 static_cast<int>(TrackDisplayPreference::PlayingTrackSelectedWhenStopped));
-    addComboItem(m_backgroundTrackPreference, tr("Playing (blank at startup)"),
-                 static_cast<int>(TrackDisplayPreference::PlayingTrackBlankAtStartup));
-    addComboItem(m_backgroundTrackPreference, tr("Playing (blank when stopped)"),
-                 static_cast<int>(TrackDisplayPreference::PlayingTrackBlankWhenStopped));
-    addComboItem(m_backgroundScaling, tr("Scaled and cropped"), static_cast<int>(PlaylistBgScaling::ScaledAndCropped),
-                 tr("Fill the playlist area while preserving proportions; edges may be cropped"));
-    addComboItem(m_backgroundScaling, tr("Scaled"), static_cast<int>(PlaylistBgScaling::Scaled),
-                 tr("Stretch the image to fill the playlist area; proportions may change"));
-    addComboItem(m_backgroundScaling, tr("Scaled, keep proportions"),
-                 static_cast<int>(PlaylistBgScaling::ScaledKeepProportions),
-                 tr("Fit the whole image inside the playlist area without cropping"));
-    addComboItem(m_backgroundScaling, tr("Original size"), static_cast<int>(PlaylistBgScaling::OriginalSize),
-                 tr("Draw the image at its original size, optionally limited by maximum size"));
-    addComboItem(m_backgroundPosition, tr("Top left"), static_cast<int>(PlaylistBgImagePosition::TopLeft));
-    addComboItem(m_backgroundPosition, tr("Top"), static_cast<int>(PlaylistBgImagePosition::Top));
-    addComboItem(m_backgroundPosition, tr("Top right"), static_cast<int>(PlaylistBgImagePosition::TopRight));
-    addComboItem(m_backgroundPosition, tr("Left"), static_cast<int>(PlaylistBgImagePosition::Left));
-    addComboItem(m_backgroundPosition, tr("Middle"), static_cast<int>(PlaylistBgImagePosition::Middle));
-    addComboItem(m_backgroundPosition, tr("Right"), static_cast<int>(PlaylistBgImagePosition::Right));
-    addComboItem(m_backgroundPosition, tr("Bottom left"), static_cast<int>(PlaylistBgImagePosition::BottomLeft));
-    addComboItem(m_backgroundPosition, tr("Bottom"), static_cast<int>(PlaylistBgImagePosition::Bottom));
-    addComboItem(m_backgroundPosition, tr("Bottom right"), static_cast<int>(PlaylistBgImagePosition::BottomRight));
-
-    m_backgroundMaxSize->setRange(0, 4096);
-    m_backgroundMaxSize->setSuffix(u" px"_s);
-    m_backgroundMaxSize->setSpecialValueText(tr("Disabled"));
-    m_backgroundBlur->setRange(0, 100);
-    m_backgroundBlur->setSuffix(u" px"_s);
-    m_backgroundOpacity->setRange(0, 100);
-    m_backgroundOpacity->setSuffix(u" %"_s);
-    m_backgroundFadeDuration->setRange(0, PixmapFadeController::MaxDurationMs);
-    m_backgroundFadeDuration->setSingleStep(50);
-    m_backgroundFadeDuration->setSuffix(u" ms"_s);
-    m_backgroundFadeDuration->addSpecialValue(0, tr("Disabled"));
-
-    m_customImage->setToolTip(tr("Path to the custom background image"));
-    m_backgroundImage->setToolTip(tr("Select which image source to use for the playlist background"));
-    m_backgroundCoverType->setToolTip(tr("Select which artwork type to use for current track artwork"));
-    m_backgroundTrackPreference->setToolTip(tr("Select which track supplies the background artwork"));
-    m_backgroundScaling->setToolTip(tr("Controls how the background image is scaled to the playlist area"));
-    m_backgroundPosition->setToolTip(tr("Alignment for original-size background images"));
-    m_backgroundMaxSize->setToolTip(tr("Maximum width or height for original-size background images"));
-    m_backgroundBlur->setToolTip(tr("Applies blur to the background image"));
-    m_backgroundOpacity->setToolTip(tr("Controls how strongly the background image is shown"));
-    m_backgroundFadeDuration->setToolTip(tr("Duration for fading between background images; set to 0 to disable"));
     m_startPlaybackOnSend->setToolTip(
         tr("After adding tracks to the front of or replacing the playback queue, start playback immediately"));
 
-    auto* background       = new QGroupBox(tr("Background Image"), this);
-    auto* backgroundLayout = new QGridLayout(background);
+    clicks->setVisible(!previewMode);
 
-    row = 0;
-    backgroundLayout->addWidget(Gui::createSectionHeader(tr("Image source"), this), row++, 0, 1, 2);
-    backgroundLayout->addWidget(new QLabel(tr("Source") + u":"_s, this), row, 0);
-    backgroundLayout->addWidget(m_backgroundImage, row++, 1);
-    backgroundLayout->addWidget(m_backgroundCoverTypeLabel, row, 0);
-    backgroundLayout->addWidget(m_backgroundCoverType, row++, 1);
-    backgroundLayout->addWidget(m_backgroundTrackPreferenceLabel, row, 0);
-    backgroundLayout->addWidget(m_backgroundTrackPreference, row++, 1);
-    backgroundLayout->addWidget(m_customImageLabel, row, 0);
-    backgroundLayout->addWidget(m_customImage, row++, 1);
-    backgroundLayout->addWidget(Gui::createSectionHeader(tr("Layout"), this), row++, 0, 1, 2);
-    backgroundLayout->addWidget(new QLabel(tr("Scale mode") + u":"_s, this), row, 0);
-    backgroundLayout->addWidget(m_backgroundScaling, row++, 1);
-    backgroundLayout->addWidget(new QLabel(tr("Alignment") + u":"_s, this), row, 0);
-    backgroundLayout->addWidget(m_backgroundPosition, row++, 1);
-    backgroundLayout->addWidget(new QLabel(tr("Maximum size") + u":"_s, this), row, 0);
-    backgroundLayout->addWidget(m_backgroundMaxSize, row++, 1);
-    backgroundLayout->addWidget(Gui::createSectionHeader(tr("Effects"), this), row++, 0, 1, 2);
-    backgroundLayout->addWidget(m_backgroundBlur, row++, 0, 1, 2);
-    backgroundLayout->addWidget(m_backgroundOpacity, row++, 0, 1, 2);
-    backgroundLayout->addWidget(m_backgroundFadeDuration, row, 0, 1, 2);
-    backgroundLayout->setColumnStretch(1, 1);
+    auto* generalLayout = new QGridLayout(generalPage);
+    generalLayout->addWidget(appearance, 0, 0);
+    generalLayout->addWidget(artwork, 0, 1);
+    generalLayout->addWidget(clicks, 1, 0, 1, 2);
+    generalLayout->setColumnStretch(0, 1);
+    generalLayout->setColumnStretch(1, 1);
+    generalLayout->setRowStretch(2, 1);
 
-    auto* layout{contentLayout()};
-    layout->addWidget(appearance, 0, 0);
-    layout->addWidget(clicks, 1, 0);
-    layout->addWidget(background, 0, 1, 2, 1);
-    layout->setColumnStretch(0, 1);
-    layout->setColumnStretch(1, 1);
-    layout->setRowStretch(2, 1);
+    auto* tabs = new QTabWidget(this);
+    tabs->addTab(generalPage, tr("General"));
+    tabs->addTab(m_background, tr("Background"));
+    contentLayout()->addWidget(tabs);
 
-    QObject::connect(browseAction, &QAction::triggered, this, &PlaylistConfigDialog::browseBackgroundImage);
-    QObject::connect(m_backgroundImage, &QComboBox::currentIndexChanged, this,
-                     &PlaylistConfigDialog::updateBackgroundControls);
-    QObject::connect(m_backgroundScaling, &QComboBox::currentIndexChanged, this,
-                     &PlaylistConfigDialog::updateBackgroundControls);
+    QObject::connect(m_stickyHeaders, &QCheckBox::toggled, m_stickySubheaders, &QWidget::setEnabled);
+    QObject::connect(m_artworkReflection, &QCheckBox::toggled, this, &PlaylistConfigDialog::updateReflectionControls);
     QObject::connect(m_doubleClick, &QComboBox::currentIndexChanged, this,
                      &PlaylistConfigDialog::updateStartPlaybackState);
     QObject::connect(m_middleClick, &QComboBox::currentIndexChanged, this,
@@ -243,52 +159,47 @@ PlaylistConfigDialog::PlaylistConfigDialog(PlaylistWidget* playlist, const QStri
 void PlaylistConfigDialog::setConfig(const PlaylistWidget::ConfigData& config)
 {
     m_header->setChecked(config.showHeader);
+    m_stickyHeaders->setChecked(config.stickyHeaders);
+    m_stickySubheaders->setChecked(config.stickySubheaders);
+    m_stickySubheaders->setEnabled(config.stickyHeaders);
+    m_stickyArtwork->setChecked(config.stickyArtwork);
     m_scrollBar->setChecked(config.showScrollBar);
     m_alternatingRows->setChecked(config.alternatingRows);
     m_imagePadding->setValue(config.imagePadding);
     m_imagePaddingTop->setValue(config.imagePaddingTop);
     m_artworkCornerRadius->setValue(config.artworkCornerRadius);
-    m_backgroundImage->setCurrentIndex(m_backgroundImage->findData(config.backgroundImageMode));
-    m_customImage->setText(config.backgroundCustomImage);
-    m_backgroundCoverType->setCurrentIndex(m_backgroundCoverType->findData(config.backgroundCoverType));
-    m_backgroundTrackPreference->setCurrentIndex(
-        m_backgroundTrackPreference->findData(static_cast<int>(config.backgroundTrackPreference)));
-    m_backgroundScaling->setCurrentIndex(m_backgroundScaling->findData(config.backgroundScaling));
-    m_backgroundPosition->setCurrentIndex(m_backgroundPosition->findData(config.backgroundPosition));
-    m_backgroundMaxSize->setValue(config.backgroundMaxSize);
-    m_backgroundBlur->setValue(config.backgroundBlur);
-    m_backgroundOpacity->setValue(config.backgroundOpacity);
-    m_backgroundFadeDuration->setValue(config.backgroundFadeDuration);
+    m_artworkReflection->setChecked(config.artworkReflection);
+    m_artworkReflectionHeight->setValue(config.artworkReflectionHeight);
+    m_artworkReflectionOpacity->setValue(config.artworkReflectionOpacity);
+    m_artworkReflectionGap->setValue(config.artworkReflectionGap);
+    m_background->setConfig(config.background);
     TrackSelectionController::setCurrentAction(m_doubleClick, static_cast<int>(config.doubleClickAction));
     TrackSelectionController::setCurrentAction(m_middleClick, static_cast<int>(config.middleClickAction));
     m_startPlaybackOnSend->setChecked(config.startPlaybackOnSend);
-    updateBackgroundControls();
+    updateReflectionControls();
     updateStartPlaybackState();
 }
 
 PlaylistWidget::ConfigData PlaylistConfigDialog::config() const
 {
     return {
-        .showHeader             = m_header->isChecked(),
-        .showScrollBar          = m_scrollBar->isChecked(),
-        .alternatingRows        = m_alternatingRows->isChecked(),
-        .imagePadding           = m_imagePadding->value(),
-        .imagePaddingTop        = m_imagePaddingTop->value(),
-        .artworkCornerRadius    = m_artworkCornerRadius->value(),
-        .backgroundImageMode    = m_backgroundImage->currentData().toInt(),
-        .backgroundCustomImage  = m_customImage->text(),
-        .backgroundCoverType    = m_backgroundCoverType->currentData().toInt(),
-        .backgroundScaling      = m_backgroundScaling->currentData().toInt(),
-        .backgroundPosition     = m_backgroundPosition->currentData().toInt(),
-        .backgroundMaxSize      = m_backgroundMaxSize->value(),
-        .backgroundBlur         = m_backgroundBlur->value(),
-        .backgroundOpacity      = m_backgroundOpacity->value(),
-        .backgroundFadeDuration = m_backgroundFadeDuration->value(),
-        .backgroundTrackPreference
-        = static_cast<TrackDisplayPreference>(m_backgroundTrackPreference->currentData().toInt()),
-        .doubleClickAction   = static_cast<TrackAction>(m_doubleClick->currentData().toInt()),
-        .middleClickAction   = static_cast<TrackAction>(m_middleClick->currentData().toInt()),
-        .startPlaybackOnSend = m_startPlaybackOnSend->isChecked(),
+        .showHeader               = m_header->isChecked(),
+        .stickyHeaders            = m_stickyHeaders->isChecked(),
+        .stickySubheaders         = m_stickySubheaders->isChecked(),
+        .stickyArtwork            = m_stickyArtwork->isChecked(),
+        .showScrollBar            = m_scrollBar->isChecked(),
+        .alternatingRows          = m_alternatingRows->isChecked(),
+        .imagePadding             = m_imagePadding->value(),
+        .imagePaddingTop          = m_imagePaddingTop->value(),
+        .artworkCornerRadius      = m_artworkCornerRadius->value(),
+        .artworkReflection        = m_artworkReflection->isChecked(),
+        .artworkReflectionHeight  = m_artworkReflectionHeight->value(),
+        .artworkReflectionOpacity = m_artworkReflectionOpacity->value(),
+        .artworkReflectionGap     = m_artworkReflectionGap->value(),
+        .background               = m_background->config(),
+        .doubleClickAction        = static_cast<TrackAction>(m_doubleClick->currentData().toInt()),
+        .middleClickAction        = static_cast<TrackAction>(m_middleClick->currentData().toInt()),
+        .startPlaybackOnSend      = m_startPlaybackOnSend->isChecked(),
     };
 }
 
@@ -297,49 +208,22 @@ void PlaylistConfigDialog::mergeExternalConfig(const PlaylistWidget::ConfigData&
 {
     mergeExternalFields(
         previous, current, &PlaylistWidget::ConfigData::showHeader, &PlaylistWidget::ConfigData::showScrollBar,
-        &PlaylistWidget::ConfigData::alternatingRows, &PlaylistWidget::ConfigData::imagePadding,
-        &PlaylistWidget::ConfigData::imagePaddingTop, &PlaylistWidget::ConfigData::artworkCornerRadius,
-        &PlaylistWidget::ConfigData::backgroundImageMode, &PlaylistWidget::ConfigData::backgroundCustomImage,
-        &PlaylistWidget::ConfigData::backgroundCoverType, &PlaylistWidget::ConfigData::backgroundScaling,
-        &PlaylistWidget::ConfigData::backgroundPosition, &PlaylistWidget::ConfigData::backgroundMaxSize,
-        &PlaylistWidget::ConfigData::backgroundBlur, &PlaylistWidget::ConfigData::backgroundOpacity,
-        &PlaylistWidget::ConfigData::backgroundFadeDuration, &PlaylistWidget::ConfigData::backgroundTrackPreference,
+        &PlaylistWidget::ConfigData::stickyHeaders, &PlaylistWidget::ConfigData::stickySubheaders,
+        &PlaylistWidget::ConfigData::stickyArtwork, &PlaylistWidget::ConfigData::alternatingRows,
+        &PlaylistWidget::ConfigData::imagePadding, &PlaylistWidget::ConfigData::imagePaddingTop,
+        &PlaylistWidget::ConfigData::artworkCornerRadius, &PlaylistWidget::ConfigData::artworkReflection,
+        &PlaylistWidget::ConfigData::artworkReflectionHeight, &PlaylistWidget::ConfigData::artworkReflectionOpacity,
+        &PlaylistWidget::ConfigData::artworkReflectionGap, &PlaylistWidget::ConfigData::background,
         &PlaylistWidget::ConfigData::doubleClickAction, &PlaylistWidget::ConfigData::middleClickAction,
         &PlaylistWidget::ConfigData::startPlaybackOnSend);
 }
 
-void PlaylistConfigDialog::browseBackgroundImage()
+void PlaylistConfigDialog::updateReflectionControls() const
 {
-    const QString initialPath = m_customImage->text().isEmpty() ? QDir::homePath() : m_customImage->text();
-    const QString filename = QFileDialog::getOpenFileName(this, tr("Choose Background Image"), initialPath,
-                                                          tr("Images (*.png *.jpg *.jpeg *.webp *.bmp);;All files (*)"),
-                                                          nullptr, QFileDialog::DontResolveSymlinks);
-    if(!filename.isEmpty()) {
-        m_customImage->setText(filename);
-    }
-}
-
-void PlaylistConfigDialog::updateBackgroundControls() const
-{
-    const auto imageMode   = static_cast<PlaylistBgImage>(m_backgroundImage->currentData().toInt());
-    const bool hasImage    = imageMode != PlaylistBgImage::None;
-    const bool customImage = imageMode == PlaylistBgImage::Custom;
-    const bool albumCover  = imageMode == PlaylistBgImage::AlbumCover;
-    const bool originalSize
-        = static_cast<PlaylistBgScaling>(m_backgroundScaling->currentData().toInt()) == PlaylistBgScaling::OriginalSize;
-
-    m_backgroundCoverTypeLabel->setVisible(albumCover);
-    m_backgroundCoverType->setVisible(albumCover);
-    m_backgroundTrackPreferenceLabel->setVisible(albumCover);
-    m_backgroundTrackPreference->setVisible(albumCover);
-    m_customImageLabel->setVisible(customImage);
-    m_customImage->setVisible(customImage);
-    m_backgroundScaling->setEnabled(hasImage);
-    m_backgroundPosition->setEnabled(hasImage && originalSize);
-    m_backgroundMaxSize->setEnabled(hasImage && originalSize);
-    m_backgroundBlur->setEnabled(hasImage);
-    m_backgroundOpacity->setEnabled(hasImage);
-    m_backgroundFadeDuration->setEnabled(hasImage);
+    const bool enabled = m_artworkReflection->isChecked();
+    m_artworkReflectionHeight->setEnabled(enabled);
+    m_artworkReflectionOpacity->setEnabled(enabled);
+    m_artworkReflectionGap->setEnabled(enabled);
 }
 
 void PlaylistConfigDialog::updateStartPlaybackState() const

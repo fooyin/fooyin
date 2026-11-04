@@ -37,6 +37,12 @@ public:
         return m_dbProvider.db();
     }
 
+protected:
+    [[nodiscard]] const DbConnectionProvider& dbProvider() const
+    {
+        return m_dbProvider;
+    }
+
 private:
     DbConnectionProvider m_dbProvider;
 };

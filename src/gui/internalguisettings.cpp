@@ -29,6 +29,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/iconloader.h>
+#include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
@@ -100,6 +101,9 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     qRegisterMetaType<Fooyin::ResolvedAppStyle>("ResolvedAppStyle");
 
     m_settings->createTempSetting<LayoutEditing>(false);
+    m_settings->createSetting<DockWidgetPalette>(false, u"Interface/DockWidgetPalette"_s);
+    m_settings->createSetting<SettingsSearchBarPosition>(
+        static_cast<int>(SettingsDialogController::SearchBarPosition::Top), u"Interface/SettingsSearchBarPosition"_s);
     m_settings->createSetting<StartupBehaviour>(3, u"Interface/StartupBehaviour"_s);
     m_settings->createSetting<WaitForTracks>(true, u"Interface/WaitForTracks"_s);
     m_settings->createSetting<IconTheme>(0, u"Theme/IconTheme"_s);
@@ -120,7 +124,9 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<LockSplitterHandles>(false, u"Interface/LockSplitterHandles"_s);
     m_settings->createSetting<SplitterHandleSize>(-1, u"Interface/SplitterHandleSize"_s);
     m_settings->createSetting<ResizeLockedAdjacentOnly>(true, u"Interface/ResizeLockedAdjacentOnly"_s);
-    m_settings->createSetting<VolumeStep>(0.05, u"Controls/VolumeStep"_s);
+    m_settings->createSetting<VolumeStep>(1.0, u"Controls/VolumeStep"_s);
+    m_settings->createSetting<VolumeControlStepSmall>(1.0, u"Controls/VolumeControlStepSmall"_s);
+    m_settings->createSetting<VolumeControlStepLarge>(5.0, u"Controls/VolumeControlStepLarge"_s);
     m_settings->createSetting<SearchSuccessClear>(true, u"Searching/ClearOnSuccess"_s);
     m_settings->createSetting<SearchAutoDelay>(1, u"Searching/AutoDelay"_s);
     m_settings->createSetting<SearchPlaylistName>(SearchWidget::defaultPlaylistName(), u"Searching/PlaylistName"_s);
@@ -142,6 +148,10 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<RatingEmptyStarSymbol>(defaultRatingEmptyStarSymbol(),
                                                      u"Interface/RatingEmptyStarSymbol"_s);
     m_settings->createSetting<SeekBarMouseFocus>(false, u"Interface/SeekBarMouseFocus"_s);
+    m_settings->createSetting<ABRepeatMarkerWidth>(1.5, u"Interface/ABRepeatMarkerWidth"_s);
+    m_settings->createSetting<ABRepeatMarkerColourA>(QVariant{}, u"Interface/ABRepeatMarkerColourA"_s);
+    m_settings->createSetting<ABRepeatMarkerColourB>(QVariant{}, u"Interface/ABRepeatMarkerColourB"_s);
+    m_settings->createSetting<ABRepeatSeekOnAChange>(true, u"Playback/ABRepeatSeekOnAChange"_s);
     m_settings->createSetting<LoveHeartSize>(15, u"Interface/LoveHeartSize"_s);
     m_settings->createSetting<LoveHeartColour>(QVariant{}, u"Interface/LoveHeartColour"_s);
     m_settings->createSetting<RatingOneStarColour>(QVariant{}, u"Interface/RatingOneStarColour"_s);
@@ -152,15 +162,13 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<UnlovedHeartColour>(QVariant{}, u"Interface/UnlovedHeartColour"_s);
     m_settings->createSetting<UnratedStarColour>(QVariant{}, u"Interface/UnratedStarColour"_s);
     m_settings->createSetting<PlaybackQueueFollowCurrent>(true, u"PlaybackQueue/FollowCurrent"_s);
-    m_settings->createSetting<PlaylistShowQueueIndexes>(false, u"Playlist/ShowQueueIndexes"_s);
+    m_settings->createSetting<PlaylistShowQueueIndexes>(true, u"Playlist/ShowQueueIndexes"_s);
     m_settings->createSetting<RatingEditorOnlyOnHover>(false, u"Playlist/RatingEditorOnlyOnHover"_s);
     m_settings->createSetting<LoveEditorOnlyOnHover>(false, u"Playlist/LoveEditorOnlyOnHover"_s);
     m_settings->createSetting<ConfirmPlaylistRemoval>(true, u"Playlist/ConfirmRemoval"_s);
 
+    m_settings->createSetting<Internal::GlobalBackground>(QVariantMap{}, u"Interface/Background"_s);
     m_settings->createSetting<Internal::EditingMenuLevels>(2, u"Interface/EditingMenuLevels"_s);
-    m_settings->createSetting<Internal::PlaylistAltColours>(true, u"PlaylistWidget/AlternatingColours"_s);
-    m_settings->createSetting<Internal::PlaylistHeader>(true, u"PlaylistWidget/Header"_s);
-    m_settings->createSetting<Internal::PlaylistScrollBar>(true, u"PlaylistWidget/Scrollbar"_s);
     m_settings->createSetting<Internal::StatusShowIcon>(false, u"StatusWidget/ShowIcon"_s);
     m_settings->createSetting<Internal::StatusShowSelection>(false, u"StatusWidget/ShowSelection"_s);
     m_settings->createSetting<Internal::StatusShowPlaylist>(false, u"StatusWidget/ShowPlaylist"_s);
@@ -189,32 +197,12 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::ArtistCoverFallbackToFront>(false, u"Artwork/ArtistFallbackToFront"_s);
     m_settings->createSetting<Internal::TrackCoverThumbnailGroupScript>(
         u"[%date%|][%albumartist%|][%artist%|]$if2(%album%,%path%)"_s, u"Artwork/ThumbnailGroupScript"_s);
-    m_settings->createSetting<Internal::PlaylistImagePadding>(5, u"PlaylistWidget/ImagePadding"_s);
-    m_settings->createSetting<Internal::PlaylistImagePaddingTop>(0, u"PlaylistWidget/ImagePaddingTop"_s);
-    m_settings->createSetting<Internal::PlaylistArtworkCornerRadius>(0, u"PlaylistWidget/ArtworkCornerRadius"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundImageMode>(static_cast<int>(PlaylistBgImage::None),
-                                                                     u"PlaylistWidget/BackgroundImage"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundCustomImage>(QString{},
-                                                                       u"PlaylistWidget/BackgroundCustomImage"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundScaling>(
-        static_cast<int>(PlaylistBgScaling::ScaledAndCropped), u"PlaylistWidget/BackgroundScaling"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundPosition>(static_cast<int>(PlaylistBgImagePosition::Middle),
-                                                                    u"PlaylistWidget/BackgroundPosition"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundMaxSize>(0, u"PlaylistWidget/BackgroundMaxSize"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundBlur>(0, u"PlaylistWidget/BackgroundBlur"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundOpacity>(40, u"PlaylistWidget/BackgroundOpacity"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundFadeDuration>(0, u"PlaylistWidget/BackgroundFadeDuration"_s);
-    m_settings->createSetting<Internal::PlaylistBackgroundCoverType>(static_cast<int>(Track::Cover::Front),
-                                                                     u"PlaylistWidget/BackgroundCoverType"_s);
     m_settings->createSetting<Internal::PlaylistPlayingRowColour>(QVariant{}, u"PlaylistWidget/PlayingRowColour"_s);
     m_settings->createSetting<Internal::PlaylistPlayingRowFont>(QVariant{}, u"PlaylistWidget/PlayingRowFont"_s);
     m_settings->createSetting<Internal::PixmapCacheSize>(PixmapCacheSize, u"Interface/PixmapCacheSize"_s);
     m_settings->createSetting<Internal::EditableLayoutMargin>(-1, u"Interface/EditableLayoutMargin"_s);
     m_settings->createSetting<Internal::ShowTrayIcon>(false, u"Interface/ShowTrayIcon"_s);
     m_settings->createSetting<Internal::TrayOnClose>(false, u"Interface/TrayOnClose"_s);
-    m_settings->createSetting<Internal::PlaylistMiddleClick>(0, u"PlaylistWidget/MiddleClickBehaviour"_s);
-    m_settings->createSetting<Internal::PlaylistDoubleClick>(5, u"PlaylistWidget/DoubleClickBehaviour"_s);
-    m_settings->createSetting<Internal::PlaylistStartPlaybackOnSend>(false, u"PlaylistWidget/StartPlaybackOnSend"_s);
     m_settings->createSetting<Internal::LibTreeIconSize>(QSize{36, 36}, u"LibraryTree/IconSize"_s);
     m_settings->createSetting<Internal::ArtworkSaveMethods>(QVariant::fromValue(defaultArtworkSaveMethods()),
                                                             u"Artwork/SaveMethods"_s);
@@ -229,6 +217,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<DragOnlyAfterSelect>(true, u"Interface/DragOnlyAfterSelect"_s);
     m_settings->createSetting<Internal::PlaylistTrackPreloadCount>(2000, u"Playlist/TrackPreloadCount"_s);
     m_settings->createSetting<Internal::PlaylistInlineTagEditing>(false, u"PlaylistWidget/InlineTagEditing"_s);
+    m_settings->createSetting<Internal::PlaylistInlineEditDelayMs>(600, u"PlaylistWidget/InlineEditDelayMs"_s);
     m_settings->createSetting<Internal::ContextMenuTrackDisabledSections>(
         QStringList{QString::fromLatin1(Constants::Actions::CopyLocation),
                     QString::fromLatin1(Constants::Actions::CopyDirectoryPath),
@@ -275,5 +264,18 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
         static_cast<int>(NowPlayingOutputService::OutputDefaultOptions), u"NowPlayingOutput/Options"_s);
     m_settings->createSetting<Internal::NowPlayingOutputAppendLineLimit>(0, u"NowPlayingOutput/AppendLineLimit"_s);
     m_settings->createSetting<Internal::OutputDeviceRefreshMs>(0, u"Engine/OutputDeviceRefreshMs"_s);
+
+    const auto scriptEditorFont = m_settings->fileValue(u"Interface/ScriptEditor/Font"_s);
+    if(scriptEditorFont.canConvert<QFont>()) {
+        auto theme           = m_settings->value<CustomTheme>().value<FyTheme>();
+        const auto className = u"Fooyin::ScriptEditorTextEdit"_s;
+        if(!theme.fonts.contains(className)) {
+            theme.fonts.insert(className, scriptEditorFont.value<QFont>());
+            m_settings->set<CustomTheme>(QVariant::fromValue(theme));
+        }
+    }
+    m_settings->fileRemove(u"Interface/ScriptEditor/Font"_s);
+    m_settings->fileRemove(u"Interface/ScriptEditor/FontFamily"_s);
+    m_settings->fileRemove(u"Interface/ScriptEditor/FontSize"_s);
 }
 } // namespace Fooyin

@@ -21,7 +21,10 @@
 
 #include <utils/settings/settingsdialogcontroller.h>
 
+#include <QCoreApplication>
+#include <QFileInfo>
 #include <QSettings>
+#include <QThread>
 
 #include <optional>
 #include <ranges>
@@ -60,22 +63,34 @@ std::optional<QVariant> loadedSettingValue(const SettingsEntry& setting, const Q
 
 SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
     : QObject{parent}
-    , m_settingsFile{new QSettings(settingsPath, QSettings::IniFormat, this)}
+    , m_settingsPath{QFileInfo{settingsPath}.absoluteFilePath()}
+    , m_notifying{false}
+    , m_notificationScheduled{false}
     , m_settingsDialog{nullptr}
 { }
 
 void SettingsManager::createSettingsDialog(QMainWindow* mainWindow)
 {
-    m_settingsDialog = new SettingsDialogController(this, mainWindow);
+    Q_ASSERT(QCoreApplication::instance() && QThread::currentThread() == qApp->thread());
+    Q_ASSERT(QThread::currentThread() == thread());
+
+    if(!m_settingsDialog) {
+        m_settingsDialog = new SettingsDialogController(this, mainWindow);
+    }
 }
 
 SettingsDialogController* SettingsManager::settingsDialog() const
 {
+    Q_ASSERT(QCoreApplication::instance() && QThread::currentThread() == qApp->thread());
+    Q_ASSERT(QThread::currentThread() == thread());
+
     return m_settingsDialog;
 }
 
 bool SettingsManager::settingsHaveChanged() const
 {
+    const std::shared_lock lock{m_lock};
+
     return std::ranges::any_of(m_settings, [](const auto& setting) {
         return setting.second && setting.second->wasChanged() && !setting.second->isTemporary();
     });
@@ -93,27 +108,25 @@ void SettingsManager::storeAllSettings()
 
 void SettingsManager::resetAllSettings()
 {
-    std::unique_lock lock(m_lock);
+    std::unique_lock lock{m_lock};
+    {
+        QSettings settings{m_settingsPath, QSettings::IniFormat};
+        settings.clear();
+    }
 
-    m_settingsFile->clear();
-
-    std::vector<SettingsEntry*> resetSettings;
-    for(SettingsEntry* setting : m_settings | std::views::values) {
-        if(setting && setting->reset()) {
-            resetSettings.emplace_back(setting);
+    for(const auto& setting : m_settings | std::views::values) {
+        if((*setting).reset()) {
+            m_notifications.emplace_back(setting.get(), setting->value());
         }
     }
 
     lock.unlock();
-
-    for(SettingsEntry* setting : resetSettings) {
-        setting->notifySubscribers();
-    }
+    notifySubscribers();
 }
 
 QVariant SettingsManager::value(QAnyStringView key) const
 {
-    const std::shared_lock lock(m_lock);
+    const std::shared_lock lock{m_lock};
 
     auto settingIt = settingEntry(key);
     if(settingIt == m_settings.cend()) {
@@ -124,104 +137,96 @@ QVariant SettingsManager::value(QAnyStringView key) const
 
 bool SettingsManager::set(QAnyStringView key, const QVariant& value)
 {
-    std::unique_lock lock(m_lock);
+    std::unique_lock lock{m_lock};
 
-    auto settingIt = settingEntry(key);
-    if(settingIt == m_settings.cend()) {
+    const auto it = settingEntry(key);
+    if(it == m_settings.cend() || !it->second->setValue(value)) {
         return false;
     }
-    const auto& [_, setting] = *settingIt;
 
-    const bool success = setting && setting->setValue(value);
-
+    SettingsEntry* setting = it->second.get();
+    m_notifications.emplace_back(setting, setting->value());
     lock.unlock();
-
-    if(success) {
-        setting->notifySubscribers();
-    }
-
-    return success;
+    notifySubscribers();
+    return true;
 }
 
 bool SettingsManager::reset(QAnyStringView key)
 {
-    std::unique_lock lock(m_lock);
+    std::unique_lock lock{m_lock};
 
-    auto settingIt = settingEntry(key);
-    if(settingIt == m_settings.cend()) {
+    const auto it = settingEntry(key);
+    if(it == m_settings.cend() || !it->second->reset()) {
         return false;
     }
-    const auto& [_, setting] = *settingIt;
 
-    const bool success = setting->reset();
-
+    SettingsEntry* setting = it->second.get();
+    fileRemove(setting->key());
+    m_notifications.emplace_back(setting, setting->value());
     lock.unlock();
-
-    if(success) {
-        fileRemove(setting->key());
-        setting->notifySubscribers();
-    }
-
-    return success;
+    notifySubscribers();
+    return true;
 }
 
 bool SettingsManager::contains(QAnyStringView key) const
 {
-    const std::shared_lock lock(m_lock);
+    const std::shared_lock lock{m_lock};
 
     return std::ranges::any_of(m_settings, [key](const auto& setting) { return setting.second->key() == key; });
 }
 
 QVariant SettingsManager::fileValue(QAnyStringView key, const QVariant& defaultValue) const
 {
-    return m_settingsFile->value(key, defaultValue);
+    const QSettings settings{m_settingsPath, QSettings::IniFormat};
+    return settings.value(key, defaultValue);
 }
 
 bool SettingsManager::fileSet(QAnyStringView key, const QVariant& value)
 {
-    if(fileValue(key, {}) == value) {
+    QSettings settings{m_settingsPath, QSettings::IniFormat};
+    if(settings.value(key) == value) {
         return false;
     }
 
-    m_settingsFile->setValue(key, value);
+    settings.setValue(key, value);
 
     return true;
 }
 
 bool SettingsManager::fileContains(QAnyStringView key) const
 {
-    return m_settingsFile->contains(key);
+    const QSettings settings{m_settingsPath, QSettings::IniFormat};
+    return settings.contains(key);
 }
 
 void SettingsManager::fileRemove(QAnyStringView key)
 {
-    m_settingsFile->remove(key);
+    QSettings settings{m_settingsPath, QSettings::IniFormat};
+    settings.remove(key);
 }
 
 void SettingsManager::createSetting(const QString& key, const QVariant& value)
 {
-    const std::unique_lock lock(m_lock);
+    const std::unique_lock lock{m_lock};
 
     if(settingExists(key)) {
         qCWarning(SETTINGS) << "Setting has already been registered:" << key;
         return;
     }
 
-    auto* setting = m_settings.emplace(key, new SettingsEntry(key, value, this)).first->second;
-    checkLoadSetting(setting);
+    addSetting(key, key, value, Settings::Variant, false);
 }
 
 void SettingsManager::createTempSetting(const QString& key, const QVariant& value)
 {
-    const std::unique_lock lock(m_lock);
+    const std::unique_lock lock{m_lock};
 
     if(settingExists(key)) {
         qCWarning(SETTINGS) << "Setting has already been registered:" << key;
         return;
     }
 
-    auto* setting = m_settings.emplace(key, new SettingsEntry(key, value, this)).first->second;
-    setting->setIsTemporary(true);
+    addSetting(key, key, value, Settings::Variant, true);
 }
 
 SettingsManager::SettingsMap::const_iterator SettingsManager::settingEntry(QAnyStringView key) const
@@ -247,29 +252,83 @@ void SettingsManager::checkLoadSetting(SettingsEntry* setting) const
         return;
     }
 
-    if(!m_settingsFile->contains(keyString)) {
+    const QSettings settings{m_settingsPath, QSettings::IniFormat};
+    if(!settings.contains(keyString)) {
         return;
     }
 
-    if(const auto value = loadedSettingValue(*setting, m_settingsFile->value(keyString))) {
+    if(const auto value = loadedSettingValue(*setting, settings.value(keyString))) {
         setting->setValueSilently(*value);
     }
 }
 
 void SettingsManager::saveSettings(bool onlyChanged)
 {
-    const std::shared_lock lock(m_lock);
+    const std::shared_lock lock{m_lock};
+
+    QSettings settings{m_settingsPath, QSettings::IniFormat};
 
     for(const auto& setting : m_settings | std::views::values) {
         if(setting && (!onlyChanged || setting->wasChanged()) && !setting->isTemporary()) {
             const auto keyString = setting->key();
             if(!keyString.isEmpty()) {
-                m_settingsFile->setValue(keyString, setting->value());
+                settings.setValue(keyString, setting->value());
             }
         }
     }
 
-    m_settingsFile->sync();
+    settings.sync();
+}
+
+void SettingsManager::addSetting(const QString& mapKey, const QString& key, const QVariant& value, Settings::Type type,
+                                 bool isTemporary)
+{
+    auto setting = std::make_unique<SettingsEntry>(key, value, type);
+    setting->moveToThread(thread());
+    setting->setIsTemporary(isTemporary);
+    if(!isTemporary) {
+        checkLoadSetting(setting.get());
+    }
+    m_settings.emplace(mapKey, std::move(setting));
+}
+
+void SettingsManager::notifySubscribers()
+{
+    if(QThread::currentThread() == thread()) {
+        dispatchNotifications();
+        return;
+    }
+
+    {
+        const std::unique_lock lock{m_lock};
+        if(m_notifications.empty() || m_notifying || m_notificationScheduled) {
+            return;
+        }
+        m_notificationScheduled = true;
+    }
+
+    QMetaObject::invokeMethod(this, &SettingsManager::dispatchNotifications, Qt::QueuedConnection);
+}
+
+void SettingsManager::dispatchNotifications()
+{
+    std::unique_lock lock{m_lock};
+
+    m_notificationScheduled = false;
+    if(m_notifying) {
+        return;
+    }
+    m_notifying = true;
+
+    while(!m_notifications.empty()) {
+        Notification notification = std::move(m_notifications.front());
+        m_notifications.pop_front();
+        lock.unlock();
+        notification.setting->notifySubscribers(notification.value);
+        lock.lock();
+    }
+
+    m_notifying = false;
 }
 } // namespace Fooyin
 

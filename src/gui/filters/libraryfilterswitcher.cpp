@@ -29,13 +29,15 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QComboBox>
+#include <QContextMenuEvent>
+#include <QHBoxLayout>
 #include <QInputDialog>
 #include <QJsonObject>
+#include <QLabel>
 #include <QLineEdit>
 #include <QMenu>
 #include <QSignalBlocker>
 #include <QStringList>
-#include <QVBoxLayout>
 
 using namespace Qt::StringLiterals;
 
@@ -46,18 +48,27 @@ LibraryFilterSwitcher::LibraryFilterSwitcher(LibraryFilterRegistry* registry, Mu
     , m_registry{registry}
     , m_library{library}
     , m_settings{settings}
+    , m_label{new QLabel(tr("Filter") + u": "_s, this)}
     , m_presets{new QComboBox(this)}
     , m_allLibraryName{tr("All")}
+    , m_showLabel{true}
     , m_rememberLastFilter{false}
     , m_lastFilterId{-1}
 {
-    auto* layout = new QVBoxLayout(this);
+    auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins({});
+    layout->addWidget(m_label);
     layout->addWidget(m_presets);
+
+    m_label->setContentsMargins(5, 0, 0, 0);
+    m_label->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QObject::connect(m_presets, &QComboBox::currentIndexChanged, this, [this]() { activateCurrent(); });
     m_presets->setContextMenuPolicy(Qt::CustomContextMenu);
-    QObject::connect(m_presets, &QWidget::customContextMenuRequested, this, &LibraryFilterSwitcher::showContextMenu);
+    QObject::connect(m_label, &QWidget::customContextMenuRequested, this,
+                     [this](const QPoint& pos) { showContextMenu(m_label->mapToGlobal(pos)); });
+    QObject::connect(m_presets, &QWidget::customContextMenuRequested, this,
+                     [this](const QPoint& pos) { showContextMenu(m_presets->mapToGlobal(pos)); });
     QObject::connect(m_registry, &RegistryBase::itemAdded, this, [this]() { populate(); });
     QObject::connect(m_registry, &LibraryFilterRegistry::libraryFilterChanged, this,
                      &LibraryFilterSwitcher::filterChanged);
@@ -71,6 +82,8 @@ LibraryFilterSwitcher::LibraryFilterSwitcher(LibraryFilterRegistry* registry, Mu
         populate();
     });
     QObject::connect(m_library, &MusicLibrary::activeLibraryFiltersChanged, this, [this]() { populate(); });
+
+    setShowLabel(m_showLabel);
 }
 
 QString LibraryFilterSwitcher::name() const
@@ -85,6 +98,7 @@ QString LibraryFilterSwitcher::layoutName() const
 
 void LibraryFilterSwitcher::saveLayoutData(QJsonObject& layout)
 {
+    layout["ShowLabel"_L1]          = m_showLabel;
     layout["AllLibraryName"_L1]     = m_allLibraryName;
     layout["RememberLastFilter"_L1] = m_rememberLastFilter;
     if(m_rememberLastFilter) {
@@ -94,15 +108,44 @@ void LibraryFilterSwitcher::saveLayoutData(QJsonObject& layout)
 
 void LibraryFilterSwitcher::loadLayoutData(const QJsonObject& layout)
 {
+    setShowLabel(layout.value("ShowLabel"_L1).toBool());
     if(const QString name = layout.value("AllLibraryName"_L1).toString().trimmed(); !name.isEmpty()) {
         m_allLibraryName = name;
     }
-    if(layout.contains("RememberLastFilter"_L1)) {
-        m_rememberLastFilter = layout.value("RememberLastFilter"_L1).toBool();
-    }
-    if(layout.contains("LastFilter"_L1)) {
-        m_lastFilterId = layout.value("LastFilter"_L1).toInt(-1);
-    }
+
+    m_rememberLastFilter = layout.value("RememberLastFilter"_L1).toBool(m_rememberLastFilter);
+    m_lastFilterId       = layout.value("LastFilter"_L1).toInt(m_lastFilterId);
+}
+
+void LibraryFilterSwitcher::populateContextMenu(QMenu* menu)
+{
+    auto* showLabel = menu->addAction(tr("Show label"));
+    showLabel->setCheckable(true);
+    showLabel->setChecked(m_showLabel);
+    QObject::connect(showLabel, &QAction::triggered, this, &LibraryFilterSwitcher::setShowLabel);
+
+    auto* rename = menu->addAction(tr("Rename ‘All’ filter"));
+    QObject::connect(rename, &QAction::triggered, this, [this]() {
+        bool ok{false};
+        const QString newName = QInputDialog::getText(this, tr("Rename ‘All’ Filter"), tr("Name:"), QLineEdit::Normal,
+                                                      m_allLibraryName, &ok);
+
+        if(ok && !newName.trimmed().isEmpty()) {
+            m_allLibraryName = newName.trimmed();
+            populate();
+        }
+    });
+
+    auto* rememberLast = menu->addAction(tr("Remember last filter"));
+    rememberLast->setCheckable(true);
+    rememberLast->setChecked(m_rememberLastFilter);
+    QObject::connect(rememberLast, &QAction::triggered, this, [this](bool checked) { m_rememberLastFilter = checked; });
+
+    menu->addSeparator();
+
+    auto* manage = menu->addAction(tr("Manage library filters…"));
+    QObject::connect(manage, &QAction::triggered, this,
+                     [this]() { m_settings->settingsDialog()->openAtPage(Id{Constants::Page::Filters}); });
 }
 
 void LibraryFilterSwitcher::finalise()
@@ -119,6 +162,11 @@ void LibraryFilterSwitcher::finalise()
     }
 }
 
+void LibraryFilterSwitcher::contextMenuEvent(QContextMenuEvent* event)
+{
+    showContextMenu(event->globalPos());
+}
+
 void LibraryFilterSwitcher::populate()
 {
     const QSignalBlocker blocker{m_presets};
@@ -128,7 +176,7 @@ void LibraryFilterSwitcher::populate()
     const LibraryFilterList activeFilters = m_library->activeLibraryFilters();
     int activeIndex{0};
     for(const LibraryFilter& preset : m_registry->items()) {
-        if(!preset.enabled) {
+        if(!preset.isEnabled) {
             continue;
         }
         m_presets->addItem(preset.name, preset.id);
@@ -153,7 +201,7 @@ void LibraryFilterSwitcher::filterChanged(const LibraryFilter& filter)
     auto activeFilters = m_library->activeLibraryFilters();
     const auto active  = std::ranges::find(activeFilters, filter.id, &LibraryFilter::id);
     if(active != activeFilters.end()) {
-        if(filter.enabled) {
+        if(filter.isEnabled) {
             *active = filter;
         }
         else {
@@ -178,35 +226,19 @@ void LibraryFilterSwitcher::activateCurrent()
     }
 }
 
-void LibraryFilterSwitcher::showContextMenu(const QPoint& pos)
+void LibraryFilterSwitcher::setShowLabel(bool showLabel)
+{
+    m_showLabel = showLabel;
+    m_label->setVisible(m_showLabel);
+    updateGeometry();
+}
+
+void LibraryFilterSwitcher::showContextMenu(const QPoint& globalPos)
 {
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
-
-    auto* rename = menu->addAction(tr("Rename 'All' filter"));
-    QObject::connect(rename, &QAction::triggered, this, [this]() {
-        bool ok{false};
-        const QString newName = QInputDialog::getText(this, tr("Rename 'All' Filter"), tr("Name:"), QLineEdit::Normal,
-                                                      m_allLibraryName, &ok);
-
-        if(ok && !newName.trimmed().isEmpty()) {
-            m_allLibraryName = newName.trimmed();
-            populate();
-        }
-    });
-
-    auto* rememberLast = menu->addAction(tr("Remember last filter"));
-    rememberLast->setCheckable(true);
-    rememberLast->setChecked(m_rememberLastFilter);
-    QObject::connect(rememberLast, &QAction::triggered, this, [this](bool checked) { m_rememberLastFilter = checked; });
-
-    menu->addSeparator();
-
-    auto* manage = menu->addAction(tr("Manage library filters…"));
-    QObject::connect(manage, &QAction::triggered, this,
-                     [this]() { m_settings->settingsDialog()->openAtPage(Id{Constants::Page::Filters}); });
-
-    menu->popup(m_presets->mapToGlobal(pos));
+    populateContextMenu(menu);
+    menu->popup(globalPos);
 }
 } // namespace Fooyin::Filters
 

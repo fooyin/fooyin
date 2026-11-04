@@ -22,6 +22,7 @@
 #include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/widgets/toolbutton.h>
 #include <utils/actions/actionmanager.h>
@@ -30,14 +31,12 @@
 #include <utils/utils.h>
 
 #include <QAction>
-#include <QActionGroup>
 #include <QBoxLayout>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QMenu>
 #include <QResizeEvent>
-#include <QToolBar>
 
 using namespace Qt::StringLiterals;
 
@@ -189,40 +188,18 @@ void PlayerControl::populateContextMenu(QMenu* menu)
     setupButtonControl(tr("Show Random Track"), m_randomTrack, &m_showRandomTrack);
     menu->addSeparator();
 
-    auto* orientationGroup = new QActionGroup(menu);
-    auto* automatic        = new QAction(tr("Automatic"), orientationGroup);
-    auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
-    auto* vertical         = new QAction(tr("Vertical"), orientationGroup);
-
-    auto* orientationMenu = new QMenu(tr("Orientation"), menu);
-    orientationMenu->addAction(automatic);
-    orientationMenu->addAction(horizontal);
-    orientationMenu->addAction(vertical);
-
-    automatic->setCheckable(true);
-    horizontal->setCheckable(true);
-    vertical->setCheckable(true);
-
-    automatic->setChecked(m_autoOrientation);
-    horizontal->setChecked(!m_autoOrientation && m_orientation == Qt::Horizontal);
-    vertical->setChecked(!m_autoOrientation && m_orientation == Qt::Vertical);
-
-    QObject::connect(automatic, &QAction::triggered, this, [this]() {
-        m_autoOrientation = true;
-        updateOrientation();
-    });
-    QObject::connect(horizontal, &QAction::triggered, this, [this]() {
-        m_autoOrientation = false;
-        m_orientation     = Qt::Horizontal;
-        updateOrientation();
-    });
-    QObject::connect(vertical, &QAction::triggered, this, [this]() {
-        m_autoOrientation = false;
-        m_orientation     = Qt::Vertical;
-        updateOrientation();
-    });
-
-    menu->addMenu(orientationMenu);
+    Gui::addOrientationMenu(menu, this,
+                            {.title      = tr("Orientation"),
+                             .automatic  = tr("Automatic"),
+                             .horizontal = tr("Horizontal"),
+                             .vertical   = tr("Vertical")},
+                            m_autoOrientation, m_orientation, [this](std::optional<Qt::Orientation> orientation) {
+                                m_autoOrientation = !orientation.has_value();
+                                if(orientation) {
+                                    m_orientation = *orientation;
+                                }
+                                updateOrientation();
+                            });
 }
 
 void PlayerControl::contextMenuEvent(QContextMenuEvent* event)
@@ -243,13 +220,13 @@ void PlayerControl::updateOrientation()
 {
     auto orientation{m_orientation};
     if(m_autoOrientation) {
-        const auto* toolbar = findToolbar();
-        orientation         = toolbar ? toolbar->orientation() : (height() > width() ? Qt::Vertical : Qt::Horizontal);
+        orientation = automaticOrientation();
     }
     const auto direction = orientation == Qt::Vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight;
     if(m_layout->direction() != direction) {
         m_layout->setDirection(direction);
     }
+    updateOrientationConstraints(m_autoOrientation, m_layout->minimumSize());
 }
 
 void PlayerControl::updateIcons() const

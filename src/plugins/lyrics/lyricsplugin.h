@@ -25,13 +25,13 @@
 
 namespace Fooyin {
 class FyWidget;
-class PlaylistHandler;
 class Track;
 class TrackSelectionController;
 
 namespace Lyrics {
 class LyricsFinder;
 class LyricsSaver;
+class LyricsPlaybackService;
 class LyricsSettings;
 struct Lyrics;
 
@@ -58,7 +58,7 @@ private:
 
     ActionManager* m_actionManager;
     PlayerController* m_playerController;
-    PlaylistHandler* m_playlistHandler;
+    const CorePluginContext* m_coreContext;
     std::shared_ptr<AudioLoader> m_audioLoader;
     std::shared_ptr<NetworkAccessManager> m_networkAccess;
     TrackSelectionController* m_trackSelection;
@@ -66,6 +66,7 @@ private:
     SettingsManager* m_settings;
 
     std::unique_ptr<LyricsSettings> m_lyricsSettings;
+    LyricsPlaybackService* m_lyricsService;
     LyricsFinder* m_lyricsFinder;
     LyricsSaver* m_lyricsSaver;
 };

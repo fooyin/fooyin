@@ -100,7 +100,8 @@ void EditMenu::refreshSortActions()
 
     auto* sortMenu                 = m_actionManager->actionContainer(Constants::Menus::EditSort);
     const QStringList sortCategory = {tr("Edit"), tr("Sort")};
-    const auto presets             = m_sortingRegistry->items();
+    auto presets                   = m_sortingRegistry->items();
+    std::erase_if(presets, [](const auto& preset) { return !preset.isEnabled; });
 
     std::erase_if(m_sortPresetActions, [this, &presets, sortActionId](const auto& presetAction) {
         const bool removed = std::ranges::none_of(

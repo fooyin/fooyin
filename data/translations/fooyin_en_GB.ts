@@ -40,6 +40,146 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::AutoPlaylistDialog</name>
+    <message numerus="yes">
+        <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="404"/>
+        <source>%Ln matching track(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::AutoPlaylistRulesWidget</name>
+    <message numerus="yes">
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="551"/>
+        <source>second</source>
+        <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
+        <translation>
+            <numerusform>second</numerusform>
+            <numerusform>second</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="553"/>
+        <source>seconds</source>
+        <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
+        <translation>
+            <numerusform>second</numerusform>
+            <numerusform>seconds</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="557"/>
+        <source>minute</source>
+        <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
+        <translation>
+            <numerusform>minute</numerusform>
+            <numerusform>minutes</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="559"/>
+        <source>minutes</source>
+        <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
+        <translation>
+            <numerusform>minute</numerusform>
+            <numerusform>minutes</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="563"/>
+        <source>hour</source>
+        <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
+        <translation>
+            <numerusform>hour</numerusform>
+            <numerusform>hours</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="565"/>
+        <source>hours</source>
+        <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
+        <translation>
+            <numerusform>hour</numerusform>
+            <numerusform>hours</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="569"/>
+        <source>day</source>
+        <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
+        <translation>
+            <numerusform>day</numerusform>
+            <numerusform>days</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="571"/>
+        <source>days</source>
+        <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
+        <translation>
+            <numerusform>day</numerusform>
+            <numerusform>days</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="575"/>
+        <source>week</source>
+        <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
+        <translation>
+            <numerusform>week</numerusform>
+            <numerusform>weeks</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="577"/>
+        <source>weeks</source>
+        <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
+        <translation>
+            <numerusform>week</numerusform>
+            <numerusform>weeks</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="581"/>
+        <source>month</source>
+        <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
+        <translation>
+            <numerusform>month</numerusform>
+            <numerusform>months</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="583"/>
+        <source>months</source>
+        <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
+        <translation>
+            <numerusform>month</numerusform>
+            <numerusform>months</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="587"/>
+        <source>year</source>
+        <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
+        <translation>
+            <numerusform>year</numerusform>
+            <numerusform>years</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="589"/>
+        <source>years</source>
+        <extracomment>Time unit in ‘in the last [number] [unit]’. The number is displayed separately; translate only the unit.</extracomment>
+        <translation type="unfinished">
+            <numerusform>year</numerusform>
+            <numerusform>years</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::Cdda::CdDriveSettingsDialog</name>
     <message numerus="yes">
         <location filename="../../src/plugins/cdda/cddadrivesettingsdialog.cpp" line="154"/>
@@ -135,7 +275,7 @@
 <context>
     <name>Fooyin::ConverterSetupDialog</name>
     <message numerus="yes">
-        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1245"/>
+        <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1263"/>
         <source>%Ln DSP(s)</source>
         <translation>
             <numerusform>%Ln DSP</numerusform>
@@ -146,7 +286,7 @@
 <context>
     <name>Fooyin::Equaliser::EqualiserSettingsWidget</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="993"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1080"/>
         <source>The first %Ln non-empty line(s) must contain integer values.</source>
         <translation>
             <numerusform>The first %Ln non-empty line must contain integer values.</numerusform>
@@ -154,7 +294,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1004"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1091"/>
         <source>The preset file contains %Ln band value(s).</source>
         <translation>
             <numerusform>The preset file contains %Ln band value.</numerusform>
@@ -162,7 +302,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1005"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1092"/>
         <source>Expected %Ln band value(s).</source>
         <translation>
             <numerusform>Expected %Ln band value.</numerusform>
@@ -192,8 +332,8 @@
 <context>
     <name>Fooyin::FileOps::FileOpsDialog</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="511"/>
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="527"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="581"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="597"/>
         <source>Pending operation(s): %Ln</source>
         <translation>
             <numerusform>Pending operation: %Ln</numerusform>
@@ -201,15 +341,15 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="544"/>
-        <source>Aborted: %Ln operation(s) not run</source>
-        <translation>
-            <numerusform>Aborted: %Ln operation not run</numerusform>
-            <numerusform>Aborted: %Ln operations not run</numerusform>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="622"/>
+        <source>Stopped: %Ln operation(s) not run</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="550"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="628"/>
         <source>Completed %Ln operation(s)</source>
         <translation>
             <numerusform>Completed %Ln operation</numerusform>
@@ -217,7 +357,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="557"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="635"/>
         <source>%Ln succeeded</source>
         <translation>
             <numerusform>%Ln succeeded</numerusform>
@@ -225,7 +365,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="560"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="638"/>
         <source>%Ln failed</source>
         <translation>
             <numerusform>%Ln failed</numerusform>
@@ -233,7 +373,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="563"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="641"/>
         <source>%Ln skipped</source>
         <translation>
             <numerusform>%Ln skipped</numerusform>
@@ -241,7 +381,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="566"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="644"/>
         <source>%Ln cancelled</source>
         <translation>
             <numerusform>%Ln cancelled</numerusform>
@@ -249,7 +389,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="571"/>
+        <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="649"/>
         <source>Completed %Ln operation(s): %1</source>
         <translation>
             <numerusform>Completed %Ln operation: %1</numerusform>
@@ -260,7 +400,7 @@
 <context>
     <name>Fooyin::FileOps::FileOpsPlugin</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="280"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="283"/>
         <source>Deleted %Ln track(s)</source>
         <translation>
             <numerusform>Deleted %Ln track</numerusform>
@@ -268,7 +408,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="290"/>
+        <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="293"/>
         <source>Could not move %Ln file(s) to the trash. Delete them permanently?</source>
         <translation>
             <numerusform>Could not move %Ln file to the trash. Delete them permanently?</numerusform>
@@ -281,7 +421,7 @@
     <message numerus="yes">
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="102"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln track</numerusform>
             <numerusform>%Ln tracks</numerusform>
         </translation>
@@ -289,9 +429,9 @@
     <message numerus="yes">
         <location filename="../../src/gui/filters/tracklistwidget.cpp" line="103"/>
         <source>%1 of %Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1 of %Ln track</numerusform>
+            <numerusform>%1 of %Ln tracks</numerusform>
         </translation>
     </message>
 </context>
@@ -325,7 +465,7 @@
 <context>
     <name>Fooyin::Lyrics::LyricsSearchDialog</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="238"/>
+        <location filename="../../src/plugins/lyrics/lyricssearchdialog.cpp" line="220"/>
         <source>%Ln result(s)</source>
         <translation>
             <numerusform>%Ln result</numerusform>
@@ -355,7 +495,7 @@
 <context>
     <name>Fooyin::MetadataLookupDialog</name>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="520"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="543"/>
         <source>Found %Ln release(s).</source>
         <translation>
             <numerusform>Found %Ln release.</numerusform>
@@ -363,7 +503,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="907"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="936"/>
         <source>Metadata will be applied to %Ln track(s).</source>
         <translation>
             <numerusform>Metadata will be applied to %Ln track.</numerusform>
@@ -371,7 +511,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="909"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="938"/>
         <source>%Ln track(s) will be updated.</source>
         <translation>
             <numerusform>%Ln track will be updated.</numerusform>
@@ -379,7 +519,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="957"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="986"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
@@ -387,8 +527,8 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="978"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="983"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1007"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1012"/>
         <source>%Ln succeeded</source>
         <translation>
             <numerusform>%Ln succeeded</numerusform>
@@ -396,8 +536,8 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="979"/>
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="984"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1008"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1013"/>
         <source>%Ln failed</source>
         <translation>
             <numerusform>%Ln failed</numerusform>
@@ -405,7 +545,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="989"/>
+        <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1018"/>
         <source>Metadata was updated in %Ln track(s).</source>
         <translation>
             <numerusform>Metadata was updated in %Ln track.</numerusform>
@@ -435,7 +575,7 @@
 <context>
     <name>Fooyin::PlaylistController</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="439"/>
+        <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="482"/>
         <source>Remove %Ln playlist(s)?</source>
         <translation>
             <numerusform>Remove %Ln playlist?</numerusform>
@@ -446,7 +586,7 @@
 <context>
     <name>Fooyin::PlaylistModel</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1636"/>
+        <location filename="../../src/gui/playlist/playlistmodel.cpp" line="1747"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
@@ -455,9 +595,36 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::PlaylistPresetsPageWidget</name>
+    <message numerus="yes">
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="585"/>
+        <source>Used by %Ln playlist(s)</source>
+        <translation>
+            <numerusform>Used by %Ln playlist</numerusform>
+            <numerusform>Used by %Ln playlists</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::PlaylistWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2033"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="604"/>
+        <source>%Ln track(s)</source>
+        <translation type="unfinished">
+            <numerusform>%Ln track</numerusform>
+            <numerusform>%Ln tracks</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1434"/>
+        <source>Update ‘%1’ (%Ln playlist(s))</source>
+        <translation>
+            <numerusform>Update ‘%1’ (%Ln playlist)</numerusform>
+            <numerusform>Update ‘%1’ (%Ln playlists)</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2037"/>
         <source>Writing metadata to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing metadata to %Ln track…</numerusform>
@@ -479,7 +646,7 @@
 <context>
     <name>Fooyin::ProjectM::ProjectMView</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/projectm/projectmview.cpp" line="638"/>
+        <location filename="../../src/plugins/projectm/projectmview.cpp" line="639"/>
         <source>Using presets from %Ln folder(s)</source>
         <translation>
             <numerusform>Using presets from %Ln folder</numerusform>
@@ -490,7 +657,7 @@
 <context>
     <name>Fooyin::PropertiesDialogWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="775"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="831"/>
         <source>%Ln track(s)</source>
         <translation>
             <numerusform>%Ln track</numerusform>
@@ -501,7 +668,7 @@
 <context>
     <name>Fooyin::PropertiesWriteProgress</name>
     <message numerus="yes">
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="119"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="120"/>
         <source>Writing changes to %Ln track(s)…</source>
         <translation>
             <numerusform>Writing changes to %Ln track…</numerusform>
@@ -513,18 +680,18 @@
     <name>Fooyin::QuickTagger::QuickTaggerPlugin</name>
     <message numerus="yes">
         <location filename="../../src/plugins/quicktagger/quicktaggerplugin.cpp" line="313"/>
-        <source>Set &quot;%1&quot; on %Ln track(s)?</source>
+        <source>Set ‘%1’ on %Ln track(s)?</source>
         <extracomment>%1 is the Quick Tagger entry name, for example &quot;Rating&quot;.</extracomment>
         <translation>
-            <numerusform>Set &quot;%1&quot; on %Ln track?</numerusform>
-            <numerusform>Set &quot;%1&quot; on %Ln tracks?</numerusform>
+            <numerusform>Set ‘%1’ on %Ln track?</numerusform>
+            <numerusform>Set ‘%1’ on %Ln tracks?</numerusform>
         </translation>
     </message>
 </context>
 <context>
     <name>Fooyin::RadioBrowser::RadioSearch</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="827"/>
+        <location filename="../../src/plugins/radiobrowser/radiosearch.cpp" line="861"/>
         <source>%Ln active filter(s)</source>
         <translation>
             <numerusform>%Ln active filter</numerusform>

@@ -20,11 +20,15 @@ $SUDO apt-get install -y \
         libicu-dev \
         libglm-dev \
         libglu1-mesa-dev \
+        libx11-dev \
+        libx11-xcb-dev \
+        libxcb1-dev \
         libxkbcommon-dev \
         dpkg-dev \
         dh-make \
         zlib1g-dev \
         libasound2-dev \
+        libjack-jackd2-dev \
         libpipewire-0.3-dev \
         libpulse-dev \
         libsdl2-dev \

@@ -51,7 +51,7 @@ private:
 
 LibraryMetadataPageWidget::LibraryMetadataPageWidget(SettingsManager* settings)
     : m_settings{settings}
-    , m_useVariousCompilations{new QCheckBox(tr("Use 'Various Artists' for compilations"), this)}
+    , m_useVariousCompilations{new QCheckBox(tr("Use ‘Various Artists’ for compilations"), this)}
     , m_saveRatings{new QCheckBox(tr("Save ratings to file tags when possible"), this)}
     , m_savePlaycounts{new QCheckBox(tr("Save playcounts to file tags when possible"), this)}
     , m_overwriteRatingsOnReload{new QCheckBox(tr("Overwrite rating in database when songs are re-read"), this)}

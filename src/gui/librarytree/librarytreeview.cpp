@@ -19,23 +19,37 @@
 
 #include "librarytreeview.h"
 
+#include <gui/contextmenuutils.h>
+#include <gui/guiutils.h>
+#include <gui/widgets/widgetbackground.h>
+
+#include <QApplication>
+#include <QDynamicPropertyChangeEvent>
 #include <QHeaderView>
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QScopedValueRollback>
+#include <QTimerEvent>
 #include <QWheelEvent>
 
 namespace Fooyin {
 LibraryTreeView::LibraryTreeView(QWidget* parent)
     : QTreeView{parent}
+    , m_background{new WidgetBackground(viewport(), this)}
+    , m_backgroundPalette{palette()}
+    , m_updatingBackgroundPalette{false}
     , m_isLoading{false}
     , m_expandsOnSingleClick{false}
+    , m_delayCollapse{false}
 {
+    viewport()->setAutoFillBackground(false);
+
     setUniformRowHeights(false);
-    setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setSelectionMode(ExtendedSelection);
     setHeaderHidden(true);
     setDragEnabled(true);
-    setDragDropMode(QAbstractItemView::DragOnly);
+    setDragDropMode(DragOnly);
     setSortingEnabled(true);
 
     header()->setSortIndicatorShown(false);
@@ -45,19 +59,71 @@ LibraryTreeView::LibraryTreeView(QWidget* parent)
     setTextElideMode(Qt::ElideRight);
 }
 
+bool LibraryTreeView::event(QEvent* event)
+{
+    if(event->type() == QEvent::DynamicPropertyChange
+       && static_cast<QDynamicPropertyChangeEvent*>(event)->propertyName() == "transparent_base_rows") {
+        QMetaObject::invokeMethod(
+            this,
+            [this] {
+                const QScopedValueRollback guard{m_updatingBackgroundPalette, true};
+                updateBackgroundPalette();
+            },
+            Qt::QueuedConnection);
+    }
+    return QTreeView::event(event);
+}
+
 void LibraryTreeView::setLoading(bool isLoading)
 {
     m_isLoading = isLoading;
     viewport()->update();
 }
 
-void LibraryTreeView::setExpandsOnSingleClick(bool enabled)
+void LibraryTreeView::setExpandsOnSingleClick(bool enabled, bool delayCollapse)
 {
-    m_expandsOnSingleClick = enabled;
+    cancelPendingCollapse();
+    m_singleClickToggleIndex = QPersistentModelIndex{};
+    m_expandsOnSingleClick   = enabled;
+    m_delayCollapse          = delayCollapse;
+}
+
+void LibraryTreeView::setBackgroundConfig(const BackgroundConfig& config)
+{
+    const QScopedValueRollback guard{m_updatingBackgroundPalette, true};
+    m_background->setConfig(config);
+    updateBackgroundPalette();
+}
+
+void LibraryTreeView::setBackgroundPixmap(const QPixmap& pixmap)
+{
+    const QScopedValueRollback guard{m_updatingBackgroundPalette, true};
+    m_background->setPixmap(pixmap);
+    updateBackgroundPalette();
+}
+
+void LibraryTreeView::setViewPalette(const QPalette& palette)
+{
+    m_backgroundPalette = palette;
+    updateBackgroundPalette();
+}
+
+void LibraryTreeView::initViewItemOption(QStyleOptionViewItem* option) const
+{
+    QTreeView::initViewItemOption(option);
+
+    if(m_background->hasImage()) {
+        WidgetBackground::makeRowPaletteTransparent(option->palette);
+    }
 }
 
 void LibraryTreeView::changeEvent(QEvent* event)
 {
+    if(m_updatingBackgroundPalette && event->type() == QEvent::PaletteChange) {
+        QTreeView::changeEvent(event);
+        return;
+    }
+
     switch(event->type()) {
         case QEvent::FontChange:
         case QEvent::PaletteChange:
@@ -83,10 +149,14 @@ void LibraryTreeView::changeEvent(QEvent* event)
 
 void LibraryTreeView::mousePressEvent(QMouseEvent* event)
 {
+    const auto modifierGuard = ContextMenuUtils::normaliseContextMenuModifiers(event);
+
     if(event->button() > Qt::MiddleButton) {
         event->ignore();
         return;
     }
+
+    cancelPendingCollapse();
 
     const QModelIndex index = indexAt(event->position().toPoint());
 
@@ -97,6 +167,7 @@ void LibraryTreeView::mousePressEvent(QMouseEvent* event)
     }
 
     if(event->button() == Qt::MiddleButton) {
+        QTreeView::mousePressEvent(event);
         Q_EMIT middleClicked(index);
         return;
     }
@@ -116,9 +187,20 @@ void LibraryTreeView::mouseReleaseEvent(QMouseEvent* event)
 {
     QTreeView::mouseReleaseEvent(event);
 
-    if(m_expandsOnSingleClick && event->button() == Qt::LeftButton && m_singleClickToggleIndex.isValid()
-       && m_singleClickToggleIndex == indexAt(event->position().toPoint())) {
-        setExpanded(m_singleClickToggleIndex, !isExpanded(m_singleClickToggleIndex));
+    if(m_expandsOnSingleClick && event->button() == Qt::LeftButton && event->modifiers() == Qt::NoModifier
+       && m_singleClickToggleIndex.isValid() && m_singleClickToggleIndex == indexAt(event->position().toPoint())) {
+        if(isExpanded(m_singleClickToggleIndex)) {
+            if(m_delayCollapse) {
+                m_collapseIndex = m_singleClickToggleIndex;
+                m_collapseTimer.start(QApplication::doubleClickInterval(), Qt::PreciseTimer, this);
+            }
+            else {
+                collapse(m_singleClickToggleIndex);
+            }
+        }
+        else {
+            expand(m_singleClickToggleIndex);
+        }
     }
 
     m_singleClickToggleIndex = QPersistentModelIndex{};
@@ -131,14 +213,12 @@ void LibraryTreeView::mouseDoubleClickEvent(QMouseEvent* event)
         return;
     }
 
+    cancelPendingCollapse();
     m_singleClickToggleIndex = QPersistentModelIndex{};
 
     if(m_expandsOnSingleClick) {
         const QModelIndex index = indexAt(event->position().toPoint());
         if(index.isValid()) {
-            if(expandsOnDoubleClick() && model()->hasChildren(index)) {
-                setExpanded(index, !isExpanded(index));
-            }
             Q_EMIT doubleClicked(index);
         }
         event->accept();
@@ -146,6 +226,20 @@ void LibraryTreeView::mouseDoubleClickEvent(QMouseEvent* event)
     }
 
     QTreeView::mouseDoubleClickEvent(event);
+}
+
+void LibraryTreeView::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_collapseTimer.timerId()) {
+        const QModelIndex index{m_collapseIndex};
+        cancelPendingCollapse();
+        if(index.isValid()) {
+            collapse(index);
+        }
+        return;
+    }
+
+    QTreeView::timerEvent(event);
 }
 
 void LibraryTreeView::wheelEvent(QWheelEvent* event)
@@ -166,16 +260,20 @@ void LibraryTreeView::wheelEvent(QWheelEvent* event)
 
 void LibraryTreeView::paintEvent(QPaintEvent* event)
 {
-    QPainter painter{viewport()};
-
-    auto drawCentreText = [this, &painter](const QString& text) {
-        QRect textRect = painter.fontMetrics().boundingRect(text);
-        textRect.moveCenter(viewport()->rect().center());
-        painter.drawText(textRect, Qt::AlignCenter, text);
-    };
+    {
+        QPainter painter{viewport()};
+        painter.fillRect(viewport()->rect(), m_backgroundPalette.brush(QPalette::Base));
+        m_background->draw(painter);
+    }
 
     if(m_isLoading) {
-        drawCentreText(tr("Loading Library…"));
+        QPainter painter{viewport()};
+
+        const QString text = tr("Loading Library…");
+        QRect textRect     = painter.fontMetrics().boundingRect(text);
+        textRect.moveCenter(viewport()->rect().center());
+
+        painter.drawText(textRect, Qt::AlignCenter, text);
         return;
     }
 
@@ -198,6 +296,28 @@ QModelIndex LibraryTreeView::moveCursor(CursorAction cursorAction, Qt::KeyboardM
     }
 
     return QTreeView::moveCursor(cursorAction, modifiers);
+}
+
+void LibraryTreeView::cancelPendingCollapse()
+{
+    m_collapseTimer.stop();
+    m_collapseIndex = QPersistentModelIndex{};
+}
+
+void LibraryTreeView::updateBackgroundPalette()
+{
+    const bool hasImage = m_background->hasImage();
+
+    QPalette viewPalette{m_backgroundPalette};
+    if(hasImage) {
+        // QTreeView fills its animation buffers with the view's base brush
+        for(const auto group : {QPalette::Active, QPalette::Inactive, QPalette::Disabled}) {
+            QBrush base = viewPalette.brush(group, QPalette::Base);
+            base.setStyle(Qt::NoBrush);
+            viewPalette.setBrush(group, QPalette::Base, base);
+        }
+    }
+    Gui::refreshItemViewPalette(this, viewPalette);
 }
 } // namespace Fooyin
 

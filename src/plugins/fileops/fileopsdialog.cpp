@@ -25,21 +25,25 @@
 #include <core/coresettings.h>
 #include <core/library/librarymanager.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <gui/iconloader.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/stringcollator.h>
 #include <utils/utils.h>
 
 #include <QAction>
 #include <QByteArray>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QCompleter>
 #include <QDialogButtonBox>
 #include <QDir>
 #include <QFileDialog>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
+#include <QInputDialog>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
@@ -65,6 +69,7 @@ public:
                          LibraryManager* libraryManager);
 
     void setup();
+    void focusInitialAction();
 
     void changeOperation(Operation operation);
     void updateOptionState() const;
@@ -77,14 +82,14 @@ public:
     void deletePreset();
 
     void saveCurrentPreset() const;
-    void loadCurrentPreset() const;
+    void loadCurrentPreset();
     void loadPresets();
     void populatePresets();
 
     void saveState() const;
     void restoreState() const;
 
-    void simulateOp() const;
+    void simulateOp();
     void toggleRun();
     void modelUpdated();
     void runFinished();
@@ -119,6 +124,7 @@ public:
     FileOpsModel* m_model;
     QLabel* m_status;
     QPushButton* m_runButton{nullptr};
+    QPushButton* m_closeButton{nullptr};
 
     std::vector<FileOpPreset> m_presets;
     bool m_supportsFileOperations{false};
@@ -126,6 +132,7 @@ public:
     bool m_loading{false};
     bool m_running{false};
     bool m_presetsChanged{false};
+    bool m_initialFocusPending{true};
 };
 
 FileOpsDialogPrivate::FileOpsDialogPrivate(FileOpsDialog* self, MusicLibrary* library, const TrackList& tracks,
@@ -149,7 +156,7 @@ FileOpsDialogPrivate::FileOpsDialogPrivate(FileOpsDialog* self, MusicLibrary* li
     , m_saveButton{new QPushButton(FileOpsDialog::tr("&Save"), self)}
     , m_deleteButton{new QPushButton(FileOpsDialog::tr("&Delete"), self)}
     , m_resultsTable{new QTreeView(self)}
-    , m_model{new FileOpsModel(library, std::move(audioLoader), tracks, m_settings, self)}
+    , m_model{new FileOpsModel(library, std::move(audioLoader), tracks, m_settings, m_libraryManager, self)}
     , m_status{new QLabel(self)}
     , m_supportsFileOperations{std::ranges::all_of(tracks, [](const Track& track) { return !track.isInArchive(); })}
     , m_supportsExtract{std::ranges::all_of(tracks, [](const Track& track) { return track.isInArchive(); })}
@@ -163,10 +170,14 @@ void FileOpsDialogPrivate::setup()
     Gui::setThemeIcon(browseAction, Constants::Icons::Options);
     QObject::connect(browseAction, &QAction::triggered, this, &FileOpsDialogPrivate::browseDestination);
     m_destination->setEditable(true);
+    m_destination->completer()->setCaseSensitivity(Qt::CaseSensitive);
     auto* destLine = m_destination->lineEdit();
     destLine->addAction(browseAction, QLineEdit::TrailingPosition);
 
-    m_resultsTable->setModel(m_model);
+    auto* sortModel = new StringSortProxyModel(m_self);
+    sortModel->setSourceModel(m_model);
+    sortModel->sort(1);
+    m_resultsTable->setModel(sortModel);
     m_resultsTable->header()->setStretchLastSection(true);
 
     const auto firstHint = m_resultsTable->header()->sectionSizeHint(0);
@@ -184,7 +195,10 @@ void FileOpsDialogPrivate::setup()
     m_renameOp->setEnabled(m_supportsFileOperations);
     m_extractOp->setEnabled(m_supportsExtract);
 
-    m_presetBox->setEditable(true);
+    const FySettings settings;
+    m_presetBox->setEditable(settings.value(Fooyin::Settings::Gui::PresetComboBoxModeKey, true).toBool());
+    m_presetBox->setInsertPolicy(QComboBox::NoInsert);
+    m_saveButton->setText(m_presetBox->isEditable() ? FileOpsDialog::tr("&Save") : FileOpsDialog::tr("&Save…"));
 
     auto* opLabel = new QLabel(tr("Operation") + u":"_s);
 
@@ -206,7 +220,14 @@ void FileOpsDialogPrivate::setup()
 
     auto* buttonBox = new QDialogButtonBox(QDialogButtonBox::Apply | QDialogButtonBox::Close, m_self);
     m_runButton     = buttonBox->button(QDialogButtonBox::Apply);
+    m_closeButton   = buttonBox->button(QDialogButtonBox::Close);
     m_runButton->setText(tr("&Run"));
+
+    for(auto* button : {m_loadButton, m_saveButton, m_deleteButton, m_runButton, m_closeButton}) {
+        button->setAutoDefault(false);
+    }
+    m_runButton->setDefault(true);
+
     QObject::connect(m_runButton, &QAbstractButton::clicked, this, &FileOpsDialogPrivate::toggleRun);
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, m_self, &QDialog::accept);
     QObject::connect(buttonBox, &QDialogButtonBox::rejected, m_self, &QDialog::reject);
@@ -253,7 +274,10 @@ void FileOpsDialogPrivate::setup()
     QObject::connect(m_removeArchive, &QCheckBox::clicked, this, &FileOpsDialogPrivate::simulateOp);
     QObject::connect(m_presetBox, &QComboBox::currentTextChanged, this, &FileOpsDialogPrivate::updateButtonState);
 
-    QObject::connect(m_model, &FileOpsModel::simulated, this, &FileOpsDialogPrivate::modelUpdated);
+    QObject::connect(m_model, &FileOpsModel::simulated, this, [this]() {
+        modelUpdated();
+        focusInitialAction();
+    });
     QObject::connect(m_model, &QAbstractItemModel::rowsRemoved, this, &FileOpsDialogPrivate::modelUpdated);
     QObject::connect(m_model, &QAbstractItemModel::rowsInserted, this, &FileOpsDialogPrivate::modelUpdated);
     QObject::connect(m_model, &FileOpsModel::finished, this, &FileOpsDialogPrivate::runFinished);
@@ -264,7 +288,28 @@ void FileOpsDialogPrivate::setup()
     loadCurrentPreset();
     updateButtonState();
 
+    QMetaObject::invokeMethod(this, &FileOpsDialogPrivate::focusInitialAction);
+
     m_self->resize(720, 480);
+}
+
+void FileOpsDialogPrivate::focusInitialAction()
+{
+    if(!m_initialFocusPending || !m_self->isVisible()) {
+        return;
+    }
+
+    auto* input = m_operation == Operation::Rename ? static_cast<QWidget*>(m_filename) : m_destination;
+    auto* focus = m_self->focusWidget();
+    if(focus && focus != input && focus != m_destination->lineEdit() && focus != m_closeButton) {
+        m_initialFocusPending = false;
+        return;
+    }
+
+    const bool ready      = m_runButton->isEnabled();
+    m_initialFocusPending = !ready;
+    QWidget* target       = ready ? m_runButton : input;
+    target->setFocus(Qt::OtherFocusReason);
 }
 
 void FileOpsDialogPrivate::changeOperation(Operation operation)
@@ -302,9 +347,11 @@ void FileOpsDialogPrivate::updateOptionState() const
 
 void FileOpsDialogPrivate::updateButtonState() const
 {
-    m_loadButton->setEnabled(m_presetBox->findText(m_presetBox->currentText()) >= 0);
-    m_saveButton->setEnabled(!m_presetBox->currentText().isEmpty());
-    m_deleteButton->setEnabled(m_presetBox->findText(m_presetBox->currentText()) >= 0);
+    const QString name   = m_presetBox->currentText();
+    const bool hasPreset = m_presetBox->findText(name) >= 0;
+    m_loadButton->setEnabled(hasPreset);
+    m_deleteButton->setEnabled(hasPreset);
+    m_saveButton->setEnabled(!m_presetBox->isEditable() || !name.trimmed().isEmpty());
 }
 
 FileOpPreset FileOpsDialogPrivate::currentPreset() const
@@ -324,7 +371,18 @@ FileOpPreset FileOpsDialogPrivate::currentPreset() const
 
 void FileOpsDialogPrivate::savePreset()
 {
-    const QString name = m_presetBox->currentText();
+    QString name = m_presetBox->currentText();
+    if(!m_presetBox->isEditable()) {
+        bool accepted{false};
+        name = QInputDialog::getText(m_self, tr("Save Preset"), tr("Preset name:"), QLineEdit::Normal, name, &accepted);
+        if(!accepted) {
+            return;
+        }
+    }
+    name = name.trimmed();
+    if(name.isEmpty()) {
+        return;
+    }
 
     FileOpPreset preset = currentPreset();
     preset.name         = name;
@@ -332,12 +390,13 @@ void FileOpsDialogPrivate::savePreset()
     auto existingPreset = findPreset(name);
     if(existingPreset != m_presets.cend()) {
         QMessageBox msg{QMessageBox::Question, tr("Preset already exists"),
-                        tr("A preset named \"%1\" already exists. Overwrite it?").arg(name),
+                        tr("A preset named ‘%1’ already exists. Overwrite it?").arg(name),
                         QMessageBox::Yes | QMessageBox::No};
-        if(msg.exec() == QMessageBox::Yes) {
-            *existingPreset = preset;
-            m_presetBox->setCurrentIndex(m_presetBox->findText(name));
+        if(msg.exec() != QMessageBox::Yes) {
+            return;
         }
+        *existingPreset = std::move(preset);
+        m_presetBox->setCurrentIndex(m_presetBox->findText(name));
     }
     else {
         m_presets.push_back(preset);
@@ -388,7 +447,7 @@ void FileOpsDialogPrivate::saveCurrentPreset() const
     m_settings->fileSet(CurrentPreset, byteArray);
 }
 
-void FileOpsDialogPrivate::loadCurrentPreset() const
+void FileOpsDialogPrivate::loadCurrentPreset()
 {
     auto byteArray = m_settings->fileValue(CurrentPreset).toByteArray();
 
@@ -403,7 +462,7 @@ void FileOpsDialogPrivate::loadCurrentPreset() const
 
         m_destination->setCurrentIndex(-1);
         m_destination->setCurrentText(preset.dest);
-        m_filename->setText(preset.filename);
+        m_filename->setScript(preset.filename);
         m_entireSource->setChecked(preset.wholeDir);
         m_removeEmpty->setChecked(preset.removeEmpty);
         m_removeArchive->setChecked(preset.removeSourceArchive);
@@ -447,12 +506,19 @@ void FileOpsDialogPrivate::restoreState() const
     }
 }
 
-void FileOpsDialogPrivate::simulateOp() const
+void FileOpsDialogPrivate::simulateOp()
 {
     if(m_loading) {
         return;
     }
 
+    if(m_self->isVisible()) {
+        m_initialFocusPending = false;
+    }
+
+    m_closeButton->setDefault(false);
+    m_runButton->setDefault(!m_running);
+    m_runButton->setEnabled(false);
     m_model->simulate(currentPreset());
 
     m_status->setText(FileOpsDialog::tr("Determining operations…"));
@@ -482,7 +548,7 @@ void FileOpsDialogPrivate::toggleRun()
             QMessageBox confirmation{QMessageBox::Question, tr("Delete source archive after extraction?"), message,
                                      QMessageBox::Yes | QMessageBox::No, m_self};
             confirmation.setDefaultButton(QMessageBox::No);
-            auto* dontAskAgain = new QCheckBox(tr("Don't ask again"), &confirmation);
+            auto* dontAskAgain = new QCheckBox(tr("Don’t ask again"), &confirmation);
             confirmation.setCheckBox(dontAskAgain);
 
             if(confirmation.exec() != QMessageBox::Yes) {
@@ -495,7 +561,11 @@ void FileOpsDialogPrivate::toggleRun()
             }
         }
 
-        m_runButton->setText(tr("&Abort"));
+        m_runButton->setText(tr("&Stop"));
+        m_runButton->setDefault(false);
+        if(m_runButton->hasFocus()) {
+            m_resultsTable->setFocus(Qt::OtherFocusReason);
+        }
         m_model->run();
     }
 
@@ -540,8 +610,16 @@ void FileOpsDialogPrivate::runFinished()
     const int skippedCount   = m_model->skippedCount();
     const int cancelledCount = m_model->cancelledCount();
 
+    m_runButton->setDefault(pendingCount > 0);
+    m_closeButton->setDefault(pendingCount == 0);
+
+    if(m_resultsTable->hasFocus() || m_runButton->hasFocus()) {
+        auto* button = pendingCount > 0 ? m_runButton : m_closeButton;
+        button->setFocus(Qt::OtherFocusReason);
+    }
+
     if(pendingCount > 0) {
-        m_status->setText(FileOpsDialog::tr("Aborted: %Ln operation(s) not run", nullptr, pendingCount));
+        m_status->setText(FileOpsDialog::tr("Stopped: %Ln operation(s) not run", nullptr, pendingCount));
         m_runButton->setEnabled(true);
         return;
     }
@@ -638,7 +716,7 @@ void FileOpsDialog::loadPreset(const QString& name)
 
         p->m_destination->setCurrentIndex(-1);
         p->m_destination->setCurrentText(preset->dest);
-        p->m_filename->setText(preset->filename);
+        p->m_filename->setScript(preset->filename);
         p->m_entireSource->setChecked(preset->wholeDir);
         p->m_removeEmpty->setChecked(preset->removeEmpty);
         p->m_removeArchive->setChecked(preset->removeSourceArchive);

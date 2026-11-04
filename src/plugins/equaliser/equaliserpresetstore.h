@@ -30,6 +30,7 @@ struct EqualiserPreset
 {
     QString name;
     QByteArray settings;
+    QString builtInId;
 };
 
 class EqualiserPresetStore : public QObject
@@ -44,11 +45,14 @@ public:
 
     void setPreset(QString name, QByteArray settings);
     void removePreset(const QString& name);
+    void restoreBuiltInPresets();
 
 Q_SIGNALS:
     void presetsChanged();
 
 private:
+    static std::vector<EqualiserPreset> builtInPresets();
+
     void load();
     void save() const;
 

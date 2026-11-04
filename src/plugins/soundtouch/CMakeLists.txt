@@ -7,13 +7,15 @@ endif()
 
 create_fooyin_plugin_internal(
     soundtouch
-    DEPENDS Fooyin::Core
-            Fooyin::Gui
-            SoundTouch::SoundTouch
-    SOURCES soundtouchdsp.cpp
-            soundtouchdsp.h
-            soundtouchplugin.cpp
-            soundtouchplugin.h
-            soundtouchsettingswidget.cpp
-            soundtouchsettingswidget.h
+    DEPENDS #
+        Fooyin::Core
+        Fooyin::Gui
+        SoundTouch::SoundTouch
+    SOURCES
+        soundtouchdsp.cpp
+        soundtouchdsp.h
+        soundtouchplugin.cpp
+        soundtouchplugin.h
+        soundtouchsettingswidget.cpp
+        soundtouchsettingswidget.h
 )

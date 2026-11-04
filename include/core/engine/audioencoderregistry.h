@@ -27,6 +27,8 @@
 #include <vector>
 
 namespace Fooyin {
+class AudioEncoderRegistryPrivate;
+
 class FYCORE_EXPORT AudioEncoderRegistry
 {
 public:
@@ -35,6 +37,9 @@ public:
         Fallback = -100,
         Normal   = 0,
     };
+
+    AudioEncoderRegistry();
+    ~AudioEncoderRegistry();
 
     void addEncoderBackend(const QString& id, const QString& name, EncoderCreator creator,
                            BackendPriority priority = BackendPriority::Normal);
@@ -47,14 +52,6 @@ public:
     void reset();
 
 private:
-    struct Backend
-    {
-        QString id;
-        QString name;
-        EncoderCreator creator;
-        BackendPriority priority{BackendPriority::Normal};
-    };
-
-    std::vector<Backend> m_backends;
+    std::unique_ptr<AudioEncoderRegistryPrivate> p;
 };
 } // namespace Fooyin

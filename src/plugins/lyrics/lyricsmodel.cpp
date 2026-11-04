@@ -363,19 +363,11 @@ void LyricsModel::updateCurrentLine()
     int newLineEnd{-1};
     int newWord{-1};
 
-    const auto line = lineForTimestamp(m_currentTime);
-    if(line != m_lyrics.lines.cend()) {
-        newLine = static_cast<int>(std::distance(m_lyrics.lines.cbegin(), line));
-
-        while(newLine > 0 && m_lyrics.lines.at(newLine - 1).timestamp == line->timestamp) {
-            --newLine;
-        }
-
-        newLineEnd = newLine;
-        while(std::cmp_less(newLineEnd + 1, m_lyrics.lines.size())
-              && m_lyrics.lines.at(newLineEnd + 1).timestamp == line->timestamp) {
-            ++newLineEnd;
-        }
+    const auto [first, last] = m_lyrics.lineRange(m_currentTime);
+    if(first != last) {
+        newLine         = static_cast<int>(first);
+        newLineEnd      = static_cast<int>(last - 1);
+        const auto line = m_lyrics.lines.cbegin() + newLine;
 
         if(m_lyrics.type == Lyrics::Type::SyncedWords) {
             const auto word = wordForTimestamp(*line, m_currentTime);
@@ -478,20 +470,6 @@ RichText LyricsModel::textForLine(const ParsedLine& line) const
     return formattedText;
 }
 
-std::vector<ParsedLine>::const_iterator LyricsModel::lineForTimestamp(uint64_t timestamp) const
-{
-    auto line = std::ranges::lower_bound(m_lyrics.lines, timestamp, {}, &Fooyin::Lyrics::ParsedLine::endTimestamp);
-    if(line == m_lyrics.lines.cbegin() && line->timestamp > timestamp) {
-        return m_lyrics.lines.cend();
-    }
-
-    if(line == m_lyrics.lines.cend() || line->timestamp > timestamp) {
-        --line;
-    }
-
-    return line;
-}
-
 bool LyricsModel::shouldFillLineProgress() const
 {
     return m_lyrics.type == Lyrics::Type::Synced
@@ -511,6 +489,10 @@ bool LyricsModel::shouldFillProgress() const
 
 std::vector<ParsedWord>::const_iterator LyricsModel::wordForTimestamp(const ParsedLine& line, uint64_t timestamp) const
 {
+    if(line.words.empty()) {
+        return line.words.cend();
+    }
+
     auto word = std::ranges::lower_bound(line.words, timestamp, {}, &Fooyin::Lyrics::ParsedWord::endTimestamp);
     if(word == line.words.cbegin() && word->timestamp > timestamp) {
         return line.words.cend();

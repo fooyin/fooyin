@@ -20,12 +20,15 @@
 #pragma once
 
 #include <core/player/playerdefs.h>
+#include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <gui/widgetcontainer.h>
 
 #include <QBasicTimer>
 #include <QIcon>
 #include <QPointer>
+
+#include <functional>
 
 class QHBoxLayout;
 class QAction;
@@ -56,6 +59,7 @@ class PlaylistTabs : public WidgetContainer
 public:
     struct ConfigData
     {
+        QString titleScript{QStringLiteral("%playlist_name%")};
         PlaylistTabPosition position{PlaylistTabPosition::Top};
         bool expand{false};
         bool showAddButton{false};
@@ -88,6 +92,7 @@ public:
     void loadLayoutData(const QJsonObject& layout) override;
 
     [[nodiscard]] bool canAddWidget() const override;
+    [[nodiscard]] bool canInsertWidget(int index) const override;
     [[nodiscard]] bool canMoveWidget(int index, int newIndex) const override;
     [[nodiscard]] int widgetIndex(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtId(const Id& id) const override;
@@ -99,9 +104,11 @@ public:
 
     int addWidget(FyWidget* widget) override;
     void insertWidget(int index, FyWidget* widget) override;
-    void removeWidget(int index) override;
-    void replaceWidget(int index, FyWidget* newWidget) override;
     void moveWidget(int index, int newIndex) override;
+    FyWidget* takeWidget(int index) override;
+
+    [[nodiscard]] QJsonObject saveEditingState() const override;
+    void restoreEditingState(const QJsonObject& state) override;
 
 Q_SIGNALS:
     void configChanged();
@@ -109,6 +116,8 @@ Q_SIGNALS:
     void tracksDropped(const QByteArray& data, const Fooyin::UId& playlistId);
     void trackListDropped(const Fooyin::TrackList& tracks, const Fooyin::UId& playlistId);
     void savePlaylistRequested(const Fooyin::UId& playlistId);
+    void newAutoPlaylistRequested(std::function<void(Fooyin::Playlist*)> onFinished = {});
+    void editAutoPlaylistRequested(const Fooyin::UId& playlistId);
 
 protected:
     void changeEvent(QEvent* event) override;
@@ -119,6 +128,8 @@ protected:
     void timerEvent(QTimerEvent* event) override;
     void dropEvent(QDropEvent* event) override;
     void openConfigDialog() override;
+
+    FyWidget* exchangeWidgetImpl(int index, FyWidget* newWidget) override;
 
 private:
     void setupConnections();
@@ -132,13 +143,16 @@ private:
 
     void playlistChanged(Playlist* oldPlaylist, Playlist* playlist);
     void activePlaylistChanged(Playlist* playlist);
-    void playlistRenamed(const Playlist* playlist) const;
     void playlistUpdated(const Playlist* playlist);
 
-    void playStateChanged(Player::PlayState state) const;
+    void playStateChanged(Player::PlayState state);
+    void refreshTabTitle(const Playlist* playlist);
+    void refreshTabTitles();
     void refreshTabIcons();
     void updateTabIcon(int i, Player::PlayState state) const;
     void createEmptyPlaylist() const;
+
+    [[nodiscard]] QString playlistTitle(const Playlist* playlist, const QString& script);
 
     ActionManager* m_actionManager;
     PlaylistController* m_playlistController;
@@ -150,6 +164,7 @@ private:
     WidgetContext* m_context;
     QAction* m_savePlaylistAction;
     Command* m_savePlaylistCmd;
+    ScriptParser m_parser;
 
     QVBoxLayout* m_layout;
     SingleTabbedWidget* m_tabs;

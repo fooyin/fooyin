@@ -5,11 +5,13 @@ endif()
 
 create_fooyin_plugin_internal(
     wasapi
-    DEPENDS Fooyin::Core
-            ole32
-            avrt
-    SOURCES wasapioutput.cpp
-            wasapioutput.h
-            wasapiplugin.cpp
-            wasapiplugin.h
+    DEPENDS #
+        Fooyin::Core
+        ole32
+        avrt
+    SOURCES #
+        wasapioutput.cpp
+        wasapioutput.h
+        wasapiplugin.cpp
+        wasapiplugin.h
 )

@@ -19,15 +19,19 @@
 
 #include "equaliserpresetstore.h"
 
+#include "equaliserdsp.h"
+
 #include <core/coresettings.h>
+#include <utils/helpers.h>
 
 #include <QDataStream>
 
-#include <algorithm>
+#include <array>
+#include <ranges>
 
 using namespace Qt::StringLiterals;
 
-constexpr auto PresetStoreVersion = 1;
+constexpr auto PresetStoreVersion = 2;
 constexpr auto PresetsSettingKey  = "DSP/EqualiserPresets"_L1;
 
 namespace Fooyin::Equaliser {
@@ -65,7 +69,7 @@ void EqualiserPresetStore::setPreset(QString name, QByteArray settings)
         m_presets[index].settings = std::move(settings);
     }
     else {
-        m_presets.push_back({.name = std::move(name), .settings = std::move(settings)});
+        m_presets.push_back({.name = std::move(name), .settings = std::move(settings), .builtInId = {}});
     }
 
     save();
@@ -84,9 +88,63 @@ void EqualiserPresetStore::removePreset(const QString& name)
     Q_EMIT presetsChanged();
 }
 
+void EqualiserPresetStore::restoreBuiltInPresets()
+{
+    auto presets = builtInPresets();
+    for(auto& preset : presets) {
+        const auto existing = std::ranges::find(m_presets, preset.builtInId, &EqualiserPreset::builtInId);
+        if(existing != m_presets.end()) {
+            // Keep the existing name so restoring a preset can't conflict with a user preset
+            existing->settings = std::move(preset.settings);
+        }
+        else {
+            preset.name = Utils::findUniqueString(
+                preset.name, m_presets, [](const EqualiserPreset& existingPreset) { return existingPreset.name; });
+            m_presets.push_back(std::move(preset));
+        }
+    }
+
+    save();
+    Q_EMIT presetsChanged();
+}
+
+std::vector<EqualiserPreset> EqualiserPresetStore::builtInPresets()
+{
+    std::vector<EqualiserPreset> presets;
+
+    const auto addPreset
+        = [&presets](QString id, QString name, const std::array<double, EqualiserDsp::BandCount>& bands) {
+              EqualiserDsp dsp;
+              dsp.setPreampDb(-std::max(0.0, *std::ranges::max_element(bands)));
+              for(int i{0}; std::cmp_less(i, bands.size()); ++i) {
+                  dsp.setBandDb(i, bands[i]);
+              }
+              presets.push_back({.name = std::move(name), .settings = dsp.saveSettings(), .builtInId = std::move(id)});
+          };
+
+    addPreset(u"bass-boost"_s, tr("Bass boost"),
+              {3.0, 3.0, 2.5, 2.0, 1.5, 1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
+    addPreset(u"bass-reduction"_s, tr("Bass reduction"),
+              {-3.0, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
+    addPreset(u"dance"_s, tr("Dance"),
+              {2.0, 1.5, 1.5, 1.5, 1.0, 0.5, 0.0, 0.0, 0.0, -0.5, -1.0, -2.0, -2.5, -3.0, -3.0, -2.0, -1.0, 0.0});
+    addPreset(u"pop"_s, tr("Pop"),
+              {-1.5, -0.5, 0.5, 1.5, 2.0, 2.5, 3.0, 3.0, 2.0, 1.5, 0.5, -0.5, -1.0, -2.0, -2.0, -2.0, -1.5, -1.5});
+    addPreset(u"rock"_s, tr("Rock"),
+              {1.5, 1.5, 1.0, 1.0, -0.5, -2.5, -2.5, -3.0, -2.0, -1.0, -0.5, 0.5, 1.0, 1.5, 2.0, 2.0, 2.0, 2.0});
+    addPreset(u"treble-boost"_s, tr("Treble boost"),
+              {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.0, 3.0});
+    addPreset(u"treble-reduction"_s, tr("Treble reduction"),
+              {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5, -1.0, -1.5, -2.0, -2.5, -3.0, -3.0, -3.0});
+    addPreset(u"vocal-presence"_s, tr("Vocal presence"),
+              {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 2.5, 1.5, 0.5, 0.0, 0.0, 0.0});
+
+    return presets;
+}
+
 void EqualiserPresetStore::load()
 {
-    m_presets.clear();
+    m_presets = builtInPresets();
 
     const FySettings settings;
     auto serializedData = settings.value(PresetsSettingKey).toByteArray();
@@ -106,35 +164,38 @@ void EqualiserPresetStore::load()
     qint32 presetCount{0};
     stream >> version;
     stream >> presetCount;
-    if(stream.status() != QDataStream::Ok || version != PresetStoreVersion || presetCount < 0) {
+    if(stream.status() != QDataStream::Ok || (version != 1 && version != PresetStoreVersion) || presetCount < 0) {
         return;
     }
 
+    std::vector<EqualiserPreset> presets;
     for(qint32 i{0}; i < presetCount; ++i) {
         EqualiserPreset preset;
         stream >> preset.name;
         stream >> preset.settings;
+        if(version >= 2) {
+            stream >> preset.builtInId;
+        }
         preset.name = preset.name.trimmed();
 
         if(stream.status() != QDataStream::Ok || preset.name.isEmpty() || preset.settings.isEmpty()) {
-            m_presets.clear();
             return;
         }
 
-        if(indexByName(preset.name) < 0) {
-            m_presets.push_back(std::move(preset));
+        if(std::ranges::find(presets, preset.name, &EqualiserPreset::name) == presets.end()) {
+            presets.push_back(std::move(preset));
         }
+    }
+
+    m_presets = std::move(presets);
+
+    if(version == 1) {
+        restoreBuiltInPresets();
     }
 }
 
 void EqualiserPresetStore::save() const
 {
-    FySettings settings;
-    if(m_presets.empty()) {
-        settings.remove(PresetsSettingKey);
-        return;
-    }
-
     QByteArray serializedData;
     QDataStream stream{&serializedData, QIODevice::WriteOnly};
     stream.setVersion(QDataStream::Qt_6_0);
@@ -145,8 +206,10 @@ void EqualiserPresetStore::save() const
     for(const auto& preset : m_presets) {
         stream << preset.name;
         stream << preset.settings;
+        stream << preset.builtInId;
     }
 
+    FySettings settings;
     settings.setValue(PresetsSettingKey, qCompress(serializedData, 9));
 }
 } // namespace Fooyin::Equaliser

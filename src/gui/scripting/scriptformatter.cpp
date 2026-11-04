@@ -19,11 +19,13 @@
 
 #include <gui/scripting/scriptformatter.h>
 
+#include <core/constants.h>
 #include <gui/scripting/scriptformatterregistry.h>
 
 #include <QCoreApplication>
 #include <QRegularExpression>
 
+#include <algorithm>
 #include <optional>
 
 using namespace Qt::StringLiterals;
@@ -108,6 +110,7 @@ public:
     qsizetype m_position{0};
 
     RichTextBlock m_currentBlock;
+    std::vector<QString> m_formatTags;
 
     ErrorList m_errors;
     RichText m_formatResult;
@@ -116,6 +119,14 @@ public:
 void ScriptFormatterPrivate::expression()
 {
     const QChar current = m_input.at(m_position);
+
+    if(current == Constants::PlayingIconMarker) {
+        flushCurrentBlock();
+        m_formatResult.blocks.push_back(
+            {.text = {}, .format = m_currentBlock.format, .type = RichTextBlock::Type::PlayingIcon});
+        ++m_position;
+        return;
+    }
 
     if(current == u'<' && formatBlock()) {
         return;
@@ -135,7 +146,8 @@ void ScriptFormatterPrivate::expression()
     }
 
     const qsizetype start = m_position++;
-    while(m_position < m_input.size() && m_input.at(m_position) != u'<' && m_input.at(m_position) != u'\\') {
+    while(m_position < m_input.size() && m_input.at(m_position) != u'<' && m_input.at(m_position) != u'\\'
+          && m_input.at(m_position) != Constants::PlayingIconMarker) {
         ++m_position;
     }
     m_currentBlock.text += m_input.sliced(start, m_position - start);
@@ -143,14 +155,23 @@ void ScriptFormatterPrivate::expression()
 
 bool ScriptFormatterPrivate::formatBlock()
 {
+    const qsizetype end = tagEnd();
+    if(end >= 0
+       && m_input.sliced(m_position + 1, end - m_position - 1).trimmed().compare(u"hr/"_s, Qt::CaseInsensitive) == 0) {
+        flushCurrentBlock();
+        m_formatResult.blocks.push_back(
+            {.text = {}, .format = m_currentBlock.format, .type = RichTextBlock::Type::Line});
+        m_position = end + 1;
+        return true;
+    }
+
     const auto tag = peekFormatTag();
     if(!tag) {
         return false;
     }
 
     const qsizetype tagPos{m_position};
-    const qsizetype end = tagEnd();
-    m_position          = end + 1;
+    m_position = end + 1;
     processFormat(*tag, tagPos, end - tagPos + 1);
     return true;
 }
@@ -222,11 +243,15 @@ void ScriptFormatterPrivate::processFormat(const FormatTag& tag, qsizetype tagPo
         addError(tagPosition, m_input.sliced(tagPosition, tagLength));
     }
 
-    while(m_position < m_input.size() && !isClosingTag(tag.name)) {
+    m_formatTags.push_back(tag.name);
+    // Closing an enclosing scope also ends any unclosed tag inside it
+    while(m_position < m_input.size()
+          && !std::ranges::any_of(m_formatTags, [this](const auto& name) { return isClosingTag(name); })) {
         expression();
     }
 
-    if(m_position < m_input.size()) {
+    m_formatTags.pop_back();
+    if(m_position < m_input.size() && isClosingTag(tag.name)) {
         m_position = tagEnd() + 1;
     }
 
@@ -239,7 +264,7 @@ void ScriptFormatterPrivate::processFormat(const FormatTag& tag, qsizetype tagPo
 void ScriptFormatterPrivate::addError(qsizetype position, QStringView value)
 {
     QString errorMessage = QCoreApplication::translate("Fooyin::ScriptFormatter",
-                                                       "[%1] Error in formatting tag '%2': invalid formatting option.")
+                                                       "[%1] Error in formatting tag ‘%2’: invalid formatting option.")
                                .arg(position)
                                .arg(value);
 
@@ -284,7 +309,7 @@ RichText ScriptFormatter::evaluate(const QString& input)
 
     p->resetFormat();
 
-    if(!input.contains(u'<') && !input.contains(u'\\')) {
+    if(!input.contains(u'<') && !input.contains(u'\\') && !input.contains(Constants::PlayingIconMarker)) {
         p->m_currentBlock.text = input;
         p->m_formatResult.blocks.emplace_back(p->m_currentBlock);
         return p->m_formatResult;

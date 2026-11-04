@@ -26,10 +26,14 @@
 #include <utils/stareditor.h>
 #include <utils/starrating.h>
 
+#include <QContextMenuEvent>
 #include <QHBoxLayout>
+#include <QJsonObject>
 #include <QKeyEvent>
+#include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QResizeEvent>
 
 using namespace Qt::StringLiterals;
 
@@ -52,6 +56,7 @@ public:
 
     void setRating(const StarRating& rating);
     void setInteractive(bool enabled);
+    void setOrientation(Qt::Orientation orientation);
     void setToolButtonOptions(Settings::Gui::ToolButtonOptions options);
 
     [[nodiscard]] QSize sizeHint() const override;
@@ -85,11 +90,23 @@ RatingControlEditor::RatingControlEditor(QWidget* parent)
 
 void RatingControlEditor::setRating(const StarRating& rating)
 {
-    m_rating        = rating;
+    const auto orientation = m_rating.orientation();
+    m_rating               = rating;
+    m_rating.setOrientation(orientation);
     m_previewRating = rating.rating();
 
     updateGeometry();
     update();
+}
+
+void RatingControlEditor::setOrientation(Qt::Orientation orientation)
+{
+    if(m_rating.orientation() != orientation) {
+        m_rating.setOrientation(orientation);
+        m_previewRating = m_rating.rating();
+        updateGeometry();
+        update();
+    }
 }
 
 void RatingControlEditor::setInteractive(bool enabled)
@@ -183,8 +200,11 @@ StarRating RatingControlEditor::ratingForSize() const
     auto rating{m_rating};
 
     if(m_stretchEnabled) {
-        const int padding = static_cast<int>(ControlPadding * std::min(width(), height()));
-        const int scale   = std::min(height() - (2 * padding), (width() - (2 * padding)) / rating.maxStarCount());
+        const int padding   = static_cast<int>(ControlPadding * std::min(width(), height()));
+        const bool vertical = m_rating.orientation() == Qt::Vertical;
+        const int length    = vertical ? height() : width();
+        const int thickness = vertical ? width() : height();
+        const int scale     = std::min(thickness - (2 * padding), (length - (2 * padding)) / rating.maxStarCount());
         rating.setStarScale(std::max(m_rating.starScale(), scale));
     }
 
@@ -204,6 +224,8 @@ RatingControl::RatingControl(PlayerController* playerController, SettingsManager
     , m_playerController{playerController}
     , m_settings{settings}
     , m_editor{new RatingControlEditor(this)}
+    , m_orientation{Qt::Horizontal}
+    , m_autoOrientation{true}
 {
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins({});
@@ -246,13 +268,75 @@ QString RatingControl::layoutName() const
     return u"RatingControl"_s;
 }
 
+void RatingControl::saveLayoutData(QJsonObject& layout)
+{
+    if(!m_autoOrientation) {
+        layout["Orientation"_L1] = m_orientation;
+    }
+}
+
+void RatingControl::loadLayoutData(const QJsonObject& layout)
+{
+    if(layout.contains("Orientation"_L1)) {
+        const auto orientation = static_cast<Qt::Orientation>(layout.value("Orientation"_L1).toInt());
+        if(orientation == Qt::Horizontal || orientation == Qt::Vertical) {
+            m_orientation     = orientation;
+            m_autoOrientation = false;
+            updateOrientation();
+        }
+    }
+}
+
+void RatingControl::populateContextMenu(QMenu* menu)
+{
+    Gui::addOrientationMenu(menu, this,
+                            {.title      = tr("Orientation"),
+                             .automatic  = tr("Automatic"),
+                             .horizontal = tr("Horizontal"),
+                             .vertical   = tr("Vertical")},
+                            m_autoOrientation, m_orientation, [this](std::optional<Qt::Orientation> orientation) {
+                                m_autoOrientation = !orientation.has_value();
+                                if(orientation) {
+                                    m_orientation = *orientation;
+                                }
+                                updateOrientation();
+                            });
+}
+
+void RatingControl::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    populateContextMenu(menu);
+    menu->popup(event->globalPos());
+}
+
+void RatingControl::resizeEvent(QResizeEvent* event)
+{
+    updateOrientation();
+    FyWidget::resizeEvent(event);
+}
+
+void RatingControl::updateOrientation()
+{
+    auto orientation{m_orientation};
+    if(m_autoOrientation) {
+        orientation = automaticOrientation();
+    }
+    m_editor->setOrientation(orientation);
+    updateOrientationConstraints(m_autoOrientation, layout()->minimumSize().expandedTo(m_editor->sizeHint()));
+    if(!m_autoOrientation || findToolbar()) {
+        setMinimumSize(m_editor->sizeHint());
+    }
+}
+
 void RatingControl::updateTrack(const Track& track)
 {
     const float rating = track.isValid() ? std::max(0.0F, track.rating()) : 0.0F;
     m_editor->setRating({rating, 5, m_settings->value<Settings::Gui::StarRatingSize>(),
                          Gui::ratingStarColours(*m_settings), Gui::unratedStarColour(*m_settings)});
     m_editor->setInteractive(track.isValid() && m_playerController->playState() != Player::PlayState::Stopped);
-    setMinimumSize(m_editor->sizeHint());
+    updateOrientation();
 }
 
 void RatingControl::updateAppearance()

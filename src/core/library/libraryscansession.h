@@ -29,11 +29,11 @@
 #include "librarytrackresolver.h"
 
 #include <functional>
+#include <stop_token>
 
 namespace Fooyin {
 class AudioLoader;
 class PlaylistLoader;
-class RemoteDownloadHandle;
 class RemoteIoService;
 class TrackDatabase;
 class TrackMetadataStore;
@@ -60,17 +60,21 @@ public:
     bool scanFiles(const TrackList& libraryTracks, const QList<QUrl>& urls, LibraryScanFilesResult& result);
     bool scanPlaylist(const TrackList& libraryTracks, const QList<QUrl>& urls, TrackList& result);
     void scanPlaylistAsync(const TrackList& libraryTracks, const QList<QUrl>& urls, QObject* context,
-                           std::function<void(bool completed, TrackList tracks)> callback);
+                           std::function<void(bool completed, TrackList tracks)> callback, std::stop_token token = {});
 
     void finish();
+    void fail(QString error);
+    [[nodiscard]] QString error() const;
 
     [[nodiscard]] size_t filesScanned() const;
     [[nodiscard]] size_t progressCount() const;
     [[nodiscard]] size_t discoveredFiles() const;
 
 private:
+    class PlaylistScanOperation;
+
     void reset(const LibraryInfo& library);
-    void flushWriter(bool finalFlush = false);
+    bool flushWriter(bool finalFlush = false);
     void maybeFlushWriter();
     LibraryTrackResolver makeResolver();
     bool handleEnumeratedFile(const QFileInfo& info, EnumeratedFileType type);
@@ -91,7 +95,7 @@ private:
     LibraryInfo m_currentLibrary;
     LibraryTrackResolver* m_resolver;
     LibraryScanFilesResult* m_fileScanResult;
-    std::shared_ptr<RemoteDownloadHandle> m_remotePlaylistDownload;
+    std::unique_ptr<PlaylistScanOperation> m_playlistScan;
 
     std::set<QString> m_externalExplicitPaths;
     std::set<QString> m_externalExplicitDirs;

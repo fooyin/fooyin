@@ -24,30 +24,26 @@ Worker::Worker(QObject* parent)
     : QObject{parent}
     , m_state{Idle}
     , m_closing{false}
-{ }
-
-void Worker::initialiseThread()
+    , m_activeStopToken{m_stopSource.get_token()}
 {
-    m_closing.store(false, std::memory_order_release);
-    resetStopSource();
+    qRegisterMetaType<std::stop_token>();
 }
+
+void Worker::initialiseThread() { }
 
 void Worker::stopThread()
 {
-    requestStop();
-    setState(Idle);
+    requestStop(Idle);
 }
 
 void Worker::pauseThread()
 {
-    requestStop();
-    setState(Paused);
+    requestStop(Paused);
 }
 
 void Worker::closeThread()
 {
-    requestStop();
-    m_closing.store(true, std::memory_order_release);
+    requestStop(Idle, true);
 }
 
 Worker::State Worker::state() const
@@ -57,16 +53,37 @@ Worker::State Worker::state() const
 
 void Worker::setState(State state)
 {
-    if(state == Running) {
-        resetStopSource();
-    }
-
     m_state.store(state, std::memory_order_release);
+}
+
+std::stop_token Worker::prepareWork()
+{
+    const std::scoped_lock lock{m_stopSourceMutex};
+    if(!closing() && !m_stopSource.stop_possible()) {
+        m_stopSource = std::stop_source{};
+    }
+    return m_stopSource.get_token();
+}
+
+bool Worker::startWork(std::stop_token token)
+{
+    const std::scoped_lock lock{m_stopSourceMutex};
+    if(closing() || !token.stop_possible() || token.stop_requested() || token != m_stopSource.get_token()) {
+        return false;
+    }
+    m_activeStopToken = token;
+    setState(Running);
+    return true;
 }
 
 bool Worker::mayRun() const
 {
-    return state() == Running && !closing() && !stopRequested();
+    return mayRun(m_activeStopToken);
+}
+
+bool Worker::mayRun(std::stop_token token) const
+{
+    return state() == Running && !closing() && !token.stop_requested();
 }
 
 bool Worker::closing() const
@@ -76,27 +93,28 @@ bool Worker::closing() const
 
 std::stop_token Worker::stopToken() const
 {
-    const std::scoped_lock lock{m_stopSourceMutex};
-    return m_stopSource.get_token();
+    return m_activeStopToken;
 }
 
 bool Worker::stopRequested() const
 {
-    const std::scoped_lock lock{m_stopSourceMutex};
-    return m_stopSource.stop_requested();
+    return closing() || m_activeStopToken.stop_requested();
 }
 
-void Worker::resetStopSource()
+void Worker::requestStop(State state, bool close)
 {
-    const std::scoped_lock lock{m_stopSourceMutex};
-    m_stopSource = std::stop_source{};
+    std::stop_source source{std::nostopstate};
+    {
+        const std::scoped_lock lock{m_stopSourceMutex};
+        setState(state);
+        if(close) {
+            m_closing.store(true, std::memory_order_release);
+        }
+        source = std::exchange(m_stopSource, std::stop_source{std::nostopstate});
+    }
+    source.request_stop();
 }
 
-void Worker::requestStop()
-{
-    const std::scoped_lock lock{m_stopSourceMutex};
-    m_stopSource.request_stop();
-}
 } // namespace Fooyin
 
 #include "utils/moc_worker.cpp"

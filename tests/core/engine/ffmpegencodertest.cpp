@@ -20,14 +20,15 @@
 #include <core/engine/audioconverter.h>
 #include <core/engine/input/ffmpeg/ffmpegencoder.h>
 #include <core/engine/input/ffmpeg/ffmpeginput.h>
+#include <utils/scopeguard.h>
 
 #include <gtest/gtest.h>
 
 #include <QBuffer>
 #include <QDir>
 #include <QFileInfo>
-#include <QScopeGuard>
 #include <QTemporaryDir>
+#include <QtEndian>
 
 extern "C"
 {
@@ -137,7 +138,7 @@ QByteArray makeTimedId3TransportStream()
     if(avformat_alloc_output_context2(&context, nullptr, "mpegts", nullptr) < 0 || !context) {
         return {};
     }
-    const auto freeContext = qScopeGuard([&context] { avformat_free_context(context); });
+    const auto freeContext = scopeGuard([&context] { avformat_free_context(context); });
 
     AVStream* audio = avformat_new_stream(context, nullptr);
     AVStream* id3   = avformat_new_stream(context, nullptr);
@@ -177,7 +178,7 @@ QByteArray makeTimedId3TransportStream()
     if(!packet) {
         return {};
     }
-    const auto freePacket = qScopeGuard([&packet] { av_packet_free(&packet); });
+    const auto freePacket = scopeGuard([&packet] { av_packet_free(&packet); });
 
     const auto writePacket = [context, packet](AVStream* stream, QByteArrayView data, int64_t pts, int64_t duration,
                                                AVRational sourceTimeBase) {
@@ -282,7 +283,7 @@ bool outputHasAudioStream(const QString& path, AVCodecID expectedCodec, int expe
         return false;
     }
 
-    const auto close = qScopeGuard([&context] { avformat_close_input(&context); });
+    const auto close = scopeGuard([&context] { avformat_close_input(&context); });
 
     if(avformat_find_stream_info(context, nullptr) < 0) {
         return false;
@@ -386,6 +387,24 @@ TEST(FFmpegEncoderTest, ProfileIdsAreUniqueAndComplete)
     }
 }
 
+TEST(FFmpegEncoderTest, AdvertisesSampleFormatsOnlyForLosslessOutput)
+{
+    const auto profiles = FFmpegEncoder{}.availableEncoders();
+
+    for(const AudioEncoderInfo& info : profiles) {
+        SCOPED_TRACE(info.id.toStdString());
+        const auto& formats = info.capabilities.sampleFormats;
+        const bool lossless = info.profile.formatId == u"wav"_s || info.profile.formatId == u"flac"_s
+                           || info.profile.formatId == u"alac"_s || info.profile.formatId == u"wavpack"_s;
+        EXPECT_EQ(formats.empty(), !lossless);
+        EXPECT_EQ(std::ranges::find(formats, SampleFormat::Unknown), formats.cend());
+        if(info.profile.formatId == u"flac"_s || info.profile.formatId == u"alac"_s) {
+            EXPECT_EQ(std::ranges::find(formats, SampleFormat::F32), formats.cend());
+            EXPECT_EQ(std::ranges::find(formats, SampleFormat::F64), formats.cend());
+        }
+    }
+}
+
 TEST(FFmpegEncoderTest, Mp3AdvertisesGenericRateControlCapabilities)
 {
     const auto profile = profileById(FFmpegEncoder{}.availableEncoders(), u"ffmpeg-mp3"_s);
@@ -452,6 +471,7 @@ TEST(FFmpegEncoderTest, EncodesRequestedWavSampleFormats)
         FormatCase{u"pcm_u8"_s, AV_CODEC_ID_PCM_U8, SampleFormat::U8, 8},
         FormatCase{u"pcm_s32le"_s, AV_CODEC_ID_PCM_S32LE, SampleFormat::S32, 32},
         FormatCase{u"pcm_f32le"_s, AV_CODEC_ID_PCM_F32LE, SampleFormat::F32, 32},
+        FormatCase{u"pcm_f64le"_s, AV_CODEC_ID_PCM_F64LE, SampleFormat::F64, 64},
     };
 
     for(const auto& testCase : cases) {
@@ -468,6 +488,12 @@ TEST(FFmpegEncoderTest, Encodes24BitFlac)
     encodeSmokeTest(u"ffmpeg-flac"_s, AV_CODEC_ID_FLAC, 0, 5, 44100, SampleFormat::S24In32, 24);
 }
 
+TEST(FFmpegEncoderTest, Encodes24BitAlac)
+{
+    encodeSmokeTest(u"ffmpeg-alac"_s, AV_CODEC_ID_ALAC, 0, -1, 44100, SampleFormat::S24In32, 24, EncoderMode::Default,
+                    2.0, SampleFormat::S24In32);
+}
+
 TEST(FFmpegEncoderTest, AutomaticSampleFormatPreserves24BitWav)
 {
     if(!hasEncoder({u"pcm_s24le"_s})) {
@@ -480,6 +506,12 @@ TEST(FFmpegEncoderTest, AutomaticSampleFormatPreserves24BitWav)
 TEST(FFmpegEncoderTest, AutomaticSampleFormatPreserves24BitFlac)
 {
     encodeSmokeTest(u"ffmpeg-flac"_s, AV_CODEC_ID_FLAC, 0, 5, 44100, SampleFormat::Unknown, 24, EncoderMode::Default,
+                    2.0, SampleFormat::S24In32);
+}
+
+TEST(FFmpegEncoderTest, AutomaticSampleFormatPreserves24BitAlac)
+{
+    encodeSmokeTest(u"ffmpeg-alac"_s, AV_CODEC_ID_ALAC, 0, -1, 44100, SampleFormat::Unknown, 24, EncoderMode::Default,
                     2.0, SampleFormat::S24In32);
 }
 
@@ -604,6 +636,8 @@ TEST(FFmpegInputTest, PreservesFramesWhenReadSizeIsNotFrameAligned)
         decoded.append(reinterpret_cast<const char*>(data.data()), static_cast<qsizetype>(data.size()));
     }
 
+    // WAV stores little endian samples, while the decoder returns native endian PCM
+    qFromLittleEndian<int16_t>(pcm.constData(), pcm.size() / sizeof(int16_t), pcm.data());
     EXPECT_EQ(decoded, pcm);
 }
 

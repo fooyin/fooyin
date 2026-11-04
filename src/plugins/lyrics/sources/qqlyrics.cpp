@@ -133,7 +133,7 @@ void QQLyrics::handleLyricReply()
         resetReply();
 
         const QString lyrics = obj.value("lyric"_L1).toString();
-        if(!lyrics.isEmpty()) {
+        if(!lyrics.isEmpty() && !lyrics.contains("此歌曲为没有填词的纯音乐，请您欣赏"_L1)) {
             m_currentData->data = lyrics;
         }
     }

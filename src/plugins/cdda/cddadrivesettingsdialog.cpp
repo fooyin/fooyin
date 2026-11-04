@@ -74,8 +74,8 @@ CdDriveSettingsDialog::CdDriveSettingsDialog(CdDriveInfo drive, std::shared_ptr<
     }
     m_speedLimit->setEnabled(m_drive.supportsSpeedLimit);
     m_speedLimit->setToolTip(m_drive.supportsSpeedLimit
-                                 ? tr("Limits the drive's read speed while ripping; playback is unaffected.")
-                                 : tr("This drive doesn't support read-speed control."));
+                                 ? tr("Limits the drive’s read speed while ripping; playback is unaffected.")
+                                 : tr("This drive doesn’t support read-speed control."));
 
     const CdDriveSettings settings = m_settingsStore->settingsForDrive(m_drive);
     m_readOffset->setValue(settings.readOffsetFrames);

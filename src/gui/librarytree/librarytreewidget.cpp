@@ -34,6 +34,7 @@
 #include <core/application.h>
 #include <core/coresettings.h>
 #include <core/library/libraryinfo.h>
+#include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/player/playerdefs.h>
@@ -41,12 +42,14 @@
 #include <core/scripting/trackqueryfilter.h>
 #include <gui/configdialog.h>
 #include <gui/contextmenuutils.h>
+#include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/backgroundimagesource.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
@@ -66,6 +69,7 @@
 #include <QJsonObject>
 #include <QKeyEvent>
 #include <QMenu>
+#include <QPersistentModelIndex>
 #include <QSignalBlocker>
 #include <QTreeView>
 #include <QVBoxLayout>
@@ -98,6 +102,7 @@ constexpr auto LibTreeHeaderKey                = u"LibraryTree/Header";
 constexpr auto LibTreeShowSummaryNodeKey       = u"LibraryTree/ShowSummaryNode";
 constexpr auto LibTreeSummaryNodeTitleKey      = u"LibraryTree/SummaryNodeTitle";
 constexpr auto LibTreeArtworkRadiusKey         = u"LibraryTree/ArtworkCornerRadius";
+constexpr auto LibTreeBackgroundKey            = u"LibraryTree/Background";
 
 namespace Fooyin {
 using namespace Settings::Gui::Internal;
@@ -197,6 +202,7 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
                                      GuiStyleProvider* styleProvider, QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
+    , m_libraryManager{core->libraryManager()}
     , m_library{core->library()}
     , m_playlistHandler{playlistController->playlistHandler()}
     , m_playerController{playlistController->playerController()}
@@ -206,6 +212,8 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
     , m_settings{core->settingsManager()}
     , m_styleProvider{styleProvider}
     , m_styleInitialised{false}
+    , m_backgroundSource{new BackgroundImageSource(new CoverProvider(coverRepository, this), m_playerController,
+                                                   m_trackSelection, this)}
     , m_resetThrottler{new SignalThrottler(this)}
     , m_layout{new QVBoxLayout(this)}
     , m_controlsLayout{nullptr}
@@ -239,7 +247,10 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
     m_libraryTree->setModel(m_sortProxy);
     m_libraryTree->setItemDelegate(m_delegate);
     m_libraryTree->viewport()->installEventFilter(new ToolTipFilter(this));
+
     QObject::connect(m_libraryTree, &LibraryTreeView::displayChanged, m_model, &LibraryTreeModel::resetPalette);
+    QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_libraryTree,
+                     &LibraryTreeView::setBackgroundPixmap);
 
     if(const auto initialGroup = m_groupsRegistry->itemByIndex(0)) {
         changeGrouping(initialGroup.value());
@@ -329,490 +340,6 @@ void LibraryTreeWidget::loadLayoutData(const QJsonObject& layout)
     if(m_searchBar && layout.value("SearchBar"_L1).isObject()) {
         m_searchBar->loadLayoutData(layout.value("SearchBar"_L1).toObject());
     }
-}
-
-void LibraryTreeWidget::enableIntegratedControls(SearchController* searchController, bool visibleByDefault)
-{
-    if(m_searchBar) {
-        return;
-    }
-
-    m_controlsVisibleByDefault = visibleByDefault;
-    m_config.showControls      = defaultConfig().showControls;
-
-    m_groupSelector = new QComboBox(this);
-    m_searchBar     = new SearchWidget(searchController, m_playlistController, m_library, m_settings, this);
-    m_searchBar->setSearchTarget(this);
-
-    m_controlsLayout = new QHBoxLayout();
-    m_controlsLayout->setContentsMargins({});
-    m_controlsLayout->addWidget(m_groupSelector);
-    m_controlsLayout->addWidget(m_searchBar, 1);
-
-    setControlsVisible(m_config.showControls);
-    setControlsPosition(m_config.controlsPosition);
-
-    refreshGroupingSelector();
-
-    QObject::connect(m_groupSelector, &QComboBox::currentIndexChanged, this, [this](int index) {
-        if(index < 0) {
-            return;
-        }
-
-        if(const auto grouping = m_groupsRegistry->itemById(m_groupSelector->itemData(index).toInt())) {
-            changeGrouping(grouping.value());
-        }
-    });
-    QObject::connect(m_groupsRegistry, &RegistryBase::itemAdded, this, &LibraryTreeWidget::refreshGroupingSelector);
-    QObject::connect(m_groupsRegistry, &RegistryBase::itemChanged, this, &LibraryTreeWidget::refreshGroupingSelector);
-    QObject::connect(m_groupsRegistry, &RegistryBase::itemRemoved, this, &LibraryTreeWidget::refreshGroupingSelector);
-
-    Context actionContext = m_widgetContext->context();
-    actionContext.erase(Constants::Context::TrackSelection);
-
-    auto* focusSearch = new QAction(tr("Focus search"), this);
-    focusSearch->setStatusTip(tr("Focus the integrated search bar"));
-    m_actionManager->registerAction(focusSearch, Constants::Actions::SearchPlaylist, actionContext);
-    QObject::connect(focusSearch, &QAction::triggered, this, [this]() {
-        if(!m_config.showControls) {
-            auto config{m_config};
-            config.showControls = true;
-            applyConfig(config);
-        }
-        m_searchBar->setFocus(Qt::ShortcutFocusReason);
-        m_searchBar->selectAll();
-    });
-}
-
-void LibraryTreeWidget::searchEvent(const SearchRequest& request)
-{
-    searchChanged(request);
-}
-
-LibraryTreeWidget::ConfigData LibraryTreeWidget::factoryConfig() const
-{
-    ConfigData config;
-    config.showControls = m_controlsVisibleByDefault;
-    return config;
-}
-
-LibraryTreeWidget::ConfigData LibraryTreeWidget::defaultConfig() const
-{
-    auto config{factoryConfig()};
-
-    config.doubleClickAction = m_settings->fileValue(LibTreeDoubleClickKey, config.doubleClickAction).toInt();
-    config.middleClickAction = m_settings->fileValue(LibTreeMiddleClickKey, config.middleClickAction).toInt();
-    config.sendPlayback      = m_settings->fileValue(LibTreeSendPlaybackKey, config.sendPlayback).toBool();
-    config.playlistEnabled   = m_settings->fileValue(LibTreePlaylistEnabledKey, config.playlistEnabled).toBool();
-    config.autoSwitch        = m_settings->fileValue(LibTreeAutoSwitchKey, config.autoSwitch).toBool();
-    config.preservePlaybackPlaylist
-        = m_settings->fileValue(LibTreeKeepAliveKey, config.preservePlaybackPlaylist).toBool();
-    config.playlistName = m_settings->fileValue(LibTreeAutoPlaylistKey, config.playlistName).toString();
-    config.restoreState = m_settings->fileValue(LibTreeRestoreStateKey, config.restoreState).toBool();
-    config.expandOnSingleClick
-        = m_settings->fileValue(LibTreeExpandSingleClickKey, config.expandOnSingleClick).toBool();
-    config.showControls     = m_settings->fileValue(LibTreeShowControlsKey, config.showControls).toBool();
-    config.controlsPosition = static_cast<ControlsPosition>(
-        m_settings->fileValue(LibTreeControlsPosKey, static_cast<int>(config.controlsPosition)).toInt());
-    config.autoExpandSearchResultLimit
-        = m_settings->fileValue(LibTreeAutoExpandSearchLimitKey, config.autoExpandSearchResultLimit).toInt();
-    config.animated            = m_settings->fileValue(LibTreeAnimatedKey, config.animated).toBool();
-    config.showHeader          = m_settings->fileValue(LibTreeHeaderKey, config.showHeader).toBool();
-    config.showScrollbar       = m_settings->fileValue(LibTreeScrollBarKey, config.showScrollbar).toBool();
-    config.alternatingRows     = m_settings->fileValue(LibTreeAltColoursKey, config.alternatingRows).toBool();
-    config.showSummaryNode     = m_settings->fileValue(LibTreeShowSummaryNodeKey, config.showSummaryNode).toBool();
-    config.summaryNodeTitle    = m_settings->fileValue(LibTreeSummaryNodeTitleKey, config.summaryNodeTitle).toString();
-    config.rowHeight           = m_settings->fileValue(LibTreeRowHeightKey, config.rowHeight).toInt();
-    config.iconSize            = m_settings->value<LibTreeIconSize>().toSize();
-    config.artworkCornerRadius = m_settings->fileValue(LibTreeArtworkRadiusKey, config.artworkCornerRadius).toInt();
-
-    return config;
-}
-
-const LibraryTreeWidget::ConfigData& LibraryTreeWidget::currentConfig() const
-{
-    return m_config;
-}
-
-void LibraryTreeWidget::saveDefaults(const ConfigData& config) const
-{
-    m_settings->fileSet(LibTreeDoubleClickKey, config.doubleClickAction);
-    m_settings->fileSet(LibTreeMiddleClickKey, config.middleClickAction);
-    m_settings->fileSet(LibTreeSendPlaybackKey, config.sendPlayback);
-    m_settings->fileSet(LibTreePlaylistEnabledKey, config.playlistEnabled);
-    m_settings->fileSet(LibTreeAutoSwitchKey, config.autoSwitch);
-    m_settings->fileSet(LibTreeKeepAliveKey, config.preservePlaybackPlaylist);
-    m_settings->fileSet(LibTreeAutoPlaylistKey, config.playlistName);
-    m_settings->fileSet(LibTreeRestoreStateKey, config.restoreState);
-    m_settings->fileSet(LibTreeExpandSingleClickKey, config.expandOnSingleClick);
-    m_settings->fileSet(LibTreeShowControlsKey, config.showControls);
-    m_settings->fileSet(LibTreeControlsPosKey, static_cast<int>(config.controlsPosition));
-    m_settings->fileSet(LibTreeAutoExpandSearchLimitKey, config.autoExpandSearchResultLimit);
-    m_settings->fileSet(LibTreeAnimatedKey, config.animated);
-    m_settings->fileSet(LibTreeHeaderKey, config.showHeader);
-    m_settings->fileSet(LibTreeScrollBarKey, config.showScrollbar);
-    m_settings->fileSet(LibTreeAltColoursKey, config.alternatingRows);
-    m_settings->fileSet(LibTreeShowSummaryNodeKey, config.showSummaryNode);
-    m_settings->fileSet(LibTreeSummaryNodeTitleKey, config.summaryNodeTitle);
-    m_settings->fileSet(LibTreeRowHeightKey, config.rowHeight);
-    m_settings->set<LibTreeIconSize>(config.iconSize);
-    m_settings->fileSet(LibTreeArtworkRadiusKey, config.artworkCornerRadius);
-}
-
-void LibraryTreeWidget::clearSavedDefaults() const
-{
-    m_settings->fileRemove(LibTreeDoubleClickKey);
-    m_settings->fileRemove(LibTreeMiddleClickKey);
-    m_settings->fileRemove(LibTreeSendPlaybackKey);
-    m_settings->fileRemove(LibTreePlaylistEnabledKey);
-    m_settings->fileRemove(LibTreeAutoSwitchKey);
-    m_settings->fileRemove(LibTreeKeepAliveKey);
-    m_settings->fileRemove(LibTreeAutoPlaylistKey);
-    m_settings->fileRemove(LibTreeRestoreStateKey);
-    m_settings->fileRemove(LibTreeExpandSingleClickKey);
-    m_settings->fileRemove(LibTreeShowControlsKey);
-    m_settings->fileRemove(LibTreeControlsPosKey);
-    m_settings->fileRemove(LibTreeAutoExpandSearchLimitKey);
-    m_settings->fileRemove(LibTreeAnimatedKey);
-    m_settings->fileRemove(LibTreeHeaderKey);
-    m_settings->fileRemove(LibTreeScrollBarKey);
-    m_settings->fileRemove(LibTreeAltColoursKey);
-    m_settings->fileRemove(LibTreeShowSummaryNodeKey);
-    m_settings->fileRemove(LibTreeSummaryNodeTitleKey);
-    m_settings->fileRemove(LibTreeRowHeightKey);
-    m_settings->reset<LibTreeIconSize>();
-    m_settings->fileRemove(LibTreeArtworkRadiusKey);
-}
-
-void LibraryTreeWidget::applyConfig(const ConfigData& config)
-{
-    m_config = config;
-
-    if(!m_config.iconSize.isValid()) {
-        m_config.iconSize = factoryConfig().iconSize;
-    }
-
-    m_config.rowHeight                   = std::max(m_config.rowHeight, 0);
-    m_config.autoExpandSearchResultLimit = std::max(m_config.autoExpandSearchResultLimit, 0);
-    m_config.artworkCornerRadius         = std::clamp(m_config.artworkCornerRadius, 0, 100);
-
-    if(m_config.summaryNodeTitle.isEmpty()) {
-        m_config.summaryNodeTitle = factoryConfig().summaryNodeTitle;
-    }
-    if(m_config.controlsPosition != ControlsPosition::Top && m_config.controlsPosition != ControlsPosition::Bottom) {
-        m_config.controlsPosition = factoryConfig().controlsPosition;
-    }
-
-    m_doubleClickAction = static_cast<TrackAction>(m_config.doubleClickAction);
-    m_middleClickAction = static_cast<TrackAction>(m_config.middleClickAction);
-
-    m_libraryTree->setExpandsOnDoubleClick(m_doubleClickAction == TrackAction::None
-                                           || m_doubleClickAction == TrackAction::Play);
-    m_libraryTree->setExpandsOnSingleClick(m_config.expandOnSingleClick);
-    setControlsVisible(m_config.showControls);
-    setControlsPosition(m_config.controlsPosition);
-    m_trackSelection->changePlaybackOnSend(m_widgetContext, m_config.sendPlayback);
-    m_libraryTree->setAnimated(m_config.animated);
-    m_libraryTree->setHeaderHidden(!m_config.showHeader);
-    setScrollbarEnabled(m_config.showScrollbar);
-    m_libraryTree->setAlternatingRowColors(m_config.alternatingRows);
-    m_model->setRowHeight(m_config.rowHeight);
-    m_model->setSummaryNodeConfig(m_config.showSummaryNode, m_config.summaryNodeTitle);
-    m_libraryTree->setIconSize(m_config.iconSize);
-    m_delegate->setArtworkCornerRadius(m_config.artworkCornerRadius);
-    m_libraryTree->viewport()->update();
-
-    QMetaObject::invokeMethod(m_libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
-
-    Q_EMIT configChanged();
-}
-
-void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
-{
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-    Utils::forwardMenuStatusTips(menu);
-
-    populateContextMenu(menu);
-    menu->popup(event->globalPos());
-}
-
-void LibraryTreeWidget::keyPressEvent(QKeyEvent* event)
-{
-    const auto key = event->key();
-    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
-        handleDoubleClick(m_libraryTree->currentIndex());
-    }
-
-    FyWidget::keyPressEvent(event);
-}
-
-LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObject& layout) const
-{
-    ConfigData config{defaultConfig()};
-
-    if(layout.contains("DoubleClickAction"_L1)) {
-        config.doubleClickAction = layout.value("DoubleClickAction"_L1).toInt();
-    }
-    if(layout.contains("MiddleClickAction"_L1)) {
-        config.middleClickAction = layout.value("MiddleClickAction"_L1).toInt();
-    }
-    if(layout.contains("SendPlayback"_L1)) {
-        config.sendPlayback = layout.value("SendPlayback"_L1).toBool();
-    }
-    if(layout.contains("PlaylistEnabled"_L1)) {
-        config.playlistEnabled = layout.value("PlaylistEnabled"_L1).toBool();
-    }
-    if(layout.contains("AutoSwitch"_L1)) {
-        config.autoSwitch = layout.value("AutoSwitch"_L1).toBool();
-    }
-    if(layout.contains("KeepAlive"_L1)) {
-        config.preservePlaybackPlaylist = layout.value("KeepAlive"_L1).toBool();
-    }
-    if(layout.contains("PlaylistName"_L1)) {
-        config.playlistName = layout.value("PlaylistName"_L1).toString();
-    }
-    if(layout.contains("RestoreState"_L1)) {
-        config.restoreState = layout.value("RestoreState"_L1).toBool();
-    }
-    if(layout.contains("ExpandOnSingleClick"_L1)) {
-        config.expandOnSingleClick = layout.value("ExpandOnSingleClick"_L1).toBool();
-    }
-    if(layout.contains("ShowControls"_L1)) {
-        config.showControls = layout.value("ShowControls"_L1).toBool();
-    }
-    if(layout.contains("ControlsPosition"_L1)) {
-        const auto position = static_cast<ControlsPosition>(layout.value("ControlsPosition"_L1).toInt());
-        if(position == ControlsPosition::Top || position == ControlsPosition::Bottom) {
-            config.controlsPosition = position;
-        }
-    }
-    if(layout.contains("AutoExpandSearchResultLimit"_L1)) {
-        config.autoExpandSearchResultLimit = layout.value("AutoExpandSearchResultLimit"_L1).toInt();
-    }
-    if(layout.contains("Animated"_L1)) {
-        config.animated = layout.value("Animated"_L1).toBool();
-    }
-    if(layout.contains("ShowHeader"_L1)) {
-        config.showHeader = layout.value("ShowHeader"_L1).toBool();
-    }
-    if(layout.contains("ShowScrollbar"_L1)) {
-        config.showScrollbar = layout.value("ShowScrollbar"_L1).toBool();
-    }
-    if(layout.contains("AlternatingRows"_L1)) {
-        config.alternatingRows = layout.value("AlternatingRows"_L1).toBool();
-    }
-    if(layout.contains("ShowSummaryNode"_L1)) {
-        config.showSummaryNode = layout.value("ShowSummaryNode"_L1).toBool();
-    }
-    if(layout.contains("SummaryNodeTitle"_L1)) {
-        config.summaryNodeTitle = layout.value("SummaryNodeTitle"_L1).toString();
-    }
-    if(layout.contains("RowHeight"_L1)) {
-        config.rowHeight = layout.value("RowHeight"_L1).toInt();
-    }
-    if(layout.contains("IconWidth"_L1) && layout.contains("IconHeight"_L1)) {
-        config.iconSize = {layout.value("IconWidth"_L1).toInt(), layout.value("IconHeight"_L1).toInt()};
-    }
-    if(layout.contains("ArtworkCornerRadius"_L1)) {
-        config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt();
-    }
-
-    if(!config.iconSize.isValid()) {
-        config.iconSize = factoryConfig().iconSize;
-    }
-
-    config.rowHeight                   = std::max(config.rowHeight, 0);
-    config.autoExpandSearchResultLimit = std::max(config.autoExpandSearchResultLimit, 0);
-    config.artworkCornerRadius         = std::clamp(config.artworkCornerRadius, 0, 100);
-
-    if(config.summaryNodeTitle.isEmpty()) {
-        config.summaryNodeTitle = factoryConfig().summaryNodeTitle;
-    }
-
-    return config;
-}
-
-void LibraryTreeWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
-{
-    layout["DoubleClickAction"_L1]           = config.doubleClickAction;
-    layout["MiddleClickAction"_L1]           = config.middleClickAction;
-    layout["SendPlayback"_L1]                = config.sendPlayback;
-    layout["PlaylistEnabled"_L1]             = config.playlistEnabled;
-    layout["AutoSwitch"_L1]                  = config.autoSwitch;
-    layout["KeepAlive"_L1]                   = config.preservePlaybackPlaylist;
-    layout["PlaylistName"_L1]                = config.playlistName;
-    layout["RestoreState"_L1]                = config.restoreState;
-    layout["ExpandOnSingleClick"_L1]         = config.expandOnSingleClick;
-    layout["ShowControls"_L1]                = config.showControls;
-    layout["ControlsPosition"_L1]            = static_cast<int>(config.controlsPosition);
-    layout["AutoExpandSearchResultLimit"_L1] = config.autoExpandSearchResultLimit;
-    layout["Animated"_L1]                    = config.animated;
-    layout["ShowHeader"_L1]                  = config.showHeader;
-    layout["ShowScrollbar"_L1]               = config.showScrollbar;
-    layout["AlternatingRows"_L1]             = config.alternatingRows;
-    layout["ShowSummaryNode"_L1]             = config.showSummaryNode;
-    layout["SummaryNodeTitle"_L1]            = config.summaryNodeTitle;
-    layout["RowHeight"_L1]                   = config.rowHeight;
-    layout["IconWidth"_L1]                   = config.iconSize.width();
-    layout["IconHeight"_L1]                  = config.iconSize.height();
-    layout["ArtworkCornerRadius"_L1]         = config.artworkCornerRadius;
-}
-
-void LibraryTreeWidget::openConfigDialog()
-{
-    showConfigDialog(new LibraryTreeConfigDialog(this, m_groupsRegistry, this), Qt::NonModal);
-}
-
-void LibraryTreeWidget::setupConnections()
-{
-    const auto resetModel = [this]() {
-        if(m_pendingResetState.isEmpty()) {
-            m_pendingResetState = saveState();
-        }
-        const bool usingFilteredTracks
-            = !m_currentSearch.isEmpty() || m_currentEmptySearchMode == EmptySearchMode::ShowAll;
-        m_model->reset(usingFilteredTracks ? m_filteredTracks : sourceTracks());
-    };
-
-    QObject::connect(m_resetThrottler, &SignalThrottler::triggered, this, resetModel);
-
-    QObject::connect(m_model, &LibraryTreeModel::dataUpdated, m_libraryTree, &QTreeView::dataChanged);
-    QObject::connect(m_model, &LibraryTreeModel::modelLoaded, this, [this]() { restoreState(m_pendingState); });
-    QObject::connect(m_model, &LibraryTreeModel::modelResetFinished, this,
-                     [this]() { restoreState(std::exchange(m_pendingResetState, {}), true); });
-    QObject::connect(m_libraryTree, &LibraryTreeView::displayAboutToChange, this, [this]() {
-        if(m_pendingResetState.isEmpty()) {
-            m_pendingResetState = saveState();
-        }
-    });
-
-    QObject::connect(m_libraryTree, &LibraryTreeView::doubleClicked, this,
-                     [this](const QModelIndex& index) { handleDoubleClick(index); });
-    QObject::connect(m_libraryTree, &LibraryTreeView::middleClicked, this,
-                     [this](const QModelIndex& index) { handleMiddleClick(index); });
-    QObject::connect(m_libraryTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-                     [this](const QItemSelection& selected, const QItemSelection& deselected) {
-                         selectionChanged(selected, deselected);
-                     });
-    QObject::connect(m_libraryTree->header(), &QHeaderView::customContextMenuRequested, this,
-                     [this](const QPoint& pos) { setupHeaderContextMenu(pos); });
-    QObject::connect(m_libraryTree, &QAbstractItemView::iconSizeChanged, this, [this](const QSize& size) {
-        if(size.isValid() && m_config.iconSize != size) {
-            m_config.iconSize = size;
-            QMetaObject::invokeMethod(m_libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
-            Q_EMIT configChanged();
-        }
-    });
-    QObject::connect(m_groupsRegistry, &LibraryTreeGroupRegistry::groupingChanged, this,
-                     [this](const LibraryTreeGrouping& changedGrouping) {
-                         if(m_grouping.id == changedGrouping.id) {
-                             changeGrouping(changedGrouping);
-                         }
-                     });
-
-    QObject::connect(m_library, &MusicLibrary::tracksLoaded, this, [this]() {
-        if(!m_library->hasActiveLibraryFilters()) {
-            reset();
-        }
-    });
-    QObject::connect(m_library, &MusicLibrary::tracksAdded, this, [this](const TrackList& tracks) {
-        if(!m_library->hasActiveLibraryFilters()) {
-            handleTracksAdded(tracks);
-        }
-    });
-    QObject::connect(m_library, &MusicLibrary::tracksScanned, m_model,
-                     [this](int /*id*/, const TrackList& tracks) { handleTracksAdded(tracks); });
-    QObject::connect(m_library, &MusicLibrary::tracksMetadataChanged, this, [this](const TrackList& tracks) {
-        if(!m_library->hasActiveLibraryFilters()) {
-            handleTracksUpdated(tracks);
-        }
-    });
-    QObject::connect(m_library, &MusicLibrary::tracksUpdated, this, [this](const TrackList& tracks) {
-        if(!m_library->hasActiveLibraryFilters()) {
-            m_model->refreshTracks(tracks);
-        }
-    });
-    QObject::connect(m_library, &MusicLibrary::tracksDeleted, this, [this](const TrackList& tracks) {
-        if(!m_library->hasActiveLibraryFilters()) {
-            m_model->removeTracks(tracks);
-        }
-    });
-    QObject::connect(m_library, &MusicLibrary::tracksSorted, this, [this]() {
-        if(!m_library->hasActiveLibraryFilters()) {
-            reset();
-        }
-    });
-    QObject::connect(m_library, &MusicLibrary::visibleLibraryTracksChanged, this, &LibraryTreeWidget::refreshSearch);
-
-    QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
-                     [this](Player::PlayState state) { m_model->setPlayState(state); });
-    QObject::connect(m_playerController, &PlayerController::playlistTrackUpdated, this,
-                     [this](const auto& track) { playlistTrackChanged(track); });
-    QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
-                     [this](auto* playlist) { activePlaylistChanged(playlist); });
-
-    m_styleProvider->subscribe(this, [this](const ResolvedAppStyle& resolvedStyle) {
-        const bool initialStyle = !std::exchange(m_styleInitialised, true);
-        Gui::refreshItemViewPalette(m_libraryTree, resolvedStyle.palette);
-        m_model->resetPalette();
-        if(initialStyle) {
-            reset();
-        }
-    });
-
-    m_settings->subscribe<Settings::Core::UseVariousForCompilations>(this, [this]() { reset(); });
-
-    m_settings->subscribe<Settings::Gui::RatingFullStarSymbol>(this, resetModel);
-    m_settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(this, resetModel);
-    m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, resetModel);
-}
-
-void LibraryTreeWidget::refreshGroupingSelector()
-{
-    if(!m_groupSelector) {
-        return;
-    }
-
-    const QSignalBlocker blocker{m_groupSelector};
-
-    m_groupSelector->clear();
-    for(const auto& grouping : m_groupsRegistry->items()) {
-        m_groupSelector->addItem(grouping.name, grouping.id);
-    }
-    m_groupSelector->setCurrentIndex(m_groupSelector->findData(m_grouping.id));
-}
-
-void LibraryTreeWidget::setControlsPosition(ControlsPosition position)
-{
-    if(!m_controlsLayout) {
-        return;
-    }
-
-    m_layout->removeItem(m_controlsLayout);
-    m_layout->insertLayout(position == ControlsPosition::Top ? 0 : 1, m_controlsLayout);
-}
-
-void LibraryTreeWidget::setControlsVisible(bool visible)
-{
-    if(!m_groupSelector || !m_searchBar) {
-        return;
-    }
-
-    if(!visible) {
-        m_searchBar->clear();
-    }
-    m_groupSelector->setVisible(visible);
-    m_searchBar->setVisible(visible);
-}
-
-void LibraryTreeWidget::reset()
-{
-    if(!m_styleProvider->isResolved()) {
-        return;
-    }
-
-    m_resetThrottler->throttle();
 }
 
 void LibraryTreeWidget::populateContextMenu(QMenu* menu)
@@ -944,6 +471,485 @@ void LibraryTreeWidget::populateContextMenu(QMenu* menu)
         });
 }
 
+void LibraryTreeWidget::enableIntegratedControls(SearchController* searchController, bool visibleByDefault)
+{
+    if(m_searchBar) {
+        return;
+    }
+
+    m_controlsVisibleByDefault = visibleByDefault;
+    m_config.showControls      = defaultConfig().showControls;
+
+    m_groupSelector = new QComboBox(this);
+    m_searchBar     = new SearchWidget(searchController, m_playlistController, m_library, m_settings, this);
+    m_searchBar->setSearchTarget(this);
+
+    m_controlsLayout = new QHBoxLayout();
+    m_controlsLayout->setContentsMargins({});
+    m_controlsLayout->addWidget(m_groupSelector);
+    m_controlsLayout->addWidget(m_searchBar, 1);
+
+    setControlsVisible(m_config.showControls);
+    setControlsPosition(m_config.controlsPosition);
+
+    refreshGroupingSelector();
+
+    QObject::connect(m_groupSelector, &QComboBox::currentIndexChanged, this, [this](int index) {
+        if(index < 0) {
+            return;
+        }
+
+        if(const auto grouping = m_groupsRegistry->itemById(m_groupSelector->itemData(index).toInt())) {
+            changeGrouping(grouping.value());
+        }
+    });
+    QObject::connect(m_groupsRegistry, &RegistryBase::itemAdded, this, &LibraryTreeWidget::refreshGroupingSelector);
+    QObject::connect(m_groupsRegistry, &RegistryBase::itemChanged, this, &LibraryTreeWidget::refreshGroupingSelector);
+    QObject::connect(m_groupsRegistry, &RegistryBase::itemRemoved, this, &LibraryTreeWidget::refreshGroupingSelector);
+
+    Context actionContext = m_widgetContext->context();
+    actionContext.erase(Constants::Context::TrackSelection);
+
+    auto* focusSearch = new QAction(tr("Focus search"), this);
+    focusSearch->setStatusTip(tr("Focus the integrated search bar"));
+    m_actionManager->registerAction(focusSearch, Constants::Actions::SearchPlaylist, actionContext);
+    QObject::connect(focusSearch, &QAction::triggered, this, [this]() {
+        if(!m_config.showControls) {
+            auto config{m_config};
+            config.showControls = true;
+            applyConfig(config);
+        }
+        m_searchBar->setFocus(Qt::ShortcutFocusReason);
+        m_searchBar->selectAll();
+    });
+}
+
+void LibraryTreeWidget::searchEvent(const SearchRequest& request)
+{
+    searchChanged(request);
+}
+
+LibraryTreeWidget::ConfigData LibraryTreeWidget::factoryConfig() const
+{
+    ConfigData config;
+    config.showControls = m_controlsVisibleByDefault;
+    config.showHeader   = !isWindow();
+    return config;
+}
+
+LibraryTreeWidget::ConfigData LibraryTreeWidget::defaultConfig() const
+{
+    auto config{factoryConfig()};
+
+    config.doubleClickAction = m_settings->fileValue(LibTreeDoubleClickKey, config.doubleClickAction).toInt();
+    config.middleClickAction = m_settings->fileValue(LibTreeMiddleClickKey, config.middleClickAction).toInt();
+    config.sendPlayback      = m_settings->fileValue(LibTreeSendPlaybackKey, config.sendPlayback).toBool();
+    config.playlistEnabled   = m_settings->fileValue(LibTreePlaylistEnabledKey, config.playlistEnabled).toBool();
+    config.autoSwitch        = m_settings->fileValue(LibTreeAutoSwitchKey, config.autoSwitch).toBool();
+    config.preservePlaybackPlaylist
+        = m_settings->fileValue(LibTreeKeepAliveKey, config.preservePlaybackPlaylist).toBool();
+    config.playlistName = m_settings->fileValue(LibTreeAutoPlaylistKey, config.playlistName).toString();
+    config.restoreState = m_settings->fileValue(LibTreeRestoreStateKey, config.restoreState).toBool();
+    config.expandOnSingleClick
+        = m_settings->fileValue(LibTreeExpandSingleClickKey, config.expandOnSingleClick).toBool();
+    config.showControls     = m_settings->fileValue(LibTreeShowControlsKey, config.showControls).toBool();
+    config.controlsPosition = static_cast<ControlsPosition>(
+        m_settings->fileValue(LibTreeControlsPosKey, static_cast<int>(config.controlsPosition)).toInt());
+    config.autoExpandSearchResultLimit
+        = m_settings->fileValue(LibTreeAutoExpandSearchLimitKey, config.autoExpandSearchResultLimit).toInt();
+    config.animated            = m_settings->fileValue(LibTreeAnimatedKey, config.animated).toBool();
+    config.showHeader          = m_settings->fileValue(LibTreeHeaderKey, config.showHeader).toBool();
+    config.showScrollbar       = m_settings->fileValue(LibTreeScrollBarKey, config.showScrollbar).toBool();
+    config.alternatingRows     = m_settings->fileValue(LibTreeAltColoursKey, config.alternatingRows).toBool();
+    config.showSummaryNode     = m_settings->fileValue(LibTreeShowSummaryNodeKey, config.showSummaryNode).toBool();
+    config.summaryNodeTitle    = m_settings->fileValue(LibTreeSummaryNodeTitleKey, config.summaryNodeTitle).toString();
+    config.rowHeight           = m_settings->fileValue(LibTreeRowHeightKey, config.rowHeight).toInt();
+    config.iconSize            = m_settings->value<LibTreeIconSize>().toSize();
+    config.artworkCornerRadius = m_settings->fileValue(LibTreeArtworkRadiusKey, config.artworkCornerRadius).toInt();
+    config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(LibTreeBackgroundKey).toMap()));
+
+    return config;
+}
+
+const LibraryTreeWidget::ConfigData& LibraryTreeWidget::currentConfig() const
+{
+    return m_config;
+}
+
+void LibraryTreeWidget::saveDefaults(const ConfigData& config) const
+{
+    m_settings->fileSet(LibTreeDoubleClickKey, config.doubleClickAction);
+    m_settings->fileSet(LibTreeMiddleClickKey, config.middleClickAction);
+    m_settings->fileSet(LibTreeSendPlaybackKey, config.sendPlayback);
+    m_settings->fileSet(LibTreePlaylistEnabledKey, config.playlistEnabled);
+    m_settings->fileSet(LibTreeAutoSwitchKey, config.autoSwitch);
+    m_settings->fileSet(LibTreeKeepAliveKey, config.preservePlaybackPlaylist);
+    m_settings->fileSet(LibTreeAutoPlaylistKey, config.playlistName);
+    m_settings->fileSet(LibTreeRestoreStateKey, config.restoreState);
+    m_settings->fileSet(LibTreeExpandSingleClickKey, config.expandOnSingleClick);
+    m_settings->fileSet(LibTreeShowControlsKey, config.showControls);
+    m_settings->fileSet(LibTreeControlsPosKey, static_cast<int>(config.controlsPosition));
+    m_settings->fileSet(LibTreeAutoExpandSearchLimitKey, config.autoExpandSearchResultLimit);
+    m_settings->fileSet(LibTreeAnimatedKey, config.animated);
+    m_settings->fileSet(LibTreeHeaderKey, config.showHeader);
+    m_settings->fileSet(LibTreeScrollBarKey, config.showScrollbar);
+    m_settings->fileSet(LibTreeAltColoursKey, config.alternatingRows);
+    m_settings->fileSet(LibTreeShowSummaryNodeKey, config.showSummaryNode);
+    m_settings->fileSet(LibTreeSummaryNodeTitleKey, config.summaryNodeTitle);
+    m_settings->fileSet(LibTreeRowHeightKey, config.rowHeight);
+    m_settings->set<LibTreeIconSize>(config.iconSize);
+    m_settings->fileSet(LibTreeArtworkRadiusKey, config.artworkCornerRadius);
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    m_settings->fileSet(LibTreeBackgroundKey, background.toVariantMap());
+}
+
+void LibraryTreeWidget::clearSavedDefaults() const
+{
+    m_settings->fileRemove(LibTreeDoubleClickKey);
+    m_settings->fileRemove(LibTreeMiddleClickKey);
+    m_settings->fileRemove(LibTreeSendPlaybackKey);
+    m_settings->fileRemove(LibTreePlaylistEnabledKey);
+    m_settings->fileRemove(LibTreeAutoSwitchKey);
+    m_settings->fileRemove(LibTreeKeepAliveKey);
+    m_settings->fileRemove(LibTreeAutoPlaylistKey);
+    m_settings->fileRemove(LibTreeRestoreStateKey);
+    m_settings->fileRemove(LibTreeExpandSingleClickKey);
+    m_settings->fileRemove(LibTreeShowControlsKey);
+    m_settings->fileRemove(LibTreeControlsPosKey);
+    m_settings->fileRemove(LibTreeAutoExpandSearchLimitKey);
+    m_settings->fileRemove(LibTreeAnimatedKey);
+    m_settings->fileRemove(LibTreeHeaderKey);
+    m_settings->fileRemove(LibTreeScrollBarKey);
+    m_settings->fileRemove(LibTreeAltColoursKey);
+    m_settings->fileRemove(LibTreeShowSummaryNodeKey);
+    m_settings->fileRemove(LibTreeSummaryNodeTitleKey);
+    m_settings->fileRemove(LibTreeRowHeightKey);
+    m_settings->reset<LibTreeIconSize>();
+    m_settings->fileRemove(LibTreeArtworkRadiusKey);
+    m_settings->fileRemove(LibTreeBackgroundKey);
+}
+
+void LibraryTreeWidget::applyConfig(const ConfigData& config)
+{
+    m_config = config;
+    m_config.background.normalise();
+
+    if(!m_config.iconSize.isValid()) {
+        m_config.iconSize = factoryConfig().iconSize;
+    }
+
+    m_config.rowHeight                   = std::max(m_config.rowHeight, 0);
+    m_config.autoExpandSearchResultLimit = std::max(m_config.autoExpandSearchResultLimit, 0);
+    m_config.artworkCornerRadius         = std::clamp(m_config.artworkCornerRadius, 0, 100);
+
+    if(m_config.summaryNodeTitle.isEmpty()) {
+        m_config.summaryNodeTitle = factoryConfig().summaryNodeTitle;
+    }
+    if(m_config.controlsPosition != ControlsPosition::Top && m_config.controlsPosition != ControlsPosition::Bottom) {
+        m_config.controlsPosition = factoryConfig().controlsPosition;
+    }
+
+    m_doubleClickAction = static_cast<TrackAction>(m_config.doubleClickAction);
+    m_middleClickAction = static_cast<TrackAction>(m_config.middleClickAction);
+
+    m_libraryTree->setExpandsOnDoubleClick(m_doubleClickAction == TrackAction::None
+                                           || m_doubleClickAction == TrackAction::Play);
+    m_libraryTree->setExpandsOnSingleClick(m_config.expandOnSingleClick, m_doubleClickAction != TrackAction::None);
+    setControlsVisible(m_config.showControls);
+    setControlsPosition(m_config.controlsPosition);
+    m_trackSelection->changePlaybackOnSend(m_widgetContext, m_config.sendPlayback);
+    m_libraryTree->setAnimated(m_config.animated);
+    m_libraryTree->setHeaderHidden(!m_config.showHeader);
+    setScrollbarEnabled(m_config.showScrollbar);
+    m_libraryTree->setAlternatingRowColors(m_config.alternatingRows);
+    m_model->setRowHeight(m_config.rowHeight);
+    m_model->setSummaryNodeConfig(m_config.showSummaryNode, m_config.summaryNodeTitle);
+    m_libraryTree->setIconSize(m_config.iconSize);
+    m_delegate->setArtworkCornerRadius(m_config.artworkCornerRadius);
+    m_libraryTree->setBackgroundConfig(m_config.background);
+    m_backgroundSource->setConfig(m_config.background);
+    m_libraryTree->viewport()->update();
+
+    QMetaObject::invokeMethod(m_libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+
+    Q_EMIT configChanged();
+}
+
+void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    Utils::forwardMenuStatusTips(menu);
+
+    populateContextMenu(menu);
+    menu->popup(event->globalPos());
+}
+
+void LibraryTreeWidget::keyPressEvent(QKeyEvent* event)
+{
+    const auto key = event->key();
+    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
+        handleDoubleClick(m_libraryTree->currentIndex());
+    }
+
+    FyWidget::keyPressEvent(event);
+}
+
+LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObject& layout) const
+{
+    ConfigData config{defaultConfig()};
+
+    config.doubleClickAction        = layout.value("DoubleClickAction"_L1).toInt(config.doubleClickAction);
+    config.middleClickAction        = layout.value("MiddleClickAction"_L1).toInt(config.middleClickAction);
+    config.sendPlayback             = layout.value("SendPlayback"_L1).toBool(config.sendPlayback);
+    config.playlistEnabled          = layout.value("PlaylistEnabled"_L1).toBool(config.playlistEnabled);
+    config.autoSwitch               = layout.value("AutoSwitch"_L1).toBool(config.autoSwitch);
+    config.preservePlaybackPlaylist = layout.value("KeepAlive"_L1).toBool(config.preservePlaybackPlaylist);
+    config.playlistName             = layout.value("PlaylistName"_L1).toString(config.playlistName);
+    config.restoreState             = layout.value("RestoreState"_L1).toBool(config.restoreState);
+    config.expandOnSingleClick      = layout.value("ExpandOnSingleClick"_L1).toBool(config.expandOnSingleClick);
+    config.showControls             = layout.value("ShowControls"_L1).toBool(config.showControls);
+
+    if(layout.contains("ControlsPosition"_L1)) {
+        const auto position = static_cast<ControlsPosition>(layout.value("ControlsPosition"_L1).toInt());
+        if(position == ControlsPosition::Top || position == ControlsPosition::Bottom) {
+            config.controlsPosition = position;
+        }
+    }
+
+    config.autoExpandSearchResultLimit
+        = layout.value("AutoExpandSearchResultLimit"_L1).toInt(config.autoExpandSearchResultLimit);
+    config.animated         = layout.value("Animated"_L1).toBool(config.animated);
+    config.showHeader       = layout.value("ShowHeader"_L1).toBool(config.showHeader);
+    config.showScrollbar    = layout.value("ShowScrollbar"_L1).toBool(config.showScrollbar);
+    config.alternatingRows  = layout.value("AlternatingRows"_L1).toBool(config.alternatingRows);
+    config.showSummaryNode  = layout.value("ShowSummaryNode"_L1).toBool(config.showSummaryNode);
+    config.summaryNodeTitle = layout.value("SummaryNodeTitle"_L1).toString(config.summaryNodeTitle);
+    config.rowHeight        = layout.value("RowHeight"_L1).toInt(config.rowHeight);
+
+    if(layout.contains("IconWidth"_L1) && layout.contains("IconHeight"_L1)) {
+        config.iconSize = {layout.value("IconWidth"_L1).toInt(), layout.value("IconHeight"_L1).toInt()};
+    }
+
+    config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt(config.artworkCornerRadius);
+    config.background.loadLayout(layout.value("Background"_L1).toObject());
+
+    if(!config.iconSize.isValid()) {
+        config.iconSize = factoryConfig().iconSize;
+    }
+
+    config.rowHeight                   = std::max(config.rowHeight, 0);
+    config.autoExpandSearchResultLimit = std::max(config.autoExpandSearchResultLimit, 0);
+    config.artworkCornerRadius         = std::clamp(config.artworkCornerRadius, 0, 100);
+
+    if(config.summaryNodeTitle.isEmpty()) {
+        config.summaryNodeTitle = factoryConfig().summaryNodeTitle;
+    }
+
+    return config;
+}
+
+void LibraryTreeWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
+{
+    layout["DoubleClickAction"_L1]           = config.doubleClickAction;
+    layout["MiddleClickAction"_L1]           = config.middleClickAction;
+    layout["SendPlayback"_L1]                = config.sendPlayback;
+    layout["PlaylistEnabled"_L1]             = config.playlistEnabled;
+    layout["AutoSwitch"_L1]                  = config.autoSwitch;
+    layout["KeepAlive"_L1]                   = config.preservePlaybackPlaylist;
+    layout["PlaylistName"_L1]                = config.playlistName;
+    layout["RestoreState"_L1]                = config.restoreState;
+    layout["ExpandOnSingleClick"_L1]         = config.expandOnSingleClick;
+    layout["ShowControls"_L1]                = config.showControls;
+    layout["ControlsPosition"_L1]            = static_cast<int>(config.controlsPosition);
+    layout["AutoExpandSearchResultLimit"_L1] = config.autoExpandSearchResultLimit;
+    layout["Animated"_L1]                    = config.animated;
+    layout["ShowHeader"_L1]                  = config.showHeader;
+    layout["ShowScrollbar"_L1]               = config.showScrollbar;
+    layout["AlternatingRows"_L1]             = config.alternatingRows;
+    layout["ShowSummaryNode"_L1]             = config.showSummaryNode;
+    layout["SummaryNodeTitle"_L1]            = config.summaryNodeTitle;
+    layout["RowHeight"_L1]                   = config.rowHeight;
+    layout["IconWidth"_L1]                   = config.iconSize.width();
+    layout["IconHeight"_L1]                  = config.iconSize.height();
+    layout["ArtworkCornerRadius"_L1]         = config.artworkCornerRadius;
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    layout["Background"_L1] = background;
+}
+
+void LibraryTreeWidget::openConfigDialog()
+{
+    showConfigDialog(new LibraryTreeConfigDialog(this, m_groupsRegistry, this), Qt::NonModal);
+}
+
+void LibraryTreeWidget::setupConnections()
+{
+    const auto resetModel = [this]() {
+        if(m_pendingResetState.isEmpty()) {
+            m_pendingResetState = saveState();
+        }
+        const bool usingFilteredTracks
+            = !m_currentSearch.isEmpty() || m_currentEmptySearchMode == EmptySearchMode::ShowAll;
+        m_model->reset(usingFilteredTracks ? m_filteredTracks : sourceTracks());
+    };
+
+    QObject::connect(m_resetThrottler, &SignalThrottler::triggered, this, resetModel);
+
+    QObject::connect(m_model, &LibraryTreeModel::dataUpdated, m_libraryTree, &QTreeView::dataChanged);
+    QObject::connect(m_model, &LibraryTreeModel::modelLoaded, this, [this]() { restoreState(m_pendingState); });
+    QObject::connect(m_model, &LibraryTreeModel::modelResetFinished, this,
+                     [this]() { restoreState(std::exchange(m_pendingResetState, {}), true); });
+    QObject::connect(m_libraryTree, &LibraryTreeView::displayAboutToChange, this, [this]() {
+        if(m_pendingResetState.isEmpty()) {
+            m_pendingResetState = saveState();
+        }
+    });
+
+    QObject::connect(m_libraryTree, &LibraryTreeView::doubleClicked, this,
+                     [this](const QModelIndex& index) { handleDoubleClick(index); });
+    QObject::connect(m_libraryTree, &LibraryTreeView::middleClicked, this,
+                     [this](const QModelIndex& index) { handleMiddleClick(index); });
+    QObject::connect(m_libraryTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                     [this](const QItemSelection& selected, const QItemSelection& deselected) {
+                         selectionChanged(selected, deselected);
+                     });
+    QObject::connect(m_libraryTree->header(), &QHeaderView::customContextMenuRequested, this,
+                     [this](const QPoint& pos) { setupHeaderContextMenu(pos); });
+    QObject::connect(m_libraryTree, &QAbstractItemView::iconSizeChanged, this, [this](const QSize& size) {
+        if(size.isValid() && m_config.iconSize != size) {
+            m_config.iconSize = size;
+            QMetaObject::invokeMethod(m_libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+            Q_EMIT configChanged();
+        }
+    });
+    QObject::connect(m_groupsRegistry, &LibraryTreeGroupRegistry::groupingChanged, this,
+                     [this](const LibraryTreeGrouping& changedGrouping) {
+                         if(m_grouping.id == changedGrouping.id) {
+                             changeGrouping(changedGrouping);
+                         }
+                     });
+
+    QObject::connect(m_library, &MusicLibrary::tracksLoaded, this, [this]() {
+        if(!m_library->hasActiveLibraryFilters()) {
+            reset();
+        }
+    });
+    QObject::connect(m_library, &MusicLibrary::tracksAdded, this, [this](const TrackList& tracks) {
+        if(!m_library->hasActiveLibraryFilters()) {
+            handleTracksAdded(tracks);
+        }
+    });
+    QObject::connect(m_library, &MusicLibrary::tracksScanned, m_model,
+                     [this](int /*id*/, const TrackList& tracks) { handleTracksAdded(tracks); });
+    QObject::connect(m_library, &MusicLibrary::tracksMetadataChanged, this, [this](const TrackList& tracks) {
+        if(!m_library->hasActiveLibraryFilters()) {
+            handleTracksUpdated(tracks);
+        }
+    });
+    QObject::connect(m_library, &MusicLibrary::tracksUpdated, this, [this](const TrackList& tracks) {
+        if(!m_library->hasActiveLibraryFilters()) {
+            m_model->refreshTracks(tracks);
+        }
+    });
+    QObject::connect(m_library, &MusicLibrary::tracksDeleted, this, [this](const TrackList& tracks) {
+        if(!m_library->hasActiveLibraryFilters()) {
+            m_model->removeTracks(tracks);
+        }
+    });
+    QObject::connect(m_library, &MusicLibrary::tracksSorted, this, [this]() {
+        if(!m_library->hasActiveLibraryFilters()) {
+            reset();
+        }
+    });
+    QObject::connect(m_library, &MusicLibrary::visibleLibraryTracksChanged, this, &LibraryTreeWidget::refreshSearch);
+
+    QObject::connect(m_libraryManager, &LibraryManager::librariesChanged, this, &LibraryTreeWidget::reset);
+
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
+                     [this](Player::PlayState state) { m_model->setPlayState(state); });
+    QObject::connect(m_playerController, &PlayerController::playlistTrackUpdated, this,
+                     [this](const auto& track) { playlistTrackChanged(track); });
+    QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
+                     [this](auto* playlist) { activePlaylistChanged(playlist); });
+
+    m_styleProvider->subscribe(this, [this](const ResolvedAppStyle& resolvedStyle) {
+        const bool initialStyle = !std::exchange(m_styleInitialised, true);
+        m_libraryTree->setViewPalette(resolvedStyle.palette);
+        m_model->resetPalette();
+        if(initialStyle) {
+            reset();
+        }
+    });
+
+    m_settings->subscribe<Settings::Core::UseVariousForCompilations>(this, [this]() { reset(); });
+
+    m_settings->subscribe<Settings::Gui::RatingFullStarSymbol>(this, resetModel);
+    m_settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(this, resetModel);
+    m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, resetModel);
+}
+
+void LibraryTreeWidget::refreshGroupingSelector()
+{
+    if(!m_groupSelector) {
+        return;
+    }
+
+    const QSignalBlocker blocker{m_groupSelector};
+
+    m_groupSelector->clear();
+    for(const auto& grouping : m_groupsRegistry->items()) {
+        if(!grouping.isEnabled && grouping.id != m_grouping.id) {
+            continue;
+        }
+        m_groupSelector->addItem(grouping.name, grouping.id);
+    }
+    m_groupSelector->setCurrentIndex(m_groupSelector->findData(m_grouping.id));
+}
+
+void LibraryTreeWidget::setControlsPosition(ControlsPosition position)
+{
+    if(!m_controlsLayout) {
+        return;
+    }
+
+    QMargins margins;
+    if(m_config.showControls) {
+        const bool window = isWindow();
+        const bool atTop  = position == ControlsPosition::Top;
+        margins           = {window ? 6 : 0, atTop ? 6 : 0, window ? 6 : 0, atTop ? 0 : 6};
+    }
+    m_controlsLayout->setContentsMargins(margins);
+
+    m_layout->removeItem(m_controlsLayout);
+    m_layout->insertLayout(position == ControlsPosition::Top ? 0 : 1, m_controlsLayout);
+}
+
+void LibraryTreeWidget::setControlsVisible(bool visible)
+{
+    if(!m_groupSelector || !m_searchBar) {
+        return;
+    }
+
+    if(!visible) {
+        m_searchBar->clear();
+    }
+    m_groupSelector->setVisible(visible);
+    m_searchBar->setVisible(visible);
+}
+
+void LibraryTreeWidget::reset()
+{
+    if(!m_styleProvider->isResolved()) {
+        return;
+    }
+
+    m_resetThrottler->throttle();
+}
+
 void LibraryTreeWidget::addDisplayMenu(QMenu* parent)
 {
     auto* displayMenu = new QMenu(tr("Display"), parent);
@@ -976,10 +982,7 @@ void LibraryTreeWidget::changeGrouping(const LibraryTreeGrouping& newGrouping)
         reset();
     }
 
-    if(m_groupSelector) {
-        const QSignalBlocker blocker{m_groupSelector};
-        m_groupSelector->setCurrentIndex(m_groupSelector->findData(m_grouping.id));
-    }
+    refreshGroupingSelector();
 }
 
 void LibraryTreeWidget::activePlaylistChanged(Playlist* playlist) const
@@ -1024,6 +1027,10 @@ void LibraryTreeWidget::addGroupMenu(QMenu* parent)
 
     const auto groups = m_groupsRegistry->items();
     for(const auto& group : groups) {
+        if(!group.isEnabled) {
+            continue;
+        }
+
         auto* switchGroup = new QAction(group.name, groupMenu);
         QObject::connect(switchGroup, &QAction::triggered, this, [this, group]() { changeGrouping(group); });
         switchGroup->setCheckable(true);
@@ -1318,10 +1325,12 @@ TrackList LibraryTreeWidget::sourceTracks() const
     return m_library->visibleLibraryTracks();
 }
 
-void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, int row, bool singleTrackSelection)
+void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, const QModelIndex& selectedIndex)
 {
     m_playlistGroups.clear();
 
+    const bool singleTrackSelection = selectedIndex.isValid();
+    const QPersistentModelIndex selectedTrackIndex{selectedIndex};
     const QModelIndexList leafNodes = filterLeafNodes(m_sortProxy, indexes);
 
     if(leafNodes.empty()) {
@@ -1329,6 +1338,7 @@ void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, int row, 
     }
 
     TrackList tracks;
+    int row = singleTrackSelection ? -1 : 0;
 
     QModelIndex parent;
     for(const QModelIndex& index : leafNodes) {
@@ -1336,26 +1346,28 @@ void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, int row, 
             continue;
         }
 
-        if(!parent.isValid()) {
+        if(tracks.empty()) {
             parent = index.parent();
         }
         else if(index.parent() != parent) {
             if(m_playlistGroups.empty()) {
-                m_playlistGroups[0] = parent.data(Qt::DisplayRole).toString();
+                m_playlistGroups[0] = parent.data(LibraryTreeItem::Title).toString();
             }
             parent = index.parent();
 
-            m_playlistGroups[static_cast<int>(tracks.size())] = parent.data(Qt::DisplayRole).toString();
+            m_playlistGroups[static_cast<int>(tracks.size())] = parent.data(LibraryTreeItem::Title).toString();
         }
         const auto indexTracks = index.data(LibraryTreeItem::Tracks).value<TrackList>();
+        if(index == selectedTrackIndex) {
+            row = static_cast<int>(tracks.size());
+        }
         tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
     }
 
-    if(tracks.empty()) {
+    if(tracks.empty() || row < 0) {
         return;
     }
 
-    row                  = std::clamp(row, 0, static_cast<int>(tracks.size()) - 1);
     const auto queueMode = static_cast<PlaybackQueueMode>(m_settings->value<Settings::Core::PlaybackQueueMode>());
     const auto playNowAction
         = static_cast<PlayNowAction>(m_settings->value<Settings::Core::PlaybackQueuePlayNowAction>());
@@ -1380,7 +1392,7 @@ void LibraryTreeWidget::handlePlayback(const QModelIndexList& indexes, int row, 
     syncSelectionPlaylist(tracks);
 
     if(parent.isValid() && m_playlistGroups.empty()) {
-        m_playlistGroups[0] = parent.data(Qt::DisplayRole).toString();
+        m_playlistGroups[0] = parent.data(LibraryTreeItem::Title).toString();
     }
 
     m_playlist = m_playlistHandler->createTempPlaylist(QString::fromLatin1(LibTreePlaylist), tracks);
@@ -1411,7 +1423,6 @@ void LibraryTreeWidget::handlePlayTrack(const QModelIndex& index)
         return;
     }
 
-    const int row            = index.row();
     const QModelIndex parent = index.parent();
     const int count          = m_sortProxy->rowCount(parent);
 
@@ -1421,7 +1432,7 @@ void LibraryTreeWidget::handlePlayTrack(const QModelIndex& index)
         trackIndexes.emplace_back(m_sortProxy->index(i, 0, parent));
     }
 
-    handlePlayback(trackIndexes, row, true);
+    handlePlayback(trackIndexes, index);
 }
 
 void LibraryTreeWidget::handleDoubleClick(const QModelIndex& index)
@@ -1435,7 +1446,12 @@ void LibraryTreeWidget::handleDoubleClick(const QModelIndex& index)
     }
 
     if(m_doubleClickAction == TrackAction::Play) {
-        handlePlayTrack(index);
+        if(m_config.expandOnSingleClick && m_sortProxy->hasChildren(index)) {
+            handlePlayback({index});
+        }
+        else {
+            handlePlayTrack(index);
+        }
         return;
     }
 

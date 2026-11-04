@@ -112,7 +112,7 @@ CommandButtonConfigDialog::CommandButtonConfigDialog(CommandButton* button, Acti
     auto* previewLabel = new QLabel(tr("Preview") + u":"_s, this);
 
     auto* iconHint = new QLabel(
-        tr("Choose a built-in icon or custom image. If none is set, the button uses the command's default icon."),
+        tr("Choose a built-in icon or custom image. If none is set, the button uses the command’s default icon."),
         this);
     iconHint->setWordWrap(true);
 

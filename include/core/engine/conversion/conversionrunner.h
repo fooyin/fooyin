@@ -57,6 +57,7 @@ struct ConversionProgress
     QString outputPath;
     uint64_t sourcePositionMs{0};
     uint64_t sourceDurationMs{0};
+    bool finished{false};
 };
 
 class FYCORE_EXPORT ConversionInputObserver
@@ -84,6 +85,7 @@ struct Request
     CancelCallback cancelCallback;
     ExistingFileCallback existingFileCallback;
     std::shared_ptr<ConversionInputObserver> sourceObserver;
+    int maxParallelConversions{0};
 };
 
 FYCORE_EXPORT std::vector<ConversionTrackResult> run(const Request& request);

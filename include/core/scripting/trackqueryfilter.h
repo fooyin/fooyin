@@ -22,14 +22,14 @@
 #include "fycore_export.h"
 
 #include <core/playlist/playlist.h>
+#include <core/scripting/scripttypes.h>
 
 #include <memory>
 
 namespace Fooyin {
 class FySettings;
 class SettingsManager;
-class ScriptFunctionProvider;
-class ScriptVariableProvider;
+class ScriptRegistry;
 
 enum class ScriptSearchMode : uint8_t
 {
@@ -54,16 +54,17 @@ public:
 
     TrackQueryFilter();
     explicit TrackQueryFilter(ScriptSearchOptions options);
+    TrackQueryFilter(ScriptSearchOptions options, ScriptRegistry* registry);
     ~TrackQueryFilter();
+
+    static ScriptSearchOptions defaultSearchOptions();
 
     [[nodiscard]] static bool matchesSearch(const QString& text, const QString& search, ScriptSearchMode mode,
                                             bool phraseMatch = false);
 
-    void addProvider(const ScriptVariableProvider& provider);
-    void addProvider(const ScriptFunctionProvider& provider);
-
-    [[nodiscard]] TrackList filter(const QString& search, const TrackList& tracks);
-    [[nodiscard]] PlaylistTrackList filter(const QString& search, const PlaylistTrackList& tracks);
+    [[nodiscard]] TrackList filter(const QString& search, const TrackList& tracks, const ScriptContext& context = {});
+    [[nodiscard]] PlaylistTrackList filter(const QString& search, const PlaylistTrackList& tracks,
+                                           const ScriptContext& context = {});
 
 private:
     std::unique_ptr<TrackSearchFilterPrivate> p;

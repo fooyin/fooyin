@@ -19,6 +19,8 @@
 
 #include "playbackprogresstracker.h"
 
+#include <utils/timeconstants.h>
+
 #include <algorithm>
 #include <utility>
 
@@ -52,14 +54,19 @@ void PlaybackProgressTracker::reset()
 void PlaybackProgressTracker::onTrackCommitted(uint64_t totalDurationMs, double playedThresholdFraction,
                                                uint64_t playedThresholdTimeMs)
 {
-    m_totalDuration   = totalDurationMs;
-    m_position        = 0;
-    m_timeListened    = 0;
-    m_playedThreshold = 0;
-    m_trackingActive  = true;
-    m_seeking         = false;
-    m_counted         = false;
+    updateDuration(totalDurationMs, playedThresholdFraction, playedThresholdTimeMs);
+    m_position       = 0;
+    m_timeListened   = 0;
+    m_trackingActive = true;
+    m_seeking        = false;
+    m_counted        = false;
+}
 
+void PlaybackProgressTracker::updateDuration(uint64_t totalDurationMs, double playedThresholdFraction,
+                                             uint64_t playedThresholdTimeMs)
+{
+    m_totalDuration   = totalDurationMs;
+    m_playedThreshold = 0;
     if(m_totalDuration > 200) {
         const auto playedThresholdFractionMs
             = static_cast<uint64_t>(static_cast<double>(m_totalDuration - 200) * playedThresholdFraction);
@@ -95,14 +102,7 @@ PlaybackProgressTracker::PositionUpdate PlaybackProgressTracker::restoreProgress
     m_timeListened   = timeListenedMs;
     m_trackingActive = true;
     m_seeking        = false;
-    m_counted        = false;
-
-    if(m_playedThreshold > 0 && m_timeListened >= m_playedThreshold) {
-        m_timeListened = m_playedThreshold - 1;
-    }
-    else if(m_playedThreshold == 0) {
-        m_timeListened = 0;
-    }
+    m_counted        = m_timeListened >= m_playedThreshold;
 
     return currentPositionUpdate();
 }
@@ -187,7 +187,7 @@ PlaybackProgressTracker::PositionUpdate PlaybackProgressTracker::currentPosition
         .reachedPlayedThreshold = reachedPlayedThreshold,
     };
 
-    const uint64_t seconds = m_position / 1000;
+    const uint64_t seconds = m_position / Time::MsPerSecond;
     if(!m_hasLastPositionSecond || m_lastPositionSecond != seconds) {
         m_lastPositionSecond    = seconds;
         m_hasLastPositionSecond = true;

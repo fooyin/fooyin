@@ -465,7 +465,7 @@ void DspSettingsController::showDialog(const QString& dspId, QWidget* parent)
 
     auto* editor = createEditor(dspId, parent);
     if(!editor) {
-        QMessageBox::warning(parent, tr("DSP Settings"), tr("Unable to open settings for DSP \"%1\".").arg(dspId));
+        QMessageBox::warning(parent, tr("DSP Settings"), tr("Unable to open settings for DSP ‘%1’.").arg(dspId));
         return;
     }
 
@@ -475,7 +475,7 @@ void DspSettingsController::showDialog(const QString& dspId, QWidget* parent)
         auto dsp = m_chainStore->createDsp(dspId);
         if(!dsp) {
             editor->deleteLater();
-            QMessageBox::warning(parent, tr("DSP Settings"), tr("Unable to find DSP \"%1\".").arg(dspId));
+            QMessageBox::warning(parent, tr("DSP Settings"), tr("Unable to find DSP ‘%1’.").arg(dspId));
             return;
         }
         defaultSettings = dsp->saveSettings();

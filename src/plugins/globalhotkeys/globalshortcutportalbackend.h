@@ -54,6 +54,8 @@ private Q_SLOTS:
                            const QVariantMap& options);
     void shortcutDeactivated(const QDBusObjectPath& sessionHandle, const QString& shortcutId, qulonglong timestamp,
                              const QVariantMap& options);
+    void shortcutsChanged(const QDBusObjectPath& sessionHandle,
+                          const Fooyin::GlobalHotkeys::PortalShortcutList& shortcuts);
     void sessionClosed();
 
 private:

@@ -139,7 +139,15 @@ Qt::ItemFlags FiltersColumnModel::flags(const QModelIndex& index) const
         return Qt::NoItemFlags;
     }
 
-    return ExtendableTableModel::flags(index) | Qt::ItemIsEditable;
+    auto flags = ExtendableTableModel::flags(index);
+    if(index.column() == 0) {
+        flags |= Qt::ItemIsUserCheckable;
+    }
+    else if(index.column() >= 2) {
+        flags |= Qt::ItemIsEditable;
+    }
+
+    return flags;
 }
 
 QVariant FiltersColumnModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -154,12 +162,16 @@ QVariant FiltersColumnModel::headerData(int section, Qt::Orientation orientation
 
     switch(section) {
         case 0:
-            return tr("Index");
+            return tr("Enabled");
         case 1:
-            return tr("Name");
+            return tr("Index");
         case 2:
-            return tr("Display Script");
+            return tr("Name");
         case 3:
+            return tr("Grouping Script");
+        case 4:
+            return tr("Display Script");
+        case 5:
             return tr("Sort Script");
         default:
             break;
@@ -184,23 +196,33 @@ QVariant FiltersColumnModel::data(const QModelIndex& index, int role) const
         return QVariant::fromValue(item->column());
     }
 
+    if(index.column() == 0 && role == Qt::TextAlignmentRole) {
+        return Qt::AlignCenter;
+    }
+
+    if(index.column() == 0 && role == Qt::CheckStateRole) {
+        return item->column().isEnabled ? Qt::Checked : Qt::Unchecked;
+    }
+
     const FilterColumn& columnData = item->column();
 
-    if(role == Qt::ForegroundRole && index.column() == 3 && columnData.sortField.isEmpty()) {
+    if(role == Qt::ForegroundRole
+       && ((index.column() == 3 && columnData.groupingField.isEmpty())
+           || (index.column() == 5 && columnData.sortField.isEmpty()))) {
         return QApplication::palette().color(QPalette::PlaceholderText);
     }
 
     if(role == Qt::EditRole) {
         switch(index.column()) {
-            case 0:
+            case 1:
                 return columnData.index;
-            case 1: {
+            case 2:
                 return columnData.name;
-            }
-            case 2: {
-                return columnData.field;
-            }
             case 3:
+                return columnData.groupingField;
+            case 4:
+                return columnData.field;
+            case 5:
                 return columnData.sortField;
             default:
                 break;
@@ -209,19 +231,23 @@ QVariant FiltersColumnModel::data(const QModelIndex& index, int role) const
 
     if(role == Qt::DisplayRole) {
         switch(index.column()) {
-            case 0:
+            case 1:
                 return columnData.index;
-            case 1: {
+            case 2: {
                 const QString& name = columnData.name;
                 return !name.isEmpty() ? name : u"<enter name here>"_s;
             }
-            case 2: {
+            case 3: {
+                const QString& groupingField = columnData.groupingField;
+                return !groupingField.isEmpty() ? groupingField : tr("Use display script");
+            }
+            case 4: {
                 const QString& field = columnData.field;
                 return !field.isEmpty() ? field : u"<enter field here>"_s;
             }
-            case 3: {
+            case 5: {
                 const QString& sortField = columnData.sortField;
-                return !sortField.isEmpty() ? sortField : tr("Use display script");
+                return !sortField.isEmpty() ? sortField : tr("Use grouping script");
             }
             default:
                 break;
@@ -233,40 +259,63 @@ QVariant FiltersColumnModel::data(const QModelIndex& index, int role) const
 
 bool FiltersColumnModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    if(role != Qt::EditRole) {
+    if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
+        return false;
+    }
+
+    if(role != Qt::EditRole && role != Qt::CheckStateRole) {
         return false;
     }
 
     auto* item          = static_cast<ColumnItem*>(index.internalPointer());
     FilterColumn column = item->column();
 
-    switch(index.column()) {
-        case 1: {
-            if(value.toString() == u"<enter name here>"_s || column.name == value.toString()) {
-                if(item->status() == ColumnItem::Added) {
-                    Q_EMIT pendingRowCancelled();
+    if(index.column() == 0 && role == Qt::CheckStateRole) {
+        const bool enabled = value.value<Qt::CheckState>() == Qt::Checked;
+        if(column.isEnabled == enabled) {
+            return false;
+        }
+        column.isEnabled = enabled;
+    }
+    else if(role == Qt::EditRole) {
+        switch(index.column()) {
+            case 2: {
+                if(value.toString() == u"<enter name here>"_s || column.name == value.toString()) {
+                    if(item->status() == ColumnItem::Added) {
+                        Q_EMIT pendingRowCancelled();
+                    }
+                    return false;
                 }
-                return false;
+                column.name = value.toString();
+                break;
             }
-            column.name = value.toString();
-            break;
-        }
-        case 2: {
-            if(column.field == value.toString()) {
-                return false;
+            case 3: {
+                if(column.groupingField == value.toString()) {
+                    return false;
+                }
+                column.groupingField = value.toString();
+                break;
             }
-            column.field = value.toString();
-            break;
-        }
-        case 3: {
-            if(column.sortField == value.toString()) {
-                return false;
+            case 4: {
+                if(column.field == value.toString()) {
+                    return false;
+                }
+                column.field = value.toString();
+                break;
             }
-            column.sortField = value.toString();
-            break;
+            case 5: {
+                if(column.sortField == value.toString()) {
+                    return false;
+                }
+                column.sortField = value.toString();
+                break;
+            }
+            default:
+                return false;
         }
-        default:
-            break;
+    }
+    else {
+        return false;
     }
 
     if(item->status() == ColumnItem::None) {
@@ -274,7 +323,8 @@ bool FiltersColumnModel::setData(const QModelIndex& index, const QVariant& value
     }
 
     item->changeColumn(column);
-    Q_EMIT dataChanged(index, index, {Qt::FontRole, Qt::DisplayRole});
+    Q_EMIT dataChanged(index, index,
+                       {Qt::FontRole, Qt::DisplayRole, Qt::ForegroundRole, Qt::CheckStateRole, Qt::UserRole});
 
     return true;
 }
@@ -297,7 +347,7 @@ int FiltersColumnModel::rowCount(const QModelIndex& /*parent*/) const
 
 int FiltersColumnModel::columnCount(const QModelIndex& /*parent*/) const
 {
-    return 4;
+    return 6;
 }
 
 bool FiltersColumnModel::removeRows(int row, int count, const QModelIndex& /*parent*/)

@@ -20,12 +20,12 @@ on:
         default: ''
 
 permissions:
-  actions: read
+  actions: write
   contents: read
 
 env:
   FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
-  QT_VERSION: '6.8.3'
+  QT_VERSION: '6.12.0'
   VCPKG_DISABLE_METRICS: true
   VCPKG_ROOT_DIR: 'C:/vcpkg'
   VCPKG_INSTALLED_DIR: 'C:/v'
@@ -101,6 +101,8 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: ${{ env.QT_VERSION }}
+          # Support the Windows x64 repository layout used by Qt 6.11 and later
+          aqtsource: git+https://github.com/miurahr/aqtinstall.git@8c3695d4a4e1ceabf6a74dc6c79681656dc6b74b
           archives: qtbase qtsvg qttools
           cache: true
           arch: ${{ matrix.qt-arch }}
@@ -137,19 +139,17 @@ jobs:
         id: ccache-generation
         shell: pwsh
         run: |
-          $now = [DateTime]::UtcNow
-          $weekYear = [System.Globalization.ISOWeek]::GetYear($now)
-          $week = [System.Globalization.ISOWeek]::GetWeekOfYear($now)
-          echo "week=$weekYear-$($week.ToString('D2'))" >> $env:GITHUB_OUTPUT
+          $period = [Math]::Floor([DateTimeOffset]::UtcNow.ToUnixTimeSeconds() / 86400)
+          echo "period=$period" >> $env:GITHUB_OUTPUT
 
       - name: Restore ccache
         id: ccache-restore
         uses: actions/cache/restore@v6
         with:
           path: ${{ github.workspace }}/.ccache
-          key: ${{ runner.os }}-ccache-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ env.CCACHE_VERSION }}-${{ steps.ccache-generation.outputs.week }}
+          key: ${{ runner.os }}-ccache-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ env.QT_VERSION }}-${{ env.CCACHE_VERSION }}-${{ steps.ccache-generation.outputs.period }}
           restore-keys: |
-            ${{ runner.os }}-ccache-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ env.CCACHE_VERSION }}-
+            ${{ runner.os }}-ccache-${{ matrix.cmake-preset }}-${{ steps.vcpkg-cache.outputs.toolchain }}-${{ env.QT_VERSION }}-${{ env.CCACHE_VERSION }}-
 
       - name: Set CMAKE_PRESET
         shell: pwsh
@@ -175,7 +175,7 @@ jobs:
 
       - name: Sign Windows binaries
         if: inputs.signing_policy_slug != '' && github.repository == 'fooyin/fooyin'
-        uses: signpath/github-action-submit-signing-request@v2
+        uses: signpath/github-action-submit-signing-request@v3
         with:
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
           organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
@@ -203,6 +203,31 @@ jobs:
           Set-Location S:/
           .\ci\windows-package.ps1
 
+      - name: Package SDK
+        if: matrix.arch == 'amd64'
+        shell: pwsh
+        run: |
+          Set-Location S:/
+          cmake --build "build-$env:CMAKE_PRESET" --target package_sdk --config Release
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+      - name: Verify relocated SDK
+        if: matrix.arch == 'amd64'
+        shell: pwsh
+        run: |
+          Set-Location S:/
+          .\ci\windows-sdk-verify.ps1
+
+      - name: Upload SDK artifact
+        if: matrix.arch == 'amd64'
+        uses: actions/upload-artifact@v7
+        with:
+          name: sdk-windows-${{ matrix.arch }}
+          path: build-${{ matrix.cmake-preset }}/sdk/*.zip
+          if-no-files-found: error
+
       - name: Upload unsigned installer for SignPath
         if: inputs.signing_policy_slug != '' && github.repository == 'fooyin/fooyin'
         id: upload-unsigned-installer
@@ -215,7 +240,7 @@ jobs:
 
       - name: Sign Windows installer
         if: inputs.signing_policy_slug != '' && github.repository == 'fooyin/fooyin'
-        uses: signpath/github-action-submit-signing-request@v2
+        uses: signpath/github-action-submit-signing-request@v3
         with:
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
           organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
@@ -247,7 +272,7 @@ jobs:
 
       - name: Save ccache
         if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v6
+        uses: ./.github/actions/save-ccache
         with:
           path: ${{ github.workspace }}/.ccache
           key: ${{ steps.ccache-restore.outputs.cache-primary-key }}

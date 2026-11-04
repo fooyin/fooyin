@@ -130,6 +130,7 @@ private:
 
     AudioFormat m_format;
     std::vector<float> m_samples;
+    uint64_t m_presentationLeadMs{0};
     size_t m_capacityFrames;
     size_t m_headFrame;
     size_t m_frameCount;

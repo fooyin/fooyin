@@ -148,4 +148,21 @@ int StringCollator::compare(QStringView s1, QStringView s2) const
     return ucol_strcoll(p->m_collator, reinterpret_cast<const UChar*>(s1.data()), s1.size(),
                         reinterpret_cast<const UChar*>(s2.data()), s2.size());
 }
+
+StringSortProxyModel::StringSortProxyModel(QObject* parent)
+    : QSortFilterProxyModel{parent}
+{ }
+
+bool StringSortProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
+{
+    const auto leftValue  = left.data(sortRole());
+    const auto rightValue = right.data(sortRole());
+
+    if(leftValue.typeId() != QMetaType::QString || rightValue.typeId() != QMetaType::QString) {
+        return QSortFilterProxyModel::lessThan(left, right);
+    }
+
+    m_collator.setCaseSensitivity(sortCaseSensitivity());
+    return m_collator.compare(leftValue.toString(), rightValue.toString()) < 0;
+}
 } // namespace Fooyin

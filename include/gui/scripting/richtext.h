@@ -24,12 +24,14 @@
 #include <QVariant>
 
 #include <cstdint>
+#include <vector>
 
 namespace Fooyin {
 enum class RichAlignment : uint8_t
 {
     Left = 0,
     Right,
+    Default, // Uses the view alignment; left/right item layouts treat this as left
 };
 
 struct RichColour
@@ -63,34 +65,32 @@ struct RichFormatting
     QFont font;
     RichColour colour;
     QString link;
-    RichAlignment alignment{RichAlignment::Left};
+    RichAlignment alignment{RichAlignment::Default};
 
-    bool operator==(const RichFormatting& other) const
-    {
-        return std::tie(font, colour, link, alignment)
-            == std::tie(other.font, other.colour, other.link, other.alignment);
-    };
+    bool operator==(const RichFormatting& other) const = default;
 };
 
 struct RichTextBlock
 {
+    enum class Type : uint8_t
+    {
+        Text = 0,
+        Line,
+        PlayingIcon,
+    };
+
     QString text;
     RichFormatting format;
+    Type type{Type::Text};
 
-    bool operator==(const RichTextBlock& other) const
-    {
-        return std::tie(text, format) == std::tie(other.text, other.format);
-    };
+    bool operator==(const RichTextBlock& other) const = default;
 };
 
 struct RichText
 {
     std::vector<RichTextBlock> blocks;
 
-    bool operator==(const RichText& other) const
-    {
-        return blocks == other.blocks;
-    };
+    bool operator==(const RichText& other) const = default;
 
     operator QVariant() const
     {
@@ -127,10 +127,7 @@ struct RichScript
     QString script;
     RichText text;
 
-    bool operator==(const RichScript& other) const
-    {
-        return std::tie(script, text) == std::tie(other.script, other.text);
-    };
+    bool operator==(const RichScript& other) const = default;
 
     friend QDataStream& operator<<(QDataStream& stream, const RichScript& richScript)
     {

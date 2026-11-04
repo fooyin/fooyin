@@ -22,6 +22,7 @@
 #include "spectrumsettings.h"
 
 #include <gui/fywidget.h>
+#include <gui/widgets/backgroundconfig.h>
 
 #include <QString>
 #include <QVariant>
@@ -29,9 +30,12 @@
 class QJsonObject;
 
 namespace Fooyin {
+class BackgroundImageSource;
+class CoverRepository;
 class EngineController;
 class PlayerController;
 class SettingsManager;
+class TrackSelectionController;
 
 namespace Spectrum {
 class SpectrumView;
@@ -82,9 +86,12 @@ public:
         bool interpolate{true};
         QString axisFont;
         QVariant colours;
+        BackgroundConfig background;
     };
 
-    explicit SpectrumWidget(EngineController* engine, SettingsManager* settings, QWidget* parent = nullptr);
+    explicit SpectrumWidget(EngineController* engine, PlayerController* playerController,
+                            CoverRepository* coverRepository, TrackSelectionController* selectionController,
+                            SettingsManager* settings, QWidget* parent = nullptr);
     ~SpectrumWidget() override;
 
     [[nodiscard]] QString name() const override;
@@ -116,6 +123,7 @@ private:
     void showContextMenu(const QPoint& globalPos);
 
     SettingsManager* m_settings;
+    BackgroundImageSource* m_backgroundSource;
     SpectrumView* m_view;
     ConfigData m_config;
 };

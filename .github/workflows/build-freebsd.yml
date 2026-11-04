@@ -23,7 +23,7 @@ jobs:
     name: FreeBSD
     runs-on: ubuntu-latest
     env:
-      FREEBSD_VERSION: '15.0'
+      FREEBSD_VERSION: '15.1'
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -33,19 +33,19 @@ jobs:
 
       - name: Set ccache generation
         id: ccache-generation
-        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+        run: echo "period=$(( $(date -u +%s) / 86400 ))" >> "$GITHUB_OUTPUT"
 
       - name: Restore ccache
         id: ccache-restore
         uses: actions/cache/restore@v6
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: freebsd-${{ env.FREEBSD_VERSION }}-ccache-${{ steps.ccache-generation.outputs.week }}
+          key: freebsd-${{ env.FREEBSD_VERSION }}-ccache-${{ steps.ccache-generation.outputs.period }}
           restore-keys: |
             freebsd-${{ env.FREEBSD_VERSION }}-ccache-
 
       - name: Start FreeBSD VM
-        uses: cross-platform-actions/action@v1.6.0
+        uses: cross-platform-actions/action@v1.7.0
         with:
           operating_system: freebsd
           architecture: x86-64
@@ -67,11 +67,12 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: freebsd-${{ env.FREEBSD_VERSION }}
-          path: pkg
+          path: pkg/*.pkg
+          if-no-files-found: error
 
       - name: Save ccache
         if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache-restore.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v6
+        uses: ./.github/actions/save-ccache
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ${{ steps.ccache-restore.outputs.cache-primary-key }}

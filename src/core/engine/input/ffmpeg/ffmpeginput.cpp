@@ -23,7 +23,8 @@
 #include "ffmpegframe.h"
 #include "ffmpegstream.h"
 #include "ffmpegutils.h"
-#include "input/id3utils.h"
+#include "input/metadata/id3.h"
+#include "input/metadata/mpegproperties.h"
 #include "input/tagpolicy.h"
 #include "internalcoresettings.h"
 
@@ -33,6 +34,8 @@
 #include <core/engine/tagdefs.h>
 #include <core/network/remotestreamdevice.h>
 
+#include <taglib/id3v2header.h>
+
 #include <QDebug>
 #include <QFile>
 #include <QIODevice>
@@ -41,6 +44,7 @@
 #include <chrono>
 #include <cstring>
 #include <deque>
+#include <limits>
 #include <stop_token>
 #include <utility>
 
@@ -530,14 +534,14 @@ QStringList splitStandardField(TagType tagType, const TagPolicy& policy, const Q
     if(!supportsSlashSeparatedTextFields(tagType)) {
         return values;
     }
-    return Id3Utils::splitStandardField(field, values,
-                                        tagType == TagType::ID3v2_3 && policy.splitId3v23SemicolonSeparatedTags);
+    return Metadata::splitId3StandardField(field, values,
+                                           tagType == TagType::ID3v2_3 && policy.splitId3v23SemicolonSeparatedTags);
 }
 
 QStringList splitExtraField(TagType tagType, const TagPolicy& policy, const QString& field, const QStringList& values)
 {
     return tagType == TagType::ID3v2_3
-             ? Id3Utils::splitExtraField(field, values, policy.splitId3v23SemicolonSeparatedTags)
+             ? Metadata::splitId3ExtraField(field, values, policy.splitId3v23SemicolonSeparatedTags)
              : values;
 }
 
@@ -805,6 +809,40 @@ struct FFmpegIoContext
     RemoteStreamDevice* remoteDevice{nullptr};
     const FFmpegOpenProbeDeadline* openProbeDeadline{nullptr};
     std::stop_token abortToken;
+    QByteArray probeHeader;
+    qint64 probeHeaderOffset{0};
+    qint64 probeReadOffset{0};
+    bool headerOffsetKnown{false};
+
+    void captureProbeHeader(qint64 offset, QByteArrayView data)
+    {
+        if(!remoteDevice || !openProbeDeadline || offset < 0) {
+            return;
+        }
+
+        const auto append = [&](qsizetype limit) {
+            const qint64 skip = probeHeaderOffset + probeHeader.size() - offset;
+            if(skip >= 0 && skip < data.size() && probeHeader.size() < limit) {
+                const auto bytes = data.sliced(skip);
+                probeHeader.append(bytes.data(), std::min(bytes.size(), limit - probeHeader.size()));
+            }
+        };
+
+        if(!headerOffsetKnown) {
+            append(10);
+            if(probeHeader.size() < 10) {
+                return;
+            }
+            if(probeHeader.startsWith("ID3")) {
+                const TagLib::ID3v2::Header header{TagLib::ByteVector{probeHeader.constData(), 10}};
+                probeHeaderOffset = header.completeTagSize();
+                probeHeader.clear();
+            }
+            headerOffsetKnown = true;
+        }
+
+        append(4096);
+    }
 };
 
 struct FormatContext
@@ -851,12 +889,20 @@ int ffRead(void* data, uint8_t* buffer, int size)
                 }
                 return AVERROR(EAGAIN);
             }
+            if(remoteDevice) {
+                qCWarning(FFMPEG) << "Remote input read failed:" << device->errorString();
+            }
             return AVERROR(EIO);
         }
         if(sizeRead == 0) {
             return AVERROR_EOF;
         }
 
+        if(ioContext->openProbeDeadline) {
+            ioContext->captureProbeHeader(ioContext->probeReadOffset,
+                                          QByteArrayView{reinterpret_cast<const char*>(buffer), sizeRead});
+            ioContext->probeReadOffset += sizeRead;
+        }
         return static_cast<int>(sizeRead);
     }
 }
@@ -869,51 +915,133 @@ int64_t ffSeek(void* data, int64_t offset, int whence)
         return -1;
     }
 
-    if(device->isSequential()) {
+    const qint64 size = device->size();
+    if(whence == AVSEEK_SIZE) {
+        return size;
+    }
+    if(device->isSequential() || size < 0) {
         return -1;
     }
 
-    int64_t seekPos{0};
-
+    qint64 seekPos{0};
     switch(whence) {
-        case AVSEEK_SIZE:
-            return device->size();
         case SEEK_SET:
-            seekPos = offset;
             break;
         case SEEK_CUR:
-            seekPos = device->pos() + offset;
+            seekPos = device->pos();
             break;
         case SEEK_END:
-            seekPos = device->size() - offset;
+            seekPos = size;
             break;
         default:
             return -1;
     }
 
-    if(seekPos < 0 || seekPos > device->size()) {
+    if(seekPos < 0 || seekPos > size || offset < -seekPos || offset > size - seekPos) {
         return -1;
     }
+    if(!device->seek(seekPos + offset)) {
+        if(ioContext->remoteDevice && !ioContext->abortToken.stop_requested()) {
+            qCWarning(FFMPEG) << "Remote input seek failed:"
+                              << "position=" << seekPos + offset << "error=" << device->errorString();
+        }
+        return -1;
+    }
+    if(ioContext->openProbeDeadline) {
+        ioContext->probeReadOffset = device->pos();
+    }
+    return device->pos();
+}
 
-    return device->seek(seekPos);
+uint64_t streamDurationMs(const AVFormatContext* context, const AVStream* stream)
+{
+    AVRational timeBase{stream->time_base};
+    auto duration{stream->duration};
+    if(duration <= 0 || duration == AV_NOPTS_VALUE) {
+        duration = context->duration;
+        timeBase = TimeBaseAv;
+    }
+    if(duration <= 0 || duration == AV_NOPTS_VALUE) {
+        return 0;
+    }
+    return static_cast<uint64_t>(std::max<int64_t>(0, av_rescale_q(duration, timeBase, TimeBaseMs)));
+}
+
+void applyFileProperties(QIODevice* device, RemoteStreamDevice* remoteDevice, Track& track)
+{
+    if(!track.isRemote()) {
+        return;
+    }
+
+    RemoteFileInfo info;
+    if(const auto* fileDevice = dynamic_cast<const RemoteFileDevice*>(remoteDevice)) {
+        info = fileDevice->remoteFileInfo();
+    }
+    else if(device) {
+        info.size = device->size();
+    }
+    if(info.size >= 0) {
+        track.setFileSize(info.size);
+    }
+    if(info.modifiedTime > 0) {
+        track.setModifiedTime(info.modifiedTime);
+    }
+}
+
+void applyCodecMetadata(AVFormatContext* context, AVStream* stream, QByteArrayView header, Track& track)
+{
+    for(const auto* metadata : {context->metadata, stream->metadata}) {
+        if(const auto* encoder = av_dict_get(metadata, "encoder", nullptr, 0)) {
+            track.setTool(convertString(encoder->value));
+        }
+    }
+    if(stream->codecpar->codec_id == AV_CODEC_ID_MP3) {
+        Metadata::readMpegProperties(header, track);
+    }
 }
 
 FormatContext createAVFormatContext(const AudioSource& source, std::stop_token abortToken = {})
 {
     FormatContext fc;
 
-    auto ioContextData          = std::make_unique<FFmpegIoContext>();
-    ioContextData->device       = source.device;
-    ioContextData->remoteDevice = source.remoteStreamDevice;
-    ioContextData->abortToken   = std::move(abortToken);
+    auto ioContextData             = std::make_unique<FFmpegIoContext>();
+    ioContextData->device          = source.device;
+    ioContextData->remoteDevice    = source.remoteStreamDevice;
+    ioContextData->abortToken      = std::move(abortToken);
+    ioContextData->probeReadOffset = source.device ? source.device->pos() : 0;
 
-    // FFmpeg infers seek support from the callback itself, so returning an error from ffSeek is not enough to keep
-    // demuxers on their sequential path in all cases
-    auto* seek = source.device && source.device->isSequential() ? nullptr : ffSeek;
+    std::optional<FFmpegOpenProbeDeadline> deadline;
+    auto* remoteDevice = source.remoteStreamDevice;
+    if(remoteDevice) {
+        const auto timeout = source.remoteOpenTimeout > 0ms
+                               ? source.remoteOpenTimeout
+                               : std::chrono::milliseconds{Settings::Core::Internal::DefaultRemoteOpenTimeoutMs};
+        deadline.emplace(std::chrono::steady_clock::now() + std::max(1ms, timeout));
+        ioContextData->openProbeDeadline = &*deadline;
+        remoteDevice->setReadCancellationToken(ioContextData->abortToken);
+        remoteDevice->setNonBlockingReadsEnabled(true);
+
+        // HTTP capabilities must be known before choosing the AVIO seek callback
+        if(source.device) {
+            source.device->waitForReadyRead(
+                static_cast<int>(std::clamp<int64_t>(timeout.count(), 1, std::numeric_limits<int>::max())));
+        }
+        if(ioContextData->abortToken.stop_requested() || deadline->expired()) {
+            return {};
+        }
+    }
+
+    // Known-size sequential sources can answer size queries without supporting seeks
+    const bool sequential = source.device && source.device->isSequential();
+    const bool knownSize  = source.device && source.device->size() >= 0;
+    auto* seek            = sequential && !knownSize ? nullptr : ffSeek;
     fc.ioContext.reset(avio_alloc_context(nullptr, 0, 0, ioContextData.get(), ffRead, nullptr, seek));
     if(!fc.ioContext) {
         qCWarning(FFMPEG) << "Failed to allocate AVIO context";
         return {};
+    }
+    if(sequential) {
+        fc.ioContext->seekable = 0;
     }
     fc.ioContextData = std::move(ioContextData);
 
@@ -927,22 +1055,14 @@ FormatContext createAVFormatContext(const AudioSource& source, std::stop_token a
 
     QByteArray filepathData;
     const char* filepath{nullptr};
-    auto* remoteDevice = source.remoteStreamDevice;
     if(!source.filepath.isEmpty() && (!remoteDevice || remoteDevice->shouldExposePathToDecoder())) {
         filepathData = source.filepath.toUtf8();
         filepath     = filepathData.constData();
     }
 
-    std::optional<FFmpegOpenProbeDeadline> deadline;
-    if(remoteDevice) {
-        const auto timeout = source.remoteOpenTimeout > std::chrono::milliseconds{0}
-                               ? source.remoteOpenTimeout
-                               : std::chrono::milliseconds{Settings::Core::Internal::DefaultRemoteOpenTimeoutMs};
-        deadline.emplace(std::chrono::steady_clock::now() + std::max(1ms, timeout));
-        auto* ioContext                        = fc.ioContextData.get();
-        ioContext->openProbeDeadline           = &*deadline;
+    if(deadline) {
         avContext->interrupt_callback.callback = ffmpegInterruptCallback;
-        avContext->interrupt_callback.opaque   = ioContext;
+        avContext->interrupt_callback.opaque   = fc.ioContextData.get();
     }
 
     const int ret = avformat_open_input(&avContext, filepath, nullptr, nullptr);
@@ -971,6 +1091,10 @@ FormatContext createAVFormatContext(const AudioSource& source, std::stop_token a
 
     if(auto* ioContext = fc.ioContextData.get()) {
         ioContext->openProbeDeadline = nullptr;
+    }
+
+    if(remoteDevice) {
+        remoteDevice->setNonBlockingReadsEnabled(false);
     }
 
     // Needed for seeking of APE files
@@ -1049,6 +1173,7 @@ public:
 
     AVRational m_timeBase{.num = 0, .den = 0};
     bool m_isSeekable{false};
+    bool m_isLiveStream{false};
     bool m_draining{false};
     bool m_error{false};
     bool m_eof{false};
@@ -1085,6 +1210,8 @@ bool FFmpegInputPrivate::isRemoteStream() const
 
 void FFmpegInputPrivate::reset()
 {
+    m_isSeekable              = false;
+    m_isLiveStream            = false;
     m_error                   = false;
     m_eof                     = false;
     m_isDecoding              = false;
@@ -1128,10 +1255,6 @@ bool FFmpegInputPrivate::setup(const AudioSource& source, std::stop_token abortT
     reset();
 
     m_remoteDevice = source.remoteStreamDevice;
-    if(m_remoteDevice) {
-        m_remoteDevice->setReadCancellationToken(abortToken);
-        m_remoteDevice->setNonBlockingReadsEnabled(true);
-    }
 
     FormatContext context = createAVFormatContext(source, std::move(abortToken));
     m_context             = std::move(context.formatContext);
@@ -1142,7 +1265,9 @@ bool FFmpegInputPrivate::setup(const AudioSource& source, std::stop_token abortT
         return false;
     }
 
-    m_isSeekable = !(m_context->ctx_flags & AVFMTCTX_UNSEEKABLE);
+    m_isSeekable   = !(m_context->ctx_flags & AVFMTCTX_UNSEEKABLE) && m_context->pb
+                  && (m_context->pb->seekable & AVIO_SEEKABLE_NORMAL);
+    m_isLiveStream = m_remoteDevice && (!source.device || source.device->size() < 0);
 
     m_stream = Utils::findAudioStream(m_context.get());
     if(!m_stream.isValid()) {
@@ -1153,9 +1278,6 @@ bool FFmpegInputPrivate::setup(const AudioSource& source, std::stop_token abortT
 
     if(createCodec(m_stream.avStream())) {
         m_audioFormat = Utils::audioFormatFromCodec(m_stream.avStream()->codecpar, m_codec.context()->sample_fmt);
-        if(m_remoteDevice) {
-            m_remoteDevice->setNonBlockingReadsEnabled(false);
-        }
         return true;
     }
 
@@ -1373,10 +1495,21 @@ void FFmpegInputPrivate::updateNetworkMetadata() const
     Track track{m_baseTrack};
 
     if(!metadata->streamTitle.isEmpty()) {
-        const auto [artist, title] = splitIcyStreamTitle(metadata->streamTitle);
-        track.setTitle(title.isEmpty() ? metadata->streamTitle : title);
-        if(!artist.isEmpty()) {
-            track.setArtists({artist});
+        if(!metadata->title.isEmpty()) {
+            track.setTitle(metadata->title);
+            if(!metadata->artist.isEmpty() && track.artists().isEmpty()) {
+                track.setArtists({metadata->artist});
+            }
+            if(!metadata->album.isEmpty() && track.album().isEmpty()) {
+                track.setAlbum(metadata->album);
+            }
+        }
+        else {
+            const auto [artist, title] = splitIcyStreamTitle(metadata->streamTitle);
+            track.setTitle(title.isEmpty() ? metadata->streamTitle : title);
+            if(!artist.isEmpty()) {
+                track.setArtists({artist});
+            }
         }
         track.replaceExtraTag(u"STREAMTITLE"_s, metadata->streamTitle);
     }
@@ -1418,7 +1551,7 @@ void FFmpegInputPrivate::processTimedMetadataPacket(const AVPacket& packet)
     }
 
     const auto metadata
-        = Id3Utils::parseTimedMetadata(QByteArrayView{reinterpret_cast<const char*>(packet.data), packet.size});
+        = Metadata::parseTimedId3Metadata(QByteArrayView{reinterpret_cast<const char*>(packet.data), packet.size});
     if(!metadata) {
         return;
     }
@@ -1475,6 +1608,13 @@ void FFmpegInputPrivate::applyStreamProperties(Track& track) const
     }
     if(track.bitrate() <= 0 && codecPar && codecPar->bit_rate > 0) {
         track.setBitrate(static_cast<int>(codecPar->bit_rate / 1000));
+    }
+    if(track.duration() == 0 && !m_isLiveStream) {
+        track.setDuration(streamDurationMs(m_context.get(), m_stream.avStream()));
+    }
+    if(m_ioContextData) {
+        applyFileProperties(m_ioContextData->device, m_remoteDevice, track);
+        applyCodecMetadata(m_context.get(), m_stream.avStream(), m_ioContextData->probeHeader, track);
     }
     track.setEncoding(isLossless(codecId) ? u"Lossless"_s : u"Lossy"_s);
 }
@@ -1661,7 +1801,7 @@ std::optional<AudioFormat> FFmpegDecoder::init(const AudioSource& source, const 
     if(p->setup(source, abortToken())) {
         Track runtimeTrack{track};
         if(track.isRemote() && p->m_remoteDevice) {
-            p->m_remoteDevice->setReconnectOnFinishedEnabled(track.duration() == 0);
+            p->m_remoteDevice->setReconnectOnFinishedEnabled(p->m_isLiveStream && track.duration() == 0);
         }
         if(track.isRemote() && options.testFlag(UpdateTracks)) {
             p->applyStreamProperties(runtimeTrack);
@@ -1672,9 +1812,6 @@ std::optional<AudioFormat> FFmpegDecoder::init(const AudioSource& source, const 
         p->m_changedTrack = runtimeTrack;
         p->m_trackChanged = track.isRemote() && options.testFlag(UpdateTracks) && !runtimeTrack.sameDataAs(track);
 
-        if(track.isRemote()) {
-            p->m_isSeekable = false;
-        }
         p->checkIsVbr(track);
         return p->m_audioFormat;
     }
@@ -1820,7 +1957,7 @@ public:
     {
         reset();
 
-        FormatContext context = createAVFormatContext(source);
+        FormatContext context = createAVFormatContext(source, m_readCancellationToken);
         m_context             = std::move(context.formatContext);
         m_ioContext           = std::move(context.ioContext);
         m_ioContextData       = std::move(context.ioContextData);
@@ -1846,6 +1983,7 @@ public:
     FormatContextPtr m_context;
     Stream m_stream;
     int m_chapterCount{0};
+    std::stop_token m_readCancellationToken;
 };
 
 FFmpegReader::FFmpegReader()
@@ -1853,6 +1991,11 @@ FFmpegReader::FFmpegReader()
 { }
 
 FFmpegReader::~FFmpegReader() = default;
+
+void FFmpegReader::setReadCancellationToken(std::stop_token token)
+{
+    p->m_readCancellationToken = std::move(token);
+}
 
 QStringList FFmpegReader::extensions() const
 {
@@ -1933,20 +2076,8 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
     track.setBitDepth(format.bitdepth());
     track.setEncoding(isLossless(codecPar->codec_id) ? u"Lossless"_s : u"Lossy"_s);
 
-    if(track.duration() == 0 && !track.isRemote()) {
-        AVRational timeBase = avStream->time_base;
-        auto duration       = avStream->duration;
-        if(duration <= 0 || std::cmp_equal(duration, AV_NOPTS_VALUE)) {
-            duration = p->m_context->duration;
-            timeBase = TimeBaseAv;
-        }
-
-        if(duration > 0 && !std::cmp_equal(duration, AV_NOPTS_VALUE)) {
-            const uint64_t durationMs = av_rescale_q(duration, timeBase, TimeBaseMs);
-            if(durationMs > 0) {
-                track.setDuration(durationMs);
-            }
-        }
+    if(track.duration() == 0 && (!track.isRemote() || (source.device && source.device->size() >= 0))) {
+        track.setDuration(streamDurationMs(p->m_context.get(), avStream));
     }
 
     auto bitrate = static_cast<int>(codecPar->bit_rate / 1000);
@@ -1980,6 +2111,11 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
     const AVDictionaryEntry* streamTag{nullptr};
     while((streamTag = av_dict_get(avStream->metadata, "", streamTag, AV_DICT_IGNORE_SUFFIX))) {
         parseTag(track, tagType, streamTag, TagScope::Track, p->m_chapterCount, policy);
+    }
+
+    applyFileProperties(source.device, source.remoteStreamDevice, track);
+    if(p->m_ioContextData) {
+        applyCodecMetadata(p->m_context.get(), p->m_stream.avStream(), p->m_ioContextData->probeHeader, track);
     }
 
     const int subsong = track.subsong();

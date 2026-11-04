@@ -42,9 +42,13 @@ public:
 private:
     static OSStatus handleEvent(EventHandlerCallRef nextHandler, EventRef event, void* context);
 
+    void registerBindings(bool reportFailures);
+    void clearRegistrations();
+
     EventHandlerRef m_eventHandler;
     std::unordered_map<std::uint32_t, EventHotKeyRef> m_hotKeys;
     std::unordered_map<std::uint32_t, GlobalShortcutDescriptor> m_bindings;
+    GlobalShortcutDescriptorList m_requestedBindings;
     GlobalShortcutRepeater m_repeater;
     std::uint32_t m_nextNativeId;
 };

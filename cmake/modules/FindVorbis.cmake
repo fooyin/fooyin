@@ -52,9 +52,10 @@ if(Vorbis_FOUND AND NOT TARGET Vorbis::VorbisFile)
     add_library(Vorbis::VorbisFile UNKNOWN IMPORTED GLOBAL)
     set_target_properties(
         Vorbis::VorbisFile
-        PROPERTIES IMPORTED_LOCATION "${VorbisFile_LIBRARY}"
-                   INTERFACE_COMPILE_OPTIONS "${PC_Vorbis_CFLAGS_OTHER}"
-                   INTERFACE_INCLUDE_DIRECTORIES "${Vorbis_INCLUDE_DIR}"
-                   INTERFACE_LINK_LIBRARIES "${Vorbis_LIBRARY};${Vorbis_OGG_LIBRARY}"
+        PROPERTIES
+            IMPORTED_LOCATION "${VorbisFile_LIBRARY}"
+            INTERFACE_COMPILE_OPTIONS "${PC_Vorbis_CFLAGS_OTHER}"
+            INTERFACE_INCLUDE_DIRECTORIES "${Vorbis_INCLUDE_DIR}"
+            INTERFACE_LINK_LIBRARIES "${Vorbis_LIBRARY};${Vorbis_OGG_LIBRARY}"
     )
 endif()

@@ -35,18 +35,8 @@ find_package(PkgConfig QUIET)
 
 pkg_check_modules(PC_TAGLIB QUIET taglib)
 
-find_path(
-    TAGLIB_INCLUDE_DIRS
-    NAMES tag.h
-    PATH_SUFFIXES taglib
-    HINTS ${PC_TAGLIB_INCLUDEDIR}
-)
-
-find_library(
-    TAGLIB_LIBRARIES
-    NAMES tag
-    HINTS ${PC_TAGLIB_LIBDIR}
-)
+find_path(TAGLIB_INCLUDE_DIRS NAMES tag.h PATH_SUFFIXES taglib HINTS ${PC_TAGLIB_INCLUDEDIR})
+find_library(TAGLIB_LIBRARIES NAMES tag HINTS ${PC_TAGLIB_LIBDIR})
 
 set(TAGLIB_VERSION ${PC_TAGLIB_VERSION})
 
@@ -77,8 +67,8 @@ find_package_handle_standard_args(
 if(TAGLIB_FOUND AND NOT TARGET Taglib::Taglib)
     add_library(Taglib::Taglib UNKNOWN IMPORTED)
     set_target_properties(
-        Taglib::Taglib PROPERTIES IMPORTED_LOCATION "${TAGLIB_LIBRARIES}" INTERFACE_INCLUDE_DIRECTORIES
-                                                                          "${TAGLIB_INCLUDE_DIRS}"
+        Taglib::Taglib
+        PROPERTIES IMPORTED_LOCATION "${TAGLIB_LIBRARIES}" INTERFACE_INCLUDE_DIRECTORIES "${TAGLIB_INCLUDE_DIRS}"
     )
 endif()
 
@@ -86,7 +76,6 @@ mark_as_advanced(TAGLIB_LIBRARIES TAGLIB_INCLUDE_DIRS)
 
 include(FeatureSummary)
 set_package_properties(
-    Taglib PROPERTIES
-    URL "https://taglib.org/"
-    DESCRIPTION "A library for reading and editing the meta-data of audio formats"
+    Taglib
+    PROPERTIES URL "https://taglib.org/" DESCRIPTION "A library for reading and editing the meta-data of audio formats"
 )

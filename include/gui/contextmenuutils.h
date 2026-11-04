@@ -20,12 +20,12 @@
 #pragma once
 
 #include <gui/settings/context/staticcontextmenu.h>
+#include <utils/scopeguard.h>
 
 #include <QApplication>
 #include <QMenu>
+#include <QMouseEvent>
 #include <QStringList>
-
-#include <utility>
 
 namespace Fooyin::ContextMenuUtils {
 inline bool showAllActions(Qt::KeyboardModifiers modifiers)
@@ -36,6 +36,16 @@ inline bool showAllActions(Qt::KeyboardModifiers modifiers)
 inline bool showAllActions()
 {
     return showAllActions(QApplication::keyboardModifiers());
+}
+
+inline auto normaliseContextMenuModifiers(QMouseEvent* event)
+{
+    const auto modifiers = event->modifiers();
+    if(event->button() == Qt::RightButton && showAllActions(modifiers)) {
+        // Selection should behave like an ordinary right-click so hidden actions are shown
+        event->setModifiers(modifiers & ~Qt::ShiftModifier);
+    }
+    return scopeGuard([event, modifiers]() { event->setModifiers(modifiers); });
 }
 
 inline bool isSectionEnabled(const QStringList& disabledSections, const char* sectionId,

@@ -41,10 +41,7 @@ struct IconCaptionLine
     RichText text;
     Qt::Alignment alignment{Qt::AlignLeft};
 
-    bool operator==(const IconCaptionLine& other) const
-    {
-        return std::tie(text, alignment) == std::tie(other.text, other.alignment);
-    }
+    bool operator==(const IconCaptionLine& other) const = default;
 };
 
 using IconCaptionLineList = std::vector<IconCaptionLine>;

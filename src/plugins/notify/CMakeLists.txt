@@ -1,8 +1,4 @@
-find_package(
-    Qt6
-    COMPONENTS DBus
-    QUIET
-)
+find_package(Qt6 COMPONENTS DBus QUIET)
 
 if(NOT Qt6DBus_FOUND)
     message(STATUS "Qt6::DBus not found; skipping notify plugin.")
@@ -10,14 +6,15 @@ if(NOT Qt6DBus_FOUND)
 endif()
 
 set(SOURCES
-    notificationbackend.cpp
-    notificationbackend.h
-    notifyplugin.cpp
-    notifyplugin.h
+    #[[gersemi: sort]] #
     backends/freedesktopnotificationbackend.cpp
     backends/freedesktopnotificationbackend.h
     backends/portalnotificationbackend.cpp
     backends/portalnotificationbackend.h
+    notificationbackend.cpp
+    notificationbackend.h
+    notifyplugin.cpp
+    notifyplugin.h
     settings/notifypage.cpp
     settings/notifypage.h
     settings/notifysettings.cpp
@@ -28,8 +25,9 @@ qt_add_dbus_interface(SOURCES org.freedesktop.Notifications.xml notificationsint
 
 create_fooyin_plugin_internal(
     notify
-    DEPENDS Fooyin::Core
-            Fooyin::Gui
-            Qt6::DBus
+    DEPENDS #
+        Fooyin::Core
+        Fooyin::Gui
+        Qt6::DBus
     SOURCES ${SOURCES}
 )

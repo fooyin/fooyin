@@ -22,6 +22,7 @@
 #include "settings/wavebarsettings.h"
 #include "wavebarcolours.h"
 
+#include <gui/widgets/backgroundconfigwidget.h>
 #include <gui/widgets/colourbutton.h>
 
 #include <QButtonGroup>
@@ -83,6 +84,7 @@ WaveBarConfigDialog::WaveBarConfigDialog(WaveBarWidget* waveBar, QWidget* parent
     , m_cacheSizeLabel{new QLabel(this)}
     , m_numSamples{new QComboBox(this)}
     , m_clearCacheButton{new QPushButton(tr("Clear Cache"), this)}
+    , m_background{new BackgroundConfigWidget(this)}
 {
     auto* tabs = new QTabWidget(this);
 
@@ -92,6 +94,7 @@ WaveBarConfigDialog::WaveBarConfigDialog(WaveBarWidget* waveBar, QWidget* parent
 
     tabs->addTab(displayPage, tr("Display"));
     tabs->addTab(coloursPage, tr("Colours"));
+    tabs->addTab(m_background, tr("Background"));
     tabs->addTab(globalPage, tr("Global"));
 
     m_trackPreference->addItem(tr("Playing track"), static_cast<int>(TrackDisplayPreference::PlayingTrack));
@@ -348,6 +351,7 @@ WaveBarWidget::ConfigData WaveBarConfigDialog::config() const
         .centreGap         = m_centreGap->value(),
         .channelScale      = m_channelScale->value(),
         .colourOptions     = QVariant{},
+        .background        = m_background->config(),
     };
 
     Colours colours;
@@ -384,6 +388,7 @@ WaveBarWidget::ConfigData WaveBarConfigDialog::config() const
 
 void WaveBarConfigDialog::setConfig(const WaveBarWidget::ConfigData& config)
 {
+    m_background->setConfig(config.background);
     m_showLabels->setChecked(config.showLabels);
     m_showRemainingTime->setChecked(config.showRemainingTime);
     m_showPlayedThreshold->setChecked(config.showPlayedThreshold);
@@ -458,7 +463,7 @@ void WaveBarConfigDialog::mergeExternalConfig(const WaveBarWidget::ConfigData& p
                         &WaveBarWidget::ConfigData::peakDisplayMode, &WaveBarWidget::ConfigData::normaliseToPeak,
                         &WaveBarWidget::ConfigData::decibelScale, &WaveBarWidget::ConfigData::maxScale,
                         &WaveBarWidget::ConfigData::centreGap, &WaveBarWidget::ConfigData::channelScale,
-                        &WaveBarWidget::ConfigData::colourOptions);
+                        &WaveBarWidget::ConfigData::colourOptions, &WaveBarWidget::ConfigData::background);
 }
 
 void WaveBarConfigDialog::apply()

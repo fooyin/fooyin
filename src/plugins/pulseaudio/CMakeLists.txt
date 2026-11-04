@@ -7,10 +7,12 @@ endif()
 
 create_fooyin_plugin_internal(
     pulseaudio
-    DEPENDS Fooyin::Core
-            ${PULSEAUDIO_LIBRARY}
-    SOURCES pulseaudiooutput.cpp
-            pulseaudiooutput.h
-            pulseaudioplugin.cpp
-            pulseaudioplugin.h
+    DEPENDS #
+        Fooyin::Core
+        ${PULSEAUDIO_LIBRARY}
+    SOURCES #
+        pulseaudiooutput.cpp
+        pulseaudiooutput.h
+        pulseaudioplugin.cpp
+        pulseaudioplugin.h
 )

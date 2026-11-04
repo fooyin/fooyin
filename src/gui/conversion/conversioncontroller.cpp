@@ -184,177 +184,12 @@ public:
                       DspRegistry* dspRegistry, ConversionJob job, QString askFolder, bool showReport,
                       bool showOutputFiles, std::shared_ptr<ConversionInputObserver> sourceObserver,
                       std::function<void(const std::vector<ConversionTrackResult>&)> completion, QWidget* parentWindow,
-                      QObject* parent)
-        : QObject{parent}
-        , m_audioLoader{std::move(audioLoader)}
-        , m_encoderRegistry{encoderRegistry}
-        , m_dspRegistry{dspRegistry}
-        , m_job{std::move(job)}
-        , m_askFolder{std::move(askFolder)}
-        , m_showReport{showReport}
-        , m_showOutputFiles{showOutputFiles}
-        , m_sourceObserver{std::move(sourceObserver)}
-        , m_completion{std::move(completion)}
-        , m_parentWindow{parentWindow}
-        , m_cancelled{std::make_shared<std::atomic_bool>(false)}
-        , m_progress{new ElapsedProgressDialog(tr("Preparing conversion…"), tr("Cancel"), 0, 100, parentWindow)}
-        , m_watcher{new QFutureWatcher<std::vector<ConversionTrackResult>>(this)}
-    {
-        m_progress->setAttribute(Qt::WA_DeleteOnClose, false);
-        m_progress->setWindowTitle(tr("Audio Conversion"));
-        m_progress->setModal(false);
-        m_progress->setMinimumDuration(250ms);
-        m_progress->startTimer();
-        m_progress->setValue(0);
+                      QObject* parent);
 
-        QObject::connect(m_progress, &ElapsedProgressDialog::cancelled, m_progress,
-                         [cancelled = m_cancelled]() { cancelled->store(true, std::memory_order_release); });
-        QObject::connect(m_progress, &QDialog::rejected, m_progress,
-                         [cancelled = m_cancelled]() { cancelled->store(true, std::memory_order_release); });
-        QObject::connect(m_watcher, &QFutureWatcherBase::finished, this, &ConversionSession::finish);
-    }
-
-    void start()
-    {
-        auto future = Utils::asyncExec([audioLoader = m_audioLoader, encoderRegistry = m_encoderRegistry,
-                                        dspRegistry = m_dspRegistry, job = m_job, askFolder = m_askFolder,
-                                        cancelled = m_cancelled, progress = m_progress, session = this,
-                                        sourceObserver = m_sourceObserver]() {
-            ConversionRunner::Request request;
-            request.audioLoader     = audioLoader.get();
-            request.encoderRegistry = encoderRegistry;
-            request.dspRegistry     = dspRegistry;
-            request.job             = job;
-            request.sourceObserver  = sourceObserver;
-            request.askFolder       = askFolder;
-            request.cancelCallback  = [cancelled]() {
-                return cancelled->load(std::memory_order_acquire);
-            };
-            request.progressCallback = [progress](const ConversionProgress& current) {
-                const int trackCount       = std::max(1, current.trackCount);
-                const double trackProgress = current.sourceDurationMs > 0
-                                               ? std::clamp(static_cast<double>(current.sourcePositionMs)
-                                                                / static_cast<double>(current.sourceDurationMs),
-                                                            0.0, 1.0)
-                                               : 0.0;
-                const auto percentage      = static_cast<int>(
-                    ((static_cast<double>(current.trackIndex) + trackProgress) / trackCount) * 100.0);
-                const QString progressText = current.sourceDurationMs > 0
-                                               ? tr("%1%").arg(QString::number(trackProgress * 100.0, 'f', 1))
-                                               : tr("Calculating…");
-                const QString text         = tr("Converting %1 of %2 (%3)")
-                                                 .arg(current.trackIndex + 1)
-                                                 .arg(current.trackCount)
-                                                 .arg(progressText)
-                                           + "\n"_L1 + tr("Current file") + ":\n"_L1 + current.sourcePath;
-                QMetaObject::invokeMethod(progress, [progress, percentage, text]() {
-                    progress->setText(text);
-                    progress->setValue(percentage);
-                });
-            };
-            request.existingFileCallback = [cancelled, progress, session](const QString& path) {
-                if(cancelled->load(std::memory_order_acquire)) {
-                    return ExistingFileMode::Ask;
-                }
-
-                auto promise        = std::make_shared<std::promise<ExistingFileMode>>();
-                auto decisionFuture = promise->get_future();
-                const bool invoked  = QMetaObject::invokeMethod(
-                    session,
-                    [cancelled, progress, path, promise, session]() {
-                        if(cancelled->load(std::memory_order_acquire)) {
-                            promise->set_value(ExistingFileMode::Ask);
-                            return;
-                        }
-
-                        progress->show();
-
-                        auto* prompt
-                            = new QMessageBox{QMessageBox::Question, tr("File already exists"),
-                                              tr("The file already exists:\n%1").arg(path),
-                                              QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, progress};
-                        prompt->setAttribute(Qt::WA_DeleteOnClose);
-                        prompt->setModal(false);
-                        prompt->button(QMessageBox::Yes)->setText(tr("Overwrite"));
-                        prompt->button(QMessageBox::No)->setText(tr("Skip"));
-
-                        QObject::connect(prompt, &QDialog::finished, session, [cancelled, promise](int result) {
-                            if(result == QMessageBox::Yes) {
-                                promise->set_value(ExistingFileMode::Overwrite);
-                            }
-                            else if(result == QMessageBox::No) {
-                                promise->set_value(ExistingFileMode::Skip);
-                            }
-                            else {
-                                cancelled->store(true, std::memory_order_release);
-                                promise->set_value(ExistingFileMode::Ask);
-                            }
-                        });
-
-                        prompt->open();
-                        prompt->raise();
-                        prompt->activateWindow();
-                    },
-                    Qt::QueuedConnection);
-                return invoked ? decisionFuture.get() : ExistingFileMode::Ask;
-            };
-            return ConversionRunner::run(request);
-        });
-
-        m_watcher->setFuture(future);
-    }
+    void start();
 
 private:
-    void finish()
-    {
-        const auto results = m_watcher->result();
-        m_progress->setValue(100);
-
-        const ConversionCounts counts = conversionCounts(results);
-
-        bool hasDetails{false};
-        for(const ConversionTrackResult& result : results) {
-            hasDetails = hasDetails || !result.error.isEmpty() || !result.warnings.empty();
-        }
-
-        if(m_showReport || counts.failed > 0 || counts.cancelled > 0 || hasDetails) {
-            m_progress->hide();
-            showConversionResults(m_parentWindow, results, counts, hasDetails, m_job.preset.other.verifyOutput);
-        }
-
-        if(m_showOutputFiles) {
-            TrackList convertedTracks;
-            std::set<QString> outputPaths;
-            for(const ConversionTrackResult& result : results) {
-                if(result.status != ConversionResultStatus::Succeeded || result.outputPath.isEmpty()) {
-                    continue;
-                }
-
-                const QString outputPath = QDir::cleanPath(QFileInfo{result.outputPath}.absoluteFilePath());
-                if(!outputPaths.insert(outputPath).second) {
-                    continue;
-                }
-
-                Track outputTrack{outputPath};
-                if(!m_audioLoader->readTrackMetadata(outputTrack)) {
-                    qCWarning(CONV_CTRL) << "Failed to read metadata of file:" << outputPath;
-                }
-                readFileProperties(outputTrack);
-                convertedTracks.push_back(std::move(outputTrack));
-            }
-
-            if(!convertedTracks.empty()) {
-                Q_EMIT convertedFilesReady(convertedTracks);
-            }
-        }
-
-        if(m_completion) {
-            m_completion(results);
-        }
-
-        m_progress->deleteLater();
-        deleteLater();
-    }
+    void finish();
 
     std::shared_ptr<AudioLoader> m_audioLoader;
     AudioEncoderRegistry* m_encoderRegistry;
@@ -374,6 +209,200 @@ private:
 Q_SIGNALS:
     void convertedFilesReady(const Fooyin::TrackList& tracks);
 };
+
+ConversionSession::ConversionSession(std::shared_ptr<AudioLoader> audioLoader, AudioEncoderRegistry* encoderRegistry,
+                                     DspRegistry* dspRegistry, ConversionJob job, QString askFolder, bool showReport,
+                                     bool showOutputFiles, std::shared_ptr<ConversionInputObserver> sourceObserver,
+                                     std::function<void(const std::vector<ConversionTrackResult>&)> completion,
+                                     QWidget* parentWindow, QObject* parent)
+    : QObject{parent}
+    , m_audioLoader{std::move(audioLoader)}
+    , m_encoderRegistry{encoderRegistry}
+    , m_dspRegistry{dspRegistry}
+    , m_job{std::move(job)}
+    , m_askFolder{std::move(askFolder)}
+    , m_showReport{showReport}
+    , m_showOutputFiles{showOutputFiles}
+    , m_sourceObserver{std::move(sourceObserver)}
+    , m_completion{std::move(completion)}
+    , m_parentWindow{parentWindow}
+    , m_cancelled{std::make_shared<std::atomic_bool>(false)}
+    , m_progress{new ElapsedProgressDialog(tr("Preparing conversion…"), tr("Cancel"), 0, 100, parentWindow)}
+    , m_watcher{new QFutureWatcher<std::vector<ConversionTrackResult>>(this)}
+{
+    m_progress->setAttribute(Qt::WA_DeleteOnClose, false);
+    m_progress->setWindowTitle(tr("Audio Conversion"));
+    m_progress->setModal(false);
+    m_progress->setMinimumDuration(250ms);
+    m_progress->startTimer();
+    m_progress->setValue(0);
+
+    QObject::connect(m_progress, &ElapsedProgressDialog::cancelled, m_progress,
+                     [cancelled = m_cancelled]() { cancelled->store(true, std::memory_order_release); });
+    QObject::connect(m_progress, &QDialog::rejected, m_progress,
+                     [cancelled = m_cancelled]() { cancelled->store(true, std::memory_order_release); });
+    QObject::connect(m_watcher, &QFutureWatcherBase::finished, this, &ConversionSession::finish);
+}
+
+void ConversionSession::start()
+{
+    const auto future = Utils::asyncExec([audioLoader = m_audioLoader, encoderRegistry = m_encoderRegistry,
+                                          dspRegistry = m_dspRegistry, job = m_job, askFolder = m_askFolder,
+                                          cancelled = m_cancelled, progress = m_progress, session = this,
+                                          sourceObserver         = m_sourceObserver,
+                                          maxParallelConversions = ConverterSettings::maxParallelConversions()]() {
+        ConversionRunner::Request request;
+        request.audioLoader     = audioLoader.get();
+        request.encoderRegistry = encoderRegistry;
+        request.dspRegistry     = dspRegistry;
+        request.job             = job;
+        request.sourceObserver  = sourceObserver;
+        request.askFolder       = askFolder;
+        request.cancelCallback  = [cancelled]() {
+            return cancelled->load(std::memory_order_acquire);
+        };
+        request.maxParallelConversions = maxParallelConversions;
+        request.progressCallback = [progress, fractions = std::vector<double>(job.tracks.size()), totalProgress = 0.0,
+                                    finishedCount = size_t{0}, lastUpdate = std::chrono::steady_clock::now() - 100ms](
+                                       const ConversionProgress& current) mutable {
+            const int i{current.trackIndex};
+            if(std::cmp_greater_equal(i, fractions.size())) {
+                return;
+            }
+
+            const double fraction = current.sourceDurationMs > 0 ? static_cast<double>(current.sourcePositionMs)
+                                                                       / static_cast<double>(current.sourceDurationMs)
+                                                                 : 0.0;
+            if(current.finished && fractions[i] < 1.0) {
+                ++finishedCount;
+            }
+
+            const double next = std::max(fractions[i], current.finished ? 1.0 : std::clamp(fraction, 0.0, 0.99));
+            totalProgress += next - fractions[i];
+            fractions[i] = next;
+
+            const bool allFinished = finishedCount == fractions.size();
+            const auto now         = std::chrono::steady_clock::now();
+            if(!allFinished && now - lastUpdate < 100ms) {
+                return;
+            }
+
+            lastUpdate = now;
+            const auto percentage
+                = std::min(99, static_cast<int>(totalProgress / static_cast<double>(fractions.size()) * 100.0));
+            const QString text = allFinished
+                                   ? tr("Finalising…")
+                                   : tr("Converting files (%1 of %2 finished)").arg(finishedCount).arg(fractions.size())
+                                         + "\n"_L1 + tr("Current file") + ":\n"_L1 + current.sourcePath;
+            QMetaObject::invokeMethod(
+                progress,
+                [progress, percentage, text]() {
+                    progress->setText(text);
+                    progress->setValue(percentage);
+                },
+                Qt::QueuedConnection);
+        };
+        request.existingFileCallback = [cancelled, progress, session](const QString& path) {
+            if(cancelled->load(std::memory_order_acquire)) {
+                return ExistingFileMode::Ask;
+            }
+
+            const auto promise  = std::make_shared<std::promise<ExistingFileMode>>();
+            auto decisionFuture = promise->get_future();
+            const bool invoked  = QMetaObject::invokeMethod(
+                session,
+                [cancelled, progress, path, promise, session]() {
+                    if(cancelled->load(std::memory_order_acquire)) {
+                        promise->set_value(ExistingFileMode::Ask);
+                        return;
+                    }
+
+                    progress->show();
+
+                    auto* prompt = new QMessageBox{QMessageBox::Question, tr("File already exists"),
+                                                   tr("The file already exists:\n%1").arg(path),
+                                                   QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, progress};
+                    prompt->setAttribute(Qt::WA_DeleteOnClose);
+                    prompt->setModal(false);
+                    prompt->button(QMessageBox::Yes)->setText(tr("Overwrite"));
+                    prompt->button(QMessageBox::No)->setText(tr("Skip"));
+
+                    QObject::connect(prompt, &QDialog::finished, session, [cancelled, promise](int result) {
+                        if(result == QMessageBox::Yes) {
+                            promise->set_value(ExistingFileMode::Overwrite);
+                        }
+                        else if(result == QMessageBox::No) {
+                            promise->set_value(ExistingFileMode::Skip);
+                        }
+                        else {
+                            cancelled->store(true, std::memory_order_release);
+                            promise->set_value(ExistingFileMode::Ask);
+                        }
+                    });
+
+                    prompt->open();
+                    prompt->raise();
+                    prompt->activateWindow();
+                },
+                Qt::QueuedConnection);
+            return invoked ? decisionFuture.get() : ExistingFileMode::Ask;
+        };
+        return ConversionRunner::run(request);
+    });
+
+    m_watcher->setFuture(future);
+}
+
+void ConversionSession::finish()
+{
+    const auto results = m_watcher->result();
+    m_progress->setValue(100);
+
+    const ConversionCounts counts = conversionCounts(results);
+
+    bool hasDetails{false};
+    for(const ConversionTrackResult& result : results) {
+        hasDetails = hasDetails || !result.error.isEmpty() || !result.warnings.empty();
+    }
+
+    if(m_showReport || counts.failed > 0 || counts.cancelled > 0 || hasDetails) {
+        m_progress->hide();
+        showConversionResults(m_parentWindow, results, counts, hasDetails, m_job.preset.other.verifyOutput);
+    }
+
+    if(m_showOutputFiles) {
+        TrackList convertedTracks;
+        std::set<QString> outputPaths;
+        for(const ConversionTrackResult& result : results) {
+            if(result.status != ConversionResultStatus::Succeeded || result.outputPath.isEmpty()) {
+                continue;
+            }
+
+            const QString outputPath = QDir::cleanPath(QFileInfo{result.outputPath}.absoluteFilePath());
+            if(!outputPaths.insert(outputPath).second) {
+                continue;
+            }
+
+            Track outputTrack{outputPath};
+            if(!m_audioLoader->readTrackMetadata(outputTrack)) {
+                qCWarning(CONV_CTRL) << "Failed to read metadata of file:" << outputPath;
+            }
+            readFileProperties(outputTrack);
+            convertedTracks.push_back(std::move(outputTrack));
+        }
+
+        if(!convertedTracks.empty()) {
+            Q_EMIT convertedFilesReady(convertedTracks);
+        }
+    }
+
+    if(m_completion) {
+        m_completion(results);
+    }
+
+    m_progress->deleteLater();
+    deleteLater();
+}
 } // namespace
 
 ConversionController::ConversionController(std::shared_ptr<AudioLoader> audioLoader,
@@ -488,6 +517,7 @@ bool ConversionController::startPreset(const QString& presetId, const TrackList&
     lastUsed.name        = u"[last used]"_s;
     lastUsed.preset.name = lastUsed.name;
     ConverterSettings::setLastUsedConversionPreset(lastUsed);
+    ConverterSettings::setCurrentConversionPreset(lastUsed);
     Q_EMIT conversionPresetsChanged();
 
     start({.tracks = tracks, .preset = std::move(selected.preset)}, std::move(askFolder), selected.showReport,

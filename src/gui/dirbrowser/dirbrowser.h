@@ -24,6 +24,7 @@
 #include <core/player/playbackqueue.h>
 #include <core/player/playerdefs.h>
 #include <gui/fywidget.h>
+#include <gui/widgets/backgroundconfig.h>
 
 #include <QDir>
 #include <QList>
@@ -44,6 +45,8 @@ class QVBoxLayout;
 
 namespace Fooyin {
 class ActionManager;
+class BackgroundImageSource;
+class CoverRepository;
 class DirProxyModel;
 class DirTree;
 class PlaylistInteractor;
@@ -73,7 +76,8 @@ public:
     };
 
     DirBrowser(const QStringList& supportedExtensions, ActionManager* actionManager,
-               PlaylistInteractor* playlistInteractor, SettingsManager* settings, QWidget* parent = nullptr);
+               PlaylistInteractor* playlistInteractor, TrackSelectionController* selection,
+               CoverRepository* coverRepository, SettingsManager* settings, QWidget* parent = nullptr);
     ~DirBrowser() override;
 
     [[nodiscard]] QString name() const override;
@@ -102,6 +106,7 @@ public:
         QString rootPath{
             QDir::homePath(),
         };
+        BackgroundConfig background;
     };
 
     [[nodiscard]] ConfigData factoryConfig() const;
@@ -187,6 +192,7 @@ private:
     DirTree* m_dirTree;
     QFileSystemModel* m_model;
     DirProxyModel* m_proxyModel;
+    BackgroundImageSource* m_backgroundSource;
     QUndoStack m_dirHistory;
 
     QFlags<QDir::Filter> m_defaultFilters;

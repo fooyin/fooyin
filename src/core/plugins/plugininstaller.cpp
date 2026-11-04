@@ -21,9 +21,12 @@
 
 #include "plugininfo.h"
 
+#include <core/coresettings.h>
 #include <core/plugins/plugin.h>
 #include <utils/fileutils.h>
+#include <utils/fypaths.h>
 
+#include <QCoreApplication>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -40,6 +43,7 @@
 #include <array>
 #include <optional>
 #include <unordered_set>
+#include <vector>
 
 using namespace Qt::StringLiterals;
 
@@ -48,6 +52,7 @@ Q_LOGGING_CATEGORY(PLUGIN_INSTALLER, "fy.plugininstaller")
 constexpr qint64 MaxEntrySize     = 256LL * 1024 * 1024;
 constexpr qint64 MaxExtractedSize = 512LL * 1024 * 1024;
 constexpr auto MaxEntryCount      = 4096;
+constexpr auto PendingRemovalKey  = "Plugins/PendingRemoval"_L1;
 
 namespace Fooyin::PluginInstaller {
 namespace {
@@ -65,6 +70,8 @@ using ArchivePtr = std::unique_ptr<archive, ArchiveDeleter>;
 struct InstalledPlugin
 {
     QString identifier;
+    QString relativePath;
+    QJsonObject metadata;
 };
 
 QString targetDirectory()
@@ -115,6 +122,19 @@ bool isValidPathPart(const QString& part)
     return std::ranges::find(reservedNames, baseName) == reservedNames.cend();
 }
 
+bool isValidIdentifier(const QString& identifier)
+{
+    static const QRegularExpression identifierRegex{u"^[a-z0-9][a-z0-9._-]*$"_s};
+    return identifierRegex.match(identifier).hasMatch() && isValidPathPart(identifier);
+}
+
+bool hasFooyinMetadata(const QJsonObject& metadata)
+{
+    const QString iid = metadata.value("IID"_L1).toString();
+    return metadata.contains("MetaData"_L1)
+        && (iid == "org.fooyin.fooyin.plugin"_L1 || iid.startsWith("org.fooyin.fooyin.plugin/"_L1));
+}
+
 std::optional<QString> outputPath(const QString& entryPath, bool isDirectory, const QString& target)
 {
     QString path = QDir::fromNativeSeparators(entryPath);
@@ -152,12 +172,12 @@ std::optional<QString> outputPath(const QString& entryPath, bool isDirectory, co
     return {};
 }
 
-bool extractBundle(const QString& filepath, const QString& destination)
+std::expected<void, InstallError> extractBundle(const QString& filepath, const QString& destination)
 {
     const QString target = targetDirectory();
     if(target.isEmpty()) {
         qCWarning(PLUGIN_INSTALLER) << "Unsupported plugin bundle target" << QSysInfo::buildCpuArchitecture();
-        return false;
+        return std::unexpected{InstallError::UnsupportedPlatform};
     }
 
     const ArchivePtr reader{archive_read_new()};
@@ -166,7 +186,7 @@ bool extractBundle(const QString& filepath, const QString& destination)
 
     if(archive_read_open_filename(reader.get(), QFile::encodeName(filepath).constData(), 10240) != ARCHIVE_OK) {
         qCWarning(PLUGIN_INSTALLER) << "Could not open plugin bundle:" << archive_error_string(reader.get());
-        return false;
+        return std::unexpected{InstallError::BundleReadFailed};
     }
 
     std::unordered_set<QString> extractedPaths;
@@ -178,25 +198,25 @@ bool extractBundle(const QString& filepath, const QString& destination)
     int archiveResult{ARCHIVE_OK};
     while((archiveResult = archive_read_next_header(reader.get(), &entry)) == ARCHIVE_OK) {
         if(++entryCount > MaxEntryCount || archive_entry_is_encrypted(entry) == 1) {
-            return false;
+            return std::unexpected{InstallError::InvalidBundle};
         }
 
         const auto fileType = archive_entry_filetype(entry);
         const bool isDir    = fileType == AE_IFDIR;
         if(!isDir && fileType != AE_IFREG) {
-            return false;
+            return std::unexpected{InstallError::InvalidBundle};
         }
 
         const char* utf8Path = archive_entry_pathname_utf8(entry);
         const char* rawPath  = utf8Path ? utf8Path : archive_entry_pathname(entry);
         if(!rawPath) {
-            return false;
+            return std::unexpected{InstallError::InvalidBundle};
         }
 
         const QString entryPath = utf8Path ? QString::fromUtf8(rawPath) : QFile::decodeName(rawPath);
         const auto relativePath = outputPath(entryPath, isDir, target);
         if(!relativePath) {
-            return false;
+            return std::unexpected{InstallError::InvalidBundle};
         }
 
         if(relativePath->isEmpty()) {
@@ -207,26 +227,28 @@ bool extractBundle(const QString& filepath, const QString& destination)
         foundTarget |= QDir::fromNativeSeparators(entryPath).startsWith(target + u'/');
         const QString pathKey = relativePath->toCaseFolded();
         if(!extractedPaths.emplace(pathKey).second) {
-            return false;
+            return std::unexpected{InstallError::InvalidBundle};
         }
 
         const QString output = QDir{destination}.filePath(*relativePath);
         if(isDir) {
             if(!QDir{}.mkpath(output)) {
-                return false;
+                return std::unexpected{InstallError::WriteFailed};
             }
             continue;
         }
 
         const la_int64_t declaredSize = archive_entry_size_is_set(entry) ? archive_entry_size(entry) : 0;
-        if(declaredSize < 0 || declaredSize > MaxEntrySize || extractedSize + declaredSize > MaxExtractedSize
-           || !QDir{}.mkpath(QFileInfo{output}.absolutePath())) {
-            return false;
+        if(declaredSize < 0 || declaredSize > MaxEntrySize || extractedSize + declaredSize > MaxExtractedSize) {
+            return std::unexpected{InstallError::InvalidBundle};
+        }
+        if(!QDir{}.mkpath(QFileInfo{output}.absolutePath())) {
+            return std::unexpected{InstallError::WriteFailed};
         }
 
         QFile outputFile{output};
         if(!outputFile.open(QIODevice::WriteOnly | QIODevice::NewOnly)) {
-            return false;
+            return std::unexpected{InstallError::WriteFailed};
         }
 
         std::array<char, 64UL * 1024> buffer{};
@@ -235,20 +257,28 @@ bool extractBundle(const QString& filepath, const QString& destination)
         while((bytesRead = archive_read_data(reader.get(), buffer.data(), buffer.size())) > 0) {
             entrySize += bytesRead;
             extractedSize += bytesRead;
-            if(entrySize > MaxEntrySize || extractedSize > MaxExtractedSize
-               || outputFile.write(buffer.data(), bytesRead) != bytesRead) {
-                return false;
+            if(entrySize > MaxEntrySize || extractedSize > MaxExtractedSize) {
+                return std::unexpected{InstallError::InvalidBundle};
+            }
+            if(outputFile.write(buffer.data(), bytesRead) != bytesRead) {
+                return std::unexpected{InstallError::WriteFailed};
             }
         }
         if(bytesRead < 0) {
-            return false;
+            return std::unexpected{InstallError::BundleReadFailed};
         }
     }
 
-    return archiveResult == ARCHIVE_EOF && foundTarget;
+    if(archiveResult != ARCHIVE_EOF) {
+        return std::unexpected{InstallError::BundleReadFailed};
+    }
+    if(!foundTarget) {
+        return std::unexpected{InstallError::MissingPlatform};
+    }
+    return {};
 }
 
-std::optional<InstalledPlugin> inspectPlugin(const QString& directory)
+std::expected<InstalledPlugin, InstallError> inspectPlugin(const QString& directory)
 {
     std::optional<InstalledPlugin> installedPlugin;
 
@@ -260,24 +290,30 @@ std::optional<InstalledPlugin> inspectPlugin(const QString& directory)
 
         const QPluginLoader loader{filepath};
         const QJsonObject metadata = loader.metaData();
-        if(metadata.value("IID"_L1).toString() != QLatin1StringView{FOOYIN_PLUGIN_IID}
-           || !metadata.contains("MetaData"_L1)) {
+        if(!hasFooyinMetadata(metadata)) {
             continue;
         }
-
-        static const QRegularExpression identifierRegex{u"^[a-z0-9][a-z0-9._-]*$"_s};
+        if(metadata.value("IID"_L1).toString() != QLatin1StringView{FOOYIN_PLUGIN_IID}) {
+            return std::unexpected{InstallError::IncompatibleApi};
+        }
 
         const PluginInfo plugin{filepath, metadata};
         const QString identifier = plugin.identifier();
-        if(installedPlugin || identifier.isEmpty() || plugin.version().isEmpty()
-           || !identifierRegex.match(identifier).hasMatch()) {
-            return {};
+        if(installedPlugin) {
+            return std::unexpected{InstallError::MultiplePlugins};
+        }
+        if(plugin.version().isEmpty() || !isValidIdentifier(identifier)) {
+            return std::unexpected{InstallError::InvalidMetadata};
         }
 
-        installedPlugin = InstalledPlugin{.identifier = identifier};
+        installedPlugin = InstalledPlugin{
+            .identifier = identifier, .relativePath = QDir{directory}.relativeFilePath(filepath), .metadata = metadata};
     }
 
-    return installedPlugin;
+    if(!installedPlugin) {
+        return std::unexpected{InstallError::InvalidPlugin};
+    }
+    return *installedPlugin;
 }
 
 bool moveStagingDirectory(const QString& stagingPath, const QString& destination, QTemporaryDir& stagingDir)
@@ -288,62 +324,210 @@ bool moveStagingDirectory(const QString& stagingPath, const QString& destination
     stagingDir.setAutoRemove(false);
     return true;
 }
+
+std::vector<QString> loosePluginFiles(const QString& pluginsPath, const QString& identifier)
+{
+    std::vector<QString> paths;
+    const QFileInfoList files = QDir{pluginsPath}.entryInfoList(QDir::Files);
+    for(const QFileInfo& file : files) {
+        const QString filepath = file.absoluteFilePath();
+        if(!QLibrary::isLibrary(filepath)) {
+            continue;
+        }
+
+        const QPluginLoader loader{filepath};
+        const QJsonObject metadata = loader.metaData();
+        if(!hasFooyinMetadata(metadata)) {
+            continue;
+        }
+
+        if(PluginInfo{filepath, metadata}.identifier() == identifier) {
+            paths.emplace_back(filepath);
+        }
+    }
+    return paths;
+}
+
+std::expected<void, QString> removePath(const QString& path)
+{
+    const QFileInfo info{path};
+    if(!info.exists() && !info.isSymLink()) {
+        return {};
+    }
+    if(info.isDir() && !info.isSymLink()) {
+        if(!QDir{path}.removeRecursively()) {
+            return std::unexpected{
+                QCoreApplication::translate("Fooyin::PluginInstaller",
+                                            "Could not remove plugin directory ‘%1’. "
+                                            "Check that it is writable and its files are not in use.")
+                    .arg(path)};
+        }
+    }
+    else {
+        QFile file{path};
+        if(!file.remove()) {
+            return std::unexpected{QCoreApplication::translate("Fooyin::PluginInstaller", "Could not remove ‘%1’: %2")
+                                       .arg(path, file.errorString())};
+        }
+    }
+    return {};
+}
 } // namespace
 
-Result install(const QString& filepath, const QString& pluginsPath, bool overwrite)
+std::expected<std::unique_ptr<PluginInfo>, InstallError> install(const QString& filepath, const QString& pluginsPath,
+                                                                 bool overwrite)
 {
     const QFileInfo source{filepath};
-    if(!source.isFile() || !QDir{}.mkpath(pluginsPath)) {
-        return Result::Failed;
+    if(!source.isFile()) {
+        return std::unexpected{InstallError::InvalidSource};
+    }
+    if(!QDir{}.mkpath(pluginsPath)) {
+        return std::unexpected{InstallError::WriteFailed};
     }
 
     QTemporaryDir stagingDirectory{QDir{pluginsPath}.filePath(u".staging-XXXXXX"_s)};
     if(!stagingDirectory.isValid()) {
-        return Result::Failed;
+        return std::unexpected{InstallError::WriteFailed};
     }
 
     const QString suffix = source.suffix().toLower();
     if(suffix == "fyplugin"_L1 || suffix == "zip"_L1) {
-        if(!extractBundle(filepath, stagingDirectory.path())) {
-            return Result::Failed;
+        if(const auto result = extractBundle(filepath, stagingDirectory.path()); !result) {
+            return std::unexpected{result.error()};
         }
     }
     else {
-        if(!QLibrary::isLibrary(filepath)
-           || !QFile::copy(filepath, QDir{stagingDirectory.path()}.filePath(source.fileName()))) {
-            return Result::Failed;
+        if(!QLibrary::isLibrary(filepath)) {
+            return std::unexpected{InstallError::InvalidPlugin};
+        }
+        if(!QFile::copy(filepath, QDir{stagingDirectory.path()}.filePath(source.fileName()))) {
+            return std::unexpected{InstallError::WriteFailed};
         }
     }
 
     const auto plugin = inspectPlugin(stagingDirectory.path());
     if(!plugin) {
-        return Result::Failed;
+        return std::unexpected{plugin.error()};
     }
 
-    const QString pluginPath = QDir{pluginsPath}.filePath(plugin->identifier);
-    if(QFileInfo::exists(pluginPath) && !overwrite) {
-        return Result::AlreadyInstalled;
-    }
-
-    if(!QFileInfo::exists(pluginPath)) {
-        return moveStagingDirectory(stagingDirectory.path(), pluginPath, stagingDirectory) ? Result::Installed
-                                                                                           : Result::Failed;
-    }
-
+    const QString pluginPath  = QDir{pluginsPath}.filePath(plugin->identifier);
     const QString updatesPath = QDir{pluginsPath}.filePath(u".updates"_s);
     const QString updatePath  = QDir{updatesPath}.filePath(plugin->identifier);
+    if(!overwrite) {
+        auto existingPlugin = inspectPlugin(updatePath);
+        if(!existingPlugin) {
+            existingPlugin = inspectPlugin(pluginPath);
+        }
+
+        QString existingVersion;
+        const auto loosePlugins = loosePluginFiles(pluginsPath, plugin->identifier);
+        if(existingPlugin) {
+            existingVersion = PluginInfo{QString{}, existingPlugin->metadata}.version();
+        }
+        else if(!loosePlugins.empty()) {
+            const QString& loosePath = loosePlugins.front();
+            existingVersion          = PluginInfo{loosePath, QPluginLoader{loosePath}.metaData()}.version();
+        }
+
+        if(QFileInfo::exists(pluginPath) || QFileInfo::exists(updatePath) || !loosePlugins.empty()) {
+            const QString version = PluginInfo{QString{}, plugin->metadata}.version();
+            return std::unexpected{version == existingVersion ? InstallError::SameVersionInstalled
+                                                              : InstallError::AlreadyInstalled};
+        }
+    }
+
+    const auto installTo = [&](const QString& destination) -> std::expected<std::unique_ptr<PluginInfo>, InstallError> {
+        if(!moveStagingDirectory(stagingDirectory.path(), destination, stagingDirectory)) {
+            return std::unexpected{InstallError::WriteFailed};
+        }
+        return std::make_unique<PluginInfo>(QDir{destination}.filePath(plugin->relativePath), plugin->metadata);
+    };
+
+    if(!QFileInfo::exists(pluginPath)) {
+        return installTo(pluginPath);
+    }
+
     if(!QDir{}.mkpath(updatesPath)) {
-        return Result::Failed;
+        return std::unexpected{InstallError::WriteFailed};
     }
     if(QFileInfo::exists(updatePath) && !QDir{updatePath}.removeRecursively()) {
-        return Result::Failed;
+        return std::unexpected{InstallError::WriteFailed};
     }
 
-    return moveStagingDirectory(stagingDirectory.path(), updatePath, stagingDirectory) ? Result::Installed
-                                                                                       : Result::Failed;
+    return installTo(updatePath);
 }
 
-bool applyPendingUpdates(const QString& pluginsPath)
+bool canRemove(const PluginInfo& plugin, const QString& pluginsPath)
+{
+    if(!isValidIdentifier(plugin.identifier())) {
+        return false;
+    }
+
+    const QString rootPath = QFileInfo{pluginsPath}.canonicalFilePath();
+    const QString filepath = QFileInfo{plugin.filepath()}.canonicalFilePath();
+    if(rootPath.isEmpty() || filepath.isEmpty()) {
+        return false;
+    }
+
+    const QString relativePath = QDir{rootPath}.relativeFilePath(filepath);
+    return relativePath.startsWith(plugin.identifier() + u'/')
+        || relativePath.startsWith(u".updates/"_s + plugin.identifier() + u'/');
+}
+
+std::expected<void, QString> remove(const QString& identifier, const QString& pluginsPath)
+{
+    if(!isValidIdentifier(identifier)) {
+        return std::unexpected{
+            QCoreApplication::translate("Fooyin::PluginInstaller", "Invalid plugin identifier ‘%1’.").arg(identifier)};
+    }
+
+    const QDir directory{pluginsPath};
+    const QString updatesPath = directory.filePath(u".updates"_s);
+    if(QFileInfo{updatesPath}.isSymLink()) {
+        return std::unexpected{QCoreApplication::translate("Fooyin::PluginInstaller",
+                                                           "The plugin update directory ‘%1’ is a symbolic link.")
+                                   .arg(updatesPath)};
+    }
+
+    std::vector<QString> paths;
+#ifdef Q_OS_WIN
+    // Portable installs share this root with bundled loose plugins
+    if(!Utils::isPortable()) {
+        paths = loosePluginFiles(pluginsPath, identifier);
+    }
+#else
+    paths = loosePluginFiles(pluginsPath, identifier);
+#endif
+    paths.emplace_back(QDir{updatesPath}.filePath(identifier));
+    paths.emplace_back(directory.filePath(identifier));
+
+    for(const QString& path : paths) {
+        if(const auto result = removePath(path); !result) {
+            return result;
+        }
+    }
+    QDir{pluginsPath}.rmdir(u".updates"_s);
+    return {};
+}
+
+QStringList pendingRemovals()
+{
+    const FyStateSettings settings;
+    return settings.value(PendingRemovalKey).toStringList();
+}
+
+void setPendingRemovals(const QStringList& identifiers)
+{
+    FyStateSettings settings;
+    if(identifiers.isEmpty()) {
+        settings.remove(PendingRemovalKey);
+    }
+    else {
+        settings.setValue(PendingRemovalKey, identifiers);
+    }
+}
+
+bool applyPendingUpdates(const QString& pluginsPath, const QStringList& pendingRemovals)
 {
     const QDir updates{QDir{pluginsPath}.filePath(u".updates"_s)};
     if(!updates.exists()) {
@@ -353,6 +537,9 @@ bool applyPendingUpdates(const QString& pluginsPath)
     bool success{true};
     const QFileInfoList pendingUpdates = updates.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
     for(const QFileInfo& pendingUpdate : pendingUpdates) {
+        if(pendingRemovals.contains(pendingUpdate.fileName())) {
+            continue;
+        }
         const QString targetPath = QDir{pluginsPath}.filePath(pendingUpdate.fileName());
         if((QFileInfo::exists(targetPath) && !QDir{targetPath}.removeRecursively())
            || !QDir{}.rename(pendingUpdate.absoluteFilePath(), targetPath)) {

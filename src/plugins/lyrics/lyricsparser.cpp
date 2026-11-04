@@ -114,7 +114,17 @@ bool isLiteral(QChar ch)
 
 bool parseTag(Fooyin::Lyrics::Lyrics& lyrics, LineContext& context)
 {
-    while(context.peek() != u']' && !context.isAtEnd()) {
+    int bracketDepth{0};
+    while(!context.isAtEnd()) {
+        if(context.peek() == u'[') {
+            ++bracketDepth;
+        }
+        else if(context.peek() == u']') {
+            if(bracketDepth == 0) {
+                break;
+            }
+            --bracketDepth;
+        }
         context.advance();
     }
 
@@ -124,13 +134,13 @@ bool parseTag(Fooyin::Lyrics::Lyrics& lyrics, LineContext& context)
         return false;
     }
 
-    const QStringList parts = tag.split(u':');
-    if(parts.size() < 2) {
+    const auto separator = tag.indexOf(u':');
+    if(separator < 0) {
         return false;
     }
 
-    const QString& field = parts.at(0);
-    const QString& value = parts.at(1);
+    const QString field = tag.first(separator);
+    const QString value = tag.sliced(separator + 1);
 
     if(field == "ti"_L1) {
         lyrics.metadata.title = value;
@@ -438,7 +448,7 @@ void parseLine(Fooyin::Lyrics::Lyrics& lyrics, const QString& line)
             }
         }
         else if(token.type == TokText) {
-            parsedWord.word = token.value;
+            parsedWord.word += token.value;
         }
     }
 

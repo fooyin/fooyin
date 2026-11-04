@@ -25,12 +25,17 @@
 namespace Fooyin {
 struct LibraryTreeGrouping
 {
+    static constexpr qint32 Magic   = -0x4C544752;
+    static constexpr qint32 Version = 2;
+
     int id{-1};
     int index{-1};
     bool isDefault{false};
     QString name;
     QString script;
     QString sortScript;
+    bool isEnabled{true};
+    QString groupingScript{};
 
     bool operator==(const LibraryTreeGrouping& other) const = default;
 
@@ -41,27 +46,53 @@ struct LibraryTreeGrouping
 
     friend QDataStream& operator<<(QDataStream& stream, const LibraryTreeGrouping& group)
     {
+        stream << Magic;
+        stream << Version;
         stream << group.id;
         stream << group.index;
         stream << group.name;
         stream << group.script;
         stream << group.sortScript;
+        stream << group.isEnabled;
+        stream << group.groupingScript;
         return stream;
     }
 
     friend QDataStream& operator>>(QDataStream& stream, LibraryTreeGrouping& group)
     {
-        stream >> group.id;
+        qint32 magicOrId{-1};
+        qint32 version{0};
+        stream >> magicOrId;
+
+        if(magicOrId == Magic) {
+            stream >> version;
+            stream >> group.id;
+        }
+        else {
+            group.id = magicOrId;
+        }
+
         stream >> group.index;
         stream >> group.name;
         stream >> group.script;
+        group.isEnabled = true;
+        group.groupingScript.clear();
+
+        if(version >= 1) {
+            stream >> group.sortScript;
+            stream >> group.isEnabled;
+            if(version >= 2) {
+                stream >> group.groupingScript;
+            }
+            return stream;
+        }
 
         QString sort;
 
         stream.startTransaction();
         stream >> sort;
         if(stream.commitTransaction()) {
-            group.sortScript = sort;
+            group.sortScript = std::move(sort);
         }
 
         return stream;

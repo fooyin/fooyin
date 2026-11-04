@@ -22,7 +22,6 @@
 #include <core/scripting/scriptscanner.h>
 
 #include <QColor>
-#include <QRegularExpression>
 #include <QSyntaxHighlighter>
 
 namespace Fooyin {
@@ -33,6 +32,7 @@ struct ScriptHighlightColours
     QColor conditional;
     QColor operatorColour;
     QColor quotedText;
+    QColor formattingTag;
 };
 
 class ScriptHighlighter : public QSyntaxHighlighter
@@ -55,6 +55,7 @@ private:
     void function();
     void functionArgs();
     void conditional();
+    void formattingTag();
 
     void setTokenFormat(const QTextCharFormat& format);
 
@@ -68,6 +69,7 @@ private:
     QTextCharFormat m_operatorFormat;
     QTextCharFormat m_quotedTextFormat;
     QTextCharFormat m_commentFormat;
+    QTextCharFormat m_formattingTagFormat;
 
     ScriptScanner m_scanner;
     ScriptScanner::Token m_current;

@@ -146,6 +146,7 @@ private:
     void publishEvent(const Engine::PlaybackItem& item, bool ready, uint64_t requestId);
     void handleStateChange(Engine::PlaybackState state);
     void handleTrackChangeRequest(const Player::TrackChangeRequest& request);
+    void handleTrackChangeRejected(const Engine::PlaybackItem& item);
     void handleUpcomingTrackChanged(const Player::UpcomingTrack& upcomingTrack);
     [[nodiscard]] bool hasAutoTrackEndTransitionEnabled() const;
     [[nodiscard]] bool hasDistinctUpcomingTrack() const;
@@ -156,6 +157,7 @@ private:
     void handleEndAdvanceWatchdogTimeout();
     void resumeControllerNaturalEndAdvance(const char* reason);
     void clearPendingBoundaryAdvance();
+    void tryPendingBoundaryAdvance();
     void clearEngineOwnedTransition();
     void handleEngineTrackChanged(const Track& track);
     void handleTrackCommitted(const Engine::TrackCommitContext& context);
@@ -219,6 +221,7 @@ private:
     QBasicTimer m_endAdvanceWatchdog;
     Track m_pendingBoundaryAdvanceTrack;
     uint64_t m_pendingBoundaryAdvanceGen;
+    bool m_pendingBoundaryAdvanceReady;
     Track m_latestTrackMetadata;
 
     Engine::PlaybackItem m_lastPreparedNextTrack;

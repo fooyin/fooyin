@@ -41,6 +41,12 @@ QString playtime(const TrackList& tracks)
     return Utils::msToString(total);
 }
 
+QString averageBitrate(const TrackList& tracks)
+{
+    const int bitrate = Track::averageBitrateForTracks(tracks);
+    return bitrate > 0 ? QString::number(bitrate) : QString{};
+}
+
 QString playlistSize(const TrackList& tracks)
 {
     uint64_t total{0};

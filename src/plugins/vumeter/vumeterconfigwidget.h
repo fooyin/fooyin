@@ -29,6 +29,7 @@ class QGroupBox;
 class QSpinBox;
 
 namespace Fooyin {
+class BackgroundConfigWidget;
 class ColourButton;
 class GradientEditor;
 
@@ -71,6 +72,7 @@ private:
     ColourButton* m_legendColour;
     ColourButton* m_gridlinesColour;
     GradientEditor* m_barGradient;
+    BackgroundConfigWidget* m_background;
 };
 } // namespace VuMeter
 } // namespace Fooyin

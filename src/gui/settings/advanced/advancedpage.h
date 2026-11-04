@@ -31,5 +31,10 @@ class AdvancedPage : public SettingsPage
 public:
     explicit AdvancedPage(AdvancedSettingsRegistry* registry, SettingsDialogController* controller,
                           QObject* parent = nullptr);
+
+    [[nodiscard]] bool matches(const QString& text) override;
+
+private:
+    AdvancedSettingsRegistry* m_registry;
 };
 } // namespace Fooyin

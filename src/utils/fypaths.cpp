@@ -100,7 +100,7 @@ QString statePath(const QString& appendPath)
         return createPath(path, appendPath);
     }
 
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
     QString stateHome = QFile::decodeName(qgetenv("XDG_STATE_HOME"));
     if(!QDir::isAbsolutePath(stateHome)) {
         stateHome = QDir::homePath() + "/.local/state"_L1;

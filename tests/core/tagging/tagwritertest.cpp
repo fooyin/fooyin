@@ -164,11 +164,13 @@ TEST_F(TagWriterTest, AiffWrite)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.setId(0);
@@ -192,7 +194,7 @@ TEST_F(TagWriterTest, AiffWrite)
     }
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
 
         EXPECT_EQ(track.title(), u"TestTitle"_s);
@@ -225,11 +227,13 @@ TEST_F(TagWriterTest, FlacWrite)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
         track.setId(0);
@@ -253,7 +257,7 @@ TEST_F(TagWriterTest, FlacWrite)
     }
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
         EXPECT_EQ(track.title(), u"TestTitle"_s);
@@ -285,10 +289,12 @@ TEST_F(TagWriterTest, FlacWriteIgnoresCanonicalFieldsInExtraTags)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
     track.setTitle(u"Canonical Title"_s);
     track.setTrackNumber(u"7"_s);
@@ -296,7 +302,7 @@ TEST_F(TagWriterTest, FlacWriteIgnoresCanonicalFieldsInExtraTags)
     track.addExtraTag(u"TRACKNUMBER"_s, u"99"_s);
     ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
 
-    Track reloaded{file.fileName()};
+    Track reloaded{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, reloaded));
     EXPECT_EQ(u"Canonical Title"_s, reloaded.title());
     EXPECT_EQ(u"7"_s, reloaded.trackNumber());
@@ -309,7 +315,7 @@ TEST_F(TagWriterTest, FlacWriteIgnoresCanonicalFieldsInExtraTags)
     reloaded.setTrackNumber(u"8"_s);
     ASSERT_TRUE(m_parser.writeTrack(source, reloaded, Flags));
 
-    Track updated{file.fileName()};
+    Track updated{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, updated));
     EXPECT_EQ(u"Updated Canonical Title"_s, updated.title());
     EXPECT_EQ(u"8"_s, updated.trackNumber());
@@ -322,8 +328,10 @@ TEST_F(TagWriterTest, FlacCoverWrite)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     const QByteArray coverData = createPngCover({4000, 4000});
     ASSERT_FALSE(coverData.isEmpty());
@@ -331,7 +339,7 @@ TEST_F(TagWriterTest, FlacCoverWrite)
     TrackCovers covers;
     covers.emplace(Track::Cover::Front, CoverImage{.mimeType = u"image/png"_s, .data = coverData});
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.writeCover(source, track, covers, Flags));
 
     const QByteArray writtenCover = m_parser.readCover(source, track, Track::Cover::Front);
@@ -346,11 +354,13 @@ TEST_F(TagWriterTest, M4aWrite)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.setId(0);
@@ -374,7 +384,7 @@ TEST_F(TagWriterTest, M4aWrite)
     }
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
         EXPECT_EQ(track.title(), u"TestTitle"_s);
@@ -407,11 +417,13 @@ TEST_F(TagWriterTest, M4aWriteReplayGain)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.setId(0);
@@ -425,7 +437,7 @@ TEST_F(TagWriterTest, M4aWriteReplayGain)
 
     ASSERT_TRUE(file.flush());
 
-    const QByteArray localPath = file.fileName().toLocal8Bit();
+    const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
     {
         const TagLib::MP4::File mp4File(localPath.constData());
         ASSERT_TRUE(mp4File.isValid());
@@ -451,11 +463,13 @@ TEST_F(TagWriterTest, M4aWriteCanonicalisesExtraTagAliases)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        TagLib::MP4::File mp4File(file.fileName().toLocal8Bit().constData());
+        TagLib::MP4::File mp4File(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_TRUE(mp4File.isValid());
         ASSERT_NE(mp4File.tag(), nullptr);
 
@@ -464,12 +478,12 @@ TEST_F(TagWriterTest, M4aWriteCanonicalisesExtraTagAliases)
         ASSERT_TRUE(mp4File.save());
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
     ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
     ASSERT_TRUE(file.flush());
 
-    const TagLib::MP4::File mp4File(file.fileName().toLocal8Bit().constData());
+    const TagLib::MP4::File mp4File(file.closeAndGetFileName().toLocal8Bit().constData());
     ASSERT_TRUE(mp4File.isValid());
     ASSERT_NE(mp4File.tag(), nullptr);
 
@@ -485,11 +499,13 @@ TEST_F(TagWriterTest, M4aRemoveExtraTagRemovesAllAliases)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        TagLib::MP4::File mp4File(file.fileName().toLocal8Bit().constData());
+        TagLib::MP4::File mp4File(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_TRUE(mp4File.isValid());
         ASSERT_NE(mp4File.tag(), nullptr);
 
@@ -498,13 +514,13 @@ TEST_F(TagWriterTest, M4aRemoveExtraTagRemovesAllAliases)
         ASSERT_TRUE(mp4File.save());
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
     track.removeExtraTag(u"RELEASETYPE"_s);
     ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
     ASSERT_TRUE(file.flush());
 
-    const TagLib::MP4::File mp4File(file.fileName().toLocal8Bit().constData());
+    const TagLib::MP4::File mp4File(file.closeAndGetFileName().toLocal8Bit().constData());
     ASSERT_TRUE(mp4File.isValid());
     ASSERT_NE(mp4File.tag(), nullptr);
 
@@ -522,8 +538,10 @@ TEST_F(TagWriterTest, M4aWriteHonoursTextRatingTagSettings)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
         FySettings settings;
@@ -532,7 +550,7 @@ TEST_F(TagWriterTest, M4aWriteHonoursTextRatingTagSettings)
         settings.sync();
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
     track.setId(0);
     track.setRating(0.7F);
@@ -540,7 +558,7 @@ TEST_F(TagWriterTest, M4aWriteHonoursTextRatingTagSettings)
     ASSERT_TRUE(file.flush());
 
     {
-        TagLib::MP4::File mp4File(file.fileName().toLocal8Bit().constData());
+        TagLib::MP4::File mp4File(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_TRUE(mp4File.isValid());
         ASSERT_NE(mp4File.tag(), nullptr);
 
@@ -559,11 +577,13 @@ TEST_F(TagWriterTest, Mp3Write)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.setId(0);
@@ -587,7 +607,7 @@ TEST_F(TagWriterTest, Mp3Write)
     }
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
         EXPECT_EQ(track.title(), u"TestTitle"_s);
@@ -635,7 +655,7 @@ TEST_F(TagWriterTest, Mp3WriteUsesConfiguredSchemeForUntaggedFiles)
 
         TempResource file{u":/audio/audiotest.mp3"_s};
         file.checkValid();
-        const QByteArray localPath = file.fileName().toLocal8Bit();
+        const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
 
         {
             TagLib::MPEG::File mp3File{localPath.constData()};
@@ -649,13 +669,15 @@ TEST_F(TagWriterTest, Mp3WriteUsesConfiguredSchemeForUntaggedFiles)
             settings.sync();
         }
 
-        const AudioSource source{.filepath = file.fileName(), .device = &file};
-        Track track{file.fileName()};
+        const AudioSource source{.filepath = file.closeAndGetFileName(), .device = &file};
+        ASSERT_TRUE(file.seek(0));
+        ASSERT_TRUE(m_parser.init(source));
+        Track track{file.closeAndGetFileName()};
         track.setId(0);
         track.setTitle(u"Scheme Test"_s);
         ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
 
-        const QByteArray writtenPath = file.fileName().toLocal8Bit();
+        const QByteArray writtenPath = file.closeAndGetFileName().toLocal8Bit();
         const TagLib::MPEG::File mp3File{writtenPath.constData()};
         ASSERT_TRUE(mp3File.isValid());
         EXPECT_EQ(mp3File.hasID3v1Tag(), testCase.hasId3v1);
@@ -668,7 +690,7 @@ TEST_F(TagWriterTest, Mp3WriteUsesConfiguredId3v2Version)
 {
     TempResource file{u":/audio/audiotest.mp3"_s};
     file.checkValid();
-    const QByteArray localPath = file.fileName().toLocal8Bit();
+    const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
 
     {
         TagLib::MPEG::File mp3File{localPath.constData()};
@@ -676,8 +698,10 @@ TEST_F(TagWriterTest, Mp3WriteUsesConfiguredId3v2Version)
         ASSERT_TRUE(mp3File.strip());
     }
 
-    const AudioSource source{.filepath = file.fileName(), .device = &file};
-    Track track{file.fileName()};
+    const AudioSource source{.filepath = file.closeAndGetFileName(), .device = &file};
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
+    Track track{file.closeAndGetFileName()};
     track.setId(0);
     track.setTitle(u"Version Test"_s);
 
@@ -692,7 +716,7 @@ TEST_F(TagWriterTest, Mp3WriteUsesConfiguredId3v2Version)
 
         ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
 
-        const QByteArray writtenPath = file.fileName().toLocal8Bit();
+        const QByteArray writtenPath = file.closeAndGetFileName().toLocal8Bit();
         TagLib::MPEG::File mp3File{writtenPath.constData()};
         ASSERT_TRUE(mp3File.hasID3v2Tag());
         ASSERT_NE(mp3File.ID3v2Tag(), nullptr);
@@ -704,7 +728,7 @@ TEST_F(TagWriterTest, Mp3WritePreservesExistingTagScheme)
 {
     TempResource file{u":/audio/audiotest.mp3"_s};
     file.checkValid();
-    const QByteArray localPath = file.fileName().toLocal8Bit();
+    const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
 
     {
         TagLib::MPEG::File mp3File{localPath.constData()};
@@ -712,8 +736,10 @@ TEST_F(TagWriterTest, Mp3WritePreservesExistingTagScheme)
         ASSERT_TRUE(mp3File.strip());
     }
 
-    const AudioSource source{.filepath = file.fileName(), .device = &file};
-    Track track{file.fileName()};
+    const AudioSource source{.filepath = file.closeAndGetFileName(), .device = &file};
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
+    Track track{file.closeAndGetFileName()};
     track.setId(0);
     track.setTitle(u"First Write"_s);
 
@@ -733,7 +759,7 @@ TEST_F(TagWriterTest, Mp3WritePreservesExistingTagScheme)
     track.setTitle(u"Second Write"_s);
     ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
 
-    const QByteArray writtenPath = file.fileName().toLocal8Bit();
+    const QByteArray writtenPath = file.closeAndGetFileName().toLocal8Bit();
     TagLib::MPEG::File mp3File{writtenPath.constData()};
     EXPECT_FALSE(mp3File.hasID3v1Tag());
     EXPECT_FALSE(mp3File.hasID3v2Tag());
@@ -745,7 +771,7 @@ TEST_F(TagWriterTest, Mp3CoverWriteUsesConfiguredApeScheme)
 {
     TempResource file{u":/audio/audiotest.mp3"_s};
     file.checkValid();
-    const QByteArray localPath = file.fileName().toLocal8Bit();
+    const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
 
     {
         TagLib::MPEG::File mp3File{localPath.constData()};
@@ -762,11 +788,13 @@ TEST_F(TagWriterTest, Mp3CoverWriteUsesConfiguredApeScheme)
     TrackCovers covers;
     covers.emplace(Track::Cover::Front, CoverImage{.mimeType = u"image/png"_s, .data = coverData});
 
-    const AudioSource source{.filepath = file.fileName(), .device = &file};
-    const Track track{file.fileName()};
+    const AudioSource source{.filepath = file.closeAndGetFileName(), .device = &file};
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
+    const Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.writeCover(source, track, covers, Flags));
 
-    const QByteArray writtenPath = file.fileName().toLocal8Bit();
+    const QByteArray writtenPath = file.closeAndGetFileName().toLocal8Bit();
     TagLib::MPEG::File mp3File{writtenPath.constData()};
     EXPECT_FALSE(mp3File.hasID3v1Tag());
     EXPECT_FALSE(mp3File.hasID3v2Tag());
@@ -783,8 +811,10 @@ TEST_F(TagWriterTest, Mp3WriteHonoursPopmSettings)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
         FySettings settings;
@@ -796,7 +826,7 @@ TEST_F(TagWriterTest, Mp3WriteHonoursPopmSettings)
     }
     EXPECT_EQ(ratingTagPolicy().popmOwner, u"owner@example.com"_s);
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
     track.setId(0);
     track.setRating(0.8F);
@@ -804,7 +834,7 @@ TEST_F(TagWriterTest, Mp3WriteHonoursPopmSettings)
     ASSERT_TRUE(file.flush());
 
     {
-        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_TRUE(mp3File.isValid());
         ASSERT_NE(mp3File.ID3v2Tag(), nullptr);
 
@@ -826,11 +856,13 @@ TEST_F(TagWriterTest, Mp3WriteCanSkipPopm)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_TRUE(mp3File.isValid());
         ASSERT_NE(mp3File.ID3v2Tag(true), nullptr);
         mp3File.ID3v2Tag()->removeFrames("POPM");
@@ -844,7 +876,7 @@ TEST_F(TagWriterTest, Mp3WriteCanSkipPopm)
         settings.sync();
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
     track.setId(0);
     track.setRating(0.8F);
@@ -852,7 +884,7 @@ TEST_F(TagWriterTest, Mp3WriteCanSkipPopm)
     ASSERT_TRUE(file.flush());
 
     {
-        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_TRUE(mp3File.isValid());
         ASSERT_NE(mp3File.ID3v2Tag(), nullptr);
         EXPECT_EQ(popmFrameByOwner(mp3File.ID3v2Tag(), u"owner@example.com"_s), nullptr);
@@ -870,8 +902,10 @@ TEST_F(TagWriterTest, Mp3RemoveRatingClearsTextRatingAndPopm)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
         FySettings settings;
@@ -882,7 +916,7 @@ TEST_F(TagWriterTest, Mp3RemoveRatingClearsTextRatingAndPopm)
         settings.sync();
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
     track.setId(0);
     track.setRating(0.7F);
@@ -894,7 +928,7 @@ TEST_F(TagWriterTest, Mp3RemoveRatingClearsTextRatingAndPopm)
     ASSERT_TRUE(file.flush());
 
     {
-        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_TRUE(mp3File.isValid());
         ASSERT_NE(mp3File.ID3v2Tag(), nullptr);
 
@@ -915,8 +949,10 @@ TEST_F(TagWriterTest, Mp3WriteHonoursTextRatingTagSettings)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
         FySettings settings;
@@ -926,7 +962,7 @@ TEST_F(TagWriterTest, Mp3WriteHonoursTextRatingTagSettings)
         settings.sync();
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
     track.setId(0);
     track.setRating(0.7F);
@@ -934,7 +970,7 @@ TEST_F(TagWriterTest, Mp3WriteHonoursTextRatingTagSettings)
     ASSERT_TRUE(file.flush());
 
     {
-        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_TRUE(mp3File.isValid());
         ASSERT_NE(mp3File.ID3v2Tag(), nullptr);
 
@@ -966,8 +1002,10 @@ TEST_F(TagWriterTest, Mp3WriteAndReadConfiguredPlaycountTags)
         file.checkValid();
 
         AudioSource source;
-        source.filepath = file.fileName();
+        source.filepath = file.closeAndGetFileName();
         source.device   = &file;
+        ASSERT_TRUE(file.seek(0));
+        ASSERT_TRUE(m_parser.init(source));
 
         {
             FySettings settings;
@@ -976,7 +1014,7 @@ TEST_F(TagWriterTest, Mp3WriteAndReadConfiguredPlaycountTags)
             settings.sync();
         }
 
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
         track.setId(0);
         track.setPlayCount(42);
@@ -984,7 +1022,7 @@ TEST_F(TagWriterTest, Mp3WriteAndReadConfiguredPlaycountTags)
         ASSERT_TRUE(file.flush());
 
         {
-            TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+            TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
             ASSERT_TRUE(mp3File.isValid());
             ASSERT_NE(mp3File.ID3v2Tag(), nullptr);
 
@@ -996,7 +1034,7 @@ TEST_F(TagWriterTest, Mp3WriteAndReadConfiguredPlaycountTags)
             ASSERT_TRUE(mp3File.save());
         }
 
-        Track rereadTrack{file.fileName()};
+        Track rereadTrack{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
         EXPECT_EQ(rereadTrack.playCount(), 42);
     }
@@ -1013,11 +1051,13 @@ TEST_F(TagWriterTest, Mp3WriteCanSkipPlaycountPopm)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_NE(mp3File.ID3v2Tag(true), nullptr);
         mp3File.ID3v2Tag()->removeFrames("POPM");
         ASSERT_TRUE(mp3File.save());
@@ -1030,14 +1070,14 @@ TEST_F(TagWriterTest, Mp3WriteCanSkipPlaycountPopm)
         settings.sync();
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
     track.setPlayCount(42);
     ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Playcount));
     ASSERT_TRUE(file.flush());
 
     {
-        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_NE(mp3File.ID3v2Tag(), nullptr);
         EXPECT_FALSE(mp3File.ID3v2Tag()->frameListMap().contains("POPM"));
         EXPECT_EQ(id3UserTextFrameValue(mp3File.ID3v2Tag(), "FMPS_Playcount"), u"42"_s);
@@ -1055,11 +1095,13 @@ TEST_F(TagWriterTest, Mp3WritePlaycountUsesPopmOwnerAndPreservesRating)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_NE(mp3File.ID3v2Tag(true), nullptr);
         mp3File.ID3v2Tag()->removeFrames("POPM");
 
@@ -1083,14 +1125,14 @@ TEST_F(TagWriterTest, Mp3WritePlaycountUsesPopmOwnerAndPreservesRating)
         settings.sync();
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
     track.setPlayCount(42);
     ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Playcount));
     ASSERT_TRUE(file.flush());
 
     {
-        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
         auto* selected = popmFrameByOwner(mp3File.ID3v2Tag(), u"owner@example.com"_s);
         ASSERT_NE(selected, nullptr);
         EXPECT_EQ(selected->rating(), 196);
@@ -1107,7 +1149,7 @@ TEST_F(TagWriterTest, Mp3WritePlaycountUsesPopmOwnerAndPreservesRating)
     ASSERT_TRUE(file.flush());
 
     {
-        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
         auto* selected = popmFrameByOwner(mp3File.ID3v2Tag(), u"owner@example.com"_s);
         ASSERT_NE(selected, nullptr);
         EXPECT_EQ(selected->rating(), 196);
@@ -1126,11 +1168,13 @@ TEST_F(TagWriterTest, Mp3ClearPopmRatingPreservesPlaycount)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_NE(mp3File.ID3v2Tag(true), nullptr);
         mp3File.ID3v2Tag()->removeFrames("POPM");
 
@@ -1148,14 +1192,14 @@ TEST_F(TagWriterTest, Mp3ClearPopmRatingPreservesPlaycount)
         settings.sync();
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
     track.setRating(0.0F);
     ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Rating));
     ASSERT_TRUE(file.flush());
 
     {
-        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
         auto* frame = popmFrameByOwner(mp3File.ID3v2Tag(), u"owner@example.com"_s);
         ASSERT_NE(frame, nullptr);
         EXPECT_EQ(frame->rating(), 0);
@@ -1174,11 +1218,13 @@ TEST_F(TagWriterTest, Mp3CombinedPopmWriteKeepsPlaycountWhenRatingIsEmpty)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_NE(mp3File.ID3v2Tag(true), nullptr);
         mp3File.ID3v2Tag()->removeFrames("POPM");
         ASSERT_TRUE(mp3File.save());
@@ -1190,7 +1236,7 @@ TEST_F(TagWriterTest, Mp3CombinedPopmWriteKeepsPlaycountWhenRatingIsEmpty)
         settings.sync();
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
     track.setRating(0.0F);
     track.setPlayCount(42);
@@ -1200,7 +1246,7 @@ TEST_F(TagWriterTest, Mp3CombinedPopmWriteKeepsPlaycountWhenRatingIsEmpty)
     ASSERT_TRUE(file.flush());
 
     {
-        TagLib::MPEG::File mp3File(file.fileName().toLocal8Bit().constData());
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
         auto* frame = popmFrameByOwner(mp3File.ID3v2Tag(), u"owner@example.com"_s);
         ASSERT_NE(frame, nullptr);
         EXPECT_EQ(frame->rating(), 0);
@@ -1219,8 +1265,10 @@ TEST_F(TagWriterTest, OggWriteHonoursTextRatingTagSettings)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
         FySettings settings;
@@ -1232,7 +1280,7 @@ TEST_F(TagWriterTest, OggWriteHonoursTextRatingTagSettings)
     }
     EXPECT_EQ(ratingTagPolicy().effectiveWriteTag(), u"RATING"_s);
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
     track.setId(0);
     track.setRating(0.7F);
@@ -1240,7 +1288,7 @@ TEST_F(TagWriterTest, OggWriteHonoursTextRatingTagSettings)
     ASSERT_TRUE(file.flush());
 
     {
-        TagLib::Ogg::Vorbis::File oggFile(file.fileName().toLocal8Bit().constData());
+        TagLib::Ogg::Vorbis::File oggFile(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_TRUE(oggFile.isValid());
         ASSERT_NE(oggFile.tag(), nullptr);
 
@@ -1262,8 +1310,10 @@ TEST_F(TagWriterTest, OggWriteAndReadConfiguredPlaycountTag)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
         FySettings settings;
@@ -1272,7 +1322,7 @@ TEST_F(TagWriterTest, OggWriteAndReadConfiguredPlaycountTag)
         settings.sync();
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
     track.setId(0);
     track.setPlayCount(42);
@@ -1280,7 +1330,7 @@ TEST_F(TagWriterTest, OggWriteAndReadConfiguredPlaycountTag)
     ASSERT_TRUE(file.flush());
 
     {
-        TagLib::Ogg::Vorbis::File oggFile(file.fileName().toLocal8Bit().constData());
+        TagLib::Ogg::Vorbis::File oggFile(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_TRUE(oggFile.isValid());
         ASSERT_NE(oggFile.tag(), nullptr);
 
@@ -1289,7 +1339,7 @@ TEST_F(TagWriterTest, OggWriteAndReadConfiguredPlaycountTag)
         EXPECT_FALSE(fields.contains("FMPS_PLAYCOUNT"));
     }
 
-    Track rereadTrack{file.fileName()};
+    Track rereadTrack{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
     EXPECT_EQ(rereadTrack.playCount(), 42);
 
@@ -1322,8 +1372,10 @@ TEST_F(TagWriterTest, OggWriteConfiguredRatingScales)
         file.checkValid();
 
         AudioSource source;
-        source.filepath = file.fileName();
+        source.filepath = file.closeAndGetFileName();
         source.device   = &file;
+        ASSERT_TRUE(file.seek(0));
+        ASSERT_TRUE(m_parser.init(source));
 
         {
             FySettings settings;
@@ -1333,7 +1385,7 @@ TEST_F(TagWriterTest, OggWriteConfiguredRatingScales)
             settings.sync();
         }
 
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
         track.setId(0);
         track.setRating(0.7F);
@@ -1341,7 +1393,7 @@ TEST_F(TagWriterTest, OggWriteConfiguredRatingScales)
         ASSERT_TRUE(file.flush());
 
         {
-            TagLib::Ogg::Vorbis::File oggFile(file.fileName().toLocal8Bit().constData());
+            TagLib::Ogg::Vorbis::File oggFile(file.closeAndGetFileName().toLocal8Bit().constData());
             ASSERT_TRUE(oggFile.isValid());
             ASSERT_NE(oggFile.tag(), nullptr);
 
@@ -1355,7 +1407,7 @@ TEST_F(TagWriterTest, OggWriteConfiguredRatingScales)
             settings.setValue(RatingSettings::ReadScale, testCase.scale);
             settings.sync();
 
-            Track rereadTrack{file.fileName()};
+            Track rereadTrack{file.closeAndGetFileName()};
             ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
             EXPECT_FLOAT_EQ(rereadTrack.rating(), testCase.expectedRating);
             EXPECT_EQ(rereadTrack.rawRatingTag(testCase.tag), testCase.expectedValue);
@@ -1374,8 +1426,10 @@ TEST_F(TagWriterTest, OggRemoveRatingClearsWrittenRawRatingOnReread)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
         FySettings settings;
@@ -1387,14 +1441,14 @@ TEST_F(TagWriterTest, OggRemoveRatingClearsWrittenRawRatingOnReread)
         settings.sync();
     }
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
     track.setId(0);
     track.setRating(0.7F);
     ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Rating));
     ASSERT_TRUE(file.flush());
 
-    Track rereadTrack{file.fileName()};
+    Track rereadTrack{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
     ASSERT_EQ(rereadTrack.rawRatingTag(u"MY_RATING"_s), u"7"_s);
 
@@ -1402,13 +1456,13 @@ TEST_F(TagWriterTest, OggRemoveRatingClearsWrittenRawRatingOnReread)
     ASSERT_TRUE(m_parser.writeTrack(source, rereadTrack, Fooyin::AudioReader::Rating));
     ASSERT_TRUE(file.flush());
 
-    Track clearedTrack{file.fileName()};
+    Track clearedTrack{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, clearedTrack));
     EXPECT_LE(clearedTrack.rating(), 0.0F);
     EXPECT_EQ(clearedTrack.rawRatingTag(u"MY_RATING"_s), QString{});
 
     {
-        TagLib::Ogg::Vorbis::File oggFile(file.fileName().toLocal8Bit().constData());
+        TagLib::Ogg::Vorbis::File oggFile(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_TRUE(oggFile.isValid());
         ASSERT_NE(oggFile.tag(), nullptr);
         EXPECT_FALSE(oggFile.tag()->fieldListMap().contains("MY_RATING"));
@@ -1424,11 +1478,13 @@ TEST_F(TagWriterTest, OggWrite)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.setId(0);
@@ -1452,7 +1508,7 @@ TEST_F(TagWriterTest, OggWrite)
     }
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
         EXPECT_EQ(track.title(), u"TestTitle"_s);
@@ -1485,11 +1541,13 @@ TEST_F(TagWriterTest, OpusWrite)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.setId(0);
@@ -1513,7 +1571,7 @@ TEST_F(TagWriterTest, OpusWrite)
     }
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
         EXPECT_EQ(track.title(), u"TestTitle"_s);
@@ -1546,10 +1604,12 @@ TEST_F(TagWriterTest, OpusR128ReadAsReplayGain)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
-    const QByteArray localPath = file.fileName().toLocal8Bit();
+    const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
     {
         TagLib::Ogg::Opus::File opusFile(localPath.constData());
         ASSERT_TRUE(opusFile.isValid());
@@ -1561,7 +1621,7 @@ TEST_F(TagWriterTest, OpusR128ReadAsReplayGain)
     }
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
 
         ASSERT_TRUE(track.hasTrackGain());
@@ -1580,11 +1640,13 @@ TEST_F(TagWriterTest, OpusWriteUsesR128TagsInsteadOfReplayGainTags)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.setId(0);
@@ -1597,7 +1659,7 @@ TEST_F(TagWriterTest, OpusWriteUsesR128TagsInsteadOfReplayGainTags)
         ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
     }
 
-    const QByteArray localPath = file.fileName().toLocal8Bit();
+    const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
     {
         const TagLib::Ogg::Opus::File opusFile(localPath.constData());
         ASSERT_TRUE(opusFile.isValid());
@@ -1614,14 +1676,14 @@ TEST_F(TagWriterTest, OpusWriteUsesR128TagsInsteadOfReplayGainTags)
     }
 
     {
-        QFile headerFile{file.fileName()};
+        QFile headerFile{file.closeAndGetFileName()};
         ASSERT_TRUE(headerFile.open(QIODevice::ReadOnly));
         const auto headerGain = readOpusHeaderGainQ78(&headerFile);
         ASSERT_TRUE(headerGain.has_value());
         EXPECT_EQ(*headerGain, -3205);
     }
 
-    Track rereadTrack{file.fileName()};
+    Track rereadTrack{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
     EXPECT_TRUE(rereadTrack.hasOpusHeaderGain());
     EXPECT_NEAR(rereadTrack.opusHeaderGainDb(), -12.5195F, 0.0002F);
@@ -1636,11 +1698,13 @@ TEST_F(TagWriterTest, OpusWriteTrackHeaderModeUsesOpusR128Offset)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.setRGTrackGain(-0.25F);
@@ -1649,7 +1713,7 @@ TEST_F(TagWriterTest, OpusWriteTrackHeaderModeUsesOpusR128Offset)
         ASSERT_TRUE(m_parser.writeTrack(source, preparedTrack, Flags));
     }
 
-    const QByteArray localPath = file.fileName().toLocal8Bit();
+    const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
     {
         const TagLib::Ogg::Opus::File opusFile(localPath.constData());
         ASSERT_TRUE(opusFile.isValid());
@@ -1661,14 +1725,14 @@ TEST_F(TagWriterTest, OpusWriteTrackHeaderModeUsesOpusR128Offset)
     }
 
     {
-        QFile headerFile{file.fileName()};
+        QFile headerFile{file.closeAndGetFileName()};
         ASSERT_TRUE(headerFile.open(QIODevice::ReadOnly));
         const auto headerGain = readOpusHeaderGainQ78(&headerFile);
         ASSERT_TRUE(headerGain.has_value());
         EXPECT_EQ(*headerGain, -1344);
     }
 
-    Track rereadTrack{file.fileName()};
+    Track rereadTrack{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
     EXPECT_NEAR(rereadTrack.opusHeaderGainDb(), -5.25F, 0.0002F);
     EXPECT_FLOAT_EQ(rereadTrack.rgTrackGain(), 5.0F);
@@ -1681,7 +1745,7 @@ TEST_F(TagWriterTest, OpusReadRejectsInvalidHeaderCrc)
     TempResource file{filepath};
     file.checkValid();
 
-    QFile headerFile{file.fileName()};
+    QFile headerFile{file.closeAndGetFileName()};
     ASSERT_TRUE(headerFile.open(QIODevice::ReadWrite));
     ASSERT_TRUE(headerFile.seek(22));
 
@@ -1704,10 +1768,12 @@ TEST_F(TagWriterTest, OpusRemoveReplayGainClearsAllReplayGainTags)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
-    const QByteArray localPath = file.fileName().toLocal8Bit();
+    const QByteArray localPath = file.closeAndGetFileName().toLocal8Bit();
     {
         TagLib::Ogg::Opus::File opusFile(localPath.constData());
         ASSERT_TRUE(opusFile.isValid());
@@ -1723,7 +1789,7 @@ TEST_F(TagWriterTest, OpusRemoveReplayGainClearsAllReplayGainTags)
     }
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.clearRGInfo();
@@ -1738,7 +1804,7 @@ TEST_F(TagWriterTest, OpusRemoveReplayGainClearsAllReplayGainTags)
     }
 
     {
-        TagLib::Ogg::Opus::File opusFile(file.fileName().toLocal8Bit().constData());
+        TagLib::Ogg::Opus::File opusFile(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_TRUE(opusFile.isValid());
         ASSERT_TRUE(opusFile.tag());
 
@@ -1752,7 +1818,7 @@ TEST_F(TagWriterTest, OpusRemoveReplayGainClearsAllReplayGainTags)
     }
 
     {
-        Track rereadTrack{file.fileName()};
+        Track rereadTrack{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
         EXPECT_FALSE(rereadTrack.hasTrackGain());
         EXPECT_FALSE(rereadTrack.hasAlbumGain());
@@ -1768,24 +1834,26 @@ TEST_F(TagWriterTest, OpusWriteCanClearHeaderGain)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.setExtraProperty(QString::fromLatin1(Constants::OpusHeaderGainQ78), QStringLiteral("0"));
         ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
     }
 
-    QFile headerFile{file.fileName()};
+    QFile headerFile{file.closeAndGetFileName()};
     ASSERT_TRUE(headerFile.open(QIODevice::ReadOnly));
     const auto headerGain = readOpusHeaderGainQ78(&headerFile);
     ASSERT_TRUE(headerGain.has_value());
     EXPECT_EQ(*headerGain, 0);
 
-    Track rereadTrack{file.fileName()};
+    Track rereadTrack{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
     EXPECT_FALSE(rereadTrack.hasOpusHeaderGain());
 }
@@ -1797,11 +1865,13 @@ TEST_F(TagWriterTest, WavWrite)
     file.checkValid();
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.setId(0);
@@ -1825,7 +1895,7 @@ TEST_F(TagWriterTest, WavWrite)
     }
 
     {
-        Track track{file.fileName()};
+        Track track{file.closeAndGetFileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
 
         EXPECT_EQ(track.title(), u"TestTitle"_s);
@@ -1864,10 +1934,12 @@ TEST_F(TagWriterTest, WritePreservesTimestamps)
     ASSERT_TRUE(modificationTime.isValid());
 
     AudioSource source;
-    source.filepath = file.fileName();
+    source.filepath = file.closeAndGetFileName();
     source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
 
-    Track track{file.fileName()};
+    Track track{file.closeAndGetFileName()};
     track.setTitle(u"Timestamp test"_s);
 
     ASSERT_TRUE(m_parser.writeTrack(source, track, Flags | AudioReader::PreserveTimestamps));

@@ -24,6 +24,7 @@
 #include <QPointer>
 
 #include <cstring>
+#include <functional>
 #include <memory>
 
 namespace Fooyin::Testing {
@@ -38,6 +39,7 @@ public:
         setRequest(request);
         setUrl(request.url());
         setOperation(operation);
+        setAttribute(QNetworkRequest::HttpStatusCodeAttribute, 200);
         QIODevice::open(ReadOnly | Unbuffered);
     }
 
@@ -46,7 +48,7 @@ public:
         m_aborted = true;
         if(m_finishOnAbort) {
             setError(OperationCanceledError, QStringLiteral("aborted"));
-            Q_EMIT finished();
+            emitFinished();
         }
     }
 
@@ -80,8 +82,19 @@ public:
         setRawHeader(name, value);
     }
 
+    void setResponseStatus(int status)
+    {
+        setAttribute(QNetworkRequest::HttpStatusCodeAttribute, status);
+    }
+
+    void emitMetadataChanged()
+    {
+        Q_EMIT metaDataChanged();
+    }
+
     void emitFinished()
     {
+        setFinished(true);
         Q_EMIT finished();
     }
 
@@ -89,7 +102,7 @@ public:
     {
         m_data = std::move(data);
         Q_EMIT readyRead();
-        Q_EMIT finished();
+        emitFinished();
     }
 
 protected:
@@ -121,6 +134,7 @@ public:
     QPointer<FakeNetworkReply> lastReply;
     QNetworkRequest lastRequest;
     int requestCount{0};
+    std::function<void(FakeNetworkReply*)> onRequest;
 
 protected:
     QNetworkReply* createRequest(Operation operation, const QNetworkRequest& request,
@@ -130,6 +144,9 @@ protected:
         lastRequest = request;
         auto* reply = new FakeNetworkReply{request, operation, m_finishRepliesOnAbort};
         lastReply   = reply;
+        if(onRequest) {
+            QMetaObject::invokeMethod(reply, [reply, respond = onRequest]() { respond(reply); }, Qt::QueuedConnection);
+        }
         return reply;
     }
 

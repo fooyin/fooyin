@@ -23,8 +23,8 @@
 #include "projectmsettings.h"
 
 #include <core/engine/visualisationservice.h>
+#include <gui/frametimer.h>
 
-#include <QBasicTimer>
 #include <QOpenGLFunctions>
 #include <QOpenGLWindow>
 #include <QSize>
@@ -142,7 +142,7 @@ private:
     std::map<QString, QString> m_failedPresetPaths;
     std::vector<float> m_stereoBuffer;
     std::deque<std::function<void()>> m_pendingGLOperations;
-    QBasicTimer m_renderTimer;
+    Gui::FrameTimer m_renderTimer;
     QString m_statusText;
     QString m_pendingPresetPath;
     QString m_currentPresetPath;

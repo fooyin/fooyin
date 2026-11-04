@@ -19,8 +19,8 @@
 
 #include "playlistmanagerwidget.h"
 
-#include "dialog/autoplaylistdialog.h"
 #include "playlist/playlistcontroller.h"
+#include "playlist/presetregistry.h"
 #include "playlistmanagerdelegate.h"
 #include "playlistmanagermodel.h"
 
@@ -37,6 +37,7 @@
 #include <utils/actions/proxyaction.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/stringcollator.h>
 #include <utils/stringutils.h>
 #include <utils/utils.h>
 
@@ -52,7 +53,6 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QSignalBlocker>
-#include <QSortFilterProxyModel>
 #include <QVBoxLayout>
 
 using namespace Qt::StringLiterals;
@@ -123,7 +123,7 @@ PlaylistManagerWidget::PlaylistManagerWidget(ActionManager* actionManager, Playl
     , m_selectionController{selectionController}
     , m_settings{settings}
     , m_model{new PlaylistManagerModel(playlistInteractor, this)}
-    , m_proxyModel{new QSortFilterProxyModel(this)}
+    , m_proxyModel{new StringSortProxyModel(this)}
     , m_view{new PlaylistManagerView(this)}
     , m_context{new WidgetContext(this, Context{IdList{Id{"Fooyin.Context.PlaylistManager."}.append(id())}}, this)}
     , m_activateAction{new QAction(tr("Activate"), this)}
@@ -234,9 +234,7 @@ void PlaylistManagerWidget::loadLayoutData(const QJsonObject& layout)
 
     resetToPlaylistIndexOrder();
 
-    if(layout.contains(ActivateOnSelection)) {
-        m_activateOnSelection = layout.value(ActivateOnSelection).toBool();
-    }
+    m_activateOnSelection = layout.value(ActivateOnSelection).toBool(m_activateOnSelection);
 }
 
 void PlaylistManagerWidget::finalise()
@@ -363,18 +361,8 @@ void PlaylistManagerWidget::setupActions()
     });
 
     m_newAutoPlaylistAction->setStatusTip(tr("Create a new autoplaylist"));
-    QObject::connect(m_newAutoPlaylistAction, &QAction::triggered, this, [this]() {
-        auto* autoDialog = new AutoPlaylistDialog(Utils::getMainWindow());
-        autoDialog->setAttribute(Qt::WA_DeleteOnClose);
-        QObject::connect(autoDialog, &AutoPlaylistDialog::playlistEdited, autoDialog,
-                         [this](const QString& name, const QString& query, const QString& sortQuery, bool forceSorted) {
-                             if(auto* newPlaylist = m_playlistController->playlistHandler()->createNewAutoPlaylist(
-                                    name, query, sortQuery, forceSorted)) {
-                                 m_playlistController->changeCurrentPlaylist(newPlaylist);
-                             }
-                         });
-        autoDialog->show();
-    });
+    QObject::connect(m_newAutoPlaylistAction, &QAction::triggered, this,
+                     [this]() { Q_EMIT newAutoPlaylistRequested(); });
 }
 
 void PlaylistManagerWidget::updateActionState() const
@@ -448,16 +436,13 @@ void PlaylistManagerWidget::activateCurrentPlaylist() const
     activatePlaylist(actionProxyIndex());
 }
 
-void PlaylistManagerWidget::editAutoPlaylist(Playlist* playlist) const
+void PlaylistManagerWidget::editAutoPlaylist(Playlist* playlist)
 {
     if(!playlist || !playlist->isAutoPlaylist()) {
         return;
     }
 
-    auto* autoDialog
-        = new AutoPlaylistDialog(m_playlistController->playlistHandler(), playlist, Utils::getMainWindow());
-    autoDialog->setAttribute(Qt::WA_DeleteOnClose);
-    autoDialog->show();
+    Q_EMIT editAutoPlaylistRequested(playlist->id());
 }
 
 void PlaylistManagerWidget::removePlaylist(const Playlist* playlist)
@@ -521,6 +506,17 @@ void PlaylistManagerWidget::showPlaylistContextMenu(const QPoint& pos)
         }
 
         menu->addAction(m_removeCmd->action());
+
+        menu->addSeparator();
+
+        auto* presetsMenu  = menu->addMenu(tr("Apply preset"));
+        const auto presets = m_playlistController->presetRegistry()->items();
+        for(const auto& preset : presets) {
+            auto* action = presetsMenu->addAction(preset.name);
+            QObject::connect(action, &QAction::triggered, this, [this, presetId = preset.id, id = playlist->id()]() {
+                m_playlistController->applyPresetToPlaylists(presetId, {id});
+            });
+        }
 
         menu->addSeparator();
     }

@@ -19,12 +19,17 @@
 
 #pragma once
 
+#include <QBasicTimer>
 #include <QEvent>
 #include <QObject>
+#include <QPalette>
 #include <QPersistentModelIndex>
 #include <QTreeView>
 
 namespace Fooyin {
+class WidgetBackground;
+struct BackgroundConfig;
+
 class LibraryTreeView : public QTreeView
 {
     Q_OBJECT
@@ -33,7 +38,10 @@ public:
     explicit LibraryTreeView(QWidget* parent = nullptr);
 
     void setLoading(bool isLoading);
-    void setExpandsOnSingleClick(bool enabled);
+    void setExpandsOnSingleClick(bool enabled, bool delayCollapse);
+    void setBackgroundConfig(const BackgroundConfig& config);
+    void setBackgroundPixmap(const QPixmap& pixmap);
+    void setViewPalette(const QPalette& palette);
 
 Q_SIGNALS:
     void middleClicked(const QModelIndex& index);
@@ -41,17 +49,29 @@ Q_SIGNALS:
     void displayChanged();
 
 protected:
+    bool event(QEvent* event) override;
+    void initViewItemOption(QStyleOptionViewItem* option) const override;
     void changeEvent(QEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
     void mouseDoubleClickEvent(QMouseEvent* event) override;
+    void timerEvent(QTimerEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;
 
 private:
+    void cancelPendingCollapse();
+    void updateBackgroundPalette();
+
+    WidgetBackground* m_background;
+    QPalette m_backgroundPalette;
+    bool m_updatingBackgroundPalette;
     bool m_isLoading;
     bool m_expandsOnSingleClick;
+    bool m_delayCollapse;
     QPersistentModelIndex m_singleClickToggleIndex;
+    QBasicTimer m_collapseTimer;
+    QPersistentModelIndex m_collapseIndex;
 };
 } // namespace Fooyin

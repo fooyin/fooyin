@@ -23,11 +23,10 @@
 
 #include "filteritem.h"
 
+#include <QMargins>
 #include <QStyledItemDelegate>
 
 namespace Fooyin::Filters {
-struct IconItemLayoutMetrics;
-
 class FYGUI_EXPORT FilterDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -37,32 +36,33 @@ public:
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
-    void setAlignCaptionsToArtwork(bool align);
+
     void setArtworkCornerRadius(int radius);
+    void setArtworkMargins(const QMargins& margins);
 
 private:
     static RichText recolourRichText(RichText richText, const QColor& colour);
 
+    [[nodiscard]] QRect artworkRect(const QStyleOptionViewItem& option) const;
     [[nodiscard]] QRect iconTextRect(const QStyleOptionViewItem& option) const;
     [[nodiscard]] int iconTextWidth(const QStyleOptionViewItem& option) const;
 
     [[nodiscard]] static IconCaptionLineList iconRichLines(const QModelIndex& index,
                                                            const QStyleOptionViewItem& option);
-    [[nodiscard]] QSize richLineSize(const QStyleOptionViewItem& option, int maxWidth, const RichText& richText) const;
     [[nodiscard]] static RichText fallbackRichText(const QStyleOptionViewItem& option, const QModelIndex& index);
     [[nodiscard]] QSize richTextSize(const QStyleOptionViewItem& option, const QModelIndex& index) const;
     [[nodiscard]] QSize iconItemSize(const QStyleOptionViewItem& option, const QModelIndex& index) const;
-    [[nodiscard]] static QSize iconItemSizeForText(const QStyleOptionViewItem& option,
-                                                   const IconItemLayoutMetrics& metrics, const QSize& textSize);
 
     void initLayoutOnlyOption(QStyleOptionViewItem* option, const QModelIndex& index) const;
     static void setupFilterOption(QStyleOptionViewItem* option, const QModelIndex& index);
-    static void drawRichTextLines(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
-                                  const IconCaptionLineList& lines);
+    void drawOverlayItem(QPainter* painter, QStyleOptionViewItem option, const QPixmap& artwork,
+                         const IconCaptionLineList& lines) const;
+    void drawRichTextLines(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
+                           const IconCaptionLineList& lines, const QRectF& artwork) const;
     static void drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
                                const std::vector<RichTextBlock>& blocks);
 
-    bool m_alignCaptionsToArtwork{true};
     int m_artworkCornerRadius{0};
+    QMargins m_artworkMargins;
 };
 } // namespace Fooyin::Filters

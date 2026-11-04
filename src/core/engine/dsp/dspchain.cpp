@@ -19,21 +19,13 @@
 
 #include "dspchain.h"
 
+#include <core/engine/audioutils.h>
+
 #include <algorithm>
 #include <iterator>
 #include <utility>
 
 namespace Fooyin {
-namespace {
-AudioFormat normalisePrepareFormat(AudioFormat format)
-{
-    if(format.isValid()) {
-        format.setSampleFormat(SampleFormat::F64);
-    }
-    return format;
-}
-} // namespace
-
 DspChain::DspChain() = default;
 
 void DspChain::prepare(const AudioFormat& format)
@@ -331,7 +323,7 @@ void DspChain::reprepareFrom(size_t startIndex)
         }
 
         if(node->isEnabled()) {
-            node->prepare(normalisePrepareFormat(current));
+            node->prepare(Audio::normaliseProcessingFormat(current));
             current = node->outputFormat(current);
         }
     }

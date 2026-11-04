@@ -21,13 +21,14 @@
 
 #include "fygui_export.h"
 
-#include <gui/widgets/multilinedelegate.h>
-
 #include <QComboBox>
 #include <QLineEdit>
 #include <QPlainTextEdit>
 
+#include <memory>
+
 namespace Fooyin {
+class ScriptTextEditPrivate;
 class Track;
 
 class FYGUI_EXPORT ScriptLineEdit : public QLineEdit
@@ -38,6 +39,9 @@ public:
     explicit ScriptLineEdit(QWidget* parent = nullptr);
     explicit ScriptLineEdit(const QString& script, QWidget* parent = nullptr);
     ScriptLineEdit(const QString& script, const Track& track, QWidget* parent = nullptr);
+
+    //! Sets the script and moves the cursor to the beginning only if the text changes.
+    void setScript(const QString& script);
 };
 
 class FYGUI_EXPORT ScriptTextEdit : public QPlainTextEdit
@@ -48,9 +52,19 @@ public:
     explicit ScriptTextEdit(QWidget* parent = nullptr);
     explicit ScriptTextEdit(const QString& script, QWidget* parent = nullptr);
     ScriptTextEdit(const QString& script, const Track& track, QWidget* parent = nullptr);
+    ~ScriptTextEdit() override;
 
     [[nodiscard]] QString text() const;
     void setText(const QString& text);
+
+    //! Includes errors from the consumer's evaluation alongside syntax errors.
+    void setError(bool error);
+    //! Validates query syntax instead of display script syntax.
+    void setQueryMode(bool enabled);
+
+    void addToolAction(QAction* action);
+    void addToolAction(QAction* action, Qt::Alignment alignment);
+    void addHint(const QString& hint);
 
     [[nodiscard]] QSize sizeHint() const override;
     [[nodiscard]] QSize minimumSizeHint() const override;
@@ -59,10 +73,10 @@ protected:
     void changeEvent(QEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
+    void timerEvent(QTimerEvent* event) override;
 
 private:
-    QAction* m_openEditor;
-    QWidget* m_toolArea;
+    std::unique_ptr<ScriptTextEditPrivate> p;
 };
 
 class FYGUI_EXPORT ScriptComboBox : public QComboBox

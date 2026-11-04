@@ -26,11 +26,15 @@
 #include <core/player/playercontroller.h>
 #include <core/player/playerdefs.h>
 #include <gui/configdialog.h>
+#include <gui/coverprovider.h>
 #include <gui/framerate.h>
+#include <gui/guiutils.h>
+#include <gui/widgets/backgroundimagesource.h>
+#include <gui/widgets/widgetbackground.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/timeconstants.h>
 
 #include <QActionGroup>
-#include <QBasicTimer>
 #include <QContextMenuEvent>
 #include <QElapsedTimer>
 #include <QJsonObject>
@@ -38,7 +42,6 @@
 #include <QPainter>
 #include <QPolygonF>
 #include <QResizeEvent>
-#include <QToolBar>
 
 using namespace Qt::StringLiterals;
 
@@ -48,6 +51,7 @@ constexpr auto UpdateFpsKey     = u"Oscilloscope/UpdateFps";
 constexpr auto DownmixModeKey   = u"Oscilloscope/DownmixMode";
 constexpr auto ShowZeroLineKey  = u"Oscilloscope/ShowZeroLine";
 constexpr auto ColoursKey       = u"Oscilloscope/Colours";
+constexpr auto BackgroundKey    = u"Oscilloscope/Background";
 
 constexpr auto StereoLaneGapPx  = 4.0F;
 constexpr auto MinLanePaddingPx = 2.0F;
@@ -59,9 +63,13 @@ constexpr auto ClockResetMs     = 300.0;
 
 namespace Fooyin::Oscilloscope {
 OscilloscopeWidget::OscilloscopeWidget(EngineController* engine, PlayerController* playerController,
+                                       CoverRepository* coverRepository, TrackSelectionController* selectionController,
                                        SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_settings{settings}
+    , m_backgroundSource{new BackgroundImageSource(new CoverProvider(coverRepository, this), playerController,
+                                                   selectionController, this)}
+    , m_background{new WidgetBackground(this)}
     , m_session{engine->visualisationService()->createSession()}
     , m_orientation{Qt::Horizontal}
     , m_autoOrientation{true}
@@ -78,6 +86,9 @@ OscilloscopeWidget::OscilloscopeWidget(EngineController* engine, PlayerControlle
     QObject::connect(playerController, &PlayerController::playStateChanged, this,
                      &OscilloscopeWidget::handlePlayStateChanged);
     QObject::connect(playerController, &PlayerController::positionMoved, this, &OscilloscopeWidget::resetPresentation);
+
+    QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_background,
+                     &WidgetBackground::setPixmap);
 
     m_config = defaultConfig();
     applyConfig(m_config);
@@ -177,38 +188,21 @@ void OscilloscopeWidget::populateContextMenu(QMenu* menu)
         });
     }
 
-    auto* orientationGroup = new QActionGroup(menu);
-    auto* automatic        = new QAction(tr("Automatic"), orientationGroup);
-    auto* horizontal       = new QAction(tr("Horizontal"), orientationGroup);
-    auto* vertical         = new QAction(tr("Vertical"), orientationGroup);
+    Gui::addOrientationMenu(menu, this,
+                            {.title      = tr("Orientation"),
+                             .automatic  = tr("Automatic"),
+                             .horizontal = tr("Horizontal"),
+                             .vertical   = tr("Vertical")},
+                            m_autoOrientation, m_orientation, [this](std::optional<Qt::Orientation> orientation) {
+                                m_autoOrientation = !orientation.has_value();
+                                if(orientation) {
+                                    setOrientation(*orientation);
+                                }
+                                else {
+                                    updateOrientation();
+                                }
+                            });
 
-    auto* orientationMenu = new QMenu(tr("Orientation"), menu);
-    orientationMenu->addAction(automatic);
-    orientationMenu->addAction(horizontal);
-    orientationMenu->addAction(vertical);
-
-    automatic->setCheckable(true);
-    horizontal->setCheckable(true);
-    vertical->setCheckable(true);
-
-    automatic->setChecked(m_autoOrientation);
-    horizontal->setChecked(!m_autoOrientation && m_orientation == Qt::Horizontal);
-    vertical->setChecked(!m_autoOrientation && m_orientation == Qt::Vertical);
-
-    QObject::connect(automatic, &QAction::triggered, this, [this]() {
-        m_autoOrientation = true;
-        updateOrientation();
-    });
-    QObject::connect(horizontal, &QAction::triggered, this, [this]() {
-        m_autoOrientation = false;
-        setOrientation(Qt::Horizontal);
-    });
-    QObject::connect(vertical, &QAction::triggered, this, [this]() {
-        m_autoOrientation = false;
-        setOrientation(Qt::Vertical);
-    });
-
-    menu->addMenu(orientationMenu);
     menu->addSeparator();
     addConfigureAction(menu, false);
 }
@@ -229,6 +223,7 @@ OscilloscopeWidget::ConfigData OscilloscopeWidget::defaultConfig() const
         = static_cast<DownmixMode>(m_settings->fileValue(DownmixModeKey, static_cast<int>(config.downmixMode)).toInt());
     config.showZeroLine = m_settings->fileValue(ShowZeroLineKey, config.showZeroLine).toBool();
     config.colours      = m_settings->fileValue(ColoursKey, config.colours);
+    config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(BackgroundKey).toMap()));
 
     return config;
 }
@@ -241,10 +236,11 @@ const OscilloscopeWidget::ConfigData& OscilloscopeWidget::currentConfig() const
 void OscilloscopeWidget::saveDefaults(const ConfigData& config) const
 {
     auto validated{config};
+    validated.background.normalise();
 
     validated.curveDurationMs = std::clamp(validated.curveDurationMs, MinCurveDurationMs, MaxCurveDurationMs);
     validated.zoomPercent     = std::clamp(validated.zoomPercent, MinZoomPercent, MaxZoomPercent);
-    validated.updateFps       = Gui::FrameRate::nearestPresetFps(validated.updateFps);
+    validated.updateFps       = Gui::FrameRate::clampFps(validated.updateFps);
 
     if(!validated.colours.canConvert<Colours>()
        || (validated.colours.isValid() && validated.colours.value<Colours>().isEmpty())) {
@@ -257,6 +253,10 @@ void OscilloscopeWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(DownmixModeKey, static_cast<int>(validated.downmixMode));
     m_settings->fileSet(ShowZeroLineKey, validated.showZeroLine);
     m_settings->fileSet(ColoursKey, validated.colours);
+
+    QJsonObject background;
+    validated.background.saveLayout(background);
+    m_settings->fileSet(BackgroundKey, background.toVariantMap());
 }
 
 void OscilloscopeWidget::clearSavedDefaults() const
@@ -267,22 +267,26 @@ void OscilloscopeWidget::clearSavedDefaults() const
     m_settings->fileRemove(DownmixModeKey);
     m_settings->fileRemove(ShowZeroLineKey);
     m_settings->fileRemove(ColoursKey);
+    m_settings->fileRemove(BackgroundKey);
 }
 
 void OscilloscopeWidget::applyConfig(const ConfigData& config)
 {
     auto validated{config};
+    validated.background.normalise();
 
     validated.curveDurationMs = std::clamp(validated.curveDurationMs, MinCurveDurationMs, MaxCurveDurationMs);
     validated.zoomPercent     = std::clamp(validated.zoomPercent, MinZoomPercent, MaxZoomPercent);
-    validated.updateFps       = Gui::FrameRate::nearestPresetFps(validated.updateFps);
+    validated.updateFps       = Gui::FrameRate::clampFps(validated.updateFps);
 
     if(!validated.colours.canConvert<Colours>()
        || (validated.colours.isValid() && validated.colours.value<Colours>().isEmpty())) {
         validated.colours = QVariant{};
     }
 
-    m_config = validated;
+    m_config = std::move(validated);
+    m_background->setConfig(m_config.background);
+    m_backgroundSource->setConfig(m_config.background);
     updateSessionConfig();
     update();
 
@@ -291,6 +295,9 @@ void OscilloscopeWidget::applyConfig(const ConfigData& config)
 
 QSize OscilloscopeWidget::minimumSizeHint() const
 {
+    if(m_autoOrientation && !findToolbar()) {
+        return {8, 8};
+    }
     const auto orientation = m_autoOrientation ? automaticOrientation() : m_orientation;
     return orientation == Qt::Horizontal ? QSize{24, 8} : QSize{8, 24};
 }
@@ -318,6 +325,7 @@ void OscilloscopeWidget::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == m_updateTimer.timerId()) {
         tick();
+        m_updateTimer.scheduleNext(this);
     }
     FyWidget::timerEvent(event);
 }
@@ -333,14 +341,6 @@ void OscilloscopeWidget::contextMenuEvent(QContextMenuEvent* event)
 void OscilloscopeWidget::openConfigDialog()
 {
     showConfigDialog(new OscilloscopeConfigDialog(this, this), Qt::NonModal);
-}
-
-Qt::Orientation OscilloscopeWidget::automaticOrientation() const
-{
-    if(const auto* toolbar = findToolbar()) {
-        return toolbar->orientation();
-    }
-    return height() > width() ? Qt::Vertical : Qt::Horizontal;
 }
 
 void OscilloscopeWidget::setOrientation(Qt::Orientation orientation)
@@ -428,7 +428,7 @@ void OscilloscopeWidget::updateSessionConfig()
 
 void OscilloscopeWidget::startUpdateTimer()
 {
-    m_updateTimer.start(Gui::FrameRate::intervalMsForFps(m_config.updateFps), Qt::PreciseTimer, this);
+    m_updateTimer.start(m_config.updateFps, this);
 }
 
 void OscilloscopeWidget::settlePresentationClock()
@@ -462,7 +462,8 @@ void OscilloscopeWidget::tick()
         m_presentationClock.start();
     }
     else {
-        const double elapsedMs = static_cast<double>(m_presentationClock.nsecsElapsed()) / 1'000'000.0;
+        const double elapsedMs
+            = static_cast<double>(m_presentationClock.nsecsElapsed()) / static_cast<double>(Time::NsPerMs);
         m_presentationClock.restart();
 
         const double predictedTimeMs = m_presentationTimeMs + std::max(0.0, elapsedMs);
@@ -496,6 +497,8 @@ void OscilloscopeWidget::paint(QPainter& painter, const QRect& rect, const QPale
     if(background.alpha() > 0) {
         painter.fillRect(rect, background);
     }
+
+    m_background->draw(painter);
 
     const int laneCount = displayedLanes();
     if(rect.width() <= 0 || rect.height() <= 0 || laneCount <= 0) {
@@ -598,21 +601,13 @@ OscilloscopeWidget::ConfigData OscilloscopeWidget::configFromLayout(const QJsonO
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("CurveDurationMs"_L1)) {
-        config.curveDurationMs = layout.value("CurveDurationMs"_L1).toInt();
-    }
-    if(layout.contains("ZoomPercent"_L1)) {
-        config.zoomPercent = layout.value("ZoomPercent"_L1).toInt();
-    }
-    if(layout.contains("UpdateFps"_L1)) {
-        config.updateFps = layout.value("UpdateFps"_L1).toInt();
-    }
-    if(layout.contains("DownmixMode"_L1)) {
-        config.downmixMode = static_cast<DownmixMode>(layout.value("DownmixMode"_L1).toInt());
-    }
-    if(layout.contains("ShowZeroLine"_L1)) {
-        config.showZeroLine = layout.value("ShowZeroLine"_L1).toBool();
-    }
+    config.curveDurationMs = layout.value("CurveDurationMs"_L1).toInt(config.curveDurationMs);
+    config.zoomPercent     = layout.value("ZoomPercent"_L1).toInt(config.zoomPercent);
+    config.updateFps       = layout.value("UpdateFps"_L1).toInt(config.updateFps);
+    config.downmixMode
+        = static_cast<DownmixMode>(layout.value("DownmixMode"_L1).toInt(static_cast<int>(config.downmixMode)));
+    config.showZeroLine = layout.value("ShowZeroLine"_L1).toBool(config.showZeroLine);
+    config.background.loadLayout(layout.value("Background"_L1).toObject());
 
     if(layout.contains("UseCustomColours"_L1)) {
         if(layout.value("UseCustomColours"_L1).toBool()) {
@@ -652,6 +647,10 @@ void OscilloscopeWidget::saveConfigToLayout(const ConfigData& config, QJsonObjec
     layout["UpdateFps"_L1]       = config.updateFps;
     layout["DownmixMode"_L1]     = static_cast<int>(config.downmixMode);
     layout["ShowZeroLine"_L1]    = config.showZeroLine;
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    layout["Background"_L1] = background;
 
     const bool customColours      = config.colours.isValid() && config.colours.canConvert<Colours>()
                                  && !config.colours.value<Colours>().isEmpty();

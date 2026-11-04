@@ -30,19 +30,22 @@
 #include <core/library/musiclibrary.h>
 #include <core/player/playerdefs.h>
 #include <core/playlist/playlist.h>
+#include <core/scripting/trackqueryfilter.h>
+#include <utils/async.h>
 #include <utils/crypto.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/stringcollator.h>
 
 #include <QFileInfo>
+#include <QFuture>
 #include <QLoggingCategory>
 
 #include <deque>
 #include <ranges>
 #include <set>
+#include <stop_token>
 #include <unordered_map>
-#include <utility>
 
 Q_LOGGING_CATEGORY(PL_HANDLER, "fy.playlisthandler")
 
@@ -74,19 +77,27 @@ enum class PreservationMode : uint8_t
     Ignore,
 };
 
-PlaylistTrackList rebuildPlaylistTracks(Playlist* playlist, const TrackList& tracks,
-                                        PreservationMode mode = PreservationMode::Ignore)
+struct AutoPlaylistSnapshot
 {
-    if(!playlist) {
-        return {};
-    }
+    UId playlistId;
+    uint64_t revision{0};
+    QString query;
+    QString sortQuery;
+    bool forceSorted{false};
+    PlaylistTrackList tracks;
+};
 
-    if(mode == PreservationMode::Ignore) {
-        return PlaylistTrack::fromTracks(tracks, playlist->id());
-    }
+struct AutoPlaylistResult
+{
+    UId playlistId;
+    uint64_t revision{0};
+    PlaylistTrackList tracks;
+    std::optional<PlaylistChangeset> changeSet;
+};
 
-    const PlaylistTrackList oldTracks = playlist->playlistTracks();
-
+PlaylistTrackList preservePlaylistEntries(const UId& playlistId, const PlaylistTrackList& oldTracks,
+                                          const TrackList& tracks)
+{
     std::unordered_map<QString, std::deque<UId>> preservedEntries;
     preservedEntries.reserve(oldTracks.size());
 
@@ -106,10 +117,22 @@ PlaylistTrackList rebuildPlaylistTracks(Playlist* playlist, const TrackList& tra
         if(preservedIt != preservedEntries.cend() && !preservedIt->second.empty()) {
             preservedIt->second.pop_front();
         }
-        result.emplace_back(track, playlist->id(), entryId, index++);
+        result.emplace_back(track, playlistId, entryId, index++);
     }
 
     return result;
+}
+
+PlaylistTrackList rebuildPlaylistTracks(Playlist* playlist, const TrackList& tracks,
+                                        PreservationMode mode = PreservationMode::Ignore)
+{
+    if(!playlist) {
+        return {};
+    }
+    if(mode == PreservationMode::Ignore) {
+        return PlaylistTrack::fromTracks(tracks, playlist->id());
+    }
+    return preservePlaylistEntries(playlist->id(), playlist->playlistTracks(), tracks);
 }
 
 bool playlistTracksSameData(const PlaylistTrackList& lhs, const PlaylistTrackList& rhs)
@@ -136,6 +159,8 @@ public:
     void reloadPlaylists();
     void populatePlaylists();
     void regenerateAutoPlaylists(const TrackList& updatedTracks = {});
+    void updateAutoPlaylists(const TrackList& tracks);
+    void startAutoPlaylistUpdates();
     bool noConcretePlaylists();
 
     void handleTracksChanged(const TrackList& tracks);
@@ -181,6 +206,12 @@ public:
     RemovedPlaylistMap m_pendingRemovedPlaylists;
 
     Playlist* m_activePlaylist{nullptr};
+    uint64_t m_autoPlaylistGeneration{0};
+    bool m_autoPlaylistPending{false};
+    bool m_autoPlaylistRunning{false};
+    bool m_stopping{false};
+    std::stop_source m_autoPlaylistStop;
+    QFuture<std::vector<AutoPlaylistResult>> m_autoPlaylistFuture;
 };
 
 PlaylistHandlerPrivate::PlaylistHandlerPrivate(PlaylistHandler* self, DbConnectionPoolPtr dbPool,
@@ -221,11 +252,14 @@ void PlaylistHandlerPrivate::reloadPlaylists()
 
 void PlaylistHandlerPrivate::populatePlaylists()
 {
-    std::unordered_map<int, Track> idTracks;
+    ++m_autoPlaylistGeneration;
+    m_autoPlaylistPending = false;
+    m_autoPlaylistStop.request_stop();
 
     const TrackList tracks        = m_library->tracks();
     const TrackList libraryTracks = m_library->libraryTracks();
 
+    std::unordered_map<int, Track> idTracks;
     for(const Track& track : tracks) {
         idTracks.emplace(track.id(), track);
     }
@@ -252,6 +286,10 @@ void PlaylistHandlerPrivate::populatePlaylists()
 
 void PlaylistHandlerPrivate::regenerateAutoPlaylists(const TrackList& updatedTracks)
 {
+    ++m_autoPlaylistGeneration;
+    m_autoPlaylistPending = false;
+    m_autoPlaylistStop.request_stop();
+
     const TrackList tracks            = m_library->libraryTracks();
     const TrackKeySet updatedTrackIds = playlistTrackKeySet(updatedTracks);
 
@@ -275,19 +313,162 @@ void PlaylistHandlerPrivate::regenerateAutoPlaylists(const TrackList& updatedTra
         }
 
         const auto changeSet = buildPlaylistChangeset(oldTracks, newTracks, updatedEntries);
-        if(changeSet && changeSet->isEmpty()) {
+        const bool unchanged = changeSet && changeSet->isEmpty();
+
+        if(!unchanged) {
+            if(changeSet) {
+                playlist->applyTrackChanges(newTracks, *changeSet);
+            }
+            else {
+                playlist->replaceTracks(newTracks);
+            }
+
+            if(changeSet) {
+                Q_EMIT m_self->tracksPatched(playlist.get(), changeSet.value(), PlaylistTrackChangeSource::External);
+            }
+            else {
+                Q_EMIT m_self->tracksChanged(playlist.get(), {}, PlaylistTrackChangeSource::External);
+            }
+        }
+    }
+}
+
+void PlaylistHandlerPrivate::updateAutoPlaylists(const TrackList& tracks)
+{
+    if(m_stopping) {
+        return;
+    }
+
+    ++m_autoPlaylistGeneration;
+    m_autoPlaylistPending = true;
+    m_autoPlaylistStop.request_stop();
+
+    // Match the library state so worker results don't repeat a metadata patch
+    TrackList updatedTracks{tracks};
+    for(auto& track : updatedTracks) {
+        if(track.metadataWasModified()) {
+            track.clearWasModified();
+        }
+    }
+
+    for(const auto& playlist : m_playlists) {
+        if(!playlist->isAutoPlaylist()) {
             continue;
         }
 
-        playlist->replaceTracks(newTracks);
-
-        if(changeSet) {
-            Q_EMIT m_self->tracksPatched(playlist.get(), changeSet.value(), PlaylistTrackChangeSource::External);
+        const auto indexes = playlist->updateTrackMetadata(updatedTracks);
+        if(indexes.empty()) {
+            continue;
         }
-        else {
-            Q_EMIT m_self->tracksChanged(playlist.get(), {}, PlaylistTrackChangeSource::External);
+
+        PlaylistChangeset changeSet;
+        changeSet.updatedEntries.reserve(indexes.size());
+        for(const int index : indexes) {
+            changeSet.updatedEntries.push_back(playlist->playlistTrack(index)->entryId);
+        }
+        Q_EMIT m_self->tracksPatched(playlist.get(), changeSet, PlaylistTrackChangeSource::External);
+    }
+
+    startAutoPlaylistUpdates();
+}
+
+void PlaylistHandlerPrivate::startAutoPlaylistUpdates()
+{
+    if(m_stopping || m_autoPlaylistRunning || !m_autoPlaylistPending) {
+        return;
+    }
+
+    std::vector<AutoPlaylistSnapshot> snapshots;
+    for(const auto& playlist : m_playlists) {
+        if(playlist->isAutoPlaylist()) {
+            AutoPlaylistSnapshot snapshot{playlist->id(),          playlist->contentRevision(),
+                                          playlist->query(),       playlist->sortQuery(),
+                                          playlist->forceSorted(), playlist->playlistTracks()};
+            snapshots.push_back(std::move(snapshot));
         }
     }
+    m_autoPlaylistPending = false;
+    if(snapshots.empty()) {
+        return;
+    }
+
+    TrackList libraryTracks  = m_library->libraryTracks();
+    const auto searchOptions = TrackQueryFilter::defaultSearchOptions();
+    const auto generation{m_autoPlaylistGeneration};
+    m_autoPlaylistStop    = std::stop_source{};
+    m_autoPlaylistRunning = true;
+
+    m_autoPlaylistFuture = Utils::asyncExec([snapshots = std::move(snapshots), libraryTracks = std::move(libraryTracks),
+                                             searchOptions, token = m_autoPlaylistStop.get_token()] {
+        std::vector<AutoPlaylistResult> results;
+
+        for(const auto& snapshot : snapshots) {
+            if(token.stop_requested()) {
+                break;
+            }
+
+            const auto previousTracks = PlaylistTrack::toTracks(snapshot.tracks);
+            const auto tracks         = Playlist::calculateAutoPlaylistTracks(
+                libraryTracks, previousTracks, snapshot.query, snapshot.sortQuery, snapshot.forceSorted, searchOptions);
+            if(token.stop_requested()) {
+                break;
+            }
+
+            auto entries   = preservePlaylistEntries(snapshot.playlistId, snapshot.tracks, tracks);
+            auto changeSet = buildPlaylistChangeset(snapshot.tracks, entries);
+            results.push_back({.playlistId = snapshot.playlistId,
+                               .revision   = snapshot.revision,
+                               .tracks     = std::move(entries),
+                               .changeSet  = std::move(changeSet)});
+        }
+
+        return results;
+    });
+
+    m_autoPlaylistFuture.then(
+        m_self, [this, generation, searchOptions](const std::vector<AutoPlaylistResult>& results) {
+            m_autoPlaylistRunning = false;
+            if(m_stopping) {
+                return;
+            }
+
+            const auto currentSearchOptions = TrackQueryFilter::defaultSearchOptions();
+            const bool searchChanged        = searchOptions.script != currentSearchOptions.script
+                                           || searchOptions.mode != currentSearchOptions.mode;
+            if(searchChanged) {
+                m_autoPlaylistPending = true;
+            }
+            if(generation == m_autoPlaylistGeneration && !searchChanged) {
+                for(const auto& result : results) {
+                    auto* playlist = m_self->playlistById(result.playlistId);
+                    if(!playlist) {
+                        continue;
+                    }
+
+                    if(playlist->contentRevision() != result.revision) {
+                        m_autoPlaylistPending = true;
+                        continue;
+                    }
+                    if(result.changeSet && result.changeSet->isEmpty()) {
+                        continue;
+                    }
+
+                    if(result.changeSet) {
+                        playlist->applyTrackChanges(result.tracks, *result.changeSet);
+                        Q_EMIT m_self->tracksPatched(playlist, *result.changeSet, PlaylistTrackChangeSource::External);
+                    }
+                    else {
+                        playlist->replaceTracks(result.tracks);
+                        Q_EMIT m_self->tracksChanged(playlist, {}, PlaylistTrackChangeSource::External);
+                    }
+
+                    if(generation != m_autoPlaylistGeneration) {
+                        break;
+                    }
+                }
+            }
+            startAutoPlaylistUpdates();
+        });
 }
 
 bool PlaylistHandlerPrivate::noConcretePlaylists()
@@ -303,13 +484,9 @@ void PlaylistHandlerPrivate::handleTracksChanged(const TrackList& tracks)
             continue;
         }
 
-        TrackList playlistTracks  = playlist->tracks();
-        const auto updatedIndexes = Utils::updateCommonTracks(playlistTracks, tracks, Utils::CommonOperation::Update);
+        const auto updatedIndexes = playlist->updateTrackMetadata(tracks);
 
         if(!updatedIndexes.empty()) {
-            for(const int index : updatedIndexes) {
-                playlist->updateTrackAtIndex(index, playlistTracks.at(index));
-            }
             Q_EMIT m_self->tracksChanged(playlist.get(), updatedIndexes, PlaylistTrackChangeSource::External);
         }
     }
@@ -355,13 +532,9 @@ void PlaylistHandlerPrivate::handleTracksUpdated(const TrackList& tracks)
             continue;
         }
 
-        TrackList playlistTracks  = playlist->tracks();
-        const auto updatedIndexes = Utils::updateCommonTracks(playlistTracks, tracks, Utils::CommonOperation::Update);
+        const auto updatedIndexes = playlist->updateTrackMetadata(tracks);
 
         if(!updatedIndexes.empty()) {
-            for(const int index : updatedIndexes) {
-                playlist->updateTrackAtIndex(index, playlistTracks.at(index));
-            }
             Q_EMIT m_self->tracksUpdated(playlist.get(), updatedIndexes);
         }
     }
@@ -457,8 +630,12 @@ void PlaylistHandlerPrivate::replacePlaylistTracks(Playlist* playlist, const Pla
     }
 
     const auto changeSet = buildPlaylistChangeset(oldTracks, newTracks, updatedTrackEntries);
-
-    playlist->replaceTracks(newTracks);
+    if(changeSet) {
+        playlist->applyTrackChanges(newTracks, *changeSet);
+    }
+    else {
+        playlist->replaceTracks(newTracks);
+    }
 
     if(changeSet && !changeSet->isEmpty()) {
         Q_EMIT m_self->tracksPatched(playlist, *changeSet, source);
@@ -625,13 +802,14 @@ PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<Aud
 
     QObject::connect(p->m_library, &MusicLibrary::tracksLoaded, this, [this]() { p->populatePlaylists(); });
     QObject::connect(p->m_library, &MusicLibrary::tracksAdded, this, [this]() { p->regenerateAutoPlaylists(); });
+    QObject::connect(p->m_library, &MusicLibrary::tracksSorted, this, [this]() { p->updateAutoPlaylists({}); });
     QObject::connect(p->m_library, &MusicLibrary::tracksMetadataChanged, this, [this](const TrackList& tracks) {
         p->handleTracksChanged(tracks);
-        p->regenerateAutoPlaylists(tracks);
+        p->updateAutoPlaylists(tracks);
     });
     QObject::connect(p->m_library, &MusicLibrary::tracksUpdated, this, [this](const TrackList& tracks) {
         p->handleTracksUpdated(tracks);
-        p->regenerateAutoPlaylists(tracks);
+        p->updateAutoPlaylists(tracks);
     });
 
     p->m_settings->subscribe<Settings::Core::ShuffleAlbumsGroupScript>(this, [this]() { p->resetShuffleOrder(); });
@@ -640,6 +818,9 @@ PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<Aud
 
 PlaylistHandler::~PlaylistHandler()
 {
+    p->m_stopping = true;
+    p->m_autoPlaylistStop.request_stop();
+    p->m_autoPlaylistFuture.waitForFinished();
     p->m_playlists.clear();
 }
 
@@ -1241,6 +1422,9 @@ Playlist* PlaylistHandler::restorePlaylist(const UId& id)
 
     p->cancelPendingRemovedPlaylist(oldName, playlist);
     p->m_playlists.emplace_back(std::move(restoredPlaylist));
+    if(playlist->isAutoPlaylist()) {
+        p->regenerateAutoPlaylists();
+    }
     p->m_playlistConnector.savePlaylist(*playlist);
 
     Q_EMIT playlistAdded(playlist);
@@ -1294,6 +1478,17 @@ void PlaylistHandler::savePlaylist(const UId& id)
     if(auto* playlistToSave = playlistById(id)) {
         p->updateIndices();
         p->m_playlistConnector.savePlaylist(*playlistToSave);
+    }
+}
+
+void PlaylistHandler::finishPendingUpdates()
+{
+    const bool pending = p->m_autoPlaylistPending || p->m_autoPlaylistRunning;
+    p->m_stopping      = true;
+    p->m_autoPlaylistStop.request_stop();
+    p->m_autoPlaylistFuture.waitForFinished();
+    if(pending) {
+        p->regenerateAutoPlaylists();
     }
 }
 } // namespace Fooyin

@@ -105,7 +105,7 @@ constexpr auto MinPeakGravity        = 0;
 constexpr auto MaxPeakGravity        = 500;
 constexpr auto DefaultPeakGravity    = 50;
 
-constexpr auto MinUpdateFps     = 20;
+constexpr auto MinUpdateFps     = 15;
 constexpr auto MaxUpdateFps     = 240;
 constexpr auto DefaultUpdateFps = 40;
 

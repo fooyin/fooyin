@@ -25,16 +25,17 @@
 namespace Fooyin {
 struct SortScript
 {
+    static constexpr qint32 Magic   = -0x534F5254;
+    static constexpr qint32 Version = 1;
+
     int id{-1};
     int index{-1};
     bool isDefault{false};
     QString name;
     QString script;
+    bool isEnabled{true};
 
-    bool operator==(const SortScript& other) const
-    {
-        return std::tie(id, index, name, script) == std::tie(other.id, other.index, other.name, other.script);
-    }
+    bool operator==(const SortScript& other) const = default;
 
     [[nodiscard]] bool isValid() const
     {
@@ -43,19 +44,39 @@ struct SortScript
 
     friend QDataStream& operator<<(QDataStream& stream, const SortScript& sort)
     {
+        stream << Magic;
+        stream << Version;
         stream << sort.id;
         stream << sort.index;
         stream << sort.name;
         stream << sort.script;
+        stream << sort.isEnabled;
         return stream;
     }
 
     friend QDataStream& operator>>(QDataStream& stream, SortScript& sort)
     {
-        stream >> sort.id;
+        qint32 magicOrId{-1};
+        qint32 version{0};
+        stream >> magicOrId;
+
+        if(magicOrId == Magic) {
+            stream >> version;
+            stream >> sort.id;
+        }
+        else {
+            sort.id = magicOrId;
+        }
+
         stream >> sort.index;
         stream >> sort.name;
         stream >> sort.script;
+        sort.isEnabled = true;
+
+        if(version >= 1) {
+            stream >> sort.isEnabled;
+        }
+
         return stream;
     }
 };

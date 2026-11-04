@@ -256,7 +256,7 @@ int main(int argc, char** argv)
     }
 
     const QApplication app{argc, argv};
-    Fooyin::MessageHandler::install(nullptr);
+    Fooyin::MessageHandler::install();
 
     KDSingleApplication instance{QCoreApplication::applicationName(),
                                  KDSingleApplication::Option::IncludeUsernameInSocketName};
@@ -269,6 +269,7 @@ int main(int argc, char** argv)
     coreApp.startup();
     Fooyin::GuiApplication guiApp{&coreApp};
     guiApp.startup();
+    coreApp.completeStartup();
 
     if(!commandLine.empty()) {
         // Wait until playlists have been populated before parsing in case of playback commands

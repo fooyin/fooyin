@@ -287,7 +287,8 @@ QString ExpressionTreeModel::expressionText(const Expression& expression) const
         return u"$%1(%2)"_s.arg(funcValue->name, args.join(u","_s));
     }
 
-    if(const auto* listValue = std::get_if<ExpressionList>(&expression.value)) {
+    const auto* dateValue = std::get_if<DateValue>(&expression.value);
+    if(const auto* listValue = dateValue ? &dateValue->args : std::get_if<ExpressionList>(&expression.value)) {
         QString listText = expressionsText(*listValue);
 
         switch(expression.type) {
@@ -434,7 +435,12 @@ void ExpressionTreeModel::iterateExpression(const Expression& expression, Expres
         }
     }
 
-    else if(const auto* listVal = std::get_if<ExpressionList>(&expression.value)) {
+    else {
+        const auto* dateVal = std::get_if<DateValue>(&expression.value);
+        const auto* listVal = dateVal ? &dateVal->args : std::get_if<ExpressionList>(&expression.value);
+        if(!listVal) {
+            return;
+        }
         if(expression.type == Expr::Conditional) {
             name   = u"[ … ]"_s;
             parent = insertNode(generateKey(parent->key(), name), name, expression, parent);

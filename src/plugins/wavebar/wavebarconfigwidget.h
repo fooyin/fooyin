@@ -33,6 +33,7 @@ class QRadioButton;
 class QSpinBox;
 
 namespace Fooyin {
+class BackgroundConfigWidget;
 class ColourButton;
 
 namespace WaveBar {
@@ -106,6 +107,7 @@ private:
     QLabel* m_cacheSizeLabel;
     QComboBox* m_numSamples;
     QPushButton* m_clearCacheButton;
+    BackgroundConfigWidget* m_background;
 };
 } // namespace WaveBar
 } // namespace Fooyin

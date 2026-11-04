@@ -20,9 +20,11 @@
 #include "librarytreeconfigwidget.h"
 
 #include "librarytreegroupeditordialog.h"
-#include "librarytreescriptenvironment.h"
+#include "librarytreescriptcontext.h"
 
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/backgroundconfigwidget.h>
+#include <gui/widgets/hintlabel.h>
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -33,6 +35,7 @@
 #include <QPushButton>
 #include <QSpinBox>
 #include <QTabWidget>
+#include <QVBoxLayout>
 
 using namespace Qt::StringLiterals;
 
@@ -64,18 +67,21 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     , m_iconWidth{new QSpinBox(this)}
     , m_iconHeight{new QSpinBox(this)}
     , m_artworkCornerRadius{new QSpinBox(this)}
+    , m_background{new BackgroundConfigWidget(this)}
     , m_manageGroupings{new QPushButton(tr("Manage groupings…"), this)}
 {
     auto* tabs = new QTabWidget(this);
 
-    auto* generalTab = new QWidget(tabs);
-    auto* styleTab   = new QWidget(tabs);
+    auto* generalTab    = new QWidget(tabs);
+    auto* styleTab      = new QWidget(tabs);
+    auto* backgroundTab = new QWidget(tabs);
 
     tabs->addTab(generalTab, tr("General"));
     tabs->addTab(styleTab, tr("Appearance"));
+    tabs->addTab(backgroundTab, tr("Background"));
 
     m_playbackOnSend->setToolTip(
-        tr(R"(For "Replace current playlist" and "Create new playlist", start playback immediately.)"));
+        tr(R"(For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately.)"));
 
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), generalTab);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
@@ -93,7 +99,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
 
     m_preservePlaybackPlaylist->setToolTip(
-        tr("When this selection playlist is used for playback, preserve it with \"(Playback)\" appended to its "
+        tr("When this selection playlist is used for playback, preserve it with ‘(Playback)’ appended to its "
            "name instead of replacing its tracks."));
 
     row = 0;
@@ -126,15 +132,17 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     m_autoExpandSearchResultLimit->setSingleStep(5);
     m_autoExpandSearchResultLimit->setSpecialValueText(tr("Disabled"));
 
+    auto* autoExpandLabel = new QLabel(tr("Auto-expand if matching track count is at most") + u":"_s, this);
+    autoExpandLabel->setWordWrap(true);
+
     auto* searchingGroup       = new QGroupBox(tr("Searching"), generalTab);
     auto* searchingGroupLayout = new QGridLayout(searchingGroup);
 
     row = 0;
     searchingGroupLayout->addWidget(m_showControls, row++, 0, 1, 3);
-    searchingGroupLayout->addWidget(new QLabel(tr("Controls position") + u":"_s, this), row, 0, 1, 2);
-    searchingGroupLayout->addWidget(m_controlsPosition, row++, 2);
-    searchingGroupLayout->addWidget(new QLabel(tr("Auto-expand if matching track count is at most") + u":"_s, this),
-                                    row, 0, 1, 2);
+    searchingGroupLayout->addWidget(new QLabel(tr("Controls position") + u":"_s, this), row, 0);
+    searchingGroupLayout->addWidget(m_controlsPosition, row++, 1, 1, 2, Qt::AlignLeft);
+    searchingGroupLayout->addWidget(autoExpandLabel, row, 0, 1, 2);
     searchingGroupLayout->addWidget(m_autoExpandSearchResultLimit, row++, 2);
     searchingGroupLayout->setColumnStretch(3, 1);
 
@@ -155,7 +163,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     m_artworkCornerRadius->setSuffix(u" %"_s);
     m_artworkCornerRadius->setSpecialValueText(tr("Square"));
 
-    auto* iconSizeHint = new QLabel(u"🛈 "_s + tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this);
+    auto* iconSizeHint = new HintLabel(tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons."), this);
     iconSizeHint->setTextFormat(Qt::RichText);
 
     row = 0;
@@ -185,12 +193,13 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     auto* generalLayout = new QGridLayout(generalTab);
 
     row = 0;
-    generalLayout->addWidget(generalGroup, row++, 0);
-    generalLayout->addWidget(searchingGroup, row++, 0);
-    generalLayout->addWidget(clickBehaviour, row++, 0);
-    generalLayout->addWidget(selectionPlaylist, row++, 0);
+    generalLayout->addWidget(generalGroup, row, 0);
+    generalLayout->addWidget(clickBehaviour, row++, 1);
+    generalLayout->addWidget(searchingGroup, row, 0);
+    generalLayout->addWidget(selectionPlaylist, row++, 1);
     generalLayout->setColumnStretch(0, 1);
-    generalLayout->setRowStretch(4, 1);
+    generalLayout->setColumnStretch(1, 1);
+    generalLayout->setRowStretch(2, 1);
 
     auto* styleLayout = new QGridLayout(styleTab);
 
@@ -198,6 +207,10 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     styleLayout->addWidget(appearanceGroup, row++, 0);
     styleLayout->setColumnStretch(0, 1);
     styleLayout->setRowStretch(1, 1);
+
+    auto* backgroundLayout = new QVBoxLayout(backgroundTab);
+    backgroundLayout->addWidget(m_background);
+    backgroundLayout->addStretch();
 
     auto* mainLayout{contentLayout()};
     row = 0;
@@ -254,6 +267,7 @@ LibraryTreeWidget::ConfigData LibraryTreeConfigDialog::config() const
         .rowHeight                   = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
         .iconSize                    = {m_iconWidth->value(), m_iconHeight->value()},
         .artworkCornerRadius         = m_artworkCornerRadius->value(),
+        .background                  = m_background->config(),
     };
 }
 
@@ -289,6 +303,8 @@ void LibraryTreeConfigDialog::setConfig(const LibraryTreeWidget::ConfigData& con
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
     m_preservePlaybackPlaylist->setEnabled(m_playlistEnabled->isChecked());
+
+    m_background->setConfig(config.background);
 }
 
 void LibraryTreeConfigDialog::mergeExternalConfig(const LibraryTreeWidget::ConfigData& previous,
@@ -305,6 +321,7 @@ void LibraryTreeConfigDialog::mergeExternalConfig(const LibraryTreeWidget::Confi
         &LibraryTreeWidget::ConfigData::showHeader, &LibraryTreeWidget::ConfigData::showScrollbar,
         &LibraryTreeWidget::ConfigData::alternatingRows, &LibraryTreeWidget::ConfigData::showSummaryNode,
         &LibraryTreeWidget::ConfigData::summaryNodeTitle, &LibraryTreeWidget::ConfigData::rowHeight,
-        &LibraryTreeWidget::ConfigData::iconSize, &LibraryTreeWidget::ConfigData::artworkCornerRadius);
+        &LibraryTreeWidget::ConfigData::iconSize, &LibraryTreeWidget::ConfigData::artworkCornerRadius,
+        &LibraryTreeWidget::ConfigData::background);
 }
 } // namespace Fooyin

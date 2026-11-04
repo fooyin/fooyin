@@ -23,6 +23,8 @@
 
 #include <QWidget>
 
+#include <vector>
+
 class QLineEdit;
 
 namespace Fooyin {

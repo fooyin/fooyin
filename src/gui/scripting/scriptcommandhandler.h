@@ -92,6 +92,7 @@ public:
     ScriptCommandHandler(ActionManager* actionManager, PlayerController* playerController,
                          PropertiesDialog* propertiesDialog, TrackSelectionController* selectionController,
                          CurrentPlaylistController* currentPlaylistController);
+    ~ScriptCommandHandler();
 
     static const ScriptCommandAliasList& scriptCommandAliases();
     static std::optional<ResolvedScriptCommand> resolveCommand(const QString& commandId);
@@ -103,6 +104,7 @@ public:
                  QWidget* sourceWidget = nullptr) const;
 
 private:
+    QMetaObject::Connection m_shortcutConnection;
     ActionManager* m_actionManager;
     PlayerController* m_playerController;
     PropertiesDialog* m_propertiesDialog;

@@ -1,0 +1,72 @@
+name: Save ccache
+description: Save ccache and remove older generations after confirming the replacement exists
+
+inputs:
+  path:
+    description: Directory containing ccache
+    required: true
+  key:
+    description: Cache key ending in a numeric daily generation
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Save ccache
+      uses: actions/cache/save@v6
+      with:
+        path: ${{ inputs.path }}
+        key: ${{ inputs.key }}
+
+    - name: Remove older ccache generations
+      continue-on-error: true
+      uses: actions/github-script@v8
+      env:
+        CCACHE_KEY: ${{ inputs.key }}
+      with:
+        script: |
+          const key = process.env.CCACHE_KEY;
+          const match = key.match(/^(.*-)(\d+)$/);
+          if (!match || !match[1].includes('-ccache-')) {
+            throw new Error(`Unexpected ccache key: ${key}`);
+          }
+
+          const [, prefix, generation] = match;
+          const caches = await github.paginate(github.rest.actions.getActionsCacheList, {
+            ...context.repo,
+            ref: context.ref,
+            key: prefix,
+            sort: 'created_at',
+            direction: 'desc',
+            per_page: 100
+          });
+          const replacement = caches.find(cache => cache.key === key && cache.ref === context.ref);
+          // Cache uploads can fail without failing the save action
+          if (!replacement) {
+            core.warning(`Replacement cache ${key} was not found; keeping older generations`);
+            return;
+          }
+
+          for (const cache of caches) {
+            if (cache.ref !== context.ref || cache.version !== replacement.version
+                || !cache.key.startsWith(prefix)) {
+              continue;
+            }
+            const cachedGeneration = cache.key.slice(prefix.length);
+            if (!/^\d+$/.test(cachedGeneration) || Number(cachedGeneration) >= Number(generation)) {
+              continue;
+            }
+
+            core.info(`Deleting superseded ccache: ${cache.key}`);
+            try {
+              await github.rest.actions.deleteActionsCacheById({
+                ...context.repo,
+                cache_id: cache.id
+              });
+            } catch (error) {
+              // Another run may have already removed the same generation
+              if (error.status !== 404) {
+                throw error;
+              }
+            }
+          }

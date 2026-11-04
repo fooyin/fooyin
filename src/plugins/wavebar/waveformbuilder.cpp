@@ -45,14 +45,26 @@ WaveformBuilder::WaveformBuilder(std::shared_ptr<AudioLoader> decoderProvider, D
 
     QObject::connect(&m_generator, &WaveformGenerator::generatingWaveform, this, &WaveformBuilder::generatingWaveform);
     QObject::connect(&m_generator, &WaveformGenerator::waveformGenerated, this,
-                     [this](const Fooyin::Track& track, const auto& /*data*/) { Q_EMIT waveformGenerated(track); });
-    QObject::connect(&m_generator, &WaveformGenerator::waveformGenerated, &m_rescaler,
-                     [this](const Track& /*track*/, const auto& data) {
-                         if(m_rescale) {
-                             m_rescaler.rescale(data, m_width);
+                     [this](const Track& track, const auto& data, std::stop_token token) {
+                         if(token.stop_requested()) {
+                             return;
+                         }
+                         Q_EMIT waveformGenerated(track);
+                         if(m_rescale && !token.stop_requested()) {
+                             QMetaObject::invokeMethod(&m_rescaler, [worker = &m_rescaler, data, width = m_width,
+                                                                     token = m_rescaler.prepareWork()] {
+                                 if(worker->startWork(token)) {
+                                     worker->rescale(data, width);
+                                 }
+                             });
                          }
                      });
-    QObject::connect(&m_rescaler, &WaveformRescaler::waveformRescaled, this, &WaveformBuilder::waveformRescaled);
+    QObject::connect(&m_rescaler, &WaveformRescaler::waveformRescaled, this,
+                     [this](const auto& data, std::stop_token token) {
+                         if(!token.stop_requested()) {
+                             Q_EMIT waveformRescaled(data);
+                         }
+                     });
 
     m_settings->subscribe<Settings::WaveBar::NumSamples>(this, [this](const int num) { m_samplesPerChannel = num; });
 
@@ -78,8 +90,10 @@ void WaveformBuilder::generate(const Track& track, bool update)
 {
     m_rescale = false;
 
-    QMetaObject::invokeMethod(
-        &m_generator, [this, track, update]() { m_generator.generate(track, m_samplesPerChannel, false, update); });
+    QMetaObject::invokeMethod(&m_generator, [worker = &m_generator, track, update, samples = m_samplesPerChannel,
+                                             token = m_generator.prepareWork()]() {
+        worker->generate(track, samples, false, update, token);
+    });
 }
 
 void WaveformBuilder::generateAndScale(const Track& track, bool update)
@@ -89,13 +103,19 @@ void WaveformBuilder::generateAndScale(const Track& track, bool update)
     m_rescale = true;
 
     QMetaObject::invokeMethod(
-        &m_generator, [this, track, update]() { m_generator.generate(track, m_samplesPerChannel, true, update); });
+        &m_generator, [worker = &m_generator, track, update, samples = m_samplesPerChannel,
+                       token = m_generator.prepareWork()]() { worker->generate(track, samples, true, update, token); });
 }
 
 void WaveformBuilder::rescale(const int width)
 {
     if(std::exchange(m_width, width) != width) {
-        QMetaObject::invokeMethod(&m_rescaler, [this]() { m_rescaler.rescale(m_width); });
+        QMetaObject::invokeMethod(&m_rescaler,
+                                  [worker = &m_rescaler, width = m_width, token = m_rescaler.prepareWork()] {
+                                      if(worker->startWork(token)) {
+                                          worker->rescale(width);
+                                      }
+                                  });
     }
 }
 
@@ -146,13 +166,20 @@ void WaveformBuilder::setDecibelScale(bool decibelScale)
 void WaveformBuilder::updateRescaler()
 {
     m_rescaler.stopThread();
-    QMetaObject::invokeMethod(&m_rescaler, [this]() {
-        m_rescaler.changeSampleWidth(m_sampleWidth);
-        m_rescaler.changeDownmix(m_downmix);
-        m_rescaler.changeSupersampleFactor(m_supersampleFactor);
-        m_rescaler.changePeakDisplayMode(m_peakDisplayMode);
-        m_rescaler.changeNormaliseToPeak(m_normaliseToPeak);
-        m_rescaler.changeDecibelScale(m_decibelScale);
+    QMetaObject::invokeMethod(&m_rescaler, [worker = &m_rescaler, sampleWidth = m_sampleWidth, downmix = m_downmix,
+                                            supersampleFactor = m_supersampleFactor,
+                                            peakDisplayMode = m_peakDisplayMode, normaliseToPeak = m_normaliseToPeak,
+                                            decibelScale = m_decibelScale, token = m_rescaler.prepareWork()] {
+        if(!worker->startWork(token)) {
+            return;
+        }
+        worker->changeSampleWidth(sampleWidth);
+        worker->changeDownmix(downmix);
+        worker->changeSupersampleFactor(supersampleFactor);
+        worker->changePeakDisplayMode(peakDisplayMode);
+        worker->changeNormaliseToPeak(normaliseToPeak);
+        worker->changeDecibelScale(decibelScale);
+        worker->setState(Worker::Idle);
     });
 }
 } // namespace Fooyin::WaveBar

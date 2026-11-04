@@ -22,10 +22,10 @@
 #include "layouttreemodel.h"
 
 #include <core/constants.h>
-#include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
-#include <gui/layoutprovider.h>
+#include <gui/layout/editablelayout.h>
+#include <gui/layout/layoutprovider.h>
 #include <gui/theme/fytheme.h>
 #include <gui/widgetprovider.h>
 #include <utils/jsonutils.h>
@@ -252,7 +252,7 @@ GuiLayoutPageWidget::GuiLayoutPageWidget(LayoutProvider* layoutProvider, Editabl
     m_layoutTree->setModel(m_model);
 
     for(auto* spinBox : {m_leftMargin, m_topMargin, m_rightMargin, m_bottomMargin}) {
-        spinBox->setRange(-999, 999);
+        spinBox->setRange(0, 999);
         spinBox->setSuffix(u" px"_s);
     }
 
@@ -886,7 +886,7 @@ void GuiLayoutPageWidget::onDeleteLayout()
         return;
     }
 
-    QMessageBox msg{QMessageBox::Question, tr("Delete Layout"), tr("Delete layout \"%1\"?").arg(name),
+    QMessageBox msg{QMessageBox::Question, tr("Delete Layout"), tr("Delete layout ‘%1’?").arg(name),
                     QMessageBox::Yes | QMessageBox::No, this};
     msg.setDefaultButton(QMessageBox::No);
     if(msg.exec() != QMessageBox::Yes) {

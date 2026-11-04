@@ -173,7 +173,7 @@ QVariant SelectionInfoFieldsModel::data(const QModelIndex& index, int role) cons
         return QVariant::fromValue(field);
     }
     if(role == Qt::CheckStateRole && column == 1) {
-        return field.enabled ? Qt::Checked : Qt::Unchecked;
+        return field.isEnabled ? Qt::Checked : Qt::Unchecked;
     }
     if(role == Qt::DisplayRole || role == Qt::EditRole) {
         switch(column) {
@@ -200,7 +200,7 @@ bool SelectionInfoFieldsModel::setData(const QModelIndex& index, const QVariant&
     SelectionInfoField field{item->m_field};
 
     if(role == Qt::CheckStateRole && index.column() == 1) {
-        field.enabled = value.value<Qt::CheckState>() == Qt::Checked;
+        field.isEnabled = value.value<Qt::CheckState>() == Qt::Checked;
     }
     else if(index.column() == 2) {
         const QString name = value.toString().trimmed();

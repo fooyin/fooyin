@@ -34,8 +34,28 @@ struct NetworkStreamMetadata
     QString streamGenre;
     QString streamTitle;
     QString streamUrl;
+    QString title;
+    QString artist;
+    QString album;
     int bitrateKbps{0};
     quint64 revision{0};
+};
+
+struct RemoteFileInfo
+{
+    qint64 size{-1};
+    //! Modification time in milliseconds since epoch, or zero when unknown.
+    quint64 modifiedTime{0};
+};
+
+//! Optional file properties
+// TODO: Add to RemoteStreamDevice for 1.0
+class FYCORE_EXPORT RemoteFileDevice
+{
+public:
+    virtual ~RemoteFileDevice() = default;
+
+    [[nodiscard]] virtual RemoteFileInfo remoteFileInfo() const = 0;
 };
 
 class FYCORE_EXPORT RemoteStreamDevice

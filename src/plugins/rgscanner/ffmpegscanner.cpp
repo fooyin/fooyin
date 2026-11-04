@@ -262,7 +262,7 @@ class FFmpegReplayGainPrivate
 public:
     explicit FFmpegReplayGainPrivate(FFmpegScanner* self);
 
-    void scanAlbum(FFmpegContext& context, TrackList& tracks) const;
+    void scanAlbum(FFmpegContext& context, TrackList& tracks, std::stop_token token) const;
 
     FFmpegScanner* m_self;
 
@@ -282,9 +282,9 @@ FFmpegReplayGainPrivate::FFmpegReplayGainPrivate(FFmpegScanner* self)
     av_log_set_level(AV_LOG_QUIET);
 }
 
-void FFmpegReplayGainPrivate::scanAlbum(FFmpegContext& context, TrackList& tracks) const
+void FFmpegReplayGainPrivate::scanAlbum(FFmpegContext& context, TrackList& tracks, std::stop_token token) const
 {
-    if(!m_self->mayRun()) {
+    if(!m_self->mayRun(token)) {
         return;
     }
 
@@ -297,7 +297,7 @@ void FFmpegReplayGainPrivate::scanAlbum(FFmpegContext& context, TrackList& track
     }
 
     for(Track& track : tracks) {
-        if(!m_self->mayRun()) {
+        if(!m_self->mayRun(token)) {
             return;
         }
         QMetaObject::invokeMethod(
@@ -349,9 +349,12 @@ FFmpegScanner::~FFmpegScanner()
     av_log_set_level(p->m_logLevel);
 };
 
-void FFmpegScanner::calculatePerTrack(const TrackList& tracks, bool truePeak)
+void FFmpegScanner::calculatePerTrack(const TrackList& tracks, bool truePeak, std::stop_token token)
 {
-    setState(Running);
+    if(!startWork(token)) {
+        Q_EMIT finished();
+        return;
+    }
 
     qCDebug(FFMPEG) << "Calculating RG using ffmpeg for" << tracks.size() << "tracks";
 
@@ -367,7 +370,10 @@ void FFmpegScanner::calculatePerTrack(const TrackList& tracks, bool truePeak)
         }
     });
 
-    auto future = QtConcurrent::map(p->m_scannedTracks, [truePeak](Track& track) {
+    auto future = QtConcurrent::map(p->m_scannedTracks, [this, truePeak, token](Track& track) {
+        if(!mayRun(token)) {
+            return;
+        }
         FFmpegContext context{truePeak};
 
         if(setupTrack(context, track, context.trackFilter)) {
@@ -381,8 +387,8 @@ void FFmpegScanner::calculatePerTrack(const TrackList& tracks, bool truePeak)
 
     p->m_future->setFuture(future);
 
-    future.then(this, [this]() {
-        if(mayRun()) {
+    future.then(this, [this, token]() {
+        if(mayRun(token)) {
             qCDebug(FFMPEG) << "Finished calculating RG for" << p->m_scannedTracks.size() << "tracks";
             Q_EMIT calculationFinished(p->m_scannedTracks);
         }
@@ -392,9 +398,12 @@ void FFmpegScanner::calculatePerTrack(const TrackList& tracks, bool truePeak)
     });
 }
 
-void FFmpegScanner::calculateAsAlbum(const TrackList& tracks, bool truePeak)
+void FFmpegScanner::calculateAsAlbum(const TrackList& tracks, bool truePeak, std::stop_token token)
 {
-    setState(Running);
+    if(!startWork(token)) {
+        Q_EMIT finished();
+        return;
+    }
 
     qCDebug(FFMPEG) << "Calculating RG using ffmpeg for" << tracks.size() << "tracks";
 
@@ -402,9 +411,9 @@ void FFmpegScanner::calculateAsAlbum(const TrackList& tracks, bool truePeak)
 
     TrackList scannedTracks{tracks};
     clearReplayGain(scannedTracks);
-    p->scanAlbum(context, scannedTracks);
+    p->scanAlbum(context, scannedTracks, token);
 
-    if(mayRun()) {
+    if(mayRun(token)) {
         qCDebug(FFMPEG) << "Finished calculating RG for" << p->m_scannedTracks.size() << "tracks";
         Q_EMIT calculationFinished(scannedTracks);
     }
@@ -413,9 +422,13 @@ void FFmpegScanner::calculateAsAlbum(const TrackList& tracks, bool truePeak)
     setState(Idle);
 }
 
-void FFmpegScanner::calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak)
+void FFmpegScanner::calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak,
+                                         std::stop_token token)
 {
-    setState(Running);
+    if(!startWork(token)) {
+        Q_EMIT finished();
+        return;
+    }
 
     qCDebug(FFMPEG) << "Calculating RG using ffmpeg for" << tracks.size() << "tracks";
 
@@ -430,15 +443,15 @@ void FFmpegScanner::calculateByAlbumTags(const TrackList& tracks, const QString&
         p->m_albums[album].push_back(std::move(scannedTrack));
     }
 
-    auto future = QtConcurrent::map(p->m_albums, [this, truePeak](auto& album) {
+    auto future = QtConcurrent::map(p->m_albums, [this, truePeak, token](auto& album) {
         FFmpegContext context{truePeak};
-        p->scanAlbum(context, album.second);
+        p->scanAlbum(context, album.second, token);
     });
 
     p->m_future->setFuture(future);
 
-    future.then(this, [this]() {
-        if(mayRun()) {
+    future.then(this, [this, token]() {
+        if(mayRun(token)) {
             for(const auto& [_, album] : p->m_albums) {
                 p->m_scannedTracks.insert(p->m_scannedTracks.end(), album.cbegin(), album.cend());
             }

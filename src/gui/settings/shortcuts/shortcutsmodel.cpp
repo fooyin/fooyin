@@ -34,7 +34,27 @@ ShortcutBindingList removeEmptyBindings(const ShortcutBindingList& bindings)
     return Utils::filter(bindings, [](const Fooyin::ShortcutBinding& binding) { return !binding.shortcut.isEmpty(); });
 }
 
-QString bindingsToString(const ShortcutBindingList& bindings, bool globalShortcutRegistered)
+ShortcutBindingList commandBindings(const Command* command, bool systemManaged)
+{
+    ShortcutBindingList bindings;
+
+    const auto shortcuts = command->shortcuts();
+    for(const auto& key : shortcuts) {
+        bindings.emplace_back(key, ShortcutScope::Application, command->shortcutTarget(key));
+    }
+
+    if(!systemManaged) {
+        const auto globalShortcuts = command->globalShortcuts();
+        for(const auto& key : globalShortcuts) {
+            bindings.emplace_back(key, ShortcutScope::Global, command->globalShortcutTarget());
+        }
+    }
+
+    return bindings;
+}
+
+QString bindingsToString(const ShortcutBindingList& bindings, bool globalShortcutRegistered,
+                         const QString& globalShortcutDescription, ShortcutTarget systemTarget)
 {
     QStringList keys;
 
@@ -43,11 +63,21 @@ QString bindingsToString(const ShortcutBindingList& bindings, bool globalShortcu
         if(binding.scope == ShortcutScope::Global) {
             text += u" ("_s + ShortcutsModel::tr("Global") + u')';
         }
+        if(binding.target == ShortcutTarget::NowPlaying) {
+            text += u" ("_s + ShortcutsModel::tr("Playing track") + u')';
+        }
         return text;
     });
 
     if(globalShortcutRegistered) {
-        keys.append(ShortcutsModel::tr("Global"));
+        //: %1 is the key combination of a shortcut
+        QString text = ShortcutsModel::tr("System: %1")
+                           .arg(globalShortcutDescription.isEmpty() ? ShortcutsModel::tr("None assigned")
+                                                                    : globalShortcutDescription);
+        if(systemTarget == ShortcutTarget::NowPlaying) {
+            text += u" ("_s + ShortcutsModel::tr("Playing track") + u')';
+        }
+        keys.append(text);
     }
 
     return keys.join(" | "_L1);
@@ -56,6 +86,21 @@ QString bindingsToString(const ShortcutBindingList& bindings, bool globalShortcu
 QString shortcutKey(const QKeySequence& shortcut)
 {
     return shortcut.toString(QKeySequence::PortableText);
+}
+
+bool bindingConflicts(const ShortcutBinding& binding, const Command* command, const ShortcutItem& other)
+{
+    const Id scope           = command->shortcutConflictScope();
+    const Id otherScope      = other.command()->shortcutConflictScope();
+    const bool scopesOverlap = !scope.isValid() || !otherScope.isValid() || scope == otherScope;
+
+    const auto otherBindings = other.bindings();
+    return std::ranges::any_of(otherBindings, [&binding, scopesOverlap](const ShortcutBinding& otherBinding) {
+        return binding.shortcut == otherBinding.shortcut
+            && (scopesOverlap || binding.scope == ShortcutScope::Global || otherBinding.scope == ShortcutScope::Global
+                || binding.target != ShortcutTarget::FocusedWidget
+                || otherBinding.target != ShortcutTarget::FocusedWidget);
+    });
 }
 
 QString conflictText(const Fooyin::ShortcutConflictList& conflicts)
@@ -103,24 +148,16 @@ ShortcutItem::ShortcutItem()
 ShortcutItem::ShortcutItem(QString title, Command* command, ShortcutItem* parent, bool systemManaged)
     : TreeStatusItem{parent}
     , m_title{std::move(title)}
+    , m_globalShortcutTarget{command ? command->globalShortcutTarget() : ShortcutTarget::FocusedWidget}
     , m_command{command}
 {
     if(command) {
         m_globalShortcutRegistered = systemManaged && command->isGlobalShortcutRegistered();
 
-        const auto shortcuts = command->shortcuts();
-        for(const auto& shortcut : shortcuts) {
-            m_bindings.emplace_back(shortcut, ShortcutScope::Application);
-        }
-
-        if(!systemManaged) {
-            const auto globalShortcuts = command->globalShortcuts();
-            for(const auto& shortcut : globalShortcuts) {
-                m_bindings.emplace_back(shortcut, ShortcutScope::Global);
-            }
-        }
-
-        m_shortcut = bindingsToString(m_bindings, m_globalShortcutRegistered);
+        m_bindings = commandBindings(command, systemManaged);
+        m_shortcut
+            = bindingsToString(m_bindings, m_globalShortcutRegistered,
+                               m_command ? m_command->globalShortcutDescription() : QString{}, m_globalShortcutTarget);
     }
 }
 
@@ -158,6 +195,11 @@ bool ShortcutItem::isGlobalShortcutRegistered() const
     return m_globalShortcutRegistered;
 }
 
+ShortcutTarget ShortcutItem::globalShortcutTarget() const
+{
+    return m_globalShortcutTarget;
+}
+
 Command* ShortcutItem::command() const
 {
     return m_command;
@@ -171,13 +213,23 @@ bool ShortcutItem::isCategory() const
 void ShortcutItem::updateBindings(const ShortcutBindingList& bindings)
 {
     m_bindings = bindings;
-    m_shortcut = bindingsToString(m_bindings, m_globalShortcutRegistered);
+    m_shortcut
+        = bindingsToString(m_bindings, m_globalShortcutRegistered,
+                           m_command ? m_command->globalShortcutDescription() : QString{}, m_globalShortcutTarget);
 }
 
 void ShortcutItem::updateGlobalShortcutRegistration(bool registered)
 {
     m_globalShortcutRegistered = registered;
-    m_shortcut                 = bindingsToString(m_bindings, m_globalShortcutRegistered);
+    m_shortcut
+        = bindingsToString(m_bindings, m_globalShortcutRegistered,
+                           m_command ? m_command->globalShortcutDescription() : QString{}, m_globalShortcutTarget);
+}
+
+void ShortcutItem::updateGlobalShortcutTarget(ShortcutTarget target)
+{
+    m_globalShortcutTarget = target;
+    updateBindings(m_bindings);
 }
 
 ShortcutsModel::ShortcutsModel(QObject* parent)
@@ -237,6 +289,17 @@ void ShortcutsModel::populate(ActionManager* actionManager)
             QObject::connect(command, &Command::shortcutChanged, this, synchronise, Qt::QueuedConnection));
         m_commandConnections.push_back(
             QObject::connect(command, &Command::globalShortcutsChanged, this, synchronise, Qt::QueuedConnection));
+        m_commandConnections.push_back(
+            QObject::connect(command, &Command::shortcutTargetsChanged, this, synchronise, Qt::QueuedConnection));
+        m_commandConnections.push_back(QObject::connect(
+            command, &Command::globalShortcutDescriptionChanged, this,
+            [this, commandGuard] {
+                if(auto* item = itemForCommand(commandGuard)) {
+                    item->updateBindings(item->bindings());
+                    emitDataChanged({commandGuard->id()});
+                }
+            },
+            Qt::QueuedConnection));
         m_commandConnections.push_back(QObject::connect(command, &Command::globalShortcutRegistrationChanged, this,
                                                         synchronise, Qt::QueuedConnection));
     }
@@ -286,6 +349,15 @@ void ShortcutsModel::globalShortcutRegistrationChanged(Command* command, bool re
     emitDataChanged({command->id()});
 }
 
+void ShortcutsModel::globalShortcutTargetChanged(Command* command, ShortcutTarget target)
+{
+    if(auto* item = itemForCommand(command); item && item->globalShortcutTarget() != target) {
+        item->updateGlobalShortcutTarget(target);
+        item->setStatus(ShortcutItem::Changed);
+        emitDataChanged({command->id()});
+    }
+}
+
 void ShortcutsModel::processQueue()
 {
     IdSet changedIds;
@@ -300,13 +372,22 @@ void ShortcutsModel::processQueue()
                 ShortcutList appShortcuts;
                 ShortcutList globalShortcuts;
 
-                for(const auto& binding : shortcut.bindings()) {
-                    auto& destination = binding.scope == ShortcutScope::Global ? globalShortcuts : appShortcuts;
-                    destination.append(binding.shortcut);
+                const auto bindings = shortcut.bindings();
+
+                for(const auto& binding : bindings) {
+                    if(binding.scope == ShortcutScope::Application) {
+                        appShortcuts.append(binding.shortcut);
+                        command->setShortcutTarget(binding.shortcut, binding.target);
+                    }
+                    else {
+                        globalShortcuts.append(binding.shortcut);
+                        command->setGlobalShortcutTarget(binding.target);
+                    }
                 }
 
                 command->setShortcut(appShortcuts);
                 if(m_systemManaged) {
+                    command->setGlobalShortcutTarget(shortcut.globalShortcutTarget());
                     command->setGlobalShortcutRegistered(shortcut.isGlobalShortcutRegistered());
                 }
                 else {
@@ -336,6 +417,7 @@ void ShortcutsModel::reassignConflicts(Command* command)
     IdSet changedIds{command->id()};
     const auto previousConflicts{m_conflicts};
     const auto conflictsForCommand = m_conflicts.at(command->id());
+    const auto& commandItem        = m_nodes.at(command->id());
 
     for(const auto& conflict : conflictsForCommand) {
         auto* item = itemForCommand(m_nodes.at(conflict.otherCommandId).command());
@@ -344,7 +426,9 @@ void ShortcutsModel::reassignConflicts(Command* command)
         }
 
         ShortcutBindingList bindings = item->bindings();
-        std::erase_if(bindings, [&conflict](const auto& binding) { return binding.shortcut == conflict.shortcut; });
+        std::erase_if(bindings, [&conflict, item, &commandItem](const auto& binding) {
+            return binding.shortcut == conflict.shortcut && bindingConflicts(binding, item->command(), commandItem);
+        });
         item->updateBindings(bindings);
         item->setStatus(ShortcutItem::Changed);
         changedIds.emplace(conflict.otherCommandId);
@@ -372,20 +456,7 @@ ShortcutBindingList ShortcutsModel::bindings(Command* command) const
         return {};
     }
 
-    ShortcutBindingList result;
-
-    const auto shortcuts = command->shortcuts();
-    for(const auto& shortcut : shortcuts) {
-        result.emplace_back(shortcut, ShortcutScope::Application);
-    }
-    if(!m_systemManaged) {
-        const auto globalShortcuts = command->globalShortcuts();
-        for(const auto& shortcut : globalShortcuts) {
-            result.emplace_back(shortcut, ShortcutScope::Global);
-        }
-    }
-
-    return result;
+    return commandBindings(command, m_systemManaged);
 }
 
 bool ShortcutsModel::isGlobalShortcutRegistered(Command* command) const
@@ -394,6 +465,14 @@ bool ShortcutsModel::isGlobalShortcutRegistered(Command* command) const
         return item->isGlobalShortcutRegistered();
     }
     return command && command->isGlobalShortcutRegistered();
+}
+
+ShortcutTarget ShortcutsModel::globalShortcutTarget(Command* command) const
+{
+    if(const auto* item = itemForCommand(command)) {
+        return item->globalShortcutTarget();
+    }
+    return command ? command->globalShortcutTarget() : ShortcutTarget::FocusedWidget;
 }
 
 ShortcutConflictList ShortcutsModel::conflicts(Command* command) const
@@ -422,7 +501,15 @@ QString ShortcutsModel::firstConflictError() const
                  + u"\n\n%1"_s.arg(item.command()->description());
         }
 
+        if(m_systemManaged && item.isGlobalShortcutRegistered()
+           && !item.command()->supportsShortcutTarget(item.globalShortcutTarget())) {
+            return tr("%1 does not support the selected shortcut target.").arg(item.command()->description());
+        }
+
         for(const auto& binding : bindings) {
+            if(!item.command()->supportsShortcutTarget(binding.target)) {
+                return tr("%1 does not support the selected shortcut target.").arg(item.command()->description());
+            }
             if(binding.scope != ShortcutScope::Global) {
                 continue;
             }
@@ -519,7 +606,13 @@ QVariant ShortcutsModel::data(const QModelIndex& index, int role) const
             break;
         case Qt::ToolTipRole:
             if(item->command()) {
-                return conflictDescription(item->command());
+                QString conflict = conflictDescription(item->command());
+                if(!conflict.isEmpty()) {
+                    return conflict;
+                }
+                if(const auto* action = item->command()->action()) {
+                    return action->statusTip();
+                }
             }
             break;
         case ShortcutItem::IsCategory:
@@ -561,24 +654,19 @@ void ShortcutsModel::synchroniseBindings(Command* command)
         return;
     }
 
-    ShortcutBindingList bindings;
-    for(const auto& shortcut : command->shortcuts()) {
-        bindings.emplace_back(shortcut, ShortcutScope::Application);
-    }
-    if(!m_systemManaged) {
-        for(const auto& shortcut : command->globalShortcuts()) {
-            bindings.emplace_back(shortcut, ShortcutScope::Global);
-        }
-    }
+    const auto bindings = commandBindings(command, m_systemManaged);
 
     const bool globalShortcutRegistered = m_systemManaged && command->isGlobalShortcutRegistered();
-    if(item->bindings() == bindings && item->isGlobalShortcutRegistered() == globalShortcutRegistered) {
+    if(item->bindings() == bindings && item->isGlobalShortcutRegistered() == globalShortcutRegistered
+       && item->globalShortcutTarget() == command->globalShortcutTarget()) {
+        Q_EMIT bindingsSynchronised(command);
         return;
     }
 
     const auto previousConflicts = m_conflicts;
     item->updateBindings(bindings);
     item->updateGlobalShortcutRegistration(globalShortcutRegistered);
+    item->updateGlobalShortcutTarget(command->globalShortcutTarget());
     rebuildConflicts();
 
     IdSet changedIds{command->id()};
@@ -623,7 +711,8 @@ void ShortcutsModel::rebuildConflicts()
         }
 
         for(const Id& commandId : commands) {
-            auto& commandConflicts = conflicts[commandId];
+            const auto& item    = m_nodes.at(commandId);
+            const auto bindings = item.bindings();
             for(const Id& otherCommandId : commands) {
                 if(otherCommandId == commandId) {
                     continue;
@@ -634,9 +723,17 @@ void ShortcutsModel::rebuildConflicts()
                     continue;
                 }
 
-                commandConflicts.push_back({.shortcut                = shortcutsByKey.at(key),
-                                            .otherCommandId          = otherCommandId,
-                                            .otherCommandDescription = otherIt->second.command()->description()});
+                const auto& shortcut = shortcutsByKey.at(key);
+                if(!std::ranges::any_of(bindings, [&item, &otherIt, &shortcut](const auto& binding) {
+                       return binding.shortcut == shortcut
+                           && bindingConflicts(binding, item.command(), otherIt->second);
+                   })) {
+                    continue;
+                }
+
+                conflicts[commandId].push_back({.shortcut                = shortcut,
+                                                .otherCommandId          = otherCommandId,
+                                                .otherCommandDescription = otherIt->second.command()->description()});
             }
         }
     }

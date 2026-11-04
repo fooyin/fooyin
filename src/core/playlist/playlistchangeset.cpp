@@ -109,8 +109,8 @@ std::optional<PlaylistChangeset> buildPlaylistChangeset(const PlaylistTrackList&
 
         retainedTrackEntries.emplace_back(oldTrack.entryId);
 
-        if(!oldTrack.track.sameDataAs(newTracks.at(static_cast<size_t>(newIt->second)).track)
-           || updatedTrackEntries.contains(oldTrack.entryId)) {
+        if(updatedTrackEntries.contains(oldTrack.entryId)
+           || !oldTrack.track.sameDataAs(newTracks.at(static_cast<size_t>(newIt->second)).track)) {
             result.updatedEntries.emplace_back(oldTrack.entryId);
         }
     }

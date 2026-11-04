@@ -34,9 +34,10 @@ public:
 
     void closeThread() override;
 
-    void calculatePerTrack(const TrackList& tracks, bool truePeak) override;
-    void calculateAsAlbum(const TrackList& tracks, bool truePeak) override;
-    void calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak) override;
+    void calculatePerTrack(const TrackList& tracks, bool truePeak, std::stop_token token) override;
+    void calculateAsAlbum(const TrackList& tracks, bool truePeak, std::stop_token token) override;
+    void calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak,
+                              std::stop_token token) override;
 
 private:
     std::unique_ptr<FFmpegReplayGainPrivate> p;

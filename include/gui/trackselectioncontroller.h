@@ -146,6 +146,9 @@ public:
     [[nodiscard]] std::optional<bool> selectionActionEnabled(const QAction* action,
                                                              const TrackSelection& selection) const;
 
+    //! Supplies target-specific availability for actions. An empty validator removes the registration.
+    void setSelectionActionValidator(QAction* action, const std::function<bool(const TrackSelection&)>& validator);
+
     void changeSelectedTracks(WidgetContext* context, const TrackSelection& selection);
     void changePlaybackOnSend(WidgetContext* context, bool enabled);
 

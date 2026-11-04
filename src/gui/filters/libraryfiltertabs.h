@@ -56,6 +56,7 @@ public:
     int addNewTab(const QString& name, const QIcon& icon);
 
     [[nodiscard]] bool canAddWidget() const override;
+    [[nodiscard]] bool canInsertWidget(int index) const override;
     [[nodiscard]] bool canMoveWidget(int index, int newIndex) const override;
     [[nodiscard]] int widgetIndex(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtId(const Id& id) const override;
@@ -67,9 +68,14 @@ public:
 
     int addWidget(FyWidget* widget) override;
     void insertWidget(int index, FyWidget* widget) override;
-    void removeWidget(int index) override;
-    void replaceWidget(int index, FyWidget* newWidget) override;
     void moveWidget(int index, int newIndex) override;
+    FyWidget* takeWidget(int index) override;
+
+    [[nodiscard]] QJsonObject saveEditingState() const override;
+    void restoreEditingState(const QJsonObject& state) override;
+
+protected:
+    FyWidget* exchangeWidgetImpl(int index, FyWidget* newWidget) override;
 
 private:
     void filterChanged(const LibraryFilter& filter);

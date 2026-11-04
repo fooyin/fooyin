@@ -1,0 +1,58 @@
+{
+    "Name": "Browser",
+    "Widgets": [
+        {
+            "SplitterVertical": {
+                "Locked": [
+                    true,
+                    false,
+                    true
+                ],
+                "State": "AAAA/wAAAAEAAAADAAAAFwAAA6YAAAAWAP////8BAAAAAgA=",
+                "Widgets": [
+                    {
+                        "SplitterHorizontal": {
+                            "Locked": [
+                                true,
+                                false,
+                                false,
+                                false
+                            ],
+                            "State": "AAAA/wAAAAEAAAAEAAAAcgAABRoAAAA2AAAAGAD/////AQAAAAEA",
+                            "Widgets": [
+                                {
+                                    "PlayerControls": {}
+                                },
+                                {
+                                    "SeekBar": {}
+                                },
+                                {
+                                    "PlaylistControls": {}
+                                },
+                                {
+                                    "VolumeControls": {}
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "SplitterHorizontal": {
+                            "State": "AAAA/wAAAAEAAAACAAACeAAAAnoA/////wEAAAABAA==",
+                            "Widgets": [
+                                {
+                                    "DirectoryBrowser": {}
+                                },
+                                {
+                                    "ArtworkPanel": {}
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "StatusBar": {}
+                    }
+                ]
+            }
+        }
+    ]
+}

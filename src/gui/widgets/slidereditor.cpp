@@ -104,6 +104,11 @@ void SliderEditor::setSingleStep(int step)
     m_slider->setTickInterval(step);
 }
 
+void SliderEditor::setPageStep(int step)
+{
+    m_slider->setPageStep(step);
+}
+
 void SliderEditor::setTicksVisible(bool visible)
 {
     m_slider->setTickPosition(visible ? QSlider::TicksBelow : QSlider::NoTicks);

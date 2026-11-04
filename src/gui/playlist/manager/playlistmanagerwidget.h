@@ -23,6 +23,8 @@
 
 #include <QPersistentModelIndex>
 
+#include <functional>
+
 class QCloseEvent;
 class QPoint;
 class QAbstractItemModel;
@@ -64,6 +66,8 @@ public:
 
 Q_SIGNALS:
     void savePlaylistRequested(const Fooyin::UId& playlistId);
+    void newAutoPlaylistRequested(std::function<void(Fooyin::Playlist*)> onFinished = {});
+    void editAutoPlaylistRequested(const Fooyin::UId& playlistId);
 
 protected:
     void showEvent(QShowEvent* event) override;
@@ -80,7 +84,7 @@ private:
     [[nodiscard]] Playlist* actionPlaylist() const;
 
     void activatePlaylist(const QModelIndex& proxyIndex) const;
-    void editAutoPlaylist(Playlist* playlist) const;
+    void editAutoPlaylist(Playlist* playlist);
     void removePlaylist(const Playlist* playlist);
     void activateCurrentPlaylist() const;
     void editCurrentAutoPlaylist();

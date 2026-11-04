@@ -19,6 +19,7 @@
 
 #include "listenbrainzservice.h"
 
+#include <core/accountstore.h>
 #include <core/coresettings.h>
 #include <core/network/networkaccessmanager.h>
 #include <core/network/networkutils.h>
@@ -156,14 +157,18 @@ bool ListenBrainzService::supportsLoved() const
 void ListenBrainzService::saveSession()
 {
     FySettings settings;
-    settings.beginGroup(isCustom() ? u"Scrobbler-"_s + name() : name());
+    settings.beginGroup(accountName());
 
     settings.setValue("IsEnabled", details().isEnabled);
     settings.setValue("SubmitLoved", details().submitLoved);
+
+    AccountStore::Values account{{u"UserToken"_s, details().token}};
     if(isCustom()) {
-        settings.setValue("URL", details().url.toDisplayString());
+        account.emplace(u"URL"_s, details().url.toString(QUrl::FullyEncoded));
     }
-    settings.setValue("UserToken", details().token);
+    if(!accountStore().save(accountName(), account)) {
+        qCWarning(SCROBBLER) << "Unable to persist account:" << name();
+    }
 
     settings.endGroup();
 }
@@ -171,17 +176,22 @@ void ListenBrainzService::saveSession()
 void ListenBrainzService::loadSession()
 {
     FySettings settings;
-    settings.beginGroup(isCustom() ? u"Scrobbler-"_s + name() : name());
+    settings.beginGroup(accountName());
 
     if(settings.contains("IsEnabled")) {
         detailsRef().isEnabled = settings.value("IsEnabled").toBool();
     }
     detailsRef().submitLoved = settings.value("SubmitLoved", false).toBool();
-    if(settings.contains("URL")) {
-        detailsRef().url = settings.value("URL").toString();
+
+    std::vector fields{u"UserToken"_s};
+    if(isCustom()) {
+        fields.emplace_back(u"URL"_s);
     }
-    if(settings.contains("UserToken")) {
-        detailsRef().token = settings.value("UserToken").toString();
+    if(const auto account = accountStore().load(accountName(), fields); account && !account->empty()) {
+        detailsRef().token = account->at(u"UserToken"_s);
+        if(isCustom()) {
+            detailsRef().url = account->at(u"URL"_s);
+        }
     }
 
     settings.endGroup();
@@ -190,11 +200,17 @@ void ListenBrainzService::loadSession()
 void ListenBrainzService::deleteSession()
 {
     FySettings settings;
-    settings.beginGroup(isCustom() ? u"Scrobbler-"_s + name() : name());
+    settings.beginGroup(accountName());
 
     settings.remove("IsEnabled");
-    settings.remove("URL");
-    settings.remove("UserToken");
+
+    std::vector fields{u"UserToken"_s};
+    if(isCustom()) {
+        fields.emplace_back(u"URL"_s);
+    }
+    if(!accountStore().remove(accountName(), fields)) {
+        qCWarning(SCROBBLER) << "Unable to delete account:" << name();
+    }
 
     settings.endGroup();
 }

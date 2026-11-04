@@ -57,12 +57,15 @@ RGScanner::RGScanner(const std::shared_ptr<AudioLoader>& audioLoader, QObject* p
 
     QObject::connect(m_worker.get(), &RGWorker::startingCalculation, this, &RGScanner::startingCalculation);
     QObject::connect(m_worker.get(), &RGWorker::calculationFinished, this, &RGScanner::calculationFinished);
+    QObject::connect(m_worker.get(), &RGWorker::closed, &m_scanThread, &QThread::quit, Qt::DirectConnection);
     QObject::connect(m_worker.get(), &RGWorker::closed, this, &RGScanner::deleteLater);
 }
 
 RGScanner::~RGScanner()
 {
-    m_scanThread.quit();
+    if(!m_worker->closing()) {
+        m_worker->closeThread();
+    }
     m_scanThread.wait();
 }
 
@@ -84,27 +87,27 @@ QStringList RGScanner::scannerNames()
 
 void RGScanner::calculatePerTrack(const TrackList& tracks)
 {
-    QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() {
+    QMetaObject::invokeMethod(m_worker.get(), [this, tracks, token = m_worker->prepareWork()]() {
         const FySettings settings;
-        m_worker->calculatePerTrack(tracks, settings.value(TruePeakSetting, false).toBool());
+        m_worker->calculatePerTrack(tracks, settings.value(TruePeakSetting, false).toBool(), token);
     });
 }
 
 void RGScanner::calculateAsAlbum(const TrackList& tracks)
 {
-    QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() {
+    QMetaObject::invokeMethod(m_worker.get(), [this, tracks, token = m_worker->prepareWork()]() {
         const FySettings settings;
-        m_worker->calculateAsAlbum(tracks, settings.value(TruePeakSetting, false).toBool());
+        m_worker->calculateAsAlbum(tracks, settings.value(TruePeakSetting, false).toBool(), token);
     });
 }
 
 void RGScanner::calculateByAlbumTags(const TrackList& tracks)
 {
-    QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() {
+    QMetaObject::invokeMethod(m_worker.get(), [this, tracks, token = m_worker->prepareWork()]() {
         const FySettings settings;
         m_worker->calculateByAlbumTags(
             tracks, settings.value(AlbumGroupScriptSetting, u"%albumartist% - %date% - %album%"_s).toString(),
-            settings.value(TruePeakSetting, false).toBool());
+            settings.value(TruePeakSetting, false).toBool(), token);
     });
 }
 } // namespace Fooyin::RGScanner

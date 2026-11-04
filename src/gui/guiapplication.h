@@ -28,7 +28,7 @@
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <gui/coverprovider.h>
-#include <gui/layoutprovider.h>
+#include <gui/layout/layoutprovider.h>
 #include <gui/playlist/playlistinteractor.h>
 #include <gui/plugins/guiplugincontext.h>
 #include <gui/trackselectioncontroller.h>
@@ -38,6 +38,7 @@
 #include <QObject>
 #include <QPointer>
 
+#include <functional>
 #include <memory>
 #include <set>
 #include <vector>
@@ -64,6 +65,7 @@ class MainWindow;
 class MetadataLookupDialog;
 enum class LookupMode : uint8_t;
 class Playlist;
+class AutoPlaylistDialog;
 class PlaylistController;
 class PlaylistManagerWidget;
 class PlaybackMenu;
@@ -71,6 +73,7 @@ class PropertiesDialog;
 class QueueViewer;
 class SearchController;
 class ScriptCommandHandler;
+class ScriptSubscription;
 class SystemTrayIcon;
 class ThemeRegistry;
 class VerificationController;
@@ -105,6 +108,9 @@ public:
     void toggleMute() const;
 
     void createNewLayout();
+
+    void createNewAutoPlaylist(std::function<void(Playlist*)> onFinished = {});
+    void editAutoPlaylist(const UId& playlistId);
 
     void searchForArtwork(const TrackList& tracks, Track::Cover type, bool quick);
     void attachArtwork(const TrackList& tracks, Track::Cover type, const QString& filepath);
@@ -197,7 +203,7 @@ private:
     void showMetadataLookupById();
 
     void createNewPlaylist() const;
-    void createNewAutoPlaylist();
+    AutoPlaylistDialog* showAutoPlaylistDialog(Playlist* playlist = nullptr);
 
     void addFiles();
     void addFolders();
@@ -273,6 +279,7 @@ private:
     QPointer<MetadataLookupDialog> m_metadataLookupDialog;
 
     ScriptParser m_scriptParser;
+    ScriptSubscription* m_titleSubscription;
     CoverProvider m_coverProvider;
 
     QBasicTimer m_themeUpdateTimer;

@@ -23,6 +23,7 @@
 
 #include <QDialog>
 #include <QPointer>
+#include <QUrl>
 
 #include <functional>
 #include <optional>
@@ -119,6 +120,7 @@ private:
     SettingsManager* m_settings;
     Purpose m_purpose;
     QString m_discId;
+    QUrl m_releaseUrl;
 
     std::unique_ptr<MetadataLookupRegistry> m_registry;
     MetadataLookupSource* m_client;
@@ -150,6 +152,7 @@ private:
     QLabel* m_releaseType;
     QLabel* m_releaseStatus;
     QLabel* m_releaseDisambiguation;
+    QPushButton* m_openRelease;
     QTableView* m_resultsView;
     QTableView* m_retrievedView;
     QTableView* m_matchView;

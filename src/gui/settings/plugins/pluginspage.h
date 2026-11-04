@@ -24,6 +24,7 @@
 namespace Fooyin {
 class PluginManager;
 class PluginSettingsRegistry;
+class PluginsModel;
 class SettingsManager;
 
 class PluginPage : public SettingsPage
@@ -33,5 +34,11 @@ class PluginPage : public SettingsPage
 public:
     PluginPage(PluginManager* pluginManager, PluginSettingsRegistry* pluginSettingsRegistry, SettingsManager* settings,
                QObject* parent = nullptr);
+
+    void installPlugin(const QString& filepath, QWidget* parent, bool promptRestart = true);
+
+private:
+    SettingsManager* m_settings;
+    PluginsModel* m_model;
 };
 } // namespace Fooyin

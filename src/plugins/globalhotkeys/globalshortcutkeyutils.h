@@ -22,6 +22,7 @@
 #include <QKeySequence>
 
 namespace Fooyin::GlobalHotkeys {
-[[nodiscard]] QString xkbKeyName(Qt::Key key);
-[[nodiscard]] QString xdgShortcutTrigger(const QKeySequence& shortcut);
+QString xkbKeyName(Qt::Key key);
+QString xkbKeypadName(Qt::Key key);
+QString xdgShortcutTrigger(const QKeySequence& shortcut);
 } // namespace Fooyin::GlobalHotkeys

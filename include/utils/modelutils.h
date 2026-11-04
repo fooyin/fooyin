@@ -26,6 +26,7 @@
 #include <QStringList>
 
 #include <functional>
+#include <vector>
 
 class QTreeView;
 

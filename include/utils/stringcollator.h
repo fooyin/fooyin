@@ -21,6 +21,7 @@
 
 #include "fyutils_export.h"
 
+#include <QSortFilterProxyModel>
 #include <QString>
 
 namespace Fooyin {
@@ -42,5 +43,19 @@ public:
 
 private:
     std::unique_ptr<StringCollatorPrivate> p;
+};
+
+class FYUTILS_EXPORT StringSortProxyModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
+
+public:
+    explicit StringSortProxyModel(QObject* parent = nullptr);
+
+protected:
+    [[nodiscard]] bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
+
+private:
+    mutable StringCollator m_collator;
 };
 } // namespace Fooyin

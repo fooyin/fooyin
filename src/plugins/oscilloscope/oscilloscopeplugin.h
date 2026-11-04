@@ -41,5 +41,7 @@ private:
     PlayerController* m_playerController;
     EngineController* m_engine;
     SettingsManager* m_settings;
+    CoverRepository* m_coverRepository;
+    TrackSelectionController* m_trackSelection;
 };
 } // namespace Fooyin::Oscilloscope

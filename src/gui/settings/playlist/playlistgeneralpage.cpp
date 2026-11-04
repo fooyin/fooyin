@@ -24,11 +24,12 @@
 #include <core/coresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/fontbutton.h>
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
 
 #include <QApplication>
 #include <QCheckBox>
@@ -41,16 +42,6 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
-namespace {
-QColor defaultPlayingRowColour()
-{
-    QColor colour = QApplication::palette().color(QPalette::Inactive, QPalette::Highlight);
-    colour        = Utils::isDarkMode() ? colour.lighter(150) : colour.darker(150);
-    colour.setAlpha(110);
-    return colour;
-}
-} // namespace
-
 class PlaylistGeneralPageWidget : public SettingsPageWidget
 {
     Q_OBJECT
@@ -106,7 +97,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     int row{0};
     behaviourLayout->addWidget(preloadCountLabel, row, 0);
     behaviourLayout->addWidget(m_preloadCount, row++, 1);
-    behaviourLayout->addWidget(new QLabel(u"🛈 "_s + tr("Set to '0' to disable preloading."), this), row++, 0, 1, 2);
+    behaviourLayout->addWidget(new HintLabel(tr("Set to ‘0’ to disable preloading."), this), row++, 0, 1, 2);
     behaviourLayout->addWidget(m_inlineTagEditing, row++, 0, 1, 2);
     behaviourLayout->setColumnStretch(behaviourLayout->columnCount(), 1);
 
@@ -162,7 +153,7 @@ void PlaylistGeneralPageWidget::load()
     m_inlineTagEditing->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistInlineTagEditing>());
     const QVariant playingRowColour = m_settings->value<Settings::Gui::Internal::PlaylistPlayingRowColour>();
     m_playingRowColour->setChecked(!playingRowColour.isNull());
-    m_playingRowColour->setColour(playingRowColour.isNull() ? defaultPlayingRowColour()
+    m_playingRowColour->setColour(playingRowColour.isNull() ? Gui::defaultPlayingRowColour()
                                                             : playingRowColour.value<QColor>());
     const QVariant playingRowFont = m_settings->value<Settings::Gui::Internal::PlaylistPlayingRowFont>();
     m_playingRowFont->setChecked(!playingRowFont.isNull());
@@ -173,7 +164,7 @@ void PlaylistGeneralPageWidget::load()
     m_preventDuplicates->setChecked(m_settings->value<Settings::Core::PlaylistPreventDuplicates>());
     m_integratedSearch->setChecked(m_settings->value<Settings::Gui::PlaylistIntegratedSearch>());
     m_searchMode->setCurrentIndex(m_searchMode->findData(m_settings->value<Settings::Gui::PlaylistSearchMode>()));
-    m_searchScript->setText(m_settings->value<Settings::Gui::PlaylistSearchScript>());
+    m_searchScript->setScript(m_settings->value<Settings::Gui::PlaylistSearchScript>());
 }
 
 void PlaylistGeneralPageWidget::apply()

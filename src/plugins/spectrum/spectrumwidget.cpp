@@ -23,7 +23,9 @@
 #include "spectrumconfigwidget.h"
 #include "spectrumview.h"
 
+#include <gui/coverprovider.h>
 #include <gui/guisettings.h>
+#include <gui/widgets/backgroundimagesource.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
@@ -79,6 +81,7 @@ constexpr auto FillSpectrumKey        = u"Spectrum/FillSpectrum";
 constexpr auto InterpolateKey         = u"Spectrum/Interpolate";
 constexpr auto AxisFontKey            = u"Spectrum/AxisFont";
 constexpr auto ColoursKey             = u"Spectrum/Colours";
+constexpr auto BackgroundKey          = u"Spectrum/Background";
 
 namespace Fooyin::Spectrum {
 namespace {
@@ -97,9 +100,13 @@ int normaliseFftSize(int fftSize)
 }
 } // namespace
 
-SpectrumWidget::SpectrumWidget(EngineController* engine, SettingsManager* settings, QWidget* parent)
+SpectrumWidget::SpectrumWidget(EngineController* engine, PlayerController* playerController,
+                               CoverRepository* coverRepository, TrackSelectionController* selectionController,
+                               SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_settings{settings}
+    , m_backgroundSource{new BackgroundImageSource(new CoverProvider(coverRepository, this), playerController,
+                                                   selectionController, this)}
     , m_view{new SpectrumView(engine, this)}
 {
     auto* layout = new QVBoxLayout(this);
@@ -107,6 +114,8 @@ SpectrumWidget::SpectrumWidget(EngineController* engine, SettingsManager* settin
     layout->addWidget(m_view);
 
     QObject::connect(m_view, &SpectrumView::contextMenuRequested, this, &SpectrumWidget::showContextMenu);
+    QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_view,
+                     &SpectrumView::setBackgroundPixmap);
 
     m_config = defaultConfig();
     applyConfig(m_config);
@@ -406,6 +415,7 @@ SpectrumWidget::ConfigData SpectrumWidget::defaultConfig() const
     config.interpolate        = m_settings->fileValue(InterpolateKey, config.interpolate).toBool();
     config.axisFont           = m_settings->fileValue(AxisFontKey, config.axisFont).toString();
     config.colours            = m_settings->fileValue(ColoursKey, config.colours);
+    config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(BackgroundKey).toMap()));
 
     return config;
 }
@@ -418,6 +428,7 @@ const SpectrumWidget::ConfigData& SpectrumWidget::currentConfig() const
 void SpectrumWidget::saveDefaults(const ConfigData& config) const
 {
     auto validated{config};
+    validated.background.normalise();
     validated.bandCount      = std::clamp(validated.bandCount, MinBandCount, MaxBandCount);
     validated.barSpacing     = std::clamp(validated.barSpacing, MinBarSpacing, MaxBarSpacing);
     validated.barSections    = std::clamp(validated.barSections, MinBarSections, MaxBarSections);
@@ -492,6 +503,10 @@ void SpectrumWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(InterpolateKey, validated.interpolate);
     m_settings->fileSet(AxisFontKey, validated.axisFont);
     m_settings->fileSet(ColoursKey, validated.colours);
+
+    QJsonObject background;
+    validated.background.saveLayout(background);
+    m_settings->fileSet(BackgroundKey, background.toVariantMap());
 }
 
 void SpectrumWidget::clearSavedDefaults() const
@@ -538,11 +553,13 @@ void SpectrumWidget::clearSavedDefaults() const
     m_settings->fileRemove(InterpolateKey);
     m_settings->fileRemove(AxisFontKey);
     m_settings->fileRemove(ColoursKey);
+    m_settings->fileRemove(BackgroundKey);
 }
 
 void SpectrumWidget::applyConfig(const ConfigData& config)
 {
     auto validated{config};
+    validated.background.normalise();
     validated.bandCount      = std::clamp(validated.bandCount, MinBandCount, MaxBandCount);
     validated.barSpacing     = std::clamp(validated.barSpacing, MinBarSpacing, MaxBarSpacing);
     validated.barSections    = std::clamp(validated.barSections, MinBarSections, MaxBarSections);
@@ -576,7 +593,9 @@ void SpectrumWidget::applyConfig(const ConfigData& config)
         validated.colours = QVariant{};
     }
 
-    m_config = validated;
+    m_config = std::move(validated);
+    m_view->setBackgroundConfig(m_config.background);
+    m_backgroundSource->setConfig(m_config.background);
     m_view->setConfig(m_config);
 
     Q_EMIT configChanged();
@@ -606,123 +625,54 @@ SpectrumWidget::ConfigData SpectrumWidget::configFromLayout(const QJsonObject& l
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("BandCount"_L1)) {
-        config.bandCount = layout.value("BandCount"_L1).toInt();
-    }
-    if(layout.contains("BarSpacing"_L1)) {
-        config.barSpacing = layout.value("BarSpacing"_L1).toInt();
-    }
-    if(layout.contains("BarSections"_L1)) {
-        config.barSections = layout.value("BarSections"_L1).toInt();
-    }
-    if(layout.contains("SectionSpacing"_L1)) {
-        config.sectionSpacing = layout.value("SectionSpacing"_L1).toInt();
-    }
-    if(layout.contains("MinFrequencyHz"_L1)) {
-        config.minFrequencyHz = layout.value("MinFrequencyHz"_L1).toInt();
-    }
-    if(layout.contains("MaxFrequencyHz"_L1)) {
-        config.maxFrequencyHz = layout.value("MaxFrequencyHz"_L1).toInt();
-    }
-    if(layout.contains("MinNote"_L1)) {
-        config.minNote = layout.value("MinNote"_L1).toInt();
-    }
-    if(layout.contains("MaxNote"_L1)) {
-        config.maxNote = layout.value("MaxNote"_L1).toInt();
-    }
-    if(layout.contains("PitchHz"_L1)) {
-        config.pitchHz = layout.value("PitchHz"_L1).toInt();
-    }
-    if(layout.contains("Transpose"_L1)) {
-        config.transpose = layout.value("Transpose"_L1).toInt();
-    }
-    if(layout.contains("AmplitudeMinDb"_L1)) {
-        config.amplitudeMinDb = layout.value("AmplitudeMinDb"_L1).toInt();
-    }
-    if(layout.contains("AmplitudeMaxDb"_L1)) {
-        config.amplitudeMaxDb = layout.value("AmplitudeMaxDb"_L1).toInt();
-    }
-    if(layout.contains("AmplitudesEnabled"_L1)) {
-        config.amplitudesEnabled = layout.value("AmplitudesEnabled"_L1).toBool();
-    }
-    if(layout.contains("AmplitudeHoldTimeMs"_L1)) {
-        config.amplitudeHoldTimeMs = layout.value("AmplitudeHoldTimeMs"_L1).toInt();
-    }
-    if(layout.contains("AmplitudeGravity"_L1)) {
-        config.amplitudeGravity = layout.value("AmplitudeGravity"_L1).toInt();
-    }
-    if(layout.contains("PeaksEnabled"_L1)) {
-        config.peaksEnabled = layout.value("PeaksEnabled"_L1).toBool();
-    }
-    if(layout.contains("PeakHoldTimeMs"_L1)) {
-        config.peakHoldTimeMs = layout.value("PeakHoldTimeMs"_L1).toInt();
-    }
-    if(layout.contains("PeakGravity"_L1)) {
-        config.peakGravity = layout.value("PeakGravity"_L1).toInt();
-    }
-    if(layout.contains("UpdateFps"_L1)) {
-        config.updateFps = layout.value("UpdateFps"_L1).toInt();
-    }
-    if(layout.contains("FftSize"_L1)) {
-        config.fftSize = layout.value("FftSize"_L1).toInt();
-    }
-    if(layout.contains("FftDurationMs"_L1)) {
-        config.fftDurationMs = layout.value("FftDurationMs"_L1).toInt();
-    }
+    config.bandCount           = layout.value("BandCount"_L1).toInt(config.bandCount);
+    config.barSpacing          = layout.value("BarSpacing"_L1).toInt(config.barSpacing);
+    config.barSections         = layout.value("BarSections"_L1).toInt(config.barSections);
+    config.sectionSpacing      = layout.value("SectionSpacing"_L1).toInt(config.sectionSpacing);
+    config.minFrequencyHz      = layout.value("MinFrequencyHz"_L1).toInt(config.minFrequencyHz);
+    config.maxFrequencyHz      = layout.value("MaxFrequencyHz"_L1).toInt(config.maxFrequencyHz);
+    config.minNote             = layout.value("MinNote"_L1).toInt(config.minNote);
+    config.maxNote             = layout.value("MaxNote"_L1).toInt(config.maxNote);
+    config.pitchHz             = layout.value("PitchHz"_L1).toInt(config.pitchHz);
+    config.transpose           = layout.value("Transpose"_L1).toInt(config.transpose);
+    config.amplitudeMinDb      = layout.value("AmplitudeMinDb"_L1).toInt(config.amplitudeMinDb);
+    config.amplitudeMaxDb      = layout.value("AmplitudeMaxDb"_L1).toInt(config.amplitudeMaxDb);
+    config.amplitudesEnabled   = layout.value("AmplitudesEnabled"_L1).toBool(config.amplitudesEnabled);
+    config.amplitudeHoldTimeMs = layout.value("AmplitudeHoldTimeMs"_L1).toInt(config.amplitudeHoldTimeMs);
+    config.amplitudeGravity    = layout.value("AmplitudeGravity"_L1).toInt(config.amplitudeGravity);
+    config.peaksEnabled        = layout.value("PeaksEnabled"_L1).toBool(config.peaksEnabled);
+    config.peakHoldTimeMs      = layout.value("PeakHoldTimeMs"_L1).toInt(config.peakHoldTimeMs);
+    config.peakGravity         = layout.value("PeakGravity"_L1).toInt(config.peakGravity);
+    config.updateFps           = layout.value("UpdateFps"_L1).toInt(config.updateFps);
+    config.fftSize             = layout.value("FftSize"_L1).toInt(config.fftSize);
+    config.fftDurationMs       = layout.value("FftDurationMs"_L1).toInt(config.fftDurationMs);
+
     if(layout.contains("FftSizingMode"_L1)) {
         config.fftSizingMode = static_cast<FftSizingMode>(layout.value("FftSizingMode"_L1).toInt());
     }
     else if(layout.contains("FftSize"_L1)) {
         config.fftSizingMode = FftSizingMode::Samples;
     }
-    if(layout.contains("WindowFunction"_L1)) {
-        config.windowFunction = static_cast<WindowFunction>(layout.value("WindowFunction"_L1).toInt());
-    }
-    if(layout.contains("GradientOrientation"_L1)) {
-        config.gradientOrientation = static_cast<GradientOrientation>(layout.value("GradientOrientation"_L1).toInt());
-    }
-    if(layout.contains("LabelMode"_L1)) {
-        config.labelMode = static_cast<LabelMode>(layout.value("LabelMode"_L1).toInt());
-    }
-    if(layout.contains("DrawStyle"_L1)) {
-        config.drawStyle = static_cast<DrawStyle>(layout.value("DrawStyle"_L1).toInt());
-    }
-    if(layout.contains("ShowTopLabels"_L1)) {
-        config.showTopLabels = layout.value("ShowTopLabels"_L1).toBool();
-    }
-    if(layout.contains("ShowBottomLabels"_L1)) {
-        config.showBottomLabels = layout.value("ShowBottomLabels"_L1).toBool();
-    }
-    if(layout.contains("ShowLeftLabels"_L1)) {
-        config.showLeftLabels = layout.value("ShowLeftLabels"_L1).toBool();
-    }
-    if(layout.contains("ShowRightLabels"_L1)) {
-        config.showRightLabels = layout.value("ShowRightLabels"_L1).toBool();
-    }
-    if(layout.contains("ShowHorizontalGrid"_L1)) {
-        config.showHorizontalGrid = layout.value("ShowHorizontalGrid"_L1).toBool();
-    }
-    if(layout.contains("ShowVerticalGrid"_L1)) {
-        config.showVerticalGrid = layout.value("ShowVerticalGrid"_L1).toBool();
-    }
-    if(layout.contains("ShowWhiteKeys"_L1)) {
-        config.showWhiteKeys = layout.value("ShowWhiteKeys"_L1).toBool();
-    }
-    if(layout.contains("ShowBlackKeys"_L1)) {
-        config.showBlackKeys = layout.value("ShowBlackKeys"_L1).toBool();
-    }
-    if(layout.contains("ShowTooltip"_L1)) {
-        config.showTooltip = layout.value("ShowTooltip"_L1).toBool();
-    }
-    if(layout.contains("FillSpectrum"_L1)) {
-        config.fillSpectrum = layout.value("FillSpectrum"_L1).toBool();
-    }
-    if(layout.contains("Interpolate"_L1)) {
-        config.interpolate = layout.value("Interpolate"_L1).toBool();
-    }
-    if(layout.contains("AxisFont"_L1)) {
-        config.axisFont = layout.value("AxisFont"_L1).toString();
-    }
+
+    config.windowFunction
+        = static_cast<WindowFunction>(layout.value("WindowFunction"_L1).toInt(static_cast<int>(config.windowFunction)));
+    config.gradientOrientation = static_cast<GradientOrientation>(
+        layout.value("GradientOrientation"_L1).toInt(static_cast<int>(config.gradientOrientation)));
+    config.labelMode = static_cast<LabelMode>(layout.value("LabelMode"_L1).toInt(static_cast<int>(config.labelMode)));
+    config.drawStyle = static_cast<DrawStyle>(layout.value("DrawStyle"_L1).toInt(static_cast<int>(config.drawStyle)));
+    config.showTopLabels      = layout.value("ShowTopLabels"_L1).toBool(config.showTopLabels);
+    config.showBottomLabels   = layout.value("ShowBottomLabels"_L1).toBool(config.showBottomLabels);
+    config.showLeftLabels     = layout.value("ShowLeftLabels"_L1).toBool(config.showLeftLabels);
+    config.showRightLabels    = layout.value("ShowRightLabels"_L1).toBool(config.showRightLabels);
+    config.showHorizontalGrid = layout.value("ShowHorizontalGrid"_L1).toBool(config.showHorizontalGrid);
+    config.showVerticalGrid   = layout.value("ShowVerticalGrid"_L1).toBool(config.showVerticalGrid);
+    config.showWhiteKeys      = layout.value("ShowWhiteKeys"_L1).toBool(config.showWhiteKeys);
+    config.showBlackKeys      = layout.value("ShowBlackKeys"_L1).toBool(config.showBlackKeys);
+    config.showTooltip        = layout.value("ShowTooltip"_L1).toBool(config.showTooltip);
+    config.fillSpectrum       = layout.value("FillSpectrum"_L1).toBool(config.fillSpectrum);
+    config.interpolate        = layout.value("Interpolate"_L1).toBool(config.interpolate);
+    config.axisFont           = layout.value("AxisFont"_L1).toString(config.axisFont);
+    config.background.loadLayout(layout.value("Background"_L1).toObject());
 
     if(layout.contains("UseCustomColours"_L1)) {
         if(layout.value("UseCustomColours"_L1).toBool()) {
@@ -824,6 +774,10 @@ void SpectrumWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& l
     layout["FillSpectrum"_L1]        = config.fillSpectrum;
     layout["Interpolate"_L1]         = config.interpolate;
     layout["AxisFont"_L1]            = config.axisFont;
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    layout["Background"_L1] = background;
 
     const bool customColours      = config.colours.isValid() && config.colours.canConvert<Colours>()
                                  && !config.colours.value<Colours>().isEmpty();

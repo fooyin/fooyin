@@ -7,12 +7,14 @@ endif()
 
 create_fooyin_plugin_internal(
     flac
-    DEPENDS Fooyin::Core
-            FLAC::FLAC
-    SOURCES flacdecoder.cpp
-            flacdecoder.h
-            flacencoder.cpp
-            flacencoder.h
-            flacplugin.cpp
-            flacplugin.h
+    DEPENDS #
+        Fooyin::Core
+        FLAC::FLAC
+    SOURCES #
+        flacdecoder.cpp
+        flacdecoder.h
+        flacencoder.cpp
+        flacencoder.h
+        flacplugin.cpp
+        flacplugin.h
 )

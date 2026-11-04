@@ -19,7 +19,7 @@
 
 #include <gui/widgetfilter.h>
 
-#include <gui/editablelayout.h>
+#include <gui/layout/editablelayout.h>
 #include <gui/widgets/overlaywidget.h>
 
 #include <QApplication>

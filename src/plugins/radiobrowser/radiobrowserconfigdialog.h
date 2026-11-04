@@ -27,7 +27,10 @@ class QCheckBox;
 class QComboBox;
 class QSpinBox;
 
-namespace Fooyin::RadioBrowser {
+namespace Fooyin {
+class BackgroundConfigWidget;
+
+namespace RadioBrowser {
 class RadioBrowserConfigDialog : public WidgetConfigDialog<RadioBrowserWidget, RadioBrowserWidget::ConfigData>
 {
     Q_OBJECT
@@ -55,10 +58,17 @@ private:
     QCheckBox* m_overrideRowHeight;
     QSpinBox* m_rowHeight;
     QSpinBox* m_iconSize;
+    QCheckBox* m_autoFitArtwork;
     QSpinBox* m_iconHorizontalGap;
     QSpinBox* m_iconVerticalGap;
     QCheckBox* m_useIconGapsForSideCaptions;
-    QSpinBox* m_iconItemBorder;
+    QSpinBox* m_iconLeftMargin;
+    QSpinBox* m_iconTopMargin;
+    QSpinBox* m_iconRightMargin;
+    QSpinBox* m_iconBottomMargin;
+    QSpinBox* m_iconCornerRadius;
     QCheckBox* m_uniformStationIcons;
+    BackgroundConfigWidget* m_background;
 };
-} // namespace Fooyin::RadioBrowser
+} // namespace RadioBrowser
+} // namespace Fooyin

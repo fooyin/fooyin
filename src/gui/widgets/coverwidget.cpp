@@ -407,15 +407,12 @@ CoverWidget::ConfigData CoverWidget::configFromLayout(const QJsonObject& layout)
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("CoverType"_L1)) {
-        config.coverType = static_cast<Track::Cover>(layout.value("CoverType"_L1).toInt());
-    }
-    if(layout.contains("CoverAlignment"_L1)) {
-        config.coverAlignment = static_cast<Qt::Alignment>(layout.value("CoverAlignment"_L1).toInt());
-    }
-    if(layout.contains("KeepAspectRatio"_L1)) {
-        config.keepAspectRatio = layout.value("KeepAspectRatio"_L1).toBool();
-    }
+    config.coverType
+        = static_cast<Track::Cover>(layout.value("CoverType"_L1).toInt(static_cast<int>(config.coverType)));
+    config.coverAlignment
+        = static_cast<Qt::Alignment>(layout.value("CoverAlignment"_L1).toInt(static_cast<int>(config.coverAlignment)));
+    config.keepAspectRatio = layout.value("KeepAspectRatio"_L1).toBool(config.keepAspectRatio);
+
     if(layout.contains("TrackPreference"_L1)) {
         config.trackPreference = static_cast<TrackDisplayPreference>(layout.value("TrackPreference"_L1).toInt());
     }
@@ -423,18 +420,13 @@ CoverWidget::ConfigData CoverWidget::configFromLayout(const QJsonObject& layout)
             && config.trackPreference == TrackDisplayPreference::PlayingTrack) {
         config.trackPreference = TrackDisplayPreference::PlayingTrackBlankWhenStopped;
     }
-    if(layout.contains("FadeCoverChanges"_L1)) {
-        config.fadeCoverChanges = layout.value("FadeCoverChanges"_L1).toBool();
-    }
-    if(layout.contains("FadeDurationMs"_L1)) {
-        config.fadeDurationMs = layout.value("FadeDurationMs"_L1).toInt();
-    }
-    if(layout.contains("DoubleClickAction"_L1)) {
-        config.doubleClickAction = static_cast<CoverAction>(layout.value("DoubleClickAction"_L1).toInt());
-    }
-    if(layout.contains("MiddleClickAction"_L1)) {
-        config.middleClickAction = static_cast<CoverAction>(layout.value("MiddleClickAction"_L1).toInt());
-    }
+
+    config.fadeCoverChanges  = layout.value("FadeCoverChanges"_L1).toBool(config.fadeCoverChanges);
+    config.fadeDurationMs    = layout.value("FadeDurationMs"_L1).toInt(config.fadeDurationMs);
+    config.doubleClickAction = static_cast<CoverAction>(
+        layout.value("DoubleClickAction"_L1).toInt(static_cast<int>(config.doubleClickAction)));
+    config.middleClickAction = static_cast<CoverAction>(
+        layout.value("MiddleClickAction"_L1).toInt(static_cast<int>(config.middleClickAction)));
 
     config.fadeDurationMs
         = std::clamp(config.fadeDurationMs, PixmapFadeController::MinDurationMs, PixmapFadeController::MaxDurationMs);

@@ -19,6 +19,7 @@
 
 #include "playlistcontroller.h"
 
+#include "internalguisettings.h"
 #include "playlistcolumnregistry.h"
 #include "playlistcommands.h"
 #include "playlistuicontroller.h"
@@ -34,6 +35,8 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMessageBox>
 #include <QPushButton>
 
@@ -41,6 +44,8 @@
 #include <numeric>
 #include <ranges>
 #include <set>
+
+using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 PlaylistController::PlaylistController(Application* app, QObject* parent)
@@ -167,6 +172,44 @@ Playlist* PlaylistController::currentPlaylist() const
 UId PlaylistController::currentPlaylistId() const
 {
     return m_workspace->currentPlaylistId();
+}
+
+int PlaylistController::presetPlaylistCount(int presetId) const
+{
+    const int defaultPreset = m_settings->fileValue(Settings::Gui::Internal::PlaylistCurrentPreset).toInt();
+
+    int count{0};
+    const auto playlists = m_handler->playlists();
+    for(const auto* playlist : playlists) {
+        const auto encoded = playlist->extraProperties().value(PlaylistLayoutProperty);
+        const auto layout  = QJsonDocument::fromJson(encoded.toUtf8()).object();
+        if(layout.value("Preset"_L1).toInt(defaultPreset) == presetId) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+void PlaylistController::applyPresetToPlaylists(int presetId, const std::vector<UId>& playlistIds)
+{
+    if(!m_presetRegistry->itemById(presetId)) {
+        return;
+    }
+
+    for(const auto& id : playlistIds) {
+        auto* playlist = m_handler->playlistById(id);
+        if(!playlist) {
+            continue;
+        }
+        const auto encoded         = playlist->extraProperties().value(PlaylistLayoutProperty);
+        auto layout                = QJsonDocument::fromJson(encoded.toUtf8()).object();
+        layout["Version"_L1]       = 1;
+        layout["Preset"_L1]        = presetId;
+        layout["CustomColumns"_L1] = false;
+        playlist->setExtraProperty(PlaylistLayoutProperty,
+                                   QString::fromUtf8(QJsonDocument{layout}.toJson(QJsonDocument::Compact)));
+        Q_EMIT playlistLayoutChanged(playlist);
+    }
 }
 
 void PlaylistController::changeCurrentPlaylist(Playlist* playlist)
@@ -433,13 +476,13 @@ bool PlaylistController::confirmPlaylistRemoval(std::span<const UId> playlistIds
     message.setIcon(QMessageBox::Question);
     message.setWindowTitle(tr("Remove Playlist"));
     if(playlists.size() == 1) {
-        message.setText(tr("Remove playlist \"%1\"?").arg(playlists.front()->name()));
+        message.setText(tr("Remove playlist ‘%1’?").arg(playlists.front()->name()));
     }
     else {
         message.setText(tr("Remove %Ln playlist(s)?", nullptr, static_cast<int>(playlists.size())));
     }
 
-    auto* dontAskAgain = new QCheckBox(tr("Don't ask again"), &message);
+    auto* dontAskAgain = new QCheckBox(tr("Don’t ask again"), &message);
     message.setCheckBox(dontAskAgain);
 
     auto* removeButton = message.addButton(tr("Remove"), QMessageBox::DestructiveRole);
@@ -730,6 +773,11 @@ void PlaylistController::handleTracksDequeued(const PlaylistIndexes& indexes)
 
 void PlaylistController::handleQueueChanged(const QueueTracks& removed, const QueueTracks& added)
 {
+    // Playlist queue indicators are only displayed for queue overrides
+    if(m_playerController->playbackQueueMode() == PlaybackQueueMode::QueueAsPlaybackSource) {
+        return;
+    }
+
     auto* currentPlaylist = m_workspace->currentPlaylist();
     if(!currentPlaylist) {
         return;

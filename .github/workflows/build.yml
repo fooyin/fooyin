@@ -28,7 +28,7 @@ on:
     types: [published]
 
 permissions:
-  actions: read
+  actions: write # needed to remove superseded build caches
   contents: write # needed for vcpkg cache and release upload
 
 jobs:
@@ -95,6 +95,13 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           pattern: fedora-*
+          path: ./artifacts
+          merge-multiple: true
+
+      - name: Download SDK artifacts
+        uses: actions/download-artifact@v8
+        with:
+          pattern: sdk-*
           path: ./artifacts
           merge-multiple: true
 

@@ -21,7 +21,7 @@
 
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
-#include <gui/layoutprovider.h>
+#include <gui/layout/layoutprovider.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
@@ -171,6 +171,9 @@ void LayoutMenu::refreshLayouts()
         m_layoutActionGroup->addAction(layoutCmd->action());
 
         QObject::connect(layoutAction, &QAction::triggered, this, [this, name]() {
+            if(name == m_layoutProvider->currentLayout().name()) {
+                return;
+            }
             const auto fyLayout = m_layoutProvider->layoutByName(name);
             if(fyLayout.isValid()) {
                 Q_EMIT changeLayout(fyLayout);

@@ -84,32 +84,32 @@ void SettingsEntry::setIsTemporary(bool isTemporary)
     m_isTemporary = isTemporary;
 }
 
-void SettingsEntry::notifySubscribers()
+void SettingsEntry::notifySubscribers(const QVariant& value)
 {
     switch(m_type) {
         case(Settings::Variant):
-            Q_EMIT settingChangedVariant(m_value);
+            Q_EMIT settingChangedVariant(value);
             break;
         case(Settings::Bool):
-            Q_EMIT settingChangedBool(m_value.toBool());
+            Q_EMIT settingChangedBool(value.toBool());
             break;
         case(Settings::Float):
-            Q_EMIT settingChangedFloat(m_value.toFloat());
+            Q_EMIT settingChangedFloat(value.toFloat());
             break;
         case(Settings::Double):
-            Q_EMIT settingChangedDouble(m_value.toDouble());
+            Q_EMIT settingChangedDouble(value.toDouble());
             break;
         case(Settings::Int):
-            Q_EMIT settingChangedInt(m_value.toInt());
+            Q_EMIT settingChangedInt(value.toInt());
             break;
         case(Settings::String):
-            Q_EMIT settingChangedString(m_value.toString());
+            Q_EMIT settingChangedString(value.toString());
             break;
         case(Settings::StringList):
-            Q_EMIT settingChangedStringList(m_value.toStringList());
+            Q_EMIT settingChangedStringList(value.toStringList());
             break;
         case(Settings::ByteArray):
-            Q_EMIT settingChangedByteArray(m_value.toByteArray());
+            Q_EMIT settingChangedByteArray(value.toByteArray());
             break;
     }
 }

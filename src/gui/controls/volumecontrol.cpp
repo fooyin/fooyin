@@ -20,16 +20,17 @@
 #include "volumecontrol.h"
 
 #include "widgets/hovermenu.h"
-#include "widgets/logslider.h"
 
 #include <core/coresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/iconloader.h>
+#include <gui/widgets/slider.h>
 #include <gui/widgets/toolbutton.h>
 #include <gui/widgets/tooltip.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
+#include <utils/audioutils.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -43,7 +44,6 @@
 #include <QMenu>
 #include <QResizeEvent>
 #include <QStyle>
-#include <QToolBar>
 #include <QToolTip>
 #include <QWheelEvent>
 
@@ -52,18 +52,33 @@
 using namespace std::chrono_literals;
 using namespace Qt::StringLiterals;
 
-constexpr double MinVolume = 0.01;
+constexpr double MinLogVolume      = 0.01;
+constexpr double LogPositionFactor = 100.0;
+constexpr int VolumeSteps          = 1000;
 
 namespace Fooyin {
+enum class VolumeCurve : uint8_t
+{
+    LinearDb = 0,
+    LinearAmplitude,
+    Quadratic,
+    Cubic,
+    LogarithmicDb,
+};
+
 class VolumeControlPrivate
 {
 public:
     VolumeControlPrivate(VolumeControl* self, ActionManager* actionManager, SettingsManager* settings);
 
     void changeDisplay(VolumeControl::Options options, bool init = false);
+    void setCurve(VolumeCurve curve);
+    void updateSlider(double volume) const;
+    void updateSteps() const;
+
+    [[nodiscard]] double volumeAtPosition(int value) const;
 
     void showVolumeMenu() const;
-    void volumeChanged(double volume) const;
     void updateDisplay(double volume) const;
     void updateToolTip(int value);
     void updateOrientation();
@@ -77,10 +92,11 @@ public:
     QPointer<ToolButton> m_volumeIcon;
     QPointer<HoverMenu> m_volumeMenu;
     QPointer<QVBoxLayout> m_menuLayout;
-    LogSlider* m_volumeSlider;
+    Slider* m_volumeSlider;
     QPointer<ToolTip> m_toolTip;
     Qt::Orientation m_orientation{Qt::Horizontal};
     bool m_autoOrientation{true};
+    VolumeCurve m_curve{VolumeCurve::LogarithmicDb};
 };
 
 VolumeControlPrivate::VolumeControlPrivate(VolumeControl* self, ActionManager* actionManager, SettingsManager* settings)
@@ -88,19 +104,18 @@ VolumeControlPrivate::VolumeControlPrivate(VolumeControl* self, ActionManager* a
     , m_actionManager{actionManager}
     , m_settings{settings}
     , m_layout{new QHBoxLayout(m_self)}
-    , m_volumeSlider{new LogSlider(Qt::Horizontal, m_self)}
+    , m_volumeSlider{new Slider(Qt::Horizontal, m_self)}
 {
     m_layout->setContentsMargins({});
     m_layout->setSpacing(0);
 
-    m_volumeSlider->setRange(MinVolume, 1.0);
-    m_volumeSlider->setNaturalValue(m_settings->value<Settings::Core::OutputVolume>());
-    QObject::connect(m_volumeSlider, &LogSlider::logValueChanged, m_volumeSlider,
-                     [this](double volume) { volumeChanged(volume); });
-    m_settings->subscribe<Settings::Core::OutputVolume>(m_volumeSlider, [this](const double volume) {
-        const QSignalBlocker blocker{m_volumeSlider};
-        m_volumeSlider->setNaturalValue(volume);
-    });
+    setCurve(m_curve);
+    QObject::connect(m_volumeSlider, &Slider::valueChanged, m_volumeSlider,
+                     [this](int value) { m_settings->set<Settings::Core::OutputVolume>(volumeAtPosition(value)); });
+    m_settings->subscribe<Settings::Core::OutputVolume>(m_volumeSlider,
+                                                        [this](double volume) { updateSlider(volume); });
+    m_settings->subscribe<Settings::Gui::VolumeControlStepSmall>(m_volumeSlider, [this]() { updateSteps(); });
+    m_settings->subscribe<Settings::Gui::VolumeControlStepLarge>(m_volumeSlider, [this]() { updateSteps(); });
 
     changeDisplay(m_options, true);
 }
@@ -156,9 +171,9 @@ void VolumeControlPrivate::changeDisplay(VolumeControl::Options options, bool in
     updateOrientation();
 
     if(options & VolumeControl::Tooltip) {
-        QObject::connect(m_volumeSlider, &LogSlider::sliderMoved, m_volumeSlider,
+        QObject::connect(m_volumeSlider, &Slider::sliderMoved, m_volumeSlider,
                          [this](int value) { updateToolTip(value); });
-        QObject::connect(m_volumeSlider, &LogSlider::sliderReleased, m_volumeSlider, [this]() {
+        QObject::connect(m_volumeSlider, &Slider::sliderReleased, m_volumeSlider, [this]() {
             if(m_toolTip) {
                 m_toolTip->deleteLater();
             }
@@ -166,14 +181,106 @@ void VolumeControlPrivate::changeDisplay(VolumeControl::Options options, bool in
     }
 }
 
+void VolumeControlPrivate::setCurve(VolumeCurve curve)
+{
+    const QSignalBlocker blocker{m_volumeSlider};
+
+    m_curve = curve;
+    if(m_curve == VolumeCurve::LinearDb) {
+        m_volumeSlider->setRange(static_cast<int>(std::log10(MinLogVolume) * LogPositionFactor), 0);
+    }
+    else {
+        m_volumeSlider->setRange(0, VolumeSteps);
+    }
+
+    updateSteps();
+    updateSlider(m_settings->value<Settings::Core::OutputVolume>());
+}
+
+void VolumeControlPrivate::updateSlider(double volume) const
+{
+    const QSignalBlocker blocker{m_volumeSlider};
+
+    volume = std::clamp(volume, 0.0, 1.0);
+
+    double value{0.0};
+    switch(m_curve) {
+        case VolumeCurve::LinearDb:
+            value = std::log10(std::max(volume, MinLogVolume)) * LogPositionFactor;
+            break;
+        case VolumeCurve::LinearAmplitude:
+            value = volume * VolumeSteps;
+            break;
+        case VolumeCurve::Quadratic:
+            value = std::sqrt(volume) * VolumeSteps;
+            break;
+        case VolumeCurve::Cubic:
+            value = std::cbrt(volume) * VolumeSteps;
+            break;
+        case VolumeCurve::LogarithmicDb:
+            value = std::exp2(Audio::volumeToDb(volume) / 10.0) * VolumeSteps;
+            break;
+    }
+
+    m_volumeSlider->setValue(static_cast<int>(std::round(value)));
+}
+
+void VolumeControlPrivate::updateSteps() const
+{
+    const int range        = m_volumeSlider->maximum() - m_volumeSlider->minimum();
+    const double smallStep = m_settings->value<Settings::Gui::VolumeControlStepSmall>();
+    const double largeStep = m_settings->value<Settings::Gui::VolumeControlStepLarge>();
+
+    m_volumeSlider->setSingleStep(std::max(1, static_cast<int>(std::round(range * smallStep / 100.0))));
+    m_volumeSlider->setPageStep(std::max(1, static_cast<int>(std::round(range * largeStep / 100.0))));
+}
+
+double VolumeControlPrivate::volumeAtPosition(int value) const
+{
+    if(value == m_volumeSlider->minimum()) {
+        return 0.0;
+    }
+
+    const double position = static_cast<double>(value) / VolumeSteps;
+    switch(m_curve) {
+        case VolumeCurve::LinearDb:
+            return std::pow(10.0, value / LogPositionFactor);
+        case VolumeCurve::LinearAmplitude:
+            return position;
+        case VolumeCurve::Quadratic:
+            return position * position;
+        case VolumeCurve::Cubic:
+            return position * position * position;
+        case VolumeCurve::LogarithmicDb:
+            // Each halving of the slider position reduces the gain by 10 dB
+            return Audio::dbToVolume(10.0 * std::log2(position));
+    }
+
+    return 0.0;
+}
+
 void VolumeControlPrivate::updateOrientation()
 {
     auto orientation{m_orientation};
+
     if(m_autoOrientation) {
-        const auto* toolbar = m_self->findToolbar();
-        orientation
-            = toolbar ? toolbar->orientation() : (m_self->height() > m_self->width() ? Qt::Vertical : Qt::Horizontal);
+        orientation = m_self->automaticOrientation();
+        if((m_options & VolumeControl::SliderMode) && !m_self->findToolbar()) {
+            const QSize minSize       = m_layout->minimumSize();
+            const int minLength       = std::max(minSize.width(), minSize.height());
+            const bool horizontalFits = m_self->width() >= minLength;
+            const bool verticalFits   = m_self->height() >= minLength;
+
+            if(horizontalFits != verticalFits) {
+                orientation = verticalFits ? Qt::Vertical : Qt::Horizontal;
+            }
+            else if(!horizontalFits && m_self->parentWidget()) {
+                const auto parentSize = m_self->parentWidget()->size();
+                orientation           = parentSize.height() > parentSize.width() ? Qt::Vertical : Qt::Horizontal;
+            }
+        }
     }
+
     const auto direction = orientation == Qt::Vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight;
     if(m_layout->direction() != direction) {
         m_layout->setDirection(direction);
@@ -195,6 +302,8 @@ void VolumeControlPrivate::updateOrientation()
         m_volumeSlider->setOrientation(Qt::Vertical);
         m_volumeSlider->setMinimumSize(0, 100);
     }
+
+    m_self->updateOrientationConstraints(m_autoOrientation, m_layout->minimumSize());
 }
 
 void VolumeControlPrivate::showVolumeMenu() const
@@ -227,15 +336,6 @@ void VolumeControlPrivate::showVolumeMenu() const
     m_volumeMenu->start(1s);
 }
 
-void VolumeControlPrivate::volumeChanged(double volume) const
-{
-    if(volume == MinVolume) {
-        volume = 0;
-    }
-
-    m_settings->set<Settings::Core::OutputVolume>(volume);
-}
-
 void VolumeControlPrivate::updateDisplay(double volume) const
 {
     if(!m_volumeIcon) {
@@ -248,7 +348,7 @@ void VolumeControlPrivate::updateDisplay(double volume) const
     else if(volume < 0.40 && volume >= 0.20) {
         m_volumeIcon->setIcon(Gui::iconFromTheme(Constants::Icons::VolumeMed));
     }
-    else if(volume < 0.20 && volume >= MinVolume) {
+    else if(volume < 0.20 && volume > 0.0) {
         m_volumeIcon->setIcon(Gui::iconFromTheme(Constants::Icons::VolumeLow));
     }
     else {
@@ -263,13 +363,13 @@ void VolumeControlPrivate::updateToolTip(int value)
         m_toolTip->show();
     }
 
-    static const auto minLogVolume = std::log10(MinVolume);
-    if(value > (minLogVolume * m_volumeSlider->scale())) {
-        const auto volumeDb = 20 * (value / m_volumeSlider->scale());
+    const double volume = volumeAtPosition(value);
+    if(volume > 0.0) {
+        const auto volumeDb = 20 * std::log10(volume);
         m_toolTip->setText(u"%1 dB"_s.arg(volumeDb, 0, 'f', 1));
     }
     else {
-        m_toolTip->setText(u"-∞ dB"_s);
+        m_toolTip->setText(u"−∞ dB"_s);
     }
 
     QPoint toolTipPos        = m_volumeSlider->mapFromGlobal(QCursor::pos());
@@ -347,7 +447,8 @@ QString VolumeControl::layoutName() const
 
 void VolumeControl::saveLayoutData(QJsonObject& layout)
 {
-    layout["Mode"_L1] = static_cast<int>(p->m_options);
+    layout["Mode"_L1]  = static_cast<int>(p->m_options);
+    layout["Curve"_L1] = static_cast<int>(p->m_curve);
 
     if(!p->m_autoOrientation) {
         layout["Orientation"_L1] = p->m_orientation;
@@ -356,6 +457,12 @@ void VolumeControl::saveLayoutData(QJsonObject& layout)
 
 void VolumeControl::loadLayoutData(const QJsonObject& layout)
 {
+    const int curve = layout.value("Curve"_L1).toInt(static_cast<int>(VolumeCurve::LogarithmicDb));
+    p->setCurve(curve >= static_cast<int>(VolumeCurve::LinearDb)
+                        && curve <= static_cast<int>(VolumeCurve::LogarithmicDb)
+                    ? static_cast<VolumeCurve>(curve)
+                    : VolumeCurve::LogarithmicDb);
+
     if(layout.contains("Mode"_L1)) {
         // Support old format (0=Icon)
         auto options = static_cast<Options>(std::max(1, layout.value("Mode"_L1).toInt()));
@@ -442,11 +549,29 @@ void VolumeControl::populateContextMenu(QMenu* menu)
         p->updateOrientation();
     });
 
+    auto* curveMenu  = new QMenu(tr("Curve"), menu);
+    auto* curveGroup = new QActionGroup(curveMenu);
+
+    const auto addCurve = [this, curveMenu, curveGroup](const QString& name, VolumeCurve curve) {
+        auto* action = new QAction(name, curveGroup);
+        action->setCheckable(true);
+        action->setChecked(p->m_curve == curve);
+        curveMenu->addAction(action);
+        QObject::connect(action, &QAction::triggered, this, [this, curve]() { p->setCurve(curve); });
+    };
+
+    addCurve(tr("Logarithmic dB"), VolumeCurve::LogarithmicDb);
+    addCurve(tr("Linear dB"), VolumeCurve::LinearDb);
+    addCurve(tr("Linear amplitude"), VolumeCurve::LinearAmplitude);
+    addCurve(tr("Quadratic"), VolumeCurve::Quadratic);
+    addCurve(tr("Cubic"), VolumeCurve::Cubic);
+
     menu->addAction(iconMode);
     menu->addAction(sliderMode);
     menu->addSeparator();
     menu->addAction(toolTip);
     menu->addSeparator();
+    menu->addMenu(curveMenu);
     menu->addMenu(orientationMenu);
 }
 

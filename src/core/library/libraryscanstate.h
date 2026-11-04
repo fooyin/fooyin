@@ -36,6 +36,8 @@ public:
     explicit LibraryScanState(LibraryScanHost* host);
 
     void reset();
+    void fail(QString error);
+    [[nodiscard]] QString error() const;
 
     [[nodiscard]] bool mayRun() const;
     [[nodiscard]] bool stopRequested() const;
@@ -99,5 +101,6 @@ private:
     size_t m_totalFiles;
     ScanProgress::Phase m_phase;
     bool m_reportEnumeratingProgress;
+    QString m_error;
 };
 } // namespace Fooyin

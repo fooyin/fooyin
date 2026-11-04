@@ -21,17 +21,22 @@
 
 #include "playlistcolumn.h"
 #include "playlistitem.h"
+#include "playlistpreset.h"
+
+#include <core/player/playbackqueue.h>
+#include <core/scripting/scripttypes.h>
 
 #include <core/track.h>
 #include <utils/crypto.h>
 #include <utils/id.h>
 #include <utils/worker.h>
 
+#include <memory>
+#include <ranges>
+#include <stop_token>
+
 namespace Fooyin {
-class PlayerController;
 class PlaylistPopulatorPrivate;
-class SettingsManager;
-struct PlaylistPreset;
 
 using ItemList       = std::vector<PlaylistItem>;
 using TrackItemMap   = std::unordered_map<PlaylistTrack, PlaylistItem, PlaylistTrack::PlaylistTrackHash>;
@@ -39,6 +44,24 @@ using ItemKeyMap     = std::unordered_map<UId, PlaylistItem, UId::UIdHash>;
 using NodeKeyMap     = std::unordered_map<UId, std::vector<UId>, UId::UIdHash>;
 using TrackIdNodeMap = std::unordered_map<int, std::vector<UId>>;
 using IndexGroupMap  = std::map<int, std::vector<UId>>;
+
+struct PlaylistPopulationRequest
+{
+    uint64_t generation{0};
+    std::stop_token stopToken;
+    UId playlistId;
+    int trackCount{0};
+    PlaylistPreset preset;
+    PlaylistColumnList columns;
+    QFont font;
+    int preloadCount{2000};
+    ScriptContextData scriptData;
+    ScriptEvaluationOptions scriptOptions;
+    PlaylistTrack playingTrack;
+    int stopAfterIndex{-1};
+    PlaylistTrackIndexes queueIndexes;
+    int queueTotal{0};
+};
 
 struct HeaderUpdateRequest
 {
@@ -49,6 +72,7 @@ using HeaderUpdateList = std::vector<HeaderUpdateRequest>;
 
 struct PendingData
 {
+    uint64_t generation{0};
     UId playlistId;
     ItemKeyMap items;
     ItemKeyMap updatedItems;
@@ -61,8 +85,28 @@ struct PendingData
 
     IndexGroupMap indexNodes;
 
+    void rebindParents(PlaylistItem* root = nullptr)
+    {
+        for(const auto& [parentKey, children] : nodes) {
+            PlaylistItem* parentItem{nullptr};
+            if(parentKey.isNull()) {
+                parentItem = root;
+            }
+            else if(const auto it = items.find(parentKey); it != items.end()) {
+                parentItem = &it->second;
+            }
+            for(const auto& childKey : children) {
+                items.at(childKey).setParent(parentItem);
+            }
+        }
+        for(auto& item : updatedItems | std::views::values) {
+            item.setParent(nullptr);
+        }
+    }
+
     void clear()
     {
+        generation = 0;
         playlistId = {};
         items.clear();
         updatedItems.clear();
@@ -73,35 +117,34 @@ struct PendingData
         indexNodes.clear();
     }
 };
+using PendingDataPtr = std::shared_ptr<PendingData>;
 
 class PlaylistPopulator : public Worker
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistPopulator(PlayerController* playerController, SettingsManager* settings,
-                               QObject* parent = nullptr);
+    explicit PlaylistPopulator(QObject* parent = nullptr);
     ~PlaylistPopulator() override;
 
-    void setFont(const QFont& font);
-    void setUseVarious(bool enabled);
-    void setPreloadCount(int count);
-
-    void run(Playlist* playlist, const PlaylistPreset& preset, const PlaylistColumnList& columns,
-             const PlaylistTrackList& tracks);
-    void runTracks(Playlist* playlist, const PlaylistPreset& preset, const PlaylistColumnList& columns,
-                   const std::map<int, PlaylistTrackList>& tracks);
-    void updateTracks(Playlist* playlist, const PlaylistPreset& preset, const PlaylistColumnList& columns,
-                      const std::set<int>& columnsToUpdate, const TrackItemMap& tracks);
-    void updateHeaders(Playlist* playlist, const PlaylistPreset& preset, const HeaderUpdateList& headers);
+    void run(const PlaylistPopulationRequest& request, const PlaylistTrackList& tracks);
+    void runTracks(const PlaylistPopulationRequest& request, const std::map<int, PlaylistTrackList>& tracks);
+    void updateTracks(const PlaylistPopulationRequest& request, const std::set<int>& columnsToUpdate,
+                      const TrackItemMap& tracks);
+    void updateHeaders(const PlaylistPopulationRequest& request, const HeaderUpdateList& headers);
 
 Q_SIGNALS:
-    void populated(const Fooyin::PendingData& data);
-    void populatedTrackGroup(const Fooyin::PendingData& data);
-    void tracksUpdated(const Fooyin::ItemList& tracks, const std::set<int>& columnsUpdated);
-    void headersUpdated(const Fooyin::ItemKeyMap& headers);
+    void populationFinished(uint64_t generation);
+    void populated(Fooyin::PendingDataPtr data);
+    void populatedTrackGroup(Fooyin::PendingDataPtr data);
+    void tracksUpdated(uint64_t generation, const Fooyin::ScriptContextData& context, const Fooyin::ItemList& tracks,
+                       const std::set<int>& columnsUpdated);
+    void headersUpdated(uint64_t generation, const Fooyin::ScriptContextData& context,
+                        const Fooyin::ItemKeyMap& headers);
 
 private:
     std::unique_ptr<PlaylistPopulatorPrivate> p;
 };
 } // namespace Fooyin
+
+Q_DECLARE_METATYPE(Fooyin::PendingDataPtr)

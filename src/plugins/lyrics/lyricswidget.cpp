@@ -26,6 +26,7 @@
 #include "lyricseditordialog.h"
 #include "lyricsfinder.h"
 #include "lyricsmodel.h"
+#include "lyricsplaybackservice.h"
 #include "lyricssaver.h"
 #include "lyricssearchdialog.h"
 #include "lyricsview.h"
@@ -33,13 +34,16 @@
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
-#include <core/scripting/scriptenvironmenthelpers.h>
+#include <core/plugins/coreplugincontext.h>
 #include <core/scripting/scriptparser.h>
+#include <core/scripting/scripttypes.h>
 #include <gui/configdialog.h>
+#include <gui/coverprovider.h>
 #include <gui/guisettings.h>
 #include <gui/guistyleprovider.h>
 #include <gui/guiutils.h>
 #include <gui/scripting/scriptformatter.h>
+#include <gui/widgets/backgroundimagesource.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsdialogcontroller.h>
@@ -81,13 +85,6 @@ constexpr auto ScrollTimeout = 100;
 
 namespace Fooyin::Lyrics {
 namespace {
-bool hasSameTagLyrics(const Track& lhs, const Track& rhs, const SettingsManager* settings)
-{
-    const QStringList searchTags = settings->fileValue(Settings::SearchTags, Defaults::searchTags()).toStringList();
-    return std::ranges::all_of(searchTags,
-                               [&lhs, &rhs](const QString& tag) { return lhs.extraTag(tag) == rhs.extraTag(tag); });
-}
-
 QMargins clampedMargins(const QMargins& margins)
 {
     return {
@@ -175,18 +172,21 @@ int centredViewportPadding(int viewportHeight, int lineHeight)
 }
 } // namespace
 
-LyricsWidget::LyricsWidget(PlayerController* playerController, PlaylistHandler* playlistHandler,
-                           LyricsFinder* lyricsFinder, LyricsSaver* lyricsSaver, SettingsManager* settings,
-                           GuiStyleProvider* styleProvider, QWidget* parent)
+LyricsWidget::LyricsWidget(const CorePluginContext& core, LyricsPlaybackService* lyricsService,
+                           LyricsSaver* lyricsSaver, GuiStyleProvider* styleProvider, CoverRepository* coverRepository,
+                           TrackSelectionController* trackSelection, QWidget* parent)
     : FyWidget{parent}
-    , m_playerController{playerController}
-    , m_playlistHandler{playlistHandler}
-    , m_settings{settings}
+    , m_playerController{core.playerController}
+    , m_scriptContext{core.scriptContext}
+    , m_playlistHandler{core.playlistHandler}
+    , m_settings{core.settingsManager}
     , m_styleProvider{styleProvider}
+    , m_backgroundSource{new BackgroundImageSource(new CoverProvider(coverRepository, this), m_playerController,
+                                                   trackSelection, this)}
     , m_lyricsView{new LyricsView(this)}
     , m_model{new LyricsModel(m_styleProvider, this)}
     , m_delegate{new LyricsDelegate(this)}
-    , m_lyricsFinder{lyricsFinder}
+    , m_lyricsService{lyricsService}
     , m_lyricsSaver{lyricsSaver}
     , m_currentTime{0}
     , m_currentLineStart{-1}
@@ -209,19 +209,10 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, PlaylistHandler* 
     applyConfig(m_config);
 
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &LyricsWidget::playStateChanged);
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
-                     [this](const Track& track) { updateLyrics(track, false); });
-    QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this,
-                     [this](const Track& track) { updateLyrics(track, true); });
     QObject::connect(m_playerController, &PlayerController::positionChanged, this, &LyricsWidget::setCurrentTime);
     QObject::connect(m_playerController, &PlayerController::positionMoved, this, &LyricsWidget::syncAutoScroll);
     QObject::connect(m_lyricsView, &LyricsView::viewportResized, this, &LyricsWidget::updateViewportPadding);
-    QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsSearchStarted, this,
-                     &LyricsWidget::handleLyricsSearchStarted);
-    QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsFound, this, &LyricsWidget::handleLyricsFound);
-    QObject::connect(m_lyricsFinder, &LyricsFinder::lyricsSearchFinished, this,
-                     &LyricsWidget::handleLyricsSearchFinished);
-    QObject::connect(m_lyricsSaver, &LyricsSaver::lyricsSaved, this, &LyricsWidget::handleSavedLyrics);
+    QObject::connect(m_lyricsService, &LyricsPlaybackService::changed, this, &LyricsWidget::syncLyrics);
 
     QObject::connect(m_model, &QAbstractItemModel::modelReset, m_delegate, &LyricsDelegate::clearLayoutCache);
     QObject::connect(m_model, &QAbstractItemModel::layoutChanged, m_delegate, &LyricsDelegate::clearLayoutCache);
@@ -274,9 +265,15 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, PlaylistHandler* 
         m_scrollTimer.start(ScrollTimeout, this);
     });
 
+    QObject::connect(m_backgroundSource, &BackgroundImageSource::pixmapChanged, m_lyricsView,
+                     &LyricsView::setBackgroundPixmap);
+
+    auto* subscription = m_scriptContext->subscribe(this);
+    subscription->setDependencies({.sources = {m_lyricsService->dataSource()}, .unclassified = false});
+
     m_styleProvider->subscribe(this, [this]() { applyConfig(m_config); });
 
-    updateLyrics(m_playerController->currentTrack());
+    syncLyrics();
 }
 
 QString LyricsWidget::defaultNoLyricsScript()
@@ -284,50 +281,38 @@ QString LyricsWidget::defaultNoLyricsScript()
     return u"[%1: %artist%$crlf(2)][%2: %album%$crlf(2)]%3: %title%"_s.arg(tr("Artist"), tr("Album"), tr("Title"));
 }
 
-void LyricsWidget::updateLyrics(const Track& track, bool force)
+void LyricsWidget::syncLyrics()
 {
-    const Track previousTrack{m_currentTrack};
+    const Track track = m_lyricsService->track();
 
-    const bool sameTrack = previousTrack.sameIdentityAs(track);
-    const bool preserveLyrics
-        = sameTrack && force && m_currentLyrics.isValid() && hasSameTagLyrics(previousTrack, track, m_settings);
-
-    m_currentTrack = track;
-
-    if(sameTrack && !force) {
-        return;
-    }
-
-    if(preserveLyrics) {
+    const bool sameTrack = m_currentTrack.sameIdentityAs(track);
+    const auto& lyrics   = m_lyricsService->lyrics();
+    if(sameTrack && lyrics.isValid() && m_currentLyrics == lyrics) {
+        m_currentTrack  = track;
+        m_currentLyrics = lyrics;
         m_model->setTrackDuration(track.duration());
         return;
     }
 
-    m_lyrics.clear();
-
-    if(m_scrollAnim) {
-        m_scrollAnim->stop();
-    }
-    m_lyricsView->verticalScrollBar()->setValue(0);
-    m_lyricsView->setEdgeFadeEnabled(false);
-
-    m_currentLyrics    = {};
+    m_currentTrack     = track;
+    m_currentLyrics    = lyrics;
     m_currentLineStart = -1;
     m_currentLineEnd   = -1;
-    m_model->setLyrics({});
 
-    if(!track.isValid()) {
-        return;
+    if(!sameTrack) {
+        if(m_scrollAnim) {
+            m_scrollAnim->stop();
+        }
+        m_lyricsView->verticalScrollBar()->setValue(0);
     }
 
-    m_lyricsView->setDisplayString(noLyricsDisplayText(track));
+    m_model->setLyrics(lyrics);
+    m_model->setTrackDuration(track.duration());
+    m_lyricsView->setDisplayString(lyrics.isValid() || !track.isValid() ? RichText{} : noLyricsDisplayText(track));
 
-    if(!sameTrack && m_settings->fileValue(Settings::AutoSearch, false).toBool()) {
-        m_lyricsFinder->findLyrics(track);
-    }
-    else {
-        m_lyricsFinder->findLocalLyrics(track);
-    }
+    updateEdgeFadeState();
+    setCurrentTime(m_playerController->currentPosition());
+    updateViewportPadding();
 }
 
 QString LyricsWidget::name() const
@@ -358,6 +343,7 @@ LyricsWidget::ConfigData LyricsWidget::factoryConfig() const
 LyricsWidget::ConfigData LyricsWidget::defaultConfig() const
 {
     auto config{factoryConfig()};
+    config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(Settings::Background).toMap()));
 
     config.seekOnClick    = m_settings->fileValue(Settings::SeekOnClick, config.seekOnClick).toBool();
     config.noLyricsScript = m_settings->fileValue(Settings::NoLyricsScript, config.noLyricsScript).toString();
@@ -434,6 +420,11 @@ void LyricsWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(Settings::LineFont, validated.lineFont);
     m_settings->fileSet(Settings::WordLineFont, validated.wordLineFont);
     m_settings->fileSet(Settings::WordFont, validated.wordFont);
+
+    QJsonObject background;
+    validated.background.normalise();
+    validated.background.saveLayout(background);
+    m_settings->fileSet(Settings::Background, background.toVariantMap());
 }
 
 void LyricsWidget::clearSavedDefaults() const
@@ -456,6 +447,7 @@ void LyricsWidget::clearSavedDefaults() const
     m_settings->fileRemove(Settings::LineFont);
     m_settings->fileRemove(Settings::WordLineFont);
     m_settings->fileRemove(Settings::WordFont);
+    m_settings->fileRemove(Settings::Background);
 }
 
 void LyricsWidget::applyConfig(const ConfigData& config)
@@ -478,7 +470,12 @@ void LyricsWidget::applyConfig(const ConfigData& config)
     validated.wordLineFont = validatedFontString(validated.wordLineFont);
     validated.wordFont     = validatedFontString(validated.wordFont);
 
-    m_config = validated;
+    validated.background.normalise();
+
+    m_config = std::move(validated);
+
+    m_lyricsView->setBackgroundConfig(m_config.background);
+    m_backgroundSource->setConfig(m_config.background);
 
     m_lyricsView->setVerticalScrollBarPolicy(m_config.showScrollbar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
     m_lyricsView->setDisplayAlignment(static_cast<Qt::Alignment>(m_config.alignment));
@@ -517,9 +514,10 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    if(!m_lyrics.empty()) {
+    const auto& candidates = m_lyricsService->candidates();
+    if(!candidates.empty()) {
         auto* selectLyrics = new QMenu(tr("Select lyrics"), menu);
-        for(const auto& lyric : m_lyrics) {
+        for(const auto& lyric : candidates) {
             const auto actionTitle = u"%1 - %2 (%3)"_s.arg(lyric.metadata.artist, lyric.metadata.title, lyric.source);
             auto* lyricAction      = new QAction(actionTitle, selectLyrics);
             QObject::connect(lyricAction, &QAction::triggered, this, [this, lyric]() { changeLyrics(lyric); });
@@ -530,7 +528,7 @@ void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* searchLyrics = new QAction(tr("Auto-search for lyrics"), menu);
     searchLyrics->setStatusTip(tr("Search for lyrics for the current track"));
-    QObject::connect(searchLyrics, &QAction::triggered, this, [this]() { m_lyricsFinder->findLyrics(m_currentTrack); });
+    QObject::connect(searchLyrics, &QAction::triggered, this, [this]() { m_lyricsService->search(); });
     menu->addAction(searchLyrics);
 
     auto* searchLyricsDialog = new QAction(tr("Search for lyrics…"), menu);
@@ -617,95 +615,9 @@ void LyricsWidget::openConfigDialog()
     showConfigDialog(new LyricsConfigDialog(this, m_styleProvider, this), Qt::NonModal);
 }
 
-void LyricsWidget::loadLyrics(const Lyrics& lyrics)
-{
-    const bool first = m_lyrics.empty();
-    m_lyrics.push_back(lyrics);
-
-    if(first) {
-        changeLyrics(lyrics);
-    }
-}
-
-void LyricsWidget::handleLyricsSearchStarted(const Track& track)
-{
-    if(track.sameIdentityAs(m_currentTrack)) {
-        m_lyrics.clear();
-    }
-}
-
-void LyricsWidget::handleLyricsFound(const Track& track, const Lyrics& lyrics)
-{
-    if(track.sameIdentityAs(m_currentTrack)) {
-        loadLyrics(lyrics);
-    }
-}
-
-void LyricsWidget::handleLyricsSearchFinished(const Track& track, bool foundAny)
-{
-    if(foundAny || !track.sameIdentityAs(m_currentTrack)) {
-        return;
-    }
-
-    m_currentLyrics    = {};
-    m_currentLineStart = -1;
-    m_currentLineEnd   = -1;
-    m_lyrics.clear();
-    m_model->setLyrics({});
-    m_lyricsView->setEdgeFadeEnabled(false);
-
-    if(track.isValid()) {
-        m_lyricsView->setDisplayString(noLyricsDisplayText(track));
-    }
-    else {
-        m_lyricsView->setDisplayString({});
-    }
-
-    updateViewportPadding();
-}
-
-void LyricsWidget::handleSavedLyrics(const Track& track, const Lyrics& lyrics)
-{
-    if(!track.sameIdentityAs(m_currentTrack)) {
-        return;
-    }
-
-    m_currentTrack = track;
-
-    std::erase_if(m_lyrics, [](const Lyrics& existingLyrics) { return existingLyrics.isLocal; });
-
-    if(lyrics.isValid()) {
-        m_lyrics.insert(m_lyrics.begin(), lyrics);
-    }
-
-    changeLyrics(lyrics);
-}
-
 void LyricsWidget::changeLyrics(const Lyrics& lyrics, const Track* sourceTrack)
 {
-    if(sourceTrack && !m_currentTrack.sameIdentityAs(*sourceTrack)) {
-        return;
-    }
-
-    m_currentLyrics = lyrics;
-
-    if(!lyrics.isLocal) {
-        m_lyricsSaver->autoSaveLyrics(lyrics, m_currentTrack);
-    }
-
-    if(lyrics.isValid()) {
-        m_lyricsView->setDisplayString({});
-        m_model->setLyrics(m_currentLyrics);
-        m_model->setTrackDuration(m_currentTrack.duration());
-        updateEdgeFadeState();
-    }
-    else {
-        m_lyricsView->setDisplayString(noLyricsDisplayText(m_currentTrack));
-        m_model->setLyrics({});
-        m_lyricsView->setEdgeFadeEnabled(false);
-    }
-
-    updateViewportPadding();
+    m_lyricsService->selectLyrics(sourceTrack ? *sourceTrack : m_currentTrack, lyrics);
 }
 
 void LyricsWidget::openEditor(const Lyrics& lyrics)
@@ -717,18 +629,11 @@ void LyricsWidget::openEditor(const Lyrics& lyrics)
     QObject::connect(dlg, &QDialog::finished, dlg, &LyricsEditorDialog::saveState);
     QObject::connect(dlg, &LyricsEditorDialog::lyricsEdited, this,
                      [this, editingTrack = m_currentTrack](const Lyrics& updatedLyrics) {
-                         if(m_currentTrack.sameIdentityAs(editingTrack)) {
-                             std::erase_if(m_lyrics,
-                                           [](const Lyrics& existingLyrics) { return existingLyrics.isLocal; });
-                             if(updatedLyrics.isValid()) {
-                                 m_lyrics.insert(m_lyrics.begin(), updatedLyrics);
-                             }
-                         }
                          changeLyrics(updatedLyrics, &editingTrack);
                      });
 
-    dlg->show();
     dlg->restoreState();
+    dlg->show();
 }
 
 void LyricsWidget::openSearchDialog()
@@ -737,8 +642,8 @@ void LyricsWidget::openSearchDialog()
         return;
     }
 
-    auto* dialog = new LyricsSearchDialog(m_currentTrack, m_lyricsFinder->networkManager(), m_lyricsSaver, m_settings,
-                                          Utils::getMainWindow());
+    auto* dialog = new LyricsSearchDialog(m_currentTrack, m_lyricsService->finder()->networkManager(), m_lyricsSaver,
+                                          m_settings, Utils::getMainWindow());
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->open();
 }
@@ -747,56 +652,26 @@ LyricsWidget::ConfigData LyricsWidget::configFromLayout(const QJsonObject& layou
 {
     ConfigData config{defaultConfig()};
 
-    if(layout.contains("SeekOnClick"_L1)) {
-        config.seekOnClick = layout.value("SeekOnClick"_L1).toBool();
-    }
-    if(layout.contains("NoLyricsScript"_L1)) {
-        config.noLyricsScript = layout.value("NoLyricsScript"_L1).toString();
-    }
-    if(layout.contains("ScrollDuration"_L1)) {
-        config.scrollDuration = layout.value("ScrollDuration"_L1).toInt();
-    }
-    if(layout.contains("ScrollMode"_L1)) {
-        config.scrollMode = layout.value("ScrollMode"_L1).toInt();
-    }
-    if(layout.contains("EdgeFadeMode"_L1)) {
-        config.edgeFadeMode = layout.value("EdgeFadeMode"_L1).toInt();
-    }
-    if(layout.contains("EdgeFadeSize"_L1)) {
-        config.edgeFadeSize = layout.value("EdgeFadeSize"_L1).toInt();
-    }
-    if(layout.contains("ShowScrollbar"_L1)) {
-        config.showScrollbar = layout.value("ShowScrollbar"_L1).toBool();
-    }
-    if(layout.contains("Alignment"_L1)) {
-        config.alignment = layout.value("Alignment"_L1).toInt();
-    }
-    if(layout.contains("LineSpacing"_L1)) {
-        config.lineSpacing = layout.value("LineSpacing"_L1).toInt();
-    }
-    if(layout.contains("CentreFirstSyncedLine"_L1)) {
-        config.centreFirstLine = layout.value("CentreFirstSyncedLine"_L1).toBool();
-    }
-    if(layout.contains("CentreLastSyncedLine"_L1)) {
-        config.centreLastLine = layout.value("CentreLastSyncedLine"_L1).toBool();
-    }
-    if(layout.contains("ProgressFill"_L1)) {
-        config.progressMode = layout.value("ProgressFill"_L1).toInt();
-    }
+    config.background.loadLayout(layout);
+
+    config.seekOnClick     = layout.value("SeekOnClick"_L1).toBool(config.seekOnClick);
+    config.noLyricsScript  = layout.value("NoLyricsScript"_L1).toString(config.noLyricsScript);
+    config.scrollDuration  = layout.value("ScrollDuration"_L1).toInt(config.scrollDuration);
+    config.scrollMode      = layout.value("ScrollMode"_L1).toInt(config.scrollMode);
+    config.edgeFadeMode    = layout.value("EdgeFadeMode"_L1).toInt(config.edgeFadeMode);
+    config.edgeFadeSize    = layout.value("EdgeFadeSize"_L1).toInt(config.edgeFadeSize);
+    config.showScrollbar   = layout.value("ShowScrollbar"_L1).toBool(config.showScrollbar);
+    config.alignment       = layout.value("Alignment"_L1).toInt(config.alignment);
+    config.lineSpacing     = layout.value("LineSpacing"_L1).toInt(config.lineSpacing);
+    config.centreFirstLine = layout.value("CentreFirstSyncedLine"_L1).toBool(config.centreFirstLine);
+    config.centreLastLine  = layout.value("CentreLastSyncedLine"_L1).toBool(config.centreLastLine);
+    config.progressMode    = layout.value("ProgressFill"_L1).toInt(config.progressMode);
 
     QMargins margins{config.margins};
-    if(layout.contains("LeftMargin"_L1)) {
-        margins.setLeft(layout.value("LeftMargin"_L1).toInt());
-    }
-    if(layout.contains("TopMargin"_L1)) {
-        margins.setTop(layout.value("TopMargin"_L1).toInt());
-    }
-    if(layout.contains("RightMargin"_L1)) {
-        margins.setRight(layout.value("RightMargin"_L1).toInt());
-    }
-    if(layout.contains("BottomMargin"_L1)) {
-        margins.setBottom(layout.value("BottomMargin"_L1).toInt());
-    }
+    margins.setLeft(layout.value("LeftMargin"_L1).toInt(margins.left()));
+    margins.setTop(layout.value("TopMargin"_L1).toInt(margins.top()));
+    margins.setRight(layout.value("RightMargin"_L1).toInt(margins.right()));
+    margins.setBottom(layout.value("BottomMargin"_L1).toInt(margins.bottom()));
     config.margins = margins;
 
     if(layout.contains("UseCustomColours"_L1)) {
@@ -828,24 +703,18 @@ LyricsWidget::ConfigData LyricsWidget::configFromLayout(const QJsonObject& layou
         }
     }
 
-    if(layout.contains("LineFont"_L1)) {
-        config.lineFont = layout.value("LineFont"_L1).toString();
-    }
-    if(layout.contains("BaseFont"_L1)) {
-        config.baseFont = layout.value("BaseFont"_L1).toString();
-    }
-    if(layout.contains("WordLineFont"_L1)) {
-        config.wordLineFont = layout.value("WordLineFont"_L1).toString();
-    }
-    if(layout.contains("WordFont"_L1)) {
-        config.wordFont = layout.value("WordFont"_L1).toString();
-    }
+    config.lineFont     = layout.value("LineFont"_L1).toString(config.lineFont);
+    config.baseFont     = layout.value("BaseFont"_L1).toString(config.baseFont);
+    config.wordLineFont = layout.value("WordLineFont"_L1).toString(config.wordLineFont);
+    config.wordFont     = layout.value("WordFont"_L1).toString(config.wordFont);
 
     return config;
 }
 
 void LyricsWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
 {
+    config.background.saveLayout(layout);
+
     layout["SeekOnClick"_L1]           = config.seekOnClick;
     layout["NoLyricsScript"_L1]        = config.noLyricsScript;
     layout["ScrollDuration"_L1]        = config.scrollDuration;
@@ -937,10 +806,12 @@ void LyricsWidget::setCurrentTime(uint64_t time)
 
 RichText LyricsWidget::noLyricsDisplayText(const Track& track)
 {
-    auto contextData = makePlaybackScriptContext(
-        m_playerController, m_playlistHandler ? m_playlistHandler->activePlaylist() : nullptr,
-        TrackListContextPolicy::Fallback, {}, true, false, Gui::ratingStarSymbols(*m_settings));
-    const QString displayText = m_parser.evaluate(m_config.noLyricsScript, track, contextData.context);
+    const auto scriptData
+        = m_scriptContext->playbackContext(m_playlistHandler ? m_playlistHandler->activePlaylist() : nullptr);
+    const ScriptEvaluationOptions options{.trackListContextPolicy = TrackListContextPolicy::Fallback,
+                                          .escapeRichText         = true,
+                                          .ratingSymbols          = Gui::ratingStarSymbols(*m_settings)};
+    const QString displayText = m_parser.evaluate(m_config.noLyricsScript, track, scriptData.context(), options);
     if(displayText.isEmpty()) {
         return {};
     }

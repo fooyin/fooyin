@@ -25,9 +25,9 @@
 
 #include <core/engine/enginedefs.h>
 #include <core/engine/visualisationservice.h>
+#include <gui/frametimer.h>
 #include <gui/widgets/tooltip.h>
 
-#include <QBasicTimer>
 #include <QElapsedTimer>
 #include <QPointer>
 #include <QWidget>
@@ -35,6 +35,8 @@
 #include <vector>
 
 namespace Fooyin {
+class WidgetBackground;
+struct BackgroundConfig;
 class EngineController;
 class PlayerController;
 
@@ -46,6 +48,9 @@ class SpectrumView : public QWidget
 public:
     explicit SpectrumView(EngineController* engine, QWidget* parent = nullptr);
 
+    void setBackgroundConfig(const BackgroundConfig& config);
+    void setBackgroundPixmap(const QPixmap& pixmap);
+
     void setConfig(const SpectrumWidget::ConfigData& config);
     void refreshStyleColours();
     [[nodiscard]] const SpectrumWidget::ConfigData& currentConfig() const;
@@ -54,6 +59,7 @@ Q_SIGNALS:
     void contextMenuRequested(const QPoint& pos);
 
 protected:
+    bool event(QEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
@@ -119,6 +125,7 @@ private:
     void ensureStaticLayer(const QPalette& palette) const;
     [[nodiscard]] QRectF staticLayerSourceRect(const QRect& logicalRect) const;
 
+    WidgetBackground* m_background;
     VisualisationSessionPtr m_session;
     SpectrumWidget::ConfigData m_config;
     SpectrumAxisRenderer m_axisRenderer;
@@ -126,8 +133,8 @@ private:
     std::vector<float> m_peakLevels;
     std::vector<int> m_barHeights;
     std::vector<int> m_peakHeights;
-    std::vector<int> m_barHoldRemainingMs;
-    std::vector<int> m_peakHoldRemainingMs;
+    std::vector<double> m_barHoldRemainingMs;
+    std::vector<double> m_peakHoldRemainingMs;
     SpectrumPlotGeometry m_geometry;
     std::vector<QRectF> m_barRects;
     std::vector<int> m_barSourceBands;
@@ -140,7 +147,7 @@ private:
     std::vector<int> m_lowResIndices;
     bool m_paused;
     bool m_stopped;
-    QBasicTimer m_updateTimer;
+    Gui::FrameTimer m_updateTimer;
     QElapsedTimer m_elapsedTimer;
     QPointer<ToolTip> m_toolTip;
     int m_toolTipBand;

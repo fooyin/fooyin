@@ -136,8 +136,19 @@ public:
     [[nodiscard]] FyWidget* findParent() const;
     /** Returns the toolbar hosting this widget, or @c nullptr if it is not hosted in one. */
     [[nodiscard]] QToolBar* findToolbar() const;
+    /** Chooses an orientation from the available space, respecting toolbar orientation. */
+    [[nodiscard]] Qt::Orientation automaticOrientation() const;
+    /** Allows automatic orientation to change before the current layout's minimum size blocks resizing. */
+    void updateOrientationConstraints(bool automatic, const QSize& minimumSize);
     /** Returns the full geometry of this widget including frame. */
     [[nodiscard]] QRect widgetGeometry() const;
+
+    /** Returns whether layout contents margins have a saved per-widget override. */
+    [[nodiscard]] bool hasCustomLayoutMargins() const;
+    /** Sets and persists layout contents margins, preserving the original margins for reset. */
+    void setLayoutMargins(const QMargins& margins);
+    /** Restores the original layout contents margins and removes the saved override. */
+    void resetLayoutMargins();
 
     /*!
      * Serialises this widget into the layout array.

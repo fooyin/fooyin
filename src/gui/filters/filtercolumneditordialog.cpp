@@ -23,6 +23,7 @@
 #include "filterscolumnmodel.h"
 
 #include <gui/scripting/scripteditor.h>
+#include <gui/widgets/checkboxdelegate.h>
 #include <gui/widgets/extendabletableview.h>
 
 #include <QDialogButtonBox>
@@ -61,12 +62,15 @@ FilterColumnEditorWidget::FilterColumnEditorWidget(FilterColumnRegistry* columnR
     , m_openEditor{new QToolButton(this)}
 {
     m_columnList->setExtendableModel(m_model);
-    m_columnList->hideColumn(0);
-    m_columnList->setExtendableColumn(1);
+    m_columnList->setItemDelegateForColumn(0, new CheckBoxDelegate(this));
+    m_columnList->hideColumn(1);
+    m_columnList->setExtendableColumn(2);
     m_columnList->verticalHeader()->hide();
-    m_columnList->horizontalHeader()->setStretchLastSection(false);
-    m_columnList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    m_columnList->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+    m_columnList->horizontalHeader()->setStretchLastSection(true);
+    m_columnList->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+    m_columnList->horizontalHeader()->setDefaultSectionSize(240);
+    m_columnList->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    m_columnList->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
 
     m_openEditor->setText(tr("Script Editor"));
     m_columnList->addCustomTool(m_openEditor);
@@ -76,9 +80,14 @@ FilterColumnEditorWidget::FilterColumnEditorWidget(FilterColumnRegistry* columnR
 
     QObject::connect(m_columnList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &FilterColumnEditorWidget::updateButtonState);
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, &FilterColumnEditorWidget::updateButtonState);
 
     QObject::connect(m_openEditor, &QToolButton::clicked, this, [this]() {
-        const auto selection    = m_columnList->selectionModel()->selectedIndexes();
+        const auto selection = m_columnList->selectionModel()->selectedIndexes();
+        if(selection.size() != 1 || selection.front().column() < 3 || selection.front().column() > 5) {
+            return;
+        }
+
         const QModelIndex index = selection.front();
         ScriptEditor::openEditor(
             index.data(Qt::EditRole).toString(),
@@ -116,8 +125,8 @@ void FilterColumnEditorWidget::updateButtonState()
         selection, [](const QModelIndex& index) { return !index.data(Qt::UserRole).value<FilterColumn>().isDefault; });
 
     m_columnList->removeRowAction()->setEnabled(hasCustom);
-    m_openEditor->setEnabled(selection.size() == 1
-                             && (selection.front().column() == 2 || selection.front().column() == 3));
+    m_openEditor->setEnabled(selection.size() == 1 && selection.front().column() >= 3
+                             && selection.front().column() <= 5);
 }
 
 FilterColumnEditorDialog::FilterColumnEditorDialog(FilterColumnRegistry* columnRegistry, QWidget* parent)
@@ -125,7 +134,7 @@ FilterColumnEditorDialog::FilterColumnEditorDialog(FilterColumnRegistry* columnR
 {
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle(tr("Manage Filter Columns"));
-    resize(700, 500);
+    resize(950, 500);
 
     auto* editor = new FilterColumnEditorWidget(columnRegistry, this);
     auto* info   = new QLabel(tr("Column presets are shared across all widgets."), this);

@@ -211,7 +211,7 @@ void SearchWidget::populateContextMenu(QMenu* menu)
 
     auto* searching = new QAction(tr("Help"), menu);
     QObject::connect(searching, &QAction::triggered, this,
-                     []() { QDesktopServices::openUrl(u"https://docs.fooyin.org/en/latest/searching/basics.html"_s); });
+                     []() { QDesktopServices::openUrl(QString::fromLatin1(Constants::Urls::Searching)); });
     menu->addAction(searching);
 }
 
@@ -244,13 +244,8 @@ void SearchWidget::saveLayoutData(QJsonObject& layout)
 
 void SearchWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains("AutoSearch"_L1)) {
-        m_autoSearch = layout.value("AutoSearch"_L1).toBool();
-    }
-
-    if(layout.contains("ShowAll"_L1)) {
-        m_showAll = layout.value("ShowAll"_L1).toBool();
-    }
+    m_autoSearch = layout.value("AutoSearch"_L1).toBool(m_autoSearch);
+    m_showAll    = layout.value("ShowAll"_L1).toBool(m_showAll);
 
     if(layout.contains("SearchMode"_L1)) {
         m_mode = static_cast<SearchMode>(layout.value("SearchMode"_L1).toVariant().value<quint8>());

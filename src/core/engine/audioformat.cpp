@@ -19,6 +19,8 @@
 
 #include <core/engine/audioformat.h>
 
+#include <utils/timeconstants.h>
+
 #include <QStringList>
 
 #include <algorithm>
@@ -245,8 +247,8 @@ uint64_t AudioFormat::bytesForDuration(uint64_t ms) const
         return 0;
     }
 
-    const uint64_t secs = ms / 1000;
-    const uint64_t rem  = ms % 1000;
+    const uint64_t secs = ms / Time::MsPerSecond;
+    const uint64_t rem  = ms % Time::MsPerSecond;
 
     const auto sRate = static_cast<uint64_t>(sampleRate());
     const auto bpf   = static_cast<uint64_t>(bytesPerFrame());
@@ -255,7 +257,7 @@ uint64_t AudioFormat::bytesForDuration(uint64_t ms) const
         return std::numeric_limits<uint64_t>::max();
     }
 
-    const uint64_t frames = (secs * sRate) + ((rem * sRate) / 1000);
+    const uint64_t frames = (secs * sRate) + ((rem * sRate) / Time::MsPerSecond);
 
     if(frames > std::numeric_limits<uint64_t>::max() / bpf) {
         return std::numeric_limits<uint64_t>::max();
@@ -274,7 +276,7 @@ uint64_t AudioFormat::durationForBytes(uint64_t byteCount) const
     const auto sRate = static_cast<uint64_t>(sampleRate());
 
     const uint64_t frames = byteCount / bpf;
-    return ((frames / sRate) * 1000) + ((frames % sRate) * 1000 / sRate);
+    return ((frames / sRate) * Time::MsPerSecond) + ((frames % sRate) * Time::MsPerSecond / sRate);
 }
 
 uint64_t AudioFormat::bytesForFrames(int frameCount) const
@@ -308,8 +310,8 @@ int AudioFormat::framesForDuration(uint64_t ms) const
         return 0;
     }
 
-    const uint64_t secs = ms / 1000;
-    const uint64_t rem  = ms % 1000;
+    const uint64_t secs = ms / Time::MsPerSecond;
+    const uint64_t rem  = ms % Time::MsPerSecond;
 
     const auto sRate = static_cast<uint64_t>(sampleRate());
 
@@ -317,7 +319,7 @@ int AudioFormat::framesForDuration(uint64_t ms) const
         return std::numeric_limits<int>::max();
     }
 
-    const uint64_t frames = (secs * sRate) + ((rem * sRate) / 1000);
+    const uint64_t frames = (secs * sRate) + ((rem * sRate) / Time::MsPerSecond);
 
     return static_cast<int>(frames);
 }
@@ -328,7 +330,7 @@ uint64_t AudioFormat::durationForFrames(int frameCount) const
         return 0;
     }
 
-    return static_cast<uint64_t>(frameCount) * 1000 / sampleRate();
+    return static_cast<uint64_t>(frameCount) * Time::MsPerSecond / sampleRate();
 }
 
 int AudioFormat::bitdepth() const

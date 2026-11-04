@@ -27,6 +27,7 @@
 #include <gui/guiconstants.h>
 #include <gui/widgets/checkboxdelegate.h>
 #include <gui/widgets/extendabletableview.h>
+#include <gui/widgets/hintlabel.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
@@ -67,7 +68,7 @@ TagEditorFieldsPageWidget::TagEditorFieldsPageWidget(TagEditorFieldRegistry* reg
     , m_fieldList{new ExtendableTableView(this)}
     , m_model{new TagEditorFieldsModel(m_registry, this)}
     , m_editValuesOnSingleClick{new QCheckBox(tr("Edit values on single click"), this)}
-    , m_hintLabel{new QLabel(this)}
+    , m_hintLabel{new HintLabel(this)}
 {
     m_fieldList->setExtendableModel(m_model);
     m_fieldList->setTools(ExtendableTableView::Move);
@@ -95,6 +96,7 @@ TagEditorFieldsPageWidget::TagEditorFieldsPageWidget(TagEditorFieldRegistry* reg
 
     QObject::connect(m_fieldList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &TagEditorFieldsPageWidget::updateButtonState);
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, &TagEditorFieldsPageWidget::updateButtonState);
     QObject::connect(m_model, &QAbstractItemModel::rowsMoved, this, &TagEditorFieldsPageWidget::updateButtonState);
 }
 
@@ -142,8 +144,7 @@ void TagEditorFieldsPageWidget::updateButtonState()
 void TagEditorFieldsPageWidget::updateHint()
 {
     const QStringList separators = multiValueSeparators(*m_settings);
-    m_hintLabel->setText(u"🛈 "_s
-                         + tr("Use any of \"%1\" in the editor to enter multiple values.").arg(separators.join(u' ')));
+    m_hintLabel->setText(tr("Use any of ‘%1’ in the editor to enter multiple values.").arg(separators.join(u' ')));
 }
 
 TagEditorFieldsPage::TagEditorFieldsPage(TagEditorFieldRegistry* registry, SettingsManager* settings, QObject* parent)

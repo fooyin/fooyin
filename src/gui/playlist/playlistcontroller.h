@@ -83,6 +83,9 @@ public:
     [[nodiscard]] Playlist* currentPlaylist() const override;
     [[nodiscard]] UId currentPlaylistId() const override;
 
+    [[nodiscard]] int presetPlaylistCount(int presetId) const;
+    void applyPresetToPlaylists(int presetId, const std::vector<UId>& playlistIds);
+
     void changeCurrentPlaylist(Playlist* playlist);
     void changeCurrentPlaylist(const UId& id) override;
     void selectTracks(const TrackList& tracks) override;
@@ -124,6 +127,7 @@ public:
 
 Q_SIGNALS:
     void playlistsLoaded();
+    void playlistLayoutChanged(Fooyin::Playlist* playlist);
     void currentPlaylistUpdated(Fooyin::Playlist* playlist);
     void currentPlaylistTracksPatched(const Fooyin::PlaylistChangeset& changeSet);
     void currentPlaylistTracksChanged(const std::vector<int>& indexes, bool allNew);

@@ -1,0 +1,125 @@
+{
+    "Name": "Obsidian",
+    "Widgets": [
+        {
+            "SplitterVertical": {
+                "Locked": [
+                    true,
+                    false,
+                    true
+                ],
+                "State": "AAAA/wAAAAEAAAADAAAAGAAAAtwAAAAcAP////8BAAAAAgA=",
+                "Widgets": [
+                    {
+                        "StatusBar": {}
+                    },
+                    {
+                        "SplitterHorizontal": {
+                            "Locked": [
+                                true,
+                                false,
+                                true
+                            ],
+                            "State": "AAAA/wAAAAEAAAADAAABeQAAAskAAAEvAP////8BAAAAAQA=",
+                            "Widgets": [
+                                {
+                                    "SplitterVertical": {
+                                        "Locked": [
+                                            true,
+                                            false
+                                        ],
+                                        "State": "AAAA/wAAAAEAAAACAAAAIAAAArsA/////wEAAAACAA==",
+                                        "Widgets": [
+                                            {
+                                                "SearchBar": {
+                                                    "ID": "866eee837dee4919bd1d1e7c916e4013",
+                                                    "Widgets": "1c827a58f07a4a939b185d9c0285f936|09356ff889694ff7941174448bd67b7a"
+                                                }
+                                            },
+                                            {
+                                                "SplitterHorizontal": {
+                                                    "State": "AAAA/wAAAAEAAAACAAAArgAAAMoA/////wEAAAABAA==",
+                                                    "Widgets": [
+                                                        {
+                                                            "LibraryFilter": {
+                                                                "Columns": "1",
+                                                                "Group": "Default",
+                                                                "ID": "1c827a58f07a4a939b185d9c0285f936",
+                                                                "Index": 0,
+                                                                "State": "AAAAJXjaY2BgYGRgYOhigNAgwGj/AcqACjAAACPXAb4="
+                                                            }
+                                                        },
+                                                        {
+                                                            "LibraryFilter": {
+                                                                "Columns": "3",
+                                                                "Group": "Default",
+                                                                "ID": "09356ff889694ff7941174448bd67b7a",
+                                                                "Index": 1,
+                                                                "State": "AAAAJXjaY2BgYGRgYFjKAKFBgNH+A5QBFWAAACcBAdk="
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "PlaylistTabs": {
+                                        "Widgets": [
+                                            {
+                                                "Playlist": {}
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "SplitterVertical": {
+                                        "Locked": [
+                                            true,
+                                            false
+                                        ],
+                                        "State": "AAAA/wAAAAEAAAACAAABLwAAAc0A/////wEAAAACAA==",
+                                        "Widgets": [
+                                            {
+                                                "ArtworkPanel": {}
+                                            },
+                                            {
+                                                "SelectionInfo": {}
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "SplitterHorizontal": {
+                            "Locked": [
+                                true,
+                                false,
+                                false,
+                                false
+                            ],
+                            "State": "AAAA/wAAAAEAAAAEAAAAggAABoIAAAA+AAAAZwD/////AQAAAAEA",
+                            "Widgets": [
+                                {
+                                    "PlayerControls": {}
+                                },
+                                {
+                                    "SeekBar": {}
+                                },
+                                {
+                                    "PlaylistControls": {}
+                                },
+                                {
+                                    "VolumeControls": {}
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

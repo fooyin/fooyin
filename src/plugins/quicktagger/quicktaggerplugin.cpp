@@ -172,6 +172,18 @@ void QuickTaggerPlugin::registerQuickTaggerActions()
     for(const auto& [id, action] : m_quickTaggerActions) {
         if(!activeIds.contains(id)) {
             syncRegisteredAction(id, action ? action->text() : QString{}, false);
+            m_trackSelection->setSelectionActionValidator(action, {});
+        }
+    }
+
+    for(const auto& id : activeIds) {
+        if(auto* command = m_actionManager->command(id)) {
+            command->setSupportsShortcutTarget(ShortcutTarget::NowPlaying, true);
+        }
+        if(auto* action = registeredAction(id)) {
+            m_trackSelection->setSelectionActionValidator(action, [this](const TrackSelection& selection) {
+                return canWriteTracks(selection.tracks, m_audioLoader);
+            });
         }
     }
 
@@ -241,10 +253,10 @@ void QuickTaggerPlugin::runRemoveQuickTagAction(const Id& id)
 void QuickTaggerPlugin::runQuickTag(const QuickTag& tag, const QString& value)
 {
     const auto* selection = m_trackSelection->selectedSelection();
-    if(!selection || !canWriteTracks(selection->tracks, m_audioLoader)) {
-        return;
+    if(selection && canWriteTracks(selection->tracks, m_audioLoader)) {
+        const TrackList tracks = selection->tracks;
+        runQuickTag(tag, value, tracks);
     }
-    runQuickTag(tag, value, selection->tracks);
 }
 
 void QuickTaggerPlugin::runQuickTag(const QuickTag& tag, const QString& value, const TrackList& tracks)
@@ -263,12 +275,11 @@ void QuickTaggerPlugin::runRemoveQuickTag(const QuickTag& tag)
         return;
     }
 
-    if(!confirmQuickTag(quickTagDisplayName(tag), static_cast<int>(selection->tracks.size()),
-                        quickTaggerConfirmationThreshold(*m_settings))) {
-        return;
+    const TrackList tracks = selection->tracks;
+    if(confirmQuickTag(quickTagDisplayName(tag), static_cast<int>(tracks.size()),
+                       quickTaggerConfirmationThreshold(*m_settings))) {
+        removeQuickTag(tag, tracks);
     }
-
-    removeQuickTag(tag, selection->tracks);
 }
 
 void QuickTaggerPlugin::applyQuickTag(const QuickTag& tag, const QString& value, TrackList tracks)
@@ -310,7 +321,7 @@ bool QuickTaggerPlugin::confirmQuickTag(const QString& field, int trackCount, in
 
     const auto response = QMessageBox::question(Utils::getMainWindow(), tr("Quick Tagger"),
                                                 //: %1 is the Quick Tagger entry name, for example "Rating".
-                                                tr("Set \"%1\" on %Ln track(s)?", nullptr, trackCount).arg(field));
+                                                tr("Set ‘%1’ on %Ln track(s)?", nullptr, trackCount).arg(field));
     return response == QMessageBox::Yes;
 }
 
