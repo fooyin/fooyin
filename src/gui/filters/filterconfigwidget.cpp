@@ -131,6 +131,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_iconHorizontalGap{new QSpinBox(this)}
     , m_iconVerticalGap{new QSpinBox(this)}
     , m_artworkCornerRadius{new QSpinBox(this)}
+    , m_overrideArtworkMargins{new QCheckBox(tr("Custom margins"), this)}
     , m_artworkLeftMargin{new QSpinBox(this)}
     , m_artworkTopMargin{new QSpinBox(this)}
     , m_artworkRightMargin{new QSpinBox(this)}
@@ -530,6 +531,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     artworkLayout->addWidget(Gui::createSectionHeader(tr("Gaps"), artworkMode), row++, 0, 1, 5);
     artworkLayout->addLayout(gapsLayout, row++, 0, 1, 5);
     artworkLayout->addWidget(Gui::createSectionHeader(tr("Margins"), artworkMode), row++, 0, 1, 5);
+    artworkLayout->addWidget(m_overrideArtworkMargins, row++, 0, 1, 5);
     artworkLayout->addLayout(marginsLayout, row++, 0, 1, 5);
     artworkLayout->setColumnStretch(4, 1);
 
@@ -646,16 +648,17 @@ FilterWidget::ConfigData FilterConfigDialog::config() const
         .coverType      = static_cast<Track::Cover>(m_coverType->currentData().toInt()),
         .coverSource
         = coverSource < 0 ? std::nullopt : std::optional{static_cast<ArtworkSourcePreference>(coverSource)},
-        .showSummary         = m_showSummary->isChecked(),
-        .showHeader          = m_showHeader->isChecked(),
-        .showScrollbar       = m_showScrollbar->isChecked(),
-        .alternatingRows     = m_alternatingRows->isChecked(),
-        .rowHeight           = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
-        .iconSize            = {m_iconWidth->value(), m_iconHeight->value()},
-        .autoFitArtwork      = m_autoFitArtwork->isChecked(),
-        .iconHorizontalGap   = m_iconHorizontalGap->value(),
-        .iconVerticalGap     = m_iconVerticalGap->value(),
-        .artworkCornerRadius = m_artworkCornerRadius->value(),
+        .showSummary            = m_showSummary->isChecked(),
+        .showHeader             = m_showHeader->isChecked(),
+        .showScrollbar          = m_showScrollbar->isChecked(),
+        .alternatingRows        = m_alternatingRows->isChecked(),
+        .rowHeight              = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
+        .iconSize               = {m_iconWidth->value(), m_iconHeight->value()},
+        .autoFitArtwork         = m_autoFitArtwork->isChecked(),
+        .iconHorizontalGap      = m_iconHorizontalGap->value(),
+        .iconVerticalGap        = m_iconVerticalGap->value(),
+        .artworkCornerRadius    = m_artworkCornerRadius->value(),
+        .overrideArtworkMargins = m_overrideArtworkMargins->isChecked(),
         .artworkMargins    = {m_artworkLeftMargin->value(), m_artworkTopMargin->value(), m_artworkRightMargin->value(),
                               m_artworkBottomMargin->value()},
         .background        = m_background->config(),
@@ -738,6 +741,10 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     m_iconHorizontalGap->setValue(config.iconHorizontalGap);
     m_iconVerticalGap->setValue(config.iconVerticalGap);
     m_artworkCornerRadius->setValue(config.artworkCornerRadius);
+    m_overrideArtworkMargins->setChecked(config.overrideArtworkMargins);
+    for(auto* margin : {m_artworkLeftMargin, m_artworkTopMargin, m_artworkRightMargin, m_artworkBottomMargin}) {
+        margin->setEnabled(config.overrideArtworkMargins);
+    }
     m_artworkLeftMargin->setValue(config.artworkMargins.left());
     m_artworkTopMargin->setValue(config.artworkMargins.top());
     m_artworkRightMargin->setValue(config.artworkMargins.right());
@@ -812,14 +819,14 @@ void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& pre
         &FilterWidget::ConfigData::alternatingRows, &FilterWidget::ConfigData::rowHeight,
         &FilterWidget::ConfigData::iconSize, &FilterWidget::ConfigData::iconHorizontalGap,
         &FilterWidget::ConfigData::autoFitArtwork, &FilterWidget::ConfigData::iconVerticalGap,
-        &FilterWidget::ConfigData::artworkCornerRadius, &FilterWidget::ConfigData::artworkMargins,
-        &FilterWidget::ConfigData::expandGroups, &FilterWidget::ConfigData::expansionAnimated,
-        &FilterWidget::ConfigData::expansionAnimationDuration, &FilterWidget::ConfigData::expansionAlternatingRows,
-        &FilterWidget::ConfigData::expandedArtwork, &FilterWidget::ConfigData::expansionMinimumRows,
-        &FilterWidget::ConfigData::expansionMaximumColumns, &FilterWidget::ConfigData::expansionArtworkOnLeft,
-        &FilterWidget::ConfigData::expansionStretchColumns, &FilterWidget::ConfigData::expansionMinimumColumnWidth,
-        &FilterWidget::ConfigData::expansionArtworkSize, &FilterWidget::ConfigData::expansionShowCloseButton,
-        &FilterWidget::ConfigData::expansionArtworkReflection,
+        &FilterWidget::ConfigData::artworkCornerRadius, &FilterWidget::ConfigData::overrideArtworkMargins,
+        &FilterWidget::ConfigData::artworkMargins, &FilterWidget::ConfigData::expandGroups,
+        &FilterWidget::ConfigData::expansionAnimated, &FilterWidget::ConfigData::expansionAnimationDuration,
+        &FilterWidget::ConfigData::expansionAlternatingRows, &FilterWidget::ConfigData::expandedArtwork,
+        &FilterWidget::ConfigData::expansionMinimumRows, &FilterWidget::ConfigData::expansionMaximumColumns,
+        &FilterWidget::ConfigData::expansionArtworkOnLeft, &FilterWidget::ConfigData::expansionStretchColumns,
+        &FilterWidget::ConfigData::expansionMinimumColumnWidth, &FilterWidget::ConfigData::expansionArtworkSize,
+        &FilterWidget::ConfigData::expansionShowCloseButton, &FilterWidget::ConfigData::expansionArtworkReflection,
         &FilterWidget::ConfigData::expansionArtworkReflectionHeight,
         &FilterWidget::ConfigData::expansionArtworkReflectionOpacity,
         &FilterWidget::ConfigData::expansionArtworkReflectionGap,
@@ -843,6 +850,9 @@ void FilterConfigDialog::setupConnections()
     QObject::connect(m_artworkNoLabelsMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
 
     QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);
+    for(auto* margin : {m_artworkLeftMargin, m_artworkTopMargin, m_artworkRightMargin, m_artworkBottomMargin}) {
+        QObject::connect(m_overrideArtworkMargins, &QCheckBox::toggled, margin, &QWidget::setEnabled);
+    }
     QObject::connect(m_playlistEnabled, &QCheckBox::toggled, this, &FilterConfigDialog::updatePlaylistControls);
     QObject::connect(m_manageColumns, &QPushButton::clicked, this, [this]() {
         auto* dialog = new FilterColumnEditorDialog(m_columnRegistry, this);

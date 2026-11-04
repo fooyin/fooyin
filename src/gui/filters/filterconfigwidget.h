@@ -118,6 +118,7 @@ private:
     QSpinBox* m_iconHorizontalGap;
     QSpinBox* m_iconVerticalGap;
     QSpinBox* m_artworkCornerRadius;
+    QCheckBox* m_overrideArtworkMargins;
     QSpinBox* m_artworkLeftMargin;
     QSpinBox* m_artworkTopMargin;
     QSpinBox* m_artworkRightMargin;

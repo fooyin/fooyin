@@ -158,6 +158,7 @@ public:
         int iconHorizontalGap{-1};
         int iconVerticalGap{10};
         int artworkCornerRadius{0};
+        bool overrideArtworkMargins{false};
         QMargins artworkMargins{8, 8, 8, 8};
         BackgroundConfig background;
         bool expandGroups{false};
@@ -225,6 +226,7 @@ private:
     void handleSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
     void updateViewMode(ExpandedTreeView::ViewMode mode);
     void updateCaptions(ExpandedTreeView::CaptionDisplay captions);
+    void updateArtworkMargins();
     void updateAppearance();
     void scheduleVisibleCoverPinUpdate(int delay = 0);
     void updateVisibleCoverPins();

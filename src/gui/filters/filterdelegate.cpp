@@ -398,7 +398,8 @@ QRect FilterDelegate::iconTextRect(const QStyleOptionViewItem& option) const
                         + verticalMargin);
             rect.adjust(0, 0, 0, -verticalMargin);
             const int horizontalMargin = std::max(4, margin);
-            rect.adjust(horizontalMargin, 0, -horizontalMargin, 0);
+            rect.adjust(std::max(horizontalMargin, m_artworkMargins.left()), 0,
+                        -std::max(horizontalMargin, m_artworkMargins.right()), 0);
             break;
         }
         case ExpandedTreeView::CaptionDisplay::Overlay:
