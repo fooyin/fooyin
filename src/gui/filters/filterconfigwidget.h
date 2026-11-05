@@ -28,19 +28,17 @@
 class QCheckBox;
 class QComboBox;
 class QLineEdit;
-class QTimerEvent;
 class QPushButton;
 class QSpinBox;
 class QRadioButton;
 
 namespace Fooyin {
-class ScriptTextEdit;
 class BackgroundConfigWidget;
-class ColourButton;
-class FontButton;
 
 namespace Filters {
 class FilterColumnRegistry;
+class CoverFlowConfigWidget;
+class ExpansionConfigWidget;
 
 class FYGUI_EXPORT FilterConfigDialog : public WidgetConfigDialog<FilterWidget, FilterWidget::ConfigData>
 {
@@ -51,8 +49,6 @@ public:
                                 QWidget* parent = nullptr);
 
 protected:
-    void changeEvent(QEvent* event) override;
-    void timerEvent(QTimerEvent* event) override;
     [[nodiscard]] FilterWidget::ConfigData config() const override;
     void setConfig(const FilterWidget::ConfigData& config) override;
     void mergeExternalConfig(const FilterWidget::ConfigData& previous,
@@ -61,29 +57,10 @@ protected:
 private:
     void setupConnections();
     void updatePlaylistControls();
-    void updateExpansionControls();
-    void updatePreviewVisibility();
-    void updatePreviewArtworkMargins();
-    void updatePreviewArtworkReflection();
-    void updatePreviewBackground();
-    void applyPreview(const ExpansionResult& result);
-    void schedulePreview();
-    void updatePreview(bool synchronous = false);
-    [[nodiscard]] ExpansionScripts scripts() const;
 
     FilterWidget* m_filterWidget;
-    QWidget* m_scriptsTab;
-    ScriptTextEdit* m_headerScript;
-    ScriptTextEdit* m_trackScript;
-    ScriptTextEdit* m_footerScript;
-    ScriptTextEdit* m_groupByScript;
-    ScriptTextEdit* m_subheaderScript;
-    FilterExpansionWidget* m_preview;
-    std::shared_ptr<const TrackList> m_previewTracks;
-    ScriptSubscription* m_previewSubscription;
-    QBasicTimer m_previewTimer;
-    uint64_t m_previewGeneration;
-
+    ExpansionConfigWidget* m_expansionConfig;
+    CoverFlowConfigWidget* m_coverFlowConfig;
     FilterColumnRegistry* m_columnRegistry;
 
     QComboBox* m_source;
@@ -100,6 +77,7 @@ private:
     QCheckBox* m_restoreState;
 
     QRadioButton* m_columnsMode;
+    QRadioButton* m_coverFlowMode;
     QRadioButton* m_artworkBottomMode;
     QRadioButton* m_artworkRightMode;
     QRadioButton* m_artworkOverlayMode;
@@ -124,31 +102,6 @@ private:
     QSpinBox* m_artworkRightMargin;
     QSpinBox* m_artworkBottomMargin;
     BackgroundConfigWidget* m_background;
-    BackgroundConfigWidget* m_expansionBackground;
-    ColourButton* m_expansionBackgroundColour;
-    FontButton* m_expansionPlayingRowFont;
-    ColourButton* m_expansionPlayingRowColour;
-    QCheckBox* m_expandGroups;
-    QCheckBox* m_expansionAnimated;
-    QSpinBox* m_expansionAnimationDuration;
-    QCheckBox* m_expansionAlternatingRows;
-    QCheckBox* m_expandedArtwork;
-    QCheckBox* m_expansionCloseButton;
-    QCheckBox* m_expansionArtworkReflection;
-    QSpinBox* m_expansionArtworkReflectionHeight;
-    QSpinBox* m_expansionArtworkReflectionOpacity;
-    QSpinBox* m_expansionArtworkReflectionGap;
-    QCheckBox* m_expansionArtworkAutoMargins;
-    QSpinBox* m_expansionArtworkLeftMargin;
-    QSpinBox* m_expansionArtworkTopMargin;
-    QSpinBox* m_expansionArtworkRightMargin;
-    QSpinBox* m_expansionArtworkBottomMargin;
-    QComboBox* m_expansionArtworkPosition;
-    QSpinBox* m_expansionArtworkSize;
-    QSpinBox* m_expansionMinimumRows;
-    QSpinBox* m_expansionMaximumColumns;
-    QComboBox* m_expansionColumnSizing;
-    QSpinBox* m_expansionMinimumColumnWidth;
     QPushButton* m_manageColumns;
 };
 } // namespace Filters

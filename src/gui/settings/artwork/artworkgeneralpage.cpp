@@ -63,6 +63,7 @@ private:
 
     ScriptLineEdit* m_thumbnailGroupScript;
     QSpinBox* m_pixmapCache;
+    QSpinBox* m_coverFlowCache;
     QLabel* m_cacheSizeLabel;
 };
 
@@ -73,6 +74,7 @@ ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings, CoverRepository*
     , m_preferEmbedded{new QRadioButton(tr("Prefer embedded artwork"), this)}
     , m_thumbnailGroupScript{new ScriptLineEdit(this)}
     , m_pixmapCache{new QSpinBox(this)}
+    , m_coverFlowCache{new QSpinBox(this)}
     , m_cacheSizeLabel{new QLabel(this)}
 {
     auto* sourceGroupBox = new QGroupBox(tr("Local Source"), this);
@@ -106,6 +108,16 @@ ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings, CoverRepository*
     m_pixmapCache->setMaximum(1000);
     m_pixmapCache->setSuffix(u" MB"_s);
 
+    const auto coverFlowCacheTooltip
+        = tr("Maximum memory used for scaled artwork and reflections in each cover flow widget");
+
+    auto* coverFlowCacheLabel = new QLabel(tr("Cover flow cache size") + u":"_s, this);
+    coverFlowCacheLabel->setToolTip(coverFlowCacheTooltip);
+
+    m_coverFlowCache->setToolTip(coverFlowCacheTooltip);
+    m_coverFlowCache->setRange(1, 1024);
+    m_coverFlowCache->setSuffix(u" MiB"_s);
+
     auto* clearCacheButton = new QPushButton(tr("Clear Cache"), this);
     QObject::connect(clearCacheButton, &QPushButton::clicked, this, [this]() {
         m_coverRepository->clearCache();
@@ -115,6 +127,8 @@ ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings, CoverRepository*
     int row{0};
     cacheLayout->addWidget(pixmapCacheLabel, row, 0);
     cacheLayout->addWidget(m_pixmapCache, row++, 1);
+    cacheLayout->addWidget(coverFlowCacheLabel, row, 0);
+    cacheLayout->addWidget(m_coverFlowCache, row++, 1);
     cacheLayout->addWidget(m_cacheSizeLabel, row, 0);
     cacheLayout->addWidget(clearCacheButton, row++, 1);
     cacheLayout->setColumnStretch(cacheLayout->columnCount(), 1);
@@ -139,6 +153,7 @@ void ArtworkPageWidget::load()
     }
 
     m_pixmapCache->setValue(m_settings->value<Settings::Gui::Internal::PixmapCacheSize>());
+    m_coverFlowCache->setValue(m_settings->value<Settings::Gui::Internal::CoverFlowCacheSize>());
     m_thumbnailGroupScript->setScript(m_settings->value<Settings::Gui::Internal::TrackCoverThumbnailGroupScript>());
     updateCacheSize();
 }
@@ -151,6 +166,7 @@ void ArtworkPageWidget::apply()
     m_settings->set<Settings::Gui::Internal::TrackCoverSourcePreference>(static_cast<int>(sourcePref));
     m_settings->set<Settings::Gui::Internal::TrackCoverThumbnailGroupScript>(m_thumbnailGroupScript->text());
     m_settings->set<Settings::Gui::Internal::PixmapCacheSize>(m_pixmapCache->value());
+    m_settings->set<Settings::Gui::Internal::CoverFlowCacheSize>(m_coverFlowCache->value());
 }
 
 void ArtworkPageWidget::reset()
@@ -158,6 +174,7 @@ void ArtworkPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::TrackCoverSourcePreference>();
     m_settings->reset<Settings::Gui::Internal::TrackCoverThumbnailGroupScript>();
     m_settings->reset<Settings::Gui::Internal::PixmapCacheSize>();
+    m_settings->reset<Settings::Gui::Internal::CoverFlowCacheSize>();
 }
 
 void ArtworkPageWidget::updateCacheSize()

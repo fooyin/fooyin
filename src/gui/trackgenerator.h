@@ -41,5 +41,6 @@ public:
     static TrackList generateTracks(const Options& options);
 
     static QPixmap generateArtwork();
+    static QPixmap generateArtwork(uint32_t seed);
 };
 } // namespace Fooyin

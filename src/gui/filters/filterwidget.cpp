@@ -27,6 +27,7 @@
 #include "filteritem.h"
 #include "filtermodel.h"
 #include "filterview.h"
+#include "internalguisettings.h"
 
 #include <core/coresettings.h>
 #include <core/library/librarymanager.h>
@@ -110,6 +111,8 @@ constexpr auto FilterExpansionMinimumColumnWidthKey = u"Filters/ExpansionMinimum
 constexpr auto FilterExpansionScriptsKey            = u"Filters/ExpansionScripts";
 constexpr auto FilterExpansionPlayingRowFontKey     = u"Filters/ExpansionPlayingRowFont";
 constexpr auto FilterExpansionPlayingRowColourKey   = u"Filters/ExpansionPlayingRowColour";
+
+constexpr auto FilterCoverFlowKey = u"Filters/CoverFlow";
 
 constexpr auto FilterBackgroundKey                = u"Filters/Background";
 constexpr auto FilterExpansionBackgroundKey       = u"Filters/ExpansionBackground";
@@ -196,6 +199,10 @@ FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* c
     m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
     m_view->setSelectBeforeDrag(m_settings->value<Settings::Gui::DragOnlyAfterSelect>());
     m_settings->subscribe<Settings::Gui::DragOnlyAfterSelect>(m_view, &FilterView::setSelectBeforeDrag);
+
+    m_delegate->setCoverFlowCacheSize(m_settings->value<Settings::Gui::Internal::CoverFlowCacheSize>());
+    m_settings->subscribe<Settings::Gui::Internal::CoverFlowCacheSize>(m_delegate,
+                                                                       &FilterDelegate::setCoverFlowCacheSize);
 
     m_header->setStretchEnabled(true);
     m_header->setSortIndicatorShown(true);
@@ -355,15 +362,26 @@ void FilterWidget::setViewState(const FilterViewState& state)
     m_restoredSelectedKeys    = state.selectedKeys;
     m_selectionRestorePending = state.selectionRestorePending;
 
+    auto* selectionModel = m_view->selectionModel();
+    const bool coverFlow = m_view->viewMode() == ExpandedTreeView::ViewMode::CoverFlow;
+    QSignalBlocker blocker{selectionModel};
+    if(!coverFlow) {
+        blocker.unblock();
+    }
+
     const bool rowsChanged = m_model->setRows(m_columns, state.rows);
     traceSortState("Rows applied", true);
 
     if(state.scrollPolicy == FilterScrollPolicy::ResetIfChanged && rowsChanged && m_pendingScrollPosition < 0) {
-        m_view->scrollToTop();
+        if(coverFlow) {
+            m_view->horizontalScrollBar()->setValue(0);
+        }
+        else {
+            m_view->scrollToTop();
+        }
     }
 
-    auto* selectionModel = m_view->selectionModel();
-    const QSignalBlocker blocker{selectionModel};
+    blocker.reblock();
     selectionModel->clearSelection();
 
     const QModelIndexList selectedIndexes = m_model->indexesForKeys(state.selectedKeys);
@@ -461,7 +479,10 @@ void FilterWidget::saveLayoutData(QJsonObject& layout)
     if(m_config.restoreState && !m_expandedKey.isEmpty()) {
         layout["ExpandedKey"_L1] = QString::fromLatin1(m_expandedKey.toBase64());
     }
-    layout["ScrollPosition"_L1] = m_view->verticalScrollBar()->value();
+    layout["ScrollPosition"_L1]
+        = (m_view->viewMode() == ExpandedTreeView::ViewMode::CoverFlow ? m_view->horizontalScrollBar()
+                                                                       : m_view->verticalScrollBar())
+              ->value();
 
     QByteArray state = m_header->saveHeaderState();
     state            = qCompress(state, 9);
@@ -679,6 +700,7 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
     config.expansionPlayingRowColour
         = m_settings->fileValue(FilterExpansionPlayingRowColourKey, config.expansionPlayingRowColour).toString();
 
+    config.coverFlow.load(QJsonObject::fromVariantMap(m_settings->fileValue(FilterCoverFlowKey).toMap()));
     config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(FilterBackgroundKey).toMap()));
     config.expansionBackground.loadLayout(
         QJsonObject::fromVariantMap(m_settings->fileValue(FilterExpansionBackgroundKey).toMap()));
@@ -752,6 +774,7 @@ void FilterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(FilterExpansionScriptsKey, config.expansionScripts.toJson().toVariantMap());
     m_settings->fileSet(FilterExpansionPlayingRowFontKey, config.expansionPlayingRowFont);
     m_settings->fileSet(FilterExpansionPlayingRowColourKey, config.expansionPlayingRowColour);
+    m_settings->fileSet(FilterCoverFlowKey, config.coverFlow.toJson().toVariantMap());
 
     QJsonObject background;
     config.background.saveLayout(background);
@@ -817,6 +840,7 @@ void FilterWidget::clearSavedDefaults() const
     m_settings->fileRemove(FilterBackgroundKey);
     m_settings->fileRemove(FilterExpansionBackgroundKey);
     m_settings->fileRemove(FilterExpansionBackgroundColourKey);
+    m_settings->fileRemove(FilterCoverFlowKey);
     m_settings->fileRemove(FilterDisplayKey);
     m_settings->fileRemove(FilterCaptionsKey);
     m_settings->fileRemove(FilterArtworkKey);
@@ -831,6 +855,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
 {
     auto validated{config};
 
+    validated.coverFlow.normalise();
     validated.background.normalise();
     validated.expansionBackground.normalise();
     validated.expansionBackground.fadeDuration = 0;
@@ -840,8 +865,8 @@ void FilterWidget::applyConfig(const ConfigData& config)
     if(validated.source != FilterSource::Library && validated.source != FilterSource::CurrentPlaylist) {
         validated.source = FilterSource::Library;
     }
-    if(validated.viewMode != ExpandedTreeView::ViewMode::Tree
-       && validated.viewMode != ExpandedTreeView::ViewMode::Icon) {
+    if(validated.viewMode != ExpandedTreeView::ViewMode::Tree && validated.viewMode != ExpandedTreeView::ViewMode::Icon
+       && validated.viewMode != ExpandedTreeView::ViewMode::CoverFlow) {
         validated.viewMode = ExpandedTreeView::ViewMode::Tree;
     }
     if(validated.captionDisplay != ExpandedTreeView::CaptionDisplay::None
@@ -902,7 +927,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
                                 || m_config.expansionArtworkAutoMargins != validated.expansionArtworkAutoMargins
                                 || m_config.expansionArtworkMargins != validated.expansionArtworkMargins;
     const bool hasConfigChanged
-        = m_config.doubleClickAction != validated.doubleClickAction
+        = m_config.coverFlow != validated.coverFlow || m_config.doubleClickAction != validated.doubleClickAction
        || m_config.expansionDoubleClickAction != validated.expansionDoubleClickAction
        || m_config.expansionMiddleClickAction != validated.expansionMiddleClickAction
        || m_config.middleClickAction != validated.middleClickAction || m_config.sendPlayback != validated.sendPlayback
@@ -934,7 +959,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
         updateViewMode(m_config.viewMode);
     }
 
-    m_model->setShowDecoration(m_config.viewMode == ExpandedTreeView::ViewMode::Icon);
+    m_model->setShowDecoration(m_config.viewMode != ExpandedTreeView::ViewMode::Tree);
     updateCaptions(m_config.captionDisplay);
     m_model->setCoverType(m_config.coverType);
     m_model->setCoverSource(m_config.coverSource);
@@ -944,8 +969,11 @@ void FilterWidget::applyConfig(const ConfigData& config)
     m_view->setExpansionAnimated(m_config.expansionAnimated);
     m_view->setExpansionAnimationDuration(m_config.expansionAnimationDuration);
     m_view->setBackgroundConfig(m_config.background);
+    m_view->setCoverFlowSettings(m_config.coverFlow);
     m_backgroundSource->setConfig(m_config.background);
+
     updateAppearance();
+    scheduleVisibleCoverPinUpdate();
 
     if(m_expansion) {
         m_expansion->setBackground(m_config.expansionBackground, m_config.expansionBackgroundColour);
@@ -1144,7 +1172,7 @@ void FilterWidget::timerEvent(QTimerEvent* event)
 void FilterWidget::setupConnections()
 {
     const auto syncIconColumnOrder = [this]() {
-        if(m_view->viewMode() == ExpandedTreeView::ViewMode::Icon) {
+        if(m_view->viewMode() != ExpandedTreeView::ViewMode::Tree) {
             m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
         }
         if(!m_expandedKey.isEmpty()) {
@@ -1171,15 +1199,16 @@ void FilterWidget::setupConnections()
     QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &FilterWidget::handleSelectionChanged);
     QObject::connect(m_view, &ExpandedTreeView::viewModeChanged, this, [this](ExpandedTreeView::ViewMode mode) {
-        m_model->setShowDecoration(mode == ExpandedTreeView::ViewMode::Icon);
+        m_model->setShowDecoration(mode != ExpandedTreeView::ViewMode::Tree);
         if(mode != ExpandedTreeView::ViewMode::Icon) {
             closeExpansion();
         }
         scheduleVisibleCoverPinUpdate();
     });
     QObject::connect(m_view, &QAbstractItemView::iconSizeChanged, this, [this](const QSize& size) {
-        if(size.isValid() && m_config.iconSize != size) {
-            m_config.iconSize = size;
+        if(size.isValid() && (m_config.iconSize != size || m_config.autoFitArtwork != m_view->autoFitArtwork())) {
+            m_config.iconSize       = size;
+            m_config.autoFitArtwork = m_view->autoFitArtwork();
             m_model->setIconSize(m_view->effectiveIconSize());
             scheduleVisibleCoverPinUpdate();
             Q_EMIT configChanged();
@@ -1188,7 +1217,15 @@ void FilterWidget::setupConnections()
     QObject::connect(m_view, &ExpandedTreeView::effectiveIconSizeChanged, this, [this](const QSize& size) {
         m_model->setIconSize(size);
         scheduleVisibleCoverPinUpdate();
+        if(m_config.autoFitArtwork != m_view->autoFitArtwork()) {
+            m_config.autoFitArtwork = m_view->autoFitArtwork();
+            Q_EMIT configChanged();
+        }
     });
+    QObject::connect(m_view, &ExpandedTreeView::contentSizeChanged, this,
+                     [this]() { scheduleVisibleCoverPinUpdate(); });
+    QObject::connect(m_view->horizontalScrollBar(), &QScrollBar::valueChanged, this,
+                     [this]() { scheduleVisibleCoverPinUpdate(); });
     QObject::connect(m_view->verticalScrollBar(), &QScrollBar::valueChanged, this,
                      [this]() { scheduleVisibleCoverPinUpdate(); });
     QObject::connect(m_sortProxy, &QAbstractItemModel::modelReset, this,
@@ -1316,6 +1353,9 @@ void FilterWidget::updateViewMode(ExpandedTreeView::ViewMode mode)
 
 void FilterWidget::updateCaptions(ExpandedTreeView::CaptionDisplay captions)
 {
+    if(m_view->viewMode() == ExpandedTreeView::ViewMode::CoverFlow) {
+        captions = ExpandedTreeView::CaptionDisplay::Bottom;
+    }
     m_model->setShowLabels(captions != ExpandedTreeView::CaptionDisplay::None);
     m_view->setCaptionDisplay(captions);
 }
@@ -1348,7 +1388,11 @@ void FilterWidget::updateArtworkMargins()
 
 void FilterWidget::updateAppearance()
 {
-    m_view->setVerticalScrollBarPolicy(m_config.showScrollbar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+    const bool coverFlow = m_view->viewMode() == ExpandedTreeView::ViewMode::CoverFlow;
+    m_view->setVerticalScrollBarPolicy(m_config.showScrollbar && !coverFlow ? Qt::ScrollBarAsNeeded
+                                                                            : Qt::ScrollBarAlwaysOff);
+    m_view->setHorizontalScrollBarPolicy(m_config.showScrollbar || !coverFlow ? Qt::ScrollBarAsNeeded
+                                                                              : Qt::ScrollBarAlwaysOff);
     m_view->setAlternatingRowColors(m_config.alternatingRows);
 
     const QVariant resolvedStyleValue = m_settings->value<Settings::Gui::ResolvedAppStyle>();
@@ -1365,7 +1409,7 @@ void FilterWidget::scheduleVisibleCoverPinUpdate(int delay)
 void FilterWidget::updateVisibleCoverPins()
 {
     auto* coverProvider = m_model->coverProvider();
-    if(m_view->viewMode() != ExpandedTreeView::ViewMode::Icon) {
+    if(m_view->viewMode() == ExpandedTreeView::ViewMode::Tree) {
         coverProvider->clearVisibleThumbnailKeys(this);
         return;
     }
@@ -1653,7 +1697,7 @@ void FilterWidget::applyExpansionContent(const ExpansionResult& result)
             const int viewportHeight = m_view->viewport()->height();
             const int bottom         = m_expansion->y() + m_expansion->height();
             const int spacing        = m_view->captionDisplay() != ExpandedTreeView::CaptionDisplay::Right
-                                            || m_view->autoFitArtwork() || m_view->useIconGapsForSideCaptions()
+                                            || m_view->useIconGapsForSideCaptions()
                                          ? m_view->iconVerticalGap()
                                          : 0;
             // Keep the selected icon and its top spacing visible while showing the expansion
@@ -1785,7 +1829,12 @@ void FilterWidget::restoreScrollPosition()
     if(m_pendingScrollPosition >= 0) {
         const int scrollPosition = std::exchange(m_pendingScrollPosition, -1);
         QMetaObject::invokeMethod(
-            m_view, [this, scrollPosition]() { m_view->verticalScrollBar()->setValue(scrollPosition); },
+            m_view,
+            [this, scrollPosition]() {
+                auto* bar = m_view->viewMode() == ExpandedTreeView::ViewMode::CoverFlow ? m_view->horizontalScrollBar()
+                                                                                        : m_view->verticalScrollBar();
+                bar->setValue(scrollPosition);
+            },
             Qt::QueuedConnection);
     }
 }
@@ -1802,6 +1851,7 @@ void FilterWidget::addDisplayMenu(QMenu* menu)
     auto* displayArtLeft    = new QAction(FilterWidget::tr("Artwork (right labels)"), displayGroup);
     auto* displayArtOverlay = new QAction(FilterWidget::tr("Artwork (overlay labels)"), displayGroup);
     auto* displayArtNone    = new QAction(FilterWidget::tr("Artwork (no labels)"), displayGroup);
+    auto* displayCoverFlow  = new QAction(FilterWidget::tr("Cover flow"), displayGroup);
     auto* coverFront        = new QAction(FilterWidget::tr("Front cover"), coverGroup);
     auto* coverBack         = new QAction(FilterWidget::tr("Back cover"), coverGroup);
     auto* coverArtist       = new QAction(FilterWidget::tr("Artist"), coverGroup);
@@ -1814,6 +1864,7 @@ void FilterWidget::addDisplayMenu(QMenu* menu)
     displayArtLeft->setCheckable(true);
     displayArtOverlay->setCheckable(true);
     displayArtNone->setCheckable(true);
+    displayCoverFlow->setCheckable(true);
     coverFront->setCheckable(true);
     coverBack->setCheckable(true);
     coverArtist->setCheckable(true);
@@ -1829,8 +1880,11 @@ void FilterWidget::addDisplayMenu(QMenu* menu)
     using ViewMode       = ExpandedTreeView::ViewMode;
     using CaptionDisplay = ExpandedTreeView::CaptionDisplay;
 
-    if(currentMode == ExpandedTreeView::ViewMode::Tree) {
+    if(currentMode == ViewMode::Tree) {
         displayList->setChecked(true);
+    }
+    else if(currentMode == ViewMode::CoverFlow) {
+        displayCoverFlow->setChecked(true);
     }
     else if(currentCaptions == CaptionDisplay::Bottom) {
         displayArtBottom->setChecked(true);
@@ -1895,6 +1949,12 @@ void FilterWidget::addDisplayMenu(QMenu* menu)
         config.captionDisplay = CaptionDisplay::None;
         applyConfig(config);
     });
+    QObject::connect(displayCoverFlow, &QAction::triggered, this, [this]() {
+        auto config{m_config};
+        config.viewMode       = ViewMode::CoverFlow;
+        config.captionDisplay = CaptionDisplay::Bottom;
+        applyConfig(config);
+    });
     QObject::connect(coverFront, &QAction::triggered, this, [this]() {
         auto config{m_config};
         config.coverType = Track::Cover::Front;
@@ -1929,6 +1989,7 @@ void FilterWidget::addDisplayMenu(QMenu* menu)
     auto* expandGroups = new QAction(tr("Expand selected group"), displayMenu);
     expandGroups->setCheckable(true);
     expandGroups->setChecked(m_config.expandGroups);
+    expandGroups->setEnabled(currentMode != ViewMode::CoverFlow);
     QObject::connect(expandGroups, &QAction::toggled, this, [this](bool checked) {
         auto config         = m_config;
         config.expandGroups = checked;
@@ -2109,6 +2170,7 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
         config.iconSize = factoryConfig().iconSize;
     }
 
+    config.coverFlow.load(layout.value("CoverFlow"_L1).toObject());
     config.background.loadLayout(layout.value("Background"_L1).toObject());
     config.expansionBackground.loadLayout(layout.value("ExpansionBackground"_L1).toObject());
     config.expansionBackgroundColour
@@ -2174,6 +2236,7 @@ void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["ExpansionScripts"_L1]                  = config.expansionScripts.toJson();
     layout["ExpansionPlayingRowFont"_L1]           = config.expansionPlayingRowFont;
     layout["ExpansionPlayingRowColour"_L1]         = config.expansionPlayingRowColour;
+    layout["CoverFlow"_L1]                         = config.coverFlow.toJson();
     QJsonObject background;
     config.background.saveLayout(background);
     layout["Background"_L1] = background;

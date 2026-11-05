@@ -115,7 +115,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     m_useIconGapsForSideCaptions->setToolTip(
         tr("Apply horizontal and vertical gaps when captions are displayed to the right of icons. "
            "When disabled, columns stretch to fill the available width without gaps between stations. "
-           "Artwork margins still apply. Auto-fit artwork always uses grid spacing."));
+           "Artwork margins still apply."));
 
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
@@ -206,7 +206,6 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     contentLayout()->addWidget(tabs);
 
     QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);
-    QObject::connect(m_autoFitArtwork, &QCheckBox::toggled, m_useIconGapsForSideCaptions, &QWidget::setDisabled);
 
     m_sendClicks->setChecked(radioBrowser->sendClicks());
     QObject::connect(radioBrowser, &RadioBrowserWidget::configChanged, this,
@@ -265,11 +264,13 @@ void RadioBrowserConfigDialog::setConfig(const RadioBrowserWidget::ConfigData& c
     m_separateSavedStationsViewState->setVisible(widget()->separateSavedStationsViewStateAllowed());
     m_iconSize->setValue(std::max(config.view.iconSize.width(), config.view.iconSize.height()));
     m_autoFitArtwork->setChecked(config.view.autoFitArtwork);
-    m_autoFitArtwork->setEnabled(config.view.viewMode == ExpandedTreeView::ViewMode::Icon);
+    m_autoFitArtwork->setEnabled(config.view.viewMode == ExpandedTreeView::ViewMode::Icon
+                                 && config.view.captions != ExpandedTreeView::CaptionDisplay::Right);
     m_iconHorizontalGap->setValue(config.view.iconHorizontalGap);
     m_iconVerticalGap->setValue(config.view.iconVerticalGap);
     m_useIconGapsForSideCaptions->setChecked(config.view.useIconGapsForSideCaptions);
-    m_useIconGapsForSideCaptions->setEnabled(!config.view.autoFitArtwork);
+    m_useIconGapsForSideCaptions->setEnabled(config.view.viewMode == ExpandedTreeView::ViewMode::Icon
+                                             && config.view.captions == ExpandedTreeView::CaptionDisplay::Right);
     m_iconLeftMargin->setValue(config.view.iconMargins.left());
     m_iconTopMargin->setValue(config.view.iconMargins.top());
     m_iconRightMargin->setValue(config.view.iconMargins.right());

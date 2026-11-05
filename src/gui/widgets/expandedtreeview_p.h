@@ -160,6 +160,7 @@ public:
     using ViewMode       = ExpandedTreeView::ViewMode;
     using CaptionDisplay = ExpandedTreeView::CaptionDisplay;
 
+    CoverFlowSettings m_coverFlow;
     ViewMode m_viewMode{ViewMode::Tree};
     CaptionDisplay m_captionDisplay{CaptionDisplay::Bottom};
     int m_flowColumnGap{16};
@@ -200,6 +201,7 @@ public:
 
     mutable QBasicTimer m_delayedLayout;
     QPoint m_pressedPos;
+    QPersistentModelIndex m_coverFlowPressedIndex;
     bool m_canStartDrag{true};
     QPersistentModelIndex m_hoverIndex;
     QPoint m_dragPos;

@@ -30,6 +30,38 @@ class QHeaderView;
 namespace Fooyin {
 class ExpandedTreeViewPrivate;
 
+struct FYGUI_EXPORT CoverFlowSettings
+{
+    bool autoFitArtwork{true};
+    int sideArtworkTilt{55};
+    int centreSpacing{70};
+    int sideSpacing{30};
+    int itemsPerSide{0};
+    int sizeProgression{85};
+    int minArtworkSize{0};
+    int perspective{100};
+    int backgroundBlending{70};
+    bool showReflection{true};
+    int reflectionHeight{30};
+    int reflectionOpacity{40};
+    int reflectionGap{2};
+    bool showLabels{true};
+    bool labelsAboveArtwork{false};
+    bool labelsOnArtwork{false};
+    bool overlayLabelsOnReflections{false};
+    int labelSpacing{10};
+    bool animateScrolling{true};
+    int animationDuration{200};
+    int scrollSensitivity{100};
+
+    void normalise();
+
+    [[nodiscard]] QJsonObject toJson() const;
+    void load(const QJsonObject& object);
+
+    bool operator==(const CoverFlowSettings& other) const = default;
+};
+
 class FYGUI_EXPORT ExpandedTreeView : public QAbstractItemView
 {
     Q_OBJECT
@@ -40,6 +72,7 @@ public:
         Tree = 0,
         Icon,
         Flow,
+        CoverFlow,
     };
     Q_ENUM(ViewMode)
 
@@ -51,6 +84,38 @@ public:
         Overlay
     };
     Q_ENUM(CaptionDisplay)
+
+    class CoverFlowStyleOption : public QStyleOptionViewItem
+    {
+    public:
+        enum StyleOptionType
+        {
+            Type = SO_CustomBase + 1
+        };
+
+        enum StyleOptionVersion
+        {
+            Version = 1
+        };
+
+        enum class Element : uint8_t
+        {
+            Cover,
+            Reflection,
+            Caption
+        };
+
+        CoverFlowStyleOption()
+        {
+            type    = Type;
+            version = Version;
+        }
+
+        CoverFlowSettings settings;
+        Element element{Element::Cover};
+        qreal depth{0.0};
+        int cornerRadius{0};
+    };
 
     explicit ExpandedTreeView(QWidget* parent = nullptr);
     ~ExpandedTreeView() override;
@@ -74,6 +139,9 @@ public:
 
     [[nodiscard]] ViewMode viewMode() const;
     void setViewMode(ViewMode mode);
+
+    [[nodiscard]] CoverFlowSettings coverFlowSettings() const;
+    void setCoverFlowSettings(const CoverFlowSettings& settings);
 
     void setFlowColumnGap(int gap);
     void setFlowMinimumRows(int rows);
@@ -123,7 +191,7 @@ public:
     void setAutoFitArtwork(bool enabled);
     [[nodiscard]] QSize effectiveIconSize() const;
 
-    //! Use grid spacing for side captions. Auto-fit artwork always uses grid spacing.
+    //! Use grid spacing for side captions. Artwork fitting applies only to other caption layouts.
     [[nodiscard]] bool useIconGapsForSideCaptions() const;
     void setUseIconGapsForSideCaptions(bool enabled);
 
@@ -164,6 +232,7 @@ protected:
     friend class TreeView;
     friend class IconView;
     friend class FlowView;
+    friend class CoverFlowView;
 
     void updateGeometries() override;
     void initViewItemOption(QStyleOptionViewItem* option) const override;
@@ -202,6 +271,8 @@ protected:
     [[nodiscard]] int horizontalOffset() const override;
     [[nodiscard]] int verticalOffset() const override;
     [[nodiscard]] bool isIndexHidden(const QModelIndex& index) const override;
+    [[nodiscard]] QItemSelectionModel::SelectionFlags selectionCommand(const QModelIndex& index,
+                                                                       const QEvent* event) const override;
     void setSelection(const QRect& rect, QItemSelectionModel::SelectionFlags command) override;
     void currentChanged(const QModelIndex& current, const QModelIndex& previous) override;
     [[nodiscard]] QRegion visualRegionForSelection(const QItemSelection& selection) const override;

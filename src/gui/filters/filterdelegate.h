@@ -23,6 +23,9 @@
 
 #include "filteritem.h"
 
+#include <gui/widgets/expandedtreeview.h>
+
+#include <QCache>
 #include <QMargins>
 #include <QStyledItemDelegate>
 
@@ -32,13 +35,14 @@ class FYGUI_EXPORT FilterDelegate : public QStyledItemDelegate
     Q_OBJECT
 
 public:
-    using QStyledItemDelegate::QStyledItemDelegate;
+    explicit FilterDelegate(QObject* parent = nullptr);
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
     void setArtworkCornerRadius(int radius);
     void setArtworkMargins(const QMargins& margins);
+    void setCoverFlowCacheSize(int sizeMb);
 
 private:
     static RichText recolourRichText(RichText richText, const QColor& colour);
@@ -62,7 +66,16 @@ private:
     static void drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
                                const std::vector<RichTextBlock>& blocks);
 
-    int m_artworkCornerRadius{0};
+    void paintCoverFlow(QPainter* painter, const ExpandedTreeView::CoverFlowStyleOption& option,
+                        const QModelIndex& index) const;
+    void paintCoverFlowCaption(QPainter* painter, QStyleOptionViewItem option, const CoverFlowSettings& settings,
+                               const QModelIndex& index) const;
+
+    [[nodiscard]] QPixmap coverFlowPixmap(const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    void cacheCoverFlowPixmap(const QString& key, const QPixmap& pixmap) const;
+
+    int m_artworkCornerRadius;
     QMargins m_artworkMargins;
+    mutable QCache<QString, QPixmap> m_coverFlowPixmaps;
 };
 } // namespace Fooyin::Filters
