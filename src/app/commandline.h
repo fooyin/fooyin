@@ -43,15 +43,20 @@ public:
 
     enum class PlayerAction : uint8_t
     {
-        None      = 0,
-        PlayPause = 1,
-        Play      = 2,
-        Pause     = 3,
-        Stop      = 4,
-        Next      = 5,
-        Previous  = 6,
-        SeekFwd   = 7,
-        SeekBack  = 8,
+        None = 0,
+        PlayPause,
+        Play,
+        Pause,
+        Stop,
+        Next,
+        Previous,
+        Seek,
+        SeekFwd,
+        SeekBack,
+        NextAlbum,
+        PreviousAlbum,
+        RandomTrack,
+        RandomAlbum,
     };
 
     enum class VolumeAction : uint8_t
@@ -81,6 +86,14 @@ public:
         Random,
     };
 
+    enum class StopAfterCurrentMode : uint8_t
+    {
+        Unchanged = 0,
+        Off,
+        On,
+        Toggle,
+    };
+
     explicit CommandLine(int argc = 0, char** argv = nullptr);
 
     ParseResult parse();
@@ -90,6 +103,7 @@ public:
 
     [[nodiscard]] bool empty() const;
     [[nodiscard]] QList<QUrl> files() const;
+    [[nodiscard]] uint64_t seekTime() const;
     [[nodiscard]] uint64_t seekDelta() const;
     [[nodiscard]] bool skipSingleApp() const;
     [[nodiscard]] PlayerAction playerAction() const;
@@ -97,6 +111,7 @@ public:
     [[nodiscard]] double volume() const;
     [[nodiscard]] RepeatMode repeatMode() const;
     [[nodiscard]] ShuffleMode shuffleMode() const;
+    [[nodiscard]] StopAfterCurrentMode stopAfterCurrentMode() const;
 
     [[nodiscard]] QByteArray saveOptions() const;
     bool loadOptions(const QByteArray& options);
@@ -110,11 +125,12 @@ private:
 #endif
     QList<QUrl> m_files;
     QString m_message;
-    uint64_t m_seekDelta;
+    uint64_t m_seekTime;
     double m_volume;
     bool m_skipSingle;
     PlayerAction m_playerAction;
     VolumeAction m_volumeAction;
     RepeatMode m_repeatMode;
     ShuffleMode m_shuffleMode;
+    StopAfterCurrentMode m_stopAfterCurrentMode;
 };

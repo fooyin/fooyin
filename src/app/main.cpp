@@ -22,10 +22,12 @@
 #include "commandline.h"
 
 #include <core/application.h>
+#include <core/coresettings.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiapplication.h>
 #include <utils/logging/messagehandler.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <kdsingleapplication.h>
 
@@ -94,7 +96,7 @@ void parseCmdOptions(Fooyin::Application& app, Fooyin::GuiApplication& guiApp, C
                 player->playPause();
                 break;
             case CommandLine::PlayerAction::Play:
-                player->play();
+                player->playFromStart();
                 break;
             case CommandLine::PlayerAction::Pause:
                 player->pause();
@@ -108,11 +110,26 @@ void parseCmdOptions(Fooyin::Application& app, Fooyin::GuiApplication& guiApp, C
             case CommandLine::PlayerAction::Previous:
                 player->previous();
                 break;
+            case CommandLine::PlayerAction::NextAlbum:
+                player->nextAlbum();
+                break;
+            case CommandLine::PlayerAction::PreviousAlbum:
+                player->previousAlbum();
+                break;
+            case CommandLine::PlayerAction::RandomTrack:
+                player->randomTrack();
+                break;
+            case CommandLine::PlayerAction::RandomAlbum:
+                player->randomAlbum();
+                break;
+            case CommandLine::PlayerAction::Seek:
+                player->seek(cmdLine.seekTime());
+                break;
             case CommandLine::PlayerAction::SeekFwd:
-                player->seekForward(cmdLine.seekDelta());
+                player->seekForward(cmdLine.seekTime());
                 break;
             case CommandLine::PlayerAction::SeekBack:
-                player->seekBackward(cmdLine.seekDelta());
+                player->seekBackward(cmdLine.seekTime());
                 break;
             case CommandLine::PlayerAction::None:
                 break;
@@ -134,6 +151,14 @@ void parseCmdOptions(Fooyin::Application& app, Fooyin::GuiApplication& guiApp, C
             break;
         case CommandLine::VolumeAction::None:
             break;
+    }
+
+    if(cmdLine.stopAfterCurrentMode() != CommandLine::StopAfterCurrentMode::Unchanged) {
+        auto* settings     = app.settingsManager();
+        const bool enabled = cmdLine.stopAfterCurrentMode() == CommandLine::StopAfterCurrentMode::On
+                          || (cmdLine.stopAfterCurrentMode() == CommandLine::StopAfterCurrentMode::Toggle
+                              && !settings->value<Fooyin::Settings::Core::StopAfterCurrent>());
+        settings->set<Fooyin::Settings::Core::StopAfterCurrent>(enabled);
     }
 
     auto playMode = app.playerController()->playMode();

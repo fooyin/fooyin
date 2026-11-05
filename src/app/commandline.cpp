@@ -32,7 +32,7 @@
 using namespace Qt::StringLiterals;
 
 constexpr quint32 CommandOptionsMagic     = 0x46594f50;
-constexpr quint8 CommandOptionsVersion    = 1;
+constexpr quint8 CommandOptionsVersion    = 2;
 constexpr qsizetype MaxCommandOptionsSize = 4UL * 1024 * 1024;
 
 namespace {
@@ -41,8 +41,14 @@ enum CommandOption : uint16_t // NOLINT
     Volume = 256,
     VolumeUp,
     VolumeDown,
+    Seek,
     Repeat,
     Shuffle,
+    NextAlbum,
+    PreviousAlbum,
+    RandomTrack,
+    RandomAlbum,
+    StopAfterCurrent,
 };
 
 #ifdef Q_OS_WIN
@@ -124,6 +130,20 @@ std::optional<CommandLine::ShuffleMode> parseShuffleMode(const QStringView value
     }
     return {};
 }
+
+std::optional<CommandLine::StopAfterCurrentMode> parseStopAfterCurrentMode(const QStringView value)
+{
+    if(value == u"off") {
+        return CommandLine::StopAfterCurrentMode::Off;
+    }
+    if(value == u"on") {
+        return CommandLine::StopAfterCurrentMode::On;
+    }
+    if(value == u"toggle") {
+        return CommandLine::StopAfterCurrentMode::Toggle;
+    }
+    return {};
+}
 } // namespace
 
 CommandLine::CommandLine(int argc, char** argv)
@@ -133,13 +153,14 @@ CommandLine::CommandLine(int argc, char** argv)
 #else
     , m_argv{argv}
 #endif
-    , m_seekDelta{0}
+    , m_seekTime{0}
     , m_volume{0.0}
     , m_skipSingle{false}
     , m_playerAction{PlayerAction::None}
     , m_volumeAction{VolumeAction::None}
     , m_repeatMode{RepeatMode::Unchanged}
     , m_shuffleMode{ShuffleMode::Unchanged}
+    , m_stopAfterCurrentMode{StopAfterCurrentMode::Unchanged}
 { }
 
 #ifdef Q_OS_WIN
@@ -153,13 +174,14 @@ CommandLine::ParseResult CommandLine::parse()
     m_files.clear();
     m_message.clear();
 
-    m_seekDelta    = 0;
-    m_volume       = 0.0;
-    m_skipSingle   = false;
-    m_playerAction = PlayerAction::None;
-    m_volumeAction = VolumeAction::None;
-    m_repeatMode   = RepeatMode::Unchanged;
-    m_shuffleMode  = ShuffleMode::Unchanged;
+    m_seekTime             = 0;
+    m_volume               = 0.0;
+    m_skipSingle           = false;
+    m_playerAction         = PlayerAction::None;
+    m_volumeAction         = VolumeAction::None;
+    m_repeatMode           = RepeatMode::Unchanged;
+    m_shuffleMode          = ShuffleMode::Unchanged;
+    m_stopAfterCurrentMode = StopAfterCurrentMode::Unchanged;
 
     // Reset getopt
 #ifdef Q_OS_BSD4
@@ -180,6 +202,11 @@ CommandLine::ParseResult CommandLine::parse()
         {.name = FY_NATIVE_CLI_TEXT("stop"), .has_arg = no_argument, .flag = nullptr, .val = 's'},
         {.name = FY_NATIVE_CLI_TEXT("next"), .has_arg = no_argument, .flag = nullptr, .val = 'f'},
         {.name = FY_NATIVE_CLI_TEXT("previous"), .has_arg = no_argument, .flag = nullptr, .val = 'r'},
+        {.name = FY_NATIVE_CLI_TEXT("next-album"), .has_arg = no_argument, .flag = nullptr, .val = NextAlbum},
+        {.name = FY_NATIVE_CLI_TEXT("previous-album"), .has_arg = no_argument, .flag = nullptr, .val = PreviousAlbum},
+        {.name = FY_NATIVE_CLI_TEXT("random-track"), .has_arg = no_argument, .flag = nullptr, .val = RandomTrack},
+        {.name = FY_NATIVE_CLI_TEXT("random-album"), .has_arg = no_argument, .flag = nullptr, .val = RandomAlbum},
+        {.name = FY_NATIVE_CLI_TEXT("seek"), .has_arg = required_argument, .flag = nullptr, .val = Seek},
         {.name = FY_NATIVE_CLI_TEXT("seek-forward"), .has_arg = required_argument, .flag = nullptr, .val = 'F'},
         {.name = FY_NATIVE_CLI_TEXT("seek-backward"), .has_arg = required_argument, .flag = nullptr, .val = 'R'},
         {.name = FY_NATIVE_CLI_TEXT("volume"), .has_arg = required_argument, .flag = nullptr, .val = Volume},
@@ -188,37 +215,47 @@ CommandLine::ParseResult CommandLine::parse()
         {.name = FY_NATIVE_CLI_TEXT("mute"), .has_arg = no_argument, .flag = nullptr, .val = 'm'},
         {.name = FY_NATIVE_CLI_TEXT("repeat"), .has_arg = required_argument, .flag = nullptr, .val = Repeat},
         {.name = FY_NATIVE_CLI_TEXT("shuffle"), .has_arg = required_argument, .flag = nullptr, .val = Shuffle},
+        {.name    = FY_NATIVE_CLI_TEXT("stop-after-current"),
+         .has_arg = required_argument,
+         .flag    = nullptr,
+         .val     = StopAfterCurrent},
         {.name = nullptr, .has_arg = 0, .flag = nullptr, .val = 0},
     };
 
     static const auto help = u"%1: fooyin [%2] [%3]\n"
                              "\n"
                              "%4:\n"
-                             "  -h, --help                 %5\n"
-                             "  -v, --version              %6\n"
+                             "  -h, --help                       %5\n"
+                             "  -v, --version                    %6\n"
                              "\n"
                              "%7:\n"
-                             "  -t, --play-pause           %8\n"
-                             "  -p, --play                 %9\n"
-                             "  -u, --pause                %10\n"
-                             "  -s, --stop                 %11\n"
-                             "  -f, --next                 %12\n"
-                             "  -r, --previous             %13\n"
-                             "  -F, --seek-forward <time>  %14\n"
-                             "  -R, --seek-backward <time> %15\n"
-                             "\n"
-                             "%16:\n"
-                             "      --volume <percent>     %17\n"
-                             "      --volume-up            %18\n"
-                             "      --volume-down          %19\n"
-                             "  -m, --mute                 %20\n"
+                             "  -t, --play-pause                 %8\n"
+                             "  -p, --play                       %9\n"
+                             "  -u, --pause                      %10\n"
+                             "  -s, --stop                       %11\n"
+                             "  -f, --next                       %12\n"
+                             "  -r, --previous                   %13\n"
+                             "      --next-album                 %14\n"
+                             "      --previous-album             %15\n"
+                             "      --random-track               %16\n"
+                             "      --random-album               %17\n"
+                             "      --seek <time>                %18\n"
+                             "  -F, --seek-forward <time>        %19\n"
+                             "  -R, --seek-backward <time>       %20\n"
                              "\n"
                              "%21:\n"
-                             "      --repeat <mode>         %22\n"
-                             "      --shuffle <mode>        %23\n"
+                             "      --volume <percent>           %22\n"
+                             "      --volume-up                  %23\n"
+                             "      --volume-down                %24\n"
+                             "  -m, --mute                       %25\n"
                              "\n"
-                             "%24:\n"
-                             "  urls                       %25\n"_s;
+                             "%26:\n"
+                             "      --repeat <mode>              %27\n"
+                             "      --shuffle <mode>             %28\n"
+                             "      --stop-after-current <mode>  %29\n"
+                             "\n"
+                             "%30:\n"
+                             "  urls                             %31\n"_s;
 
     const auto setPlayerAction = [this](const PlayerAction action) {
         if(m_playerAction != PlayerAction::None) {
@@ -249,14 +286,19 @@ CommandLine::ParseResult CommandLine::parse()
                 m_message = QString{help}.arg(
                     QObject::tr("Usage"), QObject::tr("options"), QObject::tr("urls"), QObject::tr("Options"),
                     QObject::tr("Display help on command line options"), QObject::tr("Display version information"),
-                    QObject::tr("Player options"), QObject::tr("Toggle playback"), QObject::tr("Start playback"),
-                    QObject::tr("Pause playback"), QObject::tr("Stop playback"), QObject::tr("Skip to next track"),
-                    QObject::tr("Skip to previous track"), QObject::tr("Seek forward (e.g. 5000, 10s, or 1:30)"),
+                    QObject::tr("Player options"), QObject::tr("Toggle playback"),
+                    QObject::tr("Start playback or restart the current track"), QObject::tr("Pause playback"),
+                    QObject::tr("Stop playback"), QObject::tr("Skip to next track"),
+                    QObject::tr("Skip to previous track"), QObject::tr("Skip to next album"),
+                    QObject::tr("Skip to previous album"), QObject::tr("Play a random track"),
+                    QObject::tr("Play a random album"), QObject::tr("Seek to position (e.g. 5000, 10s, or 1:30)"),
+                    QObject::tr("Seek forward (e.g. 5000, 10s, or 1:30)"),
                     QObject::tr("Seek backward (e.g. 5000, 10s, or 1:30)"), QObject::tr("Volume options"),
                     QObject::tr("Set volume from 0 to 100"), QObject::tr("Increase volume by the configured step"),
                     QObject::tr("Decrease volume by the configured step"), QObject::tr("Toggle mute"),
                     QObject::tr("Playback mode options"), QObject::tr("Set repeat: off, playlist, album, or track"),
-                    QObject::tr("Set shuffle: off, tracks, albums, or random"), QObject::tr("Arguments"),
+                    QObject::tr("Set shuffle: off, tracks, albums, or random"),
+                    QObject::tr("Stop after current track: on, off, or toggle"), QObject::tr("Arguments"),
                     QObject::tr("Files, directories, or HTTP(S) URLs to open"));
                 return ParseResult::ExitSuccess;
             }
@@ -297,22 +339,28 @@ CommandLine::ParseResult CommandLine::parse()
                     return ParseResult::ExitFailure;
                 }
                 break;
-            case 'F':
-                if(optarg) {
-                    const QString value = decodeName(optarg);
-                    const auto seekTime = parseSeekTime(value);
-                    if(!seekTime) {
-                        m_message = QObject::tr("Invalid seek time: %1").arg(value);
-                        return ParseResult::ExitFailure;
-                    }
-                    if(!setPlayerAction(PlayerAction::SeekFwd)) {
-                        return ParseResult::ExitFailure;
-                    }
-                    m_seekDelta = *seekTime;
-                    break;
+            case NextAlbum:
+                if(!setPlayerAction(PlayerAction::NextAlbum)) {
+                    return ParseResult::ExitFailure;
                 }
-                m_message = QObject::tr("Missing time for seek option.");
-                return ParseResult::ExitFailure;
+                break;
+            case PreviousAlbum:
+                if(!setPlayerAction(PlayerAction::PreviousAlbum)) {
+                    return ParseResult::ExitFailure;
+                }
+                break;
+            case RandomTrack:
+                if(!setPlayerAction(PlayerAction::RandomTrack)) {
+                    return ParseResult::ExitFailure;
+                }
+                break;
+            case RandomAlbum:
+                if(!setPlayerAction(PlayerAction::RandomAlbum)) {
+                    return ParseResult::ExitFailure;
+                }
+                break;
+            case Seek:
+            case 'F':
             case 'R':
                 if(optarg) {
                     const QString value = decodeName(optarg);
@@ -321,10 +369,13 @@ CommandLine::ParseResult CommandLine::parse()
                         m_message = QObject::tr("Invalid seek time: %1").arg(value);
                         return ParseResult::ExitFailure;
                     }
-                    if(!setPlayerAction(PlayerAction::SeekBack)) {
+                    const PlayerAction action = c == Seek ? PlayerAction::Seek
+                                              : c == 'F'  ? PlayerAction::SeekFwd
+                                                          : PlayerAction::SeekBack;
+                    if(!setPlayerAction(action)) {
                         return ParseResult::ExitFailure;
                     }
-                    m_seekDelta = *seekTime;
+                    m_seekTime = *seekTime;
                     break;
                 }
                 m_message = QObject::tr("Missing time for seek option.");
@@ -384,6 +435,20 @@ CommandLine::ParseResult CommandLine::parse()
                     return ParseResult::ExitFailure;
                 }
                 m_shuffleMode = *mode;
+                break;
+            }
+            case StopAfterCurrent: {
+                if(m_stopAfterCurrentMode != StopAfterCurrentMode::Unchanged) {
+                    m_message = QObject::tr("The stop-after-current option can only be specified once.");
+                    return ParseResult::ExitFailure;
+                }
+                const QString value = decodeName(optarg);
+                const auto mode     = parseStopAfterCurrentMode(value);
+                if(!mode) {
+                    m_message = QObject::tr("Invalid stop-after-current mode: %1").arg(value);
+                    return ParseResult::ExitFailure;
+                }
+                m_stopAfterCurrentMode = *mode;
                 break;
             }
             case ':':
@@ -479,7 +544,7 @@ bool CommandLine::empty() const
 {
     return m_files.empty() && !m_skipSingle && m_playerAction == PlayerAction::None
         && m_volumeAction == VolumeAction::None && m_repeatMode == RepeatMode::Unchanged
-        && m_shuffleMode == ShuffleMode::Unchanged;
+        && m_shuffleMode == ShuffleMode::Unchanged && m_stopAfterCurrentMode == StopAfterCurrentMode::Unchanged;
 }
 
 QList<QUrl> CommandLine::files() const
@@ -487,9 +552,14 @@ QList<QUrl> CommandLine::files() const
     return m_files;
 }
 
+uint64_t CommandLine::seekTime() const
+{
+    return m_seekTime;
+}
+
 uint64_t CommandLine::seekDelta() const
 {
-    return m_seekDelta;
+    return seekTime();
 }
 
 bool CommandLine::skipSingleApp() const
@@ -522,6 +592,11 @@ CommandLine::ShuffleMode CommandLine::shuffleMode() const
     return m_shuffleMode;
 }
 
+CommandLine::StopAfterCurrentMode CommandLine::stopAfterCurrentMode() const
+{
+    return m_stopAfterCurrentMode;
+}
+
 QByteArray CommandLine::saveOptions() const
 {
     QByteArray out;
@@ -532,11 +607,12 @@ QByteArray CommandLine::saveOptions() const
     stream << CommandOptionsVersion;
     stream << m_skipSingle;
     stream << static_cast<quint8>(m_playerAction);
-    stream << static_cast<quint64>(m_seekDelta);
+    stream << static_cast<quint64>(m_seekTime);
     stream << static_cast<quint8>(m_volumeAction);
     stream << m_volume;
     stream << static_cast<quint8>(m_repeatMode);
     stream << static_cast<quint8>(m_shuffleMode);
+    stream << static_cast<quint8>(m_stopAfterCurrentMode);
     stream << static_cast<quint32>(m_files.size());
 
     for(const QUrl& file : m_files) {
@@ -561,11 +637,12 @@ bool CommandLine::loadOptions(const QByteArray& options)
     QList<QUrl> files;
     bool skipSingle{false};
     quint8 playerAction{0};
-    quint64 seekDelta{0};
+    quint64 seekTime{0};
     quint8 volumeAction{0};
     double volume{0.0};
     quint8 repeatMode{0};
     quint8 shuffleMode{0};
+    quint8 stopAfterCurrentMode{0};
     quint32 fileCount{0};
 
     stream >> magic;
@@ -577,18 +654,19 @@ bool CommandLine::loadOptions(const QByteArray& options)
 
     stream >> skipSingle;
     stream >> playerAction;
-    stream >> seekDelta;
+    stream >> seekTime;
     stream >> volumeAction;
     stream >> volume;
     stream >> repeatMode;
     stream >> shuffleMode;
+    stream >> stopAfterCurrentMode;
     stream >> fileCount;
 
     if(stream.status() != QDataStream::Ok) {
         return false;
     }
 
-    if(playerAction > static_cast<quint8>(PlayerAction::SeekBack)) {
+    if(playerAction > static_cast<quint8>(PlayerAction::RandomAlbum)) {
         return false;
     }
 
@@ -598,6 +676,10 @@ bool CommandLine::loadOptions(const QByteArray& options)
     }
 
     if(repeatMode > static_cast<quint8>(RepeatMode::Track) || shuffleMode > static_cast<quint8>(ShuffleMode::Random)) {
+        return false;
+    }
+
+    if(stopAfterCurrentMode > static_cast<quint8>(StopAfterCurrentMode::Toggle)) {
         return false;
     }
 
@@ -624,14 +706,15 @@ bool CommandLine::loadOptions(const QByteArray& options)
         return false;
     }
 
-    m_files        = std::move(files);
-    m_skipSingle   = skipSingle;
-    m_playerAction = static_cast<PlayerAction>(playerAction);
-    m_seekDelta    = static_cast<uint64_t>(seekDelta);
-    m_volumeAction = static_cast<VolumeAction>(volumeAction);
-    m_volume       = volume;
-    m_repeatMode   = static_cast<RepeatMode>(repeatMode);
-    m_shuffleMode  = static_cast<ShuffleMode>(shuffleMode);
+    m_files                = std::move(files);
+    m_skipSingle           = skipSingle;
+    m_playerAction         = static_cast<PlayerAction>(playerAction);
+    m_seekTime             = static_cast<uint64_t>(seekTime);
+    m_volumeAction         = static_cast<VolumeAction>(volumeAction);
+    m_volume               = volume;
+    m_repeatMode           = static_cast<RepeatMode>(repeatMode);
+    m_shuffleMode          = static_cast<ShuffleMode>(shuffleMode);
+    m_stopAfterCurrentMode = static_cast<StopAfterCurrentMode>(stopAfterCurrentMode);
 
     return true;
 }
