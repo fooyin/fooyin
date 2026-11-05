@@ -36,6 +36,8 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QPushButton>
+#include <QScrollArea>
 #include <QSpinBox>
 #include <QTabWidget>
 #include <QTimerEvent>
@@ -44,41 +46,6 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Filters {
-namespace {
-class TabWidget : public QTabWidget
-{
-public:
-    using QTabWidget::QTabWidget;
-
-    [[nodiscard]] QSize minimumSizeHint() const override
-    {
-        QSize hint = QTabWidget::sizeHint();
-
-        if(tabPosition() == North || tabPosition() == South) {
-            QStyleOptionTabWidgetFrame opt;
-            initStyleOption(&opt);
-
-            opt.rect = QRect(QPoint{}, hint);
-
-            const QRect tabRect     = style()->subElementRect(QStyle::SE_TabWidgetTabBar, &opt, this);
-            const int requiredWidth = tabBar()->sizeHint().width();
-            const int shortfall     = requiredWidth - tabRect.width();
-
-            if(shortfall > 0) {
-                hint.rwidth() += shortfall;
-            }
-        }
-
-        return hint;
-    }
-
-    [[nodiscard]] QSize sizeHint() const override
-    {
-        return minimumSizeHint();
-    }
-};
-} // namespace
-
 ExpansionConfigWidget::ExpansionConfigWidget(FilterWidget* filterWidget, QWidget* parent)
     : QWidget{parent}
     , m_filterWidget{filterWidget}
@@ -91,7 +58,7 @@ ExpansionConfigWidget::ExpansionConfigWidget(FilterWidget* filterWidget, QWidget
     , m_previewTracks{std::make_shared<const TrackList>(TrackGenerator::generateTracks({.albumCount = 1}))}
     , m_previewSubscription{nullptr}
     , m_previewGeneration{0}
-    , m_expansionBackground{new BackgroundConfigWidget(this)}
+    , m_expansionBackground{new BackgroundConfigWidget(Qt::Horizontal, this)}
     , m_expansionBackgroundColour{new ColourButton(tr("Background"), true, this)}
     , m_expansionPlayingRowFont{new FontButton(tr("Font") + u":"_s, true, this)}
     , m_expansionPlayingRowColour{new ColourButton(tr("Background colour") + u":"_s, true, this)}
@@ -117,33 +84,30 @@ ExpansionConfigWidget::ExpansionConfigWidget(FilterWidget* filterWidget, QWidget
     , m_expansionColumnSizing{new QComboBox(this)}
     , m_expansionMinimumColumnWidth{new QSpinBox(this)}
 {
-    const auto backgroundPage = [this](BackgroundConfigWidget* background, ColourButton* colour) {
-        auto* content = new QWidget(this);
-        auto* layout  = new QVBoxLayout(content);
-        if(colour) {
-            layout->addWidget(Gui::createSectionHeader(tr("Colour"), content));
-            layout->addWidget(colour);
-        }
-        layout->addWidget(background);
-        layout->addStretch();
-        return content;
-    };
-
     m_expansionBackground->setOptions({});
 
-    auto* expansionTabs      = new TabWidget(this);
+    auto* expansionTabs      = new QTabWidget(this);
     auto* expansionBehaviour = new QWidget(expansionTabs);
     auto* expandedArtwork    = new QWidget(expansionTabs);
+    auto* scriptsPage        = new QWidget(expansionTabs);
+
+    auto* colourLayout = new QHBoxLayout();
+    colourLayout->addWidget(m_expansionBackgroundColour, 1);
+    colourLayout->addStretch(2);
+
+    auto* backgroundPage   = new QWidget(expansionTabs);
+    auto* backgroundLayout = new QVBoxLayout(backgroundPage);
+    backgroundLayout->addWidget(Gui::createSectionHeader(tr("Colour"), backgroundPage));
+    backgroundLayout->addLayout(colourLayout);
+    backgroundLayout->addWidget(m_expansionBackground, 1);
 
     expansionTabs->addTab(expansionBehaviour, tr("Behaviour"));
-    expansionTabs->addTab(expandedArtwork, tr("Artwork"));
-    expansionTabs->addTab(backgroundPage(m_expansionBackground, m_expansionBackgroundColour), tr("Background"));
+    expansionTabs->addTab(expandedArtwork, tr("Appearance"));
+    expansionTabs->addTab(scriptsPage, tr("Scripts"));
+    expansionTabs->addTab(backgroundPage, tr("Background"));
 
-    auto* scriptsPage   = new QWidget(this);
-    auto* scriptEditors = new TabWidget(scriptsPage);
-
-    auto* scriptLayout = new QVBoxLayout(scriptsPage);
-    scriptLayout->setContentsMargins({});
+    auto* scriptEditors = new QTabWidget(scriptsPage);
+    auto* scriptLayout  = new QVBoxLayout(scriptsPage);
     scriptLayout->addWidget(scriptEditors, 1);
 
     m_groupByScript->setPlaceholderText(tr("Use display script when empty"));
@@ -173,7 +137,6 @@ ExpansionConfigWidget::ExpansionConfigWidget(FilterWidget* filterWidget, QWidget
                      [this, artwork](bool show) { m_preview->setPreviewArtwork(artwork, show); });
 
     m_preview->setPreviewMode();
-    m_preview->hide();
 
     auto* syntaxHint = new HintLabel(tr("Use <b>&lt;left&gt;</b> and <b>&lt;right&gt;</b> for alignment, "
                                         "and <b>&lt;hr/&gt;</b> for rules."),
@@ -187,15 +150,6 @@ ExpansionConfigWidget::ExpansionConfigWidget(FilterWidget* filterWidget, QWidget
 
     scriptLayout->addWidget(syntaxHint);
     scriptLayout->addWidget(columnsHint);
-
-    auto* scriptsLayout = new QHBoxLayout(this);
-    auto* previewLayout = new QVBoxLayout();
-
-    scriptsLayout->addWidget(expansionTabs, 1);
-    scriptsLayout->addLayout(previewLayout, 1);
-    previewLayout->addWidget(scriptsPage, 1);
-
-    auto* expandedArtworkLayout = new QGridLayout(expandedArtwork);
 
     m_expansionArtworkPosition->addItem(tr("Left"), true);
     m_expansionArtworkPosition->addItem(tr("Right"), false);
@@ -242,7 +196,10 @@ ExpansionConfigWidget::ExpansionConfigWidget(FilterWidget* filterWidget, QWidget
     auto* artworkSizeLabel = new QLabel(tr("Artwork size") + u":"_s, expandedArtwork);
     artworkSizeLabel->setBuddy(m_expansionArtworkSize);
 
+    auto* expandedArtworkLayout = new QGridLayout();
+
     int row{0};
+    expandedArtworkLayout->addWidget(Gui::createSectionHeader(tr("Artwork"), expandedArtwork), row++, 0, 1, 5);
     expandedArtworkLayout->addWidget(m_expandedArtwork, row++, 0, 1, 5);
     expandedArtworkLayout->addWidget(new QLabel(tr("Artwork position") + u":"_s, expandedArtwork), row, 0);
     expandedArtworkLayout->addWidget(m_expansionArtworkPosition, row++, 1);
@@ -251,17 +208,38 @@ ExpansionConfigWidget::ExpansionConfigWidget(FilterWidget* filterWidget, QWidget
     expandedArtworkLayout->addWidget(Gui::createSectionHeader(tr("Margins"), expandedArtwork), row++, 0, 1, 5);
     expandedArtworkLayout->addLayout(artworkMarginsLayout, row++, 0, 1, 5);
     expandedArtworkLayout->addWidget(m_expansionArtworkAutoMargins, row++, 0, 1, 5);
-    expandedArtworkLayout->addWidget(Gui::createSectionHeader(tr("Artwork reflection"), expandedArtwork), row++, 0, 1,
-                                     5);
-    expandedArtworkLayout->addWidget(m_expansionArtworkReflection, row++, 0, 1, 5);
-    expandedArtworkLayout->addWidget(new QLabel(tr("Height") + u":"_s, expandedArtwork), row, 0);
-    expandedArtworkLayout->addWidget(m_expansionArtworkReflectionHeight, row++, 1);
-    expandedArtworkLayout->addWidget(new QLabel(tr("Opacity") + u":"_s, expandedArtwork), row, 0);
-    expandedArtworkLayout->addWidget(m_expansionArtworkReflectionOpacity, row++, 1);
-    expandedArtworkLayout->addWidget(new QLabel(tr("Gap below artwork") + u":"_s, expandedArtwork), row, 0);
-    expandedArtworkLayout->addWidget(m_expansionArtworkReflectionGap, row++, 1);
     expandedArtworkLayout->setColumnStretch(4, 1);
     expandedArtworkLayout->setRowStretch(row, 1);
+
+    auto* reflectionLayout = new QGridLayout();
+
+    row = 0;
+    reflectionLayout->addWidget(Gui::createSectionHeader(tr("Artwork reflection"), expandedArtwork), row++, 0, 1, 3);
+    reflectionLayout->addWidget(m_expansionArtworkReflection, row++, 0, 1, 3);
+    reflectionLayout->addWidget(new QLabel(tr("Height") + u":"_s, expandedArtwork), row, 0);
+    reflectionLayout->addWidget(m_expansionArtworkReflectionHeight, row++, 1);
+    reflectionLayout->addWidget(new QLabel(tr("Opacity") + u":"_s, expandedArtwork), row, 0);
+    reflectionLayout->addWidget(m_expansionArtworkReflectionOpacity, row++, 1);
+    reflectionLayout->addWidget(new QLabel(tr("Gap below artwork") + u":"_s, expandedArtwork), row, 0);
+    reflectionLayout->addWidget(m_expansionArtworkReflectionGap, row++, 1);
+    reflectionLayout->setColumnStretch(2, 1);
+    reflectionLayout->setRowStretch(row, 1);
+
+    auto* trackRowsLayout = new QGridLayout();
+
+    row = 0;
+    trackRowsLayout->addWidget(Gui::createSectionHeader(tr("Track rows"), expandedArtwork), row++, 0, 1, 3);
+    trackRowsLayout->addWidget(m_expansionAlternatingRows, row++, 0, 1, 3);
+    trackRowsLayout->addWidget(Gui::createSectionHeader(tr("Playing track"), expandedArtwork), row++, 0, 1, 3);
+    trackRowsLayout->addWidget(m_expansionPlayingRowColour, row++, 0, 1, 3);
+    trackRowsLayout->addWidget(m_expansionPlayingRowFont, row++, 0, 1, 3);
+    trackRowsLayout->setColumnStretch(2, 1);
+    trackRowsLayout->setRowStretch(row, 1);
+
+    auto* artworkColumns = new QHBoxLayout(expandedArtwork);
+    artworkColumns->addLayout(expandedArtworkLayout, 4);
+    artworkColumns->addLayout(reflectionLayout, 3);
+    artworkColumns->addLayout(trackRowsLayout, 3);
 
     m_expansionMaximumColumns->setRange(0, 999);
     m_expansionMaximumColumns->setSpecialValueText(tr("Unlimited"));
@@ -289,36 +267,55 @@ ExpansionConfigWidget::ExpansionConfigWidget(FilterWidget* filterWidget, QWidget
     m_expansionAnimationDuration->setSingleStep(50);
     m_expansionAnimationDuration->setSuffix(u" ms"_s);
 
-    auto* expansionBehaviourLayout = new QGridLayout(expansionBehaviour);
+    auto* expansionBehaviourLayout = new QGridLayout();
 
     row = 0;
+    expansionBehaviourLayout->addWidget(Gui::createSectionHeader(tr("Expansion"), expansionBehaviour), row++, 0, 1, 3);
     expansionBehaviourLayout->addWidget(m_expandGroups, row++, 0, 1, 3);
+    expansionBehaviourLayout->addWidget(m_expansionCloseButton, row++, 0, 1, 3);
     expansionBehaviourLayout->addWidget(m_expansionAnimated, row++, 0, 1, 3);
     expansionBehaviourLayout->addWidget(new QLabel(tr("Animation duration") + u":"_s, expansionBehaviour), row, 0);
     expansionBehaviourLayout->addWidget(m_expansionAnimationDuration, row++, 1);
-    expansionBehaviourLayout->addWidget(m_expansionCloseButton, row++, 0, 1, 3);
-    expansionBehaviourLayout->addWidget(m_expansionAlternatingRows, row++, 0, 1, 3);
-    expansionBehaviourLayout->addWidget(new QLabel(tr("Maximum number of columns") + u":"_s, expansionBehaviour), row,
-                                        0);
-    expansionBehaviourLayout->addWidget(m_expansionMaximumColumns, row++, 1);
-    expansionBehaviourLayout->addWidget(new QLabel(tr("Minimum rows per column") + u":"_s, expansionBehaviour), row, 0);
-    expansionBehaviourLayout->addWidget(m_expansionMinimumRows, row++, 1);
-    expansionBehaviourLayout->addWidget(new QLabel(tr("Column sizing") + u":"_s, expansionBehaviour), row, 0);
-    expansionBehaviourLayout->addWidget(m_expansionColumnSizing, row++, 1);
-    expansionBehaviourLayout->addWidget(new QLabel(tr("Minimum column width") + u":"_s, expansionBehaviour), row, 0);
-    expansionBehaviourLayout->addWidget(m_expansionMinimumColumnWidth, row++, 1);
-    expansionBehaviourLayout->addWidget(Gui::createSectionHeader(tr("Playing track"), expansionBehaviour), row++, 0, 1,
-                                        3);
-    expansionBehaviourLayout->addWidget(m_expansionPlayingRowColour, row++, 0, 1, 3);
-    expansionBehaviourLayout->addWidget(m_expansionPlayingRowFont, row++, 0, 1, 3);
     expansionBehaviourLayout->setColumnStretch(2, 1);
     expansionBehaviourLayout->setRowStretch(row, 1);
 
-    auto* previewGroup = new QGroupBox(tr("Preview"), this);
+    auto* columnLayout = new QGridLayout();
+
+    row = 0;
+    columnLayout->addWidget(Gui::createSectionHeader(tr("Columns"), expansionBehaviour), row++, 0, 1, 3);
+    columnLayout->addWidget(new QLabel(tr("Maximum number of columns") + u":"_s, expansionBehaviour), row, 0);
+    columnLayout->addWidget(m_expansionMaximumColumns, row++, 1);
+    columnLayout->addWidget(new QLabel(tr("Minimum rows per column") + u":"_s, expansionBehaviour), row, 0);
+    columnLayout->addWidget(m_expansionMinimumRows, row++, 1);
+    columnLayout->addWidget(new QLabel(tr("Column sizing") + u":"_s, expansionBehaviour), row, 0);
+    columnLayout->addWidget(m_expansionColumnSizing, row++, 1);
+    columnLayout->addWidget(new QLabel(tr("Minimum column width") + u":"_s, expansionBehaviour), row, 0);
+    columnLayout->addWidget(m_expansionMinimumColumnWidth, row++, 1);
+    columnLayout->setColumnStretch(2, 1);
+    columnLayout->setRowStretch(row, 1);
+
+    auto* behaviourColumns = new QHBoxLayout(expansionBehaviour);
+    behaviourColumns->addLayout(expansionBehaviourLayout, 1);
+    behaviourColumns->addLayout(columnLayout, 1);
+
+    auto* previewGroup  = new QGroupBox(tr("Preview"), this);
+    auto* previewScroll = new QScrollArea(previewGroup);
+    previewScroll->setFrameShape(QFrame::NoFrame);
+    previewScroll->setWidgetResizable(true);
+    previewScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    previewScroll->setMinimumHeight(fontMetrics().height() * 15);
+    previewScroll->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Ignored);
+    previewScroll->setWidget(m_preview);
+    previewScroll->viewport()->setAutoFillBackground(false);
+    m_preview->setAutoFillBackground(false);
+    m_preview->hide();
 
     auto* previewGroupLayout = new QVBoxLayout(previewGroup);
-    previewGroupLayout->addWidget(m_preview);
-    previewLayout->addWidget(previewGroup);
+    previewGroupLayout->addWidget(previewScroll);
+
+    auto* mainLayout = new QVBoxLayout(this);
+    mainLayout->addWidget(expansionTabs);
+    mainLayout->addWidget(previewGroup, 1);
 
     setupConnections();
     setConfig(m_filterWidget->currentConfig());
@@ -350,7 +347,7 @@ void ExpansionConfigWidget::updateConfig(FilterWidget::ConfigData& config) const
     config.expansionArtworkMargins = {m_expansionArtworkLeftMargin->value(), m_expansionArtworkTopMargin->value(),
                                       m_expansionArtworkRightMargin->value(), m_expansionArtworkBottomMargin->value()};
     config.expansionScripts        = scripts();
-    config.expansionBackground     = expansionBackground;
+    config.expansionBackground     = std::move(expansionBackground);
     config.expansionBackgroundColour = m_expansionBackgroundColour->isChecked()
                                          ? m_expansionBackgroundColour->colour().name(QColor::HexArgb)
                                          : QString{};
