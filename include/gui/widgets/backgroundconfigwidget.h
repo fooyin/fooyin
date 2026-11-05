@@ -43,6 +43,7 @@ public:
     Q_DECLARE_FLAGS(Options, Option)
 
     explicit BackgroundConfigWidget(QWidget* parent = nullptr);
+    explicit BackgroundConfigWidget(Qt::Orientation orientation, QWidget* parent = nullptr);
     ~BackgroundConfigWidget() override;
 
     [[nodiscard]] BackgroundConfig config() const;

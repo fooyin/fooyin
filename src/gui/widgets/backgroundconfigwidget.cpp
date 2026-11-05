@@ -33,6 +33,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QGridLayout>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QSignalBlocker>
@@ -136,6 +137,10 @@ public:
 };
 
 BackgroundConfigWidget::BackgroundConfigWidget(QWidget* parent)
+    : BackgroundConfigWidget{Qt::Vertical, parent}
+{ }
+
+BackgroundConfigWidget::BackgroundConfigWidget(Qt::Orientation orientation, QWidget* parent)
     : QWidget{parent}
     , p{std::make_unique<BackgroundConfigWidgetPrivate>(this)}
 {
@@ -216,10 +221,25 @@ BackgroundConfigWidget::BackgroundConfigWidget(QWidget* parent)
     p->m_backgroundOpacity->setToolTip(tr("Controls how strongly the background image is shown"));
     p->m_backgroundFadeDuration->setToolTip(tr("Duration for fading between background images; set to 0 to disable"));
 
-    auto* backgroundLayout = new QGridLayout(this);
+    auto* sections         = orientation == Qt::Horizontal ? new QHBoxLayout(this) : nullptr;
+    auto* backgroundLayout = sections ? nullptr : new QGridLayout(this);
 
     int row{0};
-    backgroundLayout->addWidget(Gui::createSectionHeader(tr("Image source"), this), row++, 0, 1, 2);
+
+    const auto section = [&](const QString& title) {
+        if(sections) {
+            if(backgroundLayout) {
+                backgroundLayout->setRowStretch(row, 1);
+            }
+            backgroundLayout = new QGridLayout();
+            sections->addLayout(backgroundLayout, 1);
+            row = 0;
+        }
+        backgroundLayout->addWidget(Gui::createSectionHeader(title, this), row++, 0, 1, 2);
+        backgroundLayout->setColumnStretch(1, 1);
+    };
+
+    section(tr("Image source"));
     backgroundLayout->addWidget(new QLabel(tr("Source") + u":"_s, this), row, 0);
     backgroundLayout->addWidget(p->m_backgroundImage, row++, 1);
     backgroundLayout->addWidget(p->m_globalHint, row++, 0, 1, 2);
@@ -229,19 +249,20 @@ BackgroundConfigWidget::BackgroundConfigWidget(QWidget* parent)
     backgroundLayout->addWidget(p->m_backgroundTrackPreference, row++, 1);
     backgroundLayout->addWidget(p->m_customImageLabel, row, 0);
     backgroundLayout->addWidget(p->m_customImage, row++, 1);
-    backgroundLayout->addWidget(Gui::createSectionHeader(tr("Layout"), this), row++, 0, 1, 2);
+
+    section(tr("Layout"));
     backgroundLayout->addWidget(new QLabel(tr("Scale mode") + u":"_s, this), row, 0);
     backgroundLayout->addWidget(p->m_backgroundScaling, row++, 1);
     backgroundLayout->addWidget(new QLabel(tr("Alignment") + u":"_s, this), row, 0);
     backgroundLayout->addWidget(p->m_backgroundPosition, row++, 1);
     backgroundLayout->addWidget(new QLabel(tr("Maximum size") + u":"_s, this), row, 0);
     backgroundLayout->addWidget(p->m_backgroundMaxSize, row++, 1);
-    backgroundLayout->addWidget(Gui::createSectionHeader(tr("Effects"), this), row++, 0, 1, 2);
+
+    section(tr("Effects"));
     backgroundLayout->addWidget(p->m_backgroundBlur, row++, 0, 1, 2);
     backgroundLayout->addWidget(p->m_backgroundOpacity, row++, 0, 1, 2);
     backgroundLayout->addWidget(p->m_backgroundFadeDuration, row++, 0, 1, 2);
     backgroundLayout->setRowStretch(row, 1);
-    backgroundLayout->setColumnStretch(1, 1);
 
     QObject::connect(browseAction, &QAction::triggered, this, [this]() { p->browseBackgroundImage(); });
     QObject::connect(p->m_backgroundImage, &QComboBox::currentIndexChanged, this,
