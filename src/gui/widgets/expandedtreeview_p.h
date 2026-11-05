@@ -175,6 +175,8 @@ public:
     QMargins m_iconItemArtworkMargins;
     bool m_autoFitArtwork{false};
     QSize m_effectiveIconSize;
+    QSize m_minIconSize{1, 1};
+    QSize m_maxIconSize{QWIDGETSIZE_MAX, QWIDGETSIZE_MAX};
     bool m_useIconGapsForSideCaptions{false};
     bool m_uniformRowHeights{false};
     bool m_wordWrap{false};

@@ -19,9 +19,23 @@
 
 #pragma once
 
-#include <Qt>
+#include <gui/widgets/expandedtreeview.h>
 
 namespace Fooyin::Filters::Constants {
+constexpr int minimumIconSize(ExpandedTreeView::ViewMode mode, ExpandedTreeView::CaptionDisplay captions)
+{
+    return mode == ExpandedTreeView::ViewMode::Icon
+                && (captions == ExpandedTreeView::CaptionDisplay::Bottom
+                    || captions == ExpandedTreeView::CaptionDisplay::Overlay)
+             ? 64
+             : 16;
+}
+
+constexpr int maximumIconSize(ExpandedTreeView::ViewMode mode)
+{
+    return mode == ExpandedTreeView::ViewMode::Icon ? 1024 : 4096;
+}
+
 namespace Page {
 constexpr auto FiltersGeneral    = "Fooyin.Page.Filters.General";
 constexpr auto FiltersAppearance = "Fooyin.Page.Filters.Appearance";

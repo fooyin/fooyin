@@ -22,6 +22,7 @@
 #include "coverflowconfigwidget.h"
 #include "expansionconfigwidget.h"
 #include "filtercolumneditordialog.h"
+#include "filterconstants.h"
 
 #include <gui/guiutils.h>
 #include <gui/trackselectioncontroller.h>
@@ -475,6 +476,18 @@ void FilterConfigDialog::setupConnections()
         const bool gridArtwork  = m_artworkBottomMode->isChecked() || m_artworkOverlayMode->isChecked()
                                || m_artworkNoLabelsMode->isChecked();
         const bool manualSizing = !coverFlow || !m_coverFlowConfig->settings().autoFitArtwork;
+        const auto viewMode     = m_columnsMode->isChecked() ? ExpandedTreeView::ViewMode::Tree
+                                : coverFlow                  ? ExpandedTreeView::ViewMode::CoverFlow
+                                                             : ExpandedTreeView::ViewMode::Icon;
+        const int minIconSize   = Constants::minimumIconSize(
+            viewMode, m_artworkOverlayMode->isChecked()  ? ExpandedTreeView::CaptionDisplay::Overlay
+                      : m_artworkBottomMode->isChecked() ? ExpandedTreeView::CaptionDisplay::Bottom
+                                                         : ExpandedTreeView::CaptionDisplay::None);
+
+        m_iconWidth->setMinimum(minIconSize);
+        m_iconHeight->setMinimum(minIconSize);
+        m_iconWidth->setMaximum(Constants::maximumIconSize(viewMode));
+        m_iconHeight->setMaximum(Constants::maximumIconSize(viewMode));
 
         m_autoFitArtwork->setEnabled(gridArtwork);
         m_iconWidth->setEnabled(manualSizing);
@@ -489,6 +502,7 @@ void FilterConfigDialog::setupConnections()
     };
 
     updateAutoFitArtwork();
+    QObject::connect(m_columnsMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
     QObject::connect(m_coverFlowMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
     QObject::connect(m_artworkBottomMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
     QObject::connect(m_artworkRightMode, &QRadioButton::toggled, this, updateAutoFitArtwork);

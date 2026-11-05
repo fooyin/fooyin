@@ -23,6 +23,7 @@
 #include "filtercolumneditordialog.h"
 #include "filtercolumnregistry.h"
 #include "filterconfigwidget.h"
+#include "filterconstants.h"
 #include "filterdelegate.h"
 #include "filteritem.h"
 #include "filtermodel.h"
@@ -158,7 +159,8 @@ FilterWidget::FilterWidget(ActionManager* actionManager, FilterColumnRegistry* c
     , m_index{-1}
     , m_multipleColumns{false}
     , m_widgetContext{new WidgetContext(
-          this, Context{IdList{Constants::Context::TrackSelection, Id{"Fooyin.Context.FilterWidget."}.append(id())}},
+          this,
+          Context{IdList{Fooyin::Constants::Context::TrackSelection, Id{"Fooyin.Context.FilterWidget."}.append(id())}},
           this)}
     , m_pendingScrollPosition{-1}
     , m_applyingViewState{false}
@@ -893,6 +895,10 @@ void FilterWidget::applyConfig(const ConfigData& config)
     if(!validated.iconSize.isValid()) {
         validated.iconSize = factoryConfig().iconSize;
     }
+    const int minIconSize = Constants::minimumIconSize(validated.viewMode, validated.captionDisplay);
+    const int maxIconSize = Constants::maximumIconSize(validated.viewMode);
+    validated.iconSize
+        = validated.iconSize.expandedTo({minIconSize, minIconSize}).boundedTo({maxIconSize, maxIconSize});
 
     validated.expansionAnimationDuration        = std::clamp(validated.expansionAnimationDuration, 50, 2000);
     validated.expansionArtworkMargins           = Gui::marginsFromJson({}, validated.expansionArtworkMargins);
@@ -981,6 +987,11 @@ void FilterWidget::applyConfig(const ConfigData& config)
     }
 
     m_model->setRowHeight(m_config.rowHeight);
+    {
+        const QSignalBlocker blocker{m_view};
+        m_view->setMinimumIconSize({minIconSize, minIconSize});
+        m_view->setMaximumIconSize({maxIconSize, maxIconSize});
+    }
     m_view->setAutoFitArtwork(m_config.autoFitArtwork);
     m_view->setIconHorizontalGap(m_config.iconHorizontalGap);
     m_view->setIconVerticalGap(m_config.iconVerticalGap);

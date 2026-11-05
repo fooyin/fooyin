@@ -2167,11 +2167,15 @@ bool IconView::resizeIcons(int steps)
 
     const int padding    = std::max(0, indexSizeHint(viewItem(0).index, iconSize()).width() - iconSize().width());
     const int width      = viewport()->width() - (2 * m_horizontalInset) + m_itemSpacing;
-    const int maxColumns = std::max(1, width / (16 + padding + m_itemSpacing));
-    const int columns    = std::clamp(m_segmentSize - steps, 1, maxColumns);
+    const int minWidth   = iconSizeForWidth(std::max(16, m_view->minimumIconSize().width())).width();
+    const int maxWidth   = iconSizeForWidth(m_view->maximumIconSize().width()).width();
+    const int maxPitch   = maxWidth + padding + m_itemSpacing;
+    const int minColumns = std::max(1, (width + maxPitch - 1) / maxPitch);
+    const int maxColumns = std::max(minColumns, width / (minWidth + padding + m_itemSpacing));
+    const int columns    = std::clamp(m_segmentSize - steps, minColumns, maxColumns);
     if(columns != m_segmentSize) {
         const int pitch = steps > 0 ? (width / (columns + 1)) + 1 : width / columns;
-        m_view->changeIconSize(iconSizeForWidth(std::max(16, pitch - m_itemSpacing - padding)));
+        m_view->changeIconSize(iconSizeForWidth(std::max(minWidth, pitch - m_itemSpacing - padding)));
     }
     return true;
 }
@@ -2554,6 +2558,12 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
         }
         m_segmentSize
             = std::max(1, (segEndPosition - segStartPosition + m_itemSpacing) / (itemWidth(0) + m_itemSpacing));
+        const int artworkPadding = std::max(0, m_uniformRowWidth - iconSize().width());
+        const int maxWidth       = iconSizeForWidth(m_view->maximumIconSize().width()).width();
+        const int maxPitch       = maxWidth + artworkPadding + m_itemSpacing;
+        const int minColumns
+            = std::max(1, (segEndPosition - segStartPosition + m_itemSpacing + maxPitch - 1) / maxPitch);
+        m_segmentSize = std::max(m_segmentSize, minColumns);
     }
     else {
         for(int i{1}; i <= count; ++i) {
@@ -2626,7 +2636,8 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
             item.x     = segStartPosition + left + (segColumn * m_itemSpacing);
             item.width = right - left;
 
-            const int artworkWidth = std::max(1, item.width - artworkPadding);
+            const int artworkWidth = iconSizeForWidth(item.width - artworkPadding).width();
+            item.width             = std::max(item.width, artworkWidth + artworkPadding);
             item.decorationSize
                 = haveSideCaptions() ? iconSizeForWidth(artworkWidth) : QSize{artworkWidth, m_fittedIconSize.height()};
             item.height = measurements.heights[i];
@@ -2906,7 +2917,17 @@ QSize IconView::iconSize(int item) const
 QSize IconView::iconSizeForWidth(int width) const
 {
     const QSize preferred{iconSize()};
-    width            = std::max(1, width);
+    const QSize min{m_view->minimumIconSize()};
+    const QSize max{m_view->maximumIconSize()};
+    const int minWidth = static_cast<int>(
+        std::ceil(static_cast<double>(min.height()) * preferred.width() / std::max(1, preferred.height())));
+    const int maxWidth = static_cast<int>(
+        std::min(static_cast<double>(max.width()),
+                 std::floor(static_cast<double>(max.height()) * preferred.width() / std::max(1, preferred.height()))));
+    const int lowerWidth = std::max({1, min.width(), minWidth});
+    const int upperWidth = std::max(lowerWidth, maxWidth);
+
+    width            = std::clamp(width, lowerWidth, upperWidth);
     const int height = std::max(1, static_cast<int>(std::llround(static_cast<double>(width) * preferred.height()
                                                                  / std::max(1, preferred.width()))));
     return {width, height};
@@ -5400,11 +5421,47 @@ void ExpandedTreeView::setUseIconGapsForSideCaptions(bool enabled)
     viewport()->update();
 }
 
+QSize ExpandedTreeView::minimumIconSize() const
+{
+    return p->m_minIconSize;
+}
+
+void ExpandedTreeView::setMinimumIconSize(const QSize& size)
+{
+    const QSize minimum = size.expandedTo({1, 1});
+    if(std::exchange(p->m_minIconSize, minimum) == minimum) {
+        return;
+    }
+
+    p->m_maxIconSize = p->m_maxIconSize.expandedTo(minimum);
+    changeIconSize(iconSize());
+    p->doDelayedItemsLayout();
+    viewport()->update();
+}
+
+QSize ExpandedTreeView::maximumIconSize() const
+{
+    return p->m_maxIconSize;
+}
+
+void ExpandedTreeView::setMaximumIconSize(const QSize& size)
+{
+    const QSize maximum = size.expandedTo(p->m_minIconSize);
+    if(std::exchange(p->m_maxIconSize, maximum) == maximum) {
+        return;
+    }
+
+    changeIconSize(iconSize());
+    p->doDelayedItemsLayout();
+    viewport()->update();
+}
+
 void ExpandedTreeView::changeIconSize(const QSize& size)
 {
-    if(iconSize() != size) {
+    const QSize boundedSize = size.expandedTo(p->m_minIconSize).boundedTo(p->m_maxIconSize);
+    if(iconSize() != boundedSize) {
         p->m_preserveLayoutPosition = true;
-        setIconSize(size);
+        setIconSize(boundedSize);
         p->doDelayedItemsLayout(100);
     }
 }
@@ -6146,8 +6203,10 @@ void ExpandedTreeView::wheelEvent(QWheelEvent* event)
         return;
     }
 
-    int newSize = iconSize().width() + (increment * 2);
-    newSize     = std::clamp(newSize, 16, 1024);
+    const int minSize = std::max({16, p->m_minIconSize.width(), p->m_minIconSize.height()});
+    const int maxSize = std::max(minSize, std::min({1024, p->m_maxIconSize.width(), p->m_maxIconSize.height()}));
+    int newSize       = iconSize().width() + (increment * 2);
+    newSize           = std::clamp(newSize, minSize, maxSize);
     changeIconSize({newSize, newSize});
 
     event->accept();

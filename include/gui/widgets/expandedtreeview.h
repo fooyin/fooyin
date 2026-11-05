@@ -40,7 +40,7 @@ struct FYGUI_EXPORT CoverFlowSettings
     int sizeProgression{85};
     int minArtworkSize{0};
     int perspective{100};
-    int backgroundBlending{70};
+    int backgroundBlending{30};
     bool showReflection{true};
     int reflectionHeight{30};
     int reflectionOpacity{40};
@@ -195,6 +195,10 @@ public:
     [[nodiscard]] bool useIconGapsForSideCaptions() const;
     void setUseIconGapsForSideCaptions(bool enabled);
 
+    [[nodiscard]] QSize minimumIconSize() const;
+    void setMinimumIconSize(const QSize& size);
+    [[nodiscard]] QSize maximumIconSize() const;
+    void setMaximumIconSize(const QSize& size);
     void changeIconSize(const QSize& size);
 
     [[nodiscard]] QModelIndex expandedIndex() const;

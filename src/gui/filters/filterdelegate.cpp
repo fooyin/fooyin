@@ -27,6 +27,7 @@
 #include <gui/scripting/richtextutils.h>
 #include <gui/widgets/expandedtreeview.h>
 #include <gui/widgets/widgetbackground.h>
+#include <utils/utils.h>
 
 #include <QApplication>
 #include <QPainter>
@@ -240,7 +241,8 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     QPixmap scaledArtwork;
     if(hasArtwork) {
         const double dpr = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
-        scaledArtwork    = artworkIcon.pixmap(decorationRect.size(), dpr, Gui::itemViewIconMode(opt));
+        scaledArtwork = Utils::scalePixmap(artworkIcon.pixmap(decorationRect.size(), dpr, Gui::itemViewIconMode(opt)),
+                                           decorationRect.size(), dpr, true);
     }
 
     const auto drawArtwork = [&]() {
