@@ -20,6 +20,7 @@
 #include "playlistmanagerdelegate.h"
 
 #include <gui/guiutils.h>
+#include <gui/iconloader.h>
 
 #include <QApplication>
 #include <QPainter>
@@ -41,9 +42,7 @@ void PlaylistManagerDelegate::paint(QPainter* painter, const QStyleOptionViewIte
 
     if(!opt.icon.isNull()) {
         const QRect decorationRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
-        const QIcon::Mode mode     = opt.state.testFlag(QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled;
-        const QIcon::State state   = opt.state.testFlag(QStyle::State_Open) ? QIcon::On : QIcon::Off;
-        opt.icon.paint(painter, decorationRect, opt.decorationAlignment, mode, state);
+        Gui::drawItemViewIcon(painter, opt, opt.icon, decorationRect, opt.decorationAlignment);
     }
 
     style->drawItemText(painter, textRect, opt.displayAlignment, opt.palette, opt.state.testFlag(QStyle::State_Enabled),
