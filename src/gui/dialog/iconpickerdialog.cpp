@@ -22,6 +22,7 @@
 #include <gui/iconloader.h>
 #include <gui/widgets/expandedtreeview.h>
 
+#include <QApplication>
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -31,13 +32,34 @@
 #include <QPushButton>
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
+#include <QStyle>
+#include <QStyledItemDelegate>
 #include <QVBoxLayout>
 
 using namespace Qt::StringLiterals;
 
-constexpr QSize IconItemSize = {140, 96};
-
 namespace Fooyin {
+namespace {
+class IconPickerDelegate : public QStyledItemDelegate
+{
+public:
+    using QStyledItemDelegate::QStyledItemDelegate;
+
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override
+    {
+        QStyleOptionViewItem opt{option};
+        initStyleOption(&opt, index);
+
+        const QStyle* style  = opt.widget ? opt.widget->style() : QApplication::style();
+        const QRect iconRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
+        const QIcon icon     = std::exchange(opt.icon, {});
+
+        style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+        Gui::drawItemViewIcon(painter, opt, icon, iconRect, opt.decorationAlignment);
+    }
+};
+} // namespace
+
 IconPickerDialog::IconPickerDialog(const QIcon& commandIcon, QWidget* parent)
     : QDialog{parent}
     , m_icons{new ExpandedTreeView(this)}
@@ -55,7 +77,6 @@ IconPickerDialog::IconPickerDialog(const QIcon& commandIcon, QWidget* parent)
     auto* defaultItem = new QStandardItem(commandIcon, tr("Use command icon"));
     defaultItem->setEditable(false);
     defaultItem->setData(true, DefaultIconRole);
-    defaultItem->setSizeHint(IconItemSize);
     defaultItem->setToolTip(tr("Use the icon supplied by the selected command"));
     m_model->appendRow(defaultItem);
 
@@ -64,7 +85,6 @@ IconPickerDialog::IconPickerDialog(const QIcon& commandIcon, QWidget* parent)
         auto* item = new QStandardItem(Gui::iconFromTheme(iconName), iconName);
         item->setEditable(false);
         item->setData(iconName, ThemeNameRole);
-        item->setSizeHint(IconItemSize);
         item->setToolTip(iconName);
         m_model->appendRow(item);
     }
@@ -73,8 +93,12 @@ IconPickerDialog::IconPickerDialog(const QIcon& commandIcon, QWidget* parent)
     m_proxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
 
     m_icons->setModel(m_proxy);
+    m_icons->setItemDelegate(new IconPickerDelegate(m_icons));
     m_icons->setViewMode(ExpandedTreeView::ViewMode::Icon);
     m_icons->setCaptionDisplay(ExpandedTreeView::CaptionDisplay::Bottom);
+    m_icons->setAutoFitArtwork(true);
+    m_icons->setMinimumIconSize({48, 48});
+    m_icons->setMaximumIconSize({128, 128});
     m_icons->setHeaderHidden(true);
     m_icons->setSelectionMode(QAbstractItemView::SingleSelection);
     m_icons->setEditTriggers(QAbstractItemView::NoEditTriggers);
