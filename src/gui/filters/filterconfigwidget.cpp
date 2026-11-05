@@ -102,10 +102,10 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     backgroundLayout->addStretch();
 
     tabs->addTab(generalTab, tr("General"));
-    tabs->addTab(appearanceTab, tr("Appearance"));
-    tabs->addTab(m_coverFlowConfig, tr("Cover flow"));
-    tabs->addTab(m_expansionConfig, tr("Expansion"));
+    tabs->addTab(appearanceTab, tr("Display"));
     tabs->addTab(backgroundTab, tr("Background"));
+    tabs->addTab(m_expansionConfig, tr("Expansion"));
+    tabs->addTab(m_coverFlowConfig, tr("Cover flow"));
 
     m_playbackOnSend->setToolTip(
         tr("For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately."));
@@ -160,13 +160,15 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
         displayModeGroup->addButton(button);
     }
 
-    auto* displayModeLayout = new QVBoxLayout();
+    auto* viewMode          = new QGroupBox(tr("View mode"), appearanceTab);
+    auto* displayModeLayout = new QVBoxLayout(viewMode);
     displayModeLayout->addWidget(m_columnsMode);
     displayModeLayout->addWidget(m_artworkBottomMode);
     displayModeLayout->addWidget(m_artworkRightMode);
     displayModeLayout->addWidget(m_artworkOverlayMode);
     displayModeLayout->addWidget(m_artworkNoLabelsMode);
     displayModeLayout->addWidget(m_coverFlowMode);
+    displayModeLayout->addStretch();
 
     m_coverType->addItem(tr("Front cover"), static_cast<int>(Track::Cover::Front));
     m_coverType->addItem(tr("Back cover"), static_cast<int>(Track::Cover::Back));
@@ -176,23 +178,18 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     m_coverSource->addItem(tr("Embedded covers"), static_cast<int>(ArtworkSourcePreference::PreferEmbedded));
     m_coverSource->addItem(tr("Directory covers"), static_cast<int>(ArtworkSourcePreference::PreferDirectory));
 
-    auto* appearance       = new QGroupBox(tr("Display"), appearanceTab);
-    auto* appearanceLayout = new QGridLayout(appearance);
+    auto* displayOptions       = new QGroupBox(tr("Display options"), appearanceTab);
+    auto* displayOptionsLayout = new QGridLayout(displayOptions);
 
     int row{0};
-    appearanceLayout->addWidget(Gui::createSectionHeader(tr("View mode"), appearance), row++, 0, 1, 4);
-    appearanceLayout->addLayout(displayModeLayout, row++, 0, 1, 4);
-    appearanceLayout->addWidget(Gui::createSectionHeader(tr("Options"), appearance), row++, 0, 1, 4);
-    appearanceLayout->addWidget(m_showSummary, row++, 0, 1, 3);
-    appearanceLayout->addWidget(m_showHeader, row++, 0, 1, 3);
-    appearanceLayout->addWidget(m_showScrollbar, row++, 0, 1, 3);
-    appearanceLayout->addWidget(m_alternatingRows, row++, 0, 1, 3);
-    appearanceLayout->addWidget(m_overrideRowHeight, row, 0, 1, 2);
-    appearanceLayout->addWidget(m_rowHeight, row++, 2);
-    appearanceLayout->setColumnStretch(3, 1);
-
-    auto* artworkMode   = new QGroupBox(tr("Artwork Mode"), appearanceTab);
-    auto* artworkLayout = new QGridLayout(artworkMode);
+    displayOptionsLayout->addWidget(m_showSummary, row++, 0, 1, 3);
+    displayOptionsLayout->addWidget(m_showHeader, row++, 0, 1, 3);
+    displayOptionsLayout->addWidget(m_showScrollbar, row++, 0, 1, 3);
+    displayOptionsLayout->addWidget(m_alternatingRows, row++, 0, 1, 3);
+    displayOptionsLayout->addWidget(m_overrideRowHeight, row, 0, 1, 2);
+    displayOptionsLayout->addWidget(m_rowHeight, row++, 2);
+    displayOptionsLayout->setColumnStretch(3, 1);
+    displayOptionsLayout->setRowStretch(row, 1);
 
     m_iconWidth->setSuffix(u" px"_s);
     m_iconHeight->setSuffix(u" px"_s);
@@ -215,29 +212,35 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
         margin->setSuffix(u" px"_s);
     }
 
+    auto* artworkGroup = new QGroupBox(tr("Artwork"), appearanceTab);
+
     auto* sizeLayout = new QGridLayout();
-    sizeLayout->addWidget(new QLabel(tr("Width") + u":"_s, artworkMode), 0, 0);
+    sizeLayout->addWidget(new QLabel(tr("Width") + u":"_s, artworkGroup), 0, 0);
     sizeLayout->addWidget(m_iconWidth, 0, 1);
-    sizeLayout->addWidget(new QLabel(tr("Height") + u":"_s, artworkMode), 0, 2);
+    sizeLayout->addWidget(new QLabel(tr("Height") + u":"_s, artworkGroup), 0, 2);
     sizeLayout->addWidget(m_iconHeight, 0, 3);
     sizeLayout->setColumnStretch(4, 1);
 
+    auto* spacingGroup = new QGroupBox(tr("Artwork spacing"), appearanceTab);
+
     auto* gapsLayout = new QGridLayout();
-    gapsLayout->addWidget(new QLabel(tr("Horizontal") + u":"_s, artworkMode), 0, 0);
+    gapsLayout->addWidget(new QLabel(tr("Horizontal") + u":"_s, spacingGroup), 0, 0);
     gapsLayout->addWidget(m_iconHorizontalGap, 0, 1);
-    gapsLayout->addWidget(new QLabel(tr("Vertical") + u":"_s, artworkMode), 0, 2);
+    gapsLayout->addWidget(new QLabel(tr("Vertical") + u":"_s, spacingGroup), 0, 2);
     gapsLayout->addWidget(m_iconVerticalGap, 0, 3);
     gapsLayout->setColumnStretch(4, 1);
 
     auto* marginsLayout = new QGridLayout();
-    marginsLayout->addWidget(new QLabel(tr("Left") + u":"_s, artworkMode), 0, 0);
-    marginsLayout->addWidget(m_artworkLeftMargin, 0, 1);
-    marginsLayout->addWidget(new QLabel(tr("Right") + u":"_s, artworkMode), 0, 2);
-    marginsLayout->addWidget(m_artworkRightMargin, 0, 3);
-    marginsLayout->addWidget(new QLabel(tr("Top") + u":"_s, artworkMode), 1, 0);
-    marginsLayout->addWidget(m_artworkTopMargin, 1, 1);
-    marginsLayout->addWidget(new QLabel(tr("Bottom") + u":"_s, artworkMode), 1, 2);
-    marginsLayout->addWidget(m_artworkBottomMargin, 1, 3);
+
+    row = 0;
+    marginsLayout->addWidget(new QLabel(tr("Left") + u":"_s, spacingGroup), row, 0);
+    marginsLayout->addWidget(m_artworkLeftMargin, row, 1);
+    marginsLayout->addWidget(new QLabel(tr("Right") + u":"_s, spacingGroup), row, 2);
+    marginsLayout->addWidget(m_artworkRightMargin, row++, 3);
+    marginsLayout->addWidget(new QLabel(tr("Top") + u":"_s, spacingGroup), row, 0);
+    marginsLayout->addWidget(m_artworkTopMargin, row, 1);
+    marginsLayout->addWidget(new QLabel(tr("Bottom") + u":"_s, spacingGroup), row, 2);
+    marginsLayout->addWidget(m_artworkBottomMargin, row++, 3);
     marginsLayout->setColumnStretch(4, 1);
 
     auto* iconSizeHint = new HintLabel(
@@ -247,23 +250,32 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
         tr("Resize artwork to fill the available width using the preferred size.\n"
            "Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated as zero."));
 
+    auto* artworkLayout = new QGridLayout(artworkGroup);
+
     row = 0;
-    artworkLayout->addWidget(new QLabel(tr("Artwork type") + u":"_s, artworkMode), row, 0);
+    artworkLayout->addWidget(new QLabel(tr("Artwork type") + u":"_s, artworkGroup), row, 0);
     artworkLayout->addWidget(m_coverType, row++, 1, 1, 3);
-    artworkLayout->addWidget(new QLabel(tr("Artwork source") + u":"_s, artworkMode), row, 0);
+    artworkLayout->addWidget(new QLabel(tr("Artwork source") + u":"_s, artworkGroup), row, 0);
     artworkLayout->addWidget(m_coverSource, row++, 1, 1, 3);
-    artworkLayout->addWidget(new QLabel(tr("Corner radius") + u":"_s, artworkMode), row, 0);
+    artworkLayout->addWidget(new QLabel(tr("Corner radius") + u":"_s, artworkGroup), row, 0);
     artworkLayout->addWidget(m_artworkCornerRadius, row++, 1);
-    artworkLayout->addWidget(Gui::createSectionHeader(tr("Size"), artworkMode), row++, 0, 1, 5);
+    artworkLayout->addWidget(new QLabel(tr("Size"), artworkGroup), row++, 0, 1, 5);
     artworkLayout->addWidget(m_autoFitArtwork, row++, 0, 1, 5);
     artworkLayout->addLayout(sizeLayout, row++, 0, 1, 5);
     artworkLayout->addWidget(iconSizeHint, row++, 0, 1, 5);
-    artworkLayout->addWidget(Gui::createSectionHeader(tr("Gaps"), artworkMode), row++, 0, 1, 5);
-    artworkLayout->addLayout(gapsLayout, row++, 0, 1, 5);
-    artworkLayout->addWidget(Gui::createSectionHeader(tr("Margins"), artworkMode), row++, 0, 1, 5);
-    artworkLayout->addWidget(m_overrideArtworkMargins, row++, 0, 1, 5);
-    artworkLayout->addLayout(marginsLayout, row++, 0, 1, 5);
     artworkLayout->setColumnStretch(4, 1);
+    artworkLayout->setRowStretch(row, 1);
+
+    auto* spacingLayout = new QGridLayout(spacingGroup);
+
+    row = 0;
+    spacingLayout->addWidget(new QLabel(tr("Gaps"), spacingGroup), row++, 0, 1, 5);
+    spacingLayout->addLayout(gapsLayout, row++, 0, 1, 5);
+    spacingLayout->addWidget(new QLabel(tr("Margins"), spacingGroup), row++, 0, 1, 5);
+    spacingLayout->addWidget(m_overrideArtworkMargins, row++, 0, 1, 5);
+    spacingLayout->addLayout(marginsLayout, row++, 0, 1, 5);
+    spacingLayout->setColumnStretch(4, 1);
+    spacingLayout->setRowStretch(row, 1);
 
     auto* playlistSourceHint
         = new HintLabel(tr("Current playlist mode uses the displayed playlist as its source and selects the matching "
@@ -295,11 +307,14 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
 
     auto* appearanceTabLayout = new QGridLayout(appearanceTab);
 
-    appearanceTabLayout->addWidget(appearance, 0, 0, Qt::AlignTop);
-    appearanceTabLayout->addWidget(artworkMode, 0, 1, Qt::AlignTop);
+    row = 0;
+    appearanceTabLayout->addWidget(viewMode, row, 0);
+    appearanceTabLayout->addWidget(artworkGroup, row++, 1);
+    appearanceTabLayout->addWidget(displayOptions, row, 0);
+    appearanceTabLayout->addWidget(spacingGroup, row++, 1);
     appearanceTabLayout->setColumnStretch(0, 1);
     appearanceTabLayout->setColumnStretch(1, 1);
-    appearanceTabLayout->setRowStretch(1, 1);
+    appearanceTabLayout->setRowStretch(2, 1);
 
     auto* mainLayout{contentLayout()};
     mainLayout->addWidget(tabs, 0, 0);
