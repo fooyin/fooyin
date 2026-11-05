@@ -49,6 +49,7 @@
 #include <QPromise>
 
 #include <algorithm>
+#include <array>
 #include <chrono>
 #include <iterator>
 #include <map>
@@ -69,11 +70,12 @@ constexpr auto MaxActivePixmapRequests = 3;
 
 namespace Fooyin {
 namespace {
-std::vector<ThumbnailSize> placeholderSizes()
+constexpr auto placeholderSizes()
 {
-    return {ThumbnailSize::None,    ThumbnailSize::Tiny,  ThumbnailSize::Small,     ThumbnailSize::MediumSmall,
-            ThumbnailSize::Medium,  ThumbnailSize::Large, ThumbnailSize::VeryLarge, ThumbnailSize::ExtraLarge,
-            ThumbnailSize::XxLarge, ThumbnailSize::Huge,  ThumbnailSize::Full};
+    return std::array{ThumbnailSize::None,        ThumbnailSize::Tiny,       ThumbnailSize::Small,
+                      ThumbnailSize::MediumSmall, ThumbnailSize::Medium,     ThumbnailSize::Large,
+                      ThumbnailSize::VeryLarge,   ThumbnailSize::ExtraLarge, ThumbnailSize::XxLarge,
+                      ThumbnailSize::Huge,        ThumbnailSize::Full};
 }
 
 std::vector<QUrl> remoteArtworkUrls(const Track& track)
@@ -852,8 +854,6 @@ QFuture<QPixmap> CoverRepositoryPrivate::requestPixmap(const CoverRequestKey& re
 
     if(const auto it = m_pendingPixmapRequests.find(requestKey); it != m_pendingPixmapRequests.end()) {
         it->second.notifyOnFinished = it->second.notifyOnFinished || notifyOnFinished;
-        auto& promise               = it->second.promises.emplace_back();
-        promise.start();
 
         for(auto& request : m_queuedPixmapRequests) {
             if(request.key == requestKey) {
@@ -862,6 +862,13 @@ QFuture<QPixmap> CoverRepositoryPrivate::requestPixmap(const CoverRequestKey& re
             }
         }
 
+        if(notifyOnFinished) {
+            // Synchronous lookups only need the completion signal
+            return it->second.promises.front().future();
+        }
+
+        auto& promise = it->second.promises.emplace_back();
+        promise.start();
         return promise.future();
     }
 
@@ -1453,6 +1460,23 @@ QPixmap CoverRepository::trackCoverThumbnail(const Track& track, ThumbnailSize s
     }
 
     p->loadThumbnail(coverKey, track, size, type, sourcePreference, true);
+
+    // Keep existing artwork visible while the requested resolution is loading
+    for(const auto fallbackSize : placeholderSizes() | std::views::reverse) {
+        if(fallbackSize == size) {
+            continue;
+        }
+        if(const QPixmap cached = p->loadCachedCover(coverKey, fallbackSize, pending); !cached.isNull()) {
+            return cached;
+        }
+        if(fallbackSize != ThumbnailSize::None) {
+            const auto fallbackKey = pendingCoverKey(coverKey, true, fallbackSize);
+            if(const QPixmap pinned = p->pinnedCover(fallbackKey, pending); !pinned.isNull()) {
+                return pinned;
+            }
+        }
+    }
+
     return {};
 }
 
@@ -1553,9 +1577,10 @@ void CoverRepository::removeFromCache(const Track& track, const SettingsManager&
         p->cancelPendingPixmapRequest(CoverRequestKey{.key = key, .kind = CoverRequestKind::Full});
         p->cancelPendingPixmapRequest(CoverRequestKey{.key = key, .kind = CoverRequestKind::Original});
 
-        for(const auto size : {ThumbnailSize::Tiny, ThumbnailSize::Small, ThumbnailSize::MediumSmall,
-                               ThumbnailSize::Medium, ThumbnailSize::Large, ThumbnailSize::VeryLarge,
-                               ThumbnailSize::ExtraLarge, ThumbnailSize::XxLarge, ThumbnailSize::Huge}) {
+        for(const auto size :
+            {ThumbnailSize::Tiny, ThumbnailSize::Small, ThumbnailSize::MediumSmall, ThumbnailSize::Medium,
+             ThumbnailSize::Large, ThumbnailSize::VeryLarge, ThumbnailSize::ExtraLarge, ThumbnailSize::XxLarge,
+             ThumbnailSize::Huge, ThumbnailSize::Full}) {
             const QString thumbKey = generateThumbCoverKey(key, size);
             p->m_coverCache.remove(thumbKey);
             p->m_pinnedThumbnails.erase(thumbKey);
