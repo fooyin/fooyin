@@ -20,6 +20,7 @@
 #include "filterdelegate.h"
 
 #include "filteritem.h"
+#include "internalguisettings.h"
 
 #include <gui/guiutils.h>
 #include <gui/scripting/richtext.h>
@@ -31,12 +32,22 @@
 #include <QPainter>
 
 #include <cmath>
+#include <cstddef>
 
 constexpr auto IconCaptionMargin     = 20;
 constexpr auto RightCaptionTextWidth = 180;
+constexpr auto MaxOverlayWidthRatio  = 1.0;
+
+using namespace Qt::StringLiterals;
 
 namespace Fooyin::Filters {
 namespace {
+bool labelsOverlapReflections(const CoverFlowSettings& settings)
+{
+    return settings.overlayLabelsOnReflections && !settings.labelsAboveArtwork && !settings.labelsOnArtwork
+        && settings.showReflection && settings.reflectionHeight > 0;
+}
+
 struct PreparedTextBlock
 {
     QString text;
@@ -166,8 +177,19 @@ QSize richTextNaturalSize(const QStyleOptionViewItem& option, const RichText& ri
 }
 } // namespace
 
+FilterDelegate::FilterDelegate(QObject* parent)
+    : QStyledItemDelegate{parent}
+    , m_artworkCornerRadius{0}
+    , m_coverFlowPixmaps{static_cast<qsizetype>(Settings::Gui::Internal::DefaultCoverFlowCacheSize * 1024 * 1024)}
+{ }
+
 void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
+    if(const auto* flow = qstyleoption_cast<const ExpandedTreeView::CoverFlowStyleOption*>(&option)) {
+        paintCoverFlow(painter, *flow, index);
+        return;
+    }
+
     QStyleOptionViewItem opt{option};
     initStyleOption(&opt, index);
     setupFilterOption(&opt, index);
@@ -301,6 +323,29 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
 
 QSize FilterDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
+    if(const auto* flow = qstyleoption_cast<const ExpandedTreeView::CoverFlowStyleOption*>(&option);
+       flow && flow->element == ExpandedTreeView::CoverFlowStyleOption::Element::Caption) {
+        QStyleOptionViewItem opt{option};
+        opt.type    = QStyleOptionViewItem::Type;
+        opt.version = QStyleOptionViewItem::Version;
+        initStyleOption(&opt, index);
+        setupFilterOption(&opt, index);
+
+        int height{0};
+        auto lines = iconRichLines(index, opt);
+        if(lines.empty() && !opt.text.isEmpty()) {
+            lines.emplace_back(fallbackRichText(opt, index));
+        }
+
+        const int padding
+            = labelsOverlapReflections(flow->settings) ? std::max(4, Gui::itemViewTextMargin(opt.widget, &opt)) : 0;
+        for(const auto& line : lines) {
+            height += richLineSize(opt, std::max(0, option.rect.width() - (2 * padding)), line.text).height();
+        }
+
+        return {option.rect.width(), height > 0 ? height + (2 * padding) : 0};
+    }
+
     QStyleOptionViewItem opt{option};
     const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
 
@@ -337,6 +382,11 @@ void FilterDelegate::setArtworkCornerRadius(int radius)
 void FilterDelegate::setArtworkMargins(const QMargins& margins)
 {
     m_artworkMargins = margins;
+}
+
+void FilterDelegate::setCoverFlowCacheSize(int sizeMb)
+{
+    m_coverFlowPixmaps.setMaxCost(std::clamp(sizeMb, 1, 1024) * 1024LL * 1024LL);
 }
 
 RichText FilterDelegate::recolourRichText(RichText richText, const QColor& colour)
@@ -438,7 +488,9 @@ int FilterDelegate::iconTextWidth(const QStyleOptionViewItem& option) const
 IconCaptionLineList FilterDelegate::iconRichLines(const QModelIndex& index, const QStyleOptionViewItem& option)
 {
     const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
-    if(!view || view->viewMode() != ExpandedTreeView::ViewMode::Icon) {
+    if(!view
+       || (view->viewMode() != ExpandedTreeView::ViewMode::Icon
+           && view->viewMode() != ExpandedTreeView::ViewMode::CoverFlow)) {
         return {};
     }
 
@@ -670,10 +722,14 @@ void FilterDelegate::drawRichTextLines(QPainter* painter, const QStyleOptionView
         return;
     }
 
-    const auto* view          = qobject_cast<const ExpandedTreeView*>(option.widget);
-    const bool overlayCaption = view && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Overlay;
-    const qreal radius
-        = overlayCaption ? std::min(artwork.width(), artwork.height()) * m_artworkCornerRadius / 200.0 : 0.0;
+    const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
+    const bool coverFlowOverlay
+        = view && view->viewMode() == ExpandedTreeView::ViewMode::CoverFlow && !artwork.isEmpty();
+    const bool overlayCaption = coverFlowOverlay
+                             || (view && view->viewMode() == ExpandedTreeView::ViewMode::Icon
+                                 && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Overlay);
+    const int cornerRadius    = coverFlowOverlay ? view->iconItemCornerRadius() : m_artworkCornerRadius;
+    const qreal radius = overlayCaption ? std::min(artwork.width(), artwork.height()) * cornerRadius / 200.0 : 0.0;
     const int maxWidth = rect.width();
 
     struct CaptionLine
@@ -711,7 +767,7 @@ void FilterDelegate::drawRichTextLines(QPainter* painter, const QStyleOptionView
         const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
 
         const int padding = std::max(2, style->pixelMetric(QStyle::PM_FocusFrameVMargin, &option, option.widget));
-        const QRectF visibleArtwork = artwork.intersected(QRectF{artworkRect(option)});
+        const QRectF visibleArtwork = coverFlowOverlay ? artwork : artwork.intersected(QRectF{artworkRect(option)});
         const qreal height = std::min(visibleArtwork.height(), static_cast<qreal>(totalHeight + (2 * padding)));
 
         const QRectF background{visibleArtwork.left(), visibleArtwork.bottom() - height, visibleArtwork.width(),
@@ -808,6 +864,217 @@ void FilterDelegate::drawTextBlocks(QPainter* painter, const QStyleOptionViewIte
                              preparedLine);
         y += preparedLine.maxHeight;
     }
+}
+
+void FilterDelegate::paintCoverFlow(QPainter* painter, const ExpandedTreeView::CoverFlowStyleOption& option,
+                                    const QModelIndex& index) const
+{
+    QStyleOptionViewItem opt{option};
+    initStyleOption(&opt, index);
+    setupFilterOption(&opt, index);
+
+    opt.decorationSize = option.decorationSize;
+    opt.state &= ~(QStyle::State_Selected | QStyle::State_HasFocus);
+
+    if(option.element == ExpandedTreeView::CoverFlowStyleOption::Element::Caption) {
+        paintCoverFlowCaption(painter, opt, option.settings, index);
+        return;
+    }
+
+    const auto& settings  = option.settings;
+    const bool reflection = option.element == ExpandedTreeView::CoverFlowStyleOption::Element::Reflection;
+    if(reflection && (!settings.showReflection || settings.reflectionHeight == 0 || settings.reflectionOpacity == 0)) {
+        return;
+    }
+
+    // At 100% fading, each step away from the centre halves the opacity
+    const double fadeStrength = std::clamp(settings.backgroundBlending / 100.0, 0.0, 1.0);
+    const double opacity      = std::exp2(-fadeStrength * std::max(0.0, option.depth));
+    QPixmap pixmap            = coverFlowPixmap(opt, index);
+    QRectF pixmapRect{opt.rect};
+
+    if(reflection && !pixmap.isNull()) {
+        const QString key       = u"fooyin-cover-flow-%1-%2-%3"_s.arg(pixmap.cacheKey())
+                                      .arg(settings.reflectionHeight)
+                                      .arg(settings.reflectionOpacity);
+        const int sourceHeight  = pixmap.height();
+        const qreal height      = sourceHeight * settings.reflectionHeight / 100.0;
+        const int croppedHeight = std::min(sourceHeight, static_cast<int>(std::ceil(height)) + 1);
+
+        QPixmap mirror;
+        if(const auto* cached = m_coverFlowPixmaps.object(key)) {
+            mirror = *cached;
+        }
+        else {
+            QImage image = pixmap.toImage()
+                               .copy(0, sourceHeight - croppedHeight, pixmap.width(), croppedHeight)
+                               .transformed(QTransform::fromScale(1, -1))
+                               .convertToFormat(QImage::Format_ARGB32_Premultiplied);
+            image.setDevicePixelRatio(1.0);
+
+            QPainter mask{&image};
+            mask.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+
+            QLinearGradient fade{0, 0, 0, height};
+            fade.setColorAt(0, QColor::fromRgbF(0, 0, 0, static_cast<float>(settings.reflectionOpacity) / 100.0F));
+            fade.setColorAt(1, Qt::transparent);
+
+            mask.fillRect(image.rect(), fade);
+            mask.end();
+
+            mirror = QPixmap::fromImage(image);
+            mirror.setDevicePixelRatio(pixmap.devicePixelRatio());
+            cacheCoverFlowPixmap(key, mirror);
+        }
+        pixmapRect.setHeight(pixmapRect.height() * mirror.height() / sourceHeight);
+        pixmap = std::move(mirror);
+    }
+
+    painter->save();
+
+    painter->setOpacity(painter->opacity() * (reflection ? opacity : 1.0));
+    Gui::clipRoundedRect(*painter, opt.rect, option.cornerRadius);
+
+    if(!pixmap.isNull()) {
+        painter->drawPixmap(pixmapRect, pixmap, pixmap.rect());
+    }
+    else if(!reflection) {
+        painter->fillRect(opt.rect, opt.palette.brush(QPalette::AlternateBase));
+    }
+
+    if(!reflection) {
+        QColor shade = opt.palette.color(QPalette::Base);
+        shade.setAlphaF(static_cast<float>(1.0 - opacity));
+        painter->fillRect(opt.rect, shade);
+
+        if(settings.showLabels && settings.labelsOnArtwork && option.depth < 0.5) {
+            paintCoverFlowCaption(painter, opt, settings, index);
+        }
+
+        if(opt.state & QStyle::State_MouseOver) {
+            painter->setRenderHint(QPainter::Antialiasing);
+            painter->setBrush(Qt::NoBrush);
+            painter->setPen(QPen{opt.palette.color(QPalette::Text), 2.0});
+
+            const qreal radius
+                = std::max(0.0, (std::min(opt.rect.width(), opt.rect.height()) * option.cornerRadius / 200.0) - 1.0);
+            painter->drawRoundedRect(QRectF{opt.rect}.adjusted(1.0, 1.0, -1.0, -1.0), radius, radius);
+        }
+    }
+
+    painter->restore();
+}
+
+void FilterDelegate::paintCoverFlowCaption(QPainter* painter, QStyleOptionViewItem option,
+                                           const CoverFlowSettings& settings, const QModelIndex& index) const
+{
+    auto lines = iconRichLines(index, option);
+    if(lines.empty() && !option.text.isEmpty()) {
+        lines.emplace_back(fallbackRichText(option, index));
+    }
+    for(auto& line : lines) {
+        line.alignment = Qt::AlignHCenter;
+    }
+
+    if(settings.labelsOnArtwork) {
+        for(const auto role : {QPalette::Text, QPalette::Link}) {
+            if(option.palette.color(role).lightness() < 128) {
+                option.palette.setColor(role, Qt::white);
+            }
+        }
+
+        const int margin = std::max(4, Gui::itemViewTextMargin(option.widget, &option));
+        drawRichTextLines(painter, option, option.rect.adjusted(margin, 0, -margin, 0), lines, option.rect);
+        return;
+    }
+
+    QRect textRect{option.rect};
+
+    if(!lines.empty() && labelsOverlapReflections(settings)) {
+        int width{0};
+        for(const auto& line : lines) {
+            width = std::max(width, richTextNaturalSize(option, line.text).width());
+        }
+
+        const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
+        const int maximumWidth
+            = view ? static_cast<int>(view->effectiveIconSize().width() * MaxOverlayWidthRatio) : option.rect.width();
+        const int padding = std::max(4, Gui::itemViewTextMargin(option.widget, &option));
+
+        const QRect background = QStyle::alignedRect(
+            option.direction, Qt::AlignHCenter | Qt::AlignTop,
+            {std::min({option.rect.width(), maximumWidth, width + (4 * padding)}), option.rect.height()}, option.rect);
+
+        painter->save();
+        painter->setClipRect(option.rect, Qt::IntersectClip);
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(QColor{0, 0, 0, 180});
+        painter->drawRoundedRect(background, padding, padding);
+
+        if(option.palette.color(QPalette::Text).lightness() < 128) {
+            option.palette.setColor(QPalette::Text, Qt::white);
+        }
+
+        textRect = background.adjusted(padding, padding, -padding, -padding);
+        drawRichTextLines(painter, option, textRect, lines, {});
+        painter->restore();
+        return;
+    }
+
+    drawRichTextLines(painter, option, textRect, lines, {});
+}
+
+QPixmap FilterDelegate::coverFlowPixmap(const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    const QVariant decoration = index.data(Qt::DecorationRole);
+    qint64 sourceKey{0};
+    switch(decoration.userType()) {
+        case QMetaType::QPixmap:
+            sourceKey = decoration.value<QPixmap>().cacheKey();
+            break;
+        case QMetaType::QImage:
+            sourceKey = decoration.value<QImage>().cacheKey();
+            break;
+        case QMetaType::QIcon:
+            sourceKey = decoration.value<QIcon>().cacheKey();
+            break;
+        default:
+            break;
+    }
+
+    const qreal dpr = option.widget ? option.widget->devicePixelRatioF() : 1.0;
+    const auto mode = Gui::itemViewIconMode(option);
+    if(sourceKey == 0) {
+        return option.icon.pixmap(option.decorationSize, dpr, mode);
+    }
+
+    const QString key = u"cover-%1-%2-%3-%4-%5-%6-%7-%8-%9"_s.arg(decoration.userType())
+                            .arg(sourceKey)
+                            .arg(option.decorationSize.width())
+                            .arg(option.decorationSize.height())
+                            .arg(dpr)
+                            .arg(static_cast<int>(mode))
+                            .arg(QApplication::palette().cacheKey())
+                            .arg(QIcon::themeName())
+                            .arg(reinterpret_cast<quintptr>(QApplication::style()));
+    if(const auto* cached = m_coverFlowPixmaps.object(key)) {
+        return *cached;
+    }
+
+    const QPixmap pixmap = option.icon.pixmap(option.decorationSize, dpr, mode);
+    cacheCoverFlowPixmap(key, pixmap);
+    return pixmap;
+}
+
+void FilterDelegate::cacheCoverFlowPixmap(const QString& key, const QPixmap& pixmap) const
+{
+    if(pixmap.isNull()) {
+        return;
+    }
+
+    const auto bytes = static_cast<qsizetype>(pixmap.width()) * pixmap.height() * pixmap.depth() / 8;
+    m_coverFlowPixmaps.insert(key, new QPixmap(pixmap), bytes);
 }
 } // namespace Fooyin::Filters
 

@@ -30,6 +30,7 @@
 
 #include <QDrag>
 #include <QHeaderView>
+#include <QJsonObject>
 #include <QKeyEvent>
 #include <QMenu>
 #include <QScrollBar>
@@ -39,8 +40,10 @@
 #include <QTimer>
 #include <QWheelEvent>
 
+#include <cmath>
 #include <deque>
 #include <limits>
+#include <numbers>
 #include <numeric>
 #include <ranges>
 #include <set>
@@ -367,29 +370,15 @@ public:
     [[nodiscard]] virtual QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const = 0;
     [[nodiscard]] virtual ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const                 = 0;
     [[nodiscard]] virtual QModelIndex findIndexAt(const QPoint& point, bool incSpans, bool incPadding) const   = 0;
-    [[nodiscard]] virtual QModelIndex nearestSelectionIndex(const QPoint& /*point*/) const
-    {
-        return {};
-    }
+    [[nodiscard]] virtual QModelIndex nearestSelectionIndex(const QPoint& point) const;
     [[nodiscard]] virtual QModelIndexList visibleIndexes(int margin) const                                        = 0;
     virtual void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles) = 0;
     [[nodiscard]] virtual int sizeHintForColumn(int column) const                                                 = 0;
-    virtual QSize contentSizeForWidth(int width) const
-    {
-        return {width, m_contentsSize.height()};
-    }
-    [[nodiscard]] virtual int spacing() const
-    {
-        return 0;
-    }
-    [[nodiscard]] virtual QSize effectiveIconSize() const
-    {
-        return m_view->iconSize();
-    }
-    virtual bool resizeIcons(int /*steps*/)
-    {
-        return false;
-    }
+
+    virtual QSize contentSizeForWidth(int width) const;
+    [[nodiscard]] virtual int spacing() const;
+    [[nodiscard]] virtual QSize effectiveIconSize() const;
+    virtual bool resizeIcons(int steps);
 
     [[nodiscard]] virtual int itemHeight(int item) const                                     = 0;
     [[nodiscard]] virtual int firstVisibleItem(int* offset) const                            = 0;
@@ -405,10 +394,12 @@ public:
 
     virtual void renderToPixmap(QPainter* painter, const ItemViewPaintPairs& paintPairs, QRect& rect) const = 0;
 
+    virtual void wheelEvent(QWheelEvent* event);
     virtual void updateScrollBars() = 0;
-    virtual void updateColumns() { }
+    virtual void updateColumns();
 
     void layout(int i, bool afterIsUninitialised = false);
+
     [[nodiscard]] QRect mapToViewport(const QRect& rect) const;
     [[nodiscard]] int indexWidthHint(const QModelIndex& index, int hint, const QStyleOptionViewItem& option) const;
     [[nodiscard]] std::pair<int, int> startAndEndColumns(const QRect& rect) const;
@@ -417,76 +408,23 @@ public:
                             int right) const;
     [[nodiscard]] ItemViewPaintPairs draggablePaintPairs(const QModelIndexList& indexes, QRect& rect) const;
     [[nodiscard]] int findValidItem(int item, int step) const;
+    [[nodiscard]] bool isIndexValid(const QModelIndex& index) const;
 
-    [[nodiscard]] bool isIndexValid(const QModelIndex& index) const
-    {
-        return m_p->isIndexValid(index);
-    }
+    [[nodiscard]] QScrollBar* verticalScrollBar() const;
+    [[nodiscard]] QScrollBar* horizontalScrollBar() const;
+    [[nodiscard]] Qt::ScrollBarPolicy verticalScrollBarPolicy() const;
+    [[nodiscard]] Qt::ScrollBarPolicy horizontalScrollBarPolicy() const;
 
-    [[nodiscard]] QScrollBar* verticalScrollBar() const
-    {
-        return m_view->verticalScrollBar();
-    }
+    [[nodiscard]] int itemCount() const;
+    [[nodiscard]] std::vector<ExpandedTreeViewItem>& viewItems() const;
+    [[nodiscard]] ExpandedTreeViewItem& viewItem(int i) const;
+    [[nodiscard]] bool empty() const;
 
-    [[nodiscard]] QScrollBar* horizontalScrollBar() const
-    {
-        return m_view->horizontalScrollBar();
-    }
-
-    [[nodiscard]] Qt::ScrollBarPolicy verticalScrollBarPolicy() const
-    {
-        return m_view->verticalScrollBarPolicy();
-    }
-
-    [[nodiscard]] Qt::ScrollBarPolicy horizontalScrollBarPolicy() const
-    {
-        return m_view->horizontalScrollBarPolicy();
-    }
-
-    [[nodiscard]] int itemCount() const
-    {
-        return m_p->itemCount();
-    }
-
-    [[nodiscard]] std::vector<ExpandedTreeViewItem>& viewItems() const
-    {
-        return m_p->m_viewItems;
-    }
-
-    [[nodiscard]] ExpandedTreeViewItem& viewItem(int i) const
-    {
-        return m_p->m_viewItems.at(i);
-    }
-
-    [[nodiscard]] bool empty() const
-    {
-        return m_p->m_viewItems.empty();
-    }
-
-    [[nodiscard]] QWidget* viewport() const
-    {
-        return m_view->viewport();
-    }
-
-    [[nodiscard]] QSize viewportSize() const
-    {
-        return m_view->contentsRect().size();
-    }
-
-    [[nodiscard]] QAbstractItemModel* model() const
-    {
-        return m_p->m_model;
-    }
-
-    [[nodiscard]] QHeaderView* header() const
-    {
-        return m_p->m_header;
-    }
-
-    [[nodiscard]] QAbstractItemDelegate* delegate(const QModelIndex& idx) const
-    {
-        return m_view->itemDelegateForIndex(idx);
-    }
+    [[nodiscard]] QWidget* viewport() const;
+    [[nodiscard]] QSize viewportSize() const;
+    [[nodiscard]] QAbstractItemModel* model() const;
+    [[nodiscard]] QHeaderView* header() const;
+    [[nodiscard]] QAbstractItemDelegate* delegate(const QModelIndex& idx) const;
 
     ExpandedTreeView* m_view;
     ExpandedTreeViewPrivate* m_p;
@@ -495,6 +433,35 @@ public:
     QSize m_contentsSize;
     mutable int m_uniformRowHeight{0};
 };
+
+QModelIndex BaseView::nearestSelectionIndex(const QPoint& /*point*/) const
+{
+    return {};
+}
+
+QSize BaseView::contentSizeForWidth(int width) const
+{
+    return {width, m_contentsSize.height()};
+}
+
+int BaseView::spacing() const
+{
+    return 0;
+}
+
+QSize BaseView::effectiveIconSize() const
+{
+    return m_view->iconSize();
+}
+
+bool BaseView::resizeIcons(int /*steps*/)
+{
+    return false;
+}
+
+void BaseView::wheelEvent(QWheelEvent* /*event*/) { }
+
+void BaseView::updateColumns() { }
 
 void BaseView::layout(int i, bool afterIsUninitialised)
 {
@@ -712,6 +679,76 @@ int BaseView::findValidItem(int item, int step) const
         newItem += step;
     }
     return item;
+}
+
+bool BaseView::isIndexValid(const QModelIndex& index) const
+{
+    return m_p->isIndexValid(index);
+}
+
+QScrollBar* BaseView::verticalScrollBar() const
+{
+    return m_view->verticalScrollBar();
+}
+
+QScrollBar* BaseView::horizontalScrollBar() const
+{
+    return m_view->horizontalScrollBar();
+}
+
+Qt::ScrollBarPolicy BaseView::verticalScrollBarPolicy() const
+{
+    return m_view->verticalScrollBarPolicy();
+}
+
+Qt::ScrollBarPolicy BaseView::horizontalScrollBarPolicy() const
+{
+    return m_view->horizontalScrollBarPolicy();
+}
+
+int BaseView::itemCount() const
+{
+    return m_p->itemCount();
+}
+
+std::vector<ExpandedTreeViewItem>& BaseView::viewItems() const
+{
+    return m_p->m_viewItems;
+}
+
+ExpandedTreeViewItem& BaseView::viewItem(int i) const
+{
+    return m_p->m_viewItems.at(i);
+}
+
+bool BaseView::empty() const
+{
+    return m_p->m_viewItems.empty();
+}
+
+QWidget* BaseView::viewport() const
+{
+    return m_view->viewport();
+}
+
+QSize BaseView::viewportSize() const
+{
+    return m_view->contentsRect().size();
+}
+
+QAbstractItemModel* BaseView::model() const
+{
+    return m_p->m_model;
+}
+
+QHeaderView* BaseView::header() const
+{
+    return m_p->m_header;
+}
+
+QAbstractItemDelegate* BaseView::delegate(const QModelIndex& idx) const
+{
+    return m_view->itemDelegateForIndex(idx);
 }
 
 class TreeView : public BaseView
@@ -2877,7 +2914,7 @@ QSize IconView::iconSizeForWidth(int width) const
 
 bool IconView::useAutoFitArtwork() const
 {
-    return m_p->m_autoFitArtwork;
+    return m_p->m_autoFitArtwork && !haveSideCaptions();
 }
 
 bool IconView::haveSideCaptions() const
@@ -3323,6 +3360,616 @@ int FlowView::pageItem(int item, int direction) const
     }
 
     return nearest;
+}
+
+class CoverFlowView : public BaseView
+{
+public:
+    CoverFlowView(ExpandedTreeView* view, ExpandedTreeViewPrivate* viewP);
+
+    void invalidate() override;
+
+    void doItemLayout() override;
+    void drawView(QPainter* painter, const QRegion& region) const override;
+
+    [[nodiscard]] QSize effectiveIconSize() const override;
+    bool resizeIcons(int steps) override;
+
+    [[nodiscard]] QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const override;
+    [[nodiscard]] ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const override;
+    [[nodiscard]] QModelIndex findIndexAt(const QPoint& point, bool includeSpans, bool includePadding) const override;
+    [[nodiscard]] QModelIndexList visibleIndexes(int margin) const override;
+    void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles) override;
+    [[nodiscard]] int sizeHintForColumn(int column) const override;
+
+    [[nodiscard]] int itemHeight(int item) const override;
+    [[nodiscard]] int firstVisibleItem(int* offset) const override;
+    [[nodiscard]] int lastVisibleItem(int firstVisual, int offset) const override;
+    [[nodiscard]] QPoint coordinateForItem(int item) const override;
+    [[nodiscard]] int itemAtCoordinate(QPoint point, bool includePadding) const override;
+    [[nodiscard]] int itemAbove(int item) const override;
+    [[nodiscard]] int itemBelow(int item) const override;
+    [[nodiscard]] int itemLeft(int item) const override;
+    [[nodiscard]] int itemRight(int item) const override;
+    [[nodiscard]] int pageUp(int item) const override;
+    [[nodiscard]] int pageDown(int item) const override;
+
+    void renderToPixmap(QPainter* painter, const ItemViewPaintPairs& pairs, QRect& rect) const override;
+
+    void wheelEvent(QWheelEvent* event) override;
+    void updateScrollBars() override;
+
+private:
+    [[nodiscard]] QSize availableIconSize() const;
+    [[nodiscard]] QPolygonF coverQuad(int item) const;
+    [[nodiscard]] QRect captionRect() const;
+    [[nodiscard]] std::vector<int> paintedItems() const;
+    void drawItem(QPainter* painter, int item, ExpandedTreeView::CoverFlowStyleOption::Element element) const;
+    [[nodiscard]] int captionHeight() const;
+    [[nodiscard]] bool labelsOverlapReflections() const;
+    [[nodiscard]] int coverTop() const;
+    [[nodiscard]] int sideCoverCount() const;
+    void updateCurrentIndex();
+    void centreOn(int item);
+
+    QVariantAnimation m_animation;
+    qreal m_position{0.0};
+    qreal m_wheelSteps{0.0};
+    qreal m_zoomSteps{0.0};
+    mutable int m_captionHeight{-1};
+    mutable int m_captionWidth{-1};
+    mutable QPersistentModelIndex m_captionIndex;
+};
+
+CoverFlowView::CoverFlowView(ExpandedTreeView* view, ExpandedTreeViewPrivate* viewP)
+    : BaseView{view, viewP}
+{
+    m_animation.setEasingCurve(QEasingCurve::OutCubic);
+
+    QObject::connect(&m_animation, &QVariantAnimation::valueChanged, &m_animation, [this](const QVariant& value) {
+        m_position = value.toReal();
+        viewport()->update();
+    });
+    QObject::connect(horizontalScrollBar(), &QScrollBar::valueChanged, &m_animation,
+                     [this](int value) { centreOn(value); });
+}
+
+void CoverFlowView::invalidate()
+{
+    m_captionHeight = -1;
+}
+
+void CoverFlowView::doItemLayout()
+{
+    layout(-1);
+
+    m_animation.stop();
+    m_position     = std::clamp(horizontalScrollBar()->value(), 0, std::max(0, itemCount() - 1));
+    m_contentsSize = viewport()->size();
+
+    QMetaObject::invokeMethod(&m_animation, [this]() { updateCurrentIndex(); }, Qt::QueuedConnection);
+}
+
+void CoverFlowView::drawView(QPainter* painter, const QRegion& /*region*/) const
+{
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
+
+    const auto items = paintedItems();
+    // Queue artwork from the centre outwards before painting back to front
+    for(const int item : items | std::views::reverse) {
+        if(coverQuad(item).boundingRect().intersects(viewport()->rect())) {
+            viewItem(item).index.data(Qt::DecorationRole);
+        }
+    }
+
+    if(m_p->m_coverFlow.showReflection) {
+        for(const int item : items) {
+            drawItem(painter, item, ExpandedTreeView::CoverFlowStyleOption::Element::Reflection);
+        }
+    }
+
+    for(const int item : items) {
+        drawItem(painter, item, ExpandedTreeView::CoverFlowStyleOption::Element::Cover);
+    }
+
+    const int centre = static_cast<int>(std::llround(m_position));
+    if(centre >= 0 && centre < itemCount() && captionRect().height() > 0) {
+        ExpandedTreeView::CoverFlowStyleOption opt;
+        m_view->initViewItemOption(&opt);
+
+        opt.settings         = m_p->m_coverFlow;
+        opt.element          = ExpandedTreeView::CoverFlowStyleOption::Element::Caption;
+        opt.rect             = captionRect();
+        opt.decorationSize   = {0, 0};
+        opt.displayAlignment = Qt::AlignHCenter | Qt::AlignTop;
+        opt.state &= ~(QStyle::State_Selected | QStyle::State_HasFocus | QStyle::State_MouseOver);
+
+        const auto index = viewItem(centre).index;
+        delegate(index)->paint(painter, opt, index);
+    }
+}
+
+QSize CoverFlowView::effectiveIconSize() const
+{
+    const auto available = availableIconSize();
+    QSize size           = m_view->iconSize().expandedTo({1, 1});
+    if(m_p->m_coverFlow.autoFitArtwork || size.width() > available.width() || size.height() > available.height()) {
+        size.scale(available, Qt::KeepAspectRatio);
+    }
+    return size.expandedTo({1, 1});
+}
+
+bool CoverFlowView::resizeIcons(int steps)
+{
+    if(m_p->m_coverFlow.autoFitArtwork) {
+        return true;
+    }
+
+    const QSize current    = effectiveIconSize();
+    const QSize max        = current.scaled(availableIconSize(), Qt::KeepAspectRatio);
+    const int extent       = std::max(current.width(), current.height());
+    const int maxExtent    = std::min(2048, std::max(max.width(), max.height()));
+    const int targetExtent = static_cast<int>(std::llround(std::clamp(
+        extent * std::pow(1.1, steps), static_cast<double>(std::min(16, maxExtent)), static_cast<double>(maxExtent))));
+    if((steps < 0 && targetExtent >= extent) || (steps > 0 && targetExtent <= extent)) {
+        return true;
+    }
+
+    const QSize target = current.scaled(targetExtent, targetExtent, Qt::KeepAspectRatio).expandedTo({1, 1});
+    if(target == m_view->iconSize()) {
+        return true;
+    }
+
+    m_view->changeIconSize(target);
+    m_p->doDelayedItemsLayout();
+    return true;
+}
+
+QRect CoverFlowView::visualRect(const QModelIndex& index, RectRule /*rule*/, bool /*includePadding*/) const
+{
+    if(!isIndexValid(index)) {
+        return {};
+    }
+
+    m_p->layoutItems();
+
+    const int item = m_p->viewIndex(index);
+    QRect rect     = coverQuad(item).boundingRect().toAlignedRect();
+    if(!rect.isEmpty() && item == static_cast<int>(std::llround(m_position)) && captionRect().height() > 0) {
+        rect |= captionRect();
+    }
+    return rect;
+}
+
+ExpandedTreeViewItem CoverFlowView::indexToViewItem(const QModelIndex& index) const
+{
+    const int item = m_p->viewIndex(index);
+    if(item < 0) {
+        return {};
+    }
+
+    const auto rect = visualRect(index, RectRule::FullRow, false);
+    auto result     = viewItem(item);
+    result.x        = rect.x();
+    result.y        = rect.y();
+    result.width    = rect.width();
+    result.height   = rect.height();
+    return result;
+}
+
+QModelIndex CoverFlowView::findIndexAt(const QPoint& point, bool /*includeSpans*/, bool /*includePadding*/) const
+{
+    const int item = itemAtCoordinate(point, false);
+    return item >= 0 ? viewItem(item).index : QModelIndex{};
+}
+
+QModelIndexList CoverFlowView::visibleIndexes(int margin) const
+{
+    QModelIndexList indexes;
+
+    const auto appendItem = [this, &indexes](int item) {
+        if(item >= 0 && item < itemCount()) {
+            const auto index = viewItem(item).index;
+            if(!indexes.contains(index)) {
+                indexes.append(index);
+            }
+        }
+    };
+
+    const int target = horizontalScrollBar()->value();
+    const int radius = sideCoverCount();
+
+    if(margin > 0) {
+        appendItem(target);
+        for(int offset{1}; offset <= radius; ++offset) {
+            appendItem(target - offset);
+            appendItem(target + offset);
+        }
+    }
+
+    const auto area  = viewport()->rect().adjusted(-margin, -margin, margin, margin);
+    const auto items = paintedItems();
+    for(const int item : items | std::views::reverse) {
+        if(coverQuad(item).boundingRect().intersects(area)) {
+            appendItem(item);
+        }
+    }
+
+    if(margin > 0 && m_p->m_coverFlow.sideSpacing > 0) {
+        const qreal step = std::max(1.0, effectiveIconSize().width() * m_p->m_coverFlow.sideSpacing / 100.0);
+        const int extra  = std::clamp(static_cast<int>(std::ceil(margin / step)), 1, 8);
+        for(int offset{radius + 1}; offset <= radius + extra; ++offset) {
+            appendItem(target - offset);
+            appendItem(target + offset);
+        }
+    }
+
+    return indexes;
+}
+
+void CoverFlowView::dataChanged(const QModelIndex& /*topLeft*/, const QModelIndex& /*bottomRight*/,
+                                const QList<int>& roles)
+{
+    if(roles.empty() || !std::ranges::all_of(roles, [](int role) { return role == Qt::DecorationRole; })) {
+        invalidate();
+        m_p->doDelayedItemsLayout();
+    }
+    viewport()->update();
+}
+
+int CoverFlowView::sizeHintForColumn(int /*column*/) const
+{
+    return effectiveIconSize().width();
+}
+
+int CoverFlowView::itemHeight(int /*item*/) const
+{
+    return effectiveIconSize().height();
+}
+
+int CoverFlowView::firstVisibleItem(int* offset) const
+{
+    if(offset) {
+        *offset = 0;
+    }
+    return empty() ? -1 : std::max(0, static_cast<int>(std::ceil(m_position - sideCoverCount())));
+}
+
+int CoverFlowView::lastVisibleItem(int /*firstVisual*/, int /*offset*/) const
+{
+    return std::min(itemCount() - 1, static_cast<int>(std::floor(m_position + sideCoverCount())));
+}
+
+QPoint CoverFlowView::coordinateForItem(int item) const
+{
+    return coverQuad(item).boundingRect().topLeft().toPoint();
+}
+
+int CoverFlowView::itemAtCoordinate(QPoint point, bool /*includePadding*/) const
+{
+    if(captionRect().height() > 0 && captionRect().contains(point) && !empty()) {
+        return std::clamp(static_cast<int>(std::llround(m_position)), 0, itemCount() - 1);
+    }
+
+    const auto items = paintedItems();
+    for(const int item : std::views::reverse(items)) {
+        if(coverQuad(item).containsPoint(point, Qt::OddEvenFill)) {
+            return item;
+        }
+    }
+
+    return -1;
+}
+
+int CoverFlowView::itemAbove(int item) const
+{
+    return findValidItem(item, -1);
+}
+
+int CoverFlowView::itemBelow(int item) const
+{
+    return findValidItem(item, 1);
+}
+
+int CoverFlowView::itemLeft(int item) const
+{
+    return findValidItem(item, m_view->isRightToLeft() ? 1 : -1);
+}
+
+int CoverFlowView::itemRight(int item) const
+{
+    return findValidItem(item, m_view->isRightToLeft() ? -1 : 1);
+}
+
+int CoverFlowView::pageUp(int item) const
+{
+    return std::max(0, item - sideCoverCount());
+}
+
+int CoverFlowView::pageDown(int item) const
+{
+    return std::min(itemCount() - 1, item + sideCoverCount());
+}
+
+void CoverFlowView::renderToPixmap(QPainter* painter, const ItemViewPaintPairs& pairs, QRect& rect) const
+{
+    painter->translate(-rect.topLeft());
+
+    for(const auto& pair : pairs) {
+        const int item = m_p->viewIndex(pair.index);
+        if(item >= 0) {
+            drawItem(painter, item, ExpandedTreeView::CoverFlowStyleOption::Element::Cover);
+        }
+    }
+}
+
+void CoverFlowView::wheelEvent(QWheelEvent* event)
+{
+    const bool zoom = event->modifiers() & Qt::ControlModifier;
+    auto& remainder = zoom ? m_zoomSteps : m_wheelSteps;
+    if(event->phase() == Qt::ScrollBegin) {
+        remainder = 0.0;
+    }
+
+    const bool pixels       = !event->pixelDelta().isNull();
+    const QPoint delta      = pixels ? event->pixelDelta() : event->angleDelta();
+    const int travel        = delta.y() != 0 ? delta.y() : delta.x();
+    const qreal sensitivity = zoom ? 1.0 : m_p->m_coverFlow.scrollSensitivity / 100.0;
+
+    remainder += travel * sensitivity / (pixels ? 40.0 : 120.0);
+
+    const int steps = static_cast<int>(remainder + std::copysign(1e-6, remainder));
+    if(steps != 0) {
+        if(zoom) {
+            resizeIcons(steps);
+        }
+        else {
+            horizontalScrollBar()->setValue(horizontalScrollBar()->value() - steps);
+        }
+        remainder -= steps;
+    }
+
+    event->accept();
+}
+
+void CoverFlowView::updateScrollBars()
+{
+    horizontalScrollBar()->setRange(0, std::max(0, itemCount() - 1));
+    horizontalScrollBar()->setPageStep(1);
+    horizontalScrollBar()->setSingleStep(1);
+    verticalScrollBar()->setRange(0, 0);
+}
+
+QSize CoverFlowView::availableIconSize() const
+{
+    const int caption         = captionHeight();
+    const int captionSpace    = caption > 0 ? caption + m_p->m_coverFlow.labelSpacing : 0;
+    const qreal reflection    = m_p->m_coverFlow.showReflection ? m_p->m_coverFlow.reflectionHeight / 100.0 : 0.0;
+    const int gap             = reflection > 0.0 ? m_p->m_coverFlow.reflectionGap : 0;
+    const bool overlay        = labelsOverlapReflections();
+    const int availableHeight = viewport()->height() - 16;
+    const int height = static_cast<int>((availableHeight - (overlay ? 0 : captionSpace) - gap) / (1.0 + reflection));
+
+    return {std::max(1, static_cast<int>(viewport()->width() * 0.45)),
+            std::max(1, overlay ? std::min(height, availableHeight - captionSpace) : height)};
+}
+
+QPolygonF CoverFlowView::coverQuad(int item) const
+{
+    const qreal distance = (item - m_position) * (m_view->isRightToLeft() ? -1.0 : 1.0);
+    const qreal depth    = std::abs(distance);
+    if(item < 0 || item >= itemCount() || depth > sideCoverCount()) {
+        return {};
+    }
+
+    const auto& settings = m_p->m_coverFlow;
+
+    const auto size     = effectiveIconSize();
+    const qreal scale   = std::max(settings.minArtworkSize / 100.0, std::pow(settings.sizeProgression / 100.0, depth));
+    const qreal turn    = std::min(1.0, depth);
+    const qreal angle   = turn * settings.sideArtworkTilt * std::numbers::pi / 180.0 * (distance < 0.0 ? -1.0 : 1.0);
+    const qreal shift   = std::copysign((std::min(depth, 1.0) * settings.centreSpacing / 100.0)
+                                            + (std::max(0.0, depth - 1.0) * settings.sideSpacing / 100.0),
+                                        distance);
+    const qreal centreX = (viewport()->width() / 2.0) + (shift * size.width());
+    const qreal top     = coverTop();
+    const qreal centreY = top + (size.height() / 2.0);
+    const qreal focal   = size.width() * 2.8;
+
+    QPolygonF quad;
+    for(const auto& corner : {QPointF{-0.5, -0.5}, QPointF{0.5, -0.5}, QPointF{0.5, 0.5}, QPointF{-0.5, 0.5}}) {
+        const qreal x           = corner.x() * size.width() * scale;
+        const qreal y           = corner.y() * size.height() * scale;
+        const qreal perspective = focal / (focal - (x * std::sin(angle) * settings.perspective / 100.0));
+        quad.append({centreX + (x * std::cos(angle) * perspective), centreY + (y * perspective)});
+    }
+
+    return quad;
+}
+
+QRect CoverFlowView::captionRect() const
+{
+    const auto& settings = m_p->m_coverFlow;
+
+    const int height        = captionHeight();
+    const int artworkHeight = effectiveIconSize().height();
+    const int reflection
+        = !labelsOverlapReflections() && settings.showReflection && settings.reflectionHeight > 0
+            ? static_cast<int>(artworkHeight * settings.reflectionHeight / 100.0) + settings.reflectionGap
+            : 0;
+
+    const int top = settings.labelsAboveArtwork ? coverTop() - settings.labelSpacing - height
+                                                : coverTop() + artworkHeight + reflection + settings.labelSpacing;
+    return {8, top, std::max(0, viewport()->width() - 16), height};
+}
+
+std::vector<int> CoverFlowView::paintedItems() const
+{
+    std::vector<int> items;
+
+    const int first = std::max(0, static_cast<int>(std::ceil(m_position - sideCoverCount())));
+    const int last  = std::min(itemCount() - 1, static_cast<int>(std::floor(m_position + sideCoverCount())));
+
+    for(int item{first}; item <= last; ++item) {
+        items.push_back(item);
+    }
+    std::ranges::stable_sort(
+        items, [this](int lhs, int rhs) { return std::abs(lhs - m_position) > std::abs(rhs - m_position); });
+
+    return items;
+}
+
+void CoverFlowView::drawItem(QPainter* painter, int item, ExpandedTreeView::CoverFlowStyleOption::Element element) const
+{
+    auto quad = coverQuad(item);
+    if(quad.isEmpty() || !quad.boundingRect().intersects(viewport()->rect())) {
+        return;
+    }
+
+    const auto index = m_p->iconItemIndex(viewItem(item).index);
+
+    ExpandedTreeView::CoverFlowStyleOption opt;
+    m_view->initViewItemOption(&opt);
+
+    opt.settings              = m_p->m_coverFlow;
+    opt.settings.itemsPerSide = sideCoverCount();
+    opt.element               = element;
+    opt.depth                 = std::abs(item - m_position);
+    opt.cornerRadius          = m_p->m_iconItemCornerRadius;
+    opt.decorationSize        = effectiveIconSize();
+    opt.rect                  = {QPoint{}, opt.decorationSize};
+
+    opt.state.setFlag(QStyle::State_Selected, m_view->selectionModel()->isSelected(index));
+    opt.state.setFlag(QStyle::State_HasFocus,
+                      m_view->hasFocus() && m_view->currentIndex().siblingAtColumn(0) == index.siblingAtColumn(0));
+    opt.state.setFlag(QStyle::State_MouseOver, index.siblingAtColumn(0) == m_p->m_hoverIndex);
+    opt.state.setFlag(QStyle::State_Enabled, m_view->isEnabled() && (index.flags() & Qt::ItemIsEnabled));
+
+    if(element == ExpandedTreeView::CoverFlowStyleOption::Element::Reflection) {
+        const QPointF gap{0, static_cast<qreal>(opt.settings.reflectionGap)};
+        quad = {quad[3] + gap, quad[2] + gap, 2 * quad[2] - quad[1] + gap, 2 * quad[3] - quad[0] + gap};
+    }
+    const QSizeF size{opt.decorationSize};
+    const QPolygonF source{QPointF{0, 0}, QPointF{size.width(), 0}, QPointF{size.width(), size.height()},
+                           QPointF{0, size.height()}};
+
+    QTransform transform;
+    if(QTransform::quadToQuad(source, quad, transform)) {
+        painter->save();
+        painter->setTransform(transform, true);
+        delegate(index)->paint(painter, opt, index);
+        painter->restore();
+    }
+}
+
+int CoverFlowView::captionHeight() const
+{
+    if(!m_p->m_coverFlow.showLabels || m_p->m_coverFlow.labelsOnArtwork
+       || m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::None || empty()) {
+        return 0;
+    }
+
+    const int item   = std::clamp(static_cast<int>(std::llround(m_position)), 0, itemCount() - 1);
+    const auto index = viewItem(item).index;
+    if(m_captionHeight >= 0 && m_captionWidth == viewport()->width() && m_captionIndex == index) {
+        return m_captionHeight;
+    }
+
+    m_captionIndex = index;
+    m_captionWidth = viewport()->width();
+
+    ExpandedTreeView::CoverFlowStyleOption opt;
+    m_view->initViewItemOption(&opt);
+
+    opt.element        = ExpandedTreeView::CoverFlowStyleOption::Element::Caption;
+    opt.settings       = m_p->m_coverFlow;
+    opt.rect           = {0, 0, std::max(1, viewport()->width() - 16), viewport()->height()};
+    opt.decorationSize = {0, 0};
+
+    m_captionHeight = std::min(delegate(index)->sizeHint(opt, index).height(), std::max(1, viewport()->height() / 3));
+    return m_captionHeight;
+}
+
+bool CoverFlowView::labelsOverlapReflections() const
+{
+    const auto& settings = m_p->m_coverFlow;
+
+    return settings.overlayLabelsOnReflections && !settings.labelsAboveArtwork && !settings.labelsOnArtwork
+        && settings.showReflection && settings.reflectionHeight > 0;
+}
+
+int CoverFlowView::coverTop() const
+{
+    const auto& settings = m_p->m_coverFlow;
+
+    const int caption      = captionHeight();
+    const int captionSpace = caption > 0 ? caption + settings.labelSpacing : 0;
+    const int height       = effectiveIconSize().height();
+    const int reflection   = settings.showReflection && settings.reflectionHeight > 0
+                               ? static_cast<int>(height * settings.reflectionHeight / 100.0) + settings.reflectionGap
+                               : 0;
+    const int reservedSpace
+        = labelsOverlapReflections() ? std::max(reflection, captionSpace) : reflection + captionSpace;
+
+    const int top = std::max(8, (viewport()->height() - height - reservedSpace) / 2);
+    return top + (settings.labelsAboveArtwork ? captionSpace : 0);
+}
+
+int CoverFlowView::sideCoverCount() const
+{
+    const auto& settings = m_p->m_coverFlow;
+
+    if(settings.itemsPerSide > 0) {
+        return settings.itemsPerSide;
+    }
+    if(settings.sideSpacing == 0) {
+        return 1;
+    }
+
+    const int width   = effectiveIconSize().width();
+    const qreal space = (viewport()->width() / 2.0) - (width * settings.centreSpacing / 100.0);
+    const qreal step  = std::max(1.0, width * settings.sideSpacing / 100.0);
+    return std::clamp(static_cast<int>(std::ceil(space / step)) + 1, 1, 100);
+}
+
+void CoverFlowView::updateCurrentIndex()
+{
+    if(m_p->m_layingOutItems || !m_view->selectionModel()) {
+        return;
+    }
+
+    m_p->layoutItems();
+
+    const int item = horizontalScrollBar()->value();
+    if(item < 0 || item >= itemCount() || m_p->viewIndex(m_view->currentIndex()) == item) {
+        return;
+    }
+
+    m_view->setCurrentIndex(m_p->iconItemIndex(viewItem(item).index));
+}
+
+void CoverFlowView::centreOn(int item)
+{
+    m_animation.stop();
+
+    const int duration = m_p->m_coverFlow.animateScrolling
+                              && m_view->style()->styleHint(QStyle::SH_Widget_Animation_Duration, nullptr, m_view) > 0
+                           ? m_p->m_coverFlow.animationDuration
+                           : 0;
+    if(duration == 0 || !m_view->isVisible()) {
+        m_position = item;
+        viewport()->update();
+        updateCurrentIndex();
+        return;
+    }
+
+    m_animation.setDuration(duration);
+    m_animation.setStartValue(m_position);
+    m_animation.setEndValue(static_cast<qreal>(item));
+    m_animation.start();
+
+    updateCurrentIndex();
 }
 
 ExpandedTreeViewPrivate::ExpandedTreeViewPrivate(ExpandedTreeView* self)
@@ -4218,6 +4865,80 @@ void ExpandedTreeViewPrivate::stopExpansionAnimation()
     m_expansionAnimationHeight    = -1;
 }
 
+void CoverFlowSettings::normalise()
+{
+    sideArtworkTilt    = std::clamp(sideArtworkTilt, -85, 85);
+    centreSpacing      = std::clamp(centreSpacing, 20, 200);
+    sideSpacing        = std::clamp(sideSpacing, 0, 100);
+    itemsPerSide       = std::clamp(itemsPerSide, 0, 20);
+    sizeProgression    = std::clamp(sizeProgression, 20, 100);
+    minArtworkSize     = std::clamp(minArtworkSize, 0, 100);
+    perspective        = std::clamp(perspective, 0, 200);
+    backgroundBlending = std::clamp(backgroundBlending, 0, 100);
+    reflectionHeight   = std::clamp(reflectionHeight, 0, 100);
+    reflectionOpacity  = std::clamp(reflectionOpacity, 0, 100);
+    reflectionGap      = std::clamp(reflectionGap, 0, 100);
+    labelSpacing       = std::clamp(labelSpacing, 0, 100);
+    animationDuration  = std::clamp(animationDuration, 0, 500);
+    scrollSensitivity  = std::clamp(scrollSensitivity, 10, 500);
+    if(labelsOnArtwork) {
+        labelsAboveArtwork = false;
+    }
+}
+
+QJsonObject CoverFlowSettings::toJson() const
+{
+    return {
+        {"AutoFitArtwork"_L1, autoFitArtwork},
+        {"SideArtworkTilt"_L1, sideArtworkTilt},
+        {"CentreSpacing"_L1, centreSpacing},
+        {"SideSpacing"_L1, sideSpacing},
+        {"ItemsPerSide"_L1, itemsPerSide},
+        {"SizeProgression"_L1, sizeProgression},
+        {"MinimumArtworkSize"_L1, minArtworkSize},
+        {"Perspective"_L1, perspective},
+        {"BackgroundBlending"_L1, backgroundBlending},
+        {"ShowReflection"_L1, showReflection},
+        {"ReflectionHeight"_L1, reflectionHeight},
+        {"ReflectionOpacity"_L1, reflectionOpacity},
+        {"ReflectionGap"_L1, reflectionGap},
+        {"ShowLabels"_L1, showLabels},
+        {"LabelsAboveArtwork"_L1, labelsAboveArtwork},
+        {"LabelsOnArtwork"_L1, labelsOnArtwork},
+        {"OverlayLabelsOnReflections"_L1, overlayLabelsOnReflections},
+        {"LabelSpacing"_L1, labelSpacing},
+        {"AnimateScrolling"_L1, animateScrolling},
+        {"AnimationDuration"_L1, animationDuration},
+        {"ScrollSensitivity"_L1, scrollSensitivity},
+    };
+}
+
+void CoverFlowSettings::load(const QJsonObject& object)
+{
+    autoFitArtwork             = object.value("AutoFitArtwork"_L1).toBool(autoFitArtwork);
+    sideArtworkTilt            = object.value("SideArtworkTilt"_L1).toInt(sideArtworkTilt);
+    centreSpacing              = object.value("CentreSpacing"_L1).toInt(centreSpacing);
+    sideSpacing                = object.value("SideSpacing"_L1).toInt(sideSpacing);
+    itemsPerSide               = object.value("ItemsPerSide"_L1).toInt(itemsPerSide);
+    sizeProgression            = object.value("SizeProgression"_L1).toInt(sizeProgression);
+    minArtworkSize             = object.value("MinimumArtworkSize"_L1).toInt(minArtworkSize);
+    perspective                = object.value("Perspective"_L1).toInt(perspective);
+    backgroundBlending         = object.value("BackgroundBlending"_L1).toInt(backgroundBlending);
+    showReflection             = object.value("ShowReflection"_L1).toBool(showReflection);
+    reflectionHeight           = object.value("ReflectionHeight"_L1).toInt(reflectionHeight);
+    reflectionOpacity          = object.value("ReflectionOpacity"_L1).toInt(reflectionOpacity);
+    reflectionGap              = object.value("ReflectionGap"_L1).toInt(reflectionGap);
+    showLabels                 = object.value("ShowLabels"_L1).toBool(showLabels);
+    labelsAboveArtwork         = object.value("LabelsAboveArtwork"_L1).toBool(labelsAboveArtwork);
+    labelsOnArtwork            = object.value("LabelsOnArtwork"_L1).toBool(labelsOnArtwork);
+    overlayLabelsOnReflections = object.value("OverlayLabelsOnReflections"_L1).toBool(overlayLabelsOnReflections);
+    labelSpacing               = object.value("LabelSpacing"_L1).toInt(labelSpacing);
+    animateScrolling           = object.value("AnimateScrolling"_L1).toBool(animateScrolling);
+    animationDuration          = object.value("AnimationDuration"_L1).toInt(animationDuration);
+    scrollSensitivity          = object.value("ScrollSensitivity"_L1).toInt(scrollSensitivity);
+    normalise();
+}
+
 ExpandedTreeView::ExpandedTreeView(QWidget* parent)
     : QAbstractItemView{parent}
     , p{std::make_unique<ExpandedTreeViewPrivate>(this)}
@@ -4385,6 +5106,9 @@ void ExpandedTreeView::setViewMode(ViewMode mode)
     else if(mode == ViewMode::Icon) {
         p->m_view = std::make_unique<IconView>(this, p.get());
     }
+    else if(mode == ViewMode::CoverFlow) {
+        p->m_view = std::make_unique<CoverFlowView>(this, p.get());
+    }
     else {
         p->m_view = std::make_unique<FlowView>(this, p.get());
         setVerticalScrollMode(ScrollPerPixel);
@@ -4393,6 +5117,26 @@ void ExpandedTreeView::setViewMode(ViewMode mode)
     p->doDelayedItemsLayout();
 
     Q_EMIT viewModeChanged(mode);
+}
+
+CoverFlowSettings ExpandedTreeView::coverFlowSettings() const
+{
+    return p->m_coverFlow;
+}
+
+void ExpandedTreeView::setCoverFlowSettings(const CoverFlowSettings& settings)
+{
+    auto validated{settings};
+    validated.normalise();
+
+    if(std::exchange(p->m_coverFlow, validated) == validated) {
+        return;
+    }
+
+    if(p->m_viewMode == ViewMode::CoverFlow) {
+        p->doDelayedItemsLayout();
+        viewport()->update();
+    }
 }
 
 void ExpandedTreeView::setFlowColumnGap(int gap)
@@ -4821,7 +5565,7 @@ void ExpandedTreeView::scrollTo(const QModelIndex& index, ScrollHint hint)
         return;
     }
 
-    if(const auto* treeModel = qobject_cast<TreeModelBase*>(p->m_model); treeModel && (treeModel->isDirty())) {
+    if(const auto* treeModel = qobject_cast<TreeModelBase*>(p->m_model); treeModel && treeModel->isDirty()) {
         // Prevent scrolling when invalidating model
         return;
     }
@@ -4834,6 +5578,14 @@ void ExpandedTreeView::scrollTo(const QModelIndex& index, ScrollHint hint)
     p->layoutItems();
     if(p->m_view) {
         p->m_view->updateScrollBars();
+    }
+
+    if(p->m_viewMode == ViewMode::CoverFlow) {
+        const int item = p->viewIndex(index);
+        if(item >= 0 && (hint != EnsureVisible || !viewport()->rect().intersects(visualRect(index)))) {
+            horizontalScrollBar()->setValue(item);
+        }
+        return;
     }
 
     QRect rect = visualRect(index);
@@ -5115,7 +5867,8 @@ void ExpandedTreeView::dataChanged(const QModelIndex& topLeft, const QModelIndex
 void ExpandedTreeView::changeEvent(QEvent* event)
 {
     QAbstractItemView::changeEvent(event);
-    if((p->m_viewMode == ViewMode::Flow || p->m_viewMode == ViewMode::Icon || p->m_wordWrap)
+    if((p->m_viewMode == ViewMode::Flow || p->m_viewMode == ViewMode::Icon || p->m_viewMode == ViewMode::CoverFlow
+        || p->m_wordWrap)
        && (event->type() == QEvent::LayoutDirectionChange || event->type() == QEvent::FontChange
            || event->type() == QEvent::StyleChange)) {
         p->m_view->invalidate();
@@ -5291,9 +6044,15 @@ void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
     const QModelIndex index     = indexAt(pos);
     const QModelIndex prevIndex = currentIndex().siblingAtColumn(0);
 
+    if(p->m_viewMode == ViewMode::CoverFlow) {
+        p->m_coverFlowPressedIndex = index;
+    }
+
     if(!index.isValid()) {
         QAbstractItemView::mousePressEvent(event);
-        clearSelection();
+        if(p->m_viewMode != ViewMode::CoverFlow) {
+            clearSelection();
+        }
         return;
     }
 
@@ -5347,11 +6106,28 @@ void ExpandedTreeView::mouseDoubleClickEvent(QMouseEvent* event)
         event->ignore();
         return;
     }
+
+    if(p->m_viewMode == ViewMode::CoverFlow && p->m_coverFlowPressedIndex.isValid()) {
+        // The first click may have moved the cover away from the cursor
+        const QPoint pos = visualRect(p->m_coverFlowPressedIndex).center();
+        QMouseEvent mapped{event->type(),          QPointF{pos},     QPointF{viewport()->mapToGlobal(pos)},
+                           event->button(),        event->buttons(), event->modifiers(),
+                           event->pointingDevice()};
+        QAbstractItemView::mouseDoubleClickEvent(&mapped);
+        return;
+    }
+
     QAbstractItemView::mouseDoubleClickEvent(event);
 }
 
 void ExpandedTreeView::wheelEvent(QWheelEvent* event)
 {
+    if(p->m_viewMode == ViewMode::CoverFlow) {
+        p->layoutItems();
+        p->m_view->wheelEvent(event);
+        return;
+    }
+
     if(!(event->modifiers() & Qt::ControlModifier)) {
         QAbstractItemView::wheelEvent(event);
         return;
@@ -5396,7 +6172,7 @@ void ExpandedTreeView::resizeEvent(QResizeEvent* event)
         return;
     }
 
-    if(p->m_viewMode == ViewMode::Flow && delta.width() != 0) {
+    if(p->m_viewMode == ViewMode::CoverFlow || (p->m_viewMode == ViewMode::Flow && delta.width() != 0)) {
         p->doDelayedItemsLayout();
     }
     else if(p->m_viewMode == ViewMode::Icon && (delta.width() != 0 || p->m_expansionWidget)) {
@@ -5453,6 +6229,12 @@ void ExpandedTreeView::timerEvent(QTimerEvent* event)
 
 void ExpandedTreeView::scrollContentsBy(int dx, int dy)
 {
+    if(p->m_viewMode == ViewMode::CoverFlow) {
+        viewport()->update();
+        updateEditorGeometries();
+        return;
+    }
+
     p->updateExpansionGeometry();
 
     if(dx) {
@@ -5718,6 +6500,9 @@ QModelIndex ExpandedTreeView::moveCursor(CursorAction cursorAction, Qt::Keyboard
     p->layoutItems();
 
     QModelIndex current = currentIndex();
+    if(p->m_viewMode == ViewMode::CoverFlow && !p->m_viewItems.empty()) {
+        current = p->modelIndex(horizontalScrollBar()->value(), current.isValid() ? current.column() : 0);
+    }
     if(!current.isValid()) {
         const int count = p->m_header->count();
         const int i     = p->m_view->itemBelow(-1);
@@ -5762,7 +6547,7 @@ QModelIndex ExpandedTreeView::moveCursor(CursorAction cursorAction, Qt::Keyboard
 
 int ExpandedTreeView::horizontalOffset() const
 {
-    return p->m_header->offset();
+    return p->m_viewMode == ViewMode::CoverFlow ? 0 : p->m_header->offset();
 }
 
 int ExpandedTreeView::verticalOffset() const
@@ -5790,6 +6575,15 @@ bool ExpandedTreeView::isIndexHidden(const QModelIndex& index) const
     return p->m_header->isSectionHidden(index.column());
 }
 
+QItemSelectionModel::SelectionFlags ExpandedTreeView::selectionCommand(const QModelIndex& index,
+                                                                       const QEvent* event) const
+{
+    if(p->m_viewMode == ViewMode::CoverFlow && !index.isValid() && event && event->isPointerEvent()) {
+        return QItemSelectionModel::NoUpdate;
+    }
+    return QAbstractItemView::selectionCommand(index, event);
+}
+
 void ExpandedTreeView::setSelection(const QRect& rect, QItemSelectionModel::SelectionFlags command)
 {
     if(!selectionModel() || rect.isNull()) {
@@ -5807,6 +6601,21 @@ void ExpandedTreeView::setSelection(const QRect& rect, QItemSelectionModel::Sele
 
     QModelIndex topLeft     = findIndexAt(tl, false);
     QModelIndex bottomRight = findIndexAt(br, false);
+
+    if(p->m_viewMode == ViewMode::CoverFlow && currentIndex().isValid()) {
+        // Keyboard selection can target a cover before it has animated into view
+        if(rect.size() == QSize{1, 1}) {
+            topLeft = bottomRight = currentIndex();
+        }
+        else if(command & QItemSelectionModel::Current) {
+            if(!topLeft.isValid()) {
+                topLeft = currentIndex();
+            }
+            if(!bottomRight.isValid()) {
+                bottomRight = currentIndex();
+            }
+        }
+    }
 
     if(iconMode && p->m_expansionRect.isValid()) {
         if(p->m_expansionRect.contains(tl + p->offset())) {
@@ -5852,6 +6661,12 @@ void ExpandedTreeView::setSelection(const QRect& rect, QItemSelectionModel::Sele
 void ExpandedTreeView::currentChanged(const QModelIndex& current, const QModelIndex& previous)
 {
     QAbstractItemView::currentChanged(current, previous);
+
+    if(p->m_viewMode == ViewMode::CoverFlow) {
+        scrollTo(current, PositionAtCenter);
+        viewport()->update();
+        return;
+    }
 
     if(previous.isValid()) {
         viewport()->update(p->m_view->visualRect(previous, RectRule::FullRow, false));

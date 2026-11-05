@@ -160,6 +160,7 @@ public:
         int artworkCornerRadius{0};
         bool overrideArtworkMargins{false};
         QMargins artworkMargins{8, 8, 8, 8};
+        CoverFlowSettings coverFlow;
         BackgroundConfig background;
         bool expandGroups{false};
         bool expansionAnimated{true};

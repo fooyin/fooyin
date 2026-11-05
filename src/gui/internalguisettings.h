@@ -180,6 +180,8 @@ constexpr auto LastPlaylistPath      = "Playlist/LastPlaylistPath";
 constexpr auto ConfirmMetadataWipe   = "MetadataLookup/ConfirmWipeWritableTags";
 constexpr auto ShowLayoutEditingHint = "Interface/ShowLayoutEditingHint";
 
+constexpr auto DefaultCoverFlowCacheSize = 32;
+
 constexpr auto LayoutTransitionEnabled        = "Interface/LayoutTransitionEnabled";
 constexpr auto LayoutTransitionDuration       = "Interface/LayoutTransitionDuration";
 constexpr auto LayoutTransitionMethod         = "Interface/LayoutTransitionMethod";
@@ -254,6 +256,7 @@ enum GuiInternalSettings : uint32_t
     ContextMenuQueueViewerLayout             = 56 | Type::StringList,
     PlaylistInlineEditDelayMs                = 57 | Type::Int,
     GlobalBackground                         = 58 | Type::Variant,
+    CoverFlowCacheSize                       = 59 | Type::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

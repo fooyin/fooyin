@@ -156,6 +156,8 @@ void registerMinimalGuiSettings(SettingsManager& settings)
                                                                  u"Interface/RatingEmptyStarSymbol"_s);
     settings.createSetting<Settings::Gui::Internal::EditableLayoutMargin>(-1, u"Interface/EditableLayoutMargin"_s);
     settings.createSetting<Settings::Gui::Internal::PixmapCacheSize>(64, u"Interface/PixmapCacheSize"_s);
+    settings.createSetting<Settings::Gui::Internal::CoverFlowCacheSize>(
+        Settings::Gui::Internal::DefaultCoverFlowCacheSize, u"Interface/CoverFlowCacheSize"_s);
     settings.createSetting<Settings::Gui::Internal::TrackCoverPaths>(QVariant::fromValue(CoverPaths{}),
                                                                      u"Artwork/Paths"_s);
     settings.createSetting<Settings::Gui::Internal::TrackCoverSourcePreference>(0, u"Artwork/LocalSourcePreference"_s);
