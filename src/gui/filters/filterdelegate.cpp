@@ -241,8 +241,9 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     QPixmap scaledArtwork;
     if(hasArtwork) {
         const double dpr = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
-        scaledArtwork = Utils::scalePixmap(artworkIcon.pixmap(decorationRect.size(), dpr, Gui::itemViewIconMode(opt)),
-                                           decorationRect.size(), dpr, true);
+        const auto mode  = opt.state.testFlag(QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled;
+        scaledArtwork = Utils::scalePixmap(artworkIcon.pixmap(decorationRect.size(), dpr, mode), decorationRect.size(),
+                                           dpr, true);
     }
 
     const auto drawArtwork = [&]() {
