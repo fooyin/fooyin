@@ -782,7 +782,7 @@ void FilterDelegate::drawRichTextLines(QPainter* painter, const QStyleOptionView
         backgroundColour.setAlpha(selected ? 230 : 180);
 
         painter->fillRect(background, backgroundColour);
-        if(!selected && option.state & QStyle::State_MouseOver) {
+        if(!coverFlowOverlay && !selected && option.state & QStyle::State_MouseOver) {
             QStyleOptionViewItem hoverOpt{option};
             hoverOpt.rect            = background.toAlignedRect();
             hoverOpt.backgroundBrush = Qt::NoBrush;
@@ -937,31 +937,52 @@ void FilterDelegate::paintCoverFlow(QPainter* painter, const ExpandedTreeView::C
     painter->setOpacity(painter->opacity() * (reflection ? opacity : 1.0));
     Gui::clipRoundedRect(*painter, opt.rect, option.cornerRadius);
 
-    if(!pixmap.isNull()) {
-        painter->drawPixmap(pixmapRect, pixmap, pixmap.rect());
-    }
-    else if(!reflection) {
-        painter->fillRect(opt.rect, opt.palette.brush(QPalette::AlternateBase));
-    }
-
-    if(!reflection) {
-        QColor shade = opt.palette.color(QPalette::Base);
-        shade.setAlphaF(static_cast<float>(1.0 - opacity));
-        painter->fillRect(opt.rect, shade);
-
-        if(settings.showLabels && settings.labelsOnArtwork && option.depth < 0.5) {
-            paintCoverFlowCaption(painter, opt, settings, index);
+    const bool inlineCaption = !reflection && settings.showLabels && settings.labelsOnArtwork && option.depth < 0.5;
+    const auto drawArtwork   = [&](QPainter* target) {
+        if(!pixmap.isNull()) {
+            target->drawPixmap(pixmapRect, pixmap, pixmap.rect());
+        }
+        else if(!reflection) {
+            target->fillRect(opt.rect, opt.palette.brush(QPalette::AlternateBase));
         }
 
-        if(opt.state & QStyle::State_MouseOver) {
-            painter->setRenderHint(QPainter::Antialiasing);
-            painter->setBrush(Qt::NoBrush);
-            painter->setPen(QPen{opt.palette.color(QPalette::Text), 2.0});
-
-            const qreal radius
-                = std::max(0.0, (std::min(opt.rect.width(), opt.rect.height()) * option.cornerRadius / 200.0) - 1.0);
-            painter->drawRoundedRect(QRectF{opt.rect}.adjusted(1.0, 1.0, -1.0, -1.0), radius, radius);
+        if(!reflection) {
+            QColor shade = opt.palette.color(QPalette::Base);
+            shade.setAlphaF(static_cast<float>(1.0 - opacity));
+            target->fillRect(opt.rect, shade);
         }
+
+        if(inlineCaption) {
+            paintCoverFlowCaption(target, opt, settings, index);
+        }
+    };
+
+    if(inlineCaption) {
+        const qreal dpr = painter->device()->devicePixelRatioF();
+        QPixmap layer{QSize{static_cast<int>(std::ceil(opt.rect.width() * dpr)),
+                            static_cast<int>(std::ceil(opt.rect.height() * dpr))}};
+        layer.setDevicePixelRatio(dpr);
+        layer.fill(Qt::transparent);
+        {
+            QPainter layerPainter{&layer};
+            layerPainter.setRenderHints(painter->renderHints());
+            layerPainter.translate(-opt.rect.topLeft());
+            drawArtwork(&layerPainter);
+        }
+        painter->drawPixmap(QRectF{opt.rect}, layer, layer.rect());
+    }
+    else {
+        drawArtwork(painter);
+    }
+
+    if(!reflection && opt.state & QStyle::State_MouseOver) {
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setBrush(Qt::NoBrush);
+        painter->setPen(QPen{opt.palette.color(QPalette::Text), 2.0});
+
+        const qreal radius
+            = std::max(0.0, (std::min(opt.rect.width(), opt.rect.height()) * option.cornerRadius / 200.0) - 1.0);
+        painter->drawRoundedRect(QRectF{opt.rect}.adjusted(1.0, 1.0, -1.0, -1.0), radius, radius);
     }
 
     painter->restore();
